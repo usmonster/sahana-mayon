@@ -1,0 +1,140 @@
+SAHANA AGASTI 2.0 MAYON
+Emergency Management Software
+
+INFORMATION FOR DEVELOPERS
+
+Updated: 2010-12-02
+
+GETTING STARTED
+===============
+
+*** IMPORTANT NOTE: ***
+
+THIS IS A DOCUMENT IN PROGRESS and MAY NOT BE COMPLETE.
+
+<Quick reference for new developers>
+This is developer-specific reference information.
+
+
+SYSTEM REQUIREMENTS
+===================
+
+Software
+--------
+
+The following software is required for running Sahana Agasti:
+
+* Ubuntu 9.10 LTS or later (most current 10.04 LTS strongly recommended)
+* Apache HTTP Server 2.2.14 or later (most current 2.2 preferred)
+* MySQL 5.1.41 or later (most current 5.1 preferred)
+* PHP 5.2.12 or later (most current 5.3 strongly recommended)
+
+Hardware
+--------
+
+The following hardware resources are recommended for running Sahana Agasti:
+
+* Intel Pentium or AMD Athlon CPU
+* minimum of 50 MB available disk space
+* minimum 512 MB RAM
+
+
+GETTING THE CODE
+================
+<<
+Checkout/Branch
+
+bzr branch lp:sahana-agasti/mayon
+
+[...]
+>>
+
+SYSTEM CONFIGURATION
+====================
+<<
+Configure
+Test
+Install
+[...]
+>>
+
+DEVELOPMENT
+===========
+
+The following are links to help aid new developers in contributing to Sahana
+Agasti. For more information on best practices and standards, please visit
+http://wiki.sahanafoundation.org/doku.php/agasti:start
+
+For Agasti code documentation, please reference the included file,
+doc/doxygen/html/index.html
+
+For documentation on the Doctrine ORM, please visit
+http://www.doctrine-project.org/projects/orm/1.2/docs/en
+
+For documentation regarding the Symfony framework, please visit
+http://www.symfony-project.org/api/1_4/
+
+For PHP 5 documentation, please visit http://www.php.net/docs.php
+
+
+CHECKING CODE TO LP
+===================
+
+Check-in Check List
+-------------------
+The following is a checklist for any code you'd like to contribute to Sahana
+Agasti:
+- All code is properly commented
+- All files that have been modified or created for the project have headers that
+  include the following:
+	* A description of what the class does
+	* A license statement:
+		LICENSE: This source file is subject to LGPLv3.0 license
+		that is available through the world-wide-web at the following URI:
+		http://www.gnu.org/copyleft/lesser.html
+	* The author's name and contact information (using the @author Doxygen tag)
+	* The text "Copyright of the Sahana Software Foundation, sahanafoundation.org"
+- The code has been checked with PHP Lint, formatted properly, and tested.
+- Include in your merge request the Feature Request related to your code
+
+
+SUBMITTING A BUG
+================
+
+To submit a bug to the Mayon codebase, please do the following:
+
+	1. Sign in at https://bugs.launchpad.net/sahana-agasti/mayon
+	2. On the right side of the page click the "Report a Bug" link.
+	3. Enter the initial summary for the bug and verify it hasn't already been
+	   submitted. Click "Next" if there has not been a report.
+	4. In the Further Information section provide as many details about the bug as
+	   possible. Describe the scenario when it happens and how regularly it
+	   happens. Please INCLUDE A SCREENSHOT if you're able.
+	5. If you know the Importance of the bug or tags would be helpful include this
+	   information.
+	6. Click the Submit Bug Report button. Please be available in case the
+	   development team has questions regarding your report.
+
+
+SUBMITTING A FEATURE REQUEST
+============================
+
+To submit a feature request to the Mayon codebase, please do the following:
+
+	1. Sign in at https://blueprints.launchpad.net/sahana-agasti/mayon
+	2. On the right side of the page click the "Register a blueprint" link.
+	3. Name your feature request and provide as many details as you're able to.
+	   Remember, the more details you provide the more thoroughly we'll understand
+	   your request.
+	4. Click the Register Blueprint button. Please be available in case the
+	   development team has questions regarding your report.
+
+
+DEFAULT SETUP
+=============
+
+The default environment in ProjectConfiguration.class.php is currently set to
+dev. As a result, some forms of caching are disabled. frontend_dev.php is
+currently open and available to hosts outside of localhost (this allows full
+stack tracing and exposes potentially sensitive information).
+

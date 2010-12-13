@@ -1,0 +1,17 @@
+agShiftStatus:
+  available:
+    shift_status: available
+    description: Available shifts.
+  active:
+    shift_status: active
+    description: Active shifts.
+  standby:
+    shift_status: standby
+    description: Standby shifts.
+  inactive:
+    shift_status: inactive
+    description: Inactive shifts.
+  closed:
+    shift_status: closed
+    description: Closed shifts.
+

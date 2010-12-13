@@ -1,0 +1,12 @@
+# Pre-populate email contact type
+
+agEmailContactType:
+  work:
+    id: 1
+    email_contact_type: work
+  personal:
+    id: 2
+    email_contact_type: personal
+  other:
+    id: 3
+    email_contact_type: other

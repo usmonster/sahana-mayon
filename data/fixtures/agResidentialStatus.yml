@@ -1,0 +1,15 @@
+# Pre-populate residential status table
+
+agResidentialStatus:
+  citizen:
+    residential_status: citizen
+  tourist:
+    residential_status: tourist
+  illegal_immigrant:
+    residential_status: illegal immigrant
+  foreign_student:
+    residential_status: foreign student
+  permanent_residency:
+    residential_status: permanent resident
+  work_permit:
+    residential_status: work permit

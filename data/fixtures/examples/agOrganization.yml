@@ -1,0 +1,64 @@
+# Pre-population of Organizations
+# http://www.exploringabroad.com/humanitarian-org.htm
+
+agOrganization:
+  volunteer:
+    agEntity: 21
+    organization: volunteer
+  aah:
+    agEntity: 22
+    organization: Action Against Hunger
+  arc:
+    agEntity: 23
+    organization: American Red Cross
+  baps:
+    agEntity: 24
+    organization: BAPS Care International
+  care:
+    agEntity: 25
+    organization: CARE
+  dri:
+    agEntity: 26
+    organization: Direct Relief International
+  goal:
+    agEntity: 27
+    organization: GOAL
+  global:
+    agEntity: 28
+    organization: Global Giving
+  hfhi:
+    agEntity: 29
+    organization: Habitat for Humanity Internal
+  ifrcarc:
+    agEntity: 30
+    organization: Internal Federation Red Cross and Red Crescent
+  irw:
+    agEntity: 31
+    organization: Islamic Relieve Worldwide
+  nfg:
+    agEntity: 32
+    organization: Network for Good
+  oi:
+    agEntity: 33
+    organization: Oxfam Internal
+  ppi:
+    agEntity: 34
+    organization: People to People International
+  stc:
+    agEntity: 35
+    organization: Save the Children
+  unicef:
+    agEntity: 36
+    organization: UNICEF
+  uw:
+    agEntity: 37
+    organization: United Way
+  wfp:
+    agEntity: 38
+    organization: World Food Programme
+  wv:
+    agEntity: 39
+    organization: World Vision
+  other:
+    agEntity: 40
+    organization: Other

@@ -1,0 +1,35 @@
+# Sample of person's marital status
+# Requirement: Pre-load person object samples and marital status data dictionary.
+
+agPersonMaritalStatus:
+  person1:
+    agPerson: 1
+    agMaritalStatus: single
+  person2:
+    agPerson: 2
+    agMaritalStatus: single
+  person3:
+    agPerson: 3
+    agMaritalStatus: married
+  person4:
+    agPerson: 4
+    agMaritalStatus: separated
+  person5:
+    agPerson: 5
+    agMaritalStatus: married
+  person6:
+    agPerson: 6
+    agMaritalStatus: divorsed
+  person7:
+    agPerson: 7
+    agMaritalStatus: widow
+  person8:
+    agPerson: 8
+    agMaritalStatus: divorsed
+  person9:
+    agPerson: 9
+    agMaritalStatus: single
+  person10:
+    agPerson: 10
+    agMaritalStatus: married
+

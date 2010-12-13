@@ -1,0 +1,185 @@
+agPet:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    pet_name:
+      type: string(128)
+      notnull: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    sex_id:
+      type: integer(2)
+      notnull: true
+    species_id:
+      type: integer(2)
+      notnull: true
+    age:
+      type: integer(1)
+    age_date_recorded:
+      type: date
+    physical_description:
+      type: gzip
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agSex:
+      local: sex_id
+      foreign: id
+    agSpecies:
+      local: species_id
+      foreign: id
+agSpecies:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    species:
+      type: string(64)
+      notnull: true
+    species_desc:
+      type: string(255)
+  indexes:
+    UX_agSpecies:
+      fields: [species]
+      type: unique
+agSubSpecies:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    subspecies:
+      type: string(128)
+      notnull: true
+  indexes:
+    UX_agSubSpecies:
+      fields: [subspecies]
+      type: unique
+agPetSubSpecies:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    pet_id:
+      type: integer(4)
+      notnull: true
+    subspecies_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agPetSubSpecies:
+      fields: [pet_id]
+      type: unique
+  relations:
+    agPet:
+      local: pet_id
+      foreign: id
+    agSubSpecies:
+      local: subspecies_id
+      foreign: id
+agPetCaretaker:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    pet_id:
+      type: integer(4)
+      notnull: true
+    entity_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    UX_agPetCaretaker:
+      fields: [pet_id]
+      type: unique
+  relations:
+    agPet:
+      local: pet_id
+      foreign: id
+    agEntity:
+      local: entity_id
+      foreign: id
+agPetAllocationStatusType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    pet_allocation_status_type:
+      type: string(32)
+      notnull: true
+    pet_allocation_status_type_desc:
+      type: string(255)
+    being_serviced:
+      type: boolean
+      notnull: true
+  indexes:
+    UX_agPetAllocationStatusType:
+      fields: [pet_allocation_status_type]
+      type: unique
+agPetAllocationStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    pet_id:
+      type: integer(4)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    event_facility_resource_id:
+      type: integer(4)
+      notnull: true
+    pet_allocation_status_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agPetAllocationStatus:
+      fields: [pet_id, time_stamp]
+      type: unique
+  relations:
+    agPet:
+      local: pet_id
+      foreign: id
+    agEventFacilityResource:
+      local: event_facility_resource_id
+      foreign: id
+    agPetAllocationStatusType:
+      local: pet_allocation_status_type_id
+      foreign: id
+agPetNote:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    pet_id:
+      type: integer(4)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    event_staff_id:
+      type: integer(5)
+      notnull: true
+    pet_note:
+      type: gzip
+      notnull: true
+  relations:
+    agPet:
+      local: pet_id
+      foreign: id
+    agEventStaff:
+      local: event_staff_id
+      foreign: id
+actAs:
+  Timestampable: 

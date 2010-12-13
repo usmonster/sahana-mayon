@@ -1,0 +1,496 @@
+# Pre-populate Country's ISO 3166-2 code
+# This data dictionary is based off of http://en.wikipedia.org/wiki/ISO_3166-1
+
+agIso31662:
+  afghanistan:
+    value: ISO 3166-2:AF
+  aland_islands:
+    value: ISO 3166-2:AX
+  albania:
+    value: ISO 3166-2:AL
+  algeria:
+    value: ISO 3166-2:DZ
+  american_samoa:
+    value: ISO 3166-2:AS
+  andorra:
+    value: ISO 3166-2:AD
+  angola:
+    value: ISO 3166-2:AO
+  anguilla:
+    value: ISO 3166-2:AI
+  antarctica:
+    value: ISO 3166-2:AQ
+  antigua_and_barbuda:
+    value: ISO 3166-2:AG
+  argentina:
+    value: ISO 3166-2:AR
+  armenia:
+    value: ISO 3166-2:AM
+  aruba:
+    value: ISO 3166-2:AW
+  australia:
+    value: ISO 3166-2:AU
+  austria:
+    value: ISO 3166-2:AT
+  azerbaijan:
+    value: ISO 3166-2:AZ
+  bahamas:
+    value: ISO 3166-2:BS
+  bahrain:
+    value: ISO 3166-2:BH
+  bangladesh:
+    value: ISO 3166-2:BD
+  barbados:
+    value: ISO 3166-2:BB
+  belarus:
+    value: ISO 3166-2:BY
+  belgium:
+    value: ISO 3166-2:BE
+  belize:
+    value: ISO 3166-2:BZ
+  benin:
+    value: ISO 3166-2:BJ
+  bermuda:
+    value: ISO 3166-2:BM
+  bhutan:
+    value: ISO 3166-2:BT
+  bolivia:
+    value: ISO 3166-2:BO
+  bosnia_and_herzegovina:
+    value: ISO 3166-2:BA
+  botswana:
+    value: ISO 3166-2:BW
+  bouvet_island:
+    value: ISO 3166-2:BV
+  brazil:
+    value: ISO 3166-2:BR
+  british_indian_ocena_territory:
+    value: ISO 3166-2:IO
+  brunei_darussalam:
+    value: ISO 3166-2:BN
+  bulgaria:
+    value: ISO 3166-2:BG
+  burkina_faso:
+    value: ISO 3166-2:BF
+  burundi:
+    value: ISO 3166-2:BI
+  cambodia:
+    value: ISO 3166-2:KH
+  cameroon:
+    value: ISO 3166-2:CM
+  canada:
+    value: ISO 3166-2:CA
+  cape_verde:
+    value: ISO 3166-2:CV
+  cayman_islands:
+    value: ISO 3166-2:KY
+  central_african_republic:
+    value: ISO 3166-2:CF
+  chad:
+    value: ISO 3166-2:TD
+  chile:
+    value: ISO 3166-2:Cl
+  china:
+    value: ISO 3166-2:CN
+  christmas_island:
+    value: ISO 3166-2:CX
+  cocos_islands:
+    value: ISO 3166-2:CC
+  colombia:
+    value: ISO 3166-2:CO
+  comoros:
+    value: ISO 3166-2:KM
+  congo:
+    value: ISO 3166-2:CG
+  congo_d:
+    value: ISO 3166-2:CD
+  cook_islands:
+    value: ISO 3166-2:CK
+  costa_rica:
+    value: ISO 3166-2:CR
+  cote_divoire:
+    value: ISO 3166-2:CI
+  croatia:
+    value: ISO 3166-2:HR
+  cuba:
+    value: ISO 3166-2:CU
+  cyprus:
+    value: ISO 3166-2:CY
+  czech_republic:
+    value: ISO 3166-2:CZ
+  denmark:
+    value: ISO 3166-2:DK
+  Djibouti:
+    value: ISO 3166-2:DJ
+  dominica:
+    value: ISO 3166-2:DM
+  dominican_republic:
+    value: ISO 3166-2:DO
+  ecuador:
+    value: ISO 3166-2:EC
+  egypt:
+    value: ISO 3166-2:EG
+  el_salvador:
+    value: ISO 3166-2:SV
+  equatorial_guinea:
+    value: ISO 3166-2:GQ
+  eritrea:
+    value: ISO 3166-2:ER
+  estonia:
+    value: ISO 3166-2:EE
+  ethiopia:
+    value: ISO 3166-2:ET
+  falkland_islands:
+    value: ISO 3166-2:FK
+  faroe_islands:
+    value: ISO 3166-2:FO
+  fiji:
+    value: ISO 3166-2:FJ
+  finland:
+    value: ISO 3166-2:FI
+  france:
+    value: ISO 3166-2:FR
+  french_guiana:
+    value: ISO 3166-2:GF
+  french_polynesia:
+    value: ISO 3166-2:PF
+  french_southern_territories:
+    value: ISO 3166-2:TF
+  gabon:
+    value: ISO 3166-2:GA
+  gambia:
+    value: ISO 3166-2:GM
+  georgia:
+    value: ISO 3166-2:GE
+  germany:
+    value: ISO 3166-2:DE
+  ghana:
+    value: ISO 3166-2:GH
+  gibraltar:
+    value: ISO 3166-2:GI
+  greece:
+    value: ISO 3166-2:GR
+  greenland:
+    value: ISO 3166-2:GL
+  grenada:
+    value: ISO 3166-2:GD
+  guadeloupe:
+    value: ISO 3166-2:GP
+  guam:
+    value: ISO 3166-2:GU
+  guatemala:
+    value: ISO 3166-2:GT
+  guernsey:
+    value: ISO 3166-2:GG
+  guinea:
+    value: ISO 3166-2:GN
+  guinea_bissau:
+    value: ISO 3166-2:GW
+  guyana:
+    value: ISO 3166-2:GY
+  haiti:
+    value: ISO 3166-2:HT
+  heard_and_mcdonald:
+    value: ISO 3166-2:HM
+  holy_see:
+    value: ISO 3166-2:VA
+  honduras:
+    value: ISO 3166-2:HN
+  hong_kong:
+    value: ISO 3166-2:HK
+  hungary:
+    value: ISO 3166-2:HU
+  iceland:
+    value: ISO 3166-2:IS
+  india:
+    value: ISO 3166-2:IN
+  indonesia:
+    value: ISO 3166-2:ID
+  iran:
+    value: ISO 3166-2:IR
+  iraq:
+    value: ISO 3166-2:IQ
+  ireland:
+    value: ISO 3166-2:IE
+  isle_of_man:
+    value: ISO 3166-2:IM
+  israel:
+    value: ISO 3166-2:IL
+  italy:
+    value: ISO 3166-2:IT
+  jamaica:
+    value: ISO 3166-2:JM
+  japan:
+    value: ISO 3166-2:JP
+  jersey:
+    value: ISO 3166-2:JE
+  Jordan:
+    value: ISO 3166-2:JO
+  kazakhstan:
+    value: ISO 3166-2:KZ
+  kenya:
+    value: ISO 3166-2:KE
+  kiribati:
+    value: ISO 3166-2:KI
+  korea_d:
+    value: ISO 3166-2:KP
+  korea_r:
+    value: ISO 3166-2:KR
+  kuwait:
+    value: ISO 3166-2:KW
+  kyrgyzstan:
+    value: ISO 3166-2:KG
+  lao:
+    value: ISO 3166-2:LA
+  latvia:
+    value: ISO 3166-2:LV
+  lebanon:
+    value: ISO 3166-2:LB
+  lesotho:
+    value: ISO 3166-2:LS
+  liberia:
+    value: ISO 3166-2:LR
+  libyan:
+    value: ISO 3166-2:LY
+  liechtenstein:
+    value: ISO 3166-2:LI
+  lithuania:
+    value: ISO 3166-2:LT
+  luxembourg:
+    value: ISO 3166-2:LU
+  macao:
+    value: ISO 3166-2:MO
+  macedonia:
+    value: ISO 3166-2:MK
+  madagascar:
+    value: ISO 3166-2:MG
+  Malawi:
+    value: ISO 3166-2:MW
+  malaysia:
+    value: ISO 3166-2:MY
+  maldives:
+    value: ISO 3166-2:MV
+  mali:
+    value: ISO 3166-2:ML
+  malta:
+    value: ISO 3166-2:MT
+  marshal:
+    value: ISO 3166-2:MH
+  martinique:
+    value: ISO 3166-2:MQ
+  mauritania:
+    value: ISO 3166-2:MR
+  mauritius:
+    value: ISO 3166-2:MU
+  mayotte:
+    value: ISO 3166-2:YT
+  mexico:
+    value: ISO 3166-2:MX
+  micronesia:
+    value: ISO 3166-2:FM
+  moldova:
+    value: ISO 3166-2:MD
+  monaco:
+    value: ISO 3166-2:MC
+  mongolia:
+    value: ISO 3166-2:MN
+  montenegro:
+    value: ISO 3166-2:ME
+  montserrat:
+    value: ISO 3166-2:MS
+  morocco:
+    value: ISO 3166-2:MA
+  mozambique:
+    value: ISO 3166-2:MZ
+  myanmar:
+    value: ISO 3166-2:MM
+  namibia:
+    value: ISO 3166-2:NA
+  nauru:
+    value: ISO 3166-2:NR
+  nepal:
+    value: ISO 3166-2:NP
+  netherlands:
+    value: ISO 3166-2:NL
+  netherlands_a:
+    value: ISO 3166-2:AN
+  new_caledonia:
+    value: ISO 3166-2:NC
+  new_zealand:
+    value: ISO 3166-2:NZ
+  nicaragua:
+    value: ISO 3166-2:NI
+  niger:
+    value: ISO 3166-2:NE
+  nigeria:
+    value: ISO 3166-2:NG
+  niue:
+    value: ISO 3166-2:NU
+  norfolk_island:
+    value: ISO 3166-2:NF
+  northern_mariana_islands:
+    value: ISO 3166-2:MP
+  norway:
+    value: ISO 3166-2:NO
+  oman:
+    value: ISO 3166-2:OM
+  pakistan:
+    value: ISO 3166-2:PK
+  palau:
+    value: ISO 3166-2:PW
+  palestinian:
+    value: ISO 3166-2:PS
+  panama:
+    value: ISO 3166-2:PA
+  papua:
+    value: ISO 3166-2:PG
+  paraguay:
+    value: ISO 3166-2:PY
+  peru:
+    value: ISO 3166-2:PE
+  philippines:
+    value: ISO 3166-2:PH
+  pitcairn:
+    value: ISO 3166-2:PN
+  poland:
+    value: ISO 3166-2:PL
+  portugal:
+    value: ISO 3166-2:PT
+  puerto_rico:
+    value: ISO 3166-2:PR
+  qatar:
+    value: ISO 3166-2:QA
+  reunion:
+    value: ISO 3166-2:RE
+  romania:
+    value: ISO 3166-2:RO
+  russian_federation:
+    value: ISO 3166-2:RU
+  rwanda:
+    value: ISO 3166-2:RW
+  barthelemy:
+    value: ISO 3166-2:BL
+  helena:
+    value: ISO 3166-2:SH
+  kitts_and_nevis:
+    value: ISO 3166-2:KN
+  lucia:
+    value: ISO 3166-2:LC
+  martin:
+    value: ISO 3166-2:MF
+  pierre_and_miquelon:
+    value: ISO 3166-2:PM
+  vincent_and_grenadines:
+    value: ISO 3166-2:VC
+  samoa:
+    value: ISO 3166-2:WS
+  san_marino:
+    value: ISO 3166-2:SM
+  sao:
+    value: ISO 3166-2:ST
+  saudi_arabia:
+    value: ISO 3166-2:SA
+  senegal:
+    value: ISO 3166-2:SN
+  serbia:
+    value: ISO 3166-2:RS
+  seychelles:
+    value: ISO 3166-2:SC
+  sierra_leone:
+    value: ISO 3166-2:SL
+  singapore:
+    value: ISO 3166-2:SG
+  slovakia:
+    value: ISO 3166-2:SK
+  slovenia:
+    value: ISO 3166-2:SI
+  solomon_islands:
+    value: ISO 3166-2:SB
+  somalia:
+    value: ISO 3166-2:SO
+  south_africa:
+    value: ISO 3166-2:ZA
+  south_georgia_and_sandwich:
+    value: ISO 3166-2:GS
+  spain:
+    value: ISO 3166-2:ES
+  sri_lanka:
+    value: ISO 3166-2:LK
+  sudan:
+    value: ISO 3166-2:SD
+  suriname:
+    value: ISO 3166-2:SR
+  svalbard:
+    value: ISO 3166-2:SJ
+  swaziland:
+    value: ISO 3166-2:SZ
+  sweden:
+    value: ISO 3166-2:SE
+  switzerland:
+    value: ISO 3166-2:CH
+  syrian:
+    value: ISO 3166-2:SY
+  taiwan:
+    value: ISO 3166-2:TW
+  tajikistan:
+    value: ISO 3166-2:TJ
+  tanzania:
+    value: ISO 3166-2:TZ
+  thailand:
+    value: ISO 3166-2:TH
+  timor_leste:
+    value: ISO 3166-2:TL
+  togo:
+    value: ISO 3166-2:TG
+  tokelau:
+    value: ISO 3166-2:TK
+  tonga:
+    value: ISO 3166-2:TO
+  trinidad_and_tobago:
+    value: ISO 3166-2:TT
+  tunisia:
+    value: ISO 3166-2:TN
+  turkey:
+    value: ISO 3166-2:TR
+  turkmenistan:
+    value: ISO 3166-2:TM
+  turks_and_caicos:
+    value: ISO 3166-2:TC
+  tuvalu:
+    value: ISO 3166-2:TV
+  uganda:
+    value: ISO 3166-2:UG
+  ukraine:
+    value: ISO 3166-2:UA
+  united_arab_emirates:
+    value: ISO 3166-2:AE
+  united_kingdom:
+    value: ISO 3166-2:GB
+  united_states:
+    value: ISO 3166-2:US
+  united_states_minor:
+    value: ISO 3166-2:UM
+  uruguay:
+    value: ISO 3166-2:UY
+  uzbekistan:
+    value: ISO 3166-2:UZ
+  vanuatu:
+    value: ISO 3166-2:VU
+  venezuela:
+    value: ISO 3166-2:VE
+  vietnam:
+    value: ISO 3166-2:VN
+  virgin_islands_british:
+    value: ISO 3166-2:VG
+  virgin_islands_us:
+    value: ISO 3166-2:VI
+  wallis_and_futuna:
+    value: ISO 3166-2:WF
+  western_sahara:
+    value: ISO 3166-2:EH
+  yemen:
+    value: ISO 3166-2:YE
+  zambia:
+    value: ISO 3166-2:ZM
+  zimbabwe:
+    value: ISO 3166-2:ZW

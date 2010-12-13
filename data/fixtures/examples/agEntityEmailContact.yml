@@ -1,0 +1,80 @@
+# Sample of person's email contact info
+# Requirement: Corresponding ag_entity, ag_email_contact, ag_email_contact_type fixtures.
+
+agEntityEmailContact:
+  person1_work:
+    agEntity: 1
+    agEmailContact: email1
+    agEmailContactType: work
+    priority: 1
+  person1_personal:
+    agEntity: 1
+    agEmailContact: email2
+    agEmailContactType: personal
+    priority: 2
+  person2_work:
+    agEntity: 2
+    agEmailContact: email3
+    agEmailContactType: work
+    priority: 1
+  person2_personal:
+    agEntity: 2
+    agEmailContact: email4
+    agEmailContactType: personal
+    priority: 2
+  person3_work:
+    agEntity: 3
+    agEmailContact: email5
+    agEmailContactType: work
+    priority: 1
+  person4_work:
+    agEntity: 4
+    agEmailContact: email6
+    agEmailContactType: work
+    priority: 1
+  person4_personal:
+    agEntity: 4
+    agEmailContact: email7
+    agEmailContactType: personal
+    priority: 2
+  person5_other:
+    agEntity: 4
+    agEmailContact: email8
+    agEmailContactType: other
+    priority: 3
+  person6_work:
+    agEntity: 6
+    agEmailContact: email9
+    agEmailContactType: work
+    priority: 1
+  person6_personal:
+    agEntity: 6
+    agEmailContact: email10
+    agEmailContactType: personal
+    priority: 2
+  person6_other:
+    agEntity: 7
+    agEmailContact: email11
+    agEmailContactType: other
+    priority: 1
+  person7_work:
+    agEntity: 7
+    agEmailContact: email12
+    agEmailContactType: work
+    priority: 2
+  person7_personal:
+    agEntity: 7
+    agEmailContact: email13
+    agEmailContactType: personal
+    priority: 3
+  person8_other:
+    agEntity: 8
+    agEmailContact: email14
+    agEmailContactType: other
+    priority: 1
+  person9_work:
+    agEntity: 9
+    agEmailContact: email15
+    agEmailContactType: work
+    priority: 1
+

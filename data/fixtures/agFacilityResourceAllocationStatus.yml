@@ -1,0 +1,85 @@
+agFacilityResourceAllocationStatus:
+  available:
+    facility_resource_allocation_status: available
+    description: Facility resource available to be assigned to any facility group.
+    committed: 0
+    staffed: 0
+    servicing_clients: 0
+    accepting_clients: 0
+    allocatable: 1
+    standby: 0
+  committed:
+    facility_resource_allocation_status: committed to be activation
+    description: ready / awaiting activation / committed
+    committed: 1
+    staffed: 0
+    servicing_clients: 0
+    accepting_clients: 0
+    allocatable: 0
+    standby: 0
+  standby:
+    facility_resource_allocation_status: standby
+    description: Facility resource designated to a faciltiy group as a standby.
+    committed: 1
+    staffed: 0
+    servicing_clients: 0
+    accepting_clients: 0
+    allocatable: 0
+    standby: 1
+  active:
+    facility_resource_allocation_status: active
+    description: Facility resource designated to a facility group and is open to staff only.
+    committed: 1
+    staffed: 1
+    servicing_clients: 0
+    accepting_clients: 0
+    allocatable: 0
+    standby: 0
+  registration:
+    facility_resource_allocation_status: open registration
+    description: Facility resource currently accepting clients.
+    committed: 1
+    staffed: 1
+    servicing_clients: 1
+    accepting_clients: 1
+    allocatable: 0
+    standby: 0
+  closing:
+    facility_resource_allocation_status: closing
+    description: Facility resource is shutting down and is not accepting or servicing clients.
+    committed: 1
+    staffed: 1
+    servicing_clients: 0
+    accepting_clients: 0
+    allocatable: 0
+    standby: 0
+    app_display: 
+  closed:
+    facility_resource_allocation_status: closed
+    description: Facility resource is closed and is released for re-assignment.
+    committed: 0
+    staffed: 0
+    servicing_clients: 0
+    accepting_clients: 0
+    allocatable: 1
+    standby: 0
+  unavailable:
+    facility_resource_allocation_status: unavailable
+    description: Facility resource is unavailable for facility group assignment.
+    committed: 0
+    staffed: 0
+    servicing_clients: 0
+    accepting_clients: 0
+    allocatable: 0
+    standby: 0
+    app_display: 
+  operating:
+    facility_resource_allocation_status: operating
+    description: Facility resource is servicing clients, but not accepting new clients at the moment.
+    committed: 1
+    staffed: 1
+    servicing_clients: 1
+    accepting_clients: 0
+    allocatable: 0
+    standby: 0
+

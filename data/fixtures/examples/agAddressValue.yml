@@ -1,0 +1,567 @@
+# Samples of address values
+
+agAddressValue:
+  usa_line1_1:
+    agAddressElement: line_1
+    value: 227 West 46 Street
+  usa_city_ny:
+    agAddressElement: city
+    value: New York
+  usa_zip5_10036:
+    agAddressElement: zip5
+    value: 10036
+  country_usa:
+    agAddressElement: country
+    value: United States of America
+  usa_line1_2:
+    agAddressElement: line_1
+    value: 101 West 31 Street
+  usa_line2_1:
+    agAddressElement: line_2
+    value: 7th Floor
+  usa_zip5_10001:
+    agAddressElement: zip5
+    value: 10001
+  usa_line1_3:
+    agAddressElement: line_1
+    value: 88 East End Avenue
+  usa_zip5_10028:
+    agAddressElement: zip5
+    value: 10028
+  usa_zip4_8024:
+    agAddressElement: zip4
+    value: 8024
+  usa_line1_4:
+    agAddressElement: line_1
+    value: 875 6th Avenue
+  usa_city_ast:
+    agAddressElement: city
+    value: Astoria
+  usa_city_bay:
+    agAddressElement: city
+    value: Bayside
+  usa_city_bell:
+    agAddressElement: city
+    value: Bellerose
+  usa_city_brx:
+    agAddressElement: city
+    value: Bronx
+  usa_city_bklyn:
+    agAddressElement: city
+    value: Brooklyn
+  usa_city_cam:
+    agAddressElement: city
+    value: Cambria Heights
+  usa_city_cor:
+    agAddressElement: city
+    value: Corona
+  usa_city_eastElm:
+    agAddressElement: city
+    value: East Elmhurst
+  usa_city_elm:
+    agAddressElement: city
+    value: Elmhurst
+  usa_city_flo:
+    agAddressElement: city
+    value: Floral Park
+  usa_city_flu:
+    agAddressElement: city
+    value: Flushing
+  usa_city_for:
+    agAddressElement: city
+    value: Forest Hills
+  usa_city_fre:
+    agAddressElement: city
+    value: Fresh Meadows
+  usa_city_gle:
+    agAddressElement: city
+    value: Glen Oaks
+  usa_city_glendale:
+    agAddressElement: city
+    value: Glendale
+  usa_city_hol:
+    agAddressElement: city
+    value: Hollis
+  usa_city_jac:
+    agAddressElement: city
+    value: Jackson Heights
+  usa_city_jam:
+    agAddressElement: city
+    value: Jamaica
+  usa_city_litNec:
+    agAddressElement: city
+    value: Little Neck
+  usa_city_litNecPKWY:
+    agAddressElement: city
+    value: Little Neck PKWY
+  usa_city_lon:
+    agAddressElement: city
+    value: Long Island City
+  usa_city_mas:
+    agAddressElement: city
+    value: Maspeth
+  usa_city_mid:
+    agAddressElement: city
+    value: Middle Village
+  usa_city_ozo:
+    agAddressElement: city
+    value: Ozone Park
+  usa_city_queens:
+    agAddressElement: city
+    value: Queens
+  usa_city_queensVil:
+    agAddressElement: city
+    value: Queens Village
+  usa_city_reg:
+    agAddressElement: city
+    value: Rego Park
+  usa_city_ric:
+    agAddressElement: city
+    value: Richmond Hill
+  usa_city_rid:
+    agAddressElement: city
+    value: Ridgewood
+  usa_city_ros:
+    agAddressElement: city
+    value: Rosedale
+  usa_city_soz:
+    agAddressElement: city
+    value: S. Ozone Park
+  usa_city_spr:
+    agAddressElement: city
+    value: Springfield Gard
+  usa_city_sta:
+    agAddressElement: city
+    value: St. Albans
+  usa_city_si:
+    agAddressElement: city
+    value: Staten Island
+  usa_city_whi:
+    agAddressElement: city
+    value: Whitestone
+  usa_city_woohav:
+    agAddressElement: city
+    value: Woodhaven
+  usa_city_woosid:
+    agAddressElement: city
+    value: Woodside
+  usa_zip5_10002:
+    agAddressElement: zip5
+    value: 10002
+  usa_zip5_10003:
+    agAddressElement: zip5
+    value: 10003
+  usa_zip5_10009:
+    agAddressElement: zip5
+    value: 10009
+  usa_zip5_10010:
+    agAddressElement: zip5
+    value: 10010
+  usa_zip5_10016:
+    agAddressElement: zip5
+    value: 10016
+  usa_zip5_10019:
+    agAddressElement: zip5
+    value: 10019
+  usa_zip5_10021:
+    agAddressElement: zip5
+    value: 10021
+  usa_zip5_10022:
+    agAddressElement: zip5
+    value: 10022
+  usa_zip5_10023:
+    agAddressElement: zip5
+    value: 10023
+  usa_zip5_10024:
+    agAddressElement: zip5
+    value: 10024
+  usa_zip5_10025:
+    agAddressElement: zip5
+    value: 10025
+  usa_zip5_10026:
+    agAddressElement: zip5
+    value: 10026
+  usa_zip5_10027:
+    agAddressElement: zip5
+    value: 10027
+  usa_zip5_10028:
+    agAddressElement: zip5
+    value: 10028
+  usa_zip5_10029:
+    agAddressElement: zip5
+    value: 10029
+  usa_zip5_10030:
+    agAddressElement: zip5
+    value: 10030
+  usa_zip5_10031:
+    agAddressElement: zip5
+    value: 10031
+  usa_zip5_10032:
+    agAddressElement: zip5
+    value: 10032
+  usa_zip5_10033:
+    agAddressElement: zip5
+    value: 10033
+  usa_zip5_10035:
+    agAddressElement: zip5
+    value: 10035
+  usa_zip5_10036:
+    agAddressElement: zip5
+    value: 10036
+  usa_zip5_10039:
+    agAddressElement: zip5
+    value: 10039
+  usa_zip5_10040:
+    agAddressElement: zip5
+    value: 10040
+  usa_zip5_10301:
+    agAddressElement: zip5
+    value: 10301
+  usa_zip5_10302:
+    agAddressElement: zip5
+    value: 10302
+  usa_zip5_10303:
+    agAddressElement: zip5
+    value: 10303
+  usa_zip5_10304:
+    agAddressElement: zip5
+    value: 10304
+  usa_zip5_10308:
+    agAddressElement: zip5
+    value: 10308
+  usa_zip5_10309:
+    agAddressElement: zip5
+    value: 10309
+  usa_zip5_10310:
+    agAddressElement: zip5
+    value: 10310
+  usa_zip5_10312:
+    agAddressElement: zip5
+    value: 10312
+  usa_zip5_10314:
+    agAddressElement: zip5
+    value: 10314
+  usa_zip5_10451:
+    agAddressElement: zip5
+    value: 10451
+  usa_zip5_10452:
+    agAddressElement: zip5
+    value: 10452
+  usa_zip5_10453:
+    agAddressElement: zip5
+    value: 10453
+  usa_zip5_10455:
+    agAddressElement: zip5
+    value: 10455
+  usa_zip5_10456:
+    agAddressElement: zip5
+    value: 10456
+  usa_zip5_10457:
+    agAddressElement: zip5
+    value: 10457
+  usa_zip5_10458:
+    agAddressElement: zip5
+    value: 10458
+  usa_zip5_10459:
+    agAddressElement: zip5
+    value: 10459
+  usa_zip5_10460:
+    agAddressElement: zip5
+    value: 10460
+  usa_zip5_10462:
+    agAddressElement: zip5
+    value: 10462
+  usa_zip5_10463:
+    agAddressElement: zip5
+    value: 10463
+  usa_zip5_10465:
+    agAddressElement: zip5
+    value: 10465
+  usa_zip5_10466:
+    agAddressElement: zip5
+    value: 10466
+  usa_zip5_10467:
+    agAddressElement: zip5
+    value: 10467
+  usa_zip5_10468:
+    agAddressElement: zip5
+    value: 10468
+  usa_zip5_10469:
+    agAddressElement: zip5
+    value: 10469
+  usa_zip5_10471:
+    agAddressElement: zip5
+    value: 10471
+  usa_zip5_10472:
+    agAddressElement: zip5
+    value: 10472
+  usa_zip5_10474:
+    agAddressElement: zip5
+    value: 10474
+  usa_zip5_10475:
+    agAddressElement: zip5
+    value: 10475
+  usa_zip5_11001:
+    agAddressElement: zip5
+    value: 11001
+  usa_zip5_11003:
+    agAddressElement: zip5
+    value: 11003
+  usa_zip5_11004:
+    agAddressElement: zip5
+    value: 11004
+  usa_zip5_11101:
+    agAddressElement: zip5
+    value: 11101
+  usa_zip5_11102:
+    agAddressElement: zip5
+    value: 11102
+  usa_zip5_11103:
+    agAddressElement: zip5
+    value: 11103
+  usa_zip5_11104:
+    agAddressElement: zip5
+    value: 11104
+  usa_zip5_11105:
+    agAddressElement: zip5
+    value: 11105
+  usa_zip5_11106:
+    agAddressElement: zip5
+    value: 11106
+  usa_zip5_11201:
+    agAddressElement: zip5
+    value: 11201
+  usa_zip5_11203:
+    agAddressElement: zip5
+    value: 11203
+  usa_zip5_11204:
+    agAddressElement: zip5
+    value: 11204
+  usa_zip5_11205:
+    agAddressElement: zip5
+    value: 11205
+  usa_zip5_11206:
+    agAddressElement: zip5
+    value: 11206
+  usa_zip5_11207:
+    agAddressElement: zip5
+    value: 11207
+  usa_zip5_11208:
+    agAddressElement: zip5
+    value: 11208
+  usa_zip5_11209:
+    agAddressElement: zip5
+    value: 11209
+  usa_zip5_11210:
+    agAddressElement: zip5
+    value: 11210
+  usa_zip5_11212:
+    agAddressElement: zip5
+    value: 11212
+  usa_zip5_11213:
+    agAddressElement: zip5
+    value: 11213
+  usa_zip5_11214:
+    agAddressElement: zip5
+    value: 11214
+  usa_zip5_11215:
+    agAddressElement: zip5
+    value: 11215
+  usa_zip5_11216:
+    agAddressElement: zip5
+    value: 11216
+  usa_zip5_11217:
+    agAddressElement: zip5
+    value: 11217
+  usa_zip5_11218:
+    agAddressElement: zip5
+    value: 11218
+  usa_zip5_11219:
+    agAddressElement: zip5
+    value: 11219
+  usa_zip5_11220:
+    agAddressElement: zip5
+    value: 11220
+  usa_zip5_11221:
+    agAddressElement: zip5
+    value: 11221
+  usa_zip5_11225:
+    agAddressElement: zip5
+    value: 11225
+  usa_zip5_11226:
+    agAddressElement: zip5
+    value: 11226
+  usa_zip5_11228:
+    agAddressElement: zip5
+    value: 11228
+  usa_zip5_11230:
+    agAddressElement: zip5
+    value: 11230
+  usa_zip5_11231:
+    agAddressElement: zip5
+    value: 11231
+  usa_zip5_11232:
+    agAddressElement: zip5
+    value: 11232
+  usa_zip5_11233:
+    agAddressElement: zip5
+    value: 11233
+  usa_zip5_11237:
+    agAddressElement: zip5
+    value: 11237
+  usa_zip5_11238:
+    agAddressElement: zip5
+    value: 11238
+  usa_zip5_11354:
+    agAddressElement: zip5
+    value: 11354
+  usa_zip5_11355:
+    agAddressElement: zip5
+    value: 11355
+  usa_zip5_11357:
+    agAddressElement: zip5
+    value: 11357
+  usa_zip5_11358:
+    agAddressElement: zip5
+    value: 11358
+  usa_zip5_11361:
+    agAddressElement: zip5
+    value: 11361
+  usa_zip5_11362:
+    agAddressElement: zip5
+    value: 11362
+  usa_zip5_11364:
+    agAddressElement: zip5
+    value: 11364
+  usa_zip5_11365:
+    agAddressElement: zip5
+    value: 11365
+  usa_zip5_11366:
+    agAddressElement: zip5
+    value: 11366
+  usa_zip5_11367:
+    agAddressElement: zip5
+    value: 11367
+  usa_zip5_11368:
+    agAddressElement: zip5
+    value: 11368
+  usa_zip5_11369:
+    agAddressElement: zip5
+    value: 11369
+  usa_zip5_11372:
+    agAddressElement: zip5
+    value: 11372
+  usa_zip5_11373:
+    agAddressElement: zip5
+    value: 11373
+  usa_zip5_11374:
+    agAddressElement: zip5
+    value: 11374
+  usa_zip5_11375:
+    agAddressElement: zip5
+    value: 11375
+  usa_zip5_11377:
+    agAddressElement: zip5
+    value: 11377
+  usa_zip5_11378:
+    agAddressElement: zip5
+    value: 11378
+  usa_zip5_11379:
+    agAddressElement: zip5
+    value: 11379
+  usa_zip5_11385:
+    agAddressElement: zip5
+    value: 11385
+  usa_zip5_11411:
+    agAddressElement: zip5
+    value: 11411
+  usa_zip5_11412:
+    agAddressElement: zip5
+    value: 11412
+  usa_zip5_11413:
+    agAddressElement: zip5
+    value: 11413
+  usa_zip5_11416:
+    agAddressElement: zip5
+    value: 11416
+  usa_zip5_11417:
+    agAddressElement: zip5
+    value: 11417
+  usa_zip5_11418:
+    agAddressElement: zip5
+    value: 11418
+  usa_zip5_11420:
+    agAddressElement: zip5
+    value: 11420
+  usa_zip5_11421:
+    agAddressElement: zip5
+    value: 11421
+  usa_zip5_11422:
+    agAddressElement: zip5
+    value: 11422
+  usa_zip5_11423:
+    agAddressElement: zip5
+    value: 11423
+  usa_zip5_11426:
+    agAddressElement: zip5
+    value: 11426
+  usa_zip5_11427:
+    agAddressElement: zip5
+    value: 11427
+  usa_zip5_11428:
+    agAddressElement: zip5
+    value: 11428
+  usa_zip5_11432:
+    agAddressElement: zip5
+    value: 11432
+  usa_zip5_11435:
+    agAddressElement: zip5
+    value: 11433
+  usa_zip5_11435:
+    agAddressElement: zip5
+    value: 11435
+  usa_line1_5:
+    agAddressElement: line_1
+    value: 300 Johnson St
+  usa_line1_6:
+    agAddressElement: line_1
+    value: 451 Hoyt Street
+  usa_line1_7:
+    agAddressElement: line_1
+    value: 398 Bergen Street
+  usa_line1_8:
+    agAddressElement: line_1
+    value: 65 Stuyvesant Avenue
+  usa_line1_9:
+    agAddressElement: line_1
+    value: 1024 Dekalb Avenue
+  usa_line1_10:
+    agAddressElement: line_1
+    value: 462 Lafayette Avenue
+  usa_line1_11:
+    agAddressElement: line_1
+    value: 760 Greene Avenue
+  usa_line1_12:
+    agAddressElement: line_1
+    value: 688 Broadway
+  usa_line1_13:
+    agAddressElement: line_1
+    value: 205 Skillman Street
+  usa_line1_14:
+    agAddressElement: line_1
+    value: 89 Stockton Street
+  usa_borough_manhattan:
+    agAddressElement: borough
+    value: Manhattan
+  usa_borough_bronx:
+    agAddressElement: borough
+    value: Bronx
+  usa_borough_bklyn:
+    agAddressElement: borough
+    value: Brooklyn
+  usa_borough_queens:
+    agAddressElement: borough
+    value: Queens
+  usa_borough_si:
+    agAddressElement: borough
+    value: Staten Island

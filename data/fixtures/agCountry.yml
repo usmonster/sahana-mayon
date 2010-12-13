@@ -1,0 +1,519 @@
+# Pre-populate country table
+# This data dictionary is based off of http://www.iso.org/iso/english_country_names_and_code_elements 
+# and http://en.wikipedia.org/wiki/List_of_adjectival_and_demonymic_forms_of_place_names
+
+agCountry:
+  abkhazia:
+    country: Abkhazia
+  afghanistan:
+    country: Afghanistan
+  aland_islands:
+    country: Aland Islands
+  albania:
+    country: Albania
+  algeria:
+    country: algeria
+  american_samoa:
+    country: American Samoa
+  andorra:
+    country: Andorra
+  angola:
+    country: Angola
+  anguilla:
+    country: Anguilla
+  antarctica:
+    country: Antarctica
+  antigua_and_barbuda:
+    country: Antiqua And Barbuda
+  argentina:
+    country: Argentina
+  armenia:
+    country: Armenia
+  aruba:
+    country: Aruba
+  australia:
+    country: Australia
+  austria:
+    country: Austria
+  azerbaijan:
+    country: Azerbaijan
+  bahamas:
+    country: Bahamas
+  bahrain:
+    country: Bahrain
+  bangladesh:
+    country: Bangladesh
+  barbados:
+    country: Barbados
+  belarus:
+    country: Belarus 
+  belgium:
+    country: Belgium
+  belize:
+    country: Belize
+  benin:
+    country: Benin
+  bermuda:
+    country: Bermuda
+  bhutan:
+    country: Bhutan
+  bolivia:
+    country: Bolivia, Plurinational State Of
+  bosnia_and_herzegovina:
+    country: Bosnia And Herzegovina
+  botswana:
+    country: Botswana
+  bouvet_island:
+    country: Bouvet Island
+  brazil:
+    country: Brazil
+  british_indian_ocena_territory:
+    country: British Indian Ocean Territory
+  brunei_darussalam:
+    country: Brunei Darussalam
+  bulgaria:
+    country: Bulgaria
+  burkina_faso:
+    country: Burkina Faso
+  burma:
+    country: Burma
+  burundi:
+    country: Burundi
+  cambodia:
+    country: Cambodia
+  cameroon:
+    country: Cameroon
+  canada:
+    country: Canada
+  cape_verde:
+    country: Cape Verde
+  cayman_islands:
+    country: Cayman Islands
+  central_african_republic:
+    country: Central African Republic
+  chad:
+    country: Chad
+  chile:
+    country: Chile
+  china:
+    country: China
+  christmas_island:
+    country: Christmas Island
+  cocos_islands:
+    country: Cocos (Keeling) Islands
+  colombia:
+    country: Colombia
+  comoros:
+    country: Comoros
+  congo:
+    country: Congo
+  congo_d:
+    country: Congo, The Democratic Replublic Of The
+  cook_islands:
+    country: Cook Islands
+  costa_rica:
+    country: Costa Rica
+  cote_divoire:
+    country: Cote D'Ivoire
+  croatia:
+    country: Croatia
+  cuba:
+    country: Cuba
+  cyprus:
+    country: Cyprus
+  czech_republic:
+    country: Czech Republic
+  denmark:
+    country: Denmark
+  Djibouti:
+    country: Djibouti
+  dominica:
+    country: Dominica
+  dominican_republic:
+    country: Dominican Republic
+  east_timor:
+    country: East Timor
+  ecuador:
+    country: Ecuador
+  egypt:
+    country: Egypt
+  el_salvador:
+    country: El Salvador
+  england:
+    country: England
+  equatorial_guinea:
+    country: Equatorial Guinea
+  eritrea:
+    country: Eritrea
+  estonia:
+    country: Estonia
+  ethiopia:
+    country: Ethiopia
+  falkland_islands:
+    country: Falkland Islands (Malvinas)
+  faroe_islands:
+    country: Faroe Islands
+  fiji:
+    country: Fiji
+  finland:
+    country: Finland
+  france:
+    country: France
+  french_guiana:
+    country: French Guiana
+  french_polynesia:
+    country: French Polynesia
+  french_southern_territories:
+    country: French Southern Territories
+  gabon:
+    country: Gabon
+  gambia:
+    country: gambia
+  georgia:
+    country: Georgia
+  germany:
+    country: Germany
+  ghana:
+    country: Ghana
+  gibraltar:
+    country: Gibraltar
+  great_britain:
+    country: Great Britian
+  greece:
+    country: Greece
+  greenland:
+    country: Greenland
+  grenada:
+    country: Grenada
+  guadeloupe:
+    country: Guadeloupe
+  guam:
+    country: Guam
+  guatemala:
+    country: Guatemala
+  guernsey:
+    country: Guernsey
+  guinea:
+    country: Guinea
+  guinea_bissau:
+    country: Guinea-Bissau
+  guyana:
+    country: Guyana
+  haiti:
+    country: Haiti
+  heard_and_mcdonald:
+    country: Heard Island And McDonald Islands
+  holy_see:
+    country: Holy See (Vatican City State)
+  honduras:
+    country: Honduras
+  hong_kong:
+    country: Hong Kong
+  hungary:
+    country: Hungary
+  iceland:
+    country: Iceland
+  india:
+    country: India
+  indonesia:
+    country: Indonesia
+  iran:
+    country: Iran, Islamic Replublic Of
+  iraq:
+    country: Iraq
+  ireland:
+    country: Ireland (Republic of Ireland)
+  isle_of_man:
+    country: Isle Of Man
+  israel:
+    country: Israel
+  italy:
+    country: Italy
+  jamaica:
+    country: Jamaica
+  japan:
+    country: Japan
+  jersey:
+    country: Jersey
+  Jordan:
+    country: Jordan
+  kazakhstan:
+    country: Kazakhstan
+  kenya:
+    country: Kenya
+  kiribati:
+    country: Kiribati
+  korea_d:
+    country: Korea, Democratic People's Republic of (North Korea)
+  korea_r:
+    country: Korea, Republic of (South Korea)
+  kosovo:
+    country: Kosovo
+  kuwait:
+    country: Kuwait
+  kyrgyzstan:
+    country: Kyrgyzstan
+  lao:
+    country: Lao People's Democratic Republic
+  latvia:
+    country: Latvia
+  lebanon:
+    country: Lebanon
+  lesotho:
+    country: Lesotho
+  liberia:
+    country: Liberia
+  libyan:
+    country: Libyan Arab Jamahiriya
+  liechtenstein:
+    country: Liechtenstein
+  lithuania:
+    country: Lithuania
+  luxembourg:
+    country: Luxembourg
+  macao:
+    country: Macao
+  macedonia:
+    country: Macedonia, The Former Yogoslav Republic Of
+  madagascar:
+    country: Madagascar
+  Malawi:
+    country: Malawi
+  malaysia:
+    country: Malaysia
+  maldives:
+    country: Maldives
+  mali:
+    country: Mali
+  malta:
+    country: Malta
+  marshal:
+    country: Marshall Islands
+  martinique:
+    country: Martinique
+  mauritania:
+    country: Mauritania
+  mauritius:
+    country: Mauritius
+  mayotte:
+    country: Mayotte
+  mexico:
+    country: Mexico
+  micronesia:
+    country: Micronesia, Federated States Of
+  moldova:
+    country: Moldova, Republic Of
+  monaco:
+    country: Monaco
+  mongolia:
+    country: Mongolia
+  montenegro:
+    country: Montenegro
+  montserrat:
+    country: Montserrat
+  morocco:
+    country: Morocco
+  mozambique:
+    country: Mozambique
+  myanmar:
+    country: Myanmar
+  namibia:
+    country: namibia
+  nauru:
+    country: Nauru
+  nepal:
+    country: Nepal
+  netherlands:
+    country: Netherlands
+  netherlands_a:
+    country: Netherlands Antilles
+  new_caledonia:
+    country: New Caledonia
+  new_zealand:
+    country: New Zealand
+  nicaragua:
+    country: Nicaragua
+  niger:
+    country: Niger
+  nigeria:
+    country: Nigeria
+  niue:
+    country: Niue
+  norfolk_island:
+    country: Norfolk Island
+  northern_mariana_islands:
+    country: Northern Mariana Islands
+  norway:
+    country: Norway
+  northern_ireland:
+    country: Northern Ireland
+  oman:
+    country: Oman
+  pakistan:
+    country: Pakistan
+  palau:
+    country: Palau
+  palestinian:
+    country: Palestinian Territory, Occupied
+  panama:
+    country: Panama
+  papua:
+    country: Papua New Guinea
+  paraguay:
+    country: Paraguay
+  peru:
+    country: Peru
+  philippines:
+    country: Philippines
+  pitcairn:
+    country: Pitcairn
+  poland:
+    country: Poland
+  portugal:
+    country: Portugal
+  puerto_rico:
+    country: Puerto Rico
+  qatar:
+    country: Qatar
+  reunion:
+    country: Reunion
+  romania:
+    country: Romania
+  russian_federation:
+    country: Russian Federation
+  rwanda:
+    country: Rwanda
+  barthelemy:
+    country: Saint Barthelemy
+  helena:
+    country: Saint Helena, Ascension And Tristan Da Cunha
+  kitts_and_nevis:
+    country: Saint Kitts And Nevis
+  lucia:
+    country: Saint Lucia
+  martin:
+    country: Saint Martin
+  pierre_and_miquelon:
+    country: Saint Pierre And Miquelon
+  vincent_and_grenadines:
+    country: Saint Vincent And The Grenadines
+  samoa:
+    country: Samoa
+  san_marino:
+    country: San Marino
+  sao:
+    country: Sao Tome And Principe
+  saudi_arabia:
+    country: Saudi Arabia
+  scotland:
+    country: Scotland
+  senegal:
+    country: Senegal
+  serbia:
+    country: Serbia
+  seychelles:
+    country: Seychelles
+  sierra_leone:
+    country: Sierra Leone
+  singapore:
+    country: Singapore
+  slovakia:
+    country: Slovakia
+  slovenia:
+    country: Slovenia
+  solomon_islands:
+    country: Solomon Islands
+  somalia:
+    country: Somalia
+  south_africa:
+    country: South Africa
+  south_georgia_and_sandwich:
+    country: South Georgia And The South Sandwich Islands
+  south_ossetia:
+    country: South Ossetian
+  spain:
+    country: Spain
+  sri_lanka:
+    country: sri Lanka
+  sudan:
+    country: Sudan
+  suriname:
+    country: Suriname
+  svalbard:
+    country: Svalbard And Jan Mayen
+  swaziland:
+    country: Swaziland
+  sweden:
+    country: Sweden
+  switzerland:
+    country: Switerland
+  syrian:
+    country: Syrian Arab Republic
+  taiwan:
+    country: Taiwan
+  tajikistan:
+    country: Tajikistan
+  tanzania:
+    country: Tanzania, United Republic Of
+  thailand:
+    country: Thailand
+  timor_leste:
+    country: Timor-Leste
+  togo:
+    country: Togo
+  tokelau:
+    country: Tokelau
+  tonga:
+    country: Tonga
+  trinidad_and_tobago:
+    country: Trinidad And Tobago
+  tunisia:
+    country: Tunisia
+  turkey:
+    country: Turkey
+  turkmenistan:
+    country: Turkmenistan
+  turks_and_caicos:
+    country: Turks And Caicos Islands
+  tuvalu:
+    country: Tuvalu
+  uganda:
+    country: Uganda
+  ukraine:
+    country: Ukraine
+  united_arab_emirates:
+    country: United Arab Emirates
+  united_kingdom:
+    country: United Kingdom
+  united_states:
+    country: United States
+  united_states_minor:
+    country: United States Minor Outlying Islands
+  uruguay:
+    country: Uruguay
+  uzbekistan:
+    country: Uzbekistan
+  vanuatu:
+    country: Vanuatu
+  venezuela:
+    country: Venezuela, Bolivarian Republic Of
+  vietnam:
+    country: Viet Nam
+  virgin_islands_british:
+    country: Virgin Islands, British
+  virgin_islands_us:
+    country: Virgin Islands, US
+  wales:
+    country: Wales
+  wallis_and_futuna:
+    country: Wallis And Futuna
+  western_sahara:
+    country: Western Sahara
+  yemen:
+    country: Yemen
+  zambia:
+    country: Zambia
+  zimbabwe:
+    country: Zimbabwe
+  other:
+    country: other

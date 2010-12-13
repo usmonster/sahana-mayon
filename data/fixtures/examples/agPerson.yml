@@ -1,0 +1,24 @@
+# Samples of person object.
+
+agPerson:
+  1:
+    agEntity: 1
+  2:
+    agEntity: 2
+  3:
+    agEntity: 3
+  4:
+    agEntity: 4
+  5:
+    agEntity: 5
+  6:
+    agEntity: 6
+  7:
+    agEntity: 7
+  8:
+    agEntity: 8
+  9:
+    agEntity: 9
+  10:
+    agEntity: 10
+

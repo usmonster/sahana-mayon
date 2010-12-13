@@ -1,0 +1,192 @@
+agScenarioFacilityResource:
+  hurrA01_18_uorc:
+    agFacilityResource: facility_18_uorc
+    agScenarioFacilityGroup: hurrA_uorc
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrA01_11_ec:
+    agFacilityResource: facility_11_ec
+    agScenarioFacilityGroup: hurrA_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrA01_11_smn:
+    agFacilityResource: facility_11_smn
+    agScenarioFacilityGroup: hurrA_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrA01_11_hs:
+    agFacilityResource: facility_11_hs
+    agScenarioFacilityGroup: hurrA_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrA02_14_ec:
+    agFacilityResource: facility_14_ec
+    agScenarioFacilityGroup: hurrA_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrA02_14_hs:
+    agFacilityResource: facility_14_hs
+    agScenarioFacilityGroup: hurrA_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrA02_15_hs:
+    agFacilityResource: facility_15_hs
+    agScenarioFacilityGroup: hurrA_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 2
+  hurrA03_17_ec:
+    agFacilityResource: facility_17_ec
+    agScenarioFacilityGroup: hurrA_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrA03_17_hs:
+    agFacilityResource: facility_17_hs
+    agScenarioFacilityGroup: hurrA_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB01_18_uorc:
+    agFacilityResource: facility_18_uorc
+    agScenarioFacilityGroup: hurrB_uorc
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB01_11_ec:
+    agFacilityResource: facility_11_ec
+    agScenarioFacilityGroup: hurrB_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB01_11_smn:
+    agFacilityResource: facility_11_smn
+    agScenarioFacilityGroup: hurrB_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB01_11_hs:
+    agFacilityResource: facility_11_hs
+    agScenarioFacilityGroup: hurrB_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB02_14_ec:
+    agFacilityResource: facility_14_ec
+    agScenarioFacilityGroup: hurrB_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB02_hs:
+    agFacilityResource: facility_14_hs
+    agScenarioFacilityGroup: hurrB_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB02_15_hs:
+    agFacilityResource: facility_15_hs
+    agScenarioFacilityGroup: hurrB_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 3
+  hurrB02_13_hs:
+    agFacilityResource: facility_13_hs
+    agScenarioFacilityGroup: hurrB_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 2
+  hurrB03_17_ec:
+    agFacilityResource: facility_17_ec
+    agScenarioFacilityGroup: hurrB_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB03_17_hs:
+    agFacilityResource: facility_17_hs
+    agScenarioFacilityGroup: hurrB_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB03_17_pet:
+    agFacilityResource: facility_17_pet
+    agScenarioFacilityGroup: hurrB_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrB03_19_hs:
+    agFacilityResource: facility_19_hs
+    agScenarioFacilityGroup: hurrB_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 2
+  hurrC01_18_uorc:
+    agFacilityResource: facility_18_uorc
+    agScenarioFacilityGroup: hurrC_uorc
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC01_11_ec:
+    agFacilityResource: facility_11_ec
+    agScenarioFacilityGroup: hurrC_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC01_11_smn:
+    agFacilityResource: facility_11_smn
+    agScenarioFacilityGroup: hurrC_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC01_11_hs:
+    agFacilityResource: facility_11_hs
+    agScenarioFacilityGroup: hurrC_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC01_12_hs:
+    agFacilityResource: facility_12_hs
+    agScenarioFacilityGroup: hurrC_G01
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 2
+  hurrC02_ec:
+    agFacilityResource: facility_14_ec
+    agScenarioFacilityGroup: hurrC_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC02_14_hs:
+    agFacilityResource: facility_14_hs
+    agScenarioFacilityGroup: hurrC_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC02_15_hs:
+    agFacilityResource: facility_15_hs
+    agScenarioFacilityGroup: hurrC_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 3
+  hurrC02_13_hs:
+    agFacilityResource: facility_13_hs
+    agScenarioFacilityGroup: hurrC_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 4
+  hurrC02_16_smn:
+    agFacilityResource: facility_16_smn
+    agScenarioFacilityGroup: hurrC_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC02_16_hs:
+    agFacilityResource: facility_16_hs
+    agScenarioFacilityGroup: hurrC_G02
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 2
+  hurrC03_17_ec:
+    agFacilityResource: facility_17_ec
+    agScenarioFacilityGroup: hurrC_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC03_17_hs:
+    agFacilityResource: facility_17_hs
+    agScenarioFacilityGroup: hurrC_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC03_17_pet:
+    agFacilityResource: facility_17_pet
+    agScenarioFacilityGroup: hurrC_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC03_19_hs:
+    agFacilityResource: facility_19_hs
+    agScenarioFacilityGroup: hurrC_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 2
+  hurrC03_20_hs:
+    agFacilityResource: facility_20_hs
+    agScenarioFacilityGroup: hurrC_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+  hurrC03_19_whs: 
+    agFacilityResource: facility_19_whs
+    agScenarioFacilityGroup: hurrC_G03
+    agFacilityResourceAllocationStatus: committed
+    activation_sequence: 1
+

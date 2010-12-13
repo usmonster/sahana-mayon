@@ -1,0 +1,22 @@
+agStaffResourceType:
+  staff:
+    staff_resource_type: Staff
+    staff_resource_type_abbr: stf
+    description: General staff
+  operator:
+    staff_resource_type: Operator
+    staff_resource_type_abbr: Op
+    description: Data entry operator
+  med_nrs:
+    staff_resource_type: Medical Nurse
+    staff_resource_type_abbr: med nrs
+    description: Licensed nurse
+  med_oth:
+    staff_resource_type: Medical Other
+    staff_resource_type_abbr: med oth
+    description: Licensed medical practioner
+  spe:
+    staff_resource_type: Specialist
+    staff_resource_type_abbr: spe
+    description: administrator
+

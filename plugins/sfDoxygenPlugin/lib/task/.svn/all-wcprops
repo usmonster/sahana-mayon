@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/!svn/ver/25727/plugins/sfDoxygenPlugin/branches/1.4/lib/task
+END
+sfDoxygenUpdateTask.class.php
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/25712/plugins/sfDoxygenPlugin/branches/1.4/lib/task/sfDoxygenUpdateTask.class.php
+END
+sfDoxygenInitTask.class.php
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/25712/plugins/sfDoxygenPlugin/branches/1.4/lib/task/sfDoxygenInitTask.class.php
+END
+sfDoxygenVersionTask.class.php
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/25727/plugins/sfDoxygenPlugin/branches/1.4/lib/task/sfDoxygenVersionTask.class.php
+END
+sfDoxygenGenerateTask.class.php
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/25725/plugins/sfDoxygenPlugin/branches/1.4/lib/task/sfDoxygenGenerateTask.class.php
+END

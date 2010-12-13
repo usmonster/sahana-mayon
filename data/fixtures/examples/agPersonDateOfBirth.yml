@@ -1,0 +1,34 @@
+# Samples for person's date of birth
+# Requirement: Pre-load person object sample
+
+agPersonDateOfBirth:
+  person1:
+    agPerson: 1
+    date_of_birth: 19800802
+  person2:
+    agPerson: 2
+    date_of_birth: 19760101
+  person3:
+    agPerson: 3
+    date_of_birth: 19701204
+  person4:
+    agPerson: 4
+    date_of_birth: 19900806
+  person5:
+    agPerson: 5
+    date_of_birth: 19500412
+  person6:
+    agPerson: 6
+    date_of_birth: 19400315
+  person7:
+    agPerson: 7
+    date_of_birth: 20000520
+  person8:
+    agPerson: 8
+    date_of_birth: 19860525
+  person9:
+    agPerson: 9
+    date_of_birth: 19890718
+  person10:
+    agPerson: 10
+    date_of_birth: 19690919

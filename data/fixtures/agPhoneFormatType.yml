@@ -1,0 +1,14 @@
+# Pre-populate of phone format type with USA's phone format types.
+
+agPhoneFormatType:
+  usa_10_digits:
+    phone_format_type: USA 10 digit
+    validation: '/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4}))$/'
+    match_pattern: '/^(\d{3})(\d{3})(\d{4})$/'
+    replacement_pattern: '($1) $2-$3'
+  usa_10_digits_ext:
+    phone_format_type: USA 10 digit with an extension
+    validation: '/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4})) *x\d+$/'
+    match_pattern: '/^(\d{3})(\d{3})(\d{4})x(\d+)$/'
+    replacement_pattern: '($1) $2-$3x$4'
+

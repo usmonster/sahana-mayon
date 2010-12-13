@@ -1,0 +1,68 @@
+agPersonLastImport:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+    last_import_id:
+      type: integer(4)
+      notnull: true
+  indexes:
+    UX_agPersonLastImport:
+      fields: [person_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agImport:
+      local: last_import_id
+      foreign: id
+agImport:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    import_type_id:
+      type: integer(2)
+      notnull: true
+    filename:
+      type: gzip
+      notnull: true
+  relations:
+    agImportType:
+      local: import_type_id
+      foreign: id
+    agPerson:
+      local: person_id
+      foreign: id
+agImportType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    import_type:
+      unique: true
+      type: string(128)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agImport
+      local: import_type_id
+      foreign: person_id
+actAs:
+  Timestampable: 

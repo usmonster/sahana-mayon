@@ -1,0 +1,21 @@
+all:
+  datagrid:
+    images_dir: /sfDatagridPlugin/img/
+    class_for_foreign: sfWidgetFormPropelSelect # Or sfWidgetFormDoctrineSelect  
+#    jsframwork: prototype # prototype or jquery    
+    text_novalueinrows: Rien dans cette liste
+    text_search: Rechercher
+    text_reset: Réinitialiser 
+    text_validate: Valider
+    text_page: Page
+    text_defaultview: ""
+    label_null: Date nulle
+    text_numberofrecords: Nombre d'enregistrements
+    text_loading: Veuillez patienter
+    text_from: Du
+    text_to: Au
+    insert_pager_bottom: true
+    freezepanes: false
+#    csspath:
+#      base: /sfDatagridPlugin/css/datagrid.css
+#      calendar: /sfDatagridPlugin/css/calendar.css

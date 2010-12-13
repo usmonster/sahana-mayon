@@ -1,0 +1,215 @@
+agFacilityGroupType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    facility_group_type:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agGroupType_unq:
+      fields: [facility_group_type]
+      type: unique
+agFacilityResourceType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    facility_resource_type:
+      type: string(30)
+      notnull: true
+    facility_resource_type_abbr:
+      type: string(10)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agFacilityResourceType_unq:
+      fields: [facility_resource_type]
+      type: unique
+    UX_agFacilityResourceTypeAbbr:
+      fields: [facility_resource_type_abbr]
+      type: unique
+  relations:
+    agFacility:
+      class: agFacility
+      refClass: agFacilityResource
+      local: facility_resource_type_id
+      foreign: facility_id
+agFacility:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    site_id:
+      type: integer(5)
+      notnull: true
+    facility_name:
+      type: string(64)
+      notnull: true
+    facility_code:
+      type: string(10)
+      notnull: true
+  indexes:
+    agFacility_siteId_unq:
+      fields: [site_id]
+      type: unique
+    agFacility_facilityName_unq:
+      fields: [facility_name]
+      type: unique
+    agFacility_facilityCode_unq:
+      fields: [facility_code]
+      type: unique
+  relations:
+    agSite:
+      local: site_id
+      foreign: id
+    agFacilityResourceType:
+      class: agFacilityResourceType
+      refClass: agFacilityResource
+      local: facility_id
+      foreign: facility_resource_type_id
+agFacilityResource:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    facility_id:
+      type: integer(4)
+      notnull: true
+    facility_resource_type_id:
+      type: integer(2)
+      notnull: true
+    facility_resource_status_id:
+      default: 
+      type: integer(2)
+      notnull: true
+    capacity:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agFacilityResource_unq:
+      fields: [facility_id, facility_resource_type_id]
+      type: unique
+  relations:
+    agFacility:
+      local: facility_id
+      foreign: id
+    agFacilityResourceType:
+      local: facility_resource_type_id
+      foreign: id
+    agFacilityResourceStatus:
+      local: facility_resource_status_id
+      foreign: id
+agFacilityResourceAllocationStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    facility_resource_allocation_status:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    committed:
+      default: 0
+      type: boolean
+      notnull: true
+    staffed:
+      default: 0
+      type: boolean
+      notnull: true
+    servicing_clients:
+      default: 0
+      type: boolean
+      notnull: true
+    accepting_clients:
+      default: 0
+      type: boolean
+      notnull: true
+    allocatable:
+      default: 1
+      type: boolean
+      notnull: true
+    standby:
+      default: 0
+      type: boolean
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agFacilityResourceAllocationStatus:
+      fields: [facility_resource_allocation_status]
+      type: unique
+agFacilityGroupAllocationStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    facility_group_allocation_status:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    allocatable:
+      default: 1
+      type: boolean
+      notnull: true
+    standby:
+      default: 0
+      type: boolean
+      notnull: true
+    active:
+      default: 0
+      type: boolean
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    UX_agFacilityGroupAllocationStatus:
+      fields: [facility_group_allocation_status]
+      type: unique
+agFacilityResourceStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    facility_resource_status:
+      type: string(40)
+      notnull: true
+    is_available:
+      default: 1
+      type: boolean
+  indexes:
+    UX_agFacilityResourceStatus:
+      fields: [facility_resource_status]
+      type: unique
+actAs:
+  Timestampable: 

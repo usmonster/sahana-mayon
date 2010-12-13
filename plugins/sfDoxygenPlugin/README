@@ -1,0 +1,117 @@
+sfDoxygenPlugin
+===============
+
+The `sfDoxygenPlugin` is a symfony plugin that provides tasks to generate your
+sourcecode documentation via doxygen tool.
+
+Installation
+============
+
+Install the plugin via the subversion repository by executing the following
+command from the project root directory (branch 1.4 of the plugin works for
+both 1.3 and 1.4 symfony versions):
+
+    $ svn co http://svn.symfony-project.com/plugins/sfDoxygenPlugin/branches/1.4 plugins/sfDoxygenPlugin
+
+or by using the default symfony plugin install command:
+
+    $ ./symfony plugin:install sfDoxygenPlugin
+
+Configuration files
+===================
+
+Below there is a list of files that are created after running _doxygen-init_
+task under
+
+  * **doxygen.cfg** - the main doxygen config file
+
+  * **doxygen.ini** - file used to store your custom doxygen docs configuration
+    options. All the options defined here will be applied to _doxygen.cfg_ when
+    _doxygen:update_ task will be performed (and therefore applied while
+    generating the docs during execution of _doxygen:generate_).
+
+  * **exclude.txt** - file containing all paths that should be excluded from
+    generating the documentation. Paths existent in this file are concatenated 
+    and put into the _EXCLUDE_ option of doxygen. Similar to
+ _  config/rsync_exclude.txt_.
+
+  * **exclude_patterns.txt** - similar to _exclude.txt_ with the difference that
+    it supports the _EXCLUDE_PATTERNS_ option.
+
+  * **doxygen.xml** - specifying the layout. Used within doxygen version 1.5.7
+    or above.
+
+All files contain default values which are sufficient to perform code
+documentation generation.
+
+Usage
+=====
+
+  * Execute the tasks bundled with the plugin in the order specified below.
+    The first command creates file structure in _config/doxygen_ directory
+    and copies modified version of module skeleton into base data directory.
+    (use this task only once otherwise the changes you made will be lost):
+
+        $ ./symfony doxygen:init
+
+  * Next step is to make your custom changes to the _doxygen.ini_ file.
+    You may specify all options that would be used by the doxygen tool (few
+    important ones are already defined there, such as _PROJECT_NAME_). After
+    editing _doxygen.ini_, run the following command to update the
+    _doxygen.cfg_ file. Take a look at official doxygen documentation for more
+    details:
+
+        $ ./symfony doxygen:update
+
+  * And finally, the last step. It will generate the whole documentation
+    in the _doc/doxygen_ directory (of course you can change it). The _doc_
+    directory was removed from symfony 1.3, but the plugin creates it on it own:
+
+        $ ./symfony doxygen:generate
+
+  * Additionally you may check the version of doxygen installed using command:
+
+        $ ./symfony doxygen:version
+
+Module skeleton
+===============
+
+Running command _doxygen:init_ creates a subdirectory containing alternative
+skeleton for module generation. The skeleton is stored in _data/skeleton/module_
+directory. The changes are only about the documentation code syntax, which
+should be configured specially for doxygen (there are tiny differences between
+PHPDoc and Doxygen). When a new module is generated within command:
+
+        $ ./symfony generate:module app mod
+
+the framework already uses the new skeleton. This means that if you install
+the plugin and run _doxygen:init_ command before generating any modules, all
+generated modules will have doxygen-documentation-like comments without any
+manual modifications.
+
+By default the __@subpackage__ option is out and it is replaced with
+__@class__. Of course, the best solution is to define your own skeleton
+(if you have any suggestions, don't hesitate to mail me).
+
+Documentation
+=============
+
+By default, the documentation should include all lib class files created by the
+developer, that is: all non-base model classes (excluding base classes, 
+migration classes, vendor). Moreover, action classes should be included (but
+their templates are set to be excluded).
+
+Notes
+=====
+
+  * You need to install _doxygen_ before you can use following plugin. More
+    information can be found at the
+    [doxygen documentation](http://www.stack.nl/~dimitri/doxygen/install.html)
+
+  * Remember to add a line to the _config/rsync_exclude.txt_ file to exclude the
+    generated documentation from being sent to the production server.
+
+  * You may configure your _vhost_ to show the doxygen documentation by adding
+    the following code:
+
+        Alias /dox /path_to_my_project/doc/doxygen/html

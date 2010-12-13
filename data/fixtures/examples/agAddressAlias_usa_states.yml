@@ -1,0 +1,155 @@
+# Pre-populate address values with alias names
+# Data from http://en.wikipedia.org/wiki/U.S._state#List_of_states
+
+agAddressAlias:
+  usa_state_alabama:
+    agAddressValue: usa_state_alabama
+    alias: Alabama
+  usa_state_alaska:
+    agAddressValue: usa_state_alaska
+    alias: Alaska
+  usa_state_arizona:
+    agAddressValue: usa_state_arizona
+    alias: Arizona
+  usa_state_arkansas:
+    agAddressValue: usa_state_arkansas
+    alias: Arkansas
+  usa_state_california:
+    agAddressValue: usa_state_california
+    alias: California
+  usa_state_colorado:
+    agAddressValue: usa_state_colorado
+    alias: Colorado
+  usa_state_connecticut:
+    agAddressValue: usa_state_connecticut
+    alias: Connecticut
+  usa_state_delaware:
+    agAddressValue: usa_state_delaware
+    alias: Delaware
+  usa_state_florida:
+    agAddressValue: usa_state_florida
+    alias: Florida
+  usa_state_georgia:
+    agAddressValue: usa_state_georgia
+    alias: Georgia
+  usa_state_hawaii:
+    agAddressValue: usa_state_hawaii
+    alias: Hawaii
+  usa_state_idaho:
+    agAddressValue: usa_state_idaho
+    alias: Idaho
+  usa_state_illinois:
+    agAddressValue: usa_state_illinois
+    alias: Illinois
+  usa_state_indiana:
+    agAddressValue: usa_state_indiana
+    alias: Indiana
+  usa_state_iowa:
+    agAddressValue: usa_state_iowa
+    alias: Iowa
+  usa_state_kansas:
+    agAddressValue: usa_state_kansas
+    alias: Kansas
+  usa_state_kentucky:
+    agAddressValue: usa_state_kentucky
+    alias: Kentucky
+  usa_state_Louisiana:
+    agAddressValue: usa_state_Louisiana
+    alias: Louisiana
+  usa_state_maine:
+    agAddressValue: usa_state_maine
+    alias: Maine
+  usa_state_maryland:
+    agAddressValue: usa_state_maryland
+    alias: Maryland
+  usa_state_massachusetts:
+    agAddressValue: usa_state_massachusetts
+    alias: Massachusetts
+  usa_state_michigan:
+    agAddressValue: usa_state_michigan
+    alias: Michigan
+  usa_state_minnesota:
+    agAddressValue: usa_state_minnesota
+    alias: Minnesota
+  usa_state_mississippi:
+    agAddressValue: usa_state_mississippi
+    alias: Mississippi
+  usa_state_missouri:
+    agAddressValue: usa_state_missouri
+    alias: Missouri
+  usa_state_montana:
+    agAddressValue: usa_state_montana
+    alias: Montana
+  usa_state_nebraska:
+    agAddressValue: usa_state_nebraska
+    alias: Nebraska
+  usa_state_nevada:
+    agAddressValue: usa_state_nevada
+    alias: Nevada
+  usa_state_new_hampshire:
+    agAddressValue: usa_state_new_hampshire
+    alias: New Hampshire
+  usa_state_new_jersey:
+    agAddressValue: usa_state_new_jersey
+    alias: New Jersey
+  usa_state_new_mexico:
+    agAddressValue: usa_state_new_mexico
+    alias: New Mexico
+  usa_state_new_york:
+    agAddressValue: usa_state_new_york
+    alias: New York
+  usa_state_north_carolina:
+    agAddressValue: usa_state_north_carolina
+    alias: North Carolina
+  usa_state_north_dakota:
+    agAddressValue: usa_state_north_dakota
+    alias: North Dakota
+  usa_state_ohio:
+    agAddressValue: usa_state_ohio
+    alias: Ohio
+  usa_state_Oklahoma:
+    agAddressValue: usa_state_Oklahoma
+    alias: Oklahoma
+  usa_state_oregon:
+    agAddressValue: usa_state_oregon
+    alias: Oregon
+  usa_state_pennsylvania:
+    agAddressValue: usa_state_pennsylvania
+    alias: Pennsylvania
+  usa_state_rhode_island:
+    agAddressValue: usa_state_rhode_island
+    alias: Rhode Island
+  usa_state_south_carolina:
+    agAddressValue: usa_state_south_carolina
+    alias: South Carolina
+  usa_state_south_dakota:
+    agAddressValue: usa_state_south_dakota
+    alias: South Dakota
+  usa_state_tennessee:
+    agAddressValue: usa_state_tennessee
+    alias: Tennessee
+  usa_state_texas:
+    agAddressValue: usa_state_texas
+    alias: Texas
+  usa_state_utah:
+    agAddressValue: usa_state_utah
+    alias: Utah
+  usa_state_vermont:
+    agAddressValue: usa_state_vermont
+    alias: Vermont
+  usa_state_virginia:
+    agAddressValue: usa_state_virginia
+    alias: Virginia
+  usa_state_washington:
+    agAddressValue: usa_state_washington
+    alias: Washington
+  usa_state_west_virginia:
+    agAddressValue: usa_state_west_virginia
+    alias: West Virginia
+  usa_state_wisconsin:
+    agAddressValue: usa_state_wisconsin
+    alias: Wisconsin
+  usa_state_wyoming:
+    agAddressValue: usa_state_wyoming
+    alias: Wyoming
+

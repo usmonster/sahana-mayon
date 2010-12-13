@@ -1,0 +1,35 @@
+# Samples of person's profession
+# Requirement: Pre-load person object samples and profession data dictionary.
+
+agPersonMjAgProfession:
+  1:
+    agPerson: 1
+    agProfession: 521
+  2:
+    agPerson: 2
+    agProfession: 2
+  3:
+    agPerson: 3
+    agProfession: 665
+  4:
+    agPerson: 4
+    agProfession: 4
+  5:
+    agPerson: 5
+    agProfession: 5
+  6:
+    agPerson: 6
+    agProfession: 6
+  7:
+    agPerson: 7
+    agProfession: 7
+  8:
+    agPerson: 8
+    agProfession: 818
+  9:
+    agPerson: 9
+    agProfession: 857
+  10:
+    agPerson: 10
+    agProfession: 870
+

@@ -1,0 +1,31 @@
+agAccountStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    account_status:
+      unique: true
+      type: string(30)
+      notnull: true
+agAccount:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    account_name:
+      unique: true
+      type: string(64)
+      notnull: true
+    account_status_id:
+      type: integer(2)
+      notnull: true
+    description:
+      type: string(255)
+  relations:
+    agAccountStatus:
+      local: account_status_id
+      foreign: id
+actAs:
+  Timestampable: 

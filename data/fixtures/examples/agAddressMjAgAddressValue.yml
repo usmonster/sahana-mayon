@@ -1,0 +1,223 @@
+# Pre-populate site address
+
+agAddressMjAgAddressValue:
+  address1_line1_1:
+    agAddress: 1
+    agAddressValue: usa_line1_1
+  address1_city:
+    agAddress: 1
+    agAddressValue: usa_city_ny
+  address1_state:
+    agAddress: 1
+    agAddressValue: usa_state_new_york
+  address1_zip5:
+    agAddress: 1
+    agAddressValue: usa_zip5_10036
+  address1_country:
+    agAddress: 1
+    agAddressValue: country_usa
+  address2_line1_2:
+    agAddress: 2
+    agAddressValue: usa_line1_2
+  address2_line2_1:
+    agAddress: 2
+    agAddressValue: usa_line2_1
+  address2_city:
+    agAddress: 2
+    agAddressValue: usa_city_ny
+  address2_state:
+    agAddress: 2
+    agAddressValue: usa_state_new_york
+  address2_zip5_10001:
+    agAddress: 2
+    agAddressValue: usa_zip5_10001
+  address2_country:
+    agAddress: 2
+    agAddressValue: country_usa
+  agAddress3_line1_3:
+    agAddress: 3
+    agAddressValue: usa_line1_3
+  agAddress3_city:
+    agAddress: 3
+    agAddressValue: usa_city_ny
+  agAddress3_state:
+    agAddress: 3
+    agAddressValue: usa_state_new_york
+  agAddress3_zip5_10028:
+    agAddress: 3
+    agAddressValue: usa_zip5_10028
+  agAddress3_zip4_8024:
+    agAddress: 3
+    agAddressValue: usa_zip4_8024
+  agAddress3_country:
+    agAddress: 3
+    agAddressValue: country_usa
+  agAddress4_line1_4:
+    agAddress: 4
+    agAddressValue: usa_line1_4
+  agAddress4_city_ny:
+    agAddress: 4
+    agAddressValue: usa_city_ny
+  agAddress4_state:
+    agAddress: 4
+    agAddressValue: usa_state_new_york
+  agAddress4_zip5_10001:
+    agAddress: 4
+    agAddressValue: usa_zip5_10001
+  agAddress4_country:
+    agAddress: 4
+    agAddressValue: country_usa
+  agAddress5_line1_5:
+    agAddress: 5
+    agAddressValue: usa_line1_5
+  agAddress5_city:
+    agAddress: 5
+    agAddressValue: usa_city_bklyn
+  agAddress5_state:
+    agAddress: 5
+    agAddressValue: usa_state_new_york
+  agAddress5_zip5:
+    agAddress: 5
+    agAddressValue: usa_zip5_11201
+  agAddress5_borough:
+    agAddress: 5
+    agAddressValue: usa_borough_bklyn
+  agAddress5_country: 
+    agAddress: 5
+    agAddressValue: country_usa
+  agAddress6_line1:
+    agAddress: 6
+    agAddressValue: usa_line1_6
+  agAddress6_city:
+    agAddress: 6
+    agAddressValue: usa_city_bklyn
+  agAddress6_statue:
+    agAddress: 6
+    agAddressValue: usa_state_new_york
+  agAddress6_borough:
+    agAddress: 6
+    agAddressValue: usa_borough_bklyn
+  agAddress6_country: 
+    agAddress: 6
+    agAddressValue: country_usa
+  agAddress7_line1:
+    agAddress: 7
+    agAddressValue: usa_line1_7
+  agAddress7_city:
+    agAddress: 7
+    agAddressValue: usa_city_bklyn
+  agAddress7_statue:
+    agAddress: 7
+    agAddressValue: usa_state_new_york
+  agAddress7_borough:
+    agAddress: 7
+    agAddressValue: usa_borough_bklyn
+  agAddress7_country: 
+    agAddress: 7
+    agAddressValue: country_usa
+  agAddress8_line1:
+    agAddress: 8
+    agAddressValue: usa_line1_8
+  agAddress8_city:
+    agAddress: 8
+    agAddressValue: usa_city_bklyn
+  agAddress8_statue:
+    agAddress: 8
+    agAddressValue: usa_state_new_york
+  agAddress8_borough:
+    agAddress: 8
+    agAddressValue: usa_borough_bklyn
+  agAddress8_country: 
+    agAddress: 8
+    agAddressValue: country_usa
+  agAddress9_line1:
+    agAddress: 9
+    agAddressValue: usa_line1_9
+  agAddress9_city:
+    agAddress: 9
+    agAddressValue: usa_city_bklyn
+  agAddress9_statue:
+    agAddress: 9
+    agAddressValue: usa_state_new_york
+  agAddress9_borough:
+    agAddress: 9
+    agAddressValue: usa_borough_bklyn
+  agAddress9_country: 
+    agAddress: 9
+    agAddressValue: country_usa
+  agAddress10_line1:
+    agAddress: 10
+    agAddressValue: usa_line1_10
+  agAddress10_city:
+    agAddress: 10
+    agAddressValue: usa_city_bklyn
+  agAddress10_statue:
+    agAddress: 10
+    agAddressValue: usa_state_new_york
+  agAddress10_borough:
+    agAddress: 10
+    agAddressValue: usa_borough_bklyn
+  agAddress10_country: 
+    agAddress: 10
+    agAddressValue: country_usa
+  agAddress11_line1:
+    agAddress: 11
+    agAddressValue: usa_line1_11
+  agAddress11_city:
+    agAddress: 11
+    agAddressValue: usa_city_bklyn
+  agAddress11_statue:
+    agAddress: 11
+    agAddressValue: usa_state_new_york
+  agAddress11_borough:
+    agAddress: 11
+    agAddressValue: usa_borough_bklyn
+  agAddress11_country: 
+    agAddress: 11
+    agAddressValue: country_usa
+  agAddress12_line1:
+    agAddress: 12
+    agAddressValue: usa_line1_12
+  agAddress12_city:
+    agAddress: 12
+    agAddressValue: usa_city_bklyn
+  agAddress12_statue:
+    agAddress: 12
+    agAddressValue: usa_state_new_york
+  agAddress12_borough:
+    agAddress: 12
+    agAddressValue: usa_borough_bklyn
+  agAddress12_country: 
+    agAddress: 12
+    agAddressValue: country_usa
+  agAddress13_line1:
+    agAddress: 13
+    agAddressValue: usa_line1_13
+  agAddress13_city:
+    agAddress: 13
+    agAddressValue: usa_city_bklyn
+  agAddress13_statue:
+    agAddress: 13
+    agAddressValue: usa_state_new_york
+  agAddress13_borough:
+    agAddress: 13
+    agAddressValue: usa_borough_bklyn
+  agAddress13_country: 
+    agAddress: 13
+    agAddressValue: country_usa
+  agAddress14_line1:
+    agAddress: 14
+    agAddressValue: usa_line1_14
+  agAddress14_city:
+    agAddress: 14
+    agAddressValue: usa_city_bklyn
+  agAddress14_statue:
+    agAddress: 14
+    agAddressValue: usa_state_new_york
+  agAddress14_borough:
+    agAddress: 14
+    agAddressValue: usa_borough_bklyn
+  agAddress14_country: 
+    agAddress: 14
+    agAddressValue: country_usa
+

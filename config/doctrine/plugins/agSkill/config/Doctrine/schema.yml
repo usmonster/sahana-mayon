@@ -1,0 +1,285 @@
+agSkill:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    skill:
+      type: string(64)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agSkill_unq:
+      fields: [skill]
+      type: unique
+agCompetency:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    competency:
+      type: string(64)
+      notnull: true
+    priority:
+      type: integer(1)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agCompetency_unq:
+      fields: [competency]
+      type: unique
+agPersonSkill:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    skill_id:
+      type: integer(2)
+      notnull: true
+    competency_id:
+      type: integer(2)
+      notnull: true
+    date_expires:
+      type: date
+    confirmed:
+      default: 0
+      type: boolean
+      notnull: true
+  indexes:
+    agStaffSkill_unq:
+      fields: [person_id, skill_id]
+      type: unique
+    agStaffSkill_staffid:
+      fields: [person_id]
+    agStaffSkill_skillId:
+      fields: [skill_id]
+    agStaffSkill_competencyId:
+      fields: [competency_id]
+  relations:
+    agCompetency:
+      class: agCompetency
+      foreignAlias: agPersonSkill
+      local: competency_id
+      foreign: id
+    agPerson:
+      local: person_id
+      foreign: id
+    agSkill:
+      local: skill_id
+      foreign: id
+agCertification:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    certification:
+      type: integer(128)
+      notnull: true
+    description:
+      type: string(255)
+    certifying_organization_id:
+      type: integer(2)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agCertification_unq:
+      fields: [certification, certifying_organization_id]
+      type: unique
+  relations:
+    agOrganization:
+      local: certifying_organization_id
+      foreign: id
+agPersonCertification:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    certification_id:
+      type: integer(2)
+      notnull: true
+    date_received:
+      type: date
+      notnull: true
+    date_expires:
+      type: date
+      notnull: true
+  indexes:
+    agStaffCertification_unq:
+      fields: [person_id, certification_id, date_received]
+      type: unique
+    agStaffCertification_staffid:
+      fields: [person_id]
+    agStaffCertification_certificationId:
+      fields: [certification_id]
+  relations:
+    agCertification:
+      local: certification_id
+      foreign: id
+    agPerson:
+      local: person_id
+      foreign: id
+agSkillsProvision:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    skill_provision:
+      type: string(32)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+    priority:
+      type: integer(1)
+      notnull: true
+  indexes:
+    agSkillsProvision_unq:
+      fields: [skill_provision]
+      type: unique
+agStaffResourceTypeProvision:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    staff_resource_type_id:
+      type: integer(2)
+      notnull: true
+    skill_id:
+      type: integer(2)
+      notnull: true
+    skills_provision_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agStaffResourceTypeProvision_unq:
+      fields: [staff_resource_type_id, skill_id]
+      type: unique
+    agStaffResourceTypeProvision_staffResourceTypeId:
+      fields: [staff_resource_type_id]
+    agStaffResourceTypeProvision_skillId:
+      fields: [skill_id]
+    agStaffResourceTypeProvision_skillsProvisionId:
+      fields: [skills_provision_id]
+  relations:
+    agSkillsProvision:
+      class: agSkillsProvision
+      foreignAlias: agStaffResourceTypeProvision
+      local: skills_provision_id
+      foreign: id
+    agSkill:
+      local: skill_id
+      foreign: id
+    agStaffResourceType:
+      local: staff_resource_type_id
+      foreign: id
+agCertifiedSkill:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    certification_id:
+      type: integer(2)
+      notnull: true
+    skill_id:
+      type: integer(2)
+      notnull: true
+    competency_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agCertifiedSkill_unq:
+      fields: [certification_id, skill_id, competency_id]
+      type: unique
+    agCertifiedSkill_certificationId:
+      fields: [certification_id]
+    agCertifiedSkill_skillId:
+      fields: [skill_id]
+    agCertifiedSkill_competencyId:
+      fields: [competency_id]
+  relations:
+    agCompetency:
+      class: agCompetency
+      foreignAlias: agCertifiedSkill
+      local: competency_id
+      foreign: id
+    agCertification:
+      local: certification_id
+      foreign: id
+    agSkill:
+      local: skill_id
+      foreign: id
+agRawSkill:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    raw_skill:
+      type: string(128)
+      notnull: true
+  indexes:
+    UX_agRawSkill:
+      fields: [raw_skill]
+      type: unique
+agRawSkillMap:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    raw_skill_id:
+      type: integer(4)
+      notnull: true
+    skill_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agRawSkillMap:
+      fields: [raw_skill_id, skill_id]
+      type: unique
+  relations:
+    agSkill:
+      local: skill_id
+      foreign: id
+    agRawSkill:
+      local: raw_skill_id
+      foreign: id
+actAs:
+  Timestampable: 

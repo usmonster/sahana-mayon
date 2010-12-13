@@ -1,0 +1,61 @@
+agPersonMjAgReligion:
+  agPersonMjAgReligion_47:
+    agPerson: 1
+    agReligion: catholicism
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_70:
+    agPerson: 1
+    agReligion: aztec
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_71:
+    agPerson: 1
+    agReligion: anglo_saxon
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_72:
+    agPerson: 2
+    agReligion: greek
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_73:
+    agPerson: 3
+    agReligion: christianity
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_74:
+    agPerson: 4
+    agReligion: buddhism
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_75:
+    agPerson: 5
+    agReligion: judaism
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_76:
+    agPerson: 5
+    agReligion: babylonian
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_77:
+    agPerson: 6
+    agReligion: persian
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_92:
+    agPerson: 7
+    agReligion: roman_catholic
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_93:
+    agPerson: 8
+    agReligion: protestantism
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonMjAgReligion_94:
+    agPerson: 9
+    agReligion: shinto
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'

@@ -1,0 +1,208 @@
+# Sample for agPersonLanguageCompetency.
+
+agPersonLanguageCompetency:
+  1_1:
+    agPersonMjAgLanguage: 1
+    agLanguageFormat: read
+    agLanguageCompetency: superior
+  1_2:
+    agPersonMjAgLanguage: 1
+    agLanguageFormat: write
+    agLanguageCompetency: superior
+  1_3:
+    agPersonMjAgLanguage: 1
+    agLanguageFormat: speak
+    agLanguageCompetency: superior
+  2_1:
+    agPersonMjAgLanguage: 2
+    agLanguageFormat: read
+    agLanguageCompetency: basic
+  2_2:
+    agPersonMjAgLanguage: 2
+    agLanguageFormat: write
+    agLanguageCompetency: basic
+  2_3:
+    agPersonMjAgLanguage: 2
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  3_1:
+    agPersonMjAgLanguage: 3
+    agLanguageFormat: read
+    agLanguageCompetency: fluent
+  3_2:
+    agPersonMjAgLanguage: 3
+    agLanguageFormat: write
+    agLanguageCompetency: fluent
+  3_3:
+    agPersonMjAgLanguage: 3
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  4_1:
+    agPersonMjAgLanguage: 4
+    agLanguageFormat: read
+    agLanguageCompetency: fluent
+  4_2:
+    agPersonMjAgLanguage: 4
+    agLanguageFormat: write
+    agLanguageCompetency: fluent
+  4_3:
+    agPersonMjAgLanguage: 4
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  5_1:
+    agPersonMjAgLanguage: 5
+    agLanguageFormat: read
+    agLanguageCompetency: fluent
+  5_2:
+    agPersonMjAgLanguage: 5
+    agLanguageFormat: write
+    agLanguageCompetency: fluent
+  5_3:
+    agPersonMjAgLanguage: 5
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  6_1:
+    agPersonMjAgLanguage: 6
+    agLanguageFormat: read
+    agLanguageCompetency: basic
+  6_2:
+    agPersonMjAgLanguage: 6
+    agLanguageFormat: write
+    agLanguageCompetency: basic
+  6_3:
+    agPersonMjAgLanguage: 6
+    agLanguageFormat: speak
+    agLanguageCompetency: basic
+  7_1:
+    agPersonMjAgLanguage: 7
+    agLanguageFormat: read
+    agLanguageCompetency: fluent
+  7_2:
+    agPersonMjAgLanguage: 7
+    agLanguageFormat: write
+    agLanguageCompetency: fluent
+  7_3:
+    agPersonMjAgLanguage: 7
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  8_1:
+    agPersonMjAgLanguage: 8
+    agLanguageFormat: read
+    agLanguageCompetency: intermediate
+  8_2:
+    agPersonMjAgLanguage: 8
+    agLanguageFormat: write
+    agLanguageCompetency: intermediate
+  8_3:
+    agPersonMjAgLanguage: 8
+    agLanguageFormat: speak
+    agLanguageCompetency: superior
+  9_1:
+    agPersonMjAgLanguage: 9
+    agLanguageFormat: read
+    agLanguageCompetency: basic
+  9_2:
+    agPersonMjAgLanguage: 9
+    agLanguageFormat: write
+    agLanguageCompetency: basic
+  9_3:
+    agPersonMjAgLanguage: 9
+    agLanguageFormat: speak
+    agLanguageCompetency: superior
+  10_1:
+    agPersonMjAgLanguage: 10
+    agLanguageFormat: read
+    agLanguageCompetency: superior
+  10_2:
+    agPersonMjAgLanguage: 10
+    agLanguageFormat: write
+    agLanguageCompetency: superior
+  10_3:
+    agPersonMjAgLanguage: 10
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  11_1:
+    agPersonMjAgLanguage: 11
+    agLanguageFormat: read
+    agLanguageCompetency: fluent
+  11_2:
+    agPersonMjAgLanguage: 11
+    agLanguageFormat: write
+    agLanguageCompetency: fluent
+  11_3:
+    agPersonMjAgLanguage: 11
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  12_1:
+    agPersonMjAgLanguage: 12
+    agLanguageFormat: read
+    agLanguageCompetency: intermediate
+  12_2:
+    agPersonMjAgLanguage: 12
+    agLanguageFormat: write
+    agLanguageCompetency: intermediate
+  12_3:
+    agPersonMjAgLanguage: 12
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  13_1:
+    agPersonMjAgLanguage: 13
+    agLanguageFormat: read
+    agLanguageCompetency: intermediate
+  13_2:
+    agPersonMjAgLanguage: 13
+    agLanguageFormat: write
+    agLanguageCompetency: intermediate
+  13_3:
+    agPersonMjAgLanguage: 13
+    agLanguageFormat: speak
+    agLanguageCompetency: fluent
+  14_1:
+    agPersonMjAgLanguage: 14
+    agLanguageFormat: read
+    agLanguageCompetency: fluent
+  14_2:
+    agPersonMjAgLanguage: 14
+    agLanguageFormat: write
+    agLanguageCompetency: fluent
+  14_3:
+    agPersonMjAgLanguage: 14
+    agLanguageFormat: speak
+    agLanguageCompetency: intermediate
+  15_1:
+    agPersonMjAgLanguage: 15
+    agLanguageFormat: read
+    agLanguageCompetency: fluent
+  15_2:
+    agPersonMjAgLanguage: 15
+    agLanguageFormat: write
+    agLanguageCompetency: intermediate
+  15_3:
+    agPersonMjAgLanguage: 15
+    agLanguageFormat: speak
+    agLanguageCompetency: intermediate
+  16_1:
+    agPersonMjAgLanguage: 16
+    agLanguageFormat: read
+    agLanguageCompetency: superior
+  16_2:
+    agPersonMjAgLanguage: 16
+    agLanguageFormat: write
+    agLanguageCompetency: superior
+  16_3:
+    agPersonMjAgLanguage: 16
+    agLanguageFormat: speak
+    agLanguageCompetency: superior
+  17_1:
+    agPersonMjAgLanguage: 17
+    agLanguageFormat: read
+    agLanguageCompetency: basic
+  17_2:
+    agPersonMjAgLanguage: 17
+    agLanguageFormat: write
+    agLanguageCompetency: basic
+  17_3:
+    agPersonMjAgLanguage: 17
+    agLanguageFormat: speak
+    agLanguageCompetency: intermediate
+

@@ -1,0 +1,270 @@
+agPhoneContactType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+    phone_contact_type:
+      unique: true
+      type: string(32)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agPhoneContactType_unq:
+      fields: [phone_contact_type]
+      type: unique
+  relations:
+    agPhoneContact:
+      class: agPhoneContact
+      refClass: agEntityPhoneContact
+      local: phone_contact_type_id
+      foreign: phone_contact_id
+agEmailContactType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+    email_contact_type:
+      unique: true
+      type: string(32)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agEmailContact:
+      class: agEmailContact
+      refClass: agEntityEmailContact
+      local: email_contact_type_id
+      foreign: email_contact_id
+agAddressContactType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+    address_contact_type:
+      unique: true
+      type: string(32)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agSiteAddress:
+      class: agAddress
+      refClass: agEntityAddressContact
+      local: address_contact_type_id
+      foreign: address_id
+agPhoneContact:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    phone_contact:
+      unique: true
+      type: string(16)
+      notnull: true
+    phone_format_id:
+      type: integer(2)
+      notnull: true
+  relations:
+    agPhoneFormat:
+      local: phone_format_id
+      foreign: id
+    agPhoneContactType:
+      class: agPhoneContactType
+      refClass: agEntityPhoneContact
+      local: phone_contact_id
+      foreign: phone_contact_type_id
+    agEntity:
+      class: agEntity
+      refClass: agEntityPhoneContact
+      local: phone_contact_id
+      foreign: entity_id
+agEmailContact:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    email_contact:
+      unique: true
+      type: string(255)
+      notnull: true
+  relations:
+    agEmailContactType:
+      class: agEmailContactType
+      refClass: agEntityEmailContact
+      local: email_contact_id
+      foreign: email_contact_type_id
+    agEntity:
+      class: agEntity
+      refClass: agEntityEmailContact
+      local: email_contact_id
+      foreign: entity_id
+agEntityPhoneContact:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    entity_id:
+      type: integer(5)
+      notnull: true
+    phone_contact_id:
+      type: integer(5)
+      notnull: true
+    phone_contact_type_id:
+      type: integer(2)
+      notnull: true
+    priority:
+      type: integer(1)
+      notnull: true
+  indexes:
+    UX_ag_person_mj_ag_phone_contact:
+      fields: [entity_id, phone_contact_id, phone_contact_type_id]
+      type: unique
+    UX_agPersonMjAgPhoneContact_priority:
+      fields: [entity_id, priority]
+      type: unique
+  relations:
+    agPhoneContact:
+      local: phone_contact_id
+      foreign: id
+    agPhoneContactType:
+      local: phone_contact_type_id
+      foreign: id
+    agEntity:
+      local: entity_id
+      foreign: id
+agEntityEmailContact:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    entity_id:
+      type: integer(5)
+      notnull: true
+    email_contact_id:
+      type: integer(5)
+      notnull: true
+    email_contact_type_id:
+      type: integer(2)
+      notnull: true
+    priority:
+      type: integer(1)
+      notnull: true
+  indexes:
+    agEntityEmailContact_unq:
+      fields: [entity_id, email_contact_id, email_contact_type_id]
+      type: unique
+    agEntityAgEmailContact_priority_unq:
+      fields: [entity_id, priority]
+      type: unique
+  relations:
+    agEmailContact:
+      local: email_contact_id
+      foreign: id
+    agEmailContactType:
+      local: email_contact_type_id
+      foreign: id
+    agEntity:
+      local: entity_id
+      foreign: id
+agEntityAddressContact:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    entity_id:
+      type: integer(5)
+      notnull: true
+    address_id:
+      type: integer(5)
+      notnull: true
+    address_contact_type_id:
+      type: integer(2)
+      notnull: true
+    priority:
+      type: integer(1)
+      notnull: true
+  indexes:
+    agEntityAddressContact_unq:
+      fields: [entity_id, address_contact_type_id, address_id]
+      type: unique
+    agEntityAddressContact_priority_unq:
+      fields: [entity_id, priority]
+      type: unique
+  relations:
+    agAddressContactType:
+      local: address_contact_type_id
+      foreign: id
+    agAddress:
+      local: address_id
+      foreign: id
+    agEntity:
+      local: entity_id
+      foreign: id
+agPhoneFormat:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    country_id:
+      type: integer(2)
+      notnull: true
+    phone_format_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agPhoneFormat:
+      fields: [country_id, phone_format_type_id]
+  relations:
+    agCountry:
+      local: country_id
+      foreign: id
+    agPhoneFormatType:
+      local: phone_format_type_id
+      foreign: id
+agPhoneFormatType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    phone_format_type:
+      unique: true
+      type: string(64)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+    validation:
+      default: .*
+      type: string(128)
+      notnull: true
+    match_pattern:
+      default: (.*)
+      type: string(128)
+      notnull: true
+    replacement_pattern:
+      default: $1
+      type: string(128)
+      notnull: true
+  indexes:
+    agPhoneFormatType_unq:
+      fields: [phone_format_type]
+      type: unique
+actAs:
+  Timestampable: 

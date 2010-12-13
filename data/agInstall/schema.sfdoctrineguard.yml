@@ -1,0 +1,14 @@
+sfGuardUserProfile:
+  inheritance:
+    type: simple
+    extends: sfGuardUserProfileBasis
+
+  relations:
+    User:
+      class: sfGuardUser
+      foreign: id
+      local: user_id
+      type: one
+      onDelete: cascade
+      foreignType: one
+      foreignAlias: Profile

@@ -1,0 +1,248 @@
+agSite:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    entity_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    agSite_unq:
+      fields: [entity_id]
+      type: unique
+  relations:
+    agEntity:
+      class: agEntity
+      foreignAlias: agSite
+      local: entity_id
+      foreign: id
+agCountry:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    country:
+      unique: true
+      type: string(128)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+agAddressElement:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    address_element:
+      unique: true
+      type: string(128)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agAddressType:
+      class: agAddressStandard
+      refClass: agAddressFormat
+      local: address_element_id
+      foreign: address_standard_id
+agAddressStandard:
+  actAs:
+    Timestampable: 
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    address_standard:
+      type: string(128)
+      notnull: true
+    country_id:
+      type: integer(2)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agAddressStandard_unq:
+      fields: [address_standard]
+      type: unique
+  relations:
+    agCountry:
+      local: country_id
+      foreign: id
+    agAddressElement:
+      class: agAddressElement
+      refClass: agAddressFormat
+      local: address_standard_id
+      foreign: address_element_id
+agAddressFormat:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    address_standard_id:
+      type: integer(2)
+      notnull: true
+    address_element_id:
+      type: integer(2)
+      notnull: true
+    line_sequence:
+      type: integer(1)
+      notnull: true
+    inline_sequence:
+      type: integer(1)
+      notnull: true
+    pre_delimiter:
+      type: string(32)
+    post_delimiter:
+      type: string(32)
+    field_type_id:
+      type: integer(2)
+      notnull: true
+    is_required:
+      type: boolean
+      notnull: true
+  indexes:
+    agAddressFormat_unq:
+      fields: [address_standard_id, address_element_id]
+  relations:
+    agAddressElement:
+      local: address_element_id
+      foreign: id
+    agAddressStandard:
+      local: address_standard_id
+      foreign: id
+    agFieldType:
+      local: field_type_id
+      foreign: id
+agAddressAlias:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    address_value_id:
+      type: integer(5)
+      notnull: true
+    alias:
+      type: string(64)
+      notnull: true
+  indexes:
+    agElementAlias_UX:
+      fields: [address_value_id, alias]
+      type: unique
+  relations:
+    agAddressValue:
+      local: address_value_id
+      foreign: id
+agFieldType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    field_type:
+      unique: true
+      type: string(64)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+agAddress:
+  actAs:
+    Timestampable: 
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    address_standard_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agSiteAddress_addressStandardId:
+      fields: [address_standard_id]
+  relations:
+    agAddressStandard:
+      local: address_standard_id
+      foreign: id
+    agAddressValue:
+      class: agAddressValue
+      refClass: agAddressMjAgAddressValue
+      local: address_id
+      foreign: address_value_id
+agAddressValue:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    address_element_id:
+      type: integer(2)
+      notnull: true
+    value:
+      type: string(255)
+      notnull: true
+  indexes:
+    agAddressValue_addressElementId:
+      fields: [address_element_id]
+    agAddressValue_unq:
+      fields: [value, address_element_id]
+      type: unique
+  relations:
+    agAddressElement:
+      local: address_element_id
+      foreign: id
+    agAddress:
+      class: agAddress
+      refClass: agAddressMjAgAddressValue
+      local: address_value_id
+      foreign: address_id
+agAddressMjAgAddressValue:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    address_id:
+      type: integer(5)
+      notnull: true
+    address_value_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    agAddressMjAgAddressValue_unq:
+      fields: [address_id, address_value_id]
+      type: unique
+    agAddressMjAgAddressValue_addressId:
+      fields: [address_id]
+    agAddressMjAgAddressValue_addressValueId:
+      fields: [address_value_id]
+  relations:
+    agAddress:
+      local: address_id
+      foreign: id
+    agAddressValue:
+      local: address_value_id
+      foreign: id
+actAs:
+  Timestampable: 

@@ -1,0 +1,42 @@
+agFacility:
+  facility_11:
+    agSite: 11
+    facility_name: Fossil University
+    facility_code: FF765
+  facility_12:
+    agSite: 12
+    facility_name: Financial Center
+    facility_code: FC983
+  facility_13:
+    agSite: 13
+    facility_name: Research Center
+    facility_code: R093
+  facility_14:
+    agSite: 14
+    facility_name: Research Center II
+    facility_code: R094
+  facility_15:
+    agSite: 15
+    facility_name: Mass Transportation Resort
+    facility_code: MTR1
+  facility_16:
+    agSite: 16
+    facility_name: Public Resort
+    facility_code: PR001
+  facility_17:
+    agSite: 17
+    facility_name: Recreational Center
+    facility_code: RCR03
+  facility_18:
+    agSite: 18
+    facility_name: School 101
+    facility_code: S101
+  facility_19:
+    agSite: 19
+    facility_name: School 201
+    facility_code: S201
+  facility_20:
+    agSite: 20
+    facility_name: The Great University
+    facility_code: U230
+

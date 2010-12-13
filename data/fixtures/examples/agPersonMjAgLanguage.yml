@@ -1,0 +1,73 @@
+# Samples of ag_person_mj_ag_language
+# Requirement: Pre-load person samples and language data dictionary.
+
+agPersonMjAgLanguage:
+  1:
+    agPerson: 1
+    agLanguage: english
+    priority: 1
+  2:
+    agPerson: 1
+    agLanguage: vietnamese
+    priority: 2
+  3:
+    agPerson: 2
+    agLanguage: swedish
+    priority: 1
+  4:
+    agPerson: 3
+    agLanguage: english
+    priority: 1
+  5:
+    agPerson: 4
+    agLanguage: romanian
+    priority: 1
+  6:
+    agPerson: 4
+    agLanguage: english
+    priority: 2
+  7:
+    agPerson: 5
+    agLanguage: english
+    priority: 1
+  8:
+    agPerson: 6
+    agLanguage: english
+    priority: 1
+  9:
+    agPerson: 6
+    agLanguage: chinese
+    priority: 2
+  10:
+    agPerson: 7
+    agLanguage: english
+    priority: 1
+  11:
+    agPerson: 7
+    agLanguage: latin
+    priority: 2
+  12:
+    agPerson: 8
+    agLanguage: scottish
+    priority: 1
+  13:
+    agPerson: 8
+    agLanguage: english
+    priority: 2
+  14:
+    agPerson: 8
+    agLanguage: french
+    priority: 3
+  15:
+    agPerson: 9
+    agLanguage: russian
+    priority: 1
+  16:
+    agPerson: 10
+    agLanguage: spanish
+    priority: 1
+  17:
+    agPerson: 10
+    agLanguage: italian
+    priority: 2
+

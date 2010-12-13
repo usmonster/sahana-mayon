@@ -1,0 +1,72 @@
+# Pre-populate field type for each address element with symfony's provided widgets
+
+agFieldType:
+  sfWidgetFormChoice:
+    field_type: sfWidgetFormChoice
+  sfWidgetFormDate:
+    field_type: sfWidgetFormDate
+  sfWidgetFormDateRange:
+    field_type: sfWidgetFormDateRange
+  sfWidgetFormDateTime:
+    field_type: sfWidgetFormDateTime
+  sfWidgetFormDoctrineChoice:
+    field_type: sfWidgetFormDoctrineChoice
+  sfWidgetFormFilterInput:
+    field_type: sfWidgetFormFilterInput
+  sfWidgetFormFilterDate:
+    field_type: sfWidgetFormFilterDate
+  sfWidgetFormI18nChoiceCountry:
+    field_type: sfWidgetFormI18nChoiceCountry
+  sfWidgetFormI18nChoiceLanguage:
+    field_type: sfWidgetFormI18nChoiceLanguage
+  sfWidgetFormI18nChoiceCurrency:
+    field_type: sfWidgetFormI18nChoiceCurrency
+  sfWidgetFormI18nChoiceTimezone:
+    field_type: sfWidgetFormI18nChoiceTimezone
+  sfWidgetFormI18nDate:
+    field_type: sfWidgetFormI18nDate
+  sfWidgetFormI18nDateTime:
+    field_type: sfWidgetFormI18nDateTime
+  sfWidgetFormI18nTime:
+    field_type: sfWidgetFormI18nTime
+  sfWidgetFormInput:
+    field_type: sfWidgetFormInput
+  sfWidgetFormInputCheckbox:
+    field_type: sfWidgetFormInputCheckbox
+  sfWidgetFormInputFile:
+    field_type: sfWidgetFormInputFile
+  sfWidgetFormInputFileEditable:
+    field_type: sfWidgetFormInputFileEditable
+  sfWidgetFormInputHidden:
+    field_type: sfWidgetFormInputHidden
+  sfWidgetFormInputPassword:
+    field_type: sfWidgetFormInputPassword
+  sfWidgetFormJQueryAutocompleter:
+    field_type: sfWidgetFormJQueryAutocompleter
+  sfWidgetFormJQueryDate:
+    field_type: sfWidgetFormJQueryDate
+  sfWidgetFormPropelChoice:
+    field_type: sfWidgetFormPropelChoice
+  sfWidgetFormReCaptcha:
+    field_type: sfWidgetFormReCaptcha
+  sfWidgetFormSchema:
+    field_type: sfWidgetFormSchema
+  sfWidgetFormSchemaDecorator:
+    field_type: sfWidgetFormSchemaDecorator
+  sfWidgetFormSelect:
+    field_type: sfWidgetFormSelect
+  sfWidgetFormSelectDoubleList:
+    field_type: sfWidgetFormSelectDoubleList
+  sfWidgetFormSelectMany:
+    field_type: sfWidgetFormSelectMany
+  sfWidgetFormSelectCheckbox:
+    field_type: sfWidgetFormSelectCheckbox
+  sfWidgetFormSelectRadio:
+    field_type: sfWidgetFormSelectRadio
+  sfWidgetFormTextarea:
+    field_type: sfWidgetFormTextarea
+  sfWidgetFormTextareaTinyMCE:
+    field_type: sfWidgetFormTextareaTinyMCE
+  sfWidgetFormTime:
+    field_type: sfWidgetFormTime
+

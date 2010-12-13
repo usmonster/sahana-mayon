@@ -1,0 +1,467 @@
+# Pre-populate religion table with a scale down version of Wikipedia's List of religions and spiritual traditions, http://en.wikipedia.org/wiki/List_of_religions_and_spiritual_traditions
+
+agReligion:
+  babism:
+    religion: Babism
+  bahai_faith:
+    religion: Baha'i Faith
+  christianity:
+    religion: Christianity
+  catholicism:
+    religion: Catholicism
+  anglicanism:
+    religion: Anglicanism
+  assyrian:
+    religion: Assyrian Church of the East
+  easthern_orthodox:
+    religion: Eastern Orthodox Church
+  oriental_orthodox:
+    religion: Oriental Orthodox Church
+  roman_catholic:
+    religion: Roman Catholic Church
+  protestantism:
+    religion: Protestantism
+  gnosticism:
+    religion: Gnosticism
+  christian_gnosticism:
+    religion: Christian Gnosticism
+  persian_gnosticism:
+    religion: Persian Gnosticism
+  syrian_egyptic_gnosticism:
+    religion: Syrian Egyptic Gnosticism
+  islam:
+    religion: Islam
+  judaism:
+    religion: Judaism
+  rastafari:
+    religion: Rastafari Movement
+  mandaeans_and_sabians:
+    religion: Mandaeans and Sabians
+  samaritanism:
+    religion: Samaritanism
+  unitarian_universalism:
+    religion: Unitarian Universalism
+  ayyavazhi:
+    religion: Ayyavazhi
+  buddhism:
+    religion: Buddhism
+  din_i_ilahi:
+    religion: Din-i-Ilahi
+  hinduism:
+    religion: Hinduism
+  jainism:
+    religion: Jainism
+  sikhism:
+    religion: Sikhism
+  manichaeism:
+    religion: Manichaeism
+  Mazdakism:
+    religion: Mazdakism
+  Yazdanism:
+    religion: Yazdanism
+  Zoroastrianism:
+    religion: Zoroastrianism
+  confucianism:
+    religion: Confucianism
+  shinto:
+    religion: Shinto
+  taoism:
+    religion: Taoism
+  caodaism:
+    religion: Caodaism
+  chinese_folk:
+    religion: Chinese folk
+  chondogyo:
+    religion: Chondogyo
+  falun_gong:
+    religion: Falun Gong
+  hoa:
+    religion: Hoa Hoa
+  i_kuan_tao:
+    religion: I Kuan Tao
+  jeung:
+    religion: Jeung San Do
+  legalism:
+    religion: Legalism
+  mohism:
+    religion: Mohism
+  oomoto:
+    religion: Oomoto
+  seicho:
+    religion: Seicho-No-le
+  tenrikyo:
+    religion: Tenrikyo
+  batuque:
+    religion: Batuque
+  candomble:
+    religion: Candomble
+  dahomey:
+    religion: Dahomey Mythology
+  haitian:
+    religion: Haitian Mythology
+  kumina:
+    religion: Kumina
+  macumba:
+    religion: Macumba
+  mami:
+    religion: Mami Wata
+  obeah:
+    religion: Obeah
+  oyotunji:
+    religion: Oyotunji
+  quimbanda:
+    religion: Quimbanda
+  santeria:
+    religion: Santeria
+  umbanda:
+    religion: Umbanda
+  vodou:
+    religion: Vodou
+  akan:
+    religion: Akan Mythology
+  ashanti:
+    religion: Ashanti Mythology
+  efik:
+    religion: Efik Mythology
+  isoko:
+    religion: Isoko Mythology
+  yoruba:
+    religion: Yoruba Mythology
+  bushongo:
+    religion: Bushongo Mythology
+  bambuti:
+    religion: Bambuti (Pygmy Mythology)
+  lugbara:
+    religion: Lugbara Mythology
+  akamba:
+    religion: Akamba Mythology
+  dinka:
+    religion: Dinka Mythology
+  lotuko:
+    religion: Lotuko Mythology
+  masai:
+    religion: Masai Mythology
+  khoikhoi:
+    religion: Khoikhoi Mythology
+  lozi:
+    religion: Lozi Mythology
+  tumbuka:
+    religion: Tumbuka Mythology
+  zulu:
+    religion: Zulu Mythology
+  abenaki:
+    religion: Abenaki Mythology
+  anishinaabe:
+    religion: Anishinaabe
+  aztec:
+    religion: Aztec Mythology
+  blackfoot:
+    religion: Blackfoot Mythology
+  cherokee:
+    religion: Cherokee Mythology
+  chickasaw:
+    religion: Chickasaw Mythology
+  choctaw:
+    religion: Choctaw Mythology
+  creek:
+    religion: Creek Mythology
+  crow:
+    religion: Crow Mythology
+  ghost:
+    religion: Ghost Dance
+  guarani:
+    religion: Guarani Mythology
+  haida:
+    religion: Haida Mythology
+  ho_chunk:
+    religion: Ho-Chunck Mythology
+  hopi:
+    religion: Hopi Mythology
+  inca:
+    religion: Inca Mythology
+  indian_shaker:
+    religion: Indian Shaker Church
+  inuit:
+    religion: Inuit Mythology
+  iroquois:
+    religion: Iroquois Mythology
+  keetoowah:
+    religion: Keetoowah Nighthawk Society
+  kuksu:
+    religion: Kuksu
+  kwakiutl:
+    religion: Kwakiutl Mythology
+  lakota:
+    religion: Lakota Mythology
+  leni_lenape:
+    religion: Leni Lenape Mythology
+  longhouse:
+    religion: Longhouse
+  mapuche:
+    religion: Mapuche Mythology
+  maya:
+    religion: Maya Mythology
+  midewiwin:
+    religion: Midewiwin
+  miwok:
+    religion: Miwok
+  native_american:
+    religion: Native American Church
+  navajo:
+    religion: Navajo Mythology
+  nootka:
+    religion: Nootka Mythology
+  ohlone:
+    religion: Ohlone Mythology
+  olmec:
+    religion: Olmec Mythology
+  pomo:
+    religion: Pomo Mythology
+  pawnee:
+    religion: Pawnee Mythology
+  salish:
+    religion: Salish Mythology
+  selk_name:
+    religion: Selk'name
+  seneca:
+    religion: Seneca Mythology
+  southeastern_ceremonial_complex:
+    religion: Southeastern Ceremonial Complex
+  sun_dance:
+    religion: Sun Dance
+  tsimshian:
+    religion: Tsimshian Mythology
+  urarina:
+    religion: Urarina
+  ute:
+    religion: Ute Mythology
+  wyandot:
+    religion: Wyandot
+  zuni:
+    religion: Zuni Mythology
+  bon:
+    religion: Bon
+  chinese:
+    religion: Chinese Mythology
+  japanese:
+    religion: Japanese Mythology
+  koshinto:
+    religion: Koshinto
+  siberian:
+    religion: Siberian Shamanism
+  tengriism:
+    religion: Tengriism
+  estonian:
+    religion: Estonian Mythology
+  eskimo:
+    religion: Eskimo
+  finnish:
+    religion: Finnish Mythology
+  finnish_paganism:
+    religion: Finnish Paganism
+  hungarian:
+    religion: Hungarian Folk
+  sami:
+    religion: Sami
+  tadibya:
+    religion: Tadibya
+  aboriginal:
+    religion: Australian Aboriginal Mythology
+  balinese:
+    religion: Balinese Mythology
+  javanese:
+    religion: Javanese beliefs
+  melanesian:
+    religion: Melanesian Mythology
+  modekngei:
+    religion: Modekngei
+  nauruan:
+    religion: Nauruan Indigenou
+  micronesian:
+    religion: Micronesian Mythlogy
+  anito:
+    religion: Anito
+  gaba:
+    religion: Gaba
+  kulam:
+    religion: Kulam
+  hawaiian:
+    religion: Hawaiian Mythology
+  maori:
+    religion: Maori Religion
+  rapa_nui:
+    religion: Rapa Nui Mythology
+  moai:
+    religion: Moai
+  tangata:
+    religion: Tangata Manu
+  cargo:
+    religion: Cargo Cult
+  john_frum:
+    religion: John Frum
+  johnson:
+    religion: Johnson Cult
+  prince:
+    religion: Prince Philip Movement
+  vailala:
+    religion: Vailala Madness
+  ancient_egyptian:
+    religion: Ancient Egyptian
+  semitic:
+    religion: Ancient Semitic
+  mesopotanian:
+    religion: Mesopotamian Mythology
+  arabian:
+    religion: Arabian Mythology
+  babylonian:
+    religion: Babylonian and Assyria
+  canaanite:
+    religion: Canaanite Mythology
+  hittite:
+    religion: Hittite Mythology
+  persian:
+    religion: Persian Mythology
+  sumerian:
+    religion: Sumerian Mythology
+  proto_indo:
+    religion: Proto_indo-Iranian
+  vedic:
+    religion: Historical Vedic
+  zorastrianism:
+    religion: Zorastrianism
+  baltic:
+    religion: Baltic Polytheism
+  celtic:
+    religion: Celtic Polytheism
+  brythonic:
+    religion: Brythonic Mythology
+  gaelic:
+    religion:  Gaelic Mythology
+  germanic:
+    religion: Germanic Polytheism
+  anglo_saxon:
+    religion: Anglo-Saxon
+  continental:
+    religion: Continental Germanic
+  norse:
+    religion:  Norse
+  greek:
+    religion: Greek Polytheism
+  finnish_polytheism:
+    religion: Finnish Polytheism
+  hungarian:
+    religion: Hungarian Polytheism
+  roman:
+    religion: Roman Polytheism
+  slavic:
+    religion: Slavic Polytheism
+  eleusinian:
+    religion: Eleusinian Mysteries
+  mithraism:
+    religion: Mithraism
+  orphism:
+    religion: Orphism
+  pythagoreanism:
+    religion: Pythagoreanism
+  gallo-roman:
+    religion: Gallo-Roman
+  neopaganism:
+    religion: Neopaganism
+  neoshamanism:
+    religion: Neoshamanism
+  reiki:
+    religion: Reiki
+  anthroposophy:
+    religion: Anthroposophy
+  christian_mysticism:
+    religion: Christian Mysticism
+  esoteric:
+    religion: Esoteric Christianity
+  hindu_mysticism:
+    religion: Hindu Mysticism
+  tantra:
+    religion: Tantra
+  vaastu:
+    religion: Vaastu Shastra
+  martinism:
+    religion: Martinism
+  meher:
+    religion: Meher Baba
+  rosicrucian:
+    religion: Rosicrucian
+  rosae_crucis:
+    religion:  Ancient Mystical Order Rosae Crucis
+  ancient_rosicrucians:
+    religion: Ancient Order of the Rosicrucian
+  rosicrucian:
+    religion: Rosicrucian Fellowship
+  sufism:
+    religion: Sufism
+  theosophy:
+    religion: Theosophy
+  ceremonial_magic:
+    religion: Ceremonial Magic
+  enochian:
+    religion: Enochian Magic
+  goetic:
+    religion: Goetic Magic
+  chaos_magick:
+    religion: Chaos Magick
+  hoodoo:
+    religion: Hoodoo (Rootwork)
+  voodoo:
+    religion: New Orleans Voodoo
+  socialism_and_occultism:
+    religion: National Socialism and Occultism
+  pow_wow:
+    religion: Pow-wow
+  seior:
+    religion: Seior- Norse sorcery
+  thelema:
+    religion: Thelema
+  witchcraft:
+    religion: Witchcraft
+  demonolatry:
+    religion: Demonolatry
+  luciferianism:
+    religion: Luciferianism
+  satanism:
+    religion: Satanism
+  setianism:
+    religion: Setianism
+  freemasonry:
+    religion: Freemasonry
+  creativity:
+    religion: Creativity Movement
+  shinshukyo:
+    religion: Shinshukyo
+  messianity:
+    religion: Messianity
+  konkokyo:
+    religion: Konkokyo
+  oomoto:
+    religion: Oomoto
+  kyodan:
+    religion: PL Kyodan
+  deism:
+    religion: Deism
+  discordianism:
+    religion: Discordianism
+  ethical:
+    religion: Ethical Culture
+  reason:
+    religion: Fellowship of Reason
+  humanism:
+    religion: Humanism
+  jediism:
+    religion: Jediism
+  juche:
+    religion: Juche
+  secular:
+    religion: Secular Humanism
+  subud:
+    religion: Subud
+  other:
+    religion: Other
+  atheism:
+    religion: Atheism

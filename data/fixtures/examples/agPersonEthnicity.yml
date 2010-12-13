@@ -1,0 +1,51 @@
+agPersonEthnicity:
+  agPersonEthnicity_16:
+    agPerson: 1
+    agEthnicity: mix
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_17:
+    agPerson: 2
+    agEthnicity: australian
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_18:
+    agPerson: 3
+    agEthnicity: native_american
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_19:
+    agPerson: 4
+    agEthnicity: africa
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_20:
+    agPerson: 5
+    agEthnicity: south_east_asian
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_21:
+    agPerson: 6
+    agEthnicity: arctic
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_22:
+    agPerson: 7
+    agEthnicity: caucasian_1
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_23:
+    agPerson: 8
+    agEthnicity: caucasian_2
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_24:
+    agPerson: 9
+    agEthnicity: caucasian_3
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'
+  agPersonEthnicity_25:
+    agPerson: 10
+    agEthnicity: pacific
+    created_at: '2010-08-19 10:40:40'
+    updated_at: '2010-08-19 10:40:40'

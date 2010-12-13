@@ -1,0 +1,34 @@
+# Sample of email contact
+
+agEmailContact:
+  email1:
+    email_contact: email1@spssample.com
+  email2:
+    email_contact: email2@spssample.com
+  email3:
+    email_contact: email3@spssample.com
+  email4:
+    email_contact: email4@spssample.com
+  email5:
+    email_contact: email5@spssample.com
+  email6:
+    email_contact: email6@spssample.com
+  email7:
+    email_contact: email7@spssample.com
+  email8:
+    email_contact: email8@spssample.com
+  email9:
+    email_contact: email9@spssample.com
+  email10:
+    email_contact: email10@spssample.com
+  email11:
+    email_contact: email11@spssample.com
+  email12:
+    email_contact: email12@spssample.com
+  email13:
+    email_contact: email13@spssample.com
+  email14:
+    email_contact: email14@spssample.com
+  email15:
+    email_contact: email15@spssample.com
+

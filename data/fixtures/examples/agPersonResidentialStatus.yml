@@ -1,0 +1,45 @@
+# Samples of agPersonResidentialStatus table
+# Requirement: Pre-load agPerson sample file and agResidentialStatus data dictionary.
+
+agPersonResidentialStatus:
+  1:
+    agPerson: 1
+    agCountry: united_states
+    agResidentialStatus: citizen
+  2:
+    agPerson: 2
+    agCountry: united_states
+    agResidentialStatus: tourist
+  3:
+    agPerson: 3
+    agCountry: united_states
+    agResidentialStatus: tourist
+  4:
+    agPerson: 4
+    agCountry: united_states
+    agResidentialStatus: foreign_student
+  5:
+    agPerson: 5
+    agCountry: united_states
+    agResidentialStatus: permanent_residency
+  6:
+    agPerson: 6
+    agCountry: united_states
+    agResidentialStatus: citizen
+  7:
+    agPerson: 7
+    agCountry: united_states
+    agResidentialStatus: work_permit
+  8:
+    agPerson: 8
+    agCountry: united_states
+    agResidentialStatus: illegal_immigrant
+  9:
+    agPerson: 9
+    agCountry: united_states
+    agResidentialStatus: tourist
+  10:
+    agPerson: 10
+    agCountry: united_states
+    agResidentialStatus: foreign_student
+

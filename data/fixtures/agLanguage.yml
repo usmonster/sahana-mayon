@@ -1,0 +1,369 @@
+#Pre-populate language based on ISO 639-1 code, http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
+agLanguage:
+  abkhaz:
+    language: Abkhaz
+  afar:
+    language: Afar
+  afrikaans:
+    language: Afrikaans
+  akan:
+    language: Akan
+  albanian:
+    language: albanian
+  amharic:
+    language: Amharic
+  arabic:
+    language: Arabic
+  aragonese:
+    language: Aragonese
+  armenian:
+    language: Armenian
+  assamese:
+    language: Assamese
+  avaric:
+    language: Avaric
+  avestan:
+    language: Avestan
+  aymara:
+    language: Aymara
+  azerbaijani:
+    language: Azerbaijani
+  bambara:
+    language: Bambara
+  bashkir:
+    language: Bashkir
+  basque:
+    language: Basque
+  belarusian:
+    language: Bearusian
+  bengali:
+    language: Bengali
+  bihari:
+    language: Bihari
+  bislama:
+    language: Bislama
+  bosnian:
+    language: Bosnian
+  breton:
+    language: Breton
+  bulgarian:
+    language: Bulgarian
+  burmese:
+    language: Burmese
+  catalan:
+    language: Catalan
+  chamorro:
+    language: Chamoro
+  chechen:
+    language: Chechen
+  chichewa:
+    language: Chichewa
+  chinese:
+    language: Chinese
+  chuvash:
+    language: Chuvash
+  cornish:
+    language: Cornish
+  corsican:
+    language: Corsican
+  cree:
+    language: Cree
+  croatian:
+    language: Croatian
+  czech:
+    language: Czech
+  danish:
+    language: Danish
+  divehi:
+    language: Divehi
+  dutch:
+    language: Dutch
+  dzongkha:
+    language: Dzongkha
+  english:
+    language: English
+  esperanto:
+    language: Esperanto
+  estonian:
+    language: Estonian
+  ewe:
+    language: Ewe
+  faroese:
+    language: Faroese
+  fijian:
+    language: Fijian
+  finnish:
+    language: Finnish
+  french:
+    language: French
+  fula:
+    language: Fula
+  galician:
+    language: Galician
+  georgian:
+    language: Georgian
+  german:
+    language: German
+  greek:
+    language: Greek
+  guarani:
+    language: Guarani
+  gujarati:
+    language: Gujarati
+  haitan:
+    language: Haitan
+  hausa:
+    language: Hausa
+  hebrew:
+    language: Hebrew
+  herero:
+    language: Herero
+  hindi:
+    language: Hindi
+  hiri_motu:
+    language: Hiri Motu
+  hungarian:
+    language: Hungarian
+  interlingua:
+    language: Interlingua
+  indonesian:
+    language: Indonesian
+  interlingue:
+    language: Interlingue
+  irish:
+    language: Irish
+  igbo:
+    language: Igbo
+  inupiaq:
+    language: Inupiaq
+  ido:
+    language: Ido
+  icelandic:
+    language: Icelandic
+  italian:
+    language: Italian
+  inuktitut:
+    language: Inuktitut
+  japanese:
+    language: Japanese
+  javanese:
+    language: Javanese
+  kalaallisut:
+    language: Kalaallisut
+  kannada:
+    language: Kannada
+  kanuri:
+    language: Kanuri
+  kashmiri:
+    language: Kashmiri
+  khmer:
+    language: Khmer
+  kikuyu:
+    language: Kikuyu
+  kinyarwanda:
+    language: Kinyarwanda
+  kirghiz:
+    language: Kyrgyz
+  komi:
+    language: Komi
+  kongo:
+    language: Kongo
+  korean:
+    language: Korean
+  kurdish:
+    language: Kurdish
+  kwanyama:
+    language: Kwanyama
+  latin:
+    language: Latin
+  luxembourgish:
+    language: Luxembourgish
+  luganda:
+    language: Luganda
+  limburgish:
+    language: Limburgish
+  lingala:
+    language: Lingala
+  lao:
+    language: Lao
+  lithuanian:
+    language: Lithuanian
+  luba_katanga:
+    language: Luba-Katanga
+  manx:
+    language: Manx
+  macedonian:
+    language: Macedonian
+  malagasy:
+    language: Malagasy
+  malay:
+    language: Malay
+  malayaiam:
+    language: Malayalam
+  maltese:
+    language: Maltese
+  maori:
+    language: Maori
+  marathi:
+    language: Marathi
+  marshallese:
+    language: Marshallese
+  mongolian:
+    language: Mongolian
+  nauru:
+    language: Nauru
+  navajo:
+    language: Navajo
+  norwegian:
+    language: Norwegian Bokmal
+  north_ndebele:
+    language: North Ndebele
+  nepali:
+    language: Nepali
+  ndonga:
+    language: Ndonga
+  norwegian_nynorsk:
+    language: Norwegian Nynorsk
+  norwegian:
+    language: Norwegian
+  nuosu:
+    language: Nuosu
+  south_ndebele:
+    language: South Ndebele
+  occitan:
+    language: Occitan
+  ojibwa:
+    language: Ojibwa
+  slvaonic:
+    language: Old Church Slavonic
+  oromo:
+    language: Oromo
+  oriya:
+    language: Oriya
+  ossetian:
+    language: Ossetian
+  panjabi:
+    language: Punjabi
+  pali:
+    language: Pali
+  persian:
+    language: Persian
+  polish:
+    language: Polish
+  pashto:
+    language: Pashto
+  portuguese:
+    language: Portuguese
+  quechua:
+    language: Quechua
+  romansh:
+    language: Romansh
+  kirundi:
+    language: Kirundi
+  romanian:
+    language: Romanian
+  russian:
+    language: Russian
+  sanskrit:
+    language: Sanskrit
+  sardinian:
+    language: Sardinian
+  sindhi:
+    language: Sindhi
+  northern_sami:
+    language: Northern Sami
+  samoan:
+    language: Samoan
+  sango:
+    language: Sango
+  serbian:
+    language: Serbian
+  scottish:
+    language: Gaelic
+  shona:
+    language: Shona
+  sinhala:
+    language: Sinhalese
+  slovak:
+    language: Slovak
+  slovene:
+    language: Slovene
+  somali:
+    language: Somali
+  southern_sotho:
+    language: Southern Sotho
+  spanish:
+    language: Spanish
+  sundanese:
+    language: Sundanese
+  swahili:
+    language: Swahili
+  swati:
+    language: Swati
+  swedish:
+    language: Swedish
+  tamil:
+    language: Tamil
+  telugu:
+    language: Telugu
+  tajik:
+    language: Tajik
+  thai:
+    language: Thai
+  tigrinya:
+    language: Tigrinya
+  tibetan:
+    language: Tibetan
+  turkmen:
+    language: Turkmen
+  tagalog:
+    language: Tagalog
+  tswana:
+    language: Tswana
+  tonga:
+    language: Tonga
+  turkish:
+    language: Turkish
+  tsonga:
+    language: Tsonga
+  tatar:
+    language: Tatar
+  twi:
+    language: Twi
+  tahitian:
+    language: Tahitian
+  uighur:
+    language: Uyghur
+  ukrainian:
+    language: Ukrainian
+  urdu:
+    language: Urdu
+  uzbek:
+    language: Uzbek
+  venda:
+    language: Venda
+  vietnamese:
+    language: Vietnamese
+  volapuk:
+    language: Volapuk
+  walloon:
+    language: Walloon
+  welsh:
+    language: Welsh
+  wolof:
+    language: Wolof
+  frisian:
+    language: Western Frisian
+  xhosa:
+    language: Xhosa
+  yiddish:
+    language: Yiddish
+  yoruba:
+    language: Yoruba
+  zhuang:
+    language: Zhuang
+  zulu:
+    language: Zulu
+  other:
+    language: other

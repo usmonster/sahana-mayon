@@ -1,0 +1,109 @@
+# Samples of person's phone contact information
+# Requirement: Pre-load entity object and phone data dictionary.  Tie entity object to person object.
+
+agEntityPhoneContact:
+  person1_home:
+    agEntity: 1
+    agPhoneContact: phone1
+    agPhoneContactType: home
+    priority: 1
+  person1_work:
+    agEntity: 1
+    agPhoneContact: phone2
+    agPhoneContactType: work
+    priority: 2
+  person1_mobile:
+    agEntity: 1
+    agPhoneContact: phone3
+    agPhoneContactType: mobile
+    priority: 3
+  person2_work:
+    agEntity: 2
+    agPhoneContact: phone4
+    agPhoneContactType: work
+    priority: 1
+  person2_mobile:
+    agEntity: 2
+    agPhoneContact: phone5
+    agPhoneContactType: mobile
+    priority: 2
+  person3_work:
+    agEntity: 3
+    agPhoneContact: phone6
+    agPhoneContactType: work
+    priority: 1
+  person3_other:
+    agEntity: 3
+    agPhoneContact: phone7
+    agPhoneContactType: other
+    priority: 2
+  person4_work:
+    agEntity: 4
+    agPhoneContact: phone8
+    agPhoneContactType: work
+    priority: 1
+  person5_work:
+    agEntity: 5
+    agPhoneContact: phone9
+    agPhoneContactType: work
+    priority: 1
+  person6_work:
+    agEntity: 6
+    agPhoneContact: phone10
+    agPhoneContactType: work
+    priority: 1
+  person6_mobile:
+    agEntity: 6
+    agPhoneContact: phone11
+    agPhoneContactType: mobile
+    priority: 2
+  person7_home:
+    agEntity: 7
+    agPhoneContact: phone12
+    agPhoneContactType: home
+    priority: 1
+  person8_work:
+    agEntity: 8
+    agPhoneContact: phone13
+    agPhoneContactType: work
+    priority: 1
+  person8_home:
+    agEntity: 8
+    agPhoneContact: phone14
+    agPhoneContactType: home
+    priority: 2
+  person9_work:
+    agEntity: 9
+    agPhoneContact: phone15
+    agPhoneContactType: work
+    priority: 1
+  person9_home:
+    agEntity: 9
+    agPhoneContact: phone16
+    agPhoneContactType: home
+    priority: 2
+  person9_mobile:
+    agEntity: 9
+    agPhoneContact: phone17
+    agPhoneContactType: mobile
+    priority: 3
+  person10_home:
+    agEntity: 10
+    agPhoneContact: phone18
+    agPhoneContactType: home
+    priority: 1
+  person10_work:
+    agEntity: 10
+    agPhoneContact: phone19
+    agPhoneContactType: work
+    priority: 2
+  person10_mobile:
+    agEntity: 10
+    agPhoneContact: phone20
+    agPhoneContactType: mobile
+    priority: 3
+  person10_other:
+    agEntity: 10
+    agPhoneContact: phone21
+    agPhoneContactType: other
+    priority: 4

@@ -1,0 +1,74 @@
+agScenarioFacilityGroup:
+  hurrA_uorc:
+    agScenario: hurricaneA
+    scenario_facility_group: ScenA_UORC
+    agFacilityGroupType: uorc
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrA_G01:
+    agScenario: hurricaneA
+    scenario_facility_group: ScenA_G01
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrA_G02:
+    agScenario: hurricaneA
+    scenario_facility_group: ScenA_G02
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrA_G03:
+    agScenario: hurricaneA
+    scenario_facility_group: ScenA_G03
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrB_uorc:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_UORC
+    agFacilityGroupType: uorc
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrB_G01:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_G01
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrB_G02:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_G02
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrB_G03:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_G03
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrC_uorc:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_UORC
+    agFacilityGroupType: uorc
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrC_G01:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G01
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrC_G02:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G02
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+  hurrC_G03:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G03
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: available
+    activation_sequence: 1
+

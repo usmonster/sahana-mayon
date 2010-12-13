@@ -1,0 +1,725 @@
+agPerson:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    entity_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    agPerson_unq:
+      fields: [entity_id]
+      type: unique
+  relations:
+    agEntity:
+      class: agEntity
+      foreignAlias: agPerson
+      local: entity_id
+      foreign: id
+    agPersonDateOfBirth:
+      type: one
+      foreignType: one
+      local: id
+      foreign: person_id
+    agNationality:
+      class: agNationality
+      refClass: agPersonMjAgNationality
+      local: person_id
+      foreign: nationality_id
+    agReligion:
+      class: agReligion
+      refClass: agPersonMjAgReligion
+      local: person_id
+      foreign: religion_id
+    agProfession:
+      class: agProfession
+      refClass: agPersonMjAgProfession
+      local: person_id
+      foreign: profession_id
+    agLanguage:
+      class: agLanguage
+      refClass: agPersonMjAgLanguage
+      local: person_id
+      foreign: language_id
+    agCountry:
+      class: agCountry
+      refClass: agPersonResidentialStatus
+      local: person_id
+      foreign: country_id
+    agEthnicity:
+      class: agEthnicity
+      refClass: agPersonEthnicity
+      local: person_id
+      foreign: ethnicity_id
+    agSex:
+      class: agSex
+      refClass: agPersonSex
+      local: person_id
+      foreign: sex_id
+    agMaritalStatus:
+      class: agMaritalStatus
+      refClass: agPersonMaritalStatus
+      local: person_id
+      foreign: marital_status_id
+    agImport:
+      class: agImport
+      refClass: agPersonLastImport
+      local: person_id
+      foreign: last_import_id
+    agResidentialStatus:
+      class: agResidentialStatus
+      refClass: agPersonResidentialStatus
+      local: person_id
+      foreign: residential_status_id
+    agPersonName:
+      class: agPersonName
+      refClass: agPersonMjAgPersonName
+      local: person_id
+      foreign: person_name_id
+    agPersonNameType:
+      class: agPersonNameType
+      refClass: agPersonMjAgPersonName
+      local: person_id
+      foreign: person_name_type_id
+    agPersonCustomField:
+      class: agPersonCustomField
+      refClass: agPersonCustomFieldValue
+      local: person_id
+      foreign: person_custom_field_id
+agNationality:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    nationality:
+      unique: true
+      type: string(128)
+      notnull: true
+    description:
+      type: string(128)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonMjAgNationality
+      local: nationality_id
+      foreign: person_id
+agPersonMjAgNationality:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    nationality_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_ag_person_mj_ag_nationality:
+      fields: [person_id, nationality_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agNationality:
+      local: nationality_id
+      foreign: id
+agEthnicity:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    ethnicity:
+      unique: true
+      type: string(64)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonEthnicity
+      local: ethnicity_id
+      foreign: person_id
+agPersonEthnicity:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+    ethnicity_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agPersonEthnicity:
+      fields: [person_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agEthnicity:
+      local: ethnicity_id
+      foreign: id
+agReligion:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    religion:
+      unique: true
+      type: string(128)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonMjAgReligion
+      local: religion_id
+      foreign: person_id
+agPersonMjAgReligion:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    religion_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_ag_person_mj_ag_religion:
+      fields: [person_id, religion_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agReligion:
+      local: religion_id
+      foreign: id
+agProfession:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    profession:
+      unique: true
+      type: string(128)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonMjAgProfession
+      local: profession_id
+      foreign: person_id
+agPersonMjAgProfession:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    profession_id:
+      type: integer(4)
+      notnull: true
+    title:
+      type: string(128)
+  indexes:
+    UX_ag_person_mj_ag_profession:
+      fields: [person_id, profession_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agProfession:
+      local: profession_id
+      foreign: id
+agMaritalStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    marital_status:
+      unique: true
+      type: string(32)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonMaritalStatus
+      local: marital_status_id
+      foreign: person_id
+agPersonMaritalStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    marital_status_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agPersonMaritalStatus:
+      fields: [person_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agMaritalStatus:
+      local: marital_status_id
+      foreign: id
+agLanguage:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    language:
+      unique: true
+      type: string(128)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonMjAgLanguage
+      local: language_id
+      foreign: person_id
+agPersonMjAgLanguage:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    language_id:
+      type: integer(4)
+      notnull: true
+    priority:
+      type: integer(1)
+      notnull: true
+  indexes:
+    UX_ag_person_mj_ag_language:
+      fields: [person_id, language_id]
+      type: unique
+    agPersonMjAgLanguage_priority_unq:
+      fields: [person_id, priority]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agLanguage:
+      local: language_id
+      foreign: id
+    agLanguageFormat:
+      class: agLanguageFormat
+      refClass: agPersonLanguageCompetency
+      local: person_language_id
+      foreign: language_format_id
+    agLanguageCompetency:
+      class: agLanguageCompetency
+      refClass: agPersonLanguageCompetency
+      local: person_language_id
+      foreign: language_competency_id
+agLanguageCompetency:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    language_competency:
+      unique: true
+      type: string(64)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPersonMjAgLanguage:
+      class: agPersonMjAgLanguage
+      refClass: agPersonLanguageCompetency
+      local: language_competency_id
+      foreign: person_language_id
+    agLanguageFormat:
+      class: agLanguageFormat
+      refClass: agPersonLanguageCompetency
+      local: language_competency_id
+      foreign: language_format_id
+agSex:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    sex:
+      unique: true
+      type: string(64)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonSex
+      local: sex_id
+      foreign: person_id
+agPersonSex:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    sex_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agPersonSex:
+      fields: [person_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agSex:
+      local: sex_id
+      foreign: id
+agPersonDateOfBirth:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    date_of_birth:
+      type: date
+      notnull: true
+  indexes:
+    UX_agPersonDateOfBirth:
+      fields: [person_id]
+      type: unique
+  relations:
+    agPerson:
+      type: one
+      foreignType: one
+      local: person_id
+      foreign: id
+agPersonNameType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    person_name_type:
+      unique: true
+      type: string(30)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonMjAgPersonName
+      local: person_name_type_id
+      foreign: person_id
+    agPersonName:
+      class: agPersonName
+      refClass: agPersonMjAgPersonName
+      local: person_name_type_id
+      foreign: person_name_id
+agPersonName:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_name:
+      unique: true
+      type: string(64)
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonMjAgPersonName
+      local: person_name_id
+      foreign: person_id
+    agPersonNameType:
+      class: agPersonNameType
+      refClass: agPersonMjAgPersonName
+      local: person_name_id
+      foreign: person_name_type_id
+agPersonMjAgPersonName:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    person_name_id:
+      type: integer(5)
+      notnull: true
+    person_name_type_id:
+      type: integer(2)
+      notnull: true
+    priority:
+      type: integer(1)
+      notnull: true
+  indexes:
+    UX_ag_person_mj_ag_person_name:
+      fields: [person_name_id, person_name_type_id, person_id]
+      type: unique
+    agPersonMjAgPersonName_priority_unq:
+      fields: [person_id, person_name_type_id, priority]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agPersonName:
+      local: person_name_id
+      foreign: id
+    agPersonNameType:
+      local: person_name_type_id
+      foreign: id
+agResidentialStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    residential_status:
+      unique: true
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agPersonResidentialStatus
+      local: residential_status_id
+      foreign: person_id
+    agCountry:
+      class: agCountry
+      refClass: agPersonResidentialStatus
+      local: residential_status_id
+      foreign: country_id
+agPersonResidentialStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    country_id:
+      type: integer(2)
+      notnull: true
+    residential_status_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_ag_person_residential_status:
+      fields: [person_id, country_id]
+      type: unique
+  relations:
+    agResidentialStatus:
+      local: residential_status_id
+      foreign: id
+    agPerson:
+      local: person_id
+      foreign: id
+    agCountry:
+      local: country_id
+      foreign: id
+agPersonLanguageCompetency:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_language_id:
+      type: integer(5)
+      notnull: true
+    language_format_id:
+      type: integer(2)
+      notnull: true
+    language_competency_id:
+      type: integer(2)
+      notnull: true
+  relations:
+    agLanguageFormat:
+      local: language_format_id
+      foreign: id
+    agPersonMjAgLanguage:
+      local: person_language_id
+      foreign: id
+    agLanguageCompetency:
+      local: language_competency_id
+      foreign: id
+agLanguageFormat:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    language_format:
+      unique: true
+      type: string(64)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  relations:
+    agPersonMjAgLanguage:
+      class: agPersonMjAgLanguage
+      refClass: agPersonLanguageCompetency
+      local: language_format_id
+      foreign: person_language_id
+    agLanguageCompetency:
+      class: agLanguageCompetency
+      refClass: agPersonLanguageCompetency
+      local: language_format_id
+      foreign: language_competency_id
+agCustomFieldType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    custom_field_type:
+      type: string(64)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agCustomFieldType_unq:
+      fields: [custom_field_type]
+      type: unique
+agPersonCustomField:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    person_custom_field:
+      type: string(64)
+      notnull: true
+    custom_field_type_id:
+      type: integer(2)
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agPersonCustomField_unq:
+      fields: [person_custom_field]
+      type: unique
+  relations:
+    agCustomFieldType:
+      class: agCustomFieldType
+      foreignAlias: agPersoncustomField
+      local: custom_field_type_id
+      foreign: id
+    agPerson:
+      class: agPerson
+      refClass: agPersonCustomFieldValue
+      local: person_custom_field_id
+      foreign: person_id
+agPersonCustomFieldValue:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    person_custom_field_id:
+      type: integer(2)
+      notnull: true
+    value:
+      type: string(255)
+      notnull: true
+  indexes:
+    agPersonCustomFieldValue_unq:
+      fields: [person_id, person_custom_field_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agPersonCustomField:
+      local: person_custom_field_id
+      foreign: id
+actAs:
+  Timestampable: 

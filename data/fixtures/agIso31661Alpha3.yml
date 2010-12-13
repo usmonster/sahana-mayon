@@ -1,0 +1,496 @@
+# Pre-populate Country's ISO 3166-1 alpha-3 code
+# This data dictionary is based off of http://en.wikipedia.org/wiki/ISO_3166-1
+
+agIso31661Alpha3:
+  afghanistan:
+    value: AFG
+  aland_islands:
+    value: ALA
+  albania:
+    value: ALB
+  algeria:
+    value: DZA
+  american_samoa:
+    value: ASM
+  andorra:
+    value: AND
+  angola:
+    value: AGO
+  anguilla:
+    value: AIA
+  antarctica:
+    value: ATA
+  antigua_and_barbuda:
+    value: ATG
+  argentina:
+    value: ARG
+  armenia:
+    value: ARM
+  aruba:
+    value: ABW
+  australia:
+    value: AUS
+  austria:
+    value: AUT
+  azerbaijan:
+    value: AZE
+  bahamas:
+    value: BHS
+  bahrain:
+    value: BHR
+  bangladesh:
+    value: BGD
+  barbados:
+    value: BRB
+  belarus:
+    value: BLR
+  belgium:
+    value: BEL
+  belize:
+    value: BLZ
+  benin:
+    value: BEN
+  bermuda:
+    value: BMU
+  bhutan:
+    value: BTN
+  bolivia:
+    value: BOL
+  bosnia_and_herzegovina:
+    value: BIH
+  botswana:
+    value: BWA
+  bouvet_island:
+    value: BVT
+  brazil:
+    value: BRA
+  british_indian_ocena_territory:
+    value: IOT
+  brunei_darussalam:
+    value: BRN
+  bulgaria:
+    value: BGR
+  burkina_faso:
+    value: BFA
+  burundi:
+    value: BDI
+  cambodia:
+    value: KHM
+  cameroon:
+    value: CMR
+  canada:
+    value: CAN
+  cape_verde:
+    value: CPV
+  cayman_islands:
+    value: CYM
+  central_african_republic:
+    value: CAF
+  chad:
+    value: TCD
+  chile:
+    value: CHl
+  china:
+    value: CHN
+  christmas_island:
+    value: CXR
+  cocos_islands:
+    value: CCK
+  colombia:
+    value: COL
+  comoros:
+    value: COM
+  congo:
+    value: COG
+  congo_d:
+    value: COD
+  cook_islands:
+    value: COK
+  costa_rica:
+    value: CRI
+  cote_divoire:
+    value: CIV
+  croatia:
+    value: HRV
+  cuba:
+    value: CUB
+  cyprus:
+    value: CYP
+  czech_republic:
+    value: CZE
+  denmark:
+    value: DNK
+  Djibouti:
+    value: DJI
+  dominica:
+    value: DMA
+  dominican_republic:
+    value: DOM
+  ecuador:
+    value: ECU
+  egypt:
+    value: EGY
+  el_salvador:
+    value: SLV
+  equatorial_guinea:
+    value: GNQ
+  eritrea:
+    value: ERI
+  estonia:
+    value: EST
+  ethiopia:
+    value: ETH
+  falkland_islands:
+    value: FLK
+  faroe_islands:
+    value: FRO
+  fiji:
+    value: FJI
+  finland:
+    value: FIN
+  france:
+    value: FRA
+  french_guiana:
+    value: GUF
+  french_polynesia:
+    value: PYF
+  french_southern_territories:
+    value: ATF
+  gabon:
+    value: GAB
+  gambia:
+    value: GMB
+  georgia:
+    value: GEO
+  germany:
+    value: DEU
+  ghana:
+    value: GHA
+  gibraltar:
+    value: GIB
+  greece:
+    value: GRC
+  greenland:
+    value: GRL
+  grenada:
+    value: GRD
+  guadeloupe:
+    value: GLP
+  guam:
+    value: GUM
+  guatemala:
+    value: GTM
+  guernsey:
+    value: GGY
+  guinea:
+    value: GIN
+  guinea_bissau:
+    value: GNB
+  guyana:
+    value: GYY
+  haiti:
+    value: HTI
+  heard_and_mcdonald:
+    value: HMD
+  holy_see:
+    value: VAT
+  honduras:
+    value: HND
+  hong_kong:
+    value: HKG
+  hungary:
+    value: HUN
+  iceland:
+    value: ISL
+  india:
+    value: IND
+  indonesia:
+    value: IDN
+  iran:
+    value: IRN
+  iraq:
+    value: IRQ
+  ireland:
+    value: IRL
+  isle_of_man:
+    value: IMN
+  israel:
+    value: ISR
+  italy:
+    value: ITA
+  jamaica:
+    value: JAM
+  japan:
+    value: JPN
+  jersey:
+    value: JEY
+  Jordan:
+    value: JOR
+  kazakhstan:
+    value: KAZ
+  kenya:
+    value: KEN
+  kiribati:
+    value: KIR
+  korea_d:
+    value: PRK
+  korea_r:
+    value: KOR
+  kuwait:
+    value: KWT
+  kyrgyzstan:
+    value: KGZ
+  lao:
+    value: LAO
+  latvia:
+    value: LVA
+  lebanon:
+    value: LBN
+  lesotho:
+    value: LSO
+  liberia:
+    value: LBR
+  libyan:
+    value: LBY
+  liechtenstein:
+    value: LIE
+  lithuania:
+    value: LTU
+  luxembourg:
+    value: LUX
+  macao:
+    value: MAC
+  macedonia:
+    value: MKD
+  madagascar:
+    value: MDG
+  Malawi:
+    value: MWI
+  malaysia:
+    value: MYS
+  maldives:
+    value: MDV
+  mali:
+    value: MLI
+  malta:
+    value: MLT
+  marshal:
+    value: MHL
+  martinique:
+    value: MTQ
+  mauritania:
+    value: MRT
+  mauritius:
+    value: MUS
+  mayotte:
+    value: MYT
+  mexico:
+    value: MEX
+  micronesia:
+    value: FSM
+  moldova:
+    value: MDA
+  monaco:
+    value: MCO
+  mongolia:
+    value: MNG
+  montenegro:
+    value: MNE
+  montserrat:
+    value: MSR
+  morocco:
+    value: MAR
+  mozambique:
+    value: MOZ
+  myanmar:
+    value: MMR
+  namibia:
+    value: NAM
+  nauru:
+    value: NRU
+  nepal:
+    value: NPL
+  netherlands:
+    value: NLD
+  netherlands_a:
+    value: ANT
+  new_caledonia:
+    value: NCL
+  new_zealand:
+    value: NZL
+  nicaragua:
+    value: NIC
+  niger:
+    value: NER
+  nigeria:
+    value: NGA
+  niue:
+    value: NIU
+  norfolk_island:
+    value: NFK
+  northern_mariana_islands:
+    value: MNP
+  norway:
+    value: NOR
+  oman:
+    value: OMM
+  pakistan:
+    value: PAK
+  palau:
+    value: PLW
+  palestinian:
+    value: PSE
+  panama:
+    value: PAN
+  papua:
+    value: PNG
+  paraguay:
+    value: PRY
+  peru:
+    value: PER
+  philippines:
+    value: PHL
+  pitcairn:
+    value: PCN
+  poland:
+    value: POL
+  portugal:
+    value: PRT
+  puerto_rico:
+    value: PRI
+  qatar:
+    value: QAT
+  reunion:
+    value: REU
+  romania:
+    value: ROU
+  russian_federation:
+    value: RUS
+  rwanda:
+    value: RWA
+  barthelemy:
+    value: BLM
+  helena:
+    value: SHN
+  kitts_and_nevis:
+    value: KNA
+  lucia:
+    value: LCA
+  martin:
+    value: MFA
+  pierre_and_miquelon:
+    value: SPM
+  vincent_and_grenadines:
+    value: VCT
+  samoa:
+    value: WSM
+  san_marino:
+    value: SMR
+  sao:
+    value: STP
+  saudi_arabia:
+    value: SAU
+  senegal:
+    value: SEN
+  serbia:
+    value: SRB
+  seychelles:
+    value: SYC
+  sierra_leone:
+    value: SLE
+  singapore:
+    value: SGP
+  slovakia:
+    value: SVK
+  slovenia:
+    value: SVN
+  solomon_islands:
+    value: SLB
+  somalia:
+    value: SOM
+  south_africa:
+    value: ZAF
+  south_georgia_and_sandwich:
+    value: SGS
+  spain:
+    value: ESP
+  sri_lanka:
+    value: LKA
+  sudan:
+    value: SDN
+  suriname:
+    value: SUR
+  svalbard:
+    value: SJM
+  swaziland:
+    value: SWZ
+  sweden:
+    value: SWE
+  switzerland:
+    value: CHE
+  syrian:
+    value: SYR
+  taiwan:
+    value: TWN
+  tajikistan:
+    value: TJK
+  tanzania:
+    value: TZA
+  thailand:
+    value: THA
+  timor_leste:
+    value: TLS
+  togo:
+    value: TGO
+  tokelau:
+    value: TKL
+  tonga:
+    value: TON
+  trinidad_and_tobago:
+    value: TTO
+  tunisia:
+    value: TUN
+  turkey:
+    value: TUR
+  turkmenistan:
+    value: TKM
+  turks_and_caicos:
+    value: TCA
+  tuvalu:
+    value: TUV
+  uganda:
+    value: UGA
+  ukraine:
+    value: UKR
+  united_arab_emirates:
+    value: ARE
+  united_kingdom:
+    value: GBR
+  united_states:
+    value: USA
+  united_states_minor:
+    value: UMI
+  uruguay:
+    value: URY
+  uzbekistan:
+    value: UZB
+  vanuatu:
+    value: VUT
+  venezuela:
+    value: VEN
+  vietnam:
+    value: VNM
+  virgin_islands_british:
+    value: VGB
+  virgin_islands_us:
+    value: VIR
+  wallis_and_futuna:
+    value: WLF
+  western_sahara:
+    value: ESH
+  yemen:
+    value: YEM
+  zambia:
+    value: ZMB
+  zimbabwe:
+    value: ZWE

@@ -1,0 +1,126 @@
+agIso31662:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    value:
+      unique: true
+      type: string(20)
+      notnull: true
+  relations:
+    agCountry:
+      class: agCountry
+      refClass: agCountryMjAgIso31662
+      local: iso_31662_id
+      foreign: country_id
+agIso31661Alpha2:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    value:
+      unique: true
+      type: string(2)
+      notnull: true
+  relations:
+    agCountry:
+      class: agCountry
+      refClass: agCountryMjAgIso31661Alpha2
+      local: iso_31661_alpha2_id
+      foreign: country_id
+agIso31661Alpha3:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    value:
+      unique: true
+      type: string(3)
+      notnull: true
+  relations:
+    agCountry:
+      class: agCountry
+      refClass: agCountryMjAgIso31661Alpha3
+      local: iso_31661_alpha3_id
+      foreign: country_id
+agIso31661Numeric:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    value:
+      unique: true
+      type: string(3)
+      notnull: true
+  relations:
+    agCountry:
+      class: agCountry
+      refClass: agCountryMjAgIso31661Numeric
+      local: iso_31661_numeric_id
+      foreign: country_id
+agCountryMjAgIso31662:
+  columns:
+    country_id:
+      primary: true
+      type: integer(2)
+    iso_31662_id:
+      primary: true
+      type: integer(2)
+  relations:
+    agCountry:
+      local: country_id
+      foreign: id
+    agIso31662:
+      local: iso_31662_id
+      foreign: id
+agCountryMjAgIso31661Alpha2:
+  columns:
+    country_id:
+      primary: true
+      type: integer(2)
+    iso_31661_alpha2_id:
+      primary: true
+      type: integer(2)
+  relations:
+    agCountry:
+      local: country_id
+      foreign: id
+    agIso31661Alpha2:
+      local: iso_31661_alpha2_id
+      foreign: id
+agCountryMjAgIso31661Alpha3:
+  columns:
+    country_id:
+      primary: true
+      type: integer(2)
+    iso_31661_alpha3_id:
+      primary: true
+      type: integer(2)
+  relations:
+    agCountry:
+      local: country_id
+      foreign: id
+    agIso31661Alpha3:
+      local: iso_31661_alpha3_id
+      foreign: id
+agCountryMjAgIso31661Numeric:
+  columns:
+    country_id:
+      primary: true
+      type: integer(2)
+    iso_31661_numeric_id:
+      primary: true
+      type: integer(2)
+  relations:
+    agCountry:
+      local: country_id
+      foreign: id
+    agIso31661Numeric:
+      local: iso_31661_numeric_id
+      foreign: id
+actAs:
+  Timestampable: 

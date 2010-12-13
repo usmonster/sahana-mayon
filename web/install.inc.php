@@ -1,0 +1,678 @@
+<?php
+
+/**
+ * Sahana Agasti 1.99999 , Mayon install.inc.php
+ * this file houses installation specific functions, primarily called from install.php
+ */
+require_once (dirname(__FILE__) . '/../lib/vendor/symfony/lib/yaml/sfYaml.php');
+require_once (dirname(__FILE__) . '/../config/ProjectConfiguration.class.php');
+require_once(dirname(__FILE__) . '/requirements.inc.php');
+require_once (dirname(__FILE__) . '/func.inc.php');
+$configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+
+class agInstall
+{
+  /* protected *//*
+    var $AG_CONFIG;
+    var $DISABLE_NEXT;
+    var $steps = array();
+   */
+
+  /* public */
+
+  function __construct(&$AG_CONFIG)
+  {
+    $this->DISABLE_NEXT = FALSE;
+    $this->RETRY_SUCCESS = FALSE;
+    $this->ERROR_MESSAGE = '';
+    $this->INSTALL_RESULT = '';
+
+    $this->AG_CONFIG = &$AG_CONFIG;
+
+    $this->steps = array(
+      0 => array('title' => '1. Introduction', 'fun' => 'stage0'),
+      1 => array('title' => '2. Licence Agreement', 'fun' => 'stage1'),
+      2 => array('title' => '3. Pre-requisite Check', 'fun' => 'stage2'),
+      3 => array('title' => '4. Configure Database', 'fun' => 'stage3'),
+      4 => array('title' => '5. Configuration Summary', 'fun' => 'stage4'),
+      5 => array('title' => '6. Installation Summary', 'fun' => 'stage5'),
+//    6 => array('title' => '7. Enter Secure Mode', 'fun' => 'stage6' ),
+    );
+    $this->EventHandler();
+    GLOBAL $trans;
+    $trans = array(
+      //     requirements.inc.php
+      'S_PHP_VERSION' => 'PHP version',
+      'S_MINIMAL_VERSION_OF_PHP_IS' => 'Minimal version of PHP is',
+      'S_PHP_MEMORY_LIMIT' => 'PHP memory limit',
+      'S_IS_A_MINIMAL_PHP_MEMORY_LIMITATION_SMALL' => 'is a minimal PHP memory limitation',
+      'S_PHP_POST_MAX_SIZE' => 'PHP post max size',
+      'S_IS_A_MINIMUM_SIZE_OF_PHP_POST_SMALL' => 'is minimum size of PHP post',
+      'S_PHP_MAX_EXECUTION_TIME' => 'PHP max execution time',
+      'S_PHP_MAX_INPUT_TIME' => 'PHP max input time',
+      'S_IS_A_MINIMAL_LIMITATION_EXECTUTION_TIME_SMALL' => 'is a minimal limitation on execution time of PHP scripts',
+      'S_IS_A_MINIMAL_LIMITATION_INPUT_PARSE_TIME_SMALL' => 'is a minimal limitation on input parse time for PHP scripts',
+      'S_PHP_TIMEZONE' => 'PHP timezone',
+      'S_NO_SMALL' => 'no',
+      'S_YES_SMALL' => 'yes',
+      'S_TIMEZONE_FOR_PHP_IS_NOT_SET' => 'Timezone for PHP is not set',
+      'S_PLEASE_SET' => 'Please set',
+      'S_OPTION_IN_SMALL' => 'option in',
+      'S_PHP_DATABASES_SUPPORT' => 'PHP databases support',
+      'S_REQUIRES_ANY_DATABASE_SUPPORT' => 'Requires any database support [MySQL or PostgreSQL or Oracle or SQLite3]',
+      'S_REQUIRES_BCMATH_MODULE' => 'Requires bcmath module',
+      'S_CONFIGURE_PHP_WITH_SMALL' => 'configure PHP with',
+      'S_REQUIRES_MB_STRING_MODULE' => 'Requires mb string module',
+      'S_PHP_SOCKETS' => 'PHP Sockets',
+      'S_REQUIRED_SOCKETS_MODULE' => 'Required Sockets module',
+      'S_THE_GD_EXTENSION_IS_NOT_LOADED' => 'The GD extension is not loaded.',
+      'S_GD_PNG_SUPPORT' => 'GD PNG Support',
+      'S_REQUIRES_IMAGES_GENERATION_SUPPORT' => 'Requires images generation support',
+      'S_LIBXML_MODULE' => 'libxml module',
+      'S_PHPXML_MODULE_IS_NOT_INSTALLED' => 'php-xml module is not installed',
+      'S_CTYPE_MODULE' => 'ctype module',
+      'S_REQUIRES_CTYPE_MODULE' => 'Requires ctype module',
+      'S_PHP_UPLOAD_MAX_FILESIZE' => 'PHP upload max filesize',
+      'S_IS_MINIMAL_FOR_PHP_ULOAD_FILESIZE_SMALL' => 'is minimum for PHP upload filesize',
+      'S_SESSION_MODULE' => 'PHP Session',
+      'S_REQUIRED_SESSION_MODULE' => 'Required Session module',
+    );
+    foreach ($trans as $const => $label) {
+      if (!defined($const))
+        define($const, $label);
+    }
+    unset($GLOBALS['trans']);
+  }
+
+  function getConfig($name, $default = null)
+  {
+    return isset($this->AG_CONFIG[$name]) ? $this->AG_CONFIG[$name] : $default;
+  }
+
+  function setConfig($name, $value)
+  {
+    return ($this->AG_CONFIG[$name] = $value);
+  }
+
+  function getStep()
+  {
+    return $this->getConfig('step', 0);
+  }
+
+  function DoNext()
+  {
+    if (isset($this->steps[$this->getStep() + 1])) {
+      $this->AG_CONFIG['step']++;
+      return true;
+    }
+    return false;
+  }
+
+  function DoBack()
+  {
+    if (isset($this->steps[$this->getStep() - 1])) {
+      $this->AG_CONFIG['step']--;
+      return true;
+    }
+    return false;
+  }
+
+  function getList()
+  {
+    /**
+     * this is a simple html constructor, takes our array and
+     * generates a series of list items
+     */
+    $list = "<ul>";
+    foreach ($this->steps as $id => $data) {
+      if ($id < $this->getStep())
+        $style = 'completed';
+      else if ($id == $this->getStep())
+        $style = 'current';
+      else
+        $style = null;
+
+      $list = $list . '<li class="' . $style . '">' . $data['title'] . '</li>';
+    }
+    $list = $list . "</ul>";
+    return $list;
+  }
+
+  function getState()
+  {
+    $fun = $this->steps[$this->getStep()]['fun'];
+    return $this->$fun();
+  }
+
+  function stage0()
+  {
+    return '<div class=info>Welcome to the Sahana Agasti 1.99999, Mayon Installation Wizard.<br />
+      The installation wizard will guide you through the installation of Sahana Agasti 1.99999, Mayon <br />
+      Click the "Next" button to proceed to the next screen. If you want to change something <br />
+      at a previous step, click the "Previous" button <br />
+      You may cancel installation at any time by clicking the "Cancel" button</div>';
+  }
+
+  function stage1()
+  {
+    $LICENCE_FILE = '../LICENSE';
+
+    $this->DISABLE_NEXT = !$this->getConfig('agree', false);
+
+    $license = 'Missing licence file. See GPL licence.';
+    if (file_exists($LICENCE_FILE))
+      $license = file_get_contents($LICENCE_FILE);
+
+
+    $agree = '<input class="checkbox" type="checkbox" value="yes" name="agree" id="agree" onclick="submit();"';
+    $this->getConfig('agree', false) == 'yes' ? $agree .= ' checked=checked>' : $agree .= '>';
+
+    return '<div class=info>' . $license . "</div><br />" . $agree . '<label for="agree">I agree</label>';
+  }
+
+  /**
+   * step 2: pre-requisite check
+   * @return block of html for UI of stage/step 2
+   */
+  function stage2()
+  {
+
+    $table = '<table class="requirements" style="align:center"><tr style="font-weight:bold;"><td>&nbsp;</td><td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr>';
+    /**
+     * @todo clean up the following code
+     */
+    $final_result = true;
+
+    $reqs = check_php_requirements();
+    foreach ($reqs as $req) {
+
+      $result = null;
+      if (!is_null($req['recommended']) && ($req['result'] == 1)) {
+        $result = '<span class="orange">Ok</span>';
+      } else if ((!is_null($req['recommended']) && ($req['result'] == 2))
+          || (is_null($req['recommended']) && ($req['result'] == 1))) {
+        $result = '<span class="green">Ok</span>';
+      } else if ($req['result'] == 0) {
+        $result = '<span class="fail">Fail</span>';
+        // this will be useful$result->setHint($req['error']);
+      }
+
+      $current = '<tr><td>&nbsp;</td><td><strong>' . $req['name'] . '</strong></td>' . '<td>' . $req['current'] . '</td>';
+      $required = $req['required'] ? $req['required'] : '&nbsp;';
+      $recommend = $req['recommended'] ? $req['recommended'] : '&nbsp;';
+      $res = $req['result'] ? '&nbsp;' : 'fail';
+      $row = '<td>' . $current . '</td><td>' . $required . '</td><td>' . $recommend . '</td><td>' . $result . '</td>';
+
+      $table = $table . $row . '</tr>';
+
+      $final_result &= (bool) $req['result'];
+    }
+
+    if (!$final_result) {
+      $this->DISABLE_NEXT = true;
+
+      $retry = '<input type="submit" class="inputGray" id="retry" name="retry" value="retry" />';
+      $final_result = '<span class="fail">Please correct all issues and press the "retry" button</span><br /><br />' . $retry;
+    } else {
+      $this->DISABLE_NEXT = false;
+      $final_result = '<span class="green">Ok</span>';
+    }
+
+    return $table . '</table><br />' . $final_result;
+  }
+
+  function stage3()
+  {
+    global $AG_CONFIG;
+    $this->getCurrent();
+
+    if (isset($_REQUEST['retry']) && $this->RETRY_SUCCESS == false) {
+      $retry_label = 'retry';
+      $instruct = '<span class="fail">fail</span><br />
+      <br />Error Message:' . $this->ERROR_MESSAGE . '<br /><span class="fail">please press retry</span>';
+    } else if ($this->RETRY_SUCCESS == false) {
+      $retry_label = 'test connection';
+      $instruct = 'Press "Test connection" button when done.';
+    } else {
+      $instruct = 'Database Settings are <span class="green">Ok</span> please click next';
+    }
+    $retry = '';
+    if ($this->RETRY_SUCCESS == false) {
+      $retry = '<input type="submit" class="inputGray" id="retry" name="retry" value="' . $retry_label . '" />';
+    }
+    $table = '<fieldset>
+              <legend><img src="images/database.png" alt="database icon" />Database Configuration:</legend>
+
+              <ul>
+                <li>
+                  <label>host:</label>
+                  <input type="text" name="db_host" id="db_host" class="inputGray"
+                         value="' . $this->getConfig('DB_SERVER', 'localhost') . '"/>
+                </li>
+                <li>
+                  <label>database:</label>
+                  <input type="text" name="db_name" id="db_name" class="inputGray"
+                         value="' . $this->getConfig('DB_DATABASE', 'agasti') . '" />
+                </li>
+                <li>
+                  <label>username:</label>
+                  <input type="text" name="db_user" id="db_user" class="inputGray"
+                         value="' . $this->getConfig('DB_USER', 'root') . '" />
+                </li>
+                <li>
+                  <label>password:</label>
+                  <input type="password" name="db_pass" id="db_pass" class="inputGray"
+                         value="' . $this->getConfig('DB_PASSWORD', 'root') . '" />
+                </li>
+                <input id="init_schema" type="hidden" name="init_schema" checked="checked" />
+                <li><span class="fail">this will drop your current database.</span></li>
+              </ul>
+            </fieldset>
+            <fieldset>
+              <legend><img src="images/config.png" alt="config gear icon" />Administrator Information:</legend>
+              <ul>
+                <li>
+                  <label>name:</label>
+                  <input type="text" name="admin_name" id="admin_name" class="inputGray"
+                         value="' . $this->getConfig('ADMIN_NAME', 'administrator') . '" /><br />
+                </li>
+                <li>
+                  <label>email:</label>
+                  <input type="text" name="admin_email" id="admin_email" class="inputGray"
+                         value="' . $this->getConfig('ADMIN_EMAIL', 'b@m.an') . '" /><br />
+                </li>
+              </ul>
+            </fieldset>';
+    $results = 'Please create database manually,<br />and set the configuration parameters for connection to this database.<br /><br/>'
+        . $instruct . $table . $retry;
+
+    //$this->DISABLE_NEXT ? new CSpan(S_OK,'ok') :  new CSpan(S_FAIL, 'fail'),
+    //new  CButton('retry', 'Test connection')
+    return $results;
+  }
+
+  function stage4()
+  {
+    $current = $this->getCurrent();
+
+    return 'Below is your installation configuration summary:<br /><div class="info">
+        <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
+    '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
+    '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
+    '<br /><strong>Database Password</strong>:' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
+    '<br /><strong>Administrator</strong>:' . $this->getConfig('ADMIN_NAME') .
+    '<br /><strong>Admin E-mail</strong>:' . $this->getConfig('ADMIN_EMAIL') .
+    '</div><br /> now is your last chance to go back, by clicking next you will install Sahana Agasti';
+  }
+
+  function stage5()
+  {
+    if ($this->INSTALL_RESULT == 'Success!') {
+      return 'Congratulations! here is your installation summary:<br /><div class="info">
+        <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
+      '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
+      '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
+      '<br /><strong>Database Password</strong>:' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
+      '<br /><strong>Administrator</strong>:' . $this->getConfig('ADMIN_NAME') .
+      '<br /><strong>Admin E-mail</strong>:' . $this->getConfig('ADMIN_EMAIL') .
+      '</div><br /> BUT WAIT, you still have to create your admin user. please click finish to be authenticated, you will then create your first user.';
+    } else {
+      return '<span class="fail">There was an error with your installation:</span><br /><div class="info">' . $this->INSTALL_RESULT . '</div>';
+    }
+  }
+
+  function stage6()
+  {
+    return "there is no step 6 in the installer, well, no screen for it at least: this should login the user and redirect to admin/createuser, i.e. you shouldn't even SEE this";
+  }
+
+  function getCurrent()
+  {
+    if (file_exists(dirname(__FILE__) . '/../config/databases.yml') == TRUE) {
+      $dbArray = sfYaml::load(dirname(__FILE__) . '/../config/databases.yml');
+    } else {
+      $install_flag = false;
+    }
+    if (file_exists(dirname(__FILE__) . '/../config/config.yml') == TRUE) {
+      $cfgArray = sfYaml::load(dirname(__FILE__) . '/../config/config.yml');
+    } else {
+      $install_flag = true;
+      $existing_auth_method = "bypass";
+    }
+    try {
+      $db_params = parseDSN($dbArray['all']['doctrine']['param']['dsn']);
+      $this->setConfig('db_config', $dbArray);
+      $this->setConfig('DB_SERVER', $db_params['host']);
+      $this->setConfig('DB_DATABASE', $db_params['dbname']);
+      $this->setConfig('DB_USER', $dbArray['all']['doctrine']['param']['username']);
+      $this->setConfig('DB_PASSWORD', $dbArray['all']['doctrine']['param']['password']);
+      $this->setConfig('ADMIN_NAME', $cfgArray['admin']['admin_name']);
+      $this->setConfig('ADMIN_EMAIL', $cfgArray['admin']['admin_email']);
+    } catch (Exception $e) {
+      return 'file was unreadable';
+    }
+    return array($dbArray, $cfgArray);
+  }
+
+  function dbParams($db_params)
+  {
+    $arguments = array(
+      'task' => 'configure:database',
+      //'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+      'dsn' => $db_params['dsn'], // ilya 2010-07-21 15:16:58
+      //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+      'username' => $db_params['username'],
+      'password' => $db_params['password'],
+    );
+    $options = array(
+      'help' => null,
+      'quiet' => null,
+      'trace' => null,
+      'version' => null,
+      'color' => null,
+      'env' => 'all',
+      'name' => 'doctrine',
+      'class' => 'sfDoctrineDatabase',
+      'app' => null
+    );
+    $dispatcher = new sfEventDispatcher();
+    $formatter = new sfFormatter();
+    $dbConfig = new agDoctrineConfigureDatabaseTask($dispatcher, $formatter);
+    $dbConfig->execute($arguments, $options);
+    try {
+      $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+    } catch (Exception $e) {
+      $configuration = false;
+    }
+    return $configuration;
+  }
+
+  function CheckConnection($db_config)
+  {
+    if ($db_config['dsn'] != '') {
+      try {
+        $databaseManager = new sfDatabaseManager($this->dbParams($db_config));
+        $connection = Doctrine_Manager::connection()->connect();
+        $result = 'good';
+      } catch (Exception $e) {
+        $result = $e->getMessage();
+      }
+    } else {
+      $result = 'Database configuration is not valid: bad DSN';
+    }
+    return $result;
+  }
+
+  function doInstall($db_params)
+  {
+    $databaseManager = new sfDatabaseManager($this->dbParams($db_params));
+    $buildSql = new Doctrine_Task_GenerateSql();
+    $dropDb = new Doctrine_Task_DropDb();
+
+    $dropDb->setArguments(array('force' => true));
+    $buildSql->setArguments(array(
+      'models_path' => sfConfig::get('sf_lib_dir') . '/model/doctrine',
+      'sql_path' => sfConfig::get('sf_data_dir') . '/sql',
+    ));
+    $createDb = new Doctrine_Task_CreateDb();
+    try {
+      if ($dropDb->validate()) {
+        $dropDb->execute();
+      } else {
+        throw new Doctrine_Exception($dropDb->ask());
+      }
+    } catch (Exception $e) {
+      $installed = 'Could not drop DB! : ' . "\n" . $e->getMessage();
+    }
+    try {
+      if ($createDb->validate()) {
+        $createDb->execute();
+      } else {
+        throw new Doctrine_Exception($createDb->ask());
+      }
+    } catch (Exception $e) {
+      $installed = 'Could not create DB! : ' . "\n" . $e->getMessage();
+    }
+    try {
+      if ($buildSql->validate()) {
+        $buildSql->execute();
+      }
+    } catch (Exception $e) {
+      $installed = 'Could not build SQL! : ' . "\n" . $e->getMessage();
+    }
+
+    try {
+      Doctrine_Core::loadModels(
+              sfConfig::get('sf_lib_dir') . '/model/doctrine',
+              Doctrine_Core::MODEL_LOADING_CONSERVATIVE);
+    } catch (Exception $e) {
+      $installed = 'Could not load models! : ' . "\n" . $e->getMessage();
+    }
+    try {
+      Doctrine_Core::createTablesFromArray(Doctrine_Core::getLoadedModels());
+    } catch (Exception $e) {
+
+      $installed = 'Could not create tables! : ' . "\n" . $e->getMessage();
+    }
+
+    $insertSql = new Doctrine_Task_LoadData();
+    $insertSql->setArguments(array(
+      'data_fixtures_path' => sfConfig::get('sf_data_dir') . '/fixtures',
+      'models_path' => sfConfig::get('sf_lib_dir') . '/model/doctrine',
+      'append' => false,
+    ));
+
+    try {
+      if ($insertSql->validate()) {
+        $insertSql->execute();
+        $installed = 'Success!';
+      } else {
+        // TODO: wait, what exception? is $e defined here? -UA
+        $installed = 'SQL insert not valid! : ' . "\n" . $e->getMessage();
+      }
+    } catch (Exception $e) {
+      $installed = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
+    }
+    return $installed;
+  }
+
+  function agSaveSetup($config)
+  {
+    /** remember to set the superadmin config.yml up!!!  */
+    sfClearCache('frontend', 'all');
+    sfClearCache('frontend', 'dev');
+    sfClearCache('frontend', 'prod');
+    require_once dirname(__FILE__) . '/../lib/vendor/symfony/lib/yaml/sfYaml.php';
+    $file = sfConfig::get('sf_config_dir') . '/config.yml';
+    // update config.yml
+    try {
+      file_put_contents($file, sfYaml::dump($config, 4));
+    } catch (Exception $e) {
+      echo "hey, something went wrong:" . $e->getMessage();
+    }
+
+    $file = dirname(__FILE__) . '/../apps/frontend/config/app.yml';
+    touch($file);
+    //if app.yml doesn't exist
+    $appConfig = sfYaml::load(dirname(__FILE__) . '/../apps/frontend/config/app.yml');
+    $appConfig['all']['sf_guard_plugin'] =
+        array('check_password_callable'
+          => array('agSudoAuth', 'authenticate'));
+    $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
+
+    $appConfig['all']['.array']['navpages'] =
+        array(
+          'homepage' => array('name' => 'Home', 'route' => '@homepage'),
+          'facility' => array('name' => 'Facility', 'route' => '@facility'),
+          'staff' => array('name' => 'Staff', 'route' => '@staff'),
+          'client' => array('name' => 'Client', 'route' => '@client'),
+          'scenario' => array('name' => 'Scenario', 'route' => '@scenario'),
+          'gis' => array('name' => 'GIS', 'route' => '@gis'),
+          'org' => array('name' => 'Organization', 'route' => '@org'),
+          'admin' => array('name' => 'Admin', 'route' => '@admin'),
+          'about' => array('name' => 'About', 'route' => '@about'));
+    // update config.yml
+    try {
+      file_put_contents($file, sfYaml::dump($appConfig, 4));
+    } catch (Exception $e) {
+      echo "hey, something went wrong:" . $e->getMessage();
+      return false;
+    }
+    $file = sfConfig::get('sf_config_dir') . '/databases.yml';
+    $dbConfiguration = sfYaml::load(dirname(__FILE__) . '/../config/databases.yml');
+    $dbConfiguration['all']['doctrine']['param']['attributes'] = array(
+      'default_table_type' => 'INNODB',
+      'default_table_charset' => 'utf8',
+      'default_table_collate' => 'utf8_general_ci'
+    );
+    try {
+      file_put_contents($file, sfYaml::dump($dbConfiguration, 4));
+    } catch (Exception $e) {
+      echo "hey, something went wrong:" . $e->getMessage();
+      return false;
+    }
+
+    return true;
+  }
+
+  function EventHandler()
+  {
+    if (isset($_REQUEST['back'][$this->getStep()]))
+      $this->DoBack();
+
+    if ($this->getStep() == 1) {
+      if (!isset($_REQUEST['next'][0]) && !isset($_REQUEST['back'][2])) {
+        $this->setConfig('agree', isset($_REQUEST['agree']));
+      }
+
+      if (isset($_REQUEST['next'][$this->getStep()]) && $this->getConfig('agree', false)) {
+        $this->DoNext();
+      }
+    }
+
+    if ($this->getStep() == 2 && isset($_REQUEST['next'][$this->getStep()]) && !isset($_REQUEST['problem'])) {
+      $this->dbParams($db_params);
+      $this->DoNext();
+    }
+    if ($this->getStep() == 3) {
+      //on our first pass, these values won't exist (or if someone has returned with no POST
+      $current = $this->getCurrent();
+      $db_params = array(
+        'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name']), // ilya 2010-07-21 15:16:58
+        //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+        'username' => $_POST['db_user'],
+        'password' => $_POST['db_pass']);
+      $this->setConfig('DB_SERVER', $_POST['db_host']);
+      $this->setConfig('DB_DATABASE', $_POST['db_name']);
+      $this->setConfig('DB_USER', $_POST['db_user']);
+      $this->setConfig('DB_PASSWORD', $_POST['db_pass']);
+      $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
+      $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
+      $config_array = array(
+        'is_installed' => array('value' => 'true'),
+        'sudo' => array(
+          'super_user' => $current[1]['sudo']['super_user'],
+          'super_pass' => $current[1]['sudo']['super_pass']),
+        'admin' => array(
+          'admin_name' => $this->getConfig('ADMIN_NAME'),
+          'admin_email' => $this->getConfig('ADMIN_EMAIL'),
+          'auth_method' => array('value' => 'bypass'),
+          'log_level' => array('value' => 'default'),
+        //'db_type' => $_POST['db_type'],
+        //'db_host' => $_POST['db_host'],
+        //'db_name' => $_POST['db_port'], //ilya 2010-07-21 15:17:13
+          ));
+      //we've set our config to post values, now let's try to save
+      //agSaveSetup only saves config.yml and app.yml, databases.yml is not touched
+      //to save our databases.yml,
+      //$this->dbParams($db_params);
+      //database parameters are good here.
+      if (!($this->agSaveSetup($config_array))) {
+        $this->DISABLE_NEXT = true;
+        unset($_REQUEST['next']);
+        //if we cannot save our configuration
+      } else {
+        $dbcheck = $this->CheckConnection($db_params);
+        if ($dbcheck == 'good') {
+          $this->RETRY_SUCCESS = true;
+        } else {
+          //if we cannot establish a db connection
+          $this->RETRY_SUCCESS = false;
+          $this->DISABLE_NEXT = true;
+          $this->ERROR_MESSAGE = $dbcheck;
+          //set the installer's global error message to the return of our connection attempt
+          unset($_REQUEST['next']);
+        }
+      }
+      if (isset($_REQUEST['next'][$this->getStep()])) {
+        //the validation comment below can be handled by:
+        //$this->getCurrent();
+        $this->setConfig('db_config', $db_params);
+        $this->setConfig('DB_SERVER', $_POST['db_host']);
+        $this->setConfig('DB_DATABASE', $_POST['db_name']);
+        $this->setConfig('DB_USER', $_POST['db_user']);
+        $this->setConfig('DB_PASSWORD', $_POST['db_pass']);
+        $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
+        $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
+        $this->DoNext();
+        //we should validate here in case someone changes correct information
+      }
+    }
+
+    if ($this->getStep() == 4) {
+      //present user with configuration settings, show 'install button'
+      if (isset($_REQUEST['next'][$this->getStep()])) {
+        $this->INSTALL_RESULT = $this->doInstall($this->getConfig('db_config'));
+        $this->DoNext();
+      }
+    }
+    if (isset($_REQUEST['finish'])) {       //isset($_REQUEST['next'][$this->getStep()]
+      //$this->doNext();
+      $sudo = $this->getCurrent();
+      $sudoer = $sudo[1]['sudo']['super_user']; //get username and password from config.yml, should be cleaner.
+      $supw = $sudo[1]['sudo']['super_pass'];
+      //authenticate with this
+      try {
+        $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+        $databaseManager = new sfDatabaseManager($configuration);
+//        $connection = Doctrine_Manager::connection()->connect();
+        sfContext::createInstance($configuration)->dispatch();
+        agSudoAuth::authenticate($sudoer, $supw);
+        redirect('admin/new');
+      } catch (Exception $e) {
+        $this->ERROR_MESSAGE = $e->getMessage();
+      }
+      return;
+    }
+
+    if (isset($_REQUEST['next'][$this->getStep()])) {
+      $this->DoNext();
+    }
+  }
+
+}
+
+/** these two extended classes are for configuring doctrine */
+class agDoctrineConfigureDatabaseTask extends sfDoctrineConfigureDatabaseTask
+{
+
+  function execute($arguments = array(), $options = array())
+  {
+    parent::execute($arguments, $options);
+  }
+
+}
+
+class agDoctrineBuildSqlTask extends sfDoctrineBuildSqlTask
+{
+
+  function execute($arguments = array(), $options = array())
+  {
+    try {
+      parent::execute($arguments, $options);
+    } catch (Exception $e) {
+      throw new Doctrine_Exception($e->getMessage());
+    }
+  }
+
+}

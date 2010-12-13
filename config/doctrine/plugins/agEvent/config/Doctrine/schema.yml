@@ -1,0 +1,666 @@
+agEventScenario:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    scenario_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agEventScenario:
+      fields: [event_id, scenario_id]
+      type: unique
+    agEventScenario_eventId:
+      fields: [event_id]
+    agEventScenario_scenarioId:
+      fields: [scenario_id]
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agScenario:
+      local: scenario_id
+      foreign: id
+agEvent:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    event_name:
+      type: string(64)
+      notnull: true
+    zero_hour:
+      type: timestamp
+      notnull: true
+  indexes:
+    agEvent_unq:
+      fields: [event_name]
+      type: unique
+  relations:
+    agAffectedArea:
+      class: agAffectedArea
+      refClass: agEventAffectedArea
+      local: event_id
+      foreign: affected_area_id
+agEventDescription:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    description:
+      type: gzip
+      notnull: true
+  indexes:
+    agEvent_details_unq:
+      fields: [event_id]
+      type: unique
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+agEventStatusType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    event_status_type:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agEventStatusType_unq:
+      fields: [event_status_type]
+      type: unique
+agEventAudit:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    action:
+      type: gzip
+      notnull: true
+    updated_by:
+      type: integer(4)
+      notnull: true
+  indexes:
+    agEventAudit_eventId:
+      fields: [event_id]
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agStaff:
+      local: updated_by
+      foreign: id
+agEventAuditSql:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_audit_id:
+      type: integer(5)
+      notnull: true
+    sql_cmd:
+      type: gzip
+      notnull: true
+  relations:
+    agEventAudit:
+      local: event_audit_id
+      foreign: id
+agEventAuditValue:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_audit_id:
+      type: integer(5)
+      notnull: true
+    edit_table:
+      type: string(64)
+      notnull: true
+    edit_field:
+      type: string(64)
+      notnull: true
+    value:
+      type: gzip
+      notnull: true
+  indexes:
+    agEventAuditValue_unq:
+      fields: [event_audit_id, edit_table, edit_field]
+      type: unique
+    agEventAuditValue_eventAuditId:
+      fields: [event_audit_id]
+  relations:
+    agEventAuditSql:
+      local: event_audit_id
+      foreign: id
+agAffectedArea:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    affected_area:
+      type: string(64)
+      notnull: true
+    geo_id:
+      type: integer(5)
+      notnull: true
+    required_evacuation:
+      type: boolean
+      notnull: true
+  indexes:
+    agAffectedArea_unq:
+      fields: [affected_area]
+      type: unique
+  relations:
+    agGeo:
+      local: geo_id
+      foreign: id
+    agEvent:
+      class: agEvent
+      refClass: agEventAffectedArea
+      local: affected_area_id
+      foreign: event_id
+agEventAffectedArea:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    affected_area_id:
+      type: integer(4)
+      notnull: true
+  indexes:
+    UX_agEventAffectedArea:
+      fields: [event_id, affected_area_id]
+      type: unique
+    agEventAffectedArea_eventId:
+      fields: [event_id]
+    agEventAffectedArea_affectedAreaId:
+      fields: [affected_area_id]
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agAffectedArea:
+      local: affected_area_id
+      foreign: id
+agEventServiceArea:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+agEventServiceAreaComposite:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    event_service_area_id:
+      type: integer(4)
+      notnull: true
+    geo_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    UX_agServiceAreaComposite:
+      fields: [event_service_area_id, geo_id]
+      type: unique
+  relations:
+    agEventServiceArea:
+      local: event_service_area_id
+      foreign: id
+    agGeo:
+      local: geo_id
+      foreign: id
+agEventFacilityDistribution:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_service_area_id:
+      type: integer(4)
+      notnull: true
+    event_facility_group_id:
+      type: integer(4)
+      notnull: true
+  indexes:
+    UX_agEventFacilityDistribution:
+      fields: [event_service_area_id, event_facility_group_id]
+      type: unique
+  relations:
+    agEventServiceArea:
+      local: event_service_area_id
+      foreign: id
+    agEventFacilityGroup:
+      local: event_facility_group_id
+      foreign: id
+agEventFacilityResource:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    facility_resource_id:
+      type: integer(4)
+      notnull: true
+    event_facility_group_id:
+      type: integer(4)
+      notnull: true
+    activation_sequence:
+      default: 100
+      unsigned: true
+      type: integer(1)
+      notnull: true
+  indexes:
+    agEventFacilityResource_unq:
+      fields: [facility_resource_id, event_facility_group_id]
+      type: unique
+  relations:
+    agFacilityResource:
+      local: facility_resource_id
+      foreign: id
+    agEventFacilityGroup:
+      local: event_facility_group_id
+      foreign: id
+agEventFacilityGroup:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    event_facility_group:
+      type: string(64)
+      notnull: true
+    facility_group_type_id:
+      type: integer(2)
+      notnull: true
+    activation_sequence:
+      default: 100
+      unsigned: true
+      type: integer(1)
+      notnull: true
+  indexes:
+    UX_agEventFacilityGroup:
+      fields: [event_id, event_facility_group]
+      type: unique
+    UX_agEventFacilityGroup_eventFacilityGroup:
+      fields: [event_facility_group]
+      type: unique
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agFacilityGroupType:
+      class: agFacilityGroupType
+      foreignAlias: agEventFacilitygroup
+      local: facility_group_type_id
+      foreign: id
+    agFacilityResource:
+      class: agFacilityResource
+      refClass: agEventFacilityResource
+      local: event_facility_group_id
+      foreign: facility_resource_id
+agEventStaff:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    staff_resource_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    UX_agEventStaff:
+      fields: [event_id]
+      type: unique
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agStaffResource:
+      local: staff_resource_id
+      foreign: id
+    agEventFacilityShift:
+      class: agEventShift
+      refClass: agEventStaffShift
+      local: event_staff_id
+      foreign: event_shift_id
+agEventShift:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_facility_resource_id:
+      type: integer(4)
+      notnull: true
+    staff_resource_type_id:
+      type: integer(2)
+      notnull: true
+    minimum_staff:
+      type: integer(1)
+      notnull: true
+    maximum_staff:
+      type: integer(1)
+      notnull: true
+    start_time:
+      type: timestamp
+      notnull: true
+    end_time:
+      type: timestamp
+      notnull: true
+    break_start:
+      type: timestamp
+      notnull: true
+    break_end:
+      type: timestamp
+      notnull: true
+    task_id:
+      type: integer(2)
+      notnull: true
+    shift_status_id:
+      type: integer(2)
+    staff_wave:
+      type: integer(2)
+    deployment_algorithm_id:
+      type: integer(4)
+      notnull: true
+  relations:
+    agStaffResourceType:
+      local: staff_resource_type_id
+      foreign: id
+    agShiftTask:
+      class: agTask
+      foreignAlias: agEventFacilityShift
+      local: task_id
+      foreign: id
+    agEventFacilityResource:
+      local: event_facility_resource_id
+      foreign: id
+    agShiftStatus:
+      local: shift_status_id
+      foreign: id
+    agDeploymentAlgorithm:
+      local: deployment_algorithm_id
+      foreign: id
+    agStaffEvent:
+      class: agEventStaff
+      refClass: agEventStaffShift
+      local: event_shift_id
+      foreign: event_staff_id
+agEventStaffSignIn:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_staff_shift_id:
+      type: integer(5)
+      notnull: true
+    signin:
+      type: timestamp
+      notnull: true
+    signout:
+      type: timestamp
+  indexes:
+    UX_agEventStaffSignIn:
+      fields: [event_staff_shift_id, signin]
+      type: unique
+  relations:
+    agEventStaffShift:
+      class: agEventStaffShift
+      foreignAlias: agEventStaffSignIn
+      local: event_staff_shift_id
+      foreign: id
+agEventStaffShift:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_staff_id:
+      type: integer(5)
+      notnull: true
+    event_shift_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    agEventStaffShift_unq:
+      fields: [event_staff_id, event_shift_id]
+      type: unique
+  relations:
+    agEventStaff:
+      local: event_staff_id
+      foreign: id
+    agEventShift:
+      local: event_shift_id
+      foreign: id
+agEventFacilityGroupStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    event_facility_group_id:
+      type: integer(4)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    facility_group_allocation_status_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agEventFacilityGroupStatus:
+      fields: [event_facility_group_id, time_stamp]
+      type: unique
+  relations:
+    agFacilityGroupAllocationStatus:
+      local: facility_group_allocation_status_id
+      foreign: id
+    agEventFacilityGroup:
+      local: event_facility_group_id
+      foreign: id
+agEventFacilityResourceStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    event_facility_resource_id:
+      type: integer(4)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    facility_resource_allocation_status_id:
+      type: integer(2)
+  indexes:
+    UX_agEventFacilityResourceStatus:
+      fields: [event_facility_resource_id, time_stamp]
+      type: unique
+  relations:
+    agEventFacilityResource:
+      local: event_facility_resource_id
+      foreign: id
+    agFacilityResourceAllocationStatus:
+      local: facility_resource_allocation_status_id
+      foreign: id
+agEventStaffRotation:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    event_staff_id:
+      type: integer(5)
+      notnull: true
+    staff_wave:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agEventStaffRotation:
+      fields: [event_staff_id, staff_wave]
+      type: unique
+  relations:
+    agEventStaff:
+      local: event_staff_id
+      foreign: id
+agEventStaffStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    event_staff_id:
+      type: integer(5)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    staff_allocation_status_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agEventStaffStatus:
+      fields: [event_staff_id, time_stamp]
+      type: unique
+  relations:
+    agEventStaff:
+      local: event_staff_id
+      foreign: id
+    agStaffAllocationStatus:
+      local: staff_allocation_status_id
+      foreign: id
+agEventMessageTrigger:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    message_trigger_id:
+      type: integer(2)
+      notnull: true
+    batch_template_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agEventMessageTrigger:
+      fields: [event_id, message_trigger_id, batch_template_id]
+      type: unique
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agBatchTemplate:
+      local: batch_template_id
+      foreign: id
+    agMessageTrigger:
+      local: message_trigger_id
+      foreign: id
+agEventStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    event_status_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agEventStatus:
+      fields: [event_id, time_stamp]
+      type: unique
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agEventStatusType:
+      local: event_status_type_id
+      foreign: id
+agEventFacilityResourceActivationTime:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    event_facility_resource_id:
+      type: integer(4)
+      notnull: true
+    activation_time:
+      type: timestamp
+      notnull: true
+  indexes:
+    agEventFacilityResourceActivationTime_unq:
+      fields: [event_facility_resource_id]
+      type: unique
+  relations:
+    agEventFacilityResource:
+      class: agEventFacilityResource
+      foreignAlias: agEventFacilityResourceActivationTime
+      local: event_facility_resource_id
+      foreign: id
+actAs:
+  Timestampable: 

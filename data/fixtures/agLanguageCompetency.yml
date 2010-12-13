@@ -1,0 +1,12 @@
+# Pre-load for agLanguageCompetency.
+
+agLanguageCompetency:
+  basic: 
+    language_competency: basic
+  intermediate:
+    language_competency: intermediate
+  fluent:
+    language_competency: fluent
+  superior:
+    language_competency: superior
+

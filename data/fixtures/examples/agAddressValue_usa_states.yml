@@ -1,0 +1,155 @@
+# Pre-populate address values with states abbreviations.
+# Data from http://en.wikipedia.org/wiki/U.S._state#List_of_states
+
+agAddressValue:
+  usa_state_alabama:
+    agAddressElement: state
+    value: AL
+  usa_state_alaska:
+    agAddressElement: state
+    value: AK
+  usa_state_arizona:
+    agAddressElement: state
+    value: AZ
+  usa_state_arkansas:
+    agAddressElement: state
+    value: AR
+  usa_state_california:
+    agAddressElement: state
+    value: CA
+  usa_state_colorado:
+    agAddressElement: state
+    value: CO
+  usa_state_connecticut:
+    agAddressElement: state
+    value: CT
+  usa_state_delaware:
+    agAddressElement: state
+    value: DE
+  usa_state_florida:
+    agAddressElement: state
+    value: FL
+  usa_state_georgia:
+    agAddressElement: state
+    value: GA
+  usa_state_hawaii:
+    agAddressElement: state
+    value: HI
+  usa_state_idaho:
+    agAddressElement: state
+    value: ID
+  usa_state_illinois:
+    agAddressElement: state
+    value: IL
+  usa_state_indiana:
+    agAddressElement: state
+    value: IN
+  usa_state_iowa:
+    agAddressElement: state
+    value: IA
+  usa_state_kansas:
+    agAddressElement: state
+    value: KS
+  usa_state_kentucky:
+    agAddressElement: state
+    value: KY
+  usa_state_Louisiana:
+    agAddressElement: state
+    value: LA
+  usa_state_maine:
+    agAddressElement: state
+    value: ME
+  usa_state_maryland:
+    agAddressElement: state
+    value: MD
+  usa_state_massachusetts:
+    agAddressElement: state
+    value: MA
+  usa_state_michigan:
+    agAddressElement: state
+    value: MI
+  usa_state_minnesota:
+    agAddressElement: state
+    value: MN
+  usa_state_mississippi:
+    agAddressElement: state
+    value: MS
+  usa_state_missouri:
+    agAddressElement: state
+    value: MO
+  usa_state_montana:
+    agAddressElement: state
+    value: MT
+  usa_state_nebraska:
+    agAddressElement: state
+    value: NE
+  usa_state_nevada:
+    agAddressElement: state
+    value: NV
+  usa_state_new_hampshire:
+    agAddressElement: state
+    value: NH
+  usa_state_new_jersey:
+    agAddressElement: state
+    value: NJ
+  usa_state_new_mexico:
+    agAddressElement: state
+    value: NM
+  usa_state_new_york:
+    agAddressElement: state
+    value: NY
+  usa_state_north_carolina:
+    agAddressElement: state
+    value: NC
+  usa_state_north_dakota:
+    agAddressElement: state
+    value: ND
+  usa_state_ohio:
+    agAddressElement: state
+    value: OH
+  usa_state_Oklahoma:
+    agAddressElement: state
+    value: OK
+  usa_state_oregon:
+    agAddressElement: state
+    value: OR
+  usa_state_pennsylvania:
+    agAddressElement: state
+    value: PA
+  usa_state_rhode_island:
+    agAddressElement: state
+    value: RI
+  usa_state_south_carolina:
+    agAddressElement: state
+    value: SC
+  usa_state_south_dakota:
+    agAddressElement: state
+    value: SD
+  usa_state_tennessee:
+    agAddressElement: state
+    value: TN
+  usa_state_texas:
+    agAddressElement: state
+    value: TX
+  usa_state_utah:
+    agAddressElement: state
+    value: UT
+  usa_state_vermont:
+    agAddressElement: state
+    value: VT
+  usa_state_virginia:
+    agAddressElement: state
+    value: VA
+  usa_state_washington:
+    agAddressElement: state
+    value: WA
+  usa_state_west_virginia:
+    agAddressElement: state
+    value: WV
+  usa_state_wisconsin:
+    agAddressElement: state
+    value: WI
+  usa_state_wyoming:
+    agAddressElement: state
+    value: WY
+

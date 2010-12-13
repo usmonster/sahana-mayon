@@ -1,0 +1,15 @@
+# Pre-populate phone contact type
+
+agPhoneContactType:
+  work:
+    id: 1
+    phone_contact_type: work
+  home:
+    id: 2
+    phone_contact_type: home
+  mobile:
+    id: 3
+    phone_contact_type: mobile
+  other:
+    id: 4
+    phone_contact_type: other

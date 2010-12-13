@@ -1,0 +1,97 @@
+agReport:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    report_name:
+      type: string(64)
+      notnull: true
+    report_description:
+      type: gzip
+  indexes:
+    UX_agReport:
+      fields: [report_name]
+      type: unique
+  relations:
+    agLuceneSearch:
+      class: agLuceneSearch
+      refClass: agReportGenerator
+      local: report_id
+      foreign: lucene_search_id
+agQuerySelectField:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    report_id:
+      type: integer(2)
+      notnull: true
+    field_table:
+      type: string(64)
+      notnull: true
+    select_field:
+      type: string(64)
+      notnull: true
+    field_sequence:
+      type: integer(1)
+      notnull: true
+  indexes:
+    agQuerySelectField_unq:
+      fields: [report_id, field_table, select_field, field_sequence]
+      type: unique
+  relations:
+    agReport:
+      local: report_id
+      foreign: id
+agLuceneSearch:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    query_name:
+      type: string(64)
+      notnull: true
+    query_condition:
+      type: gzip
+      notnull: true
+  indexes:
+    agLuceneSearch_unq:
+      fields: [query_name]
+      type: unique
+  relations:
+    agReport:
+      class: agReport
+      refClass: agReportGenerator
+      local: lucene_search_id
+      foreign: report_id
+agReportGenerator:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    report_id:
+      type: integer(2)
+      notnull: true
+    lucene_search_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agReportGenerator_unq:
+      fields: [report_id]
+      type: unique
+  relations:
+    agReport:
+      local: report_id
+      foreign: id
+    agLuceneSearch:
+      local: lucene_search_id
+      foreign: id
+actAs:
+  Timestampable: 

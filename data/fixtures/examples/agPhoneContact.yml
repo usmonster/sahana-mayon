@@ -1,0 +1,79 @@
+# Samples of phone contact numbers
+
+agPhoneContact:
+  phone1:
+    phone_contact: 2125672345
+    agPhoneFormat: usa_10_digits
+  phone2:
+    phone_contact: 7187627375x4327
+    agPhoneFormat: usa_10_digits_ext
+  phone3:
+    phone_contact: 9174628733
+    agPhoneFormat: usa_10_digits
+  phone4:
+    phone_contact: 5163328837
+    agPhoneFormat: usa_10_digits
+  phone5:
+    phone_contact: 3459872245
+    agPhoneFormat: usa_10_digits
+  phone6:
+    phone_contact: 2717329844
+    agPhoneFormat: usa_10_digits
+  phone7:
+    phone_contact: 8329824343
+    agPhoneFormat: usa_10_digits
+  phone8:
+    phone_contact: 3727632322
+    agPhoneFormat: usa_10_digits
+  phone9:
+    phone_contact: 9237832432
+    agPhoneFormat: usa_10_digits
+  phone10:
+    phone_contact: 8328938382
+    agPhoneFormat: usa_10_digits
+  phone11:
+    phone_contact: 8387504546
+    agPhoneFormat: usa_10_digits
+  phone12:
+    phone_contact: 2129843985
+    agPhoneFormat: usa_10_digits
+  phone13:
+    phone_contact: 7180948934
+    agPhoneFormat: usa_10_digits
+  phone14:
+    phone_contact: 6469828973
+    agPhoneFormat: usa_10_digits
+  phone15:
+    phone_contact: 9179829873
+    agPhoneFormat: usa_10_digits
+  phone16:
+    phone_contact: 5169828322
+    agPhoneFormat: usa_10_digits
+  phone17:
+    phone_contact: 8943987438
+    agPhoneFormat: usa_10_digits
+  phone18:
+    phone_contact: 7278328723
+    agPhoneFormat: usa_10_digits
+  phone19:
+    phone_contact: 8949843784x234
+    agPhoneFormat: usa_10_digits_ext
+  phone20:
+    phone_contact: 9178398894
+    agPhoneFormat: usa_10_digits
+  phone21:
+    phone_contact: 4899823254
+    agPhoneFormat: usa_10_digits
+  phone22:
+    phone_contact: 4838994493
+    agPhoneFormat: usa_10_digits
+  phone23:
+    phone_contact: 7178389845
+    agPhoneFormat: usa_10_digits
+  phone24:
+    phone_contact: 3878894984
+    agPhoneFormat: usa_10_digits
+  phone25:
+    phone_contact: 8998984983
+    agPhoneFormat: usa_10_digits
+

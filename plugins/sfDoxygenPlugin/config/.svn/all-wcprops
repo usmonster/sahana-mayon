@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/!svn/ver/25712/plugins/sfDoxygenPlugin/branches/1.4/config
+END
+exclude.txt
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25712/plugins/sfDoxygenPlugin/branches/1.4/config/exclude.txt
+END
+exclude_patterns.txt
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/25712/plugins/sfDoxygenPlugin/branches/1.4/config/exclude_patterns.txt
+END
+doxygen.ini
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/25712/plugins/sfDoxygenPlugin/branches/1.4/config/doxygen.ini
+END

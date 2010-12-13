@@ -1,0 +1,496 @@
+# Pre-populate Country's ISO 3166-1 numeric code
+# This data dictionary is based off of http://en.wikipedia.org/wiki/ISO_3166-1
+
+agIso31661Numeric:
+  afghanistan:
+    value: '004'
+  aland_islands:
+    value: '248'
+  albania:
+    value: '008'
+  algeria:
+    value: '012'
+  american_samoa:
+    value: '016'
+  andorra:
+    value: '020'
+  angola:
+    value: '024'
+  anguilla:
+    value: '660'
+  antarctica:
+    value: '010'
+  antigua_and_barbuda:
+    value: '028'
+  argentina:
+    value: '032'
+  armenia:
+    value: '051'
+  aruba:
+    value: '533'
+  australia:
+    value: '036'
+  austria:
+    value: '040'
+  azerbaijan:
+    value: '031'
+  bahamas:
+    value: '044'
+  bahrain:
+    value: '048'
+  bangladesh:
+    value: '050'
+  barbados:
+    value: '052'
+  belarus:
+    value: '112'
+  belgium:
+    value: '056'
+  belize:
+    value: '084'
+  benin:
+    value: '204'
+  bermuda:
+    value: '060'
+  bhutan:
+    value: '064'
+  bolivia:
+    value: '068'
+  bosnia_and_herzegovina:
+    value: '070'
+  botswana:
+    value: '072'
+  bouvet_island:
+    value: '074'
+  brazil:
+    value: '076'
+  british_indian_ocena_territory:
+    value: '086'
+  brunei_darussalam:
+    value: '096'
+  bulgaria:
+    value: '100'
+  burkina_faso:
+    value: '854'
+  burundi:
+    value: '108'
+  cambodia:
+    value: '116'
+  cameroon:
+    value: '120'
+  canada:
+    value: '124'
+  cape_verde:
+    value: '132'
+  cayman_islands:
+    value: '136'
+  central_african_republic:
+    value: '140'
+  chad:
+    value: '148'
+  chile:
+    value: '152'
+  china:
+    value: '156'
+  christmas_island:
+    value: '162'
+  cocos_islands:
+    value: '166'
+  colombia:
+    value: '170'
+  comoros:
+    value: '174'
+  congo:
+    value: '178'
+  congo_d:
+    value: '180'
+  cook_islands:
+    value: '184'
+  costa_rica:
+    value: '188'
+  cote_divoire:
+    value: '384'
+  croatia:
+    value: '191'
+  cuba:
+    value: '192'
+  cyprus:
+    value: '196'
+  czech_republic:
+    value: '203'
+  denmark:
+    value: '208'
+  djibouti:
+    value: '262'
+  dominica:
+    value: '212'
+  dominican_republic:
+    value: '214'
+  ecuador:
+    value: '218'
+  egypt:
+    value: '818'
+  el_salvador:
+    value: '222'
+  equatorial_guinea:
+    value: '226'
+  eritrea:
+    value: '232'
+  estonia:
+    value: '233'
+  ethiopia:
+    value: '231'
+  falkland_islands:
+    value: '238'
+  faroe_islands:
+    value: '234'
+  fiji:
+    value: '242'
+  finland:
+    value: '246'
+  france:
+    value: '250'
+  french_guiana:
+    value: '254'
+  french_polynesia:
+    value: '258'
+  french_southern_territories:
+    value: '260'
+  gabon:
+    value: '266'
+  gambia:
+    value: '270'
+  georgia:
+    value: '268'
+  germany:
+    value: '276'
+  ghana:
+    value: '288'
+  gibraltar:
+    value: '292'
+  greece:
+    value: '300'
+  greenland:
+    value: '304'
+  grenada:
+    value: '308'
+  guadeloupe:
+    value: '312'
+  guam:
+    value: '316'
+  guatemala:
+    value: '320'
+  guernsey:
+    value: '831'
+  guinea:
+    value: '324'
+  guinea_bissau:
+    value: '624'
+  guyana:
+    value: '328'
+  haiti:
+    value: '332'
+  heard_and_mcdonald:
+    value: '334'
+  holy_see:
+    value: '336'
+  honduras:
+    value: '340'
+  hong_kong:
+    value: '344'
+  hungary:
+    value: '348'
+  iceland:
+    value: '352'
+  india:
+    value: '356'
+  indonesia:
+    value: '360'
+  iran:
+    value: '364'
+  iraq:
+    value: '368'
+  ireland:
+    value: '372'
+  isle_of_man:
+    value: '833'
+  israel:
+    value: '376'
+  italy:
+    value: '380'
+  jamaica:
+    value: '388'
+  japan:
+    value: '392'
+  jersey:
+    value: '832'
+  jordan:
+    value: '400'
+  kazakhstan:
+    value: '398'
+  kenya:
+    value: '404'
+  kiribati:
+    value: '296'
+  korea_d:
+    value: '408'
+  korea_r:
+    value: '410'
+  kuwait:
+    value: '414'
+  kyrgyzstan:
+    value: '417'
+  lao:
+    value: '418'
+  latvia:
+    value: '428'
+  lebanon:
+    value: '422'
+  lesotho:
+    value: '426'
+  liberia:
+    value: '430'
+  libyan:
+    value: '434'
+  liechtenstein:
+    value: '438'
+  lithuania:
+    value: '440'
+  luxembourg:
+    value: '442'
+  macao:
+    value: '446'
+  macedonia:
+    value: '807'
+  madagascar:
+    value: '450'
+  malawi:
+    value: '454'
+  malaysia:
+    value: '458'
+  maldives:
+    value: '462'
+  mali:
+    value: '466'
+  malta:
+    value: '470'
+  marshal:
+    value: '584'
+  martinique:
+    value: '474'
+  mauritania:
+    value: '478'
+  mauritius:
+    value: '480'
+  mayotte:
+    value: '175'
+  mexico:
+    value: '484'
+  micronesia:
+    value: '583'
+  moldova:
+    value: '498'
+  monaco:
+    value: '492'
+  mongolia:
+    value: '496'
+  montenegro:
+    value: '499'
+  montserrat:
+    value: '500'
+  morocco:
+    value: '504'
+  mozambique:
+    value: '508'
+  myanmar:
+    value: '104'
+  namibia:
+    value: '516'
+  nauru:
+    value: '520'
+  nepal:
+    value: '524'
+  netherlands:
+    value: '528'
+  netherlands_a:
+    value: '530'
+  new_caledonia:
+    value: '540'
+  new_zealand:
+    value: '554'
+  nicaragua:
+    value: '558'
+  niger:
+    value: '562'
+  nigeria:
+    value: '566'
+  niue:
+    value: '570'
+  norfolk_island:
+    value: '574'
+  northern_mariana_islands:
+    value: '580'
+  norway:
+    value: '578'
+  oman:
+    value: '512'
+  pakistan:
+    value: '586'
+  palau:
+    value: '585'
+  palestinian:
+    value: '275'
+  panama:
+    value: '591'
+  papua:
+    value: '598'
+  paraguay:
+    value: '600'
+  peru:
+    value: '604'
+  philippines:
+    value: '608'
+  pitcairn:
+    value: '612'
+  poland:
+    value: '616'
+  portugal:
+    value: '620'
+  puerto_rico:
+    value: '630'
+  qatar:
+    value: '634'
+  reunion:
+    value: '638'
+  romania:
+    value: '642'
+  russian_federation:
+    value: '643'
+  rwanda:
+    value: '646'
+  barthelemy:
+    value: '652'
+  helena:
+    value: '654'
+  kitts_and_nevis:
+    value: '659'
+  lucia:
+    value: '662'
+  martin:
+    value: '663'
+  pierre_and_miquelon:
+    value: '666'
+  vincent_and_grenadines:
+    value: '670'
+  samoa:
+    value: '882'
+  san_marino:
+    value: '674'
+  sao:
+    value: '678'
+  saudi_arabia:
+    value: '682'
+  senegal:
+    value: '686'
+  serbia:
+    value: '688'
+  seychelles:
+    value: '690'
+  sierra_leone:
+    value: '694'
+  singapore:
+    value: '702'
+  slovakia:
+    value: '703'
+  slovenia:
+    value: '705'
+  solomon_islands:
+    value: '090'
+  somalia:
+    value: '706'
+  south_africa:
+    value: '710'
+  south_georgia_and_sandwich:
+    value: '239'
+  spain:
+    value: '724'
+  sri_lanka:
+    value: '144'
+  sudan:
+    value: '736'
+  suriname:
+    value: '740'
+  svalbard:
+    value: '744'
+  swaziland:
+    value: '748'
+  sweden:
+    value: '752'
+  switzerland:
+    value: '756'
+  syrian:
+    value: '760'
+  taiwan:
+    value: '158'
+  tajikistan:
+    value: '762'
+  tanzania:
+    value: '834'
+  thailand:
+    value: '764'
+  timor_leste:
+    value: '626'
+  togo:
+    value: '768'
+  tokelau:
+    value: '772'
+  tonga:
+    value: '776'
+  trinidad_and_tobago:
+    value: '780'
+  tunisia:
+    value: '788'
+  turkey:
+    value: '792'
+  turkmenistan:
+    value: '795'
+  turks_and_caicos:
+    value: '796'
+  tuvalu:
+    value: '798'
+  uganda:
+    value: '800'
+  ukraine:
+    value: '804'
+  united_arab_emirates:
+    value: '784'
+  united_kingdom:
+    value: '826'
+  united_states:
+    value: '840'
+  united_states_minor:
+    value: '581'
+  uruguay:
+    value: '858'
+  uzbekistan:
+    value: '860'
+  vanuatu:
+    value: '548'
+  venezuela:
+    value: '862'
+  vietnam:
+    value: '704'
+  virgin_islands_british:
+    value: '092'
+  virgin_islands_us:
+    value: '850'
+  wallis_and_futuna:
+    value: '876'
+  western_sahara:
+    value: '732'
+  yemen:
+    value: '887'
+  zambia:
+    value: '894'
+  zimbabwe:
+    value: '716'

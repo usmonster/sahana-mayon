@@ -1,0 +1,15 @@
+# Pre-populate address contact type
+
+agAddressContactType:
+  home:
+    id: 1
+    address_contact_type: home
+  work:
+    id: 2
+    address_contact_type: work
+  vacation:
+    id: 3
+    address_contact_type: vacation
+  other:
+    id: 4
+    address_contact_type: other

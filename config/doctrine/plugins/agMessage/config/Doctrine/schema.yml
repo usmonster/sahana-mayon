@@ -1,0 +1,478 @@
+agMessageType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    message_type:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agMessageType_unq:
+      fields: [message_type]
+      type: unique
+  relations:
+    agMessageElementType:
+      class: agMessageElementType
+      refClass: agDefaultMessageTypeElement
+      local: message_type_id
+      foreign: message_element_type_id
+agMessageElementType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    message_element_type:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    UX_agMessageElementType:
+      fields: [message_element_type]
+      type: unique
+  relations:
+    agMessageType:
+      class: agMessageType
+      refClass: agDefaultMessageTypeElement
+      local: message_element_type_id
+      foreign: message_type_id
+    agMessageTemplate:
+      class: agMessageTemplate
+      refClass: agMessageTemplateElement
+      local: message_element_type_id
+      foreign: message_template_id
+    agMessage:
+      class: agMessage
+      refClass: agMessageElement
+      local: message_element_type_id
+      foreign: message_id
+agDefaultMessageTypeElement:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    message_type_id:
+      type: integer(2)
+      notnull: true
+    message_element_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agDefaultMessageTypeElement_unq:
+      fields: [message_type_id, message_element_type_id]
+      type: unique
+    agDefaultMessageTypeElement_messageTypeid:
+      fields: [message_type_id]
+    agDefaultMessageTypeElement_messageElementTypeId:
+      fields: [message_element_type_id]
+  relations:
+    agMessageType:
+      local: message_type_id
+      foreign: id
+    agMessageElementType:
+      local: message_element_type_id
+      foreign: id
+agMessageTemplate:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    message_template:
+      type: string(64)
+      notnull: true
+    message_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agMessageTemplate_unq:
+      fields: [message_template]
+      type: unique
+  relations:
+    agMessage:
+      class: agMessageType
+      foreignAlias: agMessageTemplate
+      local: message_type_id
+      foreign: id
+    agMessageElementType:
+      class: agMessageElementType
+      refClass: agMessageTemplateElement
+      local: message_template_id
+      foreign: message_element_type_id
+    agBatchTemplate:
+      class: agBatchTemplate
+      refClass: agMessageBatchTemplate
+      local: message_template_id
+      foreign: batch_template_id
+agMessageTemplateElement:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    message_template_id:
+      type: integer(2)
+      notnull: true
+    message_element_type_id:
+      type: integer(2)
+      notnull: true
+    value:
+      type: blob
+      notnull: true
+  indexes:
+    agMessageTemplateElement_unq:
+      fields: [message_template_id, message_element_type_id]
+      type: unique
+    agMessageTemplateElement_messageTemplateId:
+      fields: [message_template_id]
+    agMessageTemplateElement_messageElementTypeId:
+      fields: [message_element_type_id]
+  relations:
+    agMessageTemplate:
+      local: message_template_id
+      foreign: id
+    agMessageElementType:
+      local: message_element_type_id
+      foreign: id
+agBatchTemplate:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    batch_template:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+    reply_expected:
+      type: boolean
+      notnull: true
+  indexes:
+    agBatchTemplate_unq:
+      fields: [batch_template]
+      type: unique
+  relations:
+    agMessageTemplate:
+      class: agMessageTemplate
+      refClass: agMessageBatchTemplate
+      local: batch_template_id
+      foreign: message_template_id
+    agMesageReplyArgument:
+      class: agMessageReplyArgument
+      refClass: agBatchTemplateReplyArgument
+      local: batch_template_id
+      foreign: message_reply_argument_id
+agMessageBatchTemplate:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    batch_template_id:
+      type: integer(2)
+      notnull: true
+    message_template_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agMessageBatchTemplate_unq:
+      fields: [batch_template_id, message_template_id]
+      type: unique
+  relations:
+    agBatchTemplate:
+      local: batch_template_id
+      foreign: id
+    agMessageTemplate:
+      local: message_template_id
+      foreign: id
+agMessageReplyArgument:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    reply_argument:
+      type: string(64)
+      notnull: true
+    description:
+      type: string(255)
+  indexes:
+    agMessageReplyArgument_unq:
+      fields: [reply_argument]
+      type: unique
+  relations:
+    agBatchTemplate:
+      class: agBatchTemplate
+      refClass: agBatchTemplateReplyArgument
+      local: message_reply_argument_id
+      foreign: batch_template_id
+    agMessage:
+      class: agMessage
+      refClass: agMessageReply
+      local: message_reply_argument_id
+      foreign: message_id
+agBatchTemplateReplyArgument:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    batch_template_id:
+      type: integer(2)
+      notnull: true
+    message_reply_argument_id:
+      type: integer(5)
+      notnull: true
+    argument_sequence:
+      type: integer(1)
+      notnull: true
+  indexes:
+    agBatchTemplateReplyArgument_unq:
+      fields: [batch_template_id, message_reply_argument_id]
+      type: unique
+    agBatchTemplateReplyArgument_sequence_unq:
+      fields: [batch_template_id, argument_sequence]
+      type: unique
+  relations:
+    agBatchTemplate:
+      local: batch_template_id
+      foreign: id
+    agMessageReplyArgument:
+      local: message_reply_argument_id
+      foreign: id
+agMessageBatch:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_id:
+      type: integer(4)
+      notnull: true
+    batch_template_id:
+      type: integer(2)
+      notnull: true
+    execution_time:
+      type: timestamp
+      notnull: true
+  indexes:
+    UX_agMessageBatch:
+      fields: [event_id, batch_template_id, execution_time]
+      type: unique
+  relations:
+    agEvent:
+      local: event_id
+      foreign: id
+    agBatchTemplate:
+      local: batch_template_id
+      foreign: id
+    agEntity:
+      class: agEntity
+      refClass: agMessage
+      local: message_batch_id
+      foreign: recipient_id
+agMessageStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    message_status:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agMessageStatus_unq:
+      fields: [message_status]
+      type: unique
+agMessage:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    message_batch_id:
+      type: integer(5)
+      notnull: true
+    recipient_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    UX_agMessage:
+      fields: [message_batch_id, recipient_id]
+      type: unique
+  relations:
+    agEntity:
+      local: recipient_id
+      foreign: id
+    agMessageBatch:
+      local: message_batch_id
+      foreign: id
+    agMesssageReplyArgument:
+      class: agMessageReplyArgument
+      refClass: agMessageReply
+      local: message_id
+      foreign: message_reply_argument_id
+    agMessageElementType:
+      class: agMessageElementType
+      refClass: agMessageElement
+      local: message_id
+      foreign: message_element_type_id
+agMessageDetail:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    message_id:
+      type: integer(5)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    message_status_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agMessageDetail_unq:
+      fields: [message_id, time_stamp]
+      type: unique
+  relations:
+    agMessage:
+      class: agMessage
+      foreignAlias: agMessageDetail
+      local: message_id
+      foreign: id
+    agMessageStatus:
+      local: message_status_id
+      foreign: id
+agMessageReply:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    message_id:
+      type: integer(5)
+      notnull: true
+    message_reply_argument_id:
+      type: integer(5)
+      notnull: true
+    value:
+      type: blob
+      notnull: true
+  indexes:
+    agMessageReply_unq:
+      fields: [message_id, message_reply_argument_id]
+      type: unique
+  relations:
+    agMessage:
+      local: message_id
+      foreign: id
+    agMessageReplyArgument:
+      local: message_reply_argument_id
+      foreign: id
+agMessageElement:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    message_id:
+      type: integer(5)
+      notnull: true
+    message_element_type_id:
+      type: integer(2)
+      notnull: true
+    value:
+      type: blob
+      notnull: true
+  indexes:
+    agMessageElement_unq:
+      fields: [message_id, message_element_type_id]
+      type: unique
+  relations:
+    agMessage:
+      local: message_id
+      foreign: id
+    agMessageElementType:
+      local: message_element_type_id
+      foreign: id
+agMessageTrigger:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    message_trigger:
+      type: string(64)
+      notnull: true
+    description:
+      type: string(255)
+  indexes:
+    UX_MessageTrigger:
+      fields: [message_trigger]
+      type: unique
+agDefaultMessageBatchTrigger:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    message_trigger_id:
+      type: integer(2)
+      notnull: true
+    message_batch_template_id:
+      type: integer(4)
+      notnull: true
+  indexes:
+    UX_agDefaultMessageBatchTrigger:
+      fields: [message_trigger_id, message_batch_template_id]
+      type: unique
+  relations:
+    agMessageTrigger:
+      local: message_trigger_id
+      foreign: id
+    agMessageBatchTemplate:
+      local: message_batch_template_id
+      foreign: id
+actAs:
+  Timestampable: 

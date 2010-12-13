@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.4.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>sfDoxygenPlugin</name>
+ <channel>plugins.symfony-project.org</channel>
+ <summary>sfDoxygenPlugin provides you with tasks to generate your sourcecode documentation via Doxygen.</summary>
+ <description>sfDoxygenPlugin provides you with tasks to generate your sourcecode documentation via Doxygen.</description>
+ <lead>
+  <name>Tomasz Ducin</name>
+  <user>tkoomzaaskz</user>
+  <email>tomasz.ducin@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2009-12-21</date>
+ <time>11:00:00</time>
+ <version>
+   <release>1.1.0</release>
+   <api>1.4.0</api>
+ </version>
+ <stability>
+  <release>stable</release>
+  <api>stable</api>
+ </stability>
+ <license uri="http://www.symfony-project.org/license">MIT license</license>
+ <notes>-</notes>
+ <contents>
+   <dir name="/">
+     <file role="data" name="README" />
+     <file role="data" name="LICENSE" />
+
+     <dir name="config">
+       <file role="data" name="doxygen.ini" />
+       <file role="data" name="exclude.txt" />
+       <file role="data" name="exclude_patterns.txt" />
+     </dir>
+
+     <dir name="data">
+       <dir name="skeleton">
+         <dir name="module">
+           <dir name="module">
+             <dir name="actions">
+               <file role="data" name="actions.class.php" />
+             </dir>
+             <dir name="templates">
+               <file role="data" name="indexSuccess.php" />
+             </dir>
+           </dir>
+           <dir name="test">
+             <file role="data" name="actionsTest.php" />
+           </dir>
+         </dir>
+       </dir>
+     </dir>
+
+     <dir name="lib">
+
+       <dir name="task">
+         <file role="data" name="sfDoxygenInitTask.class.php" />
+         <file role="data" name="sfDoxygenUpdateTask.class.php" />
+         <file role="data" name="sfDoxygenGenerateTask.class.php" />
+         <file role="data" name="sfDoxygenVersionTask.class.php" />
+       </dir>
+
+     </dir>
+
+   </dir>
+ </contents>
+
+ <dependencies>
+  <required>
+   <php>
+    <min>5.0.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.1</min>
+   </pearinstaller>
+   <package>
+    <name>symfony</name>
+    <channel>pear.symfony-project.com</channel>
+    <min>1.3.0</min>
+    <max>1.5.0</max>
+    <exclude>1.5.0</exclude>
+   </package>
+  </required>
+ </dependencies>
+
+ <phprelease>
+ </phprelease>
+
+ <changelog>
+
+  <release>
+    <version>
+      <release>1.1.0</release>
+      <api>1.4.0</api>
+    </version>
+    <stability>
+     <release>stable</release>
+     <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-12-21</date>
+    <license>MIT</license>
+    <notes>
+      * plugin version for symfony version 1.4
+    </notes>
+  </release>
+
+  <release>
+    <version>
+      <release>1.0.4</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+     <release>stable</release>
+     <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-12-09</date>
+    <license>MIT</license>
+    <notes>
+      * added module skeleton overriding
+      * moved all EXCLUDE model/base directories to EXCLUDE_PATTERNS (and excluded plugin model base classes)
+      * removed apps from EXCLUDE (mistake fixed)
+      * more code documentation
+      * changed svn structure
+    </notes>
+  </release>
+
+  <release>
+    <version>
+      <release>1.0.3</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+     <release>stable</release>
+     <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-12-05</date>
+    <license>MIT</license>
+    <notes>
+      * added exclude lib/model entries for both propel and doctrine and for data/symfony, test directories
+      * added default doxygen.ini option SOURCE_BROWSER - to generate highlighted sources
+      * added separated file for EXCLUDE_PATTERNS Doxygen option
+    </notes>
+  </release>
+
+  <release>
+    <version>
+      <release>1.0.2</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+     <release>stable</release>
+     <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-12-04</date>
+    <license>MIT</license>
+    <notes>
+      * fixed version task file error
+    </notes>
+  </release>
+
+  <release>
+    <version>
+      <release>1.0.1</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+     <release>stable</release>
+     <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-12-04</date>
+    <license>MIT</license>
+    <notes>
+      * fixed mkdir bug (added option -p to allow doxygen:init re-run)
+      * fixed doxygen option LAYOUT_FILE bug for doxygen releases before 1.5.7 when the featur was added
+      * added version check task
+      * added command aliases
+    </notes>
+  </release>
+
+  <release>
+    <version>
+      <release>1.0.0</release>
+      <api>1.0.0</api>
+    </version>
+    <stability>
+     <release>stable</release>
+     <api>stable</api>
+    </stability>
+    <license uri="http://www.symfony-project.org/license">MIT license</license>
+    <date>2009-12-03</date>
+    <license>MIT</license>
+    <notes>
+      * initial release
+    </notes>
+  </release>
+
+ </changelog>
+
+</package>

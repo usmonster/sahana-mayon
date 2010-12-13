@@ -1,0 +1,81 @@
+agOrganization:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    organization:
+      type: string(128)
+      notnull: true
+    description:
+      type: string(255)
+    entity_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    agOrganization_unq:
+      fields: [organization]
+      type: unique
+    agOrganization_enitty_unq:
+      fields: [entity_id]
+      type: unique
+  relations:
+    agEntity:
+      class: agEntity
+      foreignAlias: agOrganization
+      local: entity_id
+      foreign: id
+    agBranch:
+      class: agBranch
+      refClass: agOrganizationBranch
+      local: organization_id
+      foreign: branch_id
+agBranch:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    branch:
+      type: string(64)
+      notnull: true
+    description:
+      type: string(255)
+  indexes:
+    agBranch_unq:
+      fields: [branch]
+      type: unique
+  relations:
+    agOrganization:
+      class: agOrganization
+      refClass: agOrganizationBranch
+      local: branch_id
+      foreign: organization_id
+agOrganizationBranch:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    organization_id:
+      type: integer(2)
+      notnull: true
+    branch_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agOrganizationBranch_unq:
+      fields: [organization_id, branch_id]
+      type: unique
+  relations:
+    agOrganization:
+      local: organization_id
+      foreign: id
+    agBranch:
+      local: branch_id
+      foreign: id
+actAs:
+  Timestampable: 

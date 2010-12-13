@@ -1,0 +1,22 @@
+agDeploymentAlgorithm:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    deployment_algorithm:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agDeploymentAlgorithm_unq:
+      fields: [deployment_algorithm]
+      type: unique
+actAs:
+  Timestampable: 

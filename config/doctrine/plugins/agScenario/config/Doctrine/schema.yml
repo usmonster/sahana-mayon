@@ -1,0 +1,531 @@
+agScenario:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    scenario:
+      type: string(64)
+      notnull: true
+    description:
+      type: string(255)
+  indexes:
+    agScenario_unq:
+      fields: [scenario]
+      type: unique
+  relations:
+    agEvent:
+      class: agEvent
+      refClass: agEventScenario
+      local: scenario_id
+      foreign: event_id
+agAffectedAreaTemplate:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    affected_area:
+      type: string(64)
+      notnull: true
+    geo_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    agPrepAffectedArea_unq:
+      fields: [affected_area]
+      type: unique
+  relations:
+    agGeo:
+      local: geo_id
+      foreign: id
+agScenarioServiceArea:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+agScenarioFacilityDistribution:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    scenario_service_area_id:
+      type: integer(2)
+      notnull: true
+    scenario_facility_group_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agScenarioFacilityDistribution:
+      fields: [scenario_facility_group_id, scenario_service_area_id]
+      type: unique
+  relations:
+    agScenarioFacilityGroup:
+      local: scenario_facility_group_id
+      foreign: id
+    agScenarioServiceArea:
+      local: scenario_service_area_id
+      foreign: id
+agScenarioAffectedArea:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    scenario_id:
+      type: integer(2)
+      notnull: true
+    affected_area_template_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agScenarioAffectedArea_unq:
+      fields: [scenario_id, affected_area_template_id]
+      type: unique
+    agScenarioAffectedArea_scenarioId:
+      fields: [scenario_id]
+    agScenarioAffectedArea_affected_area_template_id:
+      fields: [affected_area_template_id]
+  relations:
+    agAffectedAreaTemplate:
+      local: affected_area_template_id
+      foreign: id
+    agScenario:
+      local: scenario_id
+      foreign: id
+agScenarioServiceAreaComposite:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    scenario_service_area_id:
+      type: integer(2)
+      notnull: true
+    geo_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    UX_agScenarioServiceAreaComposite:
+      fields: [scenario_service_area_id]
+      type: unique
+    agScenarioServiceAreaComposite_prepServiceAreaId:
+      fields: [scenario_service_area_id]
+  relations:
+    agScenarioServiceArea:
+      local: scenario_service_area_id
+      foreign: id
+    agGeo:
+      local: geo_id
+      foreign: id
+agDefaultScenarioFacilityResourceType:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    scenario_id:
+      type: integer(2)
+      notnull: true
+    facility_resource_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_DefaultScenarioFacilityResourceType:
+      fields: [scenario_id, facility_resource_type_id]
+      type: unique
+  relations:
+    agFacilityResourceType:
+      local: facility_resource_type_id
+      foreign: id
+    agScenario:
+      local: scenario_id
+      foreign: id
+agDefaultScenarioStaffResourceType:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    scenario_id:
+      type: integer(2)
+      notnull: true
+    staff_resource_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agDefaultScenarioStaffResourceType:
+      fields: [scenario_id, staff_resource_type_id]
+      type: unique
+  relations:
+    agScenario:
+      local: scenario_id
+      foreign: id
+    agStaffResourceType:
+      local: staff_resource_type_id
+      foreign: id
+agScenarioFacilityGroup:
+  columns:
+    id:
+      primary: true
+      unique: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    scenario_id:
+      type: integer(2)
+      notnull: true
+    scenario_facility_group:
+      type: string(64)
+      notnull: true
+    facility_group_type_id:
+      type: integer(2)
+      notnull: true
+    facility_group_allocation_status_id:
+      type: integer(2)
+      notnull: true
+    activation_sequence:
+      default: 100
+      unsigned: true
+      type: integer(1)
+      notnull: true
+  indexes:
+    UX_agScenarioFacilityGroup:
+      fields: [scenario_id, scenario_facility_group]
+      type: unique
+    agScenarioFacilityGroup_unq:
+      fields: [scenario_facility_group]
+      type: unique
+  relations:
+    agScenario:
+      local: scenario_id
+      foreign: id
+    agFacilityGroupType:
+      local: facility_group_type_id
+      foreign: id
+    agFacilityGroupAllocationStatus:
+      local: facility_group_allocation_status_id
+      foreign: id
+    agFacilityResource:
+      class: agFacilityResource
+      refClass: agScenarioFacilityResource
+      local: scenario_facility_group_id
+      foreign: facility_resource_id
+agScenarioShift:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    scenario_facility_resource_id:
+      type: integer(2)
+      notnull: true
+    staff_resource_type_id:
+      type: integer(2)
+      notnull: true
+    task_id:
+      type: integer(2)
+      notnull: true
+    task_length_minutes:
+      type: integer(4)
+      notnull: true
+    break_length_minutes:
+      type: integer(4)
+      notnull: true
+    minutes_start_to_facility_activation:
+      default: 
+      type: integer(5)
+      notnull: true
+    minimum_staff:
+      type: integer(2)
+      notnull: true
+    maximum_staff:
+      type: integer(2)
+      notnull: true
+    staff_wave:
+      type: integer(2)
+      notnull: true
+    shift_status_id:
+      type: integer(2)
+      notnull: true
+    deployment_algorithm_id:
+      type: integer(4)
+      notnull: true
+  relations:
+    agStaffResourceType:
+      local: staff_resource_type_id
+      foreign: id
+    agTask:
+      local: task_id
+      foreign: id
+    agShiftStatus:
+      local: shift_status_id
+      foreign: id
+    agDeploymentAlgorithm:
+      local: deployment_algorithm_id
+      foreign: id
+    agScenarioFacilityResource:
+      class: agScenarioFacilityResource
+      foreignAlias: agScenarioShift
+      local: scenario_facility_resource_id
+      foreign: id
+agTask:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    task:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agShiftTask_unq:
+      fields: [task]
+      type: unique
+agShiftTemplate:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    shift_template:
+      type: string(64)
+      notnull: true
+    description:
+      type: string(255)
+    scenario_id:
+      type: integer(2)
+      notnull: true
+    facility_resource_type_id:
+      type: integer(2)
+      notnull: true
+    staff_resource_type_id:
+      type: integer(2)
+      notnull: true
+    task_id:
+      type: integer(2)
+      notnull: true
+    task_length_minutes:
+      type: integer(4)
+      notnull: true
+    break_length_minutes:
+      type: integer(4)
+      notnull: true
+    minutes_start_to_facility_activation:
+      type: integer(5)
+      notnull: true
+    shift_repeats:
+      type: integer(2)
+      notnull: true
+    max_staff_repeat_shifts:
+      type: integer(2)
+      notnull: true
+    shift_status_id:
+      type: integer(2)
+      notnull: true
+    deployment_algorithm_id:
+      type: integer(4)
+      notnull: true
+  relations:
+    agFacilityResourceType:
+      local: facility_resource_type_id
+      foreign: id
+    agStaffResourceType:
+      local: staff_resource_type_id
+      foreign: id
+    agTask:
+      local: task_id
+      foreign: id
+    agShiftStatus:
+      local: shift_status_id
+      foreign: id
+    agDeploymentAlgorithm:
+      local: deployment_algorithm_id
+      foreign: id
+    agScenario:
+      local: scenario_id
+      foreign: id
+agShiftTemplateMessage:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    shift_template_id:
+      type: integer(4)
+      notnull: true
+    message_trigger_id:
+      type: integer(2)
+      notnull: true
+    batch_template_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agShiftTemplateMessage:
+      fields: [shift_template_id, message_trigger_id, batch_template_id]
+      type: unique
+  relations:
+    agShiftTemplate:
+      local: shift_template_id
+      foreign: id
+    agMessageTrigger:
+      local: message_trigger_id
+      foreign: id
+    agBatchTemplate:
+      local: batch_template_id
+      foreign: id
+agShiftStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    shift_status:
+      type: string(32)
+      notnull: true
+    description:
+      type: string(255)
+    standby:
+      default: 0
+      type: boolean
+      notnull: true
+  indexes:
+    UX_agShiftStatus:
+      fields: [shift_status]
+      type: unique
+agScenarioStaffResource:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    scenario_id:
+      type: integer(2)
+    staff_resource_id:
+      type: integer(5)
+    deployment_weight:
+      type: integer(1)
+  indexes:
+    UX_agScenarioStaffResource:
+      fields: [scenario_id, staff_resource_id]
+      type: unique
+  relations:
+    agStaffResource:
+      local: staff_resource_id
+      foreign: id
+    agScenario:
+      local: scenario_id
+      foreign: id
+agScenarioFacilityResource:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    facility_resource_id:
+      type: integer(4)
+      notnull: true
+    scenario_facility_group_id:
+      type: integer(2)
+      notnull: true
+    facility_resource_allocation_status_id:
+      type: integer(2)
+      notnull: true
+    activation_sequence:
+      default: 100
+      unsigned: true
+      type: integer(1)
+      notnull: true
+  indexes:
+    UX_ScenarioFacilityResource:
+      fields: [facility_resource_id, scenario_facility_group_id]
+      type: unique
+  relations:
+    agFacilityResource:
+      local: facility_resource_id
+      foreign: id
+    agScenarioFacilityGroup:
+      local: scenario_facility_group_id
+      foreign: id
+    agFacilityResourceAllocationStatus:
+      local: facility_resource_allocation_status_id
+      foreign: id
+    agStaffResourceType:
+      class: agStaffResourceType
+      refClass: agFacilityStaffResource
+      local: scenario_facility_resource_id
+      foreign: staff_resource_type_id
+agFacilityStaffResource:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    scenario_facility_resource_id:
+      type: integer(2)
+      notnull: true
+    staff_resource_type_id:
+      type: integer(2)
+      notnull: true
+    minimum_staff:
+      type: integer(2)
+      notnull: true
+    maximum_staff:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agFacilityStaffResource_unq:
+      fields: [scenario_facility_resource_id, staff_resource_type_id]
+      type: unique
+  relations:
+    agScenarioFacilityResource:
+      local: scenario_facility_resource_id
+      foreign: id
+    agStaffResourceType:
+      local: staff_resource_type_id
+      foreign: id
+agScenarioStaffGenerator:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    scenario_id:
+      type: integer(2)
+      notnull: true
+    lucene_search_id:
+      type: integer(2)
+      notnull: true
+    search_weight:
+      type: integer(1)
+      notnull: true
+  indexes:
+    agDeploymentSearch_unq:
+      fields: [scenario_id, lucene_search_id]
+      type: unique
+  relations:
+    agScenario:
+      local: scenario_id
+      foreign: id
+    agLuceneSearch:
+      local: lucene_search_id
+      foreign: id
+actAs:
+  Timestampable: 

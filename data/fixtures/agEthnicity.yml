@@ -1,0 +1,28 @@
+# Pre-populate ethnicity table.
+# Data collected from http://tobyinkster.co.uk/blog/2007/01/02/nationalities/
+
+agEthnicity:
+  mix:
+    ethnicity: Mix Race
+  arctic:
+    ethnicity: Arctic (Siberian, Eskimo)
+  caucasian_1:
+    ethnicity: Caucasian (European)
+  caucasian_2:
+    ethnicity: Caucasian (Indian)
+  caucasian_3:
+    ethnicity: Caucasian (Middle East)
+  australian:
+    ethnicity: Indiginous Australian
+  native_american:
+    ethnicity: Native American
+  north_east_asian:
+    ethnicity: North East Asian (Mongol, Tibetan, Korean, Japanese, etc)
+  pacific:
+    ethnicity: Pacific (Polynesian, Micronesian, etc)
+  south_east_asian:
+    ethnicity: South East Asian (Chinese, Thai, Malay, Filipino, etc)
+  africa:
+    ethnicity: West African, Bushmen, Ethiopian
+  other:
+    ethnicity: Other Race

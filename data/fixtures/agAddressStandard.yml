@@ -1,0 +1,7 @@
+# Pre-populate address type
+
+agAddressStandard:
+  us_standard:
+    address_standard: us standard
+    agCountry: united_states
+    

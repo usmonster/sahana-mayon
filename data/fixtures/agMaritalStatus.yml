@@ -1,0 +1,17 @@
+# Pre-populate marital status 
+
+agMaritalStatus:
+  single:
+    marital_status: single
+  married:
+    marital_status: married
+  divorsed:
+    marital_status: divorced
+  separated:
+    marital_status: separated
+  widow:
+    marital_status: widow / widower
+  partner:
+    marital_status: unmarried partner
+  other:
+    marital_status: other

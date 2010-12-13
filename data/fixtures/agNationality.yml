@@ -1,0 +1,489 @@
+# Pre-populate nationality table
+# This data dictionary is based off of http://en.wikipedia.org/wiki/List_of_adjectival_and_demonymic_forms_of_place_names
+# and http://geography.about.com/library/weekly/aa030900a.htm
+
+agNationality:
+  abkhazia:
+    nationality: Abkhazian
+  afghanistan:
+    nationality: Afghan
+  albania:
+    nationality: Albanian
+  algeria:
+    nationality: Algerian
+  american_samoa:
+    nationality: American Samoan
+  andorra:
+    nationality: Andorran
+  angola:
+    nationality: Angolan
+  anguilla:
+    nationality: Anguillan
+  antigua_and_barbuda1:
+    nationality: Antiguan
+  antigua_and_barbuda2:
+    nationality: Barbudan
+  argentina:
+    nationality: Argentine
+  armenia:
+    nationality: Armenian
+  aruba:
+    nationality: Aruban
+  australia:
+    nationality: Australian
+  austria:
+    nationality: Austrian
+  azerbaijan:
+    nationality: Azerbaijani
+  bahamas:
+    nationality: Bahamian
+  bahrain:
+    nationality: Bahraini
+  bangladesh:
+    nationality: Bangladeshi
+  barbados:
+    nationality: Barbadian
+  belarus:
+    nationality: Belarusian
+  belgium:
+    nationality: Belgian
+  belize:
+    nationality: Belizean
+  benin:
+    nationality: Beninese
+  bermuda:
+    nationality: Bermudian
+  bhutan:
+    nationality: Bhutanese
+  bolivia:
+    nationality: Bolivian
+  bosnia_and_herzegovina1:
+    nationality: Bosnian
+  bosnia_and_herzegovina2:
+    nationality: Herzegovinian
+  botswana:
+    nationality: Motswana
+  brazil:
+    nationality: Brazilian
+  brunei_darussalam:
+    nationality: Bruneian
+  bulgaria:
+    nationality: Bulgarian
+  burkina_faso:
+    nationality: Burkinabe
+  burma:
+    nationality: Bamar
+  burundi:
+    nationality: Burundian
+  cambodia:
+    nationality: Cambodian
+  cameroon:
+    nationality: Cameroonian
+  canada:
+    nationality: Canadian
+  cape_verde:
+    nationality: Cape Verdian
+  cayman_islands:
+    nationality: Caymanian
+  central_african_republic:
+    nationality: Central African
+  chad:
+    nationality: Chadian
+  chile:
+    nationality: Chilean
+  china:
+    nationality: Chinese
+  christmas_island:
+    nationality: Christmas Islander
+  cocos_islands:
+    nationality: Cocos Islander
+  colombia:
+    nationality: Colombian
+  comoros:
+    nationality: Comoran
+  congo:
+    nationality: Congolese
+  cook_islands:
+    nationality: Cook Islander
+  costa_rica:
+    nationality: Costa Rican
+  cote_divoire:
+    nationality: Ivorian
+  croatia:
+    nationality: Croat
+  cuba:
+    nationality: Cuban
+  cyprus:
+    nationality: Cypriot
+  czech_republic:
+    nationality: Czech
+  denmark:
+    nationality: Dane
+  Djibouti:
+    nationality: Djibouti
+  dominica:
+    nationality: Dominican
+  east_timor:
+    nationality: Timorese
+  ecuador:
+    nationality: Ecuadorean
+  egypt:
+    nationality: Egyptian
+  el_salvador:
+    nationality: Salvadoran
+  england:
+    nationality: English
+  equatorial_guinea:
+    nationality: Equatorial Guinean
+  eritrea:
+    nationality: Eritrean
+  estonia:
+    nationality: Estonian
+  ethiopia:
+    nationality: Ethiopian
+  fiji:
+    nationality: Fijian
+  finland:
+    nationality: Finn
+  france:
+    nationality: French
+  french_guiana:
+    nationality: French Guianese
+  french_polynesia1:
+    nationality: French Polynesian
+  french_polynesia2:
+    nationality: Tahitian
+  gabon:
+    nationality: Gabonese
+  gambia:
+    nationality: Gambian
+  georgia:
+    nationality: Georgian
+  germany:
+    nationality: German
+  ghana:
+    nationality: Ghanaian
+  gibraltar:
+    nationality: Gibraltarian
+  great_britain:
+    nationality: British
+  greece:
+    nationality: Greek
+  greenland:
+    nationality: Greenlander
+  grenada:
+    nationality: Grenadian
+  guadeloupe:
+    nationality: Guadeloupian
+  guam:
+    nationality: Guatemanian
+  guatemala:
+    nationality: Guatemalan
+  guinea:
+    nationality: Guinean
+  guinea_bissau:
+    nationality: Guinea-Bissauan
+  guyana:
+    nationality: Guyanese
+  haiti:
+    nationality: Haitian
+  honduras:
+    nationality: Honduran
+  hong_kong:
+    nationality: Hongkonger
+  hungary:
+    nationality: Hungarian
+  iceland:
+    nationality: Icelander
+  india:
+    nationality: Indian
+  indonesia:
+    nationality: Indonesian
+  iran:
+    nationality: Iranian
+  iraq:
+    nationality: Iraqi
+  ireland:
+    nationality: Irish
+  isle_of_man:
+    nationality: Manx
+  israel:
+    nationality: Israeli
+  italy:
+    nationality: Italian
+  jamaica:
+    nationality: Jamaican
+  japan:
+    nationality: Japanese
+  Jordan:
+    nationality: Jordanian
+  kazakhstan:
+    nationality: Kazakhstani
+  kenya:
+    nationality: Kenyan
+  kiribati:
+    nationality: I-Kiribati
+  korea:
+    nationality: Korea
+  kosovo:
+    nationality: Kosovar
+  kuwait:
+    nationality: Kuwaiti
+  kyrgyzstan:
+    nationality: Kyrgyzstaini
+  lao:
+    nationality: Lao
+  latvia:
+    nationality: Latvian
+  lebanon:
+    nationality: Lebanese
+  lesotho:
+    nationality: Mosotho
+  liberia:
+    nationality: Liberian
+  libyan:
+    nationality: Libyan
+  liechtenstein:
+    nationality: Liechtensteiner
+  lithuania:
+    nationality: Lithuanian
+  luxembourg:
+    nationality: Luxembourger
+  macao:
+    nationality: Macanese
+  macedonia:
+    nationality: Macedonian
+  madagascar:
+    nationality: Malagasy
+  Malawi:
+    nationality: Malawian
+  malaysia:
+    nationality: Malaysian
+  maldives:
+    nationality: Maldivan
+  mali:
+    nationality: Malian
+  malta:
+    nationality: Maltese
+  marshal:
+    nationality: Marshallese
+  martinique:
+    nationality: Martiniquais
+  mauritania:
+    nationality: Mauritanian
+  mauritius:
+    nationality: Mauritian
+  mayotte:
+    nationality: Mahorais
+  mexico:
+    nationality: Mexican
+  micronesia:
+    nationality: Micronesian
+  moldova:
+    nationality: Moldovan
+  monaco:
+    nationality: Monegasque
+  mongolia:
+    nationality: Mongolian
+  montenegro:
+    nationality: Montenegrin
+  morocco:
+    nationality: Moroccan
+  mozambique:
+    nationality: Mozambican
+  myanmar:
+    nationality: Burmese
+  namibia:
+    nationality: Namibian
+  nauru:
+    nationality: Nauruan
+  nepal:
+    nationality: Nepalese
+  netherlands:
+    nationality: Netherlander
+  netherlands_a:
+    nationality: Dutch Antillean
+  new_caledonia:
+    nationality: New Caledonian
+  new_zealand:
+    nationality: New Zealander
+  nicaragua:
+    nationality: Nicaraguan
+  niger:
+    nationality: Nigerien
+  nigeria:
+    nationality: Nigerian
+  niue:
+    nationality: Niuen
+  norway:
+    nationality: Norwegian
+  northern_ireland:
+    nationality: Northern Irish
+  northern_marianas:
+    nationality: Northern Marianan
+  oman:
+    nationality: Omani
+  pakistan:
+    nationality: Pakistani
+  palau:
+    nationality: Palauan
+  palestinian:
+    nationality: Palestinian
+  panama:
+    nationality: Panamanian
+  papua:
+    nationality: Papua New Guinean
+  paraguay:
+    nationality: Paraguayan
+  peru:
+    nationality: Peruvian
+  philippines:
+    nationality: Filipino
+  pitcairn:
+    nationality: Pitcairn Islander
+  poland:
+    nationality: Pole
+  portugal:
+    nationality: Portuguese
+  puerto_rico:
+    nationality: Puerto Rican
+  qatar:
+    nationality: Qatari
+  reunion:
+    nationality: Reunionese
+  romania:
+    nationality: Romanian
+  russian_federation:
+    nationality: Russian
+  rwanda:
+    nationality: Rwandan
+  helena:
+    nationality: St. Helenian
+  kitts_and_nevis1:
+    nationality: Kittian
+  kitts_and_nevis2:
+    nationality: Nevisian
+  lucia:
+    nationality: Saint Lucian
+  pierre_and_miquelon1:
+    nationality: Saint-Pierrais
+  pierre_and_miquelon2:
+    nationality: Miquelonnais
+  vincent_and_grenadines1:
+    nationality: St. Vincentian
+  vincent_and_grenadines2:
+    nationality: Vincentian
+  samoa:
+    nationality: Samoan
+  san_marino:
+    nationality: Sammarinese
+  sao:
+    nationality: Sao Tomean
+  saudi_arabia:
+    nationality: Saudi
+  scotland:
+    nationality: Scottish
+  senegal:
+    nationality: Senegalese
+  serbia:
+    nationality: Serbian
+  seychelles:
+    nationality: Seychellois
+  sierra_leone:
+    nationality: Sierra Leonean
+  singapore:
+    nationality: Singaporean
+  slovakia:
+    nationality: Slovak
+  slovenia:
+    nationality: Slovene
+  solomon_islands:
+    nationality: Solomon Islander
+  somalia:
+    nationality: Somali
+  south_africa:
+    nationality: South African
+  south_ossetia:
+    nationality: South Ossetian
+  spain:
+    nationality: Spaniard
+  sri_lanka:
+    nationality: Sri Lankan
+  sudan:
+    nationality: Sudanese
+  suriname:
+    nationality: Surinamer
+  swaziland:
+    nationality: Swazi
+  sweden:
+    nationality: Swede
+  switzerland:
+    nationality: Swiss
+  syrian:
+    nationality: Syrian
+  taiwan:
+    nationality: Taiwanese
+  tajikistan:
+    nationality: Tajikistani
+  tanzania:
+    nationality: Tanzanian
+  thailand:
+    nationality: Thai
+  togo:
+    nationality: Togolese
+  tonga:
+    nationality: Tongan
+  trinidad_and_tobago1:
+    nationality: Trinidadian
+  trinidad_and_tobago2:
+    nationality: Tobagonian
+  tunisia:
+    nationality: Tunisian
+  turkey:
+    nationality: Turkish
+  turkmenistan:
+    nationality: Turkmen
+  turks_and_caicos1:
+    nationality: Turks
+  turks_and_caicos1:
+    nationality: Caicos Islander
+  tuvalu:
+    nationality: Tuvaluan
+  uganda:
+    nationality: Ugandan
+  ukraine:
+    nationality: Ukrainian
+  united_arab_emirates:
+    nationality: Emirian
+  united_states:
+    nationality: American
+  uruguay:
+    nationality: Uruguayan
+  uzbekistan:
+    nationality: Uzbek
+  vanuatu:
+    nationality: Ni-Vanuatu
+  venezuela:
+    nationality: Venezuelan
+  vietnam:
+    nationality: Vietnamese
+  virgin_islands_british:
+    nationality: British Virin Islander
+  virgin_islands_us:
+    nationality: Virgin Islander
+  wales:
+    nationality: Welsh
+  wallis_and_futuna1:
+    nationality: Wallisian
+  wallis_and_futuna2:
+    nationality: Futunan
+  western_sahara:
+    nationality: Sahrawi
+  yemen:
+    nationality: Yemeni
+  zambia:
+    nationality: Zambian
+  zimbabwe:
+    nationality: Zimbabwean
+  other:
+    nationality: other

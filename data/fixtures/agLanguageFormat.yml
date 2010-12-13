@@ -1,0 +1,10 @@
+# Pre-load for agLanguageFormat table.
+
+agLanguageFormat:
+  read:
+    language_format: read
+  write:
+    language_format: write
+  speak:
+    language_format: speak
+

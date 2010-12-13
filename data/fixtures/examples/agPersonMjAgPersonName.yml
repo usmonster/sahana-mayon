@@ -1,0 +1,135 @@
+# Sample of person with names
+# Requirement: Preload person object sample and person name and person name type data dictionary
+
+agPersonMjAgPersonName:
+  adrien_akano1:
+    agPerson: 1
+    agPersonName: 198
+    agPersonNameType: given
+    priority: 1
+  adrien_akano2:
+    agPerson: 1
+    agPersonName: 298
+    agPersonNameType: family
+    priority: 1
+  aimee_adu1:
+    agPerson: 2
+    agPersonName: 273
+    agPersonNameType: given
+    priority: 1
+  aimee_adu2:
+    agPerson: 2
+    agPersonName: 200
+    agPersonNameType: family
+    priority: 1
+  aimee_adu3:
+    agPerson: 2
+    agPersonName: 285
+    agPersonNameType: alias
+    priority: 1
+  alan_alamo1:
+    agPerson: 3
+    agPersonName: 351
+    agPersonNameType: given
+    priority: 1
+  alan_alamo2:
+    agPerson: 3
+    agPersonName: 350
+    agPersonNameType: family
+    priority: 1
+  alan_alamo3:
+    agPerson: 3
+    agPersonName: 336
+    agPersonNameType: alias
+    priority: 1
+  alicea_ammonds1:
+    agPerson: 4
+    agPersonName: 423
+    agPersonNameType: given
+    priority: 1
+  alicea_ammonds2:
+    agPerson: 4
+    agPersonName: 575
+    agPersonNameType: middle
+    priority: 1
+  alicea_ammonds3:
+    agPerson: 4
+    agPersonName: 562
+    agPersonNameType: family
+    priority: 1
+  alicea_ammonds4:
+    agPerson: 4
+    agPersonName: 574
+    agPersonNameType: maiden
+    priority: 1
+  alicea_ammonds5:
+    agPerson: 4
+    agPersonName: 421
+    agPersonNameType: alias
+    priority: 1
+  andre_andino1:
+    agPerson: 5
+    agPersonName: 613
+    agPersonNameType: given
+    priority: 1
+  andre_andino2:
+    agPerson: 5
+    agPersonName: 608
+    agPersonNameType: family
+    priority: 1
+  angelette_andrzej1:
+    agPerson: 6
+    agPersonName: 643
+    agPersonNameType: given
+    priority: 1
+  angelette_andrzej2:
+    agPerson: 6
+    agPersonName: 630
+    agPersonNameType: family
+    priority: 1
+  angela_angara1:
+    agPerson: 7
+    agPersonName: 640
+    agPersonNameType: given
+    priority: 1
+  angela_angara2:
+    agPerson: 7
+    agPersonName: 638
+    agPersonNameType: family
+    priority: 1
+  angela_angara3:
+    agPerson: 7
+    agPersonName: 639
+    agPersonNameType: alias
+    priority: 1
+  anna_aponte1:
+    agPerson: 8
+    agPersonName: 680
+    agPersonNameType: given
+    priority: 1
+  anna_aponte2:
+    agPerson: 8
+    agPersonName: 738
+    agPersonNameType: family
+    priority: 1
+  antonio_arato1:
+    agPerson: 9
+    agPersonName: 720
+    agPersonNameType: given
+    priority: 1
+  antonio_arato2:
+    agPerson: 9
+    agPersonName: 762
+    agPersonNameType: family
+    priority: 1
+  aqeela_ashe1:
+    agPerson: 10
+    agPersonName: 746
+    agPersonNameType: given
+    priority: 1
+  aqeela_ashe2:
+    agPerson: 10
+    agPersonName: 887
+    agPersonNameType: family
+    priority: 1
+

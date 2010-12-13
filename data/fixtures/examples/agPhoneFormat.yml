@@ -1,0 +1,11 @@
+# Pre-populations of agPhoneFormat with USA's phone formats.
+# Requirement: Corresponding agCountry and agPhoneFormatType fixtures
+
+agPhoneFormat:
+  usa_10_digits:
+    agCountry: united_states
+    agPhoneFormatType: usa_10_digits
+  usa_10_digits_ext:
+    agCountry: united_states
+    agPhoneFormatType: usa_10_digits_ext
+

@@ -1,0 +1,34 @@
+# This is a sample file for persons sex.
+# Requirement: Pre-load of Person object sample and sex data dictionary.
+
+agPersonSex:
+  person01:
+    agPerson: 1
+    agSex: male
+  person02:
+    agPerson: 2
+    agSex: female
+  person03:
+    agPerson: 3
+    agSex: post_man
+  person04:
+    agPerson: 4
+    agSex: post_man
+  person05:
+    agPerson: 5
+    agSex: post_woman
+  person06:
+    agPerson: 6
+    agSex: male 
+  person07:
+    agPerson: 7
+    agSex: female
+  person08:
+    agPerson: 8
+    agSex: male
+  person09:
+    agPerson: 9
+    agSex: female
+  person10:
+    agPerson: 10
+    agSex: post_man

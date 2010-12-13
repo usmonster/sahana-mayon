@@ -1,0 +1,298 @@
+agClient:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    event_id:
+      type: integer(4)
+      notnull: true
+  indexes:
+    UX_agClient:
+      fields: [person_id, event_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agEvent:
+      local: event_id
+      foreign: id
+agClientNote:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    client_id:
+      type: integer(5)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    event_staff_id:
+      type: integer(5)
+      notnull: true
+    client_note:
+      type: gzip
+      notnull: true
+  indexes:
+    UX_agClientNote:
+      fields: [client_id, time_stamp]
+      type: unique
+  relations:
+    agClient:
+      local: client_id
+      foreign: id
+    agEventStaff:
+      local: event_staff_id
+      foreign: id
+agClientMedicalStatusType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+    client_medical_status_type:
+      type: string(32)
+      notnull: true
+    client_medical_status_type_desc:
+      type: string(255)
+    special_needs:
+      type: boolean
+      notnull: true
+  indexes:
+    UX_agClientMedicalStatusType:
+      fields: [client_medical_status_type]
+      type: unique
+agClientRawSkill:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    raw_skill_id:
+      type: integer(4)
+      notnull: true
+    client_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    UX_agPersonEventRawSkill:
+      fields: [raw_skill_id, client_id]
+      type: unique
+  relations:
+    agRawSkill:
+      local: raw_skill_id
+      foreign: id
+    agClient:
+      local: client_id
+      foreign: id
+agClientMedicalStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    client_id:
+      type: integer(5)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    client_medical_status_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agClientMedicalStatus:
+      fields: [client_id, time_stamp]
+      type: unique
+  relations:
+    agClient:
+      local: client_id
+      foreign: id
+    agClientMedicalStatusType:
+      local: client_medical_status_type_id
+      foreign: id
+agClientAllocationStatusType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      autoincrement: true
+    client_allocation_status_type:
+      type: string(64)
+      notnull: true
+    client_allocation_status_type_desc:
+      type: string(255)
+    being_serviced:
+      type: boolean
+      notnull: true
+  indexes:
+    UX_agClientAllocationStatusType:
+      fields: [client_allocation_status_type]
+      type: unique
+agClientAllocationStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    client_id:
+      type: integer(5)
+      notnull: true
+    time_stamp:
+      type: timestamp
+      notnull: true
+    event_facility_resource_id:
+      type: integer(4)
+      notnull: true
+    client_allocation_status_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agClientAllocationStatus:
+      fields: [client_id, time_stamp]
+  relations:
+    agClient:
+      local: client_id
+      foreign: id
+    agEventFacilityResource:
+      local: event_facility_resource_id
+      foreign: id
+    agClientAllocationStatusType:
+      local: client_allocation_status_type_id
+      foreign: id
+agClientAge:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    client_id:
+      type: integer(5)
+      notnull: true
+    date_recorded:
+      type: date
+      notnull: true
+    age:
+      type: integer(1)
+      notnull: true
+  indexes:
+    UX_agClientAge:
+      fields: [client_id, date_recorded]
+      type: unique
+  relations:
+    agClient:
+      local: client_id
+      foreign: id
+agClientGroupType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+    client_group_type:
+      type: string(64)
+      notnull: true
+    client_group_type_desc:
+      type: string(255)
+  indexes:
+    IX_agClientGroupType:
+      fields: [client_group_type]
+agClientGroup:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    entity_id:
+      type: integer(5)
+      notnull: true
+    client_group_type_id:
+      type: integer(2)
+      notnull: true
+    client_group_leader_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    UX_agClientGroup:
+      fields: [entity_id]
+      type: unique
+  relations:
+    agClientGroupType:
+      local: client_group_type_id
+      foreign: id
+    agClient:
+      local: client_group_leader_id
+      foreign: id
+    agEntity:
+      local: entity_id
+      foreign: id
+agClientGroupCompositionType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+    client_group_composition_type:
+      type: string(32)
+      notnull: true
+    client_group_composition_type_desc:
+      type: string(255)
+  indexes:
+    UX_agClientGroupCompositionType:
+      fields: [client_group_composition_type]
+      type: unique
+agClientGroupComposition:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    client_group_id:
+      type: integer(5)
+      notnull: true
+    client_group_composition_type_id:
+      type: integer(2)
+      notnull: true
+    member_count:
+      type: integer(4)
+      notnull: true
+  indexes:
+    UX_agClientGroupComposition:
+      fields: [client_group_id, client_group_composition_type_id]
+      type: unique
+  relations:
+    agClientGroup:
+      local: client_group_id
+      foreign: id
+    agClientGroupCompositionType:
+      local: client_group_composition_type_id
+      foreign: id
+agClientGroupMembership:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    client_group_id:
+      type: integer(5)
+      notnull: true
+    client_id:
+      type: integer(5)
+      notnull: true
+  indexes:
+    UX_agClientGroupMembership:
+      fields: [client_group_id, client_id]
+      type: unique
+  relations:
+    agClient:
+      local: client_id
+      foreign: id
+    agClientGroup:
+      local: client_group_id
+      foreign: id
+actAs:
+  Timestampable: 

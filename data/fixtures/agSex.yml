@@ -1,0 +1,13 @@
+# Pre-populate sex
+
+agSex:
+  male:
+    sex: male
+  female:
+    sex: female
+  post_man:
+    sex: post-op transman
+  post_woman:
+    sex: post-op transwoman
+  other:
+    sex: other

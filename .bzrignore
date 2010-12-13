@@ -1,0 +1,16 @@
+apps/*/config/app.yml
+config/config.yml
+config/databases.yml
+data/indexes/**
+data/sql/schema.sql
+cache/**
+log/**
+.DS_Store
+nbproject
+*.~1~
+*.prj
+*.vpj
+*.vpw*
+*.vtg
+*.pui
+*.xls

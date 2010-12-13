@@ -1,0 +1,19 @@
+# Pre-populate address element
+
+agAddressElement:
+  line_1:
+    address_element: line 1
+  line_2:
+    address_element: line 2
+  city:
+    address_element: city
+  state:
+    address_element: state
+  zip5:
+    address_element: zip5
+  zip4:
+    address_element: zip+4
+  country:
+    address_element: country
+  borough:
+    address_element: borough

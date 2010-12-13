@@ -1,0 +1,6 @@
+agAccountStatus:
+  agAccountStatus_1:
+    account_status: Active
+  agAccountStatus_2:
+    account_status: Inactive
+

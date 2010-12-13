@@ -1,0 +1,51 @@
+# You can find more information about this file on the symfony website:
+# http://www.symfony-project.org/reference/1_4/en/04-Settings
+
+prod:
+  .settings:
+    no_script_name:         true
+    logging_enabled:        false
+
+dev:
+  .settings:
+    error_reporting:        <?php echo (E_ALL | E_STRICT)."\n" ?>
+    web_debug:              true
+    cache:                  false
+    no_script_name:         false
+    etag:                   false
+
+test:
+  .settings:
+    error_reporting:        <?php echo ((E_ALL | E_STRICT) ^ E_NOTICE)."\n" ?>
+    cache:                  false
+    web_debug:              false
+    no_script_name:         false
+    etag:                   false
+
+all:
+  .settings:
+    jquery_web_dir:         /sfJqueryReloadedPlugin
+    jquery_core:            jquery-1.4.2.min.js
+
+    # Form security secret (CSRF protection)
+    csrf_secret:            ba4a0880a5bf046b8bf3415427684d5762cc3e28
+
+    # Output escaping settings
+    escaping_strategy:      true
+    escaping_method:        ESC_SPECIALCHARS
+
+    # Enable the database manager
+    use_database:           true
+
+    enabled_modules:        [default, sfGuardAuth, sfGuardUser, agGis]
+    i18n:                   on
+
+  .actions:
+    login_module:           home
+    login_action:           index
+
+    error_404_module:       home
+    error_404_action:       error
+
+    secure_module:          sfGuardAuth 
+    secure_action:          secure

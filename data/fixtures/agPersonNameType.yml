@@ -1,0 +1,13 @@
+# Pre-populate person name type
+
+agPersonNameType:
+  given:
+    person_name_type: given
+  middle:
+    person_name_type: middle
+  family:
+    person_name_type: family
+  maiden:
+    person_name_type: maiden
+  alias:
+    person_name_type: alias

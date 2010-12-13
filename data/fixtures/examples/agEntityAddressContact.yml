@@ -1,0 +1,107 @@
+agEntityAddressContact:
+  person_1_home:
+    agEntity: 1
+    agAddress: 3
+    agAddressContactType: home
+    priority: 1
+  person_1_work:
+    agEntity: 1
+    agAddress: 1
+    agAddressContactType: work
+    priority: 2
+  person_2_work:
+    agEntity: 2
+    agAddress: 1
+    agAddressContactType: work
+    priority: 2
+  person_3_work:
+    agEntity: 3
+    agAddress: 1
+    agAddressContactType: work
+    priority: 2
+  person_4_work:
+    agEntity: 4
+    agAddress: 1
+    agAddressContactType: work
+    priority: 2
+  person_4_work:
+    agEntity: 4
+    agAddress: 2
+    agAddressContactType: work
+    priority: 2
+  person_5_work:
+    agEntity: 5
+    agAddress: 2
+    agAddressContactType: work
+    priority: 2
+  person_6_work:
+    agEntity: 6
+    agAddress: 3
+    agAddressContactType: work
+    priority: 2
+  person_7_vacation:
+    agEntity: 7
+    agAddress: 2
+    agAddressContactType: vacation
+    priority: 3
+  person_8_home:
+    agEntity: 8
+    agAddress: 2
+    agAddressContactType: home
+    priority: 1
+  person_9_other:
+    agEntity: 9
+    agAddress: 1
+    agAddressContactType: other
+    priority: 4
+  facility_site11:
+    agEntity: 87
+    agAddress: 5
+    agAddressContactType: work
+    priority: 2
+  facility_site12:
+    agEntity: 88
+    agAddress: 6
+    agAddressContactType: work
+    priority: 2
+  facility_site13:
+    agEntity: 89
+    agAddress: 7
+    agAddressContactType: work
+    priority: 2
+  facility_site14:
+    agEntity: 90
+    agAddress: 8
+    agAddressContactType: work
+    priority: 2
+  facility_site15:
+    agEntity: 91
+    agAddress: 9
+    agAddressContactType: work
+    priority: 2
+  facility_site16:
+    agEntity: 92
+    agAddress: 10
+    agAddressContactType: work
+    priority: 2
+  facility_site17:
+    agEntity: 93
+    agAddress: 11
+    agAddressContactType: work
+    priority: 2
+  facility_site18:
+    agEntity: 94
+    agAddress: 12
+    agAddressContactType: work
+    priority: 2
+  facility_site19:
+    agEntity: 95
+    agAddress: 13
+    agAddressContactType: work
+    priority: 2
+  facility_site20:
+    agEntity: 96
+    agAddress: 14
+    agAddressContactType: work
+    priority: 2
+

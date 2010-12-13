@@ -1,0 +1,2 @@
+<h3>Mission Statement</h3>
+<p>The mission of the Sahana Agasti software is to facilitate resource management and communication throughout all phases of emergency management by providing a turnkey open-source application that is reliable, scalable, extensible, and usable by both volunteers and professionals, and which supports the primary goal of the Sahana Software Foundation: alleviating human suffering and saving lives.</p>

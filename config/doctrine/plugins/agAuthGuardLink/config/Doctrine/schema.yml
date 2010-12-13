@@ -1,0 +1,25 @@
+agAccountMjSfGuardUser:
+  columns:
+    id:
+      autoincrement: true
+      primary: true
+      type: integer(5)
+    account_id:
+      type: integer(4)
+    sf_guard_user_id:
+      type: integer(4)
+  indexes:
+    UX_ag_account_mj_sf_guard_user:
+      fields: [account_id, sf_guard_user_id]
+      type: unique
+  relations:
+    sfGuardUser:
+      class: sfGuardUser
+      local: sf_guard_user_id
+      foreign: id
+      type: one
+    agAccount:
+      class: agAccount
+      local: account_id
+      foreign: id
+      type: one
