@@ -21,7 +21,10 @@
     if(method_exists($objPHPExcel, 'setReadDataOnly')) {
       $objPHPExcel->setReadDataOnly(true);
     }
-    $objPHPExcel->setReadFilter(new agReadFilter());
+    $filter = new agReadFilter();
+    agReadFilter::$hRow = $someVar;
+    agReadFilter::$lRow = $someOtherVar;
+    $objPHPExcel->setReadFilter($filter);
     $objReader = $objPHPExcel->load($file);
 
     if (isset($objReader)) {
@@ -74,17 +77,16 @@
   function buildAndSave($importedStaff, $i = 1) {
     require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
-
-    //$conn = Doctrine_Manager::connection();
     $appConfig= ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
     $dbManager= new sfDatabaseManager($appConfig);
     $db = $dbManager->getDatabase('doctrine');
+
     if(!is_array($importedStaff)) {
       $importedStaff = unserialize(stripslashes($importedStaff));
     }
     // $importedStaff will already be chunked if $i > 1.
     if ($i == 1) {
-     $importedStaff = array_chunk($importedStaff, 10);
+     $importedStaff = array_chunk($importedStaff, 100);
     }
     $c = count($importedStaff);
     foreach ($importedStaff[$i - 1] as $import) {
@@ -504,7 +506,6 @@
 // buildImportedStaff() ***********************
   function buildImportedStaff($importHeaders, $objReader, $highestRow) {
     // Row 1 was the headers...
-    $iRow = 2;
     for ($iRow = 2; $iRow <= $highestRow; $iRow++) {
       $importMatch = array();
       $iColumn = 0;
