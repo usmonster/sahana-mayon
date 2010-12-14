@@ -61,21 +61,61 @@ class agGisActions extends sfActions
    */
   public function executeListstaff(sfWebRequest $request)
   {
-    require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
+   require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
+    $this->ag_staff_geos = Doctrine::getTable('agPerson')
+                                      ->createQuery('a')
+                                      ->select('p.*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
+                                      ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
+                                        p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
+                                        name.agPersonNameType nametype,
+                                        pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
+                                        ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
+                                      ->execute();
+//  aa.agAddressMjAgAddressValue aav, aav.agAddressValue av,
+      //get address contact types.
+      // aav.*, av.*,
+      //as of 12.11.2010 there is no concept of a 'global priority' or 'preference' for a person's
+      //address, thjough  individual address types have priority
+      //also get person name types
+
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
         ->createQuery('f')
         ->execute();
-    $this->ag_staff_geos = Doctrine::getTable('agPerson')
-                                      ->createQuery('a')
-                                      ->select('p.*, e.*, pa.*')
-                                      ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa')
-                                      ->execute();
+    $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')
+            ->createQuery('b')
+            ->execute();
 
       #    $arrangeAddresses = array();
-    $person = $this->ag_staff_geos;
+
+
 
     }
+  public function executeListfacility(sfWebRequest $request)
+  {
+   require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
+    $this->ag_facility_geos = Doctrine::getTable('agFacility')
+                                      ->createQuery('a')
+                                      ->select('f.*,s.*, e.*, pa.*, aa.*, aas.*')
+                                      ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
+                                        pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
+                                        ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
+                                      ->execute();
+//  aa.agAddressMjAgAddressValue aav, aav.agAddressValue av,
+      //get address contact types.
+      // aav.*, av.*,
+      //as of 12.11.2010 there is no concept of a 'global priority' or 'preference' for a person's
+      //address, thjough  individual address types have priority
+      //also get person name types
 
+    $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
+        ->createQuery('f')
+        ->execute();
+
+      #    $arrangeAddresses = array();
+
+
+
+    }
     /**
    * presents the user with a new address to geo form
    * to geocode an address, this should not be used by the end user
@@ -136,7 +176,7 @@ class agGisActions extends sfActions
    */
   public function executeGeocode(sfWebRequest $request)
   {
-    require_once(sfConfig::get('sf_lib_dir') . '/vendor/agasti/agGis.class.php');
+    require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
 
     if($request->getParameter('address_id'))
     {

@@ -15,14 +15,19 @@
       <td>
         <a href="<?php echo url_for('staff/edit?id='.$ag_staff_geo->getId()) ?>">
           <?php
-          foreach ($ag_person_name_types as $agPersonNameType) {
-            $names = $ag_staff_geo->getAgPersonMjAgPersonName();
-            foreach ($names as $name) {
-              if ($name->getPersonNameTypeId() == $agPersonNameType->getId()) {
-                echo $name->getAgPersonName() . ' ';
-              }
-            }
-          }?>
+//          foreach ($ag_person_name_types as $agPersonNameType) {
+//            $names = $ag_staff_geo->getAgPersonMjAgPersonName();
+//            foreach ($names as $name) {
+//              if ($name->getPersonNameTypeId() == $agPersonNameType->getId()) {
+//                echo $name->getAgPersonName() . ' ';
+//              }
+//            }
+//          }
+          $names = agPerson::getPersonFullName($ag_staff_geo->getId());
+          foreach ($names as $name) {
+            echo $name . " ";
+          }
+          ?>
         </a>
       </td>
       <td>

@@ -17,7 +17,16 @@ class agGis
   function __construct()
   {
     //$this->GIS_CONFIG = $GIS_CONFIG;
-    $this->GIS_CONFIG['MAPURL'] = 'geo.example.com/geo-json.php?debug=0';
+    //function loadGlobals{}
+    $globalparams = Doctrine::getTable('agGlobalParam')->findBy ('datapoint', 'mapurl',Doctrine_CORE::HYDRATE_ARRAY);
+                                      //->createQuery('a')
+                                      //->select('*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
+                                      //->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
+                                        //'')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
+                                      //->execute();
+    $this->GIS_CONFIG['MAPURL'] = $globalparams[0]['value']; //how am i going to do this without hardcoding?
+
+    
     $this->GIS_CONFIG['KEY'] = 'APIKEY';
   }
   /**
@@ -36,17 +45,17 @@ class agGis
     //going to have to parse the following
     //number, street and zip
     //spl_autoload_register(array('GeoJSON', 'autoload'));
-    $json = file_get_contents($request_url);
+    //$json = file_get_contents($request_url);
     //for now we are not using file_get_contents, because the geoserver is not working
     //instead....
-    //$json = '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[40.243311018182,-79.231031181818],"properties":{"grade":1}}}]}';
+    $json = '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[40.243311018182,-79.231031181818],"properties":{"grade":1}}}]}';
     $geoJson = new GeoJSON();
     $geoJson2 = new GeoJSON();
     $json2 = json_decode($json);
-    $points = $json2->features[0]->geometry->coordinates;
+    $points = 'fail';
     //cool, we have some latitude and longitude.
     try{
-      
+      if(isset($json2->features[0])) $points = $json2->features[0]->geometry->coordinates;
       $jsonGeo = $geoJson->load($json);
     }
     catch(Exception $e){
