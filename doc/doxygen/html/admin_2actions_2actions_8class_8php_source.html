@@ -49,97 +49,113 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00027"></a><a class="code" href="classadminActions.html#a2bd3c3e8954ba9006cb1ac88764e83dd">00027</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a2bd3c3e8954ba9006cb1ac88764e83dd">executeIndex</a>(sfWebRequest $request)
 <a name="l00028"></a>00028   {
 <a name="l00033"></a>00033   }
-<a name="l00034"></a><a class="code" href="classadminActions.html#a5d37797995ed376431fe9270b17e50e7">00034</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a5d37797995ed376431fe9270b17e50e7">executeConfig</a>(sfWebRequest $request)
+<a name="l00034"></a><a class="code" href="classadminActions.html#a66bd5c1fe648a04dde9955ac16a24ebd">00034</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a66bd5c1fe648a04dde9955ac16a24ebd">executeModuleman</a>(sfWebRequest $request)
 <a name="l00035"></a>00035   {
-<a name="l00040"></a>00040   }
-<a name="l00041"></a><a class="code" href="classadminActions.html#a53032b1a926a5ecd2896e139a2c40cae">00041</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a53032b1a926a5ecd2896e139a2c40cae">executeDisplay</a>(sfWebRequest $request)
-<a name="l00042"></a>00042   {
-<a name="l00052"></a>00052     $this-&gt;form = <span class="keyword">new</span> agReligionForm();
-<a name="l00053"></a>00053     $this-&gt;form-&gt;setWidgets(array(<span class="stringliteral">&#39;ag_religion_list&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;multiple&#39;</span> =&gt; <span class="keyword">true</span>, <span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agReligion&#39;</span>))));
-<a name="l00054"></a>00054     $this-&gt;form-&gt;setValidators(array(<span class="keyword">new</span> sfValidatorDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; $this-&gt;form-&gt;getModelName(),<span class="stringliteral">&#39;column&#39;</span> =&gt; <span class="stringliteral">&#39;app_display&#39;</span>))));
-<a name="l00055"></a>00055     $food = $this-&gt;form-&gt;getObject();
-<a name="l00056"></a>00056     $foog = $this-&gt;form-&gt;getObject()-&gt;getReligion();
-<a name="l00057"></a>00057     $garb = $this-&gt;form-&gt;getObject()-&gt;id;
-<a name="l00058"></a>00058     <span class="comment">//if submitted</span>
-<a name="l00059"></a>00059     $this-&gt;form-&gt;bind($request-&gt;getParameter($this-&gt;form-&gt;getName()));
-<a name="l00060"></a>00060     <span class="keywordflow">if</span>($this-&gt;form-&gt;isValid()){
-<a name="l00061"></a>00061       <span class="keywordflow">foreach</span>($foog as $religion)
-<a name="l00062"></a>00062       {
-<a name="l00063"></a>00063         $food = $this-&gt;form-&gt;getObject();
-<a name="l00064"></a>00064         $this-&gt;form-&gt;getObject()-&gt;app_display[$religion] = 1;
-<a name="l00065"></a>00065       }
-<a name="l00066"></a>00066       $this-&gt;form-&gt;save();
-<a name="l00067"></a>00067    }
-<a name="l00068"></a>00068     
-<a name="l00069"></a>00069   }
-<a name="l00070"></a>00070   <span class="keyword">public</span> function executeList(sfWebRequest $request)
-<a name="l00071"></a>00071   {
-<a name="l00072"></a>00072     $this-&gt;ag_accounts = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)
-<a name="l00073"></a>00073       -&gt;createQuery(<span class="charliteral">&#39;a&#39;</span>)
-<a name="l00074"></a>00074       -&gt;execute();
-<a name="l00075"></a>00075   }
-<a name="l00081"></a><a class="code" href="classadminActions.html#a0aa92d11ba843c39bc9cb68e60811c33">00081</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a0aa92d11ba843c39bc9cb68e60811c33">executeShow</a>(sfWebRequest $request)
-<a name="l00082"></a>00082   {
-<a name="l00083"></a>00083     $this-&gt;ag_account = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
-<a name="l00084"></a>00084     $this-&gt;forward404Unless($this-&gt;ag_account);
-<a name="l00085"></a>00085   }
-<a name="l00091"></a><a class="code" href="classadminActions.html#a497c467213a396f88ed873ad46759ccb">00091</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a497c467213a396f88ed873ad46759ccb">executeNew</a>(sfWebRequest $request)
-<a name="l00092"></a>00092   {
-<a name="l00093"></a>00093     $this-&gt;form = <span class="keyword">new</span> <a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;...">agAccountForm</a>();
-<a name="l00094"></a>00094   }
-<a name="l00100"></a><a class="code" href="classadminActions.html#a1d7a3de88ebf7914896759af9dde3b64">00100</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a1d7a3de88ebf7914896759af9dde3b64">executeCreate</a>(sfWebRequest $request)
-<a name="l00101"></a>00101   {
-<a name="l00102"></a>00102     $this-&gt;forward404Unless($request-&gt;isMethod(sfRequest::POST));
-<a name="l00103"></a>00103 
-<a name="l00104"></a>00104     $this-&gt;form = <span class="keyword">new</span> <a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;...">agAccountForm</a>();
-<a name="l00105"></a>00105 
-<a name="l00106"></a>00106     $this-&gt;processForm($request, $this-&gt;form);
-<a name="l00107"></a>00107 
-<a name="l00108"></a>00108     $this-&gt;setTemplate(<span class="stringliteral">&#39;new&#39;</span>);
+<a name="l00040"></a>00040     $this-&gt;modules_available = agPluginManager::getPlugins();
+<a name="l00041"></a>00041     <span class="keywordflow">if</span>($request-&gt;getParameter(<span class="stringliteral">&#39;enable&#39;</span>))
+<a name="l00042"></a>00042     {
+<a name="l00043"></a>00043       sfSymfonyPluginManager::enablePlugin(<span class="stringliteral">&#39;agGisPlugin&#39;</span> , sfConfig::get(<span class="stringliteral">&#39;sf_config_dir&#39;</span>));
+<a name="l00044"></a>00044     }
+<a name="l00045"></a>00045       <span class="keywordflow">if</span>($request-&gt;getParameter(<span class="stringliteral">&#39;disable&#39;</span>))
+<a name="l00046"></a>00046     {
+<a name="l00047"></a>00047       sfSymfonyPluginManager::disablePlugin(<span class="stringliteral">&#39;agGisPlugin&#39;</span> , sfConfig::get(<span class="stringliteral">&#39;sf_config_dir&#39;</span>));
+<a name="l00048"></a>00048       <span class="comment">//disabling the plugin/module turns it off, we should remove any menu items associated with this</span>
+<a name="l00049"></a>00049       <span class="comment">//module/plugin, but this mapping needs to be stored somewhere.  maybe routing should exist in the plugin?</span>
+<a name="l00050"></a>00050     }
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052 
+<a name="l00053"></a>00053   }
+<a name="l00054"></a><a class="code" href="classadminActions.html#a5d37797995ed376431fe9270b17e50e7">00054</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a5d37797995ed376431fe9270b17e50e7">executeConfig</a>(sfWebRequest $request)
+<a name="l00055"></a>00055   {
+<a name="l00060"></a>00060   }
+<a name="l00061"></a><a class="code" href="classadminActions.html#a53032b1a926a5ecd2896e139a2c40cae">00061</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a53032b1a926a5ecd2896e139a2c40cae">executeDisplay</a>(sfWebRequest $request)
+<a name="l00062"></a>00062   {     
+<a name="l00067"></a>00067     $this-&gt;form = <span class="keyword">new</span> agReligionForm();
+<a name="l00068"></a>00068     $this-&gt;form-&gt;setWidgets(array(<span class="stringliteral">&#39;ag_religion_list&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;multiple&#39;</span> =&gt; <span class="keyword">true</span>, <span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agReligion&#39;</span>))));
+<a name="l00069"></a>00069     $this-&gt;form-&gt;setValidators(array(<span class="keyword">new</span> sfValidatorDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; $this-&gt;form-&gt;getModelName(),<span class="stringliteral">&#39;column&#39;</span> =&gt; <span class="stringliteral">&#39;app_display&#39;</span>))));
+<a name="l00070"></a>00070     $food = $this-&gt;form-&gt;getObject();
+<a name="l00071"></a>00071     $foog = $this-&gt;form-&gt;getObject()-&gt;getReligion();
+<a name="l00072"></a>00072     $garb = $this-&gt;form-&gt;getObject()-&gt;id;
+<a name="l00073"></a>00073     <span class="comment">//if submitted</span>
+<a name="l00074"></a>00074     $this-&gt;form-&gt;bind($request-&gt;getParameter($this-&gt;form-&gt;getName()));
+<a name="l00075"></a>00075     <span class="keywordflow">if</span>($this-&gt;form-&gt;isValid()){
+<a name="l00076"></a>00076       <span class="keywordflow">foreach</span>($foog as $religion)
+<a name="l00077"></a>00077       {
+<a name="l00078"></a>00078         $food = $this-&gt;form-&gt;getObject();
+<a name="l00079"></a>00079         $this-&gt;form-&gt;getObject()-&gt;app_display[$religion] = 1;
+<a name="l00080"></a>00080       }
+<a name="l00081"></a>00081       $this-&gt;form-&gt;save();
+<a name="l00082"></a>00082    }
+<a name="l00083"></a>00083     
+<a name="l00084"></a>00084   }
+<a name="l00085"></a>00085   <span class="keyword">public</span> function executeList(sfWebRequest $request)
+<a name="l00086"></a>00086   {
+<a name="l00087"></a>00087     $this-&gt;ag_accounts = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)
+<a name="l00088"></a>00088       -&gt;createQuery(<span class="charliteral">&#39;a&#39;</span>)
+<a name="l00089"></a>00089       -&gt;execute();
+<a name="l00090"></a>00090   }
+<a name="l00096"></a><a class="code" href="classadminActions.html#a0aa92d11ba843c39bc9cb68e60811c33">00096</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a0aa92d11ba843c39bc9cb68e60811c33">executeShow</a>(sfWebRequest $request)
+<a name="l00097"></a>00097   {
+<a name="l00098"></a>00098     $this-&gt;ag_account = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
+<a name="l00099"></a>00099     $this-&gt;forward404Unless($this-&gt;ag_account);
+<a name="l00100"></a>00100   }
+<a name="l00106"></a><a class="code" href="classadminActions.html#a497c467213a396f88ed873ad46759ccb">00106</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a497c467213a396f88ed873ad46759ccb">executeNew</a>(sfWebRequest $request)
+<a name="l00107"></a>00107   {
+<a name="l00108"></a>00108     $this-&gt;form = <span class="keyword">new</span> <a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;...">agAccountForm</a>();
 <a name="l00109"></a>00109   }
-<a name="l00115"></a><a class="code" href="classadminActions.html#a2cd8951d810b029580da8bfbbe6e338d">00115</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a2cd8951d810b029580da8bfbbe6e338d">executeEdit</a>(sfWebRequest $request)
+<a name="l00115"></a><a class="code" href="classadminActions.html#a1d7a3de88ebf7914896759af9dde3b64">00115</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a1d7a3de88ebf7914896759af9dde3b64">executeCreate</a>(sfWebRequest $request)
 <a name="l00116"></a>00116   {
-<a name="l00117"></a>00117     $this-&gt;forward404Unless($ag_account = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>))), sprintf(<span class="stringliteral">&#39;Object ag_account does not exist (%s).&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
-<a name="l00118"></a>00118     $this-&gt;form = <span class="keyword">new</span> <a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;...">agAccountForm</a>($ag_account);
-<a name="l00119"></a>00119   }
-<a name="l00125"></a><a class="code" href="classadminActions.html#a3f66ef494050ff5ca70b1a6d0a6062e8">00125</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a3f66ef494050ff5ca70b1a6d0a6062e8">executeUpdate</a>(sfWebRequest $request)
-<a name="l00126"></a>00126   {
-<a name="l00127"></a>00127     $this-&gt;forward404Unless($request-&gt;isMethod(sfRequest::POST) || $request-&gt;isMethod(sfRequest::PUT));
-<a name="l00128"></a>00128     $this-&gt;forward404Unless($ag_account = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>))), sprintf(<span class="stringliteral">&#39;Object ag_account does not exist (%s).&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
-<a name="l00129"></a>00129     $this-&gt;form = <span class="keyword">new</span> <a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;...">agAccountForm</a>($ag_account);
-<a name="l00130"></a>00130 
-<a name="l00131"></a>00131     $this-&gt;processForm($request, $this-&gt;form);
-<a name="l00132"></a>00132 
-<a name="l00133"></a>00133     $this-&gt;setTemplate(<span class="stringliteral">&#39;edit&#39;</span>);
+<a name="l00117"></a>00117     $this-&gt;forward404Unless($request-&gt;isMethod(sfRequest::POST));
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119     $this-&gt;form = <span class="keyword">new</span> <a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;...">agAccountForm</a>();
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121     $this-&gt;processForm($request, $this-&gt;form);
+<a name="l00122"></a>00122 
+<a name="l00123"></a>00123     $this-&gt;setTemplate(<span class="stringliteral">&#39;new&#39;</span>);
+<a name="l00124"></a>00124   }
+<a name="l00130"></a><a class="code" href="classadminActions.html#a2cd8951d810b029580da8bfbbe6e338d">00130</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a2cd8951d810b029580da8bfbbe6e338d">executeEdit</a>(sfWebRequest $request)
+<a name="l00131"></a>00131   {
+<a name="l00132"></a>00132     $this-&gt;forward404Unless($ag_account = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>))), sprintf(<span class="stringliteral">&#39;Object ag_account does not exist (%s).&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
+<a name="l00133"></a>00133     $this-&gt;form = <span class="keyword">new</span> <a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;...">agAccountForm</a>($ag_account);
 <a name="l00134"></a>00134   }
-<a name="l00140"></a><a class="code" href="classadminActions.html#abdcb714f833105e8ad1f0ddd0be97d0d">00140</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#abdcb714f833105e8ad1f0ddd0be97d0d">executeDelete</a>(sfWebRequest $request)
+<a name="l00140"></a><a class="code" href="classadminActions.html#a3f66ef494050ff5ca70b1a6d0a6062e8">00140</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#a3f66ef494050ff5ca70b1a6d0a6062e8">executeUpdate</a>(sfWebRequest $request)
 <a name="l00141"></a>00141   {
-<a name="l00142"></a>00142     $request-&gt;checkCSRFProtection();
-<a name="l00143"></a>00143 
-<a name="l00144"></a>00144     $this-&gt;forward404Unless($ag_account = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>))), sprintf(<span class="stringliteral">&#39;Object ag_account does not exist (%s).&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
-<a name="l00145"></a>00145     $mj = $ag_account-&gt;getAgAccountMjSfGuardUser()-&gt;getFirst();
-<a name="l00146"></a>00146     $sf = $mj-&gt;getSfGuardUser();
-<a name="l00147"></a>00147     $sf_user = Doctrine::getTable(<span class="stringliteral">&#39;sfGuardUser&#39;</span>)-&gt;find(array($sf-&gt;id));
-<a name="l00148"></a>00148     $mj-&gt;delete();
-<a name="l00149"></a>00149     $sf-&gt;delete();
-<a name="l00150"></a>00150     $ag_account-&gt;delete();
-<a name="l00151"></a>00151 
-<a name="l00152"></a>00152 
-<a name="l00153"></a>00153 
-<a name="l00154"></a>00154     $this-&gt;redirect(<span class="stringliteral">&#39;admin/list&#39;</span>);
-<a name="l00155"></a>00155   }
-<a name="l00156"></a>00156 
-<a name="l00157"></a>00157   <span class="keyword">protected</span> function processForm(sfWebRequest $request, sfForm $form)
-<a name="l00158"></a>00158   {
-<a name="l00159"></a>00159     $form-&gt;bind($request-&gt;getParameter($form-&gt;getName()), $request-&gt;getFiles($form-&gt;getName()));
-<a name="l00160"></a>00160     <span class="keywordflow">if</span> ($form-&gt;isValid())
-<a name="l00161"></a>00161     {
-<a name="l00162"></a>00162       $ag_account = $form-&gt;save();
-<a name="l00163"></a>00163 
-<a name="l00164"></a>00164       $this-&gt;redirect(<span class="stringliteral">&#39;admin/edit?id=&#39;</span>.$ag_account-&gt;getId());
-<a name="l00165"></a>00165     }
-<a name="l00166"></a>00166   }
-<a name="l00167"></a>00167 }
+<a name="l00142"></a>00142     $this-&gt;forward404Unless($request-&gt;isMethod(sfRequest::POST) || $request-&gt;isMethod(sfRequest::PUT));
+<a name="l00143"></a>00143     $this-&gt;forward404Unless($ag_account = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>))), sprintf(<span class="stringliteral">&#39;Object ag_account does not exist (%s).&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
+<a name="l00144"></a>00144     $this-&gt;form = <span class="keyword">new</span> <a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;...">agAccountForm</a>($ag_account);
+<a name="l00145"></a>00145 
+<a name="l00146"></a>00146     $this-&gt;processForm($request, $this-&gt;form);
+<a name="l00147"></a>00147 
+<a name="l00148"></a>00148     $this-&gt;setTemplate(<span class="stringliteral">&#39;edit&#39;</span>);
+<a name="l00149"></a>00149   }
+<a name="l00155"></a><a class="code" href="classadminActions.html#abdcb714f833105e8ad1f0ddd0be97d0d">00155</a>   <span class="keyword">public</span> function <a class="code" href="classadminActions.html#abdcb714f833105e8ad1f0ddd0be97d0d">executeDelete</a>(sfWebRequest $request)
+<a name="l00156"></a>00156   {
+<a name="l00157"></a>00157     $request-&gt;checkCSRFProtection();
+<a name="l00158"></a>00158 
+<a name="l00159"></a>00159     $this-&gt;forward404Unless($ag_account = Doctrine::getTable(<span class="stringliteral">&#39;agAccount&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>))), sprintf(<span class="stringliteral">&#39;Object ag_account does not exist (%s).&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
+<a name="l00160"></a>00160     $mj = $ag_account-&gt;getAgAccountMjSfGuardUser()-&gt;getFirst();
+<a name="l00161"></a>00161     $sf = $mj-&gt;getSfGuardUser();
+<a name="l00162"></a>00162     $sf_user = Doctrine::getTable(<span class="stringliteral">&#39;sfGuardUser&#39;</span>)-&gt;find(array($sf-&gt;id));
+<a name="l00163"></a>00163     $mj-&gt;delete();
+<a name="l00164"></a>00164     $sf-&gt;delete();
+<a name="l00165"></a>00165     $ag_account-&gt;delete();
+<a name="l00166"></a>00166 
+<a name="l00167"></a>00167 
+<a name="l00168"></a>00168 
+<a name="l00169"></a>00169     $this-&gt;redirect(<span class="stringliteral">&#39;admin/list&#39;</span>);
+<a name="l00170"></a>00170   }
+<a name="l00171"></a>00171 
+<a name="l00172"></a>00172   <span class="keyword">protected</span> function processForm(sfWebRequest $request, sfForm $form)
+<a name="l00173"></a>00173   {
+<a name="l00174"></a>00174     $form-&gt;bind($request-&gt;getParameter($form-&gt;getName()), $request-&gt;getFiles($form-&gt;getName()));
+<a name="l00175"></a>00175     <span class="keywordflow">if</span> ($form-&gt;isValid())
+<a name="l00176"></a>00176     {
+<a name="l00177"></a>00177       $ag_account = $form-&gt;save();
+<a name="l00178"></a>00178 
+<a name="l00179"></a>00179       $this-&gt;redirect(<span class="stringliteral">&#39;admin/edit?id=&#39;</span>.$ag_account-&gt;getId());
+<a name="l00180"></a>00180     }
+<a name="l00181"></a>00181   }
+<a name="l00182"></a>00182 }
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"

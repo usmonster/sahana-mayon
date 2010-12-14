@@ -143,7 +143,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000056">Todo:</a></b></dt><dd>implement soft delete</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000061">Todo:</a></b></dt><dd>implement soft delete</dd></dl>
 <p>The getting and deleting of various $ag_person properties is necessary to ensure that the agPerson's relations are all properly deleted as well.</p>
 <p>As values for agPersonLanguageCompetency are not directly availabe to an <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a>, it is necessary to iterate through the agPerson's agPersonMjAgPersonAgLanguage values and delete their related agPersonLanguageCompetency values before deleting the actual agPersonMjAgPerosnLanguage values.</p>
 <p>Last to be deleted is the actual <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a>. </p>
@@ -196,7 +196,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <div class="memdoc">
 
 <p>Export the entire staff list of an Agasti installation as an XLS and offer the option to open the file. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000057">Todo:</a></b></dt><dd><p class="startdd">: allow export of group selections or search results, implement export for other modules and models. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000062">Todo:</a></b></dt><dd><p class="startdd">: allow export of group selections or search results, implement export for other modules and models. </p>
 <p class="enddd">: add some more formatting to the file that is output to make reading easier. </p>
 </dd></dl>
 
@@ -220,11 +220,11 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <div class="memdoc">
 
 <p>Imports staff records from a properly formatted XLS file. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000058">Todo:</a></b></dt><dd><p class="startdd">: define a standard import format and document it for the end user. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000063">Todo:</a></b></dt><dd><p class="startdd">: define a standard import format and document it for the end user. </p>
 <p class="enddd">: make this more robust and create meaningful error messages for failed import fiels and records. </p>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="staff_2actions_2actions_8class_8php_source.html#l00671">671</a> of file <a class="el" href="staff_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="staff_2actions_2actions_8class_8php_source.html#l00678">678</a> of file <a class="el" href="staff_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -271,7 +271,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000053">Todo:</a></b></dt><dd>detail this function </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000058">Todo:</a></b></dt><dd>detail this function </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>sfWebRequest</em>&nbsp;</td><td>$request </td></tr>
@@ -279,7 +279,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000054">Todo:</a></b></dt><dd>include exception handling for a bad sort param </dd></dl>
+<p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000059">Todo:</a></b></dt><dd>include exception handling for a bad sort param </dd></dl>
 </p>
 
 <p>Definition at line <a class="el" href="staff_2actions_2actions_8class_8php_source.html#l00151">151</a> of file <a class="el" href="staff_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
@@ -339,7 +339,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <p>$lqResults is processed to get the <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> IDs from the Lucene Query, and then these IDs are used to construct a Doctrine query that will be used to construct the pagination for showSuccess.php.</p>
 <p>The final line of this function ($this-&gt;query = $query;) sets a query attribute that will be used by _results.php to ensure that pagination links work properly. </p>
 
-<p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000052">Todo:</a></b></dt><dd>include exception handling for a bad sort param </dd></dl>
+<p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000057">Todo:</a></b></dt><dd>include exception handling for a bad sort param </dd></dl>
 </p>
 
 <p>Definition at line <a class="el" href="staff_2actions_2actions_8class_8php_source.html#l00036">36</a> of file <a class="el" href="staff_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
@@ -373,7 +373,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000055">Todo:</a></b></dt><dd>refactor the _types and _formats queries into one larger query. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000060">Todo:</a></b></dt><dd>refactor the _types and _formats queries into one larger query. </dd></dl>
 
 <p>Definition at line <a class="el" href="staff_2actions_2actions_8class_8php_source.html#l00208">208</a> of file <a class="el" href="staff_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
