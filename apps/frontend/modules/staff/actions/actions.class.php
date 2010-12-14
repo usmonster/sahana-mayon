@@ -704,7 +704,6 @@ class staffActions extends sfActions
     $filePath = pathinfo($this->importFile);
 
     $passPath = $_FILES['import']['tmp_name'];
-    $tyr = 3;
     $extension = strtolower($filePath['extension']);
     if ($extension <> 'xls') {
       $this->uploadHeading = 'Import Failure';
@@ -716,10 +715,10 @@ class staffActions extends sfActions
       //include '../apps/frontend/lib/util/import.php';
       $returned = unserialize($returned);
       while ($returned['Current Iteration' ] < $returned['Max Iteration']) {
-        //$returned = unserialize($returned);
         $this->message = $returned;
         //$this->redirect('staff/import');
-        $returned = buildAndSave($returned['Staff'],$returned['Current Iteration'] + 1);
+        $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/import.php\'); echo buildAndSave(\'' . addslashes(serialize($returned['Staff'])) . '\', \'' . ($returned['Current Iteration'] + 1) . '\');"');
+        //$returned = buildAndSave($returned['Staff'],$returned['Current Iteration'] + 1);
         $returned = unserialize($returned);
       }
       $this->message = $returned;

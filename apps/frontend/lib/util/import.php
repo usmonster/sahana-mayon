@@ -1,7 +1,9 @@
 <?php
 // processStaffImport() ***********************
-  function processStaffImport($file,$tyr) {
+  function processStaffImport($file) {
     require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
+    require_once(dirname(__FILE__) . '/../../../../plugins/sfPhpExcelPlugin/lib/PHPExcel/PHPExcel/Reader/IReadFilter.php');
+    require_once(dirname(__FILE__) . '/agReadFilter.class.php');
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
 
     //$conn = Doctrine_Manager::connection();
@@ -19,6 +21,7 @@
     if(method_exists($objPHPExcel, 'setReadDataOnly')) {
       $objPHPExcel->setReadDataOnly(true);
     }
+    $objPHPExcel->setReadFilter(new agReadFilter());
     $objReader = $objPHPExcel->load($file);
 
     if (isset($objReader)) {
@@ -69,12 +72,22 @@
 
 // buildAndSave() ***********************
   function buildAndSave($importedStaff, $i = 1) {
+    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
+    $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
+
+    //$conn = Doctrine_Manager::connection();
+    $appConfig= ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
+    $dbManager= new sfDatabaseManager($appConfig);
+    $db = $dbManager->getDatabase('doctrine');
+    if(!is_array($importedStaff)) {
+      $importedStaff = unserialize(stripslashes($importedStaff));
+    }
     // $importedStaff will already be chunked if $i > 1.
     if ($i == 1) {
      $importedStaff = array_chunk($importedStaff, 10);
-   }
-   $c = count($importedStaff);
-   foreach ($importedStaff[$i - 1] as $import) {
+    }
+    $c = count($importedStaff);
+    foreach ($importedStaff[$i - 1] as $import) {
 //          if ($import['Custom']['Person ID'] <> null) {
 //
 //          }
