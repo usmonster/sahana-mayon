@@ -13,63 +13,6 @@
  */
 class agStaff extends BaseagStaff
 {
-//  /**
-//   * staffCount() is a static method to return one of the following types of staff count:
-//   *   (1) Total count of unique staff
-//   *   (2) Total count of unique staff within a specified organization
-//   *   (3) Total count of unique staff within a specified staff resource type
-//   *   (4) Total count of unique staff within a specificed organization and staff resource type
-//   *
-//   * @param boolean $byStaffResourceType - If param passed in as true, set query condition to staff resource type specific.
-//   * @param integer $staffResourceTypeId - Staff resource type id.  This is applied to the query condition if $byStaffResourceType is true.
-//   * @param boolean $byOrganization - If param passed in as true, set query condition to organization specific.
-//   * @param integer $organizationId - Organization id.  This is applied to the query condition if $byOrganization is true.
-//   */
-//  static public function staffCount($byStaffResourceType = false, $staffResourceTypeId = null, $byOrganization = false, $organizationId = null)
-//  {
-//    try
-//    {
-//      $staffCount = 0;
-//      $staffResourceCount = Doctrine_Core::getTable('agStaffResource')
-//        ->createQuery('sr')
-//        ->select('count(*) as count')
-//        ->execute();
-//
-//      /*
-//       * Return 0 staff count if agStaffResource table is empty.
-//       * Cannot associate staff resource to organization if there are no staff
-//       * resource defined.
-//       */
-//      if ($staffResourceCount[0]['count'] == 0)
-//      {
-//        return $staffCount;
-//      }
-//
-//      $staffResourceCountQuery = Doctrine_query::create()
-//        ->select('count(distinct sr.staff_id)')
-//        ->from('agStaffResource as sr')
-//        ->leftJoin('sr.agStaffResourceOrganization as sro')
-//        ->where('1=1');
-//
-//      if (is_bool($byStaffResourceType) and $byStaffResourceType)
-//      {
-//        $staffResourceCountQuery->addWhere('sr.staff_resource_type_id=?', ($staffResourceTypeId));
-//      }
-//
-//      if (is_bool($byOrganization) and $byOrganization)
-//      {
-//        $staffResourceCountQuery->addWhere('sro.organization_id=?', ($organizationId));
-//      }
-//
-//      $staffCountResults = $staffResourceCountQuery->execute(array(), Doctrine::HYDRATE_ARRAY);
-//      $staffCount = $staffCountResults[0]['count'];
-//
-//      return $staffCount;
-//    } catch (\Doctrine\ORM\ORMException $e) {
-//      return NULL;
-//    }
-//  }
-
   /**
    * getUniqueStaffCount() is a static method that returns different result sets depending on the pass-in groupByMode:
    *   groupByMode 1 - returns an integer total count of unique staff.

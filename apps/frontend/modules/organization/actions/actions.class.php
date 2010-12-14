@@ -89,12 +89,6 @@ class organizationActions extends sfActions
 
     // Get staff resource type in an array.
      $this->staffResourceTypes = agStaffResourceType::staffResourceTypeInArray();
-//     $staffResourceTypesObj = Doctrine_Core::getTable('agStaffResourceType')->findAll();
-//     $this->staffResourceTypes = array();
-//     foreach ($staffResourceTypesObj as $stfResType)
-//     {
-//       $this->staffResourceTypes[$stfResType->getId()] = $stfResType->getStaffResourceType();
-//     }
 
     // Get the organization's unique staff count by staff resource type.
     $this->uniqueStaffCount = agStaff::getUniqueStaffCount(2, array($this->ag_organization->getId()));
@@ -105,9 +99,6 @@ class organizationActions extends sfActions
 
     // Get the staffs and their staff resource type associated to the organization.
     $this->organizationStaffResources = agOrganization::organizationStaffByResource(array($this->ag_organization->getId()));
-//    print_r($this->organizationStaffResources);
-    $this->personPrimaryNames = agPerson::getPersonPrimaryNames();
-//    print_r($this->personPrimaryNames);
     $this->personFullName = agPerson::getPersonFullName();
     
   }
