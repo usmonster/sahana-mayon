@@ -53,22 +53,9 @@
               //the array needs to be reset, crazy concat
             }
           }
-          $order[$format->getLineSequence()][$format->getInlineSequence()] = $string;
         }
-
-        $formatted_address = '';
-        $address_id = $siteContact->getAddressId();
-        foreach ($order as $key => $line) {
-          foreach ($line as $key2 => $inLine) {
-            $formatted_address .= $order[$key][$key2];
-          }
-        }
-
-        $fooaddress[] =  $formatted_address;
-        //making a second array with the same indices as the above (hackish, needs redo)
-        $fooaddressid[] = $address_id;
       }
-//we should put a check here for 'work' and 'home' address and only retrieve those, currently it is 0 and 1 (first and second contact
+    //we should put a check here for 'work' and 'home' address and only retrieve those, currently it is 0 and 1 (first and second contact
       $addressKeys = array_keys($staffAddress);
       if(isset($staffAddress[$addressKeys[0]]))
       {

@@ -45,6 +45,21 @@ class agGisActions extends sfActions
    */
   public function executeDistance(sfWebRequest $request)
   {
+    $this->ag_facility_geos = Doctrine::getTable('agFacility') //should be agStaff.
+                                      ->createQuery('a')
+                                      ->select('f.*,s.*, e.*, pa.*, aa.*, aag.*')
+                                      ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
+                                        pa.agAddress aa, aa.agAddressGeo aag, 
+                                        ')
+                                      ->execute();
+    $this->ag_staff_geos = Doctrine::getTable('agPerson') //we want to get all persons that don't have
+                                      ->createQuery('a')
+                                      ->select('f.*,s.*, e.*, pa.*, aa.*, aas.*')
+                                      ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
+                                        pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
+                                        ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
+                                      ->execute();
+
     $this->form = new agGeoRelationshipForm();
     
     //show two listboxes, one of staff,
@@ -71,12 +86,8 @@ class agGisActions extends sfActions
                                         pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
                                         ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
                                       ->execute();
-//  aa.agAddressMjAgAddressValue aav, aav.agAddressValue av,
-      //get address contact types.
-      // aav.*, av.*,
       //as of 12.11.2010 there is no concept of a 'global priority' or 'preference' for a person's
       //address, thjough  individual address types have priority
-      //also get person name types
 
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
         ->createQuery('f')
@@ -85,14 +96,10 @@ class agGisActions extends sfActions
             ->createQuery('b')
             ->execute();
 
-      #    $arrangeAddresses = array();
-
-
-
-    }
+  }
   public function executeListfacility(sfWebRequest $request)
   {
-   require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
+    require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
     $this->ag_facility_geos = Doctrine::getTable('agFacility')
                                       ->createQuery('a')
                                       ->select('f.*,s.*, e.*, pa.*, aa.*, aas.*')
@@ -100,22 +107,10 @@ class agGisActions extends sfActions
                                         pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
                                         ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
                                       ->execute();
-//  aa.agAddressMjAgAddressValue aav, aav.agAddressValue av,
-      //get address contact types.
-      // aav.*, av.*,
-      //as of 12.11.2010 there is no concept of a 'global priority' or 'preference' for a person's
-      //address, thjough  individual address types have priority
-      //also get person name types
-
-    $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
+      $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
         ->createQuery('f')
         ->execute();
-
-      #    $arrangeAddresses = array();
-
-
-
-    }
+  }
     /**
    * presents the user with a new address to geo form
    * to geocode an address, this should not be used by the end user
