@@ -12,24 +12,40 @@
   <tbody>
     <?php foreach ($ag_staff_geos as $ag_staff_geo): ?>
     <tr>
-      <td><a href="<?php echo url_for('staff/edit?id='.$ag_staff_geo->getId()) ?>"><?php echo $ag_staff_geo->getId() ?></a></td>
-      <td><?php
+      <td>
+        <a href="<?php echo url_for('staff/edit?id='.$ag_staff_geo->getId()) ?>">
+          <?php
+          foreach ($ag_person_name_types as $agPersonNameType) {
+            $names = $ag_staff_geo->getAgPersonMjAgPersonName();
+            foreach ($names as $name) {
+              if ($name->getPersonNameTypeId() == $agPersonNameType->getId()) {
+                echo $name->getAgPersonName() . ' ';
+              }
+            }
+          }?>
+        </a>
+      </td>
+      <td>
+      <?php
+      //maybe the below 9 lines should be in actions.class
+      //the below lines return a properly ordered array of:
+      //street number, street name, city, state, zip
 
     $siteContacts = $ag_staff_geo;
 
-    $siteContacts = $siteContacts->getAgEntity()->getAgEntityAddressContact();
+      $siteContacts = $ag_staff_geo->getAgEntity()->getAgEntityAddressContact();
       foreach ($siteContacts as $siteContact) {
         $address = $siteContact->getAgAddress();
-        $formats = $siteContact->getAgAddress()->getAgAddressStandard()->getAgAddressFormat();
+        $addressValues = $address->getAgAddressMjAgAddressValue();
+        $formats = $address->getAgAddressStandard()->getAgAddressFormat();
+        $staffAddress[$siteContact->getAddressId()] = '';
         foreach ($formats as $format) {
           $string = '';
           $addressValues = $address->getAgAddressMjAgAddressValue();
           foreach ($addressValues as $addressValue) {
-            if ($addressValue->getAgAddressValue()->getAddressElementId() == $format->getAddressElementId()) {
-              if ($format->getLineSequence() <> 1 && $format->getInlineSequence() == 1) {
-                $string .= ' ';
-              }
-              $string .= $format->getPreDelimiter() . $addressValue->getAgAddressValue() . $format->getPostDelimiter();
+            if ($addressValue->getAgAddressValue()->getAddressElementId()  == $format->getAddressElementId()) {
+              $staffAddress[$siteContact->getAddressId()][] = $addressValue->getAgAddressValue()->value; //okay, i have to have these in order.
+              //the array needs to be reset, crazy concat
             }
           }
           $order[$format->getLineSequence()][$format->getInlineSequence()] = $string;
@@ -47,32 +63,38 @@
         //making a second array with the same indices as the above (hackish, needs redo)
         $fooaddressid[] = $address_id;
       }
-      if(isset($fooaddress[0]))
+//we should put a check here for 'work' and 'home' address and only retrieve those, currently it is 0 and 1 (first and second contact
+      $addressKeys = array_keys($staffAddress);
+      if(isset($staffAddress[$addressKeys[0]]))
       {
-        echo $fooaddress[0];
-
-        $addressfull = new agGis();
-        $addressparts['street'] =
-        $addressparts = $addressfull->parse_address($fooaddress[0]);
-
-        echo '<a href="' . url_for('gis/geocode') . '?number=' . $addressparts['number'] . '&street=' . $addressparts['street']  . '&zip=' . $addressparts['zip'] . '&address_id=' . $fooaddressid[0] . '">geo</a>';
-      }       ?></td>
-      <td><?php 
-      if(isset($fooaddress[1]))
-      {
-        echo $fooaddress[1];
-
-        //take the address, parse it into the pieces needed for geocoding
-        $addressfull = new agGis();
-        $addressparts = $addressfull->parse_address($fooaddress[1]);
-
-        echo '<a href="' . url_for('gis/geocode') . '?number=' . $addressparts['number'] . '&street=' . $addressparts['street']  . '&zip=' . $addressparts['zip'] . '&address_id=' . $fooaddressid[1] . '">geo</a>';
-      }?></td>
+        foreach($staffAddress[$addressKeys[0]] as $addressPart){
+          echo $addressPart . ' '; //echo the entire address
+        }
+        $streetnumber = substr($staffAddress[$addressKeys[0]][0], 0,strpos($staffAddress[$addressKeys[0]][0],' '));// agGis::parse_address($staffAddress[$addressKeys[0]][0]);
+        //parse address should be better, i want it to return streetname AND number!
+        $streetname = substr($staffAddress[$addressKeys[0]][0], strpos($streetnumber['number'], $staffAddress[$addressKeys[0]][0]));
+        $zip = $staffAddress[$addressKeys[0]][3];
+        echo '<a href="' . url_for('gis/geocode') . '?number=' . $streetnumber['number'] . '&street=' . $streetname  . '&zip=' . $zip . '&address_id=' . $addressKeys[0] . '">geo</a>';
+      }?>
+      </td>
+      <td>
+      <?php
+        if(isset($staffAddress[$addressKeys[1]]))
+        {
+          foreach($staffAddress[$addressKeys[1]] as $addressPart){
+            echo $addressPart . ' '; //echo the entire address
+          }
+          $streetnumber = substr($staffAddress[$addressKeys[1]][0], 0,strpos($staffAddress[$addressKeys[1]][0],' '));
+          //parse address should be better, i want it to return streetname AND number!
+          $streetname = substr($staffAddress[$addressKeys[1]][0], strpos($streetnumber['number'], $staffAddress[$addressKeys[1]][0]));
+          $zip = $staffAddress[$addressKeys[1]][3];
+          echo '<a href="' . url_for('gis/geocode') . '?number=' . $streetnumber['number'] . '&street=' . $streetname  . '&zip=' . $zip . '&address_id=' . $addressKeys[1] . '">geo</a>';
+        }?>
+      </td>
       <td><?php echo $ag_staff_geo->getUpdatedAt() ?></td>
     </tr>
 
     <?php
-    $fooaddress = "";
     endforeach;
     ?>
   </tbody>

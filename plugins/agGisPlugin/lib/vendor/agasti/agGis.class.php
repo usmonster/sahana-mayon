@@ -71,7 +71,7 @@ class agGis
     $ret = (acos(cos($a1)*cos($b1)*cos($a2)*cos($b2) + cos($a1)*sin($b1)*cos($a2)*sin($b2) + sin($a1)*sin($a2)) * $r) ;
     return $ret;
   }
-function parse_address($address){
+  public static function parse_address($address){
 	/***
 	2010-12-10 Added Street Name parsing. Charles Wisniewski, CUNY SPS
     2004-10-05 Added HC n Box n, Star Route to function
@@ -131,8 +131,8 @@ function parse_address($address){
 	if(preg_match('/\s+(St|Bvd|Ave|Wy|Cir|Dr|Ln|Pl|Boulevard|Blvd|Street|Avenue|Way|Circle|Drive|Lane|Place)$/i',
 	$address,$a)){
 		$b['raw_type']=$a[0];
-		strlen($b['raw_type'])>3 || strtolower($b[raw_type])=='way' || strtolower($b[raw_type])=='bvd'?$typeDefinite=false:$typeDefinite=true;
-		$b[type]=$type[strtolower($b[raw_type])];
+		strlen($b['raw_type'])>3 || strtolower($b[raw_type])=='way' || strtolower($b['raw_type'])=='bvd'?$typeDefinite=false:$typeDefinite=true;
+		$b['type']=$type[strtolower($b['raw_type'])];
 		$address=substr($address,0,strlen($address)-strlen($a[0]));
 	}
 	//remove number and fraction
