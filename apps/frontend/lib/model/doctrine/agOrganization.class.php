@@ -82,10 +82,12 @@ class agOrganization extends BaseagOrganization
         $staffId = $rslt['s_id'];
         $personId = $rslt['s_person_id'];
         $stfResTypeId = $rslt['sr_staff_resource_type_id'];
+        $stfResId = $rslt['sr_id'];
         $orgStfByRes[] = array('staff_resource_organization_id' => $stfResOrgId,
                                'organization_id' => $orgId,
                                'staff_id' => $staffId,
-                               'staff_resource_type_id' =>$stfResTypeId,
+                               'staff_resource_type_id' => $stfResTypeId,
+                               'staff_resource_id' => $stfResId,
                                'person_id' => $personId
                               );
       }

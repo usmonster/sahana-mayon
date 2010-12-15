@@ -126,7 +126,10 @@ class organizationActions extends sfActions
 
     $this->form = new agOrganizationForm();
 
+
     $entity = new agEntity();
+    $foo = $entity->id;
+
     $entity->save();
     $this->form->getObject()->setAgEntity($entity);
 
