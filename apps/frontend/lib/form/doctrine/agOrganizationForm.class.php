@@ -17,7 +17,7 @@ class agOrganizationForm extends BaseagOrganizationForm
 {
   public function setup()
   {
-    parent::setup();
+    //parent::setup();
 //    parent::configure();
 
     unset(
@@ -33,7 +33,7 @@ class agOrganizationForm extends BaseagOrganizationForm
     /*
      * configure() extends the base method to remove unused fields
      */
-    parent::configure();
+    //parent::configure();
 
     unset(
       $this['updated_at'],
@@ -116,5 +116,56 @@ class agOrganizationForm extends BaseagOrganizationForm
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
   }
+  protected function doSave($con = null)
+  {
+    $existing = $this->getObject()->getAgScenarioFacilityResource();
+    foreach($existing as $rec){$current[] = $rec;}
+    //$existing = $this->object->agFacilityResource->getPrimaryKeys();
+    $values = $this->getTaintedValues();
+    //all we need to save, is the allocated list: it's order included(this is proving to be clumsy while working with a listbox, jquery is prefered)
+    if($values) $values = $values['ag_facility_resource_order'];
+    unset($this['ag_facility_resource_order']); //we unset the two form items that are being forced in, the validator won't like it
+    unset($this['ag_facility_resource_list']);
+    parent::doSave($con);
+    if($values)
+    {
+      /** this should be $current->getAgScenarioFacilityResource(), will it return an array? will it be cached? */
+      if($current)  $toDelete = array_diff($current,$values);
 
+      if(count($toDelete) >0)
+      {
+        /** @todo clean this up, a subquery to delete on would be optimal */
+        $deleteRecs = Doctrine_Query::create()
+        ->select('a.facility_resource_id')
+        ->from('agScenarioFacilityResource a')
+        ->whereIn('a.facility_resource_id', $toDelete)->execute();
+        foreach($deleteRecs as $deletor)
+        {
+          $deletor->delete();
+        }
+      }
+      foreach($values as $key => $value)
+      {
+        if( in_array($value,$current)) $agScenarioFacilityResource = $currentCheck;
+        else{
+          //if there isn't an entry in agScenarioFacilityResource for this group/facility_resource...
+          $agScenarioFacilityResource = new agScenarioFacilityResource();
+          $agScenarioFacilityResource->scenario_facility_group_id = $this->getObject()->getId();
+          $agScenarioFacilityResource->activation_sequence = $key +1;
+          $agScenarioFacilityResource->facility_resource_id = $value;
+          $agScenarioFacilityResource->facility_resource_allocation_status_id = 4;
+          }
+        $agScenarioFacilityResource->save();
+      }
+    }
+    else
+    {
+        /**
+         * @todo there are no values, so we need to delete
+         *   if there aren't values in $values that exist in $checkArray, or if
+         *  those items have changed.. (activation order, is the only thing)
+         *  we need to update said item
+         */
+    }
+  }
 }

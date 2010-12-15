@@ -8,6 +8,7 @@
     <?php include_stylesheets() ?>
     <?php use_helper('jQuery'); ?>
     <?php include_javascripts() ?> 
+
   </head>
   <body>
     <div id="header">

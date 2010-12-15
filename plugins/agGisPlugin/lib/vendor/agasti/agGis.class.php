@@ -1,23 +1,9 @@
 <?php
 require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/camptocamp/GeoJSON/GeoJSON.class.php') ;
-
 class agGis
 {
-/* This is the symfony agasti
- *
- *  protected *//*
-  var $GEO_CONFIG;
-  */
-
-/**
- *
- * @param array $GIS_CONFIG currently a placeholder for config that could
- * @param <type> $GIS_CONFIG configuration settings for our geocoder
- */
   function __construct()
   {
-    //$this->GIS_CONFIG = $GIS_CONFIG;
-    //function loadGlobals{}
     $globalparams = Doctrine::getTable('agGlobalParam')->findBy ('datapoint', 'mapurl',Doctrine_CORE::HYDRATE_ARRAY);
                                       //->createQuery('a')
                                       //->select('*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
@@ -25,8 +11,7 @@ class agGis
                                         //'')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
                                       //->execute();
     $this->GIS_CONFIG['MAPURL'] = $globalparams[0]['value']; //how am i going to do this without hardcoding?
-
-    
+   
     $this->GIS_CONFIG['KEY'] = 'APIKEY';
   }
   /**
@@ -48,7 +33,7 @@ class agGis
     //$json = file_get_contents($request_url);
     //for now we are not using file_get_contents, because the geoserver is not working
     //instead....
-    $json = '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[40.243311018182,-79.231031181818],"properties":{"grade":1}}}]}';
+    $json = '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[44.243311018182,-71.231031181818],"properties":{"grade":1}}}]}';
     $geoJson = new GeoJSON();
     $geoJson2 = new GeoJSON();
     $json2 = json_decode($json);
@@ -66,7 +51,14 @@ class agGis
     return $points;
     
   }
-
+  /**
+   *
+   * @param float $a1 latitude 1
+   * @param float $b1 latitude 2
+   * @param float $a2 longitude 1
+   * @param float $b2 longitude 2
+   * @return <type>
+   */
   public static function getDistance($a1,$b1,$a2,$b2)
   {
     $r = 6378; //3963.1 statute miles; 3443.9 nautical miles; 6378 km

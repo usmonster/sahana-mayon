@@ -22,9 +22,10 @@
       $objPHPExcel->setReadDataOnly(true);
     }
     $filter = new agReadFilter();
+    $objPHPExcel->setReadFilter($filter);
+    //foreach($rowcount / 50 ) {
     agReadFilter::$hRow = $someVar;
     agReadFilter::$lRow = $someOtherVar;
-    $objPHPExcel->setReadFilter($filter);
     $objReader = $objPHPExcel->load($file);
 
     if (isset($objReader)) {
@@ -71,6 +72,7 @@
 //    $returned[Count] = $importCount;
     return $returned;
     }
+   //} //end the foreach, chunking our file into tangible parts
   }
 
 // buildAndSave() ***********************

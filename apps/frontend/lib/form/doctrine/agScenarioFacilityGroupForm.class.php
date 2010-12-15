@@ -105,7 +105,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
    *
    * @param sfDatabaseConnection $con
    * This is a private function that processes existing relationships
-   * relevant to
+   * relevant to scenario facility groups, facility resources and their activation sequence
    */
   protected function doSave($con = null)
   {
@@ -114,7 +114,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
     //$existing = $this->object->agFacilityResource->getPrimaryKeys();
     $values = $this->getTaintedValues();
     //all we need to save, is the allocated list: it's order included(this is proving to be clumsy while working with a listbox, jquery is prefered)
-    if($values) $values = $values['ag_facility_resource_order'];
+    if($values) $values = $values['ag_facility_resource_order']; /** @todo if we want to use jquery, we need to morph ul/li to input for form */
     unset($this['ag_facility_resource_order']);
     unset($this['ag_facility_resource_list']);
     parent::doSave($con);
