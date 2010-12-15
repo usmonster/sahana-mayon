@@ -16,7 +16,8 @@ abstract class BaseagGlobalParamForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'id'         => new sfWidgetFormInputHidden(),
-      'datapoint'  => new sfWidgetFormInputHidden(),
+      'host_id'    => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agHost'), 'add_empty' => false)),
+      'datapoint'  => new sfWidgetFormInputText(),
       'value'      => new sfWidgetFormInputText(),
       'created_at' => new sfWidgetFormDateTime(),
       'updated_at' => new sfWidgetFormDateTime(),
@@ -24,11 +25,16 @@ abstract class BaseagGlobalParamForm extends BaseFormDoctrine
 
     $this->setValidators(array(
       'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'datapoint'  => new sfValidatorChoice(array('choices' => array($this->getObject()->get('datapoint')), 'empty_value' => $this->getObject()->get('datapoint'), 'required' => false)),
+      'host_id'    => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agHost'))),
+      'datapoint'  => new sfValidatorString(array('max_length' => 128)),
       'value'      => new sfValidatorString(array('max_length' => 128)),
       'created_at' => new sfValidatorDateTime(),
       'updated_at' => new sfValidatorDateTime(),
     ));
+
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorDoctrineUnique(array('model' => 'agGlobalParam', 'column' => array('host_id', 'datapoint')))
+    );
 
     $this->widgetSchema->setNameFormat('ag_global_param[%s]');
 
