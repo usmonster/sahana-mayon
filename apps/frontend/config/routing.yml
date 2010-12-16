@@ -8,9 +8,12 @@ homepage:
 facility:
   url:  /facility
   param: { module: facility, action: index }
-staff:
+staff_index:
   url: /staff
-  param: { module: staff, action: index }
+  param: { module: agStaff, action: index }
+staff:
+  url: /staff/:action
+  param: { module: agStaff }
 client:
   url: /client
   param: { module: client, action: index }
@@ -50,7 +53,7 @@ sf_guard_signout:
   param: { module: sfGuardAuth, action: signout }
 staff_search:
   url:   /staff/search
-  param: { module: staff, action: search }
+  param: { module: agStaff, action: search }
 staff_filter:
   url:   /staff/filter
-  param: { module: staff, action: filter }
+  param: { module: agStaff, action: filter }

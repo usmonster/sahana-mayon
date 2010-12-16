@@ -32,8 +32,8 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
       'ag_person_name_list'         => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonName')),
       'ag_person_name_type_list'    => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonNameType')),
       'ag_person_custom_field_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonCustomField')),
-      'ag_import_type_list'         => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agImportType')),
       'ag_staff_status_list'        => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agStaffStatus')),
+      'ag_import_type_list'         => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agImportType')),
     ));
 
     $this->setValidators(array(
@@ -54,8 +54,8 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
       'ag_person_name_list'         => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonName', 'required' => false)),
       'ag_person_name_type_list'    => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonNameType', 'required' => false)),
       'ag_person_custom_field_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonCustomField', 'required' => false)),
-      'ag_import_type_list'         => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agImportType', 'required' => false)),
       'ag_staff_status_list'        => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agStaffStatus', 'required' => false)),
+      'ag_import_type_list'         => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agImportType', 'required' => false)),
     ));
 
     $this->validatorSchema->setPostValidator(
@@ -145,14 +145,14 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
       $this->setDefault('ag_person_custom_field_list', $this->object->agPersonCustomField->getPrimaryKeys());
     }
 
-    if (isset($this->widgetSchema['ag_import_type_list']))
-    {
-      $this->setDefault('ag_import_type_list', $this->object->agImportType->getPrimaryKeys());
-    }
-
     if (isset($this->widgetSchema['ag_staff_status_list']))
     {
       $this->setDefault('ag_staff_status_list', $this->object->agStaffStatus->getPrimaryKeys());
+    }
+
+    if (isset($this->widgetSchema['ag_import_type_list']))
+    {
+      $this->setDefault('ag_import_type_list', $this->object->agImportType->getPrimaryKeys());
     }
 
   }
@@ -172,8 +172,8 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
     $this->saveagPersonNameList($con);
     $this->saveagPersonNameTypeList($con);
     $this->saveagPersonCustomFieldList($con);
-    $this->saveagImportTypeList($con);
     $this->saveagStaffStatusList($con);
+    $this->saveagImportTypeList($con);
 
     parent::doSave($con);
   }
@@ -672,44 +672,6 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
     }
   }
 
-  public function saveagImportTypeList($con = null)
-  {
-    if (!$this->isValid())
-    {
-      throw $this->getErrorSchema();
-    }
-
-    if (!isset($this->widgetSchema['ag_import_type_list']))
-    {
-      // somebody has unset this widget
-      return;
-    }
-
-    if (null === $con)
-    {
-      $con = $this->getConnection();
-    }
-
-    $existing = $this->object->agImportType->getPrimaryKeys();
-    $values = $this->getValue('ag_import_type_list');
-    if (!is_array($values))
-    {
-      $values = array();
-    }
-
-    $unlink = array_diff($existing, $values);
-    if (count($unlink))
-    {
-      $this->object->unlink('agImportType', array_values($unlink));
-    }
-
-    $link = array_diff($values, $existing);
-    if (count($link))
-    {
-      $this->object->link('agImportType', array_values($link));
-    }
-  }
-
   public function saveagStaffStatusList($con = null)
   {
     if (!$this->isValid())
@@ -745,6 +707,44 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
     if (count($link))
     {
       $this->object->link('agStaffStatus', array_values($link));
+    }
+  }
+
+  public function saveagImportTypeList($con = null)
+  {
+    if (!$this->isValid())
+    {
+      throw $this->getErrorSchema();
+    }
+
+    if (!isset($this->widgetSchema['ag_import_type_list']))
+    {
+      // somebody has unset this widget
+      return;
+    }
+
+    if (null === $con)
+    {
+      $con = $this->getConnection();
+    }
+
+    $existing = $this->object->agImportType->getPrimaryKeys();
+    $values = $this->getValue('ag_import_type_list');
+    if (!is_array($values))
+    {
+      $values = array();
+    }
+
+    $unlink = array_diff($existing, $values);
+    if (count($unlink))
+    {
+      $this->object->unlink('agImportType', array_values($unlink));
+    }
+
+    $link = array_diff($values, $existing);
+    if (count($link))
+    {
+      $this->object->link('agImportType', array_values($link));
     }
   }
 

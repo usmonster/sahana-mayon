@@ -9,49 +9,30 @@
  * @property string $skill
  * @property string $description
  * @property boolean $app_display
- * @property Doctrine_Collection $agPersonSkill
  * @property Doctrine_Collection $agStaffResourceType
- * 
- * @method integer             getId()                           Returns the current record's "id" value
- * @method string              getSkill()                        Returns the current record's "skill" value
- * @method string              getDescription()                  Returns the current record's "description" value
- * @method boolean             getAppDisplay()                   Returns the current record's "app_display" value
- * @method Doctrine_Collection getAgPersonSkill()                Returns the current record's "agPersonSkill" collection
- * @method Doctrine_Collection getAgStaffResourceTypeProvision() Returns the current record's "agStaffResourceTypeProvision" collection
- * @method Doctrine_Collection getAgCertifiedSkill()             Returns the current record's "agCertifiedSkill" collection
- * @method Doctrine_Collection getAgRawSkillMap()                Returns the current record's "agRawSkillMap" collection
- * @method Doctrine_Collection getAgStaffResourceType()          Returns the current record's "agStaffResourceType" collection
- * @method agSkill             setId()                           Sets the current record's "id" value
- * @method agSkill             setSkill()                        Sets the current record's "skill" value
- * @method agSkill             setDescription()                  Sets the current record's "description" value
- * @method agSkill             setAppDisplay()                   Sets the current record's "app_display" value
- * @method agSkill             setAgPersonSkill()                Sets the current record's "agPersonSkill" collection
- * @method agSkill             setAgStaffResourceTypeProvision() Sets the current record's "agStaffResourceTypeProvision" collection
- * @method agSkill             setAgCertifiedSkill()             Sets the current record's "agCertifiedSkill" collection
- * @method agSkill             setAgRawSkillMap()                Sets the current record's "agRawSkillMap" collection
- * @method agSkill             setAgStaffResourceType()          Sets the current record's "agStaffResourceType" collectionProvision
+ * @property Doctrine_Collection $agPersonSkill
+ * @property Doctrine_Collection $agStaffResourceTypeProvision
  * @property Doctrine_Collection $agCertifiedSkill
  * @property Doctrine_Collection $agRawSkillMap
- * @property Doctrine_Collection $agStaffResourceType
  * 
  * @method integer             getId()                           Returns the current record's "id" value
  * @method string              getSkill()                        Returns the current record's "skill" value
  * @method string              getDescription()                  Returns the current record's "description" value
  * @method boolean             getAppDisplay()                   Returns the current record's "app_display" value
+ * @method Doctrine_Collection getAgStaffResourceType()          Returns the current record's "agStaffResourceType" collection
  * @method Doctrine_Collection getAgPersonSkill()                Returns the current record's "agPersonSkill" collection
  * @method Doctrine_Collection getAgStaffResourceTypeProvision() Returns the current record's "agStaffResourceTypeProvision" collection
  * @method Doctrine_Collection getAgCertifiedSkill()             Returns the current record's "agCertifiedSkill" collection
  * @method Doctrine_Collection getAgRawSkillMap()                Returns the current record's "agRawSkillMap" collection
- * @method Doctrine_Collection getAgStaffResourceType()          Returns the current record's "agStaffResourceType" collection
  * @method agSkill             setId()                           Sets the current record's "id" value
  * @method agSkill             setSkill()                        Sets the current record's "skill" value
  * @method agSkill             setDescription()                  Sets the current record's "description" value
  * @method agSkill             setAppDisplay()                   Sets the current record's "app_display" value
+ * @method agSkill             setAgStaffResourceType()          Sets the current record's "agStaffResourceType" collection
  * @method agSkill             setAgPersonSkill()                Sets the current record's "agPersonSkill" collection
  * @method agSkill             setAgStaffResourceTypeProvision() Sets the current record's "agStaffResourceTypeProvision" collection
  * @method agSkill             setAgCertifiedSkill()             Sets the current record's "agCertifiedSkill" collection
  * @method agSkill             setAgRawSkillMap()                Sets the current record's "agRawSkillMap" collection
- * @method agSkill             setAgStaffResourceType()          Sets the current record's "agStaffResourceType" collection
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -97,6 +78,11 @@ abstract class BaseagSkill extends sfDoctrineRecord
     public function setUp()
     {
         parent::setUp();
+        $this->hasMany('agStaffResourceType', array(
+             'refClass' => 'agStaffResourceTypeProvision',
+             'local' => 'skill_id',
+             'foreign' => 'staff_resource_type_id'));
+
         $this->hasMany('agPersonSkill', array(
              'local' => 'id',
              'foreign' => 'skill_id'));
@@ -112,11 +98,6 @@ abstract class BaseagSkill extends sfDoctrineRecord
         $this->hasMany('agRawSkillMap', array(
              'local' => 'id',
              'foreign' => 'skill_id'));
-
-        $this->hasMany('agStaffResourceType', array(
-             'refClass' => 'agStaffResourceTypeProvision',
-             'local' => 'skill_id',
-             'foreign' => 'staff_resource_type_id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();
         $this->actAs($timestampable0);

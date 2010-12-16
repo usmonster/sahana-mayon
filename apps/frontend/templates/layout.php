@@ -34,7 +34,7 @@
         <?php $loggedIn = $sf_user->isAuthenticated(); ?>
         <?php if ($loggedIn): ?>
           <span style="margin: .1em; float: right;">
-            <?php include_partial('staff/searchForm'); ?>
+            <?php include_partial('agStaff/searchForm'); ?>
           </span>
         <?php endif ?>
         </div>

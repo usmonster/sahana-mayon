@@ -30,5 +30,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enablePlugins('sfJqueryReloadedPlugin');
     $this->enablePlugins('sfJQueryUIPlugin');
     $this->enablePlugins('agGisPlugin');
+    $this->enablePlugins('agStaffPlugin');
+    
   }
 }

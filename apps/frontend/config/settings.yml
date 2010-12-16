@@ -37,7 +37,7 @@ all:
     # Enable the database manager
     use_database:           true
 
-    enabled_modules:        [default, sfGuardAuth, sfGuardUser, agGis]
+    enabled_modules:        [default, sfGuardAuth, sfGuardUser, agGis, agStaff]
     i18n:                   on
 
   .actions:
