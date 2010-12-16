@@ -429,12 +429,12 @@
       }
     ?>
     <div style="float: left;">
-      <a href="<?php echo url_for('staff/edit?id=' . $agPerson->getId()) ?>"
+      <a href="<?php echo url_for('staff/edit') . '?id=' . $agPerson->getId() ?>"
          class="linkButton">Edit</a>
      <?php
       echo link_to(
           'Delete',
-          'staff/delete?id=' . $agPerson->getId(),
+          'agStaff/delete?id=' . $agPerson->getId(),
           array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')
       ); ?>
      <?php

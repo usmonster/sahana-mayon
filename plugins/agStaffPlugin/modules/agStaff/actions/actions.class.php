@@ -423,7 +423,7 @@ class agStaffActions extends sfActions
     if ($form->isValid()) {
       $ag_person = $form->save();
 
-      $this->redirect('staff/edit?id=' . $ag_person->getId());
+      $this->redirect('agStaff/edit?id=' . $ag_person->getId());
     }
   }
 
