@@ -82,7 +82,21 @@ class scenarioActions extends sfActions
    */
   public function executeNewgroup(sfWebRequest $request)
   {
-    $this->groupform = new agScenarioFacilityGroupForm();
+
+    $woo  = $this->getUser()->getAttribute('scenario_id');
+    if($this->getUser()->getAttribute('scenario_id')){
+      $this->groupform = new agScenarioFacilityGroupForm();
+      //$this->getUser()->getAttribute('scenario_id')
+      $this->groupform->setDefault('scenario_id', $this->getUser()->getAttribute('scenario_id'));
+    }
+    else {
+      $this->groupform = new agScenarioFacilityGroupForm();
+    }
+    $this->ag_allocated_facility_resources = '';
+    $this->ag_facility_resources =  Doctrine_Query::create()
+      ->select('a.facility_id, af.*, afrt.*')
+      ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+      ->execute();
   }
 
   /**
@@ -98,7 +112,20 @@ class scenarioActions extends sfActions
 
     $this->processForm($request, $this->form);
 
-    $this->setTemplate('new');
+    if($request->getParameter('facilitygroup'))
+    {
+      $this->ag_facility_resources =  Doctrine_Query::create()
+      ->select('a.facility_id, af.*, afrt.*')
+      ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+      ->execute();
+      $this->groupform = new agScenarioFacilityGroupForm();
+      $this->groupform->getObject()->setAgScenario()->id = $
+      $this->redirect('scenario/newgroup');
+    }
+    else
+    {
+      $this->setTemplate('new');
+    }
   }
 
   /**
@@ -152,16 +179,30 @@ class scenarioActions extends sfActions
             ->execute();
     $this->form = new agScenarioForm($ag_scenario);
 
-    //check to see if there are any facility groups, if not, pass in a facility group form, set defaults.
-//    if(isset($this->ag_scenario_facility_groups))
-//    {
-//      if(count($this->ag_scenario_facility_groups) < 1)
-//      {
-//        $this->groupform = new agScenarioFacilityGroupForm();
-//        $this->groupform->getObject()->setScenarioId($request->getParameter('id'));
-//        $this->groupform->setDefault('scenario_id', $request->getParameter('id'));
-//      }
-//    }
+    //have to put a for each loop in here.
+    //we need data for each of the facility_groups.
+    foreach($this->ag_scenario_facility_groups as $ag_scenario_facility_group)
+    {
+      $current = $ag_scenario_facility_group->getAgScenarioFacilityResource();
+      $current->setKeyColumn('activation_sequence');
+      //index these by the activation sequence
+      $currentoptions = array();
+      foreach($current as $curopt)
+      {
+        $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
+        /**
+         * @todo [$curopt->activation_sequence] needs to still be applied to the list,
+         */
+      }
+
+      $this->ag_allocated_facility_resources[] = $current;
+
+      $this->ag_facility_resources[] =  Doctrine_Query::create()
+        ->select('a.facility_id, af.*, afrt.*')
+        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+        ->whereNotIn('a.id', array_keys($currentoptions))->execute();
+    }
+
   }
 
   /**
@@ -179,6 +220,25 @@ class scenarioActions extends sfActions
             ->fetchOne(), sprintf('Object ag_scenario_facility_group does not exist (%s).', $request->getParameter('id')));
 
     $this->groupform = new agScenarioFacilityGroupForm($ag_scenario_facility_group);
+
+    $current = $ag_scenario_facility_group->getAgScenarioFacilityResource();
+    $current->setKeyColumn('activation_sequence');
+    //index these by the activation sequence 
+    $currentoptions = array();
+    foreach($current as $curopt)
+    {
+      $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
+      /**
+       * @todo [$curopt->activation_sequence] needs to still be applied to the list,
+       */
+    }
+
+    $this->ag_allocated_facility_resources = $current;
+
+    $this->ag_facility_resources =  Doctrine_Query::create()
+      ->select('a.facility_id, af.*, afrt.*')
+      ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+      ->whereNotIn('a.id', array_keys($currentoptions))->execute();
   }
 
   /**
@@ -297,7 +357,7 @@ class scenarioActions extends sfActions
   }
 
   /**
-   * @todo what's this do?
+   * @method executeDeletegrouptype executes the logic to delete a facility group type
    * @param sfWebRequest $request
    */
   public function executeDeletegrouptype(sfWebRequest $request)
@@ -321,9 +381,24 @@ class scenarioActions extends sfActions
   {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
-      $ag_scenario = $form->save();
 
-      $this->redirect('scenario/edit?id=' . $ag_scenario->getId());
+      $ag_scenario = $form->save();
+      if($request->hasParameter('Continue'))
+      {
+        $this->ag_facility_resources =  Doctrine_Query::create()
+        ->select('a.facility_id, af.*, afrt.*')
+        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+        ->execute();
+        $this->groupform = new agScenarioFacilityGroupForm();
+//        $this->setTemplate('scenario/newgroup');
+        $this->getUser()->setAttribute('scenario_id',$ag_scenario->getId());
+        $this->redirect('scenario/newgroup');
+        $foo = $this->getUser()->getAttribute('scenario_id');
+
+      }else{
+        $boo = $form->getValue('Save and Continue');
+        $this->redirect('scenario/edit?id=' . $ag_scenario->getId());
+      }
     }
   }
 

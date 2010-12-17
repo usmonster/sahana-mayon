@@ -1,62 +1,35 @@
 <?php use_stylesheets_for_form($groupform) ?>
-<?php use_javascripts_for_form($groupform) ?>
-
+<?php use_helper('jQuery'); ?>
+<?php jq_add_plugins_by_name(array('ui')) ?>
+<?php use_javascript('sortList'); ?>
+<?php use_javascript('dimensions');?>
+<?php use_javascript('tooltip');?>
+<?php use_javascript('json.serialize'); ?>
 <script type="text/javascript">
- $().ready(function() {
-  $('#up').click(function() {
-   return !$($('#ag_scenario_facility_group_ag_facility_resource_order option:selected').prev("option")).before($('#ag_scenario_facility_group_ag_facility_resource_order option:selected'));
-  });
-  $('#down').click(function() {
-   return !$($('#ag_scenario_facility_group_ag_facility_resource_order option:selected').next("option")).after($('#ag_scenario_facility_group_ag_facility_resource_order option:selected'));
-  });
-  $('#add').click(function() {
-   return !$('#ag_scenario_facility_group_ag_facility_resource_list option:selected').remove().appendTo('#ag_scenario_facility_group_ag_facility_resource_order');
-  });
-  $('#remove').click(function() {
-   return !$('#ag_scenario_facility_group_ag_facility_resource_order option:selected').remove().appendTo('#ag_scenario_facility_group_ag_facility_resource_list');
-  });
-  $('#addall').click(function() {
-    return !$('#ag_scenario_facility_group_ag_facility_resource_list').each(function(){
-      $('#ag_scenario_facility_group_ag_facility_resource_list option').remove().appendTo('#ag_scenario_facility_group_ag_facility_resource_order');
-  });
- });
-  $('#removeall').click(function() {
-    return !$('#ag_scenario_facility_group_ag_facility_resource_order').each(function(){
-      $('#ag_scenario_facility_group_ag_facility_resource_order option').remove().appendTo('#ag_scenario_facility_group_ag_facility_resource_list');
-  });
- });
-  $('#selectall').click(function() {
-    $('#ag_scenario_facility_group_ag_facility_resource_list').each(function(){
-      $('#ag_scenario_facility_group_ag_facility_resource_list option').attr("selected","selected");
-  });
- });
-  $('#selectalloc').click(function() {
-    $('#ag_scenario_facility_group_ag_facility_resource_order').each(function(){
-      $('#ag_scenario_facility_group_ag_facility_resource_order option').attr("selected","selected");
-  });
- });
-  $('#deselectalloc').click(function() {
-    $('#ag_scenario_facility_group_ag_facility_resource_order').each(function(){
-      $('#ag_scenario_facility_group_ag_facility_resource_order option').attr("selected","");
-  });
- });
-  $('#deselectall').click(function() {
-    $('#ag_scenario_facility_group_ag_facility_resource_list').each(function(){
-      $('#ag_scenario_facility_group_ag_facility_resource_list option').attr("selected","");
-  });
- });
-  $('#submiter').click(function() {
-    $('#ag_scenario_facility_group_ag_facility_resource_list').each(function(){
-      $('#ag_scenario_facility_group_ag_facility_resource_list option').attr("selected","selected");
-  });
-  $('#ag_scenario_facility_group_ag_facility_resource_order').each(function(){
-      $('#ag_scenario_facility_group_ag_facility_resource_order option').attr("selected","selected");
-  });
- });
-});
-</script>
+	$(function() {
+		$( "#available, #allocated" ).sortable({
+			connectWith: ".bucket"
+		}).disableSelection();
+	});
 
-<noscript><?php echo "in order to set the activation sequence of resource facilities and add them to the facility group, you will need javascript enabled"; ?></noscript>
+jQuery('#available > li').tooltip();
+jQuery('#allocated > li').tooltip({
+bodyHandler: function() { 
+        return $('#allocated_tip').text(); 
+    }, 
+    showURL: false 
+});
+
+function serialTran() {
+var out = Array();
+$('#allocated > li').each(function(index) {
+   out[index] = $(this).attr('id');
+   $("#ag_scenario_facility_group_ag_facility_resource_order").val(JSON.stringify(out));
+});
+}
+
+</script>
+<noscript>in order to set the activation sequence of resource facilities and add them to the facility group, you will need javascript enabled</noscript>
 
 <form name="faciliy_group_form" id="facility_group_form" action="<?php echo url_for('scenario/group'.($groupform->getObject()->isNew() ? 'create' : 'update').(!$groupform->getObject()->isNew() ? '?id='.$groupform->getObject()->getId() : '')) ?>" method="post" <?php $groupform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 
@@ -64,96 +37,51 @@
 
 <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
-
-      <?php echo $groupform->renderGlobalErrors() ?>
-  <?php echo $groupform['id']->renderError();
-        echo $groupform['id'];
-  ?><br />
-
+<?php echo $groupform; ?>
 <div class="infoHolder">
   <h3>Facility Group Information</h3>
-  <ul class="neatlist">
-    <li><?php
-        echo $groupform['scenario_id']->renderLabel();
-        echo $groupform['scenario_id']->renderError();
-        echo $groupform['scenario_id'];
-        ?>
-    </li>
-    <li><?php
-        echo $groupform['scenario_facility_group']->renderLabel();
-        echo $groupform['scenario_facility_group']->renderError();
-        echo $groupform['scenario_facility_group'];
-        ?>
-    </li>
-    <li><?php
-        echo $groupform['facility_group_type_id']->renderLabel();
-        echo $groupform['facility_group_type_id']->renderError();
-        echo $groupform['facility_group_type_id'];
-        ?>
-    </li>
-    <li><?php
-        echo $groupform['facility_group_allocation_status_id']->renderLabel();
-        echo $groupform['facility_group_allocation_status_id']->renderError();
-        echo $groupform['facility_group_allocation_status_id'];
-        ?>
-    </li>
-    <li><?php
-        echo $groupform['activation_sequence']->renderLabel();
-        echo $groupform['activation_sequence']->renderError();
-        echo $groupform['activation_sequence'];
-        ?>
-    </li>
-  </ul>
-</div>
-<div class="infoHolder">
-  <h3>Facility Group Information</h3>
-  <div style="width: 40%;float:left;display:inline-block;text-align:right;">
-  Available Services
-  <br />
-          <?php echo $groupform['ag_facility_resource_list']->renderError();
-                echo $groupform['ag_facility_resource_list'];
-          ?>
+  <div style="display:inline;">
+  <h4>Available Facility Resources</h4>
+    <ul id="available" class="bucket">
+      <?php foreach($ag_facility_resources as $staff_geo){
+        echo '<li id="' . $staff_geo->getId() .'" title="' . $staff_geo->getAgFacilityResourceType() . '">' . $staff_geo->getAgFacility()->getFacilityName() . ' : ' . $staff_geo->getAgFacilityResourceType()->facility_resource_type . '</li>'; //we could set the id here to a set of ids
+      }
+      ?>
+    </ul>
+    <h4>Allocated Facility Resources</h4>
+    <ul id="allocated" class="bucket">
+     <?php $currentoptions = array();
+          if ($ag_allocated_facility_resources){
+            foreach($ag_allocated_facility_resources as $curopt)
+            {
+              $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
+              /**
+               * @todo [$curopt->activation_sequence] needs to still be applied to the list,
+               */
+             
+              echo "<li id=" . $curopt->facility_resource_id .">" . $currentoptions[$curopt->facility_resource_id] . "</li>"; //we could set the id here to a set of ids
+            }
+          }
+      ?>
+    </ul>
   </div>
-  <div style="width: 40%;float:left;display:inline-block;">
-  Assigned Facility Services
-  <br />
-          <?php echo $groupform['ag_facility_resource_order']->renderError();
-                echo $groupform['ag_facility_resource_order'];
-          ?>
-    <div style="display:inline-block;float:left;text-align:left;">
-      <input type="Button" value="&#9652;" id="up"><br/>
-      <input type="Button" value="&#9662;" id="down">
-    </div>
   </div>
-  <br />
-  <div style="display:block;text-align:center;clear:both;">
+<?php //for shirley's purposes, we need to disable items from a list that already exist in the other list. ?>
+  <br/>
+  <div id="tooltips" style="display:none;">
+    <span id="allocated_tip">
+    <?php echo "urltowiki/allocated_tooltip";?>
+    </span>
   </div>
-  <div style="text-align: center;">
-  <input type="Button" value="add &gt;&gt;" id="add">
-  <input type="Button" value="remove &lt;&lt;" id="remove">
-  <br />
-  <input type="Button" value="add all &gt;&gt;" id="addall">
-  <input type="Button" value="remove all &lt;&lt;" id="removeall">
-  <br />
-  <input type="Button" value="select all" id="selectall">
-  <input type="Button" value="select allocated" id="selectalloc">
-  
-  <br />
-  <input type="Button" value="deselect all" id="deselectall">
-  <input type="Button" value="deselect allocated" id="deselectalloc">
-  </div>
-</div>
-
-<table>
-<tfoot>
+  <table>
+  <tfoot>
       <tr>
         <td colspan="2">
-          <?php echo $groupform->renderHiddenFields(false) ?>
           &nbsp;<a href="<?php echo url_for('scenario/listgroup') ?>">Back to facility group list</a>
           <?php if (!$groupform->getObject()->isNew()): ?>
             &nbsp;<?php echo link_to('Delete', 'scenario/deletegroup?id='.$groupform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?')) ?>
           <?php endif; ?>
-          <input type="submit" value="Save" id="selecter" onclick="f_selectAll('ag_scenario_facility_group[ag_facility_resource_order][]')"/>
+          <input type="submit" value="Save" id="selecter" onclick="serialTran()"/>
         </td>
       </tr>
     </tfoot>

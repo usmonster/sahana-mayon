@@ -59,12 +59,9 @@ class agGisActions extends sfActions
                                         pa.agAddress aa, aa.agAddressGeo aag, aag.agGeo ag, ag.agGeoFeature agf
                                         ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
                                       ->execute();
-    $this->listfoo = $this->ag_staff_geos;
-    $this->form = new agGeoRelationshipForm();
-    
+    $this->distanceform = new PluginagGeoRelationshipForm();
     //show two listboxes, one of staff,
     //one of facilities
-    //since we currently only have data for staff members, we will be doing staff to staff calculation
     //will only output to screen
 
   }

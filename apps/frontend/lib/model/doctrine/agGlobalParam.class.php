@@ -22,4 +22,7 @@ class agGlobalParam extends BaseagGlobalParam
       }
     }
   }
+  static public function getParam($desired_param){
+    return $desired_param;
+  }
 }

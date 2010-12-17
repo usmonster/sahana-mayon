@@ -111,7 +111,6 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'model' => $this->getRelatedModelName('agTask'),
       'add_empty' => true,
       'method' => 'getTask',
-      //'query' => $this::$staticLists['agFacilityResourceType']
         )
     ));
     $this->setWidget(
@@ -120,7 +119,6 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'model' => $this->getRelatedModelName('agStaffResourceType'),
       'add_empty' => true,
       'method' => 'getStaffResourceType',
-      //'query' => $this::$staticLists['agFacilityResourceType']
         )
     ));
     $this->setWidget(
@@ -129,7 +127,6 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'model' => $this->getRelatedModelName('agDeploymentAlgorithm'),
       'add_empty' => true,
       'method' => 'getDeploymentAlgorithm',
-      //'query' => $this::$staticLists['agFacilityResourceType']
         )
     ));
     $this->setWidget(
@@ -138,7 +135,6 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'model' => $this->getRelatedModelName('agShiftStatus'),
       'add_empty' => true,
       'method' => 'getShiftStatus',
-      //'query' => $this::$staticLists['agFacilityResourceType']
         )
     ));
     $this->setWidget(
@@ -147,7 +143,6 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'model' => $this->getRelatedModelName('agShiftStatus'),
       'add_empty' => true,
       'method' => 'getShiftStatus',
-      //'query' => $this::$staticLists['agFacilityResourceType']
         )
     ));
     $this->widgetSchema->setLabels(array(

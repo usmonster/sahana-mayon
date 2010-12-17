@@ -10,7 +10,12 @@
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($ag_staff_geos as $ag_staff_geo): ?>
+
+    <?php
+    $names = agPerson::getPersonFullName();
+    foreach ($ag_staff_geos as $ag_staff_geo){
+      ?>
+
     <tr>
       <td>
         <a href="<?php echo url_for('staff/edit?id='.$ag_staff_geo->getId()) ?>">
@@ -23,10 +28,7 @@
 //              }
 //            }
 //          }
-          $names = agPerson::getPersonFullName($ag_staff_geo->getId());
-          foreach ($names as $name) {
-            echo $name . " ";
-          }
+            echo $names[$ag_staff_geo->getId()];
           ?>
         </a>
       </td>
@@ -87,7 +89,7 @@
     </tr>
 
     <?php
-    endforeach;
+    } //ending the foreach.
     ?>
   </tbody>
 </table>
