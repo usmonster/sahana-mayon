@@ -62,7 +62,7 @@ $desired_fields = array_diff($desired_fields, $relationsLevel1);
     <?php foreach ($pager->getResults() as $staffMember): ?>
           <tr>
             <td>
-              <a href="<?php echo url_for('staff/show?id=' . $staffMember->getId()); ?>"
+              <a href="<?php echo url_for('agStaff/show?id=' . $staffMember->getId()); ?>"
                  title="View Staff Member <?php echo $staffMember->getId(); ?>"
                  class="linkButton"><?php echo $i++; ?></a>
             </td>
