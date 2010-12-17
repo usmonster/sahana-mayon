@@ -702,25 +702,51 @@ class agStaffActions extends sfActions
     $this->importFile = $_FILES['import']['name'];
     $this->importPath = sfConfig::get('sf_upload_dir') . '/' . $this->importFile;
     $filePath = pathinfo($this->importFile);
-
+    include '../apps/frontend/lib/util/agStaffImport.class.php';
     $passPath = $_FILES['import']['tmp_name'];
     $extension = strtolower($filePath['extension']);
+
+
+require_once "../apps/frontend/lib/util/excel.php";
+$export_file = $passPath;
+//header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+//header ("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+//header ("Cache-Control: no-cache, must-revalidate");
+//header ("Pragma: no-cache");
+//header ("Content-type: application/x-msexcel");
+//header ("Content-Disposition: attachment; filename=\"" . basename($export_file) . "\"" );
+//header ("Content-Description: PHP/INTERBASE Generated Data" );
+$fp = fopen("xlsfile://". $_FILES['import']['name'], 'r+');
+$bloogle = "xlsfile:/" . $passPath;
+$floogle = readfile($bloogle);
+
+
     if ($extension <> 'xls') {
       $this->uploadHeading = 'Import Failure';
       $this->uploadMessage = $this->importFile . ' is not an XLS file and could not be read. No data was imported to Agasti.';
     } else {
-      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/import.php\'); echo processStaffImport(\'' . htmlspecialchars($passPath) . '\');"');
-//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/import.php\'); echo processStaffImport(\'' . htmlspecialchars($passPath) . '\', \'' . htmlspecialchars($tyr) . '\');"');
+//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\');"');
+      $importObj = new agStaffImport();
+      $importObj->fileName = $_FILES['import']['name'];
+      $importObj->rowSetIterator = 0;
+      $importObj->stop = false;
+      $returned = $importObj->processStaffImport($passPath);
+//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\', \'' . htmlspecialchars($tyr) . '\');"');
 //      $toImport = unserialize($toImport);
-      //include '../apps/frontend/lib/util/import.php';
-      $returned = unserialize($returned);
-      while ($returned['Current Iteration' ] < $returned['Max Iteration']) {
-        $this->message = $returned;
-        //$this->redirect('staff/import');
-        $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/import.php\'); echo buildAndSave(\'' . addslashes(serialize($returned['Staff'])) . '\', \'' . ($returned['Current Iteration'] + 1) . '\');"');
-        //$returned = buildAndSave($returned['Staff'],$returned['Current Iteration'] + 1);
-        $returned = unserialize($returned);
+      
+      //$returned = unserialize($returned);
+      while ($importObj->stop <> true) {
+        $returned = $importObj->processStaffImport($passPath);
       }
+//      while ($returned['Current Iteration' ] < $returned['Max Iteration']) {
+//        $this->message = $returned;
+//        //$this->redirect('staff/import');
+//        //$returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::buildAndSave(\'' . addslashes(serialize($returned['Staff'])) . '\', \'' . ($returned['Current Iteration'] + 1) . '\');"');
+//        $returned = $importObj->saveImportedStaff($returned['Staff'],$returned['Current Iteration'] + 1);
+//
+////        $returned = staffImport::buildAndSave(serialize($returned['Staff']),$returned['Current Iteration'] + 1);
+////        $returned = unserialize($returned);
+//      }
       $this->message = $returned;
     }
   }
