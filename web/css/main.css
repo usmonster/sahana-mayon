@@ -659,33 +659,30 @@ select {
   border-color: #00AA00;
   border-style: dashed;
 }
-.neatlist ul {
-  display: inline-block;
+#shifts {
+  float: left;
 }
-.neatlist li {
-  display: block;
+#available {
+float:left;
+
 }
-#available li{
-  border:1px solid #000;
-  background:#e5f7ff;
-  padding: 0.1em;
-  margin: 1px 1px 1px 1px;
+#allocated {
+  float: right;
 }
 .bucket{
+  padding: 2em;
   font-size: 1em;
-  display:inline-block;
-  float:left;
+  display:inline;
   width:400px;
-  height:600px;
+  height:500px;
   border:1px solid #000;
   background:#ccc;
   list-style-type: none;
   margin: 0;
-  padding: 0;
-
 }
-#allocated li{
+.bucket li{
   border:1px solid #000;
   background:#e5f7ff;
-  margin: 1px 1px 1px 1px;
+  padding: 0.1em;
+  margin: 2px 2px 2px 2px;
 }

@@ -43,6 +43,27 @@ class scenarioActions extends sfActions
             ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
             ->execute();
   }
+  /**
+   *
+   * @param sfWebRequest $request
+   * generates and passes a new scenario form to the view
+   */
+  public function executeStaffresources(sfWebRequest $request)
+  {
+    $this->forward404Unless(
+        $this->ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('id'))), sprintf('This Facility Group does not exist.', $request->getParameter('id')));
+
+    $this->ag_staff_resources = Doctrine_Core::getTable('agScenarioFacilityResource')
+            ->createQuery('agSFR')
+            ->select('agSFR.*')
+            ->from('agScenarioFacilityResource agSFR')
+            ->where('scenario_facility_group_id = ?', $request->getParameter('id'))
+            ->execute();
+    $this->staffresourceform = new agStaffResourceRequirementForm();
+  }
+
+
+
 
   /**
    * @todo what's this do?

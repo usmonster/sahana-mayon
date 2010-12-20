@@ -37,44 +37,48 @@ $('#allocated > li').each(function(index) {
 
 <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
-<?php echo $groupform; ?>
-<div class="infoHolder">
-  <h3>Facility Group Information</h3>
-  <div style="display:inline;">
-  <h4>Available Facility Resources</h4>
-    <ul id="available" class="bucket">
-      <?php foreach($ag_facility_resources as $staff_geo){
-        echo '<li id="' . $staff_geo->getId() .'" title="' . $staff_geo->getAgFacilityResourceType() . '">' . $staff_geo->getAgFacility()->getFacilityName() . ' : ' . $staff_geo->getAgFacilityResourceType()->facility_resource_type . '</li>'; //we could set the id here to a set of ids
-      }
-      ?>
-    </ul>
-    <h4>Allocated Facility Resources</h4>
-    <ul id="allocated" class="bucket">
-     <?php $currentoptions = array();
-          if ($ag_allocated_facility_resources){
-            foreach($ag_allocated_facility_resources as $curopt)
-            {
-              $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
-              /**
-               * @todo [$curopt->activation_sequence] needs to still be applied to the list,
-               */
-             
-              echo "<li id=" . $curopt->facility_resource_id .">" . $currentoptions[$curopt->facility_resource_id] . "</li>"; //we could set the id here to a set of ids
-            }
-          }
-      ?>
-    </ul>
-  </div>
-  </div>
-<?php //for shirley's purposes, we need to disable items from a list that already exist in the other list. ?>
-  <br/>
-  <div id="tooltips" style="display:none;">
-    <span id="allocated_tip">
-    <?php echo "urltowiki/allocated_tooltip";?>
-    </span>
-  </div>
-  <table>
-  <tfoot>
+<table>
+    <tbody>
+      <tr>
+          <?php echo $groupform; ?>
+      </tr>
+      <tr>
+        <td>
+          <div class="infoHolder" style="width:100%;display:inline-block;">
+              <ul id="available" class="bucket">
+                <?php foreach($ag_facility_resources as $staff_geo){
+                  echo '<li id="' . $staff_geo->getId() .'" title="' . $staff_geo->getAgFacilityResourceType() . '">' . $staff_geo->getAgFacility()->getFacilityName() . ' : ' . $staff_geo->getAgFacilityResourceType()->facility_resource_type . '</li>'; //we could set the id here to a set of ids
+                }
+                ?>
+              </ul>
+              <ul id="allocated" class="bucket">
+               <?php $currentoptions = array();
+                    if ($ag_allocated_facility_resources){
+                      foreach($ag_allocated_facility_resources as $curopt)
+                      {
+                        $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
+                        /**
+                         * @todo [$curopt->activation_sequence] needs to still be applied to the list,
+                         */
+
+                        echo "<li id=" . $curopt->facility_resource_id .">" . $currentoptions[$curopt->facility_resource_id] . "</li>"; //we could set the id here to a set of ids
+                      }
+                    }
+                ?>
+              </ul>
+            </div>
+          <?php //for shirley's purposes, we need to disable items from a list that already exist in the other list. ?>
+            <br/>
+            <div id="tooltips" style="display:none;">
+              <span id="allocated_tip">
+              <?php echo "urltowiki/allocated_tooltip";?>
+              </span>
+            </div>
+        </td>
+      </tr>
+    </tbody>
+
+    <tfoot>
       <tr>
         <td colspan="2">
           &nbsp;<a href="<?php echo url_for('scenario/listgroup') ?>">Back to facility group list</a>
@@ -82,6 +86,7 @@ $('#allocated > li').each(function(index) {
             &nbsp;<?php echo link_to('Delete', 'scenario/deletegroup?id='.$groupform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?')) ?>
           <?php endif; ?>
           <input type="submit" value="Save" id="selecter" onclick="serialTran()"/>
+          <input type="submit" value="Save and Continue" name="Continue" onclick="serialTran()"/>
         </td>
       </tr>
     </tfoot>
