@@ -667,22 +667,34 @@ float:left;
 
 }
 #allocated {
-  float: right;
+  float: left;
 }
 .bucket{
-  padding: 2em;
+  padding: 1em;
   font-size: 1em;
   display:inline;
   width:400px;
-  height:500px;
-  border:1px solid #000;
-  background:#ccc;
+  height:520px;
+  border:1px solid #dadada;
+  background:#f1f1f1;
   list-style-type: none;
-  margin: 0;
+  margin: 5px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
 }
 .bucket li{
-  border:1px solid #000;
+  border:1px solid #dadada;
   background:#e5f7ff;
-  padding: 0.1em;
+  padding: 2px;
   margin: 2px 2px 2px 2px;
+  color: #848484;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.bucket li:hover {
+  background: #cdffdd;
 }

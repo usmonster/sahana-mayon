@@ -24,6 +24,9 @@
       PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
       $objPHPExcel = PHPExcel_IOFactory::createReaderForFile($this->importFile);
       // Not all of the readers have this method, ie CSV reader.
+      if ($objPHPExcel instanceof PHPExcel_Reader_CSV) {
+        $objPHPExcel->setDelimiter('/');
+      }
       if(method_exists($objPHPExcel, 'setReadDataOnly')) {
         $objPHPExcel->setReadDataOnly(true);
       }

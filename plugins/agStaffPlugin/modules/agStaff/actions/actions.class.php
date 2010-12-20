@@ -707,8 +707,8 @@ class agStaffActions extends sfActions
     $extension = strtolower($filePath['extension']);
 
 
-require_once "../apps/frontend/lib/util/excel.php";
-$export_file = $passPath;
+//require_once "../apps/frontend/lib/util/excel.php";
+//$export_file = $passPath;
 //header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 //header ("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
 //header ("Cache-Control: no-cache, must-revalidate");
@@ -716,12 +716,12 @@ $export_file = $passPath;
 //header ("Content-type: application/x-msexcel");
 //header ("Content-Disposition: attachment; filename=\"" . basename($export_file) . "\"" );
 //header ("Content-Description: PHP/INTERBASE Generated Data" );
-$fp = fopen("xlsfile://". $_FILES['import']['name'], 'r+');
-$bloogle = "xlsfile:/" . $passPath;
-$floogle = readfile($bloogle);
+//$fp = fopen("xlsfile://". $_FILES['import']['name'], 'r+');
+//$bloogle = "xlsfile:/" . $passPath;
+//$floogle = readfile($bloogle);
 
 
-    if ($extension <> 'xls') {
+    if ($extension <> 'xls' && $extension <> 'csv') {
       $this->uploadHeading = 'Import Failure';
       $this->uploadMessage = $this->importFile . ' is not an XLS file and could not be read. No data was imported to Agasti.';
     } else {
