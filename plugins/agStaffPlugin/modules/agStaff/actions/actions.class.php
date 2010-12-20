@@ -290,7 +290,7 @@ class agStaffActions extends sfActions
    * */
   public function executeNew(sfWebRequest $request)
   {
-    $this->form = new PluginagPersonForm();
+    $this->form = new AgPersonForm();
   }
 
   /**
@@ -305,7 +305,7 @@ class agStaffActions extends sfActions
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
-    $this->form = new PluginagPersonForm();
+    $this->form = new AgPersonForm();
     $ent = new agEntity();
     $ent->save();
     $this->form->getObject()->setAgEntity($ent);
@@ -325,7 +325,7 @@ class agStaffActions extends sfActions
     $this->forward404Unless(
         $ag_person = Doctrine::getTable('AgPerson')->find(array($request->getParameter('id'))),
         sprintf('Object ag_person does not exist (%s).', $request->getParameter('id')));
-    $this->form = new PluginagPersonForm($ag_person);
+    $this->form = new AgPersonForm($ag_person);
   }
 
   /**
@@ -340,7 +340,7 @@ class agStaffActions extends sfActions
     $this->forward404Unless(
         $ag_person = Doctrine::getTable('AgPerson')->find(array($request->getParameter('id'))),
         sprintf('Object ag_person does not exist (%s).', $request->getParameter('id')));
-    $this->form = new PluginagPersonForm($ag_person);
+    $this->form = new AgPersonForm($ag_person);
 
     $this->processForm($request, $this->form);
 
