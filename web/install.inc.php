@@ -224,7 +224,7 @@ class agInstall
   function stage3()
   {
     global $AG_CONFIG;
-    $this->getCurrent();
+    self::getCurrent();
 
     if (isset($_REQUEST['retry']) && $this->RETRY_SUCCESS == false) {
       $retry_label = 'retry';
@@ -293,7 +293,7 @@ class agInstall
 
   function stage4()
   {
-    $current = $this->getCurrent();
+    $current = self::getCurrent();
 
     return 'Below is your installation configuration summary:<br /><div class="info">
         <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
@@ -326,7 +326,7 @@ class agInstall
     return "there is no step 6 in the installer, well, no screen for it at least: this should login the user and redirect to admin/createuser, i.e. you shouldn't even SEE this";
   }
 
-  function getCurrent()
+  public static function getCurrent()
   {
     if (file_exists(dirname(__FILE__) . '/../config/databases.yml') == TRUE) {
       $dbArray = sfYaml::load(dirname(__FILE__) . '/../config/databases.yml');
@@ -354,7 +354,7 @@ class agInstall
     return array($dbArray, $cfgArray);
   }
 
-  function dbParams($db_params)
+  static public function dbParams($db_params)
   {
     $arguments = array(
       'task' => 'configure:database',
@@ -387,7 +387,7 @@ class agInstall
     return $configuration;
   }
 
-  function CheckConnection($db_config)
+  static public function CheckConnection($db_config)
   {
     if ($db_config['dsn'] != '') {
       try {
@@ -556,7 +556,7 @@ class agInstall
     }
     if ($this->getStep() == 3) {
       //on our first pass, these values won't exist (or if someone has returned with no POST
-      $current = $this->getCurrent();
+      $current = self::getCurrent();
       $db_params = array(
         'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name']), // ilya 2010-07-21 15:16:58
         //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
@@ -592,7 +592,7 @@ class agInstall
         unset($_REQUEST['next']);
         //if we cannot save our configuration
       } else {
-        $dbcheck = $this->CheckConnection($db_params);
+        $dbcheck = self::CheckConnection($db_params);
         if ($dbcheck == 'good') {
           $this->RETRY_SUCCESS = true;
         } else {
@@ -628,7 +628,7 @@ class agInstall
     }
     if (isset($_REQUEST['finish'])) {       //isset($_REQUEST['next'][$this->getStep()]
       //$this->doNext();
-      $sudo = $this->getCurrent();
+      $sudo = self::getCurrent();
       $sudoer = $sudo[1]['sudo']['super_user']; //get username and password from config.yml, should be cleaner.
       $supw = $sudo[1]['sudo']['super_pass'];
       //authenticate with this

@@ -57,6 +57,8 @@ class adminActions extends sfActions
      *
      * @param sfWebRequest $request is what the user is asking of the server
      */
+
+    $this->paramform = new agGlobalParamForm();
   }
   public function executeDisplay(sfWebRequest $request)
   {     /**

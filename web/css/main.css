@@ -31,10 +31,10 @@ html, body {
   float: left;
 }
 
-.contentLeft {
-
+#contentLeft {
+  width: 400px;
+  float: let;
 }
-
 
 #columnRight {
   float: left;
