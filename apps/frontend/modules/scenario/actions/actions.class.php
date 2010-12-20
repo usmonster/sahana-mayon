@@ -406,7 +406,7 @@ class scenarioActions extends sfActions
       $ag_scenario = $form->save();
       if($request->hasParameter('Continue'))
       {
-        $this->ag_facility_resources =  Doctrine_Query::create()
+        $this->ag_facility_resources = Doctrine_Query::create()
         ->select('a.facility_id, af.*, afrt.*')
         ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
         ->execute();
@@ -435,9 +435,25 @@ class scenarioActions extends sfActions
     $groupform->bind($request->getParameter($groupform->getName()), $request->getFiles($groupform->getName()));
     if ($groupform->isValid()) {
       $ag_scenario_facility_group = $groupform->save();
-
+      if($request->hasParameter('Continue'))
+      {
+        $this->getUser()->setAttribute('staffResourceTypes',$this->staffResourceTypes);
+        $this->redirect('scenario/newstaffresources');
+      }else{
+        $boo = $form->getValue('Save and Continue');
+        $this->redirect('scenario/edit?id=' . $ag_scenario->getId());
+      }
       $this->redirect('scenario/editgroup?id=' . $ag_scenario_facility_group->getId());
     }
+  }
+
+  public function executeNewstaffresources(sfWebRequest $request)
+  {
+    $this->staffResourceTypes = Doctrine_Query::create()
+        ->select('a.id, a.staff_resource_type')
+        ->from('agStaffResourceType a')
+        ->execute();
+    $this->staffresourceform = new  agScenarioFacilityResourceForm();
   }
 
   protected function processGrouptypeform(sfWebRequest $request, sfForm $grouptypeform)
