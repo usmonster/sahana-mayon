@@ -61,8 +61,8 @@ class adminActions extends sfActions
     if($request->getParameter('update'))
     {
       $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
-      $this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
-      $this->paramform = new agGlobalParamForm($ag_global_param);
+      //$this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
+      $this->paramform = new agGlobalParamForm();
 
       $this->processParam($request, $this->paramform);
     }

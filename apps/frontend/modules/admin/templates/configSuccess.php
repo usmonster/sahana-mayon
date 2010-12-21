@@ -145,7 +145,9 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
   <fieldset>
     <legend>Global Parameters</legend>
 
-<?php include_partial('paramform', array('paramform' => $paramform)) ?>
+<?php
+//this still needs some fixing
+//include_partial('paramform', array('paramform' => $paramform)) ?>
   </fieldset>
 </form>
 </div>
