@@ -1,4 +1,4 @@
-<form action="<?php echo url_for('admin/config') ?> " method="post" />
+<form action="<?php echo url_for('admin/config') ?> " method="post">
   <table>
     <tfoot>
       <tr>
