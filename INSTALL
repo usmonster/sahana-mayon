@@ -52,9 +52,9 @@ Apache
    directories, execute the following commands from the project root:
 
   $ sudo chgrp -R WEB_GROUP config/ cache/ log/ apps/frontend/config/ \
-      apps/backend/config/ data/sql/ data/indexes/
+      apps/backend/config/ data/indexes/ data/search/ data/sql/
   $ chmod -cR g+wr config/ apps/frontend/config/ apps/backend/config/ \
-      data/sql/ data/indexes/
+      data/indexes/ data/search/ data/sql/
   $ ./symfony project:permissions
 
   * NOTE: Replace WEB_GROUP with the group associated with the Apache user, e.g.
