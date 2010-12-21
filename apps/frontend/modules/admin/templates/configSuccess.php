@@ -14,8 +14,6 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-$doo = sfConfig::get('sf_apps_dir');
-
 require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config.inc.php');
 
 ?>
@@ -30,7 +28,7 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
   //get existing configuration
   $agConfig = agConfig::singleton();
   $agConfig->getCurrent();
-  
+ 
   ?>
   
 <form action="<?php echo url_for('admin/config') ?>" method="post" class="configure" style="margin:40px;float: left;width:400px;">
@@ -41,19 +39,19 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
       </p>
       <ul>
         <li>
-          <label>host:</label><input type="text" name="db_host" id="db_host" class="inputGray" value="<?php echo $agConfig->getConfig('DB_SERVER', 'dont') ?>" />
+          <label>host:</label><input disabled="disabled" type="text" name="db_host" id="db_host" class="inputGray" value="<?php echo $agConfig->getConfig('DB_SERVER', 'dont') ?>" />
         </li>
         <li>
-          <label>database:</label><input type="text" name="db_name" id="db_name" class="inputGray" value="<?php echo $agConfig->getConfig('DB_DATABASE', 'meddle') ?>" />
+          <label>database:</label><input disabled="disabled" type="text" name="db_name" id="db_name" class="inputGray" value="<?php echo $agConfig->getConfig('DB_DATABASE', 'meddle') ?>" />
         </li>
         <li>
-          <label>username:</label><input type="text" name="db_user" id="db_user" class="inputGray" value="<?php echo $agConfig->getConfig('DB_USER', 'with')  ?>" />
+          <label>username:</label><input disabled="disabled" type="text" name="db_user" id="db_user" class="inputGray" value="<?php echo $agConfig->getConfig('DB_USER', 'with')  ?>" />
         </li>
         <li>
-          <label>password:</label><input type="password" name="db_pass" id="db_pass" class="inputGray" value="<?php echo $agConfig->getConfig('DB_PASSWORD', 'sysfiles')  ?>" />
+          <label>password:</label><input disabled="disabled" type="password" name="db_pass" id="db_pass" class="inputGray" value="<?php echo $agConfig->getConfig('DB_PASSWORD', 'sysfiles')  ?>" />
         </li>
         <li>
-          <input id="init_schema" type="checkbox" name="init_schema" />re-initialize database schema
+          <input disabled="disabled" id="init_schema" type="checkbox" name="init_schema" />re-initialize database schema
         </li>
         <li><span style="color:#ff0000;">WARNING: this will drop your current database.</span></li>
       </ul>
@@ -86,7 +84,7 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
       <li style="text-align: right">
         <input type="hidden" name="_enter_check" value="1" />
         <input type="hidden" name="_sql_check" value="<?php echo $install_flag; ?>" />
-        <input type="submit" value="save config" class="linkButton" onclick="submit.disabled=true;" />
+        <input type="submit" name="saveconfig" value="save config" class="linkButton" onclick="submit.disabled=true;" />
         <?php
 //if the right information was passed
 //process and install, with the schema file(s) needed.
@@ -147,7 +145,9 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
   <fieldset>
     <legend>Global Parameters</legend>
 
-<?php include_partial('paramform', array('paramform' => $paramform)) ?>
+<?php
+//this still needs some fixing
+//include_partial('paramform', array('paramform' => $paramform)) ?>
   </fieldset>
 </form>
 </div>

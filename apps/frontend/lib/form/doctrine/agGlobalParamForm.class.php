@@ -37,6 +37,8 @@ class agGlobalParamForm extends sfForm
         $globalparamContainer->embedForm($globalParamId, $globalParamForm);
         $globalparamContainer->widgetSchema->setLabel($globalParamId, false);
       }
+      $globalParamForm = new embeddedGlobalParamForm;
+      $globalparamContainer->embedForm('global', $globalParamForm);
     }
     $this->embedForm('ag_global_param', $globalparamContainer);
   }
