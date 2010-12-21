@@ -14,15 +14,26 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-require_once (sfConfig::get('sf_web_dir') . '/install.inc.php');
+$doo = sfConfig::get('sf_apps_dir');
+
+require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config.inc.php');
 
 ?>
-<h1>
-  <?php echo $stat; ?>
-</h1>
+<div id="infoHolder" style="display:inline;">
+  <h2>System Configuration</h2>
+  <p style="color: #848484">This page will allow you to configure your Agasti installation.</p>
+  <p style="color: #848484">Use the form to the top left to enter your system information.
+  The information to the right provides you with a system configuration check
+  </p>
 <div id="contentLeft">
-<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure" style="margin-right: 40px; float: left;">
-    <h3>Configuration Options</h3>
+  <?php
+  //get existing configuration
+  $agConfig = agConfig::singleton();
+  $agConfig->getCurrent();
+  
+  ?>
+  
+<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure" style="margin:40px;float: left;width:400px;">
     <fieldset>
       <legend><img src="<?php echo url_for('images/database.png') ?>" style="vertical-align: text-bottom" alt="database icon" />Database Configuration:</legend>
       <p>
@@ -30,16 +41,16 @@ require_once (sfConfig::get('sf_web_dir') . '/install.inc.php');
       </p>
       <ul>
         <li>
-          <label>host:</label><input type="text" name="db_host" id="db_host" class="inputGray" value="<?php echo $existing_db_host; ?>" />
+          <label>host:</label><input type="text" name="db_host" id="db_host" class="inputGray" value="<?php echo $agConfig->getConfig('DB_SERVER', 'dont') ?>" />
         </li>
         <li>
-          <label>database:</label><input type="text" name="db_name" id="db_name" class="inputGray" value="<?php echo $existing_db_name; ?>" />
+          <label>database:</label><input type="text" name="db_name" id="db_name" class="inputGray" value="<?php echo $agConfig->getConfig('DB_DATABASE', 'meddle') ?>" />
         </li>
         <li>
-          <label>username:</label><input type="text" name="db_user" id="db_user" class="inputGray" value="<?php echo $existing_db_user; ?>" />
+          <label>username:</label><input type="text" name="db_user" id="db_user" class="inputGray" value="<?php echo $agConfig->getConfig('DB_USER', 'with')  ?>" />
         </li>
         <li>
-          <label>password:</label><input type="password" name="db_pass" id="db_pass" class="inputGray" value="<?php echo $existing_db_pass; ?>" />
+          <label>password:</label><input type="password" name="db_pass" id="db_pass" class="inputGray" value="<?php echo $agConfig->getConfig('DB_PASSWORD', 'sysfiles')  ?>" />
         </li>
         <li>
           <input id="init_schema" type="checkbox" name="init_schema" />re-initialize database schema
@@ -52,9 +63,9 @@ require_once (sfConfig::get('sf_web_dir') . '/install.inc.php');
 
       <ul>
         <li>
-          <input id="auth_method1" type="radio" name="auth_method" value="default"<?php if ($existing_auth_method == 'default')
+          <input id="auth_method1" type="radio" name="auth_method" value="default"<?php if ($agConfig->getConfig('AUTH_METHOD')  == 'default')
           echo ' checked="checked"'; ?> /><label for="auth_method1">default security</label><br />
-          <input id="auth_method2" type="radio" name="auth_method" value="bypass"<?php if ($existing_auth_method == 'bypass')
+          <input id="auth_method2" type="radio" name="auth_method" value="bypass"<?php if ($agConfig->getConfig('AUTH_METHOD') == 'bypass')
                    echo ' checked="checked"'; ?> /><label for="auth_method1">bypass/superadmin</label><br />
         </li>
       </ul>
@@ -63,10 +74,10 @@ require_once (sfConfig::get('sf_web_dir') . '/install.inc.php');
       <legend><img src="<?php echo url_for('images/config.png') ?>" style="vertical-align: text-bottom" alt="config gear icon" />Administrator Configuration:</legend>
       <ul>
         <li>
-          <label>name:</label><input type="text" name="admin_name" id="admin_name" class="inputGray" value="<?php echo $existing_admin_name; ?>" /><br />
+          <label>name:</label><input type="text" name="admin_name" id="admin_name" class="inputGray" value="<?php echo $agConfig->getConfig('ADMIN_NAME') ?>" /><br />
         </li>
         <li>
-          <label>email:</label><input type="text" name="admin_email" id="admin_email" class="inputGray" value="<?php echo $existing_admin_email; ?>" /><br />
+          <label>email:</label><input type="text" name="admin_email" id="admin_email" class="inputGray" value="<?php echo $agConfig->getConfig('ADMIN_EMAIL') ?>" /><br />
         </li>
         <li
       </ul>
@@ -75,7 +86,7 @@ require_once (sfConfig::get('sf_web_dir') . '/install.inc.php');
       <li style="text-align: right">
         <input type="hidden" name="_enter_check" value="1" />
         <input type="hidden" name="_sql_check" value="<?php echo $install_flag; ?>" />
-        <input type="submit" value="install" class="linkButton" onclick="submit.disabled=true;" />
+        <input type="submit" value="save config" class="linkButton" onclick="submit.disabled=true;" />
         <?php
 //if the right information was passed
 //process and install, with the schema file(s) needed.
@@ -89,7 +100,7 @@ require_once (sfConfig::get('sf_web_dir') . '/install.inc.php');
   <fieldset>
       <legend>Configuration Test</legend>
     <h2 style="color: #848484"></h2>
-<?php $table = '<table class="requirements" style="align:center"><tr style="font-weight:bold;"><td>&nbsp;</td><td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr>';
+<?php $table = '<table class="requirements" style="align:center;width:200px;"><tr style="font-weight:bold;"><td>&nbsp;</td><td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr>';
     /**
      * @todo clean up the following code
      */
@@ -135,11 +146,9 @@ require_once (sfConfig::get('sf_web_dir') . '/install.inc.php');
   </fieldset>
   <fieldset>
     <legend>Global Parameters</legend>
-  </fieldset>
-  <p style="color: #848484">This page will allow you to configure your Agasti installation.</p>
-  <p style="color: #848484">Use the form to the top left to enter your system information.
-  The information to the right provides you with a system configuration check
-  </p>
+
 <?php include_partial('paramform', array('paramform' => $paramform)) ?>
-  </form>
+  </fieldset>
+</form>
+</div>
 </div>

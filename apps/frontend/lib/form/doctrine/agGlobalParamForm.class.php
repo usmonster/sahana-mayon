@@ -10,7 +10,7 @@
  * @author     CUNY SPS
  * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 29553 2010-05-20 14:33:00Z Kris.Wallsmith $
  */
-class agGlobalParamForm extends BaseagGlobalParamForm
+class agGlobalParamForm extends sfForm
 {
   public function setup()
   {
@@ -32,17 +32,19 @@ class agGlobalParamForm extends BaseagGlobalParamForm
       foreach ($this->ag_global_params as $globalParam) {
         $globalParamForm = new embeddedGlobalParamForm($globalParam);
 
+        $globalParamForm->setDefault('host_id', 1);
         $globalParamId = $globalParam->getId();
         $globalparamContainer->embedForm($globalParamId, $globalParamForm);
         $globalparamContainer->widgetSchema->setLabel($globalParamId, false);
       }
     }
-    $this->embedForm('params', $globalparamContainer);
+    $this->embedForm('ag_global_param', $globalparamContainer);
   }
   public function configure(){
     parent::configure();
         unset($this['created_at'],
-          $this['updated_at']
+          $this['updated_at'],
+          $this['host_id']
           );
   }
   public function getModelName()
@@ -53,7 +55,7 @@ class agGlobalParamForm extends BaseagGlobalParamForm
   {
     /**
      *
-     */
+     **/
     if (null === $forms) {
       $forms = $this->embeddedForms;
     }
@@ -74,6 +76,7 @@ class agGlobalParamForm extends BaseagGlobalParamForm
           } else {
             $objGlobalParam = $form->getObject();
             if ($objGlobalParam->value && $objGlobalParam->datapoint) {
+              $form->getObject()->setHostId(1);
               $form->getObject()->save();
             } else {
               $form->getObject()->delete();
@@ -85,7 +88,7 @@ class agGlobalParamForm extends BaseagGlobalParamForm
       }
     }
 
-
+    return parent::saveEmbeddedForms($con, $forms);
   }
 
 }

@@ -32,7 +32,7 @@ html, body {
 }
 
 #contentLeft {
-  width: 400px;
+  width: 300px;
   float: let;
 }
 
@@ -663,13 +663,12 @@ select {
   float: left;
 }
 #available {
-float:left;
-
+  float:left;
 }
 #allocated {
   float: left;
 }
-.bucket{
+.bucket {
   padding: 1em;
   font-size: 1em;
   display:inline;
@@ -683,7 +682,7 @@ float:left;
   -webkit-border-radius: 10px;
   border-radius: 10px;
 }
-.bucket li{
+.bucket li {
   border:1px solid #dadada;
   background:#e5f7ff;
   padding: 2px;

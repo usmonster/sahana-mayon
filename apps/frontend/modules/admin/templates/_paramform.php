@@ -4,7 +4,7 @@
       <tr>
         <td colspan="2">
           <?php echo $paramform->renderHiddenFields(false) ?>
-          <input type="submit" value="Save" />
+          <input type="submit" value="Save" name="update" class="buttonSmall"/>
         </td>
       </tr>
     </tfoot>
