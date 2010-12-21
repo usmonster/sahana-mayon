@@ -65,7 +65,64 @@ class adminActions extends sfActions
       $this->paramform = new agGlobalParamForm($ag_global_param);
 
       $this->processParam($request, $this->paramform);
+    }
+    if($request->getParameter('saveconfig'))
+    {
+        $file = sfConfig::get('sf_config_dir') . '/config.yml';
+      $config_array = sfYaml::load($file);
+        $config_array['admin']['admin_name'] = $_POST['admin_name'];
+        $config_array['admin']['admin_email'] = $_POST['admin_email'];
+        $config_array['admin']['auth_method']['value'] = $_POST['auth_method'];
 
+        // update config.yml
+        try {
+          file_put_contents($file, sfYaml::dump($config_array, 4));
+        } catch (Exception $e) {
+          echo "hey, something went wrong:" . $e->getMessage();
+        }
+
+        $file = sfConfig::get('sf_app_dir') . '/config/app.yml';
+        $appConfig = sfYaml::load($file);
+        
+        if($_POST['auth_method'] == 'bypass'){
+          $appConfig['all']['sf_guard_plugin'] =
+            array('check_password_callable'
+              => array('agSudoAuth', 'authenticate'));
+          $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
+        }
+        else{
+          $appConfig['all'] = '';
+        }
+          $appConfig['all']['.array']['navpages'] =
+            array(
+              'homepage' => array('name' => 'Home', 'route' => '@homepage'),
+              'facility' => array('name' => 'Facility', 'route' => '@facility'),
+              'staff' => array('name' => 'Staff', 'route' => '@staff'),
+              'client' => array('name' => 'Client', 'route' => '@client'),
+              'scenario' => array('name' => 'Scenario', 'route' => '@scenario'),
+              'gis' => array('name' => 'GIS', 'route' => '@gis'),
+              'org' => array('name' => 'Organization', 'route' => '@org'),
+              'admin' => array('name' => 'Admin', 'route' => '@admin'),
+              'about' => array('name' => 'About', 'route' => '@about'));
+        // update config.yml
+        try {
+          file_put_contents($file, sfYaml::dump($appConfig, 4));
+        } catch (Exception $e) {
+          echo "hey, something went wrong:" . $e->getMessage();
+          return false;
+        }
+
+
+
+
+
+
+
+
+
+      //check to see if auth_method is bypass, if so, modify app.yml accordingly... AFTER agSaveSetup
+//        if(!agSaveSetup($config_array)) return 'fail';
+        //agSaveSetup($config_array);
     }
   }
 
