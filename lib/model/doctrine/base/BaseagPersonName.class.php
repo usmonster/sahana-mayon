@@ -63,7 +63,9 @@ abstract class BaseagPersonName extends sfDoctrineRecord
              'local' => 'id',
              'foreign' => 'person_name_id'));
 
+        $luceneable0 = new Luceneable();
         $timestampable0 = new Doctrine_Template_Timestampable();
+        $this->actAs($luceneable0);
         $this->actAs($timestampable0);
     }
 }

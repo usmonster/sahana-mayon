@@ -98,9 +98,9 @@ abstract class BaseFormDoctrine extends sfFormDoctrine
         $this->saveEmbeddedForms($con, $form->getEmbeddedForms());
       }
     }
-    if ($this->getObject() instanceof agPerson) {
-      $this->getObject()->updateLuceneIndex();
-    }
+//    if ($this->getObject() instanceof agPerson) {
+//      $this->getObject()->updateLuceneIndex();
+//    }
   }
 
 }
