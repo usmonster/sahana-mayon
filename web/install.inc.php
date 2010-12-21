@@ -86,6 +86,7 @@ class agInstall
 
   function getConfig($name, $default = null)
   {
+    //if entry method to this function is admin/config instead of install, set the global
     return isset($this->AG_CONFIG[$name]) ? $this->AG_CONFIG[$name] : $default;
   }
 
@@ -348,6 +349,7 @@ class agInstall
       $this->setConfig('DB_PASSWORD', $dbArray['all']['doctrine']['param']['password']);
       $this->setConfig('ADMIN_NAME', $cfgArray['admin']['admin_name']);
       $this->setConfig('ADMIN_EMAIL', $cfgArray['admin']['admin_email']);
+      $this->setConfig('AUTH_METHOD', $cfgArray['admin']['auth_method']['value']);
     } catch (Exception $e) {
       return 'file was unreadable';
     }

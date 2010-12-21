@@ -18,7 +18,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class PluginagPersonForm extends BaseagPersonForm
+class agPersonForm extends BaseagPersonForm
 {
 
   public function setup()

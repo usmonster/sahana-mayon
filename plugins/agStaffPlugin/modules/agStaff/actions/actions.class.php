@@ -290,7 +290,7 @@ class agStaffActions extends sfActions
    * */
   public function executeNew(sfWebRequest $request)
   {
-    $this->form = new PluginagPersonForm();
+    $this->form = new AgPersonForm();
   }
 
   /**
@@ -305,7 +305,7 @@ class agStaffActions extends sfActions
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
-    $this->form = new PluginagPersonForm();
+    $this->form = new AgPersonForm();
     $ent = new agEntity();
     $ent->save();
     $this->form->getObject()->setAgEntity($ent);
@@ -325,7 +325,7 @@ class agStaffActions extends sfActions
     $this->forward404Unless(
         $ag_person = Doctrine::getTable('AgPerson')->find(array($request->getParameter('id'))),
         sprintf('Object ag_person does not exist (%s).', $request->getParameter('id')));
-    $this->form = new PluginagPersonForm($ag_person);
+    $this->form = new AgPersonForm($ag_person);
   }
 
   /**
@@ -340,7 +340,7 @@ class agStaffActions extends sfActions
     $this->forward404Unless(
         $ag_person = Doctrine::getTable('AgPerson')->find(array($request->getParameter('id'))),
         sprintf('Object ag_person does not exist (%s).', $request->getParameter('id')));
-    $this->form = new PluginagPersonForm($ag_person);
+    $this->form = new AgPersonForm($ag_person);
 
     $this->processForm($request, $this->form);
 
@@ -707,8 +707,8 @@ class agStaffActions extends sfActions
     $extension = strtolower($filePath['extension']);
 
 
-require_once "../apps/frontend/lib/util/excel.php";
-$export_file = $passPath;
+//require_once "../apps/frontend/lib/util/excel.php";
+//$export_file = $passPath;
 //header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 //header ("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
 //header ("Cache-Control: no-cache, must-revalidate");
@@ -716,12 +716,12 @@ $export_file = $passPath;
 //header ("Content-type: application/x-msexcel");
 //header ("Content-Disposition: attachment; filename=\"" . basename($export_file) . "\"" );
 //header ("Content-Description: PHP/INTERBASE Generated Data" );
-$fp = fopen("xlsfile://". $_FILES['import']['name'], 'r+');
-$bloogle = "xlsfile:/" . $passPath;
-$floogle = readfile($bloogle);
+//$fp = fopen("xlsfile://". $_FILES['import']['name'], 'r+');
+//$bloogle = "xlsfile:/" . $passPath;
+//$floogle = readfile($bloogle);
 
 
-    if ($extension <> 'xls') {
+    if ($extension <> 'xls' && $extension <> 'csv') {
       $this->uploadHeading = 'Import Failure';
       $this->uploadMessage = $this->importFile . ' is not an XLS file and could not be read. No data was imported to Agasti.';
     } else {

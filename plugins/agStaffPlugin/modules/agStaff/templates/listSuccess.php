@@ -67,6 +67,14 @@
           echo($sortColumn =='religion' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
+      <!-- Resource Type and Organization  -->
+      <th class="head" rowspan="2">
+        <div style="margin: 0; padding: 0;">Organization</div>
+        <?php
+#          echo($sortColumn =='religion' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+#          echo($sortColumn =='religion' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+      </th>
     </tr>
    <tr style="border: none;">
      <?php foreach ($ag_person_name_types as $ag_person_name_type_id => $ag_person_name_type): ?>
@@ -140,6 +148,9 @@
       <?php foreach ($religions as $religion): ?>
         <?php echo $religion . "<br /> "; ?>
       <?php endforeach; ?>
+      </td>
+      <td>
+        <a href="<?php echo url_for('staff/assign') . "?id=" . $staffMember->getId(); ?>" class="linkButton">Assign</a>
       </td>
     </tr>
     <?php endforeach; ?>

@@ -54,10 +54,21 @@ class adminActions extends sfActions
   public function executeConfig(sfWebRequest $request)
   {
     /**
-     *
      * @param sfWebRequest $request is what the user is asking of the server
      */
+    $this->paramform = new agGlobalParamForm();
+
+    if($request->getParameter('update'))
+    {
+      $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
+      $this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
+      $this->paramform = new agGlobalParamForm($ag_global_param);
+
+      $this->processParam($request, $this->paramform);
+
+    }
   }
+
   public function executeDisplay(sfWebRequest $request)
   {     /**
       *
@@ -179,4 +190,15 @@ class adminActions extends sfActions
       $this->redirect('admin/edit?id='.$ag_account->getId());
     }
   }
+  protected function processParam(sfWebRequest $request, sfForm $form)
+  {
+    $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
+    if ($form->isValid())
+    {
+      $form->save();
+
+      $this->redirect('admin/config');
+    }
+  }
+
 }
