@@ -25,6 +25,7 @@ class agPerson extends BaseagPerson
     $doc = new Zend_Search_Lucene_Document();
     //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
     $doc->addField(Zend_Search_Lucene_Field::Keyword('pk', $this->getId(), 'utf-8'));
+    $splork = $this->getAgPersonName();
     foreach ($this->getAgPersonName()->person_name as $name) {
       $doc->addField(Zend_Search_Lucene_Field::Keyword('name', $name, 'utf-8'));
     }
