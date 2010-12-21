@@ -2,6 +2,7 @@ apps/*/config/app.yml
 config/config.yml
 config/databases.yml
 data/indexes/**
+data/search/lucene.index/**
 data/sql/schema.sql
 cache/**
 log/**
@@ -14,4 +15,3 @@ nbproject
 *.vtg
 *.pui
 *.xls
-data/search/lucene.index
