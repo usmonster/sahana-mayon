@@ -1,7 +1,12 @@
 <?php
-  $this->form = new sfForm();
+  $facilityStaffResourceContainer = new sfForm();
+  $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainer($facilityStaffResourceContainer->getWidgetSchema());
+  $facilityStaffResourceContainer->getWidgetSchema()->addFormFormatter('facilityStaffResourceConDeco', $facilityStaffResourceConDeco);
+  $facilityStaffResourceContainer->getWidgetSchema()->setFormFormatterName('facilityStaffResourceConDeco');
   foreach ($staffResourceForms as $key => $srForm) {
-    $this->form->embedForm($key, $srForm);
+    echo '<div>';
+    $facilityStaffResourceContainer->embedForm($key, $srForm);
+    echo '</div>';
   }
-  echo $this->form;
+  echo $facilityStaffResourceContainer;
 ?>
