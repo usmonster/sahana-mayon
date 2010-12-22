@@ -493,9 +493,9 @@ agPersonName:
       unique: true
       type: string(64)
       notnull: true
-  actAs:
-    Luceneable:
-    Timestampable:
+#  actAs:
+#    Luceneable:
+#    Timestampable:
   relations:
     agPerson:
       class: agPerson
