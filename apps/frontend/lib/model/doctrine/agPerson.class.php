@@ -21,13 +21,11 @@ class agPerson extends BaseagPerson
   {
     $doc = new Zend_Search_Lucene_Document();
     //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
-    $doc->addField(Zend_Search_Lucene_Field::Keyword('pk', $this->getId(), 'utf-8'));
-//    $splork = $this->getAgPersonName();
-//    foreach ($this->getAgPersonName()->person_name as $name) {
-//      $doc->addField(Zend_Search_Lucene_Field::Keyword('name', $name, 'utf-8'));
-//    }
-    //$doc->addField(Zend_Search_Lucene_Field::Unstored('id', $this->getLocation(), 'utf-8'));
-    
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));
+    $names = $this->getName();
+    foreach ($names as $key => $name) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
+    }    
   return $doc;
   }
 
@@ -35,6 +33,7 @@ class agPerson extends BaseagPerson
   {
     foreach ($this->getAgPersonMjAgPersonName() as $name) {
       $names[$name->getAgPersonNameType()->person_name_type] = $name->getAgPersonName()->person_name;
+//      $names = $names . ' ' . $name->getAgPersonName()->person_name;
     }
     return $names;
   }
