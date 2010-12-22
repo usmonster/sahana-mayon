@@ -15,23 +15,28 @@
  */
 class agPerson extends BaseagPerson
 {
-    public $luceneSearchFields = array
-    (
-    'id' => 'keyword'
-    );
+  public $luceneSearchFields = array('id' => 'keyword');
 
   public function updateLucene()
   {
     $doc = new Zend_Search_Lucene_Document();
     //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
     $doc->addField(Zend_Search_Lucene_Field::Keyword('pk', $this->getId(), 'utf-8'));
-    $splork = $this->getAgPersonName();
-    foreach ($this->getAgPersonName()->person_name as $name) {
-      $doc->addField(Zend_Search_Lucene_Field::Keyword('name', $name, 'utf-8'));
-    }
+//    $splork = $this->getAgPersonName();
+//    foreach ($this->getAgPersonName()->person_name as $name) {
+//      $doc->addField(Zend_Search_Lucene_Field::Keyword('name', $name, 'utf-8'));
+//    }
     //$doc->addField(Zend_Search_Lucene_Field::Unstored('id', $this->getLocation(), 'utf-8'));
     
   return $doc;
+  }
+
+  public function getName()
+  {
+    foreach ($this->getAgPersonMjAgPersonName() as $name) {
+      $names[$name->getAgPersonNameType()->person_name_type] = $name->getAgPersonName()->person_name;
+    }
+    return $names;
   }
 
   /**
