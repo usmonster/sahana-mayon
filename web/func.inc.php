@@ -279,29 +279,4 @@ function buildDsnString($dbType, $dbHost, $dbName, $dbPort = null)
       $cache->clean();
   }
 
-
-/** these two extended classes are for configuring doctrine */
-class agDoctrineConfigureDatabaseTask extends sfDoctrineConfigureDatabaseTask
-{
-
-  function execute($arguments = array(), $options = array())
-  {
-    parent::execute($arguments, $options);
-  }
-
-}
-
-class agDoctrineBuildSqlTask extends sfDoctrineBuildSqlTask
-{
-
-  function execute($arguments = array(), $options = array())
-  {
-    try {
-      parent::execute($arguments, $options);
-    } catch (Exception $e) {
-      throw new Doctrine_Exception($e->getMessage());
-    }
-  }
-
-}
 ?>
