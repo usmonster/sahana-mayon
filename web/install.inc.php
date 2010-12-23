@@ -530,7 +530,7 @@ class agInstall
       //to save our databases.yml,
       //$this->dbParams($db_params);
       //database parameters are good here.
-      if (!(agSaveSetup($config_array))) {
+      if (!($this->agSaveSetup($config_array))) {
         $this->DISABLE_NEXT = true;
         unset($_REQUEST['next']);
         //if we cannot save our configuration
@@ -592,6 +592,89 @@ class agInstall
       $this->DoNext();
     }
   }
+function agSaveSetup($config)
+{
+  /** remember to set the superadmin config.yml up!!!  */
+  sfClearCache('frontend', 'all');
+  sfClearCache('frontend', 'dev');
+  sfClearCache('frontend', 'prod');
+  require_once sfConfig::get('sf_root_dir') . '/lib/vendor/symfony/lib/yaml/sfYaml.php';
+  $file = sfConfig::get('sf_config_dir') . '/config.yml';
+  // update config.yml
+  try {
+    file_put_contents($file, sfYaml::dump($config, 4));
+  } catch (Exception $e) {
+    echo "hey, something went wrong:" . $e->getMessage();
+  }
+
+  $file = sfConfig::get('sf_app_dir') . '/config/app.yml';
+  touch($file);
+  //if app.yml doesn't exist
+  $appConfig = sfYaml::load($file);
+  $appConfig['all']['sf_guard_plugin'] =
+      array('check_password_callable'
+        => array('agSudoAuth', 'authenticate'));
+  $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
+
+  $appConfig['all']['.array']['navpages'] =
+      array(
+        'homepage' => array('name' => 'Home', 'route' => '@homepage'),
+        'facility' => array('name' => 'Facility', 'route' => '@facility'),
+        'staff' => array('name' => 'Staff', 'route' => '@staff'),
+        'client' => array('name' => 'Client', 'route' => '@client'),
+        'scenario' => array('name' => 'Scenario', 'route' => '@scenario'),
+        'gis' => array('name' => 'GIS', 'route' => '@gis'),
+        'org' => array('name' => 'Organization', 'route' => '@org'),
+        'admin' => array('name' => 'Admin', 'route' => '@admin'),
+        'about' => array('name' => 'About', 'route' => '@about'));
+  // update config.yml
+  try {
+    file_put_contents($file, sfYaml::dump($appConfig, 4));
+  } catch (Exception $e) {
+    echo "hey, something went wrong:" . $e->getMessage();
+    return false;
+  }
+  $file = sfConfig::get('sf_config_dir') . '/databases.yml';
+  $dbConfiguration = sfYaml::load($file);
+  $dbConfiguration['all']['doctrine']['param']['attributes'] = array(
+    'default_table_type' => 'INNODB',
+    'default_table_charset' => 'utf8',
+    'default_table_collate' => 'utf8_general_ci'
+  );
+  try {
+    file_put_contents($file, sfYaml::dump($dbConfiguration, 4));
+  } catch (Exception $e) {
+    echo "hey, something went wrong:" . $e->getMessage();
+    return false;
+  }
+
+  return true;
+}
 
 }
 
+
+/** these two extended classes are for configuring doctrine */
+class agDoctrineConfigureDatabaseTask extends sfDoctrineConfigureDatabaseTask
+{
+
+  function execute($arguments = array(), $options = array())
+  {
+    parent::execute($arguments, $options);
+  }
+
+}
+
+class agDoctrineBuildSqlTask extends sfDoctrineBuildSqlTask
+{
+
+  function execute($arguments = array(), $options = array())
+  {
+    try {
+      parent::execute($arguments, $options);
+    } catch (Exception $e) {
+      throw new Doctrine_Exception($e->getMessage());
+    }
+  }
+
+}

@@ -119,4 +119,4 @@ agEntityRelationshipTypeInverse:
       local: entity_inverse_relationship_type_id
       foreign: id
 actAs:
-  Timestampable: 
+  Timestampable:

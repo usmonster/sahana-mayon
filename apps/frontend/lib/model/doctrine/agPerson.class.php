@@ -15,6 +15,29 @@
  */
 class agPerson extends BaseagPerson
 {
+  public $luceneSearchFields = array('id' => 'keyword');
+
+  public function updateLucene()
+  {
+    $doc = new Zend_Search_Lucene_Document();
+    //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));
+    $names = $this->getName();
+    foreach ($names as $key => $name) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
+    }    
+  return $doc;
+  }
+
+  public function getName()
+  {
+    foreach ($this->getAgPersonMjAgPersonName() as $name) {
+      $names[$name->getAgPersonNameType()->person_name_type] = $name->getAgPersonName()->person_name;
+//      $names = $names . ' ' . $name->getAgPersonName()->person_name;
+    }
+    return $names;
+  }
+
   /**
    * getPersonPrimaryNames() is a static method to return a multi layer array of person's primary name.
    * @return array( person id => name type id => array( mj person name id, person name type, person name id, person name, priority) )
