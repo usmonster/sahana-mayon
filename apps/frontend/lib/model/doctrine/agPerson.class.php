@@ -26,6 +26,29 @@ class agPerson extends BaseagPerson
     foreach ($names as $key => $name) {
       $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
     }    
+//    $emails = $this->getEmail();
+//    foreach ($emails as $key => $email) {
+//      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' email', $email, 'utf-8'));
+//    }
+    $sex = $this->getSex();
+    //foreach ($sexes as $key => $sex) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
+    //}
+    
+    //$nationality = $this->getNationality();
+      $nationalities = $this->getNationality();
+      foreach($nationalities as $nationality)
+      {
+            $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
+      }
+
+    
+    $ethnicity = $this->getEthnicity();
+    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
+
+
+
+
   return $doc;
   }
 
@@ -37,6 +60,72 @@ class agPerson extends BaseagPerson
     }
     return $names;
   }
+
+
+//  public function getEmail()
+//  {
+//      foreach ($this->getAgEntity()->getAgEntityEmailContact() as $contactStore)
+//      {
+//
+//        //        $contactTypes[$emailContactTypeArray->getAgEmailContactType()->email_contact_type] = $emailContactType->getAgEmailContact()->email_contact;
+//        //        $names = $names . ' ' . $name->getAgPersonName()->person_name;
+//        //$contactStores[$contactStore->] Doesn't seem to understand the context weird.
+//
+//
+//
+//    }
+//
+//  }
+
+  public function getSex()
+  {
+      $sexstore = $this->getAgPersonSex();
+      foreach ($sexstore as $gender)
+      {
+        $sex = $gender->getAgSex()->sex;
+
+      }
+
+      return $sex;
+
+      //$sex = $this->getAgPersonSex()->getAgSex()->sex;
+              //getAgPersonSex()->sex;
+  }
+
+  public function getNationality()
+  {
+
+//      foreach ($this->getAgPersonMjAgPersonName() as $name) {
+//      $names[$name->getAgPersonNameType()->person_name_type] = $name->getAgPersonName()->person_name;
+      foreach($this->getAgPersonMjAgNationality() as $nationality)
+      {
+          $nationalities[] = $nationality->getAgNationality()->nationality;
+      }
+
+      return $nationalities;
+  }
+
+  public function getEthnicity()
+  {
+      foreach ($this->getAgPersonEthnicity() as $ethnicity)
+      {
+          $ethnicities = $ethnicity->getAgEthnicity()->ethnicity;
+      }
+
+      return $ethnicities;
+  }
+
+  public function getLanguages()
+  {
+      foreach($this->getAgPersonMjAgLanguage() as $languageCompetency)
+      {
+          
+          $languages = $languageCompetency->getAgLanguage()->language;
+      }
+      return $languages;
+      
+  }
+
 
   /**
    * getPersonPrimaryNames() is a static method to return a multi layer array of person's primary name.
