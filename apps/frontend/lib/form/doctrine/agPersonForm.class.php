@@ -942,7 +942,8 @@ class agPersonForm extends BaseagPersonForm
           if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {//If it became blank between render and submit
             //  $form->getObject()->id = $form->getDefault('id');//Set the id and ...
             $form->updateObject($form->getDefaults());
-            $form->getObject()->delete();                    //delete the object.
+            // ...delete the object.
+            $form->getObject()->delete();
             unset($forms[$key]);
           }
           unset($forms[$key]);
