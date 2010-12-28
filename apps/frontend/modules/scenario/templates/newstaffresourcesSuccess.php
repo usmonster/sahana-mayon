@@ -1,11 +1,15 @@
 <h3>Hello</h3>
 <?php
+$a = $scenarioFacilityGroup->getAgFacilityResource();
   foreach ($staffResourceTypes as $srt) {
     $staffResourceForms[$srt->staff_resource_type] = new agFacilityStaffResourceForm();
     
     $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineLabels($staffResourceForms[$srt->staff_resource_type]->getWidgetSchema());
     $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
     $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
+
+    $staffResourceForms[$srt->staff_resource_type]->getWidget('minimum_staff')->setAttribute('class', 'inputGraySmall');
+    $staffResourceForms[$srt->staff_resource_type]->getWidget('maximum_staff')->setAttribute('class', 'inputGraySmall');
 
     $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('created_at');
     $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('updated_at');

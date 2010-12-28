@@ -441,12 +441,20 @@ input[type="button"], button[type="submit"], form input[type="submit"] {
   padding: 0;
 }
 
-.inputGray {
+.inputGray, .inputGraySmall {
   border: 1px solid #dadada;
   background-color: #efefef;
   outline: none;
+}
+
+.inputGray {
   width: 130px;
 }
+
+.inputGraySmall {
+  width: 30px;
+}
+
 #sf_guard_signin .inputGray {
   border: 1px solid #dadada;
   background-color: #efefef;

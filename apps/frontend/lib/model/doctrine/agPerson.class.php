@@ -459,7 +459,7 @@ class agPerson extends BaseagPerson
    */
   public function delete(Doctrine_Connection $conn = null)
   {
-// This should fix the Zend autoloader double declaration issue. Need to get rid of our other Zend/Lucene stuff too, now
+// This should fix the Zend autoloader double declaration issue on person delete. Need to get rid of our other Zend/Lucene stuff too, now
 // that the luceneable plugin is being used.
 //    $index = agPersonTable::getLuceneIndex();
 //

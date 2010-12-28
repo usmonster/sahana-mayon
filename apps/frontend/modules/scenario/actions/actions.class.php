@@ -435,10 +435,13 @@ class scenarioActions extends sfActions
     $groupform->bind($request->getParameter($groupform->getName()), $request->getFiles($groupform->getName()));
     if ($groupform->isValid()) {
       $ag_scenario_facility_group = $groupform->save();
+      // The Group object has been created here.
       if($request->hasParameter('Continue'))
       {
-        $this->getUser()->setAttribute('staffResourceTypes',$this->staffResourceTypes);
+        //$this->getUser()->setAttribute('staffResourceTypes', $this->staffResourceTypes);
+        $this->getUser()->setAttribute('scenarioFacilityGroup', $ag_scenario_facility_group);
         $this->redirect('scenario/newstaffresources');
+//        $this->executeNewstaffresources($request);
       }else{
         $boo = $form->getValue('Save and Continue');
         $this->redirect('scenario/edit?id=' . $ag_scenario->getId());
@@ -453,7 +456,15 @@ class scenarioActions extends sfActions
         ->select('a.id, a.staff_resource_type')
         ->from('agStaffResourceType a')
         ->execute();
-    $this->staffresourceform = new  agScenarioFacilityResourceForm();
+    //$thing = $this->getUser()->getAttribute('staffResourceTypes');
+    $group = $this->getUser()->getAttribute('scenarioFacilityGroup');
+    $groupId = $group['id'];
+    $this->scenarioFacilityGroup = Doctrine::getTable('agScenarioFacilityGroup')
+        ->findByDql('id = ?', $groupId)
+        ->getFirst();
+    $this->facilityResources = $this->scenarioFacilityGroup->getAgFacilityResource();
+    $this->staffresourceform = new agScenarioFacilityResourceForm();
+    
   }
 
   protected function processGrouptypeform(sfWebRequest $request, sfForm $grouptypeform)
