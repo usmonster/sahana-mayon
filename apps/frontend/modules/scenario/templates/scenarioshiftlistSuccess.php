@@ -14,9 +14,9 @@
     'minutesStartToFacilityActivation' =>  array('title' => 'facility activation start minutes', 'sortable' => false),
     'minimumStaff' =>  array('title' => 'minimum staff', 'sortable' => false),
     'maximumStaff' =>  array('title' => 'maximum staff', 'sortable' => false),
-    'staffWave' =>  array('title' => 'staff wave', 'sortable' => false) //,
-//    'shiftStatusId' =>  array('title' => 'shiftStatusId', 'sortable' => false),
-//    'deploymentAlgorithmId' => array('title' => 'deployment algorithm id', 'sortable' => false)
+    'staffWave' =>  array('title' => 'staff wave', 'sortable' => false),
+    'shiftStatusId' =>  array('title' => 'shiftStatusId', 'sortable' => false),
+    'deploymentAlgorithmId' => array('title' => 'deployment algorithm id', 'sortable' => false)
   );
 
   $thisUrl = url_for('scenario/scenarioshiftlist');
@@ -47,12 +47,12 @@
     <tr>
       <td><a class=linkButton href="<?php echo url_for('scenario/editscenarioshift?id='.$ag_scenario_shift->getId()) ?>" title="View Scenario Shift <?php echo $ag_scenario_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
       <td><?php echo $scenarioShifts[$ag_scenario_shift->getId()]['scenario']; ?></td>
-      <td><?php 
-             $facilityResourceId = $scenarioShifts[$ag_scenario_shift->getId()]['facility_resource_id'];
-             $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
-             echo $facilityResourceDisplay;
-#              echo $ag_scenario_shift->getAgScenarioFacilityResource()->getAgFacilityResource()->getAgFacility()->getFacilityName() . '(' . $ag_scenario_shift->getAgScenarioFacilityResource()->getAgFacilityResource()->getAgFacility()->getFacilityCode() . '):' . $ag_scenario_shift->getAgScenarioFacilityResource()->getAgFacilityResource()->getAgFacilityResourceType()->getFacilityResourceType();
-          ?></td>
+      <td><?php
+//            $facilityResourceId = $scenarioShifts[$ag_scenario_shift->getId()]['facility_resource_id'];
+//#            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
+//            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] .  ' : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
+//            echo $facilityResourceDisplay;
+            echo $ag_scenario_shift->getAgScenarioFacilityResource(); ?></td>
       <td><?php echo $ag_scenario_shift->getAgStaffResourceType()->getStaffResourceType(); ?></td>
       <td><?php echo $ag_scenario_shift->getTaskId(); ?></td>
       <td><?php echo $ag_scenario_shift->getTaskLengthMinutes(); ?></td>
@@ -61,10 +61,8 @@
       <td><?php echo $ag_scenario_shift->getMinimumStaff(); ?></td>
       <td><?php echo $ag_scenario_shift->getMaximumStaff(); ?></td>
       <td><?php echo $ag_scenario_shift->getStaffWave(); ?></td>
-<!--
-      <td><?php #echo $ag_scenario_shift->getAgShiftStatus()->getShiftStatus(); ?></td>
-      <td><?php #echo $ag_scenario_shift->getAgDeploymentAlgorithm()->getDeploymentAlgorithm(); ?></td>
--->
+      <td><?php echo $ag_scenario_shift->getAgShiftStatus()->getShiftStatus(); ?></td>
+      <td><?php echo $ag_scenario_shift->getAgDeploymentAlgorithm()->getDeploymentAlgorithm(); ?></td>
     </tr>
     <?php endforeach; ?>
   </tbody>

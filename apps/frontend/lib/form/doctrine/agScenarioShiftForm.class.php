@@ -36,7 +36,7 @@ class agScenarioShiftForm extends BaseagScenarioShiftForm
       'maximum_staff'                       => new sfWidgetFormInputText(),
       'staff_wave'                          => new sfWidgetFormInputText(),
       'shift_status_id'                     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'), 'add_empty' => false)),
-      'deployment_algorithm_id'                => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'add_empty' => false)),
+      'deployment_algorithm_id'             => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'add_empty' => false)),
       ));
 
 
@@ -51,8 +51,8 @@ class agScenarioShiftForm extends BaseagScenarioShiftForm
       'minimum_staff'                       => new sfValidatorInteger(), //(array('max' => 5)),
       'maximum_staff'                       => new sfValidatorInteger(), //(array('max' => 5)),
       'staff_wave'                          => new sfValidatorInteger(), //(array('max' => 5)),
-      'shift_status_id'                        => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'))),
-      'deployment_algorithm_id'                => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'))),
+      'shift_status_id'                     => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'))),
+      'deployment_algorithm_id'             => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'))),
     ));
 
     $this->validatorSchema->setOption('allow_extra_fields', true);

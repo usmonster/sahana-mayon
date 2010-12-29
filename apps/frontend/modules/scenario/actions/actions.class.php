@@ -180,7 +180,7 @@ class scenarioActions extends sfActions
       }
     }
 
-    $this->facilityResourceInfo = agFacilityResource::facilityResourceInfo();
+//    $this->facilityResourceInfo = agFacilityResource::facilityResourceInfo();
 
     $query = Doctrine_Query::create()
     ->select('ss.*')
