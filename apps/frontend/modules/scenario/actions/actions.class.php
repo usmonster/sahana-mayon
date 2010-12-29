@@ -121,6 +121,91 @@ class scenarioActions extends sfActions
   }
 
   /**
+   * @method executeNewscenarioshift()
+   * Generates a new scenario shift form
+   */
+  public function executeNewscenarioshift(sfWebRequest $request)
+  {
+    $this->scenarioshiftform = new agScenarioShiftForm();
+  }
+
+  /**
+   * @method executeScenarioshiftlist()
+   * Method display a list of available scenario shifts.
+   * @param sfWebRequest $request
+   * @return None
+   */
+  public function executeScenarioshiftlist(sfWebRequest $request)
+  {
+    $arrayQuery = Doctrine_Core::getTable('agScenarioShift')
+      ->createQuery('ss')
+      ->select('ss.*, s.id, s.scenario, sfg.id, sfg.scenario_facility_group, sfr.id')
+      ->leftJoin('ss.agScenarioFacilityResource AS sfr')
+      ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
+      ->leftJoin('sfg.agScenario AS s')
+      ->orderBy('s.scenario, sfg.scenario_facility_group, sfr.facility_resource_id');
+
+    $queryString = $arrayQuery->getSqlQuery();
+    $results = $arrayQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
+//    $this->scenarioshiftform = new agScenarioShiftForm();
+//    $this->myRandomParam = "This is my random Param.";
+//    $this->outputResults = $results;
+
+    $this->scenarioShifts = array();
+    foreach ($results as $scenShifts)
+    {
+      $scenShiftId = $scenShifts['ss_id'];
+
+      $newRecord = array( 'scenario' => $scenShifts['s_scenario'],
+                          'scenario_facility_group' => $scenShifts['sfg_scenario_facility_group'],
+                          'facility_resource_id' => $scenShifts['ss_scenario_facility_resource_id'],
+                          'staff_resource_type_id' => $scenShifts['ss_staff_resource_type_id'],
+                          'task_id' => $scenShifts['ss_task_id'],
+                          'task_length_minutes' => $scenShifts['ss_task_length_minutes'],
+                          'break_length_minutes' => $scenShifts['ss_break_length_minutes'],
+                          'minutes_start_to_facility_activation' => $scenShifts['ss_minutes_start_to_facility_activation'],
+                          'minimum_staff' => $scenShifts['ss_minimum_staff'],
+                          'maximum_staff' => $scenShifts['ss_maximum_staff'],
+                          'staff_wave' => $scenShifts['ss_staff_wave'],
+                          'shift_status_id' => $scenShifts['ss_shift_status_id'],
+                          'deployment_algorithm_id' => $scenShifts['ss_deployment_algorithm_id']
+                         );
+      if (array_key_exists($scenShiftId, $this->scenarioShifts))
+      {
+        $tempArray = $this->scenarioShifts[$scenShiftId];
+        $newArray = $tempArray . $newRecord;
+        $this->scenarioShifts[$scenShiftId] = $newArray;
+      } else {
+        $this->scenarioShifts[$scenShiftId] = $newRecord;
+      }
+    }
+
+    $this->facilityResourceInfo = agFacilityResource::facilityResourceInfo();
+
+    $query = Doctrine_Query::create()
+    ->select('ss.*')
+    ->from('agScenarioShift as ss');
+
+    /**
+     * Create pager
+     */
+    $this->pager = new sfDoctrinePager('agScenarioShift', 20);
+
+    /**
+     * Set pager's query to our final query including sort
+     * parameters
+     */
+    $this->pager->setQuery($query);
+
+    /**
+     * Set the pager's page number, defaulting to page 1
+     */
+    $this->pager->setPage($request->getParameter('page', 1));
+    $this->pager->init();
+
+  }
+
+  /**
    *
    * @param sfWebRequest $request
    * triggers the creation of a scenario
@@ -181,6 +266,23 @@ class scenarioActions extends sfActions
     $this->processGrouptypeform($request, $this->grouptypeform);
 
     $this->setTemplate('grouptype');
+  }
+
+  /**
+   * @method executeCreatescenarioshift()
+   * Create a new scenario shift
+   * @param sfWebRequest $request
+   * @return none
+   */
+  public function executeCreatescenarioshift(sfWebRequest $request)
+  {
+    $this->ag_scenario_shifts = Doctrine_Core::getTable('agScenarioShift')
+            ->createQuery('ss')
+            ->execute();
+    $this->forward404Unless($request->isMethod(sfRequest::POST));
+    $this->scenarioshiftform = new agScenarioShiftForm();
+    $this->processScenarioshiftform($request, $this->scenarioshiftform);
+    $this->setTemplate('scenarioShift');
   }
 
   /**
@@ -276,6 +378,22 @@ class scenarioActions extends sfActions
   }
 
   /**
+   * @method executeEditscenarioshift()
+   * Generate form for ag_scenario_shift table per record edit.
+   * @param sfWebRequest $request
+   * @return None
+   */
+  public function executeEditscenarioshift(sfWebRequest $request)
+  {
+    $this->forward404Unless($ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_shift does not exist (%s).', $request->getParameter('id')));
+//    $this->ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')
+//            ->createQuery('a')
+//            ->execute();
+    $this->scenarioshiftform = new agScenarioShiftForm($ag_scenario_shift);
+
+  }
+
+  /**
    *
    * @param sfWebRequest $request
    * processing the update of a scenario
@@ -321,6 +439,22 @@ class scenarioActions extends sfActions
     $this->processGrouptypeform($request, $this->grouptypeform);
 
     $this->setTemplate('grouptype');
+  }
+
+  /**
+   * @method executeScenarioshiftupdate(sfWebRequest $request)
+   * Process the update of a scenario shift.
+   * @param sfWebRequest $request
+   */
+  public function executeScenarioshiftupdate(sfWebRequest $request)
+  {
+    $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
+    $this->forward404Unless($ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_shift does not exist (%s).', $request->getParameter('id')));
+    $this->scenarioshiftform = new agScenarioShiftForm($ag_scenario_shift);
+
+    $this->processScenarioshiftform($request, $this->scenarioshiftform);
+
+    $this->setTemplate('scenarioshiftlist');
   }
 
   /**
@@ -389,6 +523,20 @@ class scenarioActions extends sfActions
     $ag_facility_group_type->delete();
 
     $this->redirect('scenario/grouptype');
+  }
+
+  /**
+   * @method executeDeletescenarioshift executes the logic to delete a facility group type
+   * @param sfWebRequest $request
+   */
+  public function executeDeletescenarioshift(sfWebRequest $request)
+  {
+    $request->checkCSRFProtection();
+
+    $this->forward404Unless($ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_shift does not exist (%s).', $request->getParameter('id')));
+    $ag_scenario_shift->delete();
+
+    $this->redirect('scenario/scenarioshiftlist');
   }
 
   /**
@@ -477,4 +625,14 @@ class scenarioActions extends sfActions
     }
   }
 
+  protected function processScenarioshiftform(sfWebRequest $request, sfForm $scenarioshiftform)
+  {
+    $scenarioshiftform->bind($request->getParameter($scenarioshiftform->getName()), $request->getFiles($scenarioshiftform->getName()));
+    if ($scenarioshiftform->isValid())
+    {
+      $ag_scenario_shift = $scenarioshiftform->save();
+      $this->redirect('scenario/editscenarioshift?id='.$ag_scenario_shift->getId());
+    }
+    $this->redirect('scenario/scenarioshiftlist');
+  }
 }
