@@ -9,5 +9,6 @@ echo '<a href="' . url_for('scenario/newgroup') . '" class="buttonText" title="C
 echo '<a href="' . url_for('scenario/listgroup') . '" class="buttonText" title="List Facility Groups">List Facility Groups</a><br/>';
 echo '<a href="' . url_for('scenario/grouptype') . '" class="buttonText" title="Manage Facility Group Types">Manage Facility Group Types</a><br/>';
 echo '<a href="' . url_for('scenario/scenarioshiftlist') . '" class="buttonText" title="List Scenario Shift">List Scenario Shift</a><br/>';
+echo '<a href="' . url_for('scenario/scenarioshiftgroup') . '" class="buttonText" title="List Scenario Shift">Delete Scenario Shifts By Scenario</a><br/>';
 
 ?>

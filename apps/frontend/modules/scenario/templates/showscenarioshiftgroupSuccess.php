@@ -1,6 +1,3 @@
-<h3>List Available Scenario Shifts</h3>
-
-<?php #include_partial('scenarioshiftform', array('scenarioshiftform' => $scenarioshiftform, 'myRandomParam' => $myRandomParam, 'outputResults' => $outputResults)) ?>
 <?php
   //Defines the columns of the scenario shift display list page.
   $columns = array(
@@ -19,7 +16,7 @@
     'deploymentAlgorithmId' => array('title' => 'deployment algorithm id', 'sortable' => false)
   );
 
-  $thisUrl = url_for('scenario/scenarioshiftlist');
+  $thisUrl = url_for('scenario/showscenarioshiftgroup' );
 
   ($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
   ($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';
@@ -28,6 +25,12 @@
   $descArrow = '&#x25BC;';
 
 ?>
+
+<h3>Delete a Group of Scenario Shifts</h3>
+
+<br />
+Delete all scenario shifts relating to <?php echo $scenarioName; ?> scenario.
+<br /><br />
 
 <table class="staffTable">
   <thead>
@@ -45,14 +48,9 @@
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
     <?php foreach ($pager->getResults() as $ag_scenario_shift): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('scenario/editscenarioshift?id='.$ag_scenario_shift->getId()) ?>" title="View Scenario Shift <?php echo $ag_scenario_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
-      <td><?php echo $scenarioShifts[$ag_scenario_shift->getId()]['scenario']; ?></td>
-      <td><?php
-//            $facilityResourceId = $scenarioShifts[$ag_scenario_shift->getId()]['facility_resource_id'];
-//#            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
-//            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] .  ' : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
-//            echo $facilityResourceDisplay;
-            echo $ag_scenario_shift->getAgScenarioFacilityResource(); ?></td>
+      <td><?php echo $recordRowNumber++; ?></td>
+      <td><?php echo $ag_scenario_shift->getAgScenarioFacilityResource()->getAgScenarioFacilityGroup()->getAgScenario()->getScenario(); ?></td>
+      <td><?php echo $ag_scenario_shift->getAgScenarioFacilityResource(); ?></td>
       <td><?php echo $ag_scenario_shift->getAgStaffResourceType()->getStaffResourceType(); ?></td>
       <td><?php echo $ag_scenario_shift->getTaskId(); ?></td>
       <td><?php echo $ag_scenario_shift->getTaskLengthMinutes(); ?></td>
@@ -68,22 +66,31 @@
   </tbody>
 </table>
 
-<br>
-<div>
-  <a href="<?php echo url_for('scenario/newscenarioshift') ?>" class="linkButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
-</div>
+<br />
+
+<table>
+  <tfoot>
+    <tr>
+      <td colspan="2">
+        &nbsp;<a href="<?php echo url_for('scenario/scenarioshiftgroup') ?>" class="linkButton">Back to list</a>
+        &nbsp;<?php echo link_to('Delete All', 'scenario/deletescenarioshiftgroup?scenId='.$scenarioId, array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
 
 <div style="float: right;">
   <?php
 
 //
 //First Page link (or inactive if we're at the first page).
-    echo(!$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
+    echo(!$pager->isFirstPage() ? '<a href="' . $thisUrl . '?scenId=' . $scenarioId . '&page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
 //Previous Page link (or inactive if we're at the first page).
-    echo(!$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend .'" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
+    echo(!$pager->isFirstPage() ? '<a href="' . $thisUrl . '?scenId=' . $scenarioId . '&page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend .'" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
 //Next Page link (or inactive if we're at the last page).
-    echo(!$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getNextPage() . $sortAppend . $orderAppend .'" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
+    echo(!$pager->isLastPage() ? '<a href="' . $thisUrl . '?scenId=' . $scenarioId . '&page=' . $pager->getNextPage() . $sortAppend . $orderAppend .'" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
 //Last Page link (or inactive if we're at the last page).
-    echo(!$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend .'" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
+    echo(!$pager->isLastPage() ? '<a href="' . $thisUrl . '?scenId=' . $scenarioId . '&page=' . $pager->getLastPage() . $sortAppend . $orderAppend .'" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
   ?>
 </div>

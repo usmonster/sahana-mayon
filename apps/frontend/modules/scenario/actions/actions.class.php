@@ -206,6 +206,78 @@ class scenarioActions extends sfActions
   }
 
   /**
+   * @method executeScenarioshiftgroup()
+   * Display a list of scenario with scenario shifts defined.
+   * @param sfWebRequest $request
+   * @return None
+   */
+  public function executeScenarioshiftgroup(sfWebRequest $request)
+  {
+    $query = Doctrine_Core::getTable('agScenario')
+      ->createQuery('s')
+      ->select('s.id, s.scenario,count(*) AS count')
+      ->from('agScenario AS s')
+      ->innerJoin('s.agScenarioFacilityGroup AS sfg')
+      ->innerJoin('sfg.agScenarioFacilityResource AS sfr')
+      ->innerJoin('sfr.agScenarioShift AS ss')
+      ->groupBy('s.id, s.scenario');
+
+    /**
+     * Create pager
+     */
+    $this->pager = new sfDoctrinePager('agScenario', 20);
+
+    /**
+     * Set pager's query to our final query including sort
+     * parameters
+     */
+    $this->pager->setQuery($query);
+
+    /**
+     * Set the pager's page number, defaulting to page 1
+     */
+    $this->pager->setPage($request->getParameter('page', 1));
+    $this->pager->init();
+ 
+  }
+
+  /**
+   * executeShowscenarioshiftgroup() defines the list of scenario shifts by scenario.
+   * @param sfWebRequest $request
+   */
+  public function executeShowscenarioshiftgroup(sfWebRequest $request)
+  {
+    $this->scenarioId = $request->getParameter('scenId');
+    $this->scenarioName = ucwords(Doctrine_Core::getTable('agScenario')->find($this->scenarioId)->getScenario());
+
+    $query = Doctrine_Query::create()
+    ->select('ss.*')
+    ->from('agScenarioShift AS ss')
+    ->innerJoin('ss.agScenarioFacilityResource AS sfr')
+    ->innerJoin('sfr.agScenarioFacilityGroup AS sfg')
+    ->where('sfg.scenario_id=?',$this->scenarioId)
+    ;
+
+    /**
+     * Create pager
+     */
+    $this->pager = new sfDoctrinePager('agScenarioShift', 20);
+
+    /**
+     * Set pager's query to our final query including sort
+     * parameters
+     */
+    $this->pager->setQuery($query);
+
+    /**
+     * Set the pager's page number, defaulting to page 1
+     */
+    $this->pager->setPage($request->getParameter('page', 1));
+    $this->pager->init();
+
+  }
+
+  /**
    *
    * @param sfWebRequest $request
    * triggers the creation of a scenario
@@ -537,6 +609,25 @@ class scenarioActions extends sfActions
     $ag_scenario_shift->delete();
 
     $this->redirect('scenario/scenarioshiftlist');
+  }
+
+  /**
+   * executeDeletescenarioshiftgroup()
+   * @param sfWebRequest $request
+   */
+  public function executeDeletescenarioshiftgroup(sfWebRequest $request)
+  {
+//    $request->checkCSRFProtection();
+
+//    $this->forward404Unless($ag_scenario_shift_group = Doctrine_Core::getTable('agScenarioShift')->find(array($request->getParameter('scenId'))), sprintf('Object ag_scenario_shift_group does not exist for scenario (%s).', $request->getParameter('scenId')));
+    $this->forward404Unless($scenShftGrp = Doctrine_Core::getTable('agScenarioShift')->createQuery('ss')->innerJoin('ss.agScenarioFacilityResource AS sfr')->innerJoin('sfr.agScenarioFacilityGroup AS sfg')->where('sfg.scenario_id=?',$request->getParameter('scenId'))->execute(), sprintf('Object ag_scenario_shift_group does not exist for scenario (%s).', $request->getParameter('scenId')));
+
+    //Delete all scenario shift relating to the scenario.
+    foreach ($scenShftGrp as $scenShft) {
+      $scenShft->delete();
+    }
+
+    $this->redirect('scenario/scenarioshiftgroup');
   }
 
   /**
