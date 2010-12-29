@@ -469,7 +469,7 @@ input[type="button"], button[type="submit"], form input[type="submit"] {
   outline: none;
 }
 
-.search:hover, .search:focus, .inputGray:hover, .inputGray:focus {
+.search:hover, .search:focus, .inputGray:hover, .inputGray:focus, .inputGraySmall:hover, .inputGraySmall:focus  {
   background-color: #cdffdd;
   outline: none;
 }

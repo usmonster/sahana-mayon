@@ -58,7 +58,7 @@ $('#allocated > li').each(function(index) {
         if ($ag_allocated_facility_resources){
           foreach($ag_allocated_facility_resources as $curopt)
           {
-            $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
+            $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . ": " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
             /**
              * @todo [$curopt->activation_sequence] needs to still be applied to the list,
              */

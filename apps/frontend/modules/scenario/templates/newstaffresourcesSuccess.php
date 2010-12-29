@@ -6,30 +6,27 @@
   :
 </h3>
 <?php
-echo '<h3>' . $scenarioFacilityGroup['scenario_facility_group'] . '</h3>';
-$facilityResources = $scenarioFacilityGroup->getAgFacilityResource();
-
-foreach ($facilityResources as $facilityResource) {
-  $a[] = $facilityResource;
-}
+foreach ($scenarioFacilityResources as $scenarioFacilityResource) {
   foreach ($staffResourceTypes as $srt) {
-    $staffResourceForms[$srt->staff_resource_type] = new agFacilityStaffResourceForm();
-    
-    $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineLabels($staffResourceForms[$srt->staff_resource_type]->getWidgetSchema());
-    $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
-    $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type] =
+            new agFacilityStaffResourceForm();
+    $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineLabels($formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidgetSchema());
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
 
-    $staffResourceForms[$srt->staff_resource_type]->getWidget('minimum_staff')->setAttribute('class', 'inputGraySmall');
-    $staffResourceForms[$srt->staff_resource_type]->getWidget('maximum_staff')->setAttribute('class', 'inputGraySmall');
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidget('minimum_staff')->setAttribute('class', 'inputGraySmall');
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidget('maximum_staff')->setAttribute('class', 'inputGraySmall');
 
-    $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('created_at');
-    $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('updated_at');
-    $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('scenario_facility_resource_id');
-    $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('id');
-    $staffResourceForms[$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('staff_resource_type_id');
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('created_at');
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('updated_at');
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('scenario_facility_resource_id');
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('id');
+    $formsArray[$scenarioFacilityGroup['scenario_facility_group']][$scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type)][$srt->staff_resource_type]->getWidgetSchema()->offsetUnset('staff_resource_type_id');
   }
+}
+
   include_partial('staffresourceform', array(
-      'staffResourceForms' => $staffResourceForms,
+      'formsArray' => $formsArray,
      // 'ag_facility_resources' => $ag_facility_resources,
      // 'ag_allocated_facility_resources' => $ag_allocated_facility_resources
   ));

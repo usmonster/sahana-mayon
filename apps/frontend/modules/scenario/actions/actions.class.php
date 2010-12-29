@@ -703,7 +703,7 @@ class scenarioActions extends sfActions
     $this->scenarioFacilityGroup = Doctrine::getTable('agScenarioFacilityGroup')
         ->findByDql('id = ?', $groupId)
         ->getFirst();
-    $this->facilityResources = $this->scenarioFacilityGroup->getAgFacilityResource();
+    $this->scenarioFacilityResources = $this->scenarioFacilityGroup->getAgScenarioFacilityResource();
     $this->staffresourceform = new agScenarioFacilityResourceForm();
     
   }
