@@ -8,7 +8,12 @@
 
 <br />
 
-<?php echo $scenarioshiftform; ?>
+<?php
+  echo $scenarioshiftform->renderGlobalErrors();
+  echo $scenarioshiftform['id']->renderError();
+  echo $scenarioshiftform['id'];
+  echo $scenarioshiftform;
+?>
 
 <br /><br />
 

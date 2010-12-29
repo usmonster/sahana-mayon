@@ -19,6 +19,10 @@ class agScenarioShiftForm extends BaseagScenarioShiftForm
 
   public function setup()
   {
+    unset($this['id'],
+          $this['created_at'],
+          $this['updated_at']
+         );
 
     $this->setWidgets(array(
       'id'                                  => new sfWidgetFormInputHidden(),
@@ -31,24 +35,24 @@ class agScenarioShiftForm extends BaseagScenarioShiftForm
       'minimum_staff'                       => new sfWidgetFormInputText(),
       'maximum_staff'                       => new sfWidgetFormInputText(),
       'staff_wave'                          => new sfWidgetFormInputText(),
-      'shift_status'                        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'), 'add_empty' => false)),
-      'deployment_algorithm'                => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'add_empty' => false)),
+      'shift_status_id'                     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'), 'add_empty' => false)),
+      'deployment_algorithm_id'                => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'add_empty' => false)),
       ));
 
 
     $this->setValidators(array(
-      'id'                                  => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
+//      'id'                                  => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'scenario_facility_resource_id'       => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenarioFacilityResource'))),
       'staff_resource_type_id'              => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'))),
       'task_id'                             => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agTask'))),
-      'task_length_minutes'                 => new sfValidatorInteger(array('max' => 10)),
-      'break_length_minutes'                => new sfValidatorInteger(array('max' => 10)),
-      'minutes_start_to_facility_activation'=> new sfValidatorInteger(array('max' => 20)),
-      'minimum_staff'                       => new sfValidatorInteger(array('max' => 5)),
-      'maximum_staff'                       => new sfValidatorInteger(array('max' => 5)),
-      'staff_wave'                          => new sfValidatorInteger(array('max' => 5)),
-      'shift_status'                        => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'))),
-      'deployment_algorithm'                => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'))),
+      'task_length_minutes'                 => new sfValidatorInteger(), //(array('max' => 10)),
+      'break_length_minutes'                => new sfValidatorInteger(), //(array('max' => 10)),
+      'minutes_start_to_facility_activation'=> new sfValidatorInteger(), //(array('max' => 20)),
+      'minimum_staff'                       => new sfValidatorInteger(), //(array('max' => 5)),
+      'maximum_staff'                       => new sfValidatorInteger(), //(array('max' => 5)),
+      'staff_wave'                          => new sfValidatorInteger(), //(array('max' => 5)),
+      'shift_status_id'                        => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'))),
+      'deployment_algorithm_id'                => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'))),
     ));
 
     $this->validatorSchema->setOption('allow_extra_fields', true);

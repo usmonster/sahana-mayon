@@ -442,11 +442,11 @@ class scenarioActions extends sfActions
   }
 
   /**
-   * @method executeScenarioshiftupdate(sfWebRequest $request)
+   * @method executeUpdatescenarioshift(sfWebRequest $request)
    * Process the update of a scenario shift.
    * @param sfWebRequest $request
    */
-  public function executeScenarioshiftupdate(sfWebRequest $request)
+  public function executeUpdatescenarioshift(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
     $this->forward404Unless($ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_shift does not exist (%s).', $request->getParameter('id')));
