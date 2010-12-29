@@ -1,6 +1,17 @@
-<h3>Hello</h3>
+<h3>
+  Assign staff resource requirements to the facilities within
+  <span class="logName">
+    <?php echo $scenarioFacilityGroup['scenario_facility_group'] ?>
+  </span>
+  :
+</h3>
 <?php
-$a = $scenarioFacilityGroup->getAgFacilityResource();
+echo '<h3>' . $scenarioFacilityGroup['scenario_facility_group'] . '</h3>';
+$facilityResources = $scenarioFacilityGroup->getAgFacilityResource();
+
+foreach ($facilityResources as $facilityResource) {
+  $a[] = $facilityResource;
+}
   foreach ($staffResourceTypes as $srt) {
     $staffResourceForms[$srt->staff_resource_type] = new agFacilityStaffResourceForm();
     

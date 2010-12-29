@@ -600,11 +600,13 @@ class scenarioActions extends sfActions
 
   public function executeNewstaffresources(sfWebRequest $request)
   {
+    // Query to get all staff resource tyeps. Might remove in favor of going through object.
     $this->staffResourceTypes = Doctrine_Query::create()
         ->select('a.id, a.staff_resource_type')
         ->from('agStaffResourceType a')
         ->execute();
     //$thing = $this->getUser()->getAttribute('staffResourceTypes');
+    // Set user attribute to the 'scenarioFacilityGroup' attribute coming in through the request.
     $group = $this->getUser()->getAttribute('scenarioFacilityGroup');
     $groupId = $group['id'];
     $this->scenarioFacilityGroup = Doctrine::getTable('agScenarioFacilityGroup')

@@ -36,11 +36,11 @@ class agPerson extends BaseagPerson
     //}
     
     //$nationality = $this->getNationality();
-//      $nationalities = $this->getNationality();
-//      foreach($nationalities as $nationality)
-//      {
-//            $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
-//      }
+      $nationalities = $this->getNationality();
+      foreach($nationalities as $nationality)
+      {
+        $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
+      }
 
     
     $ethnicity = $this->getEthnicity();
@@ -83,7 +83,6 @@ class agPerson extends BaseagPerson
       foreach ($sexstore as $gender)
       {
         $sex = $gender->getAgSex()->sex;
-
       }
 
       return $sex;
@@ -92,16 +91,16 @@ class agPerson extends BaseagPerson
               //getAgPersonSex()->sex;
   }
 
-//  public function getNationality()
-//  {
-//      $nationalities = array();
-////      foreach ($this->getAgPersonMjAgPersonName() as $name) {
-////      $names[$name->getAgPersonNameType()->person_name_type] = $name->getAgPersonName()->person_name;
-//      foreach($this->getAgPersonMjAgNationality() as $nationality)
-//             $nationalities = $nationality->getAgNationality()->nationality;
-//
-//      return $nationalities;
-//  }
+  public function getNationality()
+  {
+      //$nationalities = array();
+//      foreach ($this->getAgPersonMjAgPersonName() as $name) {
+//      $names[$name->getAgPersonNameType()->person_name_type] = $name->getAgPersonName()->person_name;
+      foreach($this->getAgPersonMjAgNationality() as $nationality)
+             $nationalities[] = $nationality->getAgNationality()->nationality;
+
+      return $nationalities;
+  }
 
   public function getEthnicity()
   {
