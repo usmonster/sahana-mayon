@@ -6,7 +6,7 @@ agStaffResourceType:
   operator:
     staff_resource_type: Operator
     staff_resource_type_abbr: Op
-    description: Data entry operator
+    description: administrator
   med_nrs:
     staff_resource_type: Medical Nurse
     staff_resource_type_abbr: med nrs
@@ -18,5 +18,4 @@ agStaffResourceType:
   spe:
     staff_resource_type: Specialist
     staff_resource_type_abbr: spe
-    description: administrator
-
+    description: Data entry specialist
