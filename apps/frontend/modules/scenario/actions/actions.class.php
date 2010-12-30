@@ -708,6 +708,36 @@ class scenarioActions extends sfActions
     
   }
 
+  public function executeShowFacilityResourceGroup(sfWebRequest $request)
+  {
+    $this->scenarioFacilityGroupId = $request->getParameter('scenarioFacilityGroupId');
+  }
+
+  public function executeFacilityStaffResourceCreate(sfWebRequest $request)
+  {
+    $this->forward404Unless($request->isMethod(sfRequest::POST));
+    $groupName = $request->getParameter('groupName');
+    $facilityGroup = $request->getPostParameter($groupName);
+    $this->processFacilityStaffResourceForm($facilityGroup);
+  }
+
+  public function processFacilityStaffResourceForm($facilityGroup)
+  {
+    foreach ($facilityGroup as $facility) {
+      foreach ($facility as $facilityStaffResource) {
+        $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
+        //unset($facilityStaffResourceForm['_csrf_token']);
+        $facilityStaffResourceForm->bind($facilityStaffResource, null);
+        $facilityStaffResourceForm->updateObject($facilityStaffResourceForm->getTaintedValues());
+        $c = $facilityStaffResourceForm->isValid();
+        if ($facilityStaffResourceForm->isValid()) {
+          $savedResources[] = $facilityStaffResourceForm->save();
+        }
+      }
+    }
+    $a = $resourceObjects;
+    $b = 4;
+  }
   protected function processGrouptypeform(sfWebRequest $request, sfForm $grouptypeform)
   {
     $grouptypeform->bind($request->getParameter($grouptypeform->getName()), $request->getFiles($grouptypeform->getName()));

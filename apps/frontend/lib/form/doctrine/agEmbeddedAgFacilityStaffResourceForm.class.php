@@ -10,16 +10,16 @@
  * @author     CUNY SPS
  * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 29553 2010-05-20 14:33:00Z Kris.Wallsmith $
  */
-abstract class agEmbeddedAgFacilityStaffResourceForm extends agFacilityStaffResourceForm
+class agEmbeddedAgFacilityStaffResourceForm extends agFacilityStaffResourceForm
 {
   public function setup()
   {
     $this->setWidgets(array(
       //'id'                            => new sfWidgetFormInputHidden(),
-      'scenario_facility_resource_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenarioFacilityResource'), 'add_empty' => false)),
-      'staff_resource_type_id'        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => false)),
-      'minimum_staff'                 => new sfWidgetFormInputText(),
-      'maximum_staff'                 => new sfWidgetFormInputText(),
+      'scenario_facility_resource_id' => new sfWidgetFormInputHidden(),
+      'staff_resource_type_id'        => new sfWidgetFormInputHidden(),
+      'minimum_staff'                 => new sfWidgetFormInputText(array('label' => 'Min'), array('class' => 'inputGraySmall')),
+      'maximum_staff'                 => new sfWidgetFormInputText(array('label' => 'Max'), array('class' => 'inputGraySmall')),
       //'created_at'                    => new sfWidgetFormDateTime(),
       //'updated_at'                    => new sfWidgetFormDateTime(),
     ));
