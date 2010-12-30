@@ -662,5 +662,69 @@ agEventFacilityResourceActivationTime:
       foreignAlias: agEventFacilityResourceActivationTime
       local: event_facility_resource_id
       foreign: id
+agEventRelativeShift:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    event_facility_resource_id:
+      type: integer(4)
+      notnull: true
+    staff_resource_type_id:
+      type: integer(2)
+      notnull: true
+    task_id:
+      type: integer(2)
+      notnull: true
+    task_length_minutes:
+      type: integer(4)
+      notnull: true
+    break_length_minutes:
+      type: integer(4)
+      notnull: true
+    minutes_start_to_facility_activation:
+      type: integer(5)
+      notnull: true
+    minimum_staff:
+      type: integer(2)
+      notnull: true
+    maximum_staff:
+      type: integer(2)
+      notnull: true
+    staff_wave:
+      type: integer(2)
+      notnull: true
+    shift_status_id:
+      type: integer(2)
+      notnull: true
+    deployment_algorithm_id:
+      type: integer(4)
+      notnull: true
+  relations:
+    agStaffResourceType:
+      class: agStaffResourceType
+      foreignAlias: agEventRelativeShift
+      local: staff_resource_type_id
+      foreign: id
+    agTask:
+      class: agTask
+      foreignAlias: agEventRelativeShift
+      local: task_id
+      foreign: id
+    agDeploymentAlgorithm:
+      class: agDeploymentAlgorithm
+      foreignAlias: agEventRelativeShift
+      local: deployment_algorithm_id
+      foreign: id
+    agEventFacilityResource:
+      class: agEventFacilityResource
+      foreignAlias: agEventRelativeShift
+      local: event_facility_resource_id
+      foreign: id
+    agShiftStatus:
+      local: shift_status_id
+      foreign: id
 actAs:
   Timestampable: 

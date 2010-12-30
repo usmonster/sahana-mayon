@@ -14,6 +14,7 @@
  * @property Doctrine_Collection $agSkill
  * @property Doctrine_Collection $agStaffResource
  * @property Doctrine_Collection $agEventShift
+ * @property Doctrine_Collection $agEventRelativeShift
  * @property Doctrine_Collection $agDefaultScenarioStaffResourceType
  * @property Doctrine_Collection $agScenarioShift
  * @property Doctrine_Collection $agShiftTemplate
@@ -30,6 +31,7 @@
  * @method Doctrine_Collection getAgSkill()                            Returns the current record's "agSkill" collection
  * @method Doctrine_Collection getAgStaffResource()                    Returns the current record's "agStaffResource" collection
  * @method Doctrine_Collection getAgEventShift()                       Returns the current record's "agEventShift" collection
+ * @method Doctrine_Collection getAgEventRelativeShift()               Returns the current record's "agEventRelativeShift" collection
  * @method Doctrine_Collection getAgDefaultScenarioStaffResourceType() Returns the current record's "agDefaultScenarioStaffResourceType" collection
  * @method Doctrine_Collection getAgScenarioShift()                    Returns the current record's "agScenarioShift" collection
  * @method Doctrine_Collection getAgShiftTemplate()                    Returns the current record's "agShiftTemplate" collection
@@ -45,6 +47,7 @@
  * @method agStaffResourceType setAgSkill()                            Sets the current record's "agSkill" collection
  * @method agStaffResourceType setAgStaffResource()                    Sets the current record's "agStaffResource" collection
  * @method agStaffResourceType setAgEventShift()                       Sets the current record's "agEventShift" collection
+ * @method agStaffResourceType setAgEventRelativeShift()               Sets the current record's "agEventRelativeShift" collection
  * @method agStaffResourceType setAgDefaultScenarioStaffResourceType() Sets the current record's "agDefaultScenarioStaffResourceType" collection
  * @method agStaffResourceType setAgScenarioShift()                    Sets the current record's "agScenarioShift" collection
  * @method agStaffResourceType setAgShiftTemplate()                    Sets the current record's "agShiftTemplate" collection
@@ -122,6 +125,10 @@ abstract class BaseagStaffResourceType extends sfDoctrineRecord
              'foreign' => 'staff_resource_type_id'));
 
         $this->hasMany('agEventShift', array(
+             'local' => 'id',
+             'foreign' => 'staff_resource_type_id'));
+
+        $this->hasMany('agEventRelativeShift', array(
              'local' => 'id',
              'foreign' => 'staff_resource_type_id'));
 

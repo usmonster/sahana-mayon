@@ -258,6 +258,8 @@ agScenarioShift:
     deployment_algorithm_id:
       type: integer(4)
       notnull: true
+    originator_id:
+      type: integer(4)
   relations:
     agStaffResourceType:
       local: staff_resource_type_id
@@ -275,6 +277,11 @@ agScenarioShift:
       class: agScenarioFacilityResource
       foreignAlias: agScenarioShift
       local: scenario_facility_resource_id
+      foreign: id
+    agShiftTemplate:
+      class: agShiftTemplate
+      foreignAlias: agScenarioShift
+      local: originator_id
       foreign: id
 agTask:
   columns:

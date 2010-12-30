@@ -15,6 +15,7 @@
  * @property Doctrine_Collection $agEventShift
  * @property Doctrine_Collection $agEventFacilityResourceStatus
  * @property Doctrine_Collection $agEventFacilityResourceActivationTime
+ * @property Doctrine_Collection $agEventRelativeShift
  * @property Doctrine_Collection $agPetAllocationStatus
  * 
  * @method integer                 getId()                                    Returns the current record's "id" value
@@ -27,6 +28,7 @@
  * @method Doctrine_Collection     getAgEventShift()                          Returns the current record's "agEventShift" collection
  * @method Doctrine_Collection     getAgEventFacilityResourceStatus()         Returns the current record's "agEventFacilityResourceStatus" collection
  * @method Doctrine_Collection     getAgEventFacilityResourceActivationTime() Returns the current record's "agEventFacilityResourceActivationTime" collection
+ * @method Doctrine_Collection     getAgEventRelativeShift()                  Returns the current record's "agEventRelativeShift" collection
  * @method Doctrine_Collection     getAgPetAllocationStatus()                 Returns the current record's "agPetAllocationStatus" collection
  * @method agEventFacilityResource setId()                                    Sets the current record's "id" value
  * @method agEventFacilityResource setFacilityResourceId()                    Sets the current record's "facility_resource_id" value
@@ -38,6 +40,7 @@
  * @method agEventFacilityResource setAgEventShift()                          Sets the current record's "agEventShift" collection
  * @method agEventFacilityResource setAgEventFacilityResourceStatus()         Sets the current record's "agEventFacilityResourceStatus" collection
  * @method agEventFacilityResource setAgEventFacilityResourceActivationTime() Sets the current record's "agEventFacilityResourceActivationTime" collection
+ * @method agEventFacilityResource setAgEventRelativeShift()                  Sets the current record's "agEventRelativeShift" collection
  * @method agEventFacilityResource setAgPetAllocationStatus()                 Sets the current record's "agPetAllocationStatus" collection
  * 
  * @package    AGASTI_CORE
@@ -109,6 +112,10 @@ abstract class BaseagEventFacilityResource extends sfDoctrineRecord
              'foreign' => 'event_facility_resource_id'));
 
         $this->hasMany('agEventFacilityResourceActivationTime', array(
+             'local' => 'id',
+             'foreign' => 'event_facility_resource_id'));
+
+        $this->hasMany('agEventRelativeShift', array(
              'local' => 'id',
              'foreign' => 'event_facility_resource_id'));
 

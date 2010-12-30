@@ -10,6 +10,7 @@
  * @property string $description
  * @property boolean $app_display
  * @property Doctrine_Collection $agEventFacilityShift
+ * @property Doctrine_Collection $agEventRelativeShift
  * @property Doctrine_Collection $agScenarioShift
  * @property Doctrine_Collection $agShiftTemplate
  * 
@@ -18,6 +19,7 @@
  * @method string              getDescription()          Returns the current record's "description" value
  * @method boolean             getAppDisplay()           Returns the current record's "app_display" value
  * @method Doctrine_Collection getAgEventFacilityShift() Returns the current record's "agEventFacilityShift" collection
+ * @method Doctrine_Collection getAgEventRelativeShift() Returns the current record's "agEventRelativeShift" collection
  * @method Doctrine_Collection getAgScenarioShift()      Returns the current record's "agScenarioShift" collection
  * @method Doctrine_Collection getAgShiftTemplate()      Returns the current record's "agShiftTemplate" collection
  * @method agTask              setId()                   Sets the current record's "id" value
@@ -25,6 +27,7 @@
  * @method agTask              setDescription()          Sets the current record's "description" value
  * @method agTask              setAppDisplay()           Sets the current record's "app_display" value
  * @method agTask              setAgEventFacilityShift() Sets the current record's "agEventFacilityShift" collection
+ * @method agTask              setAgEventRelativeShift() Sets the current record's "agEventRelativeShift" collection
  * @method agTask              setAgScenarioShift()      Sets the current record's "agScenarioShift" collection
  * @method agTask              setAgShiftTemplate()      Sets the current record's "agShiftTemplate" collection
  * 
@@ -73,6 +76,10 @@ abstract class BaseagTask extends sfDoctrineRecord
     {
         parent::setUp();
         $this->hasMany('agEventShift as agEventFacilityShift', array(
+             'local' => 'id',
+             'foreign' => 'task_id'));
+
+        $this->hasMany('agEventRelativeShift', array(
              'local' => 'id',
              'foreign' => 'task_id'));
 

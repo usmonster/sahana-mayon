@@ -1,19 +1,19 @@
 <?php
 
 /**
- * agScenarioShift filter form base class.
+ * agEventRelativeShift filter form base class.
  *
  * @package    AGASTI_CORE
  * @subpackage filter
  * @author     CUNY SPS
  * @version    SVN: $Id: sfDoctrineFormFilterGeneratedTemplate.php 29570 2010-05-21 14:49:47Z Kris.Wallsmith $
  */
-abstract class BaseagScenarioShiftFormFilter extends BaseFormFilterDoctrine
+abstract class BaseagEventRelativeShiftFormFilter extends BaseFormFilterDoctrine
 {
   public function setup()
   {
     $this->setWidgets(array(
-      'scenario_facility_resource_id'        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenarioFacilityResource'), 'add_empty' => true)),
+      'event_facility_resource_id'           => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agEventFacilityResource'), 'add_empty' => true)),
       'staff_resource_type_id'               => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => true)),
       'task_id'                              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agTask'), 'add_empty' => true)),
       'task_length_minutes'                  => new sfWidgetFormFilterInput(array('with_empty' => false)),
@@ -24,13 +24,12 @@ abstract class BaseagScenarioShiftFormFilter extends BaseFormFilterDoctrine
       'staff_wave'                           => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'shift_status_id'                      => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'), 'add_empty' => true)),
       'deployment_algorithm_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'add_empty' => true)),
-      'originator_id'                        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftTemplate'), 'add_empty' => true)),
       'created_at'                           => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'updated_at'                           => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
     ));
 
     $this->setValidators(array(
-      'scenario_facility_resource_id'        => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agScenarioFacilityResource'), 'column' => 'id')),
+      'event_facility_resource_id'           => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agEventFacilityResource'), 'column' => 'id')),
       'staff_resource_type_id'               => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agStaffResourceType'), 'column' => 'id')),
       'task_id'                              => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agTask'), 'column' => 'id')),
       'task_length_minutes'                  => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
@@ -41,12 +40,11 @@ abstract class BaseagScenarioShiftFormFilter extends BaseFormFilterDoctrine
       'staff_wave'                           => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'shift_status_id'                      => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agShiftStatus'), 'column' => 'id')),
       'deployment_algorithm_id'              => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'column' => 'id')),
-      'originator_id'                        => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agShiftTemplate'), 'column' => 'id')),
       'created_at'                           => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'updated_at'                           => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
     ));
 
-    $this->widgetSchema->setNameFormat('ag_scenario_shift_filters[%s]');
+    $this->widgetSchema->setNameFormat('ag_event_relative_shift_filters[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
@@ -57,14 +55,14 @@ abstract class BaseagScenarioShiftFormFilter extends BaseFormFilterDoctrine
 
   public function getModelName()
   {
-    return 'agScenarioShift';
+    return 'agEventRelativeShift';
   }
 
   public function getFields()
   {
     return array(
       'id'                                   => 'Number',
-      'scenario_facility_resource_id'        => 'ForeignKey',
+      'event_facility_resource_id'           => 'ForeignKey',
       'staff_resource_type_id'               => 'ForeignKey',
       'task_id'                              => 'ForeignKey',
       'task_length_minutes'                  => 'Number',
@@ -75,7 +73,6 @@ abstract class BaseagScenarioShiftFormFilter extends BaseFormFilterDoctrine
       'staff_wave'                           => 'Number',
       'shift_status_id'                      => 'ForeignKey',
       'deployment_algorithm_id'              => 'ForeignKey',
-      'originator_id'                        => 'ForeignKey',
       'created_at'                           => 'Date',
       'updated_at'                           => 'Date',
     );
