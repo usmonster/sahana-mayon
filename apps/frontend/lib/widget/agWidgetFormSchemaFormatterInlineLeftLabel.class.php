@@ -16,12 +16,12 @@
  * This file is modifed from the symfony package.
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  */
-class agWidgetFormSchemaFormatterInlineTopLabel extends sfWidgetFormSchemaFormatter
+class agWidgetFormSchemaFormatterInlineLeftLabel extends sfWidgetFormSchemaFormatter
 {
 
   protected
-  $rowFormat = "<div style=\"display: inline-block; margin-right: 4px; text-align: center;\"><div style=\"color: #848484;\">%label%</div><div>%error%%field%%help%%hidden_fields%</div></div>\n",
+  $rowFormat = "<div style=\"display: inline-block; margin-right: 4px; text-align: center;\"><div style=\"color: #848484; font-weight: bold; display: inline-block; margin: 4px;\">%label%</div><div style=\"display: inline-block;\">%error%%field%%help%%hidden_fields%</div></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div>%content%</div>";
+  $decoratorFormat = "<div style=\"border-bottom: solid 1px #dadada; margin-bottom: 4px;\">%content%</div>";
 }
