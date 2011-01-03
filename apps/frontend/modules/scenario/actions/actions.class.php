@@ -238,7 +238,7 @@ class scenarioActions extends sfActions
      */
     $this->pager->setPage($request->getParameter('page', 1));
     $this->pager->init();
- 
+
   }
 
   /**
@@ -418,7 +418,7 @@ class scenarioActions extends sfActions
 
     $current = $ag_scenario_facility_group->getAgScenarioFacilityResource();
     $current->setKeyColumn('activation_sequence');
-    //index these by the activation sequence 
+    //index these by the activation sequence
     $currentoptions = array();
     foreach($current as $curopt)
     {
@@ -689,54 +689,77 @@ class scenarioActions extends sfActions
     }
   }
 
+/**
+* Show page to create new staff resource requirements for facilities.
+*
+* @param sfWebRequest $request
+**/
   public function executeNewstaffresources(sfWebRequest $request)
   {
-    // Query to get all staff resource tyeps. Might remove in favor of going through object.
+    // Query to get all staff resource types.
     $this->staffResourceTypes = Doctrine_Query::create()
         ->select('a.id, a.staff_resource_type')
         ->from('agStaffResourceType a')
         ->execute();
-    //$thing = $this->getUser()->getAttribute('staffResourceTypes');
-    // Set user attribute to the 'scenarioFacilityGroup' attribute coming in through the request.
+    // Set $group to the user attribute to the 'scenarioFacilityGroup' attribute that came in through the request.
     $group = $this->getUser()->getAttribute('scenarioFacilityGroup');
-    $groupId = $group['id'];
+    //$groupId = $group['id'];
     $this->scenarioFacilityGroup = Doctrine::getTable('agScenarioFacilityGroup')
-        ->findByDql('id = ?', $groupId)
+        ->findByDql('id = ?', $group['id'])
         ->getFirst();
     $this->scenarioFacilityResources = $this->scenarioFacilityGroup->getAgScenarioFacilityResource();
     $this->staffresourceform = new agScenarioFacilityResourceForm();
-    
   }
 
   public function executeShowFacilityResourceGroup(sfWebRequest $request)
   {
-    $this->scenarioFacilityGroupId = $request->getParameter('scenarioFacilityGroupId');
+    $b =  $request->getParameter('id');
+    $this->scenarioFacilityGroupId = $request->getParameter('id');
+    $this->facilityResources = Doctrine::getTable('agScenarioFacilityResource')
+        ->findByDql('scenario_facility_group_id = ?', $request->getParameter('id'))
+        ->getData();
+    $this->facilityGroup = Doctrine::getTable('agScenarioFacilityGroup')
+        ->findByDql('id = ?', $request->getParameter('id'))
+        ->getFirst();
+    foreach ($this->facilityResources as $f) {
+      $a = 5;
+    }
+    $a = 4;
   }
 
+  /**
+  * Function to create the new facility staff resources.
+  *
+  * @param sfWebRequest $request
+  **/
   public function executeFacilityStaffResourceCreate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
+    // $groupName is passed in by the request to get the post paramater corresponding to the facility group name.
+    // This can be refactored to get an array of groupnames, if acting on all facility groups for a scenario.
     $groupName = $request->getParameter('groupName');
+    $groupId = $request->getParameter('groupId');
     $facilityGroup = $request->getPostParameter($groupName);
-    $this->processFacilityStaffResourceForm($facilityGroup);
+    $this->processFacilityStaffResourceForm($request, $facilityGroup);
   }
 
-  public function processFacilityStaffResourceForm($facilityGroup)
+  public function processFacilityStaffResourceForm($request, $facilityGroup)
   {
     foreach ($facilityGroup as $facility) {
+      //$facilityGroupId = $facility->getId();
       foreach ($facility as $facilityStaffResource) {
+        // The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
         $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
-        //unset($facilityStaffResourceForm['_csrf_token']);
         $facilityStaffResourceForm->bind($facilityStaffResource, null);
         $facilityStaffResourceForm->updateObject($facilityStaffResourceForm->getTaintedValues());
-        $c = $facilityStaffResourceForm->isValid();
         if ($facilityStaffResourceForm->isValid()) {
           $savedResources[] = $facilityStaffResourceForm->save();
         }
+        // Pass all $savedResources to the view. They're agFacilityStaffResource obs. Get rest of data through them.
       }
     }
-    $a = $resourceObjects;
-    $b = 4;
+    $this->redirect('scenario/showFacilityResourceGroup?id=' . $request->getParameter('groupId'));
+//    $this->executeShowFacilityResourceGroup($request);
   }
   protected function processGrouptypeform(sfWebRequest $request, sfForm $grouptypeform)
   {

@@ -609,13 +609,20 @@ select {
   border-bottom: solid 1px #bcbcbc;
 }
 
-.singleTable .subHeadLeft {
-  border-right: solid #bcbcbc 1px;
+.singleTable .subHeadLeft, .subHeadMid {
   background: #f1f1f1;
   font-size: .9em;
   padding: .25em 1em;
   color: #848484;
-  border-bottom: solid 1px #bcbcbc;
+  border: solid #bcbcbc;
+}
+
+.singleTable .subHeadLeft {
+  border-width: 0px 1px 1px 0px;
+}
+
+.singleTable .subHeadMid {
+  border-width: 0px 1px 1px;
 }
 .fooTable fieldset {
   border: none;

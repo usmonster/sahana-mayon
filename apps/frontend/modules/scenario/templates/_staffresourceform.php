@@ -3,7 +3,7 @@
     $groupName = $key;
   }
 ?>
-<form action="<?php echo url_for('scenario/facilityStaffResourceCreate' . '?groupName=' . $groupName/*. '?id=' . $scenarioFacilityGroupId*/) ?>" method="post">
+<form action="<?php echo url_for('scenario/facilityStaffResourceCreate' . '?groupName=' . $groupName . '&groupId=' . $scenarioFacilityGroupId) ?>" method="post">
   <?php
     // Set up the container form and its formatter.
     $facilityStaffResourceContainer = new sfForm();

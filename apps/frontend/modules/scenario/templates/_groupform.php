@@ -14,10 +14,10 @@
 
 jQuery('#available > li').tooltip();
 jQuery('#allocated > li').tooltip({
-bodyHandler: function() { 
-        return $('#allocated_tip').text(); 
-    }, 
-    showURL: false 
+bodyHandler: function() {
+        return $('#allocated_tip').text();
+    },
+    showURL: false
 });
 
 function serialTran() {
@@ -38,10 +38,16 @@ $('#allocated > li').each(function(index) {
 <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
 
-<?php 
-  $groupFormDeco = new agWidgetFormSchemaFormatterInlineLabels($groupform->getWidgetSchema());
+<?php
+  $groupFormDeco = new agWidgetFormSchemaFormatterInlineTopLabel($groupform->getWidgetSchema());
   $groupform->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupFormDeco);
   $groupform->getWidgetSchema()->setFormFormatterName('groupFormDeco');
+  $groupform->getWidget('scenario_facility_group')->setAttribute('class', 'inputGray');
+  $groupform->getWidget('activation_sequence')->setAttribute('class', 'inputGray');
+  // Disable this widget so that a different scenario can't be selected.
+  // Should be set if a parameter is passed so the form can be reused.
+  //$groupform->getWidget('scenario_id')->setAttribute('disabled', 'disabled');
+  $groupform->setWidget('scenario_id', new sfWidgetFormInputHidden());
   echo $groupform;
 ?>
 
