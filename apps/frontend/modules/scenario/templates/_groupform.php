@@ -37,7 +37,7 @@ $('#allocated > li').each(function(index) {
 
 <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
-
+<div>
 <?php
   $groupFormDeco = new agWidgetFormSchemaFormatterInlineTopLabel($groupform->getWidgetSchema());
   $groupform->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupFormDeco);
@@ -47,12 +47,12 @@ $('#allocated > li').each(function(index) {
 
   echo $groupform;
 ?>
-
+</div>
 <div class="infoHolder" style="display:inline-block;">
   <ul id="available" class="bucket">
     <?php
       foreach($ag_facility_resources as $staff_geo){
-        echo '<li id="' . $staff_geo->getId() .'" title="' . $staff_geo->getAgFacilityResourceType() . '">' . $staff_geo->getAgFacility()->getFacilityName() . ' : ' . $staff_geo->getAgFacilityResourceType()->facility_resource_type . '</li>'; //we could set the id here to a set of ids
+        echo '<li id="' . $staff_geo->getId() .'" title="' . $staff_geo->getAgFacilityResourceType() . '">' . $staff_geo->getAgFacility()->getFacilityName() . ': ' . $staff_geo->getAgFacilityResourceType()->facility_resource_type . '</li>'; //we could set the id here to a set of ids
       }
     ?>
   </ul>
@@ -81,10 +81,13 @@ $('#allocated > li').each(function(index) {
   </span>
 </div>
 <br />
-<a href="<?php echo url_for('scenario/listgroup') ?>" class="linkButton">Back to Facility Group List</a>
 <?php if (!$groupform->getObject()->isNew()): ?>
   &nbsp;<?php echo link_to('Delete', 'scenario/deletegroup?id='.$groupform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?')) ?>
 <?php endif; ?>
 <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>
 <input class="linkButton" type="submit" value="Save and Continue" name="Continue" onclick="serialTran()"/>
+<input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
+<br />
+<br />
+<a href="<?php echo url_for('scenario/listgroup') ?>" class="linkButton">Back to Facility Group List</a>
 </form>

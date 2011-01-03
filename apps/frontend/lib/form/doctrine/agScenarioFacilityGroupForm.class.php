@@ -94,7 +94,9 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
   protected function doSave($con = null)
   {
     $existing = $this->getObject()->getAgScenarioFacilityResource();
-    foreach($existing as $rec){$current[] = $rec->facility_resource_id;}
+    foreach($existing as $rec){
+      $current[] = $rec->facility_resource_id;
+    }
     //$existing = $this->object->agFacilityResource->getPrimaryKeys();
     $values = $this->getTaintedValues();
     //all we need to save, is the allocated list: it's order included(this is proving to be clumsy while working with a listbox, jquery is prefered)
@@ -106,7 +108,12 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
     {
       //current is what is currently in that facility group
       //alloc_array is what the form is bringing in, so, we should do a diff.
-      if($current)  $toDelete = array_diff ($current,$alloc_array);
+      if(isset($current)) {
+        $toDelete = array_diff ($current,$alloc_array);
+      } else {
+        $current = array();
+        $toDelete = array_diff ($current,$alloc_array);
+      }
 
       if(count($toDelete) >0)
       {

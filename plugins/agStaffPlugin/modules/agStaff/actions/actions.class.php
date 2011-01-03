@@ -95,6 +95,8 @@ class agStaffActions extends sfActions
           }
         }
       }
+    } else {
+      $query = Zend_Search_Lucene_Search_QueryParser::parse($query);
     }
     $lqResults = Doctrine_core::getTable('agPerson')->getForLuceneQuery($query);
     $this->pager = new sfDoctrinePager('agPerson', 20);

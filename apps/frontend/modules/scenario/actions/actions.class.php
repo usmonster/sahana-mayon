@@ -108,8 +108,7 @@ class scenarioActions extends sfActions
       //$this->getUser()->getAttribute('scenario_id')
       $this->groupform->setDefault('scenario_id', $this->getUser()->getAttribute('scenario_id'));
       $this->groupform->setWidget('scenario_id', new sfWidgetFormInputHidden());
-    }
-    else {
+    } else {
       $this->groupform = new agScenarioFacilityGroupForm();
     }
     $this->ag_allocated_facility_resources = '';
@@ -680,6 +679,8 @@ class scenarioActions extends sfActions
         $this->getUser()->setAttribute('scenarioFacilityGroup', $ag_scenario_facility_group);
         $this->redirect('scenario/newstaffresources');
 //        $this->executeNewstaffresources($request);
+      } elseif($request->hasParameter('Another')) {
+        $this->redirect('scenario/newgroup');
       }else{
         $boo = $form->getValue('Save and Continue');
         $this->redirect('scenario/edit?id=' . $ag_scenario->getId());
@@ -710,9 +711,8 @@ class scenarioActions extends sfActions
     $this->staffresourceform = new agScenarioFacilityResourceForm();
   }
 
-  public function executeShowFacilityResourceGroup(sfWebRequest $request)
+  public function executeShowFacilityStaffResource(sfWebRequest $request)
   {
-    $b =  $request->getParameter('id');
     $this->scenarioFacilityGroupId = $request->getParameter('id');
     $this->facilityResources = Doctrine::getTable('agScenarioFacilityResource')
         ->findByDql('scenario_facility_group_id = ?', $request->getParameter('id'))
@@ -755,7 +755,7 @@ class scenarioActions extends sfActions
         // Pass all $savedResources to the view. They're agFacilityStaffResource obs. Get rest of data through them.
       }
     }
-    $this->redirect('scenario/showFacilityResourceGroup?id=' . $request->getParameter('groupId'));
+    $this->redirect('scenario/showFacilityStaffResource?id=' . $request->getParameter('groupId'));
 //    $this->executeShowFacilityResourceGroup($request);
   }
   protected function processGrouptypeform(sfWebRequest $request, sfForm $grouptypeform)
