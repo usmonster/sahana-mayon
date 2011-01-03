@@ -103,12 +103,11 @@ class scenarioActions extends sfActions
    */
   public function executeNewgroup(sfWebRequest $request)
   {
-
-    $woo  = $this->getUser()->getAttribute('scenario_id');
     if($this->getUser()->getAttribute('scenario_id')){
       $this->groupform = new agScenarioFacilityGroupForm();
       //$this->getUser()->getAttribute('scenario_id')
       $this->groupform->setDefault('scenario_id', $this->getUser()->getAttribute('scenario_id'));
+      $this->groupform->setWidget('scenario_id', new sfWidgetFormInputHidden());
     }
     else {
       $this->groupform = new agScenarioFacilityGroupForm();
@@ -722,9 +721,7 @@ class scenarioActions extends sfActions
         ->findByDql('id = ?', $request->getParameter('id'))
         ->getFirst();
     foreach ($this->facilityResources as $f) {
-      $a = 5;
     }
-    $a = 4;
   }
 
   /**

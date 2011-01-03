@@ -44,10 +44,7 @@ $('#allocated > li').each(function(index) {
   $groupform->getWidgetSchema()->setFormFormatterName('groupFormDeco');
   $groupform->getWidget('scenario_facility_group')->setAttribute('class', 'inputGray');
   $groupform->getWidget('activation_sequence')->setAttribute('class', 'inputGray');
-  // Disable this widget so that a different scenario can't be selected.
-  // Should be set if a parameter is passed so the form can be reused.
-  //$groupform->getWidget('scenario_id')->setAttribute('disabled', 'disabled');
-  $groupform->setWidget('scenario_id', new sfWidgetFormInputHidden());
+
   echo $groupform;
 ?>
 
