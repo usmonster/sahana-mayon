@@ -119,8 +119,20 @@ class scenarioActions extends sfActions
   }
 
   /**
+   * @method executeNewshifttemplate()
+   * Generates a new shit template form
+   * @param sfWebRequest $request
+   */
+  public function executeNewshifttemplate()
+  {
+    $this->shifttemplateform = new agShiftGeneratorForm();
+    $this->scenario_id = 1;
+  }
+
+  /**
    * @method executeNewscenarioshift()
    * Generates a new scenario shift form
+   * @param sfWebRequest $request
    */
   public function executeNewscenarioshift(sfWebRequest $request)
   {
@@ -336,6 +348,23 @@ class scenarioActions extends sfActions
     $this->processGrouptypeform($request, $this->grouptypeform);
 
     $this->setTemplate('grouptype');
+  }
+
+  /**
+   * @method executeShiftTempaltecreate()
+   * Create a new shift template
+   * @param sfWebRequest $request
+   */
+  public function executeCreateshifttemplate(sfWebRequest $request)
+  {
+    $this->forward404Unless($request->isMethod(sfRequest::POST));
+//    $this->shiftgeneratorform = new agShiftGeneratorForm();
+    $scenario_id = $request->getParameter('scenario_id');
+//    $scenarioId = $request->($scenario_id);
+    //$this->
+    $this->shiftGeneratorForm = new agShiftGeneratorForm($object = null, $options = array(), $CSRFSecret = false);
+    $this->processShifttemplateform($request, $this->shiftGeneratorForm);
+//    $this->setTemplate('shifttemplate');
   }
 
   /**
@@ -768,6 +797,16 @@ class scenarioActions extends sfActions
     }
   }
 
+  public function processShifttemplateform(sfWebRequest $request, sfForm $shiftTemplateForm)
+  {
+    $shiftTemplateForm->bind($request->getParameter($shiftTemplateForm->getName()), $request->getFiles($shiftTemplateForm->getName()));
+    if ($shiftTemplateForm->isValid())
+    {
+      $ag_shift_template = $this->shiftGeneratorForm->saveEmbeddedForms();
+      $this->redirect('scenario/newshifttemplate?scenario_id=' . $this->getUser()->getAttribute('scenario_id'));
+    }
+  }
+
   protected function processScenarioshiftform(sfWebRequest $request, sfForm $scenarioshiftform)
   {
     $scenarioshiftform->bind($request->getParameter($scenarioshiftform->getName()), $request->getFiles($scenarioshiftform->getName()));
@@ -778,4 +817,5 @@ class scenarioActions extends sfActions
     }
     $this->redirect('scenario/scenarioshiftlist');
   }
+  
 }
