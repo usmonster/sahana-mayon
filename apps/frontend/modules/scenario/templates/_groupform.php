@@ -48,11 +48,11 @@ $('#allocated > li').each(function(index) {
   echo $groupform;
 ?>
 </div>
-<div class="infoHolder" style="display:inline-block;">
+<div class="bucketHolder" >
   <ul id="available" class="bucket">
     <?php
       foreach($ag_facility_resources as $staff_geo){
-        echo '<li id="' . $staff_geo->getId() .'" title="' . $staff_geo->getAgFacilityResourceType() . '">' . $staff_geo->getAgFacility()->getFacilityName() . ': ' . $staff_geo->getAgFacilityResourceType()->facility_resource_type . '</li>'; //we could set the id here to a set of ids
+        echo '<li id="' . $staff_geo->getId() .'" title="' . $staff_geo->getAgFacilityResourceType() . '">' . $staff_geo->getAgFacility()->getFacilityName() . ': ' . ucwords($staff_geo->getAgFacilityResourceType()->facility_resource_type) . '</li>'; //we could set the id here to a set of ids
       }
     ?>
   </ul>
@@ -61,7 +61,7 @@ $('#allocated > li').each(function(index) {
         if ($ag_allocated_facility_resources){
           foreach($ag_allocated_facility_resources as $curopt)
           {
-            $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . ": " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
+            $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . ": " . ucwords($curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type); //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
             /**
              * @todo [$curopt->activation_sequence] needs to still be applied to the list,
              */
@@ -87,6 +87,7 @@ $('#allocated > li').each(function(index) {
 <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>
 <input class="linkButton" type="submit" value="Save and Continue" name="Continue" onclick="serialTran()"/>
 <input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
+<input class="linkButton" type="submit" value="Save and Assign Staff Requirements to All Facility Groups" name="AssignAll" onclick="serialTran()"/>
 <br />
 <br />
 <a href="<?php echo url_for('scenario/listgroup') ?>" class="linkButton">Back to Facility Group List</a>

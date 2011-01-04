@@ -6,9 +6,10 @@
   $scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
       ->findByDql('scenario_id = ?', $groupform->getDefault('scenario_id'))
       ->getData();
-
-  if($groupform->getDefault('scenario_id') <> null) {
+  if($scenarioFacilityGroups <> null) {
     include_partial('facilityGroupTable', array('scenarioFacilityGroups' => $scenarioFacilityGroups, 'scenarioName' => $scenarioName));
+  } else {
+    echo '<h3>There are no facility groups associated with the <span style="color: #ff8f00">' . $scenarioName . '</span> scenario</h3><br />';
   }
 ?>
 <h3>Create New Facility Group for the <span style="color: #ff8f00;"><?php echo $scenarioName; ?> </span> scenario</h3>

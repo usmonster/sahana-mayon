@@ -683,12 +683,22 @@ select {
 #allocated {
   float: left;
 }
+.bucketHolder {
+  display: inline-block;
+  
+  border: solid 1px #dadada;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px;
+}
 .bucket {
   padding: 1em;
   font-size: 1em;
-  display:inline;
+  min-height: 520px;
   width:400px;
-  height:520px;
+  height: 100%;
   border:1px solid #dadada;
   background:#f1f1f1;
   list-style-type: none;
@@ -711,4 +721,10 @@ select {
 
 .bucket li:hover {
   background: #cdffdd;
+}
+
+.groupLabel {
+  margin-top: 5px;
+  color: #ff8f00;
+  font-weight: bold;
 }

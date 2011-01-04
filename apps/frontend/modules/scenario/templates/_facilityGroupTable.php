@@ -9,7 +9,7 @@
         foreach ($scenarioFacilityGroup->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
           echo '<tr>';
           echo '<td>' . $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': '
-                  . $scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
+                  . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
           echo '</td>';
           echo '</tr>';
         }

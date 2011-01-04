@@ -1,13 +1,15 @@
 <?php
   foreach ($formsArray as $key => $f) {
-    $groupName = $key;
+    // Create array of form names.
+    $groupNames[] = $key;
   }
+  $a = $scenario;
 ?>
-<form action="<?php echo url_for('scenario/facilityStaffResourceCreate' . '?groupName=' . $groupName . '&groupId=' . $scenarioFacilityGroupId) ?>" method="post">
+<form action="<?php echo url_for('scenario/facilityStaffResourceCreate' . '?scenarioId=' . $scenario->id) ?>" method="post">
   <?php
     // Set up the container form and its formatter.
     $facilityStaffResourceContainer = new sfForm();
-    $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainer($facilityStaffResourceContainer->getWidgetSchema());
+    $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainerLabel($facilityStaffResourceContainer->getWidgetSchema());
     $facilityStaffResourceContainer->getWidgetSchema()->addFormFormatter('facilityStaffResourceConDeco', $facilityStaffResourceConDeco);
     $facilityStaffResourceContainer->getWidgetSchema()->setFormFormatterName('facilityStaffResourceConDeco');
     foreach ($formsArray as $groupKey => $facilityGroup) {

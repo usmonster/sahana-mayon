@@ -16,10 +16,10 @@
  * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
  * @version    SVN: $Id: sfWidgetFormSchemaFormatterTable.class.php 5995 2007-11-13 15:50:03Z fabien $
  */
-class agWidgetFormSchemaFormatterSubContainer extends sfWidgetFormSchemaFormatter
+class agWidgetFormSchemaFormatterSubContainerLabel extends sfWidgetFormSchemaFormatter
 {
   protected
-    $rowFormat       = "%error%%field%%help%%hidden_fields%",
+    $rowFormat       = "<div class=\"groupLabel\">%label%</div>%error%%field%%help%%hidden_fields%",
     $errorRowFormat  = "<tr><td colspan=\"2\">\n%errors%</td></tr>\n",
     $helpFormat      = '<br />%help%',
     $decoratorFormat = "<div style=\"margin: 4px 0px; padding: 0\">\n%content%</div>";

@@ -1,20 +1,23 @@
-<p>You have assigned the following staff requirements to the facilities in your facility groups:</p>
+<h3>The following staff requirements have been set for the the facility groups in the <span style="color: #ff8f00"><?php echo $scenario->scenario ?></span> scenario:</h3>
+<?php foreach ($scenarioFacilityGroups as $facilityGroup): ?>
 <table class="singleTable">
   <thead>
-      <caption><?php echo $facilityGroup->scenario_facility_group; ?></caption>
+      <caption><?php echo $facilityGroup->scenario_facility_group;?></caption>
   </thead>
   <tbody>
-    <?php foreach ($facilityResources as $facilityResource): ?>
+    <?php foreach ($facilityGroup->getAgScenarioFacilityResource() as $scenarioFacilityResource): ?>
     <tr>
-      <th class="head" colspan="<?php echo (count($facilityResource->getAgFacilityStaffResource()) * 3);?>"><?php echo $facilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($facilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type); ?></th>
+      <th class="head" colspan="<?php echo (count($scenarioFacilityResource->getAgFacilityStaffResource()) * 3);?>"><?php echo $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type); ?></th>
     </tr>
     <tr>
-      <?php foreach ($facilityResource->getAgFacilityStaffResource() as $key => $staffResourceType): ?>
+      <?php foreach ($scenarioFacilityResource->getAgFacilityStaffResource() as $key => $staffResourceType): ?>
       <th class="<?php echo (($key == 0) ? 'subHeadLeft' : 'subHeadMid'); ?>"><?php echo ucwords($staffResourceType->getAgStaffResourceType()->staff_resource_type); ?></th>
       <td>Min: <?php echo $staffResourceType->minimum_staff; ?></td>
       <td>Max: <?php echo $staffResourceType->maximum_staff; ?></td>
       <?php endforeach; ?>
     </tr>
-    <?php  endforeach; ?>
+    <?php endforeach; ?>
   </tbody>
 </table>
+<br />
+<?php endforeach; ?>
