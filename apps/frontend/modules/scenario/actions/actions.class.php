@@ -43,6 +43,52 @@ class scenarioActions extends sfActions
             ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
             ->execute();
   }
+
+  /**
+   * @method executeListshifttemplate()
+   * List of scenario with defined shift templates and the total count of shift templates.
+   * @param sfWebRequest $requst
+   *
+   */
+  public function executeListshifttemplate(sfWebRequest $request)
+  {
+    $query = Doctrine_Core::getTable('agShiftTemplate')
+               ->createQuery('st')
+               ->select('st.scenario_id, s.scenario, count(*) AS count')
+               ->innerJoin('st.agScenario AS s')
+               ->groupBy('st.scenario_id, s.scenario');
+
+
+     /**
+     * Create pager
+     */
+    $this->pager = new sfDoctrinePager('agShiftTemplate', 10);
+
+    /**
+     * Check if the client wants the results sorted, and set pager
+     * query attributes accordingly
+     */
+    $this->sortColumn = $request->getParameter('sort') ? $request->getParameter('sort') : 'scenario';
+    $this->sortOrder = $request->getParameter('order') ? $request->getParameter('order') : 'ASC';
+
+    if ($request->getParameter('sort')) {
+      $query = $query->orderBy($request->getParameter('sort', 'scenario') . ' ' . $request->getParameter('order', 'ASC'));
+    }
+
+    /**
+     * Set pager's query to our final query including sort
+     * parameters
+     */
+    $this->pager->setQuery($query);
+
+    /**
+     * Set the pager's page number, defaulting to page 1
+     */
+    $this->pager->setPage($request->getParameter('page', 1));
+    $this->pager->init();
+
+  }
+
   /**
    *
    * @param sfWebRequest $request
@@ -119,14 +165,27 @@ class scenarioActions extends sfActions
   }
 
   /**
+   * @method executeEditshifttemplate()
+   * Generates a new shit template form
+   * @param sfWebRequest $request
+   */
+  public function executeEditshifttemplate(sfWebRequest $request)
+  {
+    $this->scenario_id = $request->getParameter('scenId');
+    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
+    $this->shifttemplateform = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id));
+  }
+
+  /**
    * @method executeNewshifttemplate()
    * Generates a new shit template form
    * @param sfWebRequest $request
    */
-  public function executeNewshifttemplate()
+  public function executeNewshifttemplate(sfWebRequest $request)
   {
-    $this->shifttemplateform = new agShiftGeneratorForm();
-    $this->scenario_id = 1;
+    $this->scenario_id = $request->getParameter('scenId');
+    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
+    $this->shifttemplateform = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id));
   }
 
   /**
@@ -359,10 +418,10 @@ class scenarioActions extends sfActions
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 //    $this->shiftgeneratorform = new agShiftGeneratorForm();
-    $scenario_id = $request->getParameter('scenario_id');
-//    $scenarioId = $request->($scenario_id);
-    //$this->
-    $this->shiftGeneratorForm = new agShiftGeneratorForm($object = null, $options = array(), $CSRFSecret = false);
+    $this->scenario_id = $request->getParameter('scenario_id');
+    $this->getUser()->setAttribute('scenario_id', $this->scenario_id);
+//    $this->shiftGeneratorForm = new agShiftGeneratorForm($object = null, $options = array(), $CSRFSecret = false);
+    $this->shiftGeneratorForm = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id));
     $this->processShifttemplateform($request, $this->shiftGeneratorForm);
 //    $this->setTemplate('shifttemplate');
   }
@@ -639,6 +698,29 @@ class scenarioActions extends sfActions
   }
 
   /**
+   * executeDeleteshifttemplategroup()
+   * @param sfWebRequest $request
+   */
+  public function executeDeleteshifttemplategroup(sfWebRequest $request)
+  {
+    $this->forward404Unless($shftTmpGrp = Doctrine_Core::getTable('agShiftTemplate')->createQuery('st')->where('st.scenario_id=?',$request->getParameter('scenId'))->execute(), sprintf('Object shift_template_group does not exist for scenario (%s).', $request->getParameter('scenId')));
+
+    //Delete all scenario shift relating to the scenario.
+    $scenShftGrp = Doctrine_Core::getTable('agScenarioShift')->createQuery('ss')->innerJoin('ss.agScenarioFacilityResource AS sfr')->innerJoin('sfr.agScenarioFacilityGroup AS sfg')->where('sfg.scenario_id=?',$request->getParameter('scenId'))->execute();
+    foreach ($scenShftGrp as $scenShft) {
+      $scenShft->delete();
+    }
+
+    //Delete all shift templates relating to the scenario.
+    foreach ($shftTmpGrp as $shftTmp)
+    {
+      $shftTmp->delete();
+    }
+
+    $this->redirect('scenario/listshifttemplate');
+  }
+
+  /**
    * executeDeletescenarioshiftgroup()
    * @param sfWebRequest $request
    */
@@ -803,7 +885,7 @@ class scenarioActions extends sfActions
     if ($shiftTemplateForm->isValid())
     {
       $ag_shift_template = $this->shiftGeneratorForm->saveEmbeddedForms();
-      $this->redirect('scenario/newshifttemplate?scenario_id=' . $this->getUser()->getAttribute('scenario_id'));
+      $this->redirect('scenario/newshifttemplate?scenId=' . $this->getUser()->getAttribute('scenario_id'));
     }
   }
 

@@ -19,12 +19,6 @@ class agShiftGeneratorForm extends sfForm
 
   public function configure()
   {
-    //if is not new!
-    $existingFRT =  Doctrine_Query::create()->select('DISTINCT aFR.facility_resource_type_id AS facility_resources')
-                                            ->from('agScenarioFacilityResource aSFR, aSFR.agFacilityResource aFR,agScenarioFacilityGroup aSFG')
-                                            ->where('aSFR.facility_resource_id = aFR.id AND aSFG.scenario_id = ?', 1);
-    $existingFRT = $existingFRT->execute(array(), Doctrine::HYDRATE_NONE);
-
     //we need to get all unique facility resources for every facility group in the scenario
     //this will be useful in the 'final stage', showing the user that they do not have shift templates
     //defined for those scenario/facility/staff types
@@ -37,7 +31,7 @@ class agShiftGeneratorForm extends sfForm
             ->createQuery('agST')
             ->select('agST.*')
             ->from('agShiftTemplate agST')
-            ->where('scenario_id = ?', 1)
+            ->where('scenario_id = ?', $this->getOption('scenario_id'))
             ->execute())
     {
       /* for every existing shift template, create an agEmbeddedShiftTemplateForm and embed it into $facilitygroupResourceContainer */
@@ -55,9 +49,9 @@ class agShiftGeneratorForm extends sfForm
     /* embed a new shift_template form into the shifttemplate container */
 
     /* embed the shift template container form into the scenario form */
+    $this->scenario_id = $this->getOption('scenario_id');
     $shiftTemplateForm = new agEmbeddedShiftTemplateForm();
-    $this->scenario_id = 1;
-    $shiftTemplateForm->setDefault('scenario_id', 1);
+    $shiftTemplateForm->setDefault('scenario_id', $this->scenario_id);
 
     $this->embedForm('new',$shiftTemplateForm);
     $this->widgetSchema->setLabel(array('shift_template' => 'Shift Templates'));

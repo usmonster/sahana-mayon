@@ -11,7 +11,7 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          &nbsp;<a href="<?php echo url_for('scenario/shifttemplist') ?>">Back to list</a>
+          &nbsp;<a href="<?php echo url_for('scenario/listshifttemplate') ?>">Back to list</a>
           <?php #if (!$shifttemplateform->getObject()->isNew()): ?>
             <!--
             &nbsp;<?php #echo link_to('Delete', 'scenario/deleteshifttemp?id='.$shifttemplateform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?')) ?>

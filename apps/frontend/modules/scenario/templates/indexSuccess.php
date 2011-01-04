@@ -8,7 +8,7 @@ echo '<a href="' . url_for('scenario/list') . '" class="buttonText" title="List 
 echo '<a href="' . url_for('scenario/newgroup') . '" class="buttonText" title="Create New Facility Group">Create New Facility Group</a><br/>';
 echo '<a href="' . url_for('scenario/listgroup') . '" class="buttonText" title="List Facility Groups">List Facility Groups</a><br/>';
 echo '<a href="' . url_for('scenario/grouptype') . '" class="buttonText" title="Manage Facility Group Types">Manage Facility Group Types</a><br/>';
-echo '<a href="' . url_for('scenario/newshifttemplate') . '" class="buttonText" title="Create New Shift Template">Create New Shift Template</a><br/>';
+echo '<a href="' . url_for('scenario/listshifttemplate') . '" class="buttonText" title="List Shift Template">List Shift Template</a><br/>';
 echo '<a href="' . url_for('scenario/scenarioshiftlist') . '" class="buttonText" title="List Scenario Shift">List Scenario Shift</a><br/>';
 echo '<a href="' . url_for('scenario/scenarioshiftgroup') . '" class="buttonText" title="List Scenario Shift">Delete Scenario Shifts By Scenario</a><br/>';
 

@@ -1,15 +1,13 @@
-<h3>List Scenario With Defined Scenario Shifts</h3>
-
 <?php
   //Defines the columns of the organization display list page.
   $columns = array(
-    'id' => array('title' => 'Id', 'sortable' => false),
-    'scenario' => array('title' => 'scenario', 'sortable' => false),
-    'shiftCount' => array('title' => 'shift count', 'sortable' => false),
-    'Delete Group Shifts' => array('title' => 'delete shifts', 'sortable' => false)
+    'id' => array('title' => 'Id', 'sortable' => true),
+    'scenario' => array('title' => 'scenario', 'sortable' => true),
+    'count' => array('title' => 'count', 'sortable' => false),
+    'delete' => array('title' => 'delete', 'sortable' => false)
   );
 
-  $thisUrl = url_for('scenario/scenarioshiftgroup');
+  $thisUrl = url_for('scenario/listshifttemplate');
 
   ($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
   ($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';
@@ -18,30 +16,31 @@
   $descArrow = '&#x25BC;';
 
 ?>
+<h3>Listing of Scenario with Shift Templates Defined</h3>
+
 <br />
-Click on Id to view all scenario shifts defined for that scenario.
-<br /><br />
 
 <table class="staffTable">
   <thead>
     <tr class="head">
-    <?php foreach($columns as $column => $columnCaption): ?>
+<?php foreach($columns as $column => $columnCaption): ?>
       <th>
         <?php echo $columnCaption['title'] ?>
         <?php if ($columnCaption['sortable']) { echo($sortColumn == $column && $sortOrder == 'ASC' ? '<a href="' . $thisUrl . '?sort=' . $column . '&order=ASC" class="buttonSortSelected" title="ascending">' . $ascArrow . '</a>' : '<a href="' . $thisUrl . '?sort=' . $column . '&order=ASC" class="buttonSort" title="ascending">' . $ascArrow . '</a>'); } ?>
         <?php if ($columnCaption['sortable']) { echo($sortColumn == $column && $sortOrder == 'DESC' ? '<a href="' . $thisUrl . '?sort=' . $column . '&order=DESC" class="buttonSortSelected" title="descending">' . $descArrow . '</a>' : '<a href="' . $thisUrl . '?sort=' . $column . '&order=DESC" class="buttonSort" title="descending">' . $descArrow . '</a>'); } ?>
       </th>
-    <?php endforeach; ?>
+<?php endforeach; ?>
+<!--      <th>Staff Count</th> -->
     </tr>
   </thead>
   <tbody>
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
-    <?php foreach ($pager->getResults() as $scenarioShiftGroup): ?>
+    <?php foreach ($pager->getResults() as $ag_shift_template): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('scenario/showscenarioshiftgroup?scenId='.$scenarioShiftGroup->getId()) ?>" title="View Scenario Shifts in Scenario <?php echo $scenarioShiftGroup->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
-      <td><?php echo $scenarioShiftGroup->getScenario(); ?></td>
-      <td><?php echo $scenarioShiftGroup->getCount(); ?></td>
-      <td><?php echo link_to('delete', 'scenario/deletescenarioshiftgroup?scenId='.$scenarioShiftGroup->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?></td>
+      <td><a class=linkButton href="<?php echo url_for('scenario/newshifttemplate?scenId='.$ag_shift_template->getScenarioId()) ?>" title="View Shift Templates in Scenario <?php echo $ag_shift_template->getScenarioId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+      <td><?php echo $ag_shift_template->getAgScenario()->getScenario() ?></td>
+      <td><?php echo $ag_shift_template->getCount(); ?></td>
+      <td><?php echo link_to('delete', 'scenario/deleteshifttemplategroup?scenId='.$ag_shift_template->getScenarioId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?></td>
     </tr>
     <?php endforeach; ?>
   </tbody>
