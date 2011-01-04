@@ -375,6 +375,20 @@
           </td>
         </tr>
         <tr>
+          <th class="headLeft">Staff Affiliation:</th>
+          <td colspan="3">
+            <?php
+              foreach ($agPerson->getAgStaff() as $staff) {
+                foreach ($staff->getAgStaffResource() as $staffRec) {
+                  foreach ($staffRec->getAgStaffResourceOrganization() as $staffRecOrg){
+                    echo $staffRecOrg->getAgOrganization();
+                  }
+                }
+              }
+            ?>
+          </td>
+        </tr>
+        <tr>
           <th class="headLeft">Staff Type:</th>
           <td colspan="3">
             <?php
@@ -427,14 +441,21 @@
         echo '</table>' . PHP_EOL;
         echo '<br />' . PHP_EOL;
       }
-    ?>
+      $awesome = $agPerson->getAgStaff();
+
+      foreach($agPerson->getAgStaff() as $staff) {
+        $staff_id = $staff->getId();
+      }
+      ?>
+
     <div style="float: left;">
-      <a href="<?php echo url_for('staff/edit') . '?id=' . $agPerson->getId() ?>"
+      <a href="<?php echo url_for('staff/edit') . '?id=' . $staff_id ?>"
          class="linkButton">Edit</a>
      <?php
-      echo link_to(
+
+     echo link_to(
           'Delete',
-          'agStaff/delete?id=' . $agPerson->getId(),
+          'agStaff/delete?id=' . $staff_id,
           array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')
       ); ?>
      <?php

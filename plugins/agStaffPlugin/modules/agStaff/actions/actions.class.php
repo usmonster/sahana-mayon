@@ -152,18 +152,18 @@ class agStaffActions extends sfActions
    */
   public function executeList(sfWebRequest $request)
   {
-    $query = Doctrine::getTable('agPerson')
+    $query = Doctrine::getTable('agStaff')
             ->createQuery('a')
-            ->select('p.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*,
+            ->select('p.*, p.st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*,
               nametype.*')
             ->from(
-                'agPerson p, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
+                'agPerson p, p.agStaff st, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
               pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
               p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
               name.agPersonNameType nametype'
     );
 
-    $this->pager = new sfDoctrinePager('agPerson', 20);
+    $this->pager = new sfDoctrinePager('agStaff', 20);
     /**
      * @todo include exception handling for a bad sort param
      */
@@ -209,22 +209,23 @@ class agStaffActions extends sfActions
    */
   public function executeShow(sfWebRequest $request)
   {
-    $query = Doctrine::getTable('agPerson')
+    $query = Doctrine::getTable('agStaff')
             ->createQuery('a')
             ->select(
-                'p.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*, nametype.*'
+                'p.*, st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*, nametype.*'
             )
             ->from(
-                'agPerson p, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
+                'agPerson p, p.agStaff st,p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
                   pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
                   p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
                   name.agPersonNameType nametype'
     );
 
-    $this->pager = new sfDoctrinePager('agPerson', 1);
+    $this->pager = new sfDoctrinePager('agStaff', 1);
 
+    //if we have exceucted a search
     if ($request['query']) {
-      $lqResults = Doctrine_core::getTable('agPerson')->getForLuceneQuery($request['query']);
+      $lqResults = Doctrine_core::getTable('agStaff')->getForLuceneQuery($request['query']);
 
       $i = 0;
       $lqIds = array();
@@ -235,11 +236,11 @@ class agStaffActions extends sfActions
       }
 
       if (count($lqIds) > 0) {
-        $q = Doctrine::getTable('agPerson')
+        $q = Doctrine::getTable('agStaff')
                 ->createQuery('a')
-                ->select('p.*')
-                ->from('agPerson p')
-                ->where('p.id IN (' . implode(',', $lqIds) . ')');
+                ->select('s.*')
+                ->from('agStaff s')
+                ->where('s.id IN (' . implode(',', $lqIds) . ')');
         $this->pager->setQuery($q);
         $this->pager->setPage($request->getParameter('page', 1));
         $this->pager->init();
@@ -283,7 +284,8 @@ class agStaffActions extends sfActions
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
             ->createQuery('f')
             ->execute();
-  }
+
+   }
 
   /**
    * Creates a blank agPerson form to create and save a new agPerson/staff-member
@@ -292,7 +294,7 @@ class agStaffActions extends sfActions
    * */
   public function executeNew(sfWebRequest $request)
   {
-    $this->form = new AgPersonForm();
+    $this->form = new agStaffPersonForm();
   }
 
   /**
@@ -307,13 +309,23 @@ class agStaffActions extends sfActions
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
-    $this->form = new AgPersonForm();
+    $this->form = new agStaffPersonForm();
+//    $ent = new agEntity();
+//    $ent->save();
+//    $this->form->getObject()->setAgEntity($ent);
+//    $this->processForm($request, $this->form);
+//
+//    $this->setTemplate('new');
     $ent = new agEntity();
     $ent->save();
+
     $this->form->getObject()->setAgEntity($ent);
+    //$this->form should now have in it an entity and a staff person related.
     $this->processForm($request, $this->form);
 
     $this->setTemplate('new');
+
+
   }
 
   /**
@@ -325,9 +337,11 @@ class agStaffActions extends sfActions
   public function executeEdit(sfWebRequest $request)
   {
     $this->forward404Unless(
-        $ag_person = Doctrine::getTable('AgPerson')->find(array($request->getParameter('id'))),
-        sprintf('Object ag_person does not exist (%s).', $request->getParameter('id')));
-    $this->form = new AgPersonForm($ag_person);
+        $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
+        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
+
+    $ag_person = $ag_staff->getAgPerson();
+    $this->form = new agStaffPersonForm($ag_person);
   }
 
   /**
@@ -340,9 +354,11 @@ class agStaffActions extends sfActions
     $this->forward404Unless(
         $request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
     $this->forward404Unless(
-        $ag_person = Doctrine::getTable('AgPerson')->find(array($request->getParameter('id'))),
-        sprintf('Object ag_person does not exist (%s).', $request->getParameter('id')));
-    $this->form = new AgPersonForm($ag_person);
+        $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
+        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
+
+    $ag_person = $ag_staff->getAgPerson();
+    $this->form = new agStaffPersonForm($ag_person);
 
     $this->processForm($request, $this->form);
 
@@ -369,9 +385,23 @@ class agStaffActions extends sfActions
   {
     $request->checkCSRFProtection();
 
-    $this->forward404Unless(
-        $ag_person = Doctrine::getTable('AgPerson')->find(array($request->getParameter('id'))),
-        sprintf('Object ag_person does not exist (%s).', $request->getParameter('id')));
+        $this->forward404Unless(
+        $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
+        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
+
+    $ag_person = $ag_staff->getAgPerson();
+
+    foreach ($ag_staff->getAgStaffResource() as $ag_staff_resource_pre_org) {
+      foreach($ag_staff_resource_pre_org->getAgStaffResourceOrganization() as $ag_staff_resource_org){
+        $ag_staff_resource_org->delete();
+      }
+    }
+
+    foreach ($ag_staff->getAgStaffResource() as $ag_staff_resource) {
+      $ag_staff_resource->delete();
+    }
+
+    $ag_staff->delete();
     $ag_person->getAgPersonMjAgNationality()->delete();
     $ag_person->getAgPersonDateOfBirth()->delete();
     $ag_person->getAgPersonEthnicity()->delete();
@@ -422,10 +452,21 @@ class agStaffActions extends sfActions
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
-    if ($form->isValid()) {
-      $ag_person = $form->save();
+      if ($form->isValid()) {
+      //are our values bound at this point?
+      $ag_staff = $form->save();
 
-      $this->redirect('agStaff/edit?id=' . $ag_person->getId());
+      //$staff_id = $ag_staff->getAgStaff()->getFirst()->getId();
+//not an object? first it's a collection, now not an object if i just get one
+      
+        $staff_id = Doctrine::getTable('agStaff')->createQuery('a')
+                  ->select('a.id')
+                  ->from('agStaff a')
+                  ->where('a.person_id = ?', $ag_staff->id)
+                  ->fetchOne();
+
+      //get id of STAFF person from the saved, extended agpersonform.
+      $this->redirect('agStaff/edit?id=' . $staff_id->getId());
     }
   }
 

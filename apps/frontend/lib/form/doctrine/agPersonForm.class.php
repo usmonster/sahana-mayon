@@ -948,6 +948,10 @@ class agPersonForm extends BaseagPersonForm
           }
           unset($forms[$key]);
         }
+        if ($form instanceof agEmbeddedStaffForm) {
+          unset($forms[$key]);
+        }
+        
       }
     }
     return parent::saveEmbeddedForms($con, $forms);
@@ -961,7 +965,16 @@ class agPersonForm extends BaseagPersonForm
 //
 //  }
 //
-
+//    if(get_class($this) == 'agStaffPersonForm')
+//    {
+//        $embeddeds=$this->getEmbeddedForms();
+//        $embeddedstaffform;
+//        $staffValues = $this->getValue('staff');
+//        $srt = $staffValues['ag_staff_resource_type_list'];
+//        //save the staff person's organization
+//        //save the staff person's status for that organization
+//        $this->saveagStaffResourceTypeList($con);
+//    }
     return parent::doSave($con);
   }
 
