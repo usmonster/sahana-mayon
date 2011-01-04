@@ -21,3 +21,4 @@
 </table>
 <br />
 <?php endforeach; ?>
+<a class=linkButton href="<?php echo url_for('scenario/newshifttemplate?scenId=' . $scenario->id) ?>" title="View Shift Templates">Create Shift Templates for <span style="color: #ff8f00"><?php echo $scenario->scenario; ?></span> Facilities</a>

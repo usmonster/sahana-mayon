@@ -46,7 +46,13 @@ class agStaffPersonForm extends agPersonForm
          *   */
         foreach ($this->agStaffResources as $staffResource) {
           $staffResourceForm = new agEmbeddedStaffForm($staffResource->getAgStaffResource()->getAgStaff());
-
+          // Set $organization variable to the agOrganization() value associated w/
+          // the staff member. The id value of this object is used to set the default for ag_organization_list.
+          // Maybe the conditional here is unnecessary? Doesn't seem to come in here if the form is new.
+          $organization = $this->getObject()->getAgStaff()->getFirst()->getAgStaffResource()->getFirst()->getAgStaffResourceOrganization()->getFirst()->getAgOrganization();
+          if ($organization <> null) {
+            $staffResourceForm->setDefault('ag_organization_list', $organization->id);
+          }
           $staffResourceId = $staffResource->getId();
           $staffResourceContainer->embedForm($staffResourceId, $staffResourceForm);
           $staffResourceContainer->widgetSchema->setLabel($staffResourceId, false);

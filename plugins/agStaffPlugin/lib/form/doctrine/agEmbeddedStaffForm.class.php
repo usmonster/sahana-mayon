@@ -31,8 +31,7 @@ class agEmbeddedStaffForm extends BaseagStaffForm
       {
         $currentoptions[$curopt->getId()] = $curopt->getOrganization();
       }
-     }
-
+    }
     $this->setWidgets(array(
       'id'                          => new sfWidgetFormInputHidden(),
       'person_id'                   => new sfWidgetFormInputHidden(),//new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agPerson'), 'add_empty' => false)),
