@@ -27,52 +27,44 @@
       <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" style="text-align: center">
       Name
       </th>
-      <!-- Sex -->
+      <!-- Agency -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Sex</div>
+        <div style="margin: 0; padding: 0">Agency</div>
         <?php
-          echo($sortColumn =='sex' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=sex&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=sex&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='sex' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=sex&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=sex&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='agency' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=agency&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=agency&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='agency' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=agency&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=agency&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
-      <!-- Nationality -->
+      <!-- classification -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Nationality</div>
+        <div style="margin: 0; padding: 0">Classification</div>
         <?php
-          echo($sortColumn =='nationality' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=nationality&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=nationality&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='nationality' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=nationality&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=nationality&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='staff_type' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_type&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_type&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='staff_type' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_type&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_type&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
-      <!-- Ethnicity -->
+      <!-- work_contact -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Ethnicity</div>
+        <div style="margin: 0; padding: 0">Work Contact</div>
         <?php
-          echo($sortColumn =='ethnicity' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=ethnicity&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=ethnicity&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='ethnicity' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=ethnicity&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=ethnicity&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='work_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='work_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
-      <!-- Language -->
+      <!-- home_contact -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Language</div>
-       <?php
-          echo($sortColumn =='language' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=language&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=language&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='language' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=language&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=language&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+        <div style="margin: 0; padding: 0">Home Contact</div>
+        <?php
+          echo($sortColumn =='home_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='home_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
-      <!-- Religion -->
+      <!-- staff status -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0;">Religion</div>
+        <div style="margin: 0; padding: 0">Staff Status</div>
         <?php
-          echo($sortColumn =='religion' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='religion' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
-        ?>
-      </th>
-      <!-- Resource Type and Organization  -->
-      <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0;">Organization</div>
-        <?php
-#          echo($sortColumn =='religion' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-#          echo($sortColumn =='religion' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='staff_status' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_status&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_status&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='staff_status' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_status&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_status&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
     </tr>
@@ -96,7 +88,7 @@
         <a href="<?php echo url_for('staff/show') . '?page=' . $i . $sortAppend . $orderAppend; ?>" title="View Staff Member <?php echo $staffMember->getId(); ?>" class="linkButton"><?php echo $i++; ?></a>
       </td>
       <?php
-        $names = $staffMember->getAgPersonMjAgPersonName();
+        $names = $staffMember->getAgPerson()->getAgPersonMjAgPersonName();
         foreach ($agPersonNameTypes as $agPersonNameTypeId => $agPersonNameType)
         {
           echo "<td>";
@@ -113,44 +105,61 @@
       ?>
       <td>
         <?php
-        foreach ($staffMember->getAgPersonSex() as $personSex)
-        {
-          echo($personSex->getAgSex());
-        }
-  ?>
+          foreach ($staffMember->getAgStaffResource() as $staffRec) {
+            foreach ($staffRec->getAgStaffResourceOrganization() as $staffRecOrg){
+              echo $staffRecOrg->getAgOrganization()->organization;
+            }
+          }
+        ?>
       </td>
       <td>
         <?php
-    $nationalities = $staffMember->getAgPersonMjAgNationality();
-          foreach ($nationalities as $nationality)
-          {
-      if($nationality->getAgNationality()->getAppDisplay() == 1)
-            {
-        echo $nationality->getAgNationality() . "<br /> ";
+          foreach ($staffMember->getAgStaffResourceType() as $rType) {
+            echo $rType->staff_resource_type;
+          }
+        ?>
+      </td>
+      <td>
+    <?php
+      foreach ($ag_phone_contact_types as $agPhoneContactType) {
+        $check = 0;
+        //$phoneContacts = $agStaff->getAgPerson()->getAgPersonMjAgPhoneContact();
+        $phoneContacts = $staffMember->getAgPerson()->getAgEntity()->getAgEntityPhoneContact();
+        foreach ($phoneContacts as $phoneContact) {
+          if ($phoneContact->getPhoneContactTypeId() == $agPhoneContactType->getId()) {
+            echo preg_replace(
+                    $phoneContact
+                    ->getAgPhoneContact()
+                    ->getAgPhoneFormat()
+                    ->getAgPhoneFormatType()->match_pattern,
+                    $phoneContact
+                    ->getAgPhoneContact()
+                    ->getAgPhoneFormat()
+                    ->getAgPhoneFormatType()->replacement_pattern,
+                    $phoneContact
+                    ->getAgPhoneContact()->phone_contact
+            );
+            echo '<br />';
+            $check = 1;
+          }
+        }
       }
-    }
-  ?>
+    ?>
       </td>
       <td>
-        <?php $ethnicities = $staffMember->getAgEthnicity(); ?>
-        <?php foreach ($ethnicities as $ethnicity): ?>
-        <?php echo $ethnicity . "<br /> "; ?>
-      <?php endforeach; ?>
-      </td>
-      <td>
-        <?php $languages = $staffMember->getAgLanguage(); ?>
-        <?php foreach ($languages as $language): ?>
-          <?php echo $language . "<br /> "; ?>
-      <?php endforeach; ?>
-      </td>
-      <td>
-        <?php $religions = $staffMember->getAgReligion(); ?>
-      <?php foreach ($religions as $religion): ?>
-        <?php echo $religion . "<br /> "; ?>
-      <?php endforeach; ?>
-      </td>
-      <td>
-        <a href="<?php echo url_for('staff/assign') . "?id=" . $staffMember->getId(); ?>" class="linkButton">Assign</a>
+      <?php
+      foreach ($ag_email_contact_types as $agEmailContactType) {
+        $check = 0;
+        $emailContacts = $staffMember->getAgPerson()->getAgEntity()->getAgEntityEmailContact();
+        foreach ($emailContacts as $emailContact) {
+          if ($emailContact->getEmailContactTypeId() == $agEmailContactType->getId()) {
+            echo '<a href="mailto:' . $emailContact->getAgEmailContact() . '" class="linkMail">'
+            . $emailContact->getAgEmailContact() . '</a>' . '<br />';
+            $check = 1;
+          }
+        }
+      }
+      ?>
       </td>
     </tr>
     <?php endforeach; ?>

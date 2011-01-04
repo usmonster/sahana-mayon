@@ -152,16 +152,29 @@ class agStaffActions extends sfActions
    */
   public function executeList(sfWebRequest $request)
   {
+//    $query = Doctrine::getTable('agStaff')
+//            ->createQuery('a')
+//            ->select('p.*, st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*,
+//              nametype.*')
+//            ->from(
+//                'agStaff st, st.agPerson p, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
+//              pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
+//              p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
+//              name.agPersonNameType nametype'
+//    );
     $query = Doctrine::getTable('agStaff')
             ->createQuery('a')
-            ->select('p.*, p.st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*,
-              nametype.*')
+            ->select('p.*, s.*, namejoin.*, name.*, nametype.*, stfrsco.*, o.organization agency, stfrsc.staff_resource_type_id, ect1.email_contact_type work_email, ect2.email_contact_type home_email')
             ->from(
-                'agPerson p, p.agStaff st, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
-              pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
+                'agStaff s, s.agPerson p,
               p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
-              name.agPersonNameType nametype'
-    );
+              name.agPersonNameType nametype, s.agStaffResource stfrsc,
+              stfrsc.agStaffResourceOrganization stfrsco, stfrsc.agStaffResourceType, stfrsco.agOrganization o,
+              s.agStaffStatus ss, p.agEntity e,
+              e.agEntityEmailContact ememail1, ememail1.agEmailContact ec1, ec1.agEmailContactType ect1,
+              e.agEntityEmailContact ememail2, ememail2.agEmailContact ec2, ec2.agEmailContactType ect2'
+              )
+            ->Where('ss.staff_status=?', 'active');
 
     $this->pager = new sfDoctrinePager('agStaff', 20);
     /**
@@ -186,6 +199,13 @@ class agStaffActions extends sfActions
     //$sqloutput = $query->getSqlQuery();
     $this->pager->setPage($request->getParameter('page', 1));
     $this->pager->init();
+    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
+            ->createQuery('c')
+            ->execute();
+    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
+            ->createQuery('d')
+            ->execute();
+    //ideally this should only happen once
   }
 
   /**
@@ -215,7 +235,7 @@ class agStaffActions extends sfActions
                 'p.*, st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*, nametype.*'
             )
             ->from(
-                'agPerson p, p.agStaff st,p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
+                'agStaff st, st.agPerson p, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
                   pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
                   p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
                   name.agPersonNameType nametype'

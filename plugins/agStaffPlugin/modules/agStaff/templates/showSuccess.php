@@ -6,7 +6,7 @@
 ($sf_request->getGetParameter('order')) ?
         $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';
 ?>
-<?php foreach ($pager->getResults() as $agPerson): ?>
+<?php foreach ($pager->getResults() as $agStaff): ?>
   <table class="singleTable">
     <thead>
     <caption>Primary</caption>
@@ -24,7 +24,7 @@
     <?php
     foreach ($ag_person_name_types as $agPersonNameType) {
       echo "<td>";
-      $names = $agPerson->getAgPersonMjAgPersonName();
+      $names = $agStaff->getAgPerson()->getAgPersonMjAgPersonName();
       foreach ($names as $name) {
         if ($name->getPersonNameTypeId() == $agPersonNameType->getId()) {
           echo $name->getAgPersonName();
@@ -39,7 +39,7 @@
     <th class="headLeft">Sex:</th>
     <td colspan="<?php echo count($ag_person_name_types); ?>">
       <?php
-      $sexes = $agPerson->getAgSex();
+      $sexes = $agStaff->getAgPerson()->getAgSex();
       foreach ($sexes as $sex) {
         echo ucwords($sex);
       }
@@ -50,16 +50,16 @@
     <th class="headLeft">Date of Birth:</th>
     <td colspan="<?php echo count($ag_person_name_types) - 2; ?>">
       <?php
-      echo $agPerson->getAgPersonDateOfBirth()->getDateOfBirth();
+      echo $agStaff->getAgPerson()->getAgPersonDateOfBirth()->getDateOfBirth();
       ?>
     </td>
     <th class="headMid">Age:</th>
     <td>
       <?php
       #This will need to be adjusted, don't think it's accurate for all dates, but wanted to get something in here.
-      if ($agPerson->getAgPersonDateOfBirth()->getDateOfBirth() == !null) {
+      if ($agStaff->getAgPerson()->getAgPersonDateOfBirth()->getDateOfBirth() == !null) {
         echo floor(
-            (time() - strtotime($agPerson->getAgPersonDateOfBirth()->getDateOfBirth()))
+            (time() - strtotime($agStaff->getAgPerson()->getAgPersonDateOfBirth()->getDateOfBirth()))
             / 31556926
         );
       }
@@ -70,7 +70,7 @@
     <th class="headLeft">Profession:</th>
     <td colspan="<?php echo count($ag_person_name_types); ?>">
       <?php
-      $professions = $agPerson->getAgProfession();
+      $professions = $agStaff->getAgPerson()->getAgProfession();
       foreach ($professions as $profession) {
         echo $profession . "<br /> ";
       }
@@ -81,7 +81,7 @@
     <th class="headLeft">Nationality:</th>
     <td colspan="<?php echo count($ag_person_name_types); ?>">
       <?php
-      $nationalities = $agPerson->getAgNationality();
+      $nationalities = $agStaff->getAgPerson()->getAgNationality();
       foreach ($nationalities as $nationality) {
         if ($nationality->getAppDisplay() == 1) {
           echo $nationality . "<br /> ";
@@ -94,7 +94,7 @@
     <th class="headLeft">Ethnicity:</th>
     <td colspan="<?php echo count($ag_person_name_types); ?>">
       <?php
-      $ethnicities = $agPerson->getAgEthnicity();
+      $ethnicities = $agStaff->getAgPerson()->getAgEthnicity();
       foreach ($ethnicities as $ethnicity) {
         echo $ethnicity . "<br /> ";
       }
@@ -105,7 +105,7 @@
     <th class="headLeft">Religion:</th>
     <td colspan="<?php echo count($ag_person_name_types); ?>">
       <?php
-      $religions = $agPerson->getAgReligion();
+      $religions = $agStaff->getAgPerson()->getAgReligion();
       foreach ($religions as $religion) {
         echo $religion . "<br /> ";
       }
@@ -116,7 +116,7 @@
     <th class="headLeft">Marital Status:</th>
     <td colspan="<?php echo count($ag_person_name_types); ?>">
       <?php
-      $maritalStatuses = $agPerson->getAgMaritalStatus();
+      $maritalStatuses = $agStaff->getAgPerson()->getAgMaritalStatus();
       foreach ($maritalStatuses as $maritalStatus) {
         echo ucwords($maritalStatus->getMaritalStatus());
       }
@@ -146,8 +146,8 @@
       foreach ($ag_phone_contact_types as $agPhoneContactType) {
         echo "<td>";
         $check = 0;
-        //$phoneContacts = $agPerson->getAgPersonMjAgPhoneContact();
-        $phoneContacts = $agPerson->getAgEntity()->getAgEntityPhoneContact();
+        //$phoneContacts = $agStaff->getAgPerson()->getAgPersonMjAgPhoneContact();
+        $phoneContacts = $agStaff->getAgPerson()->getAgEntity()->getAgEntityPhoneContact();
         foreach ($phoneContacts as $phoneContact) {
           if ($phoneContact->getPhoneContactTypeId() == $agPhoneContactType->getId()) {
             echo preg_replace(
@@ -193,7 +193,7 @@
       foreach ($ag_email_contact_types as $agEmailContactType) {
         echo "<td>";
         $check = 0;
-        $emailContacts = $agPerson->getAgEntity()->getAgEntityEmailContact();
+        $emailContacts = $agStaff->getAgPerson()->getAgEntity()->getAgEntityEmailContact();
         foreach ($emailContacts as $emailContact) {
           if ($emailContact->getEmailContactTypeId() == $agEmailContactType->getId()) {
             echo '<a href="mailto:' . $emailContact->getAgEmailContact() . '" class="linkMail">'
@@ -227,7 +227,7 @@
     ?>
     </tr>
   <?php
-      $personLanguages = $agPerson->getAgPersonMjAgLanguage();
+      $personLanguages = $agStaff->getAgPerson()->getAgPersonMjAgLanguage();
       foreach ($personLanguages as $personLanguage) {
         echo '<tr>';
         echo '<th class="subHeadLeft">' . $personLanguage->agLanguage . '</th>';
@@ -270,7 +270,7 @@
       echo '</tr>';
 
       #    $arrangeAddresses = array();
-      $siteContacts = $agPerson->getAgEntity()->getAgEntityAddressContact();
+      $siteContacts = $agStaff->getAgPerson()->getAgEntity()->getAgEntityAddressContact();
       foreach ($siteContacts as $siteContact) {
         $address = $siteContact->getAgAddress();
         $formats = $siteContact->getAgAddress()->getAgAddressStandard()->getAgAddressFormat();
@@ -360,7 +360,7 @@
           <th class="headLeft">Staff ID:</th>
           <td>
             <?php
-              foreach($agPerson->getAgStaff() as $staff) {
+              foreach($agStaff->getAgPerson()->getAgStaff() as $staff) {
                 echo $staff->id;
               }
             ?>
@@ -368,9 +368,7 @@
           <th class="headMid">Staff Status:</th>
           <td>
             <?php
-              foreach($agPerson->getAgStaff() as $staff) {
-                echo ucwords($staff->getAgStaffStatus()->staff_status);
-              }
+              echo ucwords($staff->getAgStaffStatus()->staff_status);
             ?>
           </td>
         </tr>
@@ -378,11 +376,9 @@
           <th class="headLeft">Staff Affiliation:</th>
           <td colspan="3">
             <?php
-              foreach ($agPerson->getAgStaff() as $staff) {
-                foreach ($staff->getAgStaffResource() as $staffRec) {
-                  foreach ($staffRec->getAgStaffResourceOrganization() as $staffRecOrg){
-                    echo $staffRecOrg->getAgOrganization();
-                  }
+              foreach ($agStaff->getAgStaffResource() as $staffRec) {
+                foreach ($staffRec->getAgStaffResourceOrganization() as $staffRecOrg){
+                  echo $staffRecOrg->getAgOrganization()->organization;
                 }
               }
             ?>
@@ -392,21 +388,19 @@
           <th class="headLeft">Staff Type:</th>
           <td colspan="3">
             <?php
-              foreach ($agPerson->getAgStaff() as $staff) {
-                foreach ($staff->getAgStaffResourceType() as $rType) {
-                  echo $rType->staff_resource_type;
-                }
+              foreach ($agStaff->getAgStaffResourceType() as $rType) {
+                echo $rType->staff_resource_type;
               }
             ?>
           </td>
         </tr>
         <tr>
           <th class="headLeft">Created:</th>
-          <td colspan="3"><?php echo $agPerson->getCreatedAt() ?></td>
+          <td colspan="3"><?php echo $agStaff->getCreatedAt() ?></td>
         </tr>
         <tr>
           <th class="headLeft">Updated:</th>
-          <td colspan="3"><?php echo $agPerson->getUpdatedAt() ?></td>
+          <td colspan="3"><?php echo $agStaff->getUpdatedAt() ?></td>
         </tr>
       </tbody>
     </table>
@@ -415,7 +409,7 @@
       $customCheck =
         Doctrine::getTable('agPersonCustomFieldValue')
         ->findByDql(
-            'person_id = ?', $agPerson->id
+            'person_id = ?', $agStaff->getAgPerson()->id
         )
         ->getFirst();
       if ($customCheck instanceof agPersonCustomFieldValue) {
@@ -424,7 +418,7 @@
         echo '<caption>Import Data</caption>' . PHP_EOL;
         echo '</thead>' . PHP_EOL;
         echo '<tbody>' . PHP_EOL;
-        foreach ($agPerson->getAgPersonCustomFieldValue() as $cFieldVal) {
+        foreach ($agStaff->getAgPerson()->getAgPersonCustomFieldValue() as $cFieldVal) {
           if ($cFieldVal->getAgPersonCustomField()->person_custom_field == $cFieldVal->getAgPersonCustomField()->getAgCustomFieldType()->custom_field_type) {
             echo '<tr>' . PHP_EOL;;
             echo '<th class="headLeft">' . $cFieldVal->getAgPersonCustomField()->person_custom_field . ':</th>' . PHP_EOL;;
@@ -441,9 +435,9 @@
         echo '</table>' . PHP_EOL;
         echo '<br />' . PHP_EOL;
       }
-      $awesome = $agPerson->getAgStaff();
+      $awesome = $agStaff->getAgPerson()->getAgStaff();
 
-      foreach($agPerson->getAgStaff() as $staff) {
+      foreach($agStaff->getAgPerson()->getAgStaff() as $staff) {
         $staff_id = $staff->getId();
       }
       ?>
