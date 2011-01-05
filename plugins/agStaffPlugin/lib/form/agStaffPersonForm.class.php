@@ -77,7 +77,9 @@ class agStaffPersonForm extends agPersonForm
   }
   protected function doSave($con = null)
   {
+    if($this->isNew()){
     parent::doSave();
+    }
   }
 
   public function saveEmbeddedForms($con = null, $forms = null)

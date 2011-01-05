@@ -113,10 +113,12 @@ class adminActions extends sfActions
         }
 
 
+        $cache = new sfFileCache(array('cache_dir' => $cacheDir));
+        $cache->clean();
 
-
-
-
+        sfClearCache('frontend', 'all');
+        sfClearCache('frontend', 'dev');
+        sfClearCache('frontend', 'prod');
 
 
 
