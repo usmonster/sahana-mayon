@@ -112,14 +112,14 @@ class adminActions extends sfActions
           return false;
         }
 
+        $caches = array('all','dev','prod');
 
-        $cache = new sfFileCache(array('cache_dir' => $cacheDir));
-        $cache->clean();
+        foreach($caches as $cachedir){
+          $cacheDir = sfConfig::get('sf_cache_dir') . '/frontend/' . $cachedir . '/';
+          $cache = new sfFileCache(array('cache_dir' => $cacheDir));
 
-        sfClearCache('frontend', 'all');
-        sfClearCache('frontend', 'dev');
-        sfClearCache('frontend', 'prod');
-
+          $cache->clean();
+        }
 
 
       //check to see if auth_method is bypass, if so, modify app.yml accordingly... AFTER agSaveSetup
