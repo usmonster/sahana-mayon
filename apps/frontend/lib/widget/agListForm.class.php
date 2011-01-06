@@ -1,0 +1,89 @@
+<?php
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+class agListForm
+{
+
+  public static function facilitylist($sf_request,$title, $columns, $pager)
+  {
+
+
+      $sortColumn = $sf_request->getGetParameter('sort');
+      $sortOrder = $sf_request->getGetParameter('order');
+      ($sf_request->getGetParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
+      ($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
+      ($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';
+  
+    $thisUrl = url_for('facility/list');
+
+    ($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
+    ($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';
+
+    $ascArrow = '&#x25B2;';
+    $descArrow = '&#x25BC;';
+
+    $listheader = '<h3>' . $title . '</h3>';
+    $listbody = '<table class="staffTable">
+  <thead>
+    <tr class="head">';
+    foreach ($columns as $column => $columnCaption) {
+
+      $listbody .= '  <th>'.  $columnCaption['title'];
+      if ($columnCaption['sortable']) {
+        $listbody .= $sortColumn == $column && $sortOrder == 'ASC' ? '<a href="' . $thisUrl . '?sort=' . $column . '&order=ASC" class="buttonSortSelected" title="ascending">' . $ascArrow . '</a>' : '<a href="' . $thisUrl . '?sort=' . $column . '&order=ASC" class="buttonSort" title="ascending">' . $ascArrow . '</a>';
+        $listbody .= $sortColumn == $column && $sortOrder == 'DESC' ? '<a href="' . $thisUrl . '?sort=' . $column . '&order=DESC" class="buttonSortSelected" title="descending">' . $descArrow . '</a>' : '<a href="' . $thisUrl . '?sort=' . $column . '&order=DESC" class="buttonSort" title="descending">' . $descArrow . '</a>';
+      }
+      $listbody .= '</th>';
+    }
+    $listbody .= ' </tr>
+    </thead>
+    <tbody>';
+
+    foreach ($pager->getResults() as $ag_facility){
+
+      $listbody .='<tr>
+          <td><a class=linkButton href="<?php' . url_for('facility/show?id=' . $ag_facility->getId()) . '"> ' . $ag_facility->getId() .'></a></td>';
+      $listbody .='<td>' . $ag_facility->getFacilityCode() . '</td>';
+      $listbody .='<td>' . $ag_facility->getFacilityName() . '</td>';
+      $listbody .='<td>';
+      $comma = 0;
+
+      foreach ($ag_facility->getAgFacilityResource() as $n){
+        $listbody .= ($comma++ > 0 ? ', ' : '') . ucwords($n->getAgFacilityResourceType()->getFacilityResourceType());
+        $listbody .= (count($ag_facility->getAgFacilityResource()) ? ' (' . count($ag_facility->getAgFacilityResource()) . ')' : '(None)') . '</td>';
+      }
+        $listbody .= '</tr>';
+    }
+
+   $listbody .='
+      </tbody>
+      </table>
+
+      <br>
+      <div>';
+   $listbody .= '<a href="' . url_for('facility/new') . '" class="linkButton" title="Create New Facility">Create New</a>
+        </div>';
+
+        $listfoot = '<div style="float: right;">';
+//
+//First Page link (or inactive if we're at the first page).
+        $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
+//Previous Page link (or inactive if we're at the first page).
+        $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
+//Next Page link (or inactive if we're at the last page).
+        $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getNextPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
+//Last Page link (or inactive if we're at the last page).
+        $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
+        $listfoot .= '</div>';
+
+//we should put in some new lines here so that we don't destroy the
+
+        $nice_list = $listheader . $listbody . $listfoot;
+
+        return $nice_list;
+      }
+    }
+
