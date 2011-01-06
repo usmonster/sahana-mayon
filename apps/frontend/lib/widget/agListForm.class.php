@@ -45,7 +45,7 @@ class agListForm
     foreach ($pager->getResults() as $ag_facility){
 
       $listbody .='<tr>
-          <td><a class=linkButton href="<?php' . url_for('facility/show?id=' . $ag_facility->getId()) . '"> ' . $ag_facility->getId() .'></a></td>';
+          <td><a class=linkButton href="' .url_for('facility/show?id=' . $ag_facility->getId()) . '"> ' . $ag_facility->getId() .'</a></td>';
       $listbody .='<td>' . $ag_facility->getFacilityCode() . '</td>';
       $listbody .='<td>' . $ag_facility->getFacilityName() . '</td>';
       $listbody .='<td>';
