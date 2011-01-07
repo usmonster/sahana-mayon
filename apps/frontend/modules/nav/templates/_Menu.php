@@ -13,3 +13,5 @@
 //  }
 //}
 ?>
+
+<?php echo $menu->render(); ?>

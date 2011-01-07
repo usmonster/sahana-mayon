@@ -27,6 +27,7 @@ class navComponents extends sfComponents
     $menu['Prep']->addChild('Scenario', '@scenario');
     $menu['Prep']['Scenario']->addChild('Scenario Staff Resources', '@scenario_show_facility_staff_resource?id=1');
 
-    echo $menu->render();
+    //echo $menu->render();
+    $this->menu = $menu;
   }
 }
