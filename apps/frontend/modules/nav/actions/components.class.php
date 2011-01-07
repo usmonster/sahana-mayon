@@ -15,9 +15,17 @@ class navComponents extends sfComponents
     $menu = new ioMenu();
     $menu->addChild('overview', '@homepage');
 
-    $menu->addChild('Facility', '@facility');
-    $menu['Facility']->addChild('Scenario', '@scenario');
-    $menu['Facility']->addChild('Staff', '@staff');
+    $menu->addChild('Plan', '');
+
+    $menu['Plan']->addChild('Scenario', '@scenario');
+    $menu['Plan']['Scenario']->addChild('Scenario Staff Resources', '@scenario_show_facility_staff_resource?id=1');
+
+    $menu['Plan']->addChild('Facility', '@facility');
+
+    $menu->addChild('Prep', '');
+
+    $menu['Prep']->addChild('Scenario', '@scenario');
+    $menu['Prep']['Scenario']->addChild('Scenario Staff Resources', '@scenario_show_facility_staff_resource?id=1');
 
     echo $menu->render();
   }
