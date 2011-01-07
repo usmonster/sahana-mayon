@@ -6,28 +6,28 @@ class navComponents extends sfComponents
    */
   public function executeMenu()
   {
-    // Nils's & Charles's modifications:
-//    $route = sfContext::getInstance()->getRouting()->getCurrentRouteName();
-//    $this->toplinks = sfConfig::get('app_toplinks');
-//    $this->secondlinks = sfConfig::get('app_second_navpages');
-//    $b = 3;
-
     $menu = new ioMenu();
-    $menu->addChild('overview', '@homepage');
+    // Nils's & Charles's modifications:
+    $route = sfContext::getInstance()->getRouting()->getCurrentRouteName();
+    $this->toplinks = sfConfig::get('app_toplinks');
+    $this->secondlinks = sfConfig::get('app_second_navpages');
+    $this->thirdlinks = sfConfig::get('app_third_navpages');
+    $b = 3;
+    //
 
-    $menu->addChild('Plan', '');
-
-    $menu['Plan']->addChild('Scenario', '@scenario');
-    $menu['Plan']['Scenario']->addChild('Scenario Staff Resources', '@scenario_show_facility_staff_resource?id=1');
-
-    $menu['Plan']->addChild('Facility', '@facility');
-
-    $menu->addChild('Prep', '');
-
-    $menu['Prep']->addChild('Scenario', '@scenario');
-    $menu['Prep']['Scenario']->addChild('Scenario Staff Resources', '@scenario_show_facility_staff_resource?id=1');
-
-    //echo $menu->render();
+    foreach ($this->toplinks as $toplink) {
+      $menu->addChild($toplink['name'], $toplink['route'], array('class' => 'menu1'));
+      //echo link_to($toplink['name'], $toplink['route'], array('class' => 'navButton'));
+//      foreach ($secondlinks as $secondlink) {
+//      $a = 4;
+//    }
+      foreach ($this->secondlinks as $secondlink) {
+        if($secondlink['parent'] == $toplink['name']) {
+          $menu[$toplink['name']]->addChild($secondlink['name'], $secondlink['route'], array('class' => 'menu2'));
+          //echo link_to($secondlink['name'], $secondlink['route'], array('class' => 'navButton'));
+        }
+      }
+    }
     $this->menu = $menu;
   }
 }
