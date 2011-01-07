@@ -730,27 +730,53 @@ select {
 }
 
 .navigation ul {
+  list-style-type: none;
+}
+/* This is the top level UL that contains all top level nav elements */
+ul.menu {
+  padding: 0;
+  margin: 0;
   list-style: none;
   list-style-type: none;
 }
-li.menu1 ul .menu2 {
-  display: none;
-}
 
-.menu1 {
-  display: inline-block;
-  color: green;
-  margin: 5px;
+/* These are the top level nav elements */
+li.menu1 {
+  float: left;
   border: solid 1px red;
+  padding: 5px;
+  position: relative;
+  width: 10em;
+  list-style-type: none;
 }
 
-.menu2 {
-  position: absolute;
+/*This is the container UL for the second level LI elements*/
+li.menu1 ul {
+  display: none;
+  position: absolute; 
+  top: 1em;
+  left: 0;
+  list-style: none;
+  list-style-type: none;
+}
+
+/* This is the UL that holds the 2nd level menu items*/
+li.menu1 > ul {
+  top: auto;
+  left: auto;
+  list-style-type: none;
+}
+
+li.menu2 {
   color: blue;
-  margin: 5px;
+  padding: 5px;
   border: solid 1px #000000;
+  margin: 0;
+  list-style: none;
+  list-style-type: none;
+  left: 0;
 }
 
-li.menu1:hover > ul .menu2 {
+li.menu1:hover > ul {
   display: block;
 }
