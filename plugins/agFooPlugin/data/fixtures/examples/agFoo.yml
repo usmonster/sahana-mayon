@@ -1,0 +1,13 @@
+agFoo:
+  1:
+    id: 1
+    foo: Blue Man
+    bar: Martini
+  2:
+    id: 2
+    foo: Orange Man
+    bar: Blue Moon
+  3:
+    id: 3
+    foo: Green Man
+    bar: Lychee Sake Martini

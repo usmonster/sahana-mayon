@@ -1,0 +1,5 @@
+all:
+  .array:
+    navpages: 
+      foo: { name: Foo, route: '@foo' }
+

@@ -1,0 +1,10 @@
+foo_index:
+  url: /foo
+  param: { module: agFoo, action: index }
+foo:
+  url: /foo/:action
+  param: { module: agFoo }
+foo_bar:
+  url: /foo/:id
+  options: { model: agFoo, type: object }
+  param: { module: agFoo, action: showFoo }

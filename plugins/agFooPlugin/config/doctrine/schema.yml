@@ -1,0 +1,12 @@
+agFoo:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    foo:
+      type: string(64)
+      notnull: true
+    bar:
+      type: string(64)
+      notnull: true
