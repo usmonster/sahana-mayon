@@ -1,0 +1,229 @@
+SAHANA AGASTI 2.0 MAYON
+Emergency Management Software
+
+INSTALLATION INSTRUCTIONS
+
+Updated: 2010-12-10
+
+*** IMPORTANT NOTE: ***
+
+These install instructions are currently tailored for systems running a LAMP
+stack, specifically Ubuntu, Apache, MySQL, and PHP 5. The installation process
+described in this document might work on other platforms, and with other web
+servers or database engines, but it has not yet been thoroughly tested and is
+not guaranteed. For questions or other support, please see the SUPPORT section
+in the README file.
+
+
+SYSTEM REQUIREMENTS
+===================
+
+Software
+--------
+
+The following software is required to run Sahana Agasti Mayon:
+
+* Ubuntu 9.10 LTS or later (most current 10.04 LTS strongly recommended)
+* Apache HTTP Server 2.2.14 or later (most current 2.2 preferred)
+* MySQL 5.1.41 or later (most current 5.1 preferred)
+* PHP 5.2.12 or later (most current 5.3 strongly recommended)
+
+Hardware
+--------
+
+The following hardware resources are recommended to run Sahana Agasti Mayon:
+
+* Intel Pentium or AMD Athlon CPU
+* minimum of 50 MB available disk space
+* minimum 512 MB RAM
+
+
+SYSTEM CONFIGURATION
+====================
+
+After Sahana Agasti has been downloaded and extracted, you will first need to
+configure your system before installing and using the application. These
+instructions assume you have super user permissions on the target machine.
+
+Apache
+------
+
+1. To set permissions to allow the web server appropriate access to the required
+   directories, execute the following commands from the project root:
+
+  $ sudo chgrp -R WEB_GROUP config/ cache/ log/ apps/frontend/config/ \
+      apps/backend/config/ data/indexes/ data/search/ data/sql/
+  $ chmod -cR g+wr config/ apps/frontend/config/ apps/backend/config/ \
+      data/indexes/ data/search/ data/sql/
+  $ ./symfony project:permissions
+
+  * NOTE: Replace WEB_GROUP with the group associated with the Apache user, e.g.
+    www-data or apache.
+
+2. Create a link to the web directory of the project from the server's web root,
+   for example:
+
+  $ sudo ln -s AGASTI_ROOT/web WEB_ROOT/agasti
+
+  * NOTE: Replace AGASTI_ROOT with the full filesystem path to the Agasti root
+    directory, and replace WEB_ROOT with the path to your default Apache
+    configuration's document root.
+
+3. If your version of Apache supports it, write a custom configuration file for
+   the application; for example:
+
+    Alias /agasti/sf AGASTI_ROOT/lib/vendor/symfony/data/web/sf
+    <Directory "/var/www/agasti">
+      AllowOverride All
+      Allow from All
+    </Directory>
+
+  To activate the site configuration, as well as mod_rewrite if it isn't
+  already, you can then run the following commands:
+
+  $ sudo mv agasti /etc/apache2/sites-available/
+  $ sudo a2ensite agasti
+  $ sudo a2enmod rewrite
+  $ sudo /etc/init.d/apache2 restart
+
+  * NOTES:
+
+    - Again, replace AGASTI_ROOT with the full filesystem path to the Agasti
+      root directory.
+
+    - Commands may vary slightly, depending upon your version of Apache.
+
+    - You may instead prefer to set up an Apache Virtual Host, if you know how.
+
+MySQL
+-----
+
+1. On the database server, create a schema for the project; for example:
+
+  $ mysqladmin -uroot -p create AGASTI_DB
+
+  * NOTE: Replace AGASTI_DB with the name you chose for the schema, e.g. agasti.
+
+2. Create a dedicated database user for the application (using root is highly
+   discouraged):
+
+  $ mysql -uroot -p mysql << EOF
+    GRANT ALL PRIVILEGES ON AGASTI_DB.* TO 'AGASTI_DB_USERNAME'@'DB_HOSTNAME'
+     IDENTIFIED BY 'AGASTI_DB_PASS';
+    EOF
+
+  * NOTES:
+
+    - Replace AGASTI_DB with the name you chose for the schema,
+      AGASTI_DB_USERNAME with the username you chose, and AGASTI_DB_PASS with
+      the password you chose.
+
+    - For some versions of MySQL, you may need to FLUSH PRIVILEGES; before
+      continuing.
+
+3. Customize your MySQL options by adding the following either to a new .cnf
+   file in your /etc/mysql/conf.d/ directory or to your /etc/mysql/my.cnf file:
+
+    [mysqld]
+    # sets default for charset=utf8 for client/connection
+    character-set-server    = utf8
+    collation-server        = utf8_general_ci
+
+    # sets global sql_mode to enforce NOT NULL and other attribute constraints
+    sql-mode=STRICT_ALL_TABLES
+
+    [mysql]
+    # sets default for charset=utf8 for server/database
+    default-character-set   = utf8
+
+  To activate the new options, restart MySQL:
+
+  $ sudo restart mysql
+
+  * NOTE: Depending on your platform and version of MySQL, you may need to use
+    this command:
+
+    $ sudo service mysql force-reload
+
+    or this command:
+
+    $ sudo /etc/init.d/mysql restart
+
+PHP
+---
+
+Set PHP's memory limit to 256 MB or greater by editing or adding the following
+line in /etc/php5/apache2/php.ini:
+
+  memory_limit = 256M
+
+Optionally, you may also want to replace your current php.ini with the
+recommended production settings, via this command:
+
+  $ sudo cp /usr/share/doc/php5-common/examples/php.ini-production \
+      /etc/php5/apache2/php.ini
+
+  * NOTE: You would still need to increase the memory_limit after this copy.
+
+
+APPLICATION INSTALLATION
+========================
+
+After you have configured your system, navigate to the install page for your
+Agasti instance, e.g.:
+
+  http://localhost/agasti/install.php
+
+Follow the instructions on each screen, making modifications to your system in
+response to any reported misconfigurations and entering appropriate information
+when prompted.
+
+After reviewing the installation configuration summary, the next step may take a
+few minutes before the installer reports that is has completed and you can click
+the "Finish" button.
+
+At this point you will need to set the login credentials for the superuser by
+editing the AGASTI_ROOT/config/config.yml file and replacing the null super_user
+and super_pass values with something valid and secure, e.g.:
+
+  super_user: 'somesecureusername'
+  super_pass: '$ome.$ecure.pa$$w0rd!'
+
+You should now be able sign in with those credentials and use the application.
+
+
+ERRORS AND TROUBLESHOOTING
+==========================
+
+- Blank page after clicking "Install", or "500" error page:
+
+  The file permissions or database permissions are possibly misconfigured.
+  Ensure the web server has proper access to the appropriate files and
+  directories and check your web server error log. Also, ensure the proper
+  version of PHP is installed; please see the SYSTEM REQUIREMENTS section.
+
+- 404 error page:
+
+  Verify that symbolic links are being followed and that your web server is
+  pointing to the expected directory for the application.
+
+- Installation instructions are followed properly and all settings configured
+  correctly, but still unable to log into the application with proper
+  credentials:
+
+  Clear the Symfony cache with this command, executed from your AGASTI_ROOT:
+
+  $ ./symfony cc
+
+  and try again.
+
+- I have another error, or my issue still isn't resolved:
+
+  Please see the SUPPORT section in the README file for information on how to
+  contact the developer community.
+
+
+Thank you for using Sahana Agasti!
+                                     The Sahana Software Foundation
+                                     http://www.sahanafoundation.org/
+

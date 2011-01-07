@@ -1,0 +1,38 @@
+SAHANA AGASTI 2.0 MAYON RELEASE NOTES
+
+Updated: 2010-11-17
+
+WHAT'S NEW
+==========
+
+This is the initial release of the 2.0 series, named Mayon.
+
+The following major features are included in this first release:
+
+- Simple installation process
+- Minimal front-end UI design
+- Rough tool for basic user account creation & administration
+- Initial modules for limited Staff, Facility, and Scenario input & management
+- Search, filter, and sorting capabilities for Staff data
+- Staff export tool
+- Extensive, flexible schema to support design & development of future features
+- Built using symfony, an extensible web PHP framework, to ease development
+
+
+RESOLVED ISSUES
+===============
+
+As there hasn't been a previous release, there are no resolved issues with this
+release.
+
+
+VERSION HISTORY
+===============
+
+This is the foundation release of the Agasti 2.0 Mayon series. Previous releases
+of the Agasti series are:
+
+0.9 - first release under the Agasti series; named Vesuvius
+0.6 - the original Sahana application; named Krakatoa
+
+
