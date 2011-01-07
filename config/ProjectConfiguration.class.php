@@ -31,6 +31,6 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enablePlugins('sfJQueryUIPlugin');
     $this->enablePlugins('agStaffPlugin');
     $this->enablePlugins('ajDoctrineLuceneablePlugin');
-    
+    $this->enablePlugins('ioMenuPlugin');  
   }
 }
