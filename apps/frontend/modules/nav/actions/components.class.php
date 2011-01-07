@@ -7,7 +7,12 @@ class navComponents extends sfComponents
   public function executeMenu()
   {
     $route = sfContext::getInstance()->getRouting()->getCurrentRouteName();
-    $this->pages = sfConfig::get('app_navpages');
+    $this->toplinks = sfConfig::get('app_toplinks');
+    $this->secondlinks = sfConfig::get('app_second_navpages');
+    $b = 3;
+//    foreach ( as ) {
+//
+//    }
     //unset($this->pages[$route]);
   }
 }

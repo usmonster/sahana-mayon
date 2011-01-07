@@ -1,0 +1,5 @@
+all:
+  .array:
+    second_navpages:
+      staff_list:   { name: 'List Staff', route: '@staff_list', parent: 'Staff' }
+      staff_create: { name: 'Create Staff', route: '@staff_create', parent: 'Staff' }

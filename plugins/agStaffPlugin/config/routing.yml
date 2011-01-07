@@ -1,0 +1,6 @@
+staff_list:
+  url:   /staff/list
+  param: { module: agStaff, action: list }
+staff_create:
+  url:   /staff/new
+  param: { module: agStaff, action: new }
