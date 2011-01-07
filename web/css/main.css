@@ -728,3 +728,29 @@ select {
   color: #ff8f00;
   font-weight: bold;
 }
+
+.navigation ul {
+  list-style: none;
+  list-style-type: none;
+}
+li.menu1 ul .menu2 {
+  display: none;
+}
+
+.menu1 {
+  display: inline-block;
+  color: green;
+  margin: 5px;
+  border: solid 1px red;
+}
+
+.menu2 {
+  position: absolute;
+  color: blue;
+  margin: 5px;
+  border: solid 1px #000000;
+}
+
+li.menu1:hover > ul .menu2 {
+  display: block;
+}

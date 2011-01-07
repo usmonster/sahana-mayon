@@ -5,6 +5,14 @@ foo:
   url: /foo/:action
   param: { module: agFoo }
 foo_bar:
-  url: /foo/:id
+  url: /foo/:id/show
   options: { model: agFoo, type: object }
-  param: { module: agFoo, action: showFoo }
+  param: { module: agFoo, action: show }
+foo_crazy:
+  url: /foo/:id/:foo/:bar
+  options: { model: agFoo, type: object }
+  param: { module: agFoo, action: show }
+foo_crazy_edit:
+  url: /foo/:id/:foo/:bar/edit
+  options: { model: agFoo, type: object }
+  param: { module: agFoo, action: edit }
