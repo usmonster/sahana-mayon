@@ -37,15 +37,19 @@ class adminActions extends sfActions
      *
      * @param sfWebRequest $request is what the user is asking of the server
      */
+
     $this->packages_available = agPluginManager::getPackages();
     if($request->getParameter('enable'))
     {
-      $this->getContext()->getConfiguration()->enablePackages($request->getPamater('enable'));
+      $enable_array = json_decode($request->getParameter('enable'));
+      $this->getContext()->getConfiguration()->enablePackages($enable_array);
       //sfSymfonyPluginManager::enablePlugin('agGisPlugin' , sfConfig::get('sf_config_dir'));
     }
     if($request->getParameter('disable'))
     {
-      $this->getContext()->getConfiguration()->disablePackages($request->getPamater('disable'));
+      $disable_array = json_decode($request->getParameter('disable'));
+      $this->getContext()->getConfiguration()->disablePackages($disable_array);
+
       //sfSymfonyPluginManager::disablePlugin('agGisPlugin' , sfConfig::get('sf_config_dir'));
       //disabling the plugin/module turns it off, we should remove any menu items associated with this
       //module/plugin, but this mapping needs to be stored somewhere.  maybe routing should exist in the plugin?

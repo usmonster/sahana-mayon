@@ -24,7 +24,7 @@ $('.paclist :checked').each(function(index) {
     <td>Package Version</td>
     <td>Settings</td>
   </tr>
-<form action="<?php echo url_for('admin/moduleman') ?>"method="post" enctype="multipart/form-data">
+<form action="<?php echo url_for('admin/pacman') ?>"method="post" enctype="multipart/form-data">
 <input type="hidden" name="sf_method" value="put" />
 <input type="hidden" name="disable" value="" />
 <input type="hidden" name="enable" value="" />
