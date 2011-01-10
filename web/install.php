@@ -97,7 +97,7 @@ require_once(dirname(__FILE__) . '/install.inc.php');
           <?php echo $AG_INSTALL->getList(); ?>
         </div>
         <div id="columnRight">
-          <form action="install.php" method="post" class="configure" style="margin-right: 40px; float: left;">
+          <form action="install.php" method="post" class="configure" style="margin-right: 80px; float: left;">
                 <?php echo $AG_INSTALL->getState(); ?>
 
             <ul>

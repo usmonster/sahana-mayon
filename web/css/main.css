@@ -39,6 +39,7 @@ html, body {
 #columnRight {
   float: left;
   width: auto;
+  min-width:800px;
 }
 
 /**** Header & Footer ****/
@@ -314,17 +315,24 @@ h5 {
 table.requirements{
         text-align: left;
         border-spacing: 1px;
+        border-color:#ffe45c;
+        border-width: 1px;
 }
 
 table.requirements tr td.header{
         font-weight: bold;
 }
+table.requirements th{
+        color: #000000;
+}
 
 table.requirements tr td{
         white-space: nowrap;
         padding-left: 5px;
-        padding-right: 15px;
+        padding-right: 0px;
         background-color: #FFFFFF;
+        border-color:#ffe45c;
+        border-width: 1px;
 }
 
 span.orange{

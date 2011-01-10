@@ -13,7 +13,7 @@
   <?php
   foreach($modules_available as $module)
   {
-    echo '<tr><td><input type="submit" value="'.  $module['action'] . '" name="' . $module['action'] . '" class="linkButton" /></td><td>' . $module['name'] . '</td><td>version 1<td>' . link_to($module['name'], $module['name'] . '/config') . '</td></tr>';
+    echo '<tr><td><input tyepe="checkbox" value="'.  $module['action'] . '" name="' . $module['action'] . '" class="linkButton" /></td><td>' . $module['name'] . '</td><td>version 1<td>' . link_to($module['name'], $module['name'] . '/config') . '</td></tr>';
   }
   ?>
 </form>
