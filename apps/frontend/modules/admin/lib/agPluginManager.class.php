@@ -8,9 +8,10 @@ class agPluginManager extends sfSymfonyPluginManager
   static public function getPackages()
   {
     if ($handle = opendir(sfConfig::get('sf_app_dir') . '/lib/packages/')) {
+      $i = 0;
       while (false !== ($file = readdir($handle))) {
           //if file is not . or .. OR file/directory is not an Agasti module, disallow it from being meddled with here.
-        $i = 0;
+
         if ($file != "." && $file != ".." && (strpos($file, 'ag') === 0)) {
               $module_array[$i]['name']  = $file;
               $module_array[$i]['action'] = agPluginManager::packageStatus($file, sfConfig::get('sf_config_dir'));
