@@ -37,7 +37,7 @@ class adminActions extends sfActions
      *
      * @param sfWebRequest $request is what the user is asking of the server
      */
-    $this->modules_available = agPluginManager::getPackages();
+    $this->packages_available = agPluginManager::getPackages();
     if($request->getParameter('enable'))
     {
       $this->getContext()->getConfiguration()->enablePackages($request->getPamater('enable'));
