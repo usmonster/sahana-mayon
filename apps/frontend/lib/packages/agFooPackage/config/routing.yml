@@ -4,6 +4,9 @@ foo_index:
 foo:
   url: /foo/:action
   param: { module: agFoo }
+foo_list:
+  url:   /foo/list
+  param: { module: agFoo, action: list }
 foo_bar:
   url: /foo/:id/show
   options: { model: agFoo, type: object }

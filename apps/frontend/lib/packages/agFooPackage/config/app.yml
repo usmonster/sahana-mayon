@@ -1,5 +1,10 @@
 all:
   .array:
-    navpages: 
-      foo: { name: Foo, route: '@foo' }
-
+    secondlinks:
+      #staff_list:   { name: 'List Staff', route: '@staff_list', parent: 'Staff' }
+      #staff_create: { name: 'Create Staff', route: '@staff_create', parent: 'Staff' }
+      foo_list: { name: 'List Foos', route: '@foo_list', parent: 'foo' }
+    third_navpages:
+      foo_show1: { name: 'Show Foo 1', route: '@foo_bar?id=1', parent: 'foo_list' }
+      foo_show2: { name: 'Show Foo 2', route: '@foo_bar?id=2', parent: 'foo_list' }
+      foo_show3: { name: 'Show Foo 3', route: '@foo_bar?id=3', parent: 'foo_list' }
