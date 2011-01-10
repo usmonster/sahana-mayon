@@ -15,15 +15,19 @@ abstract class BaseagFooForm extends BaseFormDoctrine
   public function setup()
   {
     $this->setWidgets(array(
-      'id'  => new sfWidgetFormInputHidden(),
-      'foo' => new sfWidgetFormInputText(),
-      'bar' => new sfWidgetFormInputText(),
+      'id'         => new sfWidgetFormInputHidden(),
+      'foo'        => new sfWidgetFormInputText(),
+      'bar'        => new sfWidgetFormInputText(),
+      'created_at' => new sfWidgetFormDateTime(),
+      'updated_at' => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'id'  => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'foo' => new sfValidatorString(array('max_length' => 64)),
-      'bar' => new sfValidatorString(array('max_length' => 64)),
+      'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
+      'foo'        => new sfValidatorString(array('max_length' => 64)),
+      'bar'        => new sfValidatorString(array('max_length' => 64)),
+      'created_at' => new sfValidatorDateTime(),
+      'updated_at' => new sfValidatorDateTime(),
     ));
 
     $this->widgetSchema->setNameFormat('ag_foo[%s]');

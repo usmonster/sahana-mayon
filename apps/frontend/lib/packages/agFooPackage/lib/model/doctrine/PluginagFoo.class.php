@@ -12,5 +12,30 @@
  */
 abstract class PluginagFoo extends BaseagFoo
 {
+  public $luceneSearchFields = array('id' => 'keyword',
+                                     'foo' => 'unstored',
+                                     'bar' => 'unstored',
+                                    );
 
+  public function updateLucene() {
+    $doc = new Zend_Search_Lucene_Document();
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->getId(), 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('Foo', $this->getFoo(), 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('Bar', $this->getBar(), 'utf-8'));
+  }
+
+//  public function updateLuceneIndex()
+//  {
+//    $index = agFooTable::getLuceneIndex();
+//
+//    foreach ($index->find('pk:' . $this->getId()) as $hit) {
+//      $index->delete($hit->id);
+//    }
+//
+//// This creates the new document for the index and sets a field with a pk value of the created/edited person's ID.
+//    $doc = new Zend_Search_Lucene_Document();
+//    $doc->addField(Zend_Search_Lucene_Field::Keyword('pk', $this->getId()));
+//    $index->addDocument($doc);
+//    $index->commit();
+//  }
 }

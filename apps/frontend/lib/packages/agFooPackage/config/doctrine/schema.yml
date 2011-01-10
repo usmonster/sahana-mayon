@@ -10,3 +10,6 @@ agFoo:
     bar:
       type: string(64)
       notnull: true
+  actAs:
+    Luceneable:
+    Timestampable:

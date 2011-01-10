@@ -35,7 +35,7 @@ class agStaffActions extends sfActions
    */
   public function executeSearch(sfWebRequest $request)
   {
-    ProjectConfiguration::registerZend();
+    //ProjectConfiguration::registerZend();
     $query = $request->getParameter('query');
 
     $originalQuery = $query;
@@ -99,6 +99,7 @@ class agStaffActions extends sfActions
       $query = Zend_Search_Lucene_Search_QueryParser::parse($query);
     }
     $lqResults = Doctrine_core::getTable('agPerson')->getForLuceneQuery($query);
+    $fooResults = Doctrine_core::getTable('agFoo')->getForLuceneQuery($query);
     $this->pager = new sfDoctrinePager('agPerson', 20);
     foreach ($lqResults as $lqResult) {
       $lqIds[] = $lqResult->getId();
