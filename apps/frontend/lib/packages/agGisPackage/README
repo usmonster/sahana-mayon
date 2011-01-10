@@ -34,11 +34,10 @@ README     - This document
 WHAT'S NEW
 ==========
 
-This is the initial creation of agFooPlugin.  It's current functionality includes:
+This is the initial creation of agGisPlugin.  It's current functionality includes:
 
-- Being an example for the other plugins.
-- Being a template
-- Having package.xml
+- Storing of coordinate sets for staff and facilities.
+- Calculating distance between two points.
 
 
 SYSTEM REQUIREMENTS
@@ -46,9 +45,9 @@ SYSTEM REQUIREMENTS
 
 *** IMPORTANT NOTE: ***
 
-The agFooPackage plugin is the template plugin for Agasti Mayon development and does not currently enhance functionality.  To enable this plugin Sahana Agasti 2.0 must be installed.
+The agGisPackage plugin handles GEO distance functionality, both by storing geo coordinates and also in creating distance calculations.  To enable this plugin Sahana Agasti 2.0 must be installed.
 
-Enter any specific Sys Requirements for agFooPackage.
+Enter any specific Sys Requirements for agGisPackage.
 
 
 INSTALLATION

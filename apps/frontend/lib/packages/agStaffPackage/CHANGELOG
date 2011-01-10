@@ -1,0 +1,31 @@
+SAHANA AGASTI 2.0 MAYON STAFF PLUGIN RELEASE NOTES
+
+Updated: 2011-01-10
+
+WHAT'S NEW
+==========
+
+This is the initial creation of agStaffPackage and there are no changes to report.  However, initial functionality includes:
+
+- Basic staff records management capabilities.
+- Export of staff information to Excel.
+
+
+RESOLVED ISSUES
+===============
+
+As there hasn't been a previous release, there are no resolved issues with this
+release.
+
+
+VERSION HISTORY
+===============
+
+agStaffPackage is in development for the 1.0 release.
+
+Plugin agStaffPackage is under initial release as part of the PHP Sahana project, Sahana Agasti:
+
+0.9 - first release under the Agasti series; named Vesuvius
+0.6 - the original Sahana application; named Krakatoa
+
+

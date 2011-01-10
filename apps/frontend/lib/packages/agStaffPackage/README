@@ -1,4 +1,4 @@
-SAHANA AGASTI 2.0 MAYON FOO PLUGIN RELEASE NOTES
+SAHANA AGASTI 2.0 MAYON STAFF PLUGIN RELEASE NOTES
 
 Updated: 2011-01-10
 
@@ -34,11 +34,10 @@ README     - This document
 WHAT'S NEW
 ==========
 
-This is the initial creation of agFooPlugin.  It's current functionality includes:
+This is the initial creation of agStaffPackage.  However, initial functionality includes:
 
-- Being an example for the other plugins.
-- Being a template
-- Having package.xml
+- Basic staff records management capabilities.
+- Export of staff information to Excel.
 
 
 SYSTEM REQUIREMENTS
@@ -46,9 +45,9 @@ SYSTEM REQUIREMENTS
 
 *** IMPORTANT NOTE: ***
 
-The agFooPackage plugin is the template plugin for Agasti Mayon development and does not currently enhance functionality.  To enable this plugin Sahana Agasti 2.0 must be installed.
+The agStaffPackage plugin is the template plugin for Agasti Mayon development and does not currently enhance functionality.  To enable this plugin Sahana Agasti 2.0 must be installed.
 
-Enter any specific Sys Requirements for agFooPackage.
+Enter any specific Sys Requirements for agStaffPackage.
 
 
 INSTALLATION

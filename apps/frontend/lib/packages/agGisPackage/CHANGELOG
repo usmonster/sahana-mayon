@@ -1,14 +1,14 @@
-SAHANA AGASTI 2.0 MAYON FOO PLUGIN RELEASE NOTES
+SAHANA AGASTI 2.0 MAYON GIS PLUGIN RELEASE NOTES
 
 Updated: 2011-01-10
 
 WHAT'S NEW
 ==========
 
-This is the initial creation of agFooPackage and there are no changes to report.  When their are, you'll find them listed here:
+This is the initial creation of agGisPackage and there are no changes to report.  However, initial functionality includes:
 
--change 1
--change 2
+- Storing of coordinate sets for staff and facilities.
+- Calculating distance between two points.
 
 
 RESOLVED ISSUES
@@ -20,6 +20,8 @@ release.
 
 VERSION HISTORY
 ===============
+
+agGisPackage is in development for the 1.0 release.
 
 Plugin agFooPackage is under initial release as part of the PHP Sahana project, Sahana Agasti:
 
