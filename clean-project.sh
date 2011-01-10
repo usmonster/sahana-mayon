@@ -6,12 +6,12 @@ PROJECT_ROOT=`dirname $0`
 # can see the models, forms and filters are specific to Agasti (prefix ag)
 
 # This section removes all old models, forms and 
-rm -rf $PROJECT_ROOT/lib/model/doctrine/ag*.php
+rm -rf $PROJECT_ROOT/lib/model/doctrine/ag*
 rm -rf $PROJECT_ROOT/lib/model/doctrine/base/Baseag*
-rm -rf $PROJECT_ROOT/lib/form/doctrine/ag*.php
+rm -rf $PROJECT_ROOT/lib/form/doctrine/ag*
 rm -rf $PROJECT_ROOT/lib/form/doctrine/base/Baseag*
 rm -rf $PROJECT_ROOT/lib/filter/doctrine/base/Baseag*
-rm -rf $PROJECT_ROOT/lib/filter/doctrine/ag*.php
+rm -rf $PROJECT_ROOT/lib/filter/doctrine/ag*
 
 # The following lines run symfony and doctrine commands to generate new models
 # forms and filters from the yml files
