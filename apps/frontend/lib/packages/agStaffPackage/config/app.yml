@@ -3,5 +3,13 @@ all:
     secondlinks:
       #staff_list:   { name: 'List Staff', route: '@staff_list', parent: 'Staff' }
       #staff_create: { name: 'Create Staff', route: '@staff_create', parent: 'Staff' }
-      plan_facility_staff_resource: { name: 'Plan Staff Res', route: '@scenario_show_facility_staff_resource?id=1', parent: 'Plan' }
-      prep_facility_staff_resource: { name: 'Prep Staff Res', route: '@scenario_show_facility_staff_resource?id=1', parent: 'Prep' }
+      plan_facility_staff_resource: { name: 'Plan Staff Res', route: '@scenario_show_facility_staff_resource?id=1', parent: 'plan' }
+      prep_facility_staff_resource: { name: 'Prep Staff Res', route: '@scenario_show_facility_staff_resource?id=1', parent: 'prep' }
+      prep_facility_staff_resource2: { name: 'Prep Staff Res', route: '@scenario_show_facility_staff_resource?id=1', parent: 'prep' }
+    third_navpages:
+      #staff_list:   { name: 'List Staff', route: '@staff_list', parent: 'Staff' }
+      #staff_create: { name: 'Create Staff', route: '@staff_create', parent: 'Staff' }
+      plan_facility_staff_resource: { name: 'Plan Staff Res3', route: '@scenario_show_facility_staff_resource?id=1', parent: 'plan_facility_staff_resource' }
+      prep_facility_staff_resource: { name: 'Prep Staff Res3', route: '@scenario_show_facility_staff_resource?id=1', parent: 'prep_facility_staff_resource' }
+      plan_facility_staff_resource3: { name: 'Plan Staff Res3.1', route: '@scenario_show_facility_staff_resource?id=1', parent: 'prep_facility_staff_resource2' }
+      prep_facility_staff_resource3: { name: 'Prep Staff Res3.1', route: '@scenario_show_facility_staff_resource?id=1', parent: 'prep_facility_staff_resource2' }

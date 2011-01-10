@@ -1,3 +1,5 @@
+@import url('menu.css');
+
 /**** Layout ****/﻿
 html, body {
   margin: 0;
@@ -313,49 +315,49 @@ h5 {
 }
 /**** Install/Configure ****/
 table.requirements{
-        text-align: left;
-        border-spacing: 1px;
-        border-color:#ffe45c;
-        border-width: 1px;
+  text-align: left;
+  border-spacing: 1px;
+  border-color:#ffe45c;
+  border-width: 1px;
 }
 
 table.requirements tr td.header{
-        font-weight: bold;
+  font-weight: bold;
 }
 table.requirements th{
-        color: #000000;
+  color: #000000;
 }
 
 table.requirements tr td{
-        white-space: nowrap;
-        padding-left: 5px;
-        padding-right: 0px;
-        background-color: #FFFFFF;
-        border-color:#ffe45c;
-        border-width: 1px;
+  white-space: nowrap;
+  padding-left: 5px;
+  padding-right: 0px;
+  background-color: #FFFFFF;
+  border-color:#ffe45c;
+  border-width: 1px;
 }
 
 span.orange{
-        color:          #EE6000;
+  color:          #EE6000;
 }
 span.fail{
-        color:          #AA0000;
-        font-weight:    bold;
+  color:          #AA0000;
+  font-weight:    bold;
 }
 span.green{
-        color:          #00AA00;
+  color:          #00AA00;
 }
 
 .configure {
- width: 670px;
- border: solid 1px #dadada;
- -moz-border-radius: 10px;
- -webkit-border-radius: 10px;
- border-radius: 10px;
- padding: 10px;
- background: #f7f7f7;
- color: #848484;
- font-weight: bold;
+  width: 670px;
+  border: solid 1px #dadada;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  padding: 10px;
+  background: #f7f7f7;
+  color: #848484;
+  font-weight: bold;
 }
 
 .configure h3 {
@@ -408,30 +410,30 @@ span.green{
 
 
 #columnLeft ul li{
-        font-size: 14px;
-        font-weight: normal;
-        color: gray;
-        list-style-image: url('../images/inst_step.gif');
+  font-size: 14px;
+  font-weight: normal;
+  color: gray;
+  list-style-image: url('../images/inst_step.gif');
 }
 
 #columnLeft ul li.current{
-        color: black;
-        list-style-image: url('../images/inst_current.gif');
+  color: black;
+  list-style-image: url('../images/inst_current.gif');
 }
 
 #columnLeft ul li.completed{
-        color: black;
-        list-style-image: url('../images/inst_completed.gif');
+  color: black;
+  list-style-image: url('../images/inst_completed.gif');
 }
 #columnRight div.info{
-        text-align: left;
-        height: 350px;
-        width: 100%;
-        font-color: #000;
-        font-weight: normal;
-        border: 1px gray inset;
-        background-color: white;
-        overflow: scroll;
+  text-align: left;
+  height: 350px;
+  width: 100%;
+  font-color: #000;
+  font-weight: normal;
+  border: 1px gray inset;
+  background-color: white;
+  overflow: scroll;
 }
 
 
@@ -693,7 +695,7 @@ select {
 }
 .bucketHolder {
   display: inline-block;
-  
+
   border: solid 1px #dadada;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -737,18 +739,68 @@ select {
   font-weight: bold;
 }
 
-.navigation ul {
-  list-style-type: none;
+/* MENU */
+
+/*@import url('/css/menu.css');*/
+
+/*#navigation li ul
+{
+  margin:0px;
+  padding:0px;
+  display:none;
+  position:absolute;
+  left:0px;
+  top:20px;
+  background-color:#999;
 }
-/* This is the top level UL that contains all top level nav elements */
+
+#navigation li:hover ul
+{
+  display:block;
+  width:120px;
+}
+
+#navigation li li
+{
+  list-style:none;
+  display:list-item;
+}
+
+#navigation ul li
+{
+  display:inline;
+  height:30px;
+  float:left;
+  list-style:none;
+  margin-left:15px;
+  position:relative;
+}*/
+
+/*#navigation ul {
+  list-style-type: none;
+}*/
+
+/*.menu li ul
+{
+  margin:0px;
+  padding:0px;
+  display:none;
+  position:absolute;
+  left:0px;
+  top:20px;
+}*/
+
+/* This is the top level UL that contains all top level nav elements
 ul.menu {
   padding: 0;
   margin: 0;
   list-style: none;
   list-style-type: none;
-}
+}*/
 
-/* These are the top level nav elements */
+
+/*
+ These are the top level nav elements 
 li.menu1 {
   float: left;
   border: solid 1px red;
@@ -758,7 +810,7 @@ li.menu1 {
   list-style-type: none;
 }
 
-/*This is the container UL for the second level LI elements*/
+This is the container UL for the second level LI elements
 li.menu1 ul {
   display: none;
   position: absolute; 
@@ -768,7 +820,7 @@ li.menu1 ul {
   list-style-type: none;
 }
 
-/* This is the UL that holds the 2nd level menu items*/
+ This is the UL that holds the 2nd level menu items
 li.menu1 > ul {
   top: auto;
   left: auto;
@@ -787,4 +839,4 @@ li.menu2 {
 
 li.menu1:hover > ul {
   display: block;
-}
+}*/

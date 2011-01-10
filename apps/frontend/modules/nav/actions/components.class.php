@@ -1,6 +1,8 @@
 <?php
+
 class navComponents extends sfComponents
 {
+
   /**
    * Executes the building of the navigation menu.
    */
@@ -15,19 +17,34 @@ class navComponents extends sfComponents
     $b = 3;
     //
 
-    foreach ($this->toplinks as $toplink) {
-      $menu->addChild($toplink['name'], $toplink['route'], array('class' => 'menu1'));
-      //echo link_to($toplink['name'], $toplink['route'], array('class' => 'navButton'));
+    foreach ($this->toplinks as $item) {
+      $menu->addChild($item['name'], $item['route'], array('class' => 'menu1'));
+      //echo link_to($item['name'], $item['route'], array('class' => 'navButton'));
 //      foreach ($secondlinks as $secondlink) {
 //      $a = 4;
 //    }
-      foreach ($this->secondlinks as $secondlink) {
-        if($secondlink['parent'] == $toplink['name']) {
-          $menu[$toplink['name']]->addChild($secondlink['name'], $secondlink['route'], array('class' => 'menu2'));
-          //echo link_to($secondlink['name'], $secondlink['route'], array('class' => 'navButton'));
-        }
+    }
+
+    foreach ($this->secondlinks as $item) {
+      $toplink = $this->toplinks[$item['parent']];
+      if (isset($toplink)) {
+        $parent = $menu[$toplink['name']];
+        $parent->addChild($item['name'], $item['route'], array('class' => 'menu2'));
+      }
+      //echo link_to($item['name'], $item['route'], array('class' => 'navButton'));
+    }
+
+    foreach ($this->thirdlinks as $item) {
+      $secondlink = $this->secondlinks[$item['parent']];
+      if (isset($secondlink)) {
+        $topname = $this->toplinks[$secondlink['parent']]['name'];
+        $parent = $menu[$topname][$secondlink['name']];
+        $parent->addChild($item['name'], $item['route'], array('class' => 'menu3'));
       }
     }
+
+
     $this->menu = $menu;
   }
+
 }
