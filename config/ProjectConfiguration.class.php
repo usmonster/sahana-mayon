@@ -19,21 +19,57 @@ class ProjectConfiguration extends sfProjectConfiguration
     Zend_Loader_Autoloader::getInstance();
     self::$zendLoaded = true;
   }
-  
+  public function enablePackages($packages) {
+    if (!is_array($packages)) {
+      if (func_num_args() > 1) {
+        $packages = func_get_args();
+      } else {
+        $packages = array($packages);
+      }
+    }
+    foreach ($packages as $package) {
+      $this->setPluginPath($package, sfConfig::get('sf_app_dir') . '/lib/packages/' . $package);
+    }
+    $this->enablePlugins($packages);
+  }
+
+  public function disabePackages($packages) {
+    if (!is_array($packages)) {
+      if (func_num_args() > 1) {
+        $packages = func_get_args();
+      } else {
+        $packages = array($packages);
+      }
+    }
+    foreach ($packages as $package) {
+      $this->setPluginPath($package, sfConfig::get('sf_app_dir') . '/lib/packages/' . $package);
+    }
+    $this->disablePlugins($packages);
+  }
+
   public function setup()
   {
-    $this->enablePlugins(array('sfDoctrinePlugin','sfDoctrineGuardPlugin'));
-    $this->enablePlugins('sfDatagridPlugin');
-    $this->enablePlugins('sfDoxygenPlugin');
-    $this->enablePlugins('sfFormExtraPlugin');
-    $this->enablePlugins('sfPhpExcelPlugin');
-    $this->enablePlugins('sfJqueryReloadedPlugin');
-    $this->enablePlugins('sfJQueryUIPlugin');
-    $this->enablePlugins('agGisPlugin');
-    $this->enablePlugins('agStaffPlugin');
-    $this->enablePlugins('agGisPlugin');
-    $this->enablePlugins('ajDoctrineLuceneablePlugin');
-    $this->enablePlugins('ioMenuPlugin');  
-    $this->enablePlugins('agFooPlugin');  
+
+    // plugins are considered 'core' elements, akin to apps/frontend/modules, they should not be
+    // disabled
+    $this->enablePlugins(
+                    array('sfDoctrinePlugin',
+                          'sfDoctrineGuardPlugin',
+                          'sfDatagridPlugin',
+                          'sfDoxygenPlugin',
+                          'sfFormExtraPlugin',
+                          'sfPhpExcelPlugin',
+                          'sfJqueryReloadedPlugin',
+                          'sfJQueryUIPlugin',
+                          'ajDoctrineLuceneablePlugin',
+                          'ioMenuPlugin'));
+
+
+
+    //packages are specific to the application, though not core and should function standalone
+    $this->enablePackages(
+                    array('agFooPackage',
+                          'agStaffPackage',
+                          'agGisPackage'));
   }
 }

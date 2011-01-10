@@ -5,15 +5,16 @@
  */
 class agPluginManager extends sfSymfonyPluginManager
 {
-  static public function getPlugins()
+  static public function getPackages()
   {
-    if ($handle = opendir(sfConfig::get('sf_plugins_dir'))) {
+    if ($handle = opendir(sfConfig::get('sf_app_dir') . '/lib/packages/')) {
+      $i = 0;
       while (false !== ($file = readdir($handle))) {
           //if file is not . or .. OR file/directory is not an Agasti module, disallow it from being meddled with here.
-        $i = 0;
+
         if ($file != "." && $file != ".." && (strpos($file, 'ag') === 0)) {
               $module_array[$i]['name']  = $file;
-              $module_array[$i]['action'] = agPluginManager::pluginStatus($file, sfConfig::get('sf_config_dir'));
+              $module_array[$i]['action'] = agPluginManager::packageStatus($file, sfConfig::get('sf_config_dir'));
               //if the module is enabled, set the action to disable, etc.
               $i++;
           }
@@ -22,7 +23,7 @@ class agPluginManager extends sfSymfonyPluginManager
     }
     return $module_array;
   }
-  static public function pluginStatus($plugin, $configDir)
+  static public function packageStatus($plugin, $configDir)
   {
     if (!$configDir)
     {
@@ -30,11 +31,11 @@ class agPluginManager extends sfSymfonyPluginManager
     }
     $file = $configDir.'/ProjectConfiguration.class.php';
     $source = file_get_contents($file);
-    if(strpos($source, $plugin) === 0){
-      return 'enable';
+    if(strpos($source, $plugin) === FALSE){
+      return 0;
     }
     else{
-      return 'disable';
+      return 1;
     }
     //is the plugin/module in the enabled array? return true. else, return false
   }

@@ -178,7 +178,9 @@ class agInstall
   function stage2()
   {
 
-    $table = '<table class="requirements" style="align:center"><tr style="font-weight:bold;"><td>&nbsp;</td><td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr>';
+    $table = '<table class="requirements" style="align:center; width:100%;">
+                <th><tr style="font-weight:bold;">
+                  <td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr></th>';
     /**
      * @todo clean up the following code
      */
@@ -198,7 +200,7 @@ class agInstall
         // this will be useful$result->setHint($req['error']);
       }
 
-      $current = '<tr><td>&nbsp;</td><td><strong>' . $req['name'] . '</strong></td>' . '<td>' . $req['current'] . '</td>';
+      $current = '<tr><td><strong>' . $req['name'] . '</strong></td>' . '<td>' . $req['current'] . '</td>';
       $required = $req['required'] ? $req['required'] : '&nbsp;';
       $recommend = $req['recommended'] ? $req['recommended'] : '&nbsp;';
       $res = $req['result'] ? '&nbsp;' : 'fail';

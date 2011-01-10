@@ -1,6 +1,6 @@
 all:
   .array:
-    second_navpages:
+    secondlinks:
       #staff_list:   { name: 'List Staff', route: '@staff_list', parent: 'Staff' }
       #staff_create: { name: 'Create Staff', route: '@staff_create', parent: 'Staff' }
       plan_facility_staff_resource: { name: 'Plan Staff Res', route: '@scenario_show_facility_staff_resource?id=1', parent: 'Plan' }

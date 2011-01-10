@@ -10,7 +10,7 @@ class navComponents extends sfComponents
     // Nils's & Charles's modifications:
     $route = sfContext::getInstance()->getRouting()->getCurrentRouteName();
     $this->toplinks = sfConfig::get('app_toplinks');
-    $this->secondlinks = sfConfig::get('app_second_navpages');
+    $this->secondlinks = sfConfig::get('app_secondlinks');
     $this->thirdlinks = sfConfig::get('app_third_navpages');
     $b = 3;
     //
