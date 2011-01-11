@@ -685,7 +685,7 @@ select {
 }
 .bucketHolder {
   display: inline-block;
-  
+  min-height: 520px;
   border: solid 1px #dadada;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -698,7 +698,7 @@ select {
   font-size: 1em;
   min-height: 520px;
   width:400px;
-  height: 100%;
+  height: auto;
   border:1px solid #dadada;
   background:#f1f1f1;
   list-style-type: none;

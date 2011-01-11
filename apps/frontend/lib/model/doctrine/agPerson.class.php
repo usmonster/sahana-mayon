@@ -61,6 +61,14 @@ class agPerson extends BaseagPerson
     return $names;
   }
 
+  public function getNameString()
+  {
+    $names = null;
+    foreach ($this->getAgPersonMjAgPersonName() as $name) {
+      $names = $names . ' ' . $name->getAgPersonName()->person_name;
+    }
+    return $names;
+  }
 
 //  public function getEmail()
 //  {

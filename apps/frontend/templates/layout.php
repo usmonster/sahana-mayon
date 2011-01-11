@@ -24,8 +24,7 @@
         }
         ?>
       </div>
-        <?php include_component('sfGuardAuth', 'login'); ?>
-
+        <?php include_component('sfGuardAuth', 'login'); ?> 
     </div>
     <div id="wrapper">
       <div id="navigation">

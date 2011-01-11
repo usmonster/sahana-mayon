@@ -26,12 +26,35 @@ class agStaffPersonForm extends agPersonForm
     /**
      *  if the staff already has resources and organizations assigned, get all the data for them
      *   */
-   $staff_resources = array();
-   if ($this->getObject()->getAgStaff()->getFirst())
-   {
-   foreach($this->getObject()->getAgStaff()->getFirst()->getAgStaffResource() as $staffrec) {
-     $staff_resources[] = $staffrec->getId();
+   $gloogle = new agStaffResourceOrganizationForm();
+   // Create the new agStaffForm() and configure its widgets.
+   $floogle = new agStaffForm();
+   $floogle->getWidgetSchema()->offsetGet('staff_status_id')->addOption('method', 'getStaffStatus');
+   $floogle->getWidgetSchema()->offsetGet('person_id')->addOption('method', 'getNameString');
+
+   $floogle->getWidgetSchema()->offsetSet('ag_staff_resource_type_list', new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agStaffResourceType')));
+
+   $floogle->getWidgetSchema()->offsetUnset('created_at');
+   $floogle->getWidgetSchema()->offsetUnset('updated_at');
+   $floogle->getWidgetSchema()->offsetUnset('person_id');
+
+   $floogle->getWidgetSchema()->setLabel('staff_status_id', 'Status');
+   $floogle->getWidgetSchema()->setLabel('ag_staff_resource_type_list', 'Staff Type');
+
+   // Check to see if there is already an agStaff object that can be used to fill the form.
+   if ($staff = $this->getObject()->getAgStaff()->getFirst()) {
+     // Set the form's object to $staff
+     $floogle->getObject()->merge($staff);
+     // Set the form defaults to $staff. updateDefaultsFromObject won't do this.
+     $floogle->setDefaults($staff->toArray());
    }
+   $this->embedForm('floogle', $floogle);
+   $this->embedForm('gloogle', $gloogle);
+   $staff_resources = array();
+   if ($this->getObject()->getAgStaff()->getFirst()) {
+     foreach($this->getObject()->getAgStaff()->getFirst()->getAgStaffResource() as $staffrec) {
+       $staff_resources[] = $staffrec->getId();
+     }
    }
    if($staff_resources){
      if ($this->agStaffResources = Doctrine::getTable('agStaffResourceOrganization')
@@ -78,10 +101,11 @@ class agStaffPersonForm extends agPersonForm
   protected function doSave($con = null)
   {
     //if($this->isNew()){
-    parent::doSave();
+//    parent::doSave();
     //}
   }
-
+// Going in here for all the embedded forms. Which makes sense, since this extends person. Maybe a check, return parent if it's not what we want?
+  
   public function saveEmbeddedForms($con = null, $forms = null)
   {
     if (null === $forms) {
