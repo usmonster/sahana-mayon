@@ -952,5 +952,14 @@ class scenarioActions extends sfActions
     }
     $this->redirect('scenario/scenarioshiftlist');
   }
-  
+
+  public function executeGeneratescenarioshift()
+  {
+//    $generatedResult = agScenarioGenerator::shiftGenerator();
+//    $this->queryString = $generatedResult[0];
+//    $this->resultSet = $generatedResult[1];
+//    $this->numRowsReturned = $this->resultSet->count();
+    $generatedResult = agScenarioGenerator::shiftGenerator();
+    print_r($generatedResult->toArray());
+  }
 }
