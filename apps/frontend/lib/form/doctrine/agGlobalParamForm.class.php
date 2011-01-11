@@ -10,87 +10,49 @@
  * @author     CUNY SPS
  * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 29553 2010-05-20 14:33:00Z Kris.Wallsmith $
  */
-class agGlobalParamForm extends sfForm
+class agGlobalParamForm extends BaseagGlobalParamForm
 {
   public function setup()
   {
-    /**
-     *  if the facility already has resources assigned, get all the data for them
-     *   */
+    parent::setup();
+    $this->setWidgets(array(
+      'id'         => new sfWidgetFormInputHidden(),
+      'host_id'    => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agHost'), 'add_empty' => false)),
+      'datapoint'  => new sfWidgetFormInputText(),
+      'value'      => new sfWidgetFormTextarea(),
+      //'created_at' => new sfWidgetFormDateTime(),
+      //'updated_at' => new sfWidgetFormDateTime(),
+    ));
 
-    $globalparamContainer = new sfForm(array(), array());
-    if (//$this->agGlobalParams = Doctrine::getTable('agGlobalParam')->findAll()){
+    $this->setValidators(array(
+      'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
+      'host_id'    => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agHost'))),
+      'datapoint'  => new sfValidatorString(array('max_length' => 128)),
+      'value'      => new sfValidatorString(array('max_length' => 128)),
+      //'created_at' => new sfValidatorDateTime(),
+      //'updated_at' => new sfValidatorDateTime(),
+    ));
+    $this->validatorSchema->setPostValidator(
+    new sfValidatorDoctrineUnique(array('model' => 'agGlobalParam', 'column' => array('host_id', 'datapoint')))
+    );
 
-            $this->ag_global_params = Doctrine_Query::create()
-            ->select('agSFR.*')
-            ->from('agGlobalParam agSFR')
-            ->execute()) {
+    $this->widgetSchema->setNameFormat('ag_global_param[%s]');
 
-      /**
-       *  for every existing facility resource, create an agEmbeddedFacilityResourceForm and embed it into $facilityResourceContainer
-       *   */
-      foreach ($this->ag_global_params as $globalParam) {
-        $globalParamForm = new embeddedGlobalParamForm($globalParam);
+    $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
-        $globalParamForm->setDefault('host_id', 1);
-        $globalParamId = $globalParam->getId();
-        $globalparamContainer->embedForm($globalParamId, $globalParamForm);
-        $globalparamContainer->widgetSchema->setLabel($globalParamId, false);
-      }
-      $globalParamForm = new embeddedGlobalParamForm;
-      $globalparamContainer->embedForm('global', $globalParamForm);
-    }
-    $this->embedForm('ag_global_param', $globalparamContainer);
+    $this->setupInheritance();
+
+
   }
   public function configure(){
     parent::configure();
         unset($this['created_at'],
-          $this['updated_at'],
-          $this['host_id']
+          $this['updated_at']
           );
   }
   public function getModelName()
   {
     return 'agGlobalParam';
-  }
-  public function saveEmbeddedForms($con = null, $forms = null)
-  {
-    /**
-     *
-     **/
-    if (null === $forms) {
-      $forms = $this->embeddedForms;
-    }
-    if (is_array($forms)) {
-      foreach ($forms as $key => $form) {
-        if ($form instanceof embeddedGlobalParamForm) {
-          if ($form->isNew()) {
-            $newFacilityResource = $form->getObject();
-            if ($newFacilityResource->capacity && $newFacilityResource->facility_resource_type_id
-                && $newFacilityResource->facility_resource_status_id) {
-              $newFacilityResource->setFacilityId($this->getObject()->getId());
-              $newFacilityResource->save();
-              $this->getObject()->getAgFacilityResource()->add($newFacilityResource);
-              unset($forms[$key]);
-            } else {
-              unset($forms[$key]);
-            }
-          } else {
-            $objGlobalParam = $form->getObject();
-            if ($objGlobalParam->value && $objGlobalParam->datapoint) {
-              $form->getObject()->setHostId(1);
-              $form->getObject()->save();
-            } else {
-              $form->getObject()->delete();
-            }
-            unset($forms[$key]);
-            //$form->getObject()->setFacilityId($this->getObject()->getId());
-          }
-        }
-      }
-    }
-
-    return parent::saveEmbeddedForms($con, $forms);
   }
 
 }

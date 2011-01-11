@@ -36,6 +36,12 @@ class agGisActions extends sfActions
   public function executeConfig(sfWebRequest $request)
   {
     //configuration options
+    $this->map_url = Doctrine::getTable('agGlobalParam') //all global parameters
+                                      ->createQuery('a')
+                                      ->select('a.*')
+                                      ->from('agGlobalParam a')
+                                      ->where('datapoint =?', 'gis_map_url')
+                                      ->fetchOne();
   }
   /**
    * presents the user with a form for calculating distance between two records

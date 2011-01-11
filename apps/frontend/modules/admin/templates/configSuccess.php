@@ -17,7 +17,7 @@
 require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config.inc.php');
 
 ?>
-<div id="infoHolder" style="display:inline;">
+<div id="infoHolder" style="display:inline-block;">
   <h2>System Configuration</h2>
   <p style="color: #848484">This page will allow you to configure your Agasti installation.</p>
   <p style="color: #848484">Use the form to the top left to enter your system information.
@@ -47,13 +47,13 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
         <li>
           <label>username:</label><input disabled="disabled" type="text" name="db_user" id="db_user" class="inputGray" value="<?php echo $agConfig->getConfig('DB_USER', 'with')  ?>" />
         </li>
-        <li>
-          <label>password:</label><input disabled="disabled" type="password" name="db_pass" id="db_pass" class="inputGray" value="<?php echo $agConfig->getConfig('DB_PASSWORD', 'sysfiles')  ?>" />
+<!--        <li>
+          <label>password:</label><input disabled="disabled" type="password" name="db_pass" id="db_pass" class="inputGray" value="<?php // echo $agConfig->getConfig('DB_PASSWORD', 'sysfiles')  ?>" />
         </li>
         <li>
           <input disabled="disabled" id="init_schema" type="checkbox" name="init_schema" />re-initialize database schema
         </li>
-        <li><span style="color:#ff0000;">WARNING: this will drop your current database.</span></li>
+        <li><span style="color:#ff0000;">WARNING: this will drop your current database.</span></li>!-->
       </ul>
     </fieldset>
     <fieldset>
@@ -142,12 +142,32 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
     echo $table . '</table><br />' . $final_result;
     ?>
   </fieldset>
+Here you can set up global parameters (variables) that can be used throughout the application.  This keeps all settings in a single place, click on a global param link to edit that item or add a new one at the bottom
   <fieldset>
     <legend>Global Parameters</legend>
+<table>
+  <thead>
+    <tr>
+      <th>Global Param</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($ag_global_params as $ag_global_param): ?>
+    <tr>
+      <td><a href="<?php echo url_for('admin/config?param='.$ag_global_param->getId()) ?>"><?php echo $ag_global_param->getDatapoint() ?></a></td>
+      <td><?php echo $ag_global_param->getValue() ?></td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
 
 <?php
 //this still needs some fixing
-//include_partial('paramform', array('paramform' => $paramform)) ?>
+include_partial('paramform', array('paramform' => $paramform)) ?>
+
+
+
   </fieldset>
 </form>
 </div>

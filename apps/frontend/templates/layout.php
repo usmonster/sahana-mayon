@@ -37,8 +37,8 @@
             <?php include_partial('agStaff/searchForm'); ?>
           </span>
         <?php endif ?>
-        </div>
-        <div id="columns">
+      </div>
+      <div id="columns">
         <?php echo $sf_content ?>
           <!-- Maybe we should somehow disable the other login form from displaying in
           sf_content

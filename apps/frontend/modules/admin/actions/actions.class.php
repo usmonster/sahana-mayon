@@ -62,14 +62,32 @@ class adminActions extends sfActions
     /**
      * @param sfWebRequest $request is what the user is asking of the server
      */
-    $this->paramform = new agGlobalParamForm();
+    if($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('param')))){
+      $this->paramform = new agGlobalParamForm($ag_global_param);
+    }
+    else{
+      $this->paramform = new agGlobalParamForm();
+    }
+    $this->ag_global_params = Doctrine_Core::getTable('agGlobalParam')
+        ->createQuery('a')
+        ->execute();
+
+    if($request->getParameter('delete'))
+    {
+      //$request->checkCSRFProtection();
+
+      $this->forward404Unless($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('deleteparam'))), sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam')));
+      $ag_global_param->delete();
+
+      $this->redirect('admin/config');
+    }
 
     if($request->getParameter('update'))
     {
       $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
       //$this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
-      $this->paramform = new agGlobalParamForm();
-
+      
+      //are we editing or creating a new param
       $this->processParam($request, $this->paramform);
     }
     if($request->getParameter('saveconfig'))
@@ -277,12 +295,12 @@ class adminActions extends sfActions
       $this->redirect('admin/edit?id='.$ag_account->getId());
     }
   }
-  protected function processParam(sfWebRequest $request, sfForm $form)
+  protected function processParam(sfWebRequest $request, sfForm $paramform)
   {
-    $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
-    if ($form->isValid())
+    $paramform->bind($request->getParameter($paramform->getName()), $request->getFiles($paramform->getName()));
+    if ($paramform->isValid())
     {
-      $form->save();
+      $paramform->save();
 
       $this->redirect('admin/config');
     }
