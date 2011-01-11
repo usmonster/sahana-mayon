@@ -841,13 +841,14 @@ class scenarioActions extends sfActions
   {
     //Query to get the active scenario
     $this->scenario = Doctrine::getTable('agScenario')
-            ->findByDql('id = ?', $this->getUser()->getAttribute('scenario_id'))
-            ->getFirst();
+
+        ->findByDql('id = ?', $request->getParameter('id'))
+        ->getFirst();
     // Query to get all staff resource types.
     $this->staffResourceTypes = Doctrine_Query::create()
-            ->select('a.id, a.staff_resource_type')
-            ->from('agStaffResourceType a')
-            ->execute();
+        ->select('a.id, a.staff_resource_type')
+        ->from('agStaffResourceType a')
+        ->execute();
     // Set $group to the user attribute to the 'scenarioFacilityGroup' attribute that came in through the request.
     $group = $this->getUser()->getAttribute('scenarioFacilityGroup');
     if (!is_array($group)) {
@@ -865,6 +866,35 @@ class scenarioActions extends sfActions
       //$this->staffresourceform = new agScenarioFacilityResourceForm();
     }
   }
+    public function executeEditstaffresources(sfWebRequest $request)
+  {
+    //Query to get the active scenario
+    $this->scenario = Doctrine::getTable('agScenario')
+        ->findByDql('id = ?', $this->getUser()->getAttribute('scenario_id'))  //instead of relying on the user session's variable, let's use a param in the request
+        ->getFirst();
+    // Query to get all staff resource types.
+    $this->staffResourceTypes = Doctrine_Query::create()
+        ->select('a.id, a.staff_resource_type')
+        ->from('agStaffResourceType a')
+        ->execute();
+    // Set $group to the user attribute to the 'scenarioFacilityGroup' attribute that came in through the request.
+    $group = $this->getUser()->getAttribute('scenarioFacilityGroup');
+    if (!is_array($group)) {
+      $this->array = false;
+      $this->scenarioFacilityGroup = $group;
+      $this->scenarioFacilityResources = $this->scenarioFacilityGroup->getAgScenarioFacilityResource();
+      $this->staffresourceform = new agScenarioFacilityResourceForm();
+    } else {
+      foreach ($group as $scenarioFacilityGroup) {
+        $groups[] = $scenarioFacilityGroup;
+      }
+      $this->array = true;
+      $this->scenarioFacilityGroup = $groups;
+      //$this->scenarioFacilityResources = $this->scenarioFacilityGroup->getAgScenarioFacilityResource();
+      //$this->staffresourceform = new agScenarioFacilityResourceForm();
+    }
+  }
+
 
   public function executeShowFacilityStaffResource(sfWebRequest $request)
   {

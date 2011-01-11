@@ -21,10 +21,10 @@ $PROJECT_ROOT/symfony doctrine:clean --no-confirmation
 $PROJECT_ROOT/symfony doctrine:build-model
 $PROJECT_ROOT/symfony doctrine:drop-db --no-confirmation
 $PROJECT_ROOT/symfony doctrine:create-db
-$PROJECT_ROOT/symfony doctrine:build-sql
+sudo -u www-data $PROJECT_ROOT/symfony doctrine:build-sql
 $PROJECT_ROOT/symfony doctrine:insert-sql
 $PROJECT_ROOT/symfony doctrine:build-forms
 $PROJECT_ROOT/symfony doctrine:build-filters
 # This loads all sample data and fixtures in from yml files existing in
 # the data directory
-$PROJECT_ROOT/symfony doctrine:data-load
+sudo -u www-data $PROJECT_ROOT/symfony doctrine:data-load -t
