@@ -14,7 +14,7 @@ echo '<a href="' . url_for('staff/cred') . '" class="buttonText" title="Credenti
     <legend><img src="<?php echo url_for('images/config.png') ?>" alt="config gear icon" />Configuration:</legend>
 <?php
 echo '<a href="' . url_for('admin/config') . '" class="buttonText" title="System Settings">System Settings<a/><br/>';
-echo '<a href="' . url_for('admin/moduleman') . '" class="buttonText" title="Module Manager">Module Manager</a><br/>';
+echo '<a href="' . url_for('admin/pacman') . '" class="buttonText" title="Module Manager">Package Manager</a><br/>';
 ?>
   </fieldset>
 

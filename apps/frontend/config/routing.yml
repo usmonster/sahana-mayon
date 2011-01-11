@@ -41,6 +41,11 @@ default_index:
   url:   /:module
   param: { action: index }
 
+scenario_show_facility_staff_resource:
+  url:     /scenario/:id/staff_resources
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: showFacilityStaffResource }
+
 default:
   url:   /:module/:action/*
 

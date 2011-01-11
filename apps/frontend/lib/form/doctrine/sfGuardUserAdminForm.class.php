@@ -17,8 +17,6 @@
 * @todo add description of class in header
 */
 
-
-
 class sfGuardUserAdminForm extends BasesfGuardUserAdminForm
 {
 /**

@@ -1,0 +1,127 @@
+ul.menu ul{display:none}
+ul.menu li:hover>ul{display:block}
+ul.menu ul{position: absolute;left:-1px;top:98%;}
+ul.menu ul ul{position: absolute;left:98%;top:-2px;}
+ul.menu,ul.menu ul {
+	margin:0px;
+	list-style:none;
+	padding:0px 2px 2px 0px;
+	background-color:#ffffff;
+	background-repeat:repeat;
+	border-color:#AAAAAA;
+	border-width:1px;
+	border-style:solid;
+}
+ul.menu table {border-collapse:collapse}
+ul.menu {
+	display:block;
+	zoom:1;
+	float: left;
+}
+ul.menu ul{
+	width:161px;
+}
+ul.menu li{
+	display:block;
+	margin:2px 0px 0px 2px;
+	font-size:0px;
+}
+ul.menu a:active, ul.menu a:focus {
+outline-style:none;
+}
+ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
+	display:block;
+	vertical-align:middle;
+	background-color:#ffffff;
+	border-width:0px;
+	border-color:#6655ff;
+	border-style:solid;
+	text-align:left;
+	text-decoration:none;
+	padding:4px;
+	_padding-left:0;
+	font:normal 11px Verdana;
+	color: #444444;
+	text-decoration:none;
+	cursor:default;
+}
+ul.menu span{
+	overflow:hidden;
+}
+ul.menu li {
+	float:left;
+}
+ul.menu ul li {
+	float:none;
+}
+ul.menu ul a {
+	text-align:left;
+	white-space:nowrap;
+}
+ul.menu li.sep{
+	text-align:center;
+	padding:0px;
+	line-height:0;
+	height:100%;
+}
+ul.menu li.sep span{
+	float:none;	padding-right:0;
+	width:5px;
+	height:16px;
+	display:inline-block;
+	background-color:#AAAAAA;	background-image:none;}
+ul.menu ul li.sep span{
+	width:80%;
+	height:3px;
+}
+ul.menu li:hover{
+	position:relative;
+}
+ul.menu li:hover>a{
+	background-color:#4792E6;
+	border-color:#665500;
+	border-style:solid;
+	font:normal 11px Verdana;
+	color: #ffffff;
+	text-decoration:none;
+}
+ul.menu li a:hover{
+	position:relative;
+	background-color:#4792E6;
+	border-color:#665500;
+	border-style:solid;
+	font:normal 11px Verdana;
+	color: #ffffff;
+	text-decoration:none;
+}
+ul.menu li.dis a {
+	color: #AAAAAA !important;
+}
+ul.menu img {border: none;float:left;_float:none;margin-right:4px;width:16px;
+height:16px;
+}
+ul.menu ul img {width:16px;
+height:16px;
+}
+ul.menu img.over{display:none}
+ul.menu li.dis a:hover img.over{display:none !important}
+ul.menu li.dis a:hover img.def {display:inline !important}
+ul.menu li:hover > a img.def  {display:none}
+ul.menu li:hover > a img.over {display:inline}
+ul.menu a:hover img.over,ul.menu a:hover ul img.def,ul.menu a:hover a:hover ul img.def,ul.menu a:hover a:hover a:hover ul img.def,ul.menu a:hover a:hover img.over,ul.menu a:hover a:hover a:hover img.over,ul.menu a:hover a:hover a:hover a:hover img.over{display:inline}
+ul.menu a:hover img.def,ul.menu a:hover ul img.over,ul.menu a:hover a:hover ul img.over,ul.menu a:hover a:hover a:hover ul img.over,ul.menu a:hover a:hover img.def,ul.menu a:hover a:hover a:hover img.def,ul.menu a:hover a:hover a:hover a:hover img.def{display:none}
+ul.menu a:hover ul,ul.menu a:hover a:hover ul,ul.menu a:hover a:hover a:hover ul{display:block}
+ul.menu a:hover ul ul,ul.menu a:hover a:hover ul ul{display:none}
+/*ul.menu span{
+	display:block;
+	background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arrv_anim_1.gif);
+	background-position:right center;
+	background-repeat: no-repeat;
+   padding-right:11px;}
+ul.menu li:hover>a>span{	background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arrv_anim_1o.gif);
+}
+ul.menu a:hover span{	_background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arrv_anim_1o.gif)}
+ul.menu ul span,ul.menu a:hover table span{background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arr_double_1.gif)}
+ul.menu ul li:hover > a span{	background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arr_double_1o.gif);}
+ul.menu table a:hover span,ul.menu table a:hover a:hover span,ul.menu table a:hover a:hover a:hover span{background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arr_double_1o.gif)}
+ul.menu table a:hover table span,ul.menu table a:hover a:hover table span{background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arr_double_1.gif)}*/

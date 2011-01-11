@@ -31,20 +31,26 @@ class adminActions extends sfActions
      * @param sfWebRequest $request is what the user is asking of the server
      */
   }
-  public function executeModuleman(sfWebRequest $request)
+  public function executePacman(sfWebRequest $request)
   {
     /**
      *
      * @param sfWebRequest $request is what the user is asking of the server
      */
-    $this->modules_available = agPluginManager::getPlugins();
+
+    $this->packages_available = agPluginManager::getPackages();
     if($request->getParameter('enable'))
     {
-      sfSymfonyPluginManager::enablePlugin('agGisPlugin' , sfConfig::get('sf_config_dir'));
+      $enable_array = json_decode($request->getParameter('enable'));
+      $this->getContext()->getConfiguration()->enablePackages($enable_array);
+      //sfSymfonyPluginManager::enablePlugin('agGisPlugin' , sfConfig::get('sf_config_dir'));
     }
-      if($request->getParameter('disable'))
+    if($request->getParameter('disable'))
     {
-      sfSymfonyPluginManager::disablePlugin('agGisPlugin' , sfConfig::get('sf_config_dir'));
+      $disable_array = json_decode($request->getParameter('disable'));
+      $this->getContext()->getConfiguration()->disablePackages($disable_array);
+
+      //sfSymfonyPluginManager::disablePlugin('agGisPlugin' , sfConfig::get('sf_config_dir'));
       //disabling the plugin/module turns it off, we should remove any menu items associated with this
       //module/plugin, but this mapping needs to be stored somewhere.  maybe routing should exist in the plugin?
     }
@@ -188,12 +194,34 @@ class adminActions extends sfActions
   }
 /**
 * 
-* @todo add description of function above and details below
+* @todo learn how description should be explained properly
 * @param $request (add description)
 */
   public function executeNew(sfWebRequest $request)
   {
     $this->form = new agAccountForm();
+  }
+  public function executeCred(sfWebRequest $request)
+  {
+
+        $this->sf_guard_permissions = Doctrine_Core::getTable('sfGuardPermission')
+                        ->createQuery('a')
+                        ->execute();
+        $this->sf_guard_group_permissions = Doctrine_Core::getTable('sfGuardGroupPermission')
+                        ->createQuery('a')
+                        ->execute();
+
+
+        $this->form = new agCredForm();
+        //if a user has entered information, process said information
+        if($request->isMethod(sfRequest::POST)){
+          $this->forward404Unless($request->isMethod(sfRequest::POST));
+          $this->processCredform($request, $this->form);
+        
+          $this->setTemplate('cred');
+        }
+
+
   }
 /**
 * 
@@ -277,5 +305,12 @@ class adminActions extends sfActions
       $this->redirect('admin/config');
     }
   }
-
+  protected function processCredform(sfWebRequest $request, sfForm $credform) {
+      $credform->bind($request->getParameter($credform->getName()), $request->getFiles($credform->getName()));
+      if ($credform->isValid()) {
+          $cred_result = $credform->save();
+          //do i really need to set a variable?
+          $this->redirect('admin/cred');
+      }
+  }
 }
