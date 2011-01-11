@@ -1,0 +1,51 @@
+# Sample of Staff Resource
+
+agStaffResource:
+  adrien_nurse:
+    Id: 1
+    agStaff: 1
+    agStaffResourceType: med_nrs
+  adrien_spe:
+    Id: 1
+    agStaff: 1
+    agStaffResourceType: spe
+  aimee_med:
+    Id: 2
+    agStaff: 2
+    agStaffResourceType: med_oth
+  alan_spe:
+    Id: 3
+    agStaff: 3
+    agStaffResourceType: spe
+  alan_staff:
+    Id: 3
+    agStaff: 3
+    agStaffResourceType: staff
+  alicea_nurse:
+    Id: 4
+    agStaff: 4
+    agStaffResourceType: med_nrs
+  andre_spe:
+    Id: 5
+    agStaff: 5
+    agStaffResourceType: spe
+  angelette_nurse:
+    Id: 6
+    agStaff: 6
+    agStaffResourceType: med_nrs
+  angela_staff:
+    Id: 7
+    agStaff: 7
+    agStaffResourceType: staff
+  anna_operator:
+    Id: 8
+    agStaff: 8
+    agStaffResourceType: operator
+  antonio_nurse:
+    Id: 9
+    agStaff: 9
+    agStaffResourceType: med_nrs
+  aqeela_staff:
+    Id: 10
+    agStaff: 10
+    agStaffResourceType: staff
