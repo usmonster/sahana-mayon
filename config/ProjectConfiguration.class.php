@@ -20,7 +20,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enablePlugins($packages);
   }
 
-  public function disabePackages($packages) {
+  public function disablePackages($packages) {
     if (!is_array($packages)) {
       if (func_num_args() > 1) {
         $packages = func_get_args();

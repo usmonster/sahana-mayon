@@ -618,16 +618,13 @@ function agSaveSetup($config)
         => array('agSudoAuth', 'authenticate'));
   $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
 
-  $appConfig['all']['.array']['navpages'] =
-      array(
+  $appConfig['all']['.array']['toplinks'] =
+  array(
         'homepage' => array('name' => 'Home', 'route' => '@homepage'),
-        'facility' => array('name' => 'Facility', 'route' => '@facility'),
-        'staff' => array('name' => 'Staff', 'route' => '@staff'),
-        'client' => array('name' => 'Client', 'route' => '@client'),
-        'scenario' => array('name' => 'Scenario', 'route' => '@scenario'),
-        'gis' => array('name' => 'GIS', 'route' => '@gis'),
-        'org' => array('name' => 'Organization', 'route' => '@org'),
-        'admin' => array('name' => 'Admin', 'route' => '@admin'),
+        'plan' => array('name' => 'Plan', 'route' => '@scenario'),
+        'prep' => array('name' => 'Prep', 'route' => '@scenario'),
+        'foo' => array('name' => 'Foo', 'route' => '@foo'),
+        'admin' => array('name' => 'Scenario', 'route' => '@admin'),
         'about' => array('name' => 'About', 'route' => '@about'));
   // update config.yml
   try {

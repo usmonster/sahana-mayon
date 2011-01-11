@@ -69,6 +69,7 @@ class agFooActions extends sfActions
   public function executeNew(sfWebRequest $request)
   {
     $this->form = new agFooForm();
+    unset($this->form['created_at'],$this->form['updated_at']);
   }
 
   public function executeCreate(sfWebRequest $request)
@@ -76,7 +77,7 @@ class agFooActions extends sfActions
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
     $this->form = new agFooForm();
-
+    unset($this->form['created_at'],$this->form['updated_at']);
     $this->processForm($request, $this->form);
 
     $this->setTemplate('new');
@@ -86,6 +87,7 @@ class agFooActions extends sfActions
   {
     $this->forward404Unless($ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id'))), sprintf('Object ag_foo does not exist (%s).', $request->getParameter('id')));
     $this->form = new agFooForm($ag_foo);
+    unset($this->form['created_at'],$this->form['updated_at']);
   }
 
   public function executeUpdate(sfWebRequest $request)

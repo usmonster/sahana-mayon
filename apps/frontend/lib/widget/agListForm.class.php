@@ -9,8 +9,6 @@ class agListForm
 
   public static function facilitylist($sf_request,$title, $columns, $pager)
   {
-
-
       $sortColumn = $sf_request->getGetParameter('sort');
       $sortOrder = $sf_request->getGetParameter('order');
       ($sf_request->getGetParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';

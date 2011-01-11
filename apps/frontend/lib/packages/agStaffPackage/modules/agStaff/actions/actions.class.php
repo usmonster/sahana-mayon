@@ -35,7 +35,6 @@ class agStaffActions extends sfActions
    */
   public function executeSearch(sfWebRequest $request)
   {
-    //ProjectConfiguration::registerZend();
     $query = $request->getParameter('query');
 
     $originalQuery = $query;

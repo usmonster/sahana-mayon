@@ -176,12 +176,34 @@ class adminActions extends sfActions
   }
 /**
 * 
-* @todo add description of function above and details below
+* @todo learn how description should be explained properly
 * @param $request (add description)
 */
   public function executeNew(sfWebRequest $request)
   {
     $this->form = new agAccountForm();
+  }
+  public function executeCred(sfWebRequest $request)
+  {
+
+        $this->sf_guard_permissions = Doctrine_Core::getTable('sfGuardPermission')
+                        ->createQuery('a')
+                        ->execute();
+        $this->sf_guard_group_permissions = Doctrine_Core::getTable('sfGuardGroupPermission')
+                        ->createQuery('a')
+                        ->execute();
+
+
+        $this->form = new agCredForm();
+        //if a user has entered information, process said information
+        if($request->isMethod(sfRequest::POST)){
+          $this->forward404Unless($request->isMethod(sfRequest::POST));
+          $this->processCredform($request, $this->form);
+        
+          $this->setTemplate('cred');
+        }
+
+
   }
 /**
 * 
@@ -265,5 +287,12 @@ class adminActions extends sfActions
       $this->redirect('admin/config');
     }
   }
-
+  protected function processCredform(sfWebRequest $request, sfForm $credform) {
+      $credform->bind($request->getParameter($credform->getName()), $request->getFiles($credform->getName()));
+      if ($credform->isValid()) {
+          $cred_result = $credform->save();
+          //do i really need to set a variable?
+          $this->redirect('admin/cred');
+      }
+  }
 }

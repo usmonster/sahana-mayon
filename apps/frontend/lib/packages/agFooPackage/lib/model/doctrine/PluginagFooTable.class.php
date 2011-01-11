@@ -14,7 +14,7 @@ class PluginagFooTable extends Doctrine_Table
      */
   public static function getInstance()
   {
-      return Doctrine_Core::getTable('PluginagFoo');
+      return Doctrine_Core::getTable('agFoo');
   }
 
   public function getForLuceneQuery($query)
