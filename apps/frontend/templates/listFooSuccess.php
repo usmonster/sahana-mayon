@@ -7,5 +7,6 @@ $columns = array(
 
 //pager comes in from the action
 
-echo agListForm::facilitylist($sf_request,'Foo Listing', $columns, $pager);
+//echo agListForm::facilitylist($sf_request,'Foo Listing', $columns, $pager);
+echo agListForm::foolist($sf_request,'Foo Listing', $columns, $pager);
 ?>

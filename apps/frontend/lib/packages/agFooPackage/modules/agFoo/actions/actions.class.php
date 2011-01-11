@@ -57,7 +57,7 @@ class agFooActions extends sfActions
     $this->pager->setPage($request->getParameter('page', 1));
     $this->pager->init();
 
-    $this->setTemplate(sfConfig::get('sf_app_template_dir').DIRECTORY_SEPARATOR.'listFoo');
+    $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'listFoo');
   }
 
   public function executeShow(sfWebRequest $request)
@@ -66,10 +66,30 @@ class agFooActions extends sfActions
     $this->forward404Unless($this->ag_foo);
   }
 
+  public function executeSearch(sfWebRequest $request)
+  {
+    $this->searchquery = $request->getParameter('query');
+    $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
+    $query = LuceneSearch::find($this->searchquery)
+            ->fuzzy()
+            ->in($this->getModuleName());
+    $this->results = $query->getRecords();
+    $this->hits = $query->getHits();
+//    $ids = LuceneSearch::find($this->searchquery)
+//            //->fuzzy()
+//            ->in('agFoo')
+//            ->getPksForModel();
+//
+//    $query2 = Doctrine_Query::create()
+//            ->select('a.*')
+//            ->from('agFoo')
+//            ->andWhereIn('id', $ids);
+  }
+
   public function executeNew(sfWebRequest $request)
   {
     $this->form = new agFooForm();
-    unset($this->form['created_at'],$this->form['updated_at']);
+    unset($this->form['created_at'], $this->form['updated_at']);
   }
 
   public function executeCreate(sfWebRequest $request)
@@ -77,7 +97,7 @@ class agFooActions extends sfActions
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
     $this->form = new agFooForm();
-    unset($this->form['created_at'],$this->form['updated_at']);
+    unset($this->form['created_at'], $this->form['updated_at']);
     $this->processForm($request, $this->form);
 
     $this->setTemplate('new');
@@ -87,7 +107,7 @@ class agFooActions extends sfActions
   {
     $this->forward404Unless($ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id'))), sprintf('Object ag_foo does not exist (%s).', $request->getParameter('id')));
     $this->form = new agFooForm($ag_foo);
-    unset($this->form['created_at'],$this->form['updated_at']);
+    unset($this->form['created_at'], $this->form['updated_at']);
   }
 
   public function executeUpdate(sfWebRequest $request)

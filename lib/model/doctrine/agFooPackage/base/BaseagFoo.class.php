@@ -47,9 +47,8 @@ abstract class BaseagFoo extends sfDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-        $luceneable0 = new Luceneable();
-        $timestampable0 = new Doctrine_Template_Timestampable();
+        $luceneable0 = new Luceneable(array(
+             ));
         $this->actAs($luceneable0);
-        $this->actAs($timestampable0);
     }
 }

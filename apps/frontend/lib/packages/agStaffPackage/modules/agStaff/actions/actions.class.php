@@ -38,65 +38,66 @@ class agStaffActions extends sfActions
     $query = $request->getParameter('query');
 
     $originalQuery = $query;
-    if (isset($request['nationality']) ||
-        isset($request['ethnicity']) ||
-        isset($request['religion'])) {
-      $query = Zend_Search_Lucene_Search_QueryParser::parse($query);
+//    if (isset($request['nationality']) ||
+//        isset($request['ethnicity']) ||
+//        isset($request['religion'])) {
+    //$query = Zend_Search_Lucene_Search_QueryParser::parse($query);
+    $query = LuceneSearch::find($query)->fuzzy()->in(array('nationality', 'ethnicity', 'religion'));
 
-      if ($query instanceof Zend_Search_Lucene_Search_Query_Insignificant) {
-        $query = new Zend_Search_Lucene_Search_Query_Boolean;
-      }
-      if (isset($request['nationality'])) {
-        foreach ($request['nationality'] as $val) {
-          $nationalities = Doctrine::getTable('agNationality')
-                  ->createQuery('a')
-                  ->select('p.nationality')
-                  ->from('agNationality p')
-                  ->where('p.id = ?', $val)
-                  ->execute();
-          foreach ($nationalities as $ret) {
-            $natSub = new Zend_Search_Lucene_Search_Query_Preprocessing_Term(
-                    $ret->nationality, null, 'nationality'
-            );
-            $query->addSubquery($natSub, true);
-          }
-        }
-      }
-      if (isset($request['ethnicity'])) {
-        foreach ($request['ethnicity'] as $val) {
-          $ethnicities = Doctrine::getTable('agEthnicity')
-                  ->createQuery('a')
-                  ->select('p.ethnicity')
-                  ->from('agEthnicity p')
-                  ->where('p.id = ?', $val)
-                  ->execute();
-          foreach ($ethnicities as $ret) {
-            $ethSub = new Zend_Search_Lucene_Search_Query_Preprocessing_Term(
-                    $ret->ethnicity, null, 'ethnicity'
-            );
-            $query->addSubquery($ethSub, true);
-          }
-        }
-      }
-      if (isset($request['religion'])) {
-        foreach ($request['religion'] as $val) {
-          $religions = Doctrine::getTable('agReligion')
-                  ->createQuery('a')
-                  ->select('p.religion')
-                  ->from('agReligion p')
-                  ->where('p.id = ?', $val)
-                  ->execute();
-          foreach ($religions as $ret) {
-            $relSub = new Zend_Search_Lucene_Search_Query_Preprocessing_Term(
-                    $ret->religion, null, 'religion'
-            );
-            $query->addSubquery($relSub, true);
-          }
-        }
-      }
-    } else {
-      $query = Zend_Search_Lucene_Search_QueryParser::parse($query);
-    }
+//      if ($query instanceof Zend_Search_Lucene_Search_Query_Insignificant) {
+//        $query = new Zend_Search_Lucene_Search_Query_Boolean;
+//      }
+//      if (isset($request['nationality'])) {
+//        foreach ($request['nationality'] as $val) {
+//          $nationalities = Doctrine::getTable('agNationality')
+//                  ->createQuery('a')
+//                  ->select('p.nationality')
+//                  ->from('agNationality p')
+//                  ->where('p.id = ?', $val)
+//                  ->execute();
+//          foreach ($nationalities as $ret) {
+//            $natSub = new Zend_Search_Lucene_Search_Query_Preprocessing_Term(
+//                    $ret->nationality, null, 'nationality'
+//            );
+//            $query->addSubquery($natSub, true);
+//          }
+//        }
+//      }
+//      if (isset($request['ethnicity'])) {
+//        foreach ($request['ethnicity'] as $val) {
+//          $ethnicities = Doctrine::getTable('agEthnicity')
+//                  ->createQuery('a')
+//                  ->select('p.ethnicity')
+//                  ->from('agEthnicity p')
+//                  ->where('p.id = ?', $val)
+//                  ->execute();
+//          foreach ($ethnicities as $ret) {
+//            $ethSub = new Zend_Search_Lucene_Search_Query_Preprocessing_Term(
+//                    $ret->ethnicity, null, 'ethnicity'
+//            );
+//            $query->addSubquery($ethSub, true);
+//          }
+//        }
+//      }
+//      if (isset($request['religion'])) {
+//        foreach ($request['religion'] as $val) {
+//          $religions = Doctrine::getTable('agReligion')
+//                  ->createQuery('a')
+//                  ->select('p.religion')
+//                  ->from('agReligion p')
+//                  ->where('p.id = ?', $val)
+//                  ->execute();
+//          foreach ($religions as $ret) {
+//            $relSub = new Zend_Search_Lucene_Search_Query_Preprocessing_Term(
+//                    $ret->religion, null, 'religion'
+//            );
+//            $query->addSubquery($relSub, true);
+//          }
+//        }
+//      }
+//    } else {
+//      $query = Zend_Search_Lucene_Search_QueryParser::parse($query);
+//    }
     $lqResults = Doctrine_core::getTable('agPerson')->getForLuceneQuery($query);
     $fooResults = Doctrine_core::getTable('agFoo')->getForLuceneQuery($query);
     $this->pager = new sfDoctrinePager('agPerson', 20);
@@ -130,7 +131,7 @@ class agStaffActions extends sfActions
       $this->pager->setPage($request->getParameter('page', 1));
       $this->pager->init();
     }
-    $this->query = $originalQuery;
+//    $this->query = $originalQuery;
   }
 
   /**
@@ -173,7 +174,7 @@ class agStaffActions extends sfActions
               s.agStaffStatus ss, p.agEntity e,
               e.agEntityEmailContact ememail1, ememail1.agEmailContact ec1, ec1.agEmailContactType ect1,
               e.agEntityEmailContact ememail2, ememail2.agEmailContact ec2, ec2.agEmailContactType ect2'
-              )
+            )
             ->Where('ss.staff_status=?', 'active');
 
     $this->pager = new sfDoctrinePager('agStaff', 20);
@@ -304,8 +305,7 @@ class agStaffActions extends sfActions
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
             ->createQuery('f')
             ->execute();
-
-   }
+  }
 
   /**
    * Creates a blank agPerson form to create and save a new agPerson/staff-member
@@ -344,8 +344,6 @@ class agStaffActions extends sfActions
     $this->processForm($request, $this->form);
 
     $this->setTemplate('new');
-
-
   }
 
   /**
@@ -405,14 +403,14 @@ class agStaffActions extends sfActions
   {
     $request->checkCSRFProtection();
 
-        $this->forward404Unless(
+    $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
         sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
 
     $ag_person = $ag_staff->getAgPerson();
 
     foreach ($ag_staff->getAgStaffResource() as $ag_staff_resource_pre_org) {
-      foreach($ag_staff_resource_pre_org->getAgStaffResourceOrganization() as $ag_staff_resource_org){
+      foreach ($ag_staff_resource_pre_org->getAgStaffResourceOrganization() as $ag_staff_resource_org) {
         $ag_staff_resource_org->delete();
       }
     }
@@ -472,18 +470,18 @@ class agStaffActions extends sfActions
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
-      if ($form->isValid()) {
+    if ($form->isValid()) {
       //are our values bound at this point?
       $ag_staff = $form->save();
 
       //$staff_id = $ag_staff->getAgStaff()->getFirst()->getId();
 //not an object? first it's a collection, now not an object if i just get one
-      
-        $staff_id = Doctrine::getTable('agStaff')->createQuery('a')
-                  ->select('a.id')
-                  ->from('agStaff a')
-                  ->where('a.person_id = ?', $ag_staff->id)
-                  ->fetchOne();
+
+      $staff_id = Doctrine::getTable('agStaff')->createQuery('a')
+              ->select('a.id')
+              ->from('agStaff a')
+              ->where('a.person_id = ?', $ag_staff->id)
+              ->fetchOne();
 
       //get id of STAFF person from the saved, extended agpersonform.
       $this->redirect('agStaff/edit?id=' . $staff_id->getId());
@@ -704,7 +702,7 @@ class agStaffActions extends sfActions
           ->setAutoSize(true);
     }
     // Save Excel 2007 file
-    
+
     $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
     $todaydate = date("d-m-y");
     $todaydate = $todaydate . '-' . date("H-i-s");
@@ -796,7 +794,6 @@ class agStaffActions extends sfActions
       $returned = $importObj->processStaffImport($passPath);
 //      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\', \'' . htmlspecialchars($tyr) . '\');"');
 //      $toImport = unserialize($toImport);
-      
       //$returned = unserialize($returned);
       while ($importObj->stop <> true) {
         $returned = $importObj->processStaffImport($passPath);
