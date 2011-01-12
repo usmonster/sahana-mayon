@@ -17,12 +17,6 @@ scenario:
 org:
   url: /organization
   param: { module: organization, action: index }
-gis_index:
-  url: /gis
-  param: { module: agGis, action: index }
-gis:
-  url: /gis/:action
-  param: { module: agGis}
 admin:
   url: /admin
   param: { module: admin, action: index }

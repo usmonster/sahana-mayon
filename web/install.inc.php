@@ -656,7 +656,7 @@ class agInstall
           'event_active_staff' => array('label' => 'Staff', 'route' => '@homepage', 'parent' => 'event_active'),
           'event_active_facilities' => array('label' => 'Facilities', 'route' => '@homepage', 'parent' => 'event_active'),
           'event_active_clients' => array('label' => 'Clients', 'route' => '@homepage', 'parent' => 'event_active'),
-          'event_active_reporting' => array('label' => 'Reporting', route => '@homepage', parent => 'event_active'));
+          'event_active_reporting' => array('label' => 'Reporting', 'route' => '@homepage', 'parent' => 'event_active'));
 
 // update config.yml
     try {
@@ -680,6 +680,7 @@ class agInstall
     }
 
     return true;
+    //once save setup is complete, create entry in ag_host (needed for global params
   }
 
 }
