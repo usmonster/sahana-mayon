@@ -1,7 +1,0 @@
-agGeoSource:
-  shere:
-    id: 1
-    geo_source: shere khan
-    data_compiled: '2010-11-29 14:01:07'
-    agGeoSourceScore: good_score
-

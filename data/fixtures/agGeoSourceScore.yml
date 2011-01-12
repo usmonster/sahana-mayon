@@ -1,9 +1,0 @@
-agGeoSourceScore:
-  good_score:
-    id: 1
-    geo_source_score: good
-    geo_source_score_value: 89
-  weak_score:
-    id: 2
-    geo_source_score: weak
-    geo_source_score_value: 40
