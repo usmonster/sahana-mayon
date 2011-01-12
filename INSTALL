@@ -3,7 +3,7 @@ Emergency Management Software
 
 INSTALLATION INSTRUCTIONS
 
-Updated: 2010-12-10
+Updated: 2011-01-11
 
 *** IMPORTANT NOTE: ***
 
@@ -53,8 +53,8 @@ Apache
 
   $ sudo chgrp -R WEB_GROUP config/ cache/ log/ apps/frontend/config/ \
       data/indexes/ data/search/ data/sql/
-  $ chmod -cR g+wr config/ apps/frontend/config/ \
-      data/indexes/ data/search/ data/sql/
+  $ chmod -cR g+wr config/ apps/frontend/config/ data/indexes/ data/search/ \
+      data/sql/
   $ ./symfony project:permissions
 
   * NOTE: Replace WEB_GROUP with the group associated with the Apache user, e.g.
