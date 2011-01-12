@@ -13,7 +13,10 @@
  */
 abstract class PluginagStaffResourceType extends BaseagStaffResourceType
 {
-  /**
+  public function __toString() {
+    return $this->getStaffResourceType();
+  }
+   /**
    * staffResourceTypeInArray() is a static method to return an array of staff resource type.
    *
    * @param boolean $app_display_true_only - If param passed in as true, only 

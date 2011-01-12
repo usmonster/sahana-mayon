@@ -17,91 +17,144 @@ class agStaffPersonForm extends agPersonForm
     parent::setup();
   }
 
+  /*****************************************************************************
+  * Sets up the embedded forms needed by agStaffPersonForm.
+  *
+  * @return a configured agStaffForm().
+  *****************************************************************************/
+  public function setupStaffForm()
+  {
+    $staffForm = new agStaffForm();
+    $staffForm->getWidget('staff_status_id')->addOption('method', 'getStaffStatus');
+    $staffForm->setWidget('ag_staff_resource_type_list', new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agStaffResourceType')));
+
+    $staffForm->getWidgetSchema()->offsetUnset('created_at');
+    $staffForm->getWidgetSchema()->offsetUnset('updated_at');
+    $staffForm->getWidgetSchema()->offsetUnset('person_id');
+    $staffForm->getWidgetSchema()->offsetUnset('ag_staff_resource_type_list');
+
+    $staffForm->getWidgetSchema()->setLabel('staff_status_id', 'Status');
+    
+    // Check to see if there is already an agStaff object that can be used to fill the form.
+    if ($staff = $this->getObject()->getAgStaff()->getFirst()) {
+      // Set the form's object to $staff
+      $staffForm->getObject()->merge($staff);
+      // Set the form defaults to $staff. updateDefaultsFromObject won't do this.
+      $staffForm->setDefaults($staff->toArray());
+    }
+    return $staffForm;
+  }
+
+  /*****************************************************************************
+  * Sets up the embedded forms needed by agStaffPersonForm.
+  *
+  * @return a configured agStaffForm().
+  *****************************************************************************/
+  public function setupStaffResourceOrganizationForm($staffResourceOrganization = null)
+  {
+    $staffResourceOrganizationForm = new agStaffResourceOrganizationForm();
+    $staffResourceOrganizationForm->getWidget('staff_resource_id')->addOption('method', 'getAgStaffResourceType');
+//    $staffResourceOrganizationForm->getWidgetSchema()->offsetGet('staff_resource_id')->addOption('method', 'getAgStaffResourceType');
+    $staffResourceOrganizationForm->getWidget('organization_id')->addOption('method', 'getOrganization');
+    $staffResourceOrganizationForm->setWidget('staff_resource_id', new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agStaffResourceType')));
+    $staffResourceOrganizationForm->setValidator('staff_resource_id', new sfValidatorDoctrineChoice(array('multiple' => false, 'model' => 'agStaffResourceType')));
+
+    $staffResourceOrganizationForm->getWidgetSchema()->offsetUnset('created_at');
+    $staffResourceOrganizationForm->getWidgetSchema()->offsetUnset('updated_at');
+
+    if ($staffResourceOrganization <> null) {
+        $staffResourceOrganizationForm->getObject()->merge($staffResourceOrganization);
+        $staffResourceOrganizationForm->setDefaults($staffResourceOrganization->toArray());
+    }
+
+    return $staffResourceOrganizationForm;
+  }
+
   public function configure()
   {
     parent::configure();
-   $staffResourceContainer = new sfForm(array(), array());
-   //also       'staff_status_id'             => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffStatus'), 'add_empty' => false)),
-   //because currently it is coming in with every embeddedstafform
+    $staffResourceContainer = new sfForm(array(), array());
+    //also       'staff_status_id'             => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffStatus'), 'add_empty' => false)),
+    //because currently it is coming in with every embeddedstafform
     /**
      *  if the staff already has resources and organizations assigned, get all the data for them
      *   */
-   $gloogle = new agStaffResourceOrganizationForm();
-   // Create the new agStaffForm() and configure its widgets.
-   $floogle = new agStaffForm();
-   $floogle->getWidgetSchema()->offsetGet('staff_status_id')->addOption('method', 'getStaffStatus');
-   $floogle->getWidgetSchema()->offsetGet('person_id')->addOption('method', 'getNameString');
 
-   $floogle->getWidgetSchema()->offsetSet('ag_staff_resource_type_list', new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agStaffResourceType')));
-
-   $floogle->getWidgetSchema()->offsetUnset('created_at');
-   $floogle->getWidgetSchema()->offsetUnset('updated_at');
-   $floogle->getWidgetSchema()->offsetUnset('person_id');
-
-   $floogle->getWidgetSchema()->setLabel('staff_status_id', 'Status');
-   $floogle->getWidgetSchema()->setLabel('ag_staff_resource_type_list', 'Staff Type');
-
-   // Check to see if there is already an agStaff object that can be used to fill the form.
-   if ($staff = $this->getObject()->getAgStaff()->getFirst()) {
-     // Set the form's object to $staff
-     $floogle->getObject()->merge($staff);
-     // Set the form defaults to $staff. updateDefaultsFromObject won't do this.
-     $floogle->setDefaults($staff->toArray());
-   }
-   $this->embedForm('floogle', $floogle);
-   $this->embedForm('gloogle', $gloogle);
-   $staff_resources = array();
-   if ($this->getObject()->getAgStaff()->getFirst()) {
-     foreach($this->getObject()->getAgStaff()->getFirst()->getAgStaffResource() as $staffrec) {
-       $staff_resources[] = $staffrec->getId();
-     }
-   }
-   if($staff_resources){
-     if ($this->agStaffResources = Doctrine::getTable('agStaffResourceOrganization')
-              ->createQuery('agSRO')
-              ->select('agSRO.*')
-              ->from('agStaffResourceOrganization agSRO')
-              ->where('staff_resource_id = ?', $staff_resources)
-              ->execute()) {
-
-        /**
-         *  for every existing staff organization resource, create an agEmbeddedStaffForm and embed it into $staffResourceContainer
-         *   */
-        foreach ($this->agStaffResources as $staffResource) {
-          $staffResourceForm = new agEmbeddedStaffForm($staffResource->getAgStaffResource()->getAgStaff());
-          // Set $organization variable to the agOrganization() value associated w/
-          // the staff member. The id value of this object is used to set the default for ag_organization_list.
-          // Maybe the conditional here is unnecessary? Doesn't seem to come in here if the form is new.
-          $organization = $this->getObject()->getAgStaff()->getFirst()->getAgStaffResource()->getFirst()->getAgStaffResourceOrganization()->getFirst()->getAgOrganization();
-          if ($organization <> null) {
-            $staffResourceForm->setDefault('ag_organization_list', $organization->id);
-          }
-          $staffResourceId = $staffResource->getId();
-          $staffResourceContainer->embedForm($staffResourceId, $staffResourceForm);
-          $staffResourceContainer->widgetSchema->setLabel($staffResourceId, false);
-        }
-      }
+    //Container form, query and iterator for calls to setupStaffResourceOrganizationForms.
+    $staffContainerForm = new sfForm();
+    $staffContainerForm->embedForm('Status', $this->setupStaffForm());
+    $staffResourceOrganizations = Doctrine_Query::create()
+        ->from('agStaffResourceOrganization b')
+        ->where('b.staff_resource_id IN (SELECT c.id FROM agStaffResource c WHERE c.staff_id = ?)', $this->getObject()->getAgStaff()->getFirst()->id)
+        ->execute();
+    $i =1;
+    foreach ($staffResourceOrganizations as $staffResourceOrganization) {
+      $staffContainerForm->embedForm('organization_' . $i, $this->setupStaffResourceOrganizationForm($staffResourceOrganization));
+      $i++;
     }
-    else{
-    /**
-     *  embed a form for new staff information entry
-     *   */
-      $staffResourceForm = new agEmbeddedStaffForm();
-
-      $staffResourceContainer->embedForm('new', $staffResourceForm);
-      $staffResourceContainer->widgetSchema->setLabel('new', false);
-    
+    $blankOrgForm = $this->setupStaffResourceOrganizationForm();
+    // Allow the form to be blank if another already exists
+    if ($i > 1) {
+      $blankOrgForm->getWidget('organization_id')->addOption('add_empty', true);
+      $blankOrgForm->getWidget('staff_resource_id')->addOption('add_empty', true);
+      $blankOrgForm->getValidator('organization_id')->addOption('required', false);
+      $blankOrgForm->getValidator('staff_resource_id')->addOption('required', false);
     }
-    /**
-     *  embed the facility resource container form into the facility form
-     *   */
-    $this->embedForm('staff', $staffResourceContainer);
+    $staffContainerForm->embedForm('New Organization', $blankOrgForm);
+    $this->embedForm('Staff', $staffContainerForm);
+/**********************/
+//    $staff_resources = array();
+//    if ($this->getObject()->getAgStaff()->getFirst()) {
+//      foreach($this->getObject()->getAgStaff()->getFirst()->getAgStaffResource() as $staffrec) {
+//        $staff_resources[] = $staffrec->getId();
+//      }
+//    }
+//    if($staff_resources){
+//      if ($this->agStaffResources = Doctrine::getTable('agStaffResourceOrganization')
+//              ->createQuery('agSRO')
+//              ->select('agSRO.*')
+//              ->from('agStaffResourceOrganization agSRO')
+//              ->whereIn('staff_resource_id', $staff_resources)
+//              ->execute()) {
+//
+//        /**
+//         *  for every existing staff organization resource, create an agEmbeddedStaffForm and embed it into $staffResourceContainer
+//         *   */
+//        foreach ($this->agStaffResources as $staffResource) {
+//          $staffResourceForm = new agEmbeddedStaffForm($staffResource->getAgStaffResource()->getAgStaff());
+//          // Set $organization variable to the agOrganization() value associated w/
+//          // the staff member. The id value of this object is used to set the default for ag_organization_list.
+//          // Maybe the conditional here is unnecessary? Doesn't seem to come in here if the form is new.
+//          $organization = $this->getObject()->getAgStaff()->getFirst()->getAgStaffResource()->getFirst()->getAgStaffResourceOrganization()->getFirst()->getAgOrganization();
+//          if ($organization <> null) {
+//            $staffResourceForm->setDefault('ag_organization_list', $organization->id);
+//          }
+//          $staffResourceId = $staffResource->getId();
+//          $staffResourceContainer->embedForm($staffResourceId, $staffResourceForm);
+//          $staffResourceContainer->widgetSchema->setLabel($staffResourceId, false);
+//        }
+//      }
+//    }
+//    else{
+//    /**
+//     *  embed a form for new staff information entry
+//     *   */
+//      $staffResourceForm = new agEmbeddedStaffForm();
+//
+//      $staffResourceContainer->embedForm('new', $staffResourceForm);
+//      $staffResourceContainer->widgetSchema->setLabel('new', false);
+//
+//    }
+//    /**
+//     *  embed the facility resource container form into the facility form
+//     *   */
+//    $this->embedForm('staff', $staffResourceContainer);
 
   }
   protected function doSave($con = null)
   {
     //if($this->isNew()){
-//    parent::doSave();
+    parent::doSave();
     //}
   }
 // Going in here for all the embedded forms. Which makes sense, since this extends person. Maybe a check, return parent if it's not what we want?

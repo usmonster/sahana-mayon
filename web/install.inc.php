@@ -241,7 +241,7 @@ class agInstall
     }
     $retry = '';
     if ($this->RETRY_SUCCESS == false) {
-      $retry = '<input type="submit" class="inputGray" id="retry" name="retry" value="' . $retry_label . '" />';
+      $retry = '<input type="submit" class="linkButton" id="retry" name="retry" value="' . $retry_label . '" />';
     }
     $table = '<fieldset>
               <legend><img src="images/database.png" alt="database icon" />Database Configuration:</legend>
