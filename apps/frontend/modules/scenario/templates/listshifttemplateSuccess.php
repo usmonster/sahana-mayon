@@ -46,6 +46,14 @@
   </tbody>
 </table>
 
+<br>
+<div>
+  <a href="<?php echo url_for('scenario/generatescenarioshift') ?>" class="linkButton" title="Generate Scenario Shifts">Generate Scenario Shifts</a>
+</div>
+
+<div style="float: right;">
+
+
 <div style="float: right;">
   <?php
 

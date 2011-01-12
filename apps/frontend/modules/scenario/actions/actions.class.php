@@ -983,8 +983,9 @@ class scenarioActions extends sfActions
 //    $this->queryString = $generatedResult[0];
 //    $this->resultSet = $generatedResult[1];
 //    $this->numRowsReturned = $this->resultSet->count();
+//    $conn = sfContext::getInstance()->getDatabaseConnection();
     $generatedResult = agScenarioGenerator::shiftGenerator();
-    print_r($generatedResult->toArray());
+    $this->redirect('scenario/scenarioshiftlist');
   }
 
 }
