@@ -37,7 +37,7 @@ class agScenarioForm extends BaseagScenarioForm
     $this->setWidgets(array(
       'id'            => new sfWidgetFormInputHidden(),
       'scenario'      => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-      'description'   => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+      'description'   => new sfWidgetFormTextarea(array(), array('class' => 'inputGray')),
     ));
 
     $this->setValidators(array(

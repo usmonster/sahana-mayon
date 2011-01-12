@@ -34,6 +34,21 @@ scenario_show_facility_staff_resource:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: showFacilityStaffResource }
 
+scenario_new_group:
+  url:     /scenario/:id/newgroup
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: newgroup }
+
+scenario_new_staff_resources:
+  url:     /scenario/:id/newstaffresources
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: newstaffresources }
+
+scenario_new_shift_templates:
+  url:     /scenario/:id/newshifttemplates
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: newshifttemplates }
+
 default:
   url:   /:module/:action/*
 

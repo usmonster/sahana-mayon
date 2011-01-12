@@ -1,11 +1,4 @@
 <?php
-  $scenarioName = Doctrine::getTable('agScenario')
-      ->findByDql('id = ?', $groupform->getDefault('scenario_id'))
-      ->getFirst()->scenario;
-
-  $scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
-      ->findByDql('scenario_id = ?', $groupform->getDefault('scenario_id'))
-      ->getData();
   if($scenarioFacilityGroups <> null) {
     include_partial('facilityGroupTable', array('scenarioFacilityGroups' => $scenarioFacilityGroups, 'scenarioName' => $scenarioName));
   } else {

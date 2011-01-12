@@ -3,11 +3,15 @@
     // Create array of form names.
     $groupNames[] = $key;
   }
-  $a = $scenario;
+
 ?>
-<form action="<?php echo url_for('scenario/facilityStaffResourceCreate' . '?scenarioId=' . $scenario->id) ?>" method="post">
+<form action="<?php echo url_for('scenario/facilityStaffResourceCreate?id=' . $scenario->id) ?>" method="post">
   <?php
+
+    //this is the same form that should be used for edit and create. display entered values if the objects exist.
     // Set up the container form and its formatter.
+
+
     $facilityStaffResourceContainer = new sfForm();
     $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainerLabel($facilityStaffResourceContainer->getWidgetSchema());
     $facilityStaffResourceContainer->getWidgetSchema()->addFormFormatter('facilityStaffResourceConDeco', $facilityStaffResourceConDeco);
@@ -26,9 +30,11 @@
         $resourceForm->getWidgetSchema()->setFormFormatterName('resourceFormDeco');
         foreach ($facilityResources as $staffKey => $staffResourceForm) {
           // And here are the real forms, the ones that will hold fields and data rather than just other forms.
+
           $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineTopLabel($staffResourceForm->getWidgetSchema());
           $staffResourceForm->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
           $staffResourceForm->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
+          //$staffResourceForm->update
           $resourceForm->embedForm($staffKey, $staffResourceForm);
         }
         $groupForm->embedForm($resourceKey, $resourceForm);
