@@ -41,7 +41,7 @@ class agInstall
     $this->EventHandler();
     GLOBAL $trans;
     $trans = array(
-      //     requirements.inc.php
+//     requirements.inc.php
       'S_PHP_VERSION' => 'PHP version',
       'S_MINIMAL_VERSION_OF_PHP_IS' => 'Minimal version of PHP is',
       'S_PHP_MEMORY_LIMIT' => 'PHP memory limit',
@@ -86,7 +86,7 @@ class agInstall
 
   function getConfig($name, $default = null)
   {
-    //if entry method to this function is admin/config instead of install, set the global
+//if entry method to this function is admin/config instead of install, set the global
     return isset($this->AG_CONFIG[$name]) ? $this->AG_CONFIG[$name] : $default;
   }
 
@@ -197,7 +197,7 @@ class agInstall
         $result = '<span class="green">Ok</span>';
       } else if ($req['result'] == 0) {
         $result = '<span class="fail">Fail</span>';
-        // this will be useful$result->setHint($req['error']);
+// this will be useful$result->setHint($req['error']);
       }
 
       $current = '<tr><td><strong>' . $req['name'] . '</strong></td>' . '<td>' . $req['current'] . '</td>';
@@ -289,8 +289,8 @@ class agInstall
     $results = 'Please create database manually,<br />and set the configuration parameters for connection to this database.<br /><br/>'
         . $instruct . $table . $retry;
 
-    //$this->DISABLE_NEXT ? new CSpan(S_OK,'ok') :  new CSpan(S_FAIL, 'fail'),
-    //new  CButton('retry', 'Test connection')
+//$this->DISABLE_NEXT ? new CSpan(S_OK,'ok') :  new CSpan(S_FAIL, 'fail'),
+//new  CButton('retry', 'Test connection')
     return $results;
   }
 
@@ -364,7 +364,7 @@ class agInstall
       'task' => 'configure:database',
       //'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
       'dsn' => $db_params['dsn'], // ilya 2010-07-21 15:16:58
-      //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+//'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
       'username' => $db_params['username'],
       'password' => $db_params['password'],
     );
@@ -471,7 +471,7 @@ class agInstall
         $insertSql->execute();
         $installed = 'Success!';
       } else {
-        // TODO: wait, what exception? is $e defined here? -UA
+// TODO: wait, what exception? is $e defined here? -UA
         $installed = 'SQL insert not valid! : ' . "\n" . $e->getMessage();
       }
     } catch (Exception $e) {
@@ -500,11 +500,11 @@ class agInstall
       $this->DoNext();
     }
     if ($this->getStep() == 3) {
-      //on our first pass, these values won't exist (or if someone has returned with no POST
+//on our first pass, these values won't exist (or if someone has returned with no POST
       $current = $this->getCurrent();
       $db_params = array(
         'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name']), // ilya 2010-07-21 15:16:58
-        //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+//'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
         'username' => $_POST['db_user'],
         'password' => $_POST['db_pass']);
       $this->setConfig('DB_SERVER', $_POST['db_host']);
@@ -524,34 +524,34 @@ class agInstall
           'auth_method' => array('value' => 'bypass'),
           'log_level' => array('value' => 'default'),
         //'db_type' => $_POST['db_type'],
-        //'db_host' => $_POST['db_host'],
-        //'db_name' => $_POST['db_port'], //ilya 2010-07-21 15:17:13
+//'db_host' => $_POST['db_host'],
+//'db_name' => $_POST['db_port'], //ilya 2010-07-21 15:17:13
           ));
-      //we've set our config to post values, now let's try to save
-      //agSaveSetup only saves config.yml and app.yml, databases.yml is not touched
-      //to save our databases.yml,
-      //$this->dbParams($db_params);
-      //database parameters are good here.
+//we've set our config to post values, now let's try to save
+//agSaveSetup only saves config.yml and app.yml, databases.yml is not touched
+//to save our databases.yml,
+//$this->dbParams($db_params);
+//database parameters are good here.
       if (!($this->agSaveSetup($config_array))) {
         $this->DISABLE_NEXT = true;
         unset($_REQUEST['next']);
-        //if we cannot save our configuration
+//if we cannot save our configuration
       } else {
         $dbcheck = $this->CheckConnection($db_params);
         if ($dbcheck == 'good') {
           $this->RETRY_SUCCESS = true;
         } else {
-          //if we cannot establish a db connection
+//if we cannot establish a db connection
           $this->RETRY_SUCCESS = false;
           $this->DISABLE_NEXT = true;
           $this->ERROR_MESSAGE = $dbcheck;
-          //set the installer's global error message to the return of our connection attempt
+//set the installer's global error message to the return of our connection attempt
           unset($_REQUEST['next']);
         }
       }
       if (isset($_REQUEST['next'][$this->getStep()])) {
-        //the validation comment below can be handled by:
-        //$this->getCurrent();
+//the validation comment below can be handled by:
+//$this->getCurrent();
         $this->setConfig('db_config', $db_params);
         $this->setConfig('DB_SERVER', $_POST['db_host']);
         $this->setConfig('DB_DATABASE', $_POST['db_name']);
@@ -560,23 +560,23 @@ class agInstall
         $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
         $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
         $this->DoNext();
-        //we should validate here in case someone changes correct information
+//we should validate here in case someone changes correct information
       }
     }
 
     if ($this->getStep() == 4) {
-      //present user with configuration settings, show 'install button'
+//present user with configuration settings, show 'install button'
       if (isset($_REQUEST['next'][$this->getStep()])) {
         $this->INSTALL_RESULT = $this->doInstall($this->getConfig('db_config'));
         $this->DoNext();
       }
     }
     if (isset($_REQUEST['finish'])) {       //isset($_REQUEST['next'][$this->getStep()]
-      //$this->doNext();
+//$this->doNext();
       $sudo = $this->getCurrent();
       $sudoer = $sudo[1]['sudo']['super_user']; //get username and password from config.yml, should be cleaner.
       $supw = $sudo[1]['sudo']['super_pass'];
-      //authenticate with this
+//authenticate with this
       try {
         $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
         $databaseManager = new sfDatabaseManager($configuration);
@@ -594,64 +594,95 @@ class agInstall
       $this->DoNext();
     }
   }
-function agSaveSetup($config)
-{
-  /** remember to set the superadmin config.yml up!!!  */
-  sfClearCache('frontend', 'all');
-  sfClearCache('frontend', 'dev');
-  sfClearCache('frontend', 'prod');
-  require_once sfConfig::get('sf_root_dir') . '/lib/vendor/symfony/lib/yaml/sfYaml.php';
-  $file = sfConfig::get('sf_config_dir') . '/config.yml';
-  // update config.yml
-  try {
-    file_put_contents($file, sfYaml::dump($config, 4));
-  } catch (Exception $e) {
-    echo "hey, something went wrong:" . $e->getMessage();
+
+  function agSaveSetup($config)
+  {
+    /** remember to set the superadmin config.yml up!!!  */
+    sfClearCache('frontend', 'all');
+    sfClearCache('frontend', 'dev');
+    sfClearCache('frontend', 'prod');
+    require_once sfConfig::get('sf_root_dir') . '/lib/vendor/symfony/lib/yaml/sfYaml.php';
+    $file = sfConfig::get('sf_config_dir') . '/config.yml';
+// update config.yml
+    try {
+      file_put_contents($file, sfYaml::dump($config, 4));
+    } catch (Exception $e) {
+      echo "hey, something went wrong:" . $e->getMessage();
+    }
+
+    $file = sfConfig::get('sf_app_dir') . '/config/app.yml';
+    touch($file);
+//if app.yml doesn't exist
+    $appConfig = sfYaml::load($file);
+    $appConfig['all']['sf_guard_plugin'] =
+        array('check_password_callable'
+          => array('agSudoAuth', 'authenticate'));
+    $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
+
+    $appConfig['all']['.array']['menu_top'] =
+        array(
+          'homepage' => array('label' => 'Home', 'route' => '@homepage'),
+          'plan' => array('label' => 'Plan', 'route' => '@homepage'),
+          'respond' => array('label' => 'Respond', 'route' => '@homepage'),
+          'recover' => array('label' => 'Recover', 'route' => '@homepage'),
+          'mitigate' => array('label' => 'Mitigate', 'route' => '@homepage'),
+          'foo' => array('label' => 'Foo', 'route' => '@foo'),
+          'modules' => array('label' => 'Modules', 'route' => '@homepage'),
+          'admin' => array('label' => 'Administration', 'route' => '@admin'),
+          'help' => array('label' => 'Help', 'route' => '@about'));
+
+    $appConfig['all']['.array']['menu_children'] =
+        array(
+          'facility' => array('label' => 'Facilities', 'route' => '@facility', 'parent' => 'plan'),
+          'org' => array('label' => 'Organizations', 'route' => '@org', 'parent' => 'plan'),
+          'scenario' => array('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'plan'),
+          'activate' => array('label' => 'Activate Scenario', 'route' => '@homepage', 'parent' => 'respond'),
+          'event' => array('label' => 'Manage Events', 'route' => '@homepage', 'parent' => 'respond'),
+          'event_active' => array('label' => 'Manage [Active Event]', 'route' => '@homepage', 'parent' => 'respond'));
+
+    $appConfig['all']['.array']['menu_grandchildren'] =
+        array(
+          'facility_new' => array('label' => 'Add New Facility', 'route' => 'facility/new', 'parent' => 'facility'),
+          'facility_list' => array('label' => 'List Facilities', 'route' => 'facility/list', 'parent' => 'facility'),
+          'facility_import' => array('label' => 'Import Facilities', 'route' => '@facility', 'parent' => 'facility'),
+          'facility_export' => array('label' => 'Export Facilities', 'route' => '@facility', 'parent' => 'facility'),
+          'facility_types' => array('label' => 'Manage Facility Types', 'route' => '@facility', 'parent' => 'facility'),
+          'org_new' => array('label' => 'Add New Organization', 'route' => 'organization/new', 'parent' => 'org'),
+          'org_list' => array('label' => 'List Organizations', 'route' => 'organization/list', 'parent' => 'org'),
+          'scenario_create' => array('label' => 'Build New Scenario', 'route' => '@staff_create', 'parent' => 'scenario'),
+          'scenario_list' => array('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
+          'scenario_facilitygrouptypes' => array('label' => 'Edit Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
+          'scenario_active' => array('label' => '[Active Scenario]', 'route' => '@scenario', 'parent' => 'scenario'),
+          'event_active_staff' => array('label' => 'Staff', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_facilities' => array('label' => 'Facilities', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_clients' => array('label' => 'Clients', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_reporting' => array('label' => 'Reporting', route => '@homepage', parent => 'event_active'));
+
+// update config.yml
+    try {
+      file_put_contents($file, sfYaml::dump($appConfig, 4));
+    } catch (Exception $e) {
+      echo "hey, something went wrong:" . $e->getMessage();
+      return false;
+    }
+    $file = sfConfig::get('sf_config_dir') . '/databases.yml';
+    $dbConfiguration = sfYaml::load($file);
+    $dbConfiguration['all']['doctrine']['param']['attributes'] = array(
+      'default_table_type' => 'INNODB',
+      'default_table_charset' => 'utf8',
+      'default_table_collate' => 'utf8_general_ci'
+    );
+    try {
+      file_put_contents($file, sfYaml::dump($dbConfiguration, 4));
+    } catch (Exception $e) {
+      echo "hey, something went wrong:" . $e->getMessage();
+      return false;
+    }
+
+    return true;
   }
 
-  $file = sfConfig::get('sf_app_dir') . '/config/app.yml';
-  touch($file);
-  //if app.yml doesn't exist
-  $appConfig = sfYaml::load($file);
-  $appConfig['all']['sf_guard_plugin'] =
-      array('check_password_callable'
-        => array('agSudoAuth', 'authenticate'));
-  $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
-
-  $appConfig['all']['.array']['toplinks'] =
-  array(
-        'homepage' => array('name' => 'Home', 'route' => '@homepage'),
-        'plan' => array('name' => 'Plan', 'route' => '@scenario'),
-        'prep' => array('name' => 'Prep', 'route' => '@scenario'),
-        'foo' => array('name' => 'Foo', 'route' => '@foo'),
-        'admin' => array('name' => 'Scenario', 'route' => '@admin'),
-        'about' => array('name' => 'About', 'route' => '@about'));
-  // update config.yml
-  try {
-    file_put_contents($file, sfYaml::dump($appConfig, 4));
-  } catch (Exception $e) {
-    echo "hey, something went wrong:" . $e->getMessage();
-    return false;
-  }
-  $file = sfConfig::get('sf_config_dir') . '/databases.yml';
-  $dbConfiguration = sfYaml::load($file);
-  $dbConfiguration['all']['doctrine']['param']['attributes'] = array(
-    'default_table_type' => 'INNODB',
-    'default_table_charset' => 'utf8',
-    'default_table_collate' => 'utf8_general_ci'
-  );
-  try {
-    file_put_contents($file, sfYaml::dump($dbConfiguration, 4));
-  } catch (Exception $e) {
-    echo "hey, something went wrong:" . $e->getMessage();
-    return false;
-  }
-
-  return true;
 }
-
-}
-
 
 /** these two extended classes are for configuring doctrine */
 class agDoctrineConfigureDatabaseTask extends sfDoctrineConfigureDatabaseTask

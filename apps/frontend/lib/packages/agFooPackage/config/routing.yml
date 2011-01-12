@@ -16,6 +16,7 @@ foo_crazy_edit:
   url: /foo/:id/:foo/:bar/edit
   options: { model: agFoo, type: object }
   param: { module: agFoo, action: edit }
+
 foo:
   url: /foo/:action/*
   param: { module: agFoo }

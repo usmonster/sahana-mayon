@@ -8,12 +8,6 @@ homepage:
 facility:
   url:  /facility
   param: { module: facility, action: index }
-staff_index:
-  url: /staff
-  param: { module: agStaff, action: index }
-staff:
-  url: /staff/:action
-  param: { module: agStaff }
 client:
   url: /client
   param: { module: client, action: index }
@@ -56,9 +50,3 @@ sf_guard_signin:
 sf_guard_signout:
   url:   /logout
   param: { module: sfGuardAuth, action: signout }
-staff_search:
-  url:   /staff/search
-  param: { module: agStaff, action: search }
-staff_filter:
-  url:   /staff/filter
-  param: { module: agStaff, action: filter }
