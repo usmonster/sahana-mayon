@@ -1,6 +1,6 @@
 <?php
 
-require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/camptocamp/GeoJSON/GeoJSON.class.php');
+require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/camptocamp/GeoJSON/GeoJSON.class.php');
 
 class agGis
 {

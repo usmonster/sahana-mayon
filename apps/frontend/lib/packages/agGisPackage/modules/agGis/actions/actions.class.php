@@ -79,7 +79,7 @@ class agGisActions extends sfActions
    */
   public function executeListstaff(sfWebRequest $request)
   {
-   require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
+   require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
     $this->ag_staff_geos = Doctrine::getTable('agPerson')
                                       ->createQuery('a')
                                       ->select('p.*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
@@ -102,7 +102,7 @@ class agGisActions extends sfActions
   }
   public function executeListfacility(sfWebRequest $request)
   {
-    require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
+    require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
     $this->ag_facility_geos = Doctrine::getTable('agFacility')
                                       ->createQuery('a')
                                       ->select('f.*,s.*, e.*, pa.*, aa.*, aas.*')
@@ -174,7 +174,7 @@ class agGisActions extends sfActions
    */
   public function executeGeocode(sfWebRequest $request)
   {
-    require_once(sfConfig::get('sf_plugins_dir') . '/agGisPlugin/lib/vendor/agasti/agGis.class.php');
+    require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
 
     if($request->getParameter('address_id'))
     {
