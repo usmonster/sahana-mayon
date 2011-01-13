@@ -636,7 +636,7 @@ class agInstall
           'facility' => array('label' => 'Facilities', 'route' => '@facility', 'parent' => 'plan'),
           'org' => array('label' => 'Organizations', 'route' => '@org', 'parent' => 'plan'),
           'scenario' => array('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'plan'),
-          'activate' => array('label' => 'Activate Scenario', 'route' => '@homepage', 'parent' => 'respond'),
+          'activate' => array('label' => 'Activate a Scenario', 'route' => '@scenario', 'parent' => 'respond'),
           'event' => array('label' => 'Manage Events', 'route' => '@homepage', 'parent' => 'respond'),
           'event_active' => array('label' => 'Manage [Active Event]', 'route' => '@homepage', 'parent' => 'respond'));
 
