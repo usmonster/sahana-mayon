@@ -1,0 +1,27 @@
+# Sample Geo Coordinates
+
+agGeoCoordinate:
+  addyid1_coord:
+    longitude: -73.986684
+    latitude: 40.759291
+  addyid3_coord:
+    longitude: -73.945894
+    latitude: 40.773421
+  addyid2_coord:
+    longitude: -73.98949
+    latitude: 40.74801
+  addyid5_coord:
+    longitude: -73.982487
+    latitude: 40.694841
+  addyid6_coord:
+    longitude: -73.994548
+    latitude: 40.676605
+  addyid7_coord:
+    longitude: -73.978448
+    latitude: 40.681785
+  addyid8_coord:
+    longitude: -73.933973
+    latitude: 40.693769
+  addyid9_coord:
+    longitude: -73.934062
+    latitude: 40.693334

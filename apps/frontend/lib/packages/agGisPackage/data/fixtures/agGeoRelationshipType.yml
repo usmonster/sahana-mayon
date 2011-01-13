@@ -1,0 +1,5 @@
+agGeoRelationshipType:
+  center_relations:
+    id: 1
+    geo_relationship_type: center to center
+

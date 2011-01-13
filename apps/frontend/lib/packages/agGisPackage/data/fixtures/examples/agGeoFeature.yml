@@ -1,0 +1,35 @@
+# sample Geo Feature data
+
+agGeoFeature:
+  addyid1_feature:
+    agGeo: addyid1_geo
+    agGeoCoordinate: addyid1_coord
+    geo_coordinate_order: 1
+  addyid3_feature:
+    agGeo: addyid3_geo
+    agGeoCoordinate: addyid3_coord
+    geo_coordinate_order: 3
+  addyid2_feature:
+    agGeo: addyid2_geo
+    agGeoCoordinate: addyid2_coord
+    geo_coordinate_order: 2
+  addyid5_feature:
+    agGeo: addyid5_geo
+    agGeoCoordinate: addyid5_coord
+    geo_coordinate_order: 5
+  addyid6_feature:
+    agGeo: addyid6_geo
+    agGeoCoordinate: addyid6_coord
+    geo_coordinate_order: 6
+  addyid7_feature:
+    agGeo: addyid7_geo
+    agGeoCoordinate: addyid7_coord
+    geo_coordinate_order: 7
+  addyid8_feature:
+    agGeo: addyid8_geo
+    agGeoCoordinate: addyid8_coord
+    geo_coordinate_order: 8
+  addyid9_feature:
+    agGeo: addyid9_geo
+    agGeoCoordinate: addyid9_coord
+    geo_coordinate_order: 9
