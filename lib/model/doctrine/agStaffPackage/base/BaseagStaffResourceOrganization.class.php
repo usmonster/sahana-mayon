@@ -53,7 +53,6 @@ abstract class BaseagStaffResourceOrganization extends sfDoctrineRecord
              'fields' => 
              array(
               0 => 'staff_resource_id',
-              1 => 'organization_id',
              ),
              'type' => 'unique',
              ));

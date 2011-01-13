@@ -10,8 +10,11 @@
  * @property integer $staff_resource_type_id
  * @property integer $minimum_staff
  * @property integer $maximum_staff
+ * @property integer $minutes_start_to_facility_activation
+ * @property integer $task_length_minutes
  * @property timestamp $start_time
  * @property timestamp $end_time
+ * @property integer $break_length_minutes
  * @property timestamp $break_start
  * @property timestamp $break_end
  * @property integer $task_id
@@ -26,46 +29,52 @@
  * @property Doctrine_Collection $agStaffEvent
  * @property Doctrine_Collection $agEventStaffShift
  * 
- * @method integer                 getId()                         Returns the current record's "id" value
- * @method integer                 getEventFacilityResourceId()    Returns the current record's "event_facility_resource_id" value
- * @method integer                 getStaffResourceTypeId()        Returns the current record's "staff_resource_type_id" value
- * @method integer                 getMinimumStaff()               Returns the current record's "minimum_staff" value
- * @method integer                 getMaximumStaff()               Returns the current record's "maximum_staff" value
- * @method timestamp               getStartTime()                  Returns the current record's "start_time" value
- * @method timestamp               getEndTime()                    Returns the current record's "end_time" value
- * @method timestamp               getBreakStart()                 Returns the current record's "break_start" value
- * @method timestamp               getBreakEnd()                   Returns the current record's "break_end" value
- * @method integer                 getTaskId()                     Returns the current record's "task_id" value
- * @method integer                 getShiftStatusId()              Returns the current record's "shift_status_id" value
- * @method integer                 getStaffWave()                  Returns the current record's "staff_wave" value
- * @method integer                 getDeploymentAlgorithmId()      Returns the current record's "deployment_algorithm_id" value
- * @method agStaffResourceType     getAgStaffResourceType()        Returns the current record's "agStaffResourceType" value
- * @method agTask                  getAgShiftTask()                Returns the current record's "agShiftTask" value
- * @method agEventFacilityResource getAgEventFacilityResource()    Returns the current record's "agEventFacilityResource" value
- * @method agShiftStatus           getAgShiftStatus()              Returns the current record's "agShiftStatus" value
- * @method agDeploymentAlgorithm   getAgDeploymentAlgorithm()      Returns the current record's "agDeploymentAlgorithm" value
- * @method Doctrine_Collection     getAgStaffEvent()               Returns the current record's "agStaffEvent" collection
- * @method Doctrine_Collection     getAgEventStaffShift()          Returns the current record's "agEventStaffShift" collection
- * @method agEventShift            setId()                         Sets the current record's "id" value
- * @method agEventShift            setEventFacilityResourceId()    Sets the current record's "event_facility_resource_id" value
- * @method agEventShift            setStaffResourceTypeId()        Sets the current record's "staff_resource_type_id" value
- * @method agEventShift            setMinimumStaff()               Sets the current record's "minimum_staff" value
- * @method agEventShift            setMaximumStaff()               Sets the current record's "maximum_staff" value
- * @method agEventShift            setStartTime()                  Sets the current record's "start_time" value
- * @method agEventShift            setEndTime()                    Sets the current record's "end_time" value
- * @method agEventShift            setBreakStart()                 Sets the current record's "break_start" value
- * @method agEventShift            setBreakEnd()                   Sets the current record's "break_end" value
- * @method agEventShift            setTaskId()                     Sets the current record's "task_id" value
- * @method agEventShift            setShiftStatusId()              Sets the current record's "shift_status_id" value
- * @method agEventShift            setStaffWave()                  Sets the current record's "staff_wave" value
- * @method agEventShift            setDeploymentAlgorithmId()      Sets the current record's "deployment_algorithm_id" value
- * @method agEventShift            setAgStaffResourceType()        Sets the current record's "agStaffResourceType" value
- * @method agEventShift            setAgShiftTask()                Sets the current record's "agShiftTask" value
- * @method agEventShift            setAgEventFacilityResource()    Sets the current record's "agEventFacilityResource" value
- * @method agEventShift            setAgShiftStatus()              Sets the current record's "agShiftStatus" value
- * @method agEventShift            setAgDeploymentAlgorithm()      Sets the current record's "agDeploymentAlgorithm" value
- * @method agEventShift            setAgStaffEvent()               Sets the current record's "agStaffEvent" collection
- * @method agEventShift            setAgEventStaffShift()          Sets the current record's "agEventStaffShift" collection
+ * @method integer                 getId()                                   Returns the current record's "id" value
+ * @method integer                 getEventFacilityResourceId()              Returns the current record's "event_facility_resource_id" value
+ * @method integer                 getStaffResourceTypeId()                  Returns the current record's "staff_resource_type_id" value
+ * @method integer                 getMinimumStaff()                         Returns the current record's "minimum_staff" value
+ * @method integer                 getMaximumStaff()                         Returns the current record's "maximum_staff" value
+ * @method integer                 getMinutesStartToFacilityActivation()     Returns the current record's "minutes_start_to_facility_activation" value
+ * @method integer                 getTaskLengthMinutes()                    Returns the current record's "task_length_minutes" value
+ * @method timestamp               getStartTime()                            Returns the current record's "start_time" value
+ * @method timestamp               getEndTime()                              Returns the current record's "end_time" value
+ * @method integer                 getBreakLengthMinutes()                   Returns the current record's "break_length_minutes" value
+ * @method timestamp               getBreakStart()                           Returns the current record's "break_start" value
+ * @method timestamp               getBreakEnd()                             Returns the current record's "break_end" value
+ * @method integer                 getTaskId()                               Returns the current record's "task_id" value
+ * @method integer                 getShiftStatusId()                        Returns the current record's "shift_status_id" value
+ * @method integer                 getStaffWave()                            Returns the current record's "staff_wave" value
+ * @method integer                 getDeploymentAlgorithmId()                Returns the current record's "deployment_algorithm_id" value
+ * @method agStaffResourceType     getAgStaffResourceType()                  Returns the current record's "agStaffResourceType" value
+ * @method agTask                  getAgShiftTask()                          Returns the current record's "agShiftTask" value
+ * @method agEventFacilityResource getAgEventFacilityResource()              Returns the current record's "agEventFacilityResource" value
+ * @method agShiftStatus           getAgShiftStatus()                        Returns the current record's "agShiftStatus" value
+ * @method agDeploymentAlgorithm   getAgDeploymentAlgorithm()                Returns the current record's "agDeploymentAlgorithm" value
+ * @method Doctrine_Collection     getAgStaffEvent()                         Returns the current record's "agStaffEvent" collection
+ * @method Doctrine_Collection     getAgEventStaffShift()                    Returns the current record's "agEventStaffShift" collection
+ * @method agEventShift            setId()                                   Sets the current record's "id" value
+ * @method agEventShift            setEventFacilityResourceId()              Sets the current record's "event_facility_resource_id" value
+ * @method agEventShift            setStaffResourceTypeId()                  Sets the current record's "staff_resource_type_id" value
+ * @method agEventShift            setMinimumStaff()                         Sets the current record's "minimum_staff" value
+ * @method agEventShift            setMaximumStaff()                         Sets the current record's "maximum_staff" value
+ * @method agEventShift            setMinutesStartToFacilityActivation()     Sets the current record's "minutes_start_to_facility_activation" value
+ * @method agEventShift            setTaskLengthMinutes()                    Sets the current record's "task_length_minutes" value
+ * @method agEventShift            setStartTime()                            Sets the current record's "start_time" value
+ * @method agEventShift            setEndTime()                              Sets the current record's "end_time" value
+ * @method agEventShift            setBreakLengthMinutes()                   Sets the current record's "break_length_minutes" value
+ * @method agEventShift            setBreakStart()                           Sets the current record's "break_start" value
+ * @method agEventShift            setBreakEnd()                             Sets the current record's "break_end" value
+ * @method agEventShift            setTaskId()                               Sets the current record's "task_id" value
+ * @method agEventShift            setShiftStatusId()                        Sets the current record's "shift_status_id" value
+ * @method agEventShift            setStaffWave()                            Sets the current record's "staff_wave" value
+ * @method agEventShift            setDeploymentAlgorithmId()                Sets the current record's "deployment_algorithm_id" value
+ * @method agEventShift            setAgStaffResourceType()                  Sets the current record's "agStaffResourceType" value
+ * @method agEventShift            setAgShiftTask()                          Sets the current record's "agShiftTask" value
+ * @method agEventShift            setAgEventFacilityResource()              Sets the current record's "agEventFacilityResource" value
+ * @method agEventShift            setAgShiftStatus()                        Sets the current record's "agShiftStatus" value
+ * @method agEventShift            setAgDeploymentAlgorithm()                Sets the current record's "agDeploymentAlgorithm" value
+ * @method agEventShift            setAgStaffEvent()                         Sets the current record's "agStaffEvent" collection
+ * @method agEventShift            setAgEventStaffShift()                    Sets the current record's "agEventStaffShift" collection
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -103,21 +112,32 @@ abstract class BaseagEventShift extends sfDoctrineRecord
              'notnull' => true,
              'length' => 1,
              ));
+        $this->hasColumn('minutes_start_to_facility_activation', 'integer', 5, array(
+             'type' => 'integer',
+             'notnull' => true,
+             'length' => 5,
+             ));
+        $this->hasColumn('task_length_minutes', 'integer', 4, array(
+             'type' => 'integer',
+             'notnull' => true,
+             'length' => 4,
+             ));
         $this->hasColumn('start_time', 'timestamp', null, array(
              'type' => 'timestamp',
-             'notnull' => true,
              ));
         $this->hasColumn('end_time', 'timestamp', null, array(
              'type' => 'timestamp',
+             ));
+        $this->hasColumn('break_length_minutes', 'integer', 4, array(
+             'type' => 'integer',
              'notnull' => true,
+             'length' => 4,
              ));
         $this->hasColumn('break_start', 'timestamp', null, array(
              'type' => 'timestamp',
-             'notnull' => true,
              ));
         $this->hasColumn('break_end', 'timestamp', null, array(
              'type' => 'timestamp',
-             'notnull' => true,
              ));
         $this->hasColumn('task_id', 'integer', 2, array(
              'type' => 'integer',

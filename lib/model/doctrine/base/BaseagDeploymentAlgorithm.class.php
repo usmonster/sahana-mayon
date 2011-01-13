@@ -10,7 +10,6 @@
  * @property string $description
  * @property boolean $app_display
  * @property Doctrine_Collection $agEventShift
- * @property Doctrine_Collection $agEventRelativeShift
  * @property Doctrine_Collection $agScenarioShift
  * @property Doctrine_Collection $agShiftTemplate
  * 
@@ -19,7 +18,6 @@
  * @method string                getDescription()          Returns the current record's "description" value
  * @method boolean               getAppDisplay()           Returns the current record's "app_display" value
  * @method Doctrine_Collection   getAgEventShift()         Returns the current record's "agEventShift" collection
- * @method Doctrine_Collection   getAgEventRelativeShift() Returns the current record's "agEventRelativeShift" collection
  * @method Doctrine_Collection   getAgScenarioShift()      Returns the current record's "agScenarioShift" collection
  * @method Doctrine_Collection   getAgShiftTemplate()      Returns the current record's "agShiftTemplate" collection
  * @method agDeploymentAlgorithm setId()                   Sets the current record's "id" value
@@ -27,7 +25,6 @@
  * @method agDeploymentAlgorithm setDescription()          Sets the current record's "description" value
  * @method agDeploymentAlgorithm setAppDisplay()           Sets the current record's "app_display" value
  * @method agDeploymentAlgorithm setAgEventShift()         Sets the current record's "agEventShift" collection
- * @method agDeploymentAlgorithm setAgEventRelativeShift() Sets the current record's "agEventRelativeShift" collection
  * @method agDeploymentAlgorithm setAgScenarioShift()      Sets the current record's "agScenarioShift" collection
  * @method agDeploymentAlgorithm setAgShiftTemplate()      Sets the current record's "agShiftTemplate" collection
  * 
@@ -76,10 +73,6 @@ abstract class BaseagDeploymentAlgorithm extends sfDoctrineRecord
     {
         parent::setUp();
         $this->hasMany('agEventShift', array(
-             'local' => 'id',
-             'foreign' => 'deployment_algorithm_id'));
-
-        $this->hasMany('agEventRelativeShift', array(
              'local' => 'id',
              'foreign' => 'deployment_algorithm_id'));
 

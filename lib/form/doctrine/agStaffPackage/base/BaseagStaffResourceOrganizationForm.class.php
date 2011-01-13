@@ -31,7 +31,7 @@ abstract class BaseagStaffResourceOrganizationForm extends BaseFormDoctrine
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorDoctrineUnique(array('model' => 'agStaffResourceOrganization', 'column' => array('staff_resource_id', 'organization_id')))
+      new sfValidatorDoctrineUnique(array('model' => 'agStaffResourceOrganization', 'column' => array('staff_resource_id')))
     );
 
     $this->widgetSchema->setNameFormat('ag_staff_resource_organization[%s]');

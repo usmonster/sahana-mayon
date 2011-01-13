@@ -10,26 +10,23 @@
  * @property string $description
  * @property boolean $standby
  * @property Doctrine_Collection $agEventShift
- * @property Doctrine_Collection $agEventRelativeShift
  * @property Doctrine_Collection $agScenarioShift
  * @property Doctrine_Collection $agShiftTemplate
  * 
- * @method integer             getId()                   Returns the current record's "id" value
- * @method string              getShiftStatus()          Returns the current record's "shift_status" value
- * @method string              getDescription()          Returns the current record's "description" value
- * @method boolean             getStandby()              Returns the current record's "standby" value
- * @method Doctrine_Collection getAgEventShift()         Returns the current record's "agEventShift" collection
- * @method Doctrine_Collection getAgEventRelativeShift() Returns the current record's "agEventRelativeShift" collection
- * @method Doctrine_Collection getAgScenarioShift()      Returns the current record's "agScenarioShift" collection
- * @method Doctrine_Collection getAgShiftTemplate()      Returns the current record's "agShiftTemplate" collection
- * @method agShiftStatus       setId()                   Sets the current record's "id" value
- * @method agShiftStatus       setShiftStatus()          Sets the current record's "shift_status" value
- * @method agShiftStatus       setDescription()          Sets the current record's "description" value
- * @method agShiftStatus       setStandby()              Sets the current record's "standby" value
- * @method agShiftStatus       setAgEventShift()         Sets the current record's "agEventShift" collection
- * @method agShiftStatus       setAgEventRelativeShift() Sets the current record's "agEventRelativeShift" collection
- * @method agShiftStatus       setAgScenarioShift()      Sets the current record's "agScenarioShift" collection
- * @method agShiftStatus       setAgShiftTemplate()      Sets the current record's "agShiftTemplate" collection
+ * @method integer             getId()              Returns the current record's "id" value
+ * @method string              getShiftStatus()     Returns the current record's "shift_status" value
+ * @method string              getDescription()     Returns the current record's "description" value
+ * @method boolean             getStandby()         Returns the current record's "standby" value
+ * @method Doctrine_Collection getAgEventShift()    Returns the current record's "agEventShift" collection
+ * @method Doctrine_Collection getAgScenarioShift() Returns the current record's "agScenarioShift" collection
+ * @method Doctrine_Collection getAgShiftTemplate() Returns the current record's "agShiftTemplate" collection
+ * @method agShiftStatus       setId()              Sets the current record's "id" value
+ * @method agShiftStatus       setShiftStatus()     Sets the current record's "shift_status" value
+ * @method agShiftStatus       setDescription()     Sets the current record's "description" value
+ * @method agShiftStatus       setStandby()         Sets the current record's "standby" value
+ * @method agShiftStatus       setAgEventShift()    Sets the current record's "agEventShift" collection
+ * @method agShiftStatus       setAgScenarioShift() Sets the current record's "agScenarioShift" collection
+ * @method agShiftStatus       setAgShiftTemplate() Sets the current record's "agShiftTemplate" collection
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -76,10 +73,6 @@ abstract class BaseagShiftStatus extends sfDoctrineRecord
     {
         parent::setUp();
         $this->hasMany('agEventShift', array(
-             'local' => 'id',
-             'foreign' => 'shift_status_id'));
-
-        $this->hasMany('agEventRelativeShift', array(
              'local' => 'id',
              'foreign' => 'shift_status_id'));
 

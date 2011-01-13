@@ -162,7 +162,7 @@ agStaffResourceOrganization:
       notnull: true
   indexes:
     UX_agStaffResourceOrganization:
-      fields: [staff_resource_id, organization_id]
+      fields: [staff_resource_id]
       type: unique
   relations:
     agStaffResource:

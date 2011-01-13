@@ -13,19 +13,21 @@ abstract class BaseagLuceneSearchFormFilter extends BaseFormFilterDoctrine
   public function setup()
   {
     $this->setWidgets(array(
-      'query_name'      => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'query_condition' => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'created_at'      => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
-      'updated_at'      => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
-      'ag_report_list'  => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReport')),
+      'lucene_search_type_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agLuceneSearchType'), 'add_empty' => true)),
+      'query_name'            => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'query_condition'       => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'created_at'            => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
+      'updated_at'            => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
+      'ag_report_list'        => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReport')),
     ));
 
     $this->setValidators(array(
-      'query_name'      => new sfValidatorPass(array('required' => false)),
-      'query_condition' => new sfValidatorPass(array('required' => false)),
-      'created_at'      => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
-      'updated_at'      => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
-      'ag_report_list'  => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agReport', 'required' => false)),
+      'lucene_search_type_id' => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agLuceneSearchType'), 'column' => 'id')),
+      'query_name'            => new sfValidatorPass(array('required' => false)),
+      'query_condition'       => new sfValidatorPass(array('required' => false)),
+      'created_at'            => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
+      'updated_at'            => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
+      'ag_report_list'        => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agReport', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('ag_lucene_search_filters[%s]');
@@ -63,12 +65,13 @@ abstract class BaseagLuceneSearchFormFilter extends BaseFormFilterDoctrine
   public function getFields()
   {
     return array(
-      'id'              => 'Number',
-      'query_name'      => 'Text',
-      'query_condition' => 'Text',
-      'created_at'      => 'Date',
-      'updated_at'      => 'Date',
-      'ag_report_list'  => 'ManyKey',
+      'id'                    => 'Number',
+      'lucene_search_type_id' => 'ForeignKey',
+      'query_name'            => 'Text',
+      'query_condition'       => 'Text',
+      'created_at'            => 'Date',
+      'updated_at'            => 'Date',
+      'ag_report_list'        => 'ManyKey',
     );
   }
 }
