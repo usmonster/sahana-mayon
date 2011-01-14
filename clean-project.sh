@@ -8,7 +8,7 @@ set -x
 set -e
 
 # Tries to infer the web user from a running Apache instance
-WEB_USER=`ps axho user,comm|grep -E "httpd|apache"|uniq -d|gawk '{print $1}'`
+WEB_USER=`ps axho user,comm|grep -E "httpd|apache"|uniq -d|awk '{print $1}'`
 
 # This will drop your database, your data, and recreate everything anew
 # This file should only be used for development of Sahana Agasti, as you
