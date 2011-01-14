@@ -437,24 +437,24 @@ class agPerson extends BaseagPerson
    * @param conn the connection to Doctrine
    * @return current save state of the object being saved
    */
-  public function save(Doctrine_Connection $conn = null)
-  {
-    $conn = $conn ? $conn : $this->getTable()->getConnection();
-    $conn->beginTransaction();
-
-    try {
-      $ret = parent::save($conn);
-
-      //$this->updateLuceneIndex(); This has been moved to apps/frontend/lib/BaseFormDoctrine to ensure names are indexed properly.
-
-      $conn->commit();
-
-      return $ret;
-    } catch (Exception $e) {
-      $conn->rollBack();
-      throw $e;
-    }
-  }
+//  public function save(Doctrine_Connection $conn = null)
+//  {
+//    $conn = $conn ? $conn : $this->getTable()->getConnection();
+//    $conn->beginTransaction();
+//
+//    try {
+//      $ret = parent::save($conn);
+//
+//      //$this->updateLuceneIndex(); This has been moved to apps/frontend/lib/BaseFormDoctrine to ensure names are indexed properly.
+//
+//      $conn->commit();
+//
+//      return $ret;
+//    } catch (Exception $e) {
+//      $conn->rollBack();
+//      throw $e;
+//    }
+//  }
 
   /**
    * Deletes an agPerson. The function has been extended to update the Lucene index

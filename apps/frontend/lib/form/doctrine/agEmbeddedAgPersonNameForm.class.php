@@ -31,7 +31,7 @@ class agEmbeddedAgPersonNameForm extends agPersonNameForm
 
     $this->setValidators(array(
       'id'                       => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'person_name'              => new sfValidatorString(array('max_length' => 64, 'required' => false)),
+      'person_name'              => new sfValidatorString(array('max_length' => 64, 'required' => false, 'empty_value' => null)),
     ));
   }
 

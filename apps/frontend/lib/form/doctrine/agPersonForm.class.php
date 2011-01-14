@@ -133,12 +133,12 @@ class agPersonForm extends BaseagPersonForm
   *****************************************************************************/
   public function embedAgPersonForms()
   {
-    $this->embedDateOfBirthForm();
-    $this->embedLanguageForm();
+//    $this->embedDateOfBirthForm();
+//    $this->embedLanguageForm();
     $this->embedNameForm();
-    $this->embedEmailForm();
-    $this->embedPhoneForm();
-    $this->embedAddressForm();
+//    $this->embedEmailForm();
+//    $this->embedPhoneForm();
+//    $this->embedAddressForm();
   }
 
   /*****************************************************************************
@@ -242,28 +242,27 @@ class agPersonForm extends BaseagPersonForm
   }
 
   /*****************************************************************************
-  * This block sets up the embedded agEmbeddedAgPersonNameForms, one for each agPersonNameType,
+  * This function sets up the embedded agEmbeddedAgPersonNameForms, one for each agPersonNameType,
   * populated with the agPersonName that corresponds to the current agPerson and
   * agPersonNameType (if it exists).
   *****************************************************************************/
   public function embedNameForm(){
     $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')->createQuery('a')->execute();
-    $nameContainer = new sfForm(array(), array());
-    //$nameContainer->widgetSchema->setFormFormatterName('list');
+    $nameContainer = new sfForm();
     $nameConDeco = new agWidgetFormSchemaFormatterSubContainer($nameContainer->getWidgetSchema());
     $nameContainer->getWidgetSchema()->addFormFormatter('nameConDeco', $nameConDeco);
     $nameContainer->getWidgetSchema()->setFormFormatterName('nameConDeco');
     foreach ($this->ag_person_name_types as $nameType) {
-      $nameForm = new agEmbeddedAgPersonNameForm();
-      foreach ($this->getObject()->getAgPersonMjAgPersonName() as $current) {
-        if ($current->getPersonNameTypeId() == $nameType->getId()) {
-          $nameForm->setDefault('person_name', $current->getAgPersonName()->person_name);
-        }
+      if($id = $this->getObject()->id) {
+        $nameObject = Doctrine_Query::create()
+            ->from('agPersonName pn')
+            ->where('pn.id IN (SELECT jn.person_name_id FROM agPersonMjAgPersonName jn WHERE jn.person_id = ? AND person_name_type_id = ?)', array($id, $nameType->id))
+            ->execute()->getFirst();
       }
+      $nameForm = new agEmbeddedAgPersonNameForm((isset($nameObject)) ? $nameObject : null);
       $nameForm->widgetSchema->setLabel('person_name', ucwords($nameType->person_name_type));
       $nameContainer->embedForm($nameType->getPersonNameType(), $nameForm);
     }
-
     $this->embedForm('name', $nameContainer);
   }
 
@@ -421,6 +420,12 @@ class agPersonForm extends BaseagPersonForm
     $this->embedForm('address', $addressContainer);
   }
 
+  /**************************************************************
+  * Saves data in the embedded date of birth form.
+  *
+  * @todo: The '0000-00-00' below is pretty hackish and should be fixed. It prevents a DB error for a field that should not be null
+  * formValuesAreBlank() or something similar should really be used, in updateObject, to catch this earlier and unset.
+  **************************************************************/
   public function saveDateOfBirthForm($form)
   {
     if ($form->getObject()->person_id == null && $form->getObject()->date_of_birth <> '0000-00-00') {
@@ -433,6 +438,70 @@ class agPersonForm extends BaseagPersonForm
     }
     unset($this->embeddedForms['date of birth']);
   }
+
+  public function saveNameForm($key, $form, $values)
+  {
+    $form->updateObject($values);
+
+    // This should only return true if the form was populated before page load.
+    if($form->getObject()->isModified() && $form->getObject()->person_name <> null) {
+      // See if the submitted name exists in the DB.
+      $nameObject = Doctrine::getTable('agPersonName')
+        ->findByDql('person_name = ?', $form->getObject()->person_name)
+        ->getFirst();
+
+      if($nameObject == false) {
+        $nameObject = new agPersonName();
+        $nameObject->person_name = $form->getObject()->person_name;
+        $nameObject->save();
+      }
+      //This query finds the name_type ID we need for the next query.
+      $typeId = Doctrine_Query::create()
+        ->select('a.id')
+        ->from('agPersonNameType a')
+        ->where('a.person_name_type = ?', $key)
+        ->execute(null, Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      //This query gets the person's agPersonMjAgPersonName object, based on person_id and name_type_id (as $typeId).
+      $joinObject = Doctrine_Query::create()
+        ->from('agPersonMjAgPersonName j')
+        ->where('j.person_name_type_id = ? AND j.person_id = ?', array($typeId, $this->getObject()->id))
+        ->execute()->getFirst();
+      
+      if($joinObject instanceof agPersonMjAgPersonName) {
+        $joinObject->person_name_id = $nameObject->id;
+        // unlink is called here because Doctrine still has the relation to the
+        // old name object and will throw a duplicate entry error as it tries to
+        // update that record's person_name value to the same value as $nameObject.
+        $joinObject->unlink('agPersonName');
+        $joinObject->save();
+      } else {
+        $joinObject = new agPersonMjAgPersonName();
+        $joinObject->person_id = $this->getObject()->id;
+        $joinObject->person_name_type_id = $typeId;
+        $joinObject->person_name_id = $nameObject->id;
+        $joinObject->priority = 1;
+        $joinObject->save();
+      }
+      // This case should return true if the form was cleared before submission.
+      // the agPersonMjAgPersonName object will be deleted.
+    } elseif($form->getObject()->isModified() && $form->getObject()->person_name == null) {
+      $typeId = Doctrine_Query::create()
+        ->select('a.id')
+        ->from('agPersonNameType a')
+        ->where('a.person_name_type = ?', $key)
+        ->execute(null, Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      $joinObject = Doctrine_Query::create()
+        ->from('agPersonMjAgPersonName j')
+        ->where('j.person_name_type_id = ? AND j.person_id = ?', array($typeId, $this->getObject()->id))
+        ->execute()->getFirst();
+      $joinObject->delete();
+      // This case should return true if there wasn't a name and a new one hasn't been input.
+    } elseif(!$form->getObject()->isModified() && $form->getObject()->person_name == null && $form->getDefault('person_name') == null) {
+      return;
+    }
+  }
   /**************************************************************
   * Saves the forms embedded on the Person page.
   * @param $forms array of forms to save
@@ -442,126 +511,119 @@ class agPersonForm extends BaseagPersonForm
   **************************************************************/
   public function saveEmbeddedForms($con = null, $forms = null)
   {
+    // Something better than isset might be useful here, get rid of the if. For now though, do it this way
+    // otherwise, after the form's unset in the saveDoB function, it'll try to get in here again and error.
     if(isset($this->embeddedForms['date of birth'])) {
       $this->saveDateOfBirthForm($this->embeddedForms['date of birth']);
     }
-    if (null === $forms) {
-      $forms = $this->embeddedForms;
+    if(isset($this->embeddedForms['name'])) {
+      // Grab values from $this andpass to saveNameForm?
+      foreach($this->embeddedForms['name']->embeddedForms as $key => $form) {
+        $values = $this->values['name'][$key];
+        $this->saveNameForm($key, $form, $values);
+        unset($this->embeddedForms['name'][$key]);
+      }
     }
+//    if (null === $forms) {
+//      $forms = $this->embeddedForms;
+//    }
     if (is_array($forms)) {
       foreach ($forms as $key => $form) {
         /**
-         * Date of Birth daving section
-         *
-         * @todo: The '0000-00-00' below is pretty hackish and should be fixed. It prevents a DB error for a field that should not be null
-         * formValuesAreBlank() or something similar should really be used, in updateObject, to catch this earlier and unset.
-         * */
-//        if ($form instanceof agEmbeddedPersonDateOfBirthForm) {
-//          if ($form->getObject()->person_id == null && $form->getObject()->date_of_birth <> '0000-00-00') {
-//            $form->getObject()->person_id = $this->getObject()->id;
-//            $form->getObject()->save();
-//          } elseif ($form->getObject()->date_of_birth == '0000-00-00' && $form->getObject()->person_id <> null) {
-//            $form->getObject()->delete();
-//          } elseif ($form->getObject()->date_of_birth <> '0000-00-00' && $form->getObject()->person_id <> null) {
-//            $form->getObject()->save();
-//          }
-//          unset($forms[$key]);
-//        }
-        /**
          *  Name Saving Section
          * */
-        if ($form instanceof agEmbeddedAgPersonNameForm) {
-          //This query finds the name_type ID we need for the next query.
-          $typeQuery = Doctrine::getTable('agPersonNameType')->createQuery('b')
-                  ->select('b.id')
-                  ->from('agPersonNameType b')
-                  ->where('b.person_name_type = ?', $key);
-
-          $typeId = $typeQuery->fetchOne()->id;
-
-          //This query gets the person's agPersonMjAgPersonName object, based on person_id and name_type_id (as $typeId).
-          $joinQuery = Doctrine::getTable('agPersonMjAgPersonName')->createQuery('c')
-                  ->select('c.id')
-                  ->from('agPersonMjAgPersonName c')
-                  ->where('c.person_name_type_id = ?', $typeId)
-                  ->andWhere('c.person_id =?', $this->getObject()->id);
-
-          //Check if the agEmbeddedAgPersonNameForm has a name value.
-          if ($form->getObject()->person_name <> null) {
-            // Get an agPersonMjAgPersonName object from $joinQuery. Then create a new agPersonMjAgPersonNameForm
-            // and put the retrieved object inside it.
-            if ($join = $joinQuery->fetchOne()) {
-              $joinForm = new agPersonMjAgPersonNameForm($join);
-            }
-            // Or create a new agPersonMjAgPersonNameForm to be populated later and set its priority to 1.
-            else {
-              $joinForm = new agPersonMjAgPersonNameForm();
-              $joinForm->getObject()->priority = 1;
-            }
-
-            // Check if the person_name value has changed since the page was rendered.
-            if ($form->getObject()->person_name <> $form->getDefault('person_name')) {
-              // If it has changed, save the entered value as $nameLookup. Then revert the object
-              // to its default values from the page render. This prevents a duplicate entry error.
-              $nameLookUp = $form->getObject()->person_name;
-              $form->updateObject($form->getDefaults());
-
-              // Create a query to see if the submitted name value, as $nameLookup, already exists
-              // in the database.
-              $q = Doctrine::getTable('agPersonName')->createQuery('a')
-                      ->select('a.id')
-                      ->from('agPersonName a')
-                      ->where('a.person_name = ?', $nameLookUp);
-
-              // If it does...
-              if ($queried = $q->fetchOne()) {
-                // Get the id of the name in the db...
-                $name_id = $queried->get('id');
-                // ...then see if the agPersonMjAgPersonName has a person_name_id corresponding to the
-                // name queried for. If it is, unset the form, no update is needed...
-                if (isset($joinForm->person_name_id) && $joinForm->person_name_id == $name_id) {
-                  unset($forms[$key]);
-                }
-                // ...If it wasn't, populate the agPersonMjAgPersonName object's values and save it.
-                // Then unset the form.
-                else {
-                  $joinForm->getObject()->person_id = $this->getObject()->id;
-                  $joinForm->getObject()->person_name_id = $name_id;
-                  $joinForm->getObject()->person_name_type_id = $typeId;
-                  $joinForm->getObject()->save();
-                  unset($forms[$key]);
-                }
-              }
-              // If the entered name isn't in the database already, make a new agPersonName object,
-              // populate it with the new name, and save it.
-              // Then populate the agPersonMjAgPersonName object's values, associating it with the
-              // id of the new name, and save it. Unset the form.
-              elseif (!$queried = $q->fetchOne()) {
-                $newName = new agPersonName();
-                $newName->person_name = $nameLookUp;
-                $newName->save();
-                $joinForm->getObject()->person_id = $this->getObject()->id;
-                $joinForm->getObject()->person_name_id = $newName->id;
-                $joinForm->getObject()->person_name_type_id = $typeId;
-                $joinForm->getObject()->save();
-                unset($forms[$key]); //This unsets the form, prevents a multiple save.
-              }
-            }
-            // If the name hasn't been changed, unset the form.
-            else {
-              unset($forms[$key]);
-            }
-          }
-          // If the name field is blank, unset the field...
-          else {
-            unset($forms[$key]);
-            // ...if it was populated, delete the existing agPersonMjAgPersonName object since it is
-            // no longer needed.
-            if ($join = $joinQuery->fetchOne()) {
-              $join->delete();
-            }
-          }
-        }
+//        if ($form instanceof agEmbeddedAgPersonNameForm) {
+//          //This query finds the name_type ID we need for the next query.
+//          $typeQuery = Doctrine::getTable('agPersonNameType')->createQuery('b')
+//                  ->select('b.id')
+//                  ->from('agPersonNameType b')
+//                  ->where('b.person_name_type = ?', $key);
+//
+//          $typeId = $typeQuery->fetchOne()->id;
+//
+//          //This query gets the person's agPersonMjAgPersonName object, based on person_id and name_type_id (as $typeId).
+//          $joinQuery = Doctrine::getTable('agPersonMjAgPersonName')->createQuery('c')
+//                  ->select('c.id')
+//                  ->from('agPersonMjAgPersonName c')
+//                  ->where('c.person_name_type_id = ?', $typeId)
+//                  ->andWhere('c.person_id =?', $this->getObject()->id);
+//
+//          //Check if the agEmbeddedAgPersonNameForm has a name value.
+//          if ($form->getObject()->person_name <> null) {
+//            // Get an agPersonMjAgPersonName object from $joinQuery. Then create a new agPersonMjAgPersonNameForm
+//            // and put the retrieved object inside it.
+//            if ($join = $joinQuery->fetchOne()) {
+//              $joinForm = new agPersonMjAgPersonNameForm($join);
+//            }
+//            // Or create a new agPersonMjAgPersonNameForm to be populated later and set its priority to 1.
+//            else {
+//              $joinForm = new agPersonMjAgPersonNameForm();
+//              $joinForm->getObject()->priority = 1;
+//            }
+//
+//            // Check if the person_name value has changed since the page was rendered.
+//            if ($form->getObject()->person_name <> $form->getDefault('person_name')) {
+//              // If it has changed, save the entered value as $nameLookup. Then revert the object
+//              // to its default values from the page render. This prevents a duplicate entry error.
+//              $nameLookUp = $form->getObject()->person_name;
+//              $form->updateObject($form->getDefaults());
+//
+//              // Create a query to see if the submitted name value, as $nameLookup, already exists
+//              // in the database.
+//              $q = Doctrine::getTable('agPersonName')->createQuery('a')
+//                      ->select('a.id')
+//                      ->from('agPersonName a')
+//                      ->where('a.person_name = ?', $nameLookUp);
+//
+//              // If it does...
+//              if ($queried = $q->fetchOne()) {
+//                // Get the id of the name in the db...
+//                $name_id = $queried->get('id');
+//                // ...then see if the agPersonMjAgPersonName has a person_name_id corresponding to the
+//                // name queried for. If it is, unset the form, no update is needed...
+//                if (isset($joinForm->person_name_id) && $joinForm->person_name_id == $name_id) {
+//                  unset($forms[$key]);
+//                }
+//                // ...If it wasn't, populate the agPersonMjAgPersonName object's values and save it.
+//                // Then unset the form.
+//                else {
+//                  $joinForm->getObject()->person_id = $this->getObject()->id;
+//                  $joinForm->getObject()->person_name_id = $name_id;
+//                  $joinForm->getObject()->person_name_type_id = $typeId;
+//                  $joinForm->getObject()->save();
+//                  unset($forms[$key]);
+//                }
+//              }
+//              // If the entered name isn't in the database already, make a new agPersonName object,
+//              // populate it with the new name, and save it.
+//              // Then populate the agPersonMjAgPersonName object's values, associating it with the
+//              // id of the new name, and save it. Unset the form.
+//              elseif (!$queried = $q->fetchOne()) {
+//                $newName = new agPersonName();
+//                $newName->person_name = $nameLookUp;
+//                $newName->save();
+//                $joinForm->getObject()->person_id = $this->getObject()->id;
+//                $joinForm->getObject()->person_name_id = $newName->id;
+//                $joinForm->getObject()->person_name_type_id = $typeId;
+//                $joinForm->getObject()->save();
+//                unset($forms[$key]); //This unsets the form, prevents a multiple save.
+//              }
+//            }
+//            // If the name hasn't been changed, unset the form.
+//            else {
+//              unset($forms[$key]);
+//            }
+//          }
+//          // If the name field is blank, unset the field...
+//          else {
+//            unset($forms[$key]);
+//            // ...if it was populated, delete the existing agPersonMjAgPersonName object since it is
+//            // no longer needed.
+//            if ($join = $joinQuery->fetchOne()) {
+//              $join->delete();
+//            }
+//          }
+//        }
         /**
          *  Email Saving Section
          * */
@@ -979,11 +1041,11 @@ class agPersonForm extends BaseagPersonForm
         
       }
     }
-    return parent::saveEmbeddedForms($con, $forms);
+    //return parent::saveEmbeddedForms($con, $forms);
   }
 
-  protected function doSave($con = null)
-  {
+//  protected function doSave($con = null)
+//  {
 //  if ($this->object->getAgPersonDateOfBirth()->date_of_birth == null) {
 //    unset($this['date_of_birth']);
 //  } else {
@@ -1000,7 +1062,7 @@ class agPersonForm extends BaseagPersonForm
 //        //save the staff person's status for that organization
 //        $this->saveagStaffResourceTypeList($con);
 //    }
-    return parent::doSave($con);
-  }
+//    return parent::doSave($con);
+//  }
 
 }
