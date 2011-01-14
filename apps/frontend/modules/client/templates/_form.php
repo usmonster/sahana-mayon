@@ -27,7 +27,7 @@
         <?php echo $form['ag_ethnicity_list']; ?>
       </div>
       <div style="display: inline-block">
-        <?php //echo $form['date of birth']; ?>
+        <?php echo $form['date of birth']; ?>
       </div>
       <br />
       <br />
@@ -56,9 +56,9 @@
     <h3>Contact</h3>
     <div class="infoHolder">
     <fieldset>
-      <h3><?php //echo $form['email']->renderLabel();?></h3>
+      <h3><?php echo $form['email']->renderLabel();?></h3>
       <div style="clear: both;"> </div>
-      <?php //echo $form['email'] ?>
+      <?php echo $form['email'] ?>
       <div style="clear: both;"> </div>
       <h3><?php //echo $form['phone']->renderLabel();?></h3>
       <div style="clear: both;"> </div>
