@@ -559,7 +559,7 @@ class agPersonForm extends BaseagPersonForm
         $joinObject->entity_id = $this->agEntity->id;
         $joinObject->email_contact_type_id = $typeId;
         $joinObject->email_contact_id = $emailObject->id;
-        $joinObject->priority = 1;
+        $joinObject->priority = $typeId;
         $joinObject->save();
       }
     } elseif($form->getObject()->isModified() && $form->getObject()->email_contact == null) {
