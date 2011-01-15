@@ -134,11 +134,11 @@ class agPersonForm extends BaseagPersonForm
   public function embedAgPersonForms()
   {
     $this->embedDateOfBirthForm();
-//    $this->embedLanguageForm();
+    $this->embedLanguageForm();
     $this->embedNameForm();
     $this->embedEmailForm();
-//    $this->embedPhoneForm();
-//    $this->embedAddressForm();
+    $this->embedPhoneForm();
+    $this->embedAddressForm();
   }
 
   /**

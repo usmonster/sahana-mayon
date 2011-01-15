@@ -14,7 +14,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config.inc.php');
+require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
 
 ?>
 <div id="infoHolder" style="display:inline-block;">
@@ -57,7 +57,7 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
       </ul>
     </fieldset>
     <fieldset>
-      <legend><img src="<?php echo url_for('images/config.png') ?>" style="vertical-align: text-bottom"alt="config gear icon" />Select Authentication Method:</legend>
+      <legend><?php echo image_tag('config.png', array('style' => 'vertical-align: text-bottom', 'alt' => 'config gear icon')) ?>Select Authentication Method:</legend>
 
       <ul>
         <li>
@@ -69,7 +69,7 @@ require_once (sfConfig::get('sf_apps_dir') . '/frontend/modules/admin/lib/config
       </ul>
     </fieldset>
     <fieldset>
-      <legend><img src="<?php echo url_for('images/config.png') ?>" style="vertical-align: text-bottom" alt="config gear icon" />Administrator Configuration:</legend>
+      <legend><?php echo image_tag('config.png', array('style' => 'vertical-align: text-bottom', 'alt' => 'config gear icon')) ?>Administrator Configuration:</legend>
       <ul>
         <li>
           <label>name:</label><input type="text" name="admin_name" id="admin_name" class="inputGray" value="<?php echo $agConfig->getConfig('ADMIN_NAME') ?>" /><br />

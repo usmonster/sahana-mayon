@@ -21,8 +21,8 @@
 
 function check_php_version()
 {
-  $required = '5.0';
-  $recommended = '5.3.0';
+  $required = '5.2.12';
+  $recommended = '5.3.2';
 
   if (version_compare(phpversion(), $recommended, '>=')) {
     $req = 2;
@@ -476,6 +476,8 @@ function check_php_requirements()
 
   $result[] = check_php_version();
   $result[] = check_php_memory_limit();
+  # TODO: uncomment this when staff/facility import is working
+  #$result[] = check_php_post_max_size(); 
   $result[] = check_file_permissions(sfConfig::get('sf_config_dir'),'0775');
   $result[] = check_file_permissions(sfConfig::get('sf_data_dir') .'/sql/','0755');
   $result[] = check_file_permissions(sfConfig::get('sf_data_dir') .'/indexes/','0755');
@@ -502,6 +504,7 @@ function check_php_requirements()
 
 function check_file_permissions($path, $perm)
 {
+  // TODO: just use is_readable/is_writeable instead? -UA.
   clearstatcache();
   $current = substr(sprintf('%o', fileperms($path)), -4);
   $trcss = (($current != $perm) ? $current : 1);

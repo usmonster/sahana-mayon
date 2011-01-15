@@ -3,7 +3,7 @@ Hello, welcome to the system administration management module of Sahana Agasti 2
 <br />
 Please select one of the following staff administration actions:<br />
   <fieldset>
-    <legend><img src="<?php echo url_for('images/config.png') ?>" alt="config gear icon" />Access Control:</legend>
+    <legend><?php echo image_tag('config.png', array('alt' => 'config gear icon')) ?>Access Control:</legend>
 <?php
 echo '<a href="' . url_for('admin/new') . '" class="buttonText" title="Create New Account">Create Account<a/><br/>';
 echo '<a href="' . url_for('admin/list') . '" class="buttonText" title="List Existing Accounts">List Accounts</a><br/>';
@@ -11,7 +11,7 @@ echo '<a href="' . url_for('staff/cred') . '" class="buttonText" title="Credenti
 ?>
   </fieldset>
   <fieldset>
-    <legend><img src="<?php echo url_for('images/config.png') ?>" alt="config gear icon" />Configuration:</legend>
+    <legend><?php echo image_tag('config.png', array('alt' => 'config gear icon')) ?>Configuration:</legend>
 <?php
 echo '<a href="' . url_for('admin/config') . '" class="buttonText" title="System Settings">System Settings<a/><br/>';
 echo '<a href="' . url_for('admin/pacman') . '" class="buttonText" title="Module Manager">Package Manager</a><br/>';

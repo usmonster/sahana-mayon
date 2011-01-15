@@ -15,7 +15,7 @@ class ProjectConfiguration extends sfProjectConfiguration
       }
     }
     foreach ($packages as $package) {
-      $this->setPluginPath($package, sfConfig::get('sf_app_dir') . '/lib/packages/' . $package);
+      $this->setPluginPath($package, sfConfig::get('sf_app_lib_dir') . '/packages/' . $package);
     }
     $this->enablePlugins($packages);
   }
@@ -29,7 +29,7 @@ class ProjectConfiguration extends sfProjectConfiguration
       }
     }
     foreach ($packages as $package) {
-      $this->setPluginPath($package, sfConfig::get('sf_app_dir') . '/lib/packages/' . $package);
+      $this->setPluginPath($package, sfConfig::get('sf_app_lib_dir') . '/packages/' . $package);
     }
     $this->disablePlugins($packages);
   }
@@ -46,7 +46,6 @@ class ProjectConfiguration extends sfProjectConfiguration
                           'sfDoxygenPlugin',
                           'sfFormExtraPlugin',
                           'sfPhpExcelPlugin',
-                          'sfJqueryReloadedPlugin',
                           'sfJQueryUIPlugin',
                           'ajDoctrineLuceneablePlugin',
                           'ioMenuPlugin'));

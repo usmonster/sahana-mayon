@@ -6,9 +6,10 @@
     <?php include_title() ?>
     <link rel="shortcut icon" href="<?php echo url_for('images/favicon.ico') ?>" />
     <?php include_stylesheets() ?>
-    <?php use_helper('jQuery'); ?>
     <?php include_javascripts() ?> 
-
+    <!--[if lt IE 9]>
+    <script src="<?php echo url_for('js/IE9.js') ?>"></script>
+    <![endif]-->
   </head>
   <body>
     <div id="header">

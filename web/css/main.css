@@ -137,7 +137,8 @@ h5 {
   border: solid #dadada;
   border-width: 0px 1px 1px;
   background: #f1f1f1;
-  height: 2em;
+  height: 2.3em;
+  z-index:100;
 }
 
 .navButton, .buttonText, .buttonTextOff {
