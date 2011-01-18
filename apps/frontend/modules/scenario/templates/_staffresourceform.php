@@ -8,16 +8,18 @@ if (isset($formsArray)){
 }
 ?>
 
-
 <form action="<?php echo url_for('scenario/staffresources?id=' . $scenario->id) ?>" method="post">
+
   <?php
     //this is the same form that should be used for edit and create. display entered values if the objects exist.
     //
     // since this is the partial, we have to refer to view layer items with $this
     //
     // Set up the container form and its formatter.
+
     //$a_record = new agFacilityStaffResource(); //get an existing record if it exists
     //echo editable_content_tag('span', $a_record,'minimum_staff');
+
     $facilityStaffResourceContainer = new sfForm();
     $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainerLabel($facilityStaffResourceContainer->getWidgetSchema());
     $facilityStaffResourceContainer->getWidgetSchema()->addFormFormatter('facilityStaffResourceConDeco', $facilityStaffResourceConDeco);

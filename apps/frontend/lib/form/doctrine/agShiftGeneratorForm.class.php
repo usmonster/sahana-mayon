@@ -77,6 +77,7 @@ class agShiftGeneratorForm extends sfForm
             $newShiftTemplate = $form->getObject();
             if ($newShiftTemplate->staff_resource_type_id && $newShiftTemplate->task_id
             && $newShiftTemplate->facility_resource_type_id && $newShiftTemplate->shift_template)
+
             {
               $newShiftTemplate->save();
               //$this->getObject()->getAgShiftTemplate()->add($newShiftTemplate);

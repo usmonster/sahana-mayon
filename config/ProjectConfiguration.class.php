@@ -34,9 +34,11 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->disablePlugins($packages);
   }
 
+
+
   public function setup()
   {
-
+    //$this->appendEnabledModules();
     // plugins are considered 'core' elements, akin to apps/frontend/modules, they should not be
     // disabled
     $this->enablePlugins(
@@ -48,8 +50,7 @@ class ProjectConfiguration extends sfProjectConfiguration
                           'sfPhpExcelPlugin',
                           'sfJQueryUIPlugin',
                           'ajDoctrineLuceneablePlugin',
-                          'ioMenuPlugin',
-                          'ioEditableContentPlugin'
+                          'ioMenuPlugin'
                                             ));
 
 
