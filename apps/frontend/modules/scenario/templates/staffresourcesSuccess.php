@@ -55,44 +55,9 @@
     <?php endforeach; ?>
   </tbody>
 </table>
-<<<<<<< TREE
-
-<h3>Add Facility Resource Requirement</h3>
-
-    <?php include_partial('staffresourceform', array('staffresourceform' => $staffresourceform, 'ag_staff_resources' => $ag_staff_resources)) ?>
-
-
-
-<h3>
-  <span>
-    Assign minimum and maximum staff resource requirements to facility groups for the
-  </span>
-  <span class="logName">
-    <?php echo $scenario->scenario ?>
-  </span>
-  <span>
-    scenario:
-  </span>
-</h3>
-<br />
-<?php
-  include_partial('staffresourceform', array(
-      'formsArray' => $formsArray,
-      'scenarioFacilityGroupId' => $scenarioFacilityGroup->id,
-      'array' => $arrayBool,
-      'scenario' => $scenario,
-     // 'ag_facility_resources' => $ag_facility_resources,
-     // 'ag_allocated_facility_resources' => $ag_allocated_facility_resources
-
-
-
-    //is this form modified?
-
-  ));
-?>=======
 <br />
 <?php endforeach; ?>
 <?php
 }
 ?>
-<a class=linkButton href="<?php echo url_for('scenario/newshifttemplate?scenId=' . $scenario->id) ?>" title="View Shift Templates">Create Shift Templates for <span style="color: #ff8f00"><?php echo $scenario->scenario; ?></span> Facilities</a>>>>>>>> MERGE-SOURCE
+<a class=linkButton href="<?php echo url_for('scenario/newshifttemplate?scenId=' . $scenario->id) ?>" title="View Shift Templates">Create Shift Templates for <span style="color: #ff8f00"><?php echo $scenario->scenario; ?></span> Facilities</a>
