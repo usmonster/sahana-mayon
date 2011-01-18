@@ -111,10 +111,7 @@ class scenarioActions extends sfActions
    */
   public function executeStaffresources(sfWebRequest $request)
   {
-
-
-
-//get the needed variables regardless of what action you are performing to staff resources
+    //get the needed variables regardless of what action you are performing to staff resources
     $this->scenario = Doctrine::getTable('agScenario')
             ->findByDql('id = ?', $request->getParameter('id'))
             ->getFirst();
@@ -130,8 +127,7 @@ class scenarioActions extends sfActions
             ->execute();
     $this->staffresourceform = new agStaffResourceRequirementForm();
 
-
-//create / process form
+    //create / process form
 
     if ($request->isMethod('post')) {  //OR sfRequest::POST
       $facilityGroups = $request->getPostParameters();
@@ -143,17 +139,16 @@ class scenarioActions extends sfActions
             //are we editing or updating?
             foreach ($facility as $facilityStaffResource) {
               // The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
-                    $existing = Doctrine_Core::getTable('AgFacilityStaffResource')
-                    ->createQuery('agSFR')
-                    ->select('agFSR.*')
-                    ->from('agFacilityStaffResource agFSR')
-                    ->where('agFSR.staff_resource_type_id = ?', $facilityStaffResource['staff_resource_type_id'])
-                    ->andWhere('agFSR.scenario_facility_resource_id = ?', $facilityStaffResource['scenario_facility_resource_id'])
-                    ->fetchOne();
-              if(!$existing){
+              $existing = Doctrine_Core::getTable('AgFacilityStaffResource')
+                      ->createQuery('agSFR')
+                      ->select('agFSR.*')
+                      ->from('agFacilityStaffResource agFSR')
+                      ->where('agFSR.staff_resource_type_id = ?', $facilityStaffResource['staff_resource_type_id'])
+                      ->andWhere('agFSR.scenario_facility_resource_id = ?', $facilityStaffResource['scenario_facility_resource_id'])
+                      ->fetchOne();
+              if (!$existing) {
                 $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
-              }
-              else{
+              } else {
                 $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($existing, $options = array(), $CSRFSecret = false);
               }
               $facilityStaffResourceForm->bind($facilityStaffResource, null);
@@ -213,22 +208,21 @@ class scenarioActions extends sfActions
               $subSubKey = $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
               //this existing check should be refactored to be more efficient
               $existing = Doctrine_Core::getTable('AgFacilityStaffResource')
-                    ->createQuery('agSFR')
-                    ->select('agFSR.*')
-                    ->from('agFacilityStaffResource agFSR')
-                    ->where('agFSR.staff_resource_type_id = ?', $srt->id)
-                    ->andWhere('agFSR.scenario_facility_resource_id = ?', $scenarioFacilityResource->id)
-                    ->fetchOne();
+                      ->createQuery('agSFR')
+                      ->select('agFSR.*')
+                      ->from('agFacilityStaffResource agFSR')
+                      ->where('agFSR.staff_resource_type_id = ?', $srt->id)
+                      ->andWhere('agFSR.scenario_facility_resource_id = ?', $scenarioFacilityResource->id)
+                      ->fetchOne();
               //a better way to do this would be to follow the same array structure, so we could do something like
               //$existing[$subKey][$subSubKey][$srt
 
-              if($existing){
+              if ($existing) {
                 $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
-                  new agEmbeddedAgFacilityStaffResourceForm($existing);
-              }
-              else{
+                    new agEmbeddedAgFacilityStaffResourceForm($existing);
+              } else {
                 $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
-                  new agEmbeddedAgFacilityStaffResourceForm();
+                    new agEmbeddedAgFacilityStaffResourceForm();
               }
               $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
               $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
@@ -247,7 +241,6 @@ class scenarioActions extends sfActions
             $subSubKey = $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
 
             $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
-                
                 new agEmbeddedAgFacilityStaffResourceForm();
 
             $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
@@ -258,7 +251,7 @@ class scenarioActions extends sfActions
           }
         }
       }
-      //this is not right, but works
+      //this is not right, but works (we can't directly modify a property of $this in our loop above)
       $this->formsArray = $formsArray;
     }
   }
