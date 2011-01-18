@@ -111,13 +111,17 @@ class scenarioActions extends sfActions
    */
   public function executeStaffresources(sfWebRequest $request)
   {
+
+
+
+//get the needed variables regardless of what action you are performing to staff resources
     $this->scenario = Doctrine::getTable('agScenario')
             ->findByDql('id = ?', $request->getParameter('id'))
             ->getFirst();
     //$this->forward404Unless(
     $this->ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
-        ->find(array($request->getParameter('id')));
-
+            ->find(array($request->getParameter('id')));
+    $this->scenarioFacilityGroups = $this->scenario->getAgScenarioFacilityGroup();
     $this->ag_staff_resources = Doctrine_Core::getTable('agScenarioFacilityResource')
             ->createQuery('agSFR')
             ->select('agSFR.*')
@@ -127,41 +131,52 @@ class scenarioActions extends sfActions
     $this->staffresourceform = new agStaffResourceRequirementForm();
 
 
-
-    //why isn't all form setup just happening here??
-    //above is only SHOW staff resources
-    //below is NEW staff resources
-    //Query to get the active scenario
 //create / process form
 
     if ($request->isMethod('post')) {  //OR sfRequest::POST
       $facilityGroups = $request->getPostParameters();
       //continuing workflow?
-      //
-      if (!$this->ag_scenario_facility_group){
-      foreach ($facilityGroups as $facilityGroup) {
-        foreach ($facilityGroup as $facility) {
-          //$facilityGroupId = $facility->getId();
-
-          //are we editing or updating?
-          foreach ($facility as $facilityStaffResource) {
-            // The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
-            $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
-            $facilityStaffResourceForm->bind($facilityStaffResource, null);
-            //$facilityStaffResourceForm->updateObjectEmbeddedForms();
-            $facilityStaffResourceForm->updateObject($facilityStaffResourceForm->getTaintedValues()); //this fails
-            if ($facilityStaffResourceForm->isValid()) {
-              // Pass all $savedResources to the view. They're agFacilityStaffResource obs. Get rest of data through them.
-              $savedResources[] = $facilityStaffResourceForm->save();
+      if ($this->ag_scenario_facility_group) {
+        foreach ($facilityGroups as $facilityGroup) {
+          foreach ($facilityGroup as $facility) {
+            //$facilityGroupId = $facility->getId();
+            //are we editing or updating?
+            foreach ($facility as $facilityStaffResource) {
+              // The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
+                    $existing = Doctrine_Core::getTable('AgFacilityStaffResource')
+                    ->createQuery('agSFR')
+                    ->select('agFSR.*')
+                    ->from('agFacilityStaffResource agFSR')
+                    ->where('agFSR.staff_resource_type_id = ?', $facilityStaffResource['staff_resource_type_id'])
+                    ->andWhere('agFSR.scenario_facility_resource_id = ?', $facilityStaffResource['scenario_facility_resource_id'])
+                    ->fetchOne();
+              if(!$existing){
+                $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
+              }
+              else{
+                $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($existing, $options = array(), $CSRFSecret = false);
+              }
+              $facilityStaffResourceForm->bind($facilityStaffResource, null);
+              //$facilityStaffResourceForm->updateObjectEmbeddedForms();
+              //$facilityStaffResourceForm->updateObject($facilityStaffResourceForm->getTaintedValues()); //this fails
+              if ($facilityStaffResourceForm->isValid() && $facilityStaffResource['minimum_staff'] && $facilityStaffResource['maximum_staff']) {
+                /**
+                 * @todo clean up for possible dirty data
+                 *  This will not work cleanly, if someone hasn't entered a minimum AND maximum and the record exists it
+                 *  will be deleted
+                 */
+                $savedResources[] = $facilityStaffResourceForm->save();
+              } else {
+                $facilityStaffResourceForm->getObject()->delete();
+              }
             }
           }
         }
       }
-     }
-     //if ($request->getParameter('Continue')) {};
-     //were there any changes?
+      //if ($request->getParameter('Continue')) {};
+      //were there any changes?
 
-     $this->redirect('scenario/staffresources?id=' . $request->getParameter('id'));
+      $this->redirect('scenario/staffresources?id=' . $request->getParameter('id'));
     } else {
 
       // Query to get all staff resource types.
@@ -196,10 +211,25 @@ class scenarioActions extends sfActions
             foreach ($this->staffResourceTypes as $srt) {
               $subKey = $group['scenario_facility_group'];
               $subSubKey = $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
+              //this existing check should be refactored to be more efficient
+              $existing = Doctrine_Core::getTable('AgFacilityStaffResource')
+                    ->createQuery('agSFR')
+                    ->select('agFSR.*')
+                    ->from('agFacilityStaffResource agFSR')
+                    ->where('agFSR.staff_resource_type_id = ?', $srt->id)
+                    ->andWhere('agFSR.scenario_facility_resource_id = ?', $scenarioFacilityResource->id)
+                    ->fetchOne();
+              //a better way to do this would be to follow the same array structure, so we could do something like
+              //$existing[$subKey][$subSubKey][$srt
 
-              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
+              if($existing){
+                $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
+                  new agEmbeddedAgFacilityStaffResourceForm($existing);
+              }
+              else{
+                $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
                   new agEmbeddedAgFacilityStaffResourceForm();
-
+              }
               $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
               $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
               $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
@@ -209,6 +239,7 @@ class scenarioActions extends sfActions
           }
         }
       } else {
+        //single group or an array?
         $this->arrayBool = false;
         foreach ($this->scenarioFacilityGroup->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
           foreach ($this->staffResourceTypes as $srt) {
@@ -216,6 +247,7 @@ class scenarioActions extends sfActions
             $subSubKey = $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
 
             $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
+                
                 new agEmbeddedAgFacilityStaffResourceForm();
 
             $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
@@ -226,7 +258,6 @@ class scenarioActions extends sfActions
           }
         }
       }
-
       //this is not right, but works
       $this->formsArray = $formsArray;
     }
@@ -297,9 +328,9 @@ class scenarioActions extends sfActions
    * Generates a new shit template form
    * @param sfWebRequest $request
    */
-  public function executeEditshifttemplate(sfWebRequest $request)
+  public function executeEditshifttemplates(sfWebRequest $request)
   {
-    $this->scenario_id = $request->getParameter('scenId');
+    $this->scenario_id = $request->getParameter('id');
     $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
     $this->shifttemplateform = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id));
   }
@@ -883,34 +914,10 @@ class scenarioActions extends sfActions
   /**
    *
    * @param sfWebRequest $request
-   * @param array $facilityGroups  => an array of facilityStaffResourceRequirements objects to process with the form
+   * @param sfForm $grouptypeform
+   *
+   * processing the facility group type form
    */
-  public function processFacilityStaffResourceForm(sfWebRequest $request, $facilityGroups)
-  {
-    if ($request->getParameter('Continue')) {
-
-    };
-
-    foreach ($facilityGroups as $facilityGroup) {
-      foreach ($facilityGroup as $facility) {
-        //$facilityGroupId = $facility->getId();
-        //are we editing or updating?
-        foreach ($facility as $facilityStaffResource) {
-          // The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
-          $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
-          $facilityStaffResourceForm->bind($facilityStaffResource, null);
-          //$facilityStaffResourceForm->updateObjectEmbeddedForms();
-          $facilityStaffResourceForm->updateObject($facilityStaffResourceForm->getTaintedValues()); //this fails
-          if ($facilityStaffResourceForm->isValid()) {
-            // Pass all $savedResources to the view. They're agFacilityStaffResource obs. Get rest of data through them.
-            $savedResources[] = $facilityStaffResourceForm->save();
-          }
-        }
-      }
-    }
-    $this->redirect('scenario/staff_resources?id=' . $request->getParameter('id'));
-  }
-
   protected function processGrouptypeform(sfWebRequest $request, sfForm $grouptypeform)
   {
     $grouptypeform->bind($request->getParameter($grouptypeform->getName()), $request->getFiles($grouptypeform->getName()));
