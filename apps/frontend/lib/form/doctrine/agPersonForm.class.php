@@ -583,6 +583,10 @@ class agPersonForm extends BaseagPersonForm
     }
   }
 
+  /*****************************************************************************
+  * Saves data in an embedded phone form.
+  *
+  *****************************************************************************/
   public function savePhoneForm($key, $form, $values)
   {
     $form->updateObject($values);
@@ -632,6 +636,226 @@ class agPersonForm extends BaseagPersonForm
       return;
     }
   }
+
+  /*****************************************************************************
+  * Saves data in an embedded address form.
+  *
+  * @todo refactor and clean this up along the lines of phone, name, and email.
+  *****************************************************************************/
+  public function saveAddressForm($form)
+  {
+    //This value is only set for agEmbeddedAgAddressValueForms. Used due to multi-level complexity of address.
+    //This query finds the address_contact_type ID we need for the next query.
+    $typeQuery = Doctrine::getTable('agAddressContactType')->createQuery('b')
+            ->select('b.id')
+            ->from('agAddressContactType b')
+            ->where('b.address_contact_type = ?', $form->addressType);
+
+    $typeId = $typeQuery->fetchOne()->id;
+
+    //This query gets the person's agEntityAddressContact object, based on person_id and address_contact_type_id (as $typeId).
+    $joinEntityAddressQuery = Doctrine::getTable('agEntityAddressContact')->createQuery('c')
+            ->select('c.id')
+            ->from('agEntityAddressContact c')
+            ->where('c.address_contact_type_id = ?', $typeId)
+            ->andWhere('c.entity_id = ?', $this->getObject()->entity_id);
+    //Check if the agEmbeddedAgAddressValueForm has a value.
+
+    if ($form->getObject()->value <> null) {
+      // Get an agEntityAddressContact object from $joinEntityAddressQuery. Then create a new agEntityAddressContactForm
+      // and put the retrieved object inside it. Set its priority to $typeId
+      if ($join = $joinEntityAddressQuery->fetchOne()) {
+        $joinEntityAddressForm = new agEntityAddressContactForm($join);
+        $joinEntityAddressForm->getObject()->priority = $typeId;
+      }
+      // Or create a new agAddress, set its address_standard_id, and save it. Then create
+      // agEntityPhoneContactForm to be populated later and set its priority and address_id.
+      else {
+        $newAddress = new agAddress();
+        $newAddress->address_standard_id = 1;
+        $newAddress->save();
+        $joinEntityAddressForm = new agEntityAddressContactForm();
+        $joinEntityAddressForm->getObject()->priority = $typeId;
+        $joinEntityAddressForm->getObject()->address_id = $newAddress->id;
+        $joinEntityAddressForm->getObject()->address_contact_type_id = $typeId;
+        $joinEntityAddressForm->getObject()->entity_id = $this->getObject()->getAgEntity()->id;
+        $joinEntityAddressForm->getObject()->save();
+      }
+
+      // Check if the agAddressValue has changed since the page was rendered.
+      if ($form->getObject()->value <> $form->getDefault('value')) {
+        // Store the newly entered value as $addressValueLookUp. Then revert the object
+        // to its default values from the page render. This prevents a duplicate entry error.
+        $addressValueLookUp = $form->getObject()->value;
+        $form->updateObject($form->getDefaults());
+
+        // Create a query to see if the submitted address value, as $addressValueLookUp, already exists
+        // in the database.
+        $addressValueQuery = Doctrine::getTable('agAddressValue')->createQuery('a')
+                ->select('a.id')
+                ->from('agAddressValue a')
+                ->where('a.value = ?', $addressValueLookUp)
+                ->andWhere('a.address_element_id = ?', $form->getObject()->address_element_id);
+
+        // If it does...
+        if ($queried = $addressValueQuery->fetchOne()) {
+          // If it exists, get an agAddressMjAgAddressValue object that joins the id of the agAddress being
+          // worked with and the id of the original agAddressValue being worked with. Used to change an
+          // address_value_id on the agAddressMjAgAddressValue object. id_holder is only set for already joined
+          // address values.
+          if (isset($form->id_holder)) {
+            $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
+                    ->select('a.id')
+                    ->from('agAddressMjAgAddressValue a')
+                    ->where('a.address_value_id = ?', $form->id_holder)
+                    ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
+
+            $joinAddressValue = $joinAddressValueQuery->fetchOne();
+            // reassign the agAddressValue of the join to the newly selected value.
+            $joinAddressValue->address_value_id = $queried->id;
+            $joinAddressValue->save();
+            //unset($forms[$key]);
+          } else {
+            $joinAddressValue = new agAddressMjAgAddressValue();
+            $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
+            $joinAddressValue->address_value_id = $queried->id;
+            $joinAddressValue->save();
+            //unset($forms[$key]);
+          }
+        }
+        // If the entered address_value isn't in the database already, make a new agAddressValue object,
+        // populate it with the new address value, and save it.
+        elseif (!$queried = $addressValueQuery->fetchOne()) {
+          $newAddressValue = new agAddressValue();
+          $newAddressValue->value = $addressValueLookUp;
+          $newAddressValue->address_element_id = $form->getObject()->address_element_id;
+          $newAddressValue->save();
+
+          if (isset($form->id_holder)) {
+            $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
+                    ->select('a.id')
+                    ->from('agAddressMjAgAddressValue a')
+                    ->where('a.address_value_id = ?', $form->id_holder)
+                    ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
+
+            $joinAddressValue = $joinAddressValueQuery->fetchOne();
+            // reassign the agAddressValue of the join to the newly selected value.
+            $joinAddressValue->address_value_id = $newAddressValue->id;
+            $joinAddressValue->save();
+            //unset($forms[$key]);
+          } else {
+            $joinAddressValue = new agAddressMjAgAddressValue();
+            $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
+            $joinAddressValue->address_value_id = $newAddressValue->id;
+            $joinAddressValue->save();
+            //unset($forms[$key]);
+          }
+        }
+      }
+      // If the address_value hasn't been changed, unset the form.
+      else {
+        //unset($forms[$key]);
+      }
+    }
+    // If the address_value field is blank, unset the form...
+    else {
+      //unset($forms[$key]);
+      // ...if it was populated, delete the existing agAddressMjAgAddressValue object since it is
+      // no longer needed.
+      if ($form->getObject()->value <> $form->getDefault('value')) {
+        $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')->select('a.id')
+                ->from('agAddressMjAgAddressValue a')
+                ->where('a.address_value_id = ?', $form->id_holder)
+                ->andWhere('a.address_id = ?', $joinEntityAddressQuery->fetchOne()->address_id);
+
+        if ($join = $joinAddressValueQuery->fetchOne()) {
+          $join->delete();
+        }
+      }
+    }
+    if ($entJoin = $joinEntityAddressQuery->fetchOne()) {
+      $q = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
+              ->select('a.id')->from('agAddressMjAgAddressValue a')
+              ->where('a.address_id = ?', $entJoin->address_id);
+      if (!($r = $q->fetchOne())) {
+        $entAdd = $entJoin->getAgAddress();
+        $entJoin->delete();
+        $entAdd->delete();
+      }
+    }
+  }
+  /*****************************************************************************
+  * Saves data in an embedded language form.
+  *
+  *****************************************************************************/
+  public function saveLanguageForm($form, $joinId)
+  {
+    if ($form instanceof agEmbeddedAgPersonMjAgLanguageForm) {
+      $joinQuery = Doctrine::getTable('agPersonMjAgLanguage')->createQuery('d')
+              ->select('d.id')
+              ->from('agPersonMjAgLanguage d')
+              ->where('d.id =?', $form->getObject()->id);
+
+      if ($form->getObject()->language_id <> null) {
+        //Create a new agPersonMjAgLanguageForm. Populate it with an existing object, if it exists.
+        //check if the langauge value has changed between page render and form submission. if it has, set the join object's lanquage to the new language.
+        if ($form->getObject()->language_id <> $form->getDefault('language_id')) {
+          // Have to get the object from the DB. Symfony errors out if we try to save the new one, won't try to update, just does an insert.
+          if ($join = $joinQuery->fetchOne()) {
+            $join->language_id = $form->getObject()->language_id;
+            $join->save();
+          } else {
+            $form->getObject()->person_id = $this->getObject()->id;
+            $form->getObject()->save();
+          }
+          $joinId = $form->getObject()->id;
+          $form->updateObject($form->getDefaults());
+//          unset($forms[$key]);
+        } else {
+          //If it didn't change, just unset it and be done w/ it.
+//          unset($forms[$key]);
+          $joinId = (isset($form->getObject()->id)) ? $form->getObject()->id : null; //Need this for the agEmbeddedAgPersonLanguageCompetencyForm section.
+        }
+      } else {
+        //If the language form is blank, unset it.
+//        unset($forms[$key]);
+        //Then see if it was made blank between render and sumbission.
+        if ($form->getObject()->language_id <> $form->getDefault('language_id')) {
+          //if it was, delete the person-language join and all the associated data.
+          //$join = $joinQuery->fetchOne();
+          if ($join = $joinQuery->fetchOne()) {
+            $competencies = $join->getAgPersonLanguageCompetency();
+            $competencies->delete();
+            $join->delete();
+          }
+          $joinId = null;
+        }
+      }
+      return $joinId;
+    }
+    if ($form instanceof agEmbeddedAgPersonLanguageCompetencyForm) {
+      // Check if a competency is selected, and also if there is still an existing person-language join.
+      if ($form->getObject()->language_competency_id <> null && $joinId <> null) {
+        // Check if it's changed between render and submission.
+        if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {
+          if ($form->getObject()->person_language_id == null) {
+            $form->getObject()->person_language_id = $joinId;
+          }
+          $form->getObject()->save();
+        }
+//        unset($forms[$key]);
+      } else //If there's no competency ID selected, or if the agPersonMjAgLanguage that uses the competency has been deleted.
+      if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {//If it became blank between render and submit
+        //  $form->getObject()->id = $form->getDefault('id');//Set the id and ...
+        $form->updateObject($form->getDefaults());
+        // ...delete the object.
+        $form->getObject()->delete();
+//        unset($forms[$key]);
+      }
+//      unset($forms[$key]);
+      return $joinId;
+    }
+  }
   /**************************************************************
   * Saves the forms embedded on the Person page.
   * @param $forms array of forms to save
@@ -671,7 +895,16 @@ class agPersonForm extends BaseagPersonForm
         unset($this->embeddedForms['email'][$key]);
       }
     }
-
+    /**
+    * Phone
+    * This is slightly more complex than name or email. Phone values need to be
+    * formatted first, as the DB holds them in 2125551212 form, but users will
+    * input in (212) 555-1212 form (or 212.555.1212, etc.). Because the values
+    * will always be processed, the form's object will always be seen as modified.
+    * That's the purpose of calling stat(Doctrine_Record::STATE_CLEAN) on the
+    * object. After that, it will return unmodified. The phone number stored in
+    * the $values array is also reformatted to be DB friendly.
+    **/
     if(isset($this->embeddedForms['phone'])) {
       $phoneFormats = Doctrine::getTable('agPhoneFormatType')
             ->createQuery('a')
@@ -692,6 +925,36 @@ class agPersonForm extends BaseagPersonForm
         unset($this->embeddedForms['phone'][$key]);
       }
     }
+    /**
+    * Address
+    *
+    * The saveAddressForm() function is in need of reactoring, which will most likely
+    * necessitate some changes here as well
+    **/
+    if(isset($this->embeddedForms['address'])) {
+      foreach($this->embeddedForms['address']->embeddedForms as $aKey => $addressForm) {
+        foreach($addressForm->embeddedForms as $fKey => $form) {
+          $this->saveAddressForm($form);
+          unset($this->embeddedForms['address']->embeddedForms[$aKey]->embeddedForms[$fKey]);
+        }
+        unset($this->embeddedForms['address'][$aKey]);
+      }
+    }
+    /**
+    * Language
+    *
+    * The saveLanguageForm() function is in need of reactoring, which will most likely
+    * necessitate some changes here as well
+    **/
+    if(isset($this->embeddedForms['languages'])) {
+      foreach($this->embeddedForms['languages']->embeddedForms as $lKey => $languageForm) {
+        foreach($languageForm->embeddedForms as $fKey => $form) {
+          $joinId = $this->saveLanguageForm($form, (isset($joinId) ? $joinId : null));
+          unset($this->embeddedForms['languages']->embeddedForms[$lKey]->embeddedForms[$fKey]);
+        }
+        unset($this->embeddedForms['languages'][$aKey]);
+      }
+    }
 //    if (null === $forms) {
 //      $forms = $this->embeddedForms;
 //    }
@@ -699,321 +962,71 @@ class agPersonForm extends BaseagPersonForm
       foreach ($forms as $key => $form) {
 
         /**
-         *  Phone Saving Section
-         * */
-        if ($form instanceof agEmbeddedAgPhoneContactForm) {
-          //This query finds the phone_contact_type ID we need for the next query.
-          $typeQuery = Doctrine::getTable('agPhoneContactType')->createQuery('b')
-                  ->select('b.id')
-                  ->from('agPhoneContactType b')
-                  ->where('b.phone_contact_type = ?', $key);
-
-          $typeId = $typeQuery->fetchOne()->id;
-
-          //This query gets the person's agEntityPhoneContact object, based on person_id and phone_contact_type_id (as $typeId).
-          $joinQuery = Doctrine::getTable('agEntityPhoneContact')->createQuery('c')
-                  ->select('c.id')
-                  ->from('agEntityPhoneContact c')
-                  ->where('c.phone_contact_type_id = ?', $typeId)
-                  ->andWhere('c.entity_id = ?', $this->getObject()->getAgEntity()->id);
-          //Check if the agEmbeddedAgPhoneContactForm has a phone_contact value.
-          if ($form->getObject()->phone_contact <> null) {
-            // Get an agEntityPhoneContact object from $joinQuery. Then create a new agEntityPhoneContactForm
-            // and put the retrieved object inside it. Set its priority to $typeId
-            if ($join = $joinQuery->fetchOne()) {
-              $joinForm = new agEntityPhoneContactForm($join);
-              $joinForm->getObject()->priority = $typeId;
-            }
-            // Or create a new agEntityPhoneContactForm to be populated later and set its priority to $typeId.
-            else {
-              $joinForm = new agEntityPhoneContactForm();
-              $joinForm->getObject()->priority = $typeId;
-            }
-
-            // Check if the phone_contact value has changed since the page was rendered.
-            if ($form->getObject()->phone_contact <> $form->getDefault('phone_contact')) {
-              // If it has changed, save the entered value as $phoneLookUp. Then revert the object
-              // to its default values from the page render. This prevents a duplicate entry error.
-              $dirtyPhone = $form->getObject()->phone_contact;
-              $phoneLookUp = preg_replace('/[^0-9x]+/', '', $dirtyPhone);
-
-              $form->updateObject($form->getDefaults());
-
-              // Create a query to see if the submitted phone value, as $phoneLookUp, already exists
-              // in the database.
-              $q = Doctrine::getTable('agPhoneContact')->createQuery('a')
-                      ->select('a.id')
-                      ->from('agPhoneContact a')
-                      ->where('a.phone_contact = ?', $phoneLookUp);
-
-              // If it does...
-              if ($queried = $q->fetchOne()) {
-                // Get the id of the phone in the db...
-                $phone_id = $queried->get('id');
-                // ...then see if the agEntityPhoneContact has an phone_contact_id corresponding to the
-                // phone queried for. If it is, unset the form, no update is needed...
-                if (isset($joinForm->phone_contact_id) && $joinForm->phone_contact_id == $phone_id) {
-                  unset($forms[$key]);
-                }
-                // ...If it wasn't, populate the agEntityPhoneContact object's values and save it.
-                // Then unset the form.
-                else {
-                  $joinForm->getObject()->entity_id = $this->getObject()->getAgEntity()->id;
-                  $joinForm->getObject()->phone_contact_id = $phone_id;
-                  $joinForm->getObject()->phone_contact_type_id = $typeId;
-                  $joinForm->getObject()->save();
-                  unset($forms[$key]);
-                }
-              }
-              // If the entered phone isn't in the database already, make a new agPhoneContact object,
-              // populate it with the new phone, and save it.
-              // Then populate the agEntityPhoneContact object's values, associating it with the
-              // id of the new phone, and save it. Unset the form.
-              elseif (!$queried = $q->fetchOne()) {
-                $newPhone = new agPhoneContact();
-                $newPhone->phone_contact = $phoneLookUp;
-                $phoneFormats = Doctrine::getTable('agPhoneFormatType')->createQuery('a')->execute();
-                //Match $phoneLookup against each match_pattern in agPhoneFormatType.
-                foreach ($phoneFormats as $phoneFormat) {
-                  if (preg_match($phoneFormat->match_pattern, $phoneLookUp)) {
-                    $newPhone->phone_format_id = $phoneFormat->id;
-                  }
-                }
-
-                /* @todo phone_format_id shouldn't be hardcoded -Ilya */
-                $newPhone->save();
-                $joinForm->getObject()->entity_id = $this->getObject()->getAgEntity()->id;
-                $joinForm->getObject()->phone_contact_id = $newPhone->id;
-                $joinForm->getObject()->phone_contact_type_id = $typeId;
-                $joinForm->getObject()->save();
-                unset($forms[$key]); //This unsets the form, prevents a multiple save.
-              }
-            }
-            // If the name hasn't been changed, unset the form.
-            else {
-              unset($forms[$key]);
-            }
-          }
-          // If the name field is blank, unset the field...
-          else {
-            unset($forms[$key]);
-            // ...if it was populated, delete the existing agPersonMjAgPersonName object since it is
-            // no longer needed.
-            if ($join = $joinQuery->fetchOne()) {
-              $join->delete();
-            }
-          }
-        }
-
-        /**
-         *  Address Saving Section
-         * */
-        if (isset($form->addressType)) {//This value is only set for agEmbeddedAgAddressValueForms. Used due to multi-level complexity of address.
-          //This query finds the address_contact_type ID we need for the next query.
-          $typeQuery = Doctrine::getTable('agAddressContactType')->createQuery('b')
-                  ->select('b.id')
-                  ->from('agAddressContactType b')
-                  ->where('b.address_contact_type = ?', $form->addressType);
-
-          $typeId = $typeQuery->fetchOne()->id;
-
-          //This query gets the person's agEntityAddressContact object, based on person_id and address_contact_type_id (as $typeId).
-          $joinEntityAddressQuery = Doctrine::getTable('agEntityAddressContact')->createQuery('c')
-                  ->select('c.id')
-                  ->from('agEntityAddressContact c')
-                  ->where('c.address_contact_type_id = ?', $typeId)
-                  ->andWhere('c.entity_id = ?', $this->getObject()->entity_id);
-          //Check if the agEmbeddedAgAddressValueForm has a value.
-
-          if ($form->getObject()->value <> null) {
-            // Get an agEntityAddressContact object from $joinEntityAddressQuery. Then create a new agEntityAddressContactForm
-            // and put the retrieved object inside it. Set its priority to $typeId
-            if ($join = $joinEntityAddressQuery->fetchOne()) {
-              $joinEntityAddressForm = new agEntityAddressContactForm($join);
-              $joinEntityAddressForm->getObject()->priority = $typeId;
-            }
-            // Or create a new agAddress, set its address_standard_id, and save it. Then create
-            // agEntityPhoneContactForm to be populated later and set its priority and address_id.
-            else {
-              $newAddress = new agAddress();
-              $newAddress->address_standard_id = 1;
-              $newAddress->save();
-              $joinEntityAddressForm = new agEntityAddressContactForm();
-              $joinEntityAddressForm->getObject()->priority = $typeId;
-              $joinEntityAddressForm->getObject()->address_id = $newAddress->id;
-              $joinEntityAddressForm->getObject()->address_contact_type_id = $typeId;
-              $joinEntityAddressForm->getObject()->entity_id = $this->getObject()->getAgEntity()->id;
-              $joinEntityAddressForm->getObject()->save();
-            }
-
-            // Check if the agAddressValue has changed since the page was rendered.
-            if ($form->getObject()->value <> $form->getDefault('value')) {
-              // Store the newly entered value as $addressValueLookUp. Then revert the object
-              // to its default values from the page render. This prevents a duplicate entry error.
-              $addressValueLookUp = $form->getObject()->value;
-              $form->updateObject($form->getDefaults());
-
-              // Create a query to see if the submitted address value, as $addressValueLookUp, already exists
-              // in the database.
-              $addressValueQuery = Doctrine::getTable('agAddressValue')->createQuery('a')
-                      ->select('a.id')
-                      ->from('agAddressValue a')
-                      ->where('a.value = ?', $addressValueLookUp)
-                      ->andWhere('a.address_element_id = ?', $form->getObject()->address_element_id);
-
-              // If it does...
-              if ($queried = $addressValueQuery->fetchOne()) {
-                // If it exists, get an agAddressMjAgAddressValue object that joins the id of the agAddress being
-                // worked with and the id of the original agAddressValue being worked with. Used to change an
-                // address_value_id on the agAddressMjAgAddressValue object. id_holder is only set for already joined
-                // address values.
-                if (isset($form->id_holder)) {
-                  $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-                          ->select('a.id')
-                          ->from('agAddressMjAgAddressValue a')
-                          ->where('a.address_value_id = ?', $form->id_holder)
-                          ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
-
-                  $joinAddressValue = $joinAddressValueQuery->fetchOne();
-                  // reassign the agAddressValue of the join to the newly selected value.
-                  $joinAddressValue->address_value_id = $queried->id;
-                  $joinAddressValue->save();
-                  unset($forms[$key]);
-                } else {
-                  $joinAddressValue = new agAddressMjAgAddressValue();
-                  $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
-                  $joinAddressValue->address_value_id = $queried->id;
-                  $joinAddressValue->save();
-                  unset($forms[$key]);
-                }
-              }
-              // If the entered address_value isn't in the database already, make a new agAddressValue object,
-              // populate it with the new address value, and save it.
-              elseif (!$queried = $addressValueQuery->fetchOne()) {
-                $newAddressValue = new agAddressValue();
-                $newAddressValue->value = $addressValueLookUp;
-                $newAddressValue->address_element_id = $form->getObject()->address_element_id;
-                $newAddressValue->save();
-
-                if (isset($form->id_holder)) {
-                  $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-                          ->select('a.id')
-                          ->from('agAddressMjAgAddressValue a')
-                          ->where('a.address_value_id = ?', $form->id_holder)
-                          ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
-
-                  $joinAddressValue = $joinAddressValueQuery->fetchOne();
-                  // reassign the agAddressValue of the join to the newly selected value.
-                  $joinAddressValue->address_value_id = $newAddressValue->id;
-                  $joinAddressValue->save();
-                  unset($forms[$key]);
-                } else {
-                  $joinAddressValue = new agAddressMjAgAddressValue();
-                  $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
-                  $joinAddressValue->address_value_id = $newAddressValue->id;
-                  $joinAddressValue->save();
-                  unset($forms[$key]);
-                }
-              }
-            }
-            // If the address_value hasn't been changed, unset the form.
-            else {
-              unset($forms[$key]);
-            }
-          }
-          // If the address_value field is blank, unset the form...
-          else {
-            unset($forms[$key]);
-            // ...if it was populated, delete the existing agAddressMjAgAddressValue object since it is
-            // no longer needed.
-            if ($form->getObject()->value <> $form->getDefault('value')) {
-              $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')->select('a.id')
-                      ->from('agAddressMjAgAddressValue a')
-                      ->where('a.address_value_id = ?', $form->id_holder)
-                      ->andWhere('a.address_id = ?', $joinEntityAddressQuery->fetchOne()->address_id);
-
-              if ($join = $joinAddressValueQuery->fetchOne()) {
-                $join->delete();
-              }
-            }
-          }
-          if ($entJoin = $joinEntityAddressQuery->fetchOne()) {
-            $q = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-                    ->select('a.id')->from('agAddressMjAgAddressValue a')
-                    ->where('a.address_id = ?', $entJoin->address_id);
-            if (!($r = $q->fetchOne())) {
-              $entAdd = $entJoin->getAgAddress();
-              $entJoin->delete();
-              $entAdd->delete();
-            }
-          }
-        }
-        /**
          * Language Saving Section
          * */
-        if ($form instanceof agEmbeddedAgPersonMjAgLanguageForm) {
-          $joinQuery = Doctrine::getTable('agPersonMjAgLanguage')->createQuery('d')
-                  ->select('d.id')
-                  ->from('agPersonMjAgLanguage d')
-                  ->where('d.id =?', $form->getObject()->id);
-
-          if ($form->getObject()->language_id <> null) {
-            //Create a new agPersonMjAgLanguageForm. Populate it with an existing object, if it exists.
-            //check if the langauge value has changed between page render and form submission. if it has, set the join object's lanquage to the new language.
-            if ($form->getObject()->language_id <> $form->getDefault('language_id')) {
-              // Have to get the object from the DB. Symfony errors out if we try to save the new one, won't try to update, just does an insert.
-              if ($join = $joinQuery->fetchOne()) {
-                $join->language_id = $form->getObject()->language_id;
-                $join->save();
-              } else {
-                $form->getObject()->person_id = $this->getObject()->id;
-                $form->getObject()->save();
-              }
-              $joinId = $form->getObject()->id;
-              $form->updateObject($form->getDefaults());
-              unset($forms[$key]);
-            } else {
-              //If it didn't change, just unset it and be done w/ it.
-              unset($forms[$key]);
-              $joinId = (isset($form->getObject()->id)) ? $form->getObject()->id : null; //Need this for the agEmbeddedAgPersonLanguageCompetencyForm section.
-            }
-          } else {
-            //If the language form is blank, unset it.
-            unset($forms[$key]);
-            //Then see if it was made blank between render and sumbission.
-            if ($form->getObject()->language_id <> $form->getDefault('language_id')) {
-              //if it was, delete the person-language join and all the associated data.
-              //$join = $joinQuery->fetchOne();
-              if ($join = $joinQuery->fetchOne()) {
-                $competencies = $join->getAgPersonLanguageCompetency();
-                $competencies->delete();
-                $join->delete();
-              }
-              $joinId = null;
-            }
-          }
-        }
-        if ($form instanceof agEmbeddedAgPersonLanguageCompetencyForm) {
-          // Check if a competency is selected, and also if there is still an existing person-language join.
-          if ($form->getObject()->language_competency_id <> null && $joinId <> null) {
-            // Check if it's changed between render and submission.
-            if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {
-              if ($form->getObject()->person_language_id == null) {
-                $form->getObject()->person_language_id = $joinId;
-              }
-              $form->getObject()->save();
-            }
-            unset($forms[$key]);
-          } else //If there's no competency ID selected, or if the agPersonMjAgLanguage that uses the competency has been deleted.
-          if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {//If it became blank between render and submit
-            //  $form->getObject()->id = $form->getDefault('id');//Set the id and ...
-            $form->updateObject($form->getDefaults());
-            // ...delete the object.
-            $form->getObject()->delete();
-            unset($forms[$key]);
-          }
-          unset($forms[$key]);
-        }
+//        if ($form instanceof agEmbeddedAgPersonMjAgLanguageForm) {
+//          $joinQuery = Doctrine::getTable('agPersonMjAgLanguage')->createQuery('d')
+//                  ->select('d.id')
+//                  ->from('agPersonMjAgLanguage d')
+//                  ->where('d.id =?', $form->getObject()->id);
+//
+//          if ($form->getObject()->language_id <> null) {
+//            //Create a new agPersonMjAgLanguageForm. Populate it with an existing object, if it exists.
+//            //check if the langauge value has changed between page render and form submission. if it has, set the join object's lanquage to the new language.
+//            if ($form->getObject()->language_id <> $form->getDefault('language_id')) {
+//              // Have to get the object from the DB. Symfony errors out if we try to save the new one, won't try to update, just does an insert.
+//              if ($join = $joinQuery->fetchOne()) {
+//                $join->language_id = $form->getObject()->language_id;
+//                $join->save();
+//              } else {
+//                $form->getObject()->person_id = $this->getObject()->id;
+//                $form->getObject()->save();
+//              }
+//              $joinId = $form->getObject()->id;
+//              $form->updateObject($form->getDefaults());
+//              unset($forms[$key]);
+//            } else {
+//              //If it didn't change, just unset it and be done w/ it.
+//              unset($forms[$key]);
+//              $joinId = (isset($form->getObject()->id)) ? $form->getObject()->id : null; //Need this for the agEmbeddedAgPersonLanguageCompetencyForm section.
+//            }
+//          } else {
+//            //If the language form is blank, unset it.
+//            unset($forms[$key]);
+//            //Then see if it was made blank between render and sumbission.
+//            if ($form->getObject()->language_id <> $form->getDefault('language_id')) {
+//              //if it was, delete the person-language join and all the associated data.
+//              //$join = $joinQuery->fetchOne();
+//              if ($join = $joinQuery->fetchOne()) {
+//                $competencies = $join->getAgPersonLanguageCompetency();
+//                $competencies->delete();
+//                $join->delete();
+//              }
+//              $joinId = null;
+//            }
+//          }
+//        }
+//        if ($form instanceof agEmbeddedAgPersonLanguageCompetencyForm) {
+//          // Check if a competency is selected, and also if there is still an existing person-language join.
+//          if ($form->getObject()->language_competency_id <> null && $joinId <> null) {
+//            // Check if it's changed between render and submission.
+//            if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {
+//              if ($form->getObject()->person_language_id == null) {
+//                $form->getObject()->person_language_id = $joinId;
+//              }
+//              $form->getObject()->save();
+//            }
+//            unset($forms[$key]);
+//          } else //If there's no competency ID selected, or if the agPersonMjAgLanguage that uses the competency has been deleted.
+//          if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {//If it became blank between render and submit
+//            //  $form->getObject()->id = $form->getDefault('id');//Set the id and ...
+//            $form->updateObject($form->getDefaults());
+//            // ...delete the object.
+//            $form->getObject()->delete();
+//            unset($forms[$key]);
+//          }
+//          unset($forms[$key]);
+//        }
         if ($form instanceof agEmbeddedStaffForm) {
           unset($forms[$key]);
         }
