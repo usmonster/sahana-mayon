@@ -30,19 +30,14 @@ default_index:
   param: { action: index }
 
 scenario_show_facility_staff_resource:
-  url:     /scenario/:id/staff_resources
+  url:     /scenario/:id/staffresources
   options: { model: agScenario, type: object }
-  param:   { module: scenario, action: showFacilityStaffResource }
+  param:   { module: scenario, action: staffresources }
 
 scenario_new_group:
   url:     /scenario/:id/newgroup
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: newgroup }
-
-scenario_new_staff_resources:
-  url:     /scenario/:id/newstaffresources
-  options: { model: agScenario, type: object }
-  param:   { module: scenario, action: newstaffresources }
 
 scenario_new_shift_templates:
   url:     /scenario/:id/newshifttemplates
@@ -59,3 +54,10 @@ sf_guard_signin:
 sf_guard_signout:
   url:   /logout
   param: { module: sfGuardAuth, action: signout }
+
+staff_search:
+  url:   /staff/search
+  param: { module: agStaff, action: search }
+staff_filter:
+  url:   /staff/filter
+  param: { module: agStaff, action: filter }

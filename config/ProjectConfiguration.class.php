@@ -49,7 +49,9 @@ class ProjectConfiguration extends sfProjectConfiguration
                           'sfJqueryReloadedPlugin',
                           'sfJQueryUIPlugin',
                           'ajDoctrineLuceneablePlugin',
-                          'ioMenuPlugin'));
+                          'ioMenuPlugin',
+                          'ioEditableContentPlugin'
+                                            ));
 
 
 
