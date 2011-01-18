@@ -50,7 +50,8 @@ class ProjectConfiguration extends sfProjectConfiguration
                           'sfPhpExcelPlugin',
                           'sfJQueryUIPlugin',
                           'ajDoctrineLuceneablePlugin',
-                          'ioMenuPlugin'
+                          'ioMenuPlugin',
+                          'sfJqueryReloadedPlugin'
                                             ));
 
 
