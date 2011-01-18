@@ -477,6 +477,16 @@ class agInstall
     } catch (Exception $e) {
       $installed = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
     }
+
+    try {
+      $ag_host = new agHost();
+      $ag_host->setHostname($this->getConfig('DB_SERVER'));
+      $ag_host->save();
+    }catch (Exception $e) {
+      $installed = 'Could not insert ag_host record' . $e->getMessage();
+    }
+
+
     return $installed;
   }
 
