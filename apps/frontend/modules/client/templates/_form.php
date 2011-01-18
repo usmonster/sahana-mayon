@@ -32,8 +32,8 @@
       <br />
       <br />
       <div style="display: block;">
-        <h4><?php //echo $form['languages']->renderLabel(); ?></h4>
-        <?php //echo $form['languages']; ?>
+        <h4><?php echo $form['languages']->renderLabel(); ?></h4>
+        <?php echo $form['languages']; ?>
       </div>
       <div style="clear: both;"> </div>
       <br />
@@ -60,18 +60,18 @@
       <div style="clear: both;"> </div>
       <?php echo $form['email'] ?>
       <div style="clear: both;"> </div>
-      <h3><?php //echo $form['phone']->renderLabel();?></h3>
+      <h3><?php echo $form['phone']->renderLabel();?></h3>
       <div style="clear: both;"> </div>
-      <?php //echo $form['phone'] ?>
+      <?php echo $form['phone'] ?>
     </fieldset>
     </div>
       <?php echo $form['_csrf_token'] ?>
   </div>
   <br />
-  <h3><?php //echo  $form['address']->renderLabel(); ?></h3>
+  <h3><?php echo  $form['address']->renderLabel(); ?></h3>
   <div class="address infoHolder">
-    <h3><?php //echo  $form['address']->renderLabel(); ?></h3>
-    <?php //echo  $form['address']; ?>
+    <h3><?php echo  $form['address']->renderLabel(); ?></h3>
+    <?php echo  $form['address']; ?>
   </div>
   <br />
   &nbsp;<a href="<?php echo url_for('client/list') ?>" class="linkButton">List</a>

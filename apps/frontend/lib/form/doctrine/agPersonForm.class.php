@@ -143,6 +143,8 @@ class agPersonForm extends BaseagPersonForm
 
   /**
   * This function sets up the date of birth form.
+  *
+  * @todo refactor this function similarly to embedNameForm() and embedEmailForm(). Get rid of default use.
   **/
   public function embedDateOfBirthForm() {
     $dateOfBirthForm = new agEmbeddedPersonDateOfBirthForm($this->getObject()->getAgPersonDateOfBirth());
@@ -154,6 +156,8 @@ class agPersonForm extends BaseagPersonForm
   /**
   * This function sets up language forms using agEmbeddedAgPersonMjAgLanguageForm
   * and agEmbeddedAgPersonLanguageCompetencyForm.
+  *
+  * @todo refactor this function similarly to embedNameForm() and embedEmailForm().
   **/
   public function embedLanguageForm() {
     $this->ag_person_language_formats = Doctrine::getTable('agLanguageFormat')->createQuery('a')->execute();
@@ -259,7 +263,7 @@ class agPersonForm extends BaseagPersonForm
             ->where('pn.id IN (SELECT jn.person_name_id FROM agPersonMjAgPersonName jn WHERE jn.person_id = ? AND person_name_type_id = ?)', array($id, $nameType->id))
             ->execute()->getFirst();
       }
-      $nameForm = new agEmbeddedAgPersonNameForm((isset($nameObject)) ? $nameObject : null);
+      $nameForm = new agEmbeddedAgPersonNameForm(isset($nameObject) ? $nameObject : null);
       $nameForm->widgetSchema->setLabel('person_name', ucwords($nameType->person_name_type));
       $nameContainer->embedForm($nameType->getPersonNameType(), $nameForm);
     }
@@ -270,24 +274,27 @@ class agPersonForm extends BaseagPersonForm
   * This block sets up the embedded agEmbeddedAgEmailContactForms, one for each
   * agEmailContactType, populated with the agPersonName that corresponds to the current
   * agPerson and agEmailContactType (if it exists).
+  *
+  * @todo     make a new formatter for these forms to use and set it up, so we
+  *           don't need to set label to false.
   **/
   public function embedEmailForm()
   {
     $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
 
-    $emailContainer = new sfForm(array(), array());
+    $emailContainer = new sfForm();
     $emailContainer->widgetSchema->setFormFormatterName('list');
     foreach ($this->ag_email_contact_types as $emailContactType) {
-      $emailContactForm = new agEmbeddedAgEmailContactForm();
-      foreach ($this->getObject()->getAgEntity()->getAgEntityEmailContact() as $current) {
-        if ($current->getEmailContactTypeId() == $emailContactType->getId()) {
-          $emailContactForm->setDefault('email_contact', $current->getAgEmailContact()->email_contact);
-        }
+      if($id = $this->agEntity->id) {
+        $emailObject = Doctrine_query::create()
+            ->from('agEmailContact ec')
+            ->where('ec.id IN (SELECT jn.email_contact_id FROM agEntityEmailContact jn WHERE jn.entity_id = ? AND email_contact_type_id = ?)', array($id, $emailContactType->id))
+            ->execute()->getFirst();
       }
+      $emailContactForm = new agEmbeddedAgEmailContactForm(isset($emailObject) ? $emailObject : null);
       $emailContactForm->widgetSchema->setLabel('email_contact', false);
       $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
     }
-
     $this->embedForm('email', $emailContainer);
   }
 
@@ -295,23 +302,23 @@ class agPersonForm extends BaseagPersonForm
   * This function sets up the embedded agEmbeddedAgPhoneContactForms, one for each
   * agPhoneContactType, populated with the agPersonName that corresponds to the
   * current agPerson and agPhoneContactType (if it exists).
+  *
+  * @todo refactor this function similarly to embedNameForm() and embedEmailForm().
   **/
   public function embedPhoneForm()
   {
-    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
+     $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
 
-    $phoneContainer = new sfForm(array(), array());
-    $phoneContainer->widgetSchema->setFormFormatterName('list');
-    foreach ($this->ag_phone_contact_types as $phoneContactType) {
-      $phoneContactForm = new agEmbeddedAgPhoneContactForm();
-      foreach ($this->getObject()->getAgEntity()->getAgEntityPhoneContact() as $current) {
-        if ($current->getPhoneContactTypeId() == $phoneContactType->getId()) {
-          $phoneContactForm->setDefault('phone_contact', preg_replace(
-                  $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->match_pattern,
-                  $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->replacement_pattern,
-                  $current->getAgPhoneContact()->phone_contact));
-        }
+     $phoneContainer = new sfForm(array(), array());
+     $phoneContainer->widgetSchema->setFormFormatterName('list');
+     foreach ($this->ag_phone_contact_types as $phoneContactType) {
+       if($id = $this->agEntity->id) {
+        $phoneObject = Doctrine_query::create()
+            ->from('agPhoneContact pc')
+            ->where('pc.id IN (SELECT jn.phone_contact_id FROM agEntityPhoneContact jn WHERE jn.entity_id = ? AND phone_contact_type_id = ?)', array($id, $phoneContactType->id))
+            ->execute()->getFirst();
       }
+      $phoneContactForm = new agEmbeddedAgPhoneContactForm(isset($phoneObject) ? $phoneObject : null);
       $phoneContactForm->widgetSchema->setLabel('phone_contact', false);
       $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
     }
@@ -321,6 +328,8 @@ class agPersonForm extends BaseagPersonForm
 
   /**
   * This function sets up address forms.
+  *
+  * @todo refactor this function similarly to embedNameForm() and embedEmailForm().
   **/
   public function embedAddressForm()
   {
@@ -466,7 +475,8 @@ class agPersonForm extends BaseagPersonForm
       ->where('a.person_name_type = ?', $key)
       ->execute(null, Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-    // Check to see if the name object is unmodified and new.
+    // Check to see if the name object is unmodified and that a value other than
+    // null was submitted.
     if($form->getObject()->isModified() && $form->getObject()->person_name <> null) {
       // See if the submitted name already exists in the db.
       $nameObject = Doctrine::getTable('agPersonName')
@@ -572,7 +582,56 @@ class agPersonForm extends BaseagPersonForm
       return;
     }
   }
-  
+
+  public function savePhoneForm($key, $form, $values)
+  {
+    $form->updateObject($values);
+
+    $typeId = Doctrine_Query::create()
+      ->select('a.id')
+      ->from('agPhoneContactType a')
+      ->where('a.phone_contact_type = ?', $key)
+      ->execute(null, Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    if($form->getObject()->isModified() && $form->getObject()->phone_contact <> null) {
+      $phoneObject = Doctrine::getTable('agPhoneContact')
+        ->findByDql('phone_contact = ?', $form->getObject()->phone_contact)
+        ->getFirst();
+
+      if($phoneObject == false) {
+        $phoneObject = new agPhoneContact();
+        $phoneObject->phone_contact = $form->getObject()->phone_contact;
+        $phoneObject->phone_format_id = $form->getObject()->phone_format_id;
+        $phoneObject->save();
+      }
+
+      $joinObject = Doctrine_Query::create()
+        ->from('agEntityPhoneContact j')
+        ->where('j.phone_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->agEntity->id))
+        ->execute()->getFirst();
+
+      if($joinObject instanceof agEntityPhoneContact) {
+        $joinObject->phone_contact_id = $phoneObject->id;
+        $joinObject->unlink('agPhoneContact');
+        $joinObject->save();
+      } else {
+        $joinObject = new agEntityPhoneContact();
+        $joinObject->entity_id = $this->agEntity->id;
+        $joinObject->phone_contact_type_id = $typeId;
+        $joinObject->phone_contact_id = $phoneObject->id;
+        $joinObject->priority = $typeId;
+        $joinObject->save();
+      }
+    } elseif($form->getObject()->isModified() && $form->getObject()->phone_contact == null) {
+      $joinObject = Doctrine_Query::create()
+        ->from('agEntityPhoneContact j')
+        ->where('j.phone_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->agEntity->id))
+        ->execute()->getFirst();
+      $joinObject->delete();
+    } elseif(!$form->getObject()->isModified() && $form->getObject()->phone_contact == null && $form->getDefault('phone_contact') == null) {
+      return;
+    }
+  }
   /**************************************************************
   * Saves the forms embedded on the Person page.
   * @param $forms array of forms to save
@@ -612,101 +671,33 @@ class agPersonForm extends BaseagPersonForm
         unset($this->embeddedForms['email'][$key]);
       }
     }
+
+    if(isset($this->embeddedForms['phone'])) {
+      $phoneFormats = Doctrine::getTable('agPhoneFormatType')
+            ->createQuery('a')
+            ->execute();
+      foreach($this->embeddedForms['phone']->embeddedForms as $key => $form) {
+        $form->getObject()->phone_contact = preg_replace('/[^0-9x]+/', '', $form->getObject()->phone_contact);
+        foreach($phoneFormats as $phoneFormat) {
+          if (preg_match($phoneFormat->match_pattern, $form->getObject()->phone_contact)) {
+            $form->getObject()->phone_format_id = $phoneFormat->id;
+          }
+        }
+        if($form->getObject()->phone_contact == $form->getDefault('phone_contact')) {
+          $form->getObject()->state(Doctrine_Record::STATE_CLEAN);
+        }
+        $values = $this->values['phone'][$key];
+        $values['phone_contact'] = preg_replace('/[^0-9x]+/', '', $values['phone_contact']);
+        $this->savePhoneForm($key, $form, $values);
+        unset($this->embeddedForms['phone'][$key]);
+      }
+    }
 //    if (null === $forms) {
 //      $forms = $this->embeddedForms;
 //    }
     if (is_array($forms)) {
       foreach ($forms as $key => $form) {
 
-        /**
-         *  Email Saving Section
-         * */
-        if ($form instanceof agEmbeddedAgEmailContactForm) {
-
-
-          //This query gets the person's agEntityEmailContact object, based on person_id and name_type_id (as $typeId).
-          $joinQuery = Doctrine::getTable('agEntityEmailContact')->createQuery('c')
-                  ->select('c.id')
-                  ->from('agEntityEmailContact c')
-                  ->where('c.email_contact_type_id = ?', $typeId)
-                  ->andWhere('c.entity_id =?', $this->getObject()->getAgEntity()->id);
-          //Check if the agEmbeddedAgEmailContactForm has an email_contact value.
-          if ($form->getObject()->email_contact <> null) {
-            // Get an agEntityEmailContact object from $joinQuery. Then create a new agEntityEmailContactForm
-            // and put the retrieved object inside it. Set its priority to $typeId
-            if ($join = $joinQuery->fetchOne()) {
-              $joinForm = new agEntityEmailContactForm($join);
-              $joinForm->getObject()->priority = $typeId;
-            }
-            // Or create a new agEntityEmailContactForm to be populated later and set its priority to $typeId.
-            else {
-              $joinForm = new agEntityEmailContactForm();
-              $joinForm->getObject()->priority = $typeId;
-            }
-
-            // Check if the email_contact value has changed since the page was rendered.
-            if ($form->getObject()->email_contact <> $form->getDefault('email_contact')) {
-              // If it has changed, save the entered value as $emailLookUp. Then revert the object
-              // to its default values from the page render. This prevents a duplicate entry error.
-              $emailLookUp = $form->getObject()->email_contact;
-              $form->updateObject($form->getDefaults());
-
-              // Create a query to see if the submitted email value, as $emailLookUp, already exists
-              // in the database.
-              $q = Doctrine::getTable('agEmailContact')->createQuery('a')
-                      ->select('a.id')
-                      ->from('agEmailContact a')
-                      ->where('a.email_contact = ?', $emailLookUp);
-
-              // If it does...
-              if ($queried = $q->fetchOne()) {
-                // Get the id of the email in the db...
-                $email_id = $queried->get('id');
-                // ...then see if the agEntityEmailContact has an email_contact_id corresponding to the
-                // email queried for. If it is, unset the form, no update is needed...
-                if (isset($joinForm->email_contact_id) && $joinForm->email_contact_id == $email_id) {
-                  unset($forms[$key]);
-                }
-                // ...If it wasn't, populate the agEntityEmailContact object's values and save it.
-                // Then unset the form.
-                else {
-                  $joinForm->getObject()->entity_id = $this->getObject()->getAgEntity()->id;
-                  $joinForm->getObject()->email_contact_id = $email_id;
-                  $joinForm->getObject()->email_contact_type_id = $typeId;
-                  $joinForm->getObject()->save();
-                  unset($forms[$key]);
-                }
-              }
-              // If the entered email isn't in the database already, make a new agEmailContact object,
-              // populate it with the new email, and save it.
-              // Then populate the agEntityEmailContact object's values, associating it with the
-              // id of the new email, and save it. Unset the form.
-              elseif (!$queried = $q->fetchOne()) {
-                $newEmail = new agEmailContact();
-                $newEmail->email_contact = $emailLookUp;
-                $newEmail->save();
-                $joinForm->getObject()->entity_id = $this->getObject()->getAgEntity()->id;
-                $joinForm->getObject()->email_contact_id = $newEmail->id;
-                $joinForm->getObject()->email_contact_type_id = $typeId;
-                $joinForm->getObject()->save();
-                unset($forms[$key]); //This unsets the form, prevents a multiple save.
-              }
-            }
-            // If the name hasn't been changed, unset the form.
-            else {
-              unset($forms[$key]);
-            }
-          }
-          // If the name field is blank, unset the field...
-          else {
-            unset($forms[$key]);
-            // ...if it was populated, delete the existing agPersonMjAgPersonName object since it is
-            // no longer needed.
-            if ($join = $joinQuery->fetchOne()) {
-              $join->delete();
-            }
-          }
-        }
         /**
          *  Phone Saving Section
          * */

@@ -40,7 +40,7 @@ ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
 	text-decoration:none;
 	padding:4px;
 	_padding-left:0;
-	font:normal 11px Verdana;
+	font:bold 11px helvetica, arial, verdana;
 	color: #444444;
 	text-decoration:none;
 	cursor:default;
