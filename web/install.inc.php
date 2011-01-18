@@ -1,7 +1,20 @@
 <?php
 
 /**
- * Sahana Agasti 1.99999 , Mayon install.inc.php
+ * Agasti 2.0 Installer
+ *
+ * PHP Version 5
+ *
+ * LICENSE: This source file is subject to LGPLv3.0 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/lesser.html
+ *
+ * @author Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ */
+/**
+ * Sahana Agasti 2.0 install.inc.php
  * this file houses installation specific functions, primarily called from install.php
  */
 require_once (dirname(__FILE__) . '/../lib/vendor/symfony/lib/yaml/sfYaml.php');
@@ -31,8 +44,8 @@ class agInstall
 
     $this->steps = array(
       0 => array('title' => '1. Introduction', 'fun' => 'stage0'),
-      1 => array('title' => '2. Licence Agreement', 'fun' => 'stage1'),
-      2 => array('title' => '3. Pre-requisite Check', 'fun' => 'stage2'),
+      1 => array('title' => '2. License Agreement', 'fun' => 'stage1'),
+      2 => array('title' => '3. Prerequisite Check', 'fun' => 'stage2'),
       3 => array('title' => '4. Configure Database', 'fun' => 'stage3'),
       4 => array('title' => '5. Configuration Summary', 'fun' => 'stage4'),
       5 => array('title' => '6. Installation Summary', 'fun' => 'stage5'),
@@ -147,11 +160,14 @@ class agInstall
 
   function stage0()
   {
-    return '<div class=info>Welcome to the Sahana Agasti 1.99999, Mayon Installation Wizard.<br />
-      The installation wizard will guide you through the installation of Sahana Agasti 1.99999, Mayon <br />
-      Click the "Next" button to proceed to the next screen. If you want to change something <br />
-      at a previous step, click the "Previous" button <br />
-      You may cancel installation at any time by clicking the "Cancel" button</div>';
+    return '<div class=info><h2>Welcome to the Sahana Agasti 2.0 Installation Wizard</h2><br />
+      <p>Agasti is an emergency management application with tools to manage staff, resources, 
+      client information and facilities through an easy to use web interface. The Installation
+      Wizard will guide you through the installation of Agasti 2.0.</p> <br />
+      Click the "Next" button to proceed to the next screen. If you want to change something at 
+      a previous step, click the "Previous" button.  You may cancel installation at any time by
+      clicking the "Cancel" button.</p>
+      <p><b> Click the "Next" button to continue.</p></b></div>';
   }
 
   function stage1()
@@ -168,7 +184,7 @@ class agInstall
     $agree = '<input class="checkbox" type="checkbox" value="yes" name="agree" id="agree" onclick="submit();"';
     $this->getConfig('agree', false) == 'yes' ? $agree .= ' checked=checked>' : $agree .= '>';
 
-    return '<div class=info>' . $license . "</div><br />" . $agree . '<label for="agree">I agree</label>';
+    return '<div class=info>' . nl2br($license) . "</div><br />" . $agree . '<label for="agree">I agree</label>';
   }
 
   /**
@@ -215,10 +231,12 @@ class agInstall
       $this->DISABLE_NEXT = true;
 
       $retry = '<input type="submit" class="inputGray" id="retry" name="retry" value="retry" />';
-      $final_result = '<span class="fail">Please correct all issues and press the "retry" button</span><br /><br />' . $retry;
+      $final_result = '<span class="fail">There are errors in your configuration.  
+        Please correct all issues and press the "retry" button.  For additional assistance
+        reference the README file.</span><br /><br />' . $retry;
     } else {
       $this->DISABLE_NEXT = false;
-      $final_result = '<span class="green">Ok</span>';
+      $final_result = '<span class="green">Your system is properly configured.  Please continue.</span>';
     }
 
     return $table . '</table><br />' . $final_result;
@@ -231,8 +249,9 @@ class agInstall
 
     if (isset($_REQUEST['retry']) && $this->RETRY_SUCCESS == false) {
       $retry_label = 'retry';
-      $instruct = '<span class="fail">fail</span><br />
-      <br />Error Message:' . $this->ERROR_MESSAGE . '<br /><span class="fail">please press retry</span>';
+      $instruct = '<span class="fail">Error</span><br />
+      <br />Error Message:' . $this->ERROR_MESSAGE . '<br /><span class="fail">Please correct the
+        error and press retry.</span>';
     } else if ($this->RETRY_SUCCESS == false) {
       $retry_label = 'test connection';
       $instruct = 'Press "Test connection" button when done.';
@@ -286,7 +305,8 @@ class agInstall
                 </li>
               </ul>
             </fieldset>';
-    $results = 'Please create database manually,<br />and set the configuration parameters for connection to this database.<br /><br/>'
+    $results = 'The database is created manually.  First, the Agasti Installer will test your
+      configuration settings before continuing.  Enter your database settings and click "Test Connection". <br /><br/>'
         . $instruct . $table . $retry;
 
 //$this->DISABLE_NEXT ? new CSpan(S_OK,'ok') :  new CSpan(S_FAIL, 'fail'),
@@ -302,23 +322,27 @@ class agInstall
         <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
     '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
     '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
-    '<br /><strong>Database Password</strong>:' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
-    '<br /><strong>Administrator</strong>:' . $this->getConfig('ADMIN_NAME') .
-    '<br /><strong>Admin E-mail</strong>:' . $this->getConfig('ADMIN_EMAIL') .
-    '</div><br /> now is your last chance to go back, by clicking next you will install Sahana Agasti';
+    '<br /><strong>Database Password</strong>: ' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
+    '<br /><strong>Administrator</strong>: ' . $this->getConfig('ADMIN_NAME') .
+    '<br /><strong>Admin E-mail</strong>: ' . $this->getConfig('ADMIN_EMAIL') .
+    '</div><br /> Please verify your settings.  By clicking next you will install Sahana Agasti.';
   }
 
   function stage5()
   {
     if ($this->INSTALL_RESULT == 'Success!') {
-      return 'Congratulations! here is your installation summary:<br /><div class="info">
+      return '<span class="okay">Congratulations!  Installation was successful:</span> <br /><div class="info">
         <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
       '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
       '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
-      '<br /><strong>Database Password</strong>:' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
-      '<br /><strong>Administrator</strong>:' . $this->getConfig('ADMIN_NAME') .
-      '<br /><strong>Admin E-mail</strong>:' . $this->getConfig('ADMIN_EMAIL') .
-      '</div><br /> BUT WAIT, you still have to create your admin user. please click finish to be authenticated, you will then create your first user.';
+      '<br /><strong>Database Password</strong>: ' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
+      '<br /><strong>Administrator</strong>: ' . $this->getConfig('ADMIN_NAME') .
+      '<br /><strong>Admin E-mail</strong>: ' . $this->getConfig('ADMIN_EMAIL') .
+      '</div><br /> NOTE: to continue with Agasti setup you must first create the "Super User"
+        account by editing the config file.  In .../config please edit the config.yml file with the
+        Super User username and password.  After you have done so, click finish and you will be 
+        redirected to log in with the Super User username and password and thenthen create your
+        first user.';
     } else {
       return '<span class="fail">There was an error with your installation:</span><br /><div class="info">' . $this->INSTALL_RESULT . '</div>';
     }
@@ -482,7 +506,7 @@ class agInstall
       $ag_host = new agHost();
       $ag_host->setHostname($this->getConfig('DB_SERVER'));
       $ag_host->save();
-    }catch (Exception $e) {
+    } catch (Exception $e) {
       $installed = 'Could not insert ag_host record' . $e->getMessage();
     }
 
