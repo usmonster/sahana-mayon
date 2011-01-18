@@ -24,5 +24,5 @@ class agWidgetFormSchemaFormatterInlineBlock extends sfWidgetFormSchemaFormatter
   $rowFormat = "<span style=\"display: block; font-weight: bold; color: #848484\">%label%</span><div style=\"display: inline-block; margin: 4px;\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div style=\"display: inline-block; border: solid 1px #dadada; -moz-border-radius: 5px; margin-right: 4px; padding: 4px;\">\n  %content%</div>";
+  $decoratorFormat = "<div class=\"facgroup\" style=\"display: inline-block; border: solid 1px #dadada; -moz-border-radius: 5px; margin-right: 4px; padding: 4px;\">\n  %content%</div>";
 }

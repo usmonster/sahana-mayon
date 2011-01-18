@@ -1,27 +1,63 @@
-<h3>Required Staff Resources for <span style="color: #ff8f00;"><?php echo $ag_scenario_facility_group->getScenarioFacilityGroup() ?></span></h3>
+<script type="text/javascript">
+  $(function(){
+    $('.groupLabel').click(function(){
+      $(this).parent().find('.facgroup').slideToggle("slow");
+    });
+  });
+</script>
 
+          <h3>
+            <span>
+              Assign minimum and maximum staff resource requirements to facility groups for the
+            </span>
+            <span class="logName">
+    <?php echo $scenario->scenario ?>
+        </span>
+        <span>
+          scenario:
+        </span>
+      </h3>
+      <br />
+
+<?php //include_partial('staffresourceform', array('staffresourceform' => $staffresourceform, 'ag_staff_resources' => $ag_staff_resources, 'scenario' => $scenario, 'formsArray' => $formsArray)) ?>
+
+
+<?php
+          include_partial('staffresourceform', array(
+            'formsArray' => $formsArray,
+            //'scenarioFacilityGroupId' => $scenarioFacilityGroup->id,
+            'array' => $arrayBool,
+            'scenario' => $scenario,
+              // 'ag_facility_resources' => $ag_facility_resources,
+              // 'ag_allocated_facility_resources' => $ag_allocated_facility_resources
+              //is this form modified?
+          ));
+?>
+
+<?php if(isset($scenarioFacilityGroups)){ ?>
+<?php foreach ($scenarioFacilityGroups as $facilityGroup): ?>
 <table class="singleTable">
   <thead>
-    <tr>
-      <th class="head" style="padding: 2px 4px;">Facility Resource</th>
-      <th class="head" style="padding: 2px 4px;">Facility Resource Capacity</th>
-      <th class="head" style="padding: 2px 4px;">Staff Resource</th>
-      <th class="head" style="padding: 2px 4px;">Minimum</th>
-      <th class="head" style="padding: 2px 4px;">Maximum</th>
-    </tr>
+      <caption><?php echo $facilityGroup->scenario_facility_group;?></caption>
   </thead>
   <tbody>
-    <?php foreach ($ag_staff_resources as $ag_staff_resource): ?>
+    <?php foreach ($facilityGroup->getAgScenarioFacilityResource() as $scenarioFacilityResource): ?>
     <tr>
-      <td><a href="<?php echo url_for('scenario/editstaffresources?id='.$ag_staff_resource->getId()) ?>"><?php echo ucwords($ag_staff_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type) ?></a></td>
-      <td><?php //echo $ag_staff_resource->getAgFacilityResource()->getCapacity() ?></td>
-      <td><?php //echo $ag_staff_resource->getAgFacilityStaffResource()->getFirst()->getAgStaffResourceType()->staff_resource_type ?></td>
-      <td><?php //echo $ag_staff_resource->getAgFacilityStaffResource()->getFirst()->getMinimumStaff() ?><br /></td>
-      <td><?php //echo $ag_staff_resource->getAgFacilityStaffResource()->getFirst()->getMaximumStaff() ?><br /></td>
+      <th class="head" colspan="<?php echo (count($scenarioFacilityResource->getAgFacilityStaffResource()) * 3);?>"><?php echo $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type); ?></th>
+    </tr>
+    <tr>
+      <?php foreach ($scenarioFacilityResource->getAgFacilityStaffResource() as $key => $staffResourceType): ?>
+      <th class="<?php echo (($key == 0) ? 'subHeadLeft' : 'subHeadMid'); ?>"><?php echo ucwords($staffResourceType->getAgStaffResourceType()->staff_resource_type); ?></th>
+      <td>Min: <?php echo $staffResourceType->minimum_staff; ?></td>
+      <td>Max: <?php echo $staffResourceType->maximum_staff; ?></td>
+      <?php endforeach; ?>
     </tr>
     <?php endforeach; ?>
   </tbody>
 </table>
-
-<h3>Add Facility Resource Requirement</h3>
-<?php include_partial('staffresourceform', array('staffresourceform' => $staffresourceform, 'ag_staff_resources' => $ag_staff_resources)) ?>
+<br />
+<?php endforeach; ?>
+<?php
+}
+?>
+<a class=linkButton href="<?php echo url_for('scenario/newshifttemplate?scenId=' . $scenario->id) ?>" title="View Shift Templates">Create Shift Templates for <span style="color: #ff8f00"><?php echo $scenario->scenario; ?></span> Facilities</a>
