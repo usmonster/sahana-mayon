@@ -1,9 +1,15 @@
 
-<h1> Welcome to NYC Sahana Agasti</h1>
+<h1> NYC Sahana Agasti</h1>
 
 <?php
 if (!$sf_user->isAuthenticated()) {
   echo "<h2> To begin, please login in the upper right.</h2>";
+}
+?>
+
+<?php
+if ($sf_user->isAuthenticated()) {
+  echo "<h2> Welcome to Sahana Agasti Emergency Preparedness and Response Software.</h2>";
 }
 ?>
 
