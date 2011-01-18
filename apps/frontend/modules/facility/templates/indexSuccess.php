@@ -1,7 +1,7 @@
-<h3>Facility Management</h3>
-Hello, welcome to the facility management module of Sahana Agasti 2.0, Mayon
-<br />
-Please select one of the following facility administration actions:<br />
+<h2>Facility Management</h2>
+<p>The Facility Management function of Agasti 2.0 is used to manage the available facility resources during emergency response preparation.
+  In this module Emergency Managers have the ability to record their facility record and define its available resources.</p>
+Please select one of the following actions:<br />
 <?php
 echo '<a href="' . url_for('facility/new') . '" class="buttonText" title="Create New Facility">Create Facility<a/><br/>';
 echo '<a href="' . url_for('facility/list') . '" class="buttonText" title="List Existing Facility">List Facilities</a><br/>';

@@ -1,9 +1,8 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
-<h3>Staff Management</h3>
-Hello, welcome to the staff management module of Sahana Agasti 2.0, Mayon
-<br />
-Please select one of the following staff administration actions:<br />
+<h2>Staff Management</h2>
+<p>The Staff Management feature in Agasti 2.0 is used to manage your available staff resources while planning before an emergency response.</p>
+Please select one of the following actions:<br />
 
 <a href="<?php echo url_for('staff/new'); ?>" class="buttonText" title="Create New Staff">Create Staff</a><br/>
 <a href="<?php echo url_for('staff/list'); ?>" class="buttonText" title="List Existing Staff">List Staff</a><br/>
