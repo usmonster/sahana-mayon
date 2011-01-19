@@ -271,7 +271,7 @@ class scenarioActions extends sfActions
    */
   public function executeStaffpool(sfWebRequest $request)
   {
-    $this->poolform = new agScenarioStaffGeneratorForm();
+    $this->poolform = new agStaffPoolForm();
   }
   /**
    *
