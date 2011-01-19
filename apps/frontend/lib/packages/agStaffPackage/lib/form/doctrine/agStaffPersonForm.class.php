@@ -22,7 +22,7 @@ class agStaffPersonForm extends agPersonForm
     $staffContainerForm = new sfForm();
     $this->embedStaffForm($staffContainerForm);
     $this->embedStaffResourceTypeForm($staffContainerForm);
-    //$this->embedStaffResourceOrganizationForm();
+    $this->embedStaffResourceOrganizationForm($staffContainerForm);
     $this->embedForm('Staff', $staffContainerForm);
   }
 
@@ -50,13 +50,16 @@ class agStaffPersonForm extends agPersonForm
      $staffContainerForm->embedForm('Type', $staffResourceTypeForm);
   }
 
-  public function embedStaffResourceOrganizationForm()
+  public function embedStaffResourceOrganizationForm($staffContainerForm)
   {
     if(!$this->isNew()) {
-      $id = Doctrine_Query::create()
+      $staffResOrgObject = Doctrine_Query::create()
           ->from('agStaffResourceOrganization a')
-          ->where('a.staff_resource_id = ?', $this->getObject()->getAgStaff()->getFirst()->)
+          ->where('a.staff_resource_id = ?', $this->getObject()->getAgStaff()->getFirst()->getAgStaffResource()->getFirst()->id)
+          ->execute()->getFirst();
     }
+    $staffResOrgForm = new PluginagEmbeddedAgStaffResourceOrganizationForm(isset($staffResOrgObject) ? $staffResOrgObject : null);
+    $staffContainerForm->embedForm('Organization', $staffResOrgForm);
   }
   public function configure()
   {
@@ -70,23 +73,23 @@ class agStaffPersonForm extends agPersonForm
 
 //    $staffContainerForm = new sfForm();
 //    $staffContainerForm->embedForm('Status', new PluginagEmbeddedAgStaffForm());
-    $staffResourceOrganizations = Doctrine_Query::create()
-        ->from('agStaffResourceOrganization b')
-        ->where('b.staff_resource_id IN (SELECT c.id FROM agStaffResource c WHERE c.staff_id = ?)', $this->getObject()->getAgStaff()->getFirst()->id)
-        ->execute();
-    $i =1;
-    foreach ($staffResourceOrganizations as $staffResourceOrganization) {
+//    $staffResourceOrganizations = Doctrine_Query::create()
+//        ->from('agStaffResourceOrganization b')
+//        ->where('b.staff_resource_id IN (SELECT c.id FROM agStaffResource c WHERE c.staff_id = ?)', $this->getObject()->getAgStaff()->getFirst()->id)
+//        ->execute();
+//    $i =1;
+//    foreach ($staffResourceOrganizations as $staffResourceOrganization) {
 //      $staffContainerForm->embedForm('organization_' . $i, new PluginagEmbeddedAgStaffResourceOrganizationForm($staffResourceOrganization));
-      $i++;
-    }
-    $blankOrgForm = new PluginagEmbeddedAgStaffResourceOrganizationForm();
+//      $i++;
+//    }
+//    $blankOrgForm = new PluginagEmbeddedAgStaffResourceOrganizationForm();
     // Allow the form to be blank if another already exists
-    if ($i > 1) {
+//    if ($i > 1) {
 //      $blankOrgForm->getWidget('organization_id')->addOption('add_empty', true);
 //      $blankOrgForm->getWidget('staff_resource_id')->addOption('add_empty', true);
 //      $blankOrgForm->getValidator('organization_id')->addOption('required', false);
 //      $blankOrgForm->getValidator('staff_resource_id')->addOption('required', false);
-    }
+//    }
 //    $staffContainerForm->embedForm('New Organization', $blankOrgForm);
 //    $this->embedForm('Staff', $staffContainerForm);
 /**********************/
@@ -148,85 +151,87 @@ class agStaffPersonForm extends agPersonForm
   
   public function saveEmbeddedForms($con = null, $forms = null)
   {
-    if (null === $forms) {
-      $forms = $this->embeddedForms;
-    }
-
-    if (is_array($forms)) {
-      foreach ($forms as $key => $form) {
-        /**
-         *  Staff Resource section
-         * */
-      if ($form instanceof sfForm) {
-        $emforms = $form->embeddedForms;
-      }
-      $staffValues = $this->values;
-      $staffValues = $staffValues['staff'];
-
-      $staffExists = $this->getObject()->getAgStaff();
-//            if(!$staffExists){
-        $staff = new agStaff();
-
-        //$newStaffResource->staff_status_id;// getValue('staff_status_id');
-        //staff status id should be set only once (per staff member)
-
-      //get all staff values from the form
-      foreach ($emforms as $emkey => $emform) {
-          if ($emform instanceof agEmbeddedStaffForm) {
-            $newStaffResource = $emform->getObject();
-            $staff->person_id = $this->getObject()->getIncremented(); //get the person_id that will exist.
-            $staff->person_id = $this->getObject()->getId();
-            $foo = $this->getObject()->id;
-            $staff->staff_status_id = $staffValues[$emkey]['staff_status_id'][0];
-            $staff->save();
-          //$taintedValues  = $emform->getTaintedValues();
-
-              //$this->getObject()->setAgStaff($staff);
-              //we should have a staff id now bound through the person object
-              //we have no agstaffresource yet!
-              //$staff_id = $this->getObject()->staff_id;
+//    parent::savEmbeddedForms();
+    $a = 4;
+//    if (null === $forms) {
+//      $forms = $this->embeddedForms;
+//    }
+//
+//    if (is_array($forms)) {
+//      foreach ($forms as $key => $form) {
+//        /**
+//         *  Staff Resource section
+//         * */
+//      if ($form instanceof sfForm) {
+//        $emforms = $form->embeddedForms;
+//      }
+//      $staffValues = $this->values;
+//      $staffValues = $staffValues['staff'];
+//
+//      $staffExists = $this->getObject()->getAgStaff();
+////            if(!$staffExists){
+//        $staff = new agStaff();
+//
+//        //$newStaffResource->staff_status_id;// getValue('staff_status_id');
+//        //staff status id should be set only once (per staff member)
+//
+//      //get all staff values from the form
+//      foreach ($emforms as $emkey => $emform) {
+//          if ($emform instanceof agEmbeddedStaffForm) {
+//            $newStaffResource = $emform->getObject();
+//            $staff->person_id = $this->getObject()->getIncremented(); //get the person_id that will exist.
+//            $staff->person_id = $this->getObject()->getId();
+//            $foo = $this->getObject()->id;
+//            $staff->staff_status_id = $staffValues[$emkey]['staff_status_id'][0];
+//            $staff->save();
+//          //$taintedValues  = $emform->getTaintedValues();
+//
+//              //$this->getObject()->setAgStaff($staff);
+//              //we should have a staff id now bound through the person object
+//              //we have no agstaffresource yet!
+//              //$staff_id = $this->getObject()->staff_id;
+////            }
+////            else {
+////              $staff = $staffExists->getFirst();
+////            }
+//              //$this->getObject()->
+//              //we only need to get the first record of a person to staff
+//            if ($emform->isNew()) {
+//              //check to see if there is an existing staff member with this person_id
+//              if ($staffValues[$emkey]['ag_organization_list'][0] && $staffValues[$emkey]['ag_staff_resource_type_list'][0]) {
+//                //$this->getObject()->getAgStaffResource();
+//                //have to create a staff resource AND a staff resource organization
+//                $staffResource = new agStaffResource();
+//                $staffResource->staff_id = $staff->id;
+//                $staffResource->staff_resource_type_id = $staffValues[$emkey]['ag_staff_resource_type_list'][0];
+//                $staffResource->save();
+//                $newStaffResourceOrganization = new agStaffResourceOrganization();
+//                $newStaffResourceOrganization->staff_resource_id = $staffResource->getId();
+//                $newStaffResourceOrganization->id = $staffResource->getId();
+//                $newStaffResourceOrganization->organization_id = $staffValues[$emkey]['ag_organization_list'][0];
+//                $newStaffResourceOrganization->save();
+//                //$newFacilityResource->save();
+//                //$this->getObject()->getAgStaffResource()->add($staffResource);
+//                unset($emforms[$emkey]);
+//              } else {
+//                unset($emforms[$emkey]);
+//              }
+//            } else {
+//              //if we are updating this form
+//              $objStaffResource = $emform->getObject();
+//              if ($staffValues[$emkey]['ag_organization_list'][0] && $staffValues[$emkey]['ag_staff_resource_type_list'][0]) {
+//                $emform->getObject()->save();
+//              } else {
+//                $emform->getObject()->delete(); //if we've blanked out all information on a form
+//              }
+//              unset($emforms[$emkey]);
+//              //$form->getObject()->setFacilityId($this->getObject()->getId());
 //            }
-//            else {
-//              $staff = $staffExists->getFirst();
-//            }
-              //$this->getObject()->
-              //we only need to get the first record of a person to staff
-            if ($emform->isNew()) {
-              //check to see if there is an existing staff member with this person_id
-              if ($staffValues[$emkey]['ag_organization_list'][0] && $staffValues[$emkey]['ag_staff_resource_type_list'][0]) {
-                //$this->getObject()->getAgStaffResource();
-                //have to create a staff resource AND a staff resource organization
-                $staffResource = new agStaffResource();
-                $staffResource->staff_id = $staff->id;
-                $staffResource->staff_resource_type_id = $staffValues[$emkey]['ag_staff_resource_type_list'][0];
-                $staffResource->save();
-                $newStaffResourceOrganization = new agStaffResourceOrganization();
-                $newStaffResourceOrganization->staff_resource_id = $staffResource->getId();
-                $newStaffResourceOrganization->id = $staffResource->getId();
-                $newStaffResourceOrganization->organization_id = $staffValues[$emkey]['ag_organization_list'][0];
-                $newStaffResourceOrganization->save();
-                //$newFacilityResource->save();
-                //$this->getObject()->getAgStaffResource()->add($staffResource);
-                unset($emforms[$emkey]);
-              } else {
-                unset($emforms[$emkey]);
-              }
-            } else {
-              //if we are updating this form
-              $objStaffResource = $emform->getObject();
-              if ($staffValues[$emkey]['ag_organization_list'][0] && $staffValues[$emkey]['ag_staff_resource_type_list'][0]) {
-                $emform->getObject()->save();
-              } else {
-                $emform->getObject()->delete(); //if we've blanked out all information on a form
-              }
-              unset($emforms[$emkey]);
-              //$form->getObject()->setFacilityId($this->getObject()->getId());
-            }
-          }
-        }
-      }
-    }
-  return parent::saveEmbeddedForms($con, $forms);
+//          }
+//        }
+//      }
+//    }
+//  return parent::saveEmbeddedForms($con, $forms);
 
   }
 }
