@@ -1,4 +1,4 @@
-<h3>Current facility groups for the <span style="color: #ff8f00"><?php echo $scenarioName; ?></span> scenario</h3>
+<h3>Current Facility Groups for the <span style="color: #ff8f00"><?php echo $scenarioName; ?></span> Scenario</h3><br>
 <table class="singleTable">
   <tbody>
     <?php
