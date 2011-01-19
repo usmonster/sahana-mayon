@@ -70,6 +70,7 @@ class ProjectConfiguration extends sfProjectConfiguration
   public function configureDoctrine(Doctrine_Manager $manager)
   {
     $manager->registerHydrator('key_value_pair', 'KeyValuePairHydrator');
+    $manager->registerHydrator('combo_set', 'ComboHydrator');
   }
 
 }

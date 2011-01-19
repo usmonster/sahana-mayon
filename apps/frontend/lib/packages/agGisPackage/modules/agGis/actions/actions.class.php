@@ -241,6 +241,11 @@ class agGisActions extends sfActions
   {
     $newGeoSet = agGisQuery::defineGeoRelation();
     print_r($newGeoSet);
+//    $test = agGisQuery::returnExistingGeoRelation();
+//    $testString = $test->getSqlQuery();
+//    $results = $test->execute(array(), 'combo_set');
+//    print_r($testString);
+//    print_r($results);
   }
 
    /**

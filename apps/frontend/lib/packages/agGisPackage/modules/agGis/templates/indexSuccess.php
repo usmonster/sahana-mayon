@@ -14,5 +14,8 @@ echo '<a href="' . url_for('gis/listfacility') . '" class="buttonText" title="Li
 echo '<a href="' . url_for('gis/liststaff') . '" class="buttonText" title="List Exsting Staff Geo">View Staff Geo Information</a><br/>';
 echo '<a href="' . url_for('gis/config') . '" class="buttonText" title="GIS">GIS Settings</a><br/>';
 //echo link_to('Excel', 'staff/excelDownload', array('class' => 'linkButton'))
+
+// @todo gisquery link is only for testing.  Please remove after testing.
+echo '<a href="' . url_for('gis/gisquery') . '" class="buttonText" title="GIS">GIS Queries</a><br/>';
 ?>
 

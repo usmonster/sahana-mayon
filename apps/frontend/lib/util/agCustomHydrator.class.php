@@ -31,3 +31,24 @@ class KeyValuePairHydrator extends Doctrine_Hydrator_Abstract
     return $array;
   }
 }
+
+class ComboHydrator extends Doctrine_Hydrator_Abstract
+{
+  /**
+   * Defines the result set as an associate array.
+   *
+   * @param <type> $stmt
+   * @return array An associate array.
+   */
+  public function hydrateResultSet($stmt)
+  {
+    $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM);
+    $array = array();
+    foreach ($results as $result)
+    {
+      $array[$result[0]] = array($result[1], $result[4], $result[5], $result[7], $result[8]);
+    }
+
+    return $array;
+  }
+}

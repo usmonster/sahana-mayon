@@ -61,8 +61,17 @@ class agGisQuery
   public static function returnExistingGeoRelation()
   {
     $query = Doctrine_Query::create()
-      ->select('geo_id1, geo_id2')
-      ->from('agGeoRelationship');
+      ->select('geo_id1, geo_id2, c2.longitude, c2.latitude, c1.longitude, c1.latitude, f1.id, f2.id, c1.id, c2.id')
+      ->from('agGeoRelationship r')
+      ->addFrom('agGeoFeature f1')
+      ->addFrom('agGeoFeature f2')
+      ->addFrom('agGeoCoordinate c1')
+      ->addFrom('agGeoCoordinate c2')
+      ->where('r.geo_id1=f1.geo_id')
+      ->andWhere('f1.geo_coordinate_id=c1.id')
+      ->andWhere('r.geo_id2=f2.geo_id')
+      ->andWhere('f2.geo_coordinate_id=c2.id')
+      ->orderBy('geo_id1, geo_id2');
 
     return $query;
   }
@@ -80,10 +89,19 @@ class agGisQuery
     // In this condition (self-referencing table query), do not use symfony doctrine count.
     $query = Doctrine_Query::create();
 
-    $query->select('g1.id, g2.id')
+    $query->select('g1.id, g2.id, c2.longitude, c2.latitude, c1.longitude, c1.latitude, f1.id, f2.id, c1.id, c2.id')
       ->from('agGeo g1')
       ->addFrom('agGeo g2')
-      ->where('g1.id < g2.id');
+      ->addFrom('agGeoFeature f1')
+      ->addFrom('agGeoFeature f2')
+      ->addFrom('agGeoCoordinate c1')
+      ->addFrom('agGeoCoordinate c2')
+      ->where('g1.id < g2.id')
+      ->andWhere('g1.id=f1.geo_id')
+      ->andWhere('f1.geo_coordinate_id=c1.id')
+      ->andWhere('g2.id=f2.geo_id')
+      ->andWhere('f2.geo_coordinate_id=c2.id')
+      ->orderBy('g1.id, g2.id');
 
     // Search for person's geo id.
     $subPerson = $query->createSubquery()
@@ -95,6 +113,7 @@ class agGisQuery
       ->innerJoin('subEA1.agEntity subE1')
       ->where('1')
       ->groupBy('subG1.id');
+    
     $subPerson->innerJoin('subE1.agPerson p');
     foreach ($personType as $ptype)
     {
@@ -110,7 +129,7 @@ class agGisQuery
           throw new sfException('An error occurred. Please pass in an accepted parameter.');
       }
     }
-    $query->where('g1.id IN (' . $subPerson->getDql() . ')');
+    $query->andWhere('g1.id IN (' . $subPerson->getDql() . ')');
 
     // Search for site type.
     $subSite = $query->createSubquery()
@@ -136,13 +155,48 @@ class agGisQuery
     }
     $query->andWhere('g2.id IN (' . $subSite->getDql() . ')');
 
+    /*
+     * @todo Remove this subquery block and replace it with a centroid calculation function.
+     * This is, currently, a hack to prevent geo features with more than one coordinate from returning.
+     */
+    $subQuery1 = $query->createSubquery()
+      ->select('f3.geo_id')
+      ->from('agGeoFeature f3')
+      ->groupBy('f3.geo_id')
+      ->having('count(f3.geo_id) = 1');
+    $query->andWhere('g1.id in (' . $subQuery1->getDql() . ')');
+    $subQuery2 = $query->createSubquery()
+      ->select('f4.geo_id')
+      ->from('agGeoFeature f4')
+      ->groupBy('f4.geo_id')
+      ->having('count(f4.geo_id) = 1');
+    $query->andWhere('g2.id in (' . $subQuery2->getDql() . ')');
+
+    $test = $query->getSqlQuery();
+
+
+    /*************
+     * NOTE: The combo_set hydration does not return all of the query rows.  It
+     * only returns the last sets since geo_id1 is used as the array key and has
+     * to be unique.  The last appearance of geo_id1 over-writes the previous
+     * sets of geo_id1, and geo_id2 where geo_id1 repeats.
+     *
+     */
     // Collect all geo relations in an array.
-    $allGeoSet = $query->execute(array(), 'key_value_pair');
+    $allGeoSet = $query->execute(array(), 'combo_set');
+//    $allGeoSet = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+    echo '<br>allGeoSet: ';
+    print_r($allGeoSet);
     // Collect defined geo relations in an array.
     $existingGeoQuery = self::returnExistingGeoRelation();
-    $existingGeoSet = $existingGeoQuery->execute(array(), 'key_value_pair');
+    $existingGeoSet = $existingGeoQuery->execute(array(), 'combo_set');
+//    $existingGeoSet = $existingGeoQuery->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+    echo '<br><br>existingGeoSet: ';
+    print_r($existingGeoSet);
     // Diff all geo relations against the defined geo relation to find the undefined geo relations.
     $newGeoSet = array_diff_assoc($allGeoSet, $existingGeoSet);
+    echo '<br><br>newGeoSet: ';
+    print_r($newGeoSet);
 
     // if countRecord is true, return only the total record count for undefined geo relations.  Otherwise, return the undefined geo relation set.
     return ($countRecords ? count($newGeoSet) : $newGeoSet);
