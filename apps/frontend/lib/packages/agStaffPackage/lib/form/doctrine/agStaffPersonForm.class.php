@@ -40,10 +40,10 @@ class agStaffPersonForm extends agPersonForm
 
   public function embedStaffResourceTypeForm($staffContainerForm)
   {
-    if($id = $this->getObject()->getAgStaff()->getFirst()->id) {
+    if($staff = $this->getObject()->getAgStaff()->getFirst()) {
        $staffResourceTypeObject = Doctrine_Query::create()
            ->from('agStaffResourceType a')
-           ->where('a.id IN (SELECT sr.staff_resource_type_id FROM agStaffResource sr WHERE sr.staff_id = ?)', $id)
+           ->where('a.id IN (SELECT sr.staff_resource_type_id FROM agStaffResource sr WHERE sr.staff_id = ?)', $staff->id)
            ->execute()->getFirst();
      }
      $staffResourceTypeForm = new PluginagEmbeddedAgStaffResourceTypeForm(isset($staffResourceTypeObject) ? $staffResourceTypeObject : null);
@@ -143,8 +143,11 @@ class agStaffPersonForm extends agPersonForm
   }
   protected function doSave($con = null)
   {
+    // prevents an error that happens when we just go into doSave(). saveEmbedded isn't
+    // hit and there's an integrity constraint for staff.
+    $this->saveEmbeddedForms();
     //if($this->isNew()){
-    parent::doSave();
+//    parent::doSave();
     //}
   }
 // Going in here for all the embedded forms. Which makes sense, since this extends person. Maybe a check, return parent if it's not what we want?
