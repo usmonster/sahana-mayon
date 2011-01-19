@@ -44,7 +44,6 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enablePlugins(
         array('sfDoctrinePlugin',
           'sfDoctrineGuardPlugin',
-          'sfDatagridPlugin',
           'sfDoxygenPlugin',
           'sfFormExtraPlugin',
           'sfPhpExcelPlugin',

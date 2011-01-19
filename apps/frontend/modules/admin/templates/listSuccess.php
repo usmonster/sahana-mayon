@@ -27,8 +27,5 @@
   </tbody>
 </table>
 
-<?php //echo sfDatagrid::render('simpleDatagrid', 'exemple/datagrid'); ?>
-
-
 <a href="<?php echo url_for('admin/new') ?>" class="linkButton" title="Create New User Account">Create New</a>
 
