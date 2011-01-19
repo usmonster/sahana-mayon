@@ -1,0 +1,140 @@
+SAHANA AGASTI 2.0 MAYON ORGANIZATION PLUGIN RELEASE NOTES
+
+Updated: 2011-01-19
+
+Sahana Agasti is a free, open-source emergency preparedness and management
+software application written in PHP by members of the Sahana Software
+Foundation's developer community.
+
+The mission of the Sahana Agasti project is to facilitate resource management
+and communication throughout all phases of emergency management by providing a
+turnkey open-source application that is reliable, scalable, extensible, and
+usable both by volunteers and by professionals, and which supports the primary
+goal of the Sahana Software Foundation: alleviating human suffering and saving
+lives.
+
+For more information on the Sahana Agasti project, visit
+http://agasti.sahanafoundation.org/ or see the included DEVELOPERS file for
+information on becoming a contributing developer.
+
+For information on the Sahana Software Foundation, visit
+http://www.sahanafoundation.org/.
+
+INCLUDED DOCUMENTS
+------------------
+
+Information for this software can be found in the following included documents:
+
+CHANGELOG  - Detailed release notes and version history
+INSTALL    - Installation instructions
+LICENSE    - Licensing information
+README     - This document
+
+
+WHAT'S NEW
+==========
+
+This is the initial creation of agOrganizationPackage.  It's current functionality includes:
+
+- Recording organization contact information
+- Relating organization information to staff records
+
+SYSTEM REQUIREMENTS
+===================
+
+*** IMPORTANT NOTE: ***
+
+The agFooPackage plugin is the template plugin for Agasti Mayon development and does not currently enhance functionality.  To enable this plugin Sahana Agasti 2.0 must be installed.
+
+Enter any specific Sys Requirements for agOrganizationPackage.
+
+
+INSTALLATION
+============
+
+To install, open the package manager and enable this plugin.
+
+
+KNOWN ISSUES AND WORKAROUNDS
+============================
+
+Enter any known issues.
+
+SUPPORT
+=======
+
+FAQ
+---
+
+1. What is Sahana?
+
+The Sahana Software Foundation is a non-profit organization whose goal is to aid
+relief efforts in emergency situations through the creation and implementation
+of technology. Please visit http://www.sahanafoundation.org/ for more
+information.
+
+2. What is Sahana Agasti?
+
+Sahana Agasti is a set of software tools, developed in PHP, for managing
+resources in the event of a large-scale emergency. Please visit
+http://wiki.sahanafoundation.org/doku.php/agasti:start
+
+3. What does Sahana Agasti do?
+
+The current development release is the foundation for the Mayon series and is
+not intended for general use. Although current functionality is limited, Sahana
+Agasti Mayon is being actively developed, and this release includes an
+installer, basic entry and management tools for emergency staff, facilities,
+scenarios, and user accounts, and an extensible schema on top of the symfony web
+application framework.
+
+4. What is the difference between Sahana Agasti and Sahana Eden?
+
+Agasti and Eden are both currently active projects approved and supported by the
+Sahana Software Foundation; however, they are separate initiatives with
+different functionality and goals. Visit http://wiki.sahanafoundation.org/ for
+more information.
+
+5. What if I have more questions?
+
+Please use the information below, under Additional Support, to contact the
+active volunteer community of the Sahana Software Foundation.
+
+Additional Support
+------------------
+
+For the most up-to-date information regarding Sahana Agasti, please visit
+http://wiki.sahanafoundation.org/doku.php/agasti:start
+
+Direct support for use or development of Agasti can be found via our active
+volunteer community:
+
+1. Email
+
+   For user support, please subscribe to the Sahana User list here:
+   https://lists.sourceforge.net/lists/listinfo/sahana-user 
+
+   You can also join the Agasti mailing list by going to
+   https://lists.sourceforge.net/lists/listinfo/sahana-agasti
+
+2. IRC
+
+   Sahana Agasti developers are available on FreeNode IRC channels
+   #sahana and #sahana-agasti.
+
+3. Launchpad
+
+   Please visit our Answers page on Launchpad, here:
+   https://answers.launchpad.net/sahana
+
+
+LICENSING
+=========
+
+For licensing information, please see the included LICENSE file.
+
+
+Thank you for using Sahana Agasti!
+                                     The Sahana Software Foundation
+                                     http://www.sahanafoundation.org/
+
