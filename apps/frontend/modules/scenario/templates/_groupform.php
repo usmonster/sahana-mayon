@@ -1,8 +1,7 @@
 <?php use_stylesheets_for_form($groupform) ?>
 <?php use_javascript('jquery.ui.custom.js'); ?>
-<?php //use_javascript('sortList'); ?>
-<?php //use_javascript('dimensions');?>
-<?php //use_javascript('tooltip');?>
+<?php //TODO: see if this is still necessary:
+use_javascript('tooltip.js'); ?>
 <?php use_javascript('json.serialize'); ?>
 <script type="text/javascript">
 	$(function() {

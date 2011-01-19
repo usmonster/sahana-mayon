@@ -1,6 +1,5 @@
 <?php use_stylesheets_for_form($form) ?>
 <?php use_javascript('jquery.ui.custom.js'); ?>
-<?php //use_javascript('tooltip');?>
 
 <form action="<?php echo url_for('scenario/'.($form->getObject()->isNew() ? 'create' : 'update').(!$form->getObject()->isNew() ? '?id='.$form->getObject()->getId() : '')) ?>" method="post" <?php $form->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 <?php if (!$form->getObject()->isNew()): ?>
