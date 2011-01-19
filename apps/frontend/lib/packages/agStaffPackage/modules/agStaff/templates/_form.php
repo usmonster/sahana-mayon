@@ -9,7 +9,7 @@
     <br />
     <h3>Staff Information</h3>
     <div class="infoHolder">
-      <?php echo $form['Staff']?>
+      <?php echo $form['staff']?>
     </div>
     <div style="clear: both;"> </div>
 

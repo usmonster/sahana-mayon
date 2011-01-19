@@ -23,7 +23,7 @@ class PluginagStaffPersonForm extends agPersonForm
     $this->embedStaffForm($staffContainerForm);
     $this->embedStaffResourceTypeForm($staffContainerForm);
     $this->embedStaffResourceOrganizationForm($staffContainerForm);
-    $this->embedForm('Staff', $staffContainerForm);
+    $this->embedForm('staff', $staffContainerForm);
   }
 
   public function embedStaffForm($staffContainerForm)
@@ -35,7 +35,7 @@ class PluginagStaffPersonForm extends agPersonForm
           ->execute()->getFirst();
     }
     $staffForm = new PluginagEmbeddedAgStaffForm(isset($staffObject) ? $staffObject : null);
-    $staffContainerForm->embedForm('Status', $staffForm);
+    $staffContainerForm->embedForm('status', $staffForm);
   }
 
   public function embedStaffResourceTypeForm($staffContainerForm)
@@ -47,7 +47,7 @@ class PluginagStaffPersonForm extends agPersonForm
            ->execute()->getFirst();
      }
      $staffResourceTypeForm = new PluginagEmbeddedAgStaffResourceTypeForm(isset($staffResourceTypeObject) ? $staffResourceTypeObject : null);
-     $staffContainerForm->embedForm('Type', $staffResourceTypeForm);
+     $staffContainerForm->embedForm('type', $staffResourceTypeForm);
   }
 
   public function embedStaffResourceOrganizationForm($staffContainerForm)
@@ -59,7 +59,7 @@ class PluginagStaffPersonForm extends agPersonForm
           ->execute()->getFirst();
     }
     $staffResOrgForm = new PluginagEmbeddedAgStaffResourceOrganizationForm(isset($staffResOrgObject) ? $staffResOrgObject : null);
-    $staffContainerForm->embedForm('Organization', $staffResOrgForm);
+    $staffContainerForm->embedForm('organization', $staffResOrgForm);
   }
   public function configure()
   {
@@ -141,21 +141,34 @@ class PluginagStaffPersonForm extends agPersonForm
 //    $this->embedForm('staff', $staffResourceContainer);
 
   }
-  protected function doSave($con = null)
-  {
-    // prevents an error that happens when we just go into doSave(). saveEmbedded isn't
-    // hit and there's an integrity constraint for staff.
-    $this->saveEmbeddedForms();
-    //if($this->isNew()){
-//    parent::doSave();
-    //}
-  }
+//  protected function doSave($con = null)
+//  {
+//    // prevents an error that happens when we just go into doSave(). saveEmbedded isn't
+//    // hit and there's an integrity constraint for staff.
+//    //$this->saveEmbeddedForms();
+//    //if($this->isNew()){
+////    parent::doSave();
+//    //}
+//  }
 // Going in here for all the embedded forms. Which makes sense, since this extends person. Maybe a check, return parent if it's not what we want?
-  
+  public function saveStaffForm($form, $values)
+  {
+    $form->updateObject($values);
+    if($form->getObject()->person_id == null) {
+      $form->getObject()->person_id = $this->getObject()->id;
+    }
+    $form->getObject()->save();
+    $a = 4;
+  }
   public function saveEmbeddedForms($con = null, $forms = null)
   {
 //    parent::savEmbeddedForms();
-    $a = 4;
+    if(isset($this->embeddedForms['staff'])) {
+      $form = $this->embeddedForms['staff']->embeddedForms['status'];
+      $values = $this->values['staff']['status'];
+      $this->saveStaffForm($form, $values);
+      unset($this->embeddedForms['staff']->embeddedForms['status']);
+    }
 //    if (null === $forms) {
 //      $forms = $this->embeddedForms;
 //    }
