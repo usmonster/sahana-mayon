@@ -15,9 +15,5 @@ echo '<a href="' . url_for('gis/liststaff') . '" class="buttonText" title="List 
 echo '<a href="' . url_for('gis/config') . '" class="buttonText" title="GIS">GIS Settings</a><br/>';
 //echo link_to('Excel', 'staff/excelDownload', array('class' => 'linkButton'))
 
-// Please remove.  This is only for testing query functions!!!!
-//echo '<a href="' . url_for('gis/gisquery') . '" class="buttonText" title="GIS">GIS queries</a><br/>';
-
-
 ?>
 
