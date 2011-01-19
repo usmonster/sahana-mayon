@@ -264,7 +264,15 @@ class scenarioActions extends sfActions
   {
     //here we can use $request to better form the index page for scenario
   }
-
+/**
+   *
+   * @param sfWebRequest $request
+   * making a staff pool is fun and easy with Agasti,
+   */
+  public function executeStaffpool(sfWebRequest $request)
+  {
+    $this->poolform = new agScenarioStaffGeneratorForm();
+  }
   /**
    *
    * @param sfWebRequest $request
