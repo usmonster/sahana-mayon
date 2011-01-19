@@ -62,4 +62,14 @@ class ProjectConfiguration extends sfProjectConfiguration
                           'agStaffPackage',
                           'agGisPackage'));
   }
+
+  /**
+   * Define custom hydration.
+   * @param Doctrine_Manager $manager
+   */
+  public function configureDoctrine(Doctrine_Manager $manager)
+  {
+    $manager->registerHydrator('key_value_pair', 'KeyValuePairHydrator');
+  }
+
 }

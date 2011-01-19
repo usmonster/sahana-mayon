@@ -231,6 +231,23 @@ class agGisActions extends sfActions
       /* if there already is an entry for this... update if better, etc... HERE */
     }
   }
+
+  /**
+   *
+   */
+  public function executeGisquery(sfWebRequest $request)
+  {
+//    $query = agGisQuery::missingGis('staff');
+//    $query = agGisQuery::defineGeoRelation();
+//    $this->myReturn = $query->getSqlQuery();
+//    //$this->myReturn = agQueryHelper::singleScalarReturns('count', $query);
+//    $results = agQueryHelper::singleScalarReturns('results', $query);
+//    print_r($results);
+      $query = agGisQuery::returnExistingGeoRelation();
+      $results = $query->execute(array(), 'key_value_pair');
+      print_r($results);
+  }
+
    /**
    * executes the delete function for a geo item
    *
