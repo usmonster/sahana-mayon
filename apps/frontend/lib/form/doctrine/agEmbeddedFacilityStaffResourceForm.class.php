@@ -16,6 +16,7 @@
  */
 class agEmbeddedFacilityStaffResourceForm extends BaseagFacilityStaffResourceForm
 {
+
   public function configure()
   {
     parent::configure();
@@ -26,7 +27,7 @@ class agEmbeddedFacilityStaffResourceForm extends BaseagFacilityStaffResourceFor
     unset(
         $this['created_at'],
         $this['updated_at']
-        );
+    );
   }
 
   public function setup()
@@ -37,13 +38,15 @@ class agEmbeddedFacilityStaffResourceForm extends BaseagFacilityStaffResourceFor
     unset(
         $this['created_at'],
         $this['updated_at']
-        );
+    );
     parent::setup();
+
+    $this->setWidget('minimum_staff', new sfWidgetFormInputText(array(), array('class' => 'morphable')));
+    $this->setWidget('maximum_staff', new sfWidgetFormInputText(array(), array('class' => 'morphable')));
 
     $resDeco = new agWidgetFormSchemaFormatterRow($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('row', $resDeco);
     $this->getWidgetSchema()->setFormFormatterName('row');
-
   }
 
   public function getModelName()

@@ -1,5 +1,13 @@
-<?php
+<?php use_helper('jQuery'); ?>
+<?php jq_add_plugins_by_name(array('ui')) ?>
+<?php use_javascript('sortList'); ?>
+<?php use_javascript('dimensions');?>
+<?php use_javascript('tooltip');?>
+<?php use_javascript('json.serialize'); ?>
+<?php use_javascript('inlineedit'); ?>
 
+
+<?php
 if (isset($formsArray)){
   foreach ($formsArray as $key => $f) {
     // Create array of form names.
@@ -8,7 +16,78 @@ if (isset($formsArray)){
 }
 ?>
 
+<script type="text/javascript">
 
+    (function($) {
+
+        $.fn.inlineEdit = function(options) {
+
+            // define some options with sensible default values
+            // - hoverClass: the css classname for the hover style
+            options = $.extend({
+                hoverClass: 'hover'
+            }, options);
+
+            return $.each(this, function() {
+
+                // define self container
+                var self = $(this);
+
+                // create a value property to keep track of current value
+                self.value = self.text();
+
+                // bind the click event to the current element, in this example it's span.editable
+                self.bind('click', function() {
+
+                    self
+                        // populate current element with an input element and add the current value to it
+                        .html('<input type="text" value="'+ self.value +'">')
+                        // select this newly created input element
+                        .find('input')
+                            // bind the blur event and make it save back the value to the original span area
+                            // there by replacing our dynamically generated input element
+                            .bind('blur', function(event) {
+                                self.value = $(this).val();
+                                self.text(self.value);
+                            })
+                            // give the newly created input element focus
+                            .focus();
+
+                })
+                // on hover add hoverClass, on rollout remove hoverClass
+                .hover(
+                    function(){
+                        self.addClass(options.hoverClass);
+                    },
+                    function(){
+                        self.removeClass(options.hoverClass);
+                    }
+                );
+            });
+        }
+
+    })(jQuery);
+
+    $(function(){
+        $('.editable').inlineEdit();
+    });
+
+
+$(function(){
+    $('.inputFraySmall').click(function(){ //we need this to happen on page load, all elements of a class that HAVE text in them, set html attr to span
+      $(this).html('<span class="inputGraySmall">' + $(this).valueOf()+'</span>');
+      });//this  has been disabled to not break anything while it's still in pro'
+
+
+    $('.groupLabel').click(function(){ //this needs to be only the children of ..currently it's ALL
+      $(this).parent().find('.facgroup').slideToggle("slow");
+    });
+});
+
+</script>
+<!--
+this is in here as a place holder for future development to
+<input type="text"  class="editable">foobar</span> -->
 <form action="<?php echo url_for('scenario/staffresources?id=' . $scenario->id) ?>" method="post">
   <?php
     //this is the same form that should be used for edit and create. display entered values if the objects exist.

@@ -23,5 +23,5 @@ class agWidgetFormSchemaFormatterInlineTopLabel extends sfWidgetFormSchemaFormat
   $rowFormat = "<div style=\"display: inline-block; margin-right: 4px; text-align: center;\"><div style=\"color: #848484;\">%label%</div><div>%error%%field%%help%%hidden_fields%</div></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div class=\"awesome\">%content%</div>";
+  $decoratorFormat = "<div class=\"inlinetoplabel\">%content%</div>";
 }
