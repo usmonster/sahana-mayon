@@ -76,7 +76,7 @@ abstract class BaseagAddress extends sfDoctrineRecord
 
         $this->hasMany('agAddressGeo', array(
              'local' => 'id',
-             'foreign' => 'geo_id'));
+             'foreign' => 'address_id'));
 
         $this->hasMany('agAddressContactType', array(
              'refClass' => 'agEntityAddressContact',

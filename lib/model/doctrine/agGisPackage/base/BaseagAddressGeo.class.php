@@ -10,23 +10,23 @@
  * @property integer $geo_id
  * @property integer $geo_match_score_id
  * @property agGeo $agGeo
- * @property agAddress $agAddress
  * @property agGeoMatchScore $agGeoMatchScore
+ * @property agAddress $agAddress
  * 
  * @method integer         getId()                 Returns the current record's "id" value
  * @method integer         getAddressId()          Returns the current record's "address_id" value
  * @method integer         getGeoId()              Returns the current record's "geo_id" value
  * @method integer         getGeoMatchScoreId()    Returns the current record's "geo_match_score_id" value
  * @method agGeo           getAgGeo()              Returns the current record's "agGeo" value
- * @method agAddress       getAgAddress()          Returns the current record's "agAddress" value
  * @method agGeoMatchScore getAgGeoMatchScore()    Returns the current record's "agGeoMatchScore" value
+ * @method agAddress       getAgAddress()          Returns the current record's "agAddress" value
  * @method agAddressGeo    setId()                 Sets the current record's "id" value
  * @method agAddressGeo    setAddressId()          Sets the current record's "address_id" value
  * @method agAddressGeo    setGeoId()              Sets the current record's "geo_id" value
  * @method agAddressGeo    setGeoMatchScoreId()    Sets the current record's "geo_match_score_id" value
  * @method agAddressGeo    setAgGeo()              Sets the current record's "agGeo" value
- * @method agAddressGeo    setAgAddress()          Sets the current record's "agAddress" value
  * @method agAddressGeo    setAgGeoMatchScore()    Sets the current record's "agGeoMatchScore" value
+ * @method agAddressGeo    setAgAddress()          Sets the current record's "agAddress" value
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -77,12 +77,12 @@ abstract class BaseagAddressGeo extends sfDoctrineRecord
              'local' => 'geo_id',
              'foreign' => 'id'));
 
-        $this->hasOne('agAddress', array(
-             'local' => 'geo_id',
-             'foreign' => 'id'));
-
         $this->hasOne('agGeoMatchScore', array(
              'local' => 'geo_match_score_id',
+             'foreign' => 'id'));
+
+        $this->hasOne('agAddress', array(
+             'local' => 'address_id',
              'foreign' => 'id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();

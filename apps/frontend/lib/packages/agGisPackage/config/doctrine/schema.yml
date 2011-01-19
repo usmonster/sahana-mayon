@@ -113,11 +113,13 @@ agAddressGeo:
     agGeo:
       local: geo_id
       foreign: id
-    agAddress:
-      local: geo_id
-      foreign: id
     agGeoMatchScore:
       local: geo_match_score_id
+      foreign: id
+    agAddress:
+      class: agAddress
+      foreignAlias: agAddressGeo
+      local: address_id
       foreign: id
 agGeoRelationshipType:
   columns:

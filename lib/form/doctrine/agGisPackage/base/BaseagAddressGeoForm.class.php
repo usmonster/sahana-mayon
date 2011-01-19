@@ -16,7 +16,7 @@ abstract class BaseagAddressGeoForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'id'                 => new sfWidgetFormInputHidden(),
-      'address_id'         => new sfWidgetFormInputText(),
+      'address_id'         => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agAddress'), 'add_empty' => false)),
       'geo_id'             => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agGeo'), 'add_empty' => false)),
       'geo_match_score_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agGeoMatchScore'), 'add_empty' => false)),
       'created_at'         => new sfWidgetFormDateTime(),
@@ -25,7 +25,7 @@ abstract class BaseagAddressGeoForm extends BaseFormDoctrine
 
     $this->setValidators(array(
       'id'                 => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'address_id'         => new sfValidatorInteger(),
+      'address_id'         => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agAddress'))),
       'geo_id'             => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agGeo'))),
       'geo_match_score_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agGeoMatchScore'))),
       'created_at'         => new sfValidatorDateTime(),

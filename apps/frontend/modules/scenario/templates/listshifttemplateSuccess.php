@@ -52,9 +52,6 @@
 </div>
 
 <div style="float: right;">
-
-
-<div style="float: right;">
   <?php
 
 //

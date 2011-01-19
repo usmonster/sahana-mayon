@@ -39,13 +39,13 @@ class PluginagGeoRelationshipForm extends BaseagGeoRelationshipForm
 //      'ag_facility_resource_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('style' => 'height:300px;width:300px;')),
 //      'ag_facility_resource_order'          => new sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('style' => 'height:300px;width:300px;'))
 //      ));
-        $this->widgetSchema['geo_facility']->addOption(
-      'query',
-      Doctrine_Query::create()
-        ->select('a.facility_id, af.*, afrt.*')
-        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-        ->whereNotIn('a.id', array_keys($currentoptions))
-    );
+//        $this->widgetSchema['geo_facility']->addOption(
+//      'query',
+//      Doctrine_Query::create()
+//        ->select('a.facility_id, af.*, afrt.*')
+//        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+//        ->whereNotIn('a.id', array_keys($currentoptions))
+//    );
 //
 //    $this->setValidators(array(
 //      'id'                                  => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
