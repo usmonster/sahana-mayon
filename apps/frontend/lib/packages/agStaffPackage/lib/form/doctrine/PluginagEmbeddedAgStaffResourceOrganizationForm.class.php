@@ -12,7 +12,7 @@
 *
 * Copyright of the Sahana Software Foundation, sahanafoundation.org
 **/
-class PluginagEmbeddedAgStaffResourceOrganizationForm extends agStaffResourceOrganizationForm
+class PluginagEmbeddedAgStaffResourceOrganizationForm extends PluginagStaffResourceOrganizationForm
 {
   public function setup()
   {

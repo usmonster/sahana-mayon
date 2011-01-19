@@ -10,7 +10,7 @@
  * @author     CUNY SPS
  * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 29553 2010-05-20 14:33:00Z Kris.Wallsmith $
  */
-class PluginagEmbeddedAgStaffResourceTypeForm extends agStaffResourceTypeForm
+class PluginagEmbeddedAgStaffResourceTypeForm extends PluginagStaffResourceTypeForm
 {
   public function setup()
   {

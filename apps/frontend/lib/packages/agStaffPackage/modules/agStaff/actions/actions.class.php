@@ -314,7 +314,7 @@ class agStaffActions extends sfActions
    * */
   public function executeNew(sfWebRequest $request)
   {
-    $this->form = new agStaffPersonForm();
+    $this->form = new PluginagStaffPersonForm();
   }
 
   /**
@@ -329,7 +329,7 @@ class agStaffActions extends sfActions
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
-    $this->form = new agStaffPersonForm();
+    $this->form = new PluginagStaffPersonForm();
 //    $ent = new agEntity();
 //    $ent->save();
 //    $this->form->getObject()->setAgEntity($ent);
@@ -359,7 +359,7 @@ class agStaffActions extends sfActions
         sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
 
     $ag_person = $ag_staff->getAgPerson();
-    $this->form = new agStaffPersonForm($ag_person);
+    $this->form = new PluginagStaffPersonForm($ag_person);
   }
 
   /**
@@ -376,7 +376,7 @@ class agStaffActions extends sfActions
         sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
 
     $ag_person = $ag_staff->getAgPerson();
-    $this->form = new agStaffPersonForm($ag_person);
+    $this->form = new PluginagStaffPersonForm($ag_person);
 
     $this->processForm($request, $this->form);
 

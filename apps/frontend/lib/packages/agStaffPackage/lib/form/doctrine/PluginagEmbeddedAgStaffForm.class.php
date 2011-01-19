@@ -13,7 +13,7 @@
 * Copyright of the Sahana Software Foundation, sahanafoundation.org
 **/
 
-class PluginagEmbeddedAgStaffForm extends agStaffForm
+class PluginagEmbeddedAgStaffForm extends PluginagStaffForm
 {
   public function setup()
   {
