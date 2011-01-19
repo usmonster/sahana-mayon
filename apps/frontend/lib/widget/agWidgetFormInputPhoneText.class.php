@@ -1,5 +1,18 @@
 <?php
-
+/**
+* This widget is used to format values from an agPhoneContact object so they'll
+* use that they will use phone number formatting that has been defined in the schema.
+*
+* PHP Version 5
+*
+* LICENSE: This source file is subject to LGPLv3.0 license
+* that is available through the world-wide-web at the following URI:
+* http://www.gnu.org/copyleft/lesser.html
+*
+* @author Nils Stolpe, CUNY SPS
+*
+* Copyright of the Sahana Software Foundation, sahanafoundation.org
+**/
 class agWidgetFormInputPhoneText extends sfWidgetFormInputText
 {
   protected function configure($options = array(), $attributes = array())
