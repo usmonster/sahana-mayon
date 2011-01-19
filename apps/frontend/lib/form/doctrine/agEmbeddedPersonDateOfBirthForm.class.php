@@ -27,6 +27,7 @@ class agEmbeddedPersonDateOfBirthForm extends agPersonDateOfBirthForm
       #'id'            => new sfWidgetFormInputHidden(),
       #'person_id'     => new sfWidgetFormInputHidden(),//sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agPerson'), 'add_empty' => false)),
       #'date_of_birth' => new sfWidgetFormDate(),
+      // TODO: replace this with regular jQuery & remove sfJQueryUIPlugin
       'date_of_birth' => new sfWidgetFormDateJQueryUI(array('change_month' => true, 'change_year' => true), array('class' => 'inputGray')),
     ));
 

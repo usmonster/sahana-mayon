@@ -1,7 +1,6 @@
 <?php use_stylesheets_for_form($distanceform) ?>
-<?php use_helper('jQuery'); ?>
-<?php jq_add_plugins_by_name(array('ui')) ?>
-<?php use_javascript('sortList'); ?>
+<?php use_javascript('jquery.ui.custom.js'); ?>
+<?php //use_javascript('sortList'); ?>
 
 <form action="<?php echo url_for('gis/'.($distanceform->getObject()->isNew() ? 'create' : 'update').(!$distanceform->getObject()->isNew() ? '?id='.$distanceform->getObject()->getId() : '')) ?>" method="post" <?php $distanceform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 <?php if (!$distanceform->getObject()->isNew()): ?>

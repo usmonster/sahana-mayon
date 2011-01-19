@@ -18,7 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
 function check_php_version()
 {
   $required = '5.2.12';
@@ -478,10 +477,13 @@ function check_php_requirements()
   $result[] = check_php_memory_limit();
   # TODO: uncomment this when staff/facility import is working
   #$result[] = check_php_post_max_size(); 
-  $result[] = check_file_permissions(sfConfig::get('sf_config_dir'),'0775');
-  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') .'/sql/','0755');
-  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') .'/indexes/','0755');
-  $result[] = check_file_permissions(sfConfig::get('sf_apps_dir') .'/frontend/config/','0755');
+//  $result[] = check_file_permissions(sfConfig::get('sf_cache_dir'),'0775');
+//  $result[] = check_file_permissions(sfConfig::get('sf_log_dir'),'0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_config_dir'), '0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_app_config_dir'), '0755');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/indexes/', '0755');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/search/', '0755');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/sql/', '0755');
 
   // removing these for now, since they're not explicit requirements
 //      $result[] = check_php_post_max_size();

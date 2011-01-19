@@ -1,9 +1,8 @@
 <?php use_stylesheets_for_form($groupform) ?>
-<?php use_helper('jQuery'); ?>
-<?php jq_add_plugins_by_name(array('ui')) ?>
-<?php use_javascript('sortList'); ?>
-<?php use_javascript('dimensions');?>
-<?php use_javascript('tooltip');?>
+<?php use_javascript('jquery.ui.custom.js'); ?>
+<?php //use_javascript('sortList'); ?>
+<?php //use_javascript('dimensions');?>
+<?php //use_javascript('tooltip');?>
 <?php use_javascript('json.serialize'); ?>
 <script type="text/javascript">
 	$(function() {

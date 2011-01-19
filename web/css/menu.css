@@ -81,7 +81,7 @@ ul.menu li:hover>a{
 	background-color:#4792E6;
 	border-color:#665500;
 	border-style:solid;
-	font:normal 11px Verdana;
+	font:bold 11px helvetica, arial, verdana;
 	color: #ffffff;
 	text-decoration:none;
 }
@@ -90,7 +90,7 @@ ul.menu li a:hover{
 	background-color:#4792E6;
 	border-color:#665500;
 	border-style:solid;
-	font:normal 11px Verdana;
+	font:bold 11px helvetica, arial, verdana;
 	color: #ffffff;
 	text-decoration:none;
 }
