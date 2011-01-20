@@ -77,7 +77,7 @@ unset($_POST);
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Sahana Agasti 1.99999, Mayon Installer</title>
-    <link rel="shortcut icon" href="<?php echo url_for('images/favicon.ico') ?>" />
+    <link rel="shortcut icon" href="images/favicon.ico" />
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" /> 
   </head>
   <body>
