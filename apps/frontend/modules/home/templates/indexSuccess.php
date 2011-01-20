@@ -16,4 +16,8 @@ if ($sf_user->isAuthenticated()) {
 <p> Agasti 2.0 is the NYC Office of Emergency Management Coastal Storm Plan web application.
   Agasti is an emergency management application with tools to manage staff, resources, client
   information and facilities through an easy to use web interface. </p>
-<p>To begin, select an option from the menus above.</p>
+<<<<<<< TREE
+
+<p>Built with PHP, MySQL, Doctrine ORM and Symfony.</p>
+=======
+<p>To begin, select an option from the menus above.</p>>>>>>>> MERGE-SOURCE

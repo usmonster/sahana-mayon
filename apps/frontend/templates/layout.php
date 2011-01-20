@@ -30,10 +30,10 @@
       </div>
       <div id="wrapper">
         <div id="navigation">
-          <!-- Some of these nav links don't all actually work; some are just placeholders for now so it looks nice. -->
-        <?php include_component('nav', 'Menu'); ?>
         <?php $loggedIn = $sf_user->isAuthenticated(); ?>
         <?php if ($loggedIn): ?>
+        <!-- Some of these nav links don't all actually work; some are just placeholders for now so it looks nice. -->
+        <?php include_component('nav', 'Menu'); ?>
           <span style="margin: .1em; float: right;">
           <?php include_partial('agStaff/searchForm'); ?>
         </span>
