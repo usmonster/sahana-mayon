@@ -9,7 +9,7 @@
 <b>Please select one of the following actions:</b><br/>
 <?php
 echo '<a href="' . url_for('gis/geocode') . '" class="buttonText" title="Update Single Entry">Geocode Addresses<a/><br/>';
-echo '<a href="' . url_for('gis/distance') . '" class="buttonText" title="Calculate Distances">Generated Calculated Distances between two sets of data</a><br/>';
+echo '<a href="' . url_for('gis/distance') . '" class="buttonText" title="Calculate Distances">Generated Calculated Distances Between Two Sets of Data</a><br/>';
 echo '<a href="' . url_for('gis/config') . '" class="buttonText" title="GIS">GIS Settings</a><br/>';
 //echo link_to('Excel', 'staff/excelDownload', array('class' => 'linkButton'))
 // @todo gisquery link is only for testing.  Please remove after testing.
