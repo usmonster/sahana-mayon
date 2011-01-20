@@ -16,7 +16,6 @@
       <div style="float: left;">
         <h1>Sahana Agasti:</h1><h2> Emergency Management </h2>
         <?php
-        //echo file_exists(dirname(__FILE__) . '/../../../config/config.yml');
         $configFilePath = sfConfig::get('sf_config_dir') . '/config.yml';
         if (file_exists($configFilePath)) {
           $cfgArray = sfYaml::load($configFilePath);
