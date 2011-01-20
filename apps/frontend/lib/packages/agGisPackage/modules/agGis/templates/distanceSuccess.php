@@ -14,11 +14,15 @@ echo image_tag('indicator.gif')
   <p>You have JavaScript enabled.</p>
 </noscript>
 
-<h3>Calculate Distances</h3>
+<h2>Calculate Distances</h2>
+
+<p>In order to deploy staff Agasti must first determine the distance between that staff member and
+facilities they may work at.  To calculate the distances between your staff and facilities click
+the button below.</p>
 
 <p>There are currently <span class="logName"><?php echo $combinationCount; ?></span> combinations of staff and facilities without distances calculated.</p>
 
-<?php echo link_to_function('calculate distances', 'calcCall()', array('class' => 'buttonSmall')) ?>
+<?php echo link_to_function('Calculate Distances', 'calcCall()', array('class' => 'buttonSmall')) ?>
 
 <br/>
 <span id="indicator">indicate!</span>
