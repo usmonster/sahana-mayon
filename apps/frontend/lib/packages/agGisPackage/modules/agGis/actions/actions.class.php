@@ -1,24 +1,24 @@
 <?php
 
 /**
-* agEmbeddedShiftTemplateForm.class.php
-*
-* Provides embedded subform for editing facility resources
-*
-* PHP Version 5
-*
-* LICENSE: This source file is subject to LGPLv3.0 license
-* that is available through the world-wide-web at the following URI:
-* http://www.gnu.org/copyleft/lesser.html
-*
-* @author Charles Wisniewski, CUNY SPS
-*
-* Copyright of the Sahana Software Foundation, sahanafoundation.org
-*/
-
+ * agEmbeddedShiftTemplateForm.class.php
+ *
+ * Provides embedded subform for editing facility resources
+ *
+ * PHP Version 5
+ *
+ * LICENSE: This source file is subject to LGPLv3.0 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/lesser.html
+ *
+ * @author Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ */
 class agGisActions extends sfActions
 {
-   /**
+
+  /**
    * presents the user with the default indexSuccess page
    * 
    * @param sfWebRequest $request web request
@@ -28,7 +28,8 @@ class agGisActions extends sfActions
 //    $bar = 'bar';
 //    $foo = new agGis($bar);
   }
-    /**
+
+  /**
    * presents the user with a form for gis configuration options
    *
    * @param sfWebRequest $request web request
@@ -37,12 +38,13 @@ class agGisActions extends sfActions
   {
     //configuration options
     $this->map_url = Doctrine::getTable('agGlobalParam') //all global parameters
-                                      ->createQuery('a')
-                                      ->select('a.*')
-                                      ->from('agGlobalParam a')
-                                      ->where('datapoint =?', 'gis_map_url')
-                                      ->fetchOne();
+            ->createQuery('a')
+            ->select('a.*')
+            ->from('agGlobalParam a')
+            ->where('datapoint =?', 'gis_map_url')
+            ->fetchOne();
   }
+
   /**
    * presents the user with a form for calculating distance between two records
    * for future it will calculate distances between all records.
@@ -51,27 +53,29 @@ class agGisActions extends sfActions
    */
   public function executeDistance(sfWebRequest $request)
   {
-    $this->ag_facility_geos = Doctrine::getTable('agFacility') //all facilities that have a coordinate set associated
-                                      ->createQuery('a')
-                                      ->select('f.*,s.*, e.*, pa.*, aa.*, aag.*')
-                                      ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
-                                        pa.agAddress aa, aa.agAddressGeo aag, aag.agGeo ag, ag.agGeoFeature agf
-                                        ')
-                                      ->execute();
-    $this->ag_staff_geos = Doctrine::getTable('agPerson') //should be agStaff
-                                      ->createQuery('a')
-                                      ->select('p.*,s.*, e.*, pa.*, aa.*, aas.*')
-                                      ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
-                                        pa.agAddress aa, aa.agAddressGeo aag, aag.agGeo ag, ag.agGeoFeature agf
-                                        ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
-                                      ->execute();
-    $this->distanceform = new PluginagGeoRelationshipForm();
+    $this->combinationCount = 25;
+//    $this->ag_facility_geos = Doctrine::getTable('agFacility') //all facilities that have a coordinate set associated
+//            ->createQuery('a')
+//            ->select('f.*,s.*, e.*, pa.*, aa.*, aag.*')
+//            ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
+//                                        pa.agAddress aa, aa.agAddressGeo aag, aag.agGeo ag, ag.agGeoFeature agf
+//                                        ')
+//            ->execute();
+//    $this->ag_staff_geos = Doctrine::getTable('agPerson') //should be agStaff
+//            ->createQuery('a')
+//            ->select('p.*,s.*, e.*, pa.*, aa.*, aas.*')
+//            ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
+//                                        pa.agAddress aa, aa.agAddressGeo aag, aag.agGeo ag, ag.agGeoFeature agf
+//                                        ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
+//            ->execute();
+//    $this->distanceform = new PluginagGeoRelationshipForm();
+//
     //show two listboxes, one of staff,
     //one of facilities
     //will only output to screen
-
   }
-    /**
+
+  /**
    * presents the user with a list of staff members, their addresses, giving you the ability
    * to geocode an address via a hyperlink beside an address
    * 
@@ -79,42 +83,43 @@ class agGisActions extends sfActions
    */
   public function executeListstaff(sfWebRequest $request)
   {
-   require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
+    require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
     $this->ag_staff_geos = Doctrine::getTable('agPerson')
-                                      ->createQuery('a')
-                                      ->select('p.*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
-                                      ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
+            ->createQuery('a')
+            ->select('p.*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
+            ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
                                         p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
                                         name.agPersonNameType nametype,
                                         pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
                                         ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
-                                      ->execute();
-      //as of 12.11.2010 there is no concept of a 'global priority' or 'preference' for a person's
-      //address, thjough  individual address types have priority
+            ->execute();
+    //as of 12.11.2010 there is no concept of a 'global priority' or 'preference' for a person's
+    //address, thjough  individual address types have priority
 
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
-        ->createQuery('f')
-        ->execute();
+            ->createQuery('f')
+            ->execute();
     $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')
             ->createQuery('b')
             ->execute();
-
   }
+
   public function executeListfacility(sfWebRequest $request)
   {
     require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
     $this->ag_facility_geos = Doctrine::getTable('agFacility')
-                                      ->createQuery('a')
-                                      ->select('f.*,s.*, e.*, pa.*, aa.*, aas.*')
-                                      ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
+            ->createQuery('a')
+            ->select('f.*,s.*, e.*, pa.*, aa.*, aas.*')
+            ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
                                         pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
                                         ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
-                                      ->execute();
-      $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
-        ->createQuery('f')
-        ->execute();
+            ->execute();
+    $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
+            ->createQuery('f')
+            ->execute();
   }
-    /**
+
+  /**
    * presents the user with a new address to geo form
    * to geocode an address, this should not be used by the end user
    *
@@ -124,12 +129,12 @@ class agGisActions extends sfActions
   {
     $this->form = new agAddressGeoForm();
   }
-   /**
+
+  /**
    * executes the create function from the above action
    *
    * @param sfWebRequest $request web request
    */
-
   public function executeCreate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
@@ -140,7 +145,8 @@ class agGisActions extends sfActions
 
     $this->setTemplate('new');
   }
-   /**
+
+  /**
    * presents the user with a form to edit address to geo information
    * this should not be used by the end user
    *
@@ -151,7 +157,8 @@ class agGisActions extends sfActions
     $this->forward404Unless($ag_geo = Doctrine_Core::getTable('agGeo')->find(array($request->getParameter('id'))), sprintf('Object ag_geo does not exist (%s).', $request->getParameter('id')));
     $this->form = new agGeoForm($ag_geo);
   }
-   /**
+
+  /**
    * executes the edit function from the above action, processes the form
    *
    * @param sfWebRequest $request web request
@@ -166,7 +173,8 @@ class agGisActions extends sfActions
 
     $this->setTemplate('edit');
   }
-   /**
+
+  /**
    * geocodes an address provided in the web request, adds entries to the database
    * to support the geocode
    *
@@ -174,61 +182,60 @@ class agGisActions extends sfActions
    */
   public function executeGeocode(sfWebRequest $request)
   {
-    require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
-
-    if($request->getParameter('address_id'))
-    {
+    require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/agGis.class.php');
+    $this->uncodedStaffCount = 5;
+    $this->uncodedFacilityCount = 10;
+    $this->goodCount = 25;
+    $this->zipCount = 15;
+    $this->nonCount = 5;
+    if ($request->getParameter('address_id')) {
       $this->form = new agAddressGeoForm();
     }
-    $geoJson = new agGis();
-    $toGeo = array('number' => $request->getParameter('number'), 'street' => $request->getParameter('street'),'zip' => $request->getParameter('zip'));
-    $toDB = $request->getParameter('address_id');
-    $toScreen = $geoJson->getGeocode($toGeo);
-    //CLEAN THIS UP!!!!!!!
-    $this->toDB = $toDB;
-    $this->address = $toGeo;
-    $this->result = $toScreen;
+    if ($request->isMethod('post')) {//we're going to assume that posts here come from javascript
+      $geoJson = new agGis();
+      $toGeo = array('number' => $request->getParameter('number'), 'street' => $request->getParameter('street'), 'zip' => $request->getParameter('zip'));
+      $toDB = $request->getParameter('address_id');
+      $toScreen = $geoJson->getGeocode($toGeo);
+      //CLEAN THIS UP!!!!!!!
+      $this->toDB = $toDB;
+      $this->address = $toGeo;
+      $this->result = $toScreen;
 
-    // at this point we're assuming the user thinks they have a better geo code, via whatever source.
-    // either that, or it's a new entry.  let's see if there is an entry for this address.
+      // at this point we're assuming the user thinks they have a better geo code, via whatever source.
+      // either that, or it's a new entry.  let's see if there is an entry for this address.
+      //$existingGeo1 = Doctrine_Core::getTable('agAddressGeo')->find($request->getParameter('address_id')); //is this going to find the address or join id?JOIN
+      $existingGeo2 = Doctrine_Core::getTable('agAddressGeo')->findByDql('address_id = ?', $request->getParameter('address_id'));
+      //the above works.which is faster?
+      //OR we could do a findby
+      $existingGeo3 = Doctrine_Core::getTable('agAddressGeo')->findBy('address_id', $request->getParameter('address_id'), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
+      if ($toDB && !$existingGeo3) {
+        /* if this is a new geocode, create an ag_geo
+         *
+         */
+        $newGeo = new agGeo();
+        $newGeo->setGeoSourceId(1); //comes from our default geoserver
+        $newGeo->setGeoTypeId(1); //point
+        $newGeo->save();
 
-    //$existingGeo1 = Doctrine_Core::getTable('agAddressGeo')->find($request->getParameter('address_id')); //is this going to find the address or join id?JOIN
-    $existingGeo2 = Doctrine_Core::getTable('agAddressGeo')->findByDql('address_id = ?',$request->getParameter('address_id'));
-    //the above works.which is faster?
-    //OR we could do a findby
-    $existingGeo3 = Doctrine_Core::getTable('agAddressGeo')->findBy('address_id',$request->getParameter('address_id'),Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
+        $newCoord = new agGeoCoordinate();
+        $newCoord->setLongitude($toScreen[0]); //create a new entry in our coordinate table
+        $newCoord->setLatitude($toScreen[1]);
+        $newCoord->save();
 
-    if ($toDB && !$existingGeo3)
-    {
-      /* if this is a new geocode, create an ag_geo
-       *
-       */
-      $newGeo = new agGeo();
-      $newGeo->setGeoSourceId(1); //comes from our default geoserver
-      $newGeo->setGeoTypeId(1); //point
-      $newGeo->save();
+        $newGeoFeature = new agGeoFeature();
+        $newGeoFeature->geo_coordinate_id = $newCoord->getId();
+        $newGeoFeature->geo_id = $newGeo->getId();
+        $newGeoFeature->geo_coordinate_order = 1; //this should have a default value as we're mainly dealing with points
+        $newGeoFeature->save();
 
-      $newCoord = new agGeoCoordinate();
-      $newCoord->setLongitude($toScreen[0]); //create a new entry in our coordinate table
-      $newCoord->setLatitude($toScreen[1]);
-      $newCoord->save();
-
-      $newGeoFeature = new agGeoFeature();
-      $newGeoFeature->geo_coordinate_id = $newCoord->getId();
-      $newGeoFeature->geo_id = $newGeo->getId();
-      $newGeoFeature->geo_coordinate_order = 1; //this should have a default value as we're mainly dealing with points
-      $newGeoFeature->save();
-      
-      $addressGeo = new agAddressGeo();
-      $addressGeo->address_id = $toDB;
-      $addressGeo->geo_id = $newGeo->getId();
-      $addressGeo->geo_match_score_id = 1;
-      $addressGeo->save();
-
-    }
-    else
-    {
-      /* if there already is an entry for this... update if better, etc... HERE */
+        $addressGeo = new agAddressGeo();
+        $addressGeo->address_id = $toDB;
+        $addressGeo->geo_id = $newGeo->getId();
+        $addressGeo->geo_match_score_id = 1;
+        $addressGeo->save();
+      } else {
+        /* if there already is an entry for this... update if better, etc... HERE */
+      }
     }
   }
 
@@ -249,12 +256,11 @@ class agGisActions extends sfActions
 //    print_r($results);
   }
 
-   /**
+  /**
    * executes the delete function for a geo item
    *
    * @param sfWebRequest $request web request
    */
-
   public function executeDelete(sfWebRequest $request)
   {
     $request->checkCSRFProtection();
@@ -264,7 +270,8 @@ class agGisActions extends sfActions
 
     $this->redirect('gis/index');
   }
-   /**
+
+  /**
    * processes the form in question, this handles various forms
    * though currently only handles the geocode form
    *
@@ -273,10 +280,8 @@ class agGisActions extends sfActions
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
-    if ($form->isValid())
-    {
-      if (isset($_REQUEST['geocode']))
-      {
+    if ($form->isValid()) {
+      if (isset($_REQUEST['geocode'])) {
         $geo = new agGeo();
         $geoFeature = $geo->setAgGeoFeature();
         $geoType = $geo->getAgGeoType();
@@ -285,8 +290,9 @@ class agGisActions extends sfActions
 
         $ag_address_geo = $form->save();
         $foo->setAgAddressGeo($ad_address_geo);
-        $this->redirect('gis/edit?id='.$ag_geo->getId());
+        $this->redirect('gis/edit?id=' . $ag_geo->getId());
       }
     }
   }
+
 }
