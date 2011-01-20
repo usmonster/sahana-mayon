@@ -272,6 +272,7 @@ class scenarioActions extends sfActions
   public function executeStaffpool(sfWebRequest $request)
   {
     $this->poolform = new agStaffPoolForm();
+    $this->poolform->getEmbeddedForm('staff_generator')->setDefault('scenario_id', $request->getParameter('id'));
   }
   /**
    *
@@ -627,12 +628,12 @@ class scenarioActions extends sfActions
          */
       }
 
-      $this->ag_allocated_facility_resources[] = $current;
+//      $this->ag_allocated_facility_resources[] = $current;
 
-      $this->ag_facility_resources[] = Doctrine_Query::create()
-              ->select('a.facility_id, af.*, afrt.*')
-              ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-              ->whereNotIn('a.id', array_keys($currentoptions))->execute();
+  //    $this->ag_facility_resources[] = Doctrine_Query::create()
+    //          ->select('a.facility_id, af.*, afrt.*')
+      //        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+        //      ->whereNotIn('a.id', array_keys($currentoptions))->execute();
     }
   }
 

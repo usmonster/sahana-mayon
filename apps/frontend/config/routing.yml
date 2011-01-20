@@ -34,6 +34,11 @@ scenario_show_facility_staff_resource:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: staffresources }
 
+scenario_staff_pool:
+  url:     /scenario/:id/staffpool
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: staffpool }
+
 scenario_new_group:
   url:     /scenario/:id/newgroup
   options: { model: agScenario, type: object }

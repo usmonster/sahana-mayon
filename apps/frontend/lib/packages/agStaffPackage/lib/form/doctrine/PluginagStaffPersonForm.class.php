@@ -12,6 +12,10 @@
  */
 class PluginagStaffPersonForm extends agPersonForm
 {
+
+  public $staff_resource_id;
+  public $staff_id;
+
   public function setup()
   {
     parent::setup();
@@ -21,46 +25,54 @@ class PluginagStaffPersonForm extends agPersonForm
   {
     $staffContainerForm = new sfForm();
     $this->embedStaffForm($staffContainerForm);
-    $this->embedStaffResourceTypeForm($staffContainerForm);
+    $this->embedStaffResourceForm($staffContainerForm);
     $this->embedStaffResourceOrganizationForm($staffContainerForm);
     $this->embedForm('staff', $staffContainerForm);
   }
 
   public function embedStaffForm($staffContainerForm)
   {
-    if($id = $this->getObject()->id) {
+    if ($id = $this->getObject()->id) {
       $staffObject = Doctrine_Query::create()
-          ->from('agStaff a')
-          ->where('a.person_id =?', $id)
-          ->execute()->getFirst();
+              ->from('agStaff a')
+              ->where('a.person_id =?', $id)
+              ->execute()->getFirst();
     }
     $staffForm = new PluginagEmbeddedAgStaffForm(isset($staffObject) ? $staffObject : null);
     $staffContainerForm->embedForm('status', $staffForm);
   }
 
-  public function embedStaffResourceTypeForm($staffContainerForm)
+  public function embedStaffResourceForm($staffContainerForm)
   {
-    if($staff = $this->getObject()->getAgStaff()->getFirst()) {
-       $staffResourceTypeObject = Doctrine_Query::create()
-           ->from('agStaffResourceType a')
-           ->where('a.id IN (SELECT sr.staff_resource_type_id FROM agStaffResource sr WHERE sr.staff_id = ?)', $staff->id)
-           ->execute()->getFirst();
-     }
-     $staffResourceTypeForm = new PluginagEmbeddedAgStaffResourceTypeForm(isset($staffResourceTypeObject) ? $staffResourceTypeObject : null);
-     $staffContainerForm->embedForm('type', $staffResourceTypeForm);
+    if ($staff = $this->getObject()->getAgStaff()->getFirst()) {
+      $staffResourceTypeObject = Doctrine_Query::create()
+              ->from('agStaffResource a')
+              ->where('a.id IN (SELECT sr.staff_resource_type_id FROM agStaffResource sr WHERE sr.staff_id = ?)', $staff->id)
+              ->execute()->getFirst();
+    }
+    $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm(isset($staffResourceTypeObject) ? $staffResourceTypeObject : null);
+    //the above will not always work because our record is not saved yet (on a new staff creation)
+    //may have to set default
+    unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
+    if(isset($this->staff_id)){
+        $staffResourceForm->setDefault('staff_id', $this->staff_id);
+    }
+    $staffContainerForm->embedForm('type', $staffResourceForm);
   }
 
   public function embedStaffResourceOrganizationForm($staffContainerForm)
   {
-    if(!$this->isNew()) {
+    if (!$this->isNew()) {
       $staffResOrgObject = Doctrine_Query::create()
-          ->from('agStaffResourceOrganization a')
-          ->where('a.staff_resource_id = ?', $this->getObject()->getAgStaff()->getFirst()->getAgStaffResource()->getFirst()->id)
-          ->execute()->getFirst();
+              ->from('agStaffResourceOrganization a')
+              ->where('a.staff_resource_id = ?', $this->getObject()->getAgStaff()->getFirst()->getAgStaffResource()->getFirst()->id)
+              ->execute()->getFirst();
     }
+
     $staffResOrgForm = new PluginagEmbeddedAgStaffResourceOrganizationForm(isset($staffResOrgObject) ? $staffResOrgObject : null);
     $staffContainerForm->embedForm('organization', $staffResOrgForm);
   }
+
   public function configure()
   {
     parent::configure();
@@ -70,7 +82,6 @@ class PluginagStaffPersonForm extends agPersonForm
     /**
      *  if the staff already has resources and organizations assigned, get all the data for them
      *   */
-
 //    $staffContainerForm = new sfForm();
 //    $staffContainerForm->embedForm('Status', new PluginagEmbeddedAgStaffForm());
 //    $staffResourceOrganizations = Doctrine_Query::create()
@@ -92,7 +103,7 @@ class PluginagStaffPersonForm extends agPersonForm
 //    }
 //    $staffContainerForm->embedForm('New Organization', $blankOrgForm);
 //    $this->embedForm('Staff', $staffContainerForm);
-/**********************/
+    /*     * ******************* */
 //    $staff_resources = array();
 //    if ($this->getObject()->getAgStaff()->getFirst()) {
 //      foreach($this->getObject()->getAgStaff()->getFirst()->getAgStaffResource() as $staffrec) {
@@ -139,8 +150,8 @@ class PluginagStaffPersonForm extends agPersonForm
 //     *  embed the facility resource container form into the facility form
 //     *   */
 //    $this->embedForm('staff', $staffResourceContainer);
-
   }
+
 //  protected function doSave($con = null)
 //  {
 //    // prevents an error that happens when we just go into doSave(). saveEmbedded isn't
@@ -154,21 +165,58 @@ class PluginagStaffPersonForm extends agPersonForm
   public function saveStaffForm($form, $values)
   {
     $form->updateObject($values);
-    if($form->getObject()->person_id == null) {
+    if ($form->getObject()->person_id == null) {
       $form->getObject()->person_id = $this->getObject()->id;
     }
     $form->getObject()->save();
-    $a = 4;
+    $this->staff_id = $form->getObject()->id;
   }
+
+  public function saveStaffResourceTypeForm($form, $values)
+  {
+    $form->updateObject($values);
+    if ($form->getObject()->staff_id == null) {
+      $form->getObject()->staff_id = $this->staff_id;
+    }
+    $form->getObject()->save();
+    $this->staff_resource_id = $form->getObject()->id;
+  }
+
+  public function saveStaffResourceOrganizationForm($form, $values)
+  {
+    $form->updateObject($values);
+    if ($form->getObject()->staff_resource_id == null) {
+      $form->getObject()->staff_resource_id = $this->staff_resource_id;
+      //since ag_staff_resource_organization.id does not auto increment, and we don't want collisions,
+      //we should set the id = to the staff_resource_id..
+      $form->getObject()->id = $this->staff_resource_id;
+    }
+    $form->getObject()->save();
+  }
+
   public function saveEmbeddedForms($con = null, $forms = null)
   {
 //    parent::savEmbeddedForms();
-    if(isset($this->embeddedForms['staff'])) {
+    if (isset($this->embeddedForms['staff'])) {
       $form = $this->embeddedForms['staff']->embeddedForms['status'];
       $values = $this->values['staff']['status'];
       $this->saveStaffForm($form, $values);
       unset($this->embeddedForms['staff']->embeddedForms['status']);
     }
+    if (isset($this->embeddedForms['staff'])) {
+      $form = $this->embeddedForms['staff']->embeddedForms['type'];
+      $values = $this->values['staff']['type'];
+      //we can inject $values['staffresource'] from the above.
+      $this->saveStaffResourceTypeForm($form, $values);
+      unset($this->embeddedForms['staff']->embeddedForms['type']);
+    }
+    if (isset($this->embeddedForms['staff'])) {
+      $form = $this->embeddedForms['staff']->embeddedForms['organization'];
+      $values = $this->values['staff']['organization'];
+      $this->saveStaffResourceOrganizationForm($form, $values);
+      unset($this->embeddedForms['staff']->embeddedForms['organization']);
+    }
+
 //    if (null === $forms) {
 //      $forms = $this->embeddedForms;
 //    }
@@ -247,7 +295,7 @@ class PluginagStaffPersonForm extends agPersonForm
 //        }
 //      }
 //    }
-//  return parent::saveEmbeddedForms($con, $forms);
-
+    return parent::saveEmbeddedForms($con, $forms);
   }
+
 }
