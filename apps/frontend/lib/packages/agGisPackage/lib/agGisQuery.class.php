@@ -77,6 +77,43 @@ class agGisQuery
   }
 
   /**
+   * 
+   * @param array $geoRelationSet
+   * @param int $relationType
+   */
+  public static function updateDistance(array $geoRelationSet, $relationType)
+  {
+//    echo agGis::getDistance(1, 1, 2, 2) . "<BR>";
+//    echo agGis::getDistance(40.75929100, -73.98668400, 40.69484100, -73.98248700);
+    foreach ($geoRelationSet as $geoRelation)
+    {
+      $lat1 = $geoRelation['geo1_latitude'];
+      $long1 = $geoRelation['geo1_longitude'];
+      $lat2 = $geoRelation['geo2_latitude'];
+      $long2 = $geoRelation['geo2_longitude'];
+      $distance = agGis::getDistance($lat1, $long1, $lat2, $long2);
+      $agGeoRelation = new agGeoRelationship();
+      $agGeoRelation->set('geo_id1', $geoRelation['geo1_id']);
+      $agGeoRelation->set('geo_id2', $geoRelation['geo2_id']);
+      $agGeoRelation->set('geo_relationship_type_id', $relationType);
+      $agGeoRelation->set('geo_relationship_km_value', $distance);
+      $agGeoRelation->save();
+
+//      echo "<BR>lat1: ", $lat1, ", long1: ", $long1, ", lat2: ", $lat2, ", long2: ", $long2, ", distance: $distance km";
+
+      }
+  }
+
+  /**
+   *
+   * @return <type>
+   */
+  public static function searchUnrelatedGeo()
+  {
+    return self::findUnrelatedGeoMySQL(FALSE, 'staff', 'facility');
+  }
+
+  /**
    * In the geo relationship table, geo_id1 captures person type geo and geo_id2 captures site type geo.
    *
    * @param boolean $countRecords Optional. By default, it is set to false.  Thus, returns the set of undefined geo relation in an array.  If passed-in as true, method will return the total record count of undefined geo relation.

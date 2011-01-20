@@ -15,16 +15,14 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agGisActions extends sfActions
-{
+class agGisActions extends sfActions {
 
   /**
    * presents the user with the default indexSuccess page
    * 
    * @param sfWebRequest $request web request
    */
-  public function executeIndex(sfWebRequest $request)
-  {
+  public function executeIndex(sfWebRequest $request) {
 //    $bar = 'bar';
 //    $foo = new agGis($bar);
   }
@@ -34,15 +32,14 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  public function executeConfig(sfWebRequest $request)
-  {
+  public function executeConfig(sfWebRequest $request) {
     //configuration options
     $this->map_url = Doctrine::getTable('agGlobalParam') //all global parameters
-            ->createQuery('a')
-            ->select('a.*')
-            ->from('agGlobalParam a')
-            ->where('datapoint =?', 'gis_map_url')
-            ->fetchOne();
+                    ->createQuery('a')
+                    ->select('a.*')
+                    ->from('agGlobalParam a')
+                    ->where('datapoint =?', 'gis_map_url')
+                    ->fetchOne();
   }
 
   /**
@@ -51,8 +48,7 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  public function executeDistance(sfWebRequest $request)
-  {
+  public function executeDistance(sfWebRequest $request) {
     $this->combinationCount = 25;
 //    $this->ag_facility_geos = Doctrine::getTable('agFacility') //all facilities that have a coordinate set associated
 //            ->createQuery('a')
@@ -81,42 +77,40 @@ class agGisActions extends sfActions
    * 
    * @param sfWebRequest $request web request
    */
-  public function executeListstaff(sfWebRequest $request)
-  {
+  public function executeListstaff(sfWebRequest $request) {
     require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
     $this->ag_staff_geos = Doctrine::getTable('agPerson')
-            ->createQuery('a')
-            ->select('p.*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
-            ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
+                    ->createQuery('a')
+                    ->select('p.*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
+                    ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
                                         p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
                                         name.agPersonNameType nametype,
                                         pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
                                         ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
-            ->execute();
+                    ->execute();
     //as of 12.11.2010 there is no concept of a 'global priority' or 'preference' for a person's
     //address, thjough  individual address types have priority
 
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
-            ->createQuery('f')
-            ->execute();
+                    ->createQuery('f')
+                    ->execute();
     $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')
-            ->createQuery('b')
-            ->execute();
+                    ->createQuery('b')
+                    ->execute();
   }
 
-  public function executeListfacility(sfWebRequest $request)
-  {
+  public function executeListfacility(sfWebRequest $request) {
     require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/agasti/agGis.class.php');
     $this->ag_facility_geos = Doctrine::getTable('agFacility')
-            ->createQuery('a')
-            ->select('f.*,s.*, e.*, pa.*, aa.*, aas.*')
-            ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
+                    ->createQuery('a')
+                    ->select('f.*,s.*, e.*, pa.*, aa.*, aas.*')
+                    ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
                                         pa.agAddress aa, aa.agAddressStandard aas, aas.agAddressFormat aaf
                                         ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
-            ->execute();
+                    ->execute();
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
-            ->createQuery('f')
-            ->execute();
+                    ->createQuery('f')
+                    ->execute();
   }
 
   /**
@@ -125,8 +119,7 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  public function executeNew(sfWebRequest $request)
-  {
+  public function executeNew(sfWebRequest $request) {
     $this->form = new agAddressGeoForm();
   }
 
@@ -135,8 +128,7 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  public function executeCreate(sfWebRequest $request)
-  {
+  public function executeCreate(sfWebRequest $request) {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
     $this->form = new agAddressGeoForm();
@@ -152,8 +144,7 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  public function executeEdit(sfWebRequest $request)
-  {
+  public function executeEdit(sfWebRequest $request) {
     $this->forward404Unless($ag_geo = Doctrine_Core::getTable('agGeo')->find(array($request->getParameter('id'))), sprintf('Object ag_geo does not exist (%s).', $request->getParameter('id')));
     $this->form = new agGeoForm($ag_geo);
   }
@@ -163,8 +154,7 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  public function executeUpdate(sfWebRequest $request)
-  {
+  public function executeUpdate(sfWebRequest $request) {
     $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
     $this->forward404Unless($ag_geo = Doctrine_Core::getTable('agGeo')->find(array($request->getParameter('id'))), sprintf('Object ag_geo does not exist (%s).', $request->getParameter('id')));
     $this->form = new agGeoForm($ag_geo);
@@ -180,8 +170,7 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  public function executeGeocode(sfWebRequest $request)
-  {
+  public function executeGeocode(sfWebRequest $request) {
     require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/agGis.class.php');
     $this->uncodedStaffCount = 5;
     $this->uncodedFacilityCount = 10;
@@ -244,16 +233,9 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request
    */
-  public function executeGisquery(sfWebRequest $request)
-  {
-    $newGeoSet = agGisQuery::findUnrelatedGeoMySQL();
-//    print_r($newGeoSet);
-
-//    $test = agGisQuery::returnExistingGeoRelation();
-//    $testString = $test->getSqlQuery();
-//    $results = $test->execute(array(), 'combo_set');
-//    print_r($testString);
-//    print_r($results);
+  public function executeGisquery(sfWebRequest $request) {
+    $geoRelationSet = agGisQuery::searchUnrelatedGeo();
+    agGisQuery::updateDistance($geoRelationSet, 1);
   }
 
   /**
@@ -261,8 +243,7 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  public function executeDelete(sfWebRequest $request)
-  {
+  public function executeDelete(sfWebRequest $request) {
     $request->checkCSRFProtection();
 
     $this->forward404Unless($ag_geo = Doctrine_Core::getTable('agGeo')->find(array($request->getParameter('id'))), sprintf('Object ag_geo does not exist (%s).', $request->getParameter('id')));
@@ -277,8 +258,7 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request web request
    */
-  protected function processForm(sfWebRequest $request, sfForm $form)
-  {
+  protected function processForm(sfWebRequest $request, sfForm $form) {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       if (isset($_REQUEST['geocode'])) {

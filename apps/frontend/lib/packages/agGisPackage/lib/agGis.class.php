@@ -2,11 +2,9 @@
 
 require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/vendor/camptocamp/GeoJSON/GeoJSON.class.php');
 
-class agGis
-{
+class agGis {
 
-  function __construct()
-  {
+  function __construct() {
     $globalparams = Doctrine::getTable('agGlobalParam')->findBy('datapoint', 'mapurl', Doctrine_CORE::HYDRATE_ARRAY);
     //->createQuery('a')
     //->select('*, e.*, pa.*, aa.*, aas.*, namejoin.*, name.*, nametype.*')
@@ -24,8 +22,7 @@ class agGis
    * @param array $address an array comprising of street  number, street name and zip code
    * @return a geoJSON object with the latitude longitude
    */
-  function getGeocode($address)
-  {
+  function getGeocode($address) {
     global $GIS_CONFIG;
     // get our geo code
     $base_url = $this->GIS_CONFIG['MAPURL'];
@@ -57,28 +54,26 @@ class agGis
 
   /**
    *
-   * @param float $a1 latitude 1
-   * @param float $b1 latitude 2
-   * @param float $a2 longitude 1
-   * @param float $b2 longitude 2
+   * @param float $lat1 latitude 1
+   * @param float $long1 longitude 1
+   * @param float $lat2 latitude 2
+   * @param float $long2 longitude 2
    * @return <type>
    */
-  public static function getDistance($a1, $b1, $a2, $b2)
-  {
+  public static function getDistance($lat1, $long1, $lat2, $long2) {
     $r = 6378; //3963.1 statute miles; 3443.9 nautical miles; 6378 km
     $pi = 3.14159265358979323846;
 
-    //print "$a1, $b1, $a2, $b2, $r, $pi\n";
-    $a1 = $a1 * ($pi / 180);
-    $a2 = $a2 * ($pi / 180);
-    $b1 = $b1 * ($pi / 180);
-    $b2 = $b2 * ($pi / 180);
-    $ret = (acos(cos($a1) * cos($b1) * cos($a2) * cos($b2) + cos($a1) * sin($b1) * cos($a2) * sin($b2) + sin($a1) * sin($a2)) * $r);
+    //print "$lat1, $lat2, $long1, $long2, $r, $pi\n";
+    $lat1 = $lat1 * ($pi / 180);
+    $long1 = $long1 * ($pi / 180);
+    $lat2 = $lat2 * ($pi / 180);
+    $long2 = $long2 * ($pi / 180);
+    $ret = acos( sin($lat1) * sin($lat2)+cos($lat1)*cos($lat2)*cos($long2 - $long1))* $r;
     return $ret;
   }
 
-  public static function parse_address($address)
-  {
+  public static function parse_address($address) {
     /*     * *
       2010-12-10 Added Street Name parsing. Charles Wisniewski, CUNY SPS
       2004-10-05 Added HC n Box n, Star Route to function
@@ -106,13 +101,13 @@ class agGis
 
      * * */
     $dir = array(
-      'N' => 'N', 'S' => 'S', 'E' => 'E', 'W' => 'W', 'NW' => 'NW', 'SW' => 'SW', 'NE' => 'NE', 'SE' => 'SE',
-      'North' => 'N', 'South' => 'S', 'East' => 'E', 'West' => 'W', 'Northwest' => 'NW', 'Southwest' => 'SW', 'Northeast' => 'NE', 'Southeast' => 'SE'
+        'N' => 'N', 'S' => 'S', 'E' => 'E', 'W' => 'W', 'NW' => 'NW', 'SW' => 'SW', 'NE' => 'NE', 'SE' => 'SE',
+        'North' => 'N', 'South' => 'S', 'East' => 'E', 'West' => 'W', 'Northwest' => 'NW', 'Southwest' => 'SW', 'Northeast' => 'NE', 'Southeast' => 'SE'
     );
     $type = array(
-      'ave' => 'Ave', 'blvd' => 'Blvd', 'st' => 'St', 'wy' => 'Wy', 'cir' => 'Cir', 'dr' => 'Dr', 'ln' => 'Ln', 'Pl' => 'Pl', 'Rd' => 'Rd',
-      'Bvd' => 'Blvd',
-      'Avenue' => 'Ave', 'Boulevard' => 'Blvd', 'Street' => 'St', 'Way' => 'Wy', 'Circle' => 'Cir', 'Drive' => 'Dr', 'Lane' => 'Ln', 'Place' => 'Pl', 'Road' => 'Rd'
+        'ave' => 'Ave', 'blvd' => 'Blvd', 'st' => 'St', 'wy' => 'Wy', 'cir' => 'Cir', 'dr' => 'Dr', 'ln' => 'Ln', 'Pl' => 'Pl', 'Rd' => 'Rd',
+        'Bvd' => 'Blvd',
+        'Avenue' => 'Ave', 'Boulevard' => 'Blvd', 'Street' => 'St', 'Way' => 'Wy', 'Circle' => 'Cir', 'Drive' => 'Dr', 'Lane' => 'Ln', 'Place' => 'Pl', 'Road' => 'Rd'
     );
 
     $address = trim($address);
@@ -121,7 +116,7 @@ class agGis
     //remove any unit or apt # from the end
     //a number alone at the end is not enough, we need at least # or one of the descriptors in ()
     if (preg_match('/(\s+(Apt|Apartment|Suite|Ste|Unit|Bldg|Building|Room|Rm|#)\s*)+#?[-a-z0-9]+$/i',
-            $address, $a)) {
+                    $address, $a)) {
       $b['raw_unit'] = $a[0];
       $b['unit'] = preg_replace('/(\s+(Apt|Apartment|Suite|Ste|Unit|Bldg|Building|Room|Rm|#)\s*)+#?/i', '', $a[0]);
       //break raw unit down
@@ -129,14 +124,14 @@ class agGis
     }
     //parse suffix direction (SW)
     if (preg_match('/\s+(North|South|East|West|Northeast|Southeast|Southwest|Northwest|N|S|E|W|NE|SE|SW|NW)$/i',
-            $address, $a)) {
+                    $address, $a)) {
       $b['raw_suffix_direction'] = $a[0];
       $b['suffix_direction'] = $dir[$b['raw_suffix_direction']];
       $address = substr($address, 0, strlen($address) - strlen($a[0]));
     }
     //remove type of street
     if (preg_match('/\s+(St|Bvd|Ave|Wy|Cir|Dr|Ln|Pl|Boulevard|Blvd|Street|Avenue|Way|Circle|Drive|Lane|Place)$/i',
-            $address, $a)) {
+                    $address, $a)) {
       $b['raw_type'] = $a[0];
       strlen($b['raw_type']) > 3 || strtolower($b[raw_type]) == 'way' || strtolower($b['raw_type']) == 'bvd' ? $typeDefinite = false : $typeDefinite = true;
       $b['type'] = $type[strtolower($b['raw_type'])];
@@ -203,31 +198,31 @@ class agGis
 
     //present the array visibly in a logical order -- not required for operation but nice
     $order = array(
-      'type_definite',
-      'address_type',
-      'raw_po_box',
-      'po_box',
-      'raw_route',
-      'route_number',
-      'route_box_number',
-      'raw_hc',
-      'hc_number',
-      'hc_box_number',
-      'raw_starrt',
-      'starrt_number',
-      'starrt_box_number',
-      'number',
-      'fraction',
-      'prefix_direction',
-      'raw_prefix_direction',
-      'name',
-      'type',
-      'raw_type',
-      'suffix_direction',
-      'raw_suffix_direction',
-      'unit',
-      'raw_unit',
-      'raw_address'
+        'type_definite',
+        'address_type',
+        'raw_po_box',
+        'po_box',
+        'raw_route',
+        'route_number',
+        'route_box_number',
+        'raw_hc',
+        'hc_number',
+        'hc_box_number',
+        'raw_starrt',
+        'starrt_number',
+        'starrt_box_number',
+        'number',
+        'fraction',
+        'prefix_direction',
+        'raw_prefix_direction',
+        'name',
+        'type',
+        'raw_type',
+        'suffix_direction',
+        'raw_suffix_direction',
+        'unit',
+        'raw_unit',
+        'raw_address'
     );
     foreach ($order as $v) {
       isset($b[$v]) ? $c[$v] = $b[$v] : '';
