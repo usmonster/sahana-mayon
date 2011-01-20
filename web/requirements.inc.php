@@ -480,10 +480,10 @@ function check_php_requirements()
 //  $result[] = check_file_permissions(sfConfig::get('sf_cache_dir'),'0775');
 //  $result[] = check_file_permissions(sfConfig::get('sf_log_dir'),'0775');
   $result[] = check_file_permissions(sfConfig::get('sf_config_dir'), '0775');
-  $result[] = check_file_permissions(sfConfig::get('sf_app_config_dir'), '0755');
-  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/indexes/', '0755');
-  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/search/', '0755');
-  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/sql/', '0755');
+  $result[] = check_file_permissions(sfConfig::get('sf_app_config_dir'), '0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/indexes/', '0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/search/', '0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/sql/', '0775');
 
   // removing these for now, since they're not explicit requirements
 //      $result[] = check_php_post_max_size();
@@ -504,23 +504,19 @@ function check_php_requirements()
   return $result;
 }
 
-function check_file_permissions($path, $perm)
+function check_file_permissions($path, $requiredPerms)
 {
   // TODO: just use is_readable/is_writeable instead? -UA.
   clearstatcache();
   $current = substr(sprintf('%o', fileperms($path)), -4);
-  $trcss = (($current != $perm) ? $current : 1);
-  //if config.yml is writeable by the server
-  //if cache is writeable by the server
-  //if data/indexes is writeable by the server
-  //if apps/frontend/config/app.yml is writeable by the server
+  $ret = (($current >= $perm) ? 2 : 0);
 
   $result = array(
     'name' => $path,
     'current' => $current,
-    'required' => $perm,
-    'recommended' => null,
-    'result' => $trcss,
+    'required' => $requiredPerms,
+    'recommended' => $requiredPerms,
+    'result' => $ret,
     'error' => 'fail'
   );
   return $result;
