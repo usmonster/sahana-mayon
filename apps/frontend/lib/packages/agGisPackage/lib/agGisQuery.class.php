@@ -77,128 +77,222 @@ class agGisQuery
   }
 
   /**
-   * In the geo relationship table, geo_id1 captures person type geo and geo_id2 captures site type geo.  Geo_id1 < geo_id2.
+   * In the geo relationship table, geo_id1 captures person type geo and geo_id2 captures site type geo.
    *
    * @param boolean $countRecords Optional. By default, it is set to false.  Thus, returns the set of undefined geo relation in an array.  If passed-in as true, method will return the total record count of undefined geo relation.
-   * @param array $personType Optional. By default, it is set with array('staff').  Currently, the method is defined for staff and client entity type.  This specifies the query condition to search for staff and/or client with undefined geo relation.
-   * @param array $siteType Optional.  By default, it is set with array('facility').  Currently, the method is defined only for facility site type.  This specifies the query condition to search for facility with undefined geo relation.
+   * @param string $leftRelation Optional. By default, it is set to 'staff'.  This specifies the query condition to search for one of the component objects with a geo relation as defined in $queryStaticClauses.
+   * @param string $rightRelation Optional.  By default, it is set to 'facility'.   This specifies the query condition to search for one of the component objects with a geo relation as defined in $queryStaticClauses.
    * @return int|array Depending on the pass in param, this method can return either the total record count of undefined geo relation or returns an array of undefined geo relations as a form of array[geo id1] = geo id2.
+   * @todo It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's.
    */
-  public static function defineGeoRelation ($countRecords = FALSE, $personType = array('staff'), $siteType = array('facility'))
+  public static function findUnrelatedGeo($countRecords = TRUE, $leftRelation = 'staff', $rightRelation = 'facility')
   {
-    // In this condition (self-referencing table query), do not use symfony doctrine count.
-    $query = Doctrine_Query::create();
 
-    $query->select('g1.id, g2.id, c2.longitude, c2.latitude, c1.longitude, c1.latitude, f1.id, f2.id, c1.id, c2.id')
-      ->from('agGeo g1')
-      ->addFrom('agGeo g2')
-      ->addFrom('agGeoFeature f1')
-      ->addFrom('agGeoFeature f2')
-      ->addFrom('agGeoCoordinate c1')
-      ->addFrom('agGeoCoordinate c2')
-      ->where('g1.id < g2.id')
-      ->andWhere('g1.id=f1.geo_id')
-      ->andWhere('f1.geo_coordinate_id=c1.id')
-      ->andWhere('g2.id=f2.geo_id')
-      ->andWhere('f2.geo_coordinate_id=c2.id')
-      ->orderBy('g1.id, g2.id');
+    /**
+     * This little magic array handles all of our joins for the right and left parameters
+     * @todo this should really be a pre-defined class so we don't have to keep writing nested array stuff
+     */
+    $queryStaticClauses = array() ;
+    // tier 0 (eg, entity)
+    $queryStaticClauses['entity']['from']= 'INNER JOIN ag_address_geo AS ag ON g.id = ag.geo_id
+      INNER JOIN ag_address AS a ON a.id = ag.address_id
+      INNER JOIN ag_entity_address_contact AS eac ON eac.address_id = a.id
+      INNER JOIN ag_entity AS e ON eac.entity_id = e.id' ;
+    // tier 1
+    $queryStaticClauses['person']['from']= $queryStaticClauses['entity']['from'] . ' ' . 'INNER JOIN ag_person AS p ON e.id = p.entity_id' ;
+    $queryStaticClauses['site']['from']= $queryStaticClauses['entity']['from'] . ' ' . 'INNER JOIN ag_site AS s ON e.id = s.entity_id' ;
+    // tier 2
+    $queryStaticClauses['staff']['from'] = $queryStaticClauses['person']['from'] . ' ' . 'INNER JOIN ag_staff AS stf ON p.id = stf.person_id' ;
+    $queryStaticClauses['facility']['from']= $queryStaticClauses['site']['from'] . ' ' . 'INNER JOIN ag_facility AS fac ON s.id = fac.site_id' ;
 
-    // Search for person's geo id.
-    $subPerson = $query->createSubquery()
-      ->select('subG1.id')
-      ->from('agGeo subG1')
-      ->innerJoin('subG1.agAddressGeo subAG1')
-      ->innerJoin('subAG1.agAddress subA1')
-      ->innerJoin('subA1.agEntityAddressContact subEA1')
-      ->innerJoin('subEA1.agEntity subE1')
-      ->where('1')
-      ->groupBy('subG1.id');
+    $baseFilterSubquery = 'SELECT DISTINCT g.id FROM ag_geo AS g' ;
+
+    // build the left relation filtering subquery
+    $leftFilterSubquery = $baseFilterSubquery . ' ' . $queryStaticClauses[$leftRelation]['from'] ;
+
+    // build the right relation filtering subquery
+    $rightFilterSubquery = $baseFilterSubquery . ' ' . $queryStaticClauses[$rightRelation]['from'] ;
+
+    /**
+     * This content block establishes a core query against which the other components of the geo relation may be joined.
+     * @todo Remove the geo-coordinate count blocks and replace them with a centroid calculation aggregate function. This is, currently, a hack to prevent geo features with more than one coordinate from returning.
+     */
+    $queryBaseInnerSelect = 'SELECT g.id
+          FROM ag_geo AS g
+            INNER JOIN ag_geo_feature AS f
+              ON g.id = f.geo_id
+            INNER JOIN ag_geo_coordinate AS c
+              ON f.geo_coordinate_id = c.id' ;
+
+    $queryBaseInnerGroupBy = 'GROUP BY g.id HAVING COUNT(c.id) = 1' ;
+
+    // using the base inner query, we combine our right and left queries with their filtering subqueries
+    // @todo this could totally be a tiny function
+    // @todo check whether or not the caching of derived tables FROM (SELECT...) would be more efficient than the ref join below
+    $leftQuery = $queryBaseInnerSelect . ' ' . 'INNER JOIN (' . $leftFilterSubquery . ') AS lf ON g.id = lf.id' . ' ' . $queryBaseInnerGroupBy ;
+    $rightQuery = $queryBaseInnerSelect . ' ' . 'INNER JOIN (' . $rightFilterSubquery . ') AS rf ON g.id = rf.id' . ' ' . $queryBaseInnerGroupBy ;
+
+    // build our base cartesian query
+    $queryCartesianSelect = 'SELECT
+      geo1.id AS geo1_id,
+      geo2.id AS geo2_id' ;
+
+    $queryCartesianWhere = 'WHERE geo1.id != geo2.id' ;
     
-    $subPerson->innerJoin('subE1.agPerson p');
-    foreach ($personType as $ptype)
-    {
-      switch ($ptype)
-      {
-        case 'staff':
-          $subPerson->orWhere('p.id IN (SELECT stf.person_id FROM agStaff stf)');
-          break;
-        case 'client':
-          $subPerson->orWhere('p.id IN (SELECT c.person_id FROM agClient c)');
-          break;
-        default:
-          throw new sfException('An error occurred. Please pass in an accepted parameter.');
-      }
-    }
-    $query->andWhere('g1.id IN (' . $subPerson->getDql() . ')');
+    $queryCartesianFrom = 'FROM (' . $leftQuery . ') AS geo1' ;
+    $queryCartesianFrom = $queryCartesianFrom . ', (' . $rightQuery . ') AS geo2' ;
 
-    // Search for site type.
-    $subSite = $query->createSubquery()
-      ->select('subG2.id')
-      ->from('agGeo subG2')
-      ->innerJoin('subG2.agAddressGeo subAG2')
-      ->innerJoin('subAG2.agAddress subA2')
-      ->innerJoin('subA2.agEntityAddressContact subEA2')
-      ->innerJoin('subEA2.agEntity subE2')
-      ->where('1')
-      ->groupBy('subG2.id');
-    $subSite->innerJoin('subE2.agSite si');
-    foreach ($siteType as $stype)
-    {
-      switch ($stype)
-      {
-        case 'facility':
-          $subSite->orWhere('si.id IN (SELECT f.site_id FROM agFacility f)');
-          break;
-        default:
-          throw new sfException('An error occurred. Please pass in an accepted parameter.');
-      }
-    }
-    $query->andWhere('g2.id IN (' . $subSite->getDql() . ')');
+    $queryCartesian = $queryCartesianSelect . ' ' . $queryCartesianFrom . ' ' . $queryCartesianWhere ;
 
-    /*
-     * @todo Remove this subquery block and replace it with a centroid calculation function.
-     * This is, currently, a hack to prevent geo features with more than one coordinate from returning.
-     */
-    $subQuery1 = $query->createSubquery()
-      ->select('f3.geo_id')
-      ->from('agGeoFeature f3')
-      ->groupBy('f3.geo_id')
-      ->having('count(f3.geo_id) = 1');
-    $query->andWhere('g1.id in (' . $subQuery1->getDql() . ')');
-    $subQuery2 = $query->createSubquery()
-      ->select('f4.geo_id')
-      ->from('agGeoFeature f4')
-      ->groupBy('f4.geo_id')
-      ->having('count(f4.geo_id) = 1');
-    $query->andWhere('g2.id in (' . $subQuery2->getDql() . ')');
+    $queryOuter = 'SELECT
+        qc.geo1_id,
+        qc.geo2_id,
+        gc1.longitude AS geo1_longitude,
+        gc1.latitude AS geo1_latitude,
+        gc2.longitude AS geo2_longitude,
+        gc2.latitude AS geo2_latitude
+      FROM (' . $queryCartesian . ') AS qc
+        INNER JOIN ag_geo AS g1
+          ON qc.geo1_id = g1.id
+        INNER JOIN ag_geo AS g2
+          ON qc.geo2_id = g2.id
+        INNER JOIN ag_geo_feature AS gf1
+          ON g1.id = gf1.geo_id
+        INNER JOIN ag_geo_feature AS gf2
+          ON g2.id = gf2.geo_id
+        INNER JOIN ag_geo_coordinate AS gc1
+          ON gf1.geo_coordinate_id = gc1.id
+        INNER JOIN ag_geo_coordinate AS gc2
+          ON gf2.geo_coordinate_id = gc2.id
+        LEFT JOIN ag_geo_relationship AS agr
+          ON qc.geo1_id = agr.geo_id1 AND qc.geo2_id = agr.geo_id2
+      WHERE agr.id IS NULL' ;
+    
+    $query = $queryOuter ;
 
-    $test = $query->getSqlQuery();
+    $conn = Doctrine_Manager::connection();
+    $pdo = $conn->execute($query);
+    $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
+    $result = $pdo->fetchAll();
+
+    // -- TEST BLOCK / REMOVE LATER --
+    echo $query . '<br><br>';
+    print_r($result);
 
 
-    /*************
-     * NOTE: The combo_set hydration does not return all of the query rows.  It
-     * only returns the last sets since geo_id1 is used as the array key and has
-     * to be unique.  The last appearance of geo_id1 over-writes the previous
-     * sets of geo_id1, and geo_id2 where geo_id1 repeats.
-     *
-     */
-    // Collect all geo relations in an array.
-    $allGeoSet = $query->execute(array(), 'combo_set');
-//    $allGeoSet = $query->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
-    echo '<br>allGeoSet: ';
-    print_r($allGeoSet);
-    // Collect defined geo relations in an array.
-    $existingGeoQuery = self::returnExistingGeoRelation();
-    $existingGeoSet = $existingGeoQuery->execute(array(), 'combo_set');
-//    $existingGeoSet = $existingGeoQuery->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
-    echo '<br><br>existingGeoSet: ';
-    print_r($existingGeoSet);
-    // Diff all geo relations against the defined geo relation to find the undefined geo relations.
-    $newGeoSet = array_diff_assoc($allGeoSet, $existingGeoSet);
-    echo '<br><br>newGeoSet: ';
-    print_r($newGeoSet);
 
     // if countRecord is true, return only the total record count for undefined geo relations.  Otherwise, return the undefined geo relation set.
-    return ($countRecords ? count($newGeoSet) : $newGeoSet);
+    return ($countRecords ? count($result) : $result);
+  }
+
+  /**
+   * This is a MySQL-optimized version of findUnrelatedGeo that takes advantage of MySQL's fast in-memory temporary tables and STRAIGHT_JOIN condition
+   *
+   * @param boolean $countRecords Optional. By default, it is set to false.  Thus, returns the set of undefined geo relation in an array.  If passed-in as true, method will return the total record count of undefined geo relation.
+   * @param string $leftRelation Optional. By default, it is set to 'staff'.  This specifies the query condition to search for one of the component objects with a geo relation as defined in $queryStaticClauses.
+   * @param string $rightRelation Optional.  By default, it is set to 'facility'.   This specifies the query condition to search for one of the component objects with a geo relation as defined in $queryStaticClauses.
+   * @return int|array Depending on the pass in param, this method can return either the total record count of undefined geo relation or returns an array of undefined geo relations as a form of array[geo id1] = geo id2.
+   * @todo It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's.
+   * @todo For this to work properly and without danger to the system, this needs to be encapsulated with exception handlers that do garbage cleanup
+   */
+  public static function findUnrelatedGeoMySQL($countRecords = FALSE, $leftRelation = 'staff', $rightRelation = 'facility')
+  {
+
+    /*
+     * This little magic array handles all of our joins for the right and left parameters
+     * @todo this should really be a pre-defined class so we don't have to keep writing nested array stuff
+     */
+    $queryStaticClauses = array() ;
+    // tier 0 (eg, entity)
+    $queryStaticClauses['entity']['from']= 'INNER JOIN ag_address_geo AS ag ON g.id = ag.geo_id
+      INNER JOIN ag_address AS a ON a.id = ag.address_id
+      INNER JOIN ag_entity_address_contact AS eac ON eac.address_id = a.id
+      INNER JOIN ag_entity AS e ON eac.entity_id = e.id' ;
+    // tier 1
+    $queryStaticClauses['person']['from']= $queryStaticClauses['entity']['from'] . ' ' . 'INNER JOIN ag_person AS p ON e.id = p.entity_id' ;
+    $queryStaticClauses['site']['from']= $queryStaticClauses['entity']['from'] . ' ' . 'INNER JOIN ag_site AS s ON e.id = s.entity_id' ;
+    // tier 2
+    $queryStaticClauses['staff']['from'] = $queryStaticClauses['person']['from'] . ' ' . 'INNER JOIN ag_staff AS stf ON p.id = stf.person_id' ;
+    $queryStaticClauses['facility']['from']= $queryStaticClauses['site']['from'] . ' ' . 'INNER JOIN ag_facility AS fac ON s.id = fac.site_id' ;
+
+    $baseFilterSubquery = 'SELECT DISTINCT g.id FROM ag_geo AS g' ;
+
+    // build the left relation filtering subquery
+    $leftFilterSubquery = $baseFilterSubquery . ' ' . $queryStaticClauses[$leftRelation]['from'] ;
+
+    // build the right relation filtering subquery
+    $rightFilterSubquery = $baseFilterSubquery . ' ' . $queryStaticClauses[$rightRelation]['from'] ;
+
+    /*
+     * This content block establishes a core query against which the other components of the geo relation may be joined.
+     * @todo Remove the geo-coordinate count blocks and replace them with a centroid calculation aggregate function. This is, currently, a hack to prevent geo features with more than one coordinate from returning.
+     */
+    $queryBaseInnerSelect = 'SELECT g.id
+          FROM ag_geo AS g
+            INNER JOIN ag_geo_feature AS f
+              ON g.id = f.geo_id
+            INNER JOIN ag_geo_coordinate AS c
+              ON f.geo_coordinate_id = c.id' ;
+
+    $queryBaseInnerGroupBy = 'GROUP BY g.id HAVING COUNT(c.id) = 1' ;
+
+    // using the base inner query, we combine our right and left queries with their filtering subqueries
+    // @todo this could totally be a tiny function
+    // @todo check whether or not the caching of derived tables FROM (SELECT...) would be more efficient than the ref join below
+    $leftQuery = $queryBaseInnerSelect . ' ' . 'STRAIGHT_JOIN (' . $leftFilterSubquery . ') AS lf ON lf.id = g.id' . ' ' . $queryBaseInnerGroupBy ;
+    $rightQuery = $queryBaseInnerSelect . ' ' . 'STRAIGHT_JOIN (' . $rightFilterSubquery . ') AS rf ON rf.id = g.id' . ' ' . $queryBaseInnerGroupBy ;
+
+    // build our base cartesian query
+    $queryCartesianSelect = 'SELECT
+      geo1.id AS geo1_id,
+      geo2.id AS geo2_id' ;
+
+    $queryCartesianWhere = 'WHERE geo1.id != geo2.id' ;
+
+    $queryCartesianFrom = 'FROM (' . $leftQuery . ') AS geo1' ;
+    $queryCartesianFrom = $queryCartesianFrom . ', (' . $rightQuery . ') AS geo2' ;
+
+    $queryCartesian = $queryCartesianSelect . ' ' . $queryCartesianFrom . ' ' . $queryCartesianWhere ;
+
+    $queryOuter = 'SELECT
+        qc.geo1_id,
+        qc.geo2_id,
+        gc1.longitude AS geo1_longitude,
+        gc1.latitude AS geo1_latitude,
+        gc2.longitude AS geo2_longitude,
+        gc2.latitude AS geo2_latitude
+      FROM (' . $queryCartesian . ') AS qc
+        STRAIGHT_JOIN ag_geo AS g1
+          ON qc.geo1_id = g1.id
+        STRAIGHT_JOIN ag_geo AS g2
+          ON qc.geo2_id = g2.id
+        INNER JOIN ag_geo_feature AS gf1
+          ON g1.id = gf1.geo_id
+        INNER JOIN ag_geo_feature AS gf2
+          ON g2.id = gf2.geo_id
+        INNER JOIN ag_geo_coordinate AS gc1
+          ON gf1.geo_coordinate_id = gc1.id
+        INNER JOIN ag_geo_coordinate AS gc2
+          ON gf2.geo_coordinate_id = gc2.id
+        LEFT JOIN ag_geo_relationship AS agr
+          ON qc.geo1_id = agr.geo_id1 AND qc.geo2_id = agr.geo_id2
+      WHERE agr.id IS NULL' ;
+
+    $query = $queryOuter ;
+    $conn = Doctrine_Manager::connection();
+    $pdo = $conn->execute($query);
+    $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
+    $result = $pdo->fetchAll();
+
+    // -- TEST BLOCK / REMOVE LATER --
+    echo $query . '<br><br>';
+    print_r($result);
+
+
+
+    // if countRecord is true, return only the total record count for undefined geo relations.  Otherwise, return the undefined geo relation set.
+    return ($countRecords ? count($result) : $result);
   }
 }
+
+

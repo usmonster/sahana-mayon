@@ -239,8 +239,9 @@ class agGisActions extends sfActions
    */
   public function executeGisquery(sfWebRequest $request)
   {
-    $newGeoSet = agGisQuery::defineGeoRelation();
-    print_r($newGeoSet);
+    $newGeoSet = agGisQuery::findUnrelatedGeoMySQL();
+//    print_r($newGeoSet);
+
 //    $test = agGisQuery::returnExistingGeoRelation();
 //    $testString = $test->getSqlQuery();
 //    $results = $test->execute(array(), 'combo_set');
