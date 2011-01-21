@@ -41,14 +41,31 @@
 
   $('#calculate').click(function()
   {
+    var startTime, endTime, totalTimeElapsed = 0, averageTime = 0, estimateTimeLeft = 0;
     $("#result").show();
     //if(xmlHttp.readyState==4)
     // {
     do {
-      totalProcessed += calcBatch();
+      // Start timing.
+      startTime = new Date().getTime();
+
+      var recordProcessed = calcBatch();
+      totalProcessed += recordProcessed;
+      // End Timing.
+      endTime = new Date().getTime();
+
       totalLeft = start - totalProcessed;
+
+      // Time elapsed for batch processing.
+//      intervalTimeElapsed = endTime - startTime;
+      totalTimeElapsed += endTime - startTime;
+      if (totalProcessed != 0) {
+        averageTime = totalTimeElapsed / totalProcessed;
+        estimateTimeLeft = averageTime * totalLeft;
+      }
+
       $("#combos").html(totalLeft);
-      $("#result").html('<?php echo image_tag('indicator.gif') ?> done processing '+totalProcessed + " out of "+start+ " records!");
+      $("#result").html('<?php echo image_tag('indicator.gif') ?> done processing '+totalProcessed + " out of "+start+ " records!<BR>Time elapsed to process " + recordProcessed + " records: "+ (intervalTimeElapsed / 1000) + 's<BR>Estimated time left to process ' + totalLeft + ' records: ' + (estimateTimeLeft / 1000) + 's');
     } while (totalLeft > 0);
     $("#result").html("done processing "+totalProcessed + " out of "+start+ " records!");
     // }
