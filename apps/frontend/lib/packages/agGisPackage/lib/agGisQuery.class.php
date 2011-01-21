@@ -42,14 +42,14 @@ class agGisQuery
 
       case 'facility':
         $query->innerJoin('e.agSite si')
-          ->innerJoin('p.agFacility fac');
+          ->innerJoin('si.agFacility fac');
         break;
 
       default:
         throw new sfException('An error occurred. Please pass in an accepted parameter.');
     }
 
-    return $query;
+    return $query->execute(array(), DOCTRINE_CORE::HYDRATE_SCALAR);
   }
 
   /**

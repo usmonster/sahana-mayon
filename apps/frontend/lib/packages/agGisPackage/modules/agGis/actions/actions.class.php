@@ -50,6 +50,10 @@ class agGisActions extends sfActions {
    */
   public function executeDistance(sfWebRequest $request) {
     $this->combinationCount = 25;
+    if ($request->isXmlHttpRequest())
+    {
+      return 'you started calculating dude... its going to be a while';
+    }
 //    $this->ag_facility_geos = Doctrine::getTable('agFacility') //all facilities that have a coordinate set associated
 //            ->createQuery('a')
 //            ->select('f.*,s.*, e.*, pa.*, aa.*, aag.*')
@@ -172,8 +176,8 @@ class agGisActions extends sfActions {
    */
   public function executeGeocode(sfWebRequest $request) {
     require_once(sfConfig::get('sf_app_lib_dir') . '/packages/agGisPackage/lib/agGis.class.php');
-    $this->uncodedStaffCount = 5;
-    $this->uncodedFacilityCount = 10;
+    $this->uncodedStaffCount = count(agGisQuery::missingGis('staff'));
+    $this->uncodedFacilityCount = count(agGisQuery::missingGis('facility'));
     $this->goodCount = 25;
     $this->zipCount = 15;
     $this->nonCount = 5;

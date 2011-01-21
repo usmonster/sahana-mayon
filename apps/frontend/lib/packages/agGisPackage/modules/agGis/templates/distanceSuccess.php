@@ -1,15 +1,5 @@
 <?php use_helper('JavascriptBase') ?>
-<script language="Javascript">
-  function calcCall()
-  {
-    document.getElementById("indicator").innerHTML =
-      '<?php
-echo image_tag('indicator.gif')
-//and when this is DONE, it should be set back to nothing. or a success image
-?>'
 
-      }
-</script>
 <noscript>
   <p>You have JavaScript enabled.</p>
 </noscript>
@@ -22,7 +12,25 @@ the button below.</p>
 
 <p>There are currently <span class="logName"><?php echo $combinationCount; ?></span> combinations of staff and facilities without distances calculated.</p>
 
-<?php echo link_to_function('Calculate Distances', 'calcCall()', array('class' => 'buttonSmall')) ?>
 
+<a href="#" id="calculate" class="buttonSmall">get your calculation on!</a>
 <br/>
-<span id="indicator">indicate!</span>
+<div id="result"></div>
+
+
+<script type="text/javascript">
+$('#calculate').click(function()
+  {
+    $('#result').html('<p>please wait, calculation taking place <?php echo image_tag('indicator.gif') ?></p>');
+    //if(xmlHttp.readyState==4)
+   // {
+    $.load('distance', function(data) {//do i have to set http headers?
+      $('#result').html(data);
+
+});
+   // }
+
+//and when this is DONE, it should be set back to nothing. or a success image
+
+  });
+</script>
