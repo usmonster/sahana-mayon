@@ -20,6 +20,10 @@ class agGisQuery {
    */
   public static function missingGis($entityType) {
     $addressArray = array();
+    
+    $queryStaticClauses = array();
+    $queryStaticClauses['staff'] = 'p.agStaff stf' ;
+    $queryStaticClauses['facility'] = 'si.agFacility fac' ;
 
     $query = Doctrine_Query::create()
                     ->select('a.id, ea.id, ag.id, g.id, gf.id')
@@ -29,22 +33,10 @@ class agGisQuery {
                     ->leftJoin('ag.agGeo g')
                     ->leftJoin('g.agGeoFeature gf')
                     ->innerJoin('ea.agEntity e')
+                    ->leftJoin('e.agPerson p')
+                    ->leftJoin('e.agSite si')
+                    ->innerJoin($queryStaticClauses[$entityType])
                     ->where('gf.geo_coordinate_id is null');
-
-    switch ($entityType) {
-      case 'staff':
-        $query->innerJoin('e.agPerson p')
-                ->innerJoin('p.agStaff stf');
-        break;
-
-      case 'facility':
-        $query->innerJoin('e.agSite si')
-                ->innerJoin('si.agFacility fac');
-        break;
-
-      default:
-        throw new sfException('An error occurred. Please pass in an accepted parameter.');
-    }
 
     return $query->execute(array(), DOCTRINE_CORE::HYDRATE_SCALAR);
   }
@@ -98,8 +90,8 @@ class agGisQuery {
    *
    * @return <type>
    */
-  public static function searchUnrelatedGeo($countRecord) {
-    return self::findUnrelatedGeoMySQL($countRecord, 'staff', 'facility');
+  public static function searchUnrelatedGeo($returnCount) {
+    return self::findUnrelatedGeoMySQL($returnCount, 'staff', 'facility');
   }
 
   /**
@@ -111,7 +103,7 @@ class agGisQuery {
    * @return int|array Depending on the pass in param, this method can return either the total record count of undefined geo relation or returns an array of undefined geo relations as a form of array[geo id1] = geo id2.
    * @todo It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's.
    */
-  public static function findUnrelatedGeo($countRecords = TRUE, $leftRelation = 'staff', $rightRelation = 'facility') {
+  public static function findUnrelatedGeo($returnCount = TRUE, $leftRelation = 'staff', $rightRelation = 'facility') {
 
     /**
      * This little magic array handles all of our joins for the right and left parameters
@@ -193,7 +185,7 @@ class agGisQuery {
           ON qc.geo1_id = agr.geo_id1 AND qc.geo2_id = agr.geo_id2
       WHERE agr.id IS NULL';
 
-    if ($countRecords) {
+    if ($returnCount) {
       $queryOuter = 'SELECT COUNT(*) FROM (' . $queryOuter . ') AS x';
     } else {
       $queryOuter .= ' LIMIT 5000';
@@ -224,7 +216,7 @@ class agGisQuery {
    * @todo It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's.
    * @todo For this to work properly and without danger to the system, this needs to be encapsulated with exception handlers that do garbage cleanup
    */
-  public static function findUnrelatedGeoMySQL($countRecords = TRUE, $leftRelation = 'staff', $rightRelation = 'facility') {
+  public static function findUnrelatedGeoMySQL($returnCount = TRUE, $leftRelation = 'staff', $rightRelation = 'facility') {
     global $offSet, $limit, $unrelatedGeoRelation;
 
     /*
@@ -307,7 +299,7 @@ class agGisQuery {
           ON qc.geo1_id = agr.geo_id1 AND qc.geo2_id = agr.geo_id2
       WHERE agr.id IS NULL';
 
-    if ($countRecords) {
+    if ($returnCount) {
       $queryOuter = 'SELECT COUNT(*) as rowCount FROM (' . $queryOuter . ') AS x';
     } else {
       $queryOuter .= ' LIMIT 5000';
