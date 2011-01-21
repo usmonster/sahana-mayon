@@ -136,7 +136,7 @@ class agGisQuery {
    * @param boolean $countRecords Optional. By default, it is set to false.  Thus, returns the set of undefined geo relation in an array.  If passed-in as true, method will return the total record count of undefined geo relation.
    * @param string $leftRelation Optional. By default, it is set to 'staff'.  This specifies the query condition to search for one of the component objects with a geo relation as defined in $queryStaticClauses.
    * @param string $rightRelation Optional.  By default, it is set to 'facility'.   This specifies the query condition to search for one of the component objects with a geo relation as defined in $queryStaticClauses.
-   * @return int|array Depending on the pass in param, this method can return either the total record count of undefined geo relation or returns an array of undefined geo relations as a form of array[geo id1] = geo id2.
+   * @return array Depending on the pass in param, this method can return either the total record count of undefined geo relation (as the sole element of an array) or returns an array of undefined geo relations as a form of array[geo id1] = geo id2.
    * @todo It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's.
    */
   public static function findUnrelatedGeo($countRecords = TRUE, $leftRelation = 'staff', $rightRelation = 'facility') {

@@ -53,13 +53,13 @@ class agGisActions extends sfActions
    */
   public function executeDistance(sfWebRequest $request)
   {
-    $this->combinationCount = count(agGisQuery::searchUnrelatedGeo(TRUE));// findUnrelatedGeoMySQL());
+    $countArray = agGisQuery::searchUnrelatedGeo(TRUE, 'staff', 'facility');
+    $this->combinationCount = $countArray[0]['rowCount'];
+
+    $geoRelationSet = agGisQuery::searchUnrelatedGeo(FALSE, 'staff', 'facility');
 
     if ($request->isXmlHttpRequest()) {
-      
-
-
-      $this->results = rand(0,1); //agGisQuery::updateDistance($geoRelationSet, $relationType);
+      $this->results = agGisQuery::updateDistance($geoRelationSet, $relationType);
       //return sfView::HEADER_ONLY;
 
       return sfView::$this->renderPartial('distancecalc', array('results' => $this->results));
@@ -227,26 +227,6 @@ class agGisActions extends sfActions
       } else {
         /* if there already is an entry for this... update if better, etc... HERE */
       }
-    }
-  }
-
-  /**
-   * Define new geo relation.
-   *
-   * @param sfWebRequest $request
-   */
-  public function executeGisquery(sfWebRequest $request) {
-    $returnValue = agGisQuery::searchUnrelatedGeo(TRUE, 'staff', 'facility');
-    $entryCount = $returnValue[0]['rowCount'];
-
-    $breakCount = 0; //Testing only.
-    while ($entryCount > 0 or $breakCount < 3) {  //testing only.
-//    while ($entryCount > 0) {
-      $geoRelationSet = agGisQuery::searchUnrelatedGeo(FALSE, 'staff', 'facility');
-      agGisQuery::updateDistance($geoRelationSet, 1);
-      $returnValue = agGisQuery::searchUnrelatedGeo(TRUE, 'staff', 'facility');
-      $entryCount = $returnValue[0]['rowCount'];
-      $breakCount++;  //Testing only.
     }
   }
 

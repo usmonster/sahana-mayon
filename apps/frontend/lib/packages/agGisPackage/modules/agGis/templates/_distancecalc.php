@@ -1,7 +1,1 @@
-<?php
-
-if($results)
-{
-  echo $results;
-}
- ?>
+<?php echo $results; ?>

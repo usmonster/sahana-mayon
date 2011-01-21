@@ -15,41 +15,40 @@
 
 <a href="#" id="calculate" class="buttonSmall">Calculate all Distances</a>
 <br/>
-<div id="result">
- </div>
+<div id="result" style="display: none;">
+  <p>please wait, calculation taking place <?php echo image_tag('indicator.gif') ?></p>
+</div>
 
 
 <script type="text/javascript">
-  $('#calculate').click(function()
-  {
-    $('#result').html('<p>please wait, calculation taking place <?php echo image_tag('indicator.gif') ?></p>');
-    //if(xmlHttp.readyState==4)
-    // {
-  $.ajax({
-      type: "POST",
-      url: "http://trunk/gis/distance",
-      data: 	"dont need any data!",
-      success: function(html){
-        $("#result").html(html);
-      }
-    });
+  var start = <?php echo $combinationCount; ?>;
+  var totalLeft = start;
+  var totalProcessed = 0;
 
-  $('#result').change(function (){
+  function calcBatch() {
+    var count = 0;
     $.ajax({
       type: "POST",
-      url: "http://trunk/gis/distance",
-      data: 	"dont need any data!",
-      success: function(html){
-        $("#result").html(html);
+      url: window.location.pathname,
+      success: function(html)
+      {
+        count = html;
       }
     });
+    return count;
+  }
 
-  })
+  $('#calculate').click(function()
+  {
+    $("#result").show();
+    //if(xmlHttp.readyState==4)
+    // {
+    do {
+      totalProcessed += calcBatch();
+      totalLeft = start - totalProcessed;
+      $("#result").html("done processing "+totalProcessed + " out of "+start+ " records!");
+    } while (totalLeft > 0);
+    // }
+  });
 
-
-  // }
-
-  //and when this is DONE, it should be set back to nothing. or a success image
-
-});
 </script>
