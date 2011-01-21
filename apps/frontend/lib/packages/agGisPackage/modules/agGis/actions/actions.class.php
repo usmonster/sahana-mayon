@@ -50,8 +50,7 @@ class agGisActions extends sfActions {
    */
   public function executeDistance(sfWebRequest $request) {
     $this->combinationCount = 25;
-    if ($request->isXmlHttpRequest())
-    {
+    if ($request->isXmlHttpRequest()) {
       return 'you started calculating dude... its going to be a while';
     }
 //    $this->ag_facility_geos = Doctrine::getTable('agFacility') //all facilities that have a coordinate set associated
@@ -238,8 +237,21 @@ class agGisActions extends sfActions {
    * @param sfWebRequest $request
    */
   public function executeGisquery(sfWebRequest $request) {
-    $geoRelationSet = agGisQuery::searchUnrelatedGeo();
-    agGisQuery::updateDistance($geoRelationSet, 1);
+    $returnValue = agGisQuery::searchUnrelatedGeo(TRUE);
+    $entryCount = $returnValue[0]['rowCount'];
+//    $returnValue = agGisQuery::searchUnrelatedGeo(FALSE);
+
+    $breakCount = 0; //Testing only.
+    while ($entryCount > 0 or $breakCount < 3) {  //testing only.
+//    while ($entryCount > 0) {
+      echo "<BR>entryCount: $entryCount";
+      $geoRelationSet = agGisQuery::searchUnrelatedGeo(FALSE);
+      agGisQuery::updateDistance($geoRelationSet, 1);
+      $returnValue = agGisQuery::searchUnrelatedGeo(TRUE);
+      $entryCount = $returnValue[0]['rowCount'];
+      $breakCount++;  //Testing only.
+      echo"<BR>breakCount: ", $breakCount;
+    }
   }
 
   /**
