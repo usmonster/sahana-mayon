@@ -15,7 +15,8 @@
 
 <a href="#" id="calculate" class="buttonSmall">Calculate all Distances</a>
 <br/>
-<div id="result"></div>
+<div id="result">
+ </div>
 
 
 <script type="text/javascript">
@@ -24,18 +25,31 @@
     $('#result').html('<p>please wait, calculation taking place <?php echo image_tag('indicator.gif') ?></p>');
     //if(xmlHttp.readyState==4)
     // {
-    $.post('http://trunk/gis/distance', function(datum) {
-      $('#result').html(datum);
+  $.ajax({
+      type: "POST",
+      url: "http://trunk/gis/distance",
+      data: 	"dont need any data!",
+      success: function(html){
+        $("#result").html(html);
+      }
     });
 
-    // }
+  $('#result').change(function (){
+    $.ajax({
+      type: "POST",
+      url: "http://trunk/gis/distance",
+      data: 	"dont need any data!",
+      success: function(html){
+        $("#result").html(html);
+      }
+    });
 
-    //and when this is DONE, it should be set back to nothing. or a success image
+  })
 
-  });
+
+  // }
+
+  //and when this is DONE, it should be set back to nothing. or a success image
+
+});
 </script>
-
-<?php if(isset($awesomecool))
-      {
-        echo $awesomecool;
-      } ?>
