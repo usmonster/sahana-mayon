@@ -59,7 +59,9 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enablePackages(
         array('agFooPackage',
           'agStaffPackage',
-          'agGisPackage')
+          'agGisPackage',
+          'agEventPackage')
+          
     );
   }
 
