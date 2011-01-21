@@ -196,6 +196,7 @@ agScenarioFacilityGroup:
       unsigned: true
       type: integer(1)
       notnull: true
+  actAs: [Luceneable]
   indexes:
     UX_agScenarioFacilityGroup:
       fields: [scenario_id, scenario_facility_group]

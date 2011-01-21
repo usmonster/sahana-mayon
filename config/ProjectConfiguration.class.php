@@ -60,9 +60,11 @@ class ProjectConfiguration extends sfProjectConfiguration
         array('agFooPackage',
           'agStaffPackage',
           'agGisPackage',
+          #'agScenarioPackage',
           'agEventPackage')
           
     );
+    $this->setPluginPath('agScenarioPackage', sfConfig::get('sf_app_module_dir') . '/scenario');
   }
 
   /**

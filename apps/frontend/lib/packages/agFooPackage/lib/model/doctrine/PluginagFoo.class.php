@@ -13,7 +13,8 @@
 abstract class PluginagFoo extends BaseagFoo
 {
 
-  public function updateLucene() {
+  public function updateLucene()
+  {
     $doc = new Zend_Search_Lucene_Document();
     $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->getId(), 'utf-8'));
     $doc->addField(Zend_Search_Lucene_Field::unStored('foo', $this->getFoo(), 'utf-8'));
