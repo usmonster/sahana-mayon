@@ -319,9 +319,9 @@ class agGisQuery {
     $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
     $result = $pdo->fetchAll();
 
-    // -- TEST BLOCK / REMOVE LATER --
-    echo $query . '<br><br>';
-    echo $result[0]['rowCount'] . "<BR><BR>";
+//    // -- TEST BLOCK / REMOVE LATER --
+//    echo $query . '<br><br>';
+//    echo $result[0]['rowCount'] . "<BR><BR>";
 
     return $result;
   }

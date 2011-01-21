@@ -49,31 +49,18 @@ class agGisActions extends sfActions {
    * @param sfWebRequest $request web request
    */
   public function executeDistance(sfWebRequest $request) {
-    $this->combinationCount = 25;
-    if ($request->isXmlHttpRequest()) {
-      return 'you started calculating dude... its going to be a while';
-    }
-//    $this->ag_facility_geos = Doctrine::getTable('agFacility') //all facilities that have a coordinate set associated
-//            ->createQuery('a')
-//            ->select('f.*,s.*, e.*, pa.*, aa.*, aag.*')
-//            ->from('agFacility f, f.agSite s, s.agEntity e, e.agEntityAddressContact pa,
-//                                        pa.agAddress aa, aa.agAddressGeo aag, aag.agGeo ag, ag.agGeoFeature agf
-//                                        ')
-//            ->execute();
-//    $this->ag_staff_geos = Doctrine::getTable('agPerson') //should be agStaff
-//            ->createQuery('a')
-//            ->select('p.*,s.*, e.*, pa.*, aa.*, aas.*')
-//            ->from('agPerson p, p.agEntity e, e.agEntityAddressContact pa,
-//                                        pa.agAddress aa, aa.agAddressGeo aag, aag.agGeo ag, ag.agGeoFeature agf
-//                                        ')//, agAddressFormat,agAddressElement - including element quadrupled this!!!
-//            ->execute();
-//    $this->distanceform = new PluginagGeoRelationshipForm();
-//
-    //show two listboxes, one of staff,
-    //one of facilities
-    //will only output to screen
-  }
+    $this->combinationCount = count(agGisQuery::findUnrelatedGeoMySQL());
+    if ($request->isXmlHttpRequest())
+    {
+      //agGisQuery::updateDistance($geoRelationSet, $relationType);
+      $this->awesomecool = 'you started calculating dude... its going to be a while';
+      //return sfView::HEADER_ONLY;
+    //return $this->datum;
+      //echo "foo!";
+    return sfView::$this->renderPartial('gis/distanceprogress', array('job' => $this->awesomecool));
 
+    }
+  }
   /**
    * presents the user with a list of staff members, their addresses, giving you the ability
    * to geocode an address via a hyperlink beside an address
