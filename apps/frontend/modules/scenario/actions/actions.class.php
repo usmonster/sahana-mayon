@@ -264,16 +264,40 @@ class scenarioActions extends sfActions
   {
     //here we can use $request to better form the index page for scenario
   }
-/**
+
+  /**
    *
    * @param sfWebRequest $request
    * making a staff pool is fun and easy with Agasti,
    */
   public function executeStaffpool(sfWebRequest $request)
   {
+    $this->scenario_id = $request->getParameter('id');
+
     $this->poolform = new agStaffPoolForm();
     $this->poolform->getEmbeddedForm('staff_generator')->setDefault('scenario_id', $request->getParameter('id'));
+
+    if ($request->isMethod(sfRequest::POST)) {
+
+      $this->poolform = new agStaffPoolForm();
+
+      $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
+      if ($this->poolform->isValid()) {
+        $ag_staff_pool = $this->poolform->save();
+//        if ($request->hasParameter('Continue')) {
+//          $this->ag_facility_resources = Doctrine_Query::create()
+//                  ->select('a.facility_id, af.*, afrt.*')
+//                  ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+//                  ->execute();
+//          $this->groupform = new agScenarioFacilityGroupForm();
+//          //        $this->setTemplate('scenario/newgroup');
+//          $this->redirect('scenario/newgroup?id=' . $ag_scenario->getId());
+//        } else {
+        $this->redirect('scenario/staffpool?id' . $request->getParameter('id'));
+      }
+    }
   }
+
   /**
    *
    * @param sfWebRequest $request
@@ -629,11 +653,10 @@ class scenarioActions extends sfActions
       }
 
 //      $this->ag_allocated_facility_resources[] = $current;
-
-  //    $this->ag_facility_resources[] = Doctrine_Query::create()
-    //          ->select('a.facility_id, af.*, afrt.*')
+      //    $this->ag_facility_resources[] = Doctrine_Query::create()
+      //          ->select('a.facility_id, af.*, afrt.*')
       //        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-        //      ->whereNotIn('a.id', array_keys($currentoptions))->execute();
+      //      ->whereNotIn('a.id', array_keys($currentoptions))->execute();
     }
   }
 

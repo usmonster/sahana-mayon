@@ -1,7 +1,7 @@
 <?php use_stylesheets_for_form($poolform) ?>
 <?php //use_javascript('tooltip');?>
 
-<form action="<?php echo url_for('scenario/staffpool')  ?> " method="post">
+<form action="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?> " method="post">
 
       <table>
     <tfoot>
