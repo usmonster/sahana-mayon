@@ -48,7 +48,7 @@
       totalProcessed += calcBatch();
       totalLeft = start - totalProcessed;
       $("#combos").html(totalLeft);
-      $("#result").html("<?php echo image_tag('indicator.gif') ?> done processing "+totalProcessed + " out of "+start+ " records!");
+      $("#result").html('<?php echo image_tag('indicator.gif') ?> done processing '+totalProcessed + " out of "+start+ " records!");
     } while (totalLeft > 0);
     $("#result").html("done processing "+totalProcessed + " out of "+start+ " records!");
     // }

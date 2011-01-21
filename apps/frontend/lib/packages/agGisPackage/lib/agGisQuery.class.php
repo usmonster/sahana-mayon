@@ -252,106 +252,110 @@ class agGisQuery {
    * @todo It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's.
    * @todo For this to work properly and without danger to the system, this needs to be encapsulated with exception handlers that do garbage cleanup
    */
-  public static function findUnrelatedGeoMySQL($countRecords = TRUE, $leftRelation = 'staff', $rightRelation = 'facility') {
-    global $offSet, $limit, $unrelatedGeoRelation;
+  public static function findUnrelatedGeoMySQL($countRecords = TRUE, $leftRelation = 'staff', $rightRelation = 'facility')
+  {
+    try
+    {
+      /*
+       * This little magic array handles all of our joins for the right and left parameters
+       * @todo this should really be a pre-defined class so we don't have to keep writing nested array stuff
+       */
+      $queryStaticClauses = array();
+      // tier 0 (eg, entity)
+      $queryStaticClauses['entity']['from'] = 'INNER JOIN ag_address_geo AS ag ON g.id = ag.geo_id
+        INNER JOIN ag_address AS a ON a.id = ag.address_id
+        INNER JOIN ag_entity_address_contact AS eac ON eac.address_id = a.id
+        INNER JOIN ag_entity AS e ON eac.entity_id = e.id';
+      // tier 1
+      $queryStaticClauses['person']['from'] = $queryStaticClauses['entity']['from'] . ' ' . 'INNER JOIN ag_person AS p ON e.id = p.entity_id';
+      $queryStaticClauses['site']['from'] = $queryStaticClauses['entity']['from'] . ' ' . 'INNER JOIN ag_site AS s ON e.id = s.entity_id';
+      // tier 2
+      $queryStaticClauses['staff']['from'] = $queryStaticClauses['person']['from'] . ' ' . 'INNER JOIN ag_staff AS stf ON p.id = stf.person_id';
+      $queryStaticClauses['facility']['from'] = $queryStaticClauses['site']['from'] . ' ' . 'INNER JOIN ag_facility AS fac ON s.id = fac.site_id';
 
-    /*
-     * This little magic array handles all of our joins for the right and left parameters
-     * @todo this should really be a pre-defined class so we don't have to keep writing nested array stuff
-     */
-    $queryStaticClauses = array();
-    // tier 0 (eg, entity)
-    $queryStaticClauses['entity']['from'] = 'INNER JOIN ag_address_geo AS ag ON g.id = ag.geo_id
-      INNER JOIN ag_address AS a ON a.id = ag.address_id
-      INNER JOIN ag_entity_address_contact AS eac ON eac.address_id = a.id
-      INNER JOIN ag_entity AS e ON eac.entity_id = e.id';
-    // tier 1
-    $queryStaticClauses['person']['from'] = $queryStaticClauses['entity']['from'] . ' ' . 'INNER JOIN ag_person AS p ON e.id = p.entity_id';
-    $queryStaticClauses['site']['from'] = $queryStaticClauses['entity']['from'] . ' ' . 'INNER JOIN ag_site AS s ON e.id = s.entity_id';
-    // tier 2
-    $queryStaticClauses['staff']['from'] = $queryStaticClauses['person']['from'] . ' ' . 'INNER JOIN ag_staff AS stf ON p.id = stf.person_id';
-    $queryStaticClauses['facility']['from'] = $queryStaticClauses['site']['from'] . ' ' . 'INNER JOIN ag_facility AS fac ON s.id = fac.site_id';
+      $baseFilterSubquery = 'SELECT DISTINCT g.id FROM ag_geo AS g';
 
-    $baseFilterSubquery = 'SELECT DISTINCT g.id FROM ag_geo AS g';
+      // build the left relation filtering subquery
+      $leftFilterSubquery = $baseFilterSubquery . ' ' . $queryStaticClauses[$leftRelation]['from'];
 
-    // build the left relation filtering subquery
-    $leftFilterSubquery = $baseFilterSubquery . ' ' . $queryStaticClauses[$leftRelation]['from'];
+      // build the right relation filtering subquery
+      $rightFilterSubquery = $baseFilterSubquery . ' ' . $queryStaticClauses[$rightRelation]['from'];
 
-    // build the right relation filtering subquery
-    $rightFilterSubquery = $baseFilterSubquery . ' ' . $queryStaticClauses[$rightRelation]['from'];
+      /*
+       * This content block establishes a core query against which the other components of the geo relation may be joined.
+       * @todo Remove the geo-coordinate count blocks and replace them with a centroid calculation aggregate function. This is, currently, a hack to prevent geo features with more than one coordinate from returning.
+       */
+      $queryBaseInnerSelect = 'SELECT g.id
+            FROM ag_geo AS g
+              INNER JOIN ag_geo_feature AS f
+                ON g.id = f.geo_id
+              INNER JOIN ag_geo_coordinate AS c
+                ON f.geo_coordinate_id = c.id';
 
-    /*
-     * This content block establishes a core query against which the other components of the geo relation may be joined.
-     * @todo Remove the geo-coordinate count blocks and replace them with a centroid calculation aggregate function. This is, currently, a hack to prevent geo features with more than one coordinate from returning.
-     */
-    $queryBaseInnerSelect = 'SELECT g.id
-          FROM ag_geo AS g
-            INNER JOIN ag_geo_feature AS f
-              ON g.id = f.geo_id
-            INNER JOIN ag_geo_coordinate AS c
-              ON f.geo_coordinate_id = c.id';
+      $queryBaseInnerGroupBy = 'GROUP BY g.id HAVING COUNT(c.id) = 1';
 
-    $queryBaseInnerGroupBy = 'GROUP BY g.id HAVING COUNT(c.id) = 1';
+      // using the base inner query, we combine our right and left queries with their filtering subqueries
+      // @todo this could totally be a tiny function
+      // @todo check whether or not the caching of derived tables FROM (SELECT...) would be more efficient than the ref join below
+      $leftQuery = $queryBaseInnerSelect . ' ' . 'STRAIGHT_JOIN (' . $leftFilterSubquery . ') AS lf ON lf.id = g.id' . ' ' . $queryBaseInnerGroupBy;
+      $rightQuery = $queryBaseInnerSelect . ' ' . 'STRAIGHT_JOIN (' . $rightFilterSubquery . ') AS rf ON rf.id = g.id' . ' ' . $queryBaseInnerGroupBy;
 
-    // using the base inner query, we combine our right and left queries with their filtering subqueries
-    // @todo this could totally be a tiny function
-    // @todo check whether or not the caching of derived tables FROM (SELECT...) would be more efficient than the ref join below
-    $leftQuery = $queryBaseInnerSelect . ' ' . 'STRAIGHT_JOIN (' . $leftFilterSubquery . ') AS lf ON lf.id = g.id' . ' ' . $queryBaseInnerGroupBy;
-    $rightQuery = $queryBaseInnerSelect . ' ' . 'STRAIGHT_JOIN (' . $rightFilterSubquery . ') AS rf ON rf.id = g.id' . ' ' . $queryBaseInnerGroupBy;
+      // build our base cartesian query
+      $queryCartesianSelect = 'SELECT
+        geo1.id AS geo1_id,
+        geo2.id AS geo2_id';
 
-    // build our base cartesian query
-    $queryCartesianSelect = 'SELECT
-      geo1.id AS geo1_id,
-      geo2.id AS geo2_id';
+      $queryCartesianWhere = 'WHERE geo1.id != geo2.id';
 
-    $queryCartesianWhere = 'WHERE geo1.id != geo2.id';
+      $queryCartesianFrom = 'FROM (' . $leftQuery . ') AS geo1';
+      $queryCartesianFrom = $queryCartesianFrom . ', (' . $rightQuery . ') AS geo2';
 
-    $queryCartesianFrom = 'FROM (' . $leftQuery . ') AS geo1';
-    $queryCartesianFrom = $queryCartesianFrom . ', (' . $rightQuery . ') AS geo2';
+      $queryCartesian = $queryCartesianSelect . ' ' . $queryCartesianFrom . ' ' . $queryCartesianWhere;
 
-    $queryCartesian = $queryCartesianSelect . ' ' . $queryCartesianFrom . ' ' . $queryCartesianWhere;
+      $queryOuter = 'SELECT
+          qc.geo1_id,
+          qc.geo2_id,
+          gc1.longitude AS geo1_longitude,
+          gc1.latitude AS geo1_latitude,
+          gc2.longitude AS geo2_longitude,
+          gc2.latitude AS geo2_latitude
+        FROM (' . $queryCartesian . ') AS qc
+          STRAIGHT_JOIN ag_geo AS g1
+            ON qc.geo1_id = g1.id
+          STRAIGHT_JOIN ag_geo AS g2
+            ON qc.geo2_id = g2.id
+          INNER JOIN ag_geo_feature AS gf1
+            ON g1.id = gf1.geo_id
+          INNER JOIN ag_geo_feature AS gf2
+            ON g2.id = gf2.geo_id
+          INNER JOIN ag_geo_coordinate AS gc1
+            ON gf1.geo_coordinate_id = gc1.id
+          INNER JOIN ag_geo_coordinate AS gc2
+            ON gf2.geo_coordinate_id = gc2.id
+          LEFT JOIN ag_geo_relationship AS agr
+            ON qc.geo1_id = agr.geo_id1 AND qc.geo2_id = agr.geo_id2
+        WHERE agr.id IS NULL';
 
-    $queryOuter = 'SELECT
-        qc.geo1_id,
-        qc.geo2_id,
-        gc1.longitude AS geo1_longitude,
-        gc1.latitude AS geo1_latitude,
-        gc2.longitude AS geo2_longitude,
-        gc2.latitude AS geo2_latitude
-      FROM (' . $queryCartesian . ') AS qc
-        STRAIGHT_JOIN ag_geo AS g1
-          ON qc.geo1_id = g1.id
-        STRAIGHT_JOIN ag_geo AS g2
-          ON qc.geo2_id = g2.id
-        INNER JOIN ag_geo_feature AS gf1
-          ON g1.id = gf1.geo_id
-        INNER JOIN ag_geo_feature AS gf2
-          ON g2.id = gf2.geo_id
-        INNER JOIN ag_geo_coordinate AS gc1
-          ON gf1.geo_coordinate_id = gc1.id
-        INNER JOIN ag_geo_coordinate AS gc2
-          ON gf2.geo_coordinate_id = gc2.id
-        LEFT JOIN ag_geo_relationship AS agr
-          ON qc.geo1_id = agr.geo_id1 AND qc.geo2_id = agr.geo_id2
-      WHERE agr.id IS NULL';
+      if ($countRecords) {
+        $queryOuter = 'SELECT COUNT(*) as rowCount FROM (' . $queryOuter . ') AS x';
+      } else {
+        $queryOuter .= ' LIMIT 5000';
+      }
 
-    if ($countRecords) {
-      $queryOuter = 'SELECT COUNT(*) as rowCount FROM (' . $queryOuter . ') AS x';
-    } else {
-      $queryOuter .= ' LIMIT 5000';
+      $query = $queryOuter;
+      $conn = Doctrine_Manager::connection();
+      $pdo = $conn->execute($query);
+      $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
+      $result = $pdo->fetchAll();
+
+  //    // -- TEST BLOCK / REMOVE LATER --
+  //    echo $query . '<br><br>';
+  //    echo $result . "<BR><BR>";
+
+      return $result;
+    } catch (Exception $e) {
+      return array(0, "Error: " . $e->getMessage());
     }
-
-    $query = $queryOuter;
-    $conn = Doctrine_Manager::connection();
-    $pdo = $conn->execute($query);
-    $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
-    $result = $pdo->fetchAll();
-
-//    // -- TEST BLOCK / REMOVE LATER --
-//    echo $query . '<br><br>';
-//    echo $result . "<BR><BR>";
-
-    return $result;
   }
 
 }
