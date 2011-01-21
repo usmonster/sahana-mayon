@@ -10,13 +10,13 @@
   facilities they may work at.  To calculate the distances between your staff and facilities click
   the button below.</p>
 
-<p>There are currently <span class="logName"><?php echo $combinationCount; ?></span> combinations of staff and facilities without distances calculated.</p>
+<p>There are currently <span id="combos" class="logName"><?php echo $combinationCount; ?></span> combinations of staff and facilities without distances calculated.</p>
 
 
 <a href="#" id="calculate" class="buttonSmall">Calculate all Distances</a>
 <br/>
 <div id="result" style="display: none;">
-  <p>please wait, calculation taking place <?php echo image_tag('indicator.gif') ?></p>
+  <p><?php echo image_tag('indicator.gif') ?> please wait, calculation taking place</p>
 </div>
 
 
@@ -47,8 +47,10 @@
     do {
       totalProcessed += calcBatch();
       totalLeft = start - totalProcessed;
-      $("#result").html("done processing "+totalProcessed + " out of "+start+ " records!");
+      $("#combos").html(totalLeft);
+      $("#result").html("<?php echo image_tag('indicator.gif') ?> done processing "+totalProcessed + " out of "+start+ " records!");
     } while (totalLeft > 0);
+    $("#result").html("done processing "+totalProcessed + " out of "+start+ " records!");
     // }
   });
 
