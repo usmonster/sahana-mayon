@@ -28,11 +28,12 @@
   function calcBatch() {
     var count = 0;
     $.ajax({
+      async: false,
       type: "POST",
       url: window.location.pathname,
       success: function(html)
       {
-        count = html;
+        count = parseInt(html);
       }
     });
     return count;

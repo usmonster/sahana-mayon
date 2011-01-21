@@ -59,7 +59,7 @@ class agGisActions extends sfActions
     $geoRelationSet = agGisQuery::searchUnrelatedGeo(FALSE, 'staff', 'facility');
 
     if ($request->isXmlHttpRequest()) {
-      $this->results = agGisQuery::updateDistance($geoRelationSet, $relationType);
+      $this->results = agGisQuery::updateDistance($geoRelationSet, 1);//todo: $relationType);
       //return sfView::HEADER_ONLY;
 
       return sfView::$this->renderPartial('distancecalc', array('results' => $this->results));
