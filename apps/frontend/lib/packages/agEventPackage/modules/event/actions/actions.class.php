@@ -12,8 +12,9 @@ class eventActions extends sfActions
 {
   public function executeIndex(sfWebRequest $request)
   {
-    $this->form = new agEventForm();
-    unset($this->form['created_at'], $this->form['updated_at']);
+    $this->scenarioForm = new agEventForm();
+    unset($this->scenarioForm['created_at'], $this->scenarioForm['updated_at'], $this->scenarioForm['event_name'], $this->scenarioForm['zero_hour'], $this->scenarioForm['ag_affected_area_list']);
+    //we want to only get the scenario here,
   }
 
   public function executeMeta(sfWebRequest $request)
