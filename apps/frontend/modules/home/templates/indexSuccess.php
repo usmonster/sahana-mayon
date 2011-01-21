@@ -1,5 +1,5 @@
 
-<h1> New York City Sahana Agasti</h1>
+<h2> New York City Sahana Agasti</h2>
 
 <?php
 if (!$sf_user->isAuthenticated()) {
@@ -9,7 +9,7 @@ if (!$sf_user->isAuthenticated()) {
 
 <?php
 if ($sf_user->isAuthenticated()) {
-  echo "<h2> Welcome to Sahana Agasti Emergency Preparedness and Response Software</h2>";
+  echo "<h3> Welcome to Sahana Agasti Emergency Preparedness and Response Software</h3>";
 }
 ?>
 
