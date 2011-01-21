@@ -73,33 +73,61 @@ class agGisQuery {
   }
 
   /**
-   * 
+   *
+   *
    * @param array $geoRelationSet
    * @param int $relationType
+   * @return int A counter of saved records.
    */
   public static function updateDistance(array $geoRelationSet, $relationType) {
+    $conn = Doctrine_Manager::connection();
+    $counter = 0;
     foreach ($geoRelationSet as $geoRelation) {
+      $counter++;
       $lat1 = $geoRelation['geo1_latitude'];
       $long1 = $geoRelation['geo1_longitude'];
       $lat2 = $geoRelation['geo2_latitude'];
       $long2 = $geoRelation['geo2_longitude'];
+
+      // Calls getDistance to calculate the distance between the geo points.
       $distance = agGis::getDistance($lat1, $long1, $lat2, $long2);
+
+      // Creates a new agGeoRelationship and saves it into the database.
       $agGeoRelation = new agGeoRelationship();
       $agGeoRelation->set('geo_id1', $geoRelation['geo1_id']);
       $agGeoRelation->set('geo_id2', $geoRelation['geo2_id']);
       $agGeoRelation->set('geo_relationship_type_id', $relationType);
       $agGeoRelation->set('geo_relationship_km_value', $distance);
-      $agGeoRelation->save();
+      //$agGeoRelation->save();
+      // Flush connection and save unsaved records.
+      if (($counter % 500) == 0)
+      {
+        $conn->flush();
+      }
     }
-    return;
+    // Flush connection and save unsaved records.
+    $conn->flush();
+    return $counter;
   }
 
   /**
+   * Determines which unrelated geo method to execute to find unrelated geo.
+   * One method is MySQL DB specific whereas the other uses ANSII standard
+   * queries.
    *
-   * @return <type>
+   * @todo Build logic to determine which find unrelated geo method to use.  If 
+   *       db engine is MySQL, run the mysql specific version.  Otherwise, run 
+   *       the ANSII standard.
+   *
+   * @param boolean $countRecord Turn on/off count of undefined geo distance
+   *                             relations.
+   * @param string $leftRelation Define the left relation of the query.
+   * @param string $rightRelation Define the right relation of th query.
+   * @return array Either a total record count of or a set of geo info on
+   *               undefined geo distance relation.
    */
-  public static function searchUnrelatedGeo($countRecord) {
-    return self::findUnrelatedGeoMySQL($countRecord, 'staff', 'facility');
+  public static function searchUnrelatedGeo($countRecord, $leftRelation, $rightRelation) {
+    return self::findUnrelatedGeoMySQL($countRecord, $leftRelation, $rightRelation);
   }
 
   /**
@@ -321,7 +349,7 @@ class agGisQuery {
 
 //    // -- TEST BLOCK / REMOVE LATER --
 //    echo $query . '<br><br>';
-//    echo $result[0]['rowCount'] . "<BR><BR>";
+//    echo $result . "<BR><BR>";
 
     return $result;
   }

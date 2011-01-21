@@ -235,22 +235,18 @@ class agGisActions extends sfActions
    *
    * @param sfWebRequest $request
    */
-  public function executeGisquery(sfWebRequest $request)
-  {
-    $returnValue = agGisQuery::searchUnrelatedGeo(TRUE);
+  public function executeGisquery(sfWebRequest $request) {
+    $returnValue = agGisQuery::searchUnrelatedGeo(TRUE, 'staff', 'facility');
     $entryCount = $returnValue[0]['rowCount'];
-//    $returnValue = agGisQuery::searchUnrelatedGeo(FALSE);
 
     $breakCount = 0; //Testing only.
     while ($entryCount > 0 or $breakCount < 3) {  //testing only.
 //    while ($entryCount > 0) {
-      echo "<BR>entryCount: $entryCount";
-      $geoRelationSet = agGisQuery::searchUnrelatedGeo(FALSE);
+      $geoRelationSet = agGisQuery::searchUnrelatedGeo(FALSE, 'staff', 'facility');
       agGisQuery::updateDistance($geoRelationSet, 1);
-      $returnValue = agGisQuery::searchUnrelatedGeo(TRUE);
+      $returnValue = agGisQuery::searchUnrelatedGeo(TRUE, 'staff', 'facility');
       $entryCount = $returnValue[0]['rowCount'];
       $breakCount++;  //Testing only.
-      echo"<BR>breakCount: ", $breakCount;
     }
   }
 
