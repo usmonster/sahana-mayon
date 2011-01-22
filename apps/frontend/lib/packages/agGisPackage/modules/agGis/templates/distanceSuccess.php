@@ -10,46 +10,65 @@
   facilities they may work at.  To calculate the distances between your staff and facilities click
   the button below.</p>
 
-<p>There are currently <span class="logName"><?php echo $combinationCount; ?></span> combinations of staff and facilities without distances calculated.</p>
+<p>There are currently <span id="combos" class="logName"><?php echo $combinationCount; ?></span> combinations of staff and facilities without distances calculated.</p>
 
 
 <a href="#" id="calculate" class="buttonSmall">Calculate all Distances</a>
 <br/>
-<div id="result">
- </div>
+<div id="result" style="display: none;">
+  <p><?php echo image_tag('indicator.gif') ?> please wait, calculation taking place</p>
+</div>
 
 
 <script type="text/javascript">
+  var start = <?php echo $combinationCount; ?>;
+  var totalLeft = start;
+  var totalProcessed = 0;
+
+  function calcBatch() {
+    var count = 0;
+    $.ajax({
+      async: false,
+      type: "POST",
+      url: window.location.pathname,
+      success: function(html)
+      {
+        count = parseInt(html);
+      }
+    });
+    return count;
+  }
+
   $('#calculate').click(function()
   {
-    $('#result').html('<p>please wait, calculation taking place <?php echo image_tag('indicator.gif') ?></p>');
+    var startTime, endTime, totalTimeElapsed = 0, averageTime = 0, estimateTimeLeft = 0;
+    $("#result").show();
     //if(xmlHttp.readyState==4)
     // {
-  $.ajax({
-      type: "POST",
-      url: "http://trunk/gis/distance",
-      data: 	"dont need any data!",
-      success: function(html){
-        $("#result").html(html);
+    do {
+      // Start timing.
+      startTime = new Date().getTime();
+
+      var recordProcessed = calcBatch();
+      totalProcessed += recordProcessed;
+      // End Timing.
+      endTime = new Date().getTime();
+
+      totalLeft = start - totalProcessed;
+
+      // Time elapsed for batch processing.
+//      intervalTimeElapsed = endTime - startTime;
+      totalTimeElapsed += endTime - startTime;
+      if (totalProcessed != 0) {
+        averageTime = totalTimeElapsed / totalProcessed;
+        estimateTimeLeft = averageTime * totalLeft;
       }
-    });
 
-  $('#result').change(function (){
-    $.ajax({
-      type: "POST",
-      url: "http://trunk/gis/distance",
-      data: 	"dont need any data!",
-      success: function(html){
-        $("#result").html(html);
-      }
-    });
+      $("#combos").html(totalLeft);
+      $("#result").html('<?php echo image_tag('indicator.gif') ?> done processing '+totalProcessed + " out of "+start+ " records!<BR>Time elapsed to process " + recordProcessed + " records: "+ (intervalTimeElapsed / 1000) + 's<BR>Estimated time left to process ' + totalLeft + ' records: ' + (estimateTimeLeft / 1000) + 's');
+    } while (totalLeft > 0);
+    $("#result").html("done processing "+totalProcessed + " out of "+start+ " records!");
+    // }
+  });
 
-  })
-
-
-  // }
-
-  //and when this is DONE, it should be set back to nothing. or a success image
-
-});
 </script>

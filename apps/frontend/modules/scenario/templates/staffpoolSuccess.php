@@ -1,7 +1,7 @@
 <h2>Staff Resource Pool</h2> <br>
 Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
 
-<?php include_partial('poolform', array('poolform' => $poolform)) ?>
+<?php include_partial('poolform', array('poolform' => $poolform, 'scenario_id' => $scenario_id)) ?>
 
 <p> On this page you decide what staff to pull from and give them weight.  This is all done through search.</p>
 

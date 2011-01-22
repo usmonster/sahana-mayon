@@ -13,6 +13,8 @@ echo '<a href="' . url_for('gis/distance') . '" class="buttonText" title="Calcul
 echo '<a href="' . url_for('gis/config') . '" class="buttonText" title="GIS">GIS Settings</a><br/>';
 //echo link_to('Excel', 'staff/excelDownload', array('class' => 'linkButton'))
 // @todo gisquery link is only for testing.  Please remove after testing.
-echo '<a href="' . url_for('gis/gisquery') . '" class="buttonText" title="GIS">GIS Queries</a><br/>';
+
+// For testing gis query functions only.
+//echo '<a href="' . url_for('gis/gisquery') . '" class="buttonText" title="GIS">GIS Queries</a><br/>';
 ?>
 

@@ -285,7 +285,7 @@ class agPersonForm extends BaseagPersonForm
     $emailContainer = new sfForm();
     $emailContainer->widgetSchema->setFormFormatterName('list');
     foreach ($this->ag_email_contact_types as $emailContactType) {
-      if($id = $this->agEntity->id) {
+      if($id = $this->getObject()->entity_id) {
         $emailObject = Doctrine_query::create()
             ->from('agEmailContact ec')
             ->where('ec.id IN (SELECT jn.email_contact_id FROM agEntityEmailContact jn WHERE jn.entity_id = ? AND email_contact_type_id = ?)', array($id, $emailContactType->id))
@@ -312,7 +312,7 @@ class agPersonForm extends BaseagPersonForm
      $phoneContainer = new sfForm(array(), array());
      $phoneContainer->widgetSchema->setFormFormatterName('list');
      foreach ($this->ag_phone_contact_types as $phoneContactType) {
-       if($id = $this->agEntity->id) {
+       if($id = $this->getObject()->entity_id) {
         $phoneObject = Doctrine_query::create()
             ->from('agPhoneContact pc')
             ->where('pc.id IN (SELECT jn.phone_contact_id FROM agEntityPhoneContact jn WHERE jn.entity_id = ? AND phone_contact_type_id = ?)', array($id, $phoneContactType->id))
@@ -557,7 +557,7 @@ class agPersonForm extends BaseagPersonForm
 
       $joinObject = Doctrine_Query::create()
         ->from('agEntityEmailContact j')
-        ->where('j.email_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->agEntity->id))
+        ->where('j.email_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->getObject()->entity_id))
         ->execute()->getFirst();
 
       if($joinObject instanceof agEntityEmailContact) {
@@ -566,7 +566,7 @@ class agPersonForm extends BaseagPersonForm
         $joinObject->save();
       } else {
         $joinObject = new agEntityEmailContact();
-        $joinObject->entity_id = $this->agEntity->id;
+        $joinObject->entity_id = $this->getObject()->entity_id;
         $joinObject->email_contact_type_id = $typeId;
         $joinObject->email_contact_id = $emailObject->id;
         $joinObject->priority = $typeId;
@@ -575,7 +575,7 @@ class agPersonForm extends BaseagPersonForm
     } elseif($form->getObject()->isModified() && $form->getObject()->email_contact == null) {
       $joinObject = Doctrine_Query::create()
         ->from('agEntityEmailContact j')
-        ->where('j.email_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->agEntity->id))
+        ->where('j.email_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->getObject()->entity_id))
         ->execute()->getFirst();
       $joinObject->delete();
     } elseif(!$form->getObject()->isModified() && $form->getObject()->email_contact == null && $form->getDefault('email_contact') == null) {
@@ -611,7 +611,7 @@ class agPersonForm extends BaseagPersonForm
 
       $joinObject = Doctrine_Query::create()
         ->from('agEntityPhoneContact j')
-        ->where('j.phone_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->agEntity->id))
+        ->where('j.phone_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->getObject()->entity_id))
         ->execute()->getFirst();
 
       if($joinObject instanceof agEntityPhoneContact) {
@@ -620,7 +620,7 @@ class agPersonForm extends BaseagPersonForm
         $joinObject->save();
       } else {
         $joinObject = new agEntityPhoneContact();
-        $joinObject->entity_id = $this->agEntity->id;
+        $joinObject->entity_id = $this->getObject()->entity_id;
         $joinObject->phone_contact_type_id = $typeId;
         $joinObject->phone_contact_id = $phoneObject->id;
         $joinObject->priority = $typeId;
@@ -629,7 +629,7 @@ class agPersonForm extends BaseagPersonForm
     } elseif($form->getObject()->isModified() && $form->getObject()->phone_contact == null) {
       $joinObject = Doctrine_Query::create()
         ->from('agEntityPhoneContact j')
-        ->where('j.phone_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->agEntity->id))
+        ->where('j.phone_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->getObject()->entity_id))
         ->execute()->getFirst();
       $joinObject->delete();
     } elseif(!$form->getObject()->isModified() && $form->getObject()->phone_contact == null && $form->getDefault('phone_contact') == null) {
@@ -678,7 +678,7 @@ class agPersonForm extends BaseagPersonForm
         $joinEntityAddressForm->getObject()->priority = $typeId;
         $joinEntityAddressForm->getObject()->address_id = $newAddress->id;
         $joinEntityAddressForm->getObject()->address_contact_type_id = $typeId;
-        $joinEntityAddressForm->getObject()->entity_id = $this->getObject()->getAgEntity()->id;
+        $joinEntityAddressForm->getObject()->entity_id = $this->getObject()->entity_id;
         $joinEntityAddressForm->getObject()->save();
       }
 
