@@ -16,4 +16,26 @@ class agScenarioFacilityGroup extends BaseagScenarioFacilityGroup
   {
     return $this->getScenarioFacilityGroup();
   }
+
+  public function updateLucene()
+  {
+    $doc = new Zend_Search_Lucene_Document();
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->getId(), 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('group', $this->getScenarioFacilityGroup(), 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('scenario', $this->getAgScenario()->getScenario() . ' ' .$this->getScenario()->description, 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('group_type', $this->getAgFacilityGroupType()->getFacilityGroupType(), 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('group_status', $this->getAgFacilityGroupAllocationStatus()->facility_group_allocation_status, 'utf-8'));
+    $q = Doctrine_Query::create()
+        ->select('g.id, sfr.id, fr.id, f.facility_name, frt.facility_resource_type')
+        ->from('agScenarioFacilityGroup g')
+        ->innerJoin('g.agScenarioFacilityResource sfr')
+        ->innerJoin('r.agFacilityResource fr')
+        ->innerJoin('fr.agFacility f')
+        ->innerJoin('fr.agFacilityResourceType frt')
+        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $r = 5;
+
+    return $doc;
+  }
 }
