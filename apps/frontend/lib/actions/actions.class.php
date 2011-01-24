@@ -15,18 +15,22 @@
  */
 class agActions extends sfActions
 {
+
   public function executeSearch(sfWebRequest $request)
   {
+    $models = $this->getModuleName();
+    if (isset($this->searchedModels)) {
+      $models = implode(',', $this->searchedModels);
+    }
+
     $this->searchquery = $request->getParameter('query');
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
     $query = LuceneSearch::find($this->searchquery)
-            ->fuzzy();
-            //->in($this->getModuleName());
+            ->fuzzy()
+            ->in($models);
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
     $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'search');
-    //return sfView::$this->renderPartial('search', array('hits' => $this->hits));
-    //$this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'search');
   }
 
 }
