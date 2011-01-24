@@ -68,6 +68,14 @@ abstract class BaseagAddressGeo extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
+        $this->index('IX_agAddressGeo_addrGeo', array(
+             'fields' => 
+             array(
+              0 => 'address_id',
+              1 => 'geo_id',
+             ),
+             'type' => 'unique',
+             ));
     }
 
     public function setUp()

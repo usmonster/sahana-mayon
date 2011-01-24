@@ -33,7 +33,10 @@ abstract class BaseagAddressGeoForm extends BaseFormDoctrine
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorDoctrineUnique(array('model' => 'agAddressGeo', 'column' => array('address_id')))
+      new sfValidatorAnd(array(
+        new sfValidatorDoctrineUnique(array('model' => 'agAddressGeo', 'column' => array('address_id'))),
+        new sfValidatorDoctrineUnique(array('model' => 'agAddressGeo', 'column' => array('address_id', 'geo_id'))),
+      ))
     );
 
     $this->widgetSchema->setNameFormat('ag_address_geo[%s]');

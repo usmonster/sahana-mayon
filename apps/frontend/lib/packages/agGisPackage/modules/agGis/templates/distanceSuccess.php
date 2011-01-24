@@ -57,7 +57,7 @@
       totalLeft = start - totalProcessed;
 
       // Time elapsed for batch processing.
-//      intervalTimeElapsed = endTime - startTime;
+      intervalTimeElapsed = endTime - startTime;
       totalTimeElapsed += endTime - startTime;
       if (totalProcessed != 0) {
         averageTime = totalTimeElapsed / totalProcessed;
@@ -65,7 +65,7 @@
       }
 
       $("#combos").html(totalLeft);
-      $("#result").html('<?php echo image_tag('indicator.gif') ?> done processing '+totalProcessed + " out of "+start+ " records!<BR>Time elapsed to process " + recordProcessed + " records: "+ (intervalTimeElapsed / 1000) + 's<BR>Estimated time left to process ' + totalLeft + ' records: ' + (estimateTimeLeft / 1000) + 's');
+      $("#result").html('<?php echo image_tag('indicator.gif') ?> done processing '+totalProcessed + " out of "+start+ " records!<BR>Total time elapsed to process " + totalProcessed + " records: "+ (totalTimeElapsed / 1000) + 's<BR>Estimated time left to process ' + totalLeft + ' records: ' + (estimateTimeLeft / 1000) + 's');
     } while (totalLeft > 0);
     $("#result").html("done processing "+totalProcessed + " out of "+start+ " records!");
     // }

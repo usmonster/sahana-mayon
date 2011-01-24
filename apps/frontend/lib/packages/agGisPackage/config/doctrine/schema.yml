@@ -109,6 +109,9 @@ agAddressGeo:
     UX_agAddressGeo:
       fields: [address_id]
       type: unique
+    IX_agAddressGeo_addrGeo:
+      fields: [address_id, geo_id]
+      type: unique
   relations:
     agGeo:
       local: geo_id
