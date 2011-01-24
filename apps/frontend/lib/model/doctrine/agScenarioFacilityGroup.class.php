@@ -35,11 +35,18 @@ class agScenarioFacilityGroup extends BaseagScenarioFacilityGroup
         ->innerJoin('fr.agFacilityResourceType frt')
         ->where('g.id = ?', $this->id)
         ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-    $b = $this->getReferences();
-    foreach($this->getAgScenarioFacilityResource() as $facRes) {
-      $a = $facRes;
+    foreach($query as $result) {
+      $facilityName = $facilityName . ' ' . $result['f_facility_name'];
+      $facilityResourceType = $facilityResourceType . ' ' . $result['frt_facility_resource_type'];
     }
-    $r = 5;
+    if(isset($facilityName)) {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('facility_name', $facilityName, 'utf-8'));
+    }
+    if(isset($facilityResourceType)) {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource_type', $facilityResourceType, 'utf-8'));
+    }
+
+
 
     return $doc;
   }

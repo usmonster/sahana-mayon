@@ -981,7 +981,9 @@ class scenarioActions extends agActions
     $groupform->bind($request->getParameter($groupform->getName()), $request->getFiles($groupform->getName()));
     if ($groupform->isValid()) {
       $ag_scenario_facility_group = $groupform->save();
+      $ag_scenario_facility_group->updateLucene();
       $scenario_id = $ag_scenario_facility_group->getAgScenario()->getId();
+      $c = $ag_scenario_facility_group->getAgScenarioFacilityResource();
       // The Group object has been created here.
       if ($request->hasParameter('Continue')) {
         //$this->getUser()->setAttribute('staffResourceTypes', $this->staffResourceTypes);

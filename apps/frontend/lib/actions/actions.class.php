@@ -26,8 +26,8 @@ class agActions extends sfActions
     $this->searchquery = $request->getParameter('query');
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
     $query = LuceneSearch::find($this->searchquery)
-            ->fuzzy()
-            ->in($models);
+            ->fuzzy();
+            //->in($models);
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
     $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'search');
