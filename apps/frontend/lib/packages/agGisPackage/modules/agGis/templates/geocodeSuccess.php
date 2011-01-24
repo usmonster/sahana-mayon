@@ -42,7 +42,7 @@ if (isset($coderesults)) {
 
   the results of your geocoding:<br />
 
-  <strong>you tried to enter:</strong><?php var_dump($address) //number,street,address       ?><br/>
+  <strong>you tried to enter:</strong><?php var_dump($address) //number,street,address        ?><br/>
   <strong>the geoserver returned:</strong><?php var_dump($result) ?>
 <?php
 }

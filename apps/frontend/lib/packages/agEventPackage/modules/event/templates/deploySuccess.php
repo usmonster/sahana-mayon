@@ -5,8 +5,8 @@
 ?>
 <p>The final steps in preparation are often the most critical.  
   In the final steps of pre-deployment, you'll ensure all geographic reference information for
-your staff and facility resources are up to date, and that the shifts for <b>Name of Event</b> are
-up to date.</p>
+  your staff and facility resources are up to date, and that the shifts for <b>Name of Event</b> are
+  up to date.</p>
 
 <h3><b>Name of Event</b> Management</h3>
 

@@ -25,14 +25,17 @@ class eventActions extends sfActions
 
   public function executeReview(sfWebRequest $request)
   {
+
   }
 
   public function executeGis(sfWebRequest $request)
   {
+
   }
 
   public function executeDeploy(sfWebRequest $request)
   {
+
   }
 
   public function executeCreate(sfWebRequest $request)

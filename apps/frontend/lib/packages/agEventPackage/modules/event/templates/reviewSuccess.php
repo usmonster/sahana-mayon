@@ -11,8 +11,8 @@
   <b>Name of Event</b> before deployment.</p>
 
 <p><b>Note: What you change in an active event will not affect the scenario it is based on.</b><br>
-Inversely, changes to the Scenario will not affect your event.  Be sure, after the event, to update
-your plan with any knowledge gained during the response.</p>
+  Inversely, changes to the Scenario will not affect your event.  Be sure, after the event, to update
+  your plan with any knowledge gained during the response.</p>
 
 <b>Add some buttons.</b>
 <br />
