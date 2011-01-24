@@ -16,7 +16,6 @@ all:
   # Which models to automaticly reindex                                       #
   #############################################################################
   #models: ['News','Member','Project','Event','Content','Organisation']
-  models: ['agPerson', 'agFoo']
 
   #############################################################################
   # A verion of zend lucene has been packaged with this plugin                #

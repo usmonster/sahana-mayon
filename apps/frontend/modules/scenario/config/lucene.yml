@@ -9,7 +9,7 @@ all:
   #############################################################################
   # Location of the search index, by default in the data directory            #
   #############################################################################
-  data_dir: %SF_DATA_DIR%/search/agScenario
+  data_dir: %SF_DATA_DIR%/search
 
   #############################################################################
   # For the reindex task (lucene:reindex)                                     #

@@ -78,6 +78,7 @@ class ProjectConfiguration extends sfProjectConfiguration
           'agReportPackage',
           'agEventPackage')
     );
+    // Use the line below to enable indexing by getting Symfony to pick up lucene.yml from the module(s) passed to enableModules();
     $this->enableModules(array('scenario'));
   }
 
