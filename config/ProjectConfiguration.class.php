@@ -61,7 +61,7 @@ class ProjectConfiguration extends sfProjectConfiguration
           'agGisPackage',
           #'agScenarioPackage',
           'agEventPackage',
-          'agReportPackage'
+          'agReportPackage',
           #'agScenarioPackage',
           'agEventPackage')
           
