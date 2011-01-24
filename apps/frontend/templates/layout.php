@@ -35,7 +35,7 @@
         <!-- Some of these nav links don't all actually work; some are just placeholders for now so it looks nice. -->
         <?php include_component('nav', 'Menu'); ?>
           <span style="margin: .1em; float: right;">
-          <?php include_partial('agStaff/searchForm'); ?>
+          <?php include_partial('global/searchForm'); ?>
         </span>
         <?php endif ?>
         </div>

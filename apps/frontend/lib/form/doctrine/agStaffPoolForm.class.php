@@ -8,15 +8,15 @@
  * @author     CUNY SPS
  * @version    SVN: $Id: sfDoctrineFormTemplate.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
-class agStaffPoolForm extends agLuceneSearchForm
+class agStaffPoolForm extends agScenarioStaffGeneratorForm
 {
 
   public $lucene_search_id;
   public function embedAgSearchForms()
   {
     //$staffContainerForm = $this;
-    //$this->embedLuceneForm($this);
-    $this->embedStaffGeneratorForm();
+    $this->embedLuceneForm();
+    //$this->embedStaffGeneratorForm();
   }
 
   public function embedStaffGeneratorForm()
@@ -41,26 +41,30 @@ class agStaffPoolForm extends agLuceneSearchForm
     $this->embedForm('staff_generator', $staffGenForm);
   }
 
-//  public function embedLuceneForm($containerForm)
-//  {
-//    if (!$this->valid()) {
-//      $luceneObject = Doctrine_Query::create()
-//              ->from('agLuceneSearch a')
-//              //->where('a.p =?', $id)
-//              ->execute()->getFirst();
-//    }
-//    $luceneForm = new agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);
-//    unset($luceneForm['created_at'], $luceneForm['updated_at']);
-//    unset($luceneForm['ag_report_list']);
-//
-//    $containerForm->embedForm('lucene_search', $luceneForm);
-//  }
+  public function embedLuceneForm()
+  {
+    if (!$this->valid()) {
+      $luceneObject = Doctrine_Query::create()
+              ->from('agLuceneSearch a')
+              //->where('a.p =?', $id)
+              ->execute()->getFirst();
+    }
+    $luceneForm = new agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);
+    unset($luceneForm['created_at'], $luceneForm['updated_at']);
+    unset($luceneForm['ag_report_list']);
+
+    $this->embedForm('lucene_search', $luceneForm);
+  }
 
   public function configure()
   {
     parent::configure();
+    $this->setWidget('lucene_search_id', new sfWidgetFormInputHidden());
+    $this->setWidget('scenario_id', new sfWidgetFormInputHidden());
+    $this->setValidator('lucene_search_id', new sfValidatorPass());
+    $this->setValidator('scenario_id', new sfValidatorPass());
     unset($this['created_at'], $this['updated_at']);
-    unset($this['ag_report_list']);
+
     $this->embedAgSearchForms();
 
   }

@@ -8,7 +8,7 @@
  * @author     CUNY SPS
  * @version    SVN: $Id: actions.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
-class agFooActions extends sfActions
+class agFooActions extends agActions
 {
 
   public function executeIndex(sfWebRequest $request)
@@ -64,26 +64,6 @@ class agFooActions extends sfActions
   {
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_foo);
-  }
-
-  public function executeSearch(sfWebRequest $request)
-  {
-    $this->searchquery = $request->getParameter('query');
-    $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
-    $query = LuceneSearch::find($this->searchquery)
-            ->fuzzy()
-            ->in($this->getModuleName());
-    $this->results = $query->getRecords();
-    $this->hits = $query->getHits();
-//    $ids = LuceneSearch::find($this->searchquery)
-//            //->fuzzy()
-//            ->in('agFoo')
-//            ->getPksForModel();
-//
-//    $query2 = Doctrine_Query::create()
-//            ->select('a.*')
-//            ->from('agFoo')
-//            ->andWhereIn('id', $ids);
   }
 
   public function executeNew(sfWebRequest $request)
