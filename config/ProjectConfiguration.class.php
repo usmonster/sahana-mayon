@@ -36,6 +36,21 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->disablePlugins($packages);
   }
 
+  public function enableModules($packages)
+  {
+    if (!is_array($packages)) {
+      if (func_num_args() > 1) {
+        $packages = func_get_args();
+      } else {
+        $packages = array($packages);
+      }
+    }
+    foreach ($packages as $package) {
+      $this->setPluginPath($package, sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $package);
+    }
+    $this->enablePlugins($packages);
+  }
+
   public function setup()
   {
     //$this->appendEnabledModules();
@@ -59,14 +74,11 @@ class ProjectConfiguration extends sfProjectConfiguration
         array('agFooPackage',
           'agStaffPackage',
           'agGisPackage',
-          #'agScenarioPackage',
           'agEventPackage',
           'agReportPackage',
-          #'agScenarioPackage',
           'agEventPackage')
-          
     );
-    $this->setPluginPath('agScenarioPackage', sfConfig::get('sf_app_module_dir') . '/scenario');
+    $this->enableModules(array('scenario'));
   }
 
   /**
