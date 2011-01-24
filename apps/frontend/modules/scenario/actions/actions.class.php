@@ -307,9 +307,11 @@ class scenarioActions extends agActions
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
     }
-    else{
-      $this->poolform = new agStaffPoolForm();
+    if ($request->getParameter('search_id')) {
+      $staffPoolObject = Doctrine_Core::getTable('agScenarioStaffGenerator')->find($request->getParameter('search_id'));
     }
+
+      $this->poolform = new agStaffPoolForm(isset($staffPoolObject) ? $staffPoolObject : null);
   }
 
   /**
@@ -945,7 +947,7 @@ class scenarioActions extends agActions
 //        $this->setTemplate('scenario/newgroup');
         $this->redirect('scenario/newgroup?id=' . $ag_scenario->getId());
       } else {
-        $this->redirect('scenario/edit?id' . $ag_scenario->getId());
+        $this->redirect('scenario/edit?id=' . $ag_scenario->getId());
       }
     }
   }
