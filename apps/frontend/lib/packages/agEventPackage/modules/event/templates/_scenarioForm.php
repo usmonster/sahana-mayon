@@ -6,7 +6,7 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          <input type="submit" value="Go to Predeployment" />
+          <input type="submit" value="Go to Pre-Deployment" />
         </td>
       </tr>
     </tfoot>

@@ -59,10 +59,3 @@ sf_guard_signin:
 sf_guard_signout:
   url:   /logout
   param: { module: sfGuardAuth, action: signout }
-
-staff_search:
-  url:   /staff/search
-  param: { module: agStaff, action: search }
-staff_filter:
-  url:   /staff/filter
-  param: { module: agStaff, action: filter }
