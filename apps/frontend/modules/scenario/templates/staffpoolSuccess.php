@@ -1,9 +1,25 @@
 <h2>Staff Resource Pool</h2> <br>
 Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
-
+<p> On this page you decide what staff to pull from and give them weight.  This is all done through search.</p>
+<h3>Existing Saved Searches
+<table>
+  <thead>
+    <tr>
+      <th>Search Name</th>
+      <th>Search Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($saved_searches as $saved_search): ?>
+    <tr>
+      <td><a href="<?php echo url_for('report/editsearch?id='.$saved_search->getId()) ?>"><?php echo $saved_search->query_name ?></a></td>
+      <td><?php echo $ag_facility_group_type->getLuceneSearchType() ?></td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
 <?php include_partial('poolform', array('poolform' => $poolform, 'scenario_id' => $scenario_id)) ?>
 
-<p> On this page you decide what staff to pull from and give them weight.  This is all done through search.</p>
 
 <p> THIS PORTION BELOW IS NOT FUNCTIONAL AND ONLY FOR PROOF OF CONCEPT
 

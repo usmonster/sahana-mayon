@@ -1027,7 +1027,7 @@ class agPersonForm extends BaseagPersonForm
 //          }
 //          unset($forms[$key]);
 //        }
-        if ($form instanceof agEmbeddedStaffForm) {
+        if ($form instanceof agEmbeddedStaffForm) {  //this should be decoupled from the PERSON form
           unset($forms[$key]);
         }
         

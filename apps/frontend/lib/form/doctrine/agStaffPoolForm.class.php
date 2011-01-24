@@ -11,7 +11,7 @@
 class agStaffPoolForm extends agLuceneSearchForm
 {
 
-  //public $lucene_search_id;
+  public $lucene_search_id;
   public function embedAgSearchForms()
   {
     //$staffContainerForm = $this;
@@ -32,6 +32,8 @@ class agStaffPoolForm extends agLuceneSearchForm
 
     $staffGenForm->setWidget('lucene_search_id', new sfWidgetFormInputHidden());
     $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
+    $staffGenForm->setValidator('lucene_search_id', new sfValidatorPass());
+    $staffGenForm->setValidator('scenario_id', new sfValidatorPass());
 
     unset($staffGenForm['created_at'], $staffGenForm['updated_at']);
 
@@ -89,6 +91,7 @@ class agStaffPoolForm extends agLuceneSearchForm
     $form->updateObject($values);
     if ($form->getObject()->lucene_search_id == null) {
       $form->getObject()->lucene_search_id = $this->getObject()->id;
+      $form->getObject()->scenario_id = $this->getObject()->id;
     }
     $form->getObject()->save();
     //$this->staff_resource_id = $form->getObject()->id;

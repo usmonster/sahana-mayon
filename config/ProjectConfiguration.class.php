@@ -54,14 +54,15 @@ class ProjectConfiguration extends sfProjectConfiguration
     );
 
 
-
     //packages are specific to the application, though not core and should function standalone
     $this->enablePackages(
         array('agFooPackage',
           'agStaffPackage',
           'agGisPackage',
           #'agScenarioPackage',
-          'agEventPackage')
+          'agEventPackage',
+          'agReportPackage'
+)
           
     );
     $this->setPluginPath('agScenarioPackage', sfConfig::get('sf_app_module_dir') . '/scenario');

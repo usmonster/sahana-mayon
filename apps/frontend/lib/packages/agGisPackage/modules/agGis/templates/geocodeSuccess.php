@@ -19,13 +19,13 @@
   Below are the current results.  Click the button to create a report of the affected records.</p>
 
 <p>There are <span class="logName"><?php echo $goodCount; ?></span> <span class="green">good</span> records.
-  <a href="<?php echo url_for('reporting/goodgeo'); ?> " class="buttonSmall">View Report</a></p>
+  <a href="<?php echo url_for('report/goodgeo'); ?> " class="buttonSmall">View Report</a></p>
 
 <p>There are <span class="logName"><?php echo $zipCount; ?></span> <span class="orange">zip-code-only</span> records.
-  <a href="<?php echo url_for('reporting/zipgeo'); ?> " class="buttonSmall">View Report</a></p>
+  <a href="<?php echo url_for('report/zipgeo'); ?> " class="buttonSmall">View Report</a></p>
 
 <p>There are <span class="logName"><?php echo $nonCount; ?></span> records <span class="fail">unable to be geocoded.</span>
-  <a href="<?php echo url_for('reporting/ungeo'); ?> " class="buttonSmall">View Report</a></p>
+  <a href="<?php echo url_for('report/ungeo'); ?> " class="buttonSmall">View Report</a></p>
 
 
 <?php

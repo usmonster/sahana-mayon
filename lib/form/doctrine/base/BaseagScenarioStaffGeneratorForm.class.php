@@ -25,8 +25,8 @@ abstract class BaseagScenarioStaffGeneratorForm extends BaseFormDoctrine
 
     $this->setValidators(array(
       'id'               => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'scenario_id'      => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'required' => false )),
-      'lucene_search_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agLuceneSearch'), 'required' => false )),
+      'scenario_id'      => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'))),
+      'lucene_search_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agLuceneSearch'))),
       'search_weight'    => new sfValidatorInteger(),
       'created_at'       => new sfValidatorDateTime(),
       'updated_at'       => new sfValidatorDateTime(),

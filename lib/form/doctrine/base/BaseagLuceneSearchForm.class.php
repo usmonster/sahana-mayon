@@ -28,7 +28,7 @@ abstract class BaseagLuceneSearchForm extends BaseFormDoctrine
       'id'                    => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'lucene_search_type_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agLuceneSearchType'))),
       'query_name'            => new sfValidatorString(array('max_length' => 64)),
-      'query_condition'       => new sfValidatorPass(),
+      'query_condition'       => new sfValidatorString(array('max_length' => 64)),
       'created_at'            => new sfValidatorDateTime(),
       'updated_at'            => new sfValidatorDateTime(),
       'ag_report_list'        => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agReport', 'required' => false)),
