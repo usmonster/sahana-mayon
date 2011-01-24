@@ -99,6 +99,18 @@ class scenarioActions extends sfActions {
     $this->pager->init();
   }
 
+<<<<<<< TREE
+  public function executeSearch(sfWebRequest $request)
+  {
+    $this->searchquery = $request->getParameter('query');
+    $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
+    $query = LuceneSearch::find($this->searchquery)
+            ->fuzzy()
+            ->in($this->getModuleName());
+    $this->results = $query->getRecords();
+    $this->hits = $query->getHits();
+  }
+
   public function executeSearch(sfWebRequest $request) {
     $this->searchquery = $request->getParameter('query');
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
@@ -278,13 +290,23 @@ class scenarioActions extends sfActions {
   {
     $this->scenario_id = $request->getParameter('id');
 
+    $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
+    ->createQuery('agSSG')
+    ->select('agSSG.*')
+    ->from('agScenarioStaffGenerator agSSG')
+    ->where('agSSG.scenario_id = ?', $this->scenario_id) //join up to see what staff pool
+    ->execute();
+//this will fail currently, but it's close
+
     $this->poolform = new agStaffPoolForm();
     $this->poolform->getEmbeddedForm('staff_generator')->setDefault('scenario_id', $request->getParameter('id'));
 
     if ($request->isMethod(sfRequest::POST)) {
 
       $this->poolform = new agStaffPoolForm();
-
+      //this won't work ? setting the scenario_id here? 
+      $this->poolform->getEmbeddedForm('staff_generator')->scenario_id = $request->getParameter('id');
+      $this->poolform->getEmbeddedForm('staff_generator')->setDefault('scenario_id', $request->getParameter('id'));
       $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
       if ($this->poolform->isValid()) {
         $ag_staff_pool = $this->poolform->save();
@@ -297,7 +319,7 @@ class scenarioActions extends sfActions {
 //          //        $this->setTemplate('scenario/newgroup');
 //          $this->redirect('scenario/newgroup?id=' . $ag_scenario->getId());
 //        } else {
-        $this->redirect('scenario/staffpool?id' . $request->getParameter('id'));
+        $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
     }
   }

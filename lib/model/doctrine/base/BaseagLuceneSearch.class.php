@@ -8,7 +8,7 @@
  * @property integer $id
  * @property integer $lucene_search_type_id
  * @property string $query_name
- * @property gzip $query_condition
+ * @property string $query_condition
  * @property agLuceneSearchType $agLuceneSearchType
  * @property Doctrine_Collection $agReport
  * @property Doctrine_Collection $agReportGenerator
@@ -17,7 +17,7 @@
  * @method integer             getId()                       Returns the current record's "id" value
  * @method integer             getLuceneSearchTypeId()       Returns the current record's "lucene_search_type_id" value
  * @method string              getQueryName()                Returns the current record's "query_name" value
- * @method gzip                getQueryCondition()           Returns the current record's "query_condition" value
+ * @method string              getQueryCondition()           Returns the current record's "query_condition" value
  * @method agLuceneSearchType  getAgLuceneSearchType()       Returns the current record's "agLuceneSearchType" value
  * @method Doctrine_Collection getAgReport()                 Returns the current record's "agReport" collection
  * @method Doctrine_Collection getAgReportGenerator()        Returns the current record's "agReportGenerator" collection
@@ -57,9 +57,10 @@ abstract class BaseagLuceneSearch extends sfDoctrineRecord
              'notnull' => true,
              'length' => 64,
              ));
-        $this->hasColumn('query_condition', 'gzip', null, array(
-             'type' => 'gzip',
+        $this->hasColumn('query_condition', 'string', 64, array(
+             'type' => 'string',
              'notnull' => true,
+             'length' => 64,
              ));
 
 
