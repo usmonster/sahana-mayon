@@ -282,7 +282,15 @@ class scenarioActions extends agActions
             ->execute();
 //this will fail currently, but it's close$this->poolform = new agStaffPoolForm();
 
-    if ($request->isMethod(sfRequest::POST)) {
+    if ($request->isMethod(sfRequest::POST)) { //OR if coming from an executed search
+      if ($request->getParameter('Preview')) {
+
+        parent::doSearch($request->getParameter("ag_scenario_staff_generator['lucene_search']['query_condition']"));
+        $test = $request->getPostParameter('ag_scenario_staff_generator');
+        $test2 = $test['lucene_search'];
+        $test3 = $test2['query_condition'];
+        //the above USED to work, but let's be smarter about it
+      }
 
       if ($request->getParameter('search_id')) {
         $staffPoolObject = Doctrine_Core::getTable('agScenarioStaffGenerator')->find($request->getParameter('search_id'));
@@ -290,9 +298,10 @@ class scenarioActions extends agActions
 
       $this->poolform = new agStaffPoolForm(isset($staffPoolObject) ? $staffPoolObject : null);
       //this won't work ? setting the scenario_id here? 
-      $this->poolform->getObject()->scenario_id = $request->getParameter('id');
+
       $this->poolform->setDefault('scenario_id', $request->getParameter('id'));
       $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
+      $this->poolform->getObject()->scenario_id = $request->getParameter('id');
       if ($this->poolform->isValid()) {
         $ag_staff_pool = $this->poolform->save();
 //        if ($request->hasParameter('Continue')) {
@@ -311,7 +320,14 @@ class scenarioActions extends agActions
       $staffPoolObject = Doctrine_Core::getTable('agScenarioStaffGenerator')->find($request->getParameter('search_id'));
     }
 
-      $this->poolform = new agStaffPoolForm(isset($staffPoolObject) ? $staffPoolObject : null);
+    $this->poolform = new agStaffPoolForm(isset($staffPoolObject) ? $staffPoolObject : null);
+    $this->filterForm = new sfForm();
+    $this->filterForm->setWidgets(array(
+      'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
+      'organization' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization')),
+    ));
+    $this->filterForm->getWidget('staff_type')->setAttribute('style', 'width: 100%');
+    $this->filterForm->getWidget('organization')->setAttribute('style', 'width: 100%');
   }
 
   /**

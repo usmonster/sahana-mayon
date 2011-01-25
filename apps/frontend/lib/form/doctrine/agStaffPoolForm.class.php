@@ -12,6 +12,7 @@ class agStaffPoolForm extends agScenarioStaffGeneratorForm
 {
 
   public $lucene_search_id;
+
   public function embedAgSearchForms()
   {
     //$staffContainerForm = $this;
@@ -28,7 +29,6 @@ class agStaffPoolForm extends agScenarioStaffGeneratorForm
               ->execute()->getFirst();
     }
     $staffGenForm = new agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
-
 
     $staffGenForm->setWidget('lucene_search_id', new sfWidgetFormInputHidden());
     $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
@@ -66,7 +66,6 @@ class agStaffPoolForm extends agScenarioStaffGeneratorForm
     unset($this['created_at'], $this['updated_at']);
 
     $this->embedAgSearchForms();
-
   }
 
   public function saveEmbeddedForms($con = null, $forms = null)

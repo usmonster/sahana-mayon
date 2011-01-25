@@ -18,20 +18,31 @@ class agActions extends sfActions
 
   public function executeSearch(sfWebRequest $request)
   {
+
+    self::doSearch($request->getParameter('query'));
+    $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'search');
+    //$this->setTemplate('global/search');
+  }
+
+  public function doSearch($searchquery)
+  {
+    $models = $this->getModuleName();
+    if ($models == 'scenario'){
+      $models = 'agScenarioFacilityGroup';
+    }
     if (isset($this->searchedModels)) {
       $models = implode(',', $this->searchedModels);
     } else {
       $models = $this->getModuleName();
     }
 
-    $this->searchquery = $request->getParameter('query');
+    $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
     $query = LuceneSearch::find($this->searchquery)
             ->fuzzy();
-            //->in($models);
+    //->in($models);
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
-    $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'search');
   }
 
 }
