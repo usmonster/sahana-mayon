@@ -955,9 +955,13 @@ class agPersonForm extends BaseagPersonForm
         unset($this->embeddedForms['languages'][$aKey]);
       }
     }
+    /**
+    * @todo The if() below needs to be removed/replaced. Right now it is preventing and invalid error on
+    * some of the staff specific forms from PluginagStaffPersonForm.
+    **/
     if (is_array($forms)) {
       foreach ($forms as $key => $form) {
-        if ($form instanceof agEmbeddedStaffForm) {  //this should be decoupled from the PERSON form
+        if ($form instanceof agEmbeddedStaffForm) {
           unset($forms[$key]);
         }
       }
