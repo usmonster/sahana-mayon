@@ -1056,5 +1056,15 @@ class agPersonForm extends BaseagPersonForm
 //    }
 //    return parent::doSave($con);
 //  }
+  protected function doSave($con = null)
+  {
+    $this->saveagNationalityList($con);
+    $this->saveagReligionList($con);
+    $this->saveagProfessionList($con); 
+    $this->saveagEthnicityList($con);
+    $this->saveagSexList($con);
+    $this->saveagMaritalStatusList($con);
 
+    BaseFormDoctrine::doSave($con);
+  }
 }

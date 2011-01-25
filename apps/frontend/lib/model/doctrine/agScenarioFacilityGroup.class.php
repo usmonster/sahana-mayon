@@ -45,9 +45,6 @@ class agScenarioFacilityGroup extends BaseagScenarioFacilityGroup
     if(isset($facilityResourceType)) {
       $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource_type', $facilityResourceType, 'utf-8'));
     }
-
-
-
     return $doc;
   }
 }

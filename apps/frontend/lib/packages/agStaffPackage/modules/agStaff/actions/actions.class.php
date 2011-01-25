@@ -472,6 +472,16 @@ class agStaffActions extends sfActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       //are our values bound at this point?
+
+      // The two lines below are needed to prevent an attempted delete of the agStaff object
+      // attached to this person. Symfony/Doctrine seems to see agStaff as a join object in
+      // this case, since it holds keys from person and staff status.
+      // doSave() has also been overridden in agPersonForm.class.php so that the
+      // saveStaffStatusList function is not called. Calling that refreshes the relation
+      // and will cause failure on an update of an existing staff.
+      $form->getObject()->clearRelated('agStaffStatus');
+      $form->getObject()->clearRelated('agStaff');
+
       $ag_staff = $form->save();
 
       //$staff_id = $ag_staff->getAgStaff()->getFirst()->getId();

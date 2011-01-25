@@ -45,12 +45,12 @@ class PluginagStaffPersonForm extends agPersonForm
   public function embedStaffResourceForm($staffContainerForm)
   {
     if ($staff = $this->getObject()->getAgStaff()->getFirst()) {
-      $staffResourceTypeObject = Doctrine_Query::create()
+      $staffResourceObject = Doctrine_Query::create()
               ->from('agStaffResource a')
-              ->where('a.id IN (SELECT sr.staff_resource_type_id FROM agStaffResource sr WHERE sr.staff_id = ?)', $staff->id)
+              ->where('a.staff_id = ?', $staff->id)
               ->execute()->getFirst();
     }
-    $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm(isset($staffResourceTypeObject) ? $staffResourceTypeObject : null);
+    $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm(isset($staffResourceObject) ? $staffResourceObject : null);
     //the above will not always work because our record is not saved yet (on a new staff creation)
     //may have to set default
     unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
@@ -297,5 +297,10 @@ class PluginagStaffPersonForm extends agPersonForm
 //    }
     return parent::saveEmbeddedForms($con, $forms);
   }
+
+//  public function doSave()
+//  {
+//
+//  }
 
 }
