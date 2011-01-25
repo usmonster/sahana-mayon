@@ -955,107 +955,24 @@ class agPersonForm extends BaseagPersonForm
         unset($this->embeddedForms['languages'][$aKey]);
       }
     }
-//    if (null === $forms) {
-//      $forms = $this->embeddedForms;
-//    }
     if (is_array($forms)) {
       foreach ($forms as $key => $form) {
-
-        /**
-         * Language Saving Section
-         * */
-//        if ($form instanceof agEmbeddedAgPersonMjAgLanguageForm) {
-//          $joinQuery = Doctrine::getTable('agPersonMjAgLanguage')->createQuery('d')
-//                  ->select('d.id')
-//                  ->from('agPersonMjAgLanguage d')
-//                  ->where('d.id =?', $form->getObject()->id);
-//
-//          if ($form->getObject()->language_id <> null) {
-//            //Create a new agPersonMjAgLanguageForm. Populate it with an existing object, if it exists.
-//            //check if the langauge value has changed between page render and form submission. if it has, set the join object's lanquage to the new language.
-//            if ($form->getObject()->language_id <> $form->getDefault('language_id')) {
-//              // Have to get the object from the DB. Symfony errors out if we try to save the new one, won't try to update, just does an insert.
-//              if ($join = $joinQuery->fetchOne()) {
-//                $join->language_id = $form->getObject()->language_id;
-//                $join->save();
-//              } else {
-//                $form->getObject()->person_id = $this->getObject()->id;
-//                $form->getObject()->save();
-//              }
-//              $joinId = $form->getObject()->id;
-//              $form->updateObject($form->getDefaults());
-//              unset($forms[$key]);
-//            } else {
-//              //If it didn't change, just unset it and be done w/ it.
-//              unset($forms[$key]);
-//              $joinId = (isset($form->getObject()->id)) ? $form->getObject()->id : null; //Need this for the agEmbeddedAgPersonLanguageCompetencyForm section.
-//            }
-//          } else {
-//            //If the language form is blank, unset it.
-//            unset($forms[$key]);
-//            //Then see if it was made blank between render and sumbission.
-//            if ($form->getObject()->language_id <> $form->getDefault('language_id')) {
-//              //if it was, delete the person-language join and all the associated data.
-//              //$join = $joinQuery->fetchOne();
-//              if ($join = $joinQuery->fetchOne()) {
-//                $competencies = $join->getAgPersonLanguageCompetency();
-//                $competencies->delete();
-//                $join->delete();
-//              }
-//              $joinId = null;
-//            }
-//          }
-//        }
-//        if ($form instanceof agEmbeddedAgPersonLanguageCompetencyForm) {
-//          // Check if a competency is selected, and also if there is still an existing person-language join.
-//          if ($form->getObject()->language_competency_id <> null && $joinId <> null) {
-//            // Check if it's changed between render and submission.
-//            if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {
-//              if ($form->getObject()->person_language_id == null) {
-//                $form->getObject()->person_language_id = $joinId;
-//              }
-//              $form->getObject()->save();
-//            }
-//            unset($forms[$key]);
-//          } else //If there's no competency ID selected, or if the agPersonMjAgLanguage that uses the competency has been deleted.
-//          if ($form->getObject()->language_competency_id <> $form->getDefault('language_competency_id')) {//If it became blank between render and submit
-//            //  $form->getObject()->id = $form->getDefault('id');//Set the id and ...
-//            $form->updateObject($form->getDefaults());
-//            // ...delete the object.
-//            $form->getObject()->delete();
-//            unset($forms[$key]);
-//          }
-//          unset($forms[$key]);
-//        }
         if ($form instanceof agEmbeddedStaffForm) {  //this should be decoupled from the PERSON form
           unset($forms[$key]);
         }
-        
       }
     }
-    //return parent::saveEmbeddedForms($con, $forms);
   }
 
-//  protected function doSave($con = null)
-//  {
-//  if ($this->object->getAgPersonDateOfBirth()->date_of_birth == null) {
-//    unset($this['date_of_birth']);
-//  } else {
-//
-//  }
-//
-//    if(get_class($this) == 'agStaffPersonForm')
-//    {
-//        $embeddeds=$this->getEmbeddedForms();
-//        $embeddedstaffform;
-//        $staffValues = $this->getValue('staff');
-//        $srt = $staffValues['ag_staff_resource_type_list'];
-//        //save the staff person's organization
-//        //save the staff person's status for that organization
-//        $this->saveagStaffResourceTypeList($con);
-//    }
-//    return parent::doSave($con);
-//  }
+  /**
+  * This function is here to override BaseagPersonForm's doSave() method.
+  * This is necessary to remove some of the save...List() functions that
+  * Symfony autogenerates for many-to-many relations. The relations are more
+  * complex than Symfony is able to auto-determine, and calling the save...List()
+  * methods will often cause an error on save. The only lists needed are below.
+  *
+  * @param Doctrine_Connection $con
+  **/
   protected function doSave($con = null)
   {
     $this->saveagNationalityList($con);
