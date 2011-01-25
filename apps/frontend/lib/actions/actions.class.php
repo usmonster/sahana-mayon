@@ -18,9 +18,10 @@ class agActions extends sfActions
 
   public function executeSearch(sfWebRequest $request)
   {
-    $models = $this->getModuleName();
     if (isset($this->searchedModels)) {
       $models = implode(',', $this->searchedModels);
+    } else {
+      $models = $this->getModuleName();
     }
 
     $this->searchquery = $request->getParameter('query');
