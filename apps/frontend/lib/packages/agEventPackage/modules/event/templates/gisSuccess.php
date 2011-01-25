@@ -1,3 +1,9 @@
+<?php
+// This page is currently a stub!  The following random string is a marker for the stub.
+// PnaODfcm3Kiz4MV4vzbtr4
+// PLEASE REMOVE THIS COMMENT BLOCK WHEN YOU DEVELOP THIS PAGE!
+?>
+
 <h2>Event Management</h2>
 <?php
 //note for devs: anytime you see <b>Name Of Event</b> it's my placeholder for where you should make

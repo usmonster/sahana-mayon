@@ -20,7 +20,9 @@ class eventActions extends sfActions
 
   public function executeMeta(sfWebRequest $request)
   {
-    $this->form = new agEventForm();
+    $this->metaForm = new agEventForm();
+    unset($this->metaForm['created_at'], $this->metaForm['updated_at'], $this->metaForm['ag_affected_area_list'], $this->metaForm['ag_scenario_list']);
+
   }
 
   public function executeReview(sfWebRequest $request)
@@ -30,10 +32,55 @@ class eventActions extends sfActions
 
   public function executeGis(sfWebRequest $request)
   {
+    
+  }
+
+  public function executeDashboard(sfWebRequest $request)
+  {
+    
+  }
+
+  public function executeActive(sfWebRequest $request)
+  {
+    
+  }
+
+  public function executeStaff(sfWebRequest $request)
+  {
+    
+  }
+
+  public function executeFgroup(sfWebRequest $request)
+  {
+    
+  }
+
+  public function executeFgroupdetail(sfWebRequest $request)
+  {
+    
+  }
+
+  public function executeFacility(sfWebRequest $request)
+  {
+
+  }
+
+  public function executeFacilityupdate(sfWebRequest $request)
+  {
 
   }
 
   public function executeDeploy(sfWebRequest $request)
+  {
+
+  }
+
+    public function executeResolution(sfWebRequest $request)
+  {
+
+  }
+
+   public function executePost(sfWebRequest $request)
   {
 
   }

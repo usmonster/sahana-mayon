@@ -1,8 +1,5 @@
 <h2>Geocode Addresses</h2>
-<?php
-//note for devs: anytime you see <b>Name Of Event</b> it's my placeholder for where you should make
-//the app display the name of the event the user is working in.
-?>
+
 
 <p>Geocoding is the process of finding geographic coordinates for an address.  In order to deploy
   staff to facilities near to their home or work address Agasti must determine the distance between

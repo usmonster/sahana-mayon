@@ -73,6 +73,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enablePackages(
         array('agFooPackage',
           'agStaffPackage',
+          'agClientPackage',
           'agGisPackage',
           'agEventPackage',
           'agReportPackage',

@@ -1,4 +1,9 @@
-<h2>Event Management</h2>
+<?php
+// This page is currently a stub!  The following random string is a marker for the stub.
+// PnaODfcm3Kiz4MV4vzbtr4
+// PLEASE REMOVE THIS COMMENT BLOCK WHEN YOU DEVELOP THIS PAGE!
+?>
+<h2><b>Name of Event</b> Pre-Deployment</h2>
 <?php
 //note for devs: anytime you see <b>Name Of Event</b> it's my placeholder for where you should make
 //the app display the name of the event the user is working in.
@@ -8,12 +13,12 @@
   your staff and facility resources are up to date, and that the shifts for <b>Name of Event</b> are
   up to date.</p>
 
-<h3><b>Name of Event</b> Management</h3>
+<a href="<?php echo url_for('event/gis'); ?>" class="buttonText" title="Update GIS Data">Generate Geo Information</a><br/>
 
-<b>Buttons for GIS & Shift generation.</b><br>
+<b>Button for Shift generation.</b><br>
 
 <b>Warnings in case something is missing.</b><br>
 
-<b>Buttons to return to the dashboard or to deploy The Event.</b>
+<b>Button to save w/o deploying. </b><br>
 
-
+<b>Button to deploy The Event.</b>

@@ -1,3 +1,9 @@
+<?php
+// This page is currently a stub!  The following random string is a marker for the stub.
+// PnaODfcm3Kiz4MV4vzbtr4
+// PLEASE REMOVE THIS COMMENT BLOCK WHEN YOU DEVELOP THIS PAGE!
+?>
+
 <h2>Event Management</h2>
 <p>'Event' refers to a specific activation of the plans made in the Scenario module.  The entire term
   of the response will be referred to as an individual event, which is named in the next step.
@@ -9,7 +15,3 @@
 <h3>Event Pre-Deployment</h3>
 <b>Please select a scenario to base your event on:</b><br/>
 <?php include_partial('scenarioForm', array('scenarioForm' => $scenarioForm)) ?>
-
-
-
-

@@ -101,6 +101,12 @@ is therefore NOT INTENDED FOR GENERAL USE in its current state.
 This list covers some of the known problems (and workarounds, where applicable)
 with Agasti 2.0 Mayon, which will be resolved in future releases:
 
+- Some pages are currently stubs for development.  Those pages are marked at the top with a warning
+  and the comment tag:
+    // PnaODfcm3Kiz4MV4vzbtr4
+  This random string is grepable for a report of the remaining stubbed pages.  When a developer 
+  fleshes out one of these pages the tag should be removed.
+
 - After submitting the form on the install.php page, it may take up to 5 minutes
   to load and redirect to the login screen.
 
