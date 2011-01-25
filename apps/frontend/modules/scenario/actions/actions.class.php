@@ -15,6 +15,7 @@
  */
 class scenarioActions extends agActions
 {
+  public $searchedModels = array('agScenarioFacilityGroup');
 
   public function executeListFacilityGroup(sfWebRequest $request)
   {
