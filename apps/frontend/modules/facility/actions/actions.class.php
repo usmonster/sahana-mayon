@@ -17,7 +17,7 @@
  */
 class facilityActions extends agActions
 {
-
+  public $searchedModels = array('agFacility');
   /**
    * executeIndex()
    *
