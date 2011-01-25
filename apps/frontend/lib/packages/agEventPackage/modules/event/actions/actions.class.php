@@ -22,7 +22,6 @@ class eventActions extends sfActions
   {
     $this->metaForm = new agEventForm();
     unset($this->metaForm['created_at'], $this->metaForm['updated_at'], $this->metaForm['ag_affected_area_list'], $this->metaForm['ag_scenario_list']);
-
   }
 
   public function executeReview(sfWebRequest $request)
@@ -62,6 +61,11 @@ class eventActions extends sfActions
 
   public function executeFacility(sfWebRequest $request)
   {
+    
+  }
+
+  public function executeReport(sfWebRequest $request)
+  {
 
   }
 
@@ -72,15 +76,15 @@ class eventActions extends sfActions
 
   public function executeDeploy(sfWebRequest $request)
   {
-
+    
   }
 
-    public function executeResolution(sfWebRequest $request)
+  public function executeResolution(sfWebRequest $request)
   {
-
+    
   }
 
-   public function executePost(sfWebRequest $request)
+  public function executePost(sfWebRequest $request)
   {
 
   }

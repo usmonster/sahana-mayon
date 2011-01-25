@@ -10,12 +10,12 @@
 //You should probably add a confirmation that the event was deployed here when it's first created.
 ?>
 
+<p>The links below should really be buttons so they look nice:</p>
 <a href="<?php echo url_for('event/staff'); ?>" class="buttonText" title="Manage Event Staff">Staff Management</a><br/>
+<a href="<?php echo url_for('agClient/index'); ?>" class="buttonText" title="Manage Clients">Client Data</a><br/>
+<a href="<?php echo url_for('event/fgroup'); ?>" class="buttonText" title="Facilities and Resources">Manage Facility Groups</a><br/>
+<a href="<?php echo url_for('event/reporting'); ?>" class="buttonText" title="Manage Reports">Reporting</a><br/>
+<br>
+<a href="<?php echo url_for('event/resolution'); ?>" class="buttonText" title="Close Event">Resolve Event</a><br/>
 
-<b>Add some buttons for Staff management, Client Data, Facilities & Resources, Reporting, and Ending the Event.</b>
 <br />
-
-
-
-
-
