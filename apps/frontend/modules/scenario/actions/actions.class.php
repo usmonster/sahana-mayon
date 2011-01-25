@@ -15,6 +15,7 @@
  */
 class scenarioActions extends agActions
 {
+
   public $searchedModels = array('agScenarioFacilityGroup');
 
   public function executeListFacilityGroup(sfWebRequest $request)
@@ -274,7 +275,6 @@ class scenarioActions extends agActions
   public function executeStaffpool(sfWebRequest $request)
   {
     $this->scenario_id = $request->getParameter('id');
-
     $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
             ->createQuery('agSSG')
             ->select('agSSG.*')
@@ -285,11 +285,11 @@ class scenarioActions extends agActions
 
     if ($request->isMethod(sfRequest::POST)) { //OR if coming from an executed search
       if ($request->getParameter('Preview')) {
+        $postParam = $request->getPostParameter('ag_scenario_staff_generator');
+        $lucene_search = $postParam['lucene_search'];
+        $lucene_query = $lucene_search['query_condition'];
+        parent::doSearch($lucene_query);
 
-        parent::doSearch($request->getParameter("ag_scenario_staff_generator['lucene_search']['query_condition']"));
-        $test = $request->getPostParameter('ag_scenario_staff_generator');
-        $test2 = $test['lucene_search'];
-        $test3 = $test2['query_condition'];
         //the above USED to work, but let's be smarter about it
       }
 
