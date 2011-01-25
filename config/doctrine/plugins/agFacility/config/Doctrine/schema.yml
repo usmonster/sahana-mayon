@@ -66,6 +66,7 @@ agFacility:
     facility_code:
       type: string(10)
       notnull: true
+  actAs: [Luceneable, Timestampable]
   indexes:
     agFacility_siteId_unq:
       fields: [site_id]

@@ -15,7 +15,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class facilityActions extends sfActions
+class facilityActions extends agActions
 {
 
   /**
@@ -249,6 +249,7 @@ class facilityActions extends sfActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_facility = $form->save();
+      $ag_facility->updateLucene();
 
       $this->redirect('facility/edit?id=' . $ag_facility->getId());
     }

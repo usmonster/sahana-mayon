@@ -16,6 +16,44 @@
  */
 class agFacility extends BaseagFacility
 {
+  /**
+   * Builds an index for facility.
+   *
+   * @return Zend_Search_Lucene_Document $doc
+   */
+  public function updateLucene()
+  {
+    $doc = new Zend_Search_Lucene_Document();
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('facility', $this->facility_name, 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('facility_code', $this->facility_code, 'utf-8'));
+
+    $facilityInfo = Doctrine_Query::create()
+      ->select('f.id, fr.id, frt.id, frt.facility_resource_type, frt.facility_resource_type_abbr')
+      ->from('agFacility f')
+      ->innerJoin('f.agFacilityResource fr')
+      ->innerJoin('fr.agFacilityResourceType frt')
+      ->where('f.id=?', $this->id)
+      ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    foreach ($facilityInfo as $fac)
+    {
+      $resourceType = $fac['frt_facility_resource_type'] . ' ' . $fac['frt_facility_resource_type_abbr'];
+      $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource ' , $resourceType, 'utf-8'));
+    }
+
+//    // Cannot save facility's resource type info until after the facility is saved.
+//    $facilityResource = $this->getAgFacilityResource();
+//    if (isset($facilityResource))
+//    {
+//      if (count($this->getAgFacilityResource())> 0)
+//      {
+//        $doc->addField(Zend_Search_Lucene_Field::unStored('faciltiy_resource', $this->getAgFacilityResource()->getAgFacilityResourceType() . ' ' . $this->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type_abbr, 'utf-8'));
+//      }
+//    }
+
+    return $doc;
+  }
 
   /**
    * delete()
