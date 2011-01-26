@@ -27,7 +27,7 @@ class agActions extends sfActions
   public function doSearch($searchquery)
   {
     if (isset($this->searchedModels)) {
-      $models = implode(',', $this->searchedModels);
+      $models = $this->searchedModels;
     } else {
       $models = $this->getModuleName();
     }

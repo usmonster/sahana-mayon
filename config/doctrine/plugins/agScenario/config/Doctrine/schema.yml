@@ -9,6 +9,12 @@ agScenario:
       notnull: true
     description:
       type: string(255)
+  actAs:
+    Timestampable:
+    Luceneable:
+      fields:
+        scenario: unstored
+        description: unstored
   indexes:
     agScenario_unq:
       fields: [scenario]

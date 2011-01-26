@@ -16,7 +16,7 @@
 class scenarioActions extends agActions
 {
 
-  public $searchedModels = array('agScenarioFacilityGroup');
+  public $searchedModels = array('agScenarioFacilityGroup', 'agScenario');
 
   public function executeListFacilityGroup(sfWebRequest $request)
   {
@@ -963,6 +963,7 @@ class scenarioActions extends agActions
     if ($form->isValid()) {
 
       $ag_scenario = $form->save();
+      $ag_scenario->updateLucene();
       if ($request->hasParameter('Continue')) {
         $this->ag_facility_resources = Doctrine_Query::create()
                 ->select('a.facility_id, af.*, afrt.*')
