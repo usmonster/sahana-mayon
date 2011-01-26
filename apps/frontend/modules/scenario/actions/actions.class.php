@@ -1011,7 +1011,6 @@ class scenarioActions extends agActions
     $groupform->bind($request->getParameter($groupform->getName()), $request->getFiles($groupform->getName()));
     if ($groupform->isValid()) {
       $ag_scenario_facility_group = $groupform->save();
-      //$ag_scenario_facility_group->updateLucene();
       LuceneRecord::updateLuceneRecord($ag_scenario_facility_group);
       $scenario_id = $ag_scenario_facility_group->getAgScenario()->getId();
       $c = $ag_scenario_facility_group->getAgScenarioFacilityResource();
