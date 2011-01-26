@@ -17,9 +17,14 @@ class agClientActions extends sfActions
       ->execute();
   }
 
-  public function executeNew(sfWebRequest $request)
+  public function executeIn(sfWebRequest $request)
   {
     $this->form = new agClientForm();
+  }
+
+  public function executeDuplicate(sfWebRequest $request)
+  {
+
   }
 
   public function executeCreate(sfWebRequest $request)

@@ -275,6 +275,10 @@ class scenarioActions extends agActions
   {
   }
 
+      public function executePre(sfWebRequest $request)
+  {
+  }
+
   /**
    *
    * @param sfWebRequest $request

@@ -13,3 +13,10 @@
 
 <?php
 // include_partial('form', array('form' => $form)) ?>
+
+<p>Please enter client information.</p>
+
+<p>There should be 3 buttons at the bottom:</p>
+<b>Save (meaning save & stay)</b><br>
+<b>Save and Add Another</b><br>
+<b>Cancel and Exit to List</b>
