@@ -60,7 +60,7 @@ agLuceneSearch:
       type: string(64)
       notnull: true
     query_condition:
-      type: string(64)
+      type: clob(65532)
       notnull: true
   indexes:
     agLuceneSearch_unq:

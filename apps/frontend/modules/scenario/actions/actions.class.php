@@ -271,12 +271,14 @@ class scenarioActions extends agActions
    * calls up the review confirmation at end of the Scenario Creator
    * @param sfWebRequest $request
    */
-    public function executeReview(sfWebRequest $request)
+  public function executeReview(sfWebRequest $request)
   {
+    
   }
 
-      public function executePre(sfWebRequest $request)
+  public function executePre(sfWebRequest $request)
   {
+
   }
 
   /**
@@ -293,47 +295,33 @@ class scenarioActions extends agActions
             ->from('agScenarioStaffGenerator agSSG')
             ->where('agSSG.scenario_id = ?', $this->scenario_id) //join up to see what staff pool
             ->execute();
-//this will fail currently, but it's close$this->poolform = new agStaffPoolForm();
 
     if ($request->isMethod(sfRequest::POST)) { //OR if coming from an executed search
       if ($request->getParameter('Preview')) {
-        $postParam = $request->getPostParameter('ag_scenario_staff_generator');
-        $lucene_search = $postParam['lucene_search'];
-        $lucene_query = $lucene_search['query_condition'];
-        parent::doSearch($lucene_query);
+        $postParam = $request->getPostParameter('lucene_search');
+        $lucene_search = $postParam['query_condition'];
+        parent::doSearch($lucene_search);
+      } else {
+        //otherwise, we're SAVING/UPDATING
 
-        //the above USED to work, but let's be smarter about it
+        $this->poolform = new agStaffPoolForm();
+        $this->poolform->scenario_id = $this->scenario_id;
+
+        $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
+
+        if ($this->poolform->isValid()) {
+          $ag_staff_pool = $this->poolform->saveEmbeddedForms();
+          $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+        }
       }
-
+    } else {
       if ($request->getParameter('search_id')) {
-        $staffPoolObject = Doctrine_Core::getTable('agScenarioStaffGenerator')->find($request->getParameter('search_id'));
-      }
-
-      $this->poolform = new agStaffPoolForm(isset($staffPoolObject) ? $staffPoolObject : null);
-      //this won't work ? setting the scenario_id here? 
-
-      $this->poolform->setDefault('scenario_id', $request->getParameter('id'));
-      $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
-      $this->poolform->getObject()->scenario_id = $request->getParameter('id');
-      if ($this->poolform->isValid()) {
-        $ag_staff_pool = $this->poolform->save();
-//        if ($request->hasParameter('Continue')) {
-//          $this->ag_facility_resources = Doctrine_Query::create()
-//                  ->select('a.facility_id, af.*, afrt.*')
-//                  ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-//                  ->execute();
-//          $this->groupform = new agScenarioFacilityGroupForm();
-//          //        $this->setTemplate('scenario/newgroup');
-//          $this->redirect('scenario/newgroup?id=' . $ag_scenario->getId());
-//        } else {
-        $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+        $this->poolform = new agStaffPoolForm($request->getParameter('search_id'));
+      } else {
+        $this->poolform = new agStaffPoolForm();
       }
     }
-    if ($request->getParameter('search_id')) {
-      $staffPoolObject = Doctrine_Core::getTable('agScenarioStaffGenerator')->find($request->getParameter('search_id'));
-    }
 
-    $this->poolform = new agStaffPoolForm(isset($staffPoolObject) ? $staffPoolObject : null);
     $this->filterForm = new sfForm();
     $this->filterForm->setWidgets(array(
       'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
