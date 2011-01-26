@@ -29,6 +29,10 @@ rm -rf $PROJECT_ROOT/lib/form/doctrine/base/Baseag*
 rm -rf $PROJECT_ROOT/lib/filter/doctrine/base/Baseag*
 rm -rf $PROJECT_ROOT/lib/filter/doctrine/ag*
 
+# The line below removes all index files from data/search/lucene.index to avoid
+# index pollution form previous installs
+rm -rf $PROJECT_ROOT/data/search/lucene.index/*
+
 # The following lines run symfony and doctrine commands to generate new models
 # forms and filters from the yml files
 
