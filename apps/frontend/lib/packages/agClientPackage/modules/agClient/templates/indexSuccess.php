@@ -19,5 +19,6 @@ Please select one of the following staff administration actions:<br />
 <a href="<?php echo url_for('agClient/in'); ?>" class="buttonText" title="Check In Client">Check In Client</a><br/>
 <a href="<?php echo url_for('agClient/out'); ?>" class="buttonText" title="Check Out Clients">Check Out Clients</a><br/>
 <a href="<?php echo url_for('agClient/list'); ?>" class="buttonText" title="List Existing Clients">List Client Records</a><br/>
+<a href="<?php echo url_for('agPet/new'); ?>" class="buttonText" title="Check In Pet">Check in Pet</a><br/>
 
 If you would like to search for clients, please use the search box on the top right.

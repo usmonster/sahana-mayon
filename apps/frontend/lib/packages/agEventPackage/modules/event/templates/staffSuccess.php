@@ -18,8 +18,11 @@
 
 <p>Finally, after replies have been imported Agasti will assign available staff to facilities.
   Assigned staff will be messaged a second time with their shift assignment and where to report.</p>
-<b>Generate Staff Assignment Export</b> button.
-<br />
+<b>Generate Staff Assignment Export</b> button.<br/>
+
+<a href="<?php echo url_for('event/staffin'); ?>" class="buttonText" title="Check In Staff">Check In Staff</a><br/>
+<a href="<?php echo url_for('event/staffout'); ?>" class="buttonText" title="Check Out Staff">Check Out Staff</a><br/>
+
 
 <?php
 //and a return to dashboard button.

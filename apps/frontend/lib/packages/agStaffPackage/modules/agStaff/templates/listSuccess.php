@@ -29,7 +29,7 @@
       </th>
       <!-- Agency -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Agency</div>
+        <div class="tableHeaderContent">Agency</div>
         <?php
           echo($sortColumn =='agency' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=agency&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=agency&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='agency' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=agency&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=agency&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -37,7 +37,7 @@
       </th>
       <!-- classification -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Classification</div>
+        <div class="tableHeaderContent">Classification</div>
         <?php
           echo($sortColumn =='staff_type' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_type&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_type&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='staff_type' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_type&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_type&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -45,7 +45,7 @@
       </th>
       <!-- work_contact -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Work Contact</div>
+        <div class="tableHeaderContent">Work Contact</div>
         <?php
           echo($sortColumn =='work_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='work_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -53,7 +53,7 @@
       </th>
       <!-- home_contact -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Home Contact</div>
+        <div class="tableHeaderContent">Home Contact</div>
         <?php
           echo($sortColumn =='home_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='home_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -61,7 +61,7 @@
       </th>
       <!-- staff status -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Staff Status</div>
+        <div class="tableHeaderContent">Staff Status</div>
         <?php
           echo($sortColumn =='staff_status' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_status&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_status&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='staff_status' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_status&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_status&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');

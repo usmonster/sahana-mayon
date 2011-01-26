@@ -206,6 +206,24 @@ h5 {
   background: #f1f1f1;
 }
 
+.submitLinkButton {
+  display: inline-block;
+  color: #848484;
+  padding: 5px 10px;
+  border: solid 1px #dadada;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  background: #f1f1f1;
+  z-index: 3;
+  position: relative;
+}
+
 .linkButton:hover, .buttonSmall:hover {
   background: #cdffdd;
 }
@@ -304,6 +322,12 @@ h5 {
   font-weight: bold;
   color: #848484;
 }
+
+form .importForm {
+  position: relative;
+  display: inline-block;
+}
+
 /**** Login ****/
 #login {
   background-color: #e5f7ff;
@@ -499,6 +523,16 @@ input[type="button"]::-moz-focus-inner, form input[type="submit"]::-moz-focus-in
   padding: .25em;
 }
 
+#fileUpload {
+  text-align: right; 
+  opacity: 0; 
+  -moz-opacity:0; 
+  filter: alpha(opacity=0); 
+  z-index: 2; 
+  position: relative; 
+  width: 190px;
+}
+
 #login ul {
   list-style-type: none;
   margin:0;
@@ -520,6 +554,11 @@ select {
 }
 
 /**** Tables ****/
+th .tableHeaderContent {
+  margin: 0; 
+  padding: 0;
+}
+
 .staffTable, .singleTable {
   border-collapse: collapse;
 }

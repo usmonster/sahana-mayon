@@ -49,6 +49,26 @@ class eventActions extends sfActions
     
   }
 
+  public function executeStaffin(sfWebRequest $request)
+  {
+
+  }
+
+  public function executeInconfirm(sfWebRequest $request)
+  {
+
+  }
+
+  public function executeStaffout(sfWebRequest $request)
+  {
+
+  }
+
+    public function executeOutconfirm(sfWebRequest $request)
+  {
+
+  }
+
   public function executeFgroup(sfWebRequest $request)
   {
     
