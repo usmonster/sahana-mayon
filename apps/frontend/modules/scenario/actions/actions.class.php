@@ -259,12 +259,20 @@ class scenarioActions extends agActions
   }
 
   /**
-   * @todo what's this do?
+   * calls index template
    * @param sfWebRequest $request
    */
   public function executeIndex(sfWebRequest $request)
   {
 //here we can use $request to better form the index page for scenario
+  }
+
+  /**
+   * calls up the review confirmation at end of the Scenario Creator
+   * @param sfWebRequest $request
+   */
+    public function executeReview(sfWebRequest $request)
+  {
   }
 
   /**
