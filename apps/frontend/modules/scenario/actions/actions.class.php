@@ -295,17 +295,27 @@ class scenarioActions extends agActions
             ->from('agScenarioStaffGenerator agSSG')
             ->where('agSSG.scenario_id = ?', $this->scenario_id) //join up to see what staff pool
             ->execute();
-
-    if ($request->isMethod(sfRequest::POST)) { //OR if coming from an executed search
+    if ($request->getParameter('search_id')) {
+      $this->search_id = $request->getParameter('search_id');
+    }
+    if ($request->isMethod(sfRequest::POST)) {
+      //$request->checkCSRFProtection();
+      //OR if coming from an executed search
       if ($request->getParameter('Preview')) {
         $postParam = $request->getPostParameter('lucene_search');
         $lucene_search = $postParam['query_condition'];
         parent::doSearch($lucene_search);
-      } else {
-        //otherwise, we're SAVING/UPDATING
+      } elseif ($request->getParameter('Delete')) {
 
+        $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
+        $luceneQuery = $ag_staff_gen->getAgLuceneSearch();
+        //get the related lucene search
+        $ag_staff_gen->delete();
+        $luceneQuery->delete();
+        $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+      } elseif ($request->getParameter('Save')) {
+        //otherwise, we're SAVING/UPDATING
         $this->poolform = new agStaffPoolForm();
-        $this->poolform->scenario_id = $this->scenario_id;
 
         $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
 
@@ -313,10 +323,15 @@ class scenarioActions extends agActions
           $ag_staff_pool = $this->poolform->saveEmbeddedForms();
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }
+      } else {
+
+        //or, just make a new form
+        $this->poolform = new agStaffPoolForm();
+        $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
     } else {
-      if ($request->getParameter('search_id')) {
-        $this->poolform = new agStaffPoolForm($request->getParameter('search_id'));
+      if ($this->search_id) {
+        $this->poolform = new agStaffPoolForm($this->search_id);
       } else {
         $this->poolform = new agStaffPoolForm();
       }

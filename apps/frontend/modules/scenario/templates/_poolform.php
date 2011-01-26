@@ -1,7 +1,16 @@
 <?php use_stylesheets_for_form($poolform) ?>
 <?php //use_javascript('tooltip');  ?>
 
-<form action="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?> " method="post">
+<?php
+  $action = url_for('scenario/staffpool?id=' . $scenario_id);
+if(isset($search_id)){
+  $action .= '?search_id=' . $search_id;
+}
+
+?>
+
+
+<form action="<?php echo $action ?>" method="post">
 
   <table>
     <tfoot>
@@ -10,7 +19,8 @@
           <?php echo $poolform->renderHiddenFields(false) ?>
           <input type="submit" value="Save" class="linkButton"/>
           <input type="submit" value="Preview" class="linkButton" name="Preview"/>
-          <input type="submit" value="New" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
+          <input type="submit" value="New" name="New" class="linkButton"/>
+          <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
         </td>
       </tr>
     </tfoot>

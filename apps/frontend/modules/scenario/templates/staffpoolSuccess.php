@@ -11,19 +11,30 @@ Your staff resource pool is essentially a set of searches that let you refine wh
   </thead>
   <tbody>
     <?php foreach ($saved_searches as $saved_search): ?>
-    <tr>
-      <td><a href="<?php echo url_for('scenario/staffpool?id='. $scenario_id ) . '?search_id=' . $saved_search->getId() ?> "><?php echo $saved_search->getAgLuceneSearch()->query_name ?></a></td>
-      <td><?php echo $saved_search->getAgLuceneSearch()->getAgLuceneSearchType() ?></td>
-    </tr>
+      <tr>
+        <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) . '?search_id=' . $saved_search->getId() ?> "><?php echo $saved_search->getAgLuceneSearch()->query_name ?></a></td>
+        <td><?php echo $saved_search->getAgLuceneSearch()->getAgLuceneSearchType() ?></td>
+      </tr>
     <?php endforeach; ?>
-  </tbody>
-</table>
-<?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id)) ?>
+    </tbody>
+  </table>
+<?php
+      if (!isset($search_id)) {
+        $search_id = NULL;
+      } else {
+        $search_id = $search_id;
+        //this could be more elegant.
+      }
+?>
 
-  <div id="searchresults">
 
-<!--sometimes this will fail -->
-    <?php if(isset($searchquery)){ ?>
-    <?php include_partial('global/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results)) ?>
-    <?php } ?>
-  </div>
+<?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
+
+      <div id="searchresults">
+
+        <!--sometimes this will fail -->
+  <?php if (isset($searchquery)) {
+ ?>
+  <?php include_partial('global/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results)) ?>
+<?php } ?>
+</div>
