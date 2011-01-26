@@ -12,17 +12,4 @@
  */
 class agFacilityResourceType extends BaseagFacilityResourceType
 {
-    public $luceneSearchFields = array
-    (
-    'facility_resource' => 'unstored'
-    );
-
-  public function updateLucene()
-  {
-    $doc = new Zend_Search_Lucene_Document();
-    $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource', $this->faciltiy_resource_type . ' ' . $this->faciltiy_resource_type_abbr, 'utf-8'));
-
-  return $doc;
-  }
-
 }

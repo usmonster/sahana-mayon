@@ -36,21 +36,16 @@ class agFacility extends BaseagFacility
       ->where('f.id=?', $this->id)
       ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
+    $resourceType = null;
+    // Cannot save facility's resource type info until after the facility is saved.
     foreach ($facilityInfo as $fac)
     {
-      $resourceType = $fac['frt_facility_resource_type'] . ' ' . $fac['frt_facility_resource_type_abbr'];
-      $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource ' , $resourceType, 'utf-8'));
+      $resourceType = $resourceType . ' ' . $fac['frt_facility_resource_type'] . ' ' . $fac['frt_facility_resource_type_abbr'];
     }
-
-//    // Cannot save facility's resource type info until after the facility is saved.
-//    $facilityResource = $this->getAgFacilityResource();
-//    if (isset($facilityResource))
-//    {
-//      if (count($this->getAgFacilityResource())> 0)
-//      {
-//        $doc->addField(Zend_Search_Lucene_Field::unStored('faciltiy_resource', $this->getAgFacilityResource()->getAgFacilityResourceType() . ' ' . $this->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type_abbr, 'utf-8'));
-//      }
-//    }
+    if (isset($resourceType))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource' , $resourceType, 'utf-8'));
+    }
 
     return $doc;
   }

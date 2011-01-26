@@ -249,7 +249,8 @@ class facilityActions extends agActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_facility = $form->save();
-      $ag_facility->updateLucene();
+      //$ag_facility->updateLucene();
+      LuceneRecord::updateLuceneRecord($ag_facility);
 
       $this->redirect('facility/edit?id=' . $ag_facility->getId());
     }
