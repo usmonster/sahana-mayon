@@ -12,21 +12,21 @@ class reportActions extends sfActions
 {
   public function executeIndex(sfWebRequest $request)
   {
-    $this->ag_reports = Doctrine_Core::getTable('agReport')
+    $this->ag_reports = Doctrine_Core::getTable('agReportGenerator')
       ->createQuery('a')
       ->execute();
   }
 
   public function executeNew(sfWebRequest $request)
   {
-    $this->form = new agReportForm();
+    $this->form = new agReportMakerForm();
   }
 
   public function executeCreate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
-    $this->form = new agReportForm();
+    $this->form = new agReportMakerForm();
 
     $this->processForm($request, $this->form);
 
@@ -36,7 +36,7 @@ class reportActions extends sfActions
   public function executeEdit(sfWebRequest $request)
   {
     $this->forward404Unless($ag_report = Doctrine_Core::getTable('agReport')->find(array($request->getParameter('id'))), sprintf('Object ag_report does not exist (%s).', $request->getParameter('id')));
-    $this->form = new agReportForm($ag_report);
+    $this->form = new agReportMakerForm($ag_report);
   }
 
   public function executeUpdate(sfWebRequest $request)

@@ -700,6 +700,7 @@ class agInstall
       return false;
     }
     $file = sfConfig::get('sf_config_dir') . '/databases.yml';
+//the below line will fail if the permissions are not correct, should be wrapped in a try/catch
     $dbConfiguration = sfYaml::load($file);
     $dbConfiguration['all']['doctrine']['param']['attributes'] = array(
       'default_table_type' => 'INNODB',

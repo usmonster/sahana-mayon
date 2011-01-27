@@ -1,4 +1,4 @@
-<h1>Ag reports List</h1>
+<h2>Report List</h2>
 
 <table>
   <thead>

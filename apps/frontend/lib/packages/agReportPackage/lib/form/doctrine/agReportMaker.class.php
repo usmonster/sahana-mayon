@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Agasti ag Staff Pool Form Class - A class to generate either a new staff pool form or an
+ * Agasti ag Report Maker Form Class - A class to generate either a new staff pool form or an
  * edit staff pool form
  *
  * PHP Version 5
@@ -12,13 +12,14 @@
  *
  * @author Charles Wisniewski, CUNY SPS
  *
+ * @todo add delete handling
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  * */
-class agStaffPoolForm extends sfForm
+class agReportMakerForm extends sfForm
 {
 
-  public $lucene_search_id;
+  public $lucen_search_id;
   public $scenario_id;
   public $staff_gen_id;
 
@@ -37,33 +38,36 @@ class agStaffPoolForm extends sfForm
    * */
   public function embedAgSearchForms()
   {
-    $this->embedStaffGeneratorForm();
+    $this->embedReportGeneratorForm();
     $this->embedLuceneForm();
+    $this->embedReportForm();
+    $this->embedQuerySelectFieldForm();
+    //going to have to dynamically embed query select forms, one per table/column
   }
 
   /**
-   * Embeds the Staff Generator Form
+   * Embeds the Report Generator Form
    * */
-  public function embedStaffGeneratorForm()
+  public function embedReportGeneratorForm()
   {
-    if (isset($this->staff_gen_id)) {
+    if (isset($this->report_gen_id)) {
       $staffGenObject = Doctrine_Query::create()
-              ->from('agScenarioStaffGenerator a')
-              ->where('a.id =?', $this->staff_gen_id)
+              ->from('agReportGenerator a')
+              ->where('a.id =?', $this->report_gen_id)
               ->execute()->getFirst();
       $this->lucene_search_id = $staffGenObject->lucene_search_id;
     }
-    $staffGenForm = new agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
+    $reportGenForm = new agReportGeneratorForm(isset($reportGenObject) ? $reportGenObject : null);
 
-    $staffGenForm->setWidget('lucene_search_id', new sfWidgetFormInputHidden());
-    $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
-    $staffGenForm->setValidator('lucene_search_id', new sfValidatorPass(array('required' => false)));
-//    $staffGenForm->setValidator('search_weight', new sfValidatorPass(array('required' => false)));
-    $staffGenForm->setValidator('scenario_id', new sfValidatorPass());
+    $reportGenForm->setWidget('lucene_search_id', new sfWidgetFormInputHidden());
+    $reportGenForm->setWidget('report_id', new sfWidgetFormInputHidden());
+    $reportGenForm->setValidator('lucene_search_id', new sfValidatorPass(array('required' => false)));
+//    $reportGenForm->setValidator('search_weight', new sfValidatorPass(array('required' => false)));
+    $reportGenForm->setValidator('report_id', new sfValidatorPass());
 
-    unset($staffGenForm['created_at'], $staffGenForm['updated_at']);
+    unset($reportGenForm['created_at'], $reportGenForm['updated_at']);
 
-    $this->embedForm('staff_generator', $staffGenForm);
+    $this->embedForm('report_generator', $reportGenForm);
   }
 
   /**
@@ -78,12 +82,43 @@ class agStaffPoolForm extends sfForm
               ->execute()->getFirst();
     }
     $luceneForm = new agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);
-    
+
     unset($luceneForm['created_at'], $luceneForm['updated_at']);
     unset($luceneForm['ag_report_list']);
 
     $this->embedForm('lucene_search', $luceneForm);
   }
+  public function embedReportForm()
+  {
+    if (isset($this->report_id)) {
+      $reportObject = Doctrine_Query::create()
+              ->from('agReport a')
+              ->where('a.id =?', $this->report_id)
+              ->execute()->getFirst();
+    }
+    $reportForm = new agReportForm(isset($reportObject) ? $luceneObject : null);
+
+    unset($reportForm['created_at'], $reportForm['updated_at']);
+    unset($reportForm['ag_lucene_search_list']);
+
+    $this->embedForm('report', $reportForm);
+  }
+  public function embedQuerySelectFieldForm()
+  {
+    if (isset($this->lucene_search_id)) {
+      $luceneObject = Doctrine_Query::create()
+              ->from('agLuceneSearch a')
+              ->where('a.id =?', $this->lucene_search_id)
+              ->execute()->getFirst();
+    }
+    $queryselectForm = new agQuerySelectFieldForm(isset($luceneObject) ? $luceneObject : null);
+
+    unset($queryselectForm['created_at'], $queryselectForm['updated_at']);
+    $queryselectForm->setWidget('report_id', new sfWidgetFormInputHidden());
+
+    $this->embedForm('query_select', $queryselectForm);
+  }
+
 
   /**
    * sets the form up, gives it a name and embeds the forms
@@ -128,14 +163,14 @@ class agStaffPoolForm extends sfForm
     $form->getObject()->save();
     $this->lucene_search_id = $form->getObject()->getId();
   }
-  
+
   /**
    * save the embedded scenario staff generator form
    * @param sfForm $form a form to process
    * @param mixed $values a set of values coming from a post
    */
 
-  public function saveStaffGenForm($form, $values)
+  public function saveReportGenForm($form, $values)
   {
     $form->updateObject($values);
     if ($form->getObject()->lucene_search_id == null) {
