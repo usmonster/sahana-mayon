@@ -27,8 +27,7 @@ class agEmbeddedPersonDateOfBirthForm extends agPersonDateOfBirthForm
       #'id'            => new sfWidgetFormInputHidden(),
       #'person_id'     => new sfWidgetFormInputHidden(),//sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agPerson'), 'add_empty' => false)),
       #'date_of_birth' => new sfWidgetFormDate(),
-      // TODO: replace this with regular jQuery & remove sfJQueryUIPlugin
-      'date_of_birth' => new sfWidgetFormDateJQueryUI(array('change_month' => true, 'change_year' => true), array('class' => 'inputGray')),
+      'date_of_birth' => new sfWidgetFormInputText(array(), array('id' => 'dob', 'class' => 'inputGray')),
     ));
 
     $this->setValidators(array(
@@ -37,12 +36,13 @@ class agEmbeddedPersonDateOfBirthForm extends agPersonDateOfBirthForm
       'date_of_birth' => new sfValidatorDate(array('required' => false, 'empty_value' => '0000-00-00')),
         /**
          * @todo: 'empty_value' => '0000-00-00' is not optimal, but is currently preventing a DB error on submit.
-         * */
+         */
     ));
   }
 
   public function configure()
   {
+    parent::configure();
     $custDeco = new agWidgetFormSchemaFormatterInline($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
     $this->getWidgetSchema()->setFormFormatterName('custDeco');

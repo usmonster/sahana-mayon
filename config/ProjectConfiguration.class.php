@@ -57,12 +57,11 @@ class ProjectConfiguration extends sfProjectConfiguration
     // plugins are considered 'core' elements, akin to apps/frontend/modules, they should not be
     // disabled
     $this->enablePlugins(
-        array('sfDoctrinePlugin',
+        array(
+          'sfDoctrinePlugin',
           'sfDoctrineGuardPlugin',
           'sfDoxygenPlugin',
-          'sfFormExtraPlugin',
           'sfPhpExcelPlugin',
-          'sfJQueryUIPlugin',
           'ajDoctrineLuceneablePlugin',
           'ioMenuPlugin'
         )

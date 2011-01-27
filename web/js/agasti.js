@@ -1,15 +1,11 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-$(document).ready(function() {
+$(function() {
   $('#importForm').hide();
 });
 
-$(document).ready(function() {
+$(function() {
   $('#import').click(function() {
     $('#importForm').toggle();
-//    $('#importForm').animate({width: 'toggle'});
+    //    $('#importForm').animate({width: 'toggle'});
     return false;
   });
 //  $('#file').change(function() {
@@ -22,7 +18,7 @@ $(document).ready(function() {
 //  .change();
 });
 
-$(document).ready(function() {
+$(function() {
   $('#fileUpload').change(function() {
     $('#show').val($('#fileUpload').val());
   })

@@ -28,6 +28,19 @@
       </div>
       <div style="display: inline-block">
         <?php echo $form['date of birth']; ?>
+        <script type="text/javascript">
+          $(function() {
+            $("#dob").datepicker({
+              changeMonth: true,
+              changeYear: true,
+              defaultDate: new Date($("#dob").val()),
+              duration: 'fast',
+              minDate: -110*365,
+              maxDate: 0,
+              yearRange: 'c-110:c'
+            });
+          });
+        </script>
       </div>
       <br />
       <br />
