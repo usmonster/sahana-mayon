@@ -144,8 +144,6 @@ class DateTimeHelper
         $milliseconds_remaining = $seconds_remaining % DateTimeHelper::MSEC_IN_SEC;
 
         $this->parsedTimeArrayInstance['milliseconds'] = $milliseconds_remaining;
-
-        return $this->parsedTimeArrayInstance;
     }
 
     /**
