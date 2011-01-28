@@ -14,23 +14,23 @@
  $filterForm->getWidget('ethnicity')->setAttribute('style', 'width: 100%');
  $filterForm->getWidget('religion')->setAttribute('style', 'width: 100%');
 ?>
-<div style="border: solid 1px #dadada; margin-right: 1em; padding: .5em; -moz-border-radius: 5px;">
+<div class="filterBox">
   <h3>Filter:</h3>
   <form action="<?php echo url_for('staff_search') ?>" method="get" style="display: inline;">
-    <label style="font-weight: bold;">Search String:</label>
+    <label class ="filterButton">Search String:</label>
     <input type="hidden" name="query" value="<?php echo $sf_request->getParameter('query') ?>"/>
-    <input type="text" name="filter" value="<?php echo $sf_request->getParameter('filter') ?>" id="search_keywords" class="search" style="margin: auto; vertical-align: middle; display:inline; width: 100%" />
+    <input type="text" name="filter" value="<?php echo $sf_request->getParameter('filter') ?>" id="search_keywords" class="searchFilter"/>
 
-    <label style="font-weight: bold;">Filter By Sex:</label>
+    <label class ="filterButton">Filter By Sex:</label>
     <?php echo $filterForm['sex']; ?>
 
-    <label style="font-weight: bold;">Filter by Nationality:</label>
+    <label class ="filterButton">Filter by Nationality:</label>
     <?php echo $filterForm['nationality']; ?>
 
-    <label style="font-weight: bold;">Filter by Ethnicity:</label>
+    <label class ="filterButton">Filter by Ethnicity:</label>
     <?php echo $filterForm['ethnicity']; ?>
 
-    <label style="font-weight: bold;">Filter by Religion:</label>
+    <label class ="filterButton">Filter by Religion:</label>
     <?php echo $filterForm['religion']; ?>
 
     <input type="submit" value="Filter" class="buttonWhite" />

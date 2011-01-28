@@ -189,6 +189,20 @@ h5 {
   color: #ff7800;
   text-shadow: 0px 0px 5px #ff7800;
 }
+
+/**** Floats ****/
+
+.leftFloat
+{
+  float: left;
+}
+
+.rightFloat
+{
+  float: right;
+}
+
+
 /**** Links ****/
 .linkButton {
   display: inline-block;
@@ -326,6 +340,12 @@ h5 {
 form .importForm {
   position: relative;
   display: inline-block;
+}
+
+#divAssocStaff {
+  OVERFLOW: auto;
+  WIDTH: 350px;
+  HEIGHT: 147px;
 }
 
 /**** Login ****/
@@ -499,9 +519,23 @@ input[type="button"], button[type="submit"], form input[type="submit"] {
 
 
 .search {
-  border: 1px solid #dadada;
-  background-color: #ffffff;
-  outline: none;
+  border: none;
+}
+
+.searchForm {
+  border: none;
+  margin: auto;
+  vertical-align: middle;
+  display:inline;
+  width: 50%;
+}
+
+.searchFilter {
+  border: none;
+  margin: auto;
+  vertical-align: middle;
+  display:inline;
+  width: 100%
 }
 
 .search:hover, .search:focus, .inputGray:hover, .inputGray:focus, .inputGraySmall:hover, .inputGraySmall:focus  {
@@ -559,6 +593,10 @@ th .tableHeaderContent {
   padding: 0;
 }
 
+th .tableRow {
+  border: none;
+}
+
 .staffTable, .singleTable {
   border-collapse: collapse;
 }
@@ -583,6 +621,11 @@ th .tableHeaderContent {
   margin: 0;
   text-align: center;
 }
+
+.staffNameTable {
+  text-align: center
+}
+
 .staffTable .head, .singleTable .head, .singleTable .headLeft, .singleTable .headMid {
   background: #dadada;
   text-align: center;
@@ -777,6 +820,17 @@ th .tableHeaderContent {
   margin-top: 5px;
   color: #ff8f00;
   font-weight: bold;
+}
+
+.filterButton {
+  font-weight: bold;
+}
+
+.filterBox {
+  border: solid 1px #dadada;
+  margin-right: 1em;
+  padding: .5em;
+  -moz-border-radius: 5px;
 }
 
 /* MENU */

@@ -43,11 +43,12 @@ $ag_person_name_types = Doctrine::getTable('agPersonNameType')
     ?>
   </h3>
   <thead>
-    <tr style="border: none">
+    <tr class="search">
       <th class="head" rowspan="2"></th>
-      <!--we can use an image here for sort icons instead of v and ^, this code can also be cleaned up later for re-use -->
+      <!--we can use an image here for sort icons instead of v and ^,
+      this code can also be cleaned up later for re-use -->
       <th class="<?php ($sortColumn == 'person_name') ? print 'headsort' : print 'head' ?>"
-          colspan="<?php echo count($ag_person_name_types); ?>" style="text-align: center">Name</th>
+          colspan="<?php echo count($ag_person_name_types); ?>" class="staffNameTable">Name</th>
       <th class="<?php ($sortColumn == 'sex') ? print 'headsort' : print 'head' ?>" rowspan="2" >Sex
         <?php
         if ($sortColumn == 'sex' && $sortOrder == 'DESC') {

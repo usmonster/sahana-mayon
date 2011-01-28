@@ -22,7 +22,7 @@
     ?>
   </caption>
 <thead>
-    <tr style="border: none">
+    <tr class="tableRow">
       <th class="head" rowspan="2"></th>
       <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" style="text-align: center">
       Name
@@ -68,7 +68,7 @@
         ?>
       </th>
     </tr>
-   <tr style="border: none;">
+   <tr class="tableRow">
      <?php foreach ($ag_person_name_types as $ag_person_name_type_id => $ag_person_name_type): ?>
        <th class="subHead" rowspan="2">
          <div style="margin: 0; padding: 0"><?php echo ucwords($ag_person_name_type); ?></div>

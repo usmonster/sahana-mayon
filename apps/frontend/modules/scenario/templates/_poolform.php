@@ -35,10 +35,10 @@ if(isset($search_id)){
 
           <h3>Construct Search Conditions:</h3>
 
-          <label style="font-weight: bold;">Filter By Staff Type:</label>
+          <label class ="filterButton">Filter By Staff Type:</label>
           <?php echo $filterForm['staff_type']; ?>
 
-          <label style="font-weight: bold;">Filter by Organization:</label>          
+          <label class ="filterButton">Filter by Organization:</label>
           <?php echo $filterForm['organization']; ?>
         </td>
       </tr>

@@ -52,7 +52,7 @@ $descArrow = '&#x25BC;';
         <a href="<?php echo url_for('organization/new') ?>" class="linkButton" title="Create New Organization">Create New</a>
       </div>
 
-      <div style="float: right;">
+      <div class="rightFloat">
   <?php
 //
 //First Page link (or inactive if we're at the first page).

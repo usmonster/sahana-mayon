@@ -41,10 +41,10 @@ $desired_fields = array_diff($desired_fields, $relationsLevel1);
   </caption>
 
   <thead>
-    <tr style="border: none">
+    <tr class="tableRow">
       <th class="head" rowspan="2"></th>
       <th class="head" colspan="<?php echo count($ag_person_name_types); ?>"
-          style="text-align: center">Name</th>
+          class="staffNameTable">Name</th>
       <th class="head" rowspan="2">Sex</th>
       <th class="head" rowspan="2">Nationality</th>
       <th class="head" rowspan="2">Ethnicity</th>
