@@ -17,27 +17,27 @@ class agScenarioFacilityGroupTable extends Doctrine_Table
     return Doctrine_Core::getTable('agScenarioFacilityGroup');
   }
 
-  public function getForLuceneQuery($query)
-  {
-    $hits = self::getLuceneIndex()->find($query);
-
-    $pks = array();
-    foreach($hits as $hit)
-    {
-      $pks[] = $hit->pk;
-    }
-
-    if(empty($pks))
-    {
-      return array();
-    }
-
-    $q = $this->createQuery('j')
-      ->whereIn('j.id', $pks)
-      ->limit(20);
-
-    return $q->execute();
-  }
+//  public function getForLuceneQuery($query)
+//  {
+//    $hits = self::getLuceneIndex()->find($query);
+//
+//    $pks = array();
+//    foreach($hits as $hit)
+//    {
+//      $pks[] = $hit->pk;
+//    }
+//
+//    if(empty($pks))
+//    {
+//      return array();
+//    }
+//
+//    $q = $this->createQuery('j')
+//      ->whereIn('j.id', $pks)
+//      ->limit(20);
+//
+//    return $q->execute();
+//  }
 
 /**
 * getLuceneQuery uses the results of the Lucene query to construct a Doctrine query.
@@ -46,27 +46,27 @@ class agScenarioFacilityGroupTable extends Doctrine_Table
 * @return $q, a constructed Doctrine query
 *
 **/
-  public function getLuceneQuery($query)
-  {
-    $hits = self::getLuceneIndex()->find($query);
-
-    $pks = array();
-    foreach($hits as $hit)
-    {
-      $pks[] = $hit->pk;
-    }
-
-    if(empty($pks))
-    {
-      return array();
-    }
-
-    $q = $this->createQuery('j')
-      ->whereIn('j.id', $pks)
-      ->limit(20);
-
-    return $q;
-  }
+//  public function getLuceneQuery($query)
+//  {
+//    $hits = self::getLuceneIndex()->find($query);
+//
+//    $pks = array();
+//    foreach($hits as $hit)
+//    {
+//      $pks[] = $hit->pk;
+//    }
+//
+//    if(empty($pks))
+//    {
+//      return array();
+//    }
+//
+//    $q = $this->createQuery('j')
+//      ->whereIn('j.id', $pks)
+//      ->limit(20);
+//
+//    return $q;
+//  }
 
 /**
 * getLuceneIndex creates a new Lucene index directory, or opens one if it already exists. Permissions
@@ -75,26 +75,26 @@ class agScenarioFacilityGroupTable extends Doctrine_Table
 * @return Zend_Search_Lucene::create($index) or Zend_Search_Lucene::open($index)
 *
 **/
-  static public function getLuceneIndex()
-  {
-    ProjectConfiguration::registerZend();
-
-    if (file_exists($index = self::getLuceneIndexFile()))
-    {
-      return Zend_Search_Lucene::open($index);
-    }
-
-    return Zend_Search_Lucene::create($index);
-  }
+//  static public function getLuceneIndex()
+//  {
+//    ProjectConfiguration::registerZend();
+//
+//    if (file_exists($index = self::getLuceneIndexFile()))
+//    {
+//      return Zend_Search_Lucene::open($index);
+//    }
+//
+//    return Zend_Search_Lucene::create($index);
+//  }
 
 /**
 * getLuceneIndexFile accesses a Lucene index file within the directory accessed with getLuceneIndex.
 * @return sfConfig::get('sf_data_dir').'/indexes/person.'.sfConfig::get('sf_environment').'.index'
 *
 **/
-  static public function getLuceneIndexFile()
-  {
-//    return sfConfig::get('sf_data_dir').'/indexes/person.index';
-    return sfConfig::get('sf_data_dir').'/search/agScenario/lucene.index';
-  }
+//  static public function getLuceneIndexFile()
+//  {
+////    return sfConfig::get('sf_data_dir').'/indexes/person.index';
+//    return sfConfig::get('sf_data_dir').'/search/agScenario/lucene.index';
+//  }
 }

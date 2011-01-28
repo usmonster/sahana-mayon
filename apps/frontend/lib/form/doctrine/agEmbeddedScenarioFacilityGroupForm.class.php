@@ -49,7 +49,7 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
       'scenario_id'                         => new sfWidgetFormInputHidden(),
       'scenario_facility_group'             => new sfWidgetFormInputText(),
       'facility_group_type_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupType'), 'add_empty' => false)),
-      'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false)),
+      'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false, 'method' => 'getFacilityGroupAllocationStatus')),
       'activation_sequence'                 => new sfWidgetFormInputText(),
       //facility resource list needs to minus options that are in $currentoptions
       //'ag_facility_resource_list'          => new sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('style' => 'height:150px;width:150px;')),

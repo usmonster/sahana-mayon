@@ -25,7 +25,6 @@ class agScenarioFacilityGroup extends BaseagScenarioFacilityGroup
     $doc->addField(Zend_Search_Lucene_Field::unStored('scenario', $this->getAgScenario()->scenario . ' ' .$this->getAgScenario()->description, 'utf-8'));
     $doc->addField(Zend_Search_Lucene_Field::unStored('group_type', $this->getAgFacilityGroupType()->getFacilityGroupType(), 'utf-8'));
     $doc->addField(Zend_Search_Lucene_Field::unStored('group_status', $this->getAgFacilityGroupAllocationStatus()->facility_group_allocation_status, 'utf-8'));
-    $doc->addField(Zend_Search_Lucene_Field::unStored('bob', 'gargantua', 'utf-8'));
     $query = Doctrine_Query::create()
         ->select('g.id, sfr.id, fr.id, f.facility_name, frt.facility_resource_type')
         ->from('agScenarioFacilityGroup g')

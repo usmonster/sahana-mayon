@@ -22,6 +22,7 @@ abstract class BaseagScenarioStaffGeneratorForm extends BaseFormDoctrine
       'created_at'       => new sfWidgetFormDateTime(),
       'updated_at'       => new sfWidgetFormDateTime(),
     ));
+
     $this->setValidators(array(
       'id'               => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'scenario_id'      => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'))),
