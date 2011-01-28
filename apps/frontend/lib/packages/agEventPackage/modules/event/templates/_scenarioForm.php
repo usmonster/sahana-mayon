@@ -1,7 +1,6 @@
 <?php use_stylesheets_for_form($scenarioForm) ?>
 <?php use_javascripts_for_form($scenarioForm) ?>
-
-<form action="<?php echo url_for('event/meta') ?> " method="post">
+<form action="<?php echo url_for('event/meta') ?> " method="post" name="scenario">
   <table>
     <tfoot>
       <tr>

@@ -9,5 +9,9 @@
   the Zero Hour.</p>
 <p><b>Note:</b> the name should be specific.  For example: a hurricane response to Hurricane Erica could
   be named "Erica" in Agasti.</p>
+
+<h3>Event based on the <span style="color: #ff8f00"><?php echo $scenarioName; ?></span> Scenario</h3>
+<br>
+
 <h3>Event Pre-Deployment</h3>
-<?php include_partial('metaForm', array('metaForm' => $metaForm)) ?>
+<?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id)) ?>
