@@ -13,12 +13,15 @@
   your staff and facility resources are up to date, and that the shifts for <span style="color: #ff8f00"><?php echo $eventName; ?></span> event are
   up to date.</p>
 
-<a href="<?php echo url_for('event/gis'); ?>" class="buttonText" title="Update GIS Data">Generate Geo Information</a><br/>
+<a href="<?php echo url_for('event/gis'); ?>" class="linkButton" title="Update GIS Data">Generate Geo Information</a>
 
-<b>Button for Shift generation.</b><br>
+<a href="#" class="linkButton" title="Generate Shifts">Generate Shifts</a>
 
-<b>Warnings in case something is missing.</b><br>
+<?php
+ //We should have some warnings here in case you're missing something.
+?>
+<a href="#" class="linkButton" title="Save">Save</a>
 
-<b>Button to save w/o deploying. </b><br>
+<a href="#" class="linkButton" title="Save and Deploy">Save and Deploy</a>
 
-<b>Button to deploy The Event.</b>
+

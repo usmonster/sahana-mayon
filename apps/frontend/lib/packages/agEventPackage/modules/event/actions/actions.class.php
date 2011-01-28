@@ -32,7 +32,11 @@ class eventActions extends sfActions
   {
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
       $this->form = new PluginagEventDefForm();
-      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
+//      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
+      // Had to do this here because the form values weren't under a separate array element. Not sure why though.
+      $values = $request->getPostParameters();
+      unset($values['scenario_id']);
+      $this->form->bind($values, $request->getFiles($this->form->getName()));
       if ($this->form->isValid()) {
         $ag_event = $this->form->save();
 
