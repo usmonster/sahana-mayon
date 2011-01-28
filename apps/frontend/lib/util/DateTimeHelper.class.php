@@ -1,27 +1,22 @@
 <?php
 
-class DateTimeHelper extends DateTime
+class DateTimeHelper
 {
 
     /**
-     * DateTimeHelper this class is used to convert a time in seconds
-     * and return a parsed array of Days, Hours, Minutes, and Seconds.
-     * This wrapper is intended to simplify some of the use
-     * of date-time methods supplied by the DateTime class
+     * DateTimeHelper
+     *
+     * Converts a number of seconds or milliseconds into an array of hours,
+     * days, minutes and seconds.
      *
      * LICENSE: This source file is subject to LGPLv3.0 license
      * that is available through the world-wide-web at the following URI:
      * http://www.gnu.org/copyleft/lesser.html
      *
      * @author     Antonio Estrada, CUNY SPS
-     * @todo       Finish extending parent class functionality.  Make it usable for milliseconds and abstract.
-     *
      *
      * Copyright of the Sahana Software Foundation, sahanafoundation.org
      */
-
-    // STATIC CLASS MEMBERS
-    // ====================
 
     // Conversion Constants
     const MSEC_IN_DAY = 86400000;
@@ -34,74 +29,39 @@ class DateTimeHelper extends DateTime
     const SEC_IN_MINUTE = 60;
 
     const MSEC_IN_SEC = 1000;
-   
 
-    // INTERVAL FORMATS
-    //const TESTFORMAT = "Y%:D%"
 
-    // Declare static (class) variables to be initialized below
-    public static $days = null;
-    public static $hours = null;
-    public static $minutes = null;
-    public static $seconds = null;
-    public static $milliseconds = null;
+    // STATIC (CLASS) MEMBERS
+    // ======================
 
-    public static $dateTimeHelperArray = array (
-
-        "days"          =>      null,
-        "hours"         =>      null,
-        "minutes"       =>      null,
-        "seconds"       =>      null,
-        "milliseconds"  =>      null
-
-    );
-    
-    public static function secondsToParsedTimeArray($s)
+    /**
+     *
+     * Returns a parsed time interval in usable form.
+     *
+     * parsedTime() takes and integer representing a time interval and a string
+     * representing a unit of time, and returns an array that contains the same
+     * time interval parsed into days, hours, minutes, and seconds.
+     *
+     * @param integer $timeInterval An integer time interval in seconds or
+     * milliseconds
+     * @param string $unitsOfTime $unitsofTime is either 's' for seconds, or
+     * 'ms' for milliseconds
+     * @return array An array containing the number of days, hours minutes,
+     * seconds, and milliseconds.
+     *
+     */
+    public static function parsedTime($timeInterval, $unitsOfTime)
     {
-        DateTimeHelper::$days = (int) ($s / DateTimeHelper::SEC_IN_DAY);
-        $hours_remaining = $s % DateTimeHelper::SEC_IN_DAY;
+        $dateTimeHelperInstance = new DateTimeHelper($timeInterval, $unitsOfTime);
 
-        DateTimeHelper::$hours = (int) ($hours_remaining / DateTimeHelper::SEC_IN_HOUR);
-        $minutes_remaining = $hours_remaining % DateTimeHelper::SEC_IN_HOUR;
-
-        DateTimeHelper::$minutes = (int) ($minutes_remaining / DateTimeHelper::SEC_IN_MINUTE);
-        $seconds_remaining = $minutes_remaining % DateTimeHelper::SEC_IN_MINUTE;
-
-        DateTimeHelper::$seconds = $seconds_remaining;
-
-
-        // Build Interval String
-        DateTimeHelper::$dateTimeHelperArray['days']     =      DateTimeHelper::$days;
-        DateTimeHelper::$dateTimeHelperArray['hours']    =      DateTimeHelper::$hours;
-        DateTimeHelper::$dateTimeHelperArray['minutes']  =      DateTimeHelper::$minutes;
-        DateTimeHelper::$dateTimeHelperArray['seconds']  =      DateTimeHelper::$seconds;
-
-        return DateTimeHelper::$dateTimeHelperArray;
+        return $dateTimeHelperInstance->getParsedTime();
     }
 
+    // INSTANCE (OBJECT) MEMBERS
+    // =========================
 
-    // function: initializeDateTimeHelperClassVariables
-    //
-    // Works like a static constructor if such were supported in PHP.
-    // Initializes the Constants to be called in a static context outside
-    // the class, just before Class Definiation.
-
-    public static function initializeDateTimeHelperClassArray($s)
-    {
-        $dateTimeHelperObject = new DateTimeHelper();
-        DateTimeHelper::$dateTimeHelperArray = $dateTimeHelperObject->secondsToLegibleIntervalStr($s);
-    }
-
-    // INSTANCE MEMBERS
-    // ================
-
-    private     $days_ivar       =           null;
-    private     $hours_ivar      =           null;
-    private     $mintues_ivar    =           null;
-    private     $seconds_ivar    =           null;
-
-    private     $dateTimeHelpArray  =   array(
-
+    // Stores our parsed time
+    private $parsedTimeArrayInstance = array(
         
         "days"          =>      null,
         "hours"         =>      null,
@@ -109,42 +69,95 @@ class DateTimeHelper extends DateTime
         "seconds"       =>      null,
         "milliseconds"  =>      null
 
-
-
     );
 
-    
+
     /**
      *
-     * @method Calls DateTime::__construct($time, $object)
+     * The constructor initializes the object and calls the appropriate
+     * time parsing function based on the arguments supplied. This constructor
+     * is also used by Static functions to emulate functionality.
+     *
+     * @param integer $timeInterval An integer time interval in seconds or milliseconds
+     * @param string $unitsOfTime $unitsofTime is either 's' for seconds, or 'ms' for milliseconds
      *
      */
-    public function __construct()
+    public function __construct($timeInterval, $unitsOfTime)
     {
-        parent::__construct();
+
+        if ($unitsOfTime == 'ms')
+            $this->setMillisecondsToParsedTime($timeInterval);
+        else if ($unitsOfTime == 's')
+            $this->setSecondsToParsedTime($timeInterval);
+      
     }
 
-    public function secondsToParsedTimeArr($s)
+    /**
+     *
+     * Takes an integer time interval in seconds and converts it.
+     *
+     * Takes an integer number of seconds as an argument and parses the time
+     * interval into a corresponding number of days, hours, minutes and seconds.
+     * Leaves $this->parsedTimeArrayInstance['milliseconds'] set to NULL.
+     *
+     * @param integer $seconds
+     *
+     *
+     */
+    public function setSecondsToParsedTime($seconds)
     {
-        $this->days_ivar = (int) ($s / DateTimeHelper::SEC_IN_DAY);
-        $hours_remaining = $s % DateTimeHelper::SEC_IN_DAY;
+        $this->parsedTimeArrayInstance['days'] = (int) ($seconds / DateTimeHelper::SEC_IN_DAY);
+        $hours_remaining = $seconds % DateTimeHelper::SEC_IN_DAY;
 
-        $this->hours_ivar = (int) ($hours_remaining / DateTimeHelper::SEC_IN_HOUR);
+        $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / DateTimeHelper::SEC_IN_HOUR);
         $minutes_remaining = $hours_remaining % DateTimeHelper::SEC_IN_HOUR;
 
-        $this->mintues_ivar = (int) ($minutes_remaining / DateTimeHelper::SEC_IN_MINUTE);
+        $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / DateTimeHelper::SEC_IN_MINUTE);
         $seconds_remaining = $minutes_remaining % DateTimeHelper::SEC_IN_MINUTE;
 
-        $this->seconds_ivar = $seconds_remaining;
+        $this->parsedTimeArrayInstance['seconds'] = $seconds_remaining;
+    }
 
+    /**
+     *
+     * Takes an integer time interval in seconds and converts it.
+     *
+     * Takes an integer number of milliseconds as an argument and parses the
+     * time interval into a corresponding number of days, hours, minutes,
+     * seconds, and milliseconds.
+     *
+     * @param integer $milliseconds
+     *
+     */
+    public function setMillisecondsToParsedTime($milliseconds)
+    {
+        $this->parsedTimeArrayInstance['days'] = (int) ($milliseconds / DateTimeHelper::MSEC_IN_DAY);
+        $hours_remaining = $milliseconds % DateTimeHelper::MSEC_IN_DAY;
 
-        // Build Interval String
-        $this->dateTimeHelpArray['days']        =       $this->days_ivar;
-        $this->dateTimeHelpArray['hours']       =       $this->hours_ivar;
-        $this->dateTimeHelpArray['minutes']     =       $this->mintues_ivar;
-        $this->dateTimeHelpArray['seconds']     =       $this->seconds_ivar;
+        $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / DateTimeHelper::MSEC_IN_HOUR);
+        $minutes_remaining = $hours_remaining % DateTimeHelper::MSEC_IN_HOUR;
 
-        return $this->dateTimeHelpArray;
+        $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / DateTimeHelper::MSEC_IN_MINUTE);
+        $seconds_remaining = $minutes_remaining % DateTimeHelper::MSEC_IN_MINUTE;
+
+        $this->parsedTimeArrayInstance['seconds'] = (int) ($seconds_remaining / DateTimeHelper::MSEC_IN_SEC);
+        $milliseconds_remaining = $seconds_remaining % DateTimeHelper::MSEC_IN_SEC;
+
+        $this->parsedTimeArrayInstance['milliseconds'] = $milliseconds_remaining;
+
+        return $this->parsedTimeArrayInstance;
+    }
+
+    /**
+     *
+     * Accessor method to return array containing parsed times.
+     *
+     * @return array Array containing the number of days, minutes, seconds, and milliseconds
+     *
+     */
+    public function getParsedTime()
+    {
+        return $this->parsedTimeArrayInstance;
     }
 
 
