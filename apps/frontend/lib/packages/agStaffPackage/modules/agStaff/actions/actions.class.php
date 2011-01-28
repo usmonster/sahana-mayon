@@ -365,9 +365,15 @@ class agStaffActions extends agActions
       // saveStaffStatusList function is not called. Calling that refreshes the relation
       // and will cause failure on an update of an existing staff.
       $form->getObject()->clearRelated('agStaffStatus');
-      $form->getObject()->clearRelated('agStaff');
+      //$form->getObject()->clearRelated('agStaff');
 
       $ag_staff = $form->save();
+      $refAgStaff = $ag_staff->getAgStaff();
+      $staffObj = Doctrine_Query::create()
+        ->from('agStaff s')
+        ->where('s.person_id=?', $ag_staff->id)
+        ->fetchOne();
+      LuceneRecord::updateLuceneRecord($staffObj);
 
       //$staff_id = $ag_staff->getAgStaff()->getFirst()->getId();
 //not an object? first it's a collection, now not an object if i just get one
