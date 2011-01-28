@@ -37,7 +37,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
     $this->setWidgets(array(
       'id'                                  => new sfWidgetFormInputHidden(),
       'scenario_id'                         => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => false)),
-      'scenario_facility_group'             => new sfWidgetFormInputText(),
+      'scenario_facility_group'             => new sfWidgetFormInputText(array('label' => 'Status')),
       'facility_group_type_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupType'), 'add_empty' => false)),
       'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false, 'method' => 'getFacilityGroupAllocationStatus', 'label' => 'Status')),
       'activation_sequence'                 => new sfWidgetFormInputText(),
