@@ -16,6 +16,39 @@
  */
 class agFacility extends BaseagFacility
 {
+  /**
+   * Builds an index for facility.
+   *
+   * @return Zend_Search_Lucene_Document $doc
+   */
+  public function updateLucene()
+  {
+    $doc = new Zend_Search_Lucene_Document();
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('facility', $this->facility_name, 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('facility_code', $this->facility_code, 'utf-8'));
+
+    $facilityInfo = Doctrine_Query::create()
+      ->select('f.id, fr.id, frt.id, frt.facility_resource_type, frt.facility_resource_type_abbr')
+      ->from('agFacility f')
+      ->innerJoin('f.agFacilityResource fr')
+      ->innerJoin('fr.agFacilityResourceType frt')
+      ->where('f.id=?', $this->id)
+      ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $resourceType = null;
+    // Cannot save facility's resource type info until after the facility is saved.
+    foreach ($facilityInfo as $fac)
+    {
+      $resourceType = $resourceType . ' ' . $fac['frt_facility_resource_type'] . ' ' . $fac['frt_facility_resource_type_abbr'];
+    }
+    if (isset($resourceType))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource' , $resourceType, 'utf-8'));
+    }
+
+    return $doc;
+  }
 
   /**
    * delete()

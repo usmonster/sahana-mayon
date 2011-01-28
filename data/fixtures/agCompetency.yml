@@ -1,0 +1,11 @@
+agCompetency:
+  poor:
+    id: 1
+    competency: poor
+    priority: 1
+    description: lack of practice
+  well:
+    id: 2
+    competency: well
+    priority: 2
+    description: recently and frequently practiced

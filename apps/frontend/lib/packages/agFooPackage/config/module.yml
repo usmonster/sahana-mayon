@@ -1,0 +1,4 @@
+all:
+  enabled:            true
+  view_class:         sfPHP
+  partial_view_class: sf

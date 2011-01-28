@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Staff Actions extends sfActions
+ * Client Actions extends sfActions
  *
  * PHP Version 5
  *
@@ -407,7 +407,7 @@ class clientActions extends sfActions
     $ag_person->delete();
     $ent->delete();
 
-    $this->redirect('staff/list');
+    $this->redirect('client/list');
   }
 
   /**
@@ -423,7 +423,7 @@ class clientActions extends sfActions
     if ($form->isValid()) {
       $ag_person = $form->save();
 
-      $this->redirect('staff/edit?id=' . $ag_person->getId());
+      $this->redirect('client/edit?id=' . $ag_person->getId());
     }
   }
 
@@ -435,7 +435,7 @@ class clientActions extends sfActions
    * */
   public function executeExport()
   {
-    $staffMembers = Doctrine::getTable('agPerson')
+    $clientMembers = Doctrine::getTable('agPerson')
             ->createQuery('a')
             ->execute();
     $nameTypes = Doctrine::getTable('agPersonNameType')

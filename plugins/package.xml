@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.9.1" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
- <name>ajDoctrineLuceneablePlugin</name>
+<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.9.0" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>ioEditableContentPlugin</name>
  <channel>plugins.symfony-project.org</channel>
- <summary>This plugins allows for easy lucene full text integration in doctrine and the admin generator</summary>
- <description>This plugins allows for easy lucene full text integration in doctrine and the admin generator</description>
+ <summary>Allows for frontend/inline editing of fields and forms. The goal is to allow content to be inline-editable without getting in the way of the developer.</summary>
+ <description>Allows for frontend/inline editing of fields and forms. The goal is to allow content to be inline-editable without getting in the way of the developer.</description>
  <lead>
-  <name>A. van Waart</name>
-  <user>arendvw</user>
-  <email>arendvw@dds.nl</email>
+  <name>Ryan Weaver</name>
+  <user>weaverryan</user>
+  <email>ryan.weaver@iostudio.com</email>
   <active>yes</active>
  </lead>
- <date>2010-10-05</date>
- <time>10:35:55</time>
+ <date>2010-06-25</date>
+ <time>02:11:09</time>
  <version>
-  <release>0.1.1</release>
-  <api>0.1.0</api>
+  <release>0.6.0</release>
+  <api>0.6.0</api>
  </version>
  <stability>
   <release>beta</release>
@@ -26,115 +26,54 @@
  </notes>
  <contents>
   <dir name="/">
-   <file md5sum="053de95effc2b6b5e283022ace26f16d" name="config/ajDoctrineLuceneablePluginConfiguration.class.php" role="data"/>
-   <file md5sum="d7560e9a0d1688b5cd4be446224ccb39" name="config/config.php" role="data"/>
-   <file md5sum="35856743f6d23a3edb1453626ecc404a" name="config/lucene.yml" role="data"/>
-   <file md5sum="efc2422c622971806ae2c3ef79286db1" name="data/vendor/Zend/Loader/Autoloader/Interface.php" role="data"/>
-   <file md5sum="5de93d4bf6e110dc7d0f9c05902e6573" name="data/vendor/Zend/Loader/Autoloader/Resource.php" role="data"/>
-   <file md5sum="e0fb132d1f5c64687d559ede0f906330" name="data/vendor/Zend/Loader/PluginLoader/Exception.php" role="data"/>
-   <file md5sum="76720deb90f2ef24d23a304cc7b96e64" name="data/vendor/Zend/Loader/PluginLoader/Interface.php" role="data"/>
-   <file md5sum="f8197bc57e23aa9718cb0059180765d4" name="data/vendor/Zend/Loader/Autoloader.php" role="data"/>
-   <file md5sum="f6bbb81c336c1b2690a6cbdfa709501c" name="data/vendor/Zend/Loader/Exception.php" role="data"/>
-   <file md5sum="35acd4cf90e3999fe0ae140a15698521" name="data/vendor/Zend/Loader/PluginLoader.php" role="data"/>
-   <file md5sum="d7cfe8d0a2688e113c64b09a0c6d008b" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common/Text/CaseInsensitive.php" role="data"/>
-   <file md5sum="34bfa5e0ff9a906193e89d0f365afba2" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common/TextNum/CaseInsensitive.php" role="data"/>
-   <file md5sum="a426eb5094b823bdbfccb9429f506f80" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common/Utf8/CaseInsensitive.php" role="data"/>
-   <file md5sum="14e8e750cb58c9f54a2c3a4e334b30d2" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common/Utf8Num/CaseInsensitive.php" role="data"/>
-   <file md5sum="2914833248d91f4dd43cfd0228e1aa7d" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common/Text.php" role="data"/>
-   <file md5sum="c679eeab217e442c7fa6277a241affc1" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common/TextNum.php" role="data"/>
-   <file md5sum="2dc1058043631eada4b7ec4f86190766" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common/Utf8.php" role="data"/>
-   <file md5sum="49d6cc4500464e93c65fac34ce6c13a2" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common/Utf8Num.php" role="data"/>
-   <file md5sum="a28d253e440199bb1a08793dfa8ca8bc" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer/Common.php" role="data"/>
-   <file md5sum="e499b4553e038c467501ecb8014dd78f" name="data/vendor/Zend/Search/Lucene/Analysis/TokenFilter/LowerCase.php" role="data"/>
-   <file md5sum="0792e5bbf674b3cf77c97650834bdbb9" name="data/vendor/Zend/Search/Lucene/Analysis/TokenFilter/LowerCaseUtf8.php" role="data"/>
-   <file md5sum="1b7564521d6e3e0e074fb2c387f72d8b" name="data/vendor/Zend/Search/Lucene/Analysis/TokenFilter/ShortWords.php" role="data"/>
-   <file md5sum="3fa068ccf4d21617f62d9602e697fb56" name="data/vendor/Zend/Search/Lucene/Analysis/TokenFilter/StopWords.php" role="data"/>
-   <file md5sum="2daf3dead82ac68a0d750ccdd942d7d3" name="data/vendor/Zend/Search/Lucene/Analysis/Analyzer.php" role="data"/>
-   <file md5sum="f58966bd5d345e547da5cc7d609f639f" name="data/vendor/Zend/Search/Lucene/Analysis/Token.php" role="data"/>
-   <file md5sum="3b365cd879088d7e1cfba69bf9c55526" name="data/vendor/Zend/Search/Lucene/Analysis/TokenFilter.php" role="data"/>
-   <file md5sum="2970389b14104358e6b47f21180ada5b" name="data/vendor/Zend/Search/Lucene/Document/Docx.php" role="data"/>
-   <file md5sum="c7e8c7a2c154d93da594d4cc1a8db3cf" name="data/vendor/Zend/Search/Lucene/Document/Exception.php" role="data"/>
-   <file md5sum="b9c64401ca54e1de835473a4bd9ba98f" name="data/vendor/Zend/Search/Lucene/Document/Html.php" role="data"/>
-   <file md5sum="1db25facbc3123db7c8bb0ca042fe965" name="data/vendor/Zend/Search/Lucene/Document/OpenXml.php" role="data"/>
-   <file md5sum="b8ff4c755b5f52a9b8c0a800873e3e00" name="data/vendor/Zend/Search/Lucene/Document/Pptx.php" role="data"/>
-   <file md5sum="754f08ae2c5decec65c28fb6e0ebbfd8" name="data/vendor/Zend/Search/Lucene/Document/Xlsx.php" role="data"/>
-   <file md5sum="8778b33ad9712ab93669fd28d9c72b2a" name="data/vendor/Zend/Search/Lucene/Index/SegmentWriter/DocumentWriter.php" role="data"/>
-   <file md5sum="160e2548a12353118650ac7b344a5dd9" name="data/vendor/Zend/Search/Lucene/Index/SegmentWriter/StreamWriter.php" role="data"/>
-   <file md5sum="228d757bbf55baf46fc75d4aa92ef42f" name="data/vendor/Zend/Search/Lucene/Index/TermsStream/Interface.php" role="data"/>
-   <file md5sum="2c26f2a02f9212d0e5da0b3fdbb0aa33" name="data/vendor/Zend/Search/Lucene/Index/DictionaryLoader.php" role="data"/>
-   <file md5sum="1b9636cf3fb56511e2e072c869d74302" name="data/vendor/Zend/Search/Lucene/Index/DocsFilter.php" role="data"/>
-   <file md5sum="9d2894953179586a21952e5917169b61" name="data/vendor/Zend/Search/Lucene/Index/FieldInfo.php" role="data"/>
-   <file md5sum="2c2edd7489fa2854d2d50cdf9f5ae5bb" name="data/vendor/Zend/Search/Lucene/Index/SegmentInfo.php" role="data"/>
-   <file md5sum="65fd2414f40f694b794a4febf9446933" name="data/vendor/Zend/Search/Lucene/Index/SegmentMerger.php" role="data"/>
-   <file md5sum="32643bc91dfa4345b6188faefab731f3" name="data/vendor/Zend/Search/Lucene/Index/SegmentWriter.php" role="data"/>
-   <file md5sum="681a3006597261d3955b7e297b9337e8" name="data/vendor/Zend/Search/Lucene/Index/Term.php" role="data"/>
-   <file md5sum="511ac7aaf73a6728c6af0b92cc6983d2" name="data/vendor/Zend/Search/Lucene/Index/TermInfo.php" role="data"/>
-   <file md5sum="ec08fa36c9052385b5f766b911ed0f97" name="data/vendor/Zend/Search/Lucene/Index/TermsPriorityQueue.php" role="data"/>
-   <file md5sum="de80219bb33202b5736b06ae85aee23d" name="data/vendor/Zend/Search/Lucene/Index/Writer.php" role="data"/>
-   <file md5sum="9c2f205f0a4f152b24d055169e5972fc" name="data/vendor/Zend/Search/Lucene/Search/Highlighter/Default.php" role="data"/>
-   <file md5sum="9f96f5286527cf84ec480e2e2d818c70" name="data/vendor/Zend/Search/Lucene/Search/Highlighter/Interface.php" role="data"/>
-   <file md5sum="aca9897e3f5095bc3621465120d582a2" name="data/vendor/Zend/Search/Lucene/Search/Query/Preprocessing/Fuzzy.php" role="data"/>
-   <file md5sum="6b24f7ae3789e2e5a4411ffcf86fd048" name="data/vendor/Zend/Search/Lucene/Search/Query/Preprocessing/Phrase.php" role="data"/>
-   <file md5sum="a32184003d550758990dbf17ee9d06ef" name="data/vendor/Zend/Search/Lucene/Search/Query/Preprocessing/Term.php" role="data"/>
-   <file md5sum="21a7cc88de5d59eda2d1830d7238c010" name="data/vendor/Zend/Search/Lucene/Search/Query/Boolean.php" role="data"/>
-   <file md5sum="558b1070e9f823ed6bde43593c34e120" name="data/vendor/Zend/Search/Lucene/Search/Query/Empty.php" role="data"/>
-   <file md5sum="2cf0af41571f5881b3eacc123c8da58a" name="data/vendor/Zend/Search/Lucene/Search/Query/Fuzzy.php" role="data"/>
-   <file md5sum="c81b808e06867d562ca3b5f136ef7499" name="data/vendor/Zend/Search/Lucene/Search/Query/Insignificant.php" role="data"/>
-   <file md5sum="7ccdebe3db8ec8788fa01a3dfc7db7b3" name="data/vendor/Zend/Search/Lucene/Search/Query/MultiTerm.php" role="data"/>
-   <file md5sum="37605e6e02312d178eeb4c47149332fd" name="data/vendor/Zend/Search/Lucene/Search/Query/Phrase.php" role="data"/>
-   <file md5sum="19dafc229fe00dd5eaa4da1ce7d6cf9e" name="data/vendor/Zend/Search/Lucene/Search/Query/Preprocessing.php" role="data"/>
-   <file md5sum="384e8cfa08b3750d892c407dc1e50a1f" name="data/vendor/Zend/Search/Lucene/Search/Query/Range.php" role="data"/>
-   <file md5sum="5a1b93deb560ef55a591204a94b9bd86" name="data/vendor/Zend/Search/Lucene/Search/Query/Term.php" role="data"/>
-   <file md5sum="bf99e62e2cbbb1fa9167fde7750af4d6" name="data/vendor/Zend/Search/Lucene/Search/Query/Wildcard.php" role="data"/>
-   <file md5sum="26736ed40347211ff24490d1f9fed5d4" name="data/vendor/Zend/Search/Lucene/Search/QueryEntry/Phrase.php" role="data"/>
-   <file md5sum="465b55766f5a5fc994c5f19782baa5a6" name="data/vendor/Zend/Search/Lucene/Search/QueryEntry/Subquery.php" role="data"/>
-   <file md5sum="5dc9ec52b8917f48733e7ad4d8418382" name="data/vendor/Zend/Search/Lucene/Search/QueryEntry/Term.php" role="data"/>
-   <file md5sum="b4e9aa3ea871b6ebcb83002b22f76022" name="data/vendor/Zend/Search/Lucene/Search/Similarity/Default.php" role="data"/>
-   <file md5sum="b494eff3c495ea3ab048d1b692d23599" name="data/vendor/Zend/Search/Lucene/Search/Weight/Boolean.php" role="data"/>
-   <file md5sum="c7de7d083cd07ab1604472d25e146fc2" name="data/vendor/Zend/Search/Lucene/Search/Weight/Empty.php" role="data"/>
-   <file md5sum="faeb0e3023e111d19135277389f21c66" name="data/vendor/Zend/Search/Lucene/Search/Weight/MultiTerm.php" role="data"/>
-   <file md5sum="582061c35c6cad8faa0c03d153a0e359" name="data/vendor/Zend/Search/Lucene/Search/Weight/Phrase.php" role="data"/>
-   <file md5sum="744ccac10d2091fbf660b2bf130dee80" name="data/vendor/Zend/Search/Lucene/Search/Weight/Term.php" role="data"/>
-   <file md5sum="2406aa01be041be5a149c0f05abe91da" name="data/vendor/Zend/Search/Lucene/Search/BooleanExpressionRecognizer.php" role="data"/>
-   <file md5sum="2195ddaca3f2db90a28e14e6fed3496e" name="data/vendor/Zend/Search/Lucene/Search/Query.php" role="data"/>
-   <file md5sum="e6c714bc8ed58b2567a98bdaa3243473" name="data/vendor/Zend/Search/Lucene/Search/QueryEntry.php" role="data"/>
-   <file md5sum="9026b974847bd8db5fe849f94ed39ec9" name="data/vendor/Zend/Search/Lucene/Search/QueryHit.php" role="data"/>
-   <file md5sum="03ab3da1d8df5c4b1eea1606c837771b" name="data/vendor/Zend/Search/Lucene/Search/QueryLexer.php" role="data"/>
-   <file md5sum="d9574468af74c960324e6b15612ddf0f" name="data/vendor/Zend/Search/Lucene/Search/QueryParser.php" role="data"/>
-   <file md5sum="2f7e24cf0069f7f9fb486260bb43c951" name="data/vendor/Zend/Search/Lucene/Search/QueryParserContext.php" role="data"/>
-   <file md5sum="7b5c45a35763705a33fbdd2afea0da57" name="data/vendor/Zend/Search/Lucene/Search/QueryParserException.php" role="data"/>
-   <file md5sum="81205c4e5a296e3b9e86b9b2177a3f2b" name="data/vendor/Zend/Search/Lucene/Search/QueryToken.php" role="data"/>
-   <file md5sum="079425dee452a764d3d94b24c0621cae" name="data/vendor/Zend/Search/Lucene/Search/Similarity.php" role="data"/>
-   <file md5sum="5597f3d28d2742be273407ed9c5a359d" name="data/vendor/Zend/Search/Lucene/Search/Weight.php" role="data"/>
-   <file md5sum="dbaa9c2d06215bcf6792799b892ab5cb" name="data/vendor/Zend/Search/Lucene/Storage/Directory/Filesystem.php" role="data"/>
-   <file md5sum="b5cf925608546dc7f08a37562aeb12af" name="data/vendor/Zend/Search/Lucene/Storage/File/Filesystem.php" role="data"/>
-   <file md5sum="6f3653086083d3bd9bc828dfd7e5b331" name="data/vendor/Zend/Search/Lucene/Storage/File/Memory.php" role="data"/>
-   <file md5sum="94417a2e722bd7032e0fd521c3e8b6e3" name="data/vendor/Zend/Search/Lucene/Storage/Directory.php" role="data"/>
-   <file md5sum="78fac7e63213aa5d022957e3b32f971c" name="data/vendor/Zend/Search/Lucene/Storage/File.php" role="data"/>
-   <file md5sum="6c40dff656b8fbf4c1640b8a562a4b8b" name="data/vendor/Zend/Search/Lucene/Document.php" role="data"/>
-   <file md5sum="2d91f3e1b895097d48009a469b9f809f" name="data/vendor/Zend/Search/Lucene/Exception.php" role="data"/>
-   <file md5sum="e8ab9ef7d159f56b065ce6e456d0a951" name="data/vendor/Zend/Search/Lucene/Field.php" role="data"/>
-   <file md5sum="a7402883ea92f1bc7b1f3a958f988d9d" name="data/vendor/Zend/Search/Lucene/FSM.php" role="data"/>
-   <file md5sum="e91940fe17d40b15c2160176a134f8c2" name="data/vendor/Zend/Search/Lucene/FSMAction.php" role="data"/>
-   <file md5sum="6a86e39e0da709563c56794d387db9aa" name="data/vendor/Zend/Search/Lucene/Interface.php" role="data"/>
-   <file md5sum="0132119c3f37b8f78b1723549194a37f" name="data/vendor/Zend/Search/Lucene/LockManager.php" role="data"/>
-   <file md5sum="32b37399d1257429923a00b6c374b45d" name="data/vendor/Zend/Search/Lucene/MultiSearcher.php" role="data"/>
-   <file md5sum="11cdd54d906d213ec9977a42713f39aa" name="data/vendor/Zend/Search/Lucene/PriorityQueue.php" role="data"/>
-   <file md5sum="c0ec5cc35135efa294004c0def6dc452" name="data/vendor/Zend/Search/Lucene/Proxy.php" role="data"/>
-   <file md5sum="44e7be1925f31b16deb856bcb92dd23c" name="data/vendor/Zend/Search/Lucene/TermStreamsPriorityQueue.php" role="data"/>
-   <file md5sum="1bdd7b4c21b1d87dea6aa35d222af39f" name="data/vendor/Zend/Search/Exception.php" role="data"/>
-   <file md5sum="a45a0e1f16581fa006f0f6a215877c85" name="data/vendor/Zend/Search/Lucene.php" role="data"/>
-   <file md5sum="55ee8977abba3e9c8c56937432434c4c" name="data/vendor/Zend/Exception.php" role="data"/>
-   <file md5sum="87d76ee3022d67cf27e7d9ef4c139d2c" name="data/vendor/Zend/Loader.php" role="data"/>
-   <file md5sum="80afc220335b5567b0cd8ec523b471f5" name="lib/task/luceneOptimizeTask.class.php" role="data"/>
-   <file md5sum="0b29b15ba72d3af75855c2583e4dea17" name="lib/task/luceneReindexTask.class.php" role="data"/>
-   <file md5sum="08acca9deefc29d6a5d25950c0e44efc" name="lib/Luceneable.class.php" role="data"/>
-   <file md5sum="5a1f4f3e86c294b18da79260bd55dd89" name="lib/LuceneableListener.class.php" role="data"/>
-   <file md5sum="c76afe4c65eb42ca6f8c16c677339233" name="lib/LuceneHandler.php" role="data"/>
-   <file md5sum="0bd13cb47499bb4dab818da267e67f26" name="lib/LuceneRecord.class.php" role="data"/>
-   <file md5sum="049c64087a8fa436c7029f533852091f" name="lib/LuceneSearch.class.php" role="data"/>
-   <file md5sum="a9dd47c345c14a010a9ff0ee64a664cf" name="LICENCE" role="data"/>
-   <file md5sum="fb3b52b51de53f88d8b3533ac59f3f67" name="README" role="data"/>
+   <file md5sum="a16159fc2c5e8eb425b262eee1a9f2a0" name="lib/helper/EditableContentHelper.php" role="data"/>
+   <file md5sum="222c57f8a1452496f7adbff22fb09e3d" name="lib/service/ioEditableContentService.class.php" role="data"/>
+   <file md5sum="39cfddf2a73e57290e348b19c9e4f686" name="modules/ioEditableContent/lib/BaseioEditableContentActions.class.php" role="data"/>
+   <file md5sum="fbe2e9c0a5d0c48ebeac67f9ec15fe02" name="modules/ioEditableContent/actions/actions.class.php" role="data"/>
+   <file md5sum="2555977f7ce1c030eaf227dffa04bd6c" name="modules/ioEditableContent/templates/_formFields.php" role="data"/>
+   <file md5sum="5473830eb71f015a3f73521123d0b389" name="modules/ioEditableContent/templates/cssSuccess.css.php" role="data"/>
+   <file md5sum="c9f980dc385b72b2e3bbc34df07235ec" name="modules/ioEditableContent/templates/jsSuccess.js.php" role="data"/>
+   <file md5sum="e3a362b49b032bc15ec11ef0a9c3c768" name="modules/ioEditableContent/templates/formSuccess.php" role="data"/>
+   <file md5sum="fd4f491080d29fade5080877f1ba4c8b" name="web/fancybox/fancy_shadow_e.png" role="data"/>
+   <file md5sum="c820c878aedb7a7f9ebd7135a58e7c65" name="web/fancybox/fancy_shadow_nw.png" role="data"/>
+   <file md5sum="6cbe0c935511e7f9a2555ccb6a7324c4" name="web/fancybox/fancy_title_right.png" role="data"/>
+   <file md5sum="def257dbb0ab805c4996fd8abb1a6b49" name="web/fancybox/jquery.easing-1.3.pack.js" role="data"/>
+   <file md5sum="3be4a3aa1bb4ef20d2405720fbb05342" name="web/fancybox/jquery.fancybox-1.3.1.css" role="data"/>
+   <file md5sum="36a58859beb9a6b19322a37466b9f78e" name="web/fancybox/fancybox-y.png" role="data"/>
+   <file md5sum="8e8c18a9e7a147606a74ad2a5f4d2cff" name="web/fancybox/jquery.fancybox-1.3.1.js" role="data"/>
+   <file md5sum="11e57e492ee0311540967cc7a1e6e3e2" name="web/fancybox/fancybox.png" role="data"/>
+   <file md5sum="216e4bde5bddeeaa60dc3d692890a68e" name="web/fancybox/fancy_nav_right.png" role="data"/>
+   <file md5sum="f81cc0fee5581d76ad3cebe47e7e791b" name="web/fancybox/fancy_shadow_sw.png" role="data"/>
+   <file md5sum="a8afd5a008884380ee712d177105268f" name="web/fancybox/fancy_shadow_se.png" role="data"/>
+   <file md5sum="3f3e406102152cd8236383568a40ba35" name="web/fancybox/fancy_nav_left.png" role="data"/>
+   <file md5sum="59b0e63eb059e58d932cfd53da4d87e6" name="web/fancybox/fancy_shadow_w.png" role="data"/>
+   <file md5sum="1582ac2d3bef6a6445bf02ceca2741cd" name="web/fancybox/fancy_title_left.png" role="data"/>
+   <file md5sum="63adf788acf193d4e4f3642d7d793125" name="web/fancybox/fancy_shadow_ne.png" role="data"/>
+   <file md5sum="38dad6c1ed4bdc81c0bec721b2deb8c2" name="web/fancybox/fancy_title_main.png" role="data"/>
+   <file md5sum="325472601571f31e1bf00674c368d335" name="web/fancybox/blank.gif" role="data"/>
+   <file md5sum="9b9e5c888028aaef40fe5b6a363f1e29" name="web/fancybox/fancy_shadow_s.png" role="data"/>
+   <file md5sum="6e2879a324a76e9972ebc98201aae1d8" name="web/fancybox/fancy_close.png" role="data"/>
+   <file md5sum="e07dd7b5b3789e7521a2c1ba5c883055" name="web/fancybox/jquery.mousewheel-3.0.2.pack.js" role="data"/>
+   <file md5sum="638bf561b90f322f3a204300aee50294" name="web/fancybox/jquery.fancybox-1.3.1.pack.js" role="data"/>
+   <file md5sum="168696d8a694214090ef90e029cdf393" name="web/fancybox/fancybox-x.png" role="data"/>
+   <file md5sum="b886fd165d4b7ac77d41fb52d87ffc60" name="web/fancybox/fancy_title_over.png" role="data"/>
+   <file md5sum="b1d54c240cf06e7f41e372d56919b738" name="web/fancybox/fancy_loading.png" role="data"/>
+   <file md5sum="18cde16379b2ceadef714d9b346d09ec" name="web/fancybox/fancy_shadow_n.png" role="data"/>
+   <file md5sum="2e36d45735c47c4d2e5a479fef335a9a" name="web/js/jquery.form.js" role="data"/>
+   <file md5sum="1910e4f6f1a0c7ce784a2e7d13c3765c" name="web/js/jquery.metadata.js" role="data"/>
+   <file md5sum="df0ff7fe7cd0e9795a02c58de82f6d69" name="web/js/jquery-1.4.2.min.js" role="data"/>
+   <file md5sum="7d76003212cdfc2bbec1ec690895298c" name="web/js/jquery-ui-core-widget.min.js" role="data"/>
+   <file md5sum="78c9ad31619ef6ec5e898d3bc9d52379" name="web/js/ioEditableContent.js" role="data"/>
+   <file md5sum="5313386427144f190f3abab9685f34a8" name="web/js/ioContentEditor.js" role="data"/>
+   <file md5sum="c811d6ae56003499286cdf3288ee4c2b" name="web/js/jquery.blockUI.js" role="data"/>
+   <file md5sum="09237024af6f734a3a25b7bbab404eb4" name="config/ioEditableContentPluginConfiguration.class.php" role="data"/>
+   <file md5sum="482e2dac3881a40c778c0a6b2287c95f" name="config/app.yml" role="data"/>
+   <file md5sum="a6f815f4dd1fed8cdd371161f266cd71" name="config/routing.yml" role="data"/>
+   <file md5sum="1be2e08d50d23da6cf7e6dc44f2fb984" name="docs/editors.png" role="data"/>
+   <file md5sum="e9eeba69c11d3135cc9e5310f7071cc2" name="docs/view.png" role="data"/>
+   <file md5sum="d41d8cd98f00b204e9800998ecf8427e" name="LICENSE" role="data"/>
+   <file md5sum="55977512cdf5bbcd82ec01dfc0fc8008" name=".gitignore" role="data"/>
+   <file md5sum="0a6b7aa94bba8aae2eb578d456db5b35" name="README" role="data"/>
   </dir>
  </contents>
  <dependencies>
@@ -149,5 +88,22 @@
   </required>
  </dependencies>
  <phprelease/>
- <changelog/>
+ <changelog>
+  <release>
+   <version>
+    <release>0.6.0</release>
+    <api>0.6.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <license uri="http://www.symfony-project.com/license">MIT license</license>
+   <license>MIT</license>
+   <date>2010-06-24</date>
+   <notes>
+Initial release of the plugin - young, but well-tested and simple.
+   </notes>
+  </release>
+ </changelog>
 </package>

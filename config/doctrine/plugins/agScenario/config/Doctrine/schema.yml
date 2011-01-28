@@ -9,6 +9,12 @@ agScenario:
       notnull: true
     description:
       type: string(255)
+  actAs:
+    Timestampable:
+    Luceneable:
+      fields:
+        scenario: unstored
+        description: unstored
   indexes:
     agScenario_unq:
       fields: [scenario]
@@ -196,6 +202,7 @@ agScenarioFacilityGroup:
       unsigned: true
       type: integer(1)
       notnull: true
+  actAs: [Luceneable]
   indexes:
     UX_agScenarioFacilityGroup:
       fields: [scenario_id, scenario_facility_group]
@@ -258,6 +265,8 @@ agScenarioShift:
     deployment_algorithm_id:
       type: integer(4)
       notnull: true
+    originator_id:
+      type: integer(4)
   relations:
     agStaffResourceType:
       local: staff_resource_type_id
@@ -275,6 +284,11 @@ agScenarioShift:
       class: agScenarioFacilityResource
       foreignAlias: agScenarioShift
       local: scenario_facility_resource_id
+      foreign: id
+    agShiftTemplate:
+      class: agShiftTemplate
+      foreignAlias: agScenarioShift
+      local: originator_id
       foreign: id
 agTask:
   columns:

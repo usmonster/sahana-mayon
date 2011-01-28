@@ -1,0 +1,5 @@
+/apps/*/lib/packages/*/modules/*/config/module.yml:
+  class:    sfDefineEnvironmentConfigHandler
+  param:
+    prefix: sf_
+    module: yes

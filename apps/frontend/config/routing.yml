@@ -8,12 +8,6 @@ homepage:
 facility:
   url:  /facility
   param: { module: facility, action: index }
-staff_index:
-  url: /staff
-  param: { module: agStaff, action: index }
-staff:
-  url: /staff/:action
-  param: { module: agStaff }
 client:
   url: /client
   param: { module: client, action: index }
@@ -23,12 +17,6 @@ scenario:
 org:
   url: /organization
   param: { module: organization, action: index }
-gis_index:
-  url: /gis
-  param: { module: agGis, action: index }
-gis:
-  url: /gis/:action
-  param: { module: agGis}
 admin:
   url: /admin
   param: { module: admin, action: index }
@@ -41,6 +29,31 @@ default_index:
   url:   /:module
   param: { action: index }
 
+scenario_show_facility_staff_resource:
+  url:     /scenario/:id/staffresources
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: staffresources }
+
+scenario_staff_pool:
+  url:     /scenario/:id/staffpool
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: staffpool }
+
+scenario_search:
+  url:     /scenario/:id/search
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action search }
+
+scenario_new_group:
+  url:     /scenario/:id/newgroup
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: newgroup }
+
+scenario_new_shift_templates:
+  url:     /scenario/:id/newshifttemplates
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: newshifttemplates }
+
 default:
   url:   /:module/:action/*
 
@@ -51,9 +64,3 @@ sf_guard_signin:
 sf_guard_signout:
   url:   /logout
   param: { module: sfGuardAuth, action: signout }
-staff_search:
-  url:   /staff/search
-  param: { module: agStaff, action: search }
-staff_filter:
-  url:   /staff/filter
-  param: { module: agStaff, action: filter }

@@ -40,5 +40,14 @@ wiki is subject to a Creative Commons Attribution-NonCommercial-ShareAlike 3.0
 Unported License. For full details refer to
 http://creativecommons.org/licenses/by-nc-sa/3.0/
 
+PLUGIN LICENSING
+================
+Plugins associated with Agasti 2.0 maintain their own licensing; however, significant plugins are listed here for reference:
+
+--------
+DokuWiki
+--------
+DokuWiki is licensed under the GNU General Public License (GPL).  For detailed information please refer to http://www.gnu.org/licenses/gpl-2.0.html.
+
 This document last updated: 2010-09-24
 

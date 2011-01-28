@@ -3,7 +3,7 @@ Emergency Management Software
 
 INSTALLATION INSTRUCTIONS
 
-Updated: 2010-12-10
+Updated: 2011-01-14
 
 *** IMPORTANT NOTE: ***
 
@@ -51,10 +51,9 @@ Apache
 1. To set permissions to allow the web server appropriate access to the required
    directories, execute the following commands from the project root:
 
-  $ sudo chgrp -R WEB_GROUP config/ cache/ log/ apps/frontend/config/ \
-      apps/backend/config/ data/indexes/ data/search/ data/sql/
-  $ chmod -cR g+wr config/ apps/frontend/config/ apps/backend/config/ \
-      data/indexes/ data/search/ data/sql/
+  $ sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/indexes/ \
+      data/search/ data/sql/
+  $ chmod -cR g+wr config/ apps/*/config/ data/indexes/ data/search/ data/sql/
   $ ./symfony project:permissions
 
   * NOTE: Replace WEB_GROUP with the group associated with the Apache user, e.g.

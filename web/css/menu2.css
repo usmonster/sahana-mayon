@@ -1,0 +1,68 @@
+
+
+/* ================================================================
+This copyright notice must be untouched at all times.
+
+The original version of this stylesheet and the associated (x)html
+is available at http://www.cssplay.co.uk/menus/final_drop.html
+Copyright (c) 2005-2008 Stu Nicholls. All rights reserved.
+This stylesheet and the associated (x)html may be modified in any
+way to fit your requirements.
+=================================================================== */
+
+#navigation {width:745px; height:32px; position:relative; z-index:100;border-right:1px solid #585752; font-family:arial, sans-serif;}
+/* hack to correct IE5.5 faulty box model */
+* html #navigation {width:746px; w\idth:745px;}
+/* remove all the bullets, borders and padding from the default list styling */
+#navigation ul {padding:0;margin:0;list-style-type:none;}
+#navigation ul ul {width:149px;}
+/* float the list to make it horizontal and a relative positon so that you can control the dropdown menu positon */
+#navigation li {float:left;width:149px;position:relative;}
+/*#navigation li {float:left;position:relative;margin-top:-1px;min-width:86px;max-width:128px;_width:85px;}*/ /* <-Incomplete hack. -UA. */
+/* style the links for the top level */
+#navigation a, #navigation a:visited {display:block;font-size:12px;text-decoration:none; color:#fff; width:138px; height:30px; border:1px solid #585752; border-width:1px 0 1px 1px; background:#a6a299; padding-left:10px; line-height:29px; font-weight:bold;}
+/* a hack so that IE5.5 faulty box model is corrected */
+* html #navigation a, * html #navigation a:visited {width:149px; w\idth:138px;}
+
+/* style the second level background */
+/*#navigation ul ul a.drop, #navigation ul ul a.drop:visited {background:#d4d8bd url(http://www.cssplay.co.uk/menus/breadcrumbs/grey-arrow.gif) no-repeat 130px center;}*/
+/* style the second level hover */
+/*#navigation ul ul a.drop:hover{background:#c9ba65 url(http://www.cssplay.co.uk/menus/breadcrumbs/blue-arrow.gif) no-repeat 130px center;}*/
+/*#navigation ul ul :hover > a.drop {background:#c9ba65 url(http://www.cssplay.co.uk/menus/breadcrumbs/blue-arrow.gif) no-repeat 130px center;}*/
+/* style the third level background */
+#navigation ul ul ul a, #navigation ul ul ul a:visited {background:#e2dfa8;}
+/* style the third level hover */
+#navigation ul ul ul a:hover {background:#b2ab9b;}
+
+
+/* hide the sub levels and give them a positon absolute so that they take up no room */
+#navigation ul ul {visibility:hidden; position:absolute;height:0;top:31px;left:0; width:149px;border-top:1px solid #000;}
+/* another hack for IE5.5 */
+* html #navigation ul ul {top:30px;t\op:31px;}
+
+/* position the third level flyout menu */
+#navigation ul ul ul{left:149px; top:-1px; width:149px;}
+
+/* position the third level flyout menu for a left flyout */
+#navigation ul ul ul.left {left:-149px;}
+
+/* style the table so that it takes no ppart in the layout - required for IE to work */
+#navigation table {position:absolute; top:0; left:0; border-collapse:collapse;;}
+
+/* style the second level links */
+#navigation ul ul a, #navigation ul ul a:visited {background:#e5e1d6; color:#000; height:auto; line-height:1em; padding:5px 10px; width:128px;border-width:0 1px 1px 1px;}
+/* yet another hack for IE5.5 */
+* html #navigation ul ul a, * html #navigation ul ul a:visited {width:150px;w\idth:128px;}
+
+/* style the top level hover */
+#navigation a:hover, #navigation ul ul a:hover{color:#000; background:#fcd6a7;}
+#navigation :hover > a, #navigation ul ul :hover > a {color:#000; background:#fcd6a7;}
+
+/* make the second level visible when hover on first level list OR link */
+#navigation ul li:hover ul,
+#navigation ul a:hover ul{visibility:visible;}
+/* keep the third level hidden when you hover on first level list OR link */
+#navigation ul :hover ul ul{visibility:hidden;}
+/* make the third level visible when you hover over second level list OR link */
+#navigation ul :hover ul :hover ul{ visibility:visible;}
+

@@ -1,0 +1,19 @@
+staff_index:
+  url: /staff
+  param: { module: agStaff, action: index }
+staff_list:
+  url:   /staff/list
+  param: { module: agStaff, action: list }
+staff_create:
+  url:   /staff/new
+  param: { module: agStaff, action: new }
+staff_search:
+  url:   /staff/search
+  param: { module: agStaff, action: search }
+staff_filter:
+  url:   /staff/filter
+  param: { module: agStaff, action: filter }
+
+staff:
+  url: /staff/:action/*
+  param: { module: agStaff }

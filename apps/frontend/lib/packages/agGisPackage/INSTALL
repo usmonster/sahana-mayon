@@ -1,0 +1,48 @@
+SAHANA AGASTI 2.0 MAYON GIS PLUGIN RELEASE NOTES
+
+Updated: 2011-01-10
+
+INSTALLATION INSTRUCTIONS
+
+*** IMPORTANT NOTE: ***
+
+The agGisPackage plugin is the template plugin for Agasti Mayon development and does not currently enhance functionality.  To enable this plugin Sahana Agasti 2.0 must be installed.
+
+To install, open the package manager and enable this plugin.
+
+
+SYSTEM REQUIREMENTS
+===================
+
+Enter any specific Sys Requirements for agGisPackage.
+
+
+SYSTEM CONFIGURATION
+====================
+
+Any specific system configuration settings needed for agGisPackage.
+
+
+APPLICATION INSTALLATION
+========================
+
+Navigate within the application to the package manager and enable agGisPackage.
+
+
+ERRORS AND TROUBLESHOOTING
+==========================
+
+Any specific errors or troubleshooting special to agGisPackage should be included here:
+
+- Currently, all calculations must be requested via a manual entry; meaning the user will want to navigate to the plugin via the frontend and request the calculation of coordinates for addresses associated with staff and facilities.  Funcationality to automatically generatee coordinates is being considered for future development.
+
+- I have another error, or my issue still isn't resolved:
+
+  Please see the SUPPORT section in the README file for information on how to
+  contact the developer community.
+
+
+Thank you for using Sahana Agasti!
+                                     The Sahana Software Foundation
+                                     http://www.sahanafoundation.org/
+

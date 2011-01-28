@@ -29,4 +29,20 @@ class agScenario extends BaseagScenario
   {
     return $this->getScenario();
   }
+
+  /**
+   * Builds an index for facility.
+   *
+   * @return Zend_Search_Lucene_Document $doc
+   */
+  public function updateLucene()
+  {
+    $doc = new Zend_Search_Lucene_Document();
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('scenario', $this->scenario, 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::unStored('description', $this->description, 'utf-8'));
+
+    return $doc;
+  }
+
 }

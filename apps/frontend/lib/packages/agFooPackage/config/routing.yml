@@ -1,0 +1,22 @@
+foo_index:
+  url: /foo
+  param: { module: agFoo, action: index }
+foo_list:
+  url:   /foo/list
+  param: { module: agFoo, action: list }
+#foo_bar:
+#  url: /foo/:id/show
+#  options: { model: agFoo, type: object }
+#  param: { module: agFoo, action: show }
+#foo_crazy:
+#  url: /foo/:id/:foo/:bar
+#  options: { model: agFoo, type: object }
+#  param: { module: agFoo, action: show }
+foo_crazy_edit:
+  url: /foo/:id/:foo/:bar/edit
+  options: { model: agFoo, type: object }
+  param: { module: agFoo, action: edit }
+
+foo:
+  url: /foo/:action/*
+  param: { module: agFoo }

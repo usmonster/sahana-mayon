@@ -66,6 +66,12 @@ agFacility:
     facility_code:
       type: string(10)
       notnull: true
+  actAs:
+    Timestampable:
+    Luceneable: 
+      fields:
+        facility_name: unstored
+        facility_code: unstored
   indexes:
     agFacility_siteId_unq:
       fields: [site_id]

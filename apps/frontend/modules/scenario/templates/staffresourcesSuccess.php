@@ -1,27 +1,49 @@
-<h3>Required Staff Resources for <span style="color: #ff8f00;"><?php echo $ag_scenario_facility_group->getScenarioFacilityGroup() ?></span></h3>
+<script type="text/javascript">
+  $(function(){
+    $('.groupLabel').click(function(){
+      $(this).parent().find('.facgroup').slideToggle("slow");
+    });
+  });
+</script>
+<h2>Staff Resource Requirements</h2><br>
+<h3>
+  <span>
+    Assign minimum and maximum Staff Resource Requirements to Facility Groups for the
+  </span>
+  <span class="logName">
+    <?php echo $scenario->scenario ?>
+  </span>
+  <span>
+    Scenario:
+  </span>
+</h3>
+<br />
+<p>Staff Resources are a combination of staff records and their associated skill, called
+  'Resources'.  Below, assign minimum and maximum of the staff resource types to the facilities
+  you defined in the previous step.</p>
+<b>Note:</b> If a facility does not require any of a staff resource type leave the min and max
+blank.  <b>A facility resource must have at least one staff resource entered.</b>
 
-<table class="singleTable">
-  <thead>
-    <tr>
-      <th class="head" style="padding: 2px 4px;">Facility Resource</th>
-      <th class="head" style="padding: 2px 4px;">Facility Resource Capacity</th>
-      <th class="head" style="padding: 2px 4px;">Staff Resource</th>
-      <th class="head" style="padding: 2px 4px;">Minimum</th>
-      <th class="head" style="padding: 2px 4px;">Maximum</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($ag_staff_resources as $ag_staff_resource): ?>
-    <tr>
-      <td><a href="<?php echo url_for('scenario/editstaffresources?id='.$ag_staff_resource->getId()) ?>"><?php echo ucwords($ag_staff_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type) ?></a></td>
-      <td><?php //echo $ag_staff_resource->getAgFacilityResource()->getCapacity() ?></td>
-      <td><?php //echo $ag_staff_resource->getAgFacilityStaffResource()->getFirst()->getAgStaffResourceType()->staff_resource_type ?></td>
-      <td><?php //echo $ag_staff_resource->getAgFacilityStaffResource()->getFirst()->getMinimumStaff() ?><br /></td>
-      <td><?php //echo $ag_staff_resource->getAgFacilityStaffResource()->getFirst()->getMaximumStaff() ?><br /></td>
-    </tr>
-    <?php endforeach; ?>
-  </tbody>
-</table>
+<?php //include_partial('staffresourceform', array('staffresourceform' => $staffresourceform, 'ag_staff_resources' => $ag_staff_resources, 'scenario' => $scenario, 'formsArray' => $formsArray)) ?>
 
-<h3>Add Facility Resource Requirement</h3>
-<?php include_partial('staffresourceform', array('staffresourceform' => $staffresourceform, 'ag_staff_resources' => $ag_staff_resources)) ?>
+
+<?php
+    include_partial('staffresourceform', array(
+      'formsArray' => $formsArray,
+      //'scenarioFacilityGroupId' => $scenarioFacilityGroup->id,
+      'array' => $arrayBool,
+      'scenario' => $scenario,
+        // 'ag_facility_resources' => $ag_facility_resources,
+        // 'ag_allocated_facility_resources' => $ag_allocated_facility_resources
+        //is this form modified?
+    ));
+
+
+    //the URL below should only appear if we have filled out this sufficiently
+?>
+
+
+    <br>
+    <a class=linkButton href="<?php echo url_for('scenario/newshifttemplates?id=' . $scenario->id) ?>" title="View Shift Templates">Create Shift Templates for <span style="color: #ff8f00"><?php echo $scenario->scenario; ?></span> Facilities</a>
+<p>Click "Save" to save any updates and continue editing on this page.  Click "Create Shift 
+  Templates" to save and move to the next step.</p>

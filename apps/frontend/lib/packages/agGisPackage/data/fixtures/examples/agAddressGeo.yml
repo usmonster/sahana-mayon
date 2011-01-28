@@ -1,0 +1,35 @@
+# Sample address geo data
+
+agAddressGeo:
+  addyid1_addy_geo:
+    address_id: 1
+    agGeo: addyid1_geo
+    agGeoMatchScore: good
+  addyid3_addy_geo:
+    address_id: 3
+    agGeo: addyid3_geo
+    agGeoMatchScore: good
+  addyid2_addy_geo:
+    address_id: 2
+    agGeo: addyid2_geo
+    agGeoMatchScore: good
+  addyid5_addy_geo:
+    address_id: 5
+    agGeo: addyid5_geo
+    agGeoMatchScore: good
+  addyid6_addy_geo:
+    address_id: 6
+    agGeo: addyid5_geo
+    agGeoMatchScore: good
+  addyid7_addy_geo:
+    address_id: 7
+    agGeo: addyid5_geo
+    agGeoMatchScore: good
+  addyid8_addy_geo:
+    address_id: 8
+    agGeo: addyid5_geo
+    agGeoMatchScore: good
+  addyid9_addy_geo:
+    address_id: 9
+    agGeo: addyid5_geo
+    agGeoMatchScore: good

@@ -82,7 +82,7 @@ class agPersonTable extends Doctrine_Table
 **/
   static public function getLuceneIndex()
   {
-    ProjectConfiguration::registerZend();
+    //ProjectConfiguration::registerZend();
 
     if (file_exists($index = self::getLuceneIndexFile()))
     {

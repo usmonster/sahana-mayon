@@ -27,6 +27,7 @@ abstract class BaseagScenarioShiftForm extends BaseFormDoctrine
       'staff_wave'                           => new sfWidgetFormInputText(),
       'shift_status_id'                      => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'), 'add_empty' => false)),
       'deployment_algorithm_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'add_empty' => false)),
+      'originator_id'                        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftTemplate'), 'add_empty' => true)),
       'created_at'                           => new sfWidgetFormDateTime(),
       'updated_at'                           => new sfWidgetFormDateTime(),
     ));
@@ -44,6 +45,7 @@ abstract class BaseagScenarioShiftForm extends BaseFormDoctrine
       'staff_wave'                           => new sfValidatorInteger(),
       'shift_status_id'                      => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'))),
       'deployment_algorithm_id'              => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'))),
+      'originator_id'                        => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftTemplate'), 'required' => false)),
       'created_at'                           => new sfValidatorDateTime(),
       'updated_at'                           => new sfValidatorDateTime(),
     ));

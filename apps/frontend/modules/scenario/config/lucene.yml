@@ -1,0 +1,36 @@
+all:
+  #############################################################################
+  # creates sf_lucene_data_dir/lucene.index                                   #
+  # set to true if you use different databases for different environments.    #
+  # This means that both dev and production will share the same index.        #
+  #############################################################################
+  use_env: false
+
+  #############################################################################
+  # Location of the search index, by default in the data directory            #
+  #############################################################################
+  data_dir: %SF_DATA_DIR%/search
+
+  #############################################################################
+  # For the reindex task (lucene:reindex)                                     #
+  # Which models to automaticly reindex                                       #
+  #############################################################################
+  #models: ['News','Member','Project','Event','Content','Organisation']
+  models: ['agScenarioFacilityGroup', 'agScenario']
+  
+  #############################################################################
+  # A verion of zend lucene has been packaged with this plugin                #
+  # If you autoload the zend framework on your own, you can disable this      #
+  # behaviour.                                                                #
+  # The plugin will throw a symfony lucenable.autoload event,                 #
+  # Connect your own method with:
+  # $this->dispatcher->connect('luceneable.autoload','ProjectConfiguration::registerZend');
+  #############################################################################
+  use_packaged_lucene: true
+
+###################################################
+# Use a seperate index for the test environment   #
+###################################################
+test:
+  # creates sf_lucene_data_dir/lucene.test.index
+  use_env: true

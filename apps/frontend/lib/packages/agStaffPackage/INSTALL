@@ -1,0 +1,48 @@
+SAHANA AGASTI 2.0 MAYON STAFF PLUGIN RELEASE NOTES
+
+Updated: 2011-01-10
+
+INSTALLATION INSTRUCTIONS
+
+*** IMPORTANT NOTE: ***
+
+The agStaffPackage plugin is the template plugin for Agasti Mayon development and does not currently enhance functionality.  To enable this plugin Sahana Agasti 2.0 must be installed.
+
+To install, open the package manager and enable this plugin.
+
+
+SYSTEM REQUIREMENTS
+===================
+
+Enter any specific Sys Requirements for agStaffPackage.
+
+
+SYSTEM CONFIGURATION
+====================
+
+Any specific system configuration settings needed for agStaffPackage.
+
+
+APPLICATION INSTALLATION
+========================
+
+Navigate within the application to the package manager and enable agStaffPackage.
+
+
+ERRORS AND TROUBLESHOOTING
+==========================
+
+Any specific errors or troubleshooting special to agStaffPackage should be included here:
+
+- Currently, a staff members record can only have one resource classification and only be associated with one Organization via the Organization plugin.
+
+- I have another error, or my issue still isn't resolved:
+
+  Please see the SUPPORT section in the README file for information on how to
+  contact the developer community.
+
+
+Thank you for using Sahana Agasti!
+                                     The Sahana Software Foundation
+                                     http://www.sahanafoundation.org/
+

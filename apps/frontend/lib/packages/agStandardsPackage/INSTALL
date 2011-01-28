@@ -1,0 +1,46 @@
+SAHANA AGASTI 2.0 MAYON STANDARDS PLUGIN RELEASE NOTES
+
+Updated: 2011-01-19
+
+INSTALLATION INSTRUCTIONS
+
+*** IMPORTANT NOTE: ***
+
+The agFooPackage plugin is the template plugin for Agasti Mayon development and does not currently enhance functionality.  To enable this plugin Sahana Agasti 2.0 must be installed.
+
+To install, open the package manager and enable this plugin.
+
+
+SYSTEM REQUIREMENTS
+===================
+
+Enter any specific Sys Requirements for agStandardsPackage.
+
+
+SYSTEM CONFIGURATION
+====================
+
+Any specific system configuration settings needed for agStandardsPackage.
+
+
+APPLICATION INSTALLATION
+========================
+
+Navigate within the application to the package manager and enable agStandardsPackage.
+
+
+ERRORS AND TROUBLESHOOTING
+==========================
+
+Any specific errors or troubleshooting special to agStandardsPackage should be included here:
+
+- I have another error, or my issue still isn't resolved:
+
+  Please see the SUPPORT section in the README file for information on how to
+  contact the developer community.
+
+
+Thank you for using Sahana Agasti!
+                                     The Sahana Software Foundation
+                                     http://www.sahanafoundation.org/
+

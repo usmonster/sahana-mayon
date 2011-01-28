@@ -22,14 +22,14 @@
     ?>
   </caption>
 <thead>
-    <tr style="border: none">
+    <tr class="tableRow">
       <th class="head" rowspan="2"></th>
       <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" style="text-align: center">
       Name
       </th>
       <!-- Sex -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Sex</div>
+        <div class="tableHeaderContent">Sex</div>
         <?php
           echo($sortColumn =='sex' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=sex&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=sex&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='sex' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=sex&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=sex&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -37,7 +37,7 @@
       </th>
       <!-- Nationality -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Nationality</div>
+        <div class="tableHeaderContent">Nationality</div>
         <?php
           echo($sortColumn =='nationality' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=nationality&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=nationality&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='nationality' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=nationality&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=nationality&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -45,7 +45,7 @@
       </th>
       <!-- Ethnicity -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Ethnicity</div>
+        <div class="tableHeaderContent">Ethnicity</div>
         <?php
           echo($sortColumn =='ethnicity' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=ethnicity&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=ethnicity&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='ethnicity' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=ethnicity&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=ethnicity&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -53,7 +53,7 @@
       </th>
       <!-- Language -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0">Language</div>
+        <div class="tableHeaderContent">Language</div>
        <?php
           echo($sortColumn =='language' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=language&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=language&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='language' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=language&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=language&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -61,14 +61,14 @@
       </th>
       <!-- Religion -->
       <th class="head" rowspan="2">
-        <div style="margin: 0; padding: 0;">Religion</div>
+        <div class="tableHeaderContent">Religion</div>
         <?php
           echo($sortColumn =='religion' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn =='religion' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=religion&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
     </tr>
-   <tr style="border: none;">
+   <tr class="tableRow">
      <?php foreach ($ag_person_name_types as $ag_person_name_type_id => $ag_person_name_type): ?>
        <th class="subHead" rowspan="2">
          <div style="margin: 0; padding: 0"><?php echo ucwords($ag_person_name_type); ?></div>

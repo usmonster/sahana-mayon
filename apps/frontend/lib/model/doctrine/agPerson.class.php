@@ -26,6 +26,29 @@ class agPerson extends BaseagPerson
     foreach ($names as $key => $name) {
       $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
     }    
+//    $emails = $this->getEmail();
+//    foreach ($emails as $key => $email) {
+//      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' email', $email, 'utf-8'));
+//    }
+    $sex = $this->getSex();
+    //foreach ($sexes as $key => $sex) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
+    //}
+    
+    //$nationality = $this->getNationality();
+      $nationalities = $this->getNationality();
+      foreach($nationalities as $nationality)
+      {
+        $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
+      }
+
+    
+    $ethnicity = $this->getEthnicity();
+    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
+
+
+
+
   return $doc;
   }
 
@@ -37,6 +60,77 @@ class agPerson extends BaseagPerson
     }
     return $names;
   }
+
+  public function getNameString()
+  {
+    $names = null;
+    foreach ($this->getAgPersonMjAgPersonName() as $name) {
+      $names = $names . ' ' . $name->getAgPersonName()->person_name;
+    }
+    return $names;
+  }
+
+//  public function getEmail()
+//  {
+//      foreach ($this->getAgEntity()->getAgEntityEmailContact() as $contactStore)
+//      {
+//
+//        //        $contactTypes[$emailContactTypeArray->getAgEmailContactType()->email_contact_type] = $emailContactType->getAgEmailContact()->email_contact;
+//        //        $names = $names . ' ' . $name->getAgPersonName()->person_name;
+//        //$contactStores[$contactStore->] Doesn't seem to understand the context weird.
+//
+//
+//
+//    }
+//
+//  }
+
+  public function getSex()
+  {
+      $sexstore = $this->getAgPersonSex();
+      foreach ($sexstore as $gender)
+      {
+        $sex = $gender->getAgSex()->sex;
+      }
+
+      return $sex;
+
+      //$sex = $this->getAgPersonSex()->getAgSex()->sex;
+              //getAgPersonSex()->sex;
+  }
+
+  public function getNationality()
+  {
+      //$nationalities = array();
+//      foreach ($this->getAgPersonMjAgPersonName() as $name) {
+//      $names[$name->getAgPersonNameType()->person_name_type] = $name->getAgPersonName()->person_name;
+      foreach($this->getAgPersonMjAgNationality() as $nationality)
+             $nationalities[] = $nationality->getAgNationality()->nationality;
+
+      return $nationalities;
+  }
+
+  public function getEthnicity()
+  {
+      foreach ($this->getAgPersonEthnicity() as $ethnicity)
+      {
+          $ethnicities = $ethnicity->getAgEthnicity()->ethnicity;
+      }
+
+      return $ethnicities;
+  }
+
+  public function getLanguages()
+  {
+      foreach($this->getAgPersonMjAgLanguage() as $languageCompetency)
+      {
+          
+          $languages = $languageCompetency->getAgLanguage()->language;
+      }
+      return $languages;
+      
+  }
+
 
   /**
    * getPersonPrimaryNames() is a static method to return a multi layer array of person's primary name.
@@ -343,24 +437,24 @@ class agPerson extends BaseagPerson
    * @param conn the connection to Doctrine
    * @return current save state of the object being saved
    */
-  public function save(Doctrine_Connection $conn = null)
-  {
-    $conn = $conn ? $conn : $this->getTable()->getConnection();
-    $conn->beginTransaction();
-
-    try {
-      $ret = parent::save($conn);
-
-      //$this->updateLuceneIndex(); This has been moved to apps/frontend/lib/BaseFormDoctrine to ensure names are indexed properly.
-
-      $conn->commit();
-
-      return $ret;
-    } catch (Exception $e) {
-      $conn->rollBack();
-      throw $e;
-    }
-  }
+//  public function save(Doctrine_Connection $conn = null)
+//  {
+//    $conn = $conn ? $conn : $this->getTable()->getConnection();
+//    $conn->beginTransaction();
+//
+//    try {
+//      $ret = parent::save($conn);
+//
+//      //$this->updateLuceneIndex(); This has been moved to apps/frontend/lib/BaseFormDoctrine to ensure names are indexed properly.
+//
+//      $conn->commit();
+//
+//      return $ret;
+//    } catch (Exception $e) {
+//      $conn->rollBack();
+//      throw $e;
+//    }
+//  }
 
   /**
    * Deletes an agPerson. The function has been extended to update the Lucene index
@@ -372,11 +466,13 @@ class agPerson extends BaseagPerson
    */
   public function delete(Doctrine_Connection $conn = null)
   {
-    $index = agPersonTable::getLuceneIndex();
-
-    foreach ($index->find('pk:' . $this->getId()) as $hit) {
-      $index->delete($hit->id);
-    }
+// This should fix the Zend autoloader double declaration issue on person delete. Need to get rid of our other Zend/Lucene stuff too, now
+// that the luceneable plugin is being used.
+//    $index = agPersonTable::getLuceneIndex();
+//
+//    foreach ($index->find('pk:' . $this->getId()) as $hit) {
+//      $index->delete($hit->id);
+//    }
 
     return parent::delete($conn);
   }
