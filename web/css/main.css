@@ -833,6 +833,10 @@ th .tableRow {
   -moz-border-radius: 5px;
 }
 
+.labelGray {
+  color: #848484;
+}
+
 /* MENU */
 
 /*@import url('/css/menu.css');*/

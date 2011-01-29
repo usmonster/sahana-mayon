@@ -1,0 +1,10 @@
+# Example event status types
+agEventStatusType:
+  open:
+    id: 1
+    event_status_type: Open
+    description: This event is open and ongoing.
+  closed:
+    id: 2
+    event_status_type: Closed
+    description: This event is closed and response has been planned and implemented.

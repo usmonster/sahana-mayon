@@ -420,6 +420,9 @@ class clientActions extends sfActions
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
+    $c = $form->getName();
+    $d = $request->getParameter($form->getName());
+    $e = $request->getFiles($form->getName());
     if ($form->isValid()) {
       $ag_person = $form->save();
 

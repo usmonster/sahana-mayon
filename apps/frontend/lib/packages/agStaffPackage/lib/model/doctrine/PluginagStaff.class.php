@@ -13,6 +13,178 @@
  */
 abstract class PluginagStaff extends BaseagStaff
 {
+  public function updateLucene()
+  {
+    $doc = new Zend_Search_Lucene_Document();
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
+    $doc->addField(Zend_Search_Lucene_Field::UnStored('staff_status', $this->getAgStaffStatus()->staff_status, 'utf-8'));
+
+    // Saving staff info after staff record is created.
+    // Make staff searchable by name.
+    $query = Doctrine_Query::create()
+      ->select('s.id, p.id, pmn.id, pn.id, pn.person_name')
+      ->from('agStaff s')
+      ->innerJoin('s.agPerson p')
+      ->innerJoin('p.agPersonMjAgPersonName pmn')
+      ->innerJoin('pmn.agPersonName pn')
+      ->where('s.id=?', $this->id);
+    $queryString = $query->getSQLQuery();
+    $staffNames=$query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $staff_name = null;
+    foreach ($staffNames as $stf)
+    {
+      $staff_name .= ' ' . $stf['pn_person_name'];
+    }
+    if (isset($staff_name))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_name' , $staff_name, 'utf-8'));
+    }
+
+    // Make staff searchable by email.
+    $query = Doctrine_Query::create()
+      ->select('s.id, p.id, e.id, epc.id, pc.id, pc.phone_contact')
+      ->from('agStaff s')
+      ->innerJoin('s.agPerson p')
+      ->innerJoin('p.agEntity e')
+      ->innerJoin('e.agEntityPhoneContact epc')
+      ->innerJoin('epc.agPhoneContact pc')
+      ->where('s.id=?', $this->id);
+    $staffPhones = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $staff_phone = null;
+    foreach($staffPhones as $stf)
+    {
+      $staff_phone .= ' ' . $stf['pc_phone_contact'];
+    }
+    if (isset($staff_phone))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_phone' , $staff_phone, 'utf-8'));
+    }
+
+    // Make staff searchable by email.
+    $query = Doctrine_Query::create()
+      ->select('s.id, p.id, e.id, eec.id, ec.id, ec.email_contact')
+      ->from('agStaff s')
+      ->innerJoin('s.agPerson p')
+      ->innerJoin('p.agEntity e')
+      ->innerJoin('e.agEntityEmailContact eec')
+      ->innerJoin('eec.agEmailContact ec')
+      ->where('s.id=?', $this->id);
+    $queryString = $query->getSQLQuery();
+    $staffEmails = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $staff_email = null;
+    foreach($staffEmails as $stf)
+    {
+      $staff_email .= ' ' . $stf['ec_email_contact'];
+    }
+    if (isset($staff_email))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_email' , $staff_email, 'utf-8'));
+    }
+
+    // Make staff searchable by address
+    $query = Doctrine_Query::create()
+      ->select('s.id, p.id, e.id, eac.id, a.id, ama.id, av.id, aa.id, aa.alias, av.value')
+      ->from('agStaff s')
+      ->innerJoin('s.agPerson p')
+      ->innerJoin('p.agEntity e')
+      ->innerJoin('e.agEntityAddressContact eac')
+      ->innerJoin('eac.agAddress a')
+      ->innerJoin('a.agAddressMjAgAddressValue ama')
+      ->innerJoin('ama.agAddressValue av')
+      ->leftJoin('av.agAddressAlias aa')
+      ->where('s.id=?', $this->id);
+    $queryString = $query->getSQLQuery();
+    $staffAddresses = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $staff_address = null;
+    foreach($staffAddresses as $stf)
+    {
+      $staff_address .= ' ' . $stf['av_value'];
+      $aliasAddress = $stf['aa_alias'];
+      if ($aliasAddress != null)
+      {
+        $staff_address .= ' ' . $aliasAddress;
+      }
+    }
+    if (isset($staff_address))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_address' , $staff_address, 'utf-8'));
+    }
+
+    // Make staff searchable by language
+    $query = Doctrine_Query::create()
+      ->select('s.id, p.id, pml.id, l.language')
+      ->from('agStaff s')
+      ->innerJoin('s.agPerson p')
+      ->innerJoin('p.agPersonMjAgLanguage pml')
+      ->innerJoin('pml.agLanguage l')
+      ->where('s.id=?', $this->id);
+
+    $staffLangs = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $staff_lang = null;
+    foreach($staffLangs as $stf)
+    {
+      $staff_lang .= ' ' . $stf['l_language'];
+    }
+    if(isset($staff_lang))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_lang', $staff_lang, 'utf-8'));
+    }
+
+    $query = Doctrine_Query::create()
+      ->select('s.id, sr.id, sro.id, o.id, o.organization, o.description')
+      ->from('agStaff s')
+      ->innerJoin('s.agStaffResource sr')
+      ->innerJoin('sr.agStaffResourceOrganization sro')
+      ->innerJoin('sro.agOrganization o')
+      ->where('s.id=?', $this->id);
+
+    $staffOrgs = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $staff_org = null;
+    foreach($staffOrgs as $stf)
+    {
+      $staff_org .= ' ' . $stf['o_organization'];
+      $org_desc = $stf['o_description'];
+      if ($org_desc != null)
+      {
+        $staff_org .= ' ' . $org_desc;
+      }
+    }
+    if (isset($staff_org))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_org', $staff_org, 'utf-8'));
+    }
+
+    # Make a staff searchable by profession.
+    $query = Doctrine_Query::create()
+      ->select('s.id, p.id, pmp.id, pf.id, pf.profession')
+      ->from('agStaff s')
+      ->innerJoin('s.agPerson p')
+      ->innerJoin('p.agPersonMjAgProfession pmp')
+      ->innerJoin('pmp.agProfession pf')
+      ->where('s.id=?', $this->id);
+
+    $staffProfs = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $staff_prof = null;
+    foreach($staffProfs as $stf)
+    {
+      $staff_prof .= ' ' . $stf['pf_profession'];
+    }
+    if(isset($staff_prof))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_prof', $staff_prof, 'utf-8'));
+    }
+
+    return $doc;
+  }
+
+
   /**
    * getUniqueStaffCount() is a static method that returns different result sets depending on the pass-in groupByMode:
    *   groupByMode 1 - returns an integer total count of unique staff.

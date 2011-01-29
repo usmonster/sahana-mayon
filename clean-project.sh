@@ -48,3 +48,6 @@ $PROJECT_ROOT/symfony doctrine:build-filters
 # This loads all sample data and fixtures in from yml files existing in
 # the data directory
 sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load -t
+
+# reindexes wiki pages
+sudo -u $WEB_USER $PROJECT_ROOT/web/wiki/bin/indexer.php -c
