@@ -7,9 +7,9 @@ data/sql/schema.sql
 cache/**
 log/**
 web/wiki/data/cache/**
-web/wiki/data/index/i*.idx
+web/wiki/data/index/**
 web/wiki/data/meta/**/*.meta
-web/wiki/data/meta/_dokuwiki.changes
+web/wiki/data/meta/**/*.changes
 .DS_Store
 nbproject
 *.~1~
