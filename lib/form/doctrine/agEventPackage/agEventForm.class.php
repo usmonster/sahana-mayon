@@ -10,5 +10,7 @@
  */
 class agEventForm extends PluginagEventForm
 {
-
+  public function configure()
+  {
+  }
 }
