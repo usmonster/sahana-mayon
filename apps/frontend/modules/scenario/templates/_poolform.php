@@ -1,5 +1,17 @@
 <?php use_stylesheets_for_form($poolform) ?>
 <?php //use_javascript('tooltip');  ?>
+<?php use_javascript('jquery.ui.custom.js'); ?>
+<?php use_javascript('json.serialize'); ?>
+<script type="text/javascript">
+function queryConstruct() {
+var out = Array();
+$('.filter option:selected').each(function(index) {
+   out[index] = $(this).text();
+   $("#staff_pool_lucene_search_query_condition").val(JSON.stringify(out));
+})
+}
+
+</script>
 
 <?php
   $action = url_for('scenario/staffpool?id=' . $scenario_id);
@@ -18,7 +30,7 @@ if(isset($search_id)){
         <td colspan="2">
           <?php echo $poolform->renderHiddenFields(false) ?>
           <input type="submit" value="Save" class="linkButton"/>
-          <input type="submit" value="Preview" class="linkButton" name="Preview"/>
+          <input type="submit" value="Preview" class="linkButton" name="Preview" onclick="queryConstruct()"/>
           <input type="submit" value="New" name="New" class="linkButton"/>
           <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
         </td>
@@ -26,7 +38,7 @@ if(isset($search_id)){
     </tfoot>
     <tbody>
       <tr>
-        <td>
+        <td>  
           <?php echo $poolform ?>
         </td>
       </tr>

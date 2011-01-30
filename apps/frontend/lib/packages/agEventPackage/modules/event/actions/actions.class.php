@@ -17,26 +17,22 @@ class eventActions extends sfActions
     $this->scenarioForm->setWidgets(array(
       'ag_scenario_list' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agScenario'))
     ));
-    //$this->scenarioForm->widgetSchema->setNameFormat('scenario[%s]');
-    //$this->scenarioForm = new agEventForm();
-    //unset($this->scenarioForm['created_at'], $this->scenarioForm['updated_at'], $this->scenarioForm['event_name'], $this->scenarioForm['zero_hour'], $this->scenarioForm['ag_affected_area_list']);
-    //we want to only get the scenario here,
+    
+    $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
   }
+
   public function executeDeploy(sfWebRequest $request)
   {
-        $this->eventName = Doctrine::getTable('agEvent')
+    $this->eventName = Doctrine::getTable('agEvent')
             ->findByDql('id = ?', $request->getParameter('id'))
             ->getFirst()->event_name;
   }
+
   public function executeMeta(sfWebRequest $request)
   {
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
       $this->form = new PluginagEventDefForm();
-//      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
-      // Had to do this here because the form values weren't under a separate array element. Not sure why though.
-      $values = $request->getPostParameters();
-      unset($values['scenario_id']);
-      $this->form->bind($values, $request->getFiles($this->form->getName()));
+      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
       if ($this->form->isValid()) {
         $ag_event = $this->form->save();
 
@@ -44,6 +40,18 @@ class eventActions extends sfActions
         $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
         $ag_event_scenario->setEventId($ag_event->getId());
         $ag_event_scenario->save();
+        if (isset($updating)) { //replace with usable check to update
+          $eventStatusObject = Doctrine_Query::create()
+                  ->from('agEventStatus a')
+                  ->where('a.id =?', $ag_event->getId())
+                  ->execute()->getFirst();
+        }
+        $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
+
+        $ag_event_status->setEventStatusTypeId(1);
+        $ag_event_status->setEventId($ag_event->getId());
+        $ag_event_status->time_stamp = new Doctrine_Expression('NOW()');
+        $ag_event_status->save();
 
         //have to do this for delete also, i.e. delete the event_scenario object
 
@@ -52,17 +60,17 @@ class eventActions extends sfActions
     } else {
       //get scenario information passed from previous form
       //we should save the scenario that this event is based on
-      if($request->getParameter('ag_scenario_list')){
+      if ($request->getParameter('ag_scenario_list')) {
         $this->scenario_id = $request->getParameter('ag_scenario_list');
         $this->scenarioName = Doctrine::getTable('agScenario')
-            ->findByDql('id = ?', $this->scenario_id)
-            ->getFirst()->scenario;
+                ->findByDql('id = ?', $this->scenario_id)
+                ->getFirst()->scenario;
       }
       $this->metaForm = new PluginagEventDefForm();
-
     }
     //as a rule of thumb, actions should post to themself and then redirect
   }
+
   public function executeList(sfWebRequest $request)
   {
     $this->ag_events = Doctrine_Core::getTable('agEvent')

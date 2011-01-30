@@ -1,0 +1,4 @@
+event_deploy:
+  url:     /event/:id/deploy
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: deploy }

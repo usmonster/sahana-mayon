@@ -6,7 +6,7 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          <input type="submit" value="Continue with Pre-Deployment" />
+          <input type="submit" value="Continue with Pre-Deployment" class="linkButton"/>
           <input type="hidden" value="<?php echo $scenario_id ?>" name="scenario_id">
         </td>
       </tr>

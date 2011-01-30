@@ -39,6 +39,12 @@ class agStaffPoolForm extends sfForm
   {
     $this->embedStaffGeneratorForm();
     $this->embedLuceneForm();
+    $this->getWidgetSchema()->setLabel('staff_generator', false);
+    $this->getWidgetSchema()->setLabel('lucene_search', false);
+
+    $staffpoolDeco = new agWidgetFormSchemaFormatterInlineTopLabel($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('row', $staffpoolDeco);
+    $this->getWidgetSchema()->setFormFormatterName('row');
   }
 
   /**
@@ -55,8 +61,14 @@ class agStaffPoolForm extends sfForm
     }
     $staffGenForm = new agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
 
+    $staffGenDeco = new agWidgetFormSchemaFormatterRow($staffGenForm->getWidgetSchema());
+    $staffGenForm->getWidgetSchema()->addFormFormatter('row', $staffGenDeco);
+    $staffGenForm->getWidgetSchema()->setFormFormatterName('row');
+
     $staffGenForm->setWidget('lucene_search_id', new sfWidgetFormInputHidden());
     $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
+    $staffGenForm->setWidget('search_weight', new sfWidgetFormChoice(array('choices' => range(0,10))));
+
     $staffGenForm->setValidator('lucene_search_id', new sfValidatorPass(array('required' => false)));
 //    $staffGenForm->setValidator('search_weight', new sfValidatorPass(array('required' => false)));
     $staffGenForm->setValidator('scenario_id', new sfValidatorPass());
@@ -78,7 +90,16 @@ class agStaffPoolForm extends sfForm
               ->execute()->getFirst();
     }
     $luceneForm = new agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);
-    
+
+    //although this is the third time we've made this object, what it's constructed from each time is different
+    $luceneDeco = new agWidgetFormSchemaFormatterRow($luceneForm->getWidgetSchema());
+    $luceneForm->getWidgetSchema()->addFormFormatter('row', $luceneDeco);
+    $luceneForm->getWidgetSchema()->setFormFormatterName('row');
+    $luceneForm->setWidget('query_condition', new sfWidgetFormInputHidden());
+    $luceneForm->getWidgetSchema()->setLabel('query_name', 'Name of Staff Pool');
+    $luceneForm->getWidgetSchema()->setLabel('lucene_search_type_id', 'Search Type');
+
+
     unset($luceneForm['created_at'], $luceneForm['updated_at']);
     unset($luceneForm['ag_report_list']);
 
@@ -128,13 +149,12 @@ class agStaffPoolForm extends sfForm
     $form->getObject()->save();
     $this->lucene_search_id = $form->getObject()->getId();
   }
-  
+
   /**
    * save the embedded scenario staff generator form
    * @param sfForm $form a form to process
    * @param mixed $values a set of values coming from a post
    */
-
   public function saveStaffGenForm($form, $values)
   {
     $form->updateObject($values);

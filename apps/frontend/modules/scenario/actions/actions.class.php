@@ -297,7 +297,11 @@ class scenarioActions extends agActions
             ->execute();
     if ($request->getParameter('search_id')) {
       $this->search_id = $request->getParameter('search_id');
+      $this->poolform = new agStaffPoolForm($this->search_id);
+    } else {
+      $this->poolform = new agStaffPoolForm();
     }
+
     if ($request->isMethod(sfRequest::POST)) {
       //$request->checkCSRFProtection();
       //OR if coming from an executed search
@@ -329,12 +333,6 @@ class scenarioActions extends agActions
         $this->poolform = new agStaffPoolForm();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
-    } else {
-      if ($this->search_id) {
-        $this->poolform = new agStaffPoolForm($this->search_id);
-      } else {
-        $this->poolform = new agStaffPoolForm();
-      }
     }
 
     $this->filterForm = new sfForm();
@@ -342,8 +340,11 @@ class scenarioActions extends agActions
       'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
       'organization' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization')),
     ));
-    $this->filterForm->getWidget('staff_type')->setAttribute('style', 'width: 100%');
-    $this->filterForm->getWidget('organization')->setAttribute('style', 'width: 100%');
+//    $filterDeco = new agWidgetFormSchemaFormatterRow($luceneForm->getWidgetSchema());
+//    $luceneForm->getWidgetSchema()->addFormFormatter('row', $luceneDeco);
+//    $luceneForm->getWidgetSchema()->setFormFormatterName('row');
+    $this->filterForm->getWidget('staff_type')->setAttribute('class', 'filter');
+    $this->filterForm->getWidget('organization')->setAttribute('class', 'filter');
   }
 
   /**
@@ -1023,7 +1024,7 @@ class scenarioActions extends agActions
 //      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
 //      $task = new luceneReindexTask($this->dispatcher, new sfFormatter());
 //      $task->run(array(), array('connection' => 'doctrine'));
-      
+
       $scenario_id = $ag_scenario_facility_group->getAgScenario()->getId();
       $c = $ag_scenario_facility_group->getAgScenarioFacilityResource();
       // The Group object has been created here.
