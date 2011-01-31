@@ -63,16 +63,16 @@ Apache
 2. Create a link to the web directory of the project from the server's web root,
    for example:
 
-  $ sudo ln -s AGASTI_ROOT/web WEB_ROOT/agasti
+  $ sudo ln -s AG_ROOT/web WEB_ROOT/agasti
 
-  * NOTE: Replace AGASTI_ROOT with the full filesystem path to the Agasti root
+  * NOTE: Replace AG_ROOT with the full filesystem path to the Agasti root
     directory, and replace WEB_ROOT with the path to your default Apache
     configuration's document root.
 
 3. If your version of Apache supports it, write a custom configuration file for
    the application; for example:
 
-    Alias /agasti/sf AGASTI_ROOT/lib/vendor/symfony/data/web/sf
+    Alias /agasti/sf AG_ROOT/lib/vendor/symfony/data/web/sf
     <Directory "/var/www/agasti">
       AllowOverride All
       Allow from All
@@ -88,7 +88,7 @@ Apache
 
   * NOTES:
 
-    - Again, replace AGASTI_ROOT with the full filesystem path to the Agasti
+    - Again, replace AG_ROOT with the full filesystem path to the Agasti
       root directory.
 
     - Commands may vary slightly, depending upon your version of Apache.
@@ -183,7 +183,7 @@ few minutes before the installer reports that is has completed and you can click
 the "Finish" button.
 
 At this point you will need to set the login credentials for the superuser by
-editing the AGASTI_ROOT/config/config.yml file and replacing the null super_user
+editing the AG_ROOT/config/config.yml file and replacing the null super_user
 and super_pass values with something valid and secure, e.g.:
 
   super_user: 'somesecureusername'
@@ -193,14 +193,19 @@ You should now be able sign in with those credentials and use the application.
 
 To port these credentials to the wiki, run the script:
 
-  php apps/frontend/lib/util/wiki-auth-setup.php
+  sudo -u [WEB_USER] php [AG_ROOT]/apps/frontend/lib/util/wiki-auth-setup.php
 
 Finally, generate the wiki indexes by running the following command:
 
-  sudo -u [WEB_USER] [PROJECT_DIR]/web/wiki/bin/indexer.php -c
+  sudo -u [WEB_USER] [AG_ROOT]/web/wiki/bin/indexer.php -c
 
-  * NOTE: Replace WEB_USER with the user associated with the Apache, e.g.
-    www-data or apache.
+  * NOTES:
+
+    - Replace WEB_USER with the user associated with the Apache, e.g.
+      www-data or apache.
+
+    - You can safely ignore any PHP warning of the form:
+      PHP Warning:  parse_url(http:///web/wiki/bin/): Unable to parse URL in ...
 
 
 ERRORS AND TROUBLESHOOTING
@@ -222,7 +227,7 @@ ERRORS AND TROUBLESHOOTING
   correctly, but still unable to log into the application with proper
   credentials:
 
-  Clear the Symfony cache with this command, executed from your AGASTI_ROOT:
+  Clear the Symfony cache with this command, executed from your AG_ROOT:
 
   $ ./symfony cc
 
