@@ -15,12 +15,14 @@
  */
 class agActions extends sfActions
 {
-  protected $searchedModels = array();
+  protected $searchedModels;
 
   public function __construct($context, $moduleName, $actionName)
   {
     parent::__construct($context, $moduleName, $actionName);
-    $this->searchedModels = array($this->getModuleName());
+    if(empty($this->searchedModels)){
+      $this->searchedModels = array($this->getModuleName());
+    }
   }
 
   public function executeSearch(sfWebRequest $request)
