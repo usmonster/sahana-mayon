@@ -16,3 +16,7 @@
 <b>Please select a scenario to base your event on:</b><br/>
 
 <?php include_partial('scenarioForm', array('scenarioForm' => $scenarioForm)) ?>
+<br/>
+<?php
+echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
+?>

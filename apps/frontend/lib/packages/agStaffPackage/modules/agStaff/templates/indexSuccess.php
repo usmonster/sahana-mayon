@@ -22,4 +22,9 @@
 <br/>
 
 <a href="<?php echo url_for('staff/export'); ?>" class="buttonText" title="Export Staff">Export Staff</a><br/>
+
+<?php
+echo '<a href="' . public_path('wiki/doku.php?id=manual:user:staff') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
+?><br>
+
 If you would like to search for staff, please use the search box on the top right.

@@ -13,4 +13,5 @@ echo '<a href="' . url_for('scenario/list') . '" class="buttonText" title="List 
 echo '<a href="' . url_for('scenario/listshifttemplate') . '" class="buttonText" title="List Shift Template">List Shift Template</a><br/>';
 echo '<a href="' . url_for('scenario/scenarioshiftlist') . '" class="buttonText" title="List Scenario Shift">List Scenario Shift</a><br/>';
 echo '<a href="' . url_for('scenario/scenarioshiftgroup') . '" class="buttonText" title="List Scenario Shift">Delete Scenario Shifts By Scenario</a><br/>';
-?>
+echo '<a href="' . public_path('wiki/doku.php?id=manual:user:scenario') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
+?><br>
