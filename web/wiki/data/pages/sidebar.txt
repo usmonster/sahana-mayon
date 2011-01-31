@@ -1,6 +1,6 @@
 {{:sahanalogo.png|}}
 
-[[:manual|Administrator Manual]]
+[[:manual:administrator|Administrator Manual]]
 ----
   * [[manual:Administrator:Intro|Introduction to Sahana]]
   * [[manual:Administrator:Installation|Installation]]
@@ -11,7 +11,7 @@
     * [[manual:Administrator:Support:Troubleshooting|Troubleshooting]]
 
 
-[[:manual|User Manual]]
+[[:manual:user|User Manual]]
 ----
   * [[manual:User:Intro|Introduction]]
   * [[manual:User:Scenario|Scenarios]]
@@ -24,3 +24,9 @@
   * [[manual:User:Modules|Module Mgmt]]
     * [[manual:User:GIS|GIS Plugin]]
   * [[manual:User:FAQ|FAQ]]
+
+[[:manual:uorc|UORC Manual]]
+----
+
+[[:manual:specialist|Specialist Manual]]
+----

@@ -1,0 +1,15 @@
+<html><br><br><br><br><div style="text-align: center;"></html>{{:logo_c3.jpg|}}<html></div></html>
+
+
+----
+
+<html><div style="text-align: center; font-size: 400%; margin: 20px 0;">Specialists' Guide</div></html>
+
+
+----
+<html><div style="text-align: center;"><br><br><br><br><br><br><br><br><br><br><br>
+
+Sahana Foundation <br>
+http://www.sahanafoundation.org <br>
+info@SahanaFoundation.org <br>
+</div></html>
