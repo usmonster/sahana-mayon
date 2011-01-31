@@ -53,6 +53,9 @@ class eventActions extends sfActions
         $ag_event_status->time_stamp = new Doctrine_Expression('NOW()');
         $ag_event_status->save();
 
+        $ag_event_status = new agEventStatus();
+        
+
         //have to do this for delete also, i.e. delete the event_scenario object
 
         $this->redirect('event/deploy?id=' . $ag_event->getId());

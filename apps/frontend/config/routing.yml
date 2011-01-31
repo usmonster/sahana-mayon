@@ -68,6 +68,10 @@ scenario_review:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: review }
 
+scenario_facility_groups:
+  url:     /scenario/:id/listgroups
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: listgroups }
 
 default:
   url:   /:module/:action/*

@@ -18,7 +18,7 @@ class scenarioActions extends agActions
 
   public $searchedModels = array('agScenarioFacilityGroup', 'agScenario', 'agStaff');
 
-  public function executeListFacilityGroup(sfWebRequest $request)
+  public function executeListgroups(sfWebRequest $request)
   {
     $query = Doctrine_Core::getTable('agScenarioFacilityGroup')
             ->createQuery('a')
