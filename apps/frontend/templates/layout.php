@@ -32,7 +32,7 @@
         <div id="navigation">
         <?php $loggedIn = $sf_user->isAuthenticated(); ?>
         <?php if ($loggedIn): ?>
-        <!-- Some of these nav links don't all actually work; some are just placeholders for now so it looks nice. -->
+          <!-- Some of these nav links don't all actually work; some are just placeholders for now so it looks nice. -->
         <?php include_component('nav', 'Menu'); ?>
           <span style="margin: .1em; float: right;">
           <?php include_partial('global/searchForm'); ?>
@@ -47,8 +47,8 @@
         </div>
       </div>
       <div id="footer">
-        <?php echo image_tag('agasti_logo.png', array('alt' => '[Agasti Logo]')) ?>
-        <?php echo image_tag('logo.png', array('alt' => '[The Seal of the City of New York]')) ?>
+      <?php echo image_tag('agasti_logo.png', array('alt' => '[Agasti Logo]')) ?>
+      <?php echo image_tag('logo.png', array('alt' => '[The Seal of the City of New York]')) ?>
     </div>
   </body>
 </html>
