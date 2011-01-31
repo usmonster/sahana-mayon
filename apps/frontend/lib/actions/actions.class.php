@@ -15,22 +15,25 @@
  */
 class agActions extends sfActions
 {
+  protected $searchedModels = array();
+
+  public function __construct($context, $moduleName, $actionName)
+  {
+    parent::__construct($context, $moduleName, $actionName);
+    $this->searchedModels = array($this->getModuleName());
+  }
 
   public function executeSearch(sfWebRequest $request)
   {
     self::doSearch($request->getParameter('query'));
-    
+
     $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'search');
     //$this->setTemplate('global/search');
   }
 
   public function doSearch($searchquery)
   {
-    if (isset($this->searchedModels)) {
-      $models = $this->searchedModels;
-    } else {
-      $models = $this->getModuleName();
-    }
+    $models = $this->getSearchedModels();
 
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
@@ -39,6 +42,11 @@ class agActions extends sfActions
             ->in($models);
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
+  }
+
+  public function getSearchedModels()
+  {
+    return $this->searchedModels;
   }
 
 }

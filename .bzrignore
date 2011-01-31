@@ -6,6 +6,7 @@ data/search/**
 data/sql/schema.sql
 cache/**
 log/**
+web/wiki/conf/users.auth.php
 web/wiki/data/cache/**
 web/wiki/data/index/**
 web/wiki/data/meta/**/*.meta
