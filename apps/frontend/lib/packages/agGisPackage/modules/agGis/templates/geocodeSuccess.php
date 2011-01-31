@@ -31,16 +31,19 @@
 
 <?php
 //if the page is being rendered after calculation, we want to get results of geocoding
-//the above links should actually be javascript calls to the server, which will process in the background, once the server returns information display it in the section below
+//the above links should actually be javascript calls to the server, which will process in the
+//background, once the server returns information display it in the section below
 if (isset($coderesults)) {
+
+}
 ?>
 
-  <h3>Sahana Agasti Geocode</h3>
+<h3>Sahana Agasti Geocode</h3>
 
-  the results of your geocoding:<br />
+the results of your geocoding:<br />
 
-  <strong>you tried to enter:</strong><?php var_dump($address) //number,street,address        ?><br/>
-  <strong>the geoserver returned:</strong><?php var_dump($result) ?>
+<strong>you tried to enter:</strong><?php var_dump($address) //number,street,address         ?><br/>
+<strong>the geoserver returned:</strong><?php var_dump($result) ?>
 <?php
 }
 ?>

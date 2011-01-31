@@ -2,9 +2,10 @@
 
 <h2>Geographic Information System Management</h2>
 <p>The GIS module of Agasti 2.0 is used to manage geo-location.
-  It works by first identifying a pair of geographical co-ordinates for each location in the records system; including staff and facility locations.
-  Next, Agasti calculates the distance between the facilities and your staff.
-  During the deployment of an event Agasti will use these distances to send your staff to the ideal location for your available resources.
+  It works by first identifying a pair of geographical co-ordinates for each location in the records
+  system; including staff and facility locations.  Next, Agasti calculates the distance between the
+  facilities and your staff.  During the deployment of an event Agasti will use these distances to
+  send your staff to the ideal location for your available resources.
 </p>
 <b>Please select one of the following actions:</b><br/>
 <?php

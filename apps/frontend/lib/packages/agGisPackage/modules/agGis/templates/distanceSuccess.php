@@ -15,7 +15,7 @@
 
 <a href="#" id="calculate" class="buttonSmall">Calculate all Distances</a>
 <br/>
-<div id="result" style="display: none;">
+<div id="result">
   <p><?php echo image_tag('indicator.gif') ?> please wait, calculation taking place</p>
 </div>
 

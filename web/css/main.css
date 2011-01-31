@@ -837,6 +837,12 @@ th .tableRow {
   color: #848484;
 }
 
+/*Searching*/
+
+#result {
+  display: none;
+}
+
 /* MENU */
 
 /*@import url('/css/menu.css');*/
