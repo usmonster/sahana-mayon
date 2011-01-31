@@ -10,14 +10,17 @@
 
   * [[:manual:User|User Manual]]
     * [[manual:User:Intro|Introduction]]
-    * [[manual:User:Event|Event Planning]]
-    * [[manual:User:Staff|Staff Mgmt]]
-    * [[manual:User:Client|Clients]]
-    * [[manual:User:Organizations|Organizations]]
-    * [[manual:User:Facilities|Facilities]]
     * [[manual:User:Scenario|Scenarios]]
+    * [[manual:User:Staff|Staff Mgmt]]
+    * [[manual:User:Facilities|Facilities]]
+    * [[manual:User:Organizations|Organizations]]
+    * [[manual:User:Event|Event Deployment]]
+    * [[manual:User:Client|Clients]]
     * [[manual:User:Reports|Reports]]
     * [[manual:User:Modules|Module Mgmt]]
       * [[manual:User:GIS|GIS Plugin]]
     * [[manual:User:FAQ|FAQ]]
 
+  * [[:manual:uorc|UORC Manual]]
+
+  * [[:manual:specialist|Specialist Manual]]
