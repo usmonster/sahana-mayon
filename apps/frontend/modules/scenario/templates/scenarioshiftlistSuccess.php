@@ -71,7 +71,7 @@
 <br>
 <div>
   <a href="<?php echo url_for('scenario/newscenarioshift') ?>" class="linkButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
-  <a href="<?php echo url_for('scenario/staffpool?id=' .$scenario_id ) ?>" class="linkButton" title="Define Staff Pools">Define Staff Pools</a>
+  <a href="<?php echo url_for('scenario/staffpool?id=' .$scenario_id ) ?>" class="linkButton" title="Define Staff Pools">Save and Define Staff Pools</a>
 
 </div>
 

@@ -425,7 +425,9 @@ class scenarioActions extends agActions
       if ($this->shifttemplateform->isValid()) {
         $ag_shift_template = $this->shifttemplateform->saveEmbeddedForms();
         if ($request->hasParameter('Continue')) {
-          $this->redirect('scenario/scenarioshifts?id=' . $request->getParameter('id'));
+          $generatedResult = agScenarioGenerator::shiftGenerator();
+          //should be a try/catch here
+          $this->redirect('scenario/scenarioshiftlist?id=' . $request->getParameter('id'));
         } else {
           $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
         }

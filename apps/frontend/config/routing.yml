@@ -63,6 +63,12 @@ scenario_shift_list:
   url:     /scenario/:id/scenarioshiftlist
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: scenarioshiftlist }
+
+scenario_shifts:
+  url:     /scenario/:id/scenarioshifts
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: scenarioshifts }
+
 scenario_review:
   url:     /scenario/:id/review
   options: { model: agScenario, type: object }

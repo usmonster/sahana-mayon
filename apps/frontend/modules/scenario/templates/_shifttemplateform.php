@@ -18,7 +18,7 @@
             -->
           <?php #endif; ?>
           <input type="submit" class="linkButton" value="Save" />
-          <input type="submit" class="linkButton" value="Save and Continue" name="Continue" />
+          <input type="submit" class="linkButton" value="Save, Generate Shifts and Continue" name="Continue" />
         </td>
       </tr>
     </tfoot>
