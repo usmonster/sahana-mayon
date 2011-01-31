@@ -683,7 +683,7 @@ class agInstall
           'facility_types' => array('label' => 'Manage Facility Types', 'route' => '@facility', 'parent' => 'facility'),
           'org_new' => array('label' => 'Add New Organization', 'route' => 'organization/new', 'parent' => 'org'),
           'org_list' => array('label' => 'List Organizations', 'route' => 'organization/list', 'parent' => 'org'),
-          'scenario_create' => array('label' => 'Build New Scenario', 'route' => '@staff_create', 'parent' => 'scenario'),
+          'scenario_create' => array('label' => 'Build New Scenario', 'route' => 'scenario/new', 'parent' => 'scenario'),
           'scenario_list' => array('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
           'scenario_facilitygrouptypes' => array('label' => 'Edit Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
           'scenario_active' => array('label' => '[Active Scenario]', 'route' => '@scenario', 'parent' => 'scenario'),
