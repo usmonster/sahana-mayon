@@ -172,13 +172,13 @@ class agInstall
 
   function stage1()
   {
-    $LICENCE_FILE = '../LICENSE';
+    $LICENSE_FILE = sfConfig::get('sf_root_dir') . '/LICENSE';
 
     $this->DISABLE_NEXT = !$this->getConfig('agree', false);
 
     $license = 'Missing licence file. See GPL licence.';
-    if (file_exists($LICENCE_FILE))
-      $license = file_get_contents($LICENCE_FILE);
+    if (file_exists($LICENSE_FILE))
+      $license = file_get_contents($LICENSE_FILE);
 
 
     $agree = '<input class="checkbox" type="checkbox" value="yes" name="agree" id="agree" onclick="submit();"';
@@ -355,13 +355,15 @@ class agInstall
 
   function getCurrent()
   {
-    if (file_exists(dirname(__FILE__) . '/../config/databases.yml') == TRUE) {
-      $dbArray = sfYaml::load(dirname(__FILE__) . '/../config/databases.yml');
+    $filename = sfConfig::get('sf_config_dir') . '/databases.yml';
+    if (file_exists($filename)) {
+      $dbArray = sfYaml::load($filename);
     } else {
       $install_flag = false;
     }
-    if (file_exists(dirname(__FILE__) . '/../config/config.yml') == TRUE) {
-      $cfgArray = sfYaml::load(dirname(__FILE__) . '/../config/config.yml');
+    $filename = sfConfig::get('sf_config_dir') . '/config.yml';
+    if (file_exists($filename)) {
+      $cfgArray = sfYaml::load($filename);
     } else {
       $install_flag = true;
       $existing_auth_method = "bypass";
@@ -635,7 +637,7 @@ class agInstall
     sfClearCache('frontend', 'all');
     sfClearCache('frontend', 'dev');
     sfClearCache('frontend', 'prod');
-    require_once sfConfig::get('sf_root_dir') . '/lib/vendor/symfony/lib/yaml/sfYaml.php';
+    require_once sfConfig::get('sf_lib_dir') . '/vendor/symfony/lib/yaml/sfYaml.php';
     $file = sfConfig::get('sf_config_dir') . '/config.yml';
 // update config.yml
     try {
@@ -644,7 +646,7 @@ class agInstall
       echo "hey, something went wrong:" . $e->getMessage();
     }
 
-    $file = sfConfig::get('sf_app_dir') . '/config/app.yml';
+    $file = sfConfig::get('sf_app_config_dir') . '/app.yml';
     touch($file);
 //if app.yml doesn't exist
     $appConfig = sfYaml::load($file);
@@ -692,11 +694,11 @@ class agInstall
           'event_active_clients' => array('label' => 'Clients', 'route' => '@homepage', 'parent' => 'event_active'),
           'event_active_reporting' => array('label' => 'Reporting', 'route' => '@homepage', 'parent' => 'event_active'));
 
-// update config.yml
+// updates config.yml
     try {
       file_put_contents($file, sfYaml::dump($appConfig, 4));
     } catch (Exception $e) {
-      echo "hey, something went wrong:" . $e->getMessage();
+      echo 'hey, something went wrong: ', $e->getMessage();
       return false;
     }
     $file = sfConfig::get('sf_config_dir') . '/databases.yml';
