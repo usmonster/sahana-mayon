@@ -3,7 +3,7 @@ Emergency Management Software
 
 INSTALLATION INSTRUCTIONS
 
-Updated: 2011-01-14
+Updated: 2011-01-31
 
 *** IMPORTANT NOTE: ***
 
@@ -52,8 +52,9 @@ Apache
    directories, execute the following commands from the project root:
 
   $ sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/indexes/ \
-      data/search/ data/sql/
-  $ chmod -cR g+wr config/ apps/*/config/ data/indexes/ data/search/ data/sql/
+      data/search/ data/sql/ web/wiki/conf/ web/wiki/data/
+  $ chmod -cR g+wr config/ apps/*/config/ data/indexes/ data/search/ data/sql/ \
+      web/wiki/conf/ web/wiki/data/
   $ ./symfony project:permissions
 
   * NOTE: Replace WEB_GROUP with the group associated with the Apache user, e.g.
