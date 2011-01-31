@@ -106,6 +106,6 @@ class agShiftGeneratorForm extends sfForm
 
       }
     }
-    return;// parent::saveEmbeddedForms($con, $forms);
+    return;// parent::saveEmbeddedForms($con, $forms); <-correct, this should never have been here, sfForm will save nothing
   }
 }

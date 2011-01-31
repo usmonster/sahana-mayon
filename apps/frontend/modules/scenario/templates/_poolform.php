@@ -48,7 +48,7 @@ if(isset($search_id)){
           <h3>Construct Search Conditions:</h3>
 
           <label class ="filterButton">Filter By Staff Type:</label>
-          <?php echo $filterForm['staff_type']; ?>
+          <?php //echo $filterForm['staff_type']; ?>
 
           <label class ="filterButton">Filter by Organization:</label>
           <?php echo $filterForm['organization']; ?>

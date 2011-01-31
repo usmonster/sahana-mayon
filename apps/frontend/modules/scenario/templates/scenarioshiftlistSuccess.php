@@ -1,4 +1,4 @@
-<h3>List Available Scenario Shifts</h3>
+<h3>Scenario Shifts for <?php echo $scenario_name ?></h3>
 
 <?php #include_partial('scenarioshiftform', array('scenarioshiftform' => $scenarioshiftform, 'myRandomParam' => $myRandomParam, 'outputResults' => $outputResults)) ?>
 <?php
@@ -71,6 +71,8 @@
 <br>
 <div>
   <a href="<?php echo url_for('scenario/newscenarioshift') ?>" class="linkButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
+  <a href="<?php echo url_for('scenario/staffpool?id=' .$scenario_id ) ?>" class="linkButton" title="Define Staff Pools">Define Staff Pools</a>
+
 </div>
 
 <div style="float: right;">

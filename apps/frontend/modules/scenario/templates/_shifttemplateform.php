@@ -1,7 +1,7 @@
 <?php use_stylesheets_for_form($shifttemplateform) ?>
 <?php use_javascripts_for_form($shifttemplateform) ?>
 
-<form action="<?php echo url_for('scenario/createshifttemplate?id=' . $scenario_id); ?>" method="post">
+<form action="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id); ?>" method="post">
 <?php #if (!$shifttemplateform->getObject()->isNew()): ?>
 <!--
 <input type="hidden" name="sf_method" value="put" />
@@ -18,6 +18,7 @@
             -->
           <?php #endif; ?>
           <input type="submit" class="linkButton" value="Save" />
+          <input type="submit" class="linkButton" value="Save and Continue" name="Continue" />
         </td>
       </tr>
     </tfoot>

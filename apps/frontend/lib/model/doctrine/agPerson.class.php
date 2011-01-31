@@ -67,7 +67,7 @@ class agPerson extends BaseagPerson
     foreach ($this->getAgPersonMjAgPersonName() as $name) {
       $names = $names . ' ' . $name->getAgPersonName()->person_name;
     }
-    return $names;
+    if(isset($names))return $names;
   }
 
 //  public function getEmail()

@@ -54,6 +54,21 @@ scenario_new_shift_templates:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: newshifttemplates }
 
+scenario_shift_templates:
+  url:     /scenario/:id/shifttemplates
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: shifttemplates }
+
+scenario_shift_list:
+  url:     /scenario/:id/scenarioshiftlist
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: scenarioshiftlist }
+scenario_review:
+  url:     /scenario/:id/review
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: review }
+
+
 default:
   url:   /:module/:action/*
 

@@ -22,6 +22,8 @@ class agReportMakerForm extends sfForm
   public $lucen_search_id;
   public $scenario_id;
   public $staff_gen_id;
+  public $available_tables; //this should be a two dimensional array, with the keys as the available table names
+
 
   /**
    *
@@ -31,6 +33,7 @@ class agReportMakerForm extends sfForm
   {
     $this->staff_gen_id = $staff_gen_id;
     parent::__construct(array(), array(), array());
+
   }
 
   /**
@@ -105,6 +108,8 @@ class agReportMakerForm extends sfForm
   }
   public function embedQuerySelectFieldForm()
   {
+    $this->available_tables = Doctrine::getLoadedModels();
+
     if (isset($this->lucene_search_id)) {
       $luceneObject = Doctrine_Query::create()
               ->from('agLuceneSearch a')
