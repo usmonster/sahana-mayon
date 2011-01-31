@@ -29,10 +29,13 @@ if(isset($search_id)){
       <tr>
         <td colspan="2">
           <?php echo $poolform->renderHiddenFields(false) ?>
-          <input type="submit" value="Save" class="linkButton"/>
+          <input type="submit" value="Save" class="linkButton" name="Save" onclick="queryConstruct()"/>
           <input type="submit" value="Preview" class="linkButton" name="Preview" onclick="queryConstruct()"/>
           <input type="submit" value="New" name="New" class="linkButton"/>
+        <?php if(isset($search_id)){ ?>
           <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
+        <?php } ?>
+          <a href="<?php echo url_for('scenario/review?id=' . $scenario_id ) ?>" class="linkButton" title="Review Scenario">Finish Scenario Wizard</a>
         </td>
       </tr>
     </tfoot>

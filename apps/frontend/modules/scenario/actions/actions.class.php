@@ -332,7 +332,7 @@ class scenarioActions extends agActions
       } elseif ($request->getParameter('Save')) {
         //otherwise, we're SAVING/UPDATING
         $this->poolform = new agStaffPoolForm();
-
+        $this->poolform->scenario_id = $request->getParameter('id');
         $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
 
         if ($this->poolform->isValid()) {
