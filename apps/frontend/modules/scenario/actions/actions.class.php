@@ -316,9 +316,11 @@ class scenarioActions extends agActions
       //$request->checkCSRFProtection();
       //OR if coming from an executed search
       if ($request->getParameter('Preview')) {
-        $postParam = $request->getPostParameter('lucene_search');
-        $lucene_search = json_decode($postParam['query_condition']);
-        parent::doSearch($lucene_search);
+        $postParam = $request->getPostParameter('staff_pool');
+        $lucene_search = $postParam['lucene_search'];
+        $lucene_query = json_decode($lucene_search['query_condition']);
+
+        parent::doSearch($lucene_query[0]); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {
 
         $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
@@ -347,7 +349,7 @@ class scenarioActions extends agActions
 
     $this->filterForm = new sfForm();
     $this->filterForm->setWidgets(array(
-      //'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
+      'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
       'organization' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization')),
     ));
 //    $filterDeco = new agWidgetFormSchemaFormatterRow($luceneForm->getWidgetSchema());
