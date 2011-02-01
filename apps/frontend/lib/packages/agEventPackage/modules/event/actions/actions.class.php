@@ -74,6 +74,16 @@ class eventActions extends sfActions
     //as a rule of thumb, actions should post to themself and then redirect
   }
 
+  public function migrateScenarioToEvent(integer $scenario_id)
+  {
+    // 1. Regenerate staff pool
+    // 2. Copy over staff pool
+    // Regenerate scenario shift
+
+    // Copy over scenario shift
+
+  }
+
   public function executeList(sfWebRequest $request)
   {
     $this->ag_events = Doctrine_Core::getTable('agEvent')

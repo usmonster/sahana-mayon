@@ -153,16 +153,17 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'task_length_minutes' => 'Shift Length <br> (in minutes)',
       'break_length_minutes' => 'Break Length <br> (in minutes)',
       'minutes_start_to_facility_activation' => 'Shifts Start Time <br> Before <br> Facility Activation <br> (in min)',
-      'shift_repeats' => 'Individuals <br> Shift Repeats',
-      'max_staff_repeat_shifts' => 'Total <br> Shift Repeats',
+      'max_staff_repeat_shifts' => 'Person <br> Shift Repeats',
+      'shift_repeats' => '<em>Days Faciltiy <br> Open For</em>',
       'shift_status_id' => 'Shift Status',
       'deployment_algorithm_id' => 'Deployment Algorithm',
     ));
     $this->getWidget('task_length_minutes')->setAttribute('size', '8');
     $this->getWidget('break_length_minutes')->setAttribute('size', '8');
     $this->getWidget('minutes_start_to_facility_activation')->setAttribute('size', '8');
-    $this->getWidget('shift_repeats')->setAttribute('size', '8');
     $this->getWidget('max_staff_repeat_shifts')->setAttribute('size', '8');
+    $this->getWidgetSchema()->moveField('max_staff_repeat_shifts', sfWidgetFormSchema::AFTER, 'minutes_start_to_facility_activation');
+    $this->getWidget('shift_repeats')->setAttribute('size', '8');
 //      'shift_repeats'                        => new sfValidatorInteger(),
 //      'max_staff_repeat_shifts'              => new sfValidatorInteger(),
 

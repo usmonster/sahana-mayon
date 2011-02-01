@@ -41,7 +41,7 @@
 
   $('#calculate').click(function()
   {
-    var startTime, endTime, totalTimeElapsed = 0, averageTime = 0, estimateTimeLeft = 0;
+    var startTime, endTime, totalProcessed, totalTimeElapsed = 0, averageTime = 0, estimateTimeLeft = 0;
     $("#result").show();
     //if(xmlHttp.readyState==4)
     // {
