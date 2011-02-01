@@ -1,0 +1,6 @@
+====== Scenarios Creator Walk-through ======
+Scenarios are plans.  Plans are good.  Here you set up some information for how to make your scenario work.  Make it, save it, and click next.
+
+===== Getting Started =====
+
+[[scenario:pre|{{ :manual:user:next.png|}}]] 

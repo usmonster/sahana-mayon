@@ -12,3 +12,7 @@ echo '<a href="' . url_for('scenario/pre') . '" class="buttonText" title="Create
 echo '<a href="' . url_for('scenario/list') . '" class="buttonText" title="List Existing Scenarios">List Scenarios</a><br/>';
 echo '<a href="' . public_path('wiki/doku.php?id=manual:user:scenario') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
 ?><br>
+Some users may find it helpful to use the wiki walkthrough the first time they create a scenario:<br/>
+<?php
+echo '<a href="' . public_path('wiki/doku.php?id=manual:user:scenario:walkthrough') . '" target="new" class="buttonText" title="Help">Scenario Creator Walkthrough</a><br/>';
+?><br>

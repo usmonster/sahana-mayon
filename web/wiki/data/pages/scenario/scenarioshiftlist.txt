@@ -1,0 +1,7 @@
+====== Scenario Creator Walk-through ======
+
+===== Scenario Shifts =====
+
+
+[[scenario:staff resource pool|{{ :manual:user:next.png|}}]] 
+[[scenario:newstaffresources|{{:manual:user:previous.png?150x71 }}]]

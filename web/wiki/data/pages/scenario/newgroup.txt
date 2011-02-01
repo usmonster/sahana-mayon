@@ -1,0 +1,7 @@
+====== Scenario Creator Walk-through ======
+
+===== Facility Group Creation =====
+
+
+[[scenario:staffresources|{{ :manual:user:next.png|}}]] 
+[[scenario:new|{{:manual:user:previous.png?150x71 }}]]

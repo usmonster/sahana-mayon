@@ -1,0 +1,7 @@
+====== Scenario Creator Walk-through ======
+
+===== Staff Resource Pool =====
+
+
+[[scenario:review|{{ :manual:user:next.png|}}]] 
+[[scenario:staff resource pool|{{:manual:user:previous.png?150x71 }}]]

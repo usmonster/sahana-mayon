@@ -1,0 +1,6 @@
+====== Scenario Creator Walk-through ======
+
+===== Review =====
+
+
+[[scenario:staff_resource_pool|{{:manual:user:previous.png?150x71| }}]] 

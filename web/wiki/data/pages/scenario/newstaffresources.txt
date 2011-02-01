@@ -1,0 +1,7 @@
+====== Scenario Creator Walk-through ======
+
+===== Shift Templates =====
+
+
+[[scenario:scenarioshiftlist|{{ :manual:user:next.png|}}]] 
+[[scenario:staffresources|{{:manual:user:previous.png?150x71 }}]]
