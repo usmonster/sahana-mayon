@@ -33,25 +33,90 @@ class agFacilityForm extends BaseagFacilityForm
 //      $this['facility_name'],
 //      $this['facility_code']
     );
+//    $this->agEntity = $this->getObject()->getAgEntity();
+    $this->agEntity = $this->getObject()->getAgSite()->getAgEntity();
+    $this->embedAgFacilityForms();
+  }
+
+  public function embedPhoneForm($contactContainer)
+  {
+    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
+
+    $phoneContainer = new sfForm(array(), array());
+    $phoneDeco = new agWidgetFormSchemaFormatterRow($phoneContainer->getWidgetSchema());
+    $phoneContainer->getWidgetSchema()->addFormFormatter('row', $phoneDeco);
+    $phoneContainer->getWidgetSchema()->setFormFormatterName('row');
+    foreach ($this->ag_phone_contact_types as $phoneContactType) {
+      if ($id = $this->agEntity->id) {
+        $phoneObject = Doctrine_query::create()
+                ->from('agPhoneContact pc')
+                ->where('pc.id IN (SELECT jn.phone_contact_id FROM agEntityPhoneContact jn WHERE jn.entity_id = ? AND phone_contact_type_id = ?)', array($id, $phoneContactType->id))
+                ->execute()->getFirst();
+      }
+      $phoneContactForm = new agEmbeddedAgPhoneContactForm(isset($phoneObject) ? $phoneObject : null);
+      $phoneContactForm->widgetSchema->setLabel('phone_contact', false);
+      $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
+    }
+
+    $contactContainer->embedForm('phone', $phoneContainer);
+  }
+  
+  public function embedEmailForm($contactContainer)
+  {
+    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
+
+    $emailContainer = new sfForm();
+    $emailDeco = new agWidgetFormSchemaFormatterRow($emailContainer->getWidgetSchema());
+    $emailContainer->getWidgetSchema()->addFormFormatter('row', $emailDeco);
+    $emailContainer->getWidgetSchema()->setFormFormatterName('row');
+
+    foreach ($this->ag_email_contact_types as $emailContactType) {
+      if ($id = $this->agEntity->id) {
+        $emailObject = Doctrine_query::create()
+                ->from('agEmailContact ec')
+                ->where('ec.id IN (SELECT jn.email_contact_id FROM agEntityEmailContact jn WHERE jn.entity_id = ? AND email_contact_type_id = ?)', array($id, $emailContactType->id))
+                ->execute()->getFirst();
+      }
+      $emailContactForm = new agEmbeddedAgEmailContactForm(isset($emailObject) ? $emailObject : null);
+      $emailContactForm->widgetSchema->setLabel('email_contact', false);
+      $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
+    }
+    $contactContainer->embedForm('email', $emailContainer);
+  }
+  public function embedAgFacilityForms()
+  {
+    $contactContainer = new sfForm();
+    $this->embedEmailForm($contactContainer);
+    $this->embedPhoneForm($contactContainer);
+//    $this->embedAddressForm();
+    $this->embedForm('contact', $contactContainer);
   }
 
   /*
    * setup() extends the base method to remove unused fields and embed subforms
    */
-
   public function setup()
   {
     parent::setup();
 
     /**
      *  unset fields that we will not be displaying in the for
+     *
+     * Method below of explicitly stating the widgets we want might be better...Might not too,
+     * depends on validator maybe?
      */
-    unset(
-        $this['updated_at'],
-        $this['created_at'],
-        $this['site_id'],
-        $this['ag_facility_resource_type_list']
-    );
+//    unset(
+//        $this['updated_at'],
+//        $this['created_at'],
+//        $this['site_id'],
+//        $this['ag_facility_resource_type_list']
+//    );
+    $this->setWidgets(array(
+      'id'                             => new sfWidgetFormInputHidden(),
+      'facility_name'                  => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+      'facility_code'                  => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+
+    ));
 
 //  $primaryContainer = new sfForm(array(), array());
 //
@@ -120,77 +185,77 @@ class agFacilityForm extends BaseagFacilityForm
     /**
      *  create a container form for email and phone contacts
      *   */
-    $contactContainer = new sfForm(array(), array());
-
-    /**
-     * This block sets up the embedded agEmbeddedAgEmailContactForms, one for each
-     * agEmailContactType, populated with the agPersonName that corresponds to the current
-     * agPerson and agEmailContactType (if it exists).
-     */
-    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
-
-    $emailContainer = new sfForm(array(), array());
-
-    $emailDeco = new agWidgetFormSchemaFormatterRow($emailContainer->getWidgetSchema());
-    $emailContainer->getWidgetSchema()->addFormFormatter('row', $emailDeco);
-    $emailContainer->getWidgetSchema()->setFormFormatterName('row');
-
-    $facilityEmails = $this->getObject()->getAgSite()->getAgEntity()->getEntityEmailContact();
-
-    foreach ($this->ag_email_contact_types as $emailContactType) {
-      $emailContactForm = new agEmbeddedAgEmailContactForm();
-      if (isset($facilityEmails[$emailContactType->getId()])) {
-        $emailContactForm->setDefault('email_contact', $facilityEmails[$emailContactType->getId()]->getAgEmailContact());
-      }
-//    foreach ($this->getObject()->getAgSite()->getAgEntity()->getAgEntityEmailContact() as $current) {
-//      if ($current->getEmailContactTypeId() == $emailContactType->getId()) {
-//        $emailContactForm->setDefault('email_contact', $current->getAgEmailContact()->email_contact);
+//    $contactContainer = new sfForm(array(), array());
+//
+//    /**
+//     * This block sets up the embedded agEmbeddedAgEmailContactForms, one for each
+//     * agEmailContactType, populated with the agPersonName that corresponds to the current
+//     * agPerson and agEmailContactType (if it exists).
+//     */
+//    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
+//
+//    $emailContainer = new sfForm(array(), array());
+//
+//    $emailDeco = new agWidgetFormSchemaFormatterRow($emailContainer->getWidgetSchema());
+//    $emailContainer->getWidgetSchema()->addFormFormatter('row', $emailDeco);
+//    $emailContainer->getWidgetSchema()->setFormFormatterName('row');
+//
+//    $facilityEmails = $this->getObject()->getAgSite()->getAgEntity()->getEntityEmailContact();
+//
+//    foreach ($this->ag_email_contact_types as $emailContactType) {
+//      $emailContactForm = new agEmbeddedAgEmailContactForm();
+//      if (isset($facilityEmails[$emailContactType->getId()])) {
+//        $emailContactForm->setDefault('email_contact', $facilityEmails[$emailContactType->getId()]->getAgEmailContact());
 //      }
+////    foreach ($this->getObject()->getAgSite()->getAgEntity()->getAgEntityEmailContact() as $current) {
+////      if ($current->getEmailContactTypeId() == $emailContactType->getId()) {
+////        $emailContactForm->setDefault('email_contact', $current->getAgEmailContact()->email_contact);
+////      }
+////    }
+//      $emailContactForm->widgetSchema->setLabel('email_contact', false);
+//      $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
 //    }
-      $emailContactForm->widgetSchema->setLabel('email_contact', false);
-      $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
-    }
-
-    $contactContainer->embedForm('email', $emailContainer);
-
-    /**
-     * This block sets up the embedded agEmbeddedAgPhoneContactForms, one for each
-     * agPhoneContactType, populated with the agPersonName that corresponds to the current
-     * agPerson and agPhoneContactType (if it exists).
-     * */
-    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
-
-    $phoneContainer = new sfForm(array(), array());
-    #$phoneContainer->widgetSchema->setFormFormatterName('list');
-    #$blah = new agWidgetFormSchemaFormatterRow();
-    #$phoneContainer->widgetSchema->addFormFormatter('row', new agWidgetFormSchemaFormatterRow());
-    #$phoneContainer->widgetSchema->setFormFormatterName('row');
-
-    $phoneDeco = new agWidgetFormSchemaFormatterRow($phoneContainer->getWidgetSchema());
-    $phoneContainer->getWidgetSchema()->addFormFormatter('row', $phoneDeco);
-    $phoneContainer->getWidgetSchema()->setFormFormatterName('row');
-
-    $facilityPhones = $this->getObject()->getAgSite()->getAgEntity()->getEntityPhoneContact();
-
-    foreach ($this->ag_phone_contact_types as $phoneContactType) {
-      $phoneContactForm = new agEmbeddedAgPhoneContactForm();
-      if (isset($facilityPhones[$phoneContactType->getId()])) {
-        $current = $facilityPhones[$phoneContactType->getId()];
-
-        $phoneContactForm->setDefault('phone_contact', preg_replace(
-                $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->match_pattern,
-                $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->replacement_pattern,
-                $current->getAgPhoneContact()->phone_contact));
-      }
-
-      $phoneContactForm->widgetSchema->setLabel('phone_contact', false);
-      $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
-    }
-
-    $contactContainer->embedForm('phone', $phoneContainer);
-
-    /* embed the email and phone contacts form into the facility form */
-    $this->embedForm('contact', $contactContainer);
+//
+//    $contactContainer->embedForm('email', $emailContainer);
+//
+//    /**
+//     * This block sets up the embedded agEmbeddedAgPhoneContactForms, one for each
+//     * agPhoneContactType, populated with the agPersonName that corresponds to the current
+//     * agPerson and agPhoneContactType (if it exists).
+//     * */
+//    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
+//
+//    $phoneContainer = new sfForm(array(), array());
+//    #$phoneContainer->widgetSchema->setFormFormatterName('list');
+//    #$blah = new agWidgetFormSchemaFormatterRow();
+//    #$phoneContainer->widgetSchema->addFormFormatter('row', new agWidgetFormSchemaFormatterRow());
+//    #$phoneContainer->widgetSchema->setFormFormatterName('row');
+//
+//    $phoneDeco = new agWidgetFormSchemaFormatterRow($phoneContainer->getWidgetSchema());
+//    $phoneContainer->getWidgetSchema()->addFormFormatter('row', $phoneDeco);
+//    $phoneContainer->getWidgetSchema()->setFormFormatterName('row');
+//
+//    $facilityPhones = $this->getObject()->getAgSite()->getAgEntity()->getEntityPhoneContact();
+//
+//    foreach ($this->ag_phone_contact_types as $phoneContactType) {
+//      $phoneContactForm = new agEmbeddedAgPhoneContactForm();
+//      if (isset($facilityPhones[$phoneContactType->getId()])) {
+//        $current = $facilityPhones[$phoneContactType->getId()];
+//
+//        $phoneContactForm->setDefault('phone_contact', preg_replace(
+//                $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->match_pattern,
+//                $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->replacement_pattern,
+//                $current->getAgPhoneContact()->phone_contact));
+//      }
+//
+//      $phoneContactForm->widgetSchema->setLabel('phone_contact', false);
+//      $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
+//    }
+//
+//    $contactContainer->embedForm('phone', $phoneContainer);
+//
+//    /* embed the email and phone contacts form into the facility form */
+//    $this->embedForm('contact', $contactContainer);
 
 
     /**

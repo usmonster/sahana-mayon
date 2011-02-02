@@ -72,6 +72,7 @@ abstract class BaseagEventStaff extends sfDoctrineRecord
              'fields' => 
              array(
               0 => 'event_id',
+              1 => 'staff_resource_id',
              ),
              'type' => 'unique',
              ));

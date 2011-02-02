@@ -142,14 +142,62 @@ class eventActions extends sfActions
 
   }
 
-  public function executeFgroup(sfWebRequest $request)
+  public function executeListgroups(sfWebRequest $request)
   {
-    
+    $query = Doctrine_Core::getTable('agEventFacilityGroup')
+            ->createQuery('a')
+            ->select('a.*, afr.*, afgt.*, fr.*')
+            ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
+
+    if ($request->hasParameter('id')) {
+      $query->where('a.event_id = ?', $request->getParameter('id'));
+      $this->event = Doctrine_Query::create()
+                      ->select()
+                      ->from('agEvent')
+                      ->where('id = ?', $request->getParameter('id'))
+                      ->execute()->getFirst();
+    }
+
+    $this->ag_event_facility_groups = $query->execute();
+//$this->forward($module, $action) i think we need to forward here instead of just listfacilitygroup template because we have to
+    //$this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'listFacilityGroup');
   }
 
-  public function executeFgroupdetail(sfWebRequest $request)
+  public function executeGroupdetail(sfWebRequest $request)
   {
-    
+    $this->eventFacilityGroup = Doctrine_Query::create()
+        ->select()
+        ->from('agEventFacilityGroup')
+        ->where('id = ?', $request->getParameter('id'))
+        ->fetchOne();
+    $this->event = Doctrine_Query::create()
+        ->select()
+        ->from('agEvent')
+        ->where('id = ?', $request->getParameter('eid'))
+        ->fetchOne();
+    $this->blorg = array();
+    foreach($this->eventFacilityGroup->getAgFacilityResource() as $facRes) {
+      $q = Doctrine_Query::create()
+          ->select('id')
+          ->from('agEventFacilityResource')
+          ->where('facility_resource_id = ?', $facRes->id)
+          ->andWhere('event_facility_group_id = ?', $this->eventFacilityGroup->id)
+          ->execute()->getFirst()->id;
+       $this->blorg[] = $this->foo($q);
+    }
+  }
+
+  private function foo($frId)
+  {
+    $staffMinCount = array();
+    $staffMaxCount = array();
+    $query = Doctrine_Query::create()
+        ->select('SUM(a.minimum_staff) as foo')
+        ->from('agEventShift a')
+        ->where('a.event_facility_resource_id = ?', $frId)
+        ->andWhere('a.shift_status_id = ?', 2)
+        ->execute();
+    return $query[0]['foo'];
   }
 
   public function executeFacility(sfWebRequest $request)

@@ -33,7 +33,7 @@ abstract class BaseagEventStaffForm extends BaseFormDoctrine
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorDoctrineUnique(array('model' => 'agEventStaff', 'column' => array('event_id')))
+      new sfValidatorDoctrineUnique(array('model' => 'agEventStaff', 'column' => array('event_id', 'staff_resource_id')))
     );
 
     $this->widgetSchema->setNameFormat('ag_event_staff[%s]');

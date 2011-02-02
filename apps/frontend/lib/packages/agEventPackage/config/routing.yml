@@ -2,3 +2,18 @@ event_deploy:
   url:     /event/:id/deploy
   options: { model: agEvent, type: object }
   param:   { module: event, action: deploy }
+
+event_listgroups:
+  url:     /event/:id/listgroups
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: listgroups }
+
+event_editgroup:
+  url:     /event/:id/editgroup
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: editgroup }
+
+event_groupdetail:
+  url:     /event/:eid/groupdetail/:id
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: groupdetail }

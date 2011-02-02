@@ -25,7 +25,7 @@ class scenarioActions extends agActions
             ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
             ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr');
 
-    if ($request->hasParameter('scenario')) {
+    if ($request->hasParameter('id')) {
       $query->where('a.scenario_id=?', $request->getParameter('id'));
     }
 

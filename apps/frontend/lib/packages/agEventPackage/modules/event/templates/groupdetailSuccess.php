@@ -16,4 +16,22 @@
 <?php
 //and a button to Return to Group List & one to Return to Event Dashboard.
 ?>
+<h3>Current Facilities for the <span style="color: #ff8f00"><?php echo $eventFacilityGroup->event_facility_group; ?></span></h3><br>
+<table class="singleTable">
+  <tbody>
+    <tr>
+      <th><?php echo $eventFacilityGroup->event_facility_group . ' Facilities'; ?></th>
+    </tr>
+    <?php
+      foreach ($eventFacilityGroup->getAgFacilityResource() as $facilityResource) {
+        echo '<tr>';
+        echo '<th class="head">' . $facilityResource->getAgFacility()->facility_name . ': ' . ucwords($facilityResource->getAgFacilityResourceType()->facility_resource_type) . '</th>';
+//        echo '<td>' .
+        echo '</tr>';
+        
+      }
+    ?>
+  </tbody>
+</table>
+<br />
 

@@ -360,7 +360,7 @@ agEventStaff:
       notnull: true
   indexes:
     UX_agEventStaff:
-      fields: [event_id]
+      fields: [event_id, staff_resource_id]
       type: unique
   relations:
     agEvent:
