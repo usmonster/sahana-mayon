@@ -1,6 +1,24 @@
 ====== Scenarios Creator Walk-through ======
-Scenarios are plans.  Plans are good.  Here you set up some information for how to make your scenario work.  Make it, save it, and click next.
+Scenarios are plans; a response plan that could mirror or complement a municipalities response plan.  Scenarios help to prepare for the deployment of staff and facility resources for the duration of the emergency response.  
+
+This Scenario Creator Walk-through is meant to take someone unfamiliar with Scenarios and Events and guide them through with enough reference information to create more Scenarios on their own.  It can also be used for reference later on and the pages printed (using the Printable Version link in the left side menu) for a handy guide.  The sections of each page in this walk-through will be:
+
+  * **What It Does** A brief overview of the step's purpose when building the scenario.
+  * **Reference Information** Details that may not be intuitive for some users or will be good reference information when building later scenarios.
+  * **Walk-Through** A step by step detail of fields on the page and what to do next.
+  * **FAQ** Frequently Asked Questions about that step and its repercussions later on.
 
 ===== Getting Started =====
 
-[[scenario:pre|{{ :manual:user:next.png|}}]] 
+It's time to get started in creating your first Scenario.  Keep this walk-through open while you walk through the scenario creation steps and remember that you can always come back and edit the Scenario's information later on if your preparation changes. [[scenario:pre|{{ :manual:user:next.png|}}]] 
+
+===== Jump to Another Step =====
+
+  - [[scenario:pre|Pre Scenario Creation]]
+  - [[scenario:new|Create A Scenario]]
+  - [[scenario:newgroup| Create Facility Groups]]
+  - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:newstaffresources| Create Shift Templates]]
+  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:review| Review]]
+
