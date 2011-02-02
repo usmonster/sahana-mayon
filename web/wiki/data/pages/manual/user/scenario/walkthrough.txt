@@ -3,10 +3,10 @@ Scenarios are plans; a response plan that could mirror or complement a municipal
 
 This Scenario Creator Walk-through is meant to take someone unfamiliar with Scenarios and Events and guide them through with enough reference information to create more Scenarios on their own.  It can also be used for reference later on and the pages printed (using the Printable Version link in the left side menu) for a handy guide.  The sections of each page in this walk-through will be:
 
-  * **What It Does** A brief overview of the step's purpose when building the scenario.
-  * **Reference Information** Details that may not be intuitive for some users or will be good reference information when building later scenarios.
-  * **Walk-Through** A step by step detail of fields on the page and what to do next.
-  * **FAQ** Frequently Asked Questions about that step and its repercussions later on.
+  * **What It Does** - A brief overview of the step's purpose when building the scenario.
+  * **Reference Information** - Details that may not be intuitive for some users or will be good reference information when building later scenarios.
+  * **Walk-Through** - A step by step detail of fields on the page and what to do next.
+  * **FAQ** - Frequently Asked Questions about that step and its repercussions later on.
 
 ===== Getting Started =====
 

@@ -88,7 +88,8 @@ this is in here as a place holder for future development to
 <input type="text"  class="editable">foobar</span> -->
 <form action="<?php echo url_for('scenario/staffresources?id=' . $scenario->id) ?>" method="post">
   <?php
-    //this is the same form that should be used for edit and create. display entered values if the objects exist.
+    //this is the same form that should be used for edit and create.
+    //display entered values if the objects exist.
     //
     // since this is the partial, we have to refer to view layer items with $this
     //

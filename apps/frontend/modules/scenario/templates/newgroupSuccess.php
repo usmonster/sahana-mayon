@@ -3,10 +3,10 @@
 if ($scenarioFacilityGroups <> null) {
   include_partial('facilityGroupTable', array('scenarioFacilityGroups' => $scenarioFacilityGroups, 'scenarioName' => $scenarioName));
 } else {
-  echo '<h3>There are no facility groups associated with the <span style="color: #ff8f00">' . $scenarioName . '</span> scenario</h3><br />';
+  echo '<h3>There are no facility groups associated with the <span class="highlightedText">' . $scenarioName . '</span> scenario</h3><br />';
 }
 ?>
-<h3>Create a New Facility Group for the <span style="color: #ff8f00;"><?php echo $scenarioName;
+<h3>Create a New Facility Group for the <span class="highlightedText"><?php echo $scenarioName;
 ?> </span> Scenario</h3>
 <p>Facility Groups are actually groupings of facility resources.  To create a facility group name
 the group, assign the group type, allocation status, and the order in which is should be activated 

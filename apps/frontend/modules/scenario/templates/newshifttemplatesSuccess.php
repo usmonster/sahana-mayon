@@ -2,7 +2,7 @@
 <p>Shift Templates are templates for when responding staff will be scheduled to work.  The times 
   entered are relative, and when an event is created time will become specific to that event.</p>
 <h3>Shift Templates for
-  <span style="color: #ff8f00;">
+  <span class="highlightedText"">
   <?php echo $scenario_name ?>
   </span>
   Scenario:

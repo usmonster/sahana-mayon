@@ -75,7 +75,7 @@
 
 </div>
 
-<div style="float: right;">
+<div class="rightFloat" >
   <?php
 
 //

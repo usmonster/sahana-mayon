@@ -10,11 +10,6 @@
   </span>
 </h3>
 <br />
-<?php 
-
-
-  include_partial('shifttemplateform', array('formsArray' => $formsArray, 'shifttemplateform' => $shifttemplateform, 'scenario_id' => $scenario_id))
+<?php
+    include_partial('shifttemplateform', array('formsArray' => $formsArray, 'shifttemplateform' => $shifttemplateform, 'scenario_id' => $scenario_id))
 ?>
-
-
-
