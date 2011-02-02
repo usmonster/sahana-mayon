@@ -664,23 +664,10 @@ class agStaffActions extends agActions
     $this->importFile = $_FILES['import']['name'];
     $this->importPath = sfConfig::get('sf_upload_dir') . '/' . $this->importFile;
     $filePath = pathinfo($this->importFile);
-    include '../apps/frontend/lib/util/agStaffImport.class.php';
+    require_once sfConfig::get('sf_app_dir') . '/lib/util/agStaffImportXls.class.php';
+
     $passPath = $_FILES['import']['tmp_name'];
     $extension = strtolower($filePath['extension']);
-
-
-//require_once "../apps/frontend/lib/util/excel.php";
-//$export_file = $passPath;
-//header ("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-//header ("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
-//header ("Cache-Control: no-cache, must-revalidate");
-//header ("Pragma: no-cache");
-//header ("Content-type: application/x-msexcel");
-//header ("Content-Disposition: attachment; filename=\"" . basename($export_file) . "\"" );
-//header ("Content-Description: PHP/INTERBASE Generated Data" );
-//$fp = fopen("xlsfile://". $_FILES['import']['name'], 'r+');
-//$bloogle = "xlsfile:/" . $passPath;
-//$floogle = readfile($bloogle);
 
 
     if ($extension <> 'xls' && $extension <> 'csv') {
@@ -688,16 +675,17 @@ class agStaffActions extends agActions
       $this->uploadMessage = $this->importFile . ' is not an XLS file and could not be read. No data was imported to Agasti.';
     } else {
 //      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\');"');
-      $importObj = new agStaffImport();
+      $importObj = new agStaffImportXls();
       $importObj->fileName = $_FILES['import']['name'];
       $importObj->rowSetIterator = 0;
       $importObj->stop = false;
-      $returned = $importObj->processStaffImport($passPath);
+      $xlsPath = 'xlsfile:///' . $passPath;
+      $returned = $importObj->processStaffImport($xlsPath);
 //      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\', \'' . htmlspecialchars($tyr) . '\');"');
 //      $toImport = unserialize($toImport);
       //$returned = unserialize($returned);
       while ($importObj->stop <> true) {
-        $returned = $importObj->processStaffImport($passPath);
+        $returned = $importObj->processStaffImport($xlsPath);
       }
 //      while ($returned['Current Iteration' ] < $returned['Max Iteration']) {
 //        $this->message = $returned;
