@@ -7,4 +7,8 @@ agEventStatusType:
   closed:
     id: 2
     event_status_type: Closed
-    description: This event is closed and response has been planned and implemented.
+    description: This event is closed and response has been implemented and resolved.
+  pre_deployment:
+    id: 3
+    event_status_type: Pre-Deployment
+    description: This event is still in the planning stage and has not been deployed.

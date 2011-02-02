@@ -73,9 +73,10 @@ class agScenarioGenerator
           $id_counter++;
         }
       }
+      return 1;
     } catch (\Doctrine\ORM\ORMException $e) {
       print_r($e);
-      return NULL;
+      return 0;
     }
   }
 }

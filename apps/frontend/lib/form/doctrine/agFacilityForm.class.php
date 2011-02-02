@@ -158,6 +158,7 @@ class agFacilityForm extends BaseagFacilityForm
       foreach ($this->agFacilityResources as $facilityResource) {
         $facilityResourceForm = new agEmbeddedFacilityResourceForm($facilityResource);
 
+
         $facilityResourceId = $facilityResource->getId();
         $facilityResourceContainer->embedForm($facilityResourceId, $facilityResourceForm);
         $facilityResourceContainer->widgetSchema->setLabel($facilityResourceId, false);

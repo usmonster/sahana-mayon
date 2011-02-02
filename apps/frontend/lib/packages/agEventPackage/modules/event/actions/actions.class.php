@@ -8,28 +8,33 @@
  * @author     CUNY SPS
  * @version    SVN: $Id: actions.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
-class eventActions extends sfActions
-{
+class eventActions extends sfActions {
 
-  public function executeIndex(sfWebRequest $request)
-  {
+  public function executeIndex(sfWebRequest $request) {
     $this->scenarioForm = new sfForm();
     $this->scenarioForm->setWidgets(array(
-      'ag_scenario_list' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agScenario'))
+        'ag_scenario_list' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agScenario'))
     ));
-    
+
     $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
   }
 
-  public function executeDeploy(sfWebRequest $request)
-  {
+  public function executeDeploy(sfWebRequest $request) {
     $this->eventName = Doctrine::getTable('agEvent')
-            ->findByDql('id = ?', $request->getParameter('id'))
-            ->getFirst()->event_name;
+                    ->findByDql('id = ?', $request->getParameter('id'))
+                    ->getFirst()->event_name;
+    $this->scenario_id = Doctrine_Query::create()
+                   ->select('scenario_id')
+                    ->from('agEventScenario')
+                    ->where('event_id = ?', $request->getParameter('id'))
+                    ->execute(array(),Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
+    $this->scenarioName =   Doctrine::getTable('agScenario')
+                    ->findByDql('id = ?', $this->scenario_id)
+                    ->getFirst()->scenario;
+    $this->checkResults = $this->preMigrationCheck($this->scenario_id);
   }
 
-  public function executeMeta(sfWebRequest $request)
-  {
+  public function executeMeta(sfWebRequest $request) {
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
       $this->form = new PluginagEventDefForm();
       $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
@@ -40,24 +45,23 @@ class eventActions extends sfActions
         $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
         $ag_event_scenario->setEventId($ag_event->getId());
         $ag_event_scenario->save();
+
+        //$this->migrateScenarioToEvent($request->getParameter('scenario_id'), $ag_event->getId()); //this will create mapping from scenario to event
+
         if (isset($updating)) { //replace with usable check to update
           $eventStatusObject = Doctrine_Query::create()
-                  ->from('agEventStatus a')
-                  ->where('a.id =?', $ag_event->getId())
-                  ->execute()->getFirst();
+                          ->from('agEventStatus a')
+                          ->where('a.id =?', $ag_event->getId())
+                          ->execute()->getFirst();
         }
         $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
 
-        $ag_event_status->setEventStatusTypeId(1);
+        $ag_event_status->setEventStatusTypeId(3);
         $ag_event_status->setEventId($ag_event->getId());
         $ag_event_status->time_stamp = new Doctrine_Expression('NOW()');
         $ag_event_status->save();
 
-        $ag_event_status = new agEventStatus();
-        
-
         //have to do this for delete also, i.e. delete the event_scenario object
-
         $this->redirect('event/deploy?id=' . $ag_event->getId());
       }
     } else {
@@ -66,31 +70,83 @@ class eventActions extends sfActions
       if ($request->getParameter('ag_scenario_list')) {
         $this->scenario_id = $request->getParameter('ag_scenario_list');
         $this->scenarioName = Doctrine::getTable('agScenario')
-                ->findByDql('id = ?', $this->scenario_id)
-                ->getFirst()->scenario;
+                        ->findByDql('id = ?', $this->scenario_id)
+                        ->getFirst()->scenario;
       }
       $this->metaForm = new PluginagEventDefForm();
     }
     //as a rule of thumb, actions should post to themself and then redirect
   }
 
-  public function migrateScenarioToEvent(integer $scenario_id)
-  {
-    // 1. Regenerate staff pool
-    // 2. Copy over staff pool
-    // Regenerate scenario shift
-
-    // Copy over scenario shift
-
+  public function facilityGroupCheck($scenario_id) {
+    $facilityGroupQuery = Doctrine_Query::create()
+                    ->select('aFG.id, afG.scenario_facility_group')
+                    ->from('agScenarioFacilityGroup aFG')
+                    ->leftJoin('aFG.agScenarioFacilityResource aFR')
+                    ->where('aFR.id is NULL');
+    $returnvalue = $facilityGroupQuery->execute(array(), 'key_value_pair');
+    $facilityGroupQuery->free(); 
+    return $returnvalue;
   }
 
-  public function executeList(sfWebRequest $request)
-  {
+  public function undefinedShiftCheck($scenario_id) {
+    $undefinedFacilityShiftQuery = Doctrine_Query::create()
+                    ->select('aFR.id')
+                    ->from('agScenarioFacilityResource aFR, aFR.agScenarioFacilityGroup aFG')
+                    ->leftJoin('aFR.agScenarioShift aSS')
+                    ->where('aSS.id is NULL')
+                    ->andWhere('aFG.scenario_id =?', $scenario_id); //returns the facility resources without shift
+    $facilityShiftReturn = $undefinedFacilityShiftQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $undefinedFacilityShiftQuery->free();
+
+    $undefinedStaffShiftQuery = Doctrine_Query::create()
+                    ->select('aSRT.id, aSSR.*')
+                    ->from('agScenarioStaffResource aSSR, aSSR.agStaffResource aSR, aSR.agStaffResourceType aSRT')
+                    ->leftJoin('aSRT.agScenarioShift aSS')
+                    ->where('aSSR.scenario_id =?', $scenario_id)
+                    ->andWhere('aSRT.id is NULL'); //returns the staff resource types without a shift
+    $staffShiftReturn = $undefinedStaffShiftQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $undefinedStaffShiftQuery->free();
+
+    return array($facilityShiftReturn, $staffShiftReturn);
+  }
+
+  public function staffPoolCheck($scenario_id) {
+    $staffPoolQuery = Doctrine_Query::create()
+                    ->from('agScenarioStaffResource')
+                    ->where('scenario_id =?', $scenario_id);
+    return $staffPoolQuery->count();
+  }
+
+  public function preMigrationCheck($scenario_id) {
+    // 0. Pre check: empty facility group, undefined staff pool rules making sure pools not empty, undefined shifts for staff/facility resource.
+    $facilityGroupCheck = $this->facilityGroupCheck($scenario_id);
+    $staffPoolCheck = $this->staffPoolCheck($scenario_id);
+    $undefinedShiftCheck = $this->undefinedShiftCheck($scenario_id);
+    $undefinedFacilityShifts = $undefinedShiftCheck[0];
+    $undefinedStaffShifts = $undefinedShiftCheck[1];
+
+    return array('Empty facility groups' => $facilityGroupCheck, 'Staff pool count' => $staffPoolCheck, 'Undefined facility shifts' => $undefinedFacilityShifts, 'Undefined staff shifts' => $undefinedStaffShifts);
+  }
+
+  public function migrateScenarioToEvent($scenario_id, $event_id) {
+
+    return $migrationResult;
+    // 1. Regenerate staff pool
+    // 2. Copy over staff pool
+    // 3. Copy Faciltiy Group
+    // 4. Copy Facility Resource
+    // 5. Regenerate scenario shift
+    //agScenarioGenerator::shiftGenerator();
+    // 6. Copy over scenario shift
+  }
+
+  public function executeList(sfWebRequest $request) {
     $this->ag_events = Doctrine_Core::getTable('agEvent')
-            ->createQuery('a')
-            ->select('a.*')
-            ->from('agEvent a')
-            ->execute();
+                    ->createQuery('a')
+                    ->select('a.*')
+                    ->from('agEvent a')
+                    ->execute();
 
     /**
      * @todo make query better above to reduce db calls

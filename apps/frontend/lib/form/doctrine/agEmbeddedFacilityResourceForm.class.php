@@ -127,9 +127,9 @@ class agEmbeddedFacilityResourceForm extends agFacilityResourceForm
     /**
      * Remove labels from all visible fields
      */
-    $this->widgetSchema->setLabel('facility_resource_type_id', false);
-    $this->widgetSchema->setLabel('facility_resource_status_id', false);
-    $this->widgetSchema->setLabel('capacity', false);
+    $this->widgetSchema->setLabel('facility_resource_type_id', 'Resource Type');
+    $this->widgetSchema->setLabel('facility_resource_status_id', 'Resource Status');
+    $this->widgetSchema->setLabel('capacity', 'Capacity');
   }
 
 }
