@@ -32,10 +32,10 @@ class KeyValuePairHydrator extends Doctrine_Hydrator_Abstract
   }
 }
 
-class ComboHydrator extends Doctrine_Hydrator_Abstract
+class GisPointCoordinateHydrator extends Doctrine_Hydrator_Abstract
 {
   /**
-   * Defines the result set as an associate array.
+   * Defines the result set as a positional array.
    *
    * @param <type> $stmt
    * @return array An associate array.
@@ -46,7 +46,28 @@ class ComboHydrator extends Doctrine_Hydrator_Abstract
     $array = array();
     foreach ($results as $result)
     {
-      $array[$result[0]] = array($result[1], $result[4], $result[5], $result[7], $result[8]);
+      $array[] = array($result[0], $result[3], $result[4]);
+    } 
+
+    return $array;
+  }
+}
+
+class SingleValueArrayHydrator extends Doctrine_Hydrator_Abstract
+{
+  /**
+   * Defines the result set as a positional array.
+   *
+   * @param <type> $stmt
+   * @return array An associate array.
+   */
+  public function hydrateResultSet($stmt)
+  {
+    $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM);
+    $array = array();
+    foreach ($results as $result)
+    {
+      $array[] = $result[0] ;
     }
 
     return $array;

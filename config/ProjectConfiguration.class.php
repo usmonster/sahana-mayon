@@ -36,51 +36,35 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->disablePlugins($packages);
   }
 
-  public function enableModules($packages)
-  {
-    if (!is_array($packages)) {
-      if (func_num_args() > 1) {
-        $packages = func_get_args();
-      } else {
-        $packages = array($packages);
-      }
-    }
-    foreach ($packages as $package) {
-      $this->setPluginPath($package, sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $package);
-    }
-    $this->enablePlugins($packages);
-  }
-
   public function setup()
   {
     //$this->appendEnabledModules();
     // plugins are considered 'core' elements, akin to apps/frontend/modules, they should not be
     // disabled
     $this->enablePlugins(
-        array(
-          'sfDoctrinePlugin',
+        array('sfDoctrinePlugin',
           'sfDoctrineGuardPlugin',
           'sfDoxygenPlugin',
+          'sfFormExtraPlugin',
           'sfPhpExcelPlugin',
+          'sfJQueryUIPlugin',
           'ajDoctrineLuceneablePlugin',
           'ioMenuPlugin'
         )
     );
 
 
+
     //packages are specific to the application, though not core and should function standalone
     $this->enablePackages(
         array('agFooPackage',
           'agStaffPackage',
-          'agClientPackage',
           'agGisPackage',
-          'agEventPackage',
-          'agReportPackage',
-          'agPetPackage',
+          #'agScenarioPackage',
           'agEventPackage')
+          
     );
-    // Use the line below to enable indexing by getting Symfony to pick up lucene.yml from the module(s) passed to enableModules();
-    $this->enableModules(array('scenario', 'facility'));
+    $this->setPluginPath('agScenarioPackage', sfConfig::get('sf_app_module_dir') . '/scenario');
   }
 
   /**
@@ -90,7 +74,8 @@ class ProjectConfiguration extends sfProjectConfiguration
   public function configureDoctrine(Doctrine_Manager $manager)
   {
     $manager->registerHydrator('key_value_pair', 'KeyValuePairHydrator');
-    $manager->registerHydrator('combo_set', 'ComboHydrator');
+    $manager->registerHydrator('gis_point_coordinate', 'GisPointCoordinateHydrator');
+    $manager->registerHydrator('single_value_array', 'SingleValueArrayHydrator') ;
   }
 
 }
