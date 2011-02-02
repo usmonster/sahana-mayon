@@ -8,8 +8,7 @@ set -x
 set -e
 
 # Tries to infer the web user from a running Apache instance
-WEB_USER='_www'
-#`ps axho user,comm|grep -E "httpd|apache"|uniq -d|awk '{print $1}'`
+WEB_USER=`ps axho user,comm|grep -E "httpd|apache"|uniq -d|awk '{print $1}'`
 WEB_GROUP=$WEB_USER
 
 # This will drop your database, your data, and recreate everything anew
