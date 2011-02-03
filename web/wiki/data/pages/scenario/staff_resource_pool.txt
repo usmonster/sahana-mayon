@@ -17,10 +17,12 @@
 
 ===== Jump to Another Step =====
 
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:scenario:walkthrough|Start]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Create A Scenario]]
   - [[scenario:newgroup| Create Facility Groups]]
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:newstaffresources| Create Shift Templates]]
   - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
-  - [[scenario:review| Review]]
+  - **Review**

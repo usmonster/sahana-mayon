@@ -24,7 +24,7 @@ For Agasti to assign staff personnel to a facility the system must know how many
 After you've clicked "Save and Continue" hit the "Next" button below.
 ===== FAQ =====
 
-
+  - **Does a facility need to have every staff type assigned?** - No, you do not need to have every staff type assigned to every facility.  If a facility does not need some staff then those fields can be blank.
 ====== Continue ======
 
 [[scenario:newstaffresources|{{ :manual:user:next.png|}}]] 
@@ -32,10 +32,12 @@ After you've clicked "Save and Continue" hit the "Next" button below.
 
 ===== Jump to Another Step =====
 
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:scenario:walkthrough|Start]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Create A Scenario]]
   - [[scenario:newgroup| Create Facility Groups]]
-  - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - **Set Staff Resource Requirements**
   - [[scenario:newstaffresources| Create Shift Templates]]
   - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
   - [[scenario:review| Review]]

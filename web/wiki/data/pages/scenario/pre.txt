@@ -33,8 +33,9 @@ After you've completed one of these actions click the "Next" button below.
 [[manual:user:scenario:walkthrough|{{:manual:user:previous.png?135 }}]]
 
 ====== Jump to Another Step ======
-
-  - [[scenario:pre|Pre Scenario Creation]]
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:scenario:walkthrough|Start]]
+  - **Pre Scenario Creation**
   - [[scenario:new|Create A Scenario]]
   - [[scenario:newgroup| Create Facility Groups]]
   - [[scenario:staffresources| Set Staff Resource Requirements]]
