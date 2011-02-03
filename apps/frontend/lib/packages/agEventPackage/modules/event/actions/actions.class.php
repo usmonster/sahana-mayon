@@ -213,6 +213,7 @@ class eventActions extends sfActions {
       // 5. Regenerate scenario shift
       //agScenarioGenerator::shiftGenerator();
       // 6. Copy over scenario shift
+      // 7. Update event status to deployed/active?
 
       $con->commit();
     }
