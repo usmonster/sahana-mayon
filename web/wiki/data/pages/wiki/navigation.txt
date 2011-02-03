@@ -10,10 +10,12 @@
 
   * [[:manual:User|User Manual]]
     * [[manual:User:Intro|Introduction]]
-    * [[manual:User:Scenario|Scenarios]]
     * [[manual:User:Staff|Staff Mgmt]]
     * [[manual:User:Facilities|Facilities]]
     * [[manual:User:Organizations|Organizations]]
+    * [[manual:user:Geo|Geo Coding]]
+    * [[manual:User:Scenario|Scenarios]]
+      * [[manual:user:scenario:walkthrough|Scenario Walk-Through]]
     * [[manual:User:Event|Event Deployment]]
     * [[manual:User:Client|Clients]]
     * [[manual:User:Reports|Reports]]

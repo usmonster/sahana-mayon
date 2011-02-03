@@ -1,1 +1,9 @@
 ====== Staff Management ======
+
+Things you can do:
+
+  * [[manual:user:staff:create]]
+  * [[manual:user:staff:list]]
+  * [[manual:user:staff:import]]
+  * [[manual:user:staff:export]]
+  * [[manual:user:staff:search]]

@@ -1,0 +1,3 @@
+====== Creating Staff Records ======
+
+{{:manual:user:staff:newstaff.png?900}}
