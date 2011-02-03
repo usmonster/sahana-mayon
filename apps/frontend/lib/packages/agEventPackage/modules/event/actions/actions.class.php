@@ -5,7 +5,8 @@
  *
  * @package    AGASTI_CORE
  * @subpackage event
- * @author     CUNY SPS
+ * @author     Charles Wisniewski
+ * @author     Shirley Chan
  * @version    SVN: $Id: actions.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
 class eventActions extends sfActions {
@@ -184,11 +185,67 @@ class eventActions extends sfActions {
                 ->set('facility_resource_allocation_status_id', $scenFacRes->facility_resource_allocation_status_id);
         $eventFacilityResourceStatus->save();
 
+        // Should the shifts be process as the facility resources get processed?  Another solution is to create a temp table mapping the scenario to event faciltiy resources?
+        $this->migrateShifts($scenFacRes->id, $eventFacilityResource->id);
+
         $eventFacilityResource->free(TRUE);
         $eventFacilityResourceStatus->free(TRUE);
       }
       
       $existingScenarioFacilityResources->free(TRUE);
+    return 1;
+  }
+
+  public function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId)
+  {
+    $scenarioShifts = Doctrine_Core::getTable('agScenarioShift')->findby('scenario_facility_resource_id', $scenarioFacilityResourceId);
+    foreach($scenarioShifts as $scenShift)
+    {
+      // At this point all fields in agEventShifts will be populated with agScenarioShifts.  Only the real time fields in agEvnetShifts will not be populated.  It will be done so at a later time when agEventFacilityActivationTime is populated.
+      $eventShift = new agEventShift();
+      $eventShift->set('event_facility_resource_id', $eventFacilityResourceId)
+              ->set('staff_resource_type_id', $scenShift->staff_resource_type_id)
+              ->set('minimum_staff', $scenShift->minimum_staff)
+              ->set('maximum_staff', $scenShift->maximum_staff)
+              ->set('minutes_start_to_facility_activation', $scenShift->minutes_start_to_facility_activation)
+              ->set('task_length_minutes', $scenShift->task_length_minutes)
+              ->set('break_length_minutes', $scenShift->break_length_minutes)
+              ->set('task_id', $scenShift->task_id)
+              ->set('shift_status_id', $scenShift->shift_status_id)
+              ->set('staff_wave', $scenShift->staff_wave)
+              ->set('deployment_algorithm_id', $scenShift->deployment_algorithm_id);
+      $eventShift->save();
+      $eventShift->free(TRUE);
+    }
+    $scenarioShifts->free(TRUE);
+    return 1;
+  }
+
+  public function migrateStaffPool($scenario_id, $event_id)
+  {
+    $existingScenarioStaffPools = Doctrine_Query::create()
+            ->from('agScenarioStaffResource ssr')
+            ->where('scenario_id', $scenario_id)
+            ->orderBy('deployment_weight')
+            ->execute();
+    foreach($existingScenarioStaffPools AS $scenStfPool)
+    {
+      $eventStaff = new agEventStaff();
+      $eventStaff->set('event_id', $event_id)
+              ->set('staff_resource_id', $scenStfPool->staff_resource_id);
+      $eventStaff->save();
+
+      // @TODO Staff allocation status should be determine by the message responses.  Currently it is hard-coded to 1 as available.
+      $eventStaffStatus = new agEventStaffStatus();
+      $eventStaffStatus->set('event_staff-id', $eventStaff->id)
+              ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
+              ->set('staff_allocation_status_id', 1);
+      $eventStaffStatus->free(TRUE);
+
+      $eventStaff->free(TRUE);
+    }
+
+    $existingScenarioStaffPools->free(TRUE);
     return 1;
   }
 
@@ -203,17 +260,20 @@ class eventActions extends sfActions {
     {
       $con->beginTransaction();
 
-      // 1. Regenerate staff pool
-      // 2. Copy over staff pool
-
-      // 3a. Copy Faciltiy Group
-      // 3b. Copy Facility Resource
+      // 1a. Regenerate scenario shift
+      //agScenarioGenerator::shiftGenerator();
+      // 1b. Copy Faciltiy Group
+      // 1c. Copy Facility Resource
+      // 1d. Copy over scenario shift
       $this->migrateFacilityGroups($scenario_id, $event_id);
 
-      // 5. Regenerate scenario shift
-      //agScenarioGenerator::shiftGenerator();
-      // 6. Copy over scenario shift
-      // 7. Update event status to deployed/active?
+      // 2. Populate facility start time & update event shift with real time.
+      // 3. Regenerate staff pool
+      // 4. Copy over staff pool
+//      $this->migrateStaffPool($scenario_id, $event_id);
+
+      // 5. Populate agEventStaffShift (assigning event staffs to shifts).
+      // 6. Update event status to deployed/active?
 
       $con->commit();
     }
