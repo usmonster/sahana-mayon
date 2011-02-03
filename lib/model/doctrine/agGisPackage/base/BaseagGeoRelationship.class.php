@@ -63,7 +63,7 @@ abstract class BaseagGeoRelationship extends sfDoctrineRecord
              'length' => 2,
              ));
         $this->hasColumn('geo_relationship_km_value', 'decimal', 12, array(
-             'scale' => 6,
+             'scale' => 8,
              'type' => 'decimal',
              'notnull' => true,
              'length' => 12,
