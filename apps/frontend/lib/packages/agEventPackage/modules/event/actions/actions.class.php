@@ -100,20 +100,23 @@ class eventActions extends sfActions {
   public function undefinedShiftCheck($scenario_id) {
     $undefinedFacilityShiftQuery = Doctrine_Query::create()
                     ->select('aFR.id')
-                    ->from('agScenarioFacilityResource aFR, aFR.agScenarioFacilityGroup aFG')
+                    ->from('agScenarioFacilityResource aFR')
+                    ->innerJoin('aFR.agScenarioFacilityGroup aFG')
                     ->leftJoin('aFR.agScenarioShift aSS')
                     ->where('aSS.id is NULL')
                     ->andWhere('aFG.scenario_id =?', $scenario_id); //returns the facility resources without shift
-    $facilityShiftReturn = $undefinedFacilityShiftQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $facilityShiftReturn = $undefinedFacilityShiftQuery->execute(array(), 'single_value_array');
     $undefinedFacilityShiftQuery->free();
 
     $undefinedStaffShiftQuery = Doctrine_Query::create()
-                    ->select('aSRT.id, aSSR.*')
-                    ->from('agScenarioStaffResource aSSR, aSSR.agStaffResource aSR, aSR.agStaffResourceType aSRT')
+                    ->select('aSRT.id, aSSR.*, aSR.id')
+                    ->from('agScenarioStaffResource aSSR')
+                    ->innerJoin('aSSR.agStaffResource aSR')
+                    ->innerJoin('aSR.agStaffResourceType aSRT')
                     ->leftJoin('aSRT.agScenarioShift aSS')
                     ->where('aSSR.scenario_id =?', $scenario_id)
                     ->andWhere('aSRT.id is NULL'); //returns the staff resource types without a shift
-    $staffShiftReturn = $undefinedStaffShiftQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $staffShiftReturn = $undefinedStaffShiftQuery->execute(array(), 'single_value_array');
     $undefinedStaffShiftQuery->free();
 
     return array($facilityShiftReturn, $staffShiftReturn);
@@ -139,55 +142,53 @@ class eventActions extends sfActions {
 
   public function migrateFacilityGroups($scenario_id, $event_id)
   {
-    $existingFacilityGroups = Doctrine_Core::getTable('agScenarioFacilityGroup')->findBy('scenario_id', $scenario_id);
+    $existingScenarioFacilityGroups = Doctrine_Core::getTable('agScenarioFacilityGroup')->findBy('scenario_id', $scenario_id);
 
-    foreach ($existingFacilityGroups as $facilityGroup)
+    foreach ($existingScenarioFacilityGroups as $scenFacGrp)
     {
       $eventFacilityGroup = new agEventFacilityGroup();
       $eventFacilityGroup->set('event_id', $event_id)
-        ->set('event_facility_group', $facilityGroup->scenario_facility_group)
-        ->set('facility_group_type_id', $facilityGroup->facility_group_type_id)
-        ->set('activation_sequence', $facilityGroup->activation_sequence);
+        ->set('event_facility_group', $scenFacGrp->scenario_facility_group)
+        ->set('facility_group_type_id', $scenFacGrp->facility_group_type_id)
+        ->set('activation_sequence', $scenFacGrp->activation_sequence);
       $eventFacilityGroup->save();
 
       $eventFacilityGroupStatus = new agEventFacilityGroupStatus();
       $eventFacilityGroupStatus->set('event_facility_group_id', $eventFacilityGroup->id)
               ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
-              ->set('facility_group_allocation_status_id', $facilityGroup->facility_group_allocation_status_id);
+              ->set('facility_group_allocation_status_id', $scenFacGrp->facility_group_allocation_status_id);
       $eventFacilityGroupStatus->save();
 
-      $existingFacilityResources = $this->migrateFacilityResources($facilityGroup, $eventFacilityGroup->id);
+      $existingFacilityResources = $this->migrateFacilityResources($scenFacGrp, $eventFacilityGroup->id);
 
       $eventFacilityGroup->free(TRUE);
       $eventFacilityGroupStatus->free(TRUE);
     }
-    $existingFacilityGroups->free(TRUE);
+    $existingScenarioFacilityGroups->free(TRUE);
   }
 
   public function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id)
   {
-    $existingFacilityResources = Doctrine_Core::getTable('agScenarioFacilityResource')->findby('scenario_facility_group_id', $scenarioFacilityGroup->id);
-    foreach($existingFacilityResources as $facilityResource)
-    {
       $existingScenarioFacilityResources = $scenarioFacilityGroup->getAgScenarioFacilityResource();
       foreach($existingScenarioFacilityResources as $scenFacRes)
       {
         $eventFacilityResource = new agEventFacilityResource();
         $eventFacilityResource->set('event_facility_group_id', $event_facility_group_id)
-                ->set('facility_resource_id', $scenarioFacilityGroup->facility_resource_id)
-                ->set('activation_sequence', $scenarioFacilityGroup->activation_sequence);
+                ->set('facility_resource_id', $scenFacRes->facility_resource_id)
+                ->set('activation_sequence', $scenFacRes->activation_sequence);
         $eventFacilityResource->save();
 
         $eventFacilityResourceStatus = new agEventFacilityResourceStatus();
-        $eventFaciltiyResourceStatus->set('event_facility_resource_id', $eventFacilityResource->id)
+        $eventFacilityResourceStatus->set('event_facility_resource_id', $eventFacilityResource->id)
                 ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
-                ->set('facility_resource_allocation_status_id', $scenarioFacilityGroup->facility_resource_allocation_status_id);
+                ->set('facility_resource_allocation_status_id', $scenFacRes->facility_resource_allocation_status_id);
         $eventFacilityResourceStatus->save();
-      }
 
-      $eventFaciltiyResource->free(TRUE);
-      $eventFacilityResourceStatus->free(TRUE);
-    }
+        $eventFacilityResource->free(TRUE);
+        $eventFacilityResourceStatus->free(TRUE);
+      }
+      
+      $existingScenarioFacilityResources->free(TRUE);
     return 1;
   }
 
