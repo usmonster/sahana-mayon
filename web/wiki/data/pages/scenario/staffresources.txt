@@ -2,6 +2,8 @@
 
 ===== Staff Resource Requirements =====
 
+**What it does:**
+
 For Agasti to assign staff personnel to a facility the system must know how many of each type of staff is required for that facility to open.  In this step the minimum and maximum required staff will be entered for the facilities you included in your groups.
 ===== Reference Information =====
 

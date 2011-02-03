@@ -2,7 +2,9 @@
 
 ===== Pre-Creation =====
 
-Because a scenario is used to plan staff and facility resource deployment it's important that you have added your staff and facilities to Agasti before planning a Scenario.  Also, though not required, Organization information can also be helpful.
+**What it does:**
+
+Because a scenario is used to plan staff and facility resource deployment it's important that you have added your staff and facilities to Agasti before planning a Scenario.  Also, though not required, Organization information can be helpful if there are city or non-profit agencies that typically aid with your emergency response.
 
 **If you have not entered staff and facility details to Agasti, click the links to do so now before continuing with the Scenario Creator.**
 
@@ -22,9 +24,9 @@ After you've completed one of these actions click the "Next" button below.
 ===== FAQ =====
 **Frequently Asked Questions:**
 
-  - **Why do Scenarios need Facilities and Staff?**  Scenarios are plans for deploying different types of staff to different facilities in the affected area of your emergency response.  Agasti will need staff and facility records to use for these plans and you, as the users, will use specific information within the system to build your plan.
-  - **I only have some of my staff and facilities in the system, can I create a Scenario and update it later?"**  Yes!  You can always edit a scenario from the Scenario List (reachable by visiting the Scenario Management page and clicking "List Scenarios).  It's fine to get started now and come back later with more details.
-  - **Will I be able to update my staff before I create an Event later?** Yes.  Because Agasti uses Staff Resource Types and not individual staff members in Scenario planning you can add more staff later and they will be automatically assigned based on the Deployment Priority rules made in the Scenario Creator.
+  - **Why do Scenarios need Facilities and Staff?** - Scenarios are plans for deploying different types of staff to different facilities in the affected area of your emergency response.  Agasti will need staff and facility records to use for these plans and you, as the users, will use specific information within the system to build your plan.
+  - **I only have some of my staff and facilities in the system, can I create a Scenario and update it later?"** - Yes!  You can always edit a scenario from the Scenario List (reachable by visiting the Scenario Management page and clicking "List Scenarios).  It's fine to get started now and come back later with more details.
+  - **Will I be able to update my staff before I create an Event later?** - Yes.  Because Agasti uses Staff Resource Types and not individual staff members in Scenario planning you can add more staff later and they will be automatically assigned based on the Deployment Priority rules made in the Scenario Creator.
 ====== Continue ======
 
 [[scenario:new|{{ :manual:user:next.png|}}]] 
