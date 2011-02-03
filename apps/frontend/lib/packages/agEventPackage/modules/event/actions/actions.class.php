@@ -20,18 +20,26 @@ class eventActions extends sfActions {
   }
 
   public function executeDeploy(sfWebRequest $request) {
+    $this->event_id = $request->getParameter('id');
     $this->eventName = Doctrine::getTable('agEvent')
-                    ->findByDql('id = ?', $request->getParameter('id'))
+                    ->findByDql('id = ?', $this->event_id)
                     ->getFirst()->event_name;
     $this->scenario_id = Doctrine_Query::create()
                    ->select('scenario_id')
                     ->from('agEventScenario')
-                    ->where('event_id = ?', $request->getParameter('id'))
+                    ->where('event_id = ?', $this->event_id)
                     ->execute(array(),Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
     $this->scenarioName =   Doctrine::getTable('agScenario')
                     ->findByDql('id = ?', $this->scenario_id)
                     ->getFirst()->scenario;
     $this->checkResults = $this->preMigrationCheck($this->scenario_id);
+
+    if ($request->isMethod('POST'))
+    {
+      $this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
+      $this->redirect('event/active?id=' . $this->event_id);
+    }
+
   }
 
   public function executeMeta(sfWebRequest $request) {
@@ -58,7 +66,7 @@ class eventActions extends sfActions {
 
         $ag_event_status->setEventStatusTypeId(3);
         $ag_event_status->setEventId($ag_event->getId());
-        $ag_event_status->time_stamp = new Doctrine_Expression('NOW()');
+        $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
         $ag_event_status->save();
 
         //have to do this for delete also, i.e. delete the event_scenario object
@@ -119,7 +127,7 @@ class eventActions extends sfActions {
   }
 
   public function preMigrationCheck($scenario_id) {
-    // 0. Pre check: empty facility group, undefined staff pool rules making sure pools not empty, undefined shifts for staff/facility resource.
+    // 0. Pre check: check event status (only proceed if event status is pre-deploy), clean event related tables in pre-deploy state, empty facility group, undefined staff pool rules making sure pools not empty, undefined shifts for staff/facility resource.
     $facilityGroupCheck = $this->facilityGroupCheck($scenario_id);
     $staffPoolCheck = $this->staffPoolCheck($scenario_id);
     $undefinedShiftCheck = $this->undefinedShiftCheck($scenario_id);
@@ -129,16 +137,92 @@ class eventActions extends sfActions {
     return array('Empty facility groups' => $facilityGroupCheck, 'Staff pool count' => $staffPoolCheck, 'Undefined facility shifts' => $undefinedFacilityShifts, 'Undefined staff shifts' => $undefinedStaffShifts);
   }
 
+  public function migrateFacilityGroups($scenario_id, $event_id)
+  {
+    $existingFacilityGroups = Doctrine_Core::getTable('agScenarioFacilityGroup')->findBy('scenario_id', $scenario_id);
+
+    foreach ($existingFacilityGroups as $facilityGroup)
+    {
+      $eventFacilityGroup = new agEventFacilityGroup();
+      $eventFacilityGroup->set('event_id', $event_id)
+        ->set('event_facility_group', $facilityGroup->scenario_facility_group)
+        ->set('facility_group_type_id', $facilityGroup->facility_group_type_id)
+        ->set('activation_sequence', $facilityGroup->activation_sequence);
+      $eventFacilityGroup->save();
+
+      $eventFacilityGroupStatus = new agEventFacilityGroupStatus();
+      $eventFacilityGroupStatus->set('event_facility_group_id', $eventFacilityGroup->id)
+              ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
+              ->set('facility_group_allocation_status_id', $facilityGroup->facility_group_allocation_status_id);
+      $eventFacilityGroupStatus->save();
+
+      $existingFacilityResources = $this->migrateFacilityResources($facilityGroup, $eventFacilityGroup->id);
+
+      $eventFacilityGroup->free(TRUE);
+      $eventFacilityGroupStatus->free(TRUE);
+    }
+    $existingFacilityGroups->free(TRUE);
+  }
+
+  public function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id)
+  {
+    $existingFacilityResources = Doctrine_Core::getTable('agScenarioFacilityResource')->findby('scenario_facility_group_id', $scenarioFacilityGroup->id);
+    foreach($existingFacilityResources as $facilityResource)
+    {
+      $existingScenarioFacilityResources = $scenarioFacilityGroup->getAgScenarioFacilityResource();
+      foreach($existingScenarioFacilityResources as $scenFacRes)
+      {
+        $eventFacilityResource = new agEventFacilityResource();
+        $eventFacilityResource->set('event_facility_group_id', $event_facility_group_id)
+                ->set('facility_resource_id', $scenarioFacilityGroup->facility_resource_id)
+                ->set('activation_sequence', $scenarioFacilityGroup->activation_sequence);
+        $eventFacilityResource->save();
+
+        $eventFacilityResourceStatus = new agEventFacilityResourceStatus();
+        $eventFaciltiyResourceStatus->set('event_facility_resource_id', $eventFacilityResource->id)
+                ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
+                ->set('facility_resource_allocation_status_id', $scenarioFacilityGroup->facility_resource_allocation_status_id);
+        $eventFacilityResourceStatus->save();
+      }
+
+      $eventFaciltiyResource->free(TRUE);
+      $eventFacilityResourceStatus->free(TRUE);
+    }
+    return 1;
+  }
+
   public function migrateScenarioToEvent($scenario_id, $event_id) {
 
+    if (null === $con)
+    {
+      $con = Doctrine_Manager::getInstance()->getConnectionForComponent('agEvent');
+    }
+
+    try
+    {
+      $con->beginTransaction();
+
+      // 1. Regenerate staff pool
+      // 2. Copy over staff pool
+
+      // 3a. Copy Faciltiy Group
+      // 3b. Copy Facility Resource
+      $this->migrateFacilityGroups($scenario_id, $event_id);
+
+      // 5. Regenerate scenario shift
+      //agScenarioGenerator::shiftGenerator();
+      // 6. Copy over scenario shift
+
+      $con->commit();
+    }
+    catch (Exception $e)
+    {
+      $con->rollBack();
+
+      throw $e;
+    }
+
     return $migrationResult;
-    // 1. Regenerate staff pool
-    // 2. Copy over staff pool
-    // 3. Copy Faciltiy Group
-    // 4. Copy Facility Resource
-    // 5. Regenerate scenario shift
-    //agScenarioGenerator::shiftGenerator();
-    // 6. Copy over scenario shift
   }
 
   public function executeList(sfWebRequest $request) {
@@ -170,7 +254,6 @@ class eventActions extends sfActions {
 
   public function executeActive(sfWebRequest $request)
   {
-    
   }
 
   public function executeStaff(sfWebRequest $request)

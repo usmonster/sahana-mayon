@@ -28,6 +28,8 @@ if (isset($checkResults)) {
 }
 ?>
 <br />
+<form action="<?php echo url_for('event/deploy?id=' . $event_id) ?> " method="post">
+
 <a href="<?php echo url_for('event/gis'); ?>" class="linkButton" title="Update GIS Data">Generate Geo Information</a>
 
 <a href="#" class="linkButton" title="Generate Shifts">Generate Shifts</a>
@@ -37,6 +39,6 @@ if (isset($checkResults)) {
 ?>
 <a href="#" class="linkButton" title="Save">Save</a>
 
-<a href="#" class="linkButton" title="Save and Deploy">Save and Deploy</a>
+<input type="submit" value="Save and Deploy" class="linkButton"/>
 
-
+</form>
