@@ -1,7 +1,7 @@
 <?php
 
 /**
- * extends sfActions for scenario
+ * extends agActions for scenario
  *
  * PHP Version 5
  *
@@ -9,7 +9,7 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/copyleft/lesser.html
  *
- * @author Full Name, Organization
+ * @author Charles Wisniewski, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */

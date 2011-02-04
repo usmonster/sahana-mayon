@@ -1,15 +1,20 @@
 <?php
 
 /**
- * event actions.
+ * extends agActions for event
  *
- * @package    AGASTI_CORE
- * @subpackage event
- * @author     Charles Wisniewski
- * @author     Shirley Chan
- * @version    SVN: $Id: actions.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
+ * PHP Version 5
+ *
+ * LICENSE: This source file is subject to LGPLv3.0 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/lesser.html
+ *
+ * @author Shirley Chan, CUNY SPS
+ * @author Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class eventActions extends sfActions {
+class eventActions extends agActions {
 
   public function executeIndex(sfWebRequest $request) {
     $this->scenarioForm = new sfForm();
