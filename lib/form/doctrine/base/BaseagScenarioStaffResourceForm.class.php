@@ -16,8 +16,8 @@ abstract class BaseagScenarioStaffResourceForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'id'                => new sfWidgetFormInputHidden(),
-      'scenario_id'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => true)),
-      'staff_resource_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResource'), 'add_empty' => true)),
+      'scenario_id'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => false)),
+      'staff_resource_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResource'), 'add_empty' => false)),
       'deployment_weight' => new sfWidgetFormInputText(),
       'created_at'        => new sfWidgetFormDateTime(),
       'updated_at'        => new sfWidgetFormDateTime(),
@@ -25,9 +25,9 @@ abstract class BaseagScenarioStaffResourceForm extends BaseFormDoctrine
 
     $this->setValidators(array(
       'id'                => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'scenario_id'       => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'required' => false)),
-      'staff_resource_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResource'), 'required' => false)),
-      'deployment_weight' => new sfValidatorInteger(array('required' => false)),
+      'scenario_id'       => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'))),
+      'staff_resource_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResource'))),
+      'deployment_weight' => new sfValidatorInteger(),
       'created_at'        => new sfValidatorDateTime(),
       'updated_at'        => new sfValidatorDateTime(),
     ));

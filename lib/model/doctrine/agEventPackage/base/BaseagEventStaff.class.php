@@ -8,6 +8,7 @@
  * @property integer $id
  * @property integer $event_id
  * @property integer $staff_resource_id
+ * @property integer $deployment_weight
  * @property agEvent $agEvent
  * @property agStaffResource $agStaffResource
  * @property Doctrine_Collection $agEventFacilityShift
@@ -20,6 +21,7 @@
  * @method integer             getId()                   Returns the current record's "id" value
  * @method integer             getEventId()              Returns the current record's "event_id" value
  * @method integer             getStaffResourceId()      Returns the current record's "staff_resource_id" value
+ * @method integer             getDeploymentWeight()     Returns the current record's "deployment_weight" value
  * @method agEvent             getAgEvent()              Returns the current record's "agEvent" value
  * @method agStaffResource     getAgStaffResource()      Returns the current record's "agStaffResource" value
  * @method Doctrine_Collection getAgEventFacilityShift() Returns the current record's "agEventFacilityShift" collection
@@ -31,6 +33,7 @@
  * @method agEventStaff        setId()                   Sets the current record's "id" value
  * @method agEventStaff        setEventId()              Sets the current record's "event_id" value
  * @method agEventStaff        setStaffResourceId()      Sets the current record's "staff_resource_id" value
+ * @method agEventStaff        setDeploymentWeight()     Sets the current record's "deployment_weight" value
  * @method agEventStaff        setAgEvent()              Sets the current record's "agEvent" value
  * @method agEventStaff        setAgStaffResource()      Sets the current record's "agStaffResource" value
  * @method agEventStaff        setAgEventFacilityShift() Sets the current record's "agEventFacilityShift" collection
@@ -65,6 +68,11 @@ abstract class BaseagEventStaff extends sfDoctrineRecord
              'type' => 'integer',
              'notnull' => true,
              'length' => 5,
+             ));
+        $this->hasColumn('deployment_weight', 'integer', 1, array(
+             'type' => 'integer',
+             'notnull' => true,
+             'length' => 1,
              ));
 
 

@@ -15,7 +15,7 @@ abstract class BaseagScenarioStaffResourceFormFilter extends BaseFormFilterDoctr
     $this->setWidgets(array(
       'scenario_id'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => true)),
       'staff_resource_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResource'), 'add_empty' => true)),
-      'deployment_weight' => new sfWidgetFormFilterInput(),
+      'deployment_weight' => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'created_at'        => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'updated_at'        => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
     ));

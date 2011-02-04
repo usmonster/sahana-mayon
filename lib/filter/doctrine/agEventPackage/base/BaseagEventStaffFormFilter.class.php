@@ -15,6 +15,7 @@ abstract class BaseagEventStaffFormFilter extends BaseFormFilterDoctrine
     $this->setWidgets(array(
       'event_id'                     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agEvent'), 'add_empty' => true)),
       'staff_resource_id'            => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResource'), 'add_empty' => true)),
+      'deployment_weight'            => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'created_at'                   => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'updated_at'                   => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'ag_event_facility_shift_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agEventShift')),
@@ -23,6 +24,7 @@ abstract class BaseagEventStaffFormFilter extends BaseFormFilterDoctrine
     $this->setValidators(array(
       'event_id'                     => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agEvent'), 'column' => 'id')),
       'staff_resource_id'            => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agStaffResource'), 'column' => 'id')),
+      'deployment_weight'            => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'created_at'                   => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'updated_at'                   => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'ag_event_facility_shift_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agEventShift', 'required' => false)),
@@ -66,6 +68,7 @@ abstract class BaseagEventStaffFormFilter extends BaseFormFilterDoctrine
       'id'                           => 'Number',
       'event_id'                     => 'ForeignKey',
       'staff_resource_id'            => 'ForeignKey',
+      'deployment_weight'            => 'Number',
       'created_at'                   => 'Date',
       'updated_at'                   => 'Date',
       'ag_event_facility_shift_list' => 'ManyKey',

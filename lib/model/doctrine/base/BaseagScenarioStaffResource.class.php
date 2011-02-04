@@ -43,14 +43,17 @@ abstract class BaseagScenarioStaffResource extends sfDoctrineRecord
              ));
         $this->hasColumn('scenario_id', 'integer', 2, array(
              'type' => 'integer',
+             'notnull' => true,
              'length' => 2,
              ));
         $this->hasColumn('staff_resource_id', 'integer', 5, array(
              'type' => 'integer',
+             'notnull' => true,
              'length' => 5,
              ));
         $this->hasColumn('deployment_weight', 'integer', 1, array(
              'type' => 'integer',
+             'notnull' => true,
              'length' => 1,
              ));
 

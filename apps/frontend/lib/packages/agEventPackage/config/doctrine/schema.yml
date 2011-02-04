@@ -358,6 +358,9 @@ agEventStaff:
     staff_resource_id:
       type: integer(5)
       notnull: true
+    deployment_weight:
+      type: integer(1)
+      notnull: true
   indexes:
     UX_agEventStaff:
       fields: [event_id, staff_resource_id]
