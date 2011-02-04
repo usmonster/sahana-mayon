@@ -20,3 +20,41 @@
 <?php
 echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
 ?>
+
+<?php if ($ag_events) {
+?>
+
+  <h3>Existing Events</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Event Name</th>
+        <th>Scenario Base</th>
+        <th>Created at</th>
+        <th>Updated at</th>
+        <th>Status</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($ag_events as $ag_event): ?>
+      <tr>
+        <td><a href="<?php echo url_for('event/deploy?id=' . $ag_event->getId()) ?>"><?php echo $ag_event->getId() ?></a></td>
+        <td><?php echo $ag_event->getEventName() ?></td>
+        <td><?php echo $ag_event->getAgEventScenario()->getFirst()->getAgScenario() ?></td>
+        <td><?php echo $ag_event->getCreatedAt() ?></td>
+        <td><?php echo $ag_event->getUpdatedAt() ?></td>
+        <td><?php echo $ag_event->getAgEventStatus()->getFirst()->getAgEventStatusType() ?></td>
+        <td><a href="<?php echo url_for('report/list') ?>" class="linkButton">reports</a></td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+
+  <a href="<?php //echo url_for('agEvent')  ?>">New</a>
+
+<?php
+    } //end if for ag event listing
+?>

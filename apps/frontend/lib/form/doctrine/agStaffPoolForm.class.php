@@ -55,7 +55,7 @@ class agStaffPoolForm extends sfForm
     if (isset($this->staff_gen_id)) {
       $staffGenObject = Doctrine_Query::create()
               ->from('agScenarioStaffGenerator a')
-              ->where('a.id =?', $this->staff_gen_id)
+              ->where('a.id = ?', $this->staff_gen_id)
               ->execute()->getFirst();
       $this->lucene_search_id = $staffGenObject->lucene_search_id;
     }
@@ -67,7 +67,7 @@ class agStaffPoolForm extends sfForm
 
     $staffGenForm->setWidget('lucene_search_id', new sfWidgetFormInputHidden());
     $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
-    $staffGenForm->setWidget('search_weight', new sfWidgetFormChoice(array('choices' => range(0,10))));
+    $staffGenForm->setWidget('search_weight', new sfWidgetFormChoice(array('choices' => range(0, 10))));
 
     $staffGenForm->setValidator('lucene_search_id', new sfValidatorPass(array('required' => false)));
 //    $staffGenForm->setValidator('search_weight', new sfValidatorPass(array('required' => false)));
@@ -86,7 +86,7 @@ class agStaffPoolForm extends sfForm
     if (isset($this->lucene_search_id)) {
       $luceneObject = Doctrine_Query::create()
               ->from('agLuceneSearch a')
-              ->where('a.id =?', $this->lucene_search_id)
+              ->where('a.id = ?', $this->lucene_search_id)
               ->execute()->getFirst();
     }
     $luceneForm = new agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);

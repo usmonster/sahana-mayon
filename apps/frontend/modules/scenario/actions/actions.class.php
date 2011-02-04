@@ -277,12 +277,12 @@ class scenarioActions extends agActions
   {
     if ($this->scenario_id = $request->getParameter('id')) {
       $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-          $this->ag_scenario_facility_groups = Doctrine_Core::getTable('agScenarioFacilityGroup')
-            ->createQuery('a')
-            ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
-            ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
-            ->where('a.scenario_id = ?', $this->scenario_id)
-            ->execute();
+      $this->ag_scenario_facility_groups = Doctrine_Core::getTable('agScenarioFacilityGroup')
+              ->createQuery('a')
+              ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
+              ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
+              ->where('a.scenario_id = ?', $this->scenario_id)
+              ->execute();
     }
   }
 
