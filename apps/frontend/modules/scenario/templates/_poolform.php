@@ -6,9 +6,9 @@
   function queryConstruct() {
     var out = Array();
     $('.filter option:selected').each(function(index) {
-      out[index] = $(this).text();
-      $("#staff_pool_lucene_search_query_condition").val(JSON.stringify(out));
+      out[index] = $(this).parent().attr('id') + ":" + $(this).text();
     })
+    $("#staff_pool_lucene_search_query_condition").val(out.join(' AND '));
   }
 
 </script>
@@ -53,7 +53,7 @@ if (isset($search_id)) {
 <?php echo $filterForm['staff_type']; ?>
 
           <label class ="filterButton">Filter by Organization:</label>
-<?php echo $filterForm['organization']; ?>
+<?php echo $filterForm['staff_org']; ?>
         </td>
       </tr>
     </tbody>

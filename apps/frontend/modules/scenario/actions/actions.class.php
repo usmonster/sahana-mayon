@@ -298,29 +298,54 @@ class scenarioActions extends agActions
    */
   public function executeStaffpool(sfWebRequest $request)
   {
+
     $this->scenario_id = $request->getParameter('id');
+    $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
     $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
             ->createQuery('agSSG')
             ->select('agSSG.*')
             ->from('agScenarioStaffGenerator agSSG')
             ->where('agSSG.scenario_id = ?', $this->scenario_id) //join up to see what staff pool
             ->execute();
+    $this->filterForm = new sfForm();
+    $this->filterForm->setWidgets(array(
+      'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
+      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization')),
+    ));
     if ($request->getParameter('search_id')) {
       $this->search_id = $request->getParameter('search_id');
       $this->poolform = new agStaffPoolForm($this->search_id);
+      $queryparts = explode(" AND ", $this->poolform->getEmbeddedForm('lucene_search')->getObject()->query_condition);
+      foreach ($queryparts as $querypart) {
+        $filterType = preg_split("/.+:.+/", $querypart, 2);
+        $this->filterForm->setDefault($filterType[0], $filterType[1]);
+      }
     } else {
       $this->poolform = new agStaffPoolForm();
     }
+
+//    $filterDeco = new agWidgetFormSchemaFormatterRow($luceneForm->getWidgetSchema());
+//    $luceneForm->getWidgetSchema()->addFormFormatter('row', $luceneDeco);
+//    $luceneForm->getWidgetSchema()->setFormFormatterName('row');
+    $this->filterForm->getWidget('staff_type')->setAttribute('class', 'filter');
+    $this->filterForm->getWidget('staff_org')->setAttribute('class', 'filter');
 
     if ($request->isMethod(sfRequest::POST)) {
       //$request->checkCSRFProtection();
       //OR if coming from an executed search
       if ($request->getParameter('Preview')) {
         $postParam = $request->getPostParameter('staff_pool');
+        $staff_generator = $postParam['staff_generator'];
         $lucene_search = $postParam['lucene_search'];
-        $lucene_query = json_decode($lucene_search['query_condition']);
-
-        parent::doSearch($lucene_query[0]); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
+        $lucene_query = $lucene_search['query_condition'];
+        $this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']);
+        $this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
+        $this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
+        //$this->poolform->staff_generator->setDefault('search_weight', $staff_generator['search_weight']);
+        $this->filterForm->setDefault('staff_type', $request->getPostParameter('staff_type'));
+        $this->filterForm->setDefault('staff_org', $request->getPostParameter('staff_org'));
+        //$query_condition = implode(' AND ', $lucene_query);
+        parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {
 
         $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
@@ -337,6 +362,32 @@ class scenarioActions extends agActions
 
         if ($this->poolform->isValid()) {
           $ag_staff_pool = $this->poolform->saveEmbeddedForms();
+          $postParam = $request->getPostParameter('staff_pool');
+          $staff_generator = $postParam['staff_generator'];
+          $lucene_search = $postParam['lucene_search'];
+          $lucene_query = $lucene_search['query_condition'];
+
+          parent::doSearch($lucene_query, FALSE);
+          foreach ($this->hits as $hit) {
+            $staff_id[] = $this->results[$hit->model][$hit->pk]['id'];
+          }
+          $staff_resources = Doctrine_Query::create()
+                  ->select('a.id')
+                  ->from('agStaffResource a')
+                  ->leftJoin('a.agScenarioStaffResource asr')
+                  ->where('asr.id is NULL')
+                  ->andWhereIn('a.staff_id', $staff_id)
+                  ->andWhere('asr.scenario_id =?', $this->scenario_id)
+  //              ->andWhere('a.id NOT EXISTS (SELECT ssr.staff_resource_id FROM agScenarioStaffResource ssr WHERE ssr.scenario_id = ?)', $this->scenario_id)
+                  ->execute(array(), 'single_value_array');
+          foreach ($staff_resources as $staff_resource) {
+            $scenario_staff_resource = new agScenarioStaffResource();
+            $scenario_staff_resource->set('staff_resource_id', $staff_resource)
+                ->set('scenario_id', $this->scenario_id)
+                ->set('deployment_weight', $staff_generator['search_weight']);
+
+            $scenario_staff_resource->save();
+          }
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }
       } else {
@@ -346,17 +397,6 @@ class scenarioActions extends agActions
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
     }
-
-    $this->filterForm = new sfForm();
-    $this->filterForm->setWidgets(array(
-      'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
-      'organization' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization')),
-    ));
-//    $filterDeco = new agWidgetFormSchemaFormatterRow($luceneForm->getWidgetSchema());
-//    $luceneForm->getWidgetSchema()->addFormFormatter('row', $luceneDeco);
-//    $luceneForm->getWidgetSchema()->setFormFormatterName('row');
-//    $this->filterForm->getWidget('staff_type')->setAttribute('class', 'filter');
-    $this->filterForm->getWidget('organization')->setAttribute('class', 'filter');
   }
 
   /**

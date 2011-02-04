@@ -15,12 +15,13 @@
  */
 class agActions extends sfActions
 {
+
   protected $searchedModels;
 
   public function __construct($context, $moduleName, $actionName)
   {
     parent::__construct($context, $moduleName, $actionName);
-    if(empty($this->searchedModels)){
+    if (empty($this->searchedModels)) {
       $this->searchedModels = array($this->getModuleName());
     }
   }
@@ -33,15 +34,17 @@ class agActions extends sfActions
     //$this->setTemplate('global/search');
   }
 
-  public function doSearch($searchquery)
+  public function doSearch($searchquery, $is_fuzzy = TRUE)
   {
     $models = $this->getSearchedModels();
 
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
-    $query = LuceneSearch::find($this->searchquery)
-            ->fuzzy()
-            ->in($models);
+    $query = LuceneSearch::find($this->searchquery);
+    if ($is_fuzzy == TRUE) {
+      $query->fuzzy();
+    }
+    $query->in($models);
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
   }

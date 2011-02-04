@@ -1,6 +1,8 @@
 <h2>Staff Resource Pool</h2> <br>
 Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
-<p> On this page you decide what staff to pull from and give them weight.  This is all done through search.</p>
+<p> Please define staff resource pools for the <span class="highlightedText"><?php echo $scenarioName ?> </span> Scenario.</p>
+
+
 <?php if (count($saved_searches) > 0) {
  ?>
   <h3>Existing Saved Searches</h3>
