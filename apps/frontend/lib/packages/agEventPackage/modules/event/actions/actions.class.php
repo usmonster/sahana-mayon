@@ -213,8 +213,11 @@ class eventActions extends agActions
   public function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId)
   {
     $scenarioShifts = Doctrine_Core::getTable('agScenarioShift')->findby('scenario_facility_resource_id', $scenarioFacilityResourceId);
-    foreach ($scenarioShifts as $scenShift) {
-      // At this point all fields in agEventShifts will be populated with agScenarioShifts.  Only the real time fields in agEvnetShifts will not be populated.  It will be done so at a later time when agEventFacilityActivationTime is populated.
+    foreach($scenarioShifts as $scenShift)
+    {
+      // At this point all fields in agEventShifts will be populated with agScenarioShifts.  Only
+      // the real time fields in agEvnetShifts will not be populated.  It will be done so at a later
+      // time when agEventFacilityActivationTime is populated.
       $eventShift = new agEventShift();
       $eventShift->set('event_facility_resource_id', $eventFacilityResourceId)
           ->set('staff_resource_type_id', $scenShift->staff_resource_type_id)
@@ -248,10 +251,11 @@ class eventActions extends agActions
       $eventStaff->save();
 
       // @TODO Staff allocation status should be determine by the message responses.  Currently it is hard-coded to 1 as available.
+      $unAvailableStaffStatus = Doctrine_Core::getTable('agStaffAllocationStatus')->findby('staff_allocation_status', 'unavailable');
       $eventStaffStatus = new agEventStaffStatus();
       $eventStaffStatus->set('event_staff-id', $eventStaff->id)
-          ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
-          ->set('staff_allocation_status_id', 1);
+              ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
+              ->set('staff_allocation_status_id', $unAvailableStaffStatus);
       $eventStaffStatus->free(TRUE);
 
       $eventStaff->free(TRUE);

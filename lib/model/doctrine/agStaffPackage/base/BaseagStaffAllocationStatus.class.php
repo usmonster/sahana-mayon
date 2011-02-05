@@ -9,7 +9,7 @@
  * @property string $staff_allocation_status
  * @property string $description
  * @property boolean $allocatable
- * @property boolean $commited
+ * @property boolean $committed
  * @property boolean $standby
  * @property boolean $active
  * @property boolean $app_display
@@ -19,7 +19,7 @@
  * @method string                  getStaffAllocationStatus()   Returns the current record's "staff_allocation_status" value
  * @method string                  getDescription()             Returns the current record's "description" value
  * @method boolean                 getAllocatable()             Returns the current record's "allocatable" value
- * @method boolean                 getCommited()                Returns the current record's "commited" value
+ * @method boolean                 getCommitted()               Returns the current record's "committed" value
  * @method boolean                 getStandby()                 Returns the current record's "standby" value
  * @method boolean                 getActive()                  Returns the current record's "active" value
  * @method boolean                 getAppDisplay()              Returns the current record's "app_display" value
@@ -28,7 +28,7 @@
  * @method agStaffAllocationStatus setStaffAllocationStatus()   Sets the current record's "staff_allocation_status" value
  * @method agStaffAllocationStatus setDescription()             Sets the current record's "description" value
  * @method agStaffAllocationStatus setAllocatable()             Sets the current record's "allocatable" value
- * @method agStaffAllocationStatus setCommited()                Sets the current record's "commited" value
+ * @method agStaffAllocationStatus setCommitted()               Sets the current record's "committed" value
  * @method agStaffAllocationStatus setStandby()                 Sets the current record's "standby" value
  * @method agStaffAllocationStatus setActive()                  Sets the current record's "active" value
  * @method agStaffAllocationStatus setAppDisplay()              Sets the current record's "app_display" value
@@ -64,7 +64,7 @@ abstract class BaseagStaffAllocationStatus extends sfDoctrineRecord
              'type' => 'boolean',
              'notnull' => true,
              ));
-        $this->hasColumn('commited', 'boolean', null, array(
+        $this->hasColumn('committed', 'boolean', null, array(
              'type' => 'boolean',
              'notnull' => true,
              ));

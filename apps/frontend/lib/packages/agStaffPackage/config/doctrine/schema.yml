@@ -14,7 +14,7 @@ agStaffAllocationStatus:
       default: 1
       type: boolean
       notnull: true
-    commited:
+    committed:
       type: boolean
       notnull: true
     standby:

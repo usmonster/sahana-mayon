@@ -1,0 +1,43 @@
+agStaffAllocationStatus:
+  available:
+    id: 1
+    staff_allocation_status: available
+    allocatable: 1
+    committed: 0
+    standby: 0
+    active: 0
+  committed:
+    id: 2
+    staff_allocation_status: committed
+    allocatable: 0
+    committed: 1
+    standby: 0
+    active: 0
+  standby:
+    id: 3
+    staff_allocation_status: standby
+    allocatable: 0
+    committed: 1
+    standby: 1
+    active: 0
+  active:
+    id: 4
+    staff_allocation_status: active
+    allocatable: 0
+    committed: 1
+    standby: 0
+    active: 1
+  inactive:
+    id: 5
+    staff_allocation_status: inactive
+    allocatable: 1
+    committed: 0
+    standby: 0
+    active: 0
+  unavailable:
+    id: 6
+    staff_allocation_status: unavailable
+    allocatable: 0
+    committed: 0
+    standby: 0
+    active: 0

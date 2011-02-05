@@ -120,6 +120,14 @@ abstract class BaseagScenario extends sfDoctrineRecord
              'foreign' => 'scenario_id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();
+        $luceneable0 = new Luceneable(array(
+             'fields' => 
+             array(
+              'scenario' => 'unstored',
+              'description' => 'unstored',
+             ),
+             ));
         $this->actAs($timestampable0);
+        $this->actAs($luceneable0);
     }
 }
