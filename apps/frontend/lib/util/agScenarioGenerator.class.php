@@ -24,36 +24,41 @@ class agScenarioGenerator
           ->andWhere('st.scenario_id = sfg.scenario_id')
         ->execute(array(), Doctrine::HYDRATE_SCALAR);
 
-      // Delete all scenario shift records prior to generating scenario shifts from shift template tables.
+      // Delete all scenario shift records prior to generating scenario shifts
+      // from shift template tables.
       $deleteQuery = Doctrine_Query::create()
         ->delete()
         ->from('agScenarioShift')
         ->execute();
 
-      $id_counter = 1;
-      foreach ($scenarioShifts as $row)
-      {
-        $shift_repeat_counter = 0;
+      foreach ($scenarioShifts as $row) {
+        $shift_counter = 1;
         $staff_wave = 1;
-        $staff_wave_counter = 1;
         $reset_break_length = $row['st_break_length_minutes'];
         $reset_minutes_start_to_facility_activation = $row['st_minutes_start_to_facility_activation'];
 
-        while ( $shift_repeat_counter <= $row['st_shift_repeats'] )
-        {
-          // max_staff_repeat_shifts should be double since staff can only work every other shifts.
-          if ( $staff_wave_counter > ($row['st_max_staff_repeat_shifts'] * 2) )
-          {
-            $staff_wave++;
+        while ( $shift_counter <= $row['st_shift_repeats']+1 ) {
+          // A staff should only be working at one shift and rest while the
+          // next following shift starts.  He/she should only be assigned to
+          // every other shifts if a staff should work multiple shifts.  Thus,
+          // the staff wave is multipled by two.
+          $staff_shift_repeat = $row['st_max_staff_repeat_shifts'] * 2;
+
+          if( ($shift_counter != 1) && (($shift_counter % $staff_shift_repeat) == 1) ) {
+            $staff_wave += 2;
+          }
+
+          // Release staffs as they finish their last shift.
+          if( (($shift_counter % $staff_shift_repeat) == 0) ||
+              (($shift_counter % $staff_shift_repeat) == ($staff_shift_repeat - 1)) ||
+              ($shift_counter == ($row['st_shift_repeats'] + 1)) ||
+              ($shift_counter == $row['st_shift_repeats']) ) {
             $reset_break_length = 0;
-            $staff_wave_counter = 1;
           } else {
-            $staff_wave_counter++;
             $reset_break_length = $row['st_break_length_minutes'];
           }
 
-          $reset_break_length = ( $shift_repeat_counter == $row['st_shift_repeats'] ) ? 0 : $row['st_break_length_minutes'];
-          $reset_minutes_start_to_facility_activation = ($shift_repeat_counter == 0 ) ? $row['st_minutes_start_to_facility_activation'] : $reset_minutes_start_to_facility_activation + $row['st_task_length_minutes'];
+          $reset_minutes_start_to_facility_activation = ($shift_counter == 1 ) ? $row['st_minutes_start_to_facility_activation'] : $reset_minutes_start_to_facility_activation + $row['st_task_length_minutes'];
 
           $scenarioShift = new agScenarioShift();
           $scenarioShift->set('scenario_facility_resource_id', $row['fsr_scenario_facility_resource_id'])
@@ -64,13 +69,12 @@ class agScenarioGenerator
                   ->set('minutes_start_to_facility_activation', $reset_minutes_start_to_facility_activation)
                   ->set('minimum_staff', $row['fsr_minimum_staff'])
                   ->set('maximum_staff', $row['fsr_maximum_staff'])
-                  ->set('staff_wave', $staff_wave)
+                  ->set('staff_wave', $shift_counter&1 ? $staff_wave : $staff_wave+1)
                   ->set('shift_status_id', $row['st_shift_status_id'])
                   ->set('deployment_algorithm_id', $row['st_deployment_algorithm_id'])
                   ->set('originator_id', $row['st_id']);
           $scenarioShift->save();
-          $shift_repeat_counter++;
-          $id_counter++;
+          $shift_counter++;
         }
       }
       return 1;
