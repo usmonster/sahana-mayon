@@ -461,13 +461,13 @@ class scenarioActions extends agActions
          * @todo [$curopt->activation_sequence] needs to still be applied to the list,
          */
       }
-      $this->ag_allocated_facility_resources = $current;
 
-      /**
-       * @todo why is this returning a string to the view/template??????? ^^^^^^^
-       *        for 10 points: get the allocated facility resources to the edit page.
-       *
-       */
+      $this->ag_allocated_facility_resources = Doctrine_Query::create()
+              ->select('a.facility_id, af.*, afrt.*')
+              ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+              ->whereIn('a.id', array_keys($currentoptions))->execute();
+
+
       $this->ag_facility_resources = Doctrine_Query::create()
               ->select('a.facility_id, af.*, afrt.*')
               ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
@@ -549,7 +549,7 @@ class scenarioActions extends agActions
     $this->scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
             ->findByDql('scenario_id = ?', $this->scenario_id)
             ->getData();
-    $this->ag_allocated_facility_resources = '';
+//    $this->ag_allocated_facility_resources = '';
 
     $this->ag_facility_resources = Doctrine_Query::create()
             ->select('a.facility_id, af.*, afrt.*')

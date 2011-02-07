@@ -41,7 +41,7 @@ echo url_for
     ('scenario/fgroup?id=' . $scenario_id) . (!$groupform->getObject()->isNew() ? '?groupid=' . $groupform->getObject()->getId() : '') ?>
       " method="post" <?php $groupform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 
-    <div>
+  <div>
     <?php
     $groupFormDeco = new agWidgetFormSchemaFormatterInlineTopLabel($groupform->getWidgetSchema());
     $groupform->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupFormDeco);
@@ -67,18 +67,16 @@ echo url_for
     <ul id="allocated" class="bucket">
       <?php
       if ($ag_allocated_facility_resources) {
-        foreach ($ag_allocated_facility_resources as $curopt) {
-          $currentoptions[$curopt->facility_resource_id] =
-              $curopt->getAgFacilityResource()->getAgFacility()->facility_name . ": " .
-              ucwords($curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
-          ////$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
 
+        foreach ($ag_allocated_facility_resources as $facility_resource) {
+          echo '<li id="' . $facility_resource->getId() . '" title="' .
+          $facility_resource->getAgFacilityResourceType() . '">' .
+          $facility_resource->getAgFacility()->getFacilityName() . ': ' .
+          ucwords($facility_resource->getAgFacilityResourceType()->facility_resource_type) .
+          '</li>'; //we could set the id here to a set of ids
           /**
            * @todo [$curopt->activation_sequence] needs to still be applied to the list,
            */
-          echo "<li id=" . $curopt->facility_resource_id . ">" .
-          $currentoptions[$curopt->facility_resource_id] .
-          "</li>";
         }
       }
       ?>
