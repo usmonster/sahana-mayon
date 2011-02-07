@@ -1,5 +1,9 @@
 ====== Staff Management ======
 
+Managing staff is a key component of Agasti.  In an emergency response it's important to have up to date contact information for staff and volunteers as well as their roles in your response plan.  Agasti provides tools for these and more.  To start, use the walk-through below to create a staff member.
+
+[[manual:user:staff:create_staff_walkthrough|Creating Staff Walk-Through]]
+
 Things you can do:
 
   * [[manual:user:staff:create]]
