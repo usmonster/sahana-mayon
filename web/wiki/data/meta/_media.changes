@@ -18,3 +18,5 @@
 1296676629	127.0.0.1	E	scenario:facgroup.png	admin		
 1296677326	127.0.0.1	C	scenario:screenshot_024.png	admin		
 1296749019	::1	C	manual:user:staff:newstaff.png	admin		
+1297104348	::1	C	manual:user:staff:staff_select1.png	admin		
+1297104442	::1	C	manual:user:staff:staff_create_highlight.png	admin		

@@ -2,12 +2,41 @@
 
 Managing staff is a key component of Agasti.  In an emergency response it's important to have up to date contact information for staff and volunteers as well as their roles in your response plan.  Agasti provides tools for these and more.  To start, use the walk-through below to create a staff member.
 
-[[manual:user:staff:create_staff_walkthrough|Creating Staff Walk-Through]]
+[[manual:user:staff:staff_creation_walkthrough|Managing Staff Walk-Through]]
 
-Things you can do:
 
-  * [[manual:user:staff:create]]
-  * [[manual:user:staff:list]]
-  * [[manual:user:staff:import]]
-  * [[manual:user:staff:export]]
-  * [[manual:user:staff:search]]
+More general information can be found below.
+
+
+===== Staff Management Functions =====
+
+The functionality of the Staff Management module is broken into a few parts:
+  * Entering staff records
+  * Editing staff records
+  * Deleting records
+  * Importing
+  * Exporting
+
+In general the staff module is used to maintain staff records and prepare for the deployment of staff during an activation.  While staff information could be uploaded or entered in response to an event, if the records are available prior to an emergency response it will greatly increase the effectiveness if the initial response.
+
+Below are general details regarding staff management and its functionality.  For a detailed walk-through of all the functionality of this module see the [[manual:user:staff:staff_creation_walkthrough|Managing Staff Walk-Through]].
+
+===== Staff Resources =====
+
+A "Staff Resource" is a person combined with a skill set that is potentially available for emergency response.  For example: Jane is a nurse who volunteers with the Red Cross.  While Jane may not be directly assigned during the preparation phase of creating a scenario, the Typhoon scenario calls for 4 nurses.  When the Typhoon scenario is deployed as the "2011 Typhoon" event, Jane is available as a Staff Resource and deployed as a nurse by Agasti.
+
+==== Editing Staff Resource Types ====
+
+===== Entering Staff =====
+
+Staff can be entered into Agasti in two ways: manually and via import.  Below are brief instructions for using both; however a walk-through is available for [[manual:user:staff:new|manual entry]] and [[manual:user:staff:import|import]].
+
+==== Manual ====
+
+==== Import ====
+
+===== Editing Staff =====
+
+===== Deleting Staff =====
+
+===== Duplication =====

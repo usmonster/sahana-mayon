@@ -1,0 +1,38 @@
+====== Staff Management Walk-Through ======
+
+
+===== Creating New Staff =====
+
+Staff records in Agasti represent potential workforce resources for your emergency response and there are two ways to add new records: manual and [[manual:user:staff:import]].  This page will walk you through creating a new staff resource and, later on in this walk-through, you'll be instructed on importing a staff records file.
+
+===== Reference Information =====
+
+==== Things To Know ====
+
+  * **Staff Resources** are used when creating staff deployment rules in a Scenario.  If you plan to use a portion of your available staff records (instead of all staff), or if you want to deploy some staff with a higher priority than others, to add a staff's resource type and/or the [[manual:user:organizations|organization]] they are associated with.
+  * [[manual:user:organizations|Organization]] information can be customized through the Organization module and, ideally, will be entered before staff are created (though staff records can be updated later).
+
+===== Walk-Through =====
+
+{{:manual:user:staff:newstaff.png|}}
+
+===== FAQ =====
+
+  * **What are Staff Resources?** - A "Staff Resource" is a person and their skills; for example a person with medical training can be labelled as a 'nurse' or 'doctor' in Agasti.  Later on, when a [[manual:user:scenario|scenario]] is created, deployment rules will also be created to dictate how staff will be assigned.  Instead of deploying individual staff the staff resource types will be determined and the available individuals matched to jobs.
+  * **Why not just assign people to facilities?** - It's hard to know when planning an emergency response who is going to be affected and who is going to be available to respond.  To ensure the most needed roles are filled Agasti waits to know who is available; which happens during an active event.
+====== Continue ======
+
+[[manual:user:staff:list|{{ :manual:user:next.png|}}]] 
+[[manual:user:staff:staff_creation_walkthrough|{{:manual:user:previous.png?135 }}]]
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+
+  - [[manual:user:staff:staff_creation_walkthrough|Introduction]]
+  - **Create New Staff**
+  - [[manual:user:staff:list|Listing Staff]]
+  - [[manual:user:staff:edit|Editing Staff Records]]
+  - [[manual:user:staff:import|Importing Staff]]
+  - [[manual:user:staff:export|Exporting Staff]]
+  - [[manual:user:staff:review|Staff Management Review]]

@@ -1,0 +1,44 @@
+====== Staff Management Walk-Through ======
+
+===== Introduction =====
+
+The Staff Management functionality in Sahana Agasti is designed to help administrators and emergency managers keep records of contact information and specialities of potential staff for an emergency response.  While the interface is designed to be intuitive to users this walk through will help guide a user through the steps of entering staff information, listing and editing that information, importing a spreadsheet, and exporting that information for other use.
+
+To help organize the information each page of the walk-through will contain the following sections:
+
+  * **What It Does** - A brief overview of the step's purpose when building the scenario.
+  * **Reference Information** - Details that may not be intuitive for some users or will be good reference information when building later scenarios.
+  * **Walk-Through** - A step by step detail of fields on the page and what to do next.
+  * **FAQ** - Frequently Asked Questions about that step and its repercussions later on.
+
+===== Getting Started =====
+
+It's time to get started in creating your first Staff record.  Keep this walk-through open while you progress through staff management and remember that you can always come back and edit the staff information later on if their information changes.
+
+To get started, use the menu to navigate to the Staff Management page.
+
+{{ :manual:user:staff:staff_select1.png?800 }}
+
+
+
+Next, select the link to create a staff record, "Create Staff".
+
+
+{{ :manual:user:staff:staff_create_highlight.png?800 }}
+
+
+
+[[manual:user:staff:new|{{ :manual:user:next.png|}}]] 
+After you've clicked the "Create Staff" link, click next in this tutorial.
+
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - **Introduction**
+  - [[manual:user:staff:new|Create New Staff]]
+  - [[manual:user:staff:list|Listing Staff]]
+  - [[manual:user:staff:edit|Editing Staff Records]]
+  - [[manual:user:staff:import|Importing Staff]]
+  - [[manual:user:staff:export|Exporting Staff]]
+  - [[manual:user:staff:review|Staff Management Review]]
