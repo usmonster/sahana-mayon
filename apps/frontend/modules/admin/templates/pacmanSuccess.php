@@ -1,4 +1,4 @@
-<?php use_javascript('json.serialize'); ?>
+<?php use_javascript('json.serialize.js'); ?>
 <script type="text/javascript">
 
 function pacTran() {

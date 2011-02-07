@@ -1,7 +1,7 @@
 <?php use_javascript('jquery.ui.custom.js'); ?>
 <?php //TODO: see if this is still necessary:
 use_javascript('tooltip');?>
-<?php use_javascript('json.serialize'); ?>
+<?php use_javascript('json.serialize.js'); ?>
 <?php use_javascript('inlineedit.js'); ?>
 
 

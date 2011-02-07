@@ -1,7 +1,7 @@
 <?php use_stylesheets_for_form($poolform) ?>
 <?php //use_javascript('tooltip');   ?>
 <?php use_javascript('jquery.ui.custom.js'); ?>
-<?php use_javascript('json.serialize'); ?>
+<?php use_javascript('json.serialize.js'); ?>
 <script type="text/javascript">
   function queryConstruct() {
     var out = Array();
