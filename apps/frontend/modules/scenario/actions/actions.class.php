@@ -135,7 +135,9 @@ class scenarioActions extends agActions
 //create / process form
 
     if ($request->isMethod('post')) {  //OR sfRequest::POST
-      $facilityGroups = $request->getPostParameters();
+//      $facilityGroups = $request->getPostParameters();
+      $facilityGroups = $request->getParameter('staff_resource');
+      unset($facilityGroups['_csrf_token']);
 //continuing workflow?
       if ($this->ag_scenario_facility_group) {
         foreach ($facilityGroups as $facilityGroup) {
@@ -144,7 +146,7 @@ class scenarioActions extends agActions
 //are we editing or updating?
             foreach ($facility as $facilityStaffResource) {
 // The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
-              $existing = Doctrine_Core::getTable('AgFacilityStaffResource')
+              $existing = Doctrine_Core::getTable('agFacilityStaffResource')
                       ->createQuery('agSFR')
                       ->select('agFSR.*')
                       ->from('agFacilityStaffResource agFSR')
@@ -152,14 +154,14 @@ class scenarioActions extends agActions
                       ->andWhere('agFSR.scenario_facility_resource_id = ?', $facilityStaffResource['scenario_facility_resource_id'])
                       ->fetchOne();
               if (!$existing) {
-                $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
+                $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $facilityStaffResource, $CSRFSecret = false);
               } else {
                 $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($existing, $options = array(), $CSRFSecret = false);
               }
               $facilityStaffResourceForm->bind($facilityStaffResource, null);
 //$facilityStaffResourceForm->updateObjectEmbeddedForms();
 //$facilityStaffResourceForm->updateObject($facilityStaffResourceForm->getTaintedValues()); //this fails
-              if ($facilityStaffResourceForm->isValid() && $facilityStaffResource['minimum_staff'] && $facilityStaffResource['maximum_staff']) {
+              if ($facilityStaffResourceForm->isValid() && isset($facilityStaffResource['minimum_staff']) && isset($facilityStaffResource['maximum_staff'])) {
                 /**
                  * @todo clean up for possible dirty data
                  *  This will not work cleanly, if someone hasn't entered a minimum AND maximum and the record exists it
