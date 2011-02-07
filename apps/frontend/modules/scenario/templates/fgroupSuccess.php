@@ -1,6 +1,6 @@
 <h2>Scenario Facility Groups</h2><br>
 <?php
-if ($scenarioFacilityGroups <> null) {
+if (count($scenarioFacilityGroups) > 0) {
   include_partial('facilityGroupTable', array('scenarioFacilityGroups' => $scenarioFacilityGroups, 'scenarioName' => $scenarioName));
 } else {
   echo '<h3>There are no facility groups associated with the <span class="highlightedText">' . $scenarioName . '</span> scenario</h3><br />';
