@@ -555,7 +555,7 @@ class scenarioActions extends agActions
               ->where('sfg.scenario_id = ?', $this->scenario_id)
               ->distinct()
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources);//sfForm(); //agShiftGeneratorContainerForm ??
+      $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources, $this->scenario_id);//sfForm(); //agShiftGeneratorContainerForm ??
 
 
       //for shift template workflow,
@@ -781,7 +781,7 @@ class scenarioActions extends agActions
               ->execute();
       $this->groupform = new agScenarioFacilityGroupForm();
       $this->groupform->getObject()->setAgScenario()->id = $
-          $this->redirect('scenario/newgroup');
+          $this->redirect('scenario/group');
     } else {
       $this->setTemplate('new');
     }
@@ -1096,7 +1096,7 @@ class scenarioActions extends agActions
                 ->execute();
         $this->groupform = new agScenarioFacilityGroupForm();
 //        $this->setTemplate('scenario/newgroup');
-        $this->redirect('scenario/newgroup?id=' . $ag_scenario->getId());
+        $this->redirect('scenario/fgroup?id=' . $ag_scenario->getId());
       } else {
         $this->redirect('scenario/edit?id=' . $ag_scenario->getId());
       }

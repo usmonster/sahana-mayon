@@ -12,10 +12,12 @@ class agShiftGeneratorForm extends sfForm
 {
 
   public $facility_staff_resources;
+  public $scenario_id;
 
-  public function __construct($facility_staff_resources)
+  public function __construct($facility_staff_resources, $scenario_id)
   {
     $this->facility_staff_resources = $facility_staff_resources;
+    $this->scenario_id = $scenario_id;
     parent::__construct(array(), array(), array());
   }
 
@@ -71,6 +73,7 @@ class agShiftGeneratorForm extends sfForm
         $shiftGenForm = new agEmbeddedShiftTemplateForm();
         $shiftGenForm->setDefault('facility_resource_type_id', $fsr['fr_facility_resource_type_id']);
         $shiftGenForm->setDefault('staff_resource_type_id', $fsr['fsr_staff_resource_type_id']);
+        $shiftGenForm->setDefault('scenario_id', $this->scenario_id);
 
         $this->embedForm('shift_gen' . $fsr['fr_facility_resource_type_id'] . $fsr['fsr_staff_resource_type_id'], $shiftGenForm);
         $this->widgetSchema->setLabel('shift_gen' . $fsr['fr_facility_resource_type_id'] . $fsr['fsr_staff_resource_type_id'], false);
@@ -83,12 +86,11 @@ class agShiftGeneratorForm extends sfForm
     /* embed a new shift_template form into the shifttemplate container */
 
     /* embed the shift template container form into the scenario form */
-    $this->scenario_id = $this->getOption('scenario_id');
-    $shiftTemplateForm = new agEmbeddedShiftTemplateForm();
-    $shiftTemplateForm->setDefault('scenario_id', $this->scenario_id);
-
-    $this->embedForm('new', $shiftTemplateForm);
-    $this->widgetSchema->setLabel(array('shift_template' => 'Shift Templates'));
+//    $shiftTemplateForm = new agEmbeddedShiftTemplateForm();
+//    $shiftTemplateForm->setDefault('scenario_id', $this->scenario_id);
+//
+//    $this->embedForm('new', $shiftTemplateForm);
+//    $this->widgetSchema->setLabel(array('shift_template' => 'Shift Templates'));
     /* for each of the shift templates, provide 5 preview scenario shifts */
   }
 

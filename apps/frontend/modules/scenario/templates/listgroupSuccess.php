@@ -24,4 +24,4 @@
         </tbody>
       </table>
 
-      <a href="<?php echo url_for('scenario/newgroup') ?>" class="buttonText" title="New Facility Group">New</a>
+      <a href="<?php echo url_for('scenario/fgroup') ?>" class="buttonText" title="New Facility Group">New</a>
