@@ -39,7 +39,16 @@ class eventActions extends agActions
             ->findByDql('id = ?', $this->event_id)
             ->getFirst()->event_name;
     //foreach facility
+
+    //$this->event_facility_resources = getFacilityResources();
     $this->fgroupForm = new agEventFacilityResourceActivationTimeForm();
+    $fgroupDec = new agWidgetFormSchemaFormatterRow($this->fgroupForm->getWidgetSchema());
+    $this->fgroupForm->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
+    $this->fgroupForm->getWidgetSchema()->setFormFormatterName('row');
+
+    unset($this->fgroupForm['created_at'], $this->fgroupForm['updated_at']);
+    
+
 
   }
 
