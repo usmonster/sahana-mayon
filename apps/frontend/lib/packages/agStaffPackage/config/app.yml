@@ -1,7 +1,7 @@
 all:
   .array:
     menu_children:
-      staff: { label: 'Staff', route: '@staff', parent: 'plan' }
+      staff: { label: 'Staff', route: '@staff', parent: 'prepare' }
     menu_grandchildren:
       staff_new: { label: 'Add New Staff', route: '@staff_create', parent: 'staff' }
       staff_list: { label: 'List Staff', route: '@staff_list', parent: 'staff' }
