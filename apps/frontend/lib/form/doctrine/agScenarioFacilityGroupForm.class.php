@@ -145,7 +145,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
           $agScenarioFacilityResource->scenario_facility_group_id = $this->getObject()->getId();
           $agScenarioFacilityResource->activation_sequence = $key +1;
           $agScenarioFacilityResource->facility_resource_id = $value;
-          $agScenarioFacilityResource->facility_resource_allocation_status_id = 4;
+          $agScenarioFacilityResource->facility_resource_allocation_status_id = 2; //ready / awaiting activation / committed  
         }
         $agScenarioFacilityResource->save();
       }

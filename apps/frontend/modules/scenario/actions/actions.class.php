@@ -438,7 +438,7 @@ class scenarioActions extends agActions
   {
     //if you are coming here from not within the workflow you fail and get 404
     $this->forward404Unless($request->getParameter('id'));
-
+    $this->ag_allocated_facility_resources = '';
     if ($request->getParameter('groupid')) {
       //if we are editing a facility group
       $this->forward404Unless($ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
@@ -549,7 +549,7 @@ class scenarioActions extends agActions
     $this->scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
             ->findByDql('scenario_id = ?', $this->scenario_id)
             ->getData();
-//    $this->ag_allocated_facility_resources = '';
+    $this->ag_allocated_facility_resources = '';
 
     $this->ag_facility_resources = Doctrine_Query::create()
             ->select('a.facility_id, af.*, afrt.*')

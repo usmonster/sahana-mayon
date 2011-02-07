@@ -44,8 +44,15 @@ class eventActions extends agActions
 
     //if user passed in facilitygroup_id we can add it to the facility group id
 
+    $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
     $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id);
-    $this->fgroupForm = new agFacilityResourceAcvitationForm();//$this->event_facility_resources);
+
+    $this->facilitygroupsForm = new sfForm();
+    $this->facilitygroupsForm->setWidgets(array(
+      'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $this->active_facility_groups))
+    ));
+
+    $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
 
 
     if ($request->isMethod('POST')) {
@@ -289,15 +296,13 @@ class eventActions extends agActions
   public function migrateScenarioToEvent($scenario_id, $event_id)
   {
 
-    if (null === $con) {
       $con = Doctrine_Manager::getInstance()->getConnectionForComponent('agEvent');
-    }
 
     try {
       $con->beginTransaction();
 
       // 1a. Regenerate scenario shift
-      //agScenarioGenerator::shiftGenerator();
+      agScenarioGenerator::shiftGenerator();
       // 1b. Copy Faciltiy Group
       // 1c. Copy Facility Resource
       // 1d. Copy over scenario shift

@@ -1,0 +1,101 @@
+<?php
+
+/**
+ * agFacilityResourceActivationForm class takes in an array of forms with which to construct
+ * a set of embedded forms
+ *
+ * Provides embedded subform for editing facility resources
+ *
+ * PHP Version 5
+ *
+ * LICENSE: This source file is subject to LGPLv3.0 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/lesser.html
+ *
+ * @author Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ */
+class agFacilityResourceAcvitationForm extends sfForm
+{
+
+  public $facility_resources;
+
+  /**
+   *
+   * @param $facility_resources a set of facility resources to iterate through and construct the form
+   */
+  public function __construct($facility_resources = null) //we should disallow null from coming in as we NEED an array of forms
+  {
+    $this->facility_resources = $facility_resources;
+    parent::__construct(array(), array(), array());
+  }
+
+  public function configure()
+  {
+    $this->widgetSchema->setNameFormat('facility_resource_activation[%s]');
+    $this->embedEventFacilityResourceActivationTimeForms();
+  }
+
+  public function embedEventFacilityResourceActivationTimeForms()
+  {
+    $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainerLabel($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('facilityStaffResourceConDeco', $facilityStaffResourceConDeco);
+    $this->getWidgetSchema()->setFormFormatterName('facilityStaffResourceConDeco');
+
+    if (isset($this->facility_resources)) {
+      foreach ($this->facility_resources as $facility_resource) {
+
+        $fgroupForm = new PluginagEventFacilityResourceActivationTimeForm();
+        $fgroupDec = new agWidgetFormSchemaFormatterRow($fgroupForm->getWidgetSchema());
+        $fgroupForm->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
+        $fgroupForm->getWidgetSchema()->setFormFormatterName('row');
+        $foo = new agEventFacilityResource();
+        $facility_type = $facility_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
+
+        $facility_name = $facility_resource->getAgFacilityResource()->getAgFacility()->facility_name;
+
+        $facility_label = $facility_name . ' : ' . $facility_type;
+        //$fgroupForm->setDefault('facility_resource_id', $foo->facility_resource_id);
+        //$fgroupForm->setDefault('event_facility_group_id', $foo->event_facility_group_id);
+        $fgroupForm->setDefault('event_facility_group_id', $facility_resource->event_facility_group_id);
+        $this->embedForm($facility_label, $fgroupForm);
+
+      }
+    } else {
+
+      //this portion should be removed entirely
+      $fgroupForm = new agEventFacilityResourceActivationTimeForm();
+      //$fgroupForm = new PluginagEventFacilityResourceActivationTimeForm();
+      $fgroupDec = new agWidgetFormSchemaFormatterRow($fgroupForm->getWidgetSchema());
+      $fgroupForm->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
+      $fgroupForm->getWidgetSchema()->setFormFormatterName('row');
+
+
+      $this->embedForm('new', $fgroupForm);
+    }
+  }
+
+  /**
+   * this is the only saving that takes place since the sfForm has nothing but embedded forms
+   * @param $con to maintain amorphism this interface is copied
+   * @param $forms to maintain amorphism this interface is copied
+   */
+//  public function saveEmbeddedForms($con = null, $forms = null)
+//  {
+//    if (isset($this->embeddedForms['lucene_search'])) {
+//      $form = $this->embeddedForms['lucene_search'];
+//      $values = $this->values['lucene_search'];
+//      $this->saveLuceneForm($form, $values);
+//      unset($this->embeddedForms['lucene_search']);
+//    }
+//
+//    if (isset($this->embeddedForms['staff_generator'])) {
+//      $form = $this->embeddedForms['staff_generator'];
+//      $values = $this->values['staff_generator'];
+//      $this->saveStaffGenForm($form, $values);
+//      unset($this->embeddedForms['staff_generator']);
+//    }
+//  }
+}
+
