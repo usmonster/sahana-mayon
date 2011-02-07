@@ -120,7 +120,7 @@ class adminActions extends sfActions
     $appConfig['all']['.array']['menu_top'] =
         array(
           'homepage' => array('label' => 'Home', 'route' => '@homepage'),
-          'plan' => array('label' => 'Plan', 'route' => '@homepage'),
+          'prepare' => array('label' => 'Prepare', 'route' => '@homepage'),
           'respond' => array('label' => 'Respond', 'route' => '@homepage'),
           'recover' => array('label' => 'Recover', 'route' => '@homepage'),
           'mitigate' => array('label' => 'Mitigate', 'route' => '@homepage'),
@@ -131,9 +131,9 @@ class adminActions extends sfActions
 
     $appConfig['all']['.array']['menu_children'] =
         array(
-          'facility' => array('label' => 'Facilities', 'route' => '@facility', 'parent' => 'plan'),
-          'org' => array('label' => 'Organizations', 'route' => '@org', 'parent' => 'plan'),
-          'scenario' => array('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'plan'),
+          'facility' => array('label' => 'Facilities', 'route' => '@facility', 'parent' => 'prepare'),
+          'org' => array('label' => 'Organizations', 'route' => '@org', 'parent' => 'prepare'),
+          'scenario' => array('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'prepare'),
           'activate' => array('label' => 'Activate a Scenario', 'route' => '@scenario', 'parent' => 'respond'),
           'event' => array('label' => 'Manage Events', 'route' => '@homepage', 'parent' => 'respond'),
           'event_active' => array('label' => 'Manage [Active Event]', 'route' => '@homepage', 'parent' => 'respond'));
