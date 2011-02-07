@@ -39,19 +39,20 @@ class eventActions extends agActions
             ->findByDql('id = ?', $this->event_id)
             ->getFirst()->event_name;
     //foreach facility
+    //$this->event_facility_resources = Doctrine_Query::create()
+    //  ->select('a')
 
-    //$this->event_facility_resources = getFacilityResources();
-    $this->fgroupForm = new agEventFacilityResourceActivationTimeForm();
-    $fgroupDec = new agWidgetFormSchemaFormatterRow($this->fgroupForm->getWidgetSchema());
-    $this->fgroupForm->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
-    $this->fgroupForm->getWidgetSchema()->setFormFormatterName('row');
+    //if user passed in facilitygroup_id we can add it to the facility group id
 
-    unset($this->fgroupForm['created_at'], $this->fgroupForm['updated_at']);
-    
+    $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id);
+    $this->fgroupForm = new agFacilityResourceAcvitationForm();//$this->event_facility_resources);
 
 
+    if ($request->isMethod('POST')) {
+      $this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
+      $this->redirect('event/active?id=' . $this->event_id);
+    }
   }
-
 
   public function executeDeploy(sfWebRequest $request)
   {
@@ -69,7 +70,7 @@ class eventActions extends agActions
             ->getFirst()->scenario;
     $this->checkResults = $this->preMigrationCheck($this->scenario_id);
 
-    if ($request->isMethod('POST')) {
+    if ($request->isMethod(sfRequest::POST)) {
       $this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
       $this->redirect('event/active?id=' . $this->event_id);
     }
@@ -234,8 +235,7 @@ class eventActions extends agActions
   public function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId)
   {
     $scenarioShifts = Doctrine_Core::getTable('agScenarioShift')->findby('scenario_facility_resource_id', $scenarioFacilityResourceId);
-    foreach($scenarioShifts as $scenShift)
-    {
+    foreach ($scenarioShifts as $scenShift) {
       // At this point all fields in agEventShifts will be populated with agScenarioShifts.  Only
       // the real time fields in agEvnetShifts will not be populated.  It will be done so at a later
       // time when agEventFacilityActivationTime is populated.
@@ -275,8 +275,8 @@ class eventActions extends agActions
       $unAvailableStaffStatus = Doctrine_Core::getTable('agStaffAllocationStatus')->findby('staff_allocation_status', 'unavailable');
       $eventStaffStatus = new agEventStaffStatus();
       $eventStaffStatus->set('event_staff-id', $eventStaff->id)
-              ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
-              ->set('staff_allocation_status_id', $unAvailableStaffStatus);
+          ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
+          ->set('staff_allocation_status_id', $unAvailableStaffStatus);
       $eventStaffStatus->free(TRUE);
 
       $eventStaff->free(TRUE);
@@ -350,7 +350,10 @@ class eventActions extends agActions
 
   public function executeActive(sfWebRequest $request)
   {
-
+    $this->event_id = $request->getParameter('id');
+    $this->eventName = Doctrine::getTable('agEvent')
+            ->findByDql('id = ?', $this->event_id)
+            ->getFirst()->event_name;
   }
 
   public function executeStaff(sfWebRequest $request)

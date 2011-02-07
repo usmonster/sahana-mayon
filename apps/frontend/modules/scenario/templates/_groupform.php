@@ -5,14 +5,16 @@ use_javascript('tooltip.js'); ?>
 <?php use_javascript('json.serialize.js'); ?>
 <script type="text/javascript">
   $(function() {
+    $("#available li").bind("dblclick", function(){
+      return !$(this).remove().appendTo('#allocated')
+    });
+    $("#allocated li").bind("dblclick", function(){
+      return !$(this).remove().appendTo('#available')
+    });
+
     $( "#available, #allocated" ).sortable({
       connectWith: ".bucket"
     }).disableSelection();
-  });
-
-  $( "#available > li" ).dblclick(
-    function() {
-      return !$(this).parent().remove($(this)).appendTo('#allocated')
   });
 
   $('#available > li').tooltip();
@@ -36,13 +38,9 @@ use_javascript('tooltip.js'); ?>
   facility group, you will need javascript enabled</noscript>
 <form name="faciliy_group_form" id="facility_group_form" action="<?php
 echo url_for
-    ('scenario/fgroup?id='.  $scenario_id) . (!$groupform->getObject()->isNew() ? '?groupid=' . $groupform->getObject()->getId() : '') ?>
+    ('scenario/fgroup?id=' . $scenario_id) . (!$groupform->getObject()->isNew() ? '?groupid=' . $groupform->getObject()->getId() : '') ?>
       " method="post" <?php $groupform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 
-  <?php if (!$groupform->getObject()->isNew()): ?>
-
-    <input type="hidden" name="sf_method" value="put" />
-  <?php endif; ?>
     <div>
     <?php
     $groupFormDeco = new agWidgetFormSchemaFormatterInlineTopLabel($groupform->getWidgetSchema());
@@ -80,22 +78,21 @@ echo url_for
            */
           echo "<li id=" . $curopt->facility_resource_id . ">" .
           $currentoptions[$curopt->facility_resource_id] .
-          "</li>"; 
+          "</li>";
         }
       }
       ?>
     </ul>
   </div>
-      <br/>
-      <div class="tooltips" >
-        <span id="allocated_tip">
+  <br/>
+  <div class="tooltips" >
+    <span id="allocated_tip">
       <?php echo "urltowiki/allocated_tooltip"; ?>
     </span>
   </div>
   <br />
   <?php if (!$groupform->getObject()->isNew()): ?>
-        &nbsp;<?php echo link_to('Delete', 'scenario/deletegroup?id=' .
-            $groupform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?')) ?>
+        <input class="linkButton" type="submit" value="Delete" name="Delete"/>
   <?php endif; ?>
         <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>
         <input class="linkButton" type="submit" value="Save and Continue" name="Continue" onclick="serialTran()"/>

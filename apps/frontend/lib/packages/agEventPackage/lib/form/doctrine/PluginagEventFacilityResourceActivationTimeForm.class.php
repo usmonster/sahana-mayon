@@ -10,4 +10,9 @@
  */
 abstract class PluginagEventFacilityResourceActivationTimeForm extends BaseagEventFacilityResourceActivationTimeForm
 {
+  public function setup(){
+    parent::setup();
+    unset($this['created_at'], $this['updated_at']);
+    $this->setWidget('event_facility_resource_id', new sfWidgetFormInputHidden());
+  }
 }

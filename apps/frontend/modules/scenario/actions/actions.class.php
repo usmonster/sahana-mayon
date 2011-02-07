@@ -479,7 +479,30 @@ class scenarioActions extends agActions
     }
 
     if ($request->isMethod(sfRequest::POST)) {
-      // bind the form to it's values
+
+      if ($request->getParameter('Delete')) {
+
+        $ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('groupid')));
+
+        $fgroupRes = $ag_scenario_facility_group->getAgScenarioFacilityResource();
+
+        //get all facility resources associated with the facility group
+        foreach ($fgroupRes as $fRes) {
+          //get all shifts associated with each facility resource associated with the facility group
+          $fResShifts = $fRes->getAgScenarioShift();
+          foreach ($fResShifts as $resShift) {
+            $resShift->delete();
+          }
+          $fRes->delete();
+        }
+        $ag_scenario_facility_group->delete();
+
+        $this->redirect('scenario/fgroup?id=' . $request->getParameter('id'));
+      }
+
+      // if we are saving/udpating: bind the form to it's values
+
+
       $this->groupform->bind($request->getParameter($this->groupform->getName()), $request->getFiles($this->groupform->getName()));
 
       if ($this->groupform->isValid()) {
@@ -557,9 +580,7 @@ class scenarioActions extends agActions
               ->where('sfg.scenario_id = ?', $this->scenario_id)
               ->distinct()
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources, $this->scenario_id);//sfForm(); //agShiftGeneratorContainerForm ??
-
-
+      $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
       //for shift template workflow,
 //get current facility_staff_resource,
       //get the facility resource type ids and staff_resource_type
@@ -980,33 +1001,6 @@ class scenarioActions extends agActions
 
 
     $this->redirect('scenario/list');
-  }
-
-  /**
-   *
-   * @param sfWebRequest $request
-   * processing the deletion of a facility group
-   */
-  public function executeDeletegroup(sfWebRequest $request)
-  {
-    $request->checkCSRFProtection();
-
-    $this->forward404Unless($ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_facility_group does not exist (%s).', $request->getParameter('id')));
-
-    $fgroupRes = $ag_scenario_facility_group->getAgScenarioFacilityResource();
-
-    //get all facility resources associated with the facility group
-    foreach ($fgroupRes as $fRes) {
-      //get all shifts associated with each facility resource associated with the facility group
-      $fResShifts = $fRes->getAgScenarioShift();
-      foreach ($fResShifts as $resShift) {
-        $resShift->delete();
-      }
-      $fRes->delete();
-    }
-    $ag_scenario_facility_group->delete();
-
-    $this->redirect('scenario/listgroup');
   }
 
   /**
