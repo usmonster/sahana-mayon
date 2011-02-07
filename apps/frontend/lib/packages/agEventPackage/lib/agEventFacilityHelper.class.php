@@ -23,6 +23,7 @@ class agEventFacilityHelper
         ->addSelect('f.facility_name')
         ->addSelect('f.facility_code')
         ->addSelect('frt.facility_resource_type')
+        ->addSelect('ras.standby')
         ->addSelect('ras.facility_resource_allocation_status')
         ->addSelect('es.minutes_start_to_facility_activation')
         ->addSelect('f.id')
