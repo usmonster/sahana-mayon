@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Staff Actions extends sfActions
+ * Staff Actions extends agActions
  *
  * PHP Version 5
  *

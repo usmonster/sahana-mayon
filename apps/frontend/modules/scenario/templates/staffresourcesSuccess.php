@@ -31,6 +31,7 @@ blank.  <b>A facility resource must have at least one staff resource entered.</b
     include_partial('staffresourceform', array(
       'formsArray' => $formsArray,
       //'scenarioFacilityGroupId' => $scenarioFacilityGroup->id,
+      'facilityStaffResourceContainer' => $facilityStaffResourceContainer,
       'array' => $arrayBool,
       'scenario' => $scenario,
         // 'ag_facility_resources' => $ag_facility_resources,

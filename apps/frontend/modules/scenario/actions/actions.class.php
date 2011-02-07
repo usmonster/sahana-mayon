@@ -113,7 +113,7 @@ class scenarioActions extends agActions
    */
   public function executeStaffresources(sfWebRequest $request)
   {
-    //get the needed variables regardless of what action you are performing to staff resources
+//get the needed variables regardless of what action you are performing to staff resources
     $this->scenario = Doctrine::getTable('agScenario')
             ->findByDql('id = ?', $request->getParameter('id'))
             ->getFirst();
@@ -128,6 +128,10 @@ class scenarioActions extends agActions
             ->execute();
     $this->staffresourceform = new agStaffResourceRequirementForm();
 
+
+
+    //this came from the _staffresources partial
+    //construct our top level form, with all forms contained, and pass to the view
 //create / process form
 
     if ($request->isMethod('post')) {  //OR sfRequest::POST
@@ -237,7 +241,7 @@ class scenarioActions extends agActions
           }
         }
       } else {
-//single group or an array?
+//single group or an array? at this point should always be an array... or not matter
         $this->arrayBool = false;
         foreach ($this->scenarioFacilityGroup->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
           foreach ($this->staffResourceTypes as $srt) {
@@ -258,6 +262,7 @@ class scenarioActions extends agActions
 //this is not right, but works (we can't directly modify a property of $this in our loop above)
       $this->formsArray = $formsArray;
     }
+    $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray);
   }
 
   /**
@@ -294,7 +299,7 @@ class scenarioActions extends agActions
   /**
    *
    * @param sfWebRequest $request
-   * making a staff pool is fun and easy with Agasti,
+   * making a staff pool is fun and easy with Agasti.
    */
   public function executeStaffpool(sfWebRequest $request)
   {
@@ -331,8 +336,8 @@ class scenarioActions extends agActions
     $this->filterForm->getWidget('staff_org')->setAttribute('class', 'filter');
 
     if ($request->isMethod(sfRequest::POST)) {
-      //$request->checkCSRFProtection();
-      //OR if coming from an executed search
+//$request->checkCSRFProtection();
+//OR if coming from an executed search
       if ($request->getParameter('Preview')) {
         $postParam = $request->getPostParameter('staff_pool');
         $staff_generator = $postParam['staff_generator'];
@@ -341,21 +346,21 @@ class scenarioActions extends agActions
         $this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']);
         $this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
         $this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
-        //$this->poolform->staff_generator->setDefault('search_weight', $staff_generator['search_weight']);
+//$this->poolform->staff_generator->setDefault('search_weight', $staff_generator['search_weight']);
         $this->filterForm->setDefault('staff_type', $request->getPostParameter('staff_type'));
         $this->filterForm->setDefault('staff_org', $request->getPostParameter('staff_org'));
-        //$query_condition = implode(' AND ', $lucene_query);
+//$query_condition = implode(' AND ', $lucene_query);
         parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {
 
         $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
         $luceneQuery = $ag_staff_gen->getAgLuceneSearch();
-        //get the related lucene search
+//get the related lucene search
         $ag_staff_gen->delete();
         $luceneQuery->delete();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       } elseif ($request->getParameter('Save')) {
-        //otherwise, we're SAVING/UPDATING
+//otherwise, we're SAVING/UPDATING
         $this->poolform = new agStaffPoolForm();
         $this->poolform->scenario_id = $request->getParameter('id');
         $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
@@ -378,7 +383,7 @@ class scenarioActions extends agActions
                   ->where('asr.id is NULL')
                   ->andWhereIn('a.staff_id', $staff_id)
                   ->andWhere('asr.scenario_id =?', $this->scenario_id)
-  //              ->andWhere('a.id NOT EXISTS (SELECT ssr.staff_resource_id FROM agScenarioStaffResource ssr WHERE ssr.scenario_id = ?)', $this->scenario_id)
+//              ->andWhere('a.id NOT EXISTS (SELECT ssr.staff_resource_id FROM agScenarioStaffResource ssr WHERE ssr.scenario_id = ?)', $this->scenario_id)
                   ->execute(array(), 'single_value_array');
           foreach ($staff_resources as $staff_resource) {
             $scenario_staff_resource = new agScenarioStaffResource();
@@ -392,7 +397,7 @@ class scenarioActions extends agActions
         }
       } else {
 
-        //or, just make a new form
+//or, just make a new form
         $this->poolform = new agStaffPoolForm();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
@@ -423,27 +428,104 @@ class scenarioActions extends agActions
 
   /**
    *
-   * @param sfWebRequest $request
-   * generates and passes a new facility group form to the view
+   * @param sfWebRequest $request holds request data
+   * this function sets up and processes the facility group form, providing all needed data to the groupform
+   * template, depending on what CRUD operation the user is performing,
    */
-  public function executeNewgroup(sfWebRequest $request)
+  public function executeFgroup(sfWebRequest $request)
   {
-    if ($request->getParameter('id')) {
-      $this->groupform = new agScenarioFacilityGroupForm();
-      //$this->getUser()->getAttribute('scenario_id')
-      $this->groupform->setDefault('scenario_id', $request->getParameter('id'));
-      // Hide the scenario field if this group is being created through scenario workflow.
-      $this->groupform->setWidget('scenario_id', new sfWidgetFormInputHidden());
+    //if you are coming here from not within the workflow you fail and get 404
+    $this->forward404Unless($request->getParameter('id'));
+
+    if ($request->getParameter('groupid')) {
+      //if we are editing a facility group
+      $this->forward404Unless($ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
+              ->createQuery('a')
+              ->select('a.*, afr.*, afgt.*, afrt.*, afgas.*, fr.*, af.*, s.*')
+              ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, afr.agFacilityResource fr, fr.agFacility af, a.agScenario s, fr.agFacilityResourceType afrt')
+              ->where('a.id = ?', $request->getParameter('groupid'))
+              ->fetchOne(), sprintf('Object ag_scenario_facility_group does not exist (%s).', $request->getParameter('groupid')));
+
+      $this->groupform = new agScenarioFacilityGroupForm($ag_scenario_facility_group);
+
+      $current = $ag_scenario_facility_group->getAgScenarioFacilityResource();
+
+      $current->setKeyColumn('activation_sequence');
+      //index these by the activation sequence
+      $currentoptions = array();
+      foreach ($current as $curopt) {
+        $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
+        /**
+         * @todo [$curopt->activation_sequence] needs to still be applied to the list,
+         */
+      }
+      $this->ag_allocated_facility_resources = $current;
+
+      /**
+       * @todo why is this returning a string to the view/template??????? ^^^^^^^
+       *        for 10 points: get the allocated facility resources to the edit page.
+       *
+       */
+      $this->ag_facility_resources = Doctrine_Query::create()
+              ->select('a.facility_id, af.*, afrt.*')
+              ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+              ->whereNotIn('a.id', array_keys($currentoptions))->execute();
     } else {
+      //set us up the form for a new facility group
       $this->groupform = new agScenarioFacilityGroupForm();
+      $this->groupform->setDefault('scenario_id', $request->getParameter('id'));
     }
+
+    if ($request->isMethod(sfRequest::POST)) {
+      // bind the form to it's values
+      $this->groupform->bind($request->getParameter($this->groupform->getName()), $request->getFiles($this->groupform->getName()));
+
+      if ($this->groupform->isValid()) {
+        $ag_scenario_facility_group = $this->groupform->save();
+        LuceneRecord::updateLuceneRecord($ag_scenario_facility_group);
+
+//      Keep these lines here. They are the first steps of investigation into solving the permissions
+//      issue on reindex.
+//
+//      Zend_Search_Lucene_Storage_Directory_Filesystem::setDefaultFilePermissions('0775');
+//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+//      $task = new luceneReindexTask($this->dispatcher, new sfFormatter());
+//      $task->run(array(), array('connection' => 'doctrine'));
+
+        $scenario_id = $ag_scenario_facility_group->getAgScenario()->getId();
+        $c = $ag_scenario_facility_group->getAgScenarioFacilityResource();
+        // The Group object has been created here.
+        if ($request->hasParameter('Continue')) {
+          //$this->getUser()->setAttribute('staffResourceTypes', $this->staffResourceTypes);
+          $this->redirect('scenario/staffresources?id=' . $scenario_id);
+        } elseif ($request->hasParameter('Another')) {
+          $this->redirect('scenario/fgroup?id=' . $scenario_id);
+        } elseif ($request->hasParameter('AssignAll')) {
+          $groups = Doctrine::getTable('agScenarioFacilityGroup')
+                  ->findByDql('scenario_id = ?', $scenario_id)
+                  ->getData();
+          $this->redirect('scenario/staffresources?id=' . $scenario_id);
+        } elseif ($request->hasParameter('groupid')) {
+          //if this is an existing facility group we are editing.
+          $ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('groupid')));
+          $this->groupform = new agScenarioFacilityGroupForm($ag_scenario_facility_group);
+          $this->redirect('scenario/fgroup?groupid=' . $ag_scenario_facility_group->getId()); //redirect the user to edit the facilitygroup
+        } else {
+          $this->redirect('scenario/edit?id=' . $scenario_id);
+          //save and bring back to scenario edit page? or should goto review page.
+        }
+      }
+    }
+    //set up some things to show up on the screen for our form
+    $this->scenario_id = $request->getParameter('id');
     $this->scenarioName = Doctrine::getTable('agScenario')
-            ->findByDql('id = ?', $request->getParameter('id'))
+            ->findByDql('id = ?', $this->scenario_id)
             ->getFirst()->scenario;
     $this->scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
-            ->findByDql('scenario_id = ?', $request->getParameter('id'))
+            ->findByDql('scenario_id = ?', $this->scenario_id)
             ->getData();
     $this->ag_allocated_facility_resources = '';
+
     $this->ag_facility_resources = Doctrine_Query::create()
             ->select('a.facility_id, af.*, afrt.*')
             ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
@@ -458,7 +540,27 @@ class scenarioActions extends agActions
   {
     if ($this->scenario_id = $request->getParameter('id')) {
       $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-      $this->shifttemplateform = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id)); //this was from edit
+      //if we pass the scenario here, we can also get the staff resources set
+      //in adition to using the staff resources set, this would be a good place to let the user know that there were some staff resources not designated for
+      //the shift template step, so there may need to be some manual shift template creation, i.e. i didn't say i need at least 2 nurses in a hurricane shelter
+
+      $facility_staff_resources = Doctrine_Query::create()
+              ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
+              ->from('agFacilityStaffResource fsr')
+              //joined to the facility groups in this scenario
+              ->leftJoin('agScenarioFacilityResource sfr, sfr.agFacilityResource fr, sfr.agScenarioFacilityGroup sfg')
+              //->leftJoin('agScenarioFacilityGroup sfg, sfg.agScenarioFacilityResource sfr, sfr.agFacilityResource fr')
+              //scenario facility resource id
+              //where facility staff resource .staff resource type =
+              ->where('sfg.scenario_id = ?', $this->scenario_id)
+              ->distinct()
+              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources);//sfForm(); //agShiftGeneratorContainerForm ??
+
+
+      //for shift template workflow,
+//get current facility_staff_resource,
+      //get the facility resource type ids and staff_resource_type
     }
     if ($request->isMethod(sfRequest::POST)) {
       $this->shifttemplateform->bind($request->getParameter($this->shifttemplateform->getName()), $request->getFiles($this->shifttemplateform->getName()));
@@ -686,24 +788,6 @@ class scenarioActions extends agActions
   }
 
   /**
-   *
-   * @param sfWebRequest $request
-   * triggers the creation of a facility group
-   */
-  public function executeGroupcreate(sfWebRequest $request)
-  {
-    $this->forward404Unless($request->isMethod(sfRequest::POST));
-
-    $this->groupform = new agScenarioFacilityGroupForm();
-
-    $this->processGroupform($request, $this->groupform);
-
-    //somewhere here we need to forward, because we need to pass scenario
-
-    $this->setTemplate('newgroup');
-  }
-
-  /**
    * @todo what's this do?
    * @param sfWebRequest $request
    */
@@ -794,41 +878,6 @@ class scenarioActions extends agActions
   }
 
   /**
-   *
-   * @param sfWebRequest $request
-   * creates a facility group form populated with info for the requested facility group
-   */
-  public function executeEditgroup(sfWebRequest $request)
-  {
-    $this->forward404Unless($ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
-            ->createQuery('a')
-            ->select('a.*, afr.*, afgt.*, afrt.*, afgas.*, fr.*, af.*, s.*')
-            ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, afr.agFacilityResource fr, fr.agFacility af, a.agScenario s, fr.agFacilityResourceType afrt')
-            ->where('a.id = ?', $request->getParameter('id'))
-            ->fetchOne(), sprintf('Object ag_scenario_facility_group does not exist (%s).', $request->getParameter('groupid')));
-
-    $this->groupform = new agScenarioFacilityGroupForm($ag_scenario_facility_group);
-
-    $current = $ag_scenario_facility_group->getAgScenarioFacilityResource();
-    $current->setKeyColumn('activation_sequence');
-    //index these by the activation sequence
-    $currentoptions = array();
-    foreach ($current as $curopt) {
-      $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
-      /**
-       * @todo [$curopt->activation_sequence] needs to still be applied to the list,
-       */
-    }
-
-    $this->ag_allocated_facility_resources = $current;
-
-    $this->ag_facility_resources = Doctrine_Query::create()
-            ->select('a.facility_id, af.*, afrt.*')
-            ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-            ->whereNotIn('a.id', array_keys($currentoptions))->execute();
-  }
-
-  /**
    * @todo what's this do?
    * @param sfWebRequest $request
    */
@@ -870,22 +919,6 @@ class scenarioActions extends agActions
     $this->processForm($request, $this->form);
 
     $this->setTemplate('edit');
-  }
-
-  /**
-   *
-   * @param sfWebRequest $request
-   * processing the update of a facility group
-   */
-  public function executeGroupupdate(sfWebRequest $request)
-  {
-    $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
-    $this->forward404Unless($ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_facility_group does not exist (%s).', $request->getParameter('id')));
-    $this->groupform = new agScenarioFacilityGroupForm($ag_scenario_facility_group);
-
-    $this->processGroupform($request, $this->groupform);
-
-    $this->setTemplate('editgroup');
   }
 
   /**
@@ -1084,49 +1117,6 @@ class scenarioActions extends agActions
       $ag_facility_group_type = $grouptypeform->save();
 
       $this->redirect('scenario/grouptype');
-    }
-  }
-
-  /**
-   *
-   * @param sfWebRequest $request
-   * @param sfForm $groupform
-   *
-   * processing the facility group form
-   */
-  protected function processGroupform(sfWebRequest $request, sfForm $groupform)
-  {
-    $groupform->bind($request->getParameter($groupform->getName()), $request->getFiles($groupform->getName()));
-    if ($groupform->isValid()) {
-      $ag_scenario_facility_group = $groupform->save();
-      LuceneRecord::updateLuceneRecord($ag_scenario_facility_group);
-
-//      Keep these lines here. They are the first steps of investigation into solving the permissions
-//      issue on reindex.
-//
-//      Zend_Search_Lucene_Storage_Directory_Filesystem::setDefaultFilePermissions('0775');
-//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-//      $task = new luceneReindexTask($this->dispatcher, new sfFormatter());
-//      $task->run(array(), array('connection' => 'doctrine'));
-
-      $scenario_id = $ag_scenario_facility_group->getAgScenario()->getId();
-      $c = $ag_scenario_facility_group->getAgScenarioFacilityResource();
-      // The Group object has been created here.
-      if ($request->hasParameter('Continue')) {
-        //$this->getUser()->setAttribute('staffResourceTypes', $this->staffResourceTypes);
-        $this->redirect('scenario/staffresources?id=' . $scenario_id);
-//        $this->executeNewstaffresources($request);
-      } elseif ($request->hasParameter('Another')) {
-        $this->redirect('scenario/newgroup?id=' . $scenario_id);
-      } elseif ($request->hasParameter('AssignAll')) {
-        $groups = Doctrine::getTable('agScenarioFacilityGroup')
-                ->findByDql('scenario_id = ?', $scenario_id)
-                ->getData();
-        $this->redirect('scenario/staffresources?id=' . $scenario_id);
-      } else {
-        $this->redirect('scenario/edit?id=' . $scenario_id);
-      }
-      $this->redirect('scenario/editgroup?groupid=' . $ag_scenario_facility_group->getId());
     }
   }
 

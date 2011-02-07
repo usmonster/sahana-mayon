@@ -10,8 +10,9 @@ use_javascript('tooltip.js'); ?>
     }).disableSelection();
   });
 
-  jQuery('#available > li').tooltip();
-  jQuery('#allocated > li').tooltip({
+
+  $('#available > li').tooltip();
+  $('#allocated > li').tooltip({
     bodyHandler: function() {
       return $('#allocated_tip').text();
     },
@@ -29,11 +30,9 @@ use_javascript('tooltip.js'); ?>
 </script>
 <noscript>in order to set the activation sequence of resource facilities and add them to the
   facility group, you will need javascript enabled</noscript>
-
 <form name="faciliy_group_form" id="facility_group_form" action="<?php
 echo url_for
-    ('scenario/group' . ($groupform->getObject()->isNew() ? 'create' : 'update') .
-    (!$groupform->getObject()->isNew() ? '?id=' . $groupform->getObject()->getId() : '')) ?>
+    ('scenario/fgroup?id='.  $scenario_id) . (!$groupform->getObject()->isNew() ? '?groupid=' . $groupform->getObject()->getId() : '') ?>
       " method="post" <?php $groupform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 
   <?php if (!$groupform->getObject()->isNew()): ?>
@@ -54,18 +53,17 @@ echo url_for
   <div class="bucketHolder" >
     <ul id="available" class="bucket">
       <?php
-      foreach ($ag_facility_resources as $staff_geo) {
-        echo '<li id="' . $staff_geo->getId() . '" title="' .
-        $staff_geo->getAgFacilityResourceType() . '">' .
-        $staff_geo->getAgFacility()->getFacilityName() . ': ' .
-        ucwords($staff_geo->getAgFacilityResourceType()->facility_resource_type) .
+      foreach ($ag_facility_resources as $facility_resource) {
+        echo '<li id="' . $facility_resource->getId() . '" title="' .
+        $facility_resource->getAgFacilityResourceType() . '">' .
+        $facility_resource->getAgFacility()->getFacilityName() . ': ' .
+        ucwords($facility_resource->getAgFacilityResourceType()->facility_resource_type) .
         '</li>'; //we could set the id here to a set of ids
       }
       ?>
     </ul>
     <ul id="allocated" class="bucket">
       <?php
-      $currentoptions = array();
       if ($ag_allocated_facility_resources) {
         foreach ($ag_allocated_facility_resources as $curopt) {
           $currentoptions[$curopt->facility_resource_id] =
@@ -78,14 +76,12 @@ echo url_for
            */
           echo "<li id=" . $curopt->facility_resource_id . ">" .
           $currentoptions[$curopt->facility_resource_id] .
-          "</li>"; //we could set the id here to a set of ids
+          "</li>"; 
         }
       }
       ?>
     </ul>
   </div>
-
-  <?php //for shirley's purposes, we need to disable items from a list that already exist in the other list.  ?>
       <br/>
       <div class="tooltips" >
         <span id="allocated_tip">

@@ -60,7 +60,9 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'facility_resource_type_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'), 'add_empty' => false)),
       'staff_resource_type_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => false)),
       'task_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agTask'), 'add_empty' => false)),
-      'task_length_minutes' => new sfWidgetFormInputText(array(), array('class' => 'inputGray', 'style' => 'width:30px;')),
+      //'task_length_minutes' => new sfWidgetFormInputText(array(), array('class' => 'inputGray', 'style' => 'width:30px;')),
+      'task_length_minutes' => new sfWidgetFormJQueryTime(array(), array('class' => 'inputGray', 'style' => 'width:30px;')),
+      //still comes in as text, still comes in as time, validator/converter in actions
       'break_length_minutes' => new sfWidgetFormInputText(array(), array('class' => 'inputGray', 'style' => 'width:30px;')),
       'minutes_start_to_facility_activation' => new sfWidgetFormInputText(array(), array('class' => 'inputGray', 'style' => 'width:30px;')),
       'shift_repeats' => new sfWidgetFormInputText(array(), array('class' => 'inputGray', 'style' => 'width:30px;')),
@@ -80,6 +82,7 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'staff_resource_type_id' => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agStaffResourceType'))),
       'task_id' => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agTask'))),
       'task_length_minutes' => new sfValidatorInteger(array('required' => false)),
+      //normally this is time coming in, maybe it should be and we add a validator in transit
       'break_length_minutes' => new sfValidatorInteger(array('required' => false)),
       'minutes_start_to_facility_activation' => new sfValidatorInteger(array('required' => false)),
       'shift_repeats' => new sfValidatorInteger(array('required' => false)),

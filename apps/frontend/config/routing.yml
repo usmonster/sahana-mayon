@@ -44,10 +44,10 @@ scenario_search:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action search }
 
-scenario_new_group:
-  url:     /scenario/:id/newgroup
+scenario_fgroup:
+  url:     /scenario/:id/fgroup
   options: { model: agScenario, type: object }
-  param:   { module: scenario, action: newgroup }
+  param:   { module: scenario, action: fgroup }
 
 scenario_new_shift_templates:
   url:     /scenario/:id/newshifttemplates
