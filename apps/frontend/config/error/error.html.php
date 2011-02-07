@@ -13,7 +13,7 @@
     <meta name="language" content="en" />
     <title>Sahana Agasti 2.0</title>
 
-    <link rel="shortcut icon" href="<?php echo url_for('images/favicon.ico') ?>" />
+    <link rel="shortcut icon" href="<?php echo $path ?>/images/favicon.ico" />
     <link rel="stylesheet" type="text/css" media="screen" href="<?php echo $path ?>/sf/sf_default/css/screen.css" />
     <!--[if lt IE 7.]>
     <link rel="stylesheet" type="text/css" media="screen" href="<?php echo $path ?>/sf/sf_default/css/ie.css" />
