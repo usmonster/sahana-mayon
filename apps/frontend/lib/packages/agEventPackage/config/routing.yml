@@ -8,6 +8,11 @@ event_active:
   options: { model: agEvent, type: object }
   param:   { module: event, action: active }
 
+event_fgroup:
+  url:     /event/:id/fgroup
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: fgroup }
+
 event_listgroups:
   url:     /event/:id/listgroups
   options: { model: agEvent, type: object }

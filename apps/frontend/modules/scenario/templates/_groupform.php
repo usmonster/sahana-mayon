@@ -2,7 +2,7 @@
 <?php use_javascript('jquery.ui.custom.js'); ?>
 <?php //TODO: see if this is still necessary:
 use_javascript('tooltip.js'); ?>
-<?php use_javascript('json.serialize'); ?>
+<?php use_javascript('json.serialize.js'); ?>
 <script type="text/javascript">
   $(function() {
     $( "#available, #allocated" ).sortable({
@@ -10,6 +10,10 @@ use_javascript('tooltip.js'); ?>
     }).disableSelection();
   });
 
+  $( "#available > li" ).dblclick(
+    function() {
+      return !$(this).parent().remove($(this)).appendTo('#allocated')
+  });
 
   $('#available > li').tooltip();
   $('#allocated > li').tooltip({

@@ -32,6 +32,18 @@ class eventActions extends agActions
             ->execute();
   }
 
+  public function executeFgroup(sfWebRequest $request)
+  {
+    $this->event_id = $request->getParameter('id');
+    $this->eventName = Doctrine::getTable('agEvent')
+            ->findByDql('id = ?', $this->event_id)
+            ->getFirst()->event_name;
+    //foreach facility
+    $this->fgroupForm = new agEventFacilityResourceActivationTimeForm();
+
+  }
+
+
   public function executeDeploy(sfWebRequest $request)
   {
     $this->event_id = $request->getParameter('id');
