@@ -16,6 +16,31 @@
 
 class agEventFacilityHelper
 {
+  public static function returnActiveFacilityGroups ($eventId)
+  {
+    $query = Doctrine_Query::create()
+      ->select('efg.id')
+        ->addSelect('efg.event_facility_group')
+        ->addSelect('fgt.facility_group_type')
+        ->addSelect('fgt.id')
+      ->from('agEventFacilityGroup efg')
+        ->innerJoin('efg.agFacilityGroupType fgt')
+        ->innerJoin('efg.agEventFacilityGroupStatus egs')
+        ->innerJoin('egs.agFacilityGroupAllocationStatus gas')
+      ->where('efg.event_id = ?', $eventId)
+        ->andWhere('gas.active = ?', true)
+        ->andWhere('EXISTS (
+          SELECT efgs.id
+            FROM agEventFacilityGroupStatus efgs
+            WHERE efgs.event_facility_group_id = egs.id
+              AND efgs.time_stamp <= CURRENT_TIMESTAMP
+            HAVING MAX(efgs.time_stamp) = egs.time_stamp)') ;
+    
+    $results = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    
+    return $results ;
+  }
+
   public static function returnFacilityResourceActivation ($eventId, $eventFacilityGroupId = '%', $facilityStandbyStatus='%') //might break with wildcard defaults
   {
     $query = Doctrine_Query::create()
