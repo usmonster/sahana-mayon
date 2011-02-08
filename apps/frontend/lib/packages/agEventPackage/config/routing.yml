@@ -14,7 +14,7 @@ event_fgroup:
   param:   { module: event, action: fgroup }
 
 event_listgroups:
-  url:     /event/:id/listgroups
+  url:     /event/:event/listgroups
   options: { model: agEvent, type: object }
   param:   { module: event, action: listgroups }
 
@@ -24,6 +24,6 @@ event_editgroup:
   param:   { module: event, action: editgroup }
 
 event_groupdetail:
-  url:     /event/:eid/groupdetail/:id
+  url:     /event/:event/groupdetail/:group
   options: { model: agEvent, type: object }
   param:   { module: event, action: groupdetail }

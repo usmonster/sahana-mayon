@@ -672,6 +672,10 @@ th .tableRow {
   border-bottom: solid 1px #bcbcbc;
 }
 
+.singleTable th {
+  padding: .25em 1em;
+}
+
 /*.staffTable a, .singleTable a {
   text-decoration: none;
   outline: none;

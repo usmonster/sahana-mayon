@@ -12,5 +12,4 @@
  */
 abstract class PluginagEvent extends BaseagEvent
 {
-
 }

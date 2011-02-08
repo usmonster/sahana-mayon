@@ -154,7 +154,7 @@ class scenarioActions extends agActions
                       ->andWhere('agFSR.scenario_facility_resource_id = ?', $facilityStaffResource['scenario_facility_resource_id'])
                       ->fetchOne();
               if (!$existing) {
-                $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $facilityStaffResource, $CSRFSecret = false);
+                $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
               } else {
                 $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($existing, $options = array(), $CSRFSecret = false);
               }

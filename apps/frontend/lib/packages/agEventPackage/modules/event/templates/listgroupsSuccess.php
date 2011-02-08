@@ -1,50 +1,48 @@
 <h2><?php if(isset($event)) {echo '<span style="color: #ff8f00">' . $event->event_name . ' </span>';} ?> Facilities Management</h2>
 <?php
-//note for devs: anytime you see *Name Of Event* it's my placeholder for where you should make
-//the app display the name of the event the user is working in.
-//
-// This page is currently a stub!  The following random string is a marker for the stub.
-// PnaODfcm3Kiz4MV4vzbtr4
-// PLEASE REMOVE THIS COMMENT BLOCK WHEN YOU DEVELOP THIS PAGE!
-?>
-
-<h3>Select Facility Group</h3>
-<p>*Here will be a list of the facility groups with reports on the status of the group,
-  staff count, client count, and totals.  It's been floated that the percentage of the totals
-  should also be included.  Clicking the group name brings you to fgroupdetailSuccess.</p>
-
-<?php
-$a = urlencode($event->event_name);
-$b = urlencode('Floo&*$$#Spork');
-echo $a;
-echo $b;
 //and a return to dashboard button.
+$a = $facilityGroupArray;
 ?>
+<br />
+<h3>Facility and Facility Group listing <?php echo ((isset($event)) ? 'for the <span style="color: #ff8f00">' . $event->event_name . '</span> Event' : 'for all Events'); ?></h3>
 
-<h3>Facility Group Listing <?php if(isset($event)) {echo 'for the <span style="color: #ff8f00">' . $event->event_name . '</span> Event';} ?></h3>
-
-<table>
+<table class="singleTable">
   <thead>
     <tr>
-      <th>Facility Group</th>
-      <th>Facility Group Type</th>
-      <th>Activation Sequence</th>
-      <th>Facility Resource Count</th>
-      <th>Staff</th>
-      <th>Clients</th>
-      <th>Total</th>
-      <th>Allocation Status</th>
+      <th class="head">Facility Name & Resource Type</th>
+      <th class="head">Facility Code</th>
+      <th class="head">Facility Status</th>
+      <th class="head">Facility Activation Time</th>
+      <th class="head">Facility Group</th>
+      <th class="head">Facility Group Type</th>
+      <?php
+        if(!(isset($event))) {
+          echo '<th class="head">Event</th>';
+        }
+      ?>
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($ag_event_facility_groups as $ag_event_facility_group): ?>
-    <tr>
-      <td><a href="<?php echo url_for('event/groupdetail?eid=' . $event->id . '&id=' . $ag_event_facility_group->getId()) ?>"><?php echo $ag_event_facility_group->getEventFacilityGroup() ?></a></td>
-      <td><?php echo $ag_event_facility_group->getAgFacilityGroupType() ?></td>
-      <td><?php echo 'lala';//$ag_event_facility_group->getAgFacilityGroupAllocationStatus() ?></td>
-      <td><?php echo $ag_event_facility_group->getActivationSequence() ?></td>
-      <td><?php echo count($ag_event_facility_group->getAgFacilityResource()) ?></td>
-    </tr>
+    <?php foreach($facilityGroupArray as $facilityGroup): ?>
+      <?php foreach ($facilityGroup as $facility): ?>
+      <tr>
+        <td><?php echo $facility['f_facility_name'] . ": " . $facility['frt_facility_resource_type']; ?></td>
+        <td><?php echo $facility['f_facility_code']; ?></td>
+        <td><?php echo $facility['ras_facility_resource_allocation_status']; ?></td>
+        <td><?php
+            if(isset($facility['efrat_activation_time'])) {
+              $timeSplit = explode(' ', $facility['efrat_activation_time']);
+              echo $timeSplit[0];
+            } else {
+              echo '----';
+            }
+        ?></td>
+        <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkMail" name="modal" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
+        <td><?php echo $facility['fgt_facility_group_type'] ?></td>
+        <?php
+          if(!(isset($event))) { echo '<td>' . $facility['e_event_name'] . '</td>'; } ?>
+      </tr>
+      <?php endforeach; ?>
     <?php endforeach; ?>
   </tbody>
 </table>
