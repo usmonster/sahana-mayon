@@ -452,7 +452,7 @@ class agInstall
         throw new Doctrine_Exception($dropDb->ask());
       }
     } catch (Exception $e) {
-      $installed = 'Could not drop DB! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not drop DB! : ' . "\n" . $e->getMessage();
     }
     try {
       if ($createDb->validate()) {
@@ -460,60 +460,75 @@ class agInstall
       } else {
         throw new Doctrine_Exception($createDb->ask());
       }
+      $installed[] = 'Successfully created database';
     } catch (Exception $e) {
-      $installed = 'Could not create DB! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not create DB! : ' . "\n" . $e->getMessage();
     }
     try {
       if ($buildSql->validate()) {
         $buildSql->execute();
       }
+      $installed[] = 'Successfully built SQL';
     } catch (Exception $e) {
-      $installed = 'Could not build SQL! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not build SQL! : ' . "\n" . $e->getMessage();
     }
 
     try {
-      Doctrine_Core::loadModels(
+      $allmodels = Doctrine_Core::loadModels(
               sfConfig::get('sf_lib_dir') . '/model/doctrine',
               Doctrine_Core::MODEL_LOADING_CONSERVATIVE);
+      $installed[] = 'Sucessefully loaded all data models';
     } catch (Exception $e) {
-      $installed = 'Could not load models! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not load models! : ' . "\n" . $e->getMessage();
     }
     try {
       Doctrine_Core::createTablesFromArray(Doctrine_Core::getLoadedModels());
+      $installed[] = 'Successfully created database tables from models';
     } catch (Exception $e) {
 
-      $installed = 'Could not create tables! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not create tables! : ' . "\n" . $e->getMessage();
     }
 
-    $insertSql = new Doctrine_Task_LoadData();
-    $insertSql->setArguments(array(
-      'data_fixtures_path' => sfConfig::get('sf_data_dir') . '/fixtures',
-      'models_path' => sfConfig::get('sf_lib_dir') . '/model/doctrine',
-      'append' => false,
-    ));
-
-    try {
-      if ($insertSql->validate()) {
-        $insertSql->execute();
-        $installed = 'Success!';
-      } else {
-// TODO: wait, what exception? is $e defined here? -UA
-        $installed = 'SQL insert not valid! : ' . "\n" . $e->getMessage();
+     try {
+        Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
+        $installed[] = 'Successfully loaded core data fixtures';
+      } catch (Exception $e) {
+        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
       }
-    } catch (Exception $e) {
-      $installed = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
-    }
-
+//
+//    $packages = agPluginManager::getPackagesByStatus(1); //get all enabled packages
+//    foreach($packages as $package)
+//    {
+//      try {
+////        if($package == 'agStaffPackage'){
+////          Doctrine_Core::loadModels(sfConfig::get('sf_lib_dir') . '/model/doctrine', Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
+////        }
+////        else{
+//          Doctrine_Core::loadModels(sfConfig::get('sf_app_dir') . '/lib/packages/' . $package . '/lib/model/doctrine', Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
+////        }
+//        Doctrine_Core::loadData(sfConfig::get('sf_app_dir') . '/lib/packages/' . $package  . '/data/fixtures', true);
+//        $installed[] = 'Successfully loaded packaged data fixtures';
+//      } catch (Exception $e) {
+//        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
+//      }
+//    }
     try {
       $ag_host = new agHost();
       $ag_host->setHostname($this->getConfig('DB_SERVER'));
       $ag_host->save();
+      //$installed[] = 'Successfully generated host record based on database server host';
+      $installed = 'Success!';
     } catch (Exception $e) {
-      $installed = 'Could not insert ag_host record' . $e->getMessage();
+      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
     }
 
+    if(is_array($installed)){
+      return implode('<br>', $installed);
+    }
+      else{
+      return $installed;
+    }
 
-    return $installed;
   }
 
   function EventHandler()
@@ -524,12 +539,17 @@ class agInstall
     if ($this->getStep() == 1) {
       if (!isset($_REQUEST['next'][0]) && !isset($_REQUEST['back'][2])) {
         $this->setConfig('agree', isset($_REQUEST['agree']));
+        //$this->doNext();
       }
 
       if (isset($_REQUEST['next'][$this->getStep()]) && $this->getConfig('agree', false)) {
         $this->DoNext();
       }
     }
+
+    $foo = $this->getStep();
+    $zoo = $_REQUEST['next'][$this->getStep()];
+    $poo = $_REQUEST['problem'];
 
     if ($this->getStep() == 2 && isset($_REQUEST['next'][$this->getStep()]) && !isset($_REQUEST['problem'])) {
       $this->dbParams($db_params);

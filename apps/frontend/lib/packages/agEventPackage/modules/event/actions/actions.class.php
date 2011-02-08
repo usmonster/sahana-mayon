@@ -311,7 +311,7 @@ class eventActions extends agActions
       // 2. Populate facility start time & update event shift with real time.
       // 3. Regenerate staff pool
       // 4. Copy over staff pool
-//      $this->migrateStaffPool($scenario_id, $event_id);
+      $this->migrateStaffPool($scenario_id, $event_id);
       // 5. Populate agEventStaffShift (assigning event staffs to shifts).
       // 6. Update event status to deployed/active?
 
