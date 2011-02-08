@@ -1,10 +1,10 @@
 <?php
-class agScenarioGenerator
+class agScenarioGeneratorHelper
 {
   /**
    * @method shiftGenerator()
    * Auto-generate shifts from ag_shift_template table to ag_scenario_shift table.
-   * @return shift template entries.
+   * @return integer Returns 1 if successful.  Otherwise, 0.
    */
   public static function shiftGenerator()
   {
@@ -76,6 +76,62 @@ class agScenarioGenerator
           $scenarioShift->save();
           $shift_counter++;
         }
+      }
+      return 1;
+    } catch (\Doctrine\ORM\ORMException $e) {
+      print_r($e);
+      return 0;
+    }
+  }
+
+  /**
+   * @method staffPoolGenerator()
+   * Auto-generate staff pool using lucene search defined in agScenarioStaffGenerator to agScenarioStaffResource table.
+   * @return array
+   */
+  public static function staffPoolGenerator($lucene_query, $scenario_id)
+  {
+    try {
+      $staff_resources = array();
+      $staff_id = array();
+      $scenarioAction = new agActions(sfContext::getInstance(), 'scenario', 'staffpool');
+      $scenarioAction->doSearch($lucene_query, FALSE);
+      foreach ($scenarioAction->hits as $hit) {
+        $staff_id[] = $scenarioAction->results[$hit->model][$hit->pk]['id'];
+      }
+      if (count($staff_id)>0){
+        $staff_resources = Doctrine_Query::create()
+                ->select('a.id')
+                ->from('agStaffResource a')
+                ->leftJoin('a.agScenarioStaffResource asr')
+                ->where('asr.id is NULL')
+                ->andWhereIn('a.staff_id', $staff_id)
+                ->andWhere('asr.scenario_id =?', $scenario_id)
+                ->execute(array(), 'single_value_array');
+      }
+      return $staff_resources;
+    } catch (\Doctrine\ORM\ORMException $e) {
+      print_r($e);
+      return 0;
+    }
+  }
+
+  /**
+   * @method saveStaffPool()
+   * Save staff resource pool to db.
+   * @param array $staff_resources A single value array of staff ids.
+   * @return 1|0 Returns 1 if successful.  Otherwise, 0.
+   */
+  public static function saveStaffPool($staff_resources, $scenario_id, $search_weight)
+  {
+    try {
+      foreach ($staff_resources as $staff_resource) {
+        $scenario_staff_resource = new agScenarioStaffResource();
+        $scenario_staff_resource->set('staff_resource_id', $staff_resource)
+            ->set('scenario_id', $scenario_id)
+            ->set('deployment_weight', $search_weight);
+
+        $scenario_staff_resource->save();
       }
       return 1;
     } catch (\Doctrine\ORM\ORMException $e) {

@@ -131,10 +131,12 @@ class eventActions extends agActions
   public function facilityGroupCheck($scenario_id)
   {
     $facilityGroupQuery = Doctrine_Query::create()
-            ->select('aFG.id, afG.scenario_facility_group')
+            ->select('aFG.id, aFG.scenario_facility_group')
             ->from('agScenarioFacilityGroup aFG')
             ->leftJoin('aFG.agScenarioFacilityResource aFR')
             ->where('aFR.id is NULL');
+    $queryString = $facilityGroupQuery->getSqlQuery();
+    echo "<br />queryString: $queryString<br/>";
     $returnvalue = $facilityGroupQuery->execute(array(), 'key_value_pair');
     $facilityGroupQuery->free();
     return $returnvalue;
@@ -302,7 +304,7 @@ class eventActions extends agActions
       $con->beginTransaction();
 
       // 1a. Regenerate scenario shift
-      agScenarioGenerator::shiftGenerator();
+      agScenarioGeneratorHelper::shiftGenerator();
       // 1b. Copy Faciltiy Group
       // 1c. Copy Facility Resource
       // 1d. Copy over scenario shift
@@ -310,6 +312,21 @@ class eventActions extends agActions
 
       // 2. Populate facility start time & update event shift with real time.
       // 3. Regenerate staff pool
+      Doctrine_query::create()->from('agScenarioStaffResource')->delete();
+      Doctrine_query::create()->from('agEventStaff')->delete();
+      /**
+       * @todo Wrap in an event helper class.
+       */
+      $lucene_queries = Doctrine_Query::create()
+              ->select('ssg.id, ssg.scenario_id, ls.query_condition, ls.id')
+              ->from('agScenarioStaffGenerator ssg')
+              ->innerJoin('ssg.agLuceneSearch ls')
+              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      foreach($lucene_queries as $lucene_query){
+          $staff_resource_ids = agScenarioGeneratorHelper::staffPoolGenerator($lucene_query['ls_query_condition'], $lucene_query['ssg_scenario_id']);
+          agScenarioGeneratorHelper::saveStaffPool($staff_resource_ids);
+      }
+
       // 4. Copy over staff pool
       $this->migrateStaffPool($scenario_id, $event_id);
       // 5. Populate agEventStaffShift (assigning event staffs to shifts).
