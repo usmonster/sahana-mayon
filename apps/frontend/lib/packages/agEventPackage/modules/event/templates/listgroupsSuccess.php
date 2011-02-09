@@ -1,9 +1,11 @@
-<h2><?php if(isset($event)) {echo '<span style="color: #ff8f00">' . $event->event_name . ' </span>';} ?> Facilities Management</h2>
 <?php
-//and a return to dashboard button.
-$b = $pager;
-$a = $facilityGroupArray;
+  $sortColumn = $sf_request->getGetParameter('sort');
+  $sortOrder = $sf_request->getGetParameter('order');
+//  ($sf_request->getParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
+  ($sf_request->getParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getParameter('sort') : $sortAppend = '';
+  ($sf_request->getParameter('order')) ? $orderAppend = '&order=' . $sf_request->getParameter('order') : $orderAppend = '';
 ?>
+<h2><?php if(isset($event)) {echo '<span style="color: #ff8f00">' . $event->event_name . ' </span>';} ?> Facilities Management</h2>
 <br />
 <h3>Facilities <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span style="color: #ff8f00">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
 <table class="singleTable">
@@ -12,20 +14,54 @@ $a = $facilityGroupArray;
       <th class="head">
         <div class="tableHeaderContent">Facility Group</div>
         <?php
-//          echo($sortColumn =='agency' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=agency&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=agency&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-//          echo($sortColumn =='agency' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=agency&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=agency&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='group' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=group&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=group&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='group' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=group&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=group&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
-      <th class="head">Facility Name & Resource Type</th>
-      <th class="head">Facility Code</th>
-      <th class="head">Facility Status</th>
-      <th class="head">Facility Activation Time</th>
-      <th class="head">Facility Group Type</th>
-      <?php
-        if(!(isset($event))) {
-          echo '<th class="head">Event</th>';
-        }
-      ?>
+      <th class="head">
+        <div class="tableHeaderContent">Facility Name & Resource Type</div>
+        <?php
+          echo($sortColumn =='name' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=name&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=name&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='name' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=name&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=name&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+      </th>
+      <th class="head">
+        <div class="tableHeaderContent">Facility Code</div>
+        <?php
+          echo($sortColumn =='code' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=code&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=code&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='code' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=code&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=code&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+      </th>
+      <th class="head">
+        <div class="tableHeaderContent">Facility Status</div>
+        <?php
+          echo($sortColumn =='status' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=status&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=status&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='status' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=status&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=status&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+      </th>
+      <th class="head">
+        <div class="tableHeaderContent">Facility Activation Time</div>
+        <?php
+          echo($sortColumn =='time' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=time&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=time&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='time' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=time&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=time&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+      </th>
+      <th class="head">
+        <div class="tableHeaderContent">Facility Group Type</div>
+        <?php
+          echo($sortColumn =='type' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=type&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='type' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=type&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+      </th>
+      <?php if(!(isset($event))): ?> 
+        <th class="head">
+        <div class="tableHeaderContent">Event</div>
+        <?php
+          echo($sortColumn =='event' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=event&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=event&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='event' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=event&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=event&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+        </th>
+      <?php endif;?>
     </tr>
   </thead>
   <tbody>
@@ -56,13 +92,13 @@ $a = $facilityGroupArray;
   <?php
 
 //First Page link (or inactive if we're at the first page).
-    echo(!$pager->isFirstPage() ? '<a href="' . url_for('event/listgroups' . '?page=' . $pager->getFirstPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . /*$sortAppend . $orderAppend .*/ '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
+    echo(!$pager->isFirstPage() ? '<a href="' . url_for('event/listgroups?page=' . $pager->getFirstPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '') . $sortAppend . $orderAppend ) . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
 //Previous Page link (or inactive if we're at the first page).
-    echo(!$pager->isFirstPage() ? '<a href="' . url_for('event/listgroups' . '?page=' . $pager->getPreviousPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . /*$sortAppend . $orderAppend .*/'" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
+    echo(!$pager->isFirstPage() ? '<a href="' . url_for('event/listgroups?page=' . $pager->getPreviousPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '') . $sortAppend . $orderAppend) . '" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
 //Next Page link (or inactive if we're at the last page).
-    echo(!$pager->isLastPage() ? '<a href="' . url_for('event/listgroups' . '?page=' . $pager->getNextPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . /*$sortAppend . $orderAppend .*/'" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
+    echo(!$pager->isLastPage() ? '<a href="' . url_for('event/listgroups?page=' . $pager->getNextPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : ''). $sortAppend . $orderAppend) . '" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
 //Last Page link (or inactive if we're at the last page).
-    echo(!$pager->isLastPage() ? '<a href="' . url_for('event/listgroups' . '?page=' . $pager->getLastPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . /*$sortAppend . $orderAppend .*/'" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
+    echo(!$pager->isLastPage() ? '<a href="' . url_for('event/listgroups?page=' . $pager->getLastPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '') . $sortAppend . $orderAppend) . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
   ?>
 </div>
 <a href="<?php echo url_for('event/newgroup') ?>" class="buttonText" title="New Facility Group">New</a>
