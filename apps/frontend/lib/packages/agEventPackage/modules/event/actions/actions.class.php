@@ -44,7 +44,7 @@ class eventActions extends agActions
     $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
     $this->facility_group = '%';
 
-    foreach($this->active_facility_groups as $event_fgroup){
+    foreach ($this->active_facility_groups as $event_fgroup) {
       $facility_groups[$event_fgroup['efg_id']] = $event_fgroup['efg_event_facility_group'];
     }
 
@@ -53,25 +53,36 @@ class eventActions extends agActions
       'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups))// ,'onClick' => 'submit()'))
     ));
 
-        //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
+    //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
     if ($request->isMethod(sfRequest::POST)) {
 
       if ($request->getParameter('facility_group_filter')) {
         $this->facility_group = $request->getParameter('facility_group_list');
         $this->facilitygroupsForm->setDefault('facility_group_list', $this->facility_group);
+      } else {
+        $fac_activation = $request->getPostParameters();
+        $timeconverter = new agValidatorDateTime();
+        $timeconverted = $timeconverter->convertDateArrayToString($fac_activation['facility_resource_activation']['activation_time']);
+        foreach ($fac_activation['facility_resource_activation'] as $fac_activate) {
+          if (isset($fac_activate['operate_on'])) {
+            $eFacResActivation = new agEventFacilityResourceActivationTime();
+
+            $eFacResActivation->setActivationTime($timeconverted);
+            $eFacResActivation->setEventFacilityResourceId($fac_activate['event_facility_resource_id']);
+            $eFacResActivation->save();
+          }
+        }
       }
 
-
-      //$this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
-      //$this->redirect('event/active?id=' . $this->event_id);
+//save a bunch of stuff!
     }
 
+
+    //$this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
+    //$this->redirect('event/active?id=' . $this->event_id);
     $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group);
 
     $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
-
-
-
   }
 
   public function executeDeploy(sfWebRequest $request)
@@ -344,9 +355,9 @@ class eventActions extends agActions
               ->from('agScenarioStaffGenerator ssg')
               ->innerJoin('ssg.agLuceneSearch ls')
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      foreach($lucene_queries as $lucene_query){
-          $staff_resource_ids = agScenarioGeneratorHelper::staffPoolGenerator($lucene_query['ls_query_condition'], $lucene_query['ssg_scenario_id']);
-          agScenarioGeneratorHelper::saveStaffPool($staff_resource_ids);
+      foreach ($lucene_queries as $lucene_query) {
+        $staff_resource_ids = agScenarioGeneratorHelper::staffPoolGenerator($lucene_query['ls_query_condition'], $lucene_query['ssg_scenario_id']);
+        agScenarioGeneratorHelper::saveStaffPool($staff_resource_ids);
       }
 
       // 4. Copy over staff pool
@@ -435,17 +446,17 @@ class eventActions extends agActions
     // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
     if ($request->hasParameter('event')) {
       $this->event = Doctrine_Query::create()
-            ->select()
-            ->from('agEvent')
-            ->where('event_name = ?', urldecode($request->getParameter('event')))
-            ->execute()->getFirst();
+              ->select()
+              ->from('agEvent')
+              ->where('event_name = ?', urldecode($request->getParameter('event')))
+              ->execute()->getFirst();
       $query->where('a.event_id = ?', $this->event->id);
     }
     $facilityGroupArray = array();
     $this->ag_event_facility_groups = $query->execute();
-    foreach($this->ag_event_facility_groups as $eventFacilityGroup) {
+    foreach ($this->ag_event_facility_groups as $eventFacilityGroup) {
       $tempArray = $this->queryForTable($eventFacilityGroup->id);
-      foreach($tempArray as $ta) {
+      foreach ($tempArray as $ta) {
         array_push($facilityGroupArray, $ta);
       }
 //      $facilityGroupArray[$eventFacilityGroup->event_facility_group] = $this->queryForTable($eventFacilityGroup->id);
@@ -453,7 +464,7 @@ class eventActions extends agActions
     $this->facilityGroupArray = $facilityGroupArray;
     $this->pager = new agArrayPager(null, 1);
     $this->pager->setResultArray($facilityGroupArray);
-    $this->pager->setPage($this->getRequestParameter('page',1));
+    $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
   }
 
@@ -475,46 +486,46 @@ class eventActions extends agActions
   private function queryForTable($eventFacilityGroupId = null)
   {
     $query = Doctrine_Query::create()
-      ->select('efr.id')
-        ->addSelect('f.facility_name')
-        ->addSelect('f.facility_code')
-        ->addSelect('frt.facility_resource_type')
-        ->addSelect('ras.facility_resource_allocation_status')
-        ->addSelect('f.id')
-        ->addSelect('fr.id')
-        ->addSelect('frt.id')
-        ->addSelect('ras.id')
-        ->addSelect('ers.id')
-        ->addSelect('es.id')
-        ->addSelect('efg.event_facility_group')
-        ->addSelect('fgt.facility_group_type')
-        ->addSelect('e.event_name')
-        ->addSelect('efrat.id')
-        ->addSelect('efrat.activation_time')
-      ->from('agEventFacilityResource efr')
-        ->innerJoin('efr.agFacilityResource fr')
-        ->innerJoin('fr.agFacilityResourceStatus frs')
-        ->innerJoin('fr.agFacilityResourceType frt')
-        ->innerJoin('fr.agFacility f')
-        ->innerJoin('efr.agEventFacilityResourceStatus ers')
-        ->innerJoin('ers.agFacilityResourceAllocationStatus ras')
-        ->innerJoin('efr.agEventFacilityGroup efg')
-        ->innerJoin('efg.agFacilityGroupType fgt')
-        ->innerJoin('efg.agEvent e')
-        ->leftJoin('efr.agEventFacilityResourceActivationTime efrat')
-      ->where('EXISTS (
+            ->select('efr.id')
+            ->addSelect('f.facility_name')
+            ->addSelect('f.facility_code')
+            ->addSelect('frt.facility_resource_type')
+            ->addSelect('ras.facility_resource_allocation_status')
+            ->addSelect('f.id')
+            ->addSelect('fr.id')
+            ->addSelect('frt.id')
+            ->addSelect('ras.id')
+            ->addSelect('ers.id')
+            ->addSelect('es.id')
+            ->addSelect('efg.event_facility_group')
+            ->addSelect('fgt.facility_group_type')
+            ->addSelect('e.event_name')
+            ->addSelect('efrat.id')
+            ->addSelect('efrat.activation_time')
+            ->from('agEventFacilityResource efr')
+            ->innerJoin('efr.agFacilityResource fr')
+            ->innerJoin('fr.agFacilityResourceStatus frs')
+            ->innerJoin('fr.agFacilityResourceType frt')
+            ->innerJoin('fr.agFacility f')
+            ->innerJoin('efr.agEventFacilityResourceStatus ers')
+            ->innerJoin('ers.agFacilityResourceAllocationStatus ras')
+            ->innerJoin('efr.agEventFacilityGroup efg')
+            ->innerJoin('efg.agFacilityGroupType fgt')
+            ->innerJoin('efg.agEvent e')
+            ->leftJoin('efr.agEventFacilityResourceActivationTime efrat')
+            ->where('EXISTS (
           SELECT efrs.id
             FROM agEventFacilityResourceStatus efrs
             WHERE efrs.event_facility_resource_id = ers.event_facility_resource_id
               AND efrs.time_stamp <= CURRENT_TIMESTAMP
             HAVING MAX(efrs.time_stamp) = ers.time_stamp)');
-    if(isset($eventFacilityGroupId)) {
-      $query->andWhere('efg.id = ?',$eventFacilityGroupId);
+    if (isset($eventFacilityGroupId)) {
+      $query->andWhere('efg.id = ?', $eventFacilityGroupId);
     }
     $results = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
     return $results;
   }
-  
+
   public function executeFacility(sfWebRequest $request)
   {
     

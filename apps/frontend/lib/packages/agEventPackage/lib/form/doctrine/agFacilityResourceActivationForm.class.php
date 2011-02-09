@@ -35,8 +35,7 @@ class agFacilityResourceAcvitationForm extends sfForm
   {
     $this->widgetSchema->setNameFormat('facility_resource_activation[%s]');
     $this->embedEventFacilityResourceActivationTimeForms();
-    $this->setWidget('activation_time',   new sfWidgetFormDateTime());
-
+    $this->setWidget('activation_time', new sfWidgetFormDateTime());
   }
 
   public function embedEventFacilityResourceActivationTimeForms()
@@ -53,7 +52,7 @@ class agFacilityResourceAcvitationForm extends sfForm
         $fgroupDec = new agWidgetFormSchemaFormatterNoList($fgroupForm->getWidgetSchema());
         $fgroupForm->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
         $fgroupForm->getWidgetSchema()->setFormFormatterName('row');
-        
+
         $facility_type = $facility_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
 
         $facility_name = $facility_resource->getAgFacilityResource()->getAgFacility()->facility_name;
@@ -61,9 +60,9 @@ class agFacilityResourceAcvitationForm extends sfForm
         $facility_label = $facility_name . ' : ' . $facility_type;
         //$fgroupForm->setDefault('facility_resource_id', $foo->facility_resource_id);
         //$fgroupForm->setDefault('event_facility_group_id', $foo->event_facility_group_id);
-        $fgroupForm->setDefault('event_facility_group_id', $facility_resource->event_facility_group_id);
+        //$fgroupForm->setDefault('event_facility_group_id', $facility_resource->event_facility_group_id);
+        $fgroupForm->setDefault('event_facility_resource_id', $facility_resource->id);
         $this->embedForm($facility_label, $fgroupForm);
-
       }
     } else {
 
@@ -79,26 +78,5 @@ class agFacilityResourceAcvitationForm extends sfForm
     }
   }
 
-  /**
-   * this is the only saving that takes place since the sfForm has nothing but embedded forms
-   * @param $con to maintain amorphism this interface is copied
-   * @param $forms to maintain amorphism this interface is copied
-   */
-//  public function saveEmbeddedForms($con = null, $forms = null)
-//  {
-//    if (isset($this->embeddedForms['lucene_search'])) {
-//      $form = $this->embeddedForms['lucene_search'];
-//      $values = $this->values['lucene_search'];
-//      $this->saveLuceneForm($form, $values);
-//      unset($this->embeddedForms['lucene_search']);
-//    }
-//
-//    if (isset($this->embeddedForms['staff_generator'])) {
-//      $form = $this->embeddedForms['staff_generator'];
-//      $values = $this->values['staff_generator'];
-//      $this->saveStaffGenForm($form, $values);
-//      unset($this->embeddedForms['staff_generator']);
-//    }
-//  }
 }
 
