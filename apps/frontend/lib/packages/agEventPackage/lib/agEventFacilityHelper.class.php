@@ -72,13 +72,13 @@ class agEventFacilityHelper
       ->where('EXISTS (
           SELECT efrs.id
             FROM agEventFacilityResourceStatus efrs
-            WHERE efrs.event_facility_resource_id = ers.id
+            WHERE efrs.event_facility_resource_id = ers.event_facility_resource_id
               AND efrs.time_stamp <= CURRENT_TIMESTAMP
             HAVING MAX(efrs.time_stamp) = ers.time_stamp)')
         ->andWhere('EXISTS (
           SELECT efgs.id
             FROM agEventFacilityGroupStatus efgs
-            WHERE efgs.event_facility_group_id = egs.id
+            WHERE efgs.event_facility_group_id = egs.event_facility_group_id
               AND efgs.time_stamp <= CURRENT_TIMESTAMP
             HAVING MAX(efgs.time_stamp) = egs.time_stamp)')
         ->andWhere('EXISTS (

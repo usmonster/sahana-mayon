@@ -142,8 +142,6 @@ class eventActions extends agActions
             ->from('agScenarioFacilityGroup aFG')
             ->leftJoin('aFG.agScenarioFacilityResource aFR')
             ->where('aFR.id is NULL');
-    $queryString = $facilityGroupQuery->getSqlQuery();
-    echo "<br />queryString: $queryString<br/>";
     $returnvalue = $facilityGroupQuery->execute(array(), 'key_value_pair');
     $facilityGroupQuery->free();
     return $returnvalue;
@@ -305,20 +303,31 @@ class eventActions extends agActions
   public function migrateScenarioToEvent($scenario_id, $event_id)
   {
 
-      $con = Doctrine_Manager::getInstance()->getConnectionForComponent('agEvent');
+    $con = Doctrine_Manager::getInstance()->getConnectionForComponent('agEvent');
 
     try {
       $con->beginTransaction();
 
-      // 1a. Regenerate scenario shift
+      /**
+       * @todo
+       * 0a. Check event status.  Event status must be 'pre-deploy' state.  DO NOT migrate scenario for any other event status.
+       * 0b. Clean-out event related tables prior to migrating any scenario related tables.
+       * 1a. Regenerate scenario shift
+       */
       agScenarioGeneratorHelper::shiftGenerator();
-      // 1b. Copy Faciltiy Group
-      // 1c. Copy Facility Resource
-      // 1d. Copy over scenario shift
+      /**
+       * @todo
+       * 1b. Copy Faciltiy Group
+       * 1c. Copy Facility Resource
+       * 1d. Copy over scenario shift
+       */
       $this->migrateFacilityGroups($scenario_id, $event_id);
 
-      // 2. Populate facility start time & update event shift with real time.
-      // 3. Regenerate staff pool
+      /**
+       * @todo
+       * 2. Populate facility start time, update event shift with real time, update facility resource/group status.
+       * 3. Regenerate staff pool
+       */
       Doctrine_query::create()->from('agScenarioStaffResource')->delete();
       Doctrine_query::create()->from('agEventStaff')->delete();
       /**
