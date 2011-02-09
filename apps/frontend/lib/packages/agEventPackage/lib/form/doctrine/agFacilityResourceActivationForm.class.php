@@ -48,11 +48,6 @@ class agFacilityResourceAcvitationForm extends sfForm
       foreach ($this->facility_resources as $facility_resource) {
 
         $fgroupForm = new agEventFacilityResourceActivationTimeForm();
-
-        $fgroupDec = new agWidgetFormSchemaFormatterNoList($fgroupForm->getWidgetSchema());
-        $fgroupForm->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
-        $fgroupForm->getWidgetSchema()->setFormFormatterName('row');
-
         $facility_type = $facility_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
 
         $facility_name = $facility_resource->getAgFacilityResource()->getAgFacility()->facility_name;
@@ -77,6 +72,5 @@ class agFacilityResourceAcvitationForm extends sfForm
       $this->embedForm('new', $fgroupForm);
     }
   }
-
 }
 
