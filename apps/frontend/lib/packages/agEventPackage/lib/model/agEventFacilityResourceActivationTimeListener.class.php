@@ -18,13 +18,13 @@
 class agEventFacilityResourceActivationTimeListener extends Doctrine_Record_Listener
 {
   protected $_options ;
-
-  public function __construct(array $options)
+  
+  public function __construct($options = array('disabled' => false))
   {
     $this->_options = $options ;
   }
 
-  public function postSave($event)
+  public function postSave(Doctrine_Event $event)
   {
     $invoker = $event->getInvoker() ;
     $eventFacilityResourceId = $invoker->event_facility_resource_id ;

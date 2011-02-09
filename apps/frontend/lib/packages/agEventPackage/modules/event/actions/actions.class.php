@@ -45,12 +45,19 @@ class eventActions extends agActions
     //if user passed in facilitygroup_id we can add it to the facility group id
 
     $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
+
+    foreach($this->active_facility_groups as $event_fgroup){
+      $facility_groups[$event_fgroup['efg_id']] = $event_fgroup['efg_event_facility_group'];
+    }
+
+        //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
     $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id);
 
     $this->facilitygroupsForm = new sfForm();
     $this->facilitygroupsForm->setWidgets(array(
-      'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $this->active_facility_groups))
+      'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups))// ,'onClick' => 'submit()'))
     ));
+
 
     $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
 

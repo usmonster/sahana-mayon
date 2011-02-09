@@ -35,22 +35,25 @@ class agFacilityResourceAcvitationForm extends sfForm
   {
     $this->widgetSchema->setNameFormat('facility_resource_activation[%s]');
     $this->embedEventFacilityResourceActivationTimeForms();
+    $this->setWidget('activation_time',   new sfWidgetFormDateTime());
+
   }
 
   public function embedEventFacilityResourceActivationTimeForms()
   {
-    $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainerLabel($this->getWidgetSchema());
+    $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainerLeftLabel($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('facilityStaffResourceConDeco', $facilityStaffResourceConDeco);
     $this->getWidgetSchema()->setFormFormatterName('facilityStaffResourceConDeco');
 
     if (isset($this->facility_resources)) {
       foreach ($this->facility_resources as $facility_resource) {
 
-        $fgroupForm = new PluginagEventFacilityResourceActivationTimeForm();
-        $fgroupDec = new agWidgetFormSchemaFormatterRow($fgroupForm->getWidgetSchema());
+        $fgroupForm = new agEventFacilityResourceActivationTimeForm();
+
+        $fgroupDec = new agWidgetFormSchemaFormatterNoList($fgroupForm->getWidgetSchema());
         $fgroupForm->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
         $fgroupForm->getWidgetSchema()->setFormFormatterName('row');
-        $foo = new agEventFacilityResource();
+        
         $facility_type = $facility_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
 
         $facility_name = $facility_resource->getAgFacilityResource()->getAgFacility()->facility_name;

@@ -91,9 +91,9 @@ class agEventFacilityHelper
         ->andWhere('gas.active = ?', true)
         ->andWhere('(ras.allocatable = ? OR ras.committed = ?)', array(true, true))
         ->andWhere('ras.staffed = ?', false)
-        ->andWhere('efg.event_id = ?', $eventId)
-        ->andWhere('ras.standby = ?', $facilityStandbyStatus)
-        ->andWhere('efg.id = ?', $eventFacilityGroupId) ;
+        ->andWhere('efg.event_id = ?', $eventId);
+        //->andWhere('ras.standby = ?', $facilityStandbyStatus)
+        //->andWhere('efg.id = ?', $eventFacilityGroupId) ;
 
     $results = $query->execute() ;
 
