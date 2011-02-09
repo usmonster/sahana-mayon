@@ -32,7 +32,7 @@ class agEventFacilityHelper
         ->andWhere('EXISTS (
           SELECT efgs.id
             FROM agEventFacilityGroupStatus efgs
-            WHERE efgs.event_facility_group_id = egs.id
+            WHERE efgs.event_facility_group_id = egs.event_facility_group_id
               AND efgs.time_stamp <= CURRENT_TIMESTAMP
             HAVING MAX(efgs.time_stamp) = egs.time_stamp)') ;
     
@@ -91,9 +91,9 @@ class agEventFacilityHelper
         ->andWhere('gas.active = ?', true)
         ->andWhere('(ras.allocatable = ? OR ras.committed = ?)', array(true, true))
         ->andWhere('ras.staffed = ?', false)
-        ->andWhere('efg.event_id = ?', $eventId);
-        //->andWhere('ras.standby = ?', $facilityStandbyStatus)
-        //->andWhere('efg.id = ?', $eventFacilityGroupId) ;
+        ->andWhere('efg.event_id = ?', $eventId)
+        ->andWhere('ras.standby LIKE (?)', $facilityStandbyStatus)
+        ->andWhere('efg.id LIKE (?)', $eventFacilityGroupId) ;
 
     $results = $query->execute() ;
 

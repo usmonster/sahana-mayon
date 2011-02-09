@@ -38,34 +38,40 @@ class eventActions extends agActions
     $this->eventName = Doctrine::getTable('agEvent')
             ->findByDql('id = ?', $this->event_id)
             ->getFirst()->event_name;
-    //foreach facility
-    //$this->event_facility_resources = Doctrine_Query::create()
-    //  ->select('a')
 
     //if user passed in facilitygroup_id we can add it to the facility group id
 
     $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
+    $this->facility_group = '%';
 
     foreach($this->active_facility_groups as $event_fgroup){
       $facility_groups[$event_fgroup['efg_id']] = $event_fgroup['efg_event_facility_group'];
     }
-
-        //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
-    $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id);
 
     $this->facilitygroupsForm = new sfForm();
     $this->facilitygroupsForm->setWidgets(array(
       'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups))// ,'onClick' => 'submit()'))
     ));
 
+        //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
+    if ($request->isMethod(sfRequest::POST)) {
+
+      if ($request->getParameter('facility_group_filter')) {
+        $this->facility_group = $request->getParameter('facility_group_list');
+        $this->facilitygroupsForm->setDefault('facility_group_list', $this->facility_group);
+      }
+
+
+      //$this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
+      //$this->redirect('event/active?id=' . $this->event_id);
+    }
+
+    $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group);
 
     $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
 
 
-    if ($request->isMethod('POST')) {
-      $this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
-      $this->redirect('event/active?id=' . $this->event_id);
-    }
+
   }
 
   public function executeDeploy(sfWebRequest $request)
