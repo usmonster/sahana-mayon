@@ -29,6 +29,10 @@ default_index:
   url:   /:module
   param: { action: index }
 
+facility_import:
+  url:  /facility/import
+  param: { module: facility, action: import }
+
 scenario_show_facility_staff_resource:
   url:     /scenario/:id/staffresources
   options: { model: agScenario, type: object }
