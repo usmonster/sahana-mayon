@@ -445,10 +445,9 @@ class eventActions extends agActions
 //      $facilityGroupArray[$eventFacilityGroup->event_facility_group] = $this->queryForTable($eventFacilityGroup->id);
     }
     $this->facilityGroupArray = $facilityGroupArray;
-    $this->pager = new agArrayPager(null, 3);
+    $this->pager = new agArrayPager(null, 1);
     $this->pager->setResultArray($facilityGroupArray);
     $this->pager->setPage($this->getRequestParameter('page',1));
-    $goop = $this->pager;
     $this->pager->init();
   }
 

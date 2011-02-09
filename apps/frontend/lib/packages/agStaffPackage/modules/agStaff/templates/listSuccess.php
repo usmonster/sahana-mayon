@@ -153,7 +153,7 @@
         $emailContacts = $staffMember->getAgPerson()->getAgEntity()->getAgEntityEmailContact();
         foreach ($emailContacts as $emailContact) {
           if ($emailContact->getEmailContactTypeId() == $agEmailContactType->getId()) {
-            echo '<a href="mailto:' . $emailContact->getAgEmailContact() . '" class="linkMail">'
+            echo '<a href="mailto:' . $emailContact->getAgEmailContact() . '" class="linkText">'
             . $emailContact->getAgEmailContact() . '</a>' . '<br />';
             $check = 1;
           }
