@@ -39,8 +39,6 @@ class eventActions extends agActions
             ->findByDql('id = ?', $this->event_id)
             ->getFirst()->event_name;
 
-    //if user passed in facilitygroup_id we can add it to the facility group id
-
     $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
     $this->facility_group = '%';
 
@@ -64,7 +62,7 @@ class eventActions extends agActions
         $timeconverter = new agValidatorDateTime();
         $timeconverted = $timeconverter->convertDateArrayToString($fac_activation['facility_resource_activation']['activation_time']);
         foreach ($fac_activation['facility_resource_activation'] as $fac_activate) {
-          if (isset($fac_activate['operate_on'])) {
+          if (is_array($fac_activate) && isset($fac_activate['operate_on'])) {
             $eFacResActivation = new agEventFacilityResourceActivationTime();
 
             $eFacResActivation->setActivationTime($timeconverted);
@@ -73,13 +71,8 @@ class eventActions extends agActions
           }
         }
       }
-
-//save a bunch of stuff!
     }
 
-
-    //$this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
-    //$this->redirect('event/active?id=' . $this->event_id);
     $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group);
 
     $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
