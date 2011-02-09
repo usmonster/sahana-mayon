@@ -435,12 +435,21 @@ class eventActions extends agActions
             ->execute()->getFirst();
       $query->where('a.event_id = ?', $this->event->id);
     }
-
+    $facilityGroupArray = array();
     $this->ag_event_facility_groups = $query->execute();
     foreach($this->ag_event_facility_groups as $eventFacilityGroup) {
-      $facilityGroupArray[$eventFacilityGroup->event_facility_group] = $this->queryForTable($eventFacilityGroup->id);
+      $tempArray = $this->queryForTable($eventFacilityGroup->id);
+      foreach($tempArray as $ta) {
+        array_push($facilityGroupArray, $ta);
+      }
+//      $facilityGroupArray[$eventFacilityGroup->event_facility_group] = $this->queryForTable($eventFacilityGroup->id);
     }
     $this->facilityGroupArray = $facilityGroupArray;
+    $this->pager = new agArrayPager(null, 3);
+    $this->pager->setResultArray($facilityGroupArray);
+    $this->pager->setPage($this->getRequestParameter('page',1));
+    $goop = $this->pager;
+    $this->pager->init();
   }
 
   public function executeGroupdetail(sfWebRequest $request)
@@ -491,7 +500,7 @@ class eventActions extends agActions
       ->where('EXISTS (
           SELECT efrs.id
             FROM agEventFacilityResourceStatus efrs
-            WHERE efrs.event_facility_resource_id = ers.id
+            WHERE efrs.event_facility_resource_id = ers.event_facility_resource_id
               AND efrs.time_stamp <= CURRENT_TIMESTAMP
             HAVING MAX(efrs.time_stamp) = ers.time_stamp)');
     if(isset($eventFacilityGroupId)) {
