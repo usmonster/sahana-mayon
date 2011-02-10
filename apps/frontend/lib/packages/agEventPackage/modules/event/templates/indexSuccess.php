@@ -43,7 +43,7 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
       <tr>
         <td><a href="<?php echo url_for('event/deploy?id=' . $ag_event->getId()) ?>"><?php echo $ag_event->getId() ?></a></td>
         <td><?php echo $ag_event->getEventName() ?></td>
-        <td><?php echo $ag_event->getAgEventScenario()->getFirst()->getAgScenario() ?></td>
+        <td><?php #echo $ag_event->getAgEventScenario()->getFirst()->getAgScenario() ?></td>
         <td><?php echo $ag_event->getCreatedAt() ?></td>
         <td><?php echo $ag_event->getUpdatedAt() ?></td>
         <td><?php echo $ag_event->getAgEventStatus()->getFirst()->getAgEventStatusType() ?></td>
