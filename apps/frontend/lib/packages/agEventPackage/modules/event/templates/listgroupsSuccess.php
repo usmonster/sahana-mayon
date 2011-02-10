@@ -14,43 +14,43 @@
       <th class="head">
         <div class="tableHeaderContent">Facility Group</div>
         <?php
-          echo($sortColumn =='group' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=group&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=group&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='group' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=group&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=group&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='group' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=group&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=group&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='group' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=group&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=group&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
       <th class="head">
         <div class="tableHeaderContent">Facility Name & Resource Type</div>
         <?php
-          echo($sortColumn =='name' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=name&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=name&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='name' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=name&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=name&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='name' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=name&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=name&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='name' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=name&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=name&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
       <th class="head">
         <div class="tableHeaderContent">Facility Code</div>
         <?php
-          echo($sortColumn =='code' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=code&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=code&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='code' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=code&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=code&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='code' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=code&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=code&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='code' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=code&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=code&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
       <th class="head">
         <div class="tableHeaderContent">Facility Status</div>
         <?php
-          echo($sortColumn =='status' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=status&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=status&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='status' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=status&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=status&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='status' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=status&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=status&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='status' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=status&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=status&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
       <th class="head">
         <div class="tableHeaderContent">Facility Activation Time</div>
         <?php
-          echo($sortColumn =='time' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=time&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=time&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='time' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=time&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=time&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='time' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=time&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=time&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='time' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=time&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=time&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
       <th class="head">
         <div class="tableHeaderContent">Facility Group Type</div>
         <?php
-          echo($sortColumn =='type' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=type&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn =='type' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=type&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
+          echo($sortColumn =='type' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=type&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn =='type' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=type&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
       <?php if(!(isset($event))): ?> 

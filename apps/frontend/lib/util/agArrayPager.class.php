@@ -8,7 +8,7 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/copyleft/lesser.html
  *
- * @author     Nils Stolpe, CUNY SPS
+ * @author     Found at http://snippets.symfony-project.org/snippet/177 by CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
