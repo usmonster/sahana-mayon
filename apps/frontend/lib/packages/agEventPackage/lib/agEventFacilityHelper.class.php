@@ -211,7 +211,47 @@ class agEventFacilityHelper
             WHERE s.event_facility_resource_id = es.event_facility_resource_id
             HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)') ;
 
-    $results = $query->execute(array(), 'key_value_array') ; // NOTE: GOTTA MAKE THIS
+    $results = $query->execute(array(), 'key_value_array') ;
+    return $results ;
+  }
+
+  public static function returnFirstFacilityStaffedShifts($eventId)
+  {
+    $query = Doctrine_Query::create()
+      ->select('es.facility_resource_id')
+          ->addSelect('es.id')
+        ->from('agEventShift es')
+          ->innerJoin('es.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityGroup efg')
+          ->innerJoin('es.agEventStaffShift')
+        ->where('efg.event_id = ?', $eventId)
+          ->andWhere('EXISTS (
+          SELECT s.id
+            FROM agEventShift s
+            WHERE s.event_facility_resource_id = es.event_facility_resource_id
+            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)') ;
+
+    $results = $query->execute(array(), 'key_value_array') ;
+    return $results ;
+  }
+
+  public static function returnCurrentFacilityResourceShifts($eventId), $time = 'CURRENT_TIMESTAMP')
+  {
+    $query = Doctrine_Query::create()
+      ->select('es.facility_resource_id')
+          ->addSelect('es.id')
+        ->from('agEventShift es')
+          ->innerJoin('es.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityGroup efg')
+          ->innerJoin('es.agEventStaffShift')
+        ->where('efg.event_id = ?', $eventId)
+          ->andWhere('EXISTS (
+          SELECT s.id
+            FROM agEventShift s
+            WHERE s.event_facility_resource_id = es.event_facility_resource_id
+            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)') ;
+
+    $results = $query->execute(array(), 'key_value_array') ;
     return $results ;
   }
 }
