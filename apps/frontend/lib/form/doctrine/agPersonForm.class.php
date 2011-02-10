@@ -21,10 +21,12 @@
 class agPersonForm extends BaseagPersonForm
 {
 
-  public function setup()
-  {
-    parent::setup();
-  }
+//  This is most likely unneeded, just leaving it here for a few days in case
+//  its removal causes some unforeseen problems.
+//  public function setup()
+//  {
+//    parent::setup();
+//  }
 
   /**
    * Initializes the array of datapoints for the person form.
