@@ -222,19 +222,5 @@ agGeoRelationship:
       class: agGeo
       local: geo_id2
       foreign: id
-tempGeoRelationship:
-  actAs:
-    Timestampable:
-      created:
-        disabled: true
-      updated:
-        disabled: true
-  columns:
-    geo_id1:
-      primary: true
-      type: integer(5)
-    geo_id2:
-      primary: true
-      type: integer(5)
 actAs:
   Timestampable: 
