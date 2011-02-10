@@ -90,10 +90,10 @@ class ProjectConfiguration extends sfProjectConfiguration
   public function configureDoctrine(Doctrine_Manager $manager)
   {
     $manager->registerHydrator('key_value_pair', 'KeyValuePairHydrator');
-    $manager->registerHydrator('combo_set', 'ComboHydrator');
+    $manager->registerHydrator('key_value_array', 'KeyValueArrayHydrator');
     $manager->registerHydrator('gis_point_coordinate', 'GisPointCoordinateHydrator');
     $manager->registerHydrator('single_value_array', 'SingleValueArrayHydrator') ;
-
+    $manager->registerHydrator('status_hydrator', 'StatusHydrator') ;
   }
 
 }

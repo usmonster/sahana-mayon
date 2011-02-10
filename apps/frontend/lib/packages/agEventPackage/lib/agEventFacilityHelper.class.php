@@ -99,4 +99,119 @@ class agEventFacilityHelper
 
     return $results ;
   }
+
+  public static function activateZeroHourFacilityResources ($eventId, $activationTime)
+  {
+    $query = Doctrine_Query::create()
+      ->select('efr.id')
+        ->addSelect('f.facility_name')
+        ->addSelect('f.facility_code')
+        ->addSelect('frt.facility_resource_type')
+        ->addSelect('ras.standby')
+        ->addSelect('ras.facility_resource_allocation_status')
+        ->addSelect('es.minutes_start_to_facility_activation')
+        ->addSelect('f.id')
+        ->addSelect('fr.id')
+        ->addSelect('frt.id')
+        ->addSelect('ras.id')
+        ->addSelect('ers.id')
+        ->addSelect('es.id')
+      ->from('agEventFacilityResource efr')
+        ->innerJoin('efr.agFacilityResource fr')
+        ->innerJoin('fr.agFacilityResourceStatus frs')
+        ->innerJoin('fr.agFacilityResourceType frt')
+        ->innerJoin('fr.agFacility f')
+        ->innerJoin('efr.agEventFacilityResourceStatus ers')
+        ->innerJoin('ers.agFacilityResourceAllocationStatus ras')
+        ->innerJoin('efr.agEventFacilityGroup efg')
+        ->innerJoin('efg.agEventFacilityGroupStatus egs')
+        ->innerJoin('egs.agFacilityGroupAllocationStatus gas')
+        ->leftJoin('efr.agEventFacilityResourceActivationTime efat')
+        ->innerJoin('efr.agEventShift es')
+      ->where('EXISTS (
+          SELECT efrs.id
+            FROM agEventFacilityResourceStatus efrs
+            WHERE efrs.event_facility_resource_id = ers.event_facility_resource_id
+              AND efrs.time_stamp <= CURRENT_TIMESTAMP
+            HAVING MAX(efrs.time_stamp) = ers.time_stamp)')
+        ->andWhere('EXISTS (
+          SELECT efgs.id
+            FROM agEventFacilityGroupStatus efgs
+            WHERE efgs.event_facility_group_id = egs.event_facility_group_id
+              AND efgs.time_stamp <= CURRENT_TIMESTAMP
+            HAVING MAX(efgs.time_stamp) = egs.time_stamp)')
+        ->andWhere('EXISTS (
+          SELECT s.id
+            FROM agEventShift s
+            WHERE s.event_facility_resource_id = es.event_facility_resource_id
+            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)')
+        ->andWhere('efat.id IS NULL')
+        ->andWhere('frs.is_available = ?', true)
+        ->andWhere('gas.active = ?', true)
+        ->andWhere('(ras.allocatable = ? OR ras.committed = ?)', array(true, true))
+        ->andWhere('ras.staffed = ?', false)
+        ->andWhere('efg.event_id = ?', $eventId)
+        ->andWhere('ras.standby = ?', $false)
+        ->andWhere('efg.id LIKE (?)', $eventFacilityGroupId) ;
+  }
+
+  public static function returnCurrentEventFacilityResourceStatus($eventId)
+  {
+    $query = Doctrine_Query::create()
+      ->select('efrs,id')
+          ->addSelect('efrs.event_facility_resource_id')
+          ->addSelect('efrs.time_stamp')
+        ->from('agEventFacilityResourceStatus efrs')
+          ->innerJoin('efrs.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityGroup efg')
+        ->where('efg.event_id = ?', $eventId)
+          ->andWhere('EXISTS (
+            SELECT s.id
+              FROM agEventFacilityResourceStatus s
+              WHERE s.event_facility_resource_id = efrs.event_facility_resource_id
+                AND s.time_stamp <= CURRENT_TIMESTAMP
+              HAVING MAX(s.time_stamp) = efrs.time_stamp)') ;
+
+    $results = $query->execute(array(), 'status_hydrator') ;
+    return $results ;
+  }
+
+  public static function returnCurrentEventFacilityGroupStatus($eventId)
+  {
+    $query = Doctrine_Query::create()
+      ->select('efgs,id')
+          ->addSelect('efgs.event_facility_group_id')
+          ->addSelect('efgs.time_stamp')
+        ->from('agEventFacilityGroupStatus efgs')
+          ->innerJoin('efgs.agEventFacilityGroup efg')
+        ->where('efg.event_id = ?', $eventId)
+          ->andWhere('EXISTS (
+            SELECT s.id
+              FROM agEventFacilityResourceStatus s
+              WHERE s.event_facility_group_id = efgs.event_facility_group_id
+                AND s.time_stamp <= CURRENT_TIMESTAMP
+              HAVING MAX(s.time_stamp) = efgs.time_stamp)') ;
+
+    $results = $query->execute(array(), 'status_hydrator') ;
+    return $results ;
+  }
+
+  public static function returnFirstFacilityResourceShifts($eventId)
+  {
+    $query = Doctrine_Query::create()
+      ->select('es.facility_resource_id')
+          ->addSelect('es.id')
+        ->from('agEventShift es')
+          ->innerJoin('es.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityGroup efg')
+        ->where('efg.event_id = ?', $eventId)
+          ->andWhere('EXISTS (
+          SELECT s.id
+            FROM agEventShift s
+            WHERE s.event_facility_resource_id = es.event_facility_resource_id
+            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)') ;
+
+    $results = $query->execute(array(), 'key_value_array') ; // NOTE: GOTTA MAKE THIS
+    return $results ;
+  }
 }
