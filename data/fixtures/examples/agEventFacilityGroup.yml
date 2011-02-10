@@ -1,0 +1,34 @@
+agEventFacilityGroup:
+  zombie_apocalypse_event_facility_group_1:
+    id: 1
+    agEvent: zombie_apocalypse_event_1
+    event_facility_group: zombie_apocalypse_event_facility_group_1
+    agFacilityGroupType: solar
+    activation_sequence: 1
+  asteroid_apocalypse_event_facility_group_2:
+    id: 2
+    agEvent: asteroid_apocalypse_event_2
+    event_facility_group: asteroid_apocalypse_event_facility_group_2
+    agFacilityGroupType: solar
+    activation_sequence: 2
+  tsunami_warning_event_facility_group_3:
+    id: 3
+    agEvent: tsunami_warning_event_3
+    event_facility_group: tsunami_warning_event_event_facility_group_3
+    agFacilityGroupType: solar
+    activation_sequence: 3
+  megaquake_event_facility_group_4:
+    id: 4
+    agEvent: megaquake_event_4
+    event_facility_group:  megaquake_event_facility_group_4
+    agFacilityGroupType: solar
+    activation_sequence: 4
+  supervolcano_event_facility_group_5:
+    id: 5
+    agEvent: supervolcano_event_5
+    event_facility_group:  supervolcano_event_facility_group_5
+    agFacilityGroupType: solar
+    activation_sequence: 5
+
+
+

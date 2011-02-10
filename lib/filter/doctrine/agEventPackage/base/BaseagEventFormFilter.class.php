@@ -14,7 +14,7 @@ abstract class BaseagEventFormFilter extends BaseFormFilterDoctrine
   {
     $this->setWidgets(array(
       'event_name'            => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'zero_hour'             => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
+      'zero_hour'             => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
       'created_at'            => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'updated_at'            => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'ag_affected_area_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agAffectedArea')),

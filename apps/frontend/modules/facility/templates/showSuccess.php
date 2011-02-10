@@ -102,7 +102,7 @@
         $emailContacts = $ag_facility->getAgSite()->getAgEntity()->getAgEntityEmailContact();
         foreach ($emailContacts as $emailContact) {
           if ($emailContact->getEmailContactTypeId() == $ag_email_contact_type->getId()) {
-            echo '<a href="mailto:' . $emailContact->getAgEmailContact() . '" class="linkMail">' . $emailContact->getAgEmailContact() . '</a>' . '<br />';
+            echo '<a href="mailto:' . $emailContact->getAgEmailContact() . '" class="linkText">' . $emailContact->getAgEmailContact() . '</a>' . '<br />';
             $check = 1;
           }
         }

@@ -154,7 +154,7 @@ class scenarioActions extends agActions
                       ->andWhere('agFSR.scenario_facility_resource_id = ?', $facilityStaffResource['scenario_facility_resource_id'])
                       ->fetchOne();
               if (!$existing) {
-                $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $facilityStaffResource, $CSRFSecret = false);
+                $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
               } else {
                 $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($existing, $options = array(), $CSRFSecret = false);
               }
@@ -307,25 +307,30 @@ class scenarioActions extends agActions
   {
 
     $this->scenario_id = $request->getParameter('id');
-    $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
+    $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->scenario;
     $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
-            ->createQuery('agSSG')
-            ->select('agSSG.*')
-            ->from('agScenarioStaffGenerator agSSG')
-            ->where('agSSG.scenario_id = ?', $this->scenario_id) //join up to see what staff pool
-            ->execute();
+            ->findby('scenario_id', $this->scenario_id);
     $this->filterForm = new sfForm();
     $this->filterForm->setWidgets(array(
       'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
       'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization')),
     ));
+
     if ($request->getParameter('search_id')) {
       $this->search_id = $request->getParameter('search_id');
       $this->poolform = new agStaffPoolForm($this->search_id);
       $queryparts = explode(" AND ", $this->poolform->getEmbeddedForm('lucene_search')->getObject()->query_condition);
       foreach ($queryparts as $querypart) {
-        $filterType = preg_split("/.+:.+/", $querypart, 2);
-        $this->filterForm->setDefault($filterType[0], $filterType[1]);
+        $filterType = preg_split("/:/", $querypart, 2);
+        if ($filterType[0] == 'staff_type')
+        {
+          $defaultValue = Doctrine_Query::create()->select('id')->from('agStaffResourceType')
+                  ->where('staff_resource_type=?', $filterType[1])->execute(array(), 'single_value_array');
+        } else {
+          $defaultValue = Doctrine_Query::create()->select('id')->from('agOrganization')
+                  ->where('organization=?', $filterType[1])->execute(array(), 'single_value_array');
+        }
+        $this->filterForm->setDefault($filterType[0], $defaultValue[0]);
       }
     } else {
       $this->poolform = new agStaffPoolForm();
@@ -348,7 +353,6 @@ class scenarioActions extends agActions
         $this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']);
         $this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
         $this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
-//$this->poolform->staff_generator->setDefault('search_weight', $staff_generator['search_weight']);
         $this->filterForm->setDefault('staff_type', $request->getPostParameter('staff_type'));
         $this->filterForm->setDefault('staff_org', $request->getPostParameter('staff_org'));
 //$query_condition = implode(' AND ', $lucene_query);
@@ -361,8 +365,8 @@ class scenarioActions extends agActions
         $ag_staff_gen->delete();
         $luceneQuery->delete();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
-      } elseif ($request->getParameter('Save')) {
-//otherwise, we're SAVING/UPDATING
+
+      } elseif ($request->getParameter('Save')) { //otherwise, we're SAVING/UPDATING
         $this->poolform = new agStaffPoolForm();
         $this->poolform->scenario_id = $request->getParameter('id');
         $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
@@ -374,32 +378,12 @@ class scenarioActions extends agActions
           $lucene_search = $postParam['lucene_search'];
           $lucene_query = $lucene_search['query_condition'];
 
-          parent::doSearch($lucene_query, FALSE);
-          foreach ($this->hits as $hit) {
-            $staff_id[] = $this->results[$hit->model][$hit->pk]['id'];
-          }
-          $staff_resources = Doctrine_Query::create()
-                  ->select('a.id')
-                  ->from('agStaffResource a')
-                  ->leftJoin('a.agScenarioStaffResource asr')
-                  ->where('asr.id is NULL')
-                  ->andWhereIn('a.staff_id', $staff_id)
-                  ->andWhere('asr.scenario_id =?', $this->scenario_id)
-//              ->andWhere('a.id NOT EXISTS (SELECT ssr.staff_resource_id FROM agScenarioStaffResource ssr WHERE ssr.scenario_id = ?)', $this->scenario_id)
-                  ->execute(array(), 'single_value_array');
-          foreach ($staff_resources as $staff_resource) {
-            $scenario_staff_resource = new agScenarioStaffResource();
-            $scenario_staff_resource->set('staff_resource_id', $staff_resource)
-                ->set('scenario_id', $this->scenario_id)
-                ->set('deployment_weight', $staff_generator['search_weight']);
-
-            $scenario_staff_resource->save();
-          }
+          $staff_resource_ids = agScenarioGeneratorHelper::staffPoolGenerator($lucene_query, $this->scenario_id);
+          agScenarioGeneratorHelper::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }
-      } else {
 
-//or, just make a new form
+      } else {  //or, just make a new form
         $this->poolform = new agStaffPoolForm();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
@@ -590,7 +574,7 @@ class scenarioActions extends agActions
       if ($this->shifttemplateform->isValid()) {
         $ag_shift_template = $this->shifttemplateform->saveEmbeddedForms();
         if ($request->hasParameter('Continue')) {
-          $generatedResult = agScenarioGenerator::shiftGenerator();
+          $generatedResult = agScenarioGeneratorHelper::shiftGenerator();
           //should be a try/catch here
           $this->redirect('scenario/scenarioshiftlist?id=' . $request->getParameter('id'));
         } else {
@@ -1137,7 +1121,7 @@ class scenarioActions extends agActions
 
   public function executeGeneratescenarioshift()
   {
-    $generatedResult = agScenarioGenerator::shiftGenerator();
+    $generatedResult = agScenarioGeneratorHelper::shiftGenerator();
     $this->redirect('scenario/scenarioshiftlist');
   }
 

@@ -38,7 +38,6 @@ agEvent:
       notnull: true
     zero_hour:
       type: timestamp
-      notnull: true
   indexes:
     agEvent_unq:
       fields: [event_name]
@@ -328,9 +327,8 @@ agEventFacilityGroup:
     UX_agEventFacilityGroup:
       fields: [event_id, event_facility_group]
       type: unique
-    UX_agEventFacilityGroup_eventFacilityGroup:
+    IX_agEventFacilityGroup_eventFacilityGroup:
       fields: [event_facility_group]
-      type: unique
   relations:
     agEvent:
       local: event_id

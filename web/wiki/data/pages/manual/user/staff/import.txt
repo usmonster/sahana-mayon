@@ -9,6 +9,9 @@
 ===== Walk-Through =====
 
 
+  - Click "Import Staff" to expand the file select option {{ :manual:user:staff:staff_import_highlight.png?700 }}
+  - Select "Browse" and select a file from your computer {{ :manual:user:staff:staff_import_fileselect.png?700 }}
+  - Select "Submit" to upload the file
 ===== FAQ =====
 
 

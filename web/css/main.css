@@ -259,12 +259,13 @@ h5 {
   background: #8dffb2;
 }
 
-.linkMail {
+.linkText {
   outline: none;
   color: #848484;
+  font-weight: bold;
 }
 
-.linkMail:hover {
+.linkText:hover {
   color: #ff8f00;
   text-shadow: 0px 0px 1px #ff8f00;
 }
@@ -624,7 +625,7 @@ th .tableRow {
   border-bottom: solid #bcbcbc 1px;
 }
 
-.staffTable tr:hover {
+.staffTable tr:hover, .singleTable tr:hover {
   background: #e5f7ff;
 }
 
@@ -670,6 +671,10 @@ th .tableRow {
   padding: .25em 1em;
   text-align: center;
   border-bottom: solid 1px #bcbcbc;
+}
+
+.singleTable th {
+  padding: .25em 1em;
 }
 
 /*.staffTable a, .singleTable a {

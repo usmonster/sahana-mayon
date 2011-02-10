@@ -37,10 +37,7 @@ abstract class BaseagEventFacilityGroupForm extends BaseFormDoctrine
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorAnd(array(
-        new sfValidatorDoctrineUnique(array('model' => 'agEventFacilityGroup', 'column' => array('event_id', 'event_facility_group'))),
-        new sfValidatorDoctrineUnique(array('model' => 'agEventFacilityGroup', 'column' => array('event_facility_group'))),
-      ))
+      new sfValidatorDoctrineUnique(array('model' => 'agEventFacilityGroup', 'column' => array('event_id', 'event_facility_group')))
     );
 
     $this->widgetSchema->setNameFormat('ag_event_facility_group[%s]');

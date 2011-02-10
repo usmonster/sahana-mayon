@@ -1,0 +1,23 @@
+====== Facility Management Walk-Through ======
+
+===== Review =====
+
+===== Reference Information =====
+
+===== Walk-Through =====
+
+===== FAQ =====
+
+====== Continue ======
+
+[[manual:user:facilities:export|{{:manual:user:previous.png?135|Export }}]]
+
+====== Jump to Another Step ======
+
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
+  - [[manual:user:facilities:create|Create Facility]]
+  - [[manual:user:facilities:update|Update Facility]]
+  - [[manual:user:facilities:import|Import Facility]]
+  - [[manual:user:facilities:export|Export Facility]]
+  - **Facility Management Review**

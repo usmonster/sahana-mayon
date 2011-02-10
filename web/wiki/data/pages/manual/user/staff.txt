@@ -32,11 +32,51 @@ A "Staff Resource" is a person combined with a skill set that is potentially ava
 Staff can be entered into Agasti in two ways: manually and via import.  Below are brief instructions for using both; however a walk-through is available for [[manual:user:staff:new|manual entry]] and [[manual:user:staff:import|import]].
 
 ==== Manual ====
-
+To manually enter staff, beginning from the Staff Management page:
+  - Click "Create Staff"
+  - Select the staff's status
+    * **Active** staff are available for deployment
+    * **Inactive** staff are not available for deployment
+    * **Retired** staff are not available for deployment due to retirement
+    * **Other**
+  - Select the Staff Resource Type
+  - Select the Organization the staff member is affiliated with
+  - Enter the available details regarding the staff member.  **Note**: for the most accurate deployment the staff member should provide their most accurate home and work addresses.  Address information is used to create staff assignments during deployment and inaccurate address information could result in the staff member having to travel farther during the response.
+  - Select "save"
 ==== Import ====
 
+Beginning on the Staff Management page:
+  - Click "Import Staff" to expand the file select option
+  - Select "Browse" and select a file from your computer
+  - Select "Submit" to upload the file
 ===== Editing Staff =====
+Staff records can be updated manually or via the import instructions above.  Below are brief instructions for editing staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walkthrough]].
+
+  - Beginning on the Staff Management page select "List Staff".
+  - From the staff list locate the staff record you wish to update.  There are two ways to locate the record:
+    * Search using the "Search" box in the upper right corner
+    * Scroll manually through records via the navigation arrows in the lower right corner
+  - To select a staff record to view, click the number to the left of the record
+  - To edit the record click the "edit" button
+  - After the record has been updated click "save"
 
 ===== Deleting Staff =====
 
+Below are brief instructions for deleting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walkthrough]].
+
+  - Beginning on the Staff Management page select "List Staff".
+  - From the staff list locate the staff record you wish to update.  There are two ways to locate the record:
+    * Search using the "Search" box in the upper right corner
+    * Scroll manually through records via the navigation arrows in the lower right corner
+  - To select a staff record to view, click the number to the left of the record
+  - To delete the record click the "delete" button
+  - To confirm the deletion of the record click "ok" after the warning
+
 ===== Duplication =====
+
+===== Staff Export =====
+
+Below are brief instructions for exporting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walkthrough]].
+
+  - Beginning on the Staff Management home page select the "Export Staff" link.
+  - In the pop up window either select to open the document or select a place locally to save the document.

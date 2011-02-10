@@ -1,5 +1,42 @@
 ====== Facility Management ======
 
+The facility management module of Agasti is designed to track available site and resources for sheltering and response in the event of an emergency response.  Intended to supplement response plans where sites are pre-designated, facilities have specific roles as well as contact information for on-site response.
+
+Below is a quick guide to Facilities Management functionality; however, more detailed information is available via the [[manual:user:facilities:facilities_management_walkthrough|Facilities Management Walk-Through]].
+
+===== Facility Management Functions =====
+The functionality of Facilities Management is broken down into several parts:
+
+  * Entering Facilities
+  * Editing Facility records
+  * Deleting records
+  * Importing Facilities
+  * Exporting Facilities
+
+The Facilities Management module is used largely for the maintaining of facility information for an emergency response.  While facility information could be uploaded at the time of response, the effectiveness of the response is greatly increased if the information is available prior to response.
+
+===== Facility Resources =====
+
+A "Facility Resource" is the combination of a physical site and the function that site can serve.  For example, a local high school with a large gym and a cafeteria can be used both as a shelter and for medical overflow.  In Agasti the gym would be listed as two Facility Resources.  Let's name the gym Lincoln High; it would be listed in Agasti as:
+  * Lincoln High: Shelter
+  * Lincoln High: Medical Overflow
+
+When a new facility is created the type of resources available and the capacity of those resources will be entered.
+
+==== Editing Facility Resources ====
+
+
+===== Creating Facilities =====
+
+Facility records can be created two ways in Agasti: manual entry and import.
+===== Editing Facilities =====
+
+
+===== Exporting Facilities =====
+
+===== Deleting Facility Records =====
+
+
 Listed below are the help topics for the facility management module of Sahana Agasti 2.0, Mayon
 
 Please select one of the following facility administration actions:

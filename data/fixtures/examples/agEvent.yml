@@ -1,0 +1,21 @@
+agEvent:
+  zombie_apocalypse_event_1:
+    id: 1
+    event_name: Zombie Apocalypse 1
+    zero_hour: '2012-12-21 00:00:00'
+  asteroid_apocalypse_event_2:
+    id: 2
+    event_name: Asteroid Apocalypse 2
+    zero_hour: '2011-01-01 00:00:00'
+  tsunami_warning_event_3:
+    id: 3
+    event_name: Tsunami Warning 3
+    zero_hour: '2011-12-21 00:00:00'
+  megaquake_event_4:
+    id: 4
+    event_name: Megaquake 4
+    zero_hour: '2011-01-01 00:00:00'
+  supervolcano_event_5:
+    id: 5
+    event_name: Supervolcano 5
+    zero_hour: '2011-01-01 00:00:00'

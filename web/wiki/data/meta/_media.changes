@@ -1,5 +1,3 @@
-1292950334	127.0.0.1	C	logo.jpg	sa		
-1292950342	127.0.0.1	D	nycoem.png	sa		
 1292952178	127.0.0.1	D	logo.jpg	sa		
 1292952191	127.0.0.1	C	logo_c3.jpg	sa		
 1292952362	127.0.0.1	D	sahanalogo.jpg	sa		
@@ -20,3 +18,6 @@
 1296749019	::1	C	manual:user:staff:newstaff.png	admin		
 1297104348	::1	C	manual:user:staff:staff_select1.png	admin		
 1297104442	::1	C	manual:user:staff:staff_create_highlight.png	admin		
+1297184210	::1	C	manual:user:staff:staff_export_highlight.png	admin		
+1297184548	::1	C	manual:user:staff:staff_import_highlight.png	admin		
+1297184573	::1	C	manual:user:staff:staff_import_fileselect.png	admin		

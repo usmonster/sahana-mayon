@@ -15,6 +15,7 @@ It's time to get started in creating your first Scenario.  Keep this walk-throug
 
 ===== Jump to Another Step =====
 {{ :logo_c3.jpg?200}}
+  - **Start**
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Create A Scenario]]
   - [[scenario:newgroup| Create Facility Groups]]

@@ -17,6 +17,7 @@ use_javascript('tooltip.js'); ?>
     }).disableSelection();
   });
 
+
   $('#available > li').tooltip();
   $('#allocated > li').tooltip({
     bodyHandler: function() {

@@ -207,9 +207,8 @@ agScenarioFacilityGroup:
     UX_agScenarioFacilityGroup:
       fields: [scenario_id, scenario_facility_group]
       type: unique
-    agScenarioFacilityGroup_unq:
+    IX_agScenarioFacilityGroup_scenarioFacilityGroup:
       fields: [scenario_facility_group]
-      type: unique
   relations:
     agScenario:
       local: scenario_id
