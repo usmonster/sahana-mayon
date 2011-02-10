@@ -52,7 +52,7 @@ class agFacilityImport
     $numCols = $xlsObj->colcount($sheet_index = 0);
 
     // Create a simplified array from
-    for ($row = 1; $row <= $numRows; $row++) {
+    for ($row = 2; $row <= $numRows; $row++) {
 
       for ($col = 1; $col <= $numCols; $col++) {
         $importData[$row][$xlsObj->val(1, $col)] = $xlsObj->val($row, $col);
@@ -64,24 +64,21 @@ class agFacilityImport
 
   public function saveFacilityImport($importFacility)
   {
+    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
+    $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
+    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
+    $dbManager = new sfDatabaseManager($appConfig);
+    $db = $dbManager->getDatabase('doctrine');
 
+    $conn = Doctrine_Manager::connection();
+    
+    $foo = Doctrine_Query::create()
+            ->select('t.*')
+            ->from('temp_facilityImport t')
+            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    
     foreach ($importFacility as $import) {
 
-      //echo $import["Facility Code"] ."-" . strlen($import["Facility Code"]) . "\n";
-      $facilityCode = $import["Facility Code"];
-        
-      // Basic/Primary
-      $entity = new agEntity();
-      $entity->save();
-      $site = new agSite();
-      $site->entity_id = $entity->id;
-      $site->save();
-      $facility = new agFacility();
-      $facility->site_id = $site->id;
-      $facility->facility_name = $import["Facility Name"];
-      $facility->facility_code = substr($import["Facility Code"],7);
-      $facility->save();
-      
     }
   }
 
@@ -129,28 +126,152 @@ class agFacilityImport
     }
   }
 
-  // importName() *******************
-  private function importFacilityName($facility, $point)
+  // incrementFacilityName() *******************
+  private function incrementFacilityName($facilityName)
   {
     $nameCheck =
             Doctrine_core::getTable('agFacility')
-            ->findByDql('facility_name = ?', $point)
+            ->findByDql('facility_name = ?', $facilityName)
             ->getFirst();
     if (!($nameCheck instanceof agFacility)) {
-      $nameCheck = new agFacility();
-      $nameCheck->facility_name = $point;
-      $nameCheck->save();
+      $name = $facilityName;
+    } else {
+      $dupNameCount = $nameCheck->count() + 1;
+      $name = $facilityName . " ($dupNameCount)";
     }
+    return $name;
+  }
+
+  public function createTempTable()
+  {
+    // Access Symfony...we'll only need these lines if we need to go the shell_exec route. Might need IReadFilter.php in any case though.
+    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
+    require_once(dirname(__FILE__) . '/../../../../plugins/sfPhpExcelPlugin/lib/PHPExcel/PHPExcel/Reader/IReadFilter.php');
+    require_once(dirname(__FILE__) . '/agReadFilter.class.php');
+    require_once(dirname(__FILE__) . '/excel_reader2.php');
+    $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
+
+    // Same here
+    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
+    $dbManager = new sfDatabaseManager($appConfig);
+    $db = $dbManager->getDatabase('doctrine');
+
+    $conn = Doctrine_Manager::connection();
+
+    // Drop the table
+    try {
+      $conn->export->dropTable('temp_facilityImport');
+    } catch (Doctrine_Exception $e) {
+
+    }
+
+    $columns = array(
+      'id' => array(
+        'type' => 'integer',
+        'autoincrement' => true,
+        'primary' => true
+      ),
+      'facility_name' => array(
+        'type' => 'string',
+        'length' => 64
+      ),
+      'facility_code' => array(
+        'type' => 'string',
+        'length' => 10
+      ),
+      'facility_resource_type_abbr' => array(
+        'type' => 'string',
+        'length' => 10
+      ),
+      'facility_resource_status' => array(
+        'type' => 'string',
+        'length' => 40
+      ),
+      'capacity' => array(
+        'type' => 'integer'
+      ),
+      'activation_sequence' => array(
+        'type' => 'integer'
+      ),
+      'facility_resource_allocation_status' => array(
+        'type' => 'string',
+        'length' => 30
+      ),
+      'scenario_facility_group' => array(
+        'type' => 'string',
+        'length' => 64
+      ),
+      'facility_group_type' => array(
+        'type' => 'string',
+        'length' => 30
+      ),
+      'facility_group_allocation_status' => array(
+        'type' => 'string',
+        'length' => 30
+      ),
+      'email_contact' => array(
+        'type' => 'string',
+        'length' => 255
+      ),
+      'phone_contact' => array(
+        'type' => 'string',
+        'length' => 16
+      ),
+      'street_1' => array(
+        'type' => 'string',
+        'length' => 255
+      ),
+      'street_2' => array(
+        'type' => 'string',
+        'length' => 255
+      ),
+      'city' => array(
+        'type' => 'string',
+        'length' => 255
+      ),
+      'state' => array(
+        'type' => 'string',
+        'length' => 2
+      ),
+      'zip_code' => array(
+        'type' => 'string',
+        'length' => 255
+      ),
+      'borough' => array(
+        'type' => 'string',
+        'length' => 255
+      ),
+      'country' => array(
+        'type' => 'string',
+        'length' => 128
+      ),
+      'latitude' => array(
+        'type' => 'decimal'
+      ),
+      'longitude' => array(
+        'type' => 'decimal'
+      )
+    );
+
+    $options = array(
+      'type' => 'MYISAM',
+      'charset' => 'utf8'
+    );
+
+    $conn->export->createTable('temp_facilityImport', $columns, $options);
   }
 
 }
 
-$import = new agFacilityImport();
+//$import = new agFacilityImport();
 //$output = $import->dumpImportFile($argv[1]);
 //print("$output\n");
 //print("---------------------------\n");
 
 $test = new agFacilityImport();
+//$output = $test->processFacilityImport($argv[1]);
+//$output = $test->dumpFacilities();
+$output = $test->createTempTable();
 $output = $test->processFacilityImport($argv[1]);
-$output = $test->dumpFacilities();
+
 ?>
