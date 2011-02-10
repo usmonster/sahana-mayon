@@ -88,12 +88,11 @@ abstract class BaseagEventFacilityGroup extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
-        $this->index('UX_agEventFacilityGroup_eventFacilityGroup', array(
+        $this->index('IX_agEventFacilityGroup_eventFacilityGroup', array(
              'fields' => 
              array(
               0 => 'event_facility_group',
              ),
-             'type' => 'unique',
              ));
     }
 

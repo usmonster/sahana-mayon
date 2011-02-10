@@ -78,7 +78,6 @@ abstract class BaseagEvent extends sfDoctrineRecord
              ));
         $this->hasColumn('zero_hour', 'timestamp', null, array(
              'type' => 'timestamp',
-             'notnull' => true,
              ));
 
 

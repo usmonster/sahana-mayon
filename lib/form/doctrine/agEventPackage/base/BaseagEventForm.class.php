@@ -27,7 +27,7 @@ abstract class BaseagEventForm extends BaseFormDoctrine
     $this->setValidators(array(
       'id'                    => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'event_name'            => new sfValidatorString(array('max_length' => 64)),
-      'zero_hour'             => new sfValidatorDateTime(),
+      'zero_hour'             => new sfValidatorDateTime(array('required' => false)),
       'created_at'            => new sfValidatorDateTime(),
       'updated_at'            => new sfValidatorDateTime(),
       'ag_affected_area_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agAffectedArea', 'required' => false)),

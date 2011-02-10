@@ -97,12 +97,11 @@ abstract class BaseagScenarioFacilityGroup extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
-        $this->index('agScenarioFacilityGroup_unq', array(
+        $this->index('IX_agScenarioFacilityGroup_scenarioFacilityGroup', array(
              'fields' => 
              array(
               0 => 'scenario_facility_group',
              ),
-             'type' => 'unique',
              ));
     }
 

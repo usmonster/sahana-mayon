@@ -38,7 +38,6 @@ abstract class BaseagScenarioFacilityGroupForm extends BaseFormDoctrine
       new sfValidatorAnd(array(
         new sfValidatorDoctrineUnique(array('model' => 'agScenarioFacilityGroup', 'column' => array('id'))),
         new sfValidatorDoctrineUnique(array('model' => 'agScenarioFacilityGroup', 'column' => array('scenario_id', 'scenario_facility_group'))),
-        new sfValidatorDoctrineUnique(array('model' => 'agScenarioFacilityGroup', 'column' => array('scenario_facility_group'))),
       ))
     );
 
