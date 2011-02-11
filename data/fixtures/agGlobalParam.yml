@@ -2,6 +2,7 @@
 
 agGlobalParam:
   shift_change_restriction:
-    host_id: 1
+    id: 1
+    agHost: localhost
     datapoint: shift_change_restriction
     value: -36h
