@@ -1,6 +1,7 @@
-# Pre-populate address contact type
+# Pre-populate agGlobalParam
 
 agGlobalParam:
   shift_change_restriction:
+    host_id: 1
     datapoint: shift_change_restriction
     value: -36h
