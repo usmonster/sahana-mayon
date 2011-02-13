@@ -223,7 +223,7 @@ class agEventFacilityHelper
         ->from('agEventShift es')
           ->innerJoin('es.agEventFacilityResource efr')
           ->innerJoin('efr.agEventFacilityGroup efg')
-          ->innerJoin('es.agEventStaffShift')
+          ->innerJoin('es.agEventStaffShift ess')
         ->where('efg.event_id = ?', $eventId)
           ->andWhere('EXISTS (
           SELECT s.id
@@ -235,21 +235,24 @@ class agEventFacilityHelper
     return $results ;
   }
 
-  public static function returnCurrentFacilityResourceShifts($eventId), $time = 'CURRENT_TIMESTAMP')
+  public static function returnCurrentFacilityResourceShifts($eventId, $time = NULL)
   {
-    $query = Doctrine_Query::create()
-      ->select('es.facility_resource_id')
-          ->addSelect('es.id')
-        ->from('agEventShift es')
-          ->innerJoin('es.agEventFacilityResource efr')
-          ->innerJoin('efr.agEventFacilityGroup efg')
-          ->innerJoin('es.agEventStaffShift')
-        ->where('efg.event_id = ?', $eventId)
-          ->andWhere('EXISTS (
-          SELECT s.id
-            FROM agEventShift s
-            WHERE s.event_facility_resource_id = es.event_facility_resource_id
-            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)') ;
+    // convert our start time to unix timestamp or set default if null
+    $time = (is_null($time)) ? time() : strtotime($time) ;
+    $time = date ('Y-m-d H:i:s', $time) ;
+    print_r($time) ;
+
+    $query = new Doctrine_RawSql() ;
+    $query->addComponent('es', 'agEventShift es')
+      ->select('{es.facility_resource_id}')
+        ->addSelect('{es.id}')
+      ->from('ag_event_shift es')
+        ->innerJoin('ag_event_facility_resource efr ON es.event_facility_resource_id = efr.id')
+        ->innerJoin('ag_event_facility_group efg ON efr.event_facility_group_id = efg.id')
+        ->leftJoin('ag_event_facility_resource_activation_time efrat ON efr.id = efrat.event_facility_resource_id')
+      ->where('efg.event_id = ?', $eventId)
+        ->andWhere('DATE_ADD(efrat.activation_time, INTERVAL es.minutes_start_to_facility_activation MINUTE) <= TIMESTAMP(?)', $time)
+        ->andWhere('DATE_ADD(efrat.activation_time, INTERVAL (es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes) MINUTE) >= TIMESTAMP(?)', $time) ;
 
     $results = $query->execute(array(), 'key_value_array') ;
     return $results ;

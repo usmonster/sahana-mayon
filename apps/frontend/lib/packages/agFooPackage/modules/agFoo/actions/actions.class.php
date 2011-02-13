@@ -62,6 +62,9 @@ class agFooActions extends agActions
 
   public function executeShow(sfWebRequest $request)
   {
+    $results = agEventFacilityHelperMySql::returnCurrentFacilityResourceShifts(1) ;
+    print_r($results) ;
+
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_foo);
   }
