@@ -158,7 +158,7 @@ class agEventFacilityHelper
   public static function returnCurrentEventFacilityResourceStatus($eventId)
   {
     $query = Doctrine_Query::create()
-      ->select('efrs,id')
+      ->select('efrs.id')
           ->addSelect('efrs.event_facility_resource_id')
           ->addSelect('efrs.time_stamp')
         ->from('agEventFacilityResourceStatus efrs')
@@ -179,7 +179,7 @@ class agEventFacilityHelper
   public static function returnCurrentEventFacilityGroupStatus($eventId)
   {
     $query = Doctrine_Query::create()
-      ->select('efgs,id')
+      ->select('efgs.id')
           ->addSelect('efgs.event_facility_group_id')
           ->addSelect('efgs.time_stamp')
         ->from('agEventFacilityGroupStatus efgs')
