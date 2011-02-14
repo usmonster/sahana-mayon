@@ -20,7 +20,6 @@ $(document).ready(function() {
 	});
 });
 </script>
-<div id="something"></div>
 <?php
   $sortColumn = $sf_request->getGetParameter('sort');
   $sortOrder = $sf_request->getGetParameter('order');

@@ -453,9 +453,6 @@ class eventActions extends agActions
         array_push($facilityGroupArray, $ta);
       }
     }
-
-
-
     $this->facilityGroupArray = $facilityGroupArray;
     $this->pager = new agArrayPager(null, 10);
 
@@ -494,8 +491,6 @@ class eventActions extends agActions
     $this->results = $this->queryForTable($this->eventFacilityGroup->id);
     $statusQuery = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
     $statusId = $statusQuery[$this->eventFacilityGroup->id];
-//    $this->statusWidget = new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'add_empty' => false));
-//    $r = $this->statusWidget->getOption('choices');
     $this->form = new sfForm();
     $this->form->setWidgets(array(
       'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
