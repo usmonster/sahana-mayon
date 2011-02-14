@@ -1,5 +1,5 @@
 <?php use_javascript('jquery.ui.custom.js') ?>
-<?php use_stylesheet('ui-lightness/jquery.ui.custom.css') ?>
+<?php use_stylesheet('jquery/jquery.ui.custom.css') ?>
 <script type="text/javascript">
 $(document).ready(function() {
 	var $dialog = $('<div></div')

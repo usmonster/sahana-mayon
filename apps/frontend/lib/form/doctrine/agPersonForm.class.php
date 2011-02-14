@@ -1005,7 +1005,7 @@ class agPersonForm extends BaseagPersonForm
   public function getStylesheets()
   {
     $css = parent::getStylesheets();
-    $css['ui-lightness/jquery.ui.custom.css'] = 'all';
+    $css['jquery/jquery.ui.custom.css'] = 'all';
     return $css;
   }
 
