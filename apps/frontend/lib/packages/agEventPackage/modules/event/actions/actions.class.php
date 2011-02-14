@@ -501,29 +501,46 @@ class eventActions extends agActions
             ->from('agEventFacilityGroup')
             ->where('event_facility_group = ?', urldecode($request->getParameter('group')))
             ->fetchOne();
-    $this->event = Doctrine_Query::create()
-            ->select()
-            ->from('agEvent')
-            ->where('event_name = ?', urldecode($request->getParameter('event')))
-            ->fetchOne();
-    $this->results = $this->queryForTable($this->eventFacilityGroup->id);
-    $statusQuery = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
-    //$statusId = $statusQuery[$this->eventFacilityGroup->id];
-    $this->form = new sfForm();
-    $this->form->setWidgets(array(
-      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
-      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus')),
-    ));
     if ($request->isMethod(sfRequest::POST)) {
-
       if ($request->getParameter('resource_allocation_status')) {
         $resourceAllocation = new agEventFacilityResourceStatus();
         $resourceAllocation->event_facility_resource_id = $request->getParameter('event_facility_resource_id');
         $resourceAllocation->facility_resource_allocation_status_id = $request->getParameter('resource_allocation_status');
         $resourceAllocation->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
         $resourceAllocation->save();
+      } elseif ($request->getParameter('group_allocation_status')) {
+        $groupAllocation = new agEventFacilityGroupStatus();
+        $groupAllocation->event_facility_group_id = $this->eventFacilityGroup->id;
+        $groupAllocation->facility_group_allocation_status_id = $request->getParameter('group_allocation_status');
+        $groupAllocation->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+        $groupAllocation->save();
       }
     }
+
+
+    $this->event = Doctrine_Query::create()
+            ->select()
+            ->from('agEvent')
+            ->where('event_name = ?', urldecode($request->getParameter('event')))
+            ->fetchOne();
+    $this->results = $this->queryForTable($this->eventFacilityGroup->id);
+
+    $statusIds = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
+
+    $query = Doctrine_Query::create()
+      ->select('s.event_facility_group_id')
+        ->addSelect('s.facility_group_allocation_status_id')
+      ->from('agEventFacilityGroupStatus s')
+      ->whereIn('s.id', array_keys($statusIds));
+    // Returns fgroup_id as key, status_id as val
+    $statusQuery = $query->execute(array(), 'key_value_pair');
+
+    $this->statusId = $statusQuery[$this->eventFacilityGroup->id];
+    $this->form = new sfForm();
+    $this->form->setWidgets(array(
+      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
+      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus')),
+    ));
   }
 
   private function queryForTable($eventFacilityGroupId = null)
