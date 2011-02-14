@@ -187,7 +187,7 @@ class agEventFacilityHelper
         ->where('efg.event_id = ?', $eventId)
           ->andWhere('EXISTS (
             SELECT s.id
-              FROM agEventFacilityResourceStatus s
+              FROM agEventFacilityGroupStatus s
               WHERE s.event_facility_group_id = efgs.event_facility_group_id
                 AND s.time_stamp <= CURRENT_TIMESTAMP
               HAVING MAX(s.time_stamp) = efgs.time_stamp)') ;
@@ -240,7 +240,6 @@ class agEventFacilityHelper
     // convert our start time to unix timestamp or set default if null
     $time = (is_null($time)) ? time() : strtotime($time) ;
     $time = date ('Y-m-d H:i:s', $time) ;
-    print_r($time) ;
 
     $query = new Doctrine_RawSql() ;
     $query->addComponent('es', 'agEventShift es')
