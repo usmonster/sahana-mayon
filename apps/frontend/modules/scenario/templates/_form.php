@@ -14,7 +14,6 @@
           <?php if (!$form->getObject()->isNew()): ?>
             &nbsp;<?php echo link_to ('Delete', 'scenario/delete?id='.$form->getObject()->getId(), array('class' => 'linkButton', 'method' => 'delete', 'confirm' => 'Are you sure?')) ?>
           <?php endif; ?>
-          <input type="submit" value="Save" class="linkButton"/>
           <input type="submit" value="Save and Continue" name="Continue" class="linkButton"/>
         </td>
       </tr>

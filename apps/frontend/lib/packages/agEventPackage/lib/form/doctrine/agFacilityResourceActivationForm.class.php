@@ -40,7 +40,7 @@ class agFacilityResourceAcvitationForm extends sfForm
 
   public function embedEventFacilityResourceActivationTimeForms()
   {
-    $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterSubContainerLeftLabel($this->getWidgetSchema());
+    $facilityStaffResourceConDeco = new agWidgetFormSchemaFormatterInline($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('facilityStaffResourceConDeco', $facilityStaffResourceConDeco);
     $this->getWidgetSchema()->setFormFormatterName('facilityStaffResourceConDeco');
 

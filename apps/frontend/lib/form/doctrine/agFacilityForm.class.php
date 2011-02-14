@@ -23,8 +23,12 @@ class agFacilityForm extends BaseagFacilityForm
 
   public function configure()
   {
-    parent::configure();
-
+    /**
+     *  unset fields that we will not be displaying in the for
+     *
+     * Method below of explicitly stating the widgets we want might be better...Might not too,
+     * depends on validator maybe?
+     */
     unset(
         $this['updated_at'],
         $this['created_at'],
@@ -33,9 +37,48 @@ class agFacilityForm extends BaseagFacilityForm
 //      $this['facility_name'],
 //      $this['facility_code']
     );
+
+
+    $this->setWidgets(array(
+      'id' => new sfWidgetFormInputHidden(),
+      'facility_name' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+      'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+    ));
+
 //    $this->agEntity = $this->getObject()->getAgEntity();
     $this->agEntity = $this->getObject()->getAgSite()->getAgEntity();
+    
     $this->embedAgFacilityForms();
+
+
+    /**
+     * Sort the widgets by using getPositions() and useFields().
+     * Because useFields() also specifies all of the fields/widgets
+     * that will be displayed, we have to take care to not get rid
+     * of any fields.
+     */
+    $formFields = $this->getWidgetSchema()->getPositions();
+    $useFields = array('facility_name', 'facility_code');
+    $useFields = array_merge($useFields, array_diff($formFields, $useFields));
+    $this->useFields($useFields);
+
+
+    /**
+     * Set labels on a few fields
+     */
+    $this->widgetSchema->setLabels(array(
+      'resource' => 'Resources',
+      'facility_name' => 'Name',
+      'facility_code' => 'Facility Code'
+    ));
+
+    /**
+     * Set the formatter of this form to
+     * agWidgetFormSchemaFormatterSection
+     */
+    $sectionsDeco = new agWidgetFormSchemaFormatterSection($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('section', $sectionsDeco);
+    $this->getWidgetSchema()->setFormFormatterName('section');
   }
 
   public function embedPhoneForm($contactContainer)
@@ -60,7 +103,7 @@ class agFacilityForm extends BaseagFacilityForm
 
     $contactContainer->embedForm('phone', $phoneContainer);
   }
-  
+
   public function embedEmailForm($contactContainer)
   {
     $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
@@ -83,63 +126,9 @@ class agFacilityForm extends BaseagFacilityForm
     }
     $contactContainer->embedForm('email', $emailContainer);
   }
-  public function embedAgFacilityForms()
+
+  public function embedResourcesForm($resourceContainer)
   {
-    $contactContainer = new sfForm();
-    $this->embedEmailForm($contactContainer);
-    $this->embedPhoneForm($contactContainer);
-//    $this->embedAddressForm();
-    $this->embedForm('contact', $contactContainer);
-  }
-
-  /*
-   * setup() extends the base method to remove unused fields and embed subforms
-   */
-  public function setup()
-  {
-    parent::setup();
-
-    /**
-     *  unset fields that we will not be displaying in the for
-     *
-     * Method below of explicitly stating the widgets we want might be better...Might not too,
-     * depends on validator maybe?
-     */
-//    unset(
-//        $this['updated_at'],
-//        $this['created_at'],
-//        $this['site_id'],
-//        $this['ag_facility_resource_type_list']
-//    );
-    $this->setWidgets(array(
-      'id'                             => new sfWidgetFormInputHidden(),
-      'facility_name'                  => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-      'facility_code'                  => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-
-    ));
-
-//  $primaryContainer = new sfForm(array(), array());
-//
-//  $primaryContainer->setWidgets(array(
-//    'facility_name' => $this->getWidget('facility_name'),
-//    'facility_code' => $this->getWidget('facility_code')
-//  ));
-//
-//  $primaryContainer->setValidators(array(
-//    'facility_name' => new sfValidatorString(array('max_length' => 64)),
-//    'facility_code' => new sfValidatorString(array('max_length' => 10)),
-//  ));
-//
-//  $primaryContainer->setDefault('facility_name', $this->getObject()->facility_name);
-//  $primaryContainer->setDefault('facility_code', $this->getObject()->facility_code);
-//
-//  $this->embedForm('primary', $primaryContainer);
-//  $this->setWidget('site_id', new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agSite'), 'add_empty' => false)));
-
-
-    /**
-     *  create the container form for all facility resources
-     *   */
     $facilityResourceContainer = new sfForm(array(), array());
 
     /**
@@ -166,105 +155,38 @@ class agFacilityForm extends BaseagFacilityForm
     }
 
     /**
-     *  create a up to 5 new blank agEmbeddedFacilityResourceForm
+     *  create a up to 3 new blank agEmbeddedFacilityResourceForm
      *  instances in case the user wants to add another facility
      *  resource
      *   */
-    for ($iNewForm = 0; $iNewForm < max(5-count($this->agFacilityResources), 1); $iNewForm++) {
+    for ($iNewForm = 0; $iNewForm < max(3 - count($this->agFacilityResources), 1); $iNewForm++) {
       $facilityResourceForm = new agEmbeddedFacilityResourceForm();
 
-      $facilityResourceContainer->embedForm('new'.$iNewForm, $facilityResourceForm);
-      $facilityResourceContainer->widgetSchema->setLabel('new'.$iNewForm, false);
+      $facilityResourceContainer->embedForm('new' . $iNewForm, $facilityResourceForm);
+      $facilityResourceContainer->widgetSchema->setLabel('new' . $iNewForm, false);
     }
 
     /**
      *  embed the facility resource container form into the facility form
      *   */
-    $this->embedForm('resource', $facilityResourceContainer);
+    
+    $resourceContainer->embedForm('resource', $facilityResourceContainer);
 
+  }
 
-    /**
-     *  create a container form for email and phone contacts
-     *   */
-//    $contactContainer = new sfForm(array(), array());
-//
-//    /**
-//     * This block sets up the embedded agEmbeddedAgEmailContactForms, one for each
-//     * agEmailContactType, populated with the agPersonName that corresponds to the current
-//     * agPerson and agEmailContactType (if it exists).
-//     */
-//    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
-//
-//    $emailContainer = new sfForm(array(), array());
-//
-//    $emailDeco = new agWidgetFormSchemaFormatterRow($emailContainer->getWidgetSchema());
-//    $emailContainer->getWidgetSchema()->addFormFormatter('row', $emailDeco);
-//    $emailContainer->getWidgetSchema()->setFormFormatterName('row');
-//
-//    $facilityEmails = $this->getObject()->getAgSite()->getAgEntity()->getEntityEmailContact();
-//
-//    foreach ($this->ag_email_contact_types as $emailContactType) {
-//      $emailContactForm = new agEmbeddedAgEmailContactForm();
-//      if (isset($facilityEmails[$emailContactType->getId()])) {
-//        $emailContactForm->setDefault('email_contact', $facilityEmails[$emailContactType->getId()]->getAgEmailContact());
-//      }
-////    foreach ($this->getObject()->getAgSite()->getAgEntity()->getAgEntityEmailContact() as $current) {
-////      if ($current->getEmailContactTypeId() == $emailContactType->getId()) {
-////        $emailContactForm->setDefault('email_contact', $current->getAgEmailContact()->email_contact);
-////      }
-////    }
-//      $emailContactForm->widgetSchema->setLabel('email_contact', false);
-//      $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
-//    }
-//
-//    $contactContainer->embedForm('email', $emailContainer);
-//
-//    /**
-//     * This block sets up the embedded agEmbeddedAgPhoneContactForms, one for each
-//     * agPhoneContactType, populated with the agPersonName that corresponds to the current
-//     * agPerson and agPhoneContactType (if it exists).
-//     * */
-//    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
-//
-//    $phoneContainer = new sfForm(array(), array());
-//    #$phoneContainer->widgetSchema->setFormFormatterName('list');
-//    #$blah = new agWidgetFormSchemaFormatterRow();
-//    #$phoneContainer->widgetSchema->addFormFormatter('row', new agWidgetFormSchemaFormatterRow());
-//    #$phoneContainer->widgetSchema->setFormFormatterName('row');
-//
-//    $phoneDeco = new agWidgetFormSchemaFormatterRow($phoneContainer->getWidgetSchema());
-//    $phoneContainer->getWidgetSchema()->addFormFormatter('row', $phoneDeco);
-//    $phoneContainer->getWidgetSchema()->setFormFormatterName('row');
-//
-//    $facilityPhones = $this->getObject()->getAgSite()->getAgEntity()->getEntityPhoneContact();
-//
-//    foreach ($this->ag_phone_contact_types as $phoneContactType) {
-//      $phoneContactForm = new agEmbeddedAgPhoneContactForm();
-//      if (isset($facilityPhones[$phoneContactType->getId()])) {
-//        $current = $facilityPhones[$phoneContactType->getId()];
-//
-//        $phoneContactForm->setDefault('phone_contact', preg_replace(
-//                $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->match_pattern,
-//                $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->replacement_pattern,
-//                $current->getAgPhoneContact()->phone_contact));
-//      }
-//
-//      $phoneContactForm->widgetSchema->setLabel('phone_contact', false);
-//      $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
-//    }
-//
-//    $contactContainer->embedForm('phone', $phoneContainer);
-//
-//    /* embed the email and phone contacts form into the facility form */
-//    $this->embedForm('contact', $contactContainer);
-
-
+  public function embedAddressForm($contactContainer)
+  {
     /**
      * Address Embedding Section
      *
      * This block sets up the embedded agEmbeddedAgAddressContactForms.
      * */
-    $this->address_contact_types = Doctrine::getTable('agAddressContactType')->createQuery('a')->execute();
+    $this->address_contact_types = Doctrine::getTable('agAddressContactType')
+            ->createQuery('a')
+            ->select('a.*')
+            ->from('agAddressContactType a')
+            ->where('address_contact_type = ?', 'work')
+            ->execute();
     $this->address_formats = Doctrine::getTable('agAddressFormat')
             ->createQuery('addressFormat')
             ->select('af.*, ae.*')
@@ -295,7 +217,7 @@ class agFacilityForm extends BaseagFacilityForm
             ->select('a.value')
             ->from('agAddressValue a')
             ->where('a.address_element_id = 4')
-            ->execute();
+            ->execute();  //select * from ag_address_element .. and get the element_id by the text ('state')
 
     $this->entityAddress = Doctrine::getTable('agEntity')
             ->createQuery('entityAddresses')
@@ -376,38 +298,30 @@ class agFacilityForm extends BaseagFacilityForm
 
       $addressFirstPass = false;
     }
-    $this->embedForm('address', $addressContainer); //Embed all the addresses into agPersonForm.
-
-
-    /**
-     * Sort the widgets by using getPositions() and useFields().
-     * Because useFields() also specifies all of the fields/widgets
-     * that will be displayed, we have to take care to not get rid
-     * of any fields.
-     */
-    $formFields = $this->getWidgetSchema()->getPositions();
-    $useFields = array('facility_name', 'facility_code');
-    $useFields = array_merge($useFields, array_diff($formFields, $useFields));
-    $this->useFields($useFields);
-
-
-    /**
-     * Set labels on a few fields
-     */
-    $this->widgetSchema->setLabels(array(
-      'resource' => 'Resources',
-      'facility_name' => 'Name',
-      'facility_code' => 'Facility Code'
-    ));
-
-    /**
-     * Set the formatter of this form to
-     * agWidgetFormSchemaFormatterSection
-     */
-    $sectionsDeco = new agWidgetFormSchemaFormatterSection($this->getWidgetSchema());
-    $this->getWidgetSchema()->addFormFormatter('section', $sectionsDeco);
-    $this->getWidgetSchema()->setFormFormatterName('section');
+    $contactContainer->embedForm('address', $addressContainer); //Embed all the addresses into agPersonForm.
   }
+
+  public function embedAgFacilityForms()
+  {
+    $this->widgetSchema->setNameFormat('ag_facility[%s]');
+    $contactContainer = new sfForm();
+
+    $resourceContainer = new sfForm();
+    $this->embedResourcesForm($resourceContainer);
+    $resourceContainer->getWidgetSchema()->setLabel('resource',false);
+    $this->embedForm('resources', $resourceContainer);
+//
+    $this->embedAddressForm($contactContainer);
+    $this->embedEmailForm($contactContainer);
+    $this->embedPhoneForm($contactContainer);
+    $this->embedForm('contact', $contactContainer);
+  }
+
+  /*
+   * setup() extends the base method to remove unused fields and embed subforms
+   */
+
+
 
   /**
    * saveEmbeddedForms() is a recursive function that saves all
