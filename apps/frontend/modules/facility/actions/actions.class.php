@@ -192,78 +192,6 @@ class facilityActions extends agActions
 
     $this->setTemplate('edit');
   }
-  /**
-   * Imports facility records from a properly formatted XLS file.
-   *
-   * @todo: define a standard import format and document it for the end user.
-   * @todo: make this more robust and create meaningful error messages for failed import fiels and records.
-   * */
-  public function executeImport()
-  {
-    $staffMembers = Doctrine::getTable('agPerson')
-            ->createQuery('a')
-            ->execute();
-    $nameTypes = Doctrine::getTable('agPersonNameType')
-            ->createQuery('a')
-            ->execute();
-    $phoneTypes = Doctrine::getTable('agPhoneContactType')
-            ->createQuery('a')
-            ->execute();
-    $emailTypes = Doctrine::getTable('agEmailContactType')
-            ->createQuery('a')
-            ->execute();
-    $addressTypes = Doctrine::getTable('agAddressContactType')
-            ->createQuery('a')
-            ->execute();
-    $languageFormats = Doctrine::getTable('agLanguageFormat')
-            ->createQuery('a')
-            ->execute();
-    // Right now this is not as robust as possible, only XLS files will be handled. Functionality can be added later for CSV and a few other formats
-    // that are supported by PHPExcel. PHPExcel_IOFactory::createReaderForFile is not the issue, it will set the right reader for whatever filetype is imported,
-    // it's just set in the if statement below.
-    // Set some properties to the imported file's path and file.
-    $this->importFile = $_FILES['import']['name'];
-    $this->importPath = sfConfig::get('sf_upload_dir') . '/' . $this->importFile;
-    $filePath = pathinfo($this->importFile);
-
-    require_once sfConfig::get('sf_app_dir') . '/lib/util/agStaffImportXls.class.php';
-
-    $passPath = $_FILES['import']['tmp_name'];
-    $extension = strtolower($filePath['extension']);
-
-
-    if ($extension <> 'xls' && $extension <> 'csv') {
-      $this->uploadHeading = 'Import Failure';
-      $this->uploadMessage = $this->importFile . ' is not an XLS file and could not be read. No data was imported to Agasti.';
-    } else {
-//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\');"');
-      $importObj = new agStaffImportXls();
-      $importObj->fileName = $_FILES['import']['name'];
-      $importObj->rowSetIterator = 0;
-      $importObj->stop = false;
-      $xlsPath = 'xlsfile:///' . $passPath;
-      $returned = $importObj->processStaffImport($xlsPath);
-//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\', \'' . htmlspecialchars($tyr) . '\');"');
-//      $toImport = unserialize($toImport);
-      //$returned = unserialize($returned);
-      while ($importObj->stop <> true) {
-        $returned = $importObj->processStaffImport($xlsPath);
-      }
-//      while ($returned['Current Iteration' ] < $returned['Max Iteration']) {
-//        $this->message = $returned;
-//        //$this->redirect('staff/import');
-//        //$returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::buildAndSave(\'' . addslashes(serialize($returned['Staff'])) . '\', \'' . ($returned['Current Iteration'] + 1) . '\');"');
-//        $returned = $importObj->saveImportedStaff($returned['Staff'],$returned['Current Iteration'] + 1);
-//
-////        $returned = staffImport::buildAndSave(serialize($returned['Staff']),$returned['Current Iteration'] + 1);
-////        $returned = unserialize($returned);
-//      }
-      $this->message = $returned;
-
-    }
-  }
-
-
 
   /**
    * executeDelete()
@@ -318,9 +246,6 @@ class facilityActions extends agActions
    */
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
-    $poo = $form->getName();
-    $values = $request->getParameter($poo);
-    $files = $request->getFiles($form->getName());
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_facility = $form->save();
@@ -466,9 +391,76 @@ class facilityActions extends agActions
     unlink($filePath);
   }
 
-//  public function executeFacilityExport()
-//  {
-////    agFacilityHelper::facilityGeneralInfo('Event');
+  public function executeFacilityExport()
+  {
+//    agFacilityHelper::facilityGeneralInfo();
 //    agFacilityHelper::facilityAddress(FALSE, 'work');
-//  }
+//    agFacilityHelper::facilityGeo(TRUE, 'work');
+//        agFacilityHelper::facilityEmail(FALSE);
+//    agFacilityHelper::facilityPhone(TRUE, 'work');
+//    agFacilityHelper::facilityStaffResource();
+
+    /** Error reporting */
+    error_reporting(E_ALL);
+
+    /** PHPExcel */
+    include 'PHPExcel.php';
+
+    /** PHPExcel_Writer_Excel2007.php */
+    include 'PHPExcel/Writer/Excel2007.php';
+
+    // Create new PHPExcel object
+    echo date('H:i:s') . "Create new PHPExcel Object \n";
+    $objPHPExcel = new PHPExcel();
+
+
+    // Set properties
+    echo date('H:i:s') . " Set properties\n";
+    $objPHPExcel->getProperties()->setCreator("Agasti 2.0");
+    $objPHPExcel->getProperties()->setLastModifiedBy("Agasti 2.0");
+    $objPHPExcel->getProperties()->setTitle("Facility List");
+    $objPHPExcel->getProperties()->setSubject("Facility List");
+    $objPHPExcel->getProperties()->setDescription("Facility List");
+
+    // Set active sheet and style format
+    echo date('H:i:s') . " Set active sheet and style format\n";
+    $objPHPExcel->setActiveSheetIndex(0);
+    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Arial');
+    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
+
+    // Add some data
+    echo date('H:i:s') . " Add some data\n";
+    $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Hello');
+    $objPHPExcel->getActiveSheet()->SetCellValue('B2', 'world!');
+    $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Hello');
+    $objPHPExcel->getActiveSheet()->SetCellValue('D2', 'world!');
+
+    // Rename sheet
+    echo date('H:i:s') . " Rename sheet\n";
+    $objPHPExcel->getActiveSheet()->setTitle('Simple');
+
+    // Save Excel 2007 file
+    echo date('H:i:s') . " Write to Excel2007 format\n";
+    $todaydate = date("d-m-y");
+    $todaydate = $todaydate . '-' . date("H-i-s");
+    $filename = 'Facilities';
+    $filename = $filename . '-' . $todaydate;
+    $filename = $filename . '.xlsx';
+    $filePath = realpath(sys_get_temp_dir()) . '/' . $filename;
+    echo $filePath;
+    $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+    $objWriter->save($filePath);
+
+    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $filename . '"');
+
+    $exportFile = file_get_contents($filePath);
+
+    $this->getResponse()->setContent($exportFile);
+    $this->getResponse()->send();
+    unlink($filePath);
+
+    // Echo done
+    echo date('H:i:s') . " Done writing file.\r\n";
+  }
 }
