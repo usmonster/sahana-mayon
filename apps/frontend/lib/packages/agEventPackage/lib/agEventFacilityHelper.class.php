@@ -175,7 +175,7 @@ class agEventFacilityHelper
     $results = $query->execute(array(), 'status_hydrator') ;
     return $results ;
   }
-
+  
   public static function returnCurrentEventFacilityGroupStatus($eventId)
   {
     $query = Doctrine_Query::create()

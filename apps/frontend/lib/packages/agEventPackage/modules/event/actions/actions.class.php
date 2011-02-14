@@ -492,6 +492,16 @@ class eventActions extends agActions
             ->where('event_name = ?', urldecode($request->getParameter('event')))
             ->fetchOne();
     $this->results = $this->queryForTable($this->eventFacilityGroup->id);
+    $statusQuery = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
+    $statusId = $statusQuery[$this->eventFacilityGroup->id];
+//    $this->statusWidget = new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'add_empty' => false));
+//    $r = $this->statusWidget->getOption('choices');
+    $this->form = new sfForm();
+    $this->form->setWidgets(array(
+      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
+      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus')),
+     ));
+    $t= 3;
   }
 
   private function queryForTable($eventFacilityGroupId = null)
