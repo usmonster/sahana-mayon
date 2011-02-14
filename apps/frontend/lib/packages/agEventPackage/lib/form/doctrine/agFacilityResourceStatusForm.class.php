@@ -1,7 +1,7 @@
 <?php
 
 /**
- * agFacilityResourceActivationForm class takes in an array of forms with which to construct
+ * agFacilityResourceStatusForm class takes in an array of forms with which to construct
  * a set of embedded forms
  *
  * Provides embedded subform for editing facility resources
@@ -16,7 +16,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agFacilityResourceAcvitationForm extends sfForm
+class agFacilityResourceStatusForm extends sfForm
 {
 
   public $facility_resources;

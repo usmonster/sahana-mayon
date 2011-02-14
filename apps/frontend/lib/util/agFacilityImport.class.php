@@ -51,6 +51,8 @@ class agImportXLS
     'medical_other_max' => array('type' => "integer")
   );
 
+  public $message = "";
+  
   /**
    * processFacilityImport()
    *
@@ -77,11 +79,20 @@ class agImportXLS
       }
     }
 
+    /*
     $valid = $this->validateColumnHeaders($importFileData);
 
     if (empty($valid)) {
-      $this->saveImportTemp($importFileData);
+      $results = $this->saveImportTemp($importFileData);
+    } else {
+      $results = $valid;
     }
+     * 
+     */
+
+    $this->saveImportTemp($importFileData);
+
+    return $this->message;
   }
 
   /**
@@ -91,7 +102,7 @@ class agImportXLS
    *
    * @param $importFileData
    */
-  public function validateColumnHeaders($importFileData)
+  private function validateColumnHeaders($importFileData)
   {
 
     // Cache the import header specification
@@ -173,8 +184,10 @@ class agImportXLS
 
       $pdo = $conn->execute($query);
       $results += $pdo->rowCount();
+
+      $this->message = $results;
+     
     }
-    print("\nFacilities Imported: $results \n");
   }
 
   /**

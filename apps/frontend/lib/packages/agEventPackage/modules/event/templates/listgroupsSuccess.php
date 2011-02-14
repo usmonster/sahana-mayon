@@ -3,14 +3,12 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	var $dialog = $('<div></div')
-//	var $dialog = $('#something')
 		.dialog({
 			autoOpen: false,
                         resizable: false,
                         width: 'auto',
                         height: 'auto',
                         draggable: false,
-			title: 'Basic Dialog',
                         modal: true
 		});
 

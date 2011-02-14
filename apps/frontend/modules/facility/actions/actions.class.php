@@ -17,7 +17,9 @@
  */
 class facilityActions extends agActions
 {
+
   protected $searchedModels = array('agFacility');
+
   /**
    * executeIndex()
    *
@@ -91,14 +93,14 @@ class facilityActions extends agActions
     $this->forward404Unless($this->ag_facility);
 
     $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
-      ->createQuery('c')
-      ->execute();
+            ->createQuery('c')
+            ->execute();
     $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
-      ->createQuery('d')
-      ->execute();
+            ->createQuery('d')
+            ->execute();
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
-      ->createQuery('f')
-      ->execute();
+            ->createQuery('f')
+            ->execute();
 
 //  $query = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id')));
 //
@@ -156,8 +158,8 @@ class facilityActions extends agActions
   public function executeEdit(sfWebRequest $request)
   {
     $this->forward404Unless(
-      $ag_facility = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id'))),
-      sprintf('Object ag_facility does not exist (%s).', $request->getParameter('id'))
+        $ag_facility = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id'))),
+        sprintf('Object ag_facility does not exist (%s).', $request->getParameter('id'))
     );
 
 //  //->getAgSite()->getAgEntity()->getAgEntityEmailContact()
@@ -191,6 +193,28 @@ class facilityActions extends agActions
     $this->processForm($request, $this->form);
 
     $this->setTemplate('edit');
+  }
+
+  /**
+   * Imports facility records from a properly formatted XLS file.
+   *
+   * @todo: define a standard import format and document it for the end user.
+   * @todo: make this more robust and create meaningful error messages for failed import fiels and records.
+   * */
+  public function executeImport()
+  {
+
+    $uploadedFile = $_FILES["import"];
+
+    $uploadDir = sfConfig::get('sf_upload_dir') . '/';
+    move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"] );
+    $this->importPath = $uploadDir . $uploadedFile["name"];
+
+    $import = new agImportXLS();
+    $returned = $import->createTempTable();
+
+    $results = $import->processImport($this->importPath);
+    $this->message = $results;
   }
 
   /**
