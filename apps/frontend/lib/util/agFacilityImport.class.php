@@ -13,10 +13,10 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agFacilityImport
+class agImportXLS
 {
 
-  public $facilityImportSpec = array(
+  public $importFacilitySpec = array(
     'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
     'facility_name' => array('type' => "string", 'length' => 64),
     'facility_code' => array('type' => "string", 'length' => 10),
@@ -50,6 +50,153 @@ class agFacilityImport
     'medical_other_min' => array('type' => "integer"),
     'medical_other_max' => array('type' => "integer")
   );
+  
+
+  /**
+   * processFacilityImport()
+   *
+   * Reads contents of the Excel import file into temp table
+   *
+   * @param $importFile
+   */
+  public function processImport($importFile)
+  {
+
+    require_once(dirname(__FILE__) . '/excel_reader2.php');
+
+    // Same here
+    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
+
+    $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
+    $numRows = $xlsObj->rowcount($sheet_index = 0);
+    $numCols = $xlsObj->colcount($sheet_index = 0);
+
+    // Create a simplified array from
+    for ($row = 2; $row <= $numRows; $row++) {
+
+      for ($col = 1; $col <= $numCols; $col++) {
+
+        $colName = str_replace(" ", "_", strtolower($xlsObj->val(1, $col)));
+        $importData[$row][$colName] = $xlsObj->val($row, $col);
+      }
+    }
+
+    //print_r($importData);
+    $this->saveImportTemp($importData);
+  }
+
+  /**
+   * saveFacilityImportTemp()
+   *
+   * Writes facility import array to temp table
+   *
+   * @param $importDataSet
+   */
+  private function saveImportTemp($importDataSet)
+  {
+    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
+    $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
+    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
+    $dbManager = new sfDatabaseManager($appConfig);
+    $db = $dbManager->getDatabase('doctrine');
+
+    $conn = Doctrine_Manager::connection();
+
+    // Create an INSERT query for each facility
+    foreach ($importDataSet as $row) {
+
+      $query = "INSERT INTO temp_facilityImport (%s) \nVALUES (%s\n)";
+      $cols = "";
+      $vals = "";
+
+      foreach (array_keys($this->importFacilitySpec) as $column) {
+
+        // Ignore id key name because it is the autoincrementing identity column
+        if ($column != "id") {
+          $col = sprintf("\n\t`%s`,", $column);
+          $cols = $cols . $col;
+
+          // Handle null values with sane defaults
+          switch ($this->importFacilitySpec[$column]["type"]) {
+            case "integer":
+              if ($row[$column] == "") {
+                $val = 0.0;
+              } else {
+                $val = $row[$column];
+              };
+              break;
+            case "decimal":
+              if ($row[$column] == "") {
+                $val = 0.0;
+              } else {
+                $val = $row[$column];
+              }
+              break;
+            default:
+              $val = trim($row[$column]);
+          }
+
+          // Use the Doctrine_Manager::connection() PDO to safe up single quotes
+          $val = $conn->quote($val);
+
+          $val = sprintf("\n\t%s,", $val);
+          $vals = $vals . "$val";
+        }
+      }
+      // Chop off the trailing comma
+      $cols = substr($cols, 0, -1);
+      $vals = substr($vals, 0, -1);
+
+      $query = sprintf($query, $cols, $vals);
+
+      $pdo = $conn->execute($query);
+      $results += $pdo->rowCount();
+    }
+    print("\nFacilities Imported: $results \n");
+  }
+
+  /**
+   * createTempTable()
+   *
+   * Creates temp table
+   *
+   * @param
+   */
+  public function createTempTable()
+  {
+    // Access Symfony...we'll only need these lines if we need to go the shell_exec route. Might need IReadFilter.php in any case though.
+    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
+    $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
+
+    // Same here
+    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
+    $dbManager = new sfDatabaseManager($appConfig);
+    $db = $dbManager->getDatabase('doctrine');
+
+    $conn = Doctrine_Manager::connection();
+
+    // Drop temp if it exists
+    try {
+      $conn->export->dropTable('temp_facilityImport');
+    } catch (Doctrine_Exception $e) {
+
+    }
+
+    $options = array(
+      'type' => 'MYISAM',
+      'charset' => 'utf8'
+    );
+
+    // Create the table
+    try {
+      $conn->export->createTable('temp_facilityImport', $this->importFacilitySpec, $options);
+    } catch (Doctrine_Exception $e) {
+      echo "Error creating temp table for import.\n";
+      echo "----------------\n";
+      echo $e->errorMessage();
+      echo "\n";
+    }
+  }
 
   /**
    * dumpImportFile()
@@ -77,117 +224,6 @@ class agFacilityImport
       $foo .= "\n";
     }
     return $foo;
-  }
-
-  /**
-   * processFacilityImport()
-   *
-   * Reads contents of the Excel import file into temp table
-   *
-   * @param $importFile
-   */
-  public function processFacilityImport($importFile)
-  {
-
-    require_once(dirname(__FILE__) . '/excel_reader2.php');
-
-    // Same here
-    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
-
-    $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
-    $numRows = $xlsObj->rowcount($sheet_index = 0);
-    $numCols = $xlsObj->colcount($sheet_index = 0);
-
-    // Create a simplified array from
-    for ($row = 2; $row <= $numRows; $row++) {
-
-      for ($col = 1; $col <= $numCols; $col++) {
-
-        $colName = str_replace(" ", "_", strtolower($xlsObj->val(1, $col)));
-        $importData[$row][$colName] = $xlsObj->val($row, $col);
-      }
-    }
-
-    //print_r($importData);
-    $this->saveFacilityImportTemp($importData);
-  }
-
-  /**
-   * saveFacilityImportTemp()
-   *
-   * Writes facility import array to temp table
-   *
-   * @param $importFacility
-   */
-  private function saveFacilityImportTemp($importFacility)
-  {
-    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
-    $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
-    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
-    $dbManager = new sfDatabaseManager($appConfig);
-    $db = $dbManager->getDatabase('doctrine');
-
-    $conn = Doctrine_Manager::connection();
-
-    // Create an INSERT query for each facility
-    foreach ($importFacility as $facility) {
-
-      $query = "INSERT INTO temp_facilityImport (%s) \nVALUES (%s\n)";
-      $cols = "";
-      $vals = "";
-
-      foreach (array_keys($this->facilityImportSpec) as $column) {
-
-        // Ignore id key name because it is the autoincrementing identity column
-        if ($column != "id") {
-          $col = sprintf("\n\t`%s`,", $column);
-          $cols = $cols . $col;
-
-          // Handle null values with sane defaults
-          switch ($this->facilityImportSpec[$column]["type"]) {
-            case "integer":
-              if ($facility[$column] == "") {
-                $val = 0.0;
-              } else {
-                $val = $facility[$column];
-              };
-              break;
-            case "decimal":
-              if ($facility[$column] == "") {
-                $val = 0.0;
-              } else {
-                $val = $facility[$column];
-              }
-              break;
-            default:
-              $val = trim($facility[$column]);
-          }
-
-          // Use the Doctrine_Manager::connection() PDO to safe up single quotes
-          $val = $conn->quote($val);
-
-          $val = sprintf("\n\t%s,", $val);
-          $vals = $vals . "$val";
-        }
-      }
-      // Chop off the trailing comma
-      $cols = substr($cols, 0, -1);
-      $vals = substr($vals, 0, -1);
-
-      $query = sprintf($query, $cols, $vals);
-
-      /*
-        echo "\n";
-        print_r($facility);
-        echo "----\n";
-        echo $query;
-        echo "\n";
-       */
-
-      $pdo = $conn->execute($query);
-      $results += $pdo->rowCount();
-    }
-    print("\nFacilities Imported: $results \n");
   }
 
   /**
@@ -241,49 +277,6 @@ class agFacilityImport
     }
   }
 
-  /**
-   * createTempTable()
-   *
-   * Creates temp table
-   *
-   * @param
-   */
-  public function createTempTable()
-  {
-    // Access Symfony...we'll only need these lines if we need to go the shell_exec route. Might need IReadFilter.php in any case though.
-    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
-    $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
-
-    // Same here
-    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
-    $dbManager = new sfDatabaseManager($appConfig);
-    $db = $dbManager->getDatabase('doctrine');
-
-    $conn = Doctrine_Manager::connection();
-
-    // Drop temp if it exists
-    try {
-      $conn->export->dropTable('temp_facilityImport');
-    } catch (Doctrine_Exception $e) {
-
-    }
-
-    $options = array(
-      'type' => 'MYISAM',
-      'charset' => 'utf8'
-    );
-
-    // Create the table
-    try {
-      $conn->export->createTable('temp_facilityImport', $this->facilityImportSpec, $options);
-    } catch (Doctrine_Exception $e) {
-      echo "Error creating temp table for import.\n";
-      echo "----------------\n";
-      echo $e->errorMessage();
-      echo "\n";
-    }
-  }
-
 }
 
 //$import = new agFacilityImport();
@@ -291,9 +284,9 @@ class agFacilityImport
 //print("$output\n");
 //print("---------------------------\n");
 
-$test = new agFacilityImport();
+$test = new agImportXLS();
 //$output = $test->processFacilityImport($argv[1]);
 //$output = $test->dumpFacilities();
 $output = $test->createTempTable();
-$output = $test->processFacilityImport($argv[1]);
+$output = $test->processImport($argv[1]);
 ?>
