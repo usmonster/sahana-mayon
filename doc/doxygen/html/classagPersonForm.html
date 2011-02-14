@@ -50,19 +50,60 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h1>agPersonForm Class Reference</h1><!-- doxytag: class="agPersonForm" -->
 <p>Agasti Person Form Class - A class to generate either a 'new person' or 'edit person' form.  
 <a href="#_details">More...</a></p>
+<div class="dynheader">
+Inheritance diagram for agPersonForm:</div>
+<div class="dynsection">
+ <div class="center">
+  <img src="classagPersonForm.png" usemap="#agPersonForm_map" alt=""/>
+  <map id="agPersonForm_map" name="agPersonForm_map">
+<area href="classPluginagStaffPersonForm.html" alt="PluginagStaffPersonForm" shape="rect" coords="0,56,156,80"/>
+</map>
+ </div>
+</div>
 
 <p><a href="classagPersonForm-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad744e587f330f397aca58111e3e41e1a"></a><!-- doxytag: member="agPersonForm::setup" ref="ad744e587f330f397aca58111e3e41e1a" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#ad4a16b3359b0b2ce7de61b6ddf86a53c">configure</a> ()</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initializes the array of datapoints for the person form.  <a href="#ad4a16b3359b0b2ce7de61b6ddf86a53c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4a16b3359b0b2ce7de61b6ddf86a53c"></a><!-- doxytag: member="agPersonForm::configure" ref="ad4a16b3359b0b2ce7de61b6ddf86a53c" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#ad4a16b3359b0b2ce7de61b6ddf86a53c">configure</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initializes the array of datapoints for the person form. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#a77315bb8fe509b53275f3960f9310cca">configureWidgets</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad81ed11cd418555b65649780278b30d6"></a><!-- doxytag: member="agPersonForm::embedAgPersonForms" ref="ad81ed11cd418555b65649780278b30d6" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#ad81ed11cd418555b65649780278b30d6">embedAgPersonForms</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function sets up the embedded forms by calling all of the embed[Foo]Forms methods. <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#a5687043d22de5dec39855b928b976ece">embedDateOfBirthForm</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function sets up the date of birth form.  <a href="#a5687043d22de5dec39855b928b976ece"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#afb7766a8a5f5a8af2093f56296f88d11">embedLanguageForm</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function sets up language forms using <a class="el" href="classagEmbeddedAgPersonMjAgLanguageForm.html" title="agEmbeddedAgPersonMjAgLanguageForm.">agEmbeddedAgPersonMjAgLanguageForm</a> and <a class="el" href="classagEmbeddedAgPersonLanguageCompetencyForm.html" title="agEmbeddedAgPersonLanguageCompetencyForm">agEmbeddedAgPersonLanguageCompetencyForm</a>.  <a href="#afb7766a8a5f5a8af2093f56296f88d11"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac685c787e1aa13ad4279bd1b3ca61765"></a><!-- doxytag: member="agPersonForm::embedNameForm" ref="ac685c787e1aa13ad4279bd1b3ca61765" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#ac685c787e1aa13ad4279bd1b3ca61765">embedNameForm</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function sets up the embedded agEmbeddedAgPersonNameForms, one for each <a class="el" href="classagPersonNameType.html" title="extends the Doctrine-generated BaseagPersonNameType model">agPersonNameType</a>, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and <a class="el" href="classagPersonNameType.html" title="extends the Doctrine-generated BaseagPersonNameType model">agPersonNameType</a> (if it exists). <br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#a3de53a0f675d88fcf1d1a7065653480a">embedEmailForm</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This block sets up the embedded agEmbeddedAgEmailContactForms, one for each agEmailContactType, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and agEmailContactType (if it exists).  <a href="#a3de53a0f675d88fcf1d1a7065653480a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#a659101ba88f478a0f3ceff0a24c0cf7f">embedPhoneForm</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function sets up the embedded agEmbeddedAgPhoneContactForms, one for each agPhoneContactType, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and agPhoneContactType (if it exists).  <a href="#a659101ba88f478a0f3ceff0a24c0cf7f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#a60074f9ee2d57cd064dbb1a184a8364b">embedAddressForm</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function sets up address forms.  <a href="#a60074f9ee2d57cd064dbb1a184a8364b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#a92a22e912a1e8bc4eafb64e4effc7b13">saveDateOfBirthForm</a> ($form)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Saves data in the embedded date of birth form.  <a href="#a92a22e912a1e8bc4eafb64e4effc7b13"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#a963bdc8206a081c0e879c21d9926718a">saveNameForm</a> ($key, $form, $values)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Saves data in an embedded name form.  <a href="#a963bdc8206a081c0e879c21d9926718a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4eb3e94add3f807ebcef8018084b373"></a><!-- doxytag: member="agPersonForm::saveEmailForm" ref="aa4eb3e94add3f807ebcef8018084b373" args="($key, $form, $values)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>saveEmailForm</b> ($key, $form, $values)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36e200f9c9b6e28896450fcb5fb8bfea"></a><!-- doxytag: member="agPersonForm::savePhoneForm" ref="a36e200f9c9b6e28896450fcb5fb8bfea" args="($key, $form, $values)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>savePhoneForm</b> ($key, $form, $values)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a149ed27f3b770442068e3eb940bac62e"></a><!-- doxytag: member="agPersonForm::saveAddressForm" ref="a149ed27f3b770442068e3eb940bac62e" args="($form)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>saveAddressForm</b> ($form)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad35ab9c614029791f2decba4f1b405f9"></a><!-- doxytag: member="agPersonForm::saveLanguageForm" ref="ad35ab9c614029791f2decba4f1b405f9" args="($form, $joinId)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>saveLanguageForm</b> ($form, $joinId)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#a40adcc441ef52057193836108049d79a">saveEmbeddedForms</a> ($con=null, $forms=null)</td></tr>
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Saves the forms embedded on the Person page.  <a href="#a40adcc441ef52057193836108049d79a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64fda7c70c7c947b60bb3d0987e1ef54"></a><!-- doxytag: member="agPersonForm::getStylesheets" ref="a64fda7c70c7c947b60bb3d0987e1ef54" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>getStylesheets</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a57c096e13bab64a6412d44c1cfd15614"></a><!-- doxytag: member="agPersonForm::getJavaScripts" ref="a57c096e13bab64a6412d44c1cfd15614" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>getJavaScripts</b> ()</td></tr>
 <tr><td colspan="2"><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2447330c5313f5502d3bff8c066ec4c"></a><!-- doxytag: member="agPersonForm::doSave" ref="ac2447330c5313f5502d3bff8c066ec4c" args="($con=null)" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>doSave</b> ($con=null)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagPersonForm.html#ac2447330c5313f5502d3bff8c066ec4c">doSave</a> ($con=null)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function is here to override BaseagPersonForm's <a class="el" href="classagPersonForm.html#ac2447330c5313f5502d3bff8c066ec4c" title="This function is here to override BaseagPersonForm&#39;s doSave() method.">doSave()</a> method.  <a href="#ac2447330c5313f5502d3bff8c066ec4c"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Agasti Person Form Class - A class to generate either a 'new person' or 'edit person' form. </p>
@@ -73,17 +114,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Nils Stolpe, CUNY SPS </dd>
 <dd>
 Ilya Gulko, CUNY SPS</dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo:</a></b></dt><dd>Major clean-up required.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000019">Todo:</a></b></dt><dd>Major clean-up required.</dd></dl>
 <p>Copyright of the Sahana Software Foundation, sahanafoundation.org </p>
 
 <p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00021">21</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="ad4a16b3359b0b2ce7de61b6ddf86a53c"></a><!-- doxytag: member="agPersonForm::configure" ref="ad4a16b3359b0b2ce7de61b6ddf86a53c" args="()" -->
+<a class="anchor" id="a77315bb8fe509b53275f3960f9310cca"></a><!-- doxytag: member="agPersonForm::configureWidgets" ref="a77315bb8fe509b53275f3960f9310cca" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">agPersonForm::configure </td>
+          <td class="memname">agPersonForm::configureWidgets </td>
           <td>(</td>
           <td class="paramname"></td>
           <td>&nbsp;)&nbsp;</td>
@@ -93,29 +134,183 @@ Ilya Gulko, CUNY SPS</dd></dl>
 </div>
 <div class="memdoc">
 
-<p>Initializes the array of datapoints for the person form. </p>
-
-<p><p>Unset widgets that are auto-filled, unnecessary, or whose relations are not properly defined without using embedded forms.</p>
-<p>Configure widgests that have been autogenerated to allow multiple selection to disallow this.</p>
+<p><p>Remove multiple selection from widgets that have been autogenerated with multiple selection.</p>
 <p>Give the list widgets more aesthetically appealing and descriptive labels.</p>
 <p>Narrow down the options for select lists by using app_display. Lots of repetetive code, could be moved to function.</p>
-<p>Embed the Date of Birth form</p>
-<p>Embedded Forms</p>
-<p>The blocks below set up the embedded forms for an <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a>.</p>
-<p>Language Embedding Section</p>
-<p>This block sets up the embedded forms using <a class="el" href="classagEmbeddedAgPersonMjAgLanguageForm.html" title="agEmbeddedAgPersonMjAgLanguageForm.">agEmbeddedAgPersonMjAgLanguageForm</a> and <a class="el" href="classagEmbeddedAgPersonLanguageCompetencyForm.html" title="agEmbeddedAgPersonLanguageCompetencyForm">agEmbeddedAgPersonLanguageCompetencyForm</a>.</p>
-<p>Name Embedding Section</p>
-<p>This block sets up the embedded agEmbeddedAgPersonNameForms, one for each <a class="el" href="classagPersonNameType.html" title="extends the Doctrine-generated BaseagPersonNameType model">agPersonNameType</a>, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and <a class="el" href="classagPersonNameType.html" title="extends the Doctrine-generated BaseagPersonNameType model">agPersonNameType</a> (if it exists).</p>
-<p>Email Embedding Section</p>
-<p>This block sets up the embedded agEmbeddedAgEmailContactForms, one for each agEmailContactType, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and agEmailContactType (if it exists).</p>
-<p>Phone Embedding Section</p>
-<p>This block sets up the embedded agEmbeddedAgPhoneContactForms, one for each agPhoneContactType, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and agPhoneContactType (if it exists).</p>
-<p>Address Embedding Section</p>
-<p>This block sets up the embedded agEmbeddedAgAddressContactForms.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd>this works fine for now, since we only have one address format, but should be refactored to create a new array from values in the agAddressFormat table for each address_standard_id in that table. </dd></dl>
 </p>
 
-<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00036">36</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00041">41</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac2447330c5313f5502d3bff8c066ec4c"></a><!-- doxytag: member="agPersonForm::doSave" ref="ac2447330c5313f5502d3bff8c066ec4c" args="($con=null)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agPersonForm::doSave </td>
+          <td>(</td>
+          <td class="paramtype">$&nbsp;</td>
+          <td class="paramname"> <em>con</em> = <code>null</code></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function is here to override BaseagPersonForm's <a class="el" href="classagPersonForm.html#ac2447330c5313f5502d3bff8c066ec4c" title="This function is here to override BaseagPersonForm&#39;s doSave() method.">doSave()</a> method. </p>
+<p>This is necessary to remove some of the save...List() functions that Symfony autogenerates for many-to-many relations. The relations are more complex than Symfony is able to auto-determine, and calling the save...List() methods will often cause an error on save. The only lists needed are below.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>Doctrine_Connection</em>&nbsp;</td><td>$con </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00993">993</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a60074f9ee2d57cd064dbb1a184a8364b"></a><!-- doxytag: member="agPersonForm::embedAddressForm" ref="a60074f9ee2d57cd064dbb1a184a8364b" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agPersonForm::embedAddressForm </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function sets up address forms. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000024">Todo:</a></b></dt><dd>refactor this function similarly to <a class="el" href="classagPersonForm.html#ac685c787e1aa13ad4279bd1b3ca61765" title="This function sets up the embedded agEmbeddedAgPersonNameForms, one for each agPersonNameType...">embedNameForm()</a> and <a class="el" href="classagPersonForm.html#a3de53a0f675d88fcf1d1a7065653480a" title="This block sets up the embedded agEmbeddedAgEmailContactForms, one for each agEmailContactType...">embedEmailForm()</a>. </dd></dl>
+
+<p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000025">Todo:</a></b></dt><dd>this works fine for now, since we only have one address format, but should be refactored to create a new array from values in the agAddressFormat table for each address_standard_id in that table. </dd></dl>
+</p>
+
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00340">340</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a5687043d22de5dec39855b928b976ece"></a><!-- doxytag: member="agPersonForm::embedDateOfBirthForm" ref="a5687043d22de5dec39855b928b976ece" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agPersonForm::embedDateOfBirthForm </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function sets up the date of birth form. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000020">Todo:</a></b></dt><dd>refactor this function similarly to <a class="el" href="classagPersonForm.html#ac685c787e1aa13ad4279bd1b3ca61765" title="This function sets up the embedded agEmbeddedAgPersonNameForms, one for each agPersonNameType...">embedNameForm()</a> and <a class="el" href="classagPersonForm.html#a3de53a0f675d88fcf1d1a7065653480a" title="This block sets up the embedded agEmbeddedAgEmailContactForms, one for each agEmailContactType...">embedEmailForm()</a>. Get rid of default use. </dd></dl>
+
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00152">152</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3de53a0f675d88fcf1d1a7065653480a"></a><!-- doxytag: member="agPersonForm::embedEmailForm" ref="a3de53a0f675d88fcf1d1a7065653480a" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agPersonForm::embedEmailForm </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This block sets up the embedded agEmbeddedAgEmailContactForms, one for each agEmailContactType, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and agEmailContactType (if it exists). </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000022">Todo:</a></b></dt><dd>make a new formatter for these forms to use and set it up, so we don't need to set label to false. </dd></dl>
+
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00287">287</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="afb7766a8a5f5a8af2093f56296f88d11"></a><!-- doxytag: member="agPersonForm::embedLanguageForm" ref="afb7766a8a5f5a8af2093f56296f88d11" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agPersonForm::embedLanguageForm </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function sets up language forms using <a class="el" href="classagEmbeddedAgPersonMjAgLanguageForm.html" title="agEmbeddedAgPersonMjAgLanguageForm.">agEmbeddedAgPersonMjAgLanguageForm</a> and <a class="el" href="classagEmbeddedAgPersonLanguageCompetencyForm.html" title="agEmbeddedAgPersonLanguageCompetencyForm">agEmbeddedAgPersonLanguageCompetencyForm</a>. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000021">Todo:</a></b></dt><dd>refactor this function similarly to <a class="el" href="classagPersonForm.html#ac685c787e1aa13ad4279bd1b3ca61765" title="This function sets up the embedded agEmbeddedAgPersonNameForms, one for each agPersonNameType...">embedNameForm()</a> and <a class="el" href="classagPersonForm.html#a3de53a0f675d88fcf1d1a7065653480a" title="This block sets up the embedded agEmbeddedAgEmailContactForms, one for each agEmailContactType...">embedEmailForm()</a>. </dd></dl>
+
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00166">166</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a659101ba88f478a0f3ceff0a24c0cf7f"></a><!-- doxytag: member="agPersonForm::embedPhoneForm" ref="a659101ba88f478a0f3ceff0a24c0cf7f" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agPersonForm::embedPhoneForm </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function sets up the embedded agEmbeddedAgPhoneContactForms, one for each agPhoneContactType, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and agPhoneContactType (if it exists). </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000023">Todo:</a></b></dt><dd>refactor this function similarly to <a class="el" href="classagPersonForm.html#ac685c787e1aa13ad4279bd1b3ca61765" title="This function sets up the embedded agEmbeddedAgPersonNameForms, one for each agPersonNameType...">embedNameForm()</a> and <a class="el" href="classagPersonForm.html#a3de53a0f675d88fcf1d1a7065653480a" title="This block sets up the embedded agEmbeddedAgEmailContactForms, one for each agEmailContactType...">embedEmailForm()</a>. </dd></dl>
+
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00314">314</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a92a22e912a1e8bc4eafb64e4effc7b13"></a><!-- doxytag: member="agPersonForm::saveDateOfBirthForm" ref="a92a22e912a1e8bc4eafb64e4effc7b13" args="($form)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agPersonForm::saveDateOfBirthForm </td>
+          <td>(</td>
+          <td class="paramtype">$&nbsp;</td>
+          <td class="paramname"> <em>form</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Saves data in the embedded date of birth form. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em><a class="el" href="classagEmbeddedPersonDateOfBirthForm.html" title="Extends agPersonDateOfBirthForm and return date of birth information.">agEmbeddedPersonDateOfBirthForm</a></em>&nbsp;</td><td>$form</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000026">Todo:</a></b></dt><dd>: The '0000-00-00' below is pretty hackish and should be fixed. It prevents a DB error for a field that should not be null formValuesAreBlank() or something similar should really be used, in updateObject, to catch this earlier and unset. </dd></dl>
+
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00448">448</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
 
 </div>
 </div>
@@ -144,27 +339,65 @@ Ilya Gulko, CUNY SPS</dd></dl>
 </div>
 <div class="memdoc">
 
-<p>Saves the forms embedded on the Person page. </p>
+<p><p>Date of Birth</p>
+<p>Name</p>
+<p>Email</p>
+<p>Phone This is slightly more complex than name or email. Phone values need to be formatted first, as the DB holds them in 2125551212 form, but users will input in (212) 555-1212 form (or 212.555.1212, etc.). Because the values will always be processed, the form's object will always be seen as modified. That's the purpose of calling stat(Doctrine_Record::STATE_CLEAN) on the object. After that, it will return unmodified. The phone number stored in the $values array is also reformatted to be DB friendly.</p>
+<p>Address</p>
+<p>The saveAddressForm() function is in need of reactoring, which will most likely necessitate some changes here as well</p>
+<p>Language</p>
+<p>The saveLanguageForm() function is in need of reactoring, which will most likely necessitate some changes here as well</p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000027">Todo:</a></b></dt><dd>The if() below needs to be removed/replaced. Right now it is preventing and invalid error on some of the staff specific forms from <a class="el" href="classPluginagStaffPersonForm.html">PluginagStaffPersonForm</a>. </dd></dl>
+</p>
+
+<p>Reimplemented in <a class="el" href="classPluginagStaffPersonForm.html#a49aef23c5e8f6d0a131026dd0d62d1cd">PluginagStaffPersonForm</a>.</p>
+
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00879">879</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a963bdc8206a081c0e879c21d9926718a"></a><!-- doxytag: member="agPersonForm::saveNameForm" ref="a963bdc8206a081c0e879c21d9926718a" args="($key, $form, $values)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agPersonForm::saveNameForm </td>
+          <td>(</td>
+          <td class="paramtype">$&nbsp;</td>
+          <td class="paramname"> <em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&nbsp;</td>
+          <td class="paramname"> <em>form</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&nbsp;</td>
+          <td class="paramname"> <em>values</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Saves data in an embedded name form. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>$forms</em>&nbsp;</td><td>array of forms to save </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>$con</em>&nbsp;</td><td>the current doctrine connection instance </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>string</em>&nbsp;</td><td>$key the key of the <a class="el" href="classagEmbeddedAgPersonNameForm.html" title="A form the extends agPersonName form for name entry when creating an agPerson.">agEmbeddedAgPersonNameForm</a> being acted on. It should correspond to the name_type value that is linked to the name and person in the <a class="el" href="classagPersonMjAgPersonName.html" title="Contains the BaseagPersonMjAgPersonName class.">agPersonMjAgPersonName</a> table.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>agEmbeddedAgPersonNameForm()</em>&nbsp;</td><td>the name form being saved</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>array</em>&nbsp;</td><td>$values incoming values from the form, retrieved in <a class="el" href="classagPersonForm.html#a40adcc441ef52057193836108049d79a">saveEmbeddedForms()</a> </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>a call to the parent form's saveEmbeddedForms method </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>break this method into smaller pieces </dd></dl>
 
-<p><p>Date of Birth daving section</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000015">Todo:</a></b></dt><dd>: The '0000-00-00' below is pretty hackish and should be fixed. It prevents a DB error for a field that should not be null formValuesAreBlank() or something similar should really be used, in updateObject, to catch this earlier and unset. </dd></dl>
-<p>Name Saving Section</p>
-<p>Email Saving Section</p>
-<p>Phone Saving Section</p>
-<p>Address Saving Section</p>
-<p>Language Saving Section</p>
-</p>
-
-<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00421">421</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agPersonForm_8class_8php_source.html#l00473">473</a> of file <a class="el" href="agPersonForm_8class_8php_source.html">agPersonForm.class.php</a>.</p>
 
 </div>
 </div>

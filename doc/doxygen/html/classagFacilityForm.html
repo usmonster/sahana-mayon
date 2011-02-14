@@ -54,9 +54,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p><a href="classagFacilityForm-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf851ad533faba00166728c5d1c58d4e"></a><!-- doxytag: member="agFacilityForm::configure" ref="acf851ad533faba00166728c5d1c58d4e" args="()" -->
-&nbsp;</td><td class="memItemRight" valign="bottom"><b>configure</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityForm.html#ab543a25b9b837a61960c1073e5134c95">setup</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityForm.html#acf851ad533faba00166728c5d1c58d4e">configure</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abea03aa40bcc79f01c80df7dc0b9e833"></a><!-- doxytag: member="agFacilityForm::embedPhoneForm" ref="abea03aa40bcc79f01c80df7dc0b9e833" args="($contactContainer)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>embedPhoneForm</b> ($contactContainer)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0e05ac5b091ca94f09b207ea6c2ee958"></a><!-- doxytag: member="agFacilityForm::embedEmailForm" ref="a0e05ac5b091ca94f09b207ea6c2ee958" args="($contactContainer)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>embedEmailForm</b> ($contactContainer)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityForm.html#af1008a0140fc7445a71d58cdc048bb04">embedResourcesForm</a> ($resourceContainer)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityForm.html#a9d89679d6243b6a0ab3f320680121460">embedAddressForm</a> ($contactContainer)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a313cb46db7ebb0b2d3c0de5ec0ef81f3"></a><!-- doxytag: member="agFacilityForm::embedAgFacilityForms" ref="a313cb46db7ebb0b2d3c0de5ec0ef81f3" args="()" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>embedAgFacilityForms</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityForm.html#aa84fec066e84457337573db9ebdbd132">saveEmbeddedForms</a> ($con=null, $forms=null)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classagFacilityForm.html#aa84fec066e84457337573db9ebdbd132" title="saveEmbeddedForms() is a recursive function that saves all forms supplied in the...">saveEmbeddedForms()</a> is a recursive function that saves all forms supplied in the $forms parameter or in the form it is called from  <a href="#aa84fec066e84457337573db9ebdbd132"></a><br/></td></tr>
 </table>
@@ -69,6 +75,83 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p>Definition at line <a class="el" href="agFacilityForm_8class_8php_source.html#l00018">18</a> of file <a class="el" href="agFacilityForm_8class_8php_source.html">agFacilityForm.class.php</a>.</p>
 <hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="acf851ad533faba00166728c5d1c58d4e"></a><!-- doxytag: member="agFacilityForm::configure" ref="acf851ad533faba00166728c5d1c58d4e" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agFacilityForm::configure </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><p>unset fields that we will not be displaying in the for</p>
+<p>Method below of explicitly stating the widgets we want might be better...Might not too, depends on validator maybe?</p>
+<p>Sort the widgets by using getPositions() and useFields(). Because useFields() also specifies all of the fields/widgets that will be displayed, we have to take care to not get rid of any fields.</p>
+<p>Set labels on a few fields</p>
+<p>Set the formatter of this form to <a class="el" href="classagWidgetFormSchemaFormatterSection.html">agWidgetFormSchemaFormatterSection</a></p>
+</p>
+
+<p>Definition at line <a class="el" href="agFacilityForm_8class_8php_source.html#l00024">24</a> of file <a class="el" href="agFacilityForm_8class_8php_source.html">agFacilityForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9d89679d6243b6a0ab3f320680121460"></a><!-- doxytag: member="agFacilityForm::embedAddressForm" ref="a9d89679d6243b6a0ab3f320680121460" args="($contactContainer)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agFacilityForm::embedAddressForm </td>
+          <td>(</td>
+          <td class="paramtype">$&nbsp;</td>
+          <td class="paramname"> <em>contactContainer</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><p>Address Embedding Section</p>
+<p>This block sets up the embedded agEmbeddedAgAddressContactForms.</p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000017">Todo:</a></b></dt><dd>this works fine for now, since we only have one address format, but should be refactored to create a new array from values in the agAddressFormat table for each address_standard_id in that table. </dd></dl>
+</p>
+
+<p>Definition at line <a class="el" href="agFacilityForm_8class_8php_source.html#l00177">177</a> of file <a class="el" href="agFacilityForm_8class_8php_source.html">agFacilityForm.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af1008a0140fc7445a71d58cdc048bb04"></a><!-- doxytag: member="agFacilityForm::embedResourcesForm" ref="af1008a0140fc7445a71d58cdc048bb04" args="($resourceContainer)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agFacilityForm::embedResourcesForm </td>
+          <td>(</td>
+          <td class="paramtype">$&nbsp;</td>
+          <td class="paramname"> <em>resourceContainer</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><p>if the facility already has resources assigned, get all the data for them</p>
+<p>for every existing facility resource, create an <a class="el" href="classagEmbeddedFacilityResourceForm.html" title="agEmbeddedFacilityResourceForm">agEmbeddedFacilityResourceForm</a> and embed it into $facilityResourceContainer</p>
+<p>create a up to 3 new blank <a class="el" href="classagEmbeddedFacilityResourceForm.html" title="agEmbeddedFacilityResourceForm">agEmbeddedFacilityResourceForm</a> instances in case the user wants to add another facility resource</p>
+<p>embed the facility resource container form into the facility form</p>
+</p>
+
+<p>Definition at line <a class="el" href="agFacilityForm_8class_8php_source.html#l00130">130</a> of file <a class="el" href="agFacilityForm_8class_8php_source.html">agFacilityForm.class.php</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="aa84fec066e84457337573db9ebdbd132"></a><!-- doxytag: member="agFacilityForm::saveEmbeddedForms" ref="aa84fec066e84457337573db9ebdbd132" args="($con=null, $forms=null)" -->
 <div class="memitem">
 <div class="memproto">
@@ -108,47 +191,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Facility Resource section</p>
 <p>Email Section</p>
 <p>Phone Section</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000010">Todo:</a></b></dt><dd>phone_format_id shouldn't be hardcoded -Ilya </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000018">Todo:</a></b></dt><dd>phone_format_id shouldn't be hardcoded -Ilya </dd></dl>
 <p>Address Saving Section</p>
 </p>
 
-<p>Definition at line <a class="el" href="agFacilityForm_8class_8php_source.html#l00356">356</a> of file <a class="el" href="agFacilityForm_8class_8php_source.html">agFacilityForm.class.php</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ab543a25b9b837a61960c1073e5134c95"></a><!-- doxytag: member="agFacilityForm::setup" ref="ab543a25b9b837a61960c1073e5134c95" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">agFacilityForm::setup </td>
-          <td>(</td>
-          <td class="paramname"></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>unset fields that we will not be displaying in the for</p>
-<p>create the container form for all facility resources</p>
-<p>if the facility already has resources assigned, get all the data for them</p>
-<p>for every existing facility resource, create an <a class="el" href="classagEmbeddedFacilityResourceForm.html" title="agEmbeddedFacilityResourceForm">agEmbeddedFacilityResourceForm</a> and embed it into $facilityResourceContainer</p>
-<p>create a up to 5 new blank <a class="el" href="classagEmbeddedFacilityResourceForm.html" title="agEmbeddedFacilityResourceForm">agEmbeddedFacilityResourceForm</a> instances in case the user wants to add another facility resource</p>
-<p>embed the facility resource container form into the facility form</p>
-<p>create a container form for email and phone contacts</p>
-<p>This block sets up the embedded agEmbeddedAgEmailContactForms, one for each agEmailContactType, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and agEmailContactType (if it exists).</p>
-<p>This block sets up the embedded agEmbeddedAgPhoneContactForms, one for each agPhoneContactType, populated with the <a class="el" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> that corresponds to the current <a class="el" href="classagPerson.html" title="agPerson this class extends the person object for various purposes">agPerson</a> and agPhoneContactType (if it exists).</p>
-<p>Address Embedding Section</p>
-<p>This block sets up the embedded agEmbeddedAgAddressContactForms.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo:</a></b></dt><dd>this works fine for now, since we only have one address format, but should be refactored to create a new array from values in the agAddressFormat table for each address_standard_id in that table. </dd></dl>
-<p>Sort the widgets by using getPositions() and useFields(). Because useFields() also specifies all of the fields/widgets that will be displayed, we have to take care to not get rid of any fields.</p>
-<p>Set labels on a few fields</p>
-<p>Set the formatter of this form to <a class="el" href="classagWidgetFormSchemaFormatterSection.html">agWidgetFormSchemaFormatterSection</a></p>
-</p>
-
-<p>Definition at line <a class="el" href="agFacilityForm_8class_8php_source.html#l00042">42</a> of file <a class="el" href="agFacilityForm_8class_8php_source.html">agFacilityForm.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agFacilityForm_8class_8php_source.html#l00336">336</a> of file <a class="el" href="agFacilityForm_8class_8php_source.html">agFacilityForm.class.php</a>.</p>
 
 </div>
 </div>

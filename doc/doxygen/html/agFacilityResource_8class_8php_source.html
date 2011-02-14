@@ -62,7 +62,57 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00045"></a>00045     <span class="keywordflow">return</span> <a class="code" href="classagFacilityResource.html#aea519c2743e978daf8322c549e0bd547" title="delete()">parent::delete</a>($conn);
 <a name="l00046"></a>00046   }
 <a name="l00047"></a>00047 
-<a name="l00048"></a>00048 }
+<a name="l00058"></a><a class="code" href="classagFacilityResource.html#a9d5de469ec2f693b704804b4335f022a">00058</a>   <span class="keyword">static</span> <span class="keyword">public</span> function <a class="code" href="classagFacilityResource.html#a9d5de469ec2f693b704804b4335f022a" title="facilityResourceInfo() A static method to return a double array of facility resource...">facilityResourceInfo</a>($facilityResourceIds = null)
+<a name="l00059"></a>00059   {
+<a name="l00060"></a>00060     <span class="keywordflow">try</span>
+<a name="l00061"></a>00061     {
+<a name="l00062"></a>00062 <span class="comment">//      $rawQuery = new Doctrine_RawSql();</span>
+<a name="l00063"></a>00063 <span class="comment">//      $rawQuery-&gt;select(&#39;{sub.id},{sub.person_id},{sub.person_name_type_id},{sub.priority},{sub.person_name_id}, {pn.person_name}, {pnt.person_name_type}&#39;)</span>
+<a name="l00064"></a>00064       $query = Doctrine_Core::getTable(<span class="stringliteral">&#39;agFacilityResource&#39;</span>)
+<a name="l00065"></a>00065         -&gt;createQuery(<span class="stringliteral">&#39;fr&#39;</span>)
+<a name="l00066"></a>00066         -&gt;select(<span class="stringliteral">&#39;fr.*, f.*, frt.*, frs.*&#39;</span>)
+<a name="l00067"></a>00067         -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacility AS f&#39;</span>)
+<a name="l00068"></a>00068         -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacilityResourceType AS frt&#39;</span>)
+<a name="l00069"></a>00069         -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacilityResourceStatus AS frs&#39;</span>)
+<a name="l00070"></a>00070         -&gt;where(<span class="stringliteral">&#39;1=1&#39;</span>);
+<a name="l00071"></a>00071 
+<a name="l00072"></a>00072       <span class="keywordflow">if</span> (is_array($facilityResourceIds) and count($facilityResourceIds) &gt; 0)
+<a name="l00073"></a>00073       {
+<a name="l00074"></a>00074         $query-&gt;whereIn(<span class="stringliteral">&#39;fr.id&#39;</span>, $facilityResourceIds);
+<a name="l00075"></a>00075       }
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077       $resultSet = $query-&gt;execute();
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079       $facilityResourceSet = array();
+<a name="l00080"></a>00080       <span class="keywordflow">foreach</span> ($resultSet as $rslt)
+<a name="l00081"></a>00081       {
+<a name="l00082"></a>00082         $facility_resource_id = $rslt-&gt;getId();
+<a name="l00083"></a>00083         $facility_id = $rslt-&gt;getFacilityId();
+<a name="l00084"></a>00084         $facility_name = $rslt-&gt;getAgFacility()-&gt;getFacilityName();
+<a name="l00085"></a>00085         $facility_code = $rslt-&gt;getAgFacility()-&gt;getFacilityCode();
+<a name="l00086"></a>00086         $facility_resource_type_id = $rslt-&gt;getFacilityResourceTypeId();
+<a name="l00087"></a>00087         $facility_resource_type = $rslt-&gt;getAgFacilityResourceType()-&gt;getFacilityResourceType();
+<a name="l00088"></a>00088         $facility_resource_status_id = $rslt-&gt;getFacilityResourceStatusId();
+<a name="l00089"></a>00089         $facility_resource_status = $rslt-&gt;getAgFacilityResourceStatus()-&gt;getFacilityResourceStatus();
+<a name="l00090"></a>00090 
+<a name="l00091"></a>00091        $facilityResourceSet[$facility_resource_id] = array( <span class="stringliteral">&#39;facility_id&#39;</span> =&gt; $facility_id,
+<a name="l00092"></a>00092                                                         <span class="stringliteral">&#39;facility_name&#39;</span> =&gt; $facility_name,
+<a name="l00093"></a>00093                                                         <span class="stringliteral">&#39;facility_code&#39;</span> =&gt; $facility_code,
+<a name="l00094"></a>00094                                                         <span class="stringliteral">&#39;facility_resource_type_id&#39;</span> =&gt; $facility_resource_type_id,
+<a name="l00095"></a>00095                                                         <span class="stringliteral">&#39;facility_resource_type&#39;</span> =&gt; $facility_resource_type,
+<a name="l00096"></a>00096                                                         <span class="stringliteral">&#39;facility_resource_status_id&#39;</span> =&gt; $facility_resource_status_id,
+<a name="l00097"></a>00097                                                         <span class="stringliteral">&#39;facility_resource_status&#39;</span> =&gt; $facility_resource_status
+<a name="l00098"></a>00098                                                       );
+<a name="l00099"></a>00099       }
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101 <span class="comment">//      print_r($personNameArray);</span>
+<a name="l00102"></a>00102       <span class="keywordflow">return</span> $facilityResourceSet;
+<a name="l00103"></a>00103     }<span class="keywordflow">catch</span> (\Doctrine\ORM\ORMException $e) {
+<a name="l00104"></a>00104       <span class="keywordflow">return</span> NULL;
+<a name="l00105"></a>00105     }
+<a name="l00106"></a>00106 
+<a name="l00107"></a>00107   }
+<a name="l00108"></a>00108 }
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"

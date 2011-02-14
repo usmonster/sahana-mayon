@@ -46,11 +46,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00002"></a>00002 
 <a name="l00021"></a><a class="code" href="classagPersonName.html">00021</a> <span class="keyword">class </span><a class="code" href="classagPersonName.html" title="Agasti Sudo User Class.">agPersonName</a> <span class="keyword">extends</span> BaseagPersonName
 <a name="l00022"></a>00022 {
-<a name="l00028"></a><a class="code" href="classagPersonName.html#a29cef0e01fba8f12bfc0a6a7bca616be">00028</a>   <span class="keyword">public</span> function <a class="code" href="classagPersonName.html#a29cef0e01fba8f12bfc0a6a7bca616be">__toString</a>()
-<a name="l00029"></a>00029   {
-<a name="l00030"></a>00030     <span class="keywordflow">return</span> $this-&gt;getPersonName();
-<a name="l00031"></a>00031   }
-<a name="l00032"></a>00032 }
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 
+<a name="l00025"></a>00025     <span class="keyword">public</span> $luceneSearchFields = array
+<a name="l00026"></a>00026     (
+<a name="l00027"></a>00027     <span class="stringliteral">&#39;person_name&#39;</span> =&gt; <span class="stringliteral">&#39;unstored&#39;</span>
+<a name="l00028"></a>00028     );
+<a name="l00029"></a>00029 
+<a name="l00030"></a>00030   <span class="keyword">public</span> function updateLucene()
+<a name="l00031"></a>00031   {
+<a name="l00032"></a>00032     $doc = <span class="keyword">new</span> Zend_Search_Lucene_Document();
+<a name="l00033"></a>00033     <span class="comment">//$doc = Zend_Search_Lucene_Document_Html::loadHTML($this-&gt;getBody());</span>
+<a name="l00034"></a>00034     $doc-&gt;addField(Zend_Search_Lucene_Field::unStored(<span class="stringliteral">&#39;name&#39;</span>, $this-&gt;getPersonName(), <span class="stringliteral">&#39;utf-8&#39;</span>));
+<a name="l00035"></a>00035     <span class="comment">//$doc-&gt;addField(Zend_Search_Lucene_Field::Unstored(&#39;id&#39;, $this-&gt;getLocation(), &#39;utf-8&#39;));</span>
+<a name="l00036"></a>00036 
+<a name="l00037"></a>00037   <span class="keywordflow">return</span> $doc;
+<a name="l00038"></a>00038   }
+<a name="l00046"></a><a class="code" href="classagPersonName.html#a29cef0e01fba8f12bfc0a6a7bca616be">00046</a>   <span class="keyword">public</span> function <a class="code" href="classagPersonName.html#a29cef0e01fba8f12bfc0a6a7bca616be">__toString</a>()
+<a name="l00047"></a>00047   {
+<a name="l00048"></a>00048     <span class="keywordflow">return</span> $this-&gt;getPersonName();
+<a name="l00049"></a>00049   }
+<a name="l00050"></a>00050 }
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"

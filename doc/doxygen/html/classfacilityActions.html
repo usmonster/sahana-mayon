@@ -47,9 +47,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="contents">
-<h1>facilityActions Class Reference</h1><!-- doxytag: class="facilityActions" -->
+<h1>facilityActions Class Reference</h1><!-- doxytag: class="facilityActions" --><!-- doxytag: inherits="agActions" -->
 <p>Facility Actions extends sfActions.  
 <a href="#_details">More...</a></p>
+<div class="dynheader">
+Inheritance diagram for facilityActions:</div>
+<div class="dynsection">
+ <div class="center">
+  <img src="classfacilityActions.png" usemap="#facilityActions_map" alt=""/>
+  <map id="facilityActions_map" name="facilityActions_map">
+<area href="classagActions.html" alt="agActions" shape="rect" coords="0,0,91,24"/>
+</map>
+ </div>
+</div>
 
 <p><a href="classfacilityActions-members.html">List of all members.</a></p>
 <table border="0" cellpadding="0" cellspacing="0">
@@ -68,6 +78,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a77af7195003cab8a335000218db33287" title="executeEdit()">executeEdit()</a>  <a href="#a77af7195003cab8a335000218db33287"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a0ac4cbb2c2e98d1ca376d40fd2fdd33f">executeUpdate</a> (sfWebRequest $request)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a0ac4cbb2c2e98d1ca376d40fd2fdd33f" title="executeUpdate()">executeUpdate()</a>  <a href="#a0ac4cbb2c2e98d1ca376d40fd2fdd33f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a6940c4463dd8c6472ffc02f8ee31d5b0">executeImport</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Imports facility records from a properly formatted XLS file.  <a href="#a6940c4463dd8c6472ffc02f8ee31d5b0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a5dcf191e74998dffa8848e73b784ce53">executeDelete</a> (sfWebRequest $request)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a5dcf191e74998dffa8848e73b784ce53" title="executeDelete()">executeDelete()</a>  <a href="#a5dcf191e74998dffa8848e73b784ce53"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a68530b806445c9a04c23c4e437019541">executeExport</a> ()</td></tr>
@@ -75,6 +87,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td colspan="2"><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a818d90af02e0faea8bf0e9a3938baf6a">processForm</a> (sfWebRequest $request, sfForm $form)</td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a818d90af02e0faea8bf0e9a3938baf6a" title="processForm()">processForm()</a>  <a href="#a818d90af02e0faea8bf0e9a3938baf6a"></a><br/></td></tr>
+<tr><td colspan="2"><h2>Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0fe9bbe431022b8b298118f053ea036e"></a><!-- doxytag: member="facilityActions::$searchedModels" ref="a0fe9bbe431022b8b298118f053ea036e" args="" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>$searchedModels</b> = array('<a class="el" href="classagFacility.html">agFacility</a>')</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>Facility Actions extends sfActions. </p>
@@ -87,7 +102,7 @@ Nils Stolpe, CUNY SPS </dd>
 Ilya Gulko, CUNY SPS</dd></dl>
 <p>Copyright of the Sahana Software Foundation, sahanafoundation.org </p>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00018">18</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00018">18</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 <hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="a9c334b674b599aa96d6fa538a059f0a3"></a><!-- doxytag: member="facilityActions::executeCreate" ref="a9c334b674b599aa96d6fa538a059f0a3" args="(sfWebRequest $request)" -->
 <div class="memitem">
@@ -114,7 +129,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00127">127</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00127">127</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -149,7 +164,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <p>Redirect to facility/list when done.</p>
 </p>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00204">204</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00276">276</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -178,7 +193,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00156">156</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00156">156</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -206,7 +221,31 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00265">265</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00341">341</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6940c4463dd8c6472ffc02f8ee31d5b0"></a><!-- doxytag: member="facilityActions::executeImport" ref="a6940c4463dd8c6472ffc02f8ee31d5b0" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">facilityActions::executeImport </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Imports facility records from a properly formatted XLS file. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000081">Todo:</a></b></dt><dd><p class="startdd">: define a standard import format and document it for the end user. </p>
+<p class="enddd">: make this more robust and create meaningful error messages for failed import fiels and records. </p>
+</dd></dl>
+
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00201">201</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -235,7 +274,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00029">29</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00029">29</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -271,7 +310,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <p>Set the pager's page number, defaulting to page 1</p>
 </p>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00041">41</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00041">41</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -300,7 +339,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00115">115</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00115">115</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -329,7 +368,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00088">88</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00088">88</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -359,7 +398,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00185">185</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00185">185</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -398,12 +437,12 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html#l00247">247</a> of file <a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00319">319</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>apps/frontend/modules/facility/actions/<a class="el" href="apps_2frontend_2modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a></li>
+<li>apps/frontend/modules/facility/actions/<a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a></li>
 </ul>
 </div>
 <!--- window showing the filter options -->

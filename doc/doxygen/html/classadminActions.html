@@ -55,13 +55,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a2bd3c3e8954ba9006cb1ac88764e83dd">executeIndex</a> (sfWebRequest $request)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a66bd5c1fe648a04dde9955ac16a24ebd">executeModuleman</a> (sfWebRequest $request)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a3f994acd588b9a8083431de21b2d4337">executePacman</a> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a5d37797995ed376431fe9270b17e50e7">executeConfig</a> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a53032b1a926a5ecd2896e139a2c40cae">executeDisplay</a> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95a1106aa969105b57008582598a58ec"></a><!-- doxytag: member="adminActions::executeList" ref="a95a1106aa969105b57008582598a58ec" args="(sfWebRequest $request)" -->
 &nbsp;</td><td class="memItemRight" valign="bottom"><b>executeList</b> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a0aa92d11ba843c39bc9cb68e60811c33">executeShow</a> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a497c467213a396f88ed873ad46759ccb">executeNew</a> (sfWebRequest $request)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a780fd22ced379f6b935de9088bd52bb4"></a><!-- doxytag: member="adminActions::executeCred" ref="a780fd22ced379f6b935de9088bd52bb4" args="(sfWebRequest $request)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>executeCred</b> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a1d7a3de88ebf7914896759af9dde3b64">executeCreate</a> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a2cd8951d810b029580da8bfbbe6e338d">executeEdit</a> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a3f66ef494050ff5ca70b1a6d0a6062e8">executeUpdate</a> (sfWebRequest $request)</td></tr>
@@ -69,14 +71,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td colspan="2"><h2>Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4dd178186384c1d7af791cccc2a8b7b"></a><!-- doxytag: member="adminActions::processForm" ref="af4dd178186384c1d7af791cccc2a8b7b" args="(sfWebRequest $request, sfForm $form)" -->
 &nbsp;</td><td class="memItemRight" valign="bottom"><b>processForm</b> (sfWebRequest $request, sfForm $form)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a644e8d49f65617190a2b5ac5877b78cf"></a><!-- doxytag: member="adminActions::processParam" ref="a644e8d49f65617190a2b5ac5877b78cf" args="(sfWebRequest $request, sfForm $paramform)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>processParam</b> (sfWebRequest $request, sfForm $paramform)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac509ea97d4758e9cc04e1d4ed827e584"></a><!-- doxytag: member="adminActions::processCredform" ref="ac509ea97d4758e9cc04e1d4ed827e584" args="(sfWebRequest $request, sfForm $credform)" -->
+&nbsp;</td><td class="memItemRight" valign="bottom"><b>processCredform</b> (sfWebRequest $request, sfForm $credform)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <p>PHP Version 5. </p>
 <p>LICENSE: This source file is subject to LGPLv3.0 license that is available through the world-wide-web at the following URI: <a href="http://www.gnu.org/copyleft/lesser.html">http://www.gnu.org/copyleft/lesser.html</a></p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Full Name, Organization Copyright of the Sahana Software Foundation, sahanafoundation.org </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000029">Todo:</a></b></dt><dd>add description of class in header </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000066">Todo:</a></b></dt><dd>add description of class in header </dd></dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00020">20</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00020">20</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 <hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="a5d37797995ed376431fe9270b17e50e7"></a><!-- doxytag: member="adminActions::executeConfig" ref="a5d37797995ed376431fe9270b17e50e7" args="(sfWebRequest $request)" -->
 <div class="memitem">
@@ -102,7 +108,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </dl>
 </p>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00054">54</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00060">60</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -121,7 +127,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000033">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000070">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>$request</em>&nbsp;</td><td>(add description) </td></tr>
@@ -129,7 +135,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00115">115</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00258">258</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -148,7 +154,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000036">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000073">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>$request</em>&nbsp;</td><td>(add description) </td></tr>
@@ -156,7 +162,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00155">155</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00298">298</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -184,7 +190,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </dl>
 </p>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00061">61</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00182">182</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -203,7 +209,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000034">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000071">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>$request</em>&nbsp;</td><td>(add description) </td></tr>
@@ -211,7 +217,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00130">130</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00273">273</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -230,7 +236,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000030">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000067">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>$request</em>&nbsp;</td><td>(add description) </td></tr>
@@ -246,35 +252,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </dl>
 </p>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00027">27</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a66bd5c1fe648a04dde9955ac16a24ebd"></a><!-- doxytag: member="adminActions::executeModuleman" ref="a66bd5c1fe648a04dde9955ac16a24ebd" args="(sfWebRequest $request)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">adminActions::executeModuleman </td>
-          <td>(</td>
-          <td class="paramtype">sfWebRequest $&nbsp;</td>
-          <td class="paramname"> <em>request</em></td>
-          <td>&nbsp;)&nbsp;</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><dl><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>sfWebRequest</em>&nbsp;</td><td>$request is what the user is asking of the server</td></tr>
-  </table>
-  </dd>
-</dl>
-</p>
-
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00034">34</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00027">27</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -293,7 +271,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000032">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000069">Todo:</a></b></dt><dd>learn how description should be explained properly </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>$request</em>&nbsp;</td><td>(add description) </td></tr>
@@ -301,7 +279,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00106">106</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00227">227</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3f994acd588b9a8083431de21b2d4337"></a><!-- doxytag: member="adminActions::executePacman" ref="a3f994acd588b9a8083431de21b2d4337" args="(sfWebRequest $request)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">adminActions::executePacman </td>
+          <td>(</td>
+          <td class="paramtype">sfWebRequest $&nbsp;</td>
+          <td class="paramname"> <em>request</em></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>sfWebRequest</em>&nbsp;</td><td>$request is what the user is asking of the server</td></tr>
+  </table>
+  </dd>
+</dl>
+</p>
+
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00034">34</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -320,7 +326,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000031">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000068">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>$request</em>&nbsp;</td><td>(add description) </td></tr>
@@ -328,7 +334,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00096">96</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00217">217</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -347,7 +353,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000035">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000072">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>$request</em>&nbsp;</td><td>(add description) </td></tr>
@@ -355,12 +361,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html#l00140">140</a> of file <a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00283">283</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>apps/frontend/modules/admin/actions/<a class="el" href="apps_2frontend_2modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a></li>
+<li>apps/frontend/modules/admin/actions/<a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a></li>
 </ul>
 </div>
 <!--- window showing the filter options -->

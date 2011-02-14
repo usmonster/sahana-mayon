@@ -91,7 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00075"></a>00075 
 <a name="l00083"></a><a class="code" href="classagPersonTable.html#adab4b549e67adeca91fa976a0b21cd08">00083</a>   <span class="keyword">static</span> <span class="keyword">public</span> function <a class="code" href="classagPersonTable.html#adab4b549e67adeca91fa976a0b21cd08" title="getLuceneIndex creates a new Lucene index directory, or opens one if it already exists...">getLuceneIndex</a>()
 <a name="l00084"></a>00084   {
-<a name="l00085"></a>00085     ProjectConfiguration::registerZend();
+<a name="l00085"></a>00085     <span class="comment">//ProjectConfiguration::registerZend();</span>
 <a name="l00086"></a>00086 
 <a name="l00087"></a>00087     <span class="keywordflow">if</span> (file_exists($index = self::getLuceneIndexFile()))
 <a name="l00088"></a>00088     {
@@ -103,9 +103,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00094"></a>00094 
 <a name="l00100"></a><a class="code" href="classagPersonTable.html#a27803046fd2744ecc2cb4d8324842306">00100</a>   <span class="keyword">static</span> <span class="keyword">public</span> function <a class="code" href="classagPersonTable.html#a27803046fd2744ecc2cb4d8324842306" title="getLuceneIndexFile accesses a Lucene index file within the directory accessed with...">getLuceneIndexFile</a>()
 <a name="l00101"></a>00101   {
-<a name="l00102"></a>00102     <span class="keywordflow">return</span> sfConfig::get(<span class="stringliteral">&#39;sf_data_dir&#39;</span>).<span class="stringliteral">&#39;/indexes/person.index&#39;</span>;
-<a name="l00103"></a>00103   }
-<a name="l00104"></a>00104 }
+<a name="l00102"></a>00102 <span class="comment">//    return sfConfig::get(&#39;sf_data_dir&#39;).&#39;/indexes/person.index&#39;;</span>
+<a name="l00103"></a>00103     <span class="keywordflow">return</span> sfConfig::get(<span class="stringliteral">&#39;sf_data_dir&#39;</span>).<span class="stringliteral">&#39;/search/lucene.index&#39;</span>;
+<a name="l00104"></a>00104   }
+<a name="l00105"></a>00105 }
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>Sahana Agasti: plugins/agStaffPlugin/lib/form/agEmbeddedAgPhoneContactForm.class.php Source File</title>
+<title>Sahana Agasti: apps/frontend/lib/form/doctrine/agEmbeddedAgPhoneContactForm.class.php Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javaScript" src="search/search.js"></script>
@@ -42,23 +42,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
     </ul>
   </div>
-<h1>plugins/agStaffPlugin/lib/form/agEmbeddedAgPhoneContactForm.class.php</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
+<h1>apps/frontend/lib/form/doctrine/agEmbeddedAgPhoneContactForm.class.php</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
 <a name="l00015"></a><a class="code" href="classagEmbeddedAgPhoneContactForm.html">00015</a> <span class="keyword">class </span><a class="code" href="classagEmbeddedAgPhoneContactForm.html" title="agEntityPhoneContact form.">agEmbeddedAgPhoneContactForm</a> <span class="keyword">extends</span> agPhoneContactForm
 <a name="l00016"></a>00016 {
 <a name="l00017"></a>00017   <span class="keyword">public</span> function setup()
 <a name="l00018"></a>00018   {
 <a name="l00019"></a>00019     $this-&gt;setWidgets(array(
 <a name="l00020"></a>00020       <span class="stringliteral">&#39;id&#39;</span>                         =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),
-<a name="l00021"></a>00021       <span class="stringliteral">&#39;phone_contact&#39;</span>              =&gt; <span class="keyword">new</span> sfWidgetFormInputText(array(), array(<span class="stringliteral">&#39;class&#39;</span> =&gt; <span class="stringliteral">&#39;inputGray&#39;</span>)),
-<a name="l00022"></a>00022     ));
-<a name="l00023"></a>00023 
-<a name="l00024"></a>00024     $this-&gt;setValidators(array(
-<a name="l00025"></a>00025       <span class="stringliteral">&#39;id&#39;</span>                         =&gt; <span class="keyword">new</span> sfValidatorChoice(array(<span class="stringliteral">&#39;choices&#39;</span> =&gt; array($this-&gt;getObject()-&gt;<span class="keyword">get</span>(<span class="stringliteral">&#39;id&#39;</span>)), <span class="stringliteral">&#39;empty_value&#39;</span> =&gt; $this-&gt;getObject()-&gt;<span class="keyword">get</span>(<span class="stringliteral">&#39;id&#39;</span>), <span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>)),
-<a name="l00026"></a>00026       <span class="stringliteral">&#39;phone_contact&#39;</span>              =&gt; <span class="keyword">new</span> sfValidatorRegex(array(<span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;pattern&#39;</span> =&gt; <span class="stringliteral">&#39;/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4}))( *x\d+)?$/&#39;</span>)),<span class="comment">//sfValidatorString(array(&#39;max_length&#39; =&gt; 16)),</span>
-<a name="l00027"></a>00027       #<span class="stringliteral">&#39;phone_format_id&#39;</span>            =&gt; <span class="keyword">new</span> sfValidatorDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; $this-&gt;getRelatedModelName(<span class="stringliteral">&#39;agPhoneFormat&#39;</span>))),
-<a name="l00028"></a>00028     ));
-<a name="l00029"></a>00029   }
-<a name="l00030"></a>00030 }
+<a name="l00021"></a>00021       <span class="stringliteral">&#39;phone_contact&#39;</span>              =&gt; <span class="keyword">new</span> <a class="code" href="classagWidgetFormInputPhoneText.html" title="This widget is used to format values from an agPhoneContact object so they&amp;#39;ll...">agWidgetFormInputPhoneText</a>(array(<span class="stringliteral">&#39;match_pattern&#39;</span> =&gt; $this-&gt;getObject()-&gt;getAgPhoneFormat()-&gt;getAgPhoneFormatType()-&gt;match_pattern,
+<a name="l00022"></a>00022                                                                            <span class="stringliteral">&#39;replacement_pattern&#39;</span> =&gt; $this-&gt;getObject()-&gt;getAgPhoneFormat()-&gt;getAgPhoneFormatType()-&gt;replacement_pattern),
+<a name="l00023"></a>00023                                                                      array(<span class="stringliteral">&#39;class&#39;</span> =&gt; <span class="stringliteral">&#39;inputGray&#39;</span>)),
+<a name="l00024"></a>00024     ));
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026     $this-&gt;setValidators(array(
+<a name="l00027"></a>00027       <span class="stringliteral">&#39;id&#39;</span>                         =&gt; <span class="keyword">new</span> sfValidatorChoice(array(<span class="stringliteral">&#39;choices&#39;</span> =&gt; array($this-&gt;getObject()-&gt;<span class="keyword">get</span>(<span class="stringliteral">&#39;id&#39;</span>)), <span class="stringliteral">&#39;empty_value&#39;</span> =&gt; $this-&gt;getObject()-&gt;<span class="keyword">get</span>(<span class="stringliteral">&#39;id&#39;</span>), <span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>)),
+<a name="l00028"></a>00028       <span class="stringliteral">&#39;phone_contact&#39;</span>              =&gt; <span class="keyword">new</span> sfValidatorRegex(array(<span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;empty_value&#39;</span> =&gt; null, <span class="stringliteral">&#39;pattern&#39;</span> =&gt; <span class="stringliteral">&#39;/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4}))( *x\d+)?$/&#39;</span>)),
+<a name="l00029"></a>00029     ));
+<a name="l00030"></a>00030   }
+<a name="l00031"></a>00031 }
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
