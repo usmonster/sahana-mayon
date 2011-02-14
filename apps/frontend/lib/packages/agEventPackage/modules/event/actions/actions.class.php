@@ -498,10 +498,9 @@ class eventActions extends agActions
 //    $r = $this->statusWidget->getOption('choices');
     $this->form = new sfForm();
     $this->form->setWidgets(array(
-      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
-      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus')),
-     ));
-    $t= 3;
+      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus'), array('class' => 'inputGray')),
+      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus'), array('class' => 'inputGray')),
+    ));
   }
 
   private function queryForTable($eventFacilityGroupId = null)
