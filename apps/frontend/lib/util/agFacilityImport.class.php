@@ -79,8 +79,9 @@ class agImportXLS
 
     $valid = $this->validateColumnHeaders($importFileData);
 
-    //print_r($importData);
-    $this->saveImportTemp($importFileData);
+    if (empty($valid)) {
+      $this->saveImportTemp($importFileData);
+    }
   }
 
   /**
@@ -304,7 +305,6 @@ class agImportXLS
 //$output = $import->dumpImportFile($argv[1]);
 //print("$output\n");
 //print("---------------------------\n");
-
 //$test = new agImportXLS();
 //$output = $test->processFacilityImport($argv[1]);
 //$output = $test->dumpFacilities();
