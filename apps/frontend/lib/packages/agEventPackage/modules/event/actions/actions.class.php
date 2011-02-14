@@ -89,49 +89,53 @@ class eventActions extends agActions
             ->from('agEventScenario')
             ->where('event_id = ?', $this->event_id)
             ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
-    $this->scenarioName = Doctrine::getTable('agScenario')
+    if($this->scenario_id)
+    {
+      $this->scenarioName = Doctrine::getTable('agScenario')
             ->findByDql('id = ?', $this->scenario_id)
             ->getFirst()->scenario;
+
     $this->checkResults = $this->preMigrationCheck($this->scenario_id);
 
     if ($request->isMethod(sfRequest::POST)) {
       $this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
       $this->redirect('event/active?id=' . $this->event_id);
     }
+    }
+    else{
+      $this->forward404('you cannot deploy an event without a scenario.');
+    }
   }
 
   public function executeMeta(sfWebRequest $request)
   {
 
+    if ($request->getParameter('id')) { //if someone is coming here from an edit context
+      $this->event_id = $request->getParameter('id');
+      $eventMeta = Doctrine::getTable('agEvent')
+              ->findByDql('id = ?', $this->event_id)
+              ->getFirst();
+    } else {
+      $eventMeta = null;
+    }
 
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
       //if someone has posted, but is not creating an event from a scenario.
-      if ($request->getParameter('id')) { //if someone is coming here from an edit context
-        $eventMeta = Doctrine::getTable('agEvent')
-                ->findByDql('id = ?', $this->event_id);
-        $this->form = new PluginagEventDefForm($eventMeta);
-      } else {
-        $this->form = new PluginagEventDefForm();
-      }
-      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
-      if ($this->form->isValid()) {
+      $this->metaForm = new PluginagEventDefForm($eventMeta);
+      $this->metaForm->bind($request->getParameter($this->metaForm->getName()), $request->getFiles($this->metaForm->getName()));
+      if ($this->metaForm->isValid()) {
 
-        $ag_event = $this->form->save();
-        if ($request->getParameter('scenario_id')) {
-          $ag_event_scenario = new agEventScenario();
-          $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
-          $ag_event_scenario->setEventId($ag_event->getId());
-          $ag_event_scenario->save();
-        }
+        $ag_event = $this->metaForm->save();
+
 
         //$this->migrateScenarioToEvent($request->getParameter('scenario_id'), $ag_event->getId()); //this will create mapping from scenario to event
+//        if($this->metaForm->isNew()){
+//        if (isset($updating)) { //replace with usable check to update
+        $eventStatusObject = Doctrine_Query::create()
+                ->from('agEventStatus a')
+                ->where('a.id =?', $ag_event->getId())
+                ->execute()->getFirst();
 
-        if (isset($updating)) { //replace with usable check to update
-          $eventStatusObject = Doctrine_Query::create()
-                  ->from('agEventStatus a')
-                  ->where('a.id =?', $ag_event->getId())
-                  ->execute()->getFirst();
-        }
         $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
 
         $ag_event_status->setEventStatusTypeId(3);
@@ -140,7 +144,14 @@ class eventActions extends agActions
         $ag_event_status->save();
 
         //have to do this for delete also, i.e. delete the event_scenario object
-        $this->redirect('event/deploy?id=' . $ag_event->getId());
+        if ($request->getParameter('scenario_id') && $request->getParameter('scenario_id') != "") { //the way this is constructed we will always have a scenario_id
+          $ag_event_scenario = new agEventScenario();
+          $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
+          $ag_event_scenario->setEventId($ag_event->getId());
+          $ag_event_scenario->save();
+          $this->redirect('event/deploy?id=' . $ag_event->getId());
+        }
+
       }
     } else {
       //get scenario information passed from previous form
@@ -151,13 +162,7 @@ class eventActions extends agActions
                 ->findByDql('id = ?', $this->scenario_id)
                 ->getFirst()->scenario;
       }
-      if ($request->getParameter('id')) { //if someone is coming here from an edit context
-        $eventMeta = Doctrine::getTable('agEvent')
-                ->findByDql('id = ?', $this->event_id);
-        $this->metaForm = new PluginagEventDefForm($eventMeta);
-      } else {
-        $this->metaForm = new PluginagEventDefForm();
-      }
+      $this->metaForm = new PluginagEventDefForm($eventMeta);
     }
 
     //as a rule of thumb, actions should post to themself and then redirect
@@ -528,10 +533,10 @@ class eventActions extends agActions
     $statusIds = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
 
     $query = Doctrine_Query::create()
-      ->select('s.event_facility_group_id')
-        ->addSelect('s.facility_group_allocation_status_id')
-      ->from('agEventFacilityGroupStatus s')
-      ->whereIn('s.id', array_keys($statusIds));
+            ->select('s.event_facility_group_id')
+            ->addSelect('s.facility_group_allocation_status_id')
+            ->from('agEventFacilityGroupStatus s')
+            ->whereIn('s.id', array_keys($statusIds));
     // Returns fgroup_id as key, status_id as val
     $statusQuery = $query->execute(array(), 'key_value_pair');
 

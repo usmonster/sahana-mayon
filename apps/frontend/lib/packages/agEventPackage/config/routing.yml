@@ -3,6 +3,11 @@ event_deploy:
   options: { model: agEvent, type: object }
   param:   { module: event, action: deploy }
 
+event_meta:
+  url:     /event/:id/meta
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: meta }
+
 event_active:
   url:     /event/:id/active
   options: { model: agEvent, type: object }
