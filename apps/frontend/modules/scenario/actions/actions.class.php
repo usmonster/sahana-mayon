@@ -633,9 +633,11 @@ class scenarioActions extends agActions
     $arrayQuery = Doctrine_Core::getTable('agScenarioShift')
             ->createQuery('ss')
             ->select('ss.*, s.id, s.scenario, sfg.id, sfg.scenario_facility_group, sfr.id')
+            ->from('agScenarioShift ss')
             ->leftJoin('ss.agScenarioFacilityResource AS sfr')
             ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
             ->leftJoin('sfg.agScenario AS s')
+            ->where('s.id = ?', $request->getParameter('id'))
             ->orderBy('s.scenario, sfg.scenario_facility_group, sfr.facility_resource_id');
 
     $queryString = $arrayQuery->getSqlQuery();
@@ -674,8 +676,13 @@ class scenarioActions extends agActions
 //    $this->facilityResourceInfo = agFacilityResource::facilityResourceInfo();
 
     $query = Doctrine_Query::create()
-            ->select('ss.*')
-            ->from('agScenarioShift as ss');
+            ->select('ss.*, s.id, s.scenario, sfg.id, sfg.scenario_facility_group, sfr.id')
+            ->from('agScenarioShift as ss')
+            ->leftJoin('ss.agScenarioFacilityResource AS sfr')
+            ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
+            ->leftJoin('sfg.agScenario AS s')
+            ->where('s.id = ?', $request->getParameter('id'))    ;
+
 
     /**
      * Create pager

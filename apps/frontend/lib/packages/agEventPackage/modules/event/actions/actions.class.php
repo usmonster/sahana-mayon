@@ -498,9 +498,20 @@ class eventActions extends agActions
 //    $r = $this->statusWidget->getOption('choices');
     $this->form = new sfForm();
     $this->form->setWidgets(array(
-      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus'), array('class' => 'inputGray')),
-      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus'), array('class' => 'inputGray')),
-    ));
+      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
+      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus')),
+     ));
+    if ($request->isMethod(sfRequest::POST)) {
+
+      if ($request->getParameter('resource_allocation_status')) {
+        $resourceAllocation = new agEventFacilityResourceStatus();
+        $resourceAllocation->event_facility_resource_id = $request->getParameter('event_facility_resource_id');
+        $resourceAllocation->facility_resource_allocation_status_id = $request->getParameter('resource_allocation_status');
+        $resourceAllocation->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+        $resourceAllocation->save();
+      }
+    }
+
   }
 
   private function queryForTable($eventFacilityGroupId = null)
