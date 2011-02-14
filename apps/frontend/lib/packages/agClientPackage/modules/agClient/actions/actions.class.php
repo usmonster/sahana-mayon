@@ -10,11 +10,12 @@
  */
 class agClientActions extends sfActions
 {
+
   public function executeIndex(sfWebRequest $request)
   {
     $this->ag_clients = Doctrine_Core::getTable('agClient')
-      ->createQuery('a')
-      ->execute();
+            ->createQuery('a')
+            ->execute();
   }
 
   public function executeIn(sfWebRequest $request)
@@ -44,8 +45,9 @@ class agClientActions extends sfActions
     $this->form = new agClientForm($ag_client);
   }
 
-    public function executeOut(sfWebRequest $request)
+  public function executeOut(sfWebRequest $request)
   {
+
   }
 
   public function executeUpdate(sfWebRequest $request)
@@ -72,11 +74,11 @@ class agClientActions extends sfActions
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
-    if ($form->isValid())
-    {
+    if ($form->isValid()) {
       $ag_client = $form->save();
 
-      $this->redirect('agClient/edit?id='.$ag_client->getId());
+      $this->redirect('agClient/edit?id=' . $ag_client->getId());
     }
   }
+
 }

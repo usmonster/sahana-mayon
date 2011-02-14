@@ -357,7 +357,6 @@ class agStaffActions extends agActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       //are our values bound at this point?
-
       // The two lines below are needed to prevent an attempted delete of the agStaff object
       // attached to this person. Symfony/Doctrine seems to see agStaff as a join object in
       // this case, since it holds keys from person and staff status.
@@ -370,9 +369,9 @@ class agStaffActions extends agActions
       $ag_staff = $form->save();
       $refAgStaff = $ag_staff->getAgStaff();
       $staffObj = Doctrine_Query::create()
-        ->from('agStaff s')
-        ->where('s.person_id=?', $ag_staff->id)
-        ->fetchOne();
+              ->from('agStaff s')
+              ->where('s.person_id=?', $ag_staff->id)
+              ->fetchOne();
       LuceneRecord::updateLuceneRecord($staffObj);
 
       //$staff_id = $ag_staff->getAgStaff()->getFirst()->getId();
@@ -664,7 +663,8 @@ class agStaffActions extends agActions
     $this->importFile = $_FILES['import']['name'];
     $this->importPath = sfConfig::get('sf_upload_dir') . '/' . $this->importFile;
     $filePath = pathinfo($this->importFile);
-    require_once sfConfig::get('sf_app_dir') . '/lib/util/agStaffImportXls.class.php';
+    //require_once sfConfig::get('sf_app_dir') . '/lib/util/agStaffImportXls.class.php';
+    require_once sfConfig::get('sf_app_lib_dir') . '/util/agStaffImport.class.php';
 
     $passPath = $_FILES['import']['tmp_name'];
     $extension = strtolower($filePath['extension']);
@@ -675,11 +675,11 @@ class agStaffActions extends agActions
       $this->uploadMessage = $this->importFile . ' is not an XLS file and could not be read. No data was imported to Agasti.';
     } else {
 //      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\');"');
-      $importObj = new agStaffImportXls();
+      $importObj = new agStaffImport(); //new agStaffImportXls();
       $importObj->fileName = $_FILES['import']['name'];
       $importObj->rowSetIterator = 0;
       $importObj->stop = false;
-      $xlsPath = 'xlsfile:///' . $passPath;
+      $xlsPath = /* 'xlsfile:///' . */ $passPath;
       $returned = $importObj->processStaffImport($xlsPath);
 //      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\', \'' . htmlspecialchars($tyr) . '\');"');
 //      $toImport = unserialize($toImport);

@@ -1,5 +1,9 @@
+SAHANA AGASTI 2.0 MAYON
+Emergency Management Software
+
 LICENSING AND COPYRIGHT INFORMATION
-===================================
+
+Updated: 2011-02-14
 
 The following information is subject to change. For the most up to date
 information about the Sahana Software Foundation's licenses and agreements,
@@ -40,19 +44,20 @@ wiki is subject to a Creative Commons Attribution-NonCommercial-ShareAlike 3.0
 Unported License. For full details refer to
 http://creativecommons.org/licenses/by-nc-sa/3.0/
 
+
 PLUGIN LICENSING
 ================
-Plugins associated with Agasti 2.0 maintain their own licensing; however, significant plugins are listed here for reference:
+Plugins associated with Agasti 2.0 maintain their own licensing; however,
+significant plugins are listed here for reference:
 
 --------
 DokuWiki
 --------
-DokuWiki is licensed under the GNU General Public License (GPL).  For detailed information please refer to http://www.gnu.org/licenses/gpl-2.0.html.
-
-This document last updated: 2010-09-24
+DokuWiki is licensed under the GNU General Public License (GPL). For detailed
+information please refer to http://www.gnu.org/licenses/gpl-2.0.html.
 
 ---------
-jQuery ui
+jQuery UI
 ---------
 Copyright (c) 2011 Paul Bakaus, http://jqueryui.com/
 
@@ -80,8 +85,10 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
------------------------
-Google php-excel-reader
------------------------
-The Google php-excel-reader is available under an MIT License:
+----------------
+PHP Excel Reader
+----------------
+PHP Excel Reader is available under the MIT License:
 http://code.google.com/p/php-excel-reader/
+
+
