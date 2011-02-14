@@ -1,5 +1,5 @@
 <?php
-class agScenarioGeneratorHelper
+class agScenarioGenerator
 {
   /**
    * @method shiftGenerator()

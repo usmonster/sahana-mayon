@@ -391,4 +391,9 @@ class facilityActions extends agActions
     unlink($filePath);
   }
 
+//  public function executeFacilityExport()
+//  {
+////    agFacilityHelper::facilityGeneralInfo('Event');
+//    agFacilityHelper::facilityAddress(FALSE, 'work');
+//  }
 }
