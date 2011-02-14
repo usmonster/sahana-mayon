@@ -155,6 +155,26 @@ class agEventFacilityHelper
         ->andWhere('efg.id LIKE (?)', $eventFacilityGroupId) ;
   }
 
+  /**
+   * Static function to return the current status id's of all facility resources for a specific event
+   *
+   * @param integer(4) $eventId The event currently being queried
+   * @return array A two-dimensional associative array, keyed by agEventFacilityResourceStatus.id with
+   * a value array containing the surrogate key:
+   * (agEventFacilityResourceStatus.event_facility_resource_id, agEventFacilityResourceStatus.time_stamp)
+   *
+   * <code>
+   * // To get the current status of all facilities in a current event
+   * $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityResourceStatus($eventId) ;
+   *
+   * $q = Doctrine_Query::create()
+   *   ->select('s.*')
+   *   ->from('agEventFacilityResourceStatus s')
+   *   ->whereIn('s.id', array_keys($currentStatusIds)) ;
+   *
+   * $results = $q->execute() ;
+   * </code>
+   */
   public static function returnCurrentEventFacilityResourceStatus($eventId)
   {
     $query = Doctrine_Query::create()
@@ -172,7 +192,7 @@ class agEventFacilityHelper
                 AND s.time_stamp <= CURRENT_TIMESTAMP
               HAVING MAX(s.time_stamp) = efrs.time_stamp)') ;
 
-    $results = $query->execute(array(), 'status_hydrator') ;
+    $results = $query->execute(array(), 'key_value_array') ;
     return $results ;
   }
 
@@ -188,7 +208,7 @@ class agEventFacilityHelper
    * // To get the current status of all facilities in a current event
    * $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityGroupStatus($eventId) ;
    *
-   * $q = new Doctrine_Query::create()
+   * $q = Doctrine_Query::create()
    *   ->select('s.*')
    *   ->from('agEventFacilityGroupStatus s')
    *   ->whereIn('s.id', array_keys($currentStatusIds)) ;
@@ -212,7 +232,7 @@ class agEventFacilityHelper
                 AND s.time_stamp <= CURRENT_TIMESTAMP
               HAVING MAX(s.time_stamp) = efgs.time_stamp)') ;
 
-    $results = $query->execute(array(), 'status_hydrator') ;
+    $results = $query->execute(array(), 'key_value_array') ;
     return $results ;
   }
 
@@ -234,6 +254,7 @@ class agEventFacilityHelper
     $results = $query->execute(array(), 'key_value_array') ;
     return $results ;
   }
+
 
   public static function returnFirstFacilityStaffedShifts($eventId)
   {
