@@ -1,0 +1,8 @@
+# Pre-populate agGlobalParam
+
+agGlobalParam:
+  shift_change_restriction:
+    id: 1
+    agHost: localhost
+    datapoint: shift_change_restriction
+    value: -36h

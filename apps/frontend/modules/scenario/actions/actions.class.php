@@ -378,8 +378,8 @@ class scenarioActions extends agActions
           $lucene_search = $postParam['lucene_search'];
           $lucene_query = $lucene_search['query_condition'];
 
-          $staff_resource_ids = agScenarioGeneratorHelper::staffPoolGenerator($lucene_query, $this->scenario_id);
-          agScenarioGeneratorHelper::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
+          $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($lucene_query, $this->scenario_id);
+          agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }
 
@@ -574,7 +574,7 @@ class scenarioActions extends agActions
       if ($this->shifttemplateform->isValid()) {
         $ag_shift_template = $this->shifttemplateform->saveEmbeddedForms();
         if ($request->hasParameter('Continue')) {
-          $generatedResult = agScenarioGeneratorHelper::shiftGenerator();
+          $generatedResult = agScenarioGenerator::shiftGenerator();
           //should be a try/catch here
           $this->redirect('scenario/scenarioshiftlist?id=' . $request->getParameter('id'));
         } else {
@@ -1121,7 +1121,7 @@ class scenarioActions extends agActions
 
   public function executeGeneratescenarioshift()
   {
-    $generatedResult = agScenarioGeneratorHelper::shiftGenerator();
+    $generatedResult = agScenarioGenerator::shiftGenerator();
     $this->redirect('scenario/scenarioshiftlist');
   }
 

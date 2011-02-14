@@ -323,7 +323,7 @@ class eventActions extends agActions
        * 0b. Clean-out event related tables prior to migrating any scenario related tables.
        * 1a. Regenerate scenario shift
        */
-      agScenarioGeneratorHelper::shiftGenerator();
+      agScenarioGenerator::shiftGenerator();
       /**
        * @todo
        * 1b. Copy Faciltiy Group
@@ -348,8 +348,8 @@ class eventActions extends agActions
               ->innerJoin('ssg.agLuceneSearch ls')
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       foreach ($lucene_queries as $lucene_query) {
-        $staff_resource_ids = agScenarioGeneratorHelper::staffPoolGenerator($lucene_query['ls_query_condition'], $lucene_query['ssg_scenario_id']);
-        agScenarioGeneratorHelper::saveStaffPool($staff_resource_ids);
+        $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($lucene_query['ls_query_condition'], $lucene_query['ssg_scenario_id']);
+        agScenarioGenerator::saveStaffPool($staff_resource_ids);
       }
 
       // 4. Copy over staff pool

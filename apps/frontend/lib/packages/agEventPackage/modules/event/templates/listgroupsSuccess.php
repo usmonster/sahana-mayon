@@ -1,3 +1,28 @@
+<?php use_javascript('jquery.ui.custom.js') ?>
+<?php use_stylesheet('ui-lightness/jquery.ui.custom.css') ?>
+<script type="text/javascript">
+$(document).ready(function() {
+	var $dialog = $('<div></div')
+//	var $dialog = $('#something')
+		.dialog({
+			autoOpen: false,
+                        resizable: false,
+                        width: 'auto',
+                        height: 'auto',
+                        draggable: false,
+			title: 'Basic Dialog',
+                        modal: true
+		});
+
+	$('.modal').click(function() {
+                $dialog.dialog("option", "title", $(this).attr('title'));
+		$dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
+
+		return false;
+	});
+});
+</script>
+<div id="something"></div>
 <?php
   $sortColumn = $sf_request->getGetParameter('sort');
   $sortOrder = $sf_request->getGetParameter('order');
@@ -68,7 +93,7 @@
     <?php foreach($pager->getResults() as $facility): ?>
       <?php// foreach ($facilityGroup as $facility): ?>
       <tr>
-        <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText" name="modal" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
+        <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText modal" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
         <td><?php echo $facility['f_facility_name'] . ": " . $facility['frt_facility_resource_type']; ?></td>
         <td><?php echo $facility['f_facility_code']; ?></td>
         <td><?php echo $facility['ras_facility_resource_allocation_status']; ?></td>
