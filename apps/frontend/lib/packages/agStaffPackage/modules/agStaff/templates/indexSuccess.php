@@ -9,7 +9,7 @@
 <a href="<?php echo url_for('staff/list'); ?>" class="buttonText" title="List Existing Staff">List Staff</a><br/>
 
 <span style="display: inline-block; margin: 0px; padding: 0px" >
-  <a href="<?php echo url_for('staff/import') ?>" class="buttonText" title="Import Staff" id="import">Import Staff</a>
+  <a href="<?php echo url_for('facility/import') ?>" class="buttonText" title="Import Staff" id="import">Import Staff</a>
   <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('staff/import') ?>" method="post" enctype="multipart/form-data">
     <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
       <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
@@ -20,6 +20,7 @@
   </form>
 </span>
 <br/>
+
 
 <a href="<?php echo url_for('staff/export'); ?>" class="buttonText" title="Export Staff">Export Staff</a><br/>
 

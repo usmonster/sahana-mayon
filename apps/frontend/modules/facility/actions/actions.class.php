@@ -192,6 +192,78 @@ class facilityActions extends agActions
 
     $this->setTemplate('edit');
   }
+  /**
+   * Imports facility records from a properly formatted XLS file.
+   *
+   * @todo: define a standard import format and document it for the end user.
+   * @todo: make this more robust and create meaningful error messages for failed import fiels and records.
+   * */
+  public function executeImport()
+  {
+    $staffMembers = Doctrine::getTable('agPerson')
+            ->createQuery('a')
+            ->execute();
+    $nameTypes = Doctrine::getTable('agPersonNameType')
+            ->createQuery('a')
+            ->execute();
+    $phoneTypes = Doctrine::getTable('agPhoneContactType')
+            ->createQuery('a')
+            ->execute();
+    $emailTypes = Doctrine::getTable('agEmailContactType')
+            ->createQuery('a')
+            ->execute();
+    $addressTypes = Doctrine::getTable('agAddressContactType')
+            ->createQuery('a')
+            ->execute();
+    $languageFormats = Doctrine::getTable('agLanguageFormat')
+            ->createQuery('a')
+            ->execute();
+    // Right now this is not as robust as possible, only XLS files will be handled. Functionality can be added later for CSV and a few other formats
+    // that are supported by PHPExcel. PHPExcel_IOFactory::createReaderForFile is not the issue, it will set the right reader for whatever filetype is imported,
+    // it's just set in the if statement below.
+    // Set some properties to the imported file's path and file.
+    $this->importFile = $_FILES['import']['name'];
+    $this->importPath = sfConfig::get('sf_upload_dir') . '/' . $this->importFile;
+    $filePath = pathinfo($this->importFile);
+
+    require_once sfConfig::get('sf_app_dir') . '/lib/util/agStaffImportXls.class.php';
+
+    $passPath = $_FILES['import']['tmp_name'];
+    $extension = strtolower($filePath['extension']);
+
+
+    if ($extension <> 'xls' && $extension <> 'csv') {
+      $this->uploadHeading = 'Import Failure';
+      $this->uploadMessage = $this->importFile . ' is not an XLS file and could not be read. No data was imported to Agasti.';
+    } else {
+//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\');"');
+      $importObj = new agStaffImportXls();
+      $importObj->fileName = $_FILES['import']['name'];
+      $importObj->rowSetIterator = 0;
+      $importObj->stop = false;
+      $xlsPath = 'xlsfile:///' . $passPath;
+      $returned = $importObj->processStaffImport($xlsPath);
+//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\', \'' . htmlspecialchars($tyr) . '\');"');
+//      $toImport = unserialize($toImport);
+      //$returned = unserialize($returned);
+      while ($importObj->stop <> true) {
+        $returned = $importObj->processStaffImport($xlsPath);
+      }
+//      while ($returned['Current Iteration' ] < $returned['Max Iteration']) {
+//        $this->message = $returned;
+//        //$this->redirect('staff/import');
+//        //$returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::buildAndSave(\'' . addslashes(serialize($returned['Staff'])) . '\', \'' . ($returned['Current Iteration'] + 1) . '\');"');
+//        $returned = $importObj->saveImportedStaff($returned['Staff'],$returned['Current Iteration'] + 1);
+//
+////        $returned = staffImport::buildAndSave(serialize($returned['Staff']),$returned['Current Iteration'] + 1);
+////        $returned = unserialize($returned);
+//      }
+      $this->message = $returned;
+
+    }
+  }
+
+
 
   /**
    * executeDelete()
