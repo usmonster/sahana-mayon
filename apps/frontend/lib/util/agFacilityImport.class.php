@@ -50,7 +50,6 @@ class agImportXLS
     'medical_other_min' => array('type' => "integer"),
     'medical_other_max' => array('type' => "integer")
   );
-  
 
   /**
    * processFacilityImport()
@@ -64,9 +63,6 @@ class agImportXLS
 
     require_once(dirname(__FILE__) . '/excel_reader2.php');
 
-    // Same here
-    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
-
     $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
     $numRows = $xlsObj->rowcount($sheet_index = 0);
     $numCols = $xlsObj->colcount($sheet_index = 0);
@@ -77,18 +73,43 @@ class agImportXLS
       for ($col = 1; $col <= $numCols; $col++) {
 
         $colName = str_replace(" ", "_", strtolower($xlsObj->val(1, $col)));
-        $importData[$row][$colName] = $xlsObj->val($row, $col);
+        $importFileData[$row][$colName] = $xlsObj->val($row, $col);
       }
     }
 
+    $valid = $this->validateColumnHeaders($importFileData);
+
     //print_r($importData);
-    $this->saveImportTemp($importData);
+    $this->saveImportTemp($importFileData);
   }
 
   /**
-   * saveFacilityImportTemp()
+   * validateColumnHeaders($importFileData)
    *
-   * Writes facility import array to temp table
+   * Validates import data for correct schema. Returns an array of missing column headers.
+   *
+   * @param $importFileData
+   */
+  public function validateColumnHeaders($importFileData)
+  {
+
+    // Cache the import header specification
+    $importSpecHeaders = array_keys($this->importFacilitySpec);
+
+    // Check first row for expected column header names
+    $importFileHeaders = array_keys(array_shift($importFileData));
+
+    // The import spec will start with an ID column. Shift off of it.
+    $idColumn = array_shift($importFileHeaders);
+    $importSpecDiff = array_diff($importSpecHeaders, $importFileHeaders);
+
+    return $importSpecDiff;
+  }
+
+  /**
+   * saveImportTemp()
+   *
+   * Writes import array to temp table
    *
    * @param $importDataSet
    */
@@ -120,7 +141,7 @@ class agImportXLS
           switch ($this->importFacilitySpec[$column]["type"]) {
             case "integer":
               if ($row[$column] == "") {
-                $val = 0.0;
+                $val = 0;
               } else {
                 $val = $row[$column];
               };
@@ -284,9 +305,9 @@ class agImportXLS
 //print("$output\n");
 //print("---------------------------\n");
 
-$test = new agImportXLS();
+//$test = new agImportXLS();
 //$output = $test->processFacilityImport($argv[1]);
 //$output = $test->dumpFacilities();
-$output = $test->createTempTable();
-$output = $test->processImport($argv[1]);
+//$output = $test->createTempTable();
+//$output = $test->processImport($argv[1]);
 ?>
