@@ -1,23 +1,21 @@
 <?php
 
-class DateTimeHelper
+/**
+ * agDateTimeHelper
+ *
+ * Converts a number of seconds or milliseconds into an array of hours,
+ * days, minutes and seconds.
+ *
+ * LICENSE: This source file is subject to LGPLv3.0 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/lesser.html
+ *
+ * @author     Antonio Estrada, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ */
+class agDateTimeHelper
 {
-
-    /**
-     * DateTimeHelper
-     *
-     * Converts a number of seconds or milliseconds into an array of hours,
-     * days, minutes and seconds.
-     *
-     * LICENSE: This source file is subject to LGPLv3.0 license
-     * that is available through the world-wide-web at the following URI:
-     * http://www.gnu.org/copyleft/lesser.html
-     *
-     * @author     Antonio Estrada, CUNY SPS
-     *
-     * Copyright of the Sahana Software Foundation, sahanafoundation.org
-     */
-
     // Conversion Constants
     const MSEC_IN_DAY = 86400000;
     const SEC_IN_DAY = 86400;
@@ -29,10 +27,6 @@ class DateTimeHelper
     const SEC_IN_MINUTE = 60;
 
     const MSEC_IN_SEC = 1000;
-
-
-    // STATIC (CLASS) MEMBERS
-    // ======================
 
     /**
      *
@@ -157,7 +151,6 @@ class DateTimeHelper
     {
         return $this->parsedTimeArrayInstance;
     }
-
 
 }
 

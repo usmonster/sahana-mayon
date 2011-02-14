@@ -175,7 +175,27 @@ class agEventFacilityHelper
     $results = $query->execute(array(), 'status_hydrator') ;
     return $results ;
   }
-  
+
+  /**
+   * Static function to return the current status id's of all facility groups for a specific event
+   *
+   * @param integer(4) $eventId The event currently being queried
+   * @return array A two-dimensional associative array, keyed by agEventFacilityGroupStatus.id with
+   * a value array containing the surrogate key:
+   * (agEventFacilityGroupStatus.event_facility_group_id, agEventFacilityGroupStatus.time_stamp)
+   *
+   * <code>
+   * // To get the current status of all facilities in a current event
+   * $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityGroupStatus($eventId) ;
+   *
+   * $q = new Doctrine_Query::create()
+   *   ->select('s.*')
+   *   ->from('agEventFacilityGroupStatus s')
+   *   ->whereIn('s.id', array_keys($currentStatusIds)) ;
+   *
+   * $results = $q->execute() ;
+   * </code>
+   */
   public static function returnCurrentEventFacilityGroupStatus($eventId)
   {
     $query = Doctrine_Query::create()
