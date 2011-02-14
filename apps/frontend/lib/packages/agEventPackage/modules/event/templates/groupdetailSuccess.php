@@ -23,7 +23,7 @@
         echo '<td>' . $result['f_facility_code'] . '</td>';
         echo '<td>' . $result['f_facility_name'] . '</td>';
         echo '<td>' . $result['frt_facility_resource_type'] . '</td>';
-        echo '<td><form action="' . url_for('event/groupdetail?event=' . urlencode($result['e_event_name']) . '&group=' . urlencode($result['efg_event_facility_group'])) . '">';
+        echo '<td><form action="' . url_for('event/groupdetail?event=' . urlencode($result['e_event_name']) . '&group=' . urlencode($result['efg_event_facility_group'])) . '" method="post">';
         echo $form['resource_allocation_status']; //set the form value to $result['ras_id'] $result['ras_facility_resource_allocation_status'] . '</td>
         echo '<input type="hidden" name="event_facility_resource_id" value="' . $result['efr_id'] . '">';
         echo '<input type="submit" value="set status" name="submit" class="linkButton"></form></td>';

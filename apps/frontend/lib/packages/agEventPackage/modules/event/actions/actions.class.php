@@ -102,16 +102,27 @@ class eventActions extends agActions
 
   public function executeMeta(sfWebRequest $request)
   {
+
+
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
-      $this->form = new PluginagEventDefForm();
+      //if someone has posted, but is not creating an event from a scenario.
+      if ($request->getParameter('id')) { //if someone is coming here from an edit context
+        $eventMeta = Doctrine::getTable('agEvent')
+                ->findByDql('id = ?', $this->event_id);
+        $this->form = new PluginagEventDefForm($eventMeta);
+      } else {
+        $this->form = new PluginagEventDefForm();
+      }
       $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
       if ($this->form->isValid()) {
-        $ag_event = $this->form->save();
 
-        $ag_event_scenario = new agEventScenario();
-        $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
-        $ag_event_scenario->setEventId($ag_event->getId());
-        $ag_event_scenario->save();
+        $ag_event = $this->form->save();
+        if ($request->getParameter('scenario_id')) {
+          $ag_event_scenario = new agEventScenario();
+          $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
+          $ag_event_scenario->setEventId($ag_event->getId());
+          $ag_event_scenario->save();
+        }
 
         //$this->migrateScenarioToEvent($request->getParameter('scenario_id'), $ag_event->getId()); //this will create mapping from scenario to event
 
@@ -140,8 +151,15 @@ class eventActions extends agActions
                 ->findByDql('id = ?', $this->scenario_id)
                 ->getFirst()->scenario;
       }
-      $this->metaForm = new PluginagEventDefForm();
+      if ($request->getParameter('id')) { //if someone is coming here from an edit context
+        $eventMeta = Doctrine::getTable('agEvent')
+                ->findByDql('id = ?', $this->event_id);
+        $this->metaForm = new PluginagEventDefForm($eventMeta);
+      } else {
+        $this->metaForm = new PluginagEventDefForm();
+      }
     }
+
     //as a rule of thumb, actions should post to themself and then redirect
   }
 
@@ -490,12 +508,12 @@ class eventActions extends agActions
             ->fetchOne();
     $this->results = $this->queryForTable($this->eventFacilityGroup->id);
     $statusQuery = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
-    $statusId = $statusQuery[$this->eventFacilityGroup->id];
+    //$statusId = $statusQuery[$this->eventFacilityGroup->id];
     $this->form = new sfForm();
     $this->form->setWidgets(array(
       'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
       'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus')),
-     ));
+    ));
     if ($request->isMethod(sfRequest::POST)) {
 
       if ($request->getParameter('resource_allocation_status')) {
@@ -506,7 +524,6 @@ class eventActions extends agActions
         $resourceAllocation->save();
       }
     }
-
   }
 
   private function queryForTable($eventFacilityGroupId = null)
