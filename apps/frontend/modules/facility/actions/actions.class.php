@@ -246,6 +246,9 @@ class facilityActions extends agActions
    */
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
+    $poo = $form->getName();
+    $values = $request->getParameter($poo);
+    $files = $request->getFiles($form->getName());
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_facility = $form->save();
