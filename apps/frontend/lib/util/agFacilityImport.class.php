@@ -94,7 +94,7 @@ class agFacilityImport
     // Same here
     $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
 
-    $xlsObj = new Spreadsheet_Excel_Reader($importFile);
+    $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
     $numRows = $xlsObj->rowcount($sheet_index = 0);
     $numCols = $xlsObj->colcount($sheet_index = 0);
 
