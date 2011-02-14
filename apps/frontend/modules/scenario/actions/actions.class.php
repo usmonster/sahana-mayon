@@ -322,8 +322,7 @@ class scenarioActions extends agActions
       $queryparts = explode(" AND ", $this->poolform->getEmbeddedForm('lucene_search')->getObject()->query_condition);
       foreach ($queryparts as $querypart) {
         $filterType = preg_split("/:/", $querypart, 2);
-        if ($filterType[0] == 'staff_type')
-        {
+        if ($filterType[0] == 'staff_type') {
           $defaultValue = Doctrine_Query::create()->select('id')->from('agStaffResourceType')
                   ->where('staff_resource_type=?', $filterType[1])->execute(array(), 'single_value_array');
         } else {
@@ -365,7 +364,6 @@ class scenarioActions extends agActions
         $ag_staff_gen->delete();
         $luceneQuery->delete();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
-
       } elseif ($request->getParameter('Save')) { //otherwise, we're SAVING/UPDATING
         $this->poolform = new agStaffPoolForm();
         $this->poolform->scenario_id = $request->getParameter('id');
@@ -382,7 +380,6 @@ class scenarioActions extends agActions
           agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }
-
       } else {  //or, just make a new form
         $this->poolform = new agStaffPoolForm();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));

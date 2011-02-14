@@ -16,6 +16,7 @@
  */
 class eventActions extends agActions
 {
+
   public function executeIndex(sfWebRequest $request)
   {
     $this->scenarioForm = new sfForm();
@@ -457,18 +458,18 @@ class eventActions extends agActions
 
     $this->facilityGroupArray = $facilityGroupArray;
     $this->pager = new agArrayPager(null, 10);
-    
+
     if ($request->getParameter('sort') && $request->getParameter('order')) {
       $sortColumns = array('group' => 'efg_event_facility_group',
-                       'name' => 'f_facility_name',
-                       'code' => 'f_facility_code',
-                       'status' => 'ras_facility_resource_allocation_status',
-                       'time' => 'efrat_activation_time',
-                       'type' => 'fgt_facility_group_type',
-                       'event' => 'e_event_name');
+        'name' => 'f_facility_name',
+        'code' => 'f_facility_code',
+        'status' => 'ras_facility_resource_allocation_status',
+        'time' => 'efrat_activation_time',
+        'type' => 'fgt_facility_group_type',
+        'event' => 'e_event_name');
       $sort = $sortColumns[$request->getParameter('sort')];
       agArraySort::$sort = $sort;
-      usort($facilityGroupArray, array('agArraySort','arraySort'));
+      usort($facilityGroupArray, array('agArraySort', 'arraySort'));
       if ($request->getParameter('order') == 'DESC') {
         $facilityGroupArray = array_reverse($facilityGroupArray);
       }
@@ -491,6 +492,16 @@ class eventActions extends agActions
             ->where('event_name = ?', urldecode($request->getParameter('event')))
             ->fetchOne();
     $this->results = $this->queryForTable($this->eventFacilityGroup->id);
+    $statusQuery = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
+    $statusId = $statusQuery[$this->eventFacilityGroup->id];
+//    $this->statusWidget = new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'add_empty' => false));
+//    $r = $this->statusWidget->getOption('choices');
+    $this->form = new sfForm();
+    $this->form->setWidgets(array(
+      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
+      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus')),
+     ));
+    $t= 3;
   }
 
   private function queryForTable($eventFacilityGroupId = null)

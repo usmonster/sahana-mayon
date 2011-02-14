@@ -158,7 +158,7 @@ class agEventFacilityHelper
   public static function returnCurrentEventFacilityResourceStatus($eventId)
   {
     $query = Doctrine_Query::create()
-      ->select('efrs,id')
+      ->select('efrs.id')
           ->addSelect('efrs.event_facility_resource_id')
           ->addSelect('efrs.time_stamp')
         ->from('agEventFacilityResourceStatus efrs')
@@ -175,11 +175,11 @@ class agEventFacilityHelper
     $results = $query->execute(array(), 'status_hydrator') ;
     return $results ;
   }
-
+  
   public static function returnCurrentEventFacilityGroupStatus($eventId)
   {
     $query = Doctrine_Query::create()
-      ->select('efgs,id')
+      ->select('efgs.id')
           ->addSelect('efgs.event_facility_group_id')
           ->addSelect('efgs.time_stamp')
         ->from('agEventFacilityGroupStatus efgs')
@@ -187,7 +187,7 @@ class agEventFacilityHelper
         ->where('efg.event_id = ?', $eventId)
           ->andWhere('EXISTS (
             SELECT s.id
-              FROM agEventFacilityResourceStatus s
+              FROM agEventFacilityGroupStatus s
               WHERE s.event_facility_group_id = efgs.event_facility_group_id
                 AND s.time_stamp <= CURRENT_TIMESTAMP
               HAVING MAX(s.time_stamp) = efgs.time_stamp)') ;
@@ -240,7 +240,6 @@ class agEventFacilityHelper
     // convert our start time to unix timestamp or set default if null
     $time = (is_null($time)) ? time() : strtotime($time) ;
     $time = date ('Y-m-d H:i:s', $time) ;
-    print_r($time) ;
 
     $query = new Doctrine_RawSql() ;
     $query->addComponent('es', 'agEventShift es')
