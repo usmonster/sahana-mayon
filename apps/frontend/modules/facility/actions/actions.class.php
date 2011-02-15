@@ -215,7 +215,7 @@ class facilityActions extends agActions
 
     $import->processImport($this->importPath);
     $this->numRecordsImported = $import->numRecordsImported;
-    $this->errors = $import->errors;
+    $this->events = $import->events;
 
   }
 
