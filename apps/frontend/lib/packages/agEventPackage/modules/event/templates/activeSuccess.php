@@ -12,6 +12,6 @@
 <a href="<?php echo url_for('event/fgroup?id=' . $event_id); ?>" class="linkButton" title="Facilities and Resources">Manage Facility Groups</a><br/>
 <a href="<?php echo url_for('event/reporting'); ?>" class="buttonText" title="Manage Reports">Reporting</a><br/>
 <br>
-<a href="<?php echo url_for('event/resolution'); ?>" class="buttonText" title="Close Event">Resolve Event</a><br/>
+<a href="<?php echo url_for('event/resolution?id=' . $event_id); ?>" class="linkButton" title="Close Event">Resolve Event</a><br/>
 
 <br />

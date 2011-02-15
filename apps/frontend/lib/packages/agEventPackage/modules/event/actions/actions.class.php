@@ -89,20 +89,18 @@ class eventActions extends agActions
             ->from('agEventScenario')
             ->where('event_id = ?', $this->event_id)
             ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
-    if($this->scenario_id)
-    {
+    if ($this->scenario_id) {
       $this->scenarioName = Doctrine::getTable('agScenario')
-            ->findByDql('id = ?', $this->scenario_id)
-            ->getFirst()->scenario;
+              ->findByDql('id = ?', $this->scenario_id)
+              ->getFirst()->scenario;
 
-    $this->checkResults = $this->preMigrationCheck($this->scenario_id);
+      $this->checkResults = $this->preMigrationCheck($this->scenario_id);
 
-    if ($request->isMethod(sfRequest::POST)) {
-      $this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
-      $this->redirect('event/active?id=' . $this->event_id);
-    }
-    }
-    else{
+      if ($request->isMethod(sfRequest::POST)) {
+        $this->migrateScenarioToEvent($this->scenario_id, $this->event_id);
+        $this->redirect('event/active?id=' . $this->event_id);
+      }
+    } else {
       $this->forward404('you cannot deploy an event without a scenario.');
     }
   }
@@ -151,7 +149,6 @@ class eventActions extends agActions
           $ag_event_scenario->save();
           $this->redirect('event/deploy?id=' . $ag_event->getId());
         }
-
       }
     } else {
       //get scenario information passed from previous form
@@ -608,7 +605,24 @@ class eventActions extends agActions
 
   public function executeResolution(sfWebRequest $request)
   {
-    
+    $this->event_id = $request->getParameter('id');
+    $this->eventName = Doctrine::getTable('agEvent')
+            ->findByDql('id = ?', $this->event_id)
+            ->getFirst()->event_name;
+    $this->resForm = new sfForm();
+    $this->resForm->setWidgets(array(
+      'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType'))
+    ));
+    //$this->resForm->setDefault('event_status', $currentStatus);
+    if ($request->isMethod(sfRequest::POST)) {
+      //never going to be updating, will always be 'setting' the status, with the current timestamp
+      $ag_event_status = new agEventStatus();
+
+      $ag_event_status->setEventStatusTypeId($request->getParameter('event_status'));
+      $ag_event_status->setEventId($this->event_id);
+      $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+      $ag_event_status->save();
+    }
   }
 
   public function executePost(sfWebRequest $request)
