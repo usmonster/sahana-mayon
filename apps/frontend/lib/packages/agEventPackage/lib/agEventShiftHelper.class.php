@@ -122,7 +122,7 @@ class agEventShiftHelper
     }
   }
 
-    /**
+  /**
    * Updates all shifts associated with $event to use absolute timestamps per
    * activation protocol.
    *

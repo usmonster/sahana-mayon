@@ -213,8 +213,10 @@ class facilityActions extends agActions
     $import = new agImportXLS();
     $returned = $import->createTempTable();
 
-    $results = $import->processImport($this->importPath);
-    $this->message = $results;
+    $import->processImport($this->importPath);
+    $this->numRecordsImported = $import->numRecordsImported;
+    $this->errors = $import->errors;
+
   }
 
   /**

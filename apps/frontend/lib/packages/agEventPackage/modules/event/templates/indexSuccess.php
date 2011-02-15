@@ -23,7 +23,7 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
 
 <?php if ($ag_events) {
 ?>
-
+<hr />
   <h3>Existing Events</h3>
 
   <table>
@@ -53,7 +53,6 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
     </tbody>
   </table>
 
-  <a href="<?php //echo url_for('agEvent')  ?>">New</a>
 
 <?php
     } //end if for ag event listing

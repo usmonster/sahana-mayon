@@ -36,24 +36,26 @@ class agFacilityHelper {
               ->innerJoin('s.agEntity e')
               ->leftJoin('f.agFacilityResource fr')
               ->leftJoin('fr.agFacilityResourceType frt')
-              ->leftJoin('fr.agFacilityResourceStatus frs');
+              ->leftJoin('fr.agFacilityResourceStatus frs')
+              ->orderBy('f.id');
       
       if (isset($packageType))
       {
         switch( strtolower($packageType) )
         {
           case "scenario":
-            $facilityQuery->addSelect('sfr.activation_sequence, fras.facility_resource_allocation_status')
+            $facilityQuery->addSelect('sfr.id, sfr.activation_sequence, fras.facility_resource_allocation_status')
               ->addSelect('sfg.scenario_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, sfg.activation_sequence')
               ->leftJoin('fr.agScenarioFacilityResource sfr')
               ->leftJoin('sfr.agFacilityResourceAllocationStatus fras')
               ->leftJoin('sfr.agScenarioFacilityGroup sfg')
               ->leftJoin('sfg.agFacilityGroupType fgt')
               ->leftJoin('sfg.agFacilityGroupAllocationStatus fgas')
-              ->where('sfr.id IS NOT NULL');
+              ->where('sfr.id IS NOT NULL')
+              ->addOrderBy('sfg.id, sfg.activation_sequence, sfr.activation_sequence');
             break;
           case "event":
-            $facilityQuery->addSelect('efr.activation_sequence, fras.facility_resource_allocation_status')
+            $facilityQuery->addSelect('efr.id, efr.activation_sequence, fras.facility_resource_allocation_status')
               ->addSelect('efg.event_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, efg.activation_sequence')
               ->addSelect('efrs.id, efgs.id')
               ->leftJoin('fr.agEventFacilityResource efr')
@@ -63,7 +65,8 @@ class agFacilityHelper {
               ->leftJoin('efg.agFacilityGroupType fgt')
               ->leftJoin('efg.agEventFacilityGroupStatus efgs')
               ->leftJoin('efgs.agFacilityGroupAllocationStatus fgas')
-              ->where('efr.id IS NOT NULL');
+              ->where('efr.id IS NOT NULL')
+              ->addOrderBy('efg.id, efg.activation_sequence, efr.activation_sequence');
             break;
           default:
             // Do nothing.
@@ -71,36 +74,25 @@ class agFacilityHelper {
         }
       }
 
-//              ->leftJoin('e.agEntityEmailContact eec')
-//              ->leftJoin('eec.agEmailContact ec')
-//              ->leftJoin('eec.agEmailContactType ect')
-//              ->addWhere('ect.email_contact_type=?', 'work');
-//              ->orWHere('EXISTS (SELECT eec2.id
-//                                  FROM agEntityEmailContact eec2
-//                                  WHERE eec2.entity_id=eec.entity_id
-//                                    AND eec2.email_contact_type_id=eec.email_contact_type_id
-//                                  HAVING MIN(eec2.priority) = eec.priority)');
-
       $facilityQueryString = $facilityQuery->getSqlQuery();
       echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       print_r($facilityInfo);
 //      return $facilityInfo;
+      
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
 //      return NULL;
     }
   }
 
-  public static function facilityAddress($primaryOnly=FALSE, $type=NULL)
+  public static function facilityAddress($primaryOnly=FALSE, $type=NULL, $countryFormat = 'United States')
   {
     try {
       $facilityQuery = Doctrine_Query::create()
-              ->select('f.id, eac.entity_id, eac.address_contact_type_id, eac.address_id')
+              ->select('f.id, eac.entity_id, act.address_contact_type, eac.address_id, eac.priority')
               ->addSelect('ae.address_element, av.value')
-              ->addSelect('gc.longitude, gc.latitude')
               ->addSelect('s.id, e.id, eac.id, a.id, aav.id')
-              ->addSelect('ag.id, g.id, gf.id')
               ->from('agFacility f')
               ->innerJoin('f.agSite s')
               ->innerJoin('s.agEntity e')
@@ -111,25 +103,28 @@ class agFacilityHelper {
               ->leftJoin('aav.agAddressValue av')
               ->leftJoin('av.agAddressElement ae')
               ->innerJoin('ae.agAddressFormat af')
-              ->leftJoin('a.agAddressGeo ag')
-                ->leftJoin('ag.agGeo g')
-                ->leftJoin('g.agGeoSource gs')
-                ->leftJoin('g.agGeoFeature gf')
-                ->leftJoin('gf.agGeoCoordinate gc')
-              ->groupBy('eac.entity_id, eac.address_contact_type_id')
-              ->orderBy('f.id, af.line_sequence, af.inline_sequence');
+              ->innerJoin('af.agAddressStandard as')
+              ->innerJoin('as.agCountry c')
+              ->where('c.country=?', $countryFormat);
+//              ->orderBy('f.id, a.id, act.id, af.line_sequence, af.inline_sequence');
+//              ->orderBy('f.id, eac.address_id, eac.address_contact_type_id, af.line_sequence, af.inline_sequence');
 
       if (isset($type))
       {
-          $facilityQuery->where('act.address_contact_type=?', $type);
+          $facilityQuery->addWhere('act.address_contact_type=?', $type);
       }
 
       if ($primaryOnly)
       {
-          $facilityQuery->addSelect('MIN(eac.priority) AS priority');
+        $subQuery = 'EXISTS (SELECT eac2.id
+                             FROM agEntityAddressContact eac2
+                             WHERE eac2.entity_id = eac.entity_id
+                               AND eac2.address_contact_type_id = eac.address_contact_type_id
+                             HAVING MIN(eac2.priority) = eac.priority)';
+
+        $facilityQuery->addWhere($subQuery);
       } else {
-        $facilityQuery->addSelect('eac.priority')
-          ->addGroupBy('eac.address_id');
+        $facilityQuery->orderBy('f.id, a.id, act.id, af.line_sequence, af.inline_sequence');
       }
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
@@ -137,45 +132,202 @@ class agFacilityHelper {
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       print_r($facilityInfo);
 //      return $facilityInfo;
+      
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
 //      return NULL;
     }
   }
 
-  public static function facilityGeo()
+  public static function facilityGeo($primaryOnly=FALSE, $type=NULL)
   {
+    try {
+      $initialWhereClause = TRUE;
+      $facilityQuery = Doctrine_Query::create()
+              ->select('f.id, act.address_contact_type, eac.address_id, eac.priority')
+              ->addSelect('gc.longitude, gc.latitude')
+              ->addSelect('s.id, e.id, eac.id, a.id, ag.id, g.id, gf.id')
+              ->from('agFacility f')
+              ->innerJoin('f.agSite s')
+              ->innerJoin('s.agEntity e')
+              ->innerJoin('e.agEntityAddressContact eac')
+              ->innerJoin('eac.agAddressContactType act')
+              ->innerJoin('eac.agAddress a')
+              ->innerJoin('a.agAddressGeo ag')
+              ->innerJoin('ag.agGeo g')
+              ->innerJoin('g.agGeoSource gs')
+              ->innerJoin('g.agGeoFeature gf')
+              ->innerJoin('gf.agGeoCoordinate gc');
 
+      if (isset($type))
+      {
+        if ($initialWhereClause)
+        {
+          $facilityQuery->where('act.address_contact_type=?', $type);
+          $initialWhereClause = FALSE;
+        }
+      }
+
+      if ($primaryOnly)
+      {
+        $subQuery = 'Exists (SELECT eac2.id
+                             FROM agEntityAddressContact eac2
+                             WHERE eac2.entity_id = eac.entity_id
+                               AND eac2.address_contact_type_id = eac.address_contact_type_id
+                             HAVING MIN(eac2.priority) = eac.priority';
+
+        if ($initialWhereClause)
+        {
+          $facilityQuery->where($subQuery);
+          $initialWhereClause = FALSE;
+        } else {
+          $facilityQuery->addWhere($subQuery);
+        }
+      } else {
+        $facilityQuery->orderBy('f.id, eac.address_id, eac.address_contact_type_id, eac.priority');
+      }
+
+      $facilityQueryString = $facilityQuery->getSqlQuery();
+      echo "$facilityQueryString<BR />";
+      $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      print_r($facilityInfo);
+//      return $facilityInfo;
+
+    } catch (Exception $e) {
+      echo 'Caught exception: ', $e->getMessage(), "\n";
+//      return NULL;
+    }
   }
 
-//  public static function facilityEmail($primaryOnly=FALSE, $type=NULL)
-//  {
-//    try {
-//      $facilityAddress = Doctrine_Query::create()
-//              ->from('agFacility f')
-//              ->innerJoin('f.agSite s')
-//              ->innerJoin('s.agEntity e')
-//              ->
-//
-//    } catch (Exception $e) {
-//      echo 'Caught exception: ', $e->getMessage(), "\n";
-////      return NULL;
-//    }
-//  }
-//
-//  public static function facilityPhone($primaryOnly=FALSE, $type=NULL)
-//  {
-//    try {
-//      $facilityAddress = Doctrine_Query::create()
-//              ->from('agFacility f')
-//              ->innerJoin('f.agSite s')
-//              ->innerJoin('s.agEntity e')
-//              ->
-//
-//    } catch (Exception $e) {
-//      echo 'Caught exception: ', $e->getMessage(), "\n";
-////      return NULL;
-//    }
-//  }
+  public static function facilityEmail($primaryOnly=FALSE, $type=NULL)
+  {
+    try {
+      $initialWhereClause = TRUE;
+      $facilityQuery = Doctrine_Query::create()
+              ->select('f.id, ect.email_contact_type, ec.email_contact, eec.priority')
+              ->addSelect('s.id, e.id, eec.id')
+              ->from('agFacility f')
+              ->innerJoin('f.agSite s')
+              ->innerJoin('s.agEntity e')
+              ->innerJoin('e.agEntityEmailContact eec')
+              ->innerJoin('eec.agEmailContact ec')
+              ->innerJoin('eec.agEmailContactType ect');
+//              ->orderBy('f.id, eec.email_contact_type_id, eec.priority');
+
+      if (isset($type))
+      {
+        if ($initialWhereClause) {
+          $facilityQuery->where('ect.email_contact_type=?', $type);
+          $initialWhereCaluse = FALSE;
+        } else {
+          $facilityQuery->addWhere('ect.email_contact_type=?', $type);
+        }
+      }
+
+      if ($primaryOnly)
+      {
+        $subQuery = 'EXISTS (SELECT eec2.id
+                             FROM agEntityEmailContact eec2
+                             WHERE eec2.entity_id = eec.entity_id
+                               AND eec2.email_contact_type_id = eec.email_contact_type_id
+                             HAVING MIN(eec2.priority) = eec.priority)';
+
+        if ($initialWhereClause)
+        {
+          $facilityQuery->where($subQuery);
+        } else {
+          $faciltiyQuery->addWhere($subQuery);
+        }
+      } else {
+        $facilityQuery->orderBy('f.id, eec.email_contact_type_id, eec.priority');
+      }
+
+      $facilityQueryString = $facilityQuery->getSqlQuery();
+      echo "$facilityQueryString<BR />";
+      $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      print_r($facilityInfo);
+//      return $facilityInfo;
+
+    } catch (Exception $e) {
+      echo 'Caught exception: ', $e->getMessage(), "\n";
+//      return NULL;
+    }
+  }
+
+  public static function facilityPhone($primaryOnly=FALSE, $type=NULL)
+  {
+    try {
+      $initialWhereClause = TRUE;
+      $facilityQuery = Doctrine_Query::create()
+              ->select('f.id, pct.phone_contact_type, pc.phone_contact, epc.priority')
+              ->addSelect('s.id, e.id, epc.id')
+              ->from('agFacility f')
+              ->innerJoin('f.agSite s')
+              ->innerJoin('s.agEntity e')
+              ->innerJoin('e.agEntityPhoneContact epc')
+              ->innerJoin('epc.agPhoneContact pc')
+              ->innerJoin('epc.agPhoneContactType pct');
+
+      if (isset($type))
+      {
+        if ($initialWhereClause)
+        {
+          $facilityQuery->where('pct.phone_contact_type=?', $type);
+          $initialWhereClause = FALSE;
+        } else {
+          $facilityQuery->addWhere('pct.phone_contact_type=?', $type);
+        }
+      }
+
+      if($primaryOnly)
+      {
+        $subQuery = 'EXISTS (SELECT epc2.id
+                             FROM agEntityPhoneContact epc2
+                             WHERE epc2.entity_id = epc.entity_id
+                               AND epc2.phone_contact_type_id = epc.phone_contact_type_id
+                             HAVING MIN(epc2.priority) = epc.priority)';
+
+        if ($initialWhereClause)
+        {
+          $facilityQuery->where($subQuery);
+        } else {
+          $facilityQuery->addWhere($subQuery);
+        }
+      } else {
+        $facilityQuery->orderBy('f.id, epc.phone_contact_type_id, epc.priority');
+      }
+
+      $facilityQueryString = $facilityQuery->getSqlQuery();
+      echo "$facilityQueryString<BR />";
+      $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      print_r($facilityInfo);
+//      return $facilityInfo;
+
+    } catch (Exception $e) {
+      echo 'Caught exception: ', $e->getMessage(), "\n";
+//      return NULL;
+    }
+  }
+
+  public static function facilityStaffResource()
+  {
+    try {
+      $facilityQuery = Doctrine_Query::create()
+              ->select('fstf.scenario_facility_resource_id, srt.staff_resource_type, fstf.minimum_staff, fstf.maximum_staff')
+              ->from('agFacilityStaffResource fstf')
+              ->innerJoin('fstf.agStaffResourceType srt')
+              ->orderBy('fstf.scenario_facility_resource_id, srt.staff_resource_type');
+
+      $facilityQueryString = $facilityQuery->getSqlQuery();
+      echo "$facilityQueryString<BR />";
+      $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      print_r($facilityInfo);
+//      return $facilityInfo;
+
+    } catch (Exception $e) {
+      echo 'Caught exception: ', $e->getMessage(), "\n";
+//      return NULL;
+    }
+  }
 
 }

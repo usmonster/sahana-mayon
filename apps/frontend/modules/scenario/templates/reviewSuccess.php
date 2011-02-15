@@ -1,37 +1,22 @@
-<?php
-// This page is currently a stub!  The following random string is a marker for the stub.
-// PnaODfcm3Kiz4MV4vzbtr4
-// PLEASE REMOVE THIS COMMENT BLOCK WHEN YOU DEVELOP THIS PAGE!
-?>
-
 <h2>"<?php echo $scenario_name ?>" Scenario Review</h2>
+
+<h3>Fill In Meta Information</h3>
 <p>List scenario name and description.  Then the Facility Groups and number.</p>
-
-<h3>Facility groups:</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Facility Group</th>
-      <th>Facility Group Type</th>
-      <th>Allocation Status</th>
-      <th>Activation Sequence</th>
-      <th>Facility Resource Count</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($ag_scenario_facility_groups as $ag_scenario_facility_group): ?>
-      <tr>
-        <td><a href="<?php echo url_for('scenario/editgroup?id=' . $ag_scenario_facility_group->getId()) ?>"><?php echo $ag_scenario_facility_group->getScenarioFacilityGroup() ?></a></td>
-        <td><?php echo $ag_scenario_facility_group->getAgFacilityGroupType() ?></td>
-        <td><?php echo $ag_scenario_facility_group->getAgFacilityGroupAllocationStatus() ?></td>
-        <td><?php echo $ag_scenario_facility_group->getActivationSequence() ?></td>
-        <td><?php echo count($ag_scenario_facility_group->getAgFacilityResource()) ?></td>
-      </tr>
-    <?php endforeach; ?>
-    </tbody>
-  </table>
+<br />
+<a href="<?php echo url_for('scenario/listgroups?id=' . $scenario_id) ?>" class="linkButton">Manage Facilities/Groups</a>
+<a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton">Staff Pool Definitions</a>
+<a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton">Shift Templates</a>
+<a href="<?php echo url_for('scenario/scenarioshiftlist?id=' . $scenario_id) ?>" class="linkButton">Scenario Shifts</a>
+<a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Staff Resource Requirements</a>
 
 
-  <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton">Staff Pool Definitions</a>
-  <a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton">Staff Shifts</a>
-  <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Staff Resource Requirements</a>
+<form action="/frontend_dev.php/event/meta " method="post" name="scenario">
+  <input type="hidden" value="<?php echo $scenario_id ?>" id ="ag_scenario_list" name="ag_scenario_list" />
+  <input type="submit" value="Deploy Scenario as Event" class="linkButton" />
+</form>
+
+
+  <hr />
+
+  <a href="<?php echo url_for('scenario/list') ?>" class="linkButton">List Scenarios</a>
+  <a href="<?php echo url_for('scenario/new') ?>" class="linkButton">Create Another Scenario</a>

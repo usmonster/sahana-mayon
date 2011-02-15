@@ -1,7 +1,14 @@
 <?php use_stylesheets_for_form($metaForm) ?>
 <?php use_javascripts_for_form($metaForm) ?>
+<?php if($event_id != ""){
+  $formAct = url_for('event/meta?id=' . $event_id);
+}
+else{
+  $formAct = url_for('event/meta');
+}
+?>
 
-<form action="<?php echo url_for('event/meta') ?> " method="post">
+<form action="<?php echo $formAct; ?>" method="post">
   <table>
     <tfoot>
       <tr>

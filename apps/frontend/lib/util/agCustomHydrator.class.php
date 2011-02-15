@@ -55,9 +55,11 @@ class KeyValueArrayHydrator extends Doctrine_Hydrator_Abstract
   {
     $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM);
     $array = array();
+    $arrayLen = (count($results[0]) - 1) ;
+
     foreach ($results as $result)
     {
-      $array[$result[0]] = array_slice($result, -1, -1);
+      $array[$result[0]] = array_slice($result, 1, $arrayLen);
     }
 
     return $array;
@@ -80,27 +82,6 @@ class GisPointCoordinateHydrator extends Doctrine_Hydrator_Abstract
     {
       $array[] = array($result[0], $result[3], $result[4]);
     } 
-
-    return $array;
-  }
-}
-
-class StatusHydrator extends Doctrine_Hydrator_Abstract
-{
-  /**
-   * Defines the result set as a nested associative array.
-   *
-   * @param <type> $stmt
-   * @return array An associative array.
-   */
-  public function hydrateResultSet($stmt)
-  {
-    $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM);
-    $array = array();
-    foreach ($results as $result)
-    {
-      $array[$result[0]] = array($result[1], $result[2]);
-    }
 
     return $array;
   }
