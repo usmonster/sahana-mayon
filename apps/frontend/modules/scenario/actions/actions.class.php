@@ -562,6 +562,7 @@ class scenarioActions extends agActions
               ->distinct()
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
+
       //for shift template workflow,
 //get current facility_staff_resource,
       //get the facility resource type ids and staff_resource_type
@@ -581,29 +582,6 @@ class scenarioActions extends agActions
     }
   }
 
-  /**
-   * @method executeEditshifttemplate()
-   * Generates a new shit template form
-   * @param sfWebRequest $request
-   */
-  public function executeEditshifttemplates(sfWebRequest $request)
-  {
-    $this->scenario_id = $request->getParameter('id');
-    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-    $this->shifttemplateform = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id));
-  }
-
-  /**
-   * @method executeNewshifttemplate()
-   * Generates a new shit template form
-   * @param sfWebRequest $request
-   */
-  public function executeNewshifttemplates(sfWebRequest $request)
-  {
-    $this->scenario_id = $request->getParameter('id');
-    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-    $this->shifttemplateform = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id));
-  }
 
   public function executeScenarioshifts(sfWebRequest $request)
   {
