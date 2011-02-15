@@ -29,11 +29,11 @@ class agImportXLS
     'facility_group_type' => array('type' => "string", 'length' => 30),
     'facility_group_allocation_status' => array('type' => "string", 'length' => 30),
     'work_email' => array('type' => "string", 'length' => 255),
-    'work_phone' => array('type' => "string", 'length' => 16),
+    'work_phone' => array('type' => "string", 'length' => 32),
     'street_1' => array('type' => "string", 'length' => 255),
     'street_2' => array('type' => "string", 'length' => 255),
     'city' => array('type' => "string", 'length' => 255),
-    'state' => array('type' => "string", 'length' => 2),
+    'state' => array('type' => "string", 'length' => 255),
     'zip_code' => array('type' => "string", 'length' => 30),
     'borough' => array('type' => "string", 'length' => 30),
     'country' => array('type' => "string", 'length' => 10),
@@ -66,28 +66,41 @@ class agImportXLS
 
     require_once(dirname(__FILE__) . '/excel_reader2.php');
 
-    $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
-    $numRows = $xlsObj->rowcount($sheet_index = 0);
-    $numCols = $xlsObj->colcount($sheet_index = 0);
-
-    // Create a simplified array from
-    for ($row = 2; $row <= $numRows; $row++) {
-
-      for ($col = 1; $col <= $numCols; $col++) {
-
-        $colName = str_replace(" ", "_", strtolower($xlsObj->val(1, $col)));
-        $importFileData[$row][$colName] = $xlsObj->val($row, $col);
-      }
-    }
-
-    $this->events[] = array("type" => "info", "message" => "Validating column headers of import file.");
-    if ($this->validateColumnHeaders($importFileData)) {
-      $this->events[] = array("type" => "success", "message" => "Valid column headers found.");
-      $this->events[] = array("type" => "info", "message" => "Inserting records into temp table.");
-      $this->saveImportTemp($importFileData);
-      $this->events[] = array("type" => "success", "message" => "Done inserting temp records.");
+    $fileInfo = pathinfo($importFile);
+    if (strtolower($fileInfo["extension"]) <> 'xls') {
+      $this->events[] = array("type" => "error", "message" => "{$fileInfo['basename']} is not Microsoft Excel 2003 \".xls\" workbook.");
     } else {
-      $this->events[] = array("type" => "error", "message" => "Unable to import file due to validation error.");
+
+      $xlsObj = new Spreadsheet_Excel_Reader($importFile);
+      $numRows = $xlsObj->rowcount($sheet_index = 0);
+      $numCols = $xlsObj->colcount($sheet_index = 0);
+
+      // Create a simplified array from
+      for ($row = 2; $row <= $numRows; $row++) {
+
+        for ($col = 1; $col <= $numCols; $col++) {
+
+          $colName = str_replace(" ", "_", strtolower($xlsObj->val(1, $col)));
+          
+          $val = $xlsObj->raw($row, $col);
+          if (!($val)) {
+            $val = $xlsObj->val($row, $col);
+          }
+          $importFileData[$row][$colName] = $val;
+
+        }
+
+      }
+
+      $this->events[] = array("type" => "info", "message" => "Validating column headers of import file.");
+      if ($this->validateColumnHeaders($importFileData)) {
+        $this->events[] = array("type" => "success", "message" => "Valid column headers found.");
+        $this->events[] = array("type" => "info", "message" => "Inserting records into temp table.");
+        $this->saveImportTemp($importFileData);
+        $this->events[] = array("type" => "success", "message" => "Done inserting temp records.");
+      } else {
+        $this->events[] = array("type" => "error", "message" => "Unable to import file due to validation error.");
+      }
     }
   }
 
@@ -192,9 +205,11 @@ class agImportXLS
         $query = sprintf($query, $cols, $vals);
 
         try {
+          $this->events[] = array("type" => "foo", "message" => $query);
           $pdo = $conn->execute($query);
           $results += $pdo->rowCount();
         } catch (Doctrine_Exception $e) {
+          $this->events[] = array("type" => "error", "message" => $query);
           $this->events[] = array("type" => "error", "message" => $e->errorMessage());
         }
         $this->numRecordsImported = $results;
