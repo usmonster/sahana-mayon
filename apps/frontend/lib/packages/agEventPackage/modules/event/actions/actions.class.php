@@ -605,15 +605,6 @@ class eventActions extends agActions
 
   public function executeResolution(sfWebRequest $request)
   {
-    $this->event_id = $request->getParameter('id');
-    $this->eventName = Doctrine::getTable('agEvent')
-            ->findByDql('id = ?', $this->event_id)
-            ->getFirst()->event_name;
-    $this->resForm = new sfForm();
-    $this->resForm->setWidgets(array(
-      'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType'))
-    ));
-    //$this->resForm->setDefault('event_status', $currentStatus);
     if ($request->isMethod(sfRequest::POST)) {
       //never going to be updating, will always be 'setting' the status, with the current timestamp
       $ag_event_status = new agEventStatus();
@@ -623,6 +614,22 @@ class eventActions extends agActions
       $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
       $ag_event_status->save();
     }
+
+    $this->event_id = $request->getParameter('id');
+    $this->eventName = Doctrine::getTable('agEvent')
+            ->findByDql('id = ?', $this->event_id)
+            ->getFirst()->event_name;
+    $this->resForm = new sfForm();
+    $this->resForm->setWidgets(array(
+      'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType'))
+    ));
+    $currentStatus = agEventFacilityHelper::returnCurrentEventStatus($this->event_id);
+    foreach ($currentStatus as $current_stat) {
+      $current_status = $current_stat[0];
+      //this works, but is awful.
+    }
+
+    $this->resForm->setDefault('event_status', $current_status);
   }
 
   public function executePost(sfWebRequest $request)
