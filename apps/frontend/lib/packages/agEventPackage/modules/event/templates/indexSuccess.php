@@ -1,9 +1,3 @@
-<?php
-// This page is currently a stub!  The following random string is a marker for the stub.
-// PnaODfcm3Kiz4MV4vzbtr4
-// PLEASE REMOVE THIS COMMENT BLOCK WHEN YOU DEVELOP THIS PAGE!
-?>
-
 <h2>Event Management</h2>
 <p>'Event' refers to a specific activation of the plans made in the Scenario module.  The entire term
   of the response will be referred to as an individual event, which is named in the next step.
@@ -29,7 +23,6 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
   <table>
     <thead>
       <tr>
-        <th>Id</th>
         <th>Event Name</th>
         <th>Scenario Base</th>
         <th>Created at</th>
@@ -41,12 +34,25 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
     <tbody>
     <?php foreach ($ag_events as $ag_event): ?>
       <tr>
-        <td><a href="<?php echo url_for('event/deploy?id=' . $ag_event->getId()) ?>"><?php echo $ag_event->getId() ?></a></td>
-        <td><?php echo $ag_event->getEventName() ?></td>
+        <?php
+        $current_status = agEventFacilityHelper::returnCurrentEventStatus($ag_event->getId()); //[0]
+        if ($current_status != "")
+        {
+          $cur_status = Doctrine::getTable('agEventStatusType')
+            ->findByDql('id = ?', $current_status)
+            ->getFirst()->event_status_type;
+        }
+        else{
+          $cur_status = 'for some reason, this event does not have a status';
+        }
+
+        ?>
+
+        <td><a href="<?php echo url_for('event/active?id=' . $ag_event->getId()) ?>" class="linkButton"><?php echo $ag_event->getEventName() ?></a></td>
         <td><?php #echo $ag_event->getAgEventScenario()->getFirst()->getAgScenario() ?></td>
         <td><?php echo $ag_event->getCreatedAt() ?></td>
         <td><?php echo $ag_event->getUpdatedAt() ?></td>
-        <td><?php echo $ag_event->getAgEventStatus()->getFirst()->getAgEventStatusType() ?></td>
+        <td><?php echo $cur_status; ?></td>
         <td><a href="<?php echo url_for('report/list') ?>" class="linkButton">reports</a></td>
       </tr>
     <?php endforeach; ?>

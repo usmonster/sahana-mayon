@@ -13,6 +13,11 @@ event_resolution:
   options: { model: agEvent, type: object }
   param:   { module: event, action: resolution }
 
+event_staff:
+  url:     /event/:id/staff
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: staff }
+
 event_active:
   url:     /event/:id/active
   options: { model: agEvent, type: object }

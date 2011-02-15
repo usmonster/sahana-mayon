@@ -555,7 +555,7 @@ class scenarioActions extends agActions
       //the shift template step, so there may need to be some manual shift template creation, i.e. i didn't say i need at least 2 nurses in a hurricane shelter
 
       $facility_staff_resources = Doctrine_Query::create()
-              ->select('st.id, fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
+              ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
               //->from('agShiftTemplate st, agFacilityStaffResource fsr')
               ->from('agFacilityStaffResource fsr')
               //joined to the facility groups in this scenario

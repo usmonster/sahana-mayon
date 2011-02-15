@@ -7,8 +7,10 @@
 
 <p>The links below should really be buttons so they look nice:</p>
 
-<a href="<?php echo url_for('event/staff'); ?>" class="buttonText" title="Manage Event Staff">Staff Management</a><br/>
-<a href="<?php echo url_for('agClient/index'); ?>" class="buttonText" title="Manage Clients">Client Data</a><br/>
+<a href="<?php echo url_for('event/staff?id=' . $event_id); ?>" class="linkButton" class="linkButton" title="Manage Event Staff">Staff Management</a><br/>
+
+<em><a href="<?php echo url_for('agClient/index'); ?>" class="buttonText" title="Manage Clients">Client Data</a></em><br/>
+
 <a href="<?php echo url_for('event/fgroup?id=' . $event_id); ?>" class="linkButton" title="Facilities and Resources">Manage Facility Groups</a><br/>
 <a href="<?php echo url_for('event/reporting'); ?>" class="buttonText" title="Manage Reports">Reporting</a><br/>
 <br>

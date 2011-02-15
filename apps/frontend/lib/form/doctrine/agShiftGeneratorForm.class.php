@@ -54,6 +54,8 @@ class agShiftGeneratorForm extends sfForm
         $this->embedForm('existing' . $shiftTemplateId, $shiftTemplateForm);
         $this->widgetSchema->setLabel('existing' . $shiftTemplateId, false);
 
+
+
         foreach ($this->facility_staff_resources as $fsrKey => $fsrVal) {
           if ($shiftTemplate->staff_resource_type_id == $fsrVal['fsr_staff_resource_type_id'] && $shiftTemplate->facility_resource_type_id == $fsrVal['fr_facility_resource_type_id']) {
             unset($this->facility_staff_resources[$fsrKey]);

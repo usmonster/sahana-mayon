@@ -1,28 +1,24 @@
-<h2>*Name of Event* Staff Management</h2>
-<?php
-//note for devs: anytime you see *Name Of Event* it's my placeholder for where you should make
-//the app display the name of the event the user is working in.
-// This page is currently a stub!  The following random string is a marker for the stub.
-// PnaODfcm3Kiz4MV4vzbtr4
-// PLEASE REMOVE THIS COMMENT BLOCK WHEN YOU DEVELOP THIS PAGE!
-?>
+<h2><span class="highlightedText"><?php echo $eventName ?></span> Management</h2>
+
+
 <p>In order for staff to be assigned to facilities they must first report as being available.
   Agasti will use the Staff Deployment Priority rules created during pre-deployment to generate the
   staff for this event and create an export, using the "Generate All Staff Contact List" button below,
   for staff to be contacted.</p>
 
-<b>Generate All Staff Contact List</b> button as an export<br>
+<a href="<?php echo url_for('event/staffin'); ?>" class="linkButton" title="Generate All Staff Contact List as Export">Generate All Staff Contact List</a><br />
+
 
 <p>After staff have replied to the external messaging system please import their replies.</p>
-<b>Import Staff Replies</b> button.<br>
+<a href="<?php echo url_for('event/staffin'); ?>" class="linkButton" title="Import Staff Replies">Import Staff Replies</a><br />
 
 <p>Finally, after replies have been imported Agasti will assign available staff to facilities.
   Assigned staff will be messaged a second time with their shift assignment and where to report.</p>
-<b>Generate Staff Assignment Export</b> button.<br/>
+<a href="<?php echo url_for('event/staffin'); ?>" class="linkButton" title="Generate Staff Assignment Export">Generate Staff Assignment Export</a><br/>
 
-<a href="<?php echo url_for('event/staffin'); ?>" class="buttonText" title="Check In Staff">Check In Staff</a><br/>
-<a href="<?php echo url_for('event/staffout'); ?>" class="buttonText" title="Check Out Staff">Check Out Staff</a><br/>
+<hr />
 
+<a href="<?php echo url_for('event/active?id=' . $event_id); ?>" class="linkButton" title="Back to Event Dashboard">Back to Event Dashboard</a><br/>
 
 <?php
 //and a return to dashboard button.
