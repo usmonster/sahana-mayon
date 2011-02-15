@@ -91,7 +91,7 @@ class ProjectConfiguration extends sfProjectConfiguration
   {
     $manager->registerHydrator('key_value_pair', 'KeyValuePairHydrator');
     $manager->registerHydrator('key_value_array', 'KeyValueArrayHydrator');
-    $manager->registerHydrator('gis_point_coordinate', 'GisPointCoordinateHydrator');
+    $manager->registerHydrator('key_value_group_by', 'KeyValueGroupByHydrator');
     $manager->registerHydrator('single_value_array', 'SingleValueArrayHydrator') ;
   }
 
