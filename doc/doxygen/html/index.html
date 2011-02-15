@@ -19,6 +19,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="current"><a href="index.html"><span>Main&nbsp;Page</span></a></li>
       <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -39,6 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <h1>Sahana Agasti Documentation</h1><h3 class="version">2.0 (Mayon) </h3>
+
 <hr>
 <h2><u>What Is Agasti?</u></h2>
 <p>Agasti is the PHP based project of the Sahana Software Foundation. Based a long-term preparedness for disaster management, Agasti aims to provide scalability; whether for major cities or micro event response.</p>
@@ -150,17 +152,15 @@ included in any releases from the Sahana Software Foundation).</p>
 
 <h3>Comments and Documentation</h3>
 <p># All classes should begin with a title block describing the basics of the class and the author at a minimum.<br>
-# All public functions should be labelled using Doxygen commands.  A basic description should be included before the declaration.<br>
-# Use Doxygen-compatible comments to document function purpose and usage. You can learn how to use Doxygen at the following URL: http://www.stack.nl/~dimitri/doxygen/docblocks.html </P.
-
-
+# All public functions should be labeled using Doxygen commands.  A basic description should be included before the declaration.<br>
+# Use Doxygen-compatible comments to document function purpose and usage. You can learn how to use Doxygen at the following URL: http://www.stack.nl/~dimitri/doxygen/docblocks.html </p>
 </div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
