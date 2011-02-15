@@ -80,8 +80,12 @@ class agImportXLS
       }
     }
 
+    $this->events[] = array("type" => "info", "message" => "Validating column headers of import file.");
     if ($this->validateColumnHeaders($importFileData)) {
+      $this->events[] = array("type" => "success", "message" => "Valid column headers found.");
+      $this->events[] = array("type" => "info", "message" => "Inserting records into temp table.");
       $this->saveImportTemp($importFileData);
+      $this->events[] = array("type" => "success", "message" => "Done inserting temp records.");
     } else {
       $this->events[] = array("type" => "error", "message" => "Unable to import file due to validation error.");
     }
@@ -136,60 +140,65 @@ class agImportXLS
 
     $conn = Doctrine_Manager::connection();
 
-    // Create an INSERT query for each facility
-    foreach ($importDataSet as $row) {
+    if (empty($importDataSet)) {
+      $this->events[] = array("type" => "error", "message" => "Cannot save empty dataset to temp table.");
+    } else {
 
-      $query = "INSERT INTO temp_facilityImport (%s) \nVALUES (%s\n)";
-      $cols = "";
-      $vals = "";
+      // Create an INSERT query for each facility
+      foreach ($importDataSet as $row) {
 
-      foreach (array_keys($this->importFacilitySpec) as $column) {
+        $query = "INSERT INTO temp_facilityImport (%s) \nVALUES (%s\n)";
+        $cols = "";
+        $vals = "";
 
-        // Ignore id key name because it is the auto        $this->errors[] = ;incrementing identity column
-        if ($column != "id") {
-          $col = sprintf("\n\t`%s`,", $column);
-          $cols = $cols . $col;
+        foreach (array_keys($this->importFacilitySpec) as $column) {
 
-          // Handle null values with sane defaults
-          switch ($this->importFacilitySpec[$column]["type"]) {
-            case "integer":
-              if ($row[$column] == "") {
-                $val = 0;
-              } else {
-                $val = $row[$column];
-              };
-              break;
-            case "decimal":
-              if ($row[$column] == "") {
-                $val = 0.0;
-              } else {
-                $val = $row[$column];
-              }
-              break;
-            default:
-              $val = trim($row[$column]);
+          // Ignore id key name because it is the auto
+          if ($column != "id") {
+            $col = sprintf("\n\t`%s`,", $column);
+            $cols = $cols . $col;
+
+            // Handle null values with sane defaults
+            switch ($this->importFacilitySpec[$column]["type"]) {
+              case "integer":
+                if ($row[$column] == "") {
+                  $val = 0;
+                } else {
+                  $val = $row[$column];
+                };
+                break;
+              case "decimal":
+                if ($row[$column] == "") {
+                  $val = 0.0;
+                } else {
+                  $val = $row[$column];
+                }
+                break;
+              default:
+                $val = trim($row[$column]);
+            }
+
+            // Use the Doctrine_Manager::connection() PDO to safe up single quotes
+            $val = $conn->quote($val);
+
+            $val = sprintf("\n\t%s,", $val);
+            $vals = $vals . "$val";
           }
-
-          // Use the Doctrine_Manager::connection() PDO to safe up single quotes
-          $val = $conn->quote($val);
-
-          $val = sprintf("\n\t%s,", $val);
-          $vals = $vals . "$val";
         }
-      }
-      // Chop off the trailing comma
-      $cols = substr($cols, 0, -1);
-      $vals = substr($vals, 0, -1);
+        // Chop off the trailing comma
+        $cols = substr($cols, 0, -1);
+        $vals = substr($vals, 0, -1);
 
-      $query = sprintf($query, $cols, $vals);
+        $query = sprintf($query, $cols, $vals);
 
-      try {
-        $pdo = $conn->execute($query);
-        $results += $pdo->rowCount();
-      } catch (Doctrine_Exception $e) {
-        $this->events[] = array("type" => "error", "message" => $e->errorMessage());
+        try {
+          $pdo = $conn->execute($query);
+          $results += $pdo->rowCount();
+        } catch (Doctrine_Exception $e) {
+          $this->events[] = array("type" => "error", "message" => $e->errorMessage());
+        }
+        $this->numRecordsImported = $results;
       }
-      $this->numRecordsImported = $results;
     }
   }
 
@@ -228,6 +237,7 @@ class agImportXLS
     // Create the table
     try {
       $conn->export->createTable('temp_facilityImport', $this->importFacilitySpec, $options);
+      $this->events[] = array("type" => "success", "message" => "Created temp table.");
     } catch (Doctrine_Exception $e) {
       $this->events[] = array("type" => "error", "message" => "Error creating temp table for import.");
       $this->events[] = array("type" => "error", "message" => $e->errorMessage());
