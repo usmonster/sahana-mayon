@@ -393,74 +393,101 @@ class facilityActions extends agActions
 
   public function executeFacilityExport()
   {
-//    agFacilityHelper::facilityGeneralInfo();
-//    agFacilityHelper::facilityAddress(FALSE, 'work');
-//    agFacilityHelper::facilityGeo(TRUE, 'work');
-//        agFacilityHelper::facilityEmail(FALSE);
-//    agFacilityHelper::facilityPhone(TRUE, 'work');
-//    agFacilityHelper::facilityStaffResource();
+    $exportHeader = array('Facility Name', 'Facility Code', 'Facility Resource Type Abbr', 
+        'Facility Resource Status', 'Facility Capacity', 'Facility Activation Sequence', 
+        'Facility Allocation Status', 'Facility Group', 'Facility Group Type', 
+        'Facility Group Allocation Status', 'Faciltiy Group Activation Sequence', 
+        'Work Email', 'Work Phone', 'Street 1', 'Street 2', 'City', 'State', 'Zip Code', 'Borough', 
+        'Country', 'Longitude', 'Latitude', 'generalist_min', 'generalist_max', 'specialist_min', 
+        'specialist_max', 'operator_min', 'operator_max', 'medical_nurse_min', 
+        'medical_nurse_max', 'medical_other_min', 'medical_other_max');
 
-    /** Error reporting */
-    error_reporting(E_ALL);
-
-    /** PHPExcel */
-    include 'PHPExcel.php';
-
-    /** PHPExcel_Writer_Excel2007.php */
-    include 'PHPExcel/Writer/Excel2007.php';
-
-    // Create new PHPExcel object
-    echo date('H:i:s') . "Create new PHPExcel Object \n";
-    $objPHPExcel = new PHPExcel();
-
-
-    // Set properties
-    echo date('H:i:s') . " Set properties\n";
-    $objPHPExcel->getProperties()->setCreator("Agasti 2.0");
-    $objPHPExcel->getProperties()->setLastModifiedBy("Agasti 2.0");
-    $objPHPExcel->getProperties()->setTitle("Facility List");
-    $objPHPExcel->getProperties()->setSubject("Facility List");
-    $objPHPExcel->getProperties()->setDescription("Facility List");
-
-    // Set active sheet and style format
-    echo date('H:i:s') . " Set active sheet and style format\n";
-    $objPHPExcel->setActiveSheetIndex(0);
-    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Arial');
-    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
-
-    // Add some data
-    echo date('H:i:s') . " Add some data\n";
-    $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Hello');
-    $objPHPExcel->getActiveSheet()->SetCellValue('B2', 'world!');
-    $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Hello');
-    $objPHPExcel->getActiveSheet()->SetCellValue('D2', 'world!');
-
-    // Rename sheet
-    echo date('H:i:s') . " Rename sheet\n";
-    $objPHPExcel->getActiveSheet()->setTitle('Simple');
-
-    // Save Excel 2007 file
-    echo date('H:i:s') . " Write to Excel2007 format\n";
-    $todaydate = date("d-m-y");
-    $todaydate = $todaydate . '-' . date("H-i-s");
-    $filename = 'Facilities';
-    $filename = $filename . '-' . $todaydate;
-    $filename = $filename . '.xlsx';
-    $filePath = realpath(sys_get_temp_dir()) . '/' . $filename;
-    echo $filePath;
-    $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
-    $objWriter->save($filePath);
-
-    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $filename . '"');
-
-    $exportFile = file_get_contents($filePath);
-
-    $this->getResponse()->setContent($exportFile);
-    $this->getResponse()->send();
-    unlink($filePath);
-
-    // Echo done
-    echo date('H:i:s') . " Done writing file.\r\n";
+//    $facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario');
+//    $facilityAddress = agFacilityHelper::facilityAddress(FALSE);
+    $facilityGeo = agFacilityHelper::facilityGeo(FALSE);
+//    $facilityEmail = agFacilityHelper::facilityEmail(FALSE);
+//    $faciltiyPhone = agFacilityHelper::facilityPhone(TRUE, 'work');
+//    $facilityStaffResource = agFacilityHelper::facilityStaffResource();
+//
+//    $entry = NULL;
+//    $facilityExportInfo = NULL;
+//    foreach ($facilityGeneralInfo as $fac)
+//    {
+//      $entry[] = $fac['f_facility_name'];
+//      $entry[] = $fac['f_facility_code'];
+//      $facilityExportInfo[] = $entry;
+//    }
+//
+//
+//
+//
+//
+//
+//
+//    /** Error reporting */
+//    error_reporting(E_ALL);
+//
+//    /** Include path **/
+//    ini_set('include_path', ini_get('include_path').';../Classes/');
+//
+//    /** PHPExcel */
+//    include 'PHPExcel.php';
+//
+//    /** PHPExcel_Writer_Excel2007.php */
+//    include 'PHPExcel/Writer/Excel2007.php';
+//
+//    // Create new PHPExcel object
+//    echo date('H:i:s') . "Create new PHPExcel Object \n";
+//    $objPHPExcel = new PHPExcel();
+//
+//
+//    // Set properties
+//    echo date('H:i:s') . " Set properties\n";
+//    $objPHPExcel->getProperties()->setCreator("Agasti 2.0");
+//    $objPHPExcel->getProperties()->setLastModifiedBy("Agasti 2.0");
+//    $objPHPExcel->getProperties()->setTitle("Facility List");
+//    $objPHPExcel->getProperties()->setSubject("Facility List");
+//    $objPHPExcel->getProperties()->setDescription("Facility List");
+//
+//    // Set active sheet and style format
+//    echo date('H:i:s') . " Set active sheet and style format\n";
+//    $objPHPExcel->setActiveSheetIndex(0);
+//    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Arial');
+//    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
+//
+//    // Add some data
+//    echo date('H:i:s') . " Add some data\n";
+//    $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Hello');
+//    $objPHPExcel->getActiveSheet()->SetCellValue('B2', 'world!');
+//    $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Hello');
+//    $objPHPExcel->getActiveSheet()->SetCellValue('D2', 'world!');
+//
+//    // Rename sheet
+//    echo date('H:i:s') . " Rename sheet\n";
+//    $objPHPExcel->getActiveSheet()->setTitle('Simple');
+//
+//    // Save Excel 2007 file
+//    echo date('H:i:s') . " Write to Excel2007 format\n";
+//    $todaydate = date("d-m-y");
+//    $todaydate = $todaydate . '-' . date("H-i-s");
+//    $filename = 'Facilities';
+//    $filename = $filename . '-' . $todaydate;
+//    $filename = $filename . '.xlsx';
+//    $filePath = realpath(sys_get_temp_dir()) . '/' . $filename;
+//    echo $filePath;
+//    $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+//    $objWriter->save($filePath);
+//
+//    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'true');
+//    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $filename . '"');
+//
+//    $exportFile = file_get_contents($filePath);
+//
+//    $this->getResponse()->setContent($exportFile);
+//    $this->getResponse()->send();
+//    unlink($filePath);
+//
+//    // Echo done
+//    echo date('H:i:s') . " Done writing file.\r\n";
   }
 }

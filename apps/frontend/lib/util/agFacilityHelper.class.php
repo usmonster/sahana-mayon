@@ -27,7 +27,7 @@ class agFacilityHelper {
   {
     try {
       $facilityQuery = Doctrine_Query::create()
-              ->select('f.id AS facility_id, f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
+              ->select('f.id, f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
 //              ->addSelect('ec.email_contact')
               ->addSelect('e.id, s.id')
 //              ->addSelect('eac.id, s.id, e.id, eec.id')
@@ -124,15 +124,45 @@ class agFacilityHelper {
 
         $facilityQuery->addWhere($subQuery);
       } else {
-        $facilityQuery->orderBy('f.id, a.id, act.id, af.line_sequence, af.inline_sequence');
+        $facilityQuery->orderBy('f.id, act.id, eac.priority, a.id, af.line_sequence, af.inline_sequence');
       }
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
       echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      print_r($facilityInfo);
+//      print_r($facilityInfo);
 //      return $facilityInfo;
-      
+
+      $cleanFacilityInfo = array();
+      foreach($facilityInfo as $fac)
+      {
+        if (array_key_exists($fac['f_id'], $cleanFacilityInfo))
+        {
+          if (array_key_exists($fac['act_address_contact_type'], $cleanFacilityInfo[ $fac['f_id'] ]))
+          {
+            if (array_key_exists($fac['eac_priority'], $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ]))
+            {
+              $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ][ $fac['eac_priority'] ][ $fac['ae_address_element'] ] = $fac['av_value'];
+            } else {
+              $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ];
+              $newArray = $tempArray + array($fac['eac_priority'] => array($fac['ae_address_element'] => $fac['av_value']));
+              $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ] = $newArray;
+              $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']]['address_id'] = $fac['eac_address_id'];
+            }
+          } else {
+            $tempArray = $cleanFacilityInfo[ $fac['f_id'] ];
+            $newArray = $tempArray + array($fac['act_address_contact_type'] => array($fac['eac_priority'] => array($fac['ae_address_element'] => $fac['av_value'])));
+            $cleanFacilityInfo[ $fac['f_id'] ] = $newArray;
+            $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']]['address_id'] = $fac['eac_address_id'];
+          }
+        } else {
+          $cleanFacilityInfo[$fac['f_id']] = array($fac['act_address_contact_type'] => array($fac['eac_priority'] => array($fac['ae_address_element'] => $fac['av_value'])));
+          $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']]['address_id'] = $fac['eac_address_id'];
+        }
+      }
+
+      print_r($cleanFacilityInfo);
+
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
 //      return NULL;
@@ -145,7 +175,7 @@ class agFacilityHelper {
       $initialWhereClause = TRUE;
       $facilityQuery = Doctrine_Query::create()
               ->select('f.id, act.address_contact_type, eac.address_id, eac.priority')
-              ->addSelect('gc.longitude, gc.latitude')
+              ->addSelect('gc.latitude, gc.longitude')
               ->addSelect('s.id, e.id, eac.id, a.id, ag.id, g.id, gf.id')
               ->from('agFacility f')
               ->innerJoin('f.agSite s')
@@ -190,8 +220,27 @@ class agFacilityHelper {
       $facilityQueryString = $facilityQuery->getSqlQuery();
       echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      print_r($facilityInfo);
+//      print_r($facilityInfo);
 //      return $facilityInfo;
+
+      $cleanFacilityInfo = array();
+      foreach ($facilityInfo as $fac)
+      {
+        if (array_key_exists($fac['f_id'], $cleanFacilityInfo))
+        {
+          $tempArray = $cleanFacilityInfo[ $fac['f_id'] ];
+          $newArray = $tempArray + array( $fac['eac_address_id'] => array( 'latitude' => $fac['gc_latitude'], 'longitude' => $fac['gc_longitude']));
+          $cleanFacilityInfo[ $fac['f_id'] ] = $newArray;
+        } else {
+          $cleanFacilityInfo[ $fac['f_id'] ] = array($fac['eac_address_id'] => array( 'latitude' => $fac['gc_latitude'], 'longitude' => $fac['gc_longitude']));
+        }
+      }
+
+      print_r($cleanFacilityInfo);
+//      return $cleanFacilityInfo;
+
+
+
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
