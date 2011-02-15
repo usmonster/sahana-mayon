@@ -317,13 +317,4 @@ class agImportXLS
 
 }
 
-//$import = new agFacilityImport();
-//$output = $import->dumpImportFile($argv[1]);
-//print("$output\n");
-//print("---------------------------\n");
-//$test = new agImportXLS();
-//$output = $test->processFacilityImport($argv[1]);
-//$output = $test->dumpFacilities();
-//$output = $test->createTempTable();
-//$output = $test->processImport($argv[1]);
 ?>
