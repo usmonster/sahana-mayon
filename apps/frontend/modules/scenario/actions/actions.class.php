@@ -59,7 +59,8 @@ class scenarioActions extends agActions
             ->createQuery('a')
             ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
             ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
-            ->execute();
+            ->where('a.scenario_id = ?', $request->getParameter('id'))
+        ->execute();
   }
 
   /**
@@ -530,7 +531,7 @@ class scenarioActions extends agActions
     $this->scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
             ->findByDql('scenario_id = ?', $this->scenario_id)
             ->getData();
-    $this->ag_allocated_facility_resources = '';
+
 
     $this->ag_facility_resources = Doctrine_Query::create()
             ->select('a.facility_id, af.*, afrt.*')
