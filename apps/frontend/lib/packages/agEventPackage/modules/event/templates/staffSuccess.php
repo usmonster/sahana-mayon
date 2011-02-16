@@ -16,6 +16,8 @@
   Assigned staff will be messaged a second time with their shift assignment and where to report.</p>
 <a href="<?php echo url_for('event/staffin'); ?>" class="linkButton" title="Generate Staff Assignment Export">Generate Staff Assignment Export</a><br/>
 
+
+<a href="<?php echo url_for('event/shifts?id=' . $event_id); ?>" class="linkButton" title="View Shifts for Event">View Shifts for Event</a><br/>
 <hr />
 
 <a href="<?php echo url_for('event/active?id=' . $event_id); ?>" class="linkButton" title="Back to Event Dashboard">Back to Event Dashboard</a><br/>

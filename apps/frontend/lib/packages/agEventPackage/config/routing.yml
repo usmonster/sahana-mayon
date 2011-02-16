@@ -8,6 +8,16 @@ event_meta:
   options: { model: agEvent, type: object }
   param:   { module: event, action: meta }
 
+event_shifts:
+  url:     /event/:id/shifts/:shiftid
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: shifts }
+
+event_shifts_list:
+  url:     /event/:id/shifts
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: shifts }
+
 event_resolution:
   url:     /event/:id/resolution
   options: { model: agEvent, type: object }

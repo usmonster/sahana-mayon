@@ -16,6 +16,8 @@
  */
 class eventActions extends agActions
 {
+  public static $event_id;
+  public static $eventName;
 
   public function executeIndex(sfWebRequest $request)
   {
@@ -409,6 +411,95 @@ class eventActions extends agActions
   public function executeGis(sfWebRequest $request)
   {
     
+  }
+
+  public function executeShifts(sfWebRequest $request)
+  {
+    if($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new')
+    {
+      $this->eventshiftform = new agEventShiftForm();
+      $this->setTemplate('editshift');
+
+    }
+    elseif($request->getParameter('shiftid') && is_int($request->getParameter('shiftid')))
+    {
+      $this->eventshiftform = new agEventShiftForm($eventShift);
+      $this->setTemplate('editshift');
+    }
+    else{  //list the existing shift templates
+    $this->event_id = $request->getParameter('id');
+    $this->eventName = Doctrine::getTable('agEvent')
+            ->findByDql('id = ?', $this->event_id)
+            ->getFirst()->event_name;
+    $arrayQuery = Doctrine_Core::getTable('agEventShift')
+            ->createQuery('es')
+            ->select('es.*, e.id, e.event_name, efg.id, efg.event_facility_group, efr.id')
+            ->from('agEventShift es')
+            ->leftJoin('es.agEventFacilityResource AS efr')
+            ->leftJoin('efr.agEventFacilityGroup AS efg')
+            ->leftJoin('efg.agEvent AS e')
+            ->where('e.id = ?', $this->event_id)
+            ->orderBy('e.event_name, efg.event_facility_group, efr.facility_resource_id');
+
+    $queryString = $arrayQuery->getSqlQuery();
+    $results = $arrayQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
+
+    $this->eventShifts = array();
+    foreach ($results as $eventShifts) {
+      $eventShiftId = $eventShifts['es_id'];
+
+      $newRecord = array('event' => $eventShifts['e_event_name'],
+        'event_facility_group' => $eventShifts['efg_event_facility_group'],
+        'facility_resource_id' => $eventShifts['es_event_facility_resource_id'],
+        'staff_resource_type_id' => $eventShifts['es_staff_resource_type_id'],
+        'task_id' => $eventShifts['es_task_id'],
+        'task_length_minutes' => $eventShifts['es_task_length_minutes'],
+        'break_length_minutes' => $eventShifts['es_break_length_minutes'],
+        'minutes_start_to_facility_activation' => $eventShifts['es_minutes_start_to_facility_activation'],
+        'minimum_staff' => $eventShifts['es_minimum_staff'],
+        'maximum_staff' => $eventShifts['es_maximum_staff'],
+        'staff_wave' => $eventShifts['es_staff_wave'],
+        'shift_status_id' => $eventShifts['es_shift_status_id'],
+        'deployment_algorithm_id' => $eventShifts['es_deployment_algorithm_id']
+      );
+      if (array_key_exists($eventShiftId, $this->eventShifts)) {
+        $tempArray = $this->eventShifts[$eventShiftId];
+        $newArray = $tempArray . $newRecord;
+        $this->eventShifts[$eventShiftId] = $newArray;
+      } else {
+        $this->eventShifts[$eventShiftId] = $newRecord;
+      }
+    }
+//the above query and return ($this->eventShifts) ... ?! used for what?
+//    $this->facilityResourceInfo = agFacilityResource::facilityResourceInfo();
+
+    $query = Doctrine_Query::create()
+            ->select('es.*, e.id, e.event_name, efg.id, efg.event_facility_group, efr.id')
+            ->from('agEventShift as es')
+            ->leftJoin('es.agEventFacilityResource AS efr')
+            ->leftJoin('efr.agEventFacilityGroup AS efg')
+            ->leftJoin('efg.agEvent AS e')
+            ->where('e.id = ?', $this->event_id)    ;
+
+
+    /**
+     * Create pager
+     */
+    $this->pager = new sfDoctrinePager('agEventShift', 20);
+
+    /**
+     * Set pager's query to our final query including sort
+     * parameters
+     */
+    $this->pager->setQuery($query);
+
+    /**
+     * Set the pager's page number, defaulting to page 1
+     */
+    $this->pager->setPage($request->getParameter('page', 1));
+    $this->pager->init();
+    }
+
   }
 
   public function executeDashboard(sfWebRequest $request)
