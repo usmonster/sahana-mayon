@@ -426,7 +426,14 @@ class eventActions extends agActions
 
   public function executeStaff(sfWebRequest $request)
   {
+    /**
+     * @todo turn this into a function, add two parameters to this class called event_id and eventName that are set/gotten by
+     */
     
+    $this->event_id = $request->getParameter('id');
+    $this->eventName = Doctrine::getTable('agEvent')
+            ->findByDql('id = ?', $this->event_id)
+            ->getFirst()->event_name;
   }
 
   public function executeStaffin(sfWebRequest $request)
@@ -619,6 +626,7 @@ class eventActions extends agActions
     $this->eventName = Doctrine::getTable('agEvent')
             ->findByDql('id = ?', $this->event_id)
             ->getFirst()->event_name;
+    $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
     $this->resForm = new sfForm();
     $this->resForm->setWidgets(array(
       'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType'))

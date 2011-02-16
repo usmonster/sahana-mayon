@@ -141,11 +141,9 @@ class agDateTimeHelper
   }
 
   /**
-   *
    * Accessor method to return array containing parsed times.
    *
    * @return array Array containing the number of days, minutes, seconds, and milliseconds
-   *
    */
   public function getParsedTime()
   {
@@ -159,4 +157,29 @@ class agDateTimeHelper
 
 }
 
-?>
+?>=======
+  /**
+   * Static function to return a phptimestamp from a time string and, if the time parameter is null
+   * assign it a default value of the current timestamp.
+   *
+   * @param string $time A string representation of time to be converted to a timestamp
+   * @return timestamp A php datetime (unix epoch) value
+   */
+  public static function defaultTimestampFormat($time = NULL)
+  {
+    $timestamp = (is_null($time)) ? time() : strtotime($time) ;
+    return $timestamp ;
+  }
+
+  /**
+   * Static function to return a MySQL-formatted time string from a php timestamp
+   *
+   * @param timestamp A php datetime (unix epoch) value
+   * @return string A MySQL-formatted time string
+   */
+  public static function timestampToMySql($timestamp)
+  {
+    $mysqlTimeString = date ('Y-m-d H:i:s', $timestamp) ;
+    return $mysqlTimeString ;
+  }
+}

@@ -38,49 +38,52 @@ class agShiftGeneratorForm extends sfForm
 
 
     /* if the scenario already has existing shift templates, get them */
+    $this->agShiftTemplates = Doctrine::getTable('agShiftTemplate')
+            ->createQuery('agST')
+            ->select('agST.*')
+            ->from('agShiftTemplate agST')
+            ->where('scenario_id = ?', $this->scenario_id)  //and where the facility_group_types / staff_resource_type combo is not in the scenario shifts
+            //->andWhereNotIn('facility_resource_type_id', $this->facility_staff_resources)
+            ->execute();
 
-//    if ($this->agShiftTemplates = Doctrine::getTable('agShiftTemplate')
-//            ->createQuery('agST')
-//            ->select('agST.*')
-//            ->from('agShiftTemplate agST')
-//            ->where('scenario_id = ?', $this->getOption('scenario_id'))  //and where the facility_group_types / staff_resource_type combo is not in the scenario shifts
-//            //->andWhereNotIn('facility_resource_type_id', $this->facility_staff_resources)
-//            ->execute()) {
-//            }
+    if ($this->agShiftTemplates->count() > 0) {
+
+      foreach ($this->agShiftTemplates as $shiftTemplate) {
+        $shiftTemplateForm = new agEmbeddedShiftTemplateForm($shiftTemplate);
+        $shiftTemplateId = $shiftTemplate->getId();
+        $this->embedForm('existing' . $shiftTemplateId, $shiftTemplateForm);
+        $this->widgetSchema->setLabel('existing' . $shiftTemplateId, false);
+
+
+
+        foreach ($this->facility_staff_resources as $fsrKey => $fsrVal) {
+          if ($shiftTemplate->staff_resource_type_id == $fsrVal['fsr_staff_resource_type_id'] && $shiftTemplate->facility_resource_type_id == $fsrVal['fr_facility_resource_type_id']) {
+            unset($this->facility_staff_resources[$fsrKey]);
+          }
+        }
+        //$offset should be $this->facility_staff_resrouces' keys
 //            //where the SRT and the FRT != array_values... but 0 and 1 have to match...
-//            //$staffresourcetypes = array_
-//      /* for every existing shift template, create an agEmbeddedShiftTemplateForm and embed it into $facilitygroupResourceContainer */
-//
-//      //if a shift template exists with this facility_resource_type and this staff_resource_type,
-//      //get the object and make the form with that object, else, make a blank object
-//      //the if/else statement here will fail currently
-//
-//      //if in array match? what's the best way to join these up? create forms with the objects first
-//      //and then a set of empties? with those carrying objects being unset from the array to make?
-//      foreach ($this->agShiftTemplates as $shiftTemplate) {
-//        $shiftTemplateForm = new agEmbeddedShiftTemplateForm($shiftTemplate);
-//        $shiftTemplateId = $shiftTemplate->getId();
-//        $this->embedForm('existing' . $shiftTemplateId, $shiftTemplateForm);
-//        $this->widgetSchema->setLabel('existing' . $shiftTemplateId, false);
-//      }
-//    } else {
-
-      /* create a blank shiftTemplateForm for each of the types to add */
-      /**
-       * @todo put the top foreach and the bottom foreach together
-       */
-      foreach ($this->facility_staff_resources as $fsr) {
-        $shiftGenForm = new agEmbeddedShiftTemplateForm();
-        $shiftGenForm->setDefault('facility_resource_type_id', $fsr['fr_facility_resource_type_id']);
-        $shiftGenForm->setDefault('staff_resource_type_id', $fsr['fsr_staff_resource_type_id']);
-        $shiftGenForm->setDefault('scenario_id', $this->scenario_id);
-
-        $this->embedForm('shift_gen' . $fsr['fr_facility_resource_type_id'] . $fsr['fsr_staff_resource_type_id'], $shiftGenForm);
-        $this->widgetSchema->setLabel('shift_gen' . $fsr['fr_facility_resource_type_id'] . $fsr['fsr_staff_resource_type_id'], false);
-        //now saving: the fun part
-        //and set defaults.
-        //also get facility resource types that don't have a min/max assigned, and let user know
+        //remove that facility_staff_resource entry from $this->facility_staff_resources
       }
+    }
+
+
+    /* create a blank shiftTemplateForm for each of the types to add */
+    /**
+     * @todo put the top foreach and the bottom foreach together
+     */
+    foreach ($this->facility_staff_resources as $fsr) {
+      $shiftGenForm = new agEmbeddedShiftTemplateForm();
+      $shiftGenForm->setDefault('facility_resource_type_id', $fsr['fr_facility_resource_type_id']);
+      $shiftGenForm->setDefault('staff_resource_type_id', $fsr['fsr_staff_resource_type_id']);
+      $shiftGenForm->setDefault('scenario_id', $this->scenario_id);
+
+      $this->embedForm('shift_gen' . $fsr['fr_facility_resource_type_id'] . $fsr['fsr_staff_resource_type_id'], $shiftGenForm);
+      $this->widgetSchema->setLabel('shift_gen' . $fsr['fr_facility_resource_type_id'] . $fsr['fsr_staff_resource_type_id'], false);
+      //now saving: the fun part
+      //and set defaults.
+      //also get facility resource types that don't have a min/max assigned, and let user know
+    }
 //    }
 
     /* embed a new shift_template form into the shifttemplate container */

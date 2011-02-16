@@ -99,12 +99,11 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a77af7195003cab8a335000218db33287" title="executeEdit()">executeEdit()</a>  <a href="#a77af7195003cab8a335000218db33287"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a0ac4cbb2c2e98d1ca376d40fd2fdd33f">executeUpdate</a> (sfWebRequest $request)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a0ac4cbb2c2e98d1ca376d40fd2fdd33f" title="executeUpdate()">executeUpdate()</a>  <a href="#a0ac4cbb2c2e98d1ca376d40fd2fdd33f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a6940c4463dd8c6472ffc02f8ee31d5b0">executeImport</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Imports facility records from a properly formatted XLS file.  <a href="#a6940c4463dd8c6472ffc02f8ee31d5b0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a5dcf191e74998dffa8848e73b784ce53">executeDelete</a> (sfWebRequest $request)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a5dcf191e74998dffa8848e73b784ce53" title="executeDelete()">executeDelete()</a>  <a href="#a5dcf191e74998dffa8848e73b784ce53"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a68530b806445c9a04c23c4e437019541">executeExport</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a68530b806445c9a04c23c4e437019541" title="executeExport()">executeExport()</a>  <a href="#a68530b806445c9a04c23c4e437019541"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#acdc878e820fbe9f15bc1d469e8cd1ae8">executeFacilityExport</a> ()</td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a818d90af02e0faea8bf0e9a3938baf6a">processForm</a> (sfWebRequest $request, sfForm $form)</td></tr>
@@ -185,7 +184,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <p>Redirect to facility/list when done.</p>
 </p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00276">276</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00204">204</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -240,16 +239,16 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00341">341</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00266">266</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a6940c4463dd8c6472ffc02f8ee31d5b0"></a><!-- doxytag: member="facilityActions::executeImport" ref="a6940c4463dd8c6472ffc02f8ee31d5b0" args="()" -->
+<a class="anchor" id="acdc878e820fbe9f15bc1d469e8cd1ae8"></a><!-- doxytag: member="facilityActions::executeFacilityExport" ref="acdc878e820fbe9f15bc1d469e8cd1ae8" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">facilityActions::executeImport </td>
+          <td class="memname">facilityActions::executeFacilityExport </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -258,12 +257,12 @@ Ilya Gulko, CUNY SPS</dd></dl>
 </div>
 <div class="memdoc">
 
-<p>Imports facility records from a properly formatted XLS file. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000081">Todo:</a></b></dt><dd><p class="startdd">: define a standard import format and document it for the end user. </p>
-<p class="enddd">: make this more robust and create meaningful error messages for failed import fiels and records. </p>
-</dd></dl>
+<p><p>Error reporting</p>
+<p>PHPExcel</p>
+<p>PHPExcel_Writer_Excel2007.php </p>
+</p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00201">201</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00394">394</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -450,7 +449,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00319">319</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00247">247</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>

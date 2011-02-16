@@ -351,7 +351,11 @@ class scenarioActions extends agActions
         $lucene_query = $lucene_search['query_condition'];
         $this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']);
         $this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
-        $this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
+        //$this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
+        
+//        $this->poolform->getWidget('lucene_search[query_name]')->setDefault($lucene_search['query_name']);
+        $this->poolform->getEmbeddedForm('lucene_search')->getWidget('query_name')->setDefault($lucene_search['query_name']);
+
         $this->filterForm->setDefault('staff_type', $request->getPostParameter('staff_type'));
         $this->filterForm->setDefault('staff_org', $request->getPostParameter('staff_org'));
 //$query_condition = implode(' AND ', $lucene_query);
@@ -552,16 +556,20 @@ class scenarioActions extends agActions
 
       $facility_staff_resources = Doctrine_Query::create()
               ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
+              //->from('agShiftTemplate st, agFacilityStaffResource fsr')
               ->from('agFacilityStaffResource fsr')
               //joined to the facility groups in this scenario
               ->leftJoin('agScenarioFacilityResource sfr, sfr.agFacilityResource fr, sfr.agScenarioFacilityGroup sfg')
-              //->leftJoin('agScenarioFacilityGroup sfg, sfg.agScenarioFacilityResource sfr, sfr.agFacilityResource fr')
+              //->innerJoin('st.scenario_id = sfg.scenario_id')
+//->leftJoin('agScenarioFacilityGroup sfg, sfg.agScenarioFacilityResource sfr, sfr.agFacilityResource fr')
               //scenario facility resource id
               //where facility staff resource .staff resource type =
               ->where('sfg.scenario_id = ?', $this->scenario_id)
-              ->distinct()
-              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+              //->andWhere('st.scenario_id = ' $this->scenario_id) //this makes a fun cartesian product
+              ->distinct()  //need to be keyed by the possibly existing shift template record..
+              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);//if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
       $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
+
       //for shift template workflow,
 //get current facility_staff_resource,
       //get the facility resource type ids and staff_resource_type
@@ -581,29 +589,6 @@ class scenarioActions extends agActions
     }
   }
 
-  /**
-   * @method executeEditshifttemplate()
-   * Generates a new shit template form
-   * @param sfWebRequest $request
-   */
-  public function executeEditshifttemplates(sfWebRequest $request)
-  {
-    $this->scenario_id = $request->getParameter('id');
-    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-    $this->shifttemplateform = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id));
-  }
-
-  /**
-   * @method executeNewshifttemplate()
-   * Generates a new shit template form
-   * @param sfWebRequest $request
-   */
-  public function executeNewshifttemplates(sfWebRequest $request)
-  {
-    $this->scenario_id = $request->getParameter('id');
-    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-    $this->shifttemplateform = new agShiftGeneratorForm(array(), array('scenario_id' => $this->scenario_id));
-  }
 
   public function executeScenarioshifts(sfWebRequest $request)
   {
