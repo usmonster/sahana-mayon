@@ -70,8 +70,8 @@
 
 <br>
 <div>
-  <a href="<?php echo url_for('scenario/newscenarioshift') ?>" class="linkButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
-  <a href="<?php echo url_for('scenario/staffpool?id=' .$event_id ) ?>" class="linkButton" title="Define Staff Pools">Save and Define Staff Pools</a>
+  <a href="<?php echo url_for('event/newscenarioshift') ?>" class="linkButton" title="Create New Scenario Shift">Create New Event Shift</a>
+  <a href="<?php echo url_for('event/staffpool?id=' .$event_id ) ?>" class="linkButton" title="Define Staff Pools">Save and Define Staff Pools</a>
 
 </div>
 
