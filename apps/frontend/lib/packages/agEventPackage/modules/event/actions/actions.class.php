@@ -42,7 +42,7 @@ class eventActions extends agActions
             ->getFirst()->event_name;
 
     $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
-    $this->facility_group = '%';
+    $this->facility_group = NULL;
 
     foreach ($this->active_facility_groups as $event_fgroup) {
       $facility_groups[$event_fgroup['efg_id']] = $event_fgroup['efg_event_facility_group'];

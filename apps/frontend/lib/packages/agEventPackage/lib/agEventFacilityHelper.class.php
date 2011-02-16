@@ -93,7 +93,13 @@ class agEventFacilityHelper
         ->innerJoin('efr.agEventShift es')
       ->whereIn('ers.id', $resourceStatuses)
         ->andWhereIn('egs.id', $groupStatuses)
-        ->andWhereIn('es.id', $shifts) ;
+        ->andWhereIn('es.id', $shifts)
+        ->andWhere('efat.id IS NULL')
+        ->andWhere('frs.is_available = ?', true)
+        ->andWhere('gas.active = ?', true)
+        ->andWhere('(ras.allocatable = ? OR ras.committed = ?)', array(true, true))
+        ->andWhere('ras.staffed = ?', false)
+        ->andWhere('efg.event_id = ?', $eventId) ;
 
     if (! is_null($eventFacilityGroupId)) { $query->andWhere('efg.id = ?', $eventFacilityGroupId) ; }
 
@@ -106,6 +112,8 @@ class agEventFacilityHelper
 
   public static function activateZeroHourFacilityResources ($eventId, $activationTime)
   {
+
+
     $results = 'I don\'t do anything yet!' ;
     return $results;
   }
