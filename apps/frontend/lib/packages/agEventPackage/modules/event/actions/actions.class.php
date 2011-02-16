@@ -474,6 +474,8 @@ class eventActions extends agActions
     }
     $facilityGroupArray = array();
     $this->ag_event_facility_groups = $query->execute();
+    $thingy = $query->getSqlQuery();
+    $rg = $this->event->id;
     foreach ($this->ag_event_facility_groups as $eventFacilityGroup) {
       $tempArray = $this->queryForTable($eventFacilityGroup->id);
       foreach ($tempArray as $ta) {
@@ -510,6 +512,10 @@ class eventActions extends agActions
             ->from('agEventFacilityGroup')
             ->where('event_facility_group = ?', urldecode($request->getParameter('group')))
             ->fetchOne();
+    if($request->isXmlHttpRequest()) {
+      $this->XmlHttpRequest = true;
+      $grar = $request->getPostParameters();
+    }
     if ($request->isMethod(sfRequest::POST)) {
       if ($request->getParameter('resource_allocation_status')) {
         $resourceAllocation = new agEventFacilityResourceStatus();
@@ -525,8 +531,6 @@ class eventActions extends agActions
         $groupAllocation->save();
       }
     }
-
-
     $this->event = Doctrine_Query::create()
             ->select()
             ->from('agEvent')

@@ -2,7 +2,7 @@
 <?php use_stylesheet('jquery/jquery.ui.custom.css') ?>
 <script type="text/javascript">
 $(document).ready(function() {
-	var $dialog = $('<div></div')
+	var $dialog = $('<div id="modalContent"></div')
 		.dialog({
 			autoOpen: false,
                         resizable: false,
@@ -12,7 +12,7 @@ $(document).ready(function() {
                         modal: true
 		});
 
-	$('.modal').click(function() {
+	$('.modalTrigger').click(function() {
                 $dialog.dialog("option", "title", $(this).attr('title'));
 		$dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
 
@@ -90,7 +90,7 @@ $(document).ready(function() {
     <?php foreach($pager->getResults() as $facility): ?>
       <?php// foreach ($facilityGroup as $facility): ?>
       <tr>
-        <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText modal" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
+        <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText modalTrigger" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
         <td><?php echo $facility['f_facility_name'] . ": " . $facility['frt_facility_resource_type']; ?></td>
         <td><?php echo $facility['f_facility_code']; ?></td>
         <td><?php echo $facility['ras_facility_resource_allocation_status']; ?></td>
