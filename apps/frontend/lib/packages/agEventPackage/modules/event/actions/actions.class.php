@@ -605,7 +605,6 @@ class eventActions extends agActions
             ->fetchOne();
     if($request->isXmlHttpRequest()) {
       $this->XmlHttpRequest = true;
-      $grar = $request->getPostParameters();
     }
     if ($request->isMethod(sfRequest::POST)) {
       if ($request->getParameter('resource_allocation_status')) {

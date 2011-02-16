@@ -1,25 +1,33 @@
+<?php echo javascript_include_tag('agModal.js'); ?>
 <script type="text/javascript">
-$(document).ready(function() {
-  $('.modalSubmit').click(function(){
-    $.ajax({
-     url: $(this).parent().attr('action'),
-     type: "POST",
-     data: $('#' + $(this).parent().attr('name') + ' :input'),
-//     data: $('.modalForm :input'),
-     complete:
-       function() {
-         $('#modalContent').append('<h2 class="overlay">Status Changed</h2>');
-         $('.overlay').fadeIn(1200, function() {
-           $('.overlay').fadeOut(1200, function() {
-             $('.overlay').remove();
-             $('#modalContent').load($(this).parent().attr('action'));
-           })
-         })
-       }
-    })
-    return false;
-  });
-});
+//$(document).ready(function() {
+//  $('.modalSubmit').click(function(){
+//    $.ajax({
+//     url: $(this).parent().attr('action'),
+//     type: "POST",
+//     data: $('#' + $(this).parent().attr('name') + ' :input'),
+////     data: $('.modalForm :input'),
+//     complete:
+//       function() {
+//         $('#modalContent').append('<h2 class="overlay">Status Changed</h2>');
+//         $('.overlay').fadeIn(1200, function() {
+//           $('.overlay').fadeOut(1200, function() {
+//             $('.overlay').remove();
+//             $('#modalContent').load($(this).parent().attr('action'));
+//           })
+//         })
+//       }
+//    })
+//    return false;
+//  });
+//   $('div#modalContent').bind('dialogclose', function(event) {
+////     location.reload();
+////     $('.singleTable').append('<h2>You Suck</h2>');
+//     var path = window.location.pathname;
+//     $('#tableContainer').load(window.location.pathname + ' .singleTable');
+//
+//   });
+//});
 </script>
 <form action="<?php echo url_for('event/groupdetail?event=' . urlencode($eventFacilityGroup->getAgEvent()->event_name) . '&group=' . urlencode($eventFacilityGroup->event_facility_group)) . (isset($XmlHttpRequest) ? '" class="modalForm"' : ''); ?>" name="group_allocation_status" id="group_allocation_status" method="post">
   <label for="group_allocation_status" style="font-weight: bold; color: #848484" title="Change to update <?php echo $eventFacilityGroup->event_facility_group;?> status">Current Group Status:</label>
@@ -30,6 +38,7 @@ $(document).ready(function() {
   <input type="hidden" name="event_facility_group_id" value="<?php echo $eventFacilityGroup->id;?>">
   <input type="submit" name="submit" value="Set Group Status" class="buttonWhite<?php echo (isset($XmlHttpRequest) ? ' modalSubmit' : '');?>">
 </form>
+
 <table class="singleTable" id="dialog">
   <tbody>
     <tr>

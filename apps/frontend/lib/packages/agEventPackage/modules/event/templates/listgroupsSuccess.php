@@ -1,24 +1,25 @@
 <?php use_javascript('jquery.ui.custom.js') ?>
 <?php use_stylesheet('jquery/jquery.ui.custom.css') ?>
+<?php use_javascript('agModal.js') ?>
 <script type="text/javascript">
-$(document).ready(function() {
-	var $dialog = $('<div id="modalContent"></div')
-		.dialog({
-			autoOpen: false,
-                        resizable: false,
-                        width: 'auto',
-                        height: 'auto',
-                        draggable: false,
-                        modal: true
-		});
-
-	$('.modalTrigger').click(function() {
-                $dialog.dialog("option", "title", $(this).attr('title'));
-		$dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
-
-		return false;
-	});
-});
+//$(document).ready(function() {
+//	var $dialog = $('<div id="modalContent"></div')
+//		.dialog({
+//			autoOpen: false,
+//                        resizable: false,
+//                        width: 'auto',
+//                        height: 'auto',
+//                        draggable: false,
+//                        modal: true
+//		});
+//
+//	$('.modalTrigger').click(function() {
+//                $dialog.dialog("option", "title", $(this).attr('title'));
+//		$dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
+//
+//		return false;
+//	});
+//});
 </script>
 <?php
   $sortColumn = $sf_request->getGetParameter('sort');
@@ -30,6 +31,7 @@ $(document).ready(function() {
 <h2><?php if(isset($event)) {echo '<span style="color: #ff8f00">' . $event->event_name . ' </span>';} ?> Facilities Management</h2>
 <br />
 <h3>Facilities <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span style="color: #ff8f00">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
+<div id="tableContainer">
 <table class="singleTable">
   <thead>
     <tr>
@@ -110,6 +112,7 @@ $(document).ready(function() {
     <?php endforeach; ?>
   </tbody>
 </table>
+</div>
 <div style="float: right;">
   <?php
 
