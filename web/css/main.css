@@ -860,6 +860,19 @@ th .tableRow {
   display: none;
 }
 
+.overlay {
+  font-size: 4em;
+  text-shadow: 0px 0px 5px #ff8f00;
+  text-align: center;
+  z-index: 1;
+  color: #ff8f00;
+  position: absolute;
+  bottom: 30%;
+  left: 0;
+  right: 0;
+  display: none;
+}
+
 /* MENU */
 
 /*@import url('/css/menu.css');*/

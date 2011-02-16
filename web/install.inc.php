@@ -512,15 +512,18 @@ class agInstall
 //        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
 //      }
 //    }
-    try {
-      $ag_host = new agHost();
-      $ag_host->setHostname($this->getConfig('DB_SERVER'));
-      $ag_host->save();
-      //$installed[] = 'Successfully generated host record based on database server host';
-      $installed = 'Success!';
-    } catch (Exception $e) {
-      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
-    }
+
+//    this entry is achieved by proxy of the agHost.yml fixture/example
+//
+//    try {
+//      $ag_host = new agHost();
+//      $ag_host->setHostname($this->getConfig('DB_SERVER'));
+//      $ag_host->save();
+//      //$installed[] = 'Successfully generated host record based on database server host';
+//      $installed = 'Success!';
+//    } catch (Exception $e) {
+//      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
+//    }
 
     if(is_array($installed)){
       return implode('<br>', $installed);

@@ -1,26 +1,7 @@
-<?php use_javascript('jquery.ui.custom.js') ?>
-<?php use_stylesheet('jquery/jquery.ui.custom.css') ?>
-<script type="text/javascript">
-$(document).ready(function() {
-	var $dialog = $('<div></div')
-		.dialog({
-			autoOpen: false,
-                        resizable: false,
-                        width: 'auto',
-                        height: 'auto',
-                        draggable: false,
-                        modal: true
-		});
-
-	$('.modal').click(function() {
-                $dialog.dialog("option", "title", $(this).attr('title'));
-		$dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
-
-		return false;
-	});
-});
-</script>
 <?php
+  use_javascript('jquery.ui.custom.js');
+  use_stylesheet('jquery/jquery.ui.custom.css');
+  use_javascript('agModal.js');
   $sortColumn = $sf_request->getGetParameter('sort');
   $sortOrder = $sf_request->getGetParameter('order');
 //  ($sf_request->getParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
@@ -30,6 +11,7 @@ $(document).ready(function() {
 <h2><?php if(isset($event)) {echo '<span style="color: #ff8f00">' . $event->event_name . ' </span>';} ?> Facilities Management</h2>
 <br />
 <h3>Facilities <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span style="color: #ff8f00">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
+<div id="tableContainer">
 <table class="singleTable">
   <thead>
     <tr>
@@ -90,7 +72,7 @@ $(document).ready(function() {
     <?php foreach($pager->getResults() as $facility): ?>
       <?php// foreach ($facilityGroup as $facility): ?>
       <tr>
-        <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText modal" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
+        <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText modalTrigger" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
         <td><?php echo $facility['f_facility_name'] . ": " . $facility['frt_facility_resource_type']; ?></td>
         <td><?php echo $facility['f_facility_code']; ?></td>
         <td><?php echo $facility['ras_facility_resource_allocation_status']; ?></td>
@@ -110,6 +92,7 @@ $(document).ready(function() {
     <?php endforeach; ?>
   </tbody>
 </table>
+</div>
 <div style="float: right;">
   <?php
 

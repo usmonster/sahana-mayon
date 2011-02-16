@@ -1,7 +1,7 @@
 <?php
 
 /**
- * KeyValueGroupByHydrator this class extends the Doctrine_Hydrator_Abstract class.
+ * AssociativeThreeDimHydrator this class extends the Doctrine_Hydrator_Abstract class.
  *
  * LICENSE: This source file is subject to LGPLv3.0 license
  * that is available through the world-wide-web at the following URI:
@@ -11,14 +11,14 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class KeyValueGroupByHydrator extends Doctrine_Hydrator_Abstract
+class AssociativeThreeDimHydrator extends Doctrine_Hydrator_Abstract
 {
   /**
    * Defines the result set as an associative array and groups, assuming the first result position
    * is an associative key
    *
    * @param <type> $stmt
-   * @return array An three-dimesional associative array.
+   * @return array An three-dimensional associative array.
    */
   public function hydrateResultSet($stmt)
   {

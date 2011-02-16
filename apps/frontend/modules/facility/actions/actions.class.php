@@ -207,7 +207,7 @@ class facilityActions extends agActions
     $uploadedFile = $_FILES["import"];
 
     $uploadDir = sfConfig::get('sf_upload_dir') . '/';
-    move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"] );
+    move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"]);
     $this->importPath = $uploadDir . $uploadedFile["name"];
 
     $import = new agImportXLS();
@@ -216,7 +216,6 @@ class facilityActions extends agActions
     $import->processImport($this->importPath);
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
-
   }
 
   /**

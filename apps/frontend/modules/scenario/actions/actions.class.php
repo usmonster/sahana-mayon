@@ -128,21 +128,18 @@ class scenarioActions extends agActions
             ->execute();
     $this->staffresourceform = new agStaffResourceRequirementForm();
 
-
-
     //this came from the _staffresources partial
     //construct our top level form, with all forms contained, and pass to the view
 //create / process form
 
-    if ($request->isMethod('post')) {  //OR sfRequest::POST
+    if ($request->isMethod(sfRequest::POST)) {
 //      $facilityGroups = $request->getPostParameters();
       $facilityGroups = $request->getParameter('staff_resource');
-      unset($facilityGroups['_csrf_token']);
-//continuing workflow?
+      unset($facilityGroups['_csrf_token']);  /** @todo ??? unsetting csrf token, this should be fixed. */
+      //continuing workflow?
       if ($this->ag_scenario_facility_group) {
         foreach ($facilityGroups as $facilityGroup) {
           foreach ($facilityGroup as $facility) {
-//$facilityGroupId = $facility->getId();
 //are we editing or updating?
             foreach ($facility as $facilityStaffResource) {
 // The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
@@ -352,7 +349,6 @@ class scenarioActions extends agActions
         $this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']);
         $this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
         //$this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
-        
 //        $this->poolform->getWidget('lucene_search[query_name]')->setDefault($lucene_search['query_name']);
         $this->poolform->getEmbeddedForm('lucene_search')->getWidget('query_name')->setDefault($lucene_search['query_name']);
 
@@ -567,9 +563,8 @@ class scenarioActions extends agActions
               ->where('sfg.scenario_id = ?', $this->scenario_id)
               //->andWhere('st.scenario_id = ' $this->scenario_id) //this makes a fun cartesian product
               ->distinct()  //need to be keyed by the possibly existing shift template record..
-              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);//if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
+              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
       $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
-
       //for shift template workflow,
 //get current facility_staff_resource,
       //get the facility resource type ids and staff_resource_type
@@ -589,18 +584,12 @@ class scenarioActions extends agActions
     }
   }
 
-
-  public function executeScenarioshifts(sfWebRequest $request)
-  {
-    $this->scenarioshiftform = new agScenarioShiftForm();
-  }
-
   /**
-   * @method executeNewscenarioshift()
+   * @method executeScenarioshifts()
    * Generates a new scenario shift form
    * @param sfWebRequest $request
    */
-  public function executeNewscenarioshift(sfWebRequest $request)
+  public function executeScenarioshifts(sfWebRequest $request)
   {
     $this->scenarioshiftform = new agScenarioShiftForm();
   }
@@ -622,7 +611,7 @@ class scenarioActions extends agActions
             ->leftJoin('ss.agScenarioFacilityResource AS sfr')
             ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
             ->leftJoin('sfg.agScenario AS s')
-            ->where('s.id = ?', $request->getParameter('id'))
+            ->where('s.id = ?', $this->scenario_id)
             ->orderBy('s.scenario, sfg.scenario_facility_group, sfr.facility_resource_id');
 
     $queryString = $arrayQuery->getSqlQuery();
@@ -666,7 +655,7 @@ class scenarioActions extends agActions
             ->leftJoin('ss.agScenarioFacilityResource AS sfr')
             ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
             ->leftJoin('sfg.agScenario AS s')
-            ->where('s.id = ?', $request->getParameter('id'))    ;
+            ->where('s.id = ?', $request->getParameter('id'));
 
 
     /**
