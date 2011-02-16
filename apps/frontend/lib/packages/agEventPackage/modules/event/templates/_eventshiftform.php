@@ -1,9 +1,9 @@
-<?php use_stylesheets_for_form($scenarioshiftform) ?>
-<?php use_javascripts_for_form($scenarioshiftform) ?>
+<?php use_stylesheets_for_form($eventshiftform) ?>
+<?php use_javascripts_for_form($eventshiftform) ?>
 
 <form name="event_shift_form" id="event_shift_form" action="
 <?php
-echo url_for('event/shifts/' . ($scenarioshiftform->getObject()->isNew() ? 'new' : $eventshiftform->getObject()->getId()) .
+echo url_for('event/shifts/' . ($eventshiftform->getObject()->isNew() ? 'new' : $eventshiftform->getObject()->getId()) .
     (!$eventshiftform->getObject()->isNew() ? '?id=' .
         $eventshiftform->getObject()->getId() : '')) ?>" method="post"
       <?php $eventshiftform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
