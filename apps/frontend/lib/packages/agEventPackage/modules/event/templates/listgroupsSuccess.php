@@ -1,27 +1,7 @@
-<?php use_javascript('jquery.ui.custom.js') ?>
-<?php use_stylesheet('jquery/jquery.ui.custom.css') ?>
-<?php use_javascript('agModal.js') ?>
-<script type="text/javascript">
-//$(document).ready(function() {
-//	var $dialog = $('<div id="modalContent"></div')
-//		.dialog({
-//			autoOpen: false,
-//                        resizable: false,
-//                        width: 'auto',
-//                        height: 'auto',
-//                        draggable: false,
-//                        modal: true
-//		});
-//
-//	$('.modalTrigger').click(function() {
-//                $dialog.dialog("option", "title", $(this).attr('title'));
-//		$dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
-//
-//		return false;
-//	});
-//});
-</script>
 <?php
+  use_javascript('jquery.ui.custom.js');
+  use_stylesheet('jquery/jquery.ui.custom.css');
+  use_javascript('agModal.js');
   $sortColumn = $sf_request->getGetParameter('sort');
   $sortOrder = $sf_request->getGetParameter('order');
 //  ($sf_request->getParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
