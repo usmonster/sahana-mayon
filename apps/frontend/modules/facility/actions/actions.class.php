@@ -393,37 +393,169 @@ class facilityActions extends agActions
 
   public function executeFacilityExport()
   {
-    $exportHeader = array('Facility Name', 'Facility Code', 'Facility Resource Type Abbr', 
+    $primaryOnly = TRUE;
+    $contactType = 'work';
+    $addressStandard = 'us standard';
+
+    $exportHeaders = array('Facility Name', 'Facility Code', 'Facility Resource Type Abbr',
         'Facility Resource Status', 'Facility Capacity', 'Facility Activation Sequence', 
         'Facility Allocation Status', 'Facility Group', 'Facility Group Type', 
         'Facility Group Allocation Status', 'Faciltiy Group Activation Sequence', 
-        'Work Email', 'Work Phone', 'Street 1', 'Street 2', 'City', 'State', 'Zip Code', 'Borough', 
-        'Country', 'Longitude', 'Latitude', 'generalist_min', 'generalist_max', 'specialist_min', 
-        'specialist_max', 'operator_min', 'operator_max', 'medical_nurse_min', 
-        'medical_nurse_max', 'medical_other_min', 'medical_other_max');
+        'Work Email', 'Work Phone');
+//        'Street 1', 'Street 2', 'City', 'State', 'Zip Code', 'Borough',
+//        'Country', 'Longitude', 'Latitude', 'generalist_min', 'generalist_max', 'specialist_min',
+//        'specialist_max', 'operator_min', 'operator_max', 'medical_nurse_min',
+//        'medical_nurse_max', 'medical_other_min', 'medical_other_max');
 
-//    $facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario');
-//    $facilityAddress = agFacilityHelper::facilityAddress(FALSE);
-//    $facilityGeo = agFacilityHelper::facilityGeo(FALSE);
-//    $facilityEmail = agFacilityHelper::facilityEmail(TRUE, 'work');
-//    $faciltiyPhone = agFacilityHelper::facilityPhone(TRUE, 'work');
+    $addressFormat = Doctrine_Query::create()
+            ->select('ae.address_element')
+            ->from('agAddressElement ae')
+            ->innerJoin('ae.agAddressFormat af')
+            ->innerJoin('af.agAddressStandard astd')
+            ->where('astd.address_standard=?', $addressStandard)
+            ->orderBy('af.line_sequence, af.inline_sequence')
+            ->execute(array(), 'single_value_array');
+    $addressHeaders = array();
+    foreach ($addressFormat as $add)
+    {
+      switch ($add)
+      {
+        case 'line 1':
+          $addressHeaders[] = 'Street 1';
+          break;
+        case 'line 2':
+          $addressHeaders[] = 'Street 2';
+          break;
+        case 'zip5':
+          $addressHeaders[] = 'Zip Code';
+        case 'zip+4':
+          break;
+        default:
+          $addressHeaders[] = ucwords($add);
+       }
+    }
+    $exportHeaders = array_merge($exportHeaders,$addressHeaders);
+    array_push($exportHeaders, "longitude", "latitude");
+
+    $staffResourceTypes = Doctrine_Query::create()
+            ->select('srt.staff_resource_type, srt.id')
+            ->from('agStaffResourceType srt')
+            ->execute(array(), 'single_value_array');
+    $stfHeaders = array();
+    foreach($staffResourceTypes as $stfResType)
+    {
+      if (strtolower($stfResType) == 'staff')
+      {
+        $stfResType = 'generalist';
+      } else {
+        $stfResType = strtolower(str_replace(' ', '_', $stfResType));
+      }
+      $stfHeaders[] = $stfResType . '_min';
+      $stfHeaders[] = $stfResType . '_max';
+    }
+    $exportHeaders = array_merge($exportHeaders, $stfHeaders);
+
+    $facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario');
+    $facilityAddress = agFacilityHelper::facilityAddress($addressStandard, $primaryOnly, $contactType);
+    $facilityGeo = agFacilityHelper::facilityGeo($primaryOnly, $contactType);
+    $facilityEmail = agFacilityHelper::facilityEmail($primaryOnly, $contactType);
+    $facilityPhone = agFacilityHelper::facilityPhone($primaryOnly, $contactType);
     $facilityStaffResource = agFacilityHelper::facilityStaffResource();
-//
-//    $entry = NULL;
-//    $facilityExportInfo = NULL;
-//    foreach ($facilityGeneralInfo as $fac)
-//    {
-//      $entry[] = $fac['f_facility_name'];
-//      $entry[] = $fac['f_facility_code'];
-//      $facilityExportInfo[] = $entry;
-//    }
-//
-//
-//
-//
-//
-//
-//
+
+    $facilityExportRecords = array();
+    foreach ($facilityGeneralInfo as $fac)
+    {
+      $entry = array();
+      $entry[] = $fac['f_facility_name'];
+      $entry[] = $fac['f_facility_code'];
+      $entry[] = $fac['frt_facility_resource_type_abbr'];
+      $entry[] = $fac['frs_facility_resource_status'];
+      $entry[] = $fac['fr_capacity'];
+      $entry[] = $fac['sfr_activation_sequence'];
+      $entry[] = $fac['fras_facility_resource_allocation_status'];
+      $entry[] = $fac['sfg_scenario_facility_group'];
+      $entry[] = $fac['fgt_facility_group_type'];
+      $entry[] = $fac['fgas_facility_group_allocation_status'];
+      $entry[] = $fac['sfg_activation_sequence'];
+
+      if (array_key_exists($fac['f_id'], $facilityEmail))
+      {
+        $priorityNumber = key($facilityEmail[$fac['f_id']][$contactType]);
+        $entry[] = $facilityEmail[$fac['f_id']][$contactType][$priorityNumber];
+      } else {
+        $entry[] = null;
+      }
+
+      if (array_key_exists($fac['f_id'], $facilityPhone))
+      {
+        $priorityNumber = key($facilityPhone[$fac['f_id']][$contactType]);
+        $entry[] = $facilityPhone[$fac['f_id']][$contactType][$priorityNumber];
+      } else {
+        $entry[] = null;
+      }
+
+      $addressId = null;
+      if (array_key_exists($fac['f_id'], $facilityAddress))
+      {
+        $priorityNumber = key($facilityAddress[ $fac['f_id'] ][$contactType]);
+        $addressId = $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber]['address_id'];
+
+        foreach($addressFormat as $addr)
+        {
+          if (array_key_exists($addr, $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber]))
+          {
+            $entry[] = $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber][$addr];
+          } else {
+            $entry[] = null;
+          }
+        }
+      } else {
+        $entry = $entry + array_fill(count($entry), count($addressFormat), NULL);
+      }
+
+      if (array_key_exists($fac['f_id'], $facilityGeo))
+      {
+        if (isset($addressId))
+        {
+          if (array_key_exists($addressId, $facilityGeo[ $fac['f_id'] ]))
+          {
+            $entry[] = $facilityGeo[$addressId]['longitude'];
+            $entry[] = $facilityGeo[$addressId]['latitude'];
+          } else {
+            $entry = $entry + array_fill(count($entry), 2, NULL);
+          }
+        } else {
+          $entry = $entry + array_fill(count($entry), 2, NULL);
+        }
+      } else {
+        $entry = $entry + array_fill(count($entry), 2, NULL);
+      }
+
+      foreach($staffResourceTypes as $stfResType)
+      {
+        if (array_key_exists($fac['sfr_id'], $facilityStaffResource))
+        {
+          if(array_key_exists($stfResType, $facilityStaffResource[ $fac['sfr_id'] ]))
+          {
+            $entry[] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['minimum staff'];
+            $entry[] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['maximum staff'];
+          } else {
+            $entry = $entry + array_fill(count($entry), 2, NULL);
+          }
+        } else {
+          $entry = $entry + array_fill(count($entry), 2, NULL);
+        }
+      }
+
+      $facilityExportRecords[] = $entry;
+    }
+
+  print_r($facilityExportRecords);
+
+
+
+
+
 //    /** Error reporting */
 //    error_reporting(E_ALL);
 //
