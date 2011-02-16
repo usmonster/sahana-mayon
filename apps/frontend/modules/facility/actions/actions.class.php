@@ -404,10 +404,10 @@ class facilityActions extends agActions
 
 //    $facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario');
 //    $facilityAddress = agFacilityHelper::facilityAddress(FALSE);
-    $facilityGeo = agFacilityHelper::facilityGeo(FALSE);
-//    $facilityEmail = agFacilityHelper::facilityEmail(FALSE);
+//    $facilityGeo = agFacilityHelper::facilityGeo(FALSE);
+//    $facilityEmail = agFacilityHelper::facilityEmail(TRUE, 'work');
 //    $faciltiyPhone = agFacilityHelper::facilityPhone(TRUE, 'work');
-//    $facilityStaffResource = agFacilityHelper::facilityStaffResource();
+    $facilityStaffResource = agFacilityHelper::facilityStaffResource();
 //
 //    $entry = NULL;
 //    $facilityExportInfo = NULL;

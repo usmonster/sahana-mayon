@@ -142,11 +142,11 @@ class agFacilityHelper {
           {
             if (array_key_exists($fac['eac_priority'], $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ]))
             {
-              $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ][ $fac['eac_priority'] ][ $fac['ae_address_element'] ] = $fac['av_value'];
+              $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ][ $fac['eac_priority'] ];
+              $newArray = $tempArray + array($fac['ae_address_element'] => $fac['av_value']);
+              $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ][ $fac['eac_priority'] ] = $newArray;
             } else {
-              $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ];
-              $newArray = $tempArray + array($fac['eac_priority'] => array($fac['ae_address_element'] => $fac['av_value']));
-              $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ] = $newArray;
+              $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ][ $fac['eac_priority'] ][ $fac['ae_address_element'] ] = $fac['av_value'];
               $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']]['address_id'] = $fac['eac_address_id'];
             }
           } else {
@@ -162,6 +162,7 @@ class agFacilityHelper {
       }
 
       print_r($cleanFacilityInfo);
+//      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
@@ -239,9 +240,6 @@ class agFacilityHelper {
       print_r($cleanFacilityInfo);
 //      return $cleanFacilityInfo;
 
-
-
-
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
 //      return NULL;
@@ -267,7 +265,7 @@ class agFacilityHelper {
       {
         if ($initialWhereClause) {
           $facilityQuery->where('ect.email_contact_type=?', $type);
-          $initialWhereCaluse = FALSE;
+          $initialWhereClause = FALSE;
         } else {
           $facilityQuery->addWhere('ect.email_contact_type=?', $type);
         }
@@ -285,7 +283,7 @@ class agFacilityHelper {
         {
           $facilityQuery->where($subQuery);
         } else {
-          $faciltiyQuery->addWhere($subQuery);
+          $facilityQuery->addWhere($subQuery);
         }
       } else {
         $facilityQuery->orderBy('f.id, eec.email_contact_type_id, eec.priority');
@@ -294,8 +292,29 @@ class agFacilityHelper {
       $facilityQueryString = $facilityQuery->getSqlQuery();
       echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      print_r($facilityInfo);
+//      print_r($facilityInfo);
 //      return $facilityInfo;
+
+      $cleanFacilityInfo = array();
+      foreach($facilityInfo as $fac)
+      {
+        if (array_key_exists($fac['f_id'], $cleanFacilityInfo))
+        {
+          if (array_key_exists($fac['ect_email_contact_type'], $cleanFacilityInfo[ $fac['f_id'] ]))
+          {
+            $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['ect_email_contact_type'] ];
+            $newArray = $tempArray + array($fac['eec_priority'] => $fac['ec_email_contact']);
+            $cleanFacilityInfo[ $fac['f_id'] ][ $fac['ect_email_contact_type'] ] = $newArray;
+          } else {
+            $cleanFacilityInfo[ $fac['f_id'] ][ $fac['ect_email_contact_type'] ][ $fac['eec_priority'] ] = $fac['ec_email_contact'];
+          }
+        } else {
+          $cleanFacilityInfo[$fac['f_id']] = array($fac['ect_email_contact_type'] => array($fac['eec_priority'] => $fac['ec_email_contact']));
+        }
+      }
+
+      print_r($cleanFacilityInfo);
+//      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
@@ -349,8 +368,29 @@ class agFacilityHelper {
       $facilityQueryString = $facilityQuery->getSqlQuery();
       echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      print_r($facilityInfo);
+//      print_r($facilityInfo);
 //      return $facilityInfo;
+
+      $cleanFacilityInfo = array();
+      foreach($facilityInfo as $fac)
+      {
+        if (array_key_exists($fac['f_id'], $cleanFacilityInfo))
+        {
+          if (array_key_exists($fac['pct_phone_contact_type'], $cleanFacilityInfo[ $fac['f_id'] ]))
+          {
+            $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['pct_phone_contact_type'] ];
+            $newArray = $tempArray + array($fac['epc_priority'] => $fac['pc_phone_contact']);
+            $cleanFacilityInfo[ $fac['f_id'] ][ $fac['pct_phone_contact_type'] ] = $newArray;
+          } else {
+            $cleanFacilityInfo[ $fac['f_id'] ][ $fac['pct_phone_contact_type'] ][ $fac['epc_priority'] ] = $fac['pc_phone_contact'];
+          }
+        } else {
+          $cleanFacilityInfo[$fac['f_id']] = array($fac['pct_phone_contact_type'] => array($fac['epc_priority'] => $fac['pc_phone_contact']));
+        }
+      }
+
+      print_r($cleanFacilityInfo);
+//      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
@@ -370,8 +410,24 @@ class agFacilityHelper {
       $facilityQueryString = $facilityQuery->getSqlQuery();
       echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      print_r($facilityInfo);
+//      print_r($facilityInfo);
 //      return $facilityInfo;
+
+      $cleanFacilityInfo = array();
+      foreach ($facilityInfo as $fac)
+      {
+        if (array_key_exists($fac['fstf_scenario_facility_resource_id'], $cleanFacilityInfo))
+        {
+          $tempArray = $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ];
+          $newArray = $tempArray + array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
+          $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = $newArray;
+        } else {
+          $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum' => $fac['fstf_maximum_staff']));
+        }
+      }
+
+      print_r($cleanFacilityInfo);
+//      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
