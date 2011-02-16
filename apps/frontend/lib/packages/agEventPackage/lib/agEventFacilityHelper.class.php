@@ -40,9 +40,31 @@ class agEventFacilityHelper
 
   public static function returnFacilityResourceActivation ($eventId, $eventFacilityGroupId = NULL, $facilityStandbyStatus = NULL)
   {
-    $groupStatus = self::returnCurrentEventFacilityGroupStatus($eventId) ;
-    $resourceStatus = self::returnCurrentEventFacilityResourceStatus($eventId) ;
+    // these are relatively simple where clauses
+    $groupStatuses = array_keys( self::returnCurrentEventFacilityGroupStatus($eventId) ) ;
+    $resourceStatuses = array_keys( self::returnCurrentEventFacilityResourceStatus($eventId) ) ;
 
+    // this join condition is a little more complex because we only want one shift returned per
+    // event_facility_resource_id
+    $firstShifts = array_keys( self::returnFirstFacilityResourceShifts($eventId) ) ;
+
+    $shiftQuery = Doctrine_Query::create()
+      ->select('es.event_facility_resource_id')
+        ->addSelect('es.id')
+        ->from('agEventShift es')
+        ->whereIn('es.id', $firstShifts) ;
+
+    $facilityShifts = array_values( $shiftQuery->execute(array(),'assoc_two_dim') ) ;
+
+    $shifts = array() ;
+
+    // now we need to build an array of just the first returned shift per facility
+    foreach ($facilityShifts as $facilityShift)
+    {
+      $shifts[] = $facilityShift[0] ;
+    }
+
+    // here lies the meat of this function
     $query = Doctrine_Query::create()
       ->select('efr.id')
         ->addSelect('f.facility_name')
@@ -69,19 +91,9 @@ class agEventFacilityHelper
         ->innerJoin('egs.agFacilityGroupAllocationStatus gas')
         ->leftJoin('efr.agEventFacilityResourceActivationTime efat')
         ->innerJoin('efr.agEventShift es')
-      ->whereIn('ers.id', array_keys($resourceStatus))
-        ->andWhereIn('egs.id', array_keys($groupStatus))
-        ->andWhere('EXISTS (
-          SELECT s.id
-            FROM agEventShift s
-            WHERE s.event_facility_resource_id = es.event_facility_resource_id
-            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)')
-        ->andWhere('efat.id IS NULL')
-        ->andWhere('frs.is_available = ?', true)
-        ->andWhere('gas.active = ?', true)
-        ->andWhere('(ras.allocatable = ? OR ras.committed = ?)', array(true, true))
-        ->andWhere('ras.staffed = ?', false)
-        ->andWhere('efg.event_id = ?', $eventId) ;
+      ->whereIn('ers.id', $resourceStatuses)
+        ->andWhereIn('egs.id', $groupStatuses)
+        ->andWhereIn('es.id', $shifts) ;
 
     if (! is_null($eventFacilityGroupId)) { $query->andWhere('efg.id = ?', $eventFacilityGroupId) ; }
 
@@ -94,57 +106,7 @@ class agEventFacilityHelper
 
   public static function activateZeroHourFacilityResources ($eventId, $activationTime)
   {
-    $query = Doctrine_Query::create()
-      ->select('efr.id')
-        ->addSelect('f.facility_name')
-        ->addSelect('f.facility_code')
-        ->addSelect('frt.facility_resource_type')
-        ->addSelect('ras.standby')
-        ->addSelect('ras.facility_resource_allocation_status')
-        ->addSelect('es.minutes_start_to_facility_activation')
-        ->addSelect('f.id')
-        ->addSelect('fr.id')
-        ->addSelect('frt.id')
-        ->addSelect('ras.id')
-        ->addSelect('ers.id')
-        ->addSelect('es.id')
-      ->from('agEventFacilityResource efr')
-        ->innerJoin('efr.agFacilityResource fr')
-        ->innerJoin('fr.agFacilityResourceStatus frs')
-        ->innerJoin('fr.agFacilityResourceType frt')
-        ->innerJoin('fr.agFacility f')
-        ->innerJoin('efr.agEventFacilityResourceStatus ers')
-        ->innerJoin('ers.agFacilityResourceAllocationStatus ras')
-        ->innerJoin('efr.agEventFacilityGroup efg')
-        ->innerJoin('efg.agEventFacilityGroupStatus egs')
-        ->innerJoin('egs.agFacilityGroupAllocationStatus gas')
-        ->leftJoin('efr.agEventFacilityResourceActivationTime efat')
-        ->innerJoin('efr.agEventShift es')
-      ->where('EXISTS (
-          SELECT efrs.id
-            FROM agEventFacilityResourceStatus efrs
-            WHERE efrs.event_facility_resource_id = ers.event_facility_resource_id
-              AND efrs.time_stamp <= CURRENT_TIMESTAMP
-            HAVING MAX(efrs.time_stamp) = ers.time_stamp)')
-        ->andWhere('EXISTS (
-          SELECT efgs.id
-            FROM agEventFacilityGroupStatus efgs
-            WHERE efgs.event_facility_group_id = egs.event_facility_group_id
-              AND efgs.time_stamp <= CURRENT_TIMESTAMP
-            HAVING MAX(efgs.time_stamp) = egs.time_stamp)')
-        ->andWhere('EXISTS (
-          SELECT s.id
-            FROM agEventShift s
-            WHERE s.event_facility_resource_id = es.event_facility_resource_id
-            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)')
-        ->andWhere('efat.id IS NULL')
-        ->andWhere('frs.is_available = ?', true)
-        ->andWhere('gas.active = ?', true)
-        ->andWhere('(ras.allocatable = ? OR ras.committed = ?)', array(true, true))
-        ->andWhere('ras.staffed = ?', false)
-        ->andWhere('efg.event_id = ?', $eventId)
-        ->andWhere('ras.standby = ?', $false)
-        ->andWhere('efg.id LIKE (?)', $eventFacilityGroupId) ;
+    $results = 'I don\'t do anything yet!' ;
     return $results;
   }
 
@@ -256,15 +218,15 @@ class agEventFacilityHelper
    * Function to return the first shifts of each facility resource for a given event.
    * 
    * @param integer(4) $eventId The current event being queried
-   * @return array A three-dimensional associative array keyed by facility_resource_id with value array
-   * members as all shifts that fulfill the criterion of being a 'first shift' (eg, all start at the
-   * same time).
+   * @param boolean $staffed If true, only return the first shifts that have staff assigned to it
+   * @return array A two-dimensional associative array keyed by event_shift_id with value array
+   * members as event_facility_resource_id
    */
-  public static function returnFirstFacilityResourceShifts($eventId)
+  public static function returnFirstFacilityResourceShifts($eventId, $staffed = FALSE)
   {
     $query = Doctrine_Query::create()
-      ->select('es.facility_resource_id')
-          ->addSelect('es.id')
+      ->select('es.id')
+          ->addSelect('es.event_facility_resource_id')
         ->from('agEventShift es')
           ->innerJoin('es.agEventFacilityResource efr')
           ->innerJoin('efr.agEventFacilityGroup efg')
@@ -275,30 +237,22 @@ class agEventFacilityHelper
             WHERE s.event_facility_resource_id = es.event_facility_resource_id
             HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)') ;
 
-    $results = $query->execute(array(), 'key_value_group_by') ;
+    if ($staffed) { $query->innerJoin('es.agEventStaffShift ess') ;  }
+
+    $results = $query->execute(array(), 'key_value_array') ;
     return $results ;
   }
 
-  public static function returnFirstFacilityStaffedShifts($eventId)
-  {
-    $query = Doctrine_Query::create()
-      ->select('es.facility_resource_id')
-          ->addSelect('es.id')
-        ->from('agEventShift es')
-          ->innerJoin('es.agEventFacilityResource efr')
-          ->innerJoin('efr.agEventFacilityGroup efg')
-          ->innerJoin('es.agEventStaffShift ess')
-        ->where('efg.event_id = ?', $eventId)
-          ->andWhere('EXISTS (
-          SELECT s.id
-            FROM agEventShift s
-            WHERE s.event_facility_resource_id = es.event_facility_resource_id
-            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)');
-
-    $results = $query->execute(array(), 'key_value_array');
-    return $results;
-  }
-
+  /**
+   * Return an array keyed by the shift id of any shifts that are currently in operation
+   *
+   * @param integer(4) $eventId The event being queried
+   * @param string A optional value that adjusted the concept of 'current' from the application's
+   * CURRENT_TIMESTAMP (or PHP time()) to the passed value (essentially enabling the user to ask
+   * what shifts will be active at this point-in-$time
+   * @return array An two-dimensional associative array, keyed by event_shift_id with a value
+   * array of event_facility_resource_id
+   */
   public static function returnCurrentFacilityResourceShifts($eventId, $time = NULL)
   {
     // convert our start time to unix timestamp or set default if null
@@ -307,8 +261,8 @@ class agEventFacilityHelper
 
     $query = new Doctrine_RawSql() ;
     $query->addComponent('es', 'agEventShift es')
-      ->select('{es.facility_resource_id}')
-        ->addSelect('{es.id}')
+      ->select('{es.id}')
+        ->addSelect('{es.facility_resource_id}')
       ->from('ag_event_shift es')
         ->innerJoin('ag_event_facility_resource efr ON es.event_facility_resource_id = efr.id')
         ->innerJoin('ag_event_facility_group efg ON efr.event_facility_group_id = efg.id')
