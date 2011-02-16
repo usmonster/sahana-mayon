@@ -73,32 +73,56 @@ class agImportXLS
 
             $this->events[] = array("type" => "INFO", "message" => "Opening import file for reading.");
             $xlsObj = new Spreadsheet_Excel_Reader($importFile);
+
+            // Get some info about the workbook's composition
+            $numSheets = count($xlsObj->sheets);
+            $this->events[] = array("type" => "INFO", "message" => "Number of worksheets found: $numSheets");
+
             $numRows = $xlsObj->rowcount($sheet_index = 0);
             $numCols = $xlsObj->colcount($sheet_index = 0);
 
-            // Create a simplified array from
-            $this->events[] = array("type" => "INFO", "message" => "Parsing import file.");
-            for ($row = 2; $row <= $numRows; $row++) {
+            // Create a simplified array from the worksheets
+            // Create a simplified array from the worksheets
+            $importRow = 0;
+            for ($sheet = 0; $sheet < $numSheets; $sheet++) {
 
-                for ($col = 1; $col <= $numCols; $col++) {
+                // Get the sheet name
+                $sheetName = $xlsObj->boundsheets[$sheet]["name"];
+                $this->events[] = array("type" => "INFO", "message" => "Parsing worksheet $sheetName");
 
-                    $colName = str_replace(" ", "_", strtolower($xlsObj->val(1, $col)));
+                // We don't import sheets named "Validation"
+                if (strtolower($sheetName) <> "validation") {
+                    for ($row = 2; $row <= $numRows; $row++) {
 
-                    $val = $xlsObj->raw($row, $col);
-                    if (!($val)) {
-                        $val = $xlsObj->val($row, $col);
+                        for ($col = 1; $col <= $numCols; $col++) {
+
+                            $colName = str_replace(" ", "_", strtolower($xlsObj->val(1, $col, $sheet)));
+
+                            $val = $xlsObj->raw($row, $col, $sheet);
+                            if (!($val)) {
+                                $val = $xlsObj->val($row, $col, $sheet);
+                            }
+                            $importFileData[$importRow][$colName] = $val;
+                         
+                        }
+                        // Increment import row
+                        $importRow++;
                     }
-                    $importFileData[$row][$colName] = $val;
+                } else {
+                    $this->events[] = array("type" => "INFO", "message" => "Ignoring $sheetName worksheet");
                 }
             }
 
             $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
+
             if ($this->validateColumnHeaders($importFileData)) {
+
                 $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
                 $this->events[] = array("type" => "INFO", "message" => "Inserting records into temp table.");
                 $this->saveImportTemp($importFileData);
                 $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
             } else {
+
                 $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
             }
         }
