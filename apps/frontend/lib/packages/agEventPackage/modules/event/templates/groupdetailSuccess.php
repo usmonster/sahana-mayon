@@ -9,8 +9,8 @@ $(document).ready(function() {
      complete:
        function() {
          $('#modalContent').append('<h2 class="overlay">Status Changed</h2>');
-         $('.overlay').fadeIn('slow', function() {
-           $('.overlay').fadeOut('slow', function() {
+         $('.overlay').fadeIn(1200, function() {
+           $('.overlay').fadeOut(1200, function() {
              $('.overlay').remove();
              $('#modalContent').load($(this).parent().attr('action'));
            })
