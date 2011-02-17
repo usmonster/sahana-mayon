@@ -73,9 +73,7 @@ class agFacilityHelper {
       }
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
-      echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-//      print_r($facilityInfo);
       return $facilityInfo;
       
     } catch (Exception $e) {
@@ -103,10 +101,6 @@ class agFacilityHelper {
               ->innerJoin('ae.agAddressFormat af')
               ->innerJoin('af.agAddressStandard as')
               ->where('as.address_standard=?', $addressStandard);
-//              ->innerJoin('as.agCountry c')
-//              ->where('c.country=?', $countryFormat);
-//              ->orderBy('f.id, a.id, act.id, af.line_sequence, af.inline_sequence');
-//              ->orderBy('f.id, eac.address_id, eac.address_contact_type_id, af.line_sequence, af.inline_sequence');
 
       if (isset($type))
       {
@@ -127,10 +121,7 @@ class agFacilityHelper {
       }
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
-      echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-//      print_r($facilityInfo);
-//      return $facilityInfo;
 
       $cleanFacilityInfo = array();
       foreach($facilityInfo as $fac)
@@ -160,7 +151,6 @@ class agFacilityHelper {
         }
       }
 
-//      print_r($cleanFacilityInfo);
       return $cleanFacilityInfo;
 
     } catch (Exception $e) {
@@ -172,7 +162,6 @@ class agFacilityHelper {
   public static function facilityGeo($primaryOnly=FALSE, $type=NULL)
   {
     try {
-      $initialWhereClause = TRUE;
       $facilityQuery = Doctrine_Query::create()
               ->select('f.id, act.address_contact_type, eac.address_id, eac.priority')
               ->addSelect('gc.latitude, gc.longitude')
@@ -187,41 +176,18 @@ class agFacilityHelper {
               ->innerJoin('ag.agGeo g')
               ->innerJoin('g.agGeoSource gs')
               ->innerJoin('g.agGeoFeature gf')
-              ->innerJoin('gf.agGeoCoordinate gc');
+              ->innerJoin('gf.agGeoCoordinate gc')
+              ->groupBy('f.id, act.address_contact_type, eac.address_id')
+              ->orderBy('f.id, eac.address_id, eac.address_contact_type_id, eac.priority');
 
       if (isset($type))
       {
-        if ($initialWhereClause)
-        {
           $facilityQuery->where('act.address_contact_type=?', $type);
           $initialWhereClause = FALSE;
-        }
-      }
-
-      if ($primaryOnly)
-      {
-        $subQuery = 'EXISTS (SELECT eac2.id
-                             FROM agEntityAddressContact eac2
-                             WHERE eac2.entity_id = eac.entity_id
-                               AND eac2.address_contact_type_id = eac.address_contact_type_id
-                             HAVING MIN(eac2.priority) = eac.priority)';
-
-        if ($initialWhereClause)
-        {
-          $facilityQuery->where($subQuery);
-          $initialWhereClause = FALSE;
-        } else {
-          $facilityQuery->addWhere($subQuery);
-        }
-      } else {
-        $facilityQuery->orderBy('f.id, eac.address_id, eac.address_contact_type_id, eac.priority');
       }
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
-      echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-//      print_r($facilityInfo);
-//      return $facilityInfo;
 
       $cleanFacilityInfo = array();
       foreach ($facilityInfo as $fac)
@@ -236,7 +202,6 @@ class agFacilityHelper {
         }
       }
 
-//      print_r($cleanFacilityInfo);
       return $cleanFacilityInfo;
 
     } catch (Exception $e) {
@@ -258,7 +223,6 @@ class agFacilityHelper {
               ->innerJoin('e.agEntityEmailContact eec')
               ->innerJoin('eec.agEmailContact ec')
               ->innerJoin('eec.agEmailContactType ect');
-//              ->orderBy('f.id, eec.email_contact_type_id, eec.priority');
 
       if (isset($type))
       {
@@ -289,10 +253,7 @@ class agFacilityHelper {
       }
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
-      echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-//      print_r($facilityInfo);
-//      return $facilityInfo;
 
       $cleanFacilityInfo = array();
       foreach($facilityInfo as $fac)
@@ -312,7 +273,6 @@ class agFacilityHelper {
         }
       }
 
-//      print_r($cleanFacilityInfo);
       return $cleanFacilityInfo;
 
     } catch (Exception $e) {
@@ -365,10 +325,7 @@ class agFacilityHelper {
       }
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
-      echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-//      print_r($facilityInfo);
-//      return $facilityInfo;
 
       $cleanFacilityInfo = array();
       foreach($facilityInfo as $fac)
@@ -388,12 +345,11 @@ class agFacilityHelper {
         }
       }
 
-//      print_r($cleanFacilityInfo);
       return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
-//      return NULL;
+      return NULL;
     }
   }
 
@@ -407,10 +363,7 @@ class agFacilityHelper {
               ->orderBy('fstf.scenario_facility_resource_id, srt.staff_resource_type');
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
-      echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-//      print_r($facilityInfo);
-//      return $facilityInfo;
 
       $cleanFacilityInfo = array();
       foreach ($facilityInfo as $fac)
@@ -421,16 +374,15 @@ class agFacilityHelper {
           $newArray = $tempArray + array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
           $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = $newArray;
         } else {
-          $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum' => $fac['fstf_maximum_staff']));
+          $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
         }
       }
 
-//      print_r($cleanFacilityInfo);
       return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
-//      return NULL;
+      return NULL;
     }
   }
 

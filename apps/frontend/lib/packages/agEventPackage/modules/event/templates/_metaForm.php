@@ -23,7 +23,3 @@ else{
     </tbody>
   </table>
 </form>
-
-<form action="<?php echo $formAct; ?>" method="post">
-  <input type="submit" value="FLOOGLE!" class="linkButton" name="foob"/>
-</form>

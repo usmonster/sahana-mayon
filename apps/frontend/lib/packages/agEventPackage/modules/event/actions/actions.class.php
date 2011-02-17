@@ -91,7 +91,7 @@ class eventActions extends agActions
               ->findByDql('id = ?', $this->scenario_id)
               ->getFirst()->scenario;
 
-      $this->checkResults = $this->preMigrationCheck($this->scenario_id);
+      $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
 
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
@@ -104,16 +104,22 @@ class eventActions extends agActions
 
   private function setEventBasics(sfWebRequest $request)
   {
-    $this->event_id = $request->getParameter('id');
-    $this->eventName = Doctrine_Core::getTable('agEvent')
+    if($request->getParameter('id'))
+    {
+      $this->event_id = $request->getParameter('id');
+      if ($this->event_id != ""){
+      $this->eventName = Doctrine_Core::getTable('agEvent')
             ->findByDql('id = ?', $this->event_id)
             ->getFirst()->getEventName();
+      }
+      //TODO step through to check and see if the second if is needed
+    }
   }
 
   public function executeMeta(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    if ($request->getParameter('id')) { //if someone is coming here from an edit context
+    if ($this->event_id != "") { //if someone is coming here from an edit context
       $eventMeta = Doctrine::getTable('agEvent')
               ->findByDql('id = ?', $this->event_id)
               ->getFirst();

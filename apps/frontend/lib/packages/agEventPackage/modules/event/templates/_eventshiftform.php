@@ -1,6 +1,15 @@
 <?php use_stylesheets_for_form($eventshiftform) ?>
 <?php use_javascripts_for_form($eventshiftform) ?>
+<script type="text/javascript">
+     $.get(
+    "test1.php",
+    { id: $(this).attr('id'), title: $(this).attr('title') },
+    function(data) {
 
+        $(this).attr('title', data);
+    },
+    "text");
+</script>
 <form name="event_shift_form" id="event_shift_form" action="
 <?php
 echo url_for('event/shifts/' . ($eventshiftform->getObject()->isNew() ? 'new' : $eventshiftform->getObject()->getId()) .

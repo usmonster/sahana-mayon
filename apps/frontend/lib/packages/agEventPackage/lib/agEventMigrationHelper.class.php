@@ -16,7 +16,7 @@
 
 class agEventMigrationHelper
 {
-public function facilityGroupCheck($scenario_id)
+  public static function facilityGroupCheck($scenario_id)
   {
     $facilityGroupQuery = Doctrine_Query::create()
             ->select('aFG.id, aFG.scenario_facility_group')
@@ -28,7 +28,7 @@ public function facilityGroupCheck($scenario_id)
     return $returnvalue;
   }
 
-  public function undefinedShiftCheck($scenario_id)
+  public static function undefinedShiftCheck($scenario_id)
   {
     $undefinedFacilityShiftQuery = Doctrine_Query::create()
             ->select('aFR.id')
@@ -54,7 +54,7 @@ public function facilityGroupCheck($scenario_id)
     return array($facilityShiftReturn, $staffShiftReturn);
   }
 
-  public function staffPoolCheck($scenario_id)
+  public static function staffPoolCheck($scenario_id)
   {
     $staffPoolQuery = Doctrine_Query::create()
             ->from('agScenarioStaffResource')
@@ -62,19 +62,19 @@ public function facilityGroupCheck($scenario_id)
     return $staffPoolQuery->count();
   }
 
-  public function preMigrationCheck($scenario_id)
+  public static function preMigrationCheck($scenario_id)
   {
     // 0. Pre check: check event status (only proceed if event status is pre-deploy), clean event related tables in pre-deploy state, empty facility group, undefined staff pool rules making sure pools not empty, undefined shifts for staff/facility resource.
-    $facilityGroupCheck = $this->facilityGroupCheck($scenario_id);
-    $staffPoolCheck = $this->staffPoolCheck($scenario_id);
-    $undefinedShiftCheck = $this->undefinedShiftCheck($scenario_id);
+    $facilityGroupCheck = self::facilityGroupCheck($scenario_id);
+    $staffPoolCheck = self::staffPoolCheck($scenario_id);
+    $undefinedShiftCheck = self::undefinedShiftCheck($scenario_id);
     $undefinedFacilityShifts = $undefinedShiftCheck[0];
     $undefinedStaffShifts = $undefinedShiftCheck[1];
 
     return array('Empty facility groups' => $facilityGroupCheck, 'Staff pool count' => $staffPoolCheck, 'Undefined facility shifts' => $undefinedFacilityShifts, 'Undefined staff shifts' => $undefinedStaffShifts);
   }
 
-  public function migrateFacilityGroups($scenario_id, $event_id)
+  public static function migrateFacilityGroups($scenario_id, $event_id)
   {
     $existingScenarioFacilityGroups = Doctrine_Core::getTable('agScenarioFacilityGroup')->findBy('scenario_id', $scenario_id);
 
@@ -92,7 +92,7 @@ public function facilityGroupCheck($scenario_id)
           ->set('facility_group_allocation_status_id', $scenFacGrp->facility_group_allocation_status_id);
       $eventFacilityGroupStatus->save();
 
-      $existingFacilityResources = $this->migrateFacilityResources($scenFacGrp, $eventFacilityGroup->id);
+      $existingFacilityResources = self::migrateFacilityResources($scenFacGrp, $eventFacilityGroup->id);
 
       $eventFacilityGroup->free(TRUE);
       $eventFacilityGroupStatus->free(TRUE);
@@ -100,7 +100,7 @@ public function facilityGroupCheck($scenario_id)
     $existingScenarioFacilityGroups->free(TRUE);
   }
 
-  public function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id)
+  public static function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id)
   {
     $existingScenarioFacilityResources = $scenarioFacilityGroup->getAgScenarioFacilityResource();
     foreach ($existingScenarioFacilityResources as $scenFacRes) {
@@ -117,7 +117,7 @@ public function facilityGroupCheck($scenario_id)
       $eventFacilityResourceStatus->save();
 
       // Should the shifts be process as the facility resources get processed?  Another solution is to create a temp table mapping the scenario to event faciltiy resources?
-      $this->migrateShifts($scenFacRes->id, $eventFacilityResource->id);
+      self::migrateShifts($scenFacRes->id, $eventFacilityResource->id);
 
       $eventFacilityResource->free(TRUE);
       $eventFacilityResourceStatus->free(TRUE);
@@ -127,7 +127,7 @@ public function facilityGroupCheck($scenario_id)
     return 1;
   }
 
-  public function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId)
+  public static function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId)
   {
     $scenarioShifts = Doctrine_Core::getTable('agScenarioShift')->findby('scenario_facility_resource_id', $scenarioFacilityResourceId);
     foreach ($scenarioShifts as $scenShift) {
@@ -153,7 +153,7 @@ public function facilityGroupCheck($scenario_id)
     return 1;
   }
 
-  public function migrateStaffPool($scenario_id, $event_id)
+  public static function migrateStaffPool($scenario_id, $event_id)
   {
     $existingScenarioStaffPools = Doctrine_Query::create()
             ->from('agScenarioStaffResource ssr')
@@ -181,7 +181,7 @@ public function facilityGroupCheck($scenario_id)
     return 1;
   }
 
-  public function migrateScenarioToEvent($scenario_id, $event_id)
+  public static function migrateScenarioToEvent($scenario_id, $event_id)
   {
 
     $con = Doctrine_Manager::getInstance()->getConnectionForComponent('agEvent');
@@ -202,7 +202,7 @@ public function facilityGroupCheck($scenario_id)
        * 1c. Copy Facility Resource
        * 1d. Copy over scenario shift
        */
-      $this->migrateFacilityGroups($scenario_id, $event_id);
+      self::migrateFacilityGroups($scenario_id, $event_id);
 
       /**
        * @todo
@@ -225,7 +225,7 @@ public function facilityGroupCheck($scenario_id)
       }
 
       // 4. Copy over staff pool
-      $this->migrateStaffPool($scenario_id, $event_id);
+      self::migrateStaffPool($scenario_id, $event_id);
       // 5. Populate agEventStaffShift (assigning event staffs to shifts).
       // 6. Update event status to deployed/active?
 
