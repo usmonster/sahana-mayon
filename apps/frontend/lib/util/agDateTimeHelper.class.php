@@ -150,6 +150,14 @@ class agDateTimeHelper
       return $this->parsedTimeArrayInstance;
   }
 
+  public static function defaultDateTimeFormat($time = NULL)
+  {
+    $time = (is_null($time)) ? time() : strtotime($time) ;
+  }
+
+}
+
+?>=======
   /**
    * Static function to return a phptimestamp from a time string and, if the time parameter is null
    * assign it a default value of the current timestamp.
