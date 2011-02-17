@@ -462,32 +462,32 @@ class facilityActions extends agActions
     {
       $i = 0;
       $entry = array();
-      $entry[ $exportHeaders[$i++] ] = $fac['f_facility_name'];
-      $entry[ $exportHeaders[$i++] ] = $fac['f_facility_code'];
-      $entry[ $exportHeaders[$i++] ] = $fac['frt_facility_resource_type_abbr'];
-      $entry[ $exportHeaders[$i++] ] = $fac['frs_facility_resource_status'];
-      $entry[ $exportHeaders[$i++] ] = $fac['fr_capacity'];
-      $entry[ $exportHeaders[$i++] ] = $fac['sfr_activation_sequence'];
-      $entry[ $exportHeaders[$i++] ] = $fac['fras_facility_resource_allocation_status'];
-      $entry[ $exportHeaders[$i++] ] = $fac['sfg_scenario_facility_group'];
-      $entry[ $exportHeaders[$i++] ] = $fac['fgt_facility_group_type'];
-      $entry[ $exportHeaders[$i++] ] = $fac['fgas_facility_group_allocation_status'];
-      $entry[ $exportHeaders[$i++] ] = $fac['sfg_activation_sequence'];
+      $entry['Facility Name'] = $fac['f_facility_name'];
+      $entry['Facility Code'] = $fac['f_facility_code'];
+      $entry['Facility Resource Type Abbr'] = $fac['frt_facility_resource_type_abbr'];
+      $entry['Facility Resource Status'] = $fac['frs_facility_resource_status'];
+      $entry['Facility Capacity'] = $fac['fr_capacity'];
+      $entry['Facility Activation Sequence'] = $fac['sfr_activation_sequence'];
+      $entry['Facility Allocation Status'] = $fac['fras_facility_resource_allocation_status'];
+      $entry['Facility Group'] = $fac['sfg_scenario_facility_group'];
+      $entry['Facility Group Type'] = $fac['fgt_facility_group_type'];
+      $entry['Facility Group Allocation Status'] = $fac['fgas_facility_group_allocation_status'];
+      $entry['Facility Group Activation Sequence'] = $fac['sfg_activation_sequence'];
 
       if (array_key_exists($fac['f_id'], $facilityEmail))
       {
         $priorityNumber = key($facilityEmail[$fac['f_id']][$contactType]);
-        $entry[ $exportHeaders[$i++] ] = $facilityEmail[$fac['f_id']][$contactType][$priorityNumber];
+        $entry['Work Email'] = $facilityEmail[$fac['f_id']][$contactType][$priorityNumber];
       } else {
-        $entry[ $exportHeaders[$i++] ] = null;
+        $entry['Work Email'] = null;
       }
 
       if (array_key_exists($fac['f_id'], $facilityPhone))
       {
         $priorityNumber = key($facilityPhone[$fac['f_id']][$contactType]);
-        $entry[ $exportHeaders[$i++] ] = $facilityPhone[$fac['f_id']][$contactType][$priorityNumber];
+        $entry['Work Phone'] = $facilityPhone[$fac['f_id']][$contactType][$priorityNumber];
       } else {
-        $entry[ $exportHeaders[$i++] ] = null;
+        $entry['Work Phone'] = null;
       }
 
       $addressId = null;
@@ -498,17 +498,30 @@ class facilityActions extends agActions
 
         foreach($addressFormat as $key => $addr)
         {
+          switch ($addr)
+          {
+            case 'line 1':
+              $exp_index = 'Street 1';
+              break;
+            case 'line 2':
+              $exp_index = 'Street 2';
+              break;
+            case 'zip5':
+              $exp_index = 'Postal Code';
+            default:
+              $exp_index = ucwords($add);
+           }
+
+
           if (array_key_exists($addr, $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber]))
           {
-            $entry[ $exportHeaders[$i] ] = $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber][$addr];
+            $entry[ $exp_index ] = $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber][$addr];
           } else {
-            $entry[ $exportHeaders[$i] ] = null;
+            $entry[ $exp_index ] = null;
           }
-          $i++;
         }
       } else {
-        $entry = $entry + array_combine($addressFormat, array_fill(count($entry), count($addressFormat), NULL));
-        $i = $i + count($addressFormat);
+        $entry = $entry + array_combine($addressHeaders, array_fill(count($entry), count($addressHeaders), NULL));
       }
 
       if (array_key_exists($fac['f_id'], $facilityGeo))
@@ -517,38 +530,45 @@ class facilityActions extends agActions
         {
           if (array_key_exists($addressId, $facilityGeo[ $fac['f_id'] ]))
           {
-            $entry[ $exportHeaders[$i++] ] = $facilityGeo[ $fac['f_id'] ][$addressId]['longitude'];
-            $entry[ $exportHeaders[$i++] ] = $facilityGeo[ $fac['f_id'] ][$addressId]['latitude'];
+            $entry['Longitude'] = $facilityGeo[ $fac['f_id'] ][$addressId]['longitude'];
+            $entry['Latitude'] = $facilityGeo[ $fac['f_id'] ][$addressId]['latitude'];
           } else {
-            $entry = $entry + array_combine(array($exportHeaders[$i++], $exportHeaders[$i++]), array_fill(count($entry), 2, NULL));
+            $entry = $entry + array_combine(array('Longitude', 'Latitude'), array_fill(count($entry), 2, NULL));
           }
         } else {
-          $entry = $entry + array_combine(array($exportHeaders[$i++], $exportHeaders[$i++]), array_fill(count($entry), 2, NULL));
+          $entry = $entry + array_combine(array('Longitude', 'Latitude'), array_fill(count($entry), 2, NULL));
         }
       } else {
-        $entry = $entry + array_combine(array($exportHeaders[$i++], $exportHeaders[$i++]), array_fill(count($entry), 2, NULL));
+        $entry = $entry + array_combine(array('Longitude', 'Latitude'), array_fill(count($entry), 2, NULL));
       }
 
       foreach($staffResourceTypes as $stfResType)
       {
+        if (strtolower($stfResType) == 'staff')
+        {
+          $exp_index = 'generalist';
+        } else {
+          $exp_index = strtolower(str_replace(' ', '_', $stfResType));
+        }
+
         if (array_key_exists($fac['sfr_id'], $facilityStaffResource))
         {
           if(array_key_exists($stfResType, $facilityStaffResource[ $fac['sfr_id'] ]))
           {
-            $entry[ $exportHeaders[$i++] ] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['minimum staff'];
-            $entry[ $exportHeaders[$i++] ] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['maximum staff'];
+            $entry[$exp_index . '_min'] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['minimum staff'];
+            $entry[$exp_index . '_max'] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['maximum staff'];
           } else {
-            $entry = $entry + array_combine(array($exportHeaders[$i++], $exportHeaders[$i++]), array_fill(count($entry), 2, NULL));
+            $entry = $entry + array_combine(array($exp_index . '_min', $exp_index . '_max'), array_fill(count($entry), 2, NULL));
           }
         } else {
-          $entry = $entry + array_combine(array($exportHeaders[$i++], $exportHeaders[$i++]), array_fill(count($entry), 2, NULL));
+          $entry = $entry + array_combine(array($exp_index . '_min', $exp_index . '_max'), array_fill(count($entry), 2, NULL));
         }
       }
 
       $facilityExportRecords[] = $entry;
     }
 
-  print_r($facilityExportRecords);
+//  print_r($facilityExportRecords);
 
 
 
