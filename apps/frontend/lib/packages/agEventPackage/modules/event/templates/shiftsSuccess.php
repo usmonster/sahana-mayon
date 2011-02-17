@@ -5,18 +5,12 @@
   //Defines the columns of the scenario shift display list page.
   $columns = array(
     'id' => array('title' => 'Id', 'sortable' => false),
-    'event' => array('title' => 'event', 'sortable' => false),
+    'eventFacilityGroup' => array('title' => 'facility group', 'sortable' => false),
     'eventFacilityResource' => array('title' => 'facility resource', 'sortable' => false),
-    'staffResourceId' =>  array('title' => 'staff resource id', 'sortable' => false),
-    'taskId' =>  array('title' => 'taskId', 'sortable' => false),
-    'taskLengthMinutes' =>  array('title' => 'task length minutes', 'sortable' => false),
-    'breakLengthMinutes' =>  array('title' => 'breakLengthMinutes', 'sortable' => false),
-    'minutesStartToFacilityActivation' =>  array('title' => 'facility activation start minutes', 'sortable' => false),
-    'minimumStaff' =>  array('title' => 'minimum staff', 'sortable' => false),
-    'maximumStaff' =>  array('title' => 'maximum staff', 'sortable' => false),
-    'staffWave' =>  array('title' => 'staff wave', 'sortable' => false),
-    'shiftStatusId' =>  array('title' => 'shiftStatusId', 'sortable' => false),
-    'deploymentAlgorithmId' => array('title' => 'deployment algorithm id', 'sortable' => false)
+    'staffResourceType' =>  array('title' => 'staff resource type', 'sortable' => false),
+    'start_time' =>  array('title' => 'start', 'sortable' => false),
+    'end_time' =>  array('title' => 'end', 'sortable' => false),
+    'committed_staff' =>  array('title' => 'committed staff', 'sortable' => false)
   );
 
   $thisUrl = url_for('event/shifts?id=' . $event_id);
@@ -45,21 +39,11 @@
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
     <?php foreach ($pager->getResults() as $ag_event_shift): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('event/shifts?id='.$ag_event_shift->getId()) . '/' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+      <td><a class=linkButton href="<?php echo url_for('event/shifts?id='.$ag_event_shift->getId()) . '?shiftid=' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
       <td><?php echo $eventShifts[$ag_event_shift->getId()]['event']; ?></td>
-      <td><?php
-//            $facilityResourceId = $eventShifts[$ag_event_shift->getId()]['facility_resource_id'];
-//#            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
-//            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] .  ' : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
-//            echo $facilityResourceDisplay;
-            echo $ag_event_shift->getAgEventFacilityResource(); ?></td>
+      <td><?php echo $ag_event_shift->getAgEventFacilityResource();//->getAgEventFacilityResource(); ?></td>
       <td><?php echo $ag_event_shift->getAgStaffResourceType()->getStaffResourceType(); ?></td>
-      <td><?php echo $ag_event_shift->getTaskId(); ?></td>
-      <td><?php echo $ag_event_shift->getTaskLengthMinutes(); ?></td>
-      <td><?php echo $ag_event_shift->getBreakLengthMinutes(); ?></td>
       <td><?php echo $ag_event_shift->getMinutesStartToFacilityActivation(); ?></td>
-      <td><?php echo $ag_event_shift->getMinimumStaff(); ?></td>
-      <td><?php echo $ag_event_shift->getMaximumStaff(); ?></td>
       <td><?php echo $ag_event_shift->getStaffWave(); ?></td>
       <td><?php echo $ag_event_shift->getAgShiftStatus()->getShiftStatus(); ?></td>
       <td><?php echo $ag_event_shift->getAgDeploymentAlgorithm()->getDeploymentAlgorithm(); ?></td>

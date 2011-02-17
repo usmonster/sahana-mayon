@@ -10,7 +10,7 @@
 <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Staff Resource Requirements</a>
 
 
-<form action="/frontend_dev.php/event/meta " method="post" name="scenario">
+<form action="<?php echo url_for('event/meta')?>" method="post" name="scenario">
   <input type="hidden" value="<?php echo $scenario_id ?>" id ="ag_scenario_list" name="ag_scenario_list" />
   <input type="submit" value="Deploy Scenario as Event" class="linkButton" />
 </form>

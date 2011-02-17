@@ -13,6 +13,7 @@
  */
 class KeyValueArrayHydrator extends Doctrine_Hydrator_Abstract
 {
+
   /**
    * Defines the result set as an associative array.
    *
@@ -23,13 +24,15 @@ class KeyValueArrayHydrator extends Doctrine_Hydrator_Abstract
   {
     $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM);
     $array = array();
-    $arrayLen = (count($results[0]) - 1) ;
+    if (empty($results) > 0) {
 
-    foreach ($results as $result)
-    {
-      $array[$result[0]] = array_slice($result, 1, $arrayLen);
+      $arrayLen = (count($results[0]) - 1);
+
+      foreach ($results as $result) {
+        $array[$result[0]] = array_slice($result, 1, $arrayLen);
+      }
     }
-
     return $array;
   }
+
 }

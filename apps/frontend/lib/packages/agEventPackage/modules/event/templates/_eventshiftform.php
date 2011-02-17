@@ -10,13 +10,12 @@
     },
     "text");
 </script>
+
+ <?php $append = '?shiftid=' . ($eventshiftform->getObject()->isNew() ? 'new' : $eventshiftform->getObject()->getId()) ?>
+
+
 <form name="event_shift_form" id="event_shift_form" action="
-<?php
-echo url_for('event/shifts/' . ($eventshiftform->getObject()->isNew() ? 'new' : $eventshiftform->getObject()->getId()) .
-    (!$eventshiftform->getObject()->isNew() ? '?id=' .
-        $eventshiftform->getObject()->getId() : '')) ?>" method="post"
-      <?php $eventshiftform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
-          <br />
+<?php echo url_for('event/shifts?id=' . $event_id) . $append ?>" method="post">
 
   <?php echo $eventshiftform; ?>
 
