@@ -491,7 +491,8 @@ class agInstall
 
      try {
         Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
-        $installed[] = 'Successfully loaded core data fixtures';
+        //$installed[] = 'Successfully loaded core data fixtures';
+        $installed = 'Success!';
       } catch (Exception $e) {
         $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
       }
@@ -520,7 +521,7 @@ class agInstall
 //      $ag_host->setHostname($this->getConfig('DB_SERVER'));
 //      $ag_host->save();
 //      //$installed[] = 'Successfully generated host record based on database server host';
-//      $installed = 'Success!';
+
 //    } catch (Exception $e) {
 //      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
 //    }

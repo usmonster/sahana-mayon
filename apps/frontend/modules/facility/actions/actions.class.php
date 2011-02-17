@@ -419,9 +419,235 @@ class facilityActions extends agActions
     unlink($filePath);
   }
 
-//  public function executeFacilityExport()
-//  {
-////    agFacilityHelper::facilityGeneralInfo('Event');
-//    agFacilityHelper::facilityAddress(FALSE, 'work');
-//  }
+  public function executeFacilityExport()
+  {
+    $primaryOnly = TRUE;
+    $contactType = 'work';
+    $addressStandard = 'us standard';
+
+    $exportHeaders = array('Facility Name', 'Facility Code', 'Facility Resource Type Abbr',
+        'Facility Resource Status', 'Facility Capacity', 'Facility Activation Sequence', 
+        'Facility Allocation Status', 'Facility Group', 'Facility Group Type', 
+        'Facility Group Allocation Status', 'Faciltiy Group Activation Sequence', 
+        'Work Email', 'Work Phone');
+//        'Street 1', 'Street 2', 'City', 'State', 'Zip Code', 'Borough',
+//        'Country', 'Longitude', 'Latitude', 'generalist_min', 'generalist_max', 'specialist_min',
+//        'specialist_max', 'operator_min', 'operator_max', 'medical_nurse_min',
+//        'medical_nurse_max', 'medical_other_min', 'medical_other_max');
+
+    $addressFormat = Doctrine_Query::create()
+            ->select('ae.address_element')
+            ->from('agAddressElement ae')
+            ->innerJoin('ae.agAddressFormat af')
+            ->innerJoin('af.agAddressStandard astd')
+            ->where('astd.address_standard=?', $addressStandard)
+            ->orderBy('af.line_sequence, af.inline_sequence')
+            ->execute(array(), 'single_value_array');
+    $addressHeaders = array();
+    foreach ($addressFormat as $add)
+    {
+      switch ($add)
+      {
+        case 'line 1':
+          $addressHeaders[] = 'Street 1';
+          break;
+        case 'line 2':
+          $addressHeaders[] = 'Street 2';
+          break;
+        case 'zip5':
+          $addressHeaders[] = 'Zip Code';
+        case 'zip+4':
+          break;
+        default:
+          $addressHeaders[] = ucwords($add);
+       }
+    }
+    $exportHeaders = array_merge($exportHeaders,$addressHeaders);
+    array_push($exportHeaders, "longitude", "latitude");
+
+    $staffResourceTypes = Doctrine_Query::create()
+            ->select('srt.staff_resource_type, srt.id')
+            ->from('agStaffResourceType srt')
+            ->execute(array(), 'single_value_array');
+    $stfHeaders = array();
+    foreach($staffResourceTypes as $stfResType)
+    {
+      if (strtolower($stfResType) == 'staff')
+      {
+        $stfResType = 'generalist';
+      } else {
+        $stfResType = strtolower(str_replace(' ', '_', $stfResType));
+      }
+      $stfHeaders[] = $stfResType . '_min';
+      $stfHeaders[] = $stfResType . '_max';
+    }
+    $exportHeaders = array_merge($exportHeaders, $stfHeaders);
+
+    $facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario');
+    $facilityAddress = agFacilityHelper::facilityAddress($addressStandard, $primaryOnly, $contactType);
+    $facilityGeo = agFacilityHelper::facilityGeo($primaryOnly, $contactType);
+    $facilityEmail = agFacilityHelper::facilityEmail($primaryOnly, $contactType);
+    $facilityPhone = agFacilityHelper::facilityPhone($primaryOnly, $contactType);
+    $facilityStaffResource = agFacilityHelper::facilityStaffResource();
+
+    $facilityExportRecords = array();
+    foreach ($facilityGeneralInfo as $fac)
+    {
+      $entry = array();
+      $entry[] = $fac['f_facility_name'];
+      $entry[] = $fac['f_facility_code'];
+      $entry[] = $fac['frt_facility_resource_type_abbr'];
+      $entry[] = $fac['frs_facility_resource_status'];
+      $entry[] = $fac['fr_capacity'];
+      $entry[] = $fac['sfr_activation_sequence'];
+      $entry[] = $fac['fras_facility_resource_allocation_status'];
+      $entry[] = $fac['sfg_scenario_facility_group'];
+      $entry[] = $fac['fgt_facility_group_type'];
+      $entry[] = $fac['fgas_facility_group_allocation_status'];
+      $entry[] = $fac['sfg_activation_sequence'];
+
+      if (array_key_exists($fac['f_id'], $facilityEmail))
+      {
+        $priorityNumber = key($facilityEmail[$fac['f_id']][$contactType]);
+        $entry[] = $facilityEmail[$fac['f_id']][$contactType][$priorityNumber];
+      } else {
+        $entry[] = null;
+      }
+
+      if (array_key_exists($fac['f_id'], $facilityPhone))
+      {
+        $priorityNumber = key($facilityPhone[$fac['f_id']][$contactType]);
+        $entry[] = $facilityPhone[$fac['f_id']][$contactType][$priorityNumber];
+      } else {
+        $entry[] = null;
+      }
+
+      $addressId = null;
+      if (array_key_exists($fac['f_id'], $facilityAddress))
+      {
+        $priorityNumber = key($facilityAddress[ $fac['f_id'] ][$contactType]);
+        $addressId = $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber]['address_id'];
+
+        foreach($addressFormat as $addr)
+        {
+          if (array_key_exists($addr, $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber]))
+          {
+            $entry[] = $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber][$addr];
+          } else {
+            $entry[] = null;
+          }
+        }
+      } else {
+        $entry = $entry + array_fill(count($entry), count($addressFormat), NULL);
+      }
+
+      if (array_key_exists($fac['f_id'], $facilityGeo))
+      {
+        if (isset($addressId))
+        {
+          if (array_key_exists($addressId, $facilityGeo[ $fac['f_id'] ]))
+          {
+            $entry[] = $facilityGeo[$addressId]['longitude'];
+            $entry[] = $facilityGeo[$addressId]['latitude'];
+          } else {
+            $entry = $entry + array_fill(count($entry), 2, NULL);
+          }
+        } else {
+          $entry = $entry + array_fill(count($entry), 2, NULL);
+        }
+      } else {
+        $entry = $entry + array_fill(count($entry), 2, NULL);
+      }
+
+      foreach($staffResourceTypes as $stfResType)
+      {
+        if (array_key_exists($fac['sfr_id'], $facilityStaffResource))
+        {
+          if(array_key_exists($stfResType, $facilityStaffResource[ $fac['sfr_id'] ]))
+          {
+            $entry[] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['minimum staff'];
+            $entry[] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['maximum staff'];
+          } else {
+            $entry = $entry + array_fill(count($entry), 2, NULL);
+          }
+        } else {
+          $entry = $entry + array_fill(count($entry), 2, NULL);
+        }
+      }
+
+      $facilityExportRecords[] = $entry;
+    }
+
+  print_r($facilityExportRecords);
+
+
+
+
+
+//    /** Error reporting */
+//    error_reporting(E_ALL);
+//
+//    /** Include path **/
+//    ini_set('include_path', ini_get('include_path').';../Classes/');
+//
+//    /** PHPExcel */
+//    include 'PHPExcel.php';
+//
+//    /** PHPExcel_Writer_Excel2007.php */
+//    include 'PHPExcel/Writer/Excel2007.php';
+//
+//    // Create new PHPExcel object
+//    echo date('H:i:s') . "Create new PHPExcel Object \n";
+//    $objPHPExcel = new PHPExcel();
+//
+//
+//    // Set properties
+//    echo date('H:i:s') . " Set properties\n";
+//    $objPHPExcel->getProperties()->setCreator("Agasti 2.0");
+//    $objPHPExcel->getProperties()->setLastModifiedBy("Agasti 2.0");
+//    $objPHPExcel->getProperties()->setTitle("Facility List");
+//    $objPHPExcel->getProperties()->setSubject("Facility List");
+//    $objPHPExcel->getProperties()->setDescription("Facility List");
+//
+//    // Set active sheet and style format
+//    echo date('H:i:s') . " Set active sheet and style format\n";
+//    $objPHPExcel->setActiveSheetIndex(0);
+//    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Arial');
+//    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
+//
+//    // Add some data
+//    echo date('H:i:s') . " Add some data\n";
+//    $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'Hello');
+//    $objPHPExcel->getActiveSheet()->SetCellValue('B2', 'world!');
+//    $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Hello');
+//    $objPHPExcel->getActiveSheet()->SetCellValue('D2', 'world!');
+//
+//    // Rename sheet
+//    echo date('H:i:s') . " Rename sheet\n";
+//    $objPHPExcel->getActiveSheet()->setTitle('Simple');
+//
+//    // Save Excel 2007 file
+//    echo date('H:i:s') . " Write to Excel2007 format\n";
+//    $todaydate = date("d-m-y");
+//    $todaydate = $todaydate . '-' . date("H-i-s");
+//    $filename = 'Facilities';
+//    $filename = $filename . '-' . $todaydate;
+//    $filename = $filename . '.xlsx';
+//    $filePath = realpath(sys_get_temp_dir()) . '/' . $filename;
+//    echo $filePath;
+//    $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+//    $objWriter->save($filePath);
+//
+//    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'true');
+//    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $filename . '"');
+//
+//    $exportFile = file_get_contents($filePath);
+//
+//    $this->getResponse()->setContent($exportFile);
+//    $this->getResponse()->send();
+//    unlink($filePath);
+//
+//    // Echo done
+//    echo date('H:i:s') . " Done writing file.\r\n";
+  }
 }

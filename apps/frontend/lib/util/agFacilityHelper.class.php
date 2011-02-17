@@ -28,9 +28,7 @@ class agFacilityHelper {
     try {
       $facilityQuery = Doctrine_Query::create()
               ->select('f.id, f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
-//              ->addSelect('ec.email_contact')
               ->addSelect('e.id, s.id')
-//              ->addSelect('eac.id, s.id, e.id, eec.id')
               ->from('agFacility f')
               ->innerJoin('f.agSite s')
               ->innerJoin('s.agEntity e')
@@ -77,16 +75,16 @@ class agFacilityHelper {
       $facilityQueryString = $facilityQuery->getSqlQuery();
       echo "$facilityQueryString<BR />";
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      print_r($facilityInfo);
-//      return $facilityInfo;
+//      print_r($facilityInfo);
+      return $facilityInfo;
       
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
-//      return NULL;
+      return NULL;
     }
   }
 
-  public static function facilityAddress($primaryOnly=FALSE, $type=NULL, $countryFormat = 'United States')
+  public static function facilityAddress($addressStandard, $primaryOnly=FALSE, $type=NULL )
   {
     try {
       $facilityQuery = Doctrine_Query::create()
@@ -104,8 +102,9 @@ class agFacilityHelper {
               ->leftJoin('av.agAddressElement ae')
               ->innerJoin('ae.agAddressFormat af')
               ->innerJoin('af.agAddressStandard as')
-              ->innerJoin('as.agCountry c')
-              ->where('c.country=?', $countryFormat);
+              ->where('as.address_standard=?', $addressStandard);
+//              ->innerJoin('as.agCountry c')
+//              ->where('c.country=?', $countryFormat);
 //              ->orderBy('f.id, a.id, act.id, af.line_sequence, af.inline_sequence');
 //              ->orderBy('f.id, eac.address_id, eac.address_contact_type_id, af.line_sequence, af.inline_sequence');
 
@@ -161,12 +160,12 @@ class agFacilityHelper {
         }
       }
 
-      print_r($cleanFacilityInfo);
-//      return $cleanFacilityInfo;
+//      print_r($cleanFacilityInfo);
+      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
-//      return NULL;
+      return NULL;
     }
   }
 
@@ -201,11 +200,11 @@ class agFacilityHelper {
 
       if ($primaryOnly)
       {
-        $subQuery = 'Exists (SELECT eac2.id
+        $subQuery = 'EXISTS (SELECT eac2.id
                              FROM agEntityAddressContact eac2
                              WHERE eac2.entity_id = eac.entity_id
                                AND eac2.address_contact_type_id = eac.address_contact_type_id
-                             HAVING MIN(eac2.priority) = eac.priority';
+                             HAVING MIN(eac2.priority) = eac.priority)';
 
         if ($initialWhereClause)
         {
@@ -237,12 +236,12 @@ class agFacilityHelper {
         }
       }
 
-      print_r($cleanFacilityInfo);
-//      return $cleanFacilityInfo;
+//      print_r($cleanFacilityInfo);
+      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
-//      return NULL;
+      return NULL;
     }
   }
 
@@ -313,12 +312,12 @@ class agFacilityHelper {
         }
       }
 
-      print_r($cleanFacilityInfo);
-//      return $cleanFacilityInfo;
+//      print_r($cleanFacilityInfo);
+      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
-//      return NULL;
+      return NULL;
     }
   }
 
@@ -389,8 +388,8 @@ class agFacilityHelper {
         }
       }
 
-      print_r($cleanFacilityInfo);
-//      return $cleanFacilityInfo;
+//      print_r($cleanFacilityInfo);
+      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
@@ -426,8 +425,8 @@ class agFacilityHelper {
         }
       }
 
-      print_r($cleanFacilityInfo);
-//      return $cleanFacilityInfo;
+//      print_r($cleanFacilityInfo);
+      return $cleanFacilityInfo;
 
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
