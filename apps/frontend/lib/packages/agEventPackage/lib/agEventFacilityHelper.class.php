@@ -110,10 +110,85 @@ class agEventFacilityHelper
     return $results ;
   }
 
-  public static function activateZeroHourFacilityResources ($eventId, $activationTime)
+  public static function setEventShiftStatus ($eventShiftIds, $shiftStatusId, $releaseStaff = FALSE)
+  {
+    // change shift status
+    $shiftsQuery = Doctrine_Query::create()
+      ->update('agEventShift')
+        ->set('shift_status_id', $shiftStatusId)
+        ->whereIn('id', $eventShiftIds) ;
+
+    $eventShiftUpdates = $shiftsQuery->execute() ;
+
+    return $eventShiftUpdates ;
+
+    // release shift staff resources
+
+
+  }
+
+  public static function returnPriorShifts($time = NULL, $shiftChangeRestriction = FALSE)
+  {
+    
+  }
+
+  public static function releaseShiftStaff($eventShiftIds)
+  {
+
+  }
+  
+  public static function setFacilityActivationTime ($eventShiftId, $eventShiftStatusId, $releaseStaff = FALSE)
   {
 
 
+  }
+
+  public static function setEventZeroHour ($eventId, $activationTime)
+  {
+    // select event facility id
+
+    // cannot be staffed
+
+
+    // -- in a fac_activation_time_update --//
+    // disable shifts from before the zero hour
+
+    // enable shifts from before based on boolean y/n?
+    $query = Doctrine_Query::create()
+      ->select('efr.id')
+        ->addSelect('f.facility_name')
+        ->addSelect('f.facility_code')
+        ->addSelect('frt.facility_resource_type')
+        ->addSelect('ras.standby')
+        ->addSelect('ras.facility_resource_allocation_status')
+        ->addSelect('es.minutes_start_to_facility_activation')
+        ->addSelect('f.id')
+        ->addSelect('fr.id')
+        ->addSelect('frt.id')
+        ->addSelect('ras.id')
+        ->addSelect('ers.id')
+        ->addSelect('es.id')
+      ->from('agEventFacilityResource efr')
+        ->innerJoin('efr.agFacilityResource fr')
+        ->innerJoin('fr.agFacilityResourceStatus frs')
+        ->innerJoin('fr.agFacilityResourceType frt')
+        ->innerJoin('fr.agFacility f')
+        ->innerJoin('efr.agEventFacilityResourceStatus ers')
+        ->innerJoin('ers.agFacilityResourceAllocationStatus ras')
+        ->innerJoin('efr.agEventFacilityGroup efg')
+        ->innerJoin('efg.agEventFacilityGroupStatus egs')
+        ->innerJoin('egs.agFacilityGroupAllocationStatus gas')
+        ->leftJoin('efr.agEventFacilityResourceActivationTime efat')
+        ->innerJoin('efr.agEventShift es')
+      ->whereIn('ers.id', $resourceStatuses)
+        ->andWhereIn('egs.id', $groupStatuses)
+        ->andWhereIn('es.id', $shifts)
+        ->andWhere('efat.id IS NULL')
+        ->andWhere('frs.is_available = ?', true)
+        ->andWhere('gas.active = ?', true)
+        ->andWhere('(ras.allocatable = ? OR ras.committed = ?)', array(true, true))
+        ->andWhere('ras.staffed = ?', false)
+        ->andWhere('efg.event_id = ?', $eventId) ;
     $results = 'I don\'t do anything yet!' ;
     return $results;
   }
