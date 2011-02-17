@@ -4,7 +4,7 @@
  **/
 
 $(document).ready(function() {
-	var $dialog = $('<div id="modalContent"></div')
+	var $dialog = $('<div id="modalContent"></div>')
 		.dialog({
 			autoOpen: false,
                         resizable: false,

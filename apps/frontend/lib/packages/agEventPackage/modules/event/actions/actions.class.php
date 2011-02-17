@@ -19,6 +19,7 @@ class eventActions extends agActions
 
   public static $event_id;
   public static $eventName;
+  public static $event;
 
   public function executeIndex(sfWebRequest $request)
   {
@@ -113,6 +114,17 @@ class eventActions extends agActions
       }
       //TODO step through to check and see if the second if is needed
     }
+    if ($request->getParameter('event')) {
+            $this->event = Doctrine_Query::create()
+              ->select()
+              ->from('agEvent')
+              ->where('event_name = ?', urldecode($request->getParameter('event')))
+              ->execute()->getFirst();
+            
+      $this->event_id = $this->event->id;
+      //TODO step through to check and see if the second if is needed
+    }
+
   }
 
   public function executeMeta(sfWebRequest $request)
@@ -316,21 +328,12 @@ class eventActions extends agActions
 
   public function executeActive(sfWebRequest $request)
   {
-    $this->event_id = $request->getParameter('id');
-    $this->eventName = Doctrine::getTable('agEvent')
-            ->findByDql('id = ?', $this->event_id)
-            ->getFirst()->event_name;
+    $this->setEventBasics($request);
   }
 
   public function executeStaff(sfWebRequest $request)
   {
-    /**
-     * @todo turn this into a function, add two parameters to this class called event_id and eventName that are set/gotten by
-     */
-    $this->event_id = $request->getParameter('id');
-    $this->eventName = Doctrine::getTable('agEvent')
-            ->findByDql('id = ?', $this->event_id)
-            ->getFirst()->event_name;
+    $this->setEventBasics($request);
   }
 
   public function executeStaffin(sfWebRequest $request)
@@ -355,19 +358,16 @@ class eventActions extends agActions
 
   public function executeListgroups(sfWebRequest $request)
   {
+    $this->setEventBasics($request);
     $query = Doctrine_Core::getTable('agEventFacilityGroup')
             ->createQuery('a')
             ->select('a.*, afr.*, afgt.*, fr.*')
             ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
 
     // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
-    if ($request->hasParameter('event')) {
-      $this->event = Doctrine_Query::create()
-              ->select()
-              ->from('agEvent')
-              ->where('event_name = ?', urldecode($request->getParameter('event')))
-              ->execute()->getFirst();
-      $query->where('a.event_id = ?', $this->event->id);
+    if ($this->event != "") {
+
+      $query->where('a.event_id = ?', $this->event_id);
     }
     $facilityGroupArray = array();
     $this->ag_event_facility_groups = $query->execute();
