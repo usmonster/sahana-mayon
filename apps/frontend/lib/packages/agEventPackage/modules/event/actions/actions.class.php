@@ -91,7 +91,7 @@ class eventActions extends agActions
               ->findByDql('id = ?', $this->scenario_id)
               ->getFirst()->scenario;
 
-      $this->checkResults = $this->preMigrationCheck($this->scenario_id);
+      $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
 
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
