@@ -1,4 +1,3 @@
-<?php echo javascript_include_tag('agModal.js'); ?>
 <form action="<?php echo url_for('event/groupdetail?event=' . urlencode($eventFacilityGroup->getAgEvent()->event_name) . '&group=' . urlencode($eventFacilityGroup->event_facility_group)) . (isset($XmlHttpRequest) ? '" class="modalForm"' : ''); ?>" name="group_allocation_status" id="group_allocation_status" method="post">
   <label for="group_allocation_status" style="font-weight: bold; color: #848484" title="Change to update <?php echo $eventFacilityGroup->event_facility_group;?> status">Current Group Status:</label>
   <?php 
@@ -37,4 +36,5 @@
       }
     ?>
   </tbody>
+<?php echo javascript_include_tag('agModal.js'); ?>
 </table>

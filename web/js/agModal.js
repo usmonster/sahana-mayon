@@ -44,8 +44,8 @@ $(document).ready(function() {
   });
    $('div#modalContent').bind('dialogclose', function(event) {
      var path = window.location.pathname;
-     $('#tableContainer').load(window.location.pathname + ' .singleTable');
-
+   $('.modalReloadable').load(window.location.pathname + ' .modalReloadable > ');
+     location.reload();
    });
 });
 
