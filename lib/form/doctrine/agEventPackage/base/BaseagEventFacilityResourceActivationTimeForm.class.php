@@ -17,7 +17,7 @@ abstract class BaseagEventFacilityResourceActivationTimeForm extends BaseFormDoc
     $this->setWidgets(array(
       'id'                         => new sfWidgetFormInputHidden(),
       'event_facility_resource_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agEventFacilityResource'), 'add_empty' => false)),
-      'activation_time'            => new sfWidgetFormDateTime(),
+      'activation_time'            => new sfWidgetFormInputText(),
       'created_at'                 => new sfWidgetFormDateTime(),
       'updated_at'                 => new sfWidgetFormDateTime(),
     ));
@@ -25,7 +25,7 @@ abstract class BaseagEventFacilityResourceActivationTimeForm extends BaseFormDoc
     $this->setValidators(array(
       'id'                         => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'event_facility_resource_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agEventFacilityResource'))),
-      'activation_time'            => new sfValidatorDateTime(),
+      'activation_time'            => new sfValidatorInteger(),
       'created_at'                 => new sfValidatorDateTime(),
       'updated_at'                 => new sfValidatorDateTime(),
     ));

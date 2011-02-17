@@ -7,12 +7,12 @@
  * 
  * @property integer $id
  * @property integer $event_facility_resource_id
- * @property timestamp $activation_time
+ * @property integer $activation_time
  * @property agEventFacilityResource $agEventFacilityResource
  * 
  * @method integer                               getId()                         Returns the current record's "id" value
  * @method integer                               getEventFacilityResourceId()    Returns the current record's "event_facility_resource_id" value
- * @method timestamp                             getActivationTime()             Returns the current record's "activation_time" value
+ * @method integer                               getActivationTime()             Returns the current record's "activation_time" value
  * @method agEventFacilityResource               getAgEventFacilityResource()    Returns the current record's "agEventFacilityResource" value
  * @method agEventFacilityResourceActivationTime setId()                         Sets the current record's "id" value
  * @method agEventFacilityResourceActivationTime setEventFacilityResourceId()    Sets the current record's "event_facility_resource_id" value
@@ -40,9 +40,10 @@ abstract class BaseagEventFacilityResourceActivationTime extends sfDoctrineRecor
              'notnull' => true,
              'length' => 4,
              ));
-        $this->hasColumn('activation_time', 'timestamp', null, array(
-             'type' => 'timestamp',
+        $this->hasColumn('activation_time', 'integer', 5, array(
+             'type' => 'integer',
              'notnull' => true,
+             'length' => 5,
              ));
 
 

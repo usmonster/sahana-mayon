@@ -14,14 +14,14 @@ abstract class BaseagEventFacilityResourceActivationTimeFormFilter extends BaseF
   {
     $this->setWidgets(array(
       'event_facility_resource_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agEventFacilityResource'), 'add_empty' => true)),
-      'activation_time'            => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
+      'activation_time'            => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'created_at'                 => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'updated_at'                 => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
     ));
 
     $this->setValidators(array(
       'event_facility_resource_id' => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agEventFacilityResource'), 'column' => 'id')),
-      'activation_time'            => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
+      'activation_time'            => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'created_at'                 => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'updated_at'                 => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
     ));
@@ -45,7 +45,7 @@ abstract class BaseagEventFacilityResourceActivationTimeFormFilter extends BaseF
     return array(
       'id'                         => 'Number',
       'event_facility_resource_id' => 'ForeignKey',
-      'activation_time'            => 'Date',
+      'activation_time'            => 'Number',
       'created_at'                 => 'Date',
       'updated_at'                 => 'Date',
     );

@@ -7,7 +7,7 @@
  * 
  * @property integer $id
  * @property string $event_name
- * @property timestamp $zero_hour
+ * @property integer $zero_hour
  * @property Doctrine_Collection $agAffectedArea
  * @property Doctrine_Collection $agEventScenario
  * @property Doctrine_Collection $agEventDescription
@@ -24,7 +24,7 @@
  * 
  * @method integer             getId()                    Returns the current record's "id" value
  * @method string              getEventName()             Returns the current record's "event_name" value
- * @method timestamp           getZeroHour()              Returns the current record's "zero_hour" value
+ * @method integer             getZeroHour()              Returns the current record's "zero_hour" value
  * @method Doctrine_Collection getAgAffectedArea()        Returns the current record's "agAffectedArea" collection
  * @method Doctrine_Collection getAgEventScenario()       Returns the current record's "agEventScenario" collection
  * @method Doctrine_Collection getAgEventDescription()    Returns the current record's "agEventDescription" collection
@@ -76,8 +76,9 @@ abstract class BaseagEvent extends sfDoctrineRecord
              'notnull' => true,
              'length' => 64,
              ));
-        $this->hasColumn('zero_hour', 'timestamp', null, array(
-             'type' => 'timestamp',
+        $this->hasColumn('zero_hour', 'integer', 5, array(
+             'type' => 'integer',
+             'length' => 5,
              ));
 
 

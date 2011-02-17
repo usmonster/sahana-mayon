@@ -37,7 +37,7 @@ agEvent:
       type: string(64)
       notnull: true
     zero_hour:
-      type: timestamp
+      type: integer(5)
   indexes:
     agEvent_unq:
       fields: [event_name]
@@ -400,17 +400,9 @@ agEventShift:
     task_length_minutes:
       type: integer(4)
       notnull: true
-    start_time:
-      type: timestamp
-    end_time:
-      type: timestamp
     break_length_minutes:
       type: integer(4)
       notnull: true
-    break_start:
-      type: timestamp
-    break_end:
-      type: timestamp
     task_id:
       type: integer(2)
       notnull: true
@@ -656,7 +648,7 @@ agEventFacilityResourceActivationTime:
       type: integer(4)
       notnull: true
     activation_time:
-      type: timestamp
+      type: integer(5)
       notnull: true
   indexes:
     agEventFacilityResourceActivationTime_unq:

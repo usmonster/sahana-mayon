@@ -12,11 +12,7 @@
  * @property integer $maximum_staff
  * @property integer $minutes_start_to_facility_activation
  * @property integer $task_length_minutes
- * @property timestamp $start_time
- * @property timestamp $end_time
  * @property integer $break_length_minutes
- * @property timestamp $break_start
- * @property timestamp $break_end
  * @property integer $task_id
  * @property integer $shift_status_id
  * @property integer $staff_wave
@@ -36,11 +32,7 @@
  * @method integer                 getMaximumStaff()                         Returns the current record's "maximum_staff" value
  * @method integer                 getMinutesStartToFacilityActivation()     Returns the current record's "minutes_start_to_facility_activation" value
  * @method integer                 getTaskLengthMinutes()                    Returns the current record's "task_length_minutes" value
- * @method timestamp               getStartTime()                            Returns the current record's "start_time" value
- * @method timestamp               getEndTime()                              Returns the current record's "end_time" value
  * @method integer                 getBreakLengthMinutes()                   Returns the current record's "break_length_minutes" value
- * @method timestamp               getBreakStart()                           Returns the current record's "break_start" value
- * @method timestamp               getBreakEnd()                             Returns the current record's "break_end" value
  * @method integer                 getTaskId()                               Returns the current record's "task_id" value
  * @method integer                 getShiftStatusId()                        Returns the current record's "shift_status_id" value
  * @method integer                 getStaffWave()                            Returns the current record's "staff_wave" value
@@ -59,11 +51,7 @@
  * @method agEventShift            setMaximumStaff()                         Sets the current record's "maximum_staff" value
  * @method agEventShift            setMinutesStartToFacilityActivation()     Sets the current record's "minutes_start_to_facility_activation" value
  * @method agEventShift            setTaskLengthMinutes()                    Sets the current record's "task_length_minutes" value
- * @method agEventShift            setStartTime()                            Sets the current record's "start_time" value
- * @method agEventShift            setEndTime()                              Sets the current record's "end_time" value
  * @method agEventShift            setBreakLengthMinutes()                   Sets the current record's "break_length_minutes" value
- * @method agEventShift            setBreakStart()                           Sets the current record's "break_start" value
- * @method agEventShift            setBreakEnd()                             Sets the current record's "break_end" value
  * @method agEventShift            setTaskId()                               Sets the current record's "task_id" value
  * @method agEventShift            setShiftStatusId()                        Sets the current record's "shift_status_id" value
  * @method agEventShift            setStaffWave()                            Sets the current record's "staff_wave" value
@@ -122,22 +110,10 @@ abstract class BaseagEventShift extends sfDoctrineRecord
              'notnull' => true,
              'length' => 4,
              ));
-        $this->hasColumn('start_time', 'timestamp', null, array(
-             'type' => 'timestamp',
-             ));
-        $this->hasColumn('end_time', 'timestamp', null, array(
-             'type' => 'timestamp',
-             ));
         $this->hasColumn('break_length_minutes', 'integer', 4, array(
              'type' => 'integer',
              'notnull' => true,
              'length' => 4,
-             ));
-        $this->hasColumn('break_start', 'timestamp', null, array(
-             'type' => 'timestamp',
-             ));
-        $this->hasColumn('break_end', 'timestamp', null, array(
-             'type' => 'timestamp',
              ));
         $this->hasColumn('task_id', 'integer', 2, array(
              'type' => 'integer',
