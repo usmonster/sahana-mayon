@@ -132,9 +132,25 @@ class agEventFacilityHelper
     
   }
 
+  /**
+   * Execute a delete query to release allocated staff from the passed event shift ids
+   *
+   * @param array $eventShiftIds A single-dimension array of all event shift id's from which
+   * staff can be released
+   * @return integer The number of rows affected
+   */
   public static function releaseShiftStaff($eventShiftIds)
   {
+    $query = Doctrine_Query::create()
+      ->delete('agEventStaffShift ess')
+        ->where('NOT EXISTS(
+            SELECT essi.id
+              FROM agEventStaffSignIn essi
+              WHERE essi.event_staff_shift_id = ess.id)')
+          ->andWhereIn('ess.event_shift_id', $eventShiftIds) ;
 
+    $results = $query->execute() ;
+    return $results ;
   }
   
   public static function setFacilityActivationTime ($eventShiftId, $eventShiftStatusId, $releaseStaff = FALSE)

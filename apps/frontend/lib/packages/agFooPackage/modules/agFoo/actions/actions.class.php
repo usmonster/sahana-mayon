@@ -62,8 +62,8 @@ class agFooActions extends agActions
 
   public function executeShow(sfWebRequest $request)
   {
-    //$results = agEventFacilityHelper::setEventShiftStatus(array(1,2,3,4),4) ;
-    print_r(agGlobal::$param['shift_change_restriction']) ;
+    $results = agEventFacilityHelper::setEventShiftStatus(array(1,2,3,4),4) ;
+    print_r($results) ;
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_foo);
