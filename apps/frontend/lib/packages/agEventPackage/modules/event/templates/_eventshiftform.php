@@ -1,5 +1,6 @@
 <?php use_stylesheets_for_form($eventshiftform) ?>
 <?php use_javascripts_for_form($eventshiftform) ?>
+<?php echo javascript_include_tag('agModal.js'); ?>
 <script type="text/javascript">
      $.get(
     "test1.php",

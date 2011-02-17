@@ -200,7 +200,7 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
 //CREATE  / UPDATE
-    if ($request->isMethod(sfRequest::POST)) {
+     if ($request->isMethod(sfRequest::POST)) {
       if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
         $this->eventshiftform = new agEventShiftForm();
       } elseif ($request->getParameter('shiftid') && is_int($request->getParameter('shiftid'))) {
@@ -208,17 +208,15 @@ class eventActions extends agActions
                 ->findByDql('id = ?', $request->getParameter('shiftid'))
                 ->getFirst();
         $this->eventshiftform = new agEventShiftForm($ag_event_shift);
-      }
-      elseif($request->getParameter('delete'))
-      {
+      } elseif ($request->getParameter('delete')) {
 //DELETE
       }
       $this->eventshiftform->bind($request->getParameter($this->eventshiftform->getName()), $request->getFiles($this->eventshiftform->getName()));
       if ($this->eventshiftform->isValid()) {
         $ag_event_shift = $this->eventshiftform->save();
         $this->generateUrl('event_shifts', array('module' => 'event',
-'action' => 'shifts', 'id' => $this->event_id, 'shiftid' => $ag_event_shift->getId()));
- //       $this->redirect('event/shifts?id=' . $this->event_id . '&shiftid=' . $ag_event_shift->getId());
+          'action' => 'shifts', 'id' => $this->event_id, 'shiftid' => $ag_event_shift->getId()));
+        //       $this->redirect('event/shifts?id=' . $this->event_id . '&shiftid=' . $ag_event_shift->getId());
       }
       $this->redirect('event/shifts');
     } else {
@@ -226,7 +224,7 @@ class eventActions extends agActions
       if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
         $this->eventshiftform = new agEventShiftForm();
         $this->setTemplate('editshift');
-      } elseif ($request->getParameter('shiftid') && is_int($request->getParameter('shiftid'))) {
+      } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
 
         $ag_event_shift = Doctrine_Core::getTable('agEventShift')
                 ->findByDql('id = ?', $request->getParameter('shiftid'))
@@ -236,54 +234,57 @@ class eventActions extends agActions
         $this->setTemplate('editshift');
       } else {
         ////list the existing shift templates
-
-        $arrayQuery = Doctrine_Core::getTable('agEventShift')
-                ->createQuery('es')
-                ->select('es.*, e.id, e.event_name, efg.id, efg.event_facility_group, efr.id')
-                ->from('agEventShift es')
-                ->leftJoin('es.agEventFacilityResource AS efr')
-                ->leftJoin('efr.agEventFacilityGroup AS efg')
-                ->leftJoin('efg.agEvent AS e')
-                ->where('e.id = ?', $this->event_id)
-                ->orderBy('e.event_name, efg.event_facility_group, efr.facility_resource_id');
-
-        $queryString = $arrayQuery->getSqlQuery();
-        $results = $arrayQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
-
-        $this->eventShifts = array();
-        foreach ($results as $eventShifts) {
-          $eventShiftId = $eventShifts['es_id'];
-
-          $newRecord = array('event' => $eventShifts['e_event_name'],
-            'event_facility_group' => $eventShifts['efg_event_facility_group'],
-            'facility_resource_id' => $eventShifts['es_event_facility_resource_id'],
-            'staff_resource_type_id' => $eventShifts['es_staff_resource_type_id'],
-            'task_id' => $eventShifts['es_task_id'],
-            'task_length_minutes' => $eventShifts['es_task_length_minutes'],
-            'break_length_minutes' => $eventShifts['es_break_length_minutes'],
-            'minutes_start_to_facility_activation' => $eventShifts['es_minutes_start_to_facility_activation'],
-            'minimum_staff' => $eventShifts['es_minimum_staff'],
-            'maximum_staff' => $eventShifts['es_maximum_staff'],
-            'staff_wave' => $eventShifts['es_staff_wave'],
-            'shift_status_id' => $eventShifts['es_shift_status_id'],
-            'deployment_algorithm_id' => $eventShifts['es_deployment_algorithm_id']
-          );
-          if (array_key_exists($eventShiftId, $this->eventShifts)) {
-            $tempArray = $this->eventShifts[$eventShiftId];
-            $newArray = $tempArray . $newRecord;
-            $this->eventShifts[$eventShiftId] = $newArray;
-          } else {
-            $this->eventShifts[$eventShiftId] = $newRecord;
-          }
-        }
+//        $arrayQuery = Doctrine_Core::getTable('agEventShift')
+//                ->createQuery('es')
+//                ->select('es.*, e.id, e.event_name, efg.id, efg.event_facility_group, efr.id')
+//                ->from('agEventShift es')
+//                ->leftJoin('es.agEventFacilityResource AS efr')
+//                ->leftJoin('efr.agEventFacilityGroup AS efg')
+//                ->leftJoin('efg.agEvent AS e')
+//                ->where('e.id = ?', $this->event_id)
+//                ->orderBy('e.event_name, efg.event_facility_group, efr.facility_resource_id');
+//
+//        $queryString = $arrayQuery->getSqlQuery();
+//        $results = $arrayQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
+//
+//        $this->eventShifts = array();
+//        foreach ($results as $eventShifts) {
+//          $eventShiftId = $eventShifts['es_id'];
+//
+//          $newRecord = array('event' => $eventShifts['e_event_name'],
+//            'event_facility_group' => $eventShifts['efg_event_facility_group'],
+//            'facility_resource_id' => $eventShifts['es_event_facility_resource_id'],
+//            'staff_resource_type_id' => $eventShifts['es_staff_resource_type_id'],
+//            'task_id' => $eventShifts['es_task_id'],
+//            'task_length_minutes' => $eventShifts['es_task_length_minutes'],
+//            'break_length_minutes' => $eventShifts['es_break_length_minutes'],
+//            'minutes_start_to_facility_activation' => $eventShifts['es_minutes_start_to_facility_activation'],
+//            'minimum_staff' => $eventShifts['es_minimum_staff'],
+//            'maximum_staff' => $eventShifts['es_maximum_staff'],
+//            'staff_wave' => $eventShifts['es_staff_wave'],
+//            'shift_status_id' => $eventShifts['es_shift_status_id'],
+//            'deployment_algorithm_id' => $eventShifts['es_deployment_algorithm_id']
+//          );
+//          if (array_key_exists($eventShiftId, $this->eventShifts)) {
+//            $tempArray = $this->eventShifts[$eventShiftId];
+//            $newArray = $tempArray . $newRecord;
+//            $this->eventShifts[$eventShiftId] = $newArray;
+//          } else {
+//            $this->eventShifts[$eventShiftId] = $newRecord;
+//          }
+//        }
 //the above query and return ($this->eventShifts) ... ?! used for what?
 //    $this->facilityResourceInfo = agFacilityResource::facilityResourceInfo();
 
         $query = Doctrine_Query::create()
-                ->select('es.*, e.id, e.event_name, efg.id, efg.event_facility_group, efr.id')
+                ->select('es.*, efr.*, efg.id, efg.event_facility_group, e.*, af.*, fr.*, frt.*, srt.*, ess.*, est.*')
                 ->from('agEventShift as es')
+                ->leftJoin('es.agEventStaffShift ess')
+                ->leftJoin('ess.agEventStaff est')
+                ->leftJoin('es.agStaffResourceType srt')
                 ->leftJoin('es.agEventFacilityResource AS efr')
                 ->leftJoin('efr.agEventFacilityGroup AS efg')
+                ->leftJoin('efr.agFacilityResource fr, fr.agFacility af, fr.agFacilityResourceType frt')
                 ->leftJoin('efg.agEvent AS e')
                 ->where('e.id = ?', $this->event_id);
 
