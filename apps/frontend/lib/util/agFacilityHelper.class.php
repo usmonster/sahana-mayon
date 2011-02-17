@@ -421,7 +421,7 @@ class agFacilityHelper {
           $newArray = $tempArray + array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
           $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = $newArray;
         } else {
-          $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum' => $fac['fstf_maximum_staff']));
+          $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
         }
       }
 
