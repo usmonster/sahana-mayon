@@ -62,7 +62,7 @@ class agFooActions extends agActions
 
   public function executeShow(sfWebRequest $request)
   {
-    $results = agEventFacilityHelper::setEventShiftStatus(array(1,2,3,4),4) ;
+    $results = agEventFacilityHelper::returnCurrentFacilityResourceShifts(1) ;
     print_r($results) ;
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));

@@ -127,11 +127,6 @@ class agEventFacilityHelper
 
   }
 
-  public static function returnPriorShifts($time = NULL, $shiftChangeRestriction = FALSE)
-  {
-    
-  }
-
   /**
    * Execute a delete query to release allocated staff from the passed event shift ids
    *
@@ -152,10 +147,50 @@ class agEventFacilityHelper
     $results = $query->execute() ;
     return $results ;
   }
-  
-  public static function setFacilityActivationTime ($eventShiftId, $eventShiftStatusId, $releaseStaff = FALSE)
-  {
 
+  /**
+   * Method returns shifts that exist prior to the $time parameter (defaulted to CURRENT_TIMESTAMP)
+   * with an optional parameter to include or exclude the shift_change_restriction as part of
+   * the calculation
+   *
+   * @param <type> $eventId
+   * @param <type> $shiftChangeRestriction
+   * @param <type> $time
+   */
+  public static function returnPriorShiftTimes ($eventId, $shiftChangeRestriction = FALSE, $time = NULL)
+  {
+    // convert our start time to unix timestamp or set default if null
+    $timestamp = agDateTimeHelper::defaultTimestampFormat($time) ;
+
+    // convert our $shiftChangeRestriction to seconds
+    if ($shiftChangeRestriction)
+    {
+      $shiftOffset = strtotime(agGlobal::$param('shift_change_restriction'), 0) ;
+    }
+    else
+    {
+      $shiftOffset = 0 ;
+    }
+
+    // get prior and disabled staff shifts
+    $query = Doctrine_Query::create()
+      ->select('es.id')
+          ->addSelect('es.event_facility_resource_id')
+        ->from('agEventShift es')
+          ->innerJoin('agEventFacilityResource efr')
+          ->innerJoin('agEventFacilityResourceActivationTime')
+        ->where('') ;
+
+    //
+  }
+
+  public static function setFacilityActivationTime ($eventFacilityResourceIds, $activationTime, $releaseStaff = FALSE)
+  {
+    // change the status of shifts that will not be used (due to blackout windows)
+
+    // insert new activation times
+
+    // update existing activation times (excluding those that cannot be changed)
 
   }
 
@@ -374,19 +409,20 @@ public static function returnCurrentEventStatus($eventId)
   {
     // convert our start time to unix timestamp or set default if null
     $timestamp = agDateTimeHelper::defaultTimestampFormat($time) ;
-    $mysqlTime = agDateTimeHelper::timestampToMySql($timestamp) ;
-
-    $query = new Doctrine_RawSql() ;
-    $query->addComponent('es', 'agEventShift es')
-      ->select('{es.id}')
-        ->addSelect('{es.facility_resource_id}')
-      ->from('ag_event_shift es')
-        ->innerJoin('ag_event_facility_resource efr ON es.event_facility_resource_id = efr.id')
-        ->innerJoin('ag_event_facility_group efg ON efr.event_facility_group_id = efg.id')
-        ->leftJoin('ag_event_facility_resource_activation_time efrat ON efr.id = efrat.event_facility_resource_id')
-      ->where('efg.event_id = ?', $eventId)
-        ->andWhere('DATE_ADD(efrat.activation_time, INTERVAL es.minutes_start_to_facility_activation MINUTE) <= TIMESTAMP(?)', $mysqlTime)
-        ->andWhere('DATE_ADD(efrat.activation_time, INTERVAL (es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes) MINUTE) >= TIMESTAMP(?)', $mysqlTime) ;
+    
+    $query = Doctrine_Query::create()
+      ->select('es.id')
+          ->addSelect('es.event_facility_resource_id')
+        ->from('agEventShift es')
+          ->innerJoin('es.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityGroup efg')
+          ->leftJoin('efr.agEventFacilityResourceActivationTime efrat')
+        ->where('efg.event_id = ?', $eventId)
+          ->andWhere('(efrat.activation_time +
+            (60 * es.minutes_start_to_facility_activation)) <= ?', $timestamp)
+          ->andWhere('(efrat.activation_time +
+            (60 * (es.minutes_start_to_facility_activation +
+            (es.task_length_minutes + es.break_length_minutes)))) >= ?', $timestamp) ;
 
     $results = $query->execute(array(), 'key_value_array');
     return $results;

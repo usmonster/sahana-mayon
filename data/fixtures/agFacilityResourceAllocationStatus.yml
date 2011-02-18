@@ -9,8 +9,8 @@ agFacilityResourceAllocationStatus:
     allocatable: 1
     standby: 0
   committed:
-    facility_resource_allocation_status: committed to be activation
-    description: ready / awaiting activation / committed
+    facility_resource_allocation_status: committed
+    description: Facility resource is committed and ready / awaiting activation.
     committed: 1
     staffed: 0
     servicing_clients: 0
