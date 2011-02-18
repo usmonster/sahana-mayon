@@ -102,7 +102,7 @@ class AgImportXLS
       $this->events[] = array("type" => "ERROR", "message" => "{$this->fileInfo['basename']} is not Microsoft Excel 2003 \".xls\" workbook.");
     } else {
       $this->events[] = array("type" => "INFO", "message" => "Opening import file for reading.");
-      $xlsObj = new Spreadsheet_Excel_Reader($importFile);
+      $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
 
       // Get some info about the workbook's composition
       $numSheets = count($xlsObj->sheets);
