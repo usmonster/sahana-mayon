@@ -14,7 +14,6 @@ class navComponents extends sfComponents
     $this->toplinks = sfConfig::get('app_menu_top');
     $this->secondlinks = sfConfig::get('app_menu_children');
     $this->thirdlinks = sfConfig::get('app_menu_grandchildren');
-    $b = 3;
     //
 
     foreach ($this->toplinks as $item) {
@@ -35,6 +34,14 @@ class navComponents extends sfComponents
     }
 
     foreach ($this->thirdlinks as $item) {
+      if(preg_match('/^[a-z0-9\/\:]*\/\:[a-z0-9]+/i', $item['route'])) {
+        $goop = explode('/', $item['route']);
+        foreach($goop as $g){
+          if(preg_match('/^\:\w+/', $g)) {
+            $matches[] = $g;
+          }
+        }
+      }
       $secondlink = $this->secondlinks[$item['parent']];
       if (isset($secondlink)) {
         $topname = $this->toplinks[$secondlink['parent']]['label'];
@@ -42,9 +49,12 @@ class navComponents extends sfComponents
         $parent->addChild($item['label'], $item['route'], array('class' => 'menu3'));
       }
     }
-
-
+      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+      $task = new sfAppRoutesTask($this->dispatcher, new sfFormatter());
+      $task->run(array('application' => 'frontend'), array());
+      $routing = new sfPatternRouting($this->dispatcher);
+      $routes = $routing->getRoutes();
+//      $x = sfRouting::getRoutes();
     $this->menu = $menu;
   }
-
 }
