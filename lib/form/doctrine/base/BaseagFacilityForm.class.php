@@ -37,7 +37,6 @@ abstract class BaseagFacilityForm extends BaseFormDoctrine
     $this->validatorSchema->setPostValidator(
       new sfValidatorAnd(array(
         new sfValidatorDoctrineUnique(array('model' => 'agFacility', 'column' => array('site_id'))),
-        new sfValidatorDoctrineUnique(array('model' => 'agFacility', 'column' => array('facility_name'))),
         new sfValidatorDoctrineUnique(array('model' => 'agFacility', 'column' => array('facility_code'))),
       ))
     );

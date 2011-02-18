@@ -83,19 +83,18 @@ abstract class BaseagFacility extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
-        $this->index('agFacility_facilityName_unq', array(
-             'fields' => 
-             array(
-              0 => 'facility_name',
-             ),
-             'type' => 'unique',
-             ));
         $this->index('agFacility_facilityCode_unq', array(
              'fields' => 
              array(
               0 => 'facility_code',
              ),
              'type' => 'unique',
+             ));
+        $this->index('IX_agFacility_facilityName', array(
+             'fields' => 
+             array(
+              0 => 'facility_name',
+             ),
              ));
     }
 

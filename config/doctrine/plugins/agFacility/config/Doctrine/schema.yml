@@ -76,12 +76,11 @@ agFacility:
     agFacility_siteId_unq:
       fields: [site_id]
       type: unique
-    agFacility_facilityName_unq:
-      fields: [facility_name]
-      type: unique
     agFacility_facilityCode_unq:
       fields: [facility_code]
       type: unique
+    IX_agFacility_facilityName:
+      fields: [facility_name]
   relations:
     agSite:
       local: site_id
