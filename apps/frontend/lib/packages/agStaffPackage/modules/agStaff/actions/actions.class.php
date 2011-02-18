@@ -49,7 +49,7 @@ class agStaffActions extends agActions
 //    );
     $query = Doctrine::getTable('agStaff')
             ->createQuery('a')
-            ->select('p.*, s.*, namejoin.*, name.*, nametype.*, stfrsco.*, o.organization agency, stfrsc.staff_resource_type_id, ect1.email_contact_type work_email, ect2.email_contact_type home_email')
+            ->select('p.*, s.*, namejoin.*, name.*, nametype.*, stfrsco.*, o.organization agency, stfrsc.staff_resource_type_id, e.id, ememail1.id, ec1.id, ect1.email_contact_type work_email, ememail2.id, ec2.id, ect2.email_contact_type home_email')
             ->from(
                 'agStaff s, s.agPerson p,
               p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
@@ -59,7 +59,7 @@ class agStaffActions extends agActions
               e.agEntityEmailContact ememail1, ememail1.agEmailContact ec1, ec1.agEmailContactType ect1,
               e.agEntityEmailContact ememail2, ememail2.agEmailContact ec2, ec2.agEmailContactType ect2'
             )
-            ->Where('ss.staff_status=?', 'active');
+            ->where('ss.staff_status=?', 'active');
 
     $this->pager = new sfDoctrinePager('agStaff', 20);
     /**

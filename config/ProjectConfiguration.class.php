@@ -67,7 +67,6 @@ class ProjectConfiguration extends sfProjectConfiguration
         )
     );
 
-
     //packages are specific to the application, though not core and should function standalone
     $this->enablePackages(
         array('agFooPackage',
@@ -79,8 +78,13 @@ class ProjectConfiguration extends sfProjectConfiguration
           'agPetPackage',
           'agEventPackage')
     );
-    // Use the line below to enable indexing by getting Symfony to pick up lucene.yml from the module(s) passed to enableModules();
+
+    // enables indexing by getting symfony to see lucene.yml for each module in the array
     $this->enableModules(array('scenario', 'facility'));
+    
+    // registers event listeners
+    $this->dispatcher->connect('import.facility_file_ready', array('AgImportXLS', 'processFile'));
+
   }
 
   /**

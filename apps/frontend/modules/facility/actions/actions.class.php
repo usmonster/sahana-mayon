@@ -210,7 +210,11 @@ class facilityActions extends agActions
     move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"]);
     $this->importPath = $uploadDir . $uploadedFile["name"];
 
-    $import = new agImportXLS();
+    // fires event so listener will process the file (see ProjectConfiguration.class.php)
+    $this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready'));
+    // TODO: eventually use this ^^^ to replace this vvv.
+
+    $import = new AgImportXLS();
     $returned = $import->createTempTable();
 
     $import->processImport($this->importPath);

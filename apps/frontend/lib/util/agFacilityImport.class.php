@@ -26,7 +26,7 @@
  * @todo Add debug levels feature
  * @todo Improve Doctrine MySQL PDO exception reporting
  */
-class agImportXLS
+class AgImportXLS
 {
 
   public $importFacilitySpec = array(
@@ -47,7 +47,7 @@ class agImportXLS
     'street_2' => array('type' => "string", 'length' => 255),
     'city' => array('type' => "string", 'length' => 255),
     'state' => array('type' => "string", 'length' => 255),
-    'zip_code' => array('type' => "string", 'length' => 30),
+    'postal_code' => array('type' => "string", 'length' => 30),
     'borough' => array('type' => "string", 'length' => 30),
     'country' => array('type' => "string", 'length' => 10),
     'longitude' => array('type' => "decimal"),
@@ -101,7 +101,6 @@ class agImportXLS
     if (strtolower($this->fileInfo["extension"]) <> 'xls') {
       $this->events[] = array("type" => "ERROR", "message" => "{$this->fileInfo['basename']} is not Microsoft Excel 2003 \".xls\" workbook.");
     } else {
-
       $this->events[] = array("type" => "INFO", "message" => "Opening import file for reading.");
       $xlsObj = new Spreadsheet_Excel_Reader($importFile);
 
@@ -409,5 +408,15 @@ class agImportXLS
     }
   }
 
+  public static function processFile(sfEvent $event)
+  {
+    // this works!!! :
+//    $testFile = $event->getSubject()->importPath . '.TESTING.LISTENER';
+//    touch($testFile);
+//
+    // TODO: make this to the brunt of the work
+    // ...
+
+  }
+
 }
-?>
