@@ -308,7 +308,7 @@ class agFacilityExportHelper
   public static function gatherLookupValues($lookUps = null)
   {
     if(!isset($lookUps) || !is_array($lookUps)) {
-      $yay = 'yay';
+      return null;
     }
     foreach($lookUps as $key => $lookUp) {
       $lookUpQuery = Doctrine_Query::create()
