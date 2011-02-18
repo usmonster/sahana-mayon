@@ -8,17 +8,20 @@
  * @property integer $id
  * @property string $event_status_type
  * @property string $description
+ * @property boolean $active
  * @property boolean $app_display
  * @property Doctrine_Collection $agEventStatus
  * 
  * @method integer             getId()                Returns the current record's "id" value
  * @method string              getEventStatusType()   Returns the current record's "event_status_type" value
  * @method string              getDescription()       Returns the current record's "description" value
+ * @method boolean             getActive()            Returns the current record's "active" value
  * @method boolean             getAppDisplay()        Returns the current record's "app_display" value
  * @method Doctrine_Collection getAgEventStatus()     Returns the current record's "agEventStatus" collection
  * @method agEventStatusType   setId()                Sets the current record's "id" value
  * @method agEventStatusType   setEventStatusType()   Sets the current record's "event_status_type" value
  * @method agEventStatusType   setDescription()       Sets the current record's "description" value
+ * @method agEventStatusType   setActive()            Sets the current record's "active" value
  * @method agEventStatusType   setAppDisplay()        Sets the current record's "app_display" value
  * @method agEventStatusType   setAgEventStatus()     Sets the current record's "agEventStatus" collection
  * 
@@ -46,6 +49,11 @@ abstract class BaseagEventStatusType extends sfDoctrineRecord
         $this->hasColumn('description', 'string', 255, array(
              'type' => 'string',
              'length' => 255,
+             ));
+        $this->hasColumn('active', 'boolean', null, array(
+             'default' => 1,
+             'type' => 'boolean',
+             'notnull' => true,
              ));
         $this->hasColumn('app_display', 'boolean', null, array(
              'default' => 1,

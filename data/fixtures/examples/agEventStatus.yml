@@ -18,7 +18,7 @@ agEventStatus:
     id: 4
     agEvent: zombie_apocalypse_event_1
     time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: zombie_apocalypse_worrying_type
+    agEventStatusType: open
   asteroid_apocalypse_event_2_open_status:
     id: 5
     agEvent: asteroid_apocalypse_event_2
@@ -38,7 +38,7 @@ agEventStatus:
     id: 8
     agEvent: asteroid_apocalypse_event_2
     time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: zombie_apocalypse_worrying_type
+    agEventStatusType: open
   tsunami_warning_event_3_open_status:
     id: 9
     agEvent: tsunami_warning_event_3
@@ -58,7 +58,7 @@ agEventStatus:
     id: 12
     agEvent: tsunami_warning_event_3
     time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: zombie_apocalypse_worrying_type
+    agEventStatusType: open
   megaquake_event_4_open_status:
     id: 13
     agEvent: megaquake_event_4
@@ -78,7 +78,7 @@ agEventStatus:
     id: 16
     agEvent: megaquake_event_4
     time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: zombie_apocalypse_worrying_type
+    agEventStatusType: open
   supervolcano_event_5_open_status:
     id: 17
     agEvent: supervolcano_event_5
@@ -98,5 +98,5 @@ agEventStatus:
     id: 20
     agEvent: supervolcano_event_5
     time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: zombie_apocalypse_worrying_type
+    agEventStatusType: open
 

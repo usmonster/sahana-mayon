@@ -8,11 +8,8 @@ agEventStatusType:
     id: 2
     event_status_type: Closed
     description: This event is closed and response has been implemented and resolved.
+    active: 0
   pre_deployment:
     id: 3
     event_status_type: Pre-Deployment
-    description: This event is still in the planning stage and has not been deployed.
-  zombie_apocalypse_worrying_type:
-    id: 4
-    event_status_type: Zombie-Apocalypse-Worrying
     description: This event is still in the planning stage and has not been deployed.

@@ -81,6 +81,10 @@ agEventStatusType:
       notnull: true
     description:
       type: string(255)
+    active:
+      default: 1
+      type: boolean
+      notnull: true
     app_display:
       default: 1
       type: boolean
