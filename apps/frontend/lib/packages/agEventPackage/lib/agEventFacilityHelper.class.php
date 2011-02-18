@@ -324,24 +324,6 @@ class agEventFacilityHelper
     $results = $query->execute(array(), 'key_value_array') ;
     return $results ;
   }
-public static function returnCurrentEventStatus($eventId)
-  {
-    $query = Doctrine_Query::create()
-      ->select('es.id')
-        //->addSelect('es.time_stamp')
-        ->addSelect('es.event_status_type_id')
-        ->from('agEventStatus es')
-        ->where('es.event_id = ?', $eventId)
-          ->andWhere('EXISTS (
-            SELECT s.id
-              FROM agEventStatus s
-              WHERE s.event_id = es.event_id
-                AND s.time_stamp <= CURRENT_TIMESTAMP
-              HAVING MAX(s.time_stamp) = es.time_stamp)') ;
-
-    $results = $query->execute(array(), 'key_value_array') ;
-    return $results ;
-  }
 
   /**
    * Function to return the event_status_id and event_status_type_id of the passed event_id

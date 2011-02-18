@@ -20,16 +20,17 @@ class KeyValueArrayHydrator extends Doctrine_Hydrator_Abstract
    * @param <type> $stmt
    * @return array An associative array.
    */
-  public function hydrateResultSet($stmt)
+  public function hydrateResultSet ($stmt)
   {
-    $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM);
-    $array = array();
-    if (empty($results) > 0) {
+    $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM) ;
+    $array = array() ;
+    if (! empty($results))
+    {
+      $arrayLen = (count($results[0]) - 1) ;
 
-      $arrayLen = (count($results[0]) - 1);
-
-      foreach ($results as $result) {
-        $array[$result[0]] = array_slice($result, 1, $arrayLen);
+      foreach ($results as $result)
+      {
+        $array[$result[0]] = array_slice($result, 1, $arrayLen) ;
       }
     }
     return $array;
