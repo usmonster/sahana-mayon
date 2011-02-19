@@ -362,7 +362,8 @@ class agPersonForm extends BaseagPersonForm
     $addressContainer = new sfForm(array(), array()); // Container form.
     $addressContainer->widgetSchema->setFormFormatterName('list');
 
-    $stateList = Doctrine_Query::create()
+    $stateList = Doctrine::getTable('agAddressValue')
+            ->createQuery('addressStates')
             ->select('a.value')
             ->from('agAddressValue a')
             ->where('a.address_element_id = 4')
@@ -375,8 +376,7 @@ class agPersonForm extends BaseagPersonForm
               eac.agAddress a, a.agAddressStandard as, a.agAddressMjAgAddressValue aav,
               aav.agAddressValue av, av.agAddressElement ae, e.agPerson p')
             ->where('e.id = ?', $this->agEntity->getId())
-            ->execute()
-            ->getFirst();
+            ->fetchOne();
 
 
     foreach ($this->address_contact_types as $address_contact_type) {
