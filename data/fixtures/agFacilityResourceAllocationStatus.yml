@@ -1,85 +1,73 @@
 agFacilityResourceAllocationStatus:
-  available:
-    facility_resource_allocation_status: available
-    description: Facility resource available to be assigned to any facility group.
+  unknown:
+    facility_resource_allocation_status: unknown
+    description: Facility resource is allocated to a facility group but has an unknown status.
+    available: 1
     committed: 0
-    staffed: 0
-    servicing_clients: 0
-    accepting_clients: 0
-    allocatable: 1
     standby: 0
-  committed:
-    facility_resource_allocation_status: committed
-    description: Facility resource is committed and ready / awaiting activation.
-    committed: 1
     staffed: 0
-    servicing_clients: 0
     accepting_clients: 0
-    allocatable: 0
-    standby: 0
+    servicing_clients: 0
   standby:
     facility_resource_allocation_status: standby
-    description: Facility resource designated to a faciltiy group as a standby.
+    description: Facility resource designated as a standby resource within its facility group.
+    available: 1
     committed: 1
-    staffed: 0
-    servicing_clients: 0
-    accepting_clients: 0
-    allocatable: 0
     standby: 1
-  active:
-    facility_resource_allocation_status: active
-    description: Facility resource designated to a facility group and is open to staff only.
-    committed: 1
-    staffed: 1
-    servicing_clients: 0
+    staffed: 0
     accepting_clients: 0
-    allocatable: 0
+    servicing_clients: 0
+  setup:
+    facility_resource_allocation_status: setup
+    description: Facility resource is currently undergoing setup operations and only open to staff.
+    available: 1
+    committed: 1
     standby: 0
+    staffed: 1
+    accepting_clients: 0
+    servicing_clients: 0
   registration:
-    facility_resource_allocation_status: open registration
+    facility_resource_allocation_status: registration
     description: Facility resource currently accepting clients.
+    available: 1
     committed: 1
+    standby: 0
     staffed: 1
-    servicing_clients: 1
     accepting_clients: 1
-    allocatable: 0
-    standby: 0
-  closing:
-    facility_resource_allocation_status: closing
-    description: Facility resource is shutting down and is not accepting or servicing clients.
-    committed: 1
-    staffed: 1
-    servicing_clients: 0
-    accepting_clients: 0
-    allocatable: 0
-    standby: 0
-    app_display: 
-  closed:
-    facility_resource_allocation_status: closed
-    description: Facility resource is closed and is released for re-assignment.
-    committed: 0
-    staffed: 0
-    servicing_clients: 0
-    accepting_clients: 0
-    allocatable: 1
-    standby: 0
-  unavailable:
-    facility_resource_allocation_status: unavailable
-    description: Facility resource is unavailable for facility group assignment.
-    committed: 0
-    staffed: 0
-    servicing_clients: 0
-    accepting_clients: 0
-    allocatable: 0
-    standby: 0
-    app_display: 
+    servicing_clients: 1
   operating:
     facility_resource_allocation_status: operating
     description: Facility resource is servicing clients, but not accepting new clients at the moment.
+    available: 1
     committed: 1
-    staffed: 1
-    servicing_clients: 1
-    accepting_clients: 0
-    allocatable: 0
     standby: 0
-
+    staffed: 1
+    accepting_clients: 0
+    servicing_clients: 1
+  closing:
+    facility_resource_allocation_status: closing
+    description: Facility resource is shutting down and is not accepting or servicing clients.
+    available: 1
+    committed: 1
+    standby: 0
+    staffed: 1
+    accepting_clients: 0
+    servicing_clients: 0
+  closed:
+    facility_resource_allocation_status: closed
+    description: Facility resource is closed and resources are released for re-assignment.
+    available: 1
+    committed: 0
+    standby: 0
+    staffed: 0
+    accepting_clients: 0
+    servicing_clients: 0
+  unavailable:
+    facility_resource_allocation_status: unavailable
+    description: Facility resource is unavailable for operation.
+    available: 0
+    committed: 0
+    standby: 0
+    staffed: 0
+    accepting_clients: 0
+    servicing_clients: 0
