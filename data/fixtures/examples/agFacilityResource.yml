@@ -2,7 +2,7 @@ agFacilityResource:
   facility_11_ec:
     agFacility: facility_11
     agFacilityResourceType: ec
-    agFacilityResourceStatus: available
+    agFacilityResourceStatus: unavailable
     capacity: 9999
   facility_11_smn:
     agFacility: facility_11
@@ -52,7 +52,7 @@ agFacilityResource:
   facility_16_smn:
     agFacility: facility_16
     agFacilityResourceType: smn
-    agFacilityResourceStatus: available
+    agFacilityResourceStatus: unavailable
     capacity: 3691
   facility_16_hs:
     agFacility: facility_16

@@ -136,7 +136,15 @@ agFacilityResourceAllocationStatus:
       notnull: true
     description:
       type: string(255)
+    available:
+      default: 1
+      type: boolean
+      notnull: true
     committed:
+      default: 0
+      type: boolean
+      notnull: true
+    standby:
       default: 0
       type: boolean
       notnull: true
@@ -149,14 +157,6 @@ agFacilityResourceAllocationStatus:
       type: boolean
       notnull: true
     accepting_clients:
-      default: 0
-      type: boolean
-      notnull: true
-    allocatable:
-      default: 1
-      type: boolean
-      notnull: true
-    standby:
       default: 0
       type: boolean
       notnull: true
