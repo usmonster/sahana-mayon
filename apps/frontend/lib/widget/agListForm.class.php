@@ -119,14 +119,15 @@ class agListForm
           <td><a class=linkButton href="' . url_for('facility/show?id=' . $result->getId()) . '"> ' . $result->getId() . '</a></td>';
       $listbody .='<td>' . $result->getFacilityCode() . '</td>';
       $listbody .='<td>' . $result->getFacilityName() . '</td>';
+
       $listbody .='<td>';
       $comma = 0;
-
       foreach ($result->getAgFacilityResource() as $n) {
-        $listbody .= ( $comma++ > 0 ? ', ' : '') . ucwords($n->getAgFacilityResourceType()->getFacilityResourceType());
-        $listbody .= ( count($result->getAgFacilityResource()) ? ' (' . count($result->getAgFacilityResource()) . ')' : '(None)') . '</td>';
+        $listbody .= ( $comma++ > 0 ? ', <br />' : '') . ucwords($n->getAgFacilityResourceType()->getFacilityResourceType());
+        $listbody .= ( count($result->getAgFacilityResource()) ? ' (' . count($result->getAgFacilityResource()) . ')' : '(None)');
       }
-      $listbody .= '</tr>';
+
+      $listbody .= '</td></tr>';
     }
 
     $listbody .='
