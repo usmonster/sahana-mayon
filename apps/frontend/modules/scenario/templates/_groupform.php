@@ -90,14 +90,15 @@ echo url_for
     </span>
   </div>
   <br />
+
+        <a href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>" class="linkButton">Back</a>
   <?php if (!$groupform->getObject()->isNew()): ?>
         <input class="linkButton" type="submit" value="Delete" name="Delete"/>
-  <?php endif; ?>
         <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>
-        <input class="linkButton" type="submit" value="Save and Continue" name="Continue" onclick="serialTran()"/>
+  <?php endif; ?>
         <input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
         <input class="linkButton" type="submit" value="Save and Assign Staff Requirements to All Facility Groups" name="AssignAll" onclick="serialTran()"/>
         <br />
         <br />
-        <a href="<?php echo url_for('scenario/listgroup') ?>" class="linkButton">Back to Facility Group List</a>
+<!--        <a href="<?php //echo url_for('scenario/listgroup') ?>" class="linkButton">Back to Facility Group List</a>-->
 </form>

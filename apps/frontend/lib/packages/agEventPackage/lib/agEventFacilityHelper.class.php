@@ -499,7 +499,7 @@ class agEventFacilityHelper
     }
     else
     {
-      $query->andWhere('EXISTS (
+      $shiftQuery->andWhere('EXISTS (
         SELECT s.id
           FROM agEventShift s
           WHERE s.id = es.id
