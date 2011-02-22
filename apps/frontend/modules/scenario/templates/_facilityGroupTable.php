@@ -4,7 +4,7 @@
     <?php
       foreach ($scenarioFacilityGroups as $facilityGroup) {
         echo '<tr>';
-        echo '<th class="head"><a href="' . url_for('scenario/fgroup?id=' . $facilityGroup->scenario_id) . '?groupid=' . $facilityGroup->id .'">' . $facilityGroup->scenario_facility_group . '</a></th>';
+        echo '<th class="head"><a href="' . url_for('scenario/fgroup?id=' . $facilityGroup->scenario_id) . '/' . $facilityGroup->id .'">' . $facilityGroup->scenario_facility_group . '</a></th>';
         echo '</tr>';
         foreach ($facilityGroup->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
           echo '<tr>';
@@ -17,7 +17,13 @@
 
     ?>
     <tr>
+      <?php
+      if(is_numeric($group_id)){
+      ?>
       <th class="head"><a href="<?php echo url_for('scenario/fgroup?id=' . $facilityGroup->scenario_id) ?>" class="linkButton">Create New Facility Group</a></th>
+      <?php
+      }
+      ?>
     </tr>
   </tbody>
 </table>

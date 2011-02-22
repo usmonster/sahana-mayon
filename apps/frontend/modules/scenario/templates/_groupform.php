@@ -44,12 +44,11 @@ echo url_for
 
   <div>
     <?php
-    $groupFormDeco = new agWidgetFormSchemaFormatterInlineTopLabel($groupform->getWidgetSchema());
-    $groupform->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupFormDeco);
-    $groupform->getWidgetSchema()->setFormFormatterName('groupFormDeco');
-    $groupform->getWidget('scenario_facility_group')->setAttribute('class', 'inputGray');
-    $groupform->getWidget('activation_sequence')->setAttribute('class', 'inputGray');
-
+    if (!$groupform->getObject()->isNew()) {
+    ?>
+      <input class="linkButton" type="submit" value="Delete" name="Delete"/>
+      <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>
+    <?php }
     echo $groupform;
     ?>
   </div>
@@ -91,14 +90,8 @@ echo url_for
   </div>
   <br />
 
-        <a href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>" class="linkButton">Back</a>
-  <?php if (!$groupform->getObject()->isNew()): ?>
-        <input class="linkButton" type="submit" value="Delete" name="Delete"/>
-        <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>
-  <?php endif; ?>
-        <input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
-        <input class="linkButton" type="submit" value="Save and Assign Staff Requirements to All Facility Groups" name="AssignAll" onclick="serialTran()"/>
-        <br />
-        <br />
-<!--        <a href="<?php //echo url_for('scenario/listgroup') ?>" class="linkButton">Back to Facility Group List</a>-->
+  <a href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>" class="linkButton">Back</a>
+  <input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
+  <input class="linkButton" type="submit" value="Save and Assign Staff Requirements to All Facility Groups" name="AssignAll" onclick="serialTran()"/>
+  <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Continue</a>
 </form>

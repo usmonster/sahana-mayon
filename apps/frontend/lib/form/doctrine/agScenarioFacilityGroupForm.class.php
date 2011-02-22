@@ -73,6 +73,12 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
     $this->getWidgetSchema()->setFormFormatterName('custDeco');
 
+    $groupDeco = new agWidgetFormSchemaFormatterInlineBigTopLabel($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupDeco);
+    $this->getWidgetSchema()->setFormFormatterName('groupFormDeco');
+    $this->getWidget('scenario_facility_group')->setAttribute('class', 'inputGray');
+    $this->getWidget('activation_sequence')->setAttribute('class', 'inputGray');
+
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
     //$this->setupInheritance();
