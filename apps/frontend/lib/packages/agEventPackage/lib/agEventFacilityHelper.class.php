@@ -475,12 +475,13 @@ class agEventFacilityHelper
   {
     $firstShifts = array_keys( self::returnFirstFacilityResourceShifts($eventId, $staffed) ) ;
 
-    $query = Doctrine_Query::create()
+    $query = Doctrine_Query_Extra::create()
       ->select('es.event_facility_resource_id')
         ->addSelect('MIN(es.id) AS min_shift_id')
         ->from('agEventShift es')
         ->whereIn('es.id', $firstShifts)
         ->groupBy('es.event_facility_resource_id') ;
+
 
     if ($minEnd)
     {
@@ -495,11 +496,24 @@ class agEventFacilityHelper
 //            (es.minutes_start_to_facility_activation +
 //              es.task_length_minutes +
 //              es.break_length_minutes))') ;
-      
+
+      $query->andWhere('EXISTS (
+        SELECT s.id,
+          MIN(s.minutes_start_to_facility_activation +
+            s.task_length_minutes +
+            s.break_length_minutes) AS endTimeS,
+          (es.minutes_start_to_facility_activation +
+            es.task_length_minutes +
+            es.break_length_minutes) as endTimeEs
+          FROM agEventShift s
+          WHERE s.id = es.id
+          HAVING endTimeS = endTimeEs)') ;
+
+ 
     }
     else
     {
-      $shiftQuery->andWhere('EXISTS (
+      $query->andWhere('EXISTS (
         SELECT s.id
           FROM agEventShift s
           WHERE s.id = es.id

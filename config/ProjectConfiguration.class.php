@@ -93,11 +93,15 @@ class ProjectConfiguration extends sfProjectConfiguration
    */
   public function configureDoctrine(Doctrine_Manager $manager)
   {
+    // register hydrators
     $manager->registerHydrator('key_value_pair', 'KeyValuePairHydrator');
     $manager->registerHydrator('key_value_array', 'KeyValueArrayHydrator');
     $manager->registerHydrator('assoc_three_dim', 'AssociativeThreeDimHydrator');
     $manager->registerHydrator('assoc_two_dim', 'AssociativeTwoDimHydrator');
     $manager->registerHydrator('single_value_array', 'SingleValueArrayHydrator') ;
+
+    // extend where appropriate
+    $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CLASS, 'Doctrine_Query_Extra');
   }
 
 }
