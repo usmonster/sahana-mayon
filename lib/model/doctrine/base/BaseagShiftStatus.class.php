@@ -10,8 +10,6 @@
  * @property string $description
  * @property boolean $standby
  * @property boolean $disabled
- * @property boolean $active
- * @property boolean $assigned
  * @property Doctrine_Collection $agEventShift
  * @property Doctrine_Collection $agScenarioShift
  * @property Doctrine_Collection $agShiftTemplate
@@ -21,8 +19,6 @@
  * @method string              getDescription()     Returns the current record's "description" value
  * @method boolean             getStandby()         Returns the current record's "standby" value
  * @method boolean             getDisabled()        Returns the current record's "disabled" value
- * @method boolean             getActive()          Returns the current record's "active" value
- * @method boolean             getAssigned()        Returns the current record's "assigned" value
  * @method Doctrine_Collection getAgEventShift()    Returns the current record's "agEventShift" collection
  * @method Doctrine_Collection getAgScenarioShift() Returns the current record's "agScenarioShift" collection
  * @method Doctrine_Collection getAgShiftTemplate() Returns the current record's "agShiftTemplate" collection
@@ -31,8 +27,6 @@
  * @method agShiftStatus       setDescription()     Sets the current record's "description" value
  * @method agShiftStatus       setStandby()         Sets the current record's "standby" value
  * @method agShiftStatus       setDisabled()        Sets the current record's "disabled" value
- * @method agShiftStatus       setActive()          Sets the current record's "active" value
- * @method agShiftStatus       setAssigned()        Sets the current record's "assigned" value
  * @method agShiftStatus       setAgEventShift()    Sets the current record's "agEventShift" collection
  * @method agShiftStatus       setAgScenarioShift() Sets the current record's "agScenarioShift" collection
  * @method agShiftStatus       setAgShiftTemplate() Sets the current record's "agShiftTemplate" collection
@@ -68,16 +62,6 @@ abstract class BaseagShiftStatus extends sfDoctrineRecord
              'notnull' => true,
              ));
         $this->hasColumn('disabled', 'boolean', null, array(
-             'default' => 0,
-             'type' => 'boolean',
-             'notnull' => true,
-             ));
-        $this->hasColumn('active', 'boolean', null, array(
-             'default' => 0,
-             'type' => 'boolean',
-             'notnull' => true,
-             ));
-        $this->hasColumn('assigned', 'boolean', null, array(
              'default' => 0,
              'type' => 'boolean',
              'notnull' => true,

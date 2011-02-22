@@ -40,7 +40,7 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
 
-    $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
+    $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
     $this->facility_group = NULL;
     $facility_groups = array();
     foreach ($this->active_facility_groups as $event_fgroup) {
@@ -526,7 +526,7 @@ class eventActions extends agActions
     $this->eventName = Doctrine::getTable('agEvent')
             ->findByDql('id = ?', $this->event_id)
             ->getFirst()->event_name;
-    $this->active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this->event_id);
+    $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
     $this->resForm = new sfForm();
     $this->resForm->setWidgets(array(
       'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType'))

@@ -9,7 +9,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   2:
@@ -22,7 +22,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   3:
@@ -35,7 +35,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   4:
@@ -48,7 +48,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   5:
@@ -61,7 +61,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   6:
@@ -74,7 +74,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   7:
@@ -87,7 +87,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   8:
@@ -100,7 +100,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   9:
@@ -113,7 +113,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   10:
@@ -126,7 +126,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   11:
@@ -139,7 +139,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   12:
@@ -152,7 +152,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   13:
@@ -165,7 +165,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   14:
@@ -178,7 +178,7 @@ agScenarioShift:
     minimum_staff: 8
     maximum_staff: 15
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   15:
@@ -191,7 +191,7 @@ agScenarioShift:
     minimum_staff: 5
     maximum_staff: 8
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   16:
@@ -204,7 +204,7 @@ agScenarioShift:
     minimum_staff: 5
     maximum_staff: 8
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   17:
@@ -217,7 +217,7 @@ agScenarioShift:
     minimum_staff: 5
     maximum_staff: 8
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   18:
@@ -230,7 +230,7 @@ agScenarioShift:
     minimum_staff: 5
     maximum_staff: 8
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   19:
@@ -243,7 +243,7 @@ agScenarioShift:
     minimum_staff: 5
     maximum_staff: 8
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   20:
@@ -256,7 +256,7 @@ agScenarioShift:
     minimum_staff: 5
     maximum_staff: 8
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   21:
@@ -269,7 +269,7 @@ agScenarioShift:
     minimum_staff: 5
     maximum_staff: 8
     staff_wave: 2
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: spe_shft
   22:
@@ -282,7 +282,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 5
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_nrs_shft
   23:
@@ -295,7 +295,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 5
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_nrs_shft
   24:
@@ -308,7 +308,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 5
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_nrs_shft
   25:
@@ -321,7 +321,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 5
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_nrs_shft
   26:
@@ -334,7 +334,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 5
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_nrs_shft
   27:
@@ -347,7 +347,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 4
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_oth_shft
   28:
@@ -360,7 +360,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 4
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_oth_shft
   29:
@@ -373,7 +373,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 4
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_oth_shft
   30:
@@ -386,7 +386,7 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 4
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_oth_shft
   31:
@@ -399,6 +399,6 @@ agScenarioShift:
     minimum_staff: 2
     maximum_staff: 4
     staff_wave: 1
-    agShiftStatus: available
+    agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: med_oth_shft

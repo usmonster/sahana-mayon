@@ -420,14 +420,6 @@ agShiftStatus:
       default: 0
       type: boolean
       notnull: true
-    active:
-      default: 0
-      type: boolean
-      notnull: true
-    assigned:
-      default: 0
-      type: boolean
-      notnull: true
   indexes:
     UX_agShiftStatus:
       fields: [shift_status]

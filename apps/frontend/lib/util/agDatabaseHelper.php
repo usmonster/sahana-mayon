@@ -14,14 +14,6 @@
 class agDatabaseHelper
 {
   public static $dbEngine ;
-  /**
-   * Function to initialize the DatabaseHelper class
-   *
-   */
-  public static function agDatabaseHelperInit()
-  {
-    self::$dbEngine = self::databaseEngine() ;
-  }
 
   /**
    * Function to return the current database engine.
@@ -45,6 +37,7 @@ class agDatabaseHelper
    */
   public static function testDbEngine($dbTestEngine)
   {
+    self::$dbEngine = self::databaseEngine() ;
     $result = ((self::$dbEngine == $dbTestEngine) ? true : false) ;
 
     return $result ;
@@ -63,4 +56,4 @@ class agDatabaseHelper
       trigger_error($notice, E_USER_NOTICE);
     }
   }
-} agDatabaseHelper::agDatabaseHelperInit() ;
+} 

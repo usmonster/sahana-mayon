@@ -158,4 +158,104 @@ class agEventShiftHelper
       self::activateEventFacilityGroupShifts($result[0], $activationTime) ;
     }
   }
+
+  /**
+   * Changes the status of a specified event shift and optionally calls a function to release staff
+   * of disabled shifts.
+   *
+   * @param array $eventShiftIds An array of event shift id's.
+   * @param integer(2) $shiftStatusId The shift status id that will be set via this action
+   * @param boolean $releaseStaff An optional boolean that determines whether or not existing staff
+   * will be released from these shifts.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array An array representing the number of shifts affected and number of staff released.
+   */
+  public static function setEventShiftStatus ($eventShiftIds, $shiftStatusId, $releaseStaff = FALSE, Doctrine_Connection $conn = NULL)
+  {
+    $eventStaffUpdates = 0 ;
+    $eventShiftUpdates = 0 ;
+
+    // set our default connection if one is not passed
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    // query construction
+    $shiftsQuery = Doctrine_Query::create($conn)
+      ->update('agEventShift')
+        ->set('shift_status_id', '?', $shiftStatusId)
+        ->whereIn('id', $eventShiftIds) ;
+
+    // wrap it all in a transaction and a try/catch to rollback if an exception occurs
+    $conn->beginTransaction() ;
+    try
+    {
+      // update shifts
+      $eventShiftUpdates = $shiftsQuery->execute() ;
+
+      // release staff if instructed to do so
+      if ($releaseStaff) { $eventStaffUpdates = self::releaseShiftStaff($eventShiftIds) ; }
+      
+      // commit
+      $conn->commit() ;
+    }
+    catch(Exception $e)
+    {
+      $conn->rollback(); // rollback if we must :(
+    }
+
+    // return our respective record operation counts
+    return array($eventShiftUpdates,$eventStaffUpdates) ;
+  }
+
+  /**
+   * Execute a delete query to release allocated staff from the passed event shift ids
+   *
+   * @param array $eventShiftIds A single-dimension array of all event shift id's from which
+   * staff can be released
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return integer The number of rows affected
+   */
+  public static function releaseShiftStaff($eventShiftIds, Doctrine_Connection $conn = NULL )
+  {
+    // set our default connection if one isn't passed
+    if (! is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    $query = Doctrine_Query::create($conn)
+      ->delete('agEventStaffShift ess')
+        ->where('NOT EXISTS(
+            SELECT essi.id
+              FROM agEventStaffSignIn essi
+              WHERE essi.event_staff_shift_id = ess.id)')
+          ->andWhereIn('ess.event_shift_id', $eventShiftIds) ;
+
+    // wrap it all in a transaction and make magic happen
+    $conn->beginTransaction() ;
+    try
+    {
+      $results = $query->execute() ;
+      $conn->commit() ;
+    }
+    catch(Exception $e)
+    {
+      $conn->rollback() ;
+    }
+
+    // returns the record count
+    return $results ;
+  }
+
+  /**
+   * Returns the shift status id of the shift_disabled_status global parameter.
+   *
+   * @return integer(2) The shift status id of the global parameterized disabled shift status.
+   */
+  public static function returnDisabledShiftStatus()
+  {
+    $statusQuery = Doctrine_Query::create()
+      ->select('ss.id')
+        ->from('ag_shift_status ss')
+        ->where('ss.shift_status = ?', agGlobal::$param['shift_disabled_status']) ;
+
+    $disabledStatusId = $statusQuery->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
+    return $disabledStatusId ;
+  }
 }
