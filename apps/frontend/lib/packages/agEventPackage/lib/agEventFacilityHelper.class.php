@@ -447,8 +447,8 @@ class agEventFacilityHelper
       }
       else
       {
-        $query->leftJoin('es.agEventStaffShift ess')
-          ->andWhere('ess.id IS NULL') ;
+        $query->leftJoin('es.agEventStaffShift ess') ;
+        $query->andWhere('ess.id IS NULL') ;
       }
     }
 
@@ -475,9 +475,9 @@ class agEventFacilityHelper
   {
     $firstShifts = array_keys( self::returnFirstFacilityResourceShifts($eventId, $staffed) ) ;
 
-    $shiftQuery = Doctrine_Query::create()
+    $query = Doctrine_Query::create()
       ->select('es.event_facility_resource_id')
-        ->addSelect('MIN(es.id) AS shift_id')
+        ->addSelect('MIN(es.id) AS min_shift_id')
         ->from('agEventShift es')
         ->whereIn('es.id', $firstShifts)
         ->groupBy('es.event_facility_resource_id') ;
@@ -491,10 +491,10 @@ class agEventFacilityHelper
           HAVING MIN(
             (s.minutes_start_to_facility_activation +
               s.task_length_minutes +
-              s.break_length_minutes) =
+              s.break_length_minutes)) =
             (es.minutes_start_to_facility_activation +
               es.task_length_minutes +
-              es.break_length_minutes)') ;
+              es.break_length_minutes))') ;
     }
     else
     {
@@ -505,13 +505,13 @@ class agEventFacilityHelper
           HAVING MAX(
             (s.minutes_start_to_facility_activation +
               s.task_length_minutes +
-              s.break_length_minutes) =
+              s.break_length_minutes)) =
             (es.minutes_start_to_facility_activation +
               es.task_length_minutes +
-              es.break_length_minutes)') ;
+              es.break_length_minutes))') ;
     }
 
-    $singleFirstShifts = $shiftQuery->execute(array(),'key_value_pair') ;
+    $singleFirstShifts = $query->execute(array(),'key_value_pair') ;
     return $singleFirstShifts ;
   }
 
