@@ -14,6 +14,7 @@ web/wiki/data/meta/**/*.changes
 web/dqlme.php
 .DS_Store
 nbproject
+plugins/.*
 *.~1~
 *.prj
 *.vpj

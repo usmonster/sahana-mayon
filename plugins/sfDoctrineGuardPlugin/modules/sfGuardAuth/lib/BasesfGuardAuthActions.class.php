@@ -27,7 +27,7 @@ class BasesfGuardAuthActions extends sfActions
 
     $class = sfConfig::get('app_sf_guard_plugin_signin_form', 'sfGuardFormSignin'); 
     $this->form = new $class();
-    
+
     if ($request->isMethod('post'))
     {
       $this->form->bind($request->getParameter('signin'));
