@@ -484,17 +484,18 @@ class agEventFacilityHelper
 
     if ($minEnd)
     {
-      $query->andWhere('EXISTS (
-        SELECT s.id
-          FROM agEventShift s
-          WHERE s.id = es.id
-          HAVING MIN(
-            (s.minutes_start_to_facility_activation +
-              s.task_length_minutes +
-              s.break_length_minutes)) =
-            (es.minutes_start_to_facility_activation +
-              es.task_length_minutes +
-              es.break_length_minutes))') ;
+//      $query->andWhere('EXISTS (
+//        SELECT s.id
+//          FROM agEventShift s
+//          WHERE s.id = es.id
+//          HAVING MIN(
+//            (s.minutes_start_to_facility_activation +
+//              s.task_length_minutes +
+//              s.break_length_minutes)) =
+//            (es.minutes_start_to_facility_activation +
+//              es.task_length_minutes +
+//              es.break_length_minutes))') ;
+      
     }
     else
     {
