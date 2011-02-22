@@ -115,16 +115,15 @@ class eventActions extends agActions
       //TODO step through to check and see if the second if is needed
     }
     if ($request->getParameter('event')) {
-            $this->event = Doctrine_Query::create()
+      $this->event = Doctrine_Query::create()
               ->select()
               ->from('agEvent')
               ->where('event_name = ?', urldecode($request->getParameter('event')))
               ->execute()->getFirst();
-            
+
       $this->event_id = $this->event->id;
       //TODO step through to check and see if the second if is needed
     }
-
   }
 
   public function executeMeta(sfWebRequest $request)
@@ -212,7 +211,7 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
 //CREATE  / UPDATE
-     if ($request->isMethod(sfRequest::POST)) {
+    if ($request->isMethod(sfRequest::POST)) {
       if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
         $this->eventshiftform = new agEventShiftForm();
       } elseif ($request->getParameter('shiftid') && is_int($request->getParameter('shiftid'))) {
@@ -223,14 +222,15 @@ class eventActions extends agActions
       } elseif ($request->getParameter('delete')) {
 //DELETE
       }
+      $poo = $this->eventshiftform->getName(); //unset the staff list
       $this->eventshiftform->bind($request->getParameter($this->eventshiftform->getName()), $request->getFiles($this->eventshiftform->getName()));
-      if ($this->eventshiftform->isValid()) {
+      if ($this->eventshiftform->isValid()) { //form is not passing validation because the bind is failing?
         $ag_event_shift = $this->eventshiftform->save();
         $this->generateUrl('event_shifts', array('module' => 'event',
           'action' => 'shifts', 'id' => $this->event_id, 'shiftid' => $ag_event_shift->getId()));
         //       $this->redirect('event/shifts?id=' . $this->event_id . '&shiftid=' . $ag_event_shift->getId());
       }
-      $this->redirect('event/shifts');
+      $this->redirect('event/shifts?id=' . $this->event_id); //need to pass in event id
     } else {
 //READ
       if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
@@ -495,6 +495,71 @@ class eventActions extends agActions
     return $results;
   }
 
+  public function executeStaffshift(sfWebRequest $request)
+  {
+    $this->setEventBasics($request);
+    $this->shift_id = $request->getParameter('shiftid');
+        $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')),// 'class' => 'filter')),
+                    'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization')),
+                    'query_condition' => new sfWidgetFormInputHidden()
+          ////, 'class' => 'filter'))
+      );//will have to set the class for the form elements elsewhere
+
+    //set up inputs for form
+
+    $filterForm = new sfForm();
+    //$filterForm->getWidgetSchema()->setNameFormat('filter_form[%s]');
+    foreach($inputs as $key => $input){
+      $input->setAttribute('class', 'filter');
+      $filterForm->setWidget($key, $input);
+    }
+    $this->filterForm = $filterForm;
+
+
+    if ($request->getParameter('Search')) {
+
+    $this->staffSearchForm = new sfForm();
+
+    $this->staffSearchForm->setWidget('add', new agWidgetFormSelectCheckbox(array('choices' => array(null)), array()));
+
+    $this->staffSearchForm->getWidgetSchema()->setLabel('add', false);
+
+//    $fgroupDec = new agWidgetFormSchemaFormatterNoList($this->getWidgetSchema());
+//    $this->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
+//    $this->getWidgetSchema()->setFormFormatterName('row');
+
+      $lucene_query = $request->getParameter('query_condition');
+      //$lucene_query = $filter_form['query_condition'];
+
+      $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
+
+//$query_condition = implode(' AND ', $lucene_query);
+
+      $this->searchedModels = array('agStaff');  //technically, don't we want the search model to be agEventStaff ?
+      parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
+    } elseif ($request->getParameter('Add')) {
+      $staffPotentials = $request->getPostParameter('resultform');//('staff_list'); //ideally get only the widgets whose corresponding checkbox
+      //event_staff_id[] ->
+      foreach ($staffPotentials as $key => $staffAdd) {
+//        if (is_array($staffAdd) && isset($staffAdd['add'])) {
+          //see if staff member exists in this shift already
+          $existing = Doctrine::getTable('agEventStaffShift')
+                  ->findByDql('event_staff_id = ?', $this->shift_id)
+                  ->getFirst();
+  //      }
+        if (!$existing) {
+          $existing = new agEventStaffShift();
+          $existing->setEventStaffId($key);
+          $existing->setEventShiftId($this->shift_id);
+        }
+        $existing->save();
+      }
+
+    } elseif ($request->getParameter('Remove')) {
+      
+    }
+  }
+
   public function executeFacility(sfWebRequest $request)
   {
     
@@ -521,7 +586,7 @@ class eventActions extends agActions
       $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
       $ag_event_status->save();
     }
-
+    $this->setEventBasics($request);
     $this->event_id = $request->getParameter('id');
     $this->eventName = Doctrine::getTable('agEvent')
             ->findByDql('id = ?', $this->event_id)

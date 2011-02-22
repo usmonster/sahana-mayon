@@ -14,7 +14,7 @@ abstract class PluginagEventShiftForm extends BaseagEventShiftForm
   public function setup()
   {
     parent::setup();
-        unset(//$this['ag_staff_event_list'],
+        unset($this['ag_staff_event_list'],
           $this['created_at'],
           $this['updated_at']
          );

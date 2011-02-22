@@ -34,16 +34,15 @@
         <?php if ($loggedIn): ?>
           <!-- Some of these nav links don't all actually work; some are just placeholders for now so it looks nice. -->
         <?php include_component('nav', 'Menu'); ?>
-          <span style="margin: .1em; float: right;">
+        <span style="margin: .1em; float: right;">
           <?php include_partial('global/searchForm'); ?>
         </span>
         <?php endif ?>
         </div>
         <div id="columns">
+
         <?php echo $sf_content ?>
-          <!-- Maybe we should somehow disable the other login form from displaying in
-          sf_content
-          the event that you're not in the home module. -->
+
         </div>
       </div>
       <div id="footer">

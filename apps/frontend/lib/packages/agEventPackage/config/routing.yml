@@ -13,6 +13,11 @@ event_shifts:
   options: { model: agEvent, type: object }
   param:   { module: event, action: shifts }
 
+staff_shift:
+  url:     /event/:id/staffshift/:shiftid
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: staffshift }
+
 event_shifts_list:
   url:     /event/:id/shifts
   options: { model: agEvent, type: object }

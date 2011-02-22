@@ -308,18 +308,27 @@ class scenarioActions extends agActions
     $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->scenario;
     $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
             ->findby('scenario_id', $this->scenario_id);
-    $this->filterForm = new sfForm();
-    $this->filterForm->setWidgets(array(
-      'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType')),
-      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization')),
-    ));
+    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')),// 'class' => 'filter')),
+                    'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization'))//, 'class' => 'filter'))
+      );
+    //set up inputs for form
+    $filterForm= new sfForm();
+    foreach($inputs as $key => $input){
+      $input->setAttribute('class', 'filter');
+      $filterForm->setWidget($key, $input);
+    }
 
+    $this->filterForm = $filterForm;
     if ($request->getParameter('search_id')) {
       $this->search_id = $request->getParameter('search_id');
       $this->poolform = new agStaffPoolForm($this->search_id);
       $queryparts = explode(" AND ", $this->poolform->getEmbeddedForm('lucene_search')->getObject()->query_condition);
       foreach ($queryparts as $querypart) {
         $filterType = preg_split("/:/", $querypart, 2);
+
+
+        //these search definitions should be stored in 'search type' table maybe?
+
         if ($filterType[0] == 'staff_type') {
           $defaultValue = Doctrine_Query::create()->select('id')->from('agStaffResourceType')
                   ->where('staff_resource_type=?', $filterType[1])->execute(array(), 'single_value_array');
@@ -336,12 +345,12 @@ class scenarioActions extends agActions
 //    $filterDeco = new agWidgetFormSchemaFormatterRow($luceneForm->getWidgetSchema());
 //    $luceneForm->getWidgetSchema()->addFormFormatter('row', $luceneDeco);
 //    $luceneForm->getWidgetSchema()->setFormFormatterName('row');
-    $this->filterForm->getWidget('staff_type')->setAttribute('class', 'filter');
-    $this->filterForm->getWidget('staff_org')->setAttribute('class', 'filter');
+//    $this->filterForm->getWidget('staff_type')->setAttribute('class', 'filter');
+//    $this->filterForm->getWidget('staff_org')->setAttribute('class', 'filter');
 
     if ($request->isMethod(sfRequest::POST)) {
-//$request->checkCSRFProtection();
-//OR if coming from an executed search
+        //$request->checkCSRFProtection();
+//PREVIEW
       if ($request->getParameter('Preview')) {
         $postParam = $request->getPostParameter('staff_pool');
         $staff_generator = $postParam['staff_generator'];
@@ -350,11 +359,16 @@ class scenarioActions extends agActions
         $this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']);
         $this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
         //$this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
-//        $this->poolform->getWidget('lucene_search[query_name]')->setDefault($lucene_search['query_name']);
+//      $this->poolform->getWidget('lucene_search[query_name]')->setDefault($lucene_search['query_name']);
         $this->poolform->getEmbeddedForm('lucene_search')->getWidget('query_name')->setDefault($lucene_search['query_name']);
 
-        $this->filterForm->setDefault('staff_type', $request->getPostParameter('staff_type'));
-        $this->filterForm->setDefault('staff_org', $request->getPostParameter('staff_org'));
+        $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
+        foreach($incomingFields as $incomingField)
+        {
+          $this->filterForm->setDefault($incomingField, $request->getPostParameter($incomingField)); //inccomingField->getName ?
+        }
+        //$this->filterForm->setDefault('staff_type', $request->getPostParameter('staff_type'));
+        //$this->filterForm->setDefault('staff_org', $request->getPostParameter('staff_org'));
 //$query_condition = implode(' AND ', $lucene_query);
         parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {

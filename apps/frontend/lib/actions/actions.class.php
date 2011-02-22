@@ -34,7 +34,7 @@ class agActions extends sfActions
     //$this->setTemplate('global/search');
   }
 
-  public function doSearch($searchquery, $is_fuzzy = TRUE)
+  public function doSearch($searchquery, $is_fuzzy = TRUE, $widget = NULL)
   {
     $models = $this->getSearchedModels();
 
@@ -47,6 +47,7 @@ class agActions extends sfActions
     $query->in($models);
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
+    $this->widget = $widget;
   }
 
   public function getSearchedModels()

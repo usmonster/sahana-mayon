@@ -49,12 +49,12 @@ class navComponents extends sfComponents
         $parent->addChild($item['label'], $item['route'], array('class' => 'menu3'));
       }
     }
-      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-      $task = new sfAppRoutesTask($this->dispatcher, new sfFormatter());
-      $task->run(array('application' => 'frontend'), array());
+//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+//      $task = new sfAppRoutesTask($this->dispatcher, new sfFormatter());
+//      $task->run(array('application' => 'frontend'), array());
       $routing = new sfPatternRouting($this->dispatcher);
       $routes = $routing->getRoutes();
-//      $x = sfRouting::getRoutes();
+      //$x = sfRouting::getRoutes();
     $this->menu = $menu;
   }
 }

@@ -48,12 +48,16 @@ if (isset($search_id)) {
         <td>
 
           <h3>Construct Search Conditions:</h3>
-
-          <label class ="filterButton">Filter By Staff Type:</label>
-<?php echo $filterForm['staff_type']; ?>
-
-          <label class ="filterButton">Filter by Organization:</label>
-<?php echo $filterForm['staff_org']; ?>
+<?php
+    $labels = $filterForm->getWidgetSchema()->getLabels();
+    $fields = $filterForm->getWidgetSchema()->getFields();
+    $wSchema = $filterForm->getWidgetSchema();
+foreach($fields as $key => $field)
+{
+  echo '<label class ="filterButton">' . $labels[$key] . '</label>';
+  echo $filterForm[$key];
+}
+?>
         </td>
       </tr>
     </tbody>

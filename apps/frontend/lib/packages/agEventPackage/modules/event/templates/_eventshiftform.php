@@ -11,7 +11,7 @@
 
           <br /><br />
 
-<td><a href="<?php echo url_for('scenario/staffpool?id=4') ?>" class="linkButton modalTrigger" title="Add Staff to Shift">add staff</a></td>
+<td><a href="<?php echo url_for('event/staffshift?id=' . $event_id) . '?shiftid=' . $eventshiftform->getObject()->getId() ?>" class="linkButton modalTrigger" title="Add Staff to Shift">add staff</a></td>
           <table>
             <tfoot>
               <tr>
