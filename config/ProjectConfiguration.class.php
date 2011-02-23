@@ -101,7 +101,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $manager->registerHydrator('single_value_array', 'SingleValueArrayHydrator') ;
 
     // extend where appropriate
-    $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CLASS, 'Doctrine_Query_Extra');
+    $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CLASS, 'agDoctrineQuery');
   }
 
 }
