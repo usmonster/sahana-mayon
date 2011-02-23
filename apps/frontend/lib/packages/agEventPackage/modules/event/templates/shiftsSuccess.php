@@ -39,12 +39,12 @@
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
     <?php foreach ($pager->getResults() as $ag_event_shift): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('event/shifts?id='.$event_id) . '?shiftid=' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+      <td><a class=linkButton href="<?php echo url_for('event/shifts?id='.$event_id) . '/' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
       <td><?php echo $ag_event_shift->getAgEventFacilityResource()->getAgEventFacilityGroup()->getEventFacilityGroup() ?></td>
       <td><?php echo $ag_event_shift->getAgEventFacilityResource()->getAgFacilityResource();//->getAgEventFacilityResource(); ?></td>
       <td><?php echo $ag_event_shift->getAgStaffResourceType()->getStaffResourceType(); ?></td>
-      <td><?php echo $ag_event_shift->getStartTime(); ?></td>
-      <td><?php echo $ag_event_shift->getEndTime(); ?></td>
+      <td><?php echo 'do some math'; //$ag_event_shift->getStartTime(); ?></td>
+      <td><?php echo 'do some math'; //$ag_event_shift->getEndTime(); ?></td>
       <td><?php echo count($ag_event_shift->getAgStaffEvent()); ?></td>
     </tr>
     <?php endforeach; ?>

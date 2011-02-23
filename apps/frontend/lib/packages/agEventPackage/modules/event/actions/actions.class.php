@@ -96,7 +96,7 @@ class eventActions extends agActions
 
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
-        $this->redirect('event/active?id=' . $this->event_id);
+          $this->redirect('event/active?id=' . $this->event_id);
       }
     } else {
       $this->forward404('you cannot deploy an event without a scenario.');
@@ -206,6 +206,13 @@ class eventActions extends agActions
   {
     
   }
+  public function executeStaffpool(sfWebRequest $request)
+  {
+    $this->setEventBasics($request);
+        $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
+            ->findAll();
+  }
+
 
   public function executeShifts(sfWebRequest $request)
   {
@@ -214,8 +221,8 @@ class eventActions extends agActions
     if ($request->isMethod(sfRequest::POST)) {
       if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
         $this->eventshiftform = new agEventShiftForm();
-      } elseif ($request->getParameter('shiftid') && is_int($request->getParameter('shiftid'))) {
-        $ag_event_shift = Doctrine_Core::getTable('ageventShift')
+      } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
+        $ag_event_shift = Doctrine_Core::getTable('agEventShift')
                 ->findByDql('id = ?', $request->getParameter('shiftid'))
                 ->getFirst();
         $this->eventshiftform = new agEventShiftForm($ag_event_shift);

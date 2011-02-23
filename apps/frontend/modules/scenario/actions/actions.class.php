@@ -18,6 +18,21 @@ class scenarioActions extends agActions
 
   protected $searchedModels = array('agScenarioFacilityGroup', 'agScenario', 'agStaff');
 
+  public static $scenario_id;
+  public static $scenarioName;
+
+  /**
+   *
+   * @param <type> $request a web request
+   * this function sets up basic scenario information from a web request, used in most actions here
+   */
+  public function setScenarioBasics($request)
+  {
+    $this->scenario_id = $request->getParameter('id');
+    $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->scenario;
+  }
+
+
   public function executeListgroups(sfWebRequest $request)
   {
     $query = Doctrine_Core::getTable('agScenarioFacilityGroup')
@@ -60,7 +75,7 @@ class scenarioActions extends agActions
             ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
             ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
             ->where('a.scenario_id = ?', $request->getParameter('id'))
-        ->execute();
+            ->execute();
   }
 
   /**
@@ -136,7 +151,7 @@ class scenarioActions extends agActions
     if ($request->isMethod(sfRequest::POST)) {
 //      $facilityGroups = $request->getPostParameters();
       $facilityGroups = $request->getParameter('staff_resource');
-      unset($facilityGroups['_csrf_token']);  /** @todo ??? unsetting csrf token, this should be fixed. */
+      unset($facilityGroups['_csrf_token']);/** @todo ??? unsetting csrf token, this should be fixed. */
       //continuing workflow?
       if ($this->ag_scenario_facility_group) {
         foreach ($facilityGroups as $facilityGroup) {
@@ -209,6 +224,8 @@ class scenarioActions extends agActions
 
       if ($this->array == true) {
         $this->arrayBool = true;
+
+
         foreach ($this->scenarioFacilityGroup as $group) {
           foreach ($group->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
             foreach ($this->staffResourceTypes as $srt) {
@@ -299,36 +316,33 @@ class scenarioActions extends agActions
   /**
    *
    * @param sfWebRequest $request
-   * making a staff pool is fun and easy with Agasti.
+   * set up the form to define staff pools, via saved search
    */
   public function executeStaffpool(sfWebRequest $request)
   {
-
-    $this->scenario_id = $request->getParameter('id');
-    $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->scenario;
+    $this->setScenarioBasics($request);
     $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
             ->findby('scenario_id', $this->scenario_id);
-    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')),// 'class' => 'filter')),
-                    'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization'))//, 'class' => 'filter'))
-      );
+    //get all available staff
+    $this->total_staff =  Doctrine_Core::getTable('agStaff')->count();
+    $this->total_resources =  Doctrine_Core::getTable('agStaffResource')->count();
+    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')), // 'class' => 'filter')),
+      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization'))//, 'class' => 'filter'))
+    );
     //set up inputs for form
-    $filterForm= new sfForm();
-    foreach($inputs as $key => $input){
+    $this->filterForm = new sfForm();
+    foreach ($inputs as $key => $input) {
       $input->setAttribute('class', 'filter');
-      $filterForm->setWidget($key, $input);
+      $this->filterForm->setWidget($key, $input);
     }
 
-    $this->filterForm = $filterForm;
     if ($request->getParameter('search_id')) {
       $this->search_id = $request->getParameter('search_id');
       $this->poolform = new agStaffPoolForm($this->search_id);
       $queryparts = explode(" AND ", $this->poolform->getEmbeddedForm('lucene_search')->getObject()->query_condition);
       foreach ($queryparts as $querypart) {
         $filterType = preg_split("/:/", $querypart, 2);
-
-
         //these search definitions should be stored in 'search type' table maybe?
-
         if ($filterType[0] == 'staff_type') {
           $defaultValue = Doctrine_Query::create()->select('id')->from('agStaffResourceType')
                   ->where('staff_resource_type=?', $filterType[1])->execute(array(), 'single_value_array');
@@ -342,34 +356,27 @@ class scenarioActions extends agActions
       $this->poolform = new agStaffPoolForm();
     }
 
-//    $filterDeco = new agWidgetFormSchemaFormatterRow($luceneForm->getWidgetSchema());
-//    $luceneForm->getWidgetSchema()->addFormFormatter('row', $luceneDeco);
-//    $luceneForm->getWidgetSchema()->setFormFormatterName('row');
-//    $this->filterForm->getWidget('staff_type')->setAttribute('class', 'filter');
-//    $this->filterForm->getWidget('staff_org')->setAttribute('class', 'filter');
-
     if ($request->isMethod(sfRequest::POST)) {
-        //$request->checkCSRFProtection();
+      //$request->checkCSRFProtection();
 //PREVIEW
       if ($request->getParameter('Preview')) {
+
         $postParam = $request->getPostParameter('staff_pool');
         $staff_generator = $postParam['staff_generator'];
         $lucene_search = $postParam['lucene_search'];
         $lucene_query = $lucene_search['query_condition'];
-        $this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']);
+        //$this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']); //this definitely does NOT work
         $this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
+        $this->poolform->getEmbeddedForm('staff_generator')->setDefault('search_weight', $staff_generator['search_weight']);
+
         //$this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
-//      $this->poolform->getWidget('lucene_search[query_name]')->setDefault($lucene_search['query_name']);
+        //$this->poolform->getWidget('lucene_search[query_name]')->setDefault($lucene_search['query_name']);
         $this->poolform->getEmbeddedForm('lucene_search')->getWidget('query_name')->setDefault($lucene_search['query_name']);
 
         $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
-        foreach($incomingFields as $incomingField)
-        {
-          $this->filterForm->setDefault($incomingField, $request->getPostParameter($incomingField)); //inccomingField->getName ?
+        foreach ($incomingFields as $key => $incomingField) {
+          $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
         }
-        //$this->filterForm->setDefault('staff_type', $request->getPostParameter('staff_type'));
-        //$this->filterForm->setDefault('staff_org', $request->getPostParameter('staff_org'));
-//$query_condition = implode(' AND ', $lucene_query);
         parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {
 
@@ -397,7 +404,7 @@ class scenarioActions extends agActions
         }
       } else {  //or, just make a new form
         $this->poolform = new agStaffPoolForm();
-        $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+        //$this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
     }
   }
@@ -434,16 +441,14 @@ class scenarioActions extends agActions
   {
     //if you are coming here from not within the workflow you fail and get 404
     $this->forward404Unless($this->scenario_id = $request->getParameter('id'));
-        //set up some things to show up on the screen for our form
-    $this->scenarioName = Doctrine::getTable('agScenario')
-            ->findByDql('id = ?', $this->scenario_id)
-            ->getFirst()->scenario;
+    //set up some things to show up on the screen for our form
+    $this->setScenarioBasics($request);
     $this->scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
             ->findByDql('scenario_id = ?', $this->scenario_id)
             ->getData();
 
     $this->ag_allocated_facility_resources = '';  //set this default incase none exist
-   
+
     $this->ag_facility_resources = Doctrine_Query::create()
             ->select('a.facility_id, af.*, afrt.*')
             ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
@@ -479,7 +484,6 @@ class scenarioActions extends agActions
               ->select('a.facility_id, af.*, afrt.*')
               ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
               ->whereNotIn('a.id', array_keys($currentoptions))->execute();
-
     } else {
 //NEW
       $this->groupform = new agScenarioFacilityGroupForm();
@@ -523,7 +527,7 @@ class scenarioActions extends agActions
 //      $task->run(array(), array('connection' => 'doctrine'));
 
         if ($request->hasParameter('Continue')) {
-          //$this->getUser()->setAttribute('staffResourceTypes', $this->staffResourceTypes);
+
           $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
         } elseif ($request->hasParameter('Another')) {
           $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
@@ -543,7 +547,6 @@ class scenarioActions extends agActions
         }
       }
     }
-
   }
 
   /**
@@ -552,11 +555,30 @@ class scenarioActions extends agActions
    */
   public function executeShifttemplates(sfWebRequest $request)
   {
-    if ($this->scenario_id = $request->getParameter('id')) {
-      $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-      //if we pass the scenario here, we can also get the staff resources set
-      //in adition to using the staff resources set, this would be a good place to let the user know that there were some staff resources not designated for
+    if ($this->setScenarioBasics($request)) {
+
       //the shift template step, so there may need to be some manual shift template creation, i.e. i didn't say i need at least 2 nurses in a hurricane shelter
+      //get all possible staff resource types
+//
+//            $undefinedShiftsQuery = Doctrine_Query::create()
+//            ->select('f.id, f.facility_name, frt.id, frt.facility_resource_type,
+//                      sfr.id, srt.id, srt.staff_resource_type,
+//                      fsr.id, fsr.minimum_staff, fsr.maximum_staff,
+//                      st.id')
+//            ->addSelect('fr.id')
+//            ->from('agFacility f')
+//            ->innerJoin('f.agFacilityResource fr')
+//            ->innerJoin('fr.agFacilityResourceType frt')
+//            ->innerJoin('fr.agScenarioFacilityResource sfr')
+//            ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+//            ->innerJoin('sfr.agFacilityStaffResource fsr')
+//            ->innerJoin('fsr.agStaffResourceType srt')
+//            ->leftJoin('frt.agShiftTemplate st ON st.facility_resource_type_id = frt.id AND st.staff_resource_type_id = srt.id')
+//            ->Where('sfg.scenario_id = ?', $scenarioId)
+//            ->andWhere('st.id IS NULL');
+      //this query above, should return to us all undefined staff resources... and exclude shift templates
+
+
 
       $facility_staff_resources = Doctrine_Query::create()
               ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
@@ -574,7 +596,7 @@ class scenarioActions extends agActions
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
       $this->shifttemplateform = new agShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
       //for shift template workflow,
-//get current facility_staff_resource,
+      //get current facility_staff_resource,
       //get the facility resource type ids and staff_resource_type
     }
     if ($request->isMethod(sfRequest::POST)) {
@@ -584,7 +606,7 @@ class scenarioActions extends agActions
         if ($request->hasParameter('Continue')) {
           $generatedResult = agScenarioGenerator::shiftGenerator();
           //should be a try/catch here
-          $this->redirect('scenario/scenarioshiftlist?id=' . $request->getParameter('id'));
+          $this->redirect('scenario/shifts?id=' . $request->getParameter('id'));
         } else {
           $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
         }
@@ -597,91 +619,78 @@ class scenarioActions extends agActions
    * Generates a new scenario shift form
    * @param sfWebRequest $request
    */
-  public function executeScenarioshifts(sfWebRequest $request)
+  public function executeShifts(sfWebRequest $request)
   {
-    $this->scenarioshiftform = new agScenarioShiftForm();
-  }
 
-  /**
-   * @method executeScenarioshiftlist()
-   * Method display a list of available scenario shifts.
-   * @param sfWebRequest $request
-   * @return None
-   */
-  public function executeScenarioshiftlist(sfWebRequest $request)
-  {
+//CREATE  / UPDATE
+    //$request->getParameter('shiftid') == '' ? $this->shiftid = 'new' : $this->shiftid = $request->getParameter('shiftid');
+
     $this->scenario_id = $request->getParameter('id');
     $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-    $arrayQuery = Doctrine_Core::getTable('agScenarioShift')
-            ->createQuery('ss')
-            ->select('ss.*, s.id, s.scenario, sfg.id, sfg.scenario_facility_group, sfr.id')
-            ->from('agScenarioShift ss')
-            ->leftJoin('ss.agScenarioFacilityResource AS sfr')
-            ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
-            ->leftJoin('sfg.agScenario AS s')
-            ->where('s.id = ?', $this->scenario_id)
-            ->orderBy('s.scenario, sfg.scenario_facility_group, sfr.facility_resource_id');
+    if ($request->isMethod(sfRequest::POST)) {
 
-    $queryString = $arrayQuery->getSqlQuery();
-    $results = $arrayQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
-//    $this->scenarioshiftform = new agScenarioShiftForm();
-//    $this->myRandomParam = "This is my random Param.";
-//    $this->outputResults = $results;
+      if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
 
-    $this->scenarioShifts = array();
-    foreach ($results as $scenShifts) {
-      $scenShiftId = $scenShifts['ss_id'];
+        $this->scenarioshiftform = new agScenarioShiftForm();
+      } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
+        $ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')
+                ->findByDql('id = ?', $request->getParameter('shiftid'))
+                ->getFirst();
+        $this->scenarioshiftform = new agScenarioShiftForm($ag_scenario_shift);
+      } elseif ($request->getParameter('delete')) {
+//DELETE
+      }
+      $this->scenarioshiftform->bind($request->getParameter($this->scenarioshiftform->getName()), $request->getFiles($this->scenarioshiftform->getName()));
+      //$formvalues = $request->getParameter($this->scenarioshiftform->getName());
+      if ($this->scenarioshiftform->isValid()) { //form is not passing validation because the bind is failing?
+        $ag_scenario_shift = $this->scenarioshiftform->save();
+        $this->generateUrl('scenario_shifts', array('module' => 'scenario',
+          'action' => 'shifts', 'id' => $this->scenario_id, 'shiftid' => $ag_scenario_shift->getId()));
+        //       $this->redirect('scenario/shifts?id=' . $this->scenario_id . '&shiftid=' . $ag_scenario_shift->getId());
+      }
+      $this->redirect('scenario/shifts?id=' . $this->scenario_id); //need to pass in scenario id
+    } else {
+//READ
+      if ($request->getParameter('shiftid') == 'new') {
+        $this->scenarioshiftform = new agScenarioShiftForm();
+        $this->setTemplate('editshift');
+      } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
 
-      $newRecord = array('scenario' => $scenShifts['s_scenario'],
-        'scenario_facility_group' => $scenShifts['sfg_scenario_facility_group'],
-        'facility_resource_id' => $scenShifts['ss_scenario_facility_resource_id'],
-        'staff_resource_type_id' => $scenShifts['ss_staff_resource_type_id'],
-        'task_id' => $scenShifts['ss_task_id'],
-        'task_length_minutes' => $scenShifts['ss_task_length_minutes'],
-        'break_length_minutes' => $scenShifts['ss_break_length_minutes'],
-        'minutes_start_to_facility_activation' => $scenShifts['ss_minutes_start_to_facility_activation'],
-        'minimum_staff' => $scenShifts['ss_minimum_staff'],
-        'maximum_staff' => $scenShifts['ss_maximum_staff'],
-        'staff_wave' => $scenShifts['ss_staff_wave'],
-        'shift_status_id' => $scenShifts['ss_shift_status_id'],
-        'deployment_algorithm_id' => $scenShifts['ss_deployment_algorithm_id']
-      );
-      if (array_key_exists($scenShiftId, $this->scenarioShifts)) {
-        $tempArray = $this->scenarioShifts[$scenShiftId];
-        $newArray = $tempArray . $newRecord;
-        $this->scenarioShifts[$scenShiftId] = $newArray;
+        $ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')
+                ->findByDql('id = ?', $request->getParameter('shiftid'))
+                ->getFirst();
+
+        $this->scenarioshiftform = new agScenarioShiftForm($ag_scenario_shift);
+        $this->setTemplate('editshift');
       } else {
-        $this->scenarioShifts[$scenShiftId] = $newRecord;
+//LIST
+        $query = Doctrine_Query::create()
+                ->select('ss.*, s.id, s.scenario, sfg.id, sfg.scenario_facility_group, sfr.id')
+                ->from('agScenarioShift as ss')
+                ->leftJoin('ss.agScenarioFacilityResource AS sfr')
+                ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
+                ->leftJoin('sfg.agScenario AS s')
+                ->where('s.id = ?', $this->scenario_id);
+
+
+        /**
+         * Create pager
+         */
+        $this->pager = new sfDoctrinePager('agScenarioShift', 20);
+
+        /**
+         * Set pager's query to our final query including sort
+         * parameters
+         */
+        $this->pager->setQuery($query);
+
+        /**
+         * Set the pager's page number, defaulting to page 1
+         */
+        $this->pager->setPage($request->getParameter('page', 1));
+        $this->pager->init();
       }
     }
-
-//    $this->facilityResourceInfo = agFacilityResource::facilityResourceInfo();
-
-    $query = Doctrine_Query::create()
-            ->select('ss.*, s.id, s.scenario, sfg.id, sfg.scenario_facility_group, sfr.id')
-            ->from('agScenarioShift as ss')
-            ->leftJoin('ss.agScenarioFacilityResource AS sfr')
-            ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
-            ->leftJoin('sfg.agScenario AS s')
-            ->where('s.id = ?', $request->getParameter('id'));
-
-
-    /**
-     * Create pager
-     */
-    $this->pager = new sfDoctrinePager('agScenarioShift', 20);
-
-    /**
-     * Set pager's query to our final query including sort
-     * parameters
-     */
-    $this->pager->setQuery($query);
-
-    /**
-     * Set the pager's page number, defaulting to page 1
-     */
-    $this->pager->setPage($request->getParameter('page', 1));
-    $this->pager->init();
   }
 
   /**
@@ -814,22 +823,6 @@ class scenarioActions extends agActions
 //    $this->setTemplate('shifttemplate');
   }
 
-  /**
-   * @method executeCreatescenarioshift()
-   * Create a new scenario shift
-   * @param sfWebRequest $request
-   * @return none
-   */
-  public function executeCreatescenarioshift(sfWebRequest $request)
-  {
-    $this->ag_scenario_shifts = Doctrine_Core::getTable('agScenarioShift')
-            ->createQuery('ss')
-            ->execute();
-    $this->forward404Unless($request->isMethod(sfRequest::POST));
-    $this->scenarioshiftform = new agScenarioShiftForm();
-    $this->processScenarioshiftform($request, $this->scenarioshiftform);
-    $this->setTemplate('scenarioShift');
-  }
 
   /**
    *
@@ -883,20 +876,6 @@ class scenarioActions extends agActions
     $this->grouptypeform = new agFacilityGroupTypeForm($ag_facility_group_type);
   }
 
-  /**
-   * @method executeEditscenarioshift()
-   * Generate form for ag_scenario_shift table per record edit.
-   * @param sfWebRequest $request
-   * @return None
-   */
-  public function executeEditscenarioshift(sfWebRequest $request)
-  {
-    $this->forward404Unless($ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_shift does not exist (%s).', $request->getParameter('id')));
-//    $this->ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')
-//            ->createQuery('a')
-//            ->execute();
-    $this->scenarioshiftform = new agScenarioShiftForm($ag_scenario_shift);
-  }
 
   /**
    *
@@ -930,21 +909,6 @@ class scenarioActions extends agActions
     $this->setTemplate('grouptype');
   }
 
-  /**
-   * @method executeUpdatescenarioshift(sfWebRequest $request)
-   * Process the update of a scenario shift.
-   * @param sfWebRequest $request
-   */
-  public function executeUpdatescenarioshift(sfWebRequest $request)
-  {
-    $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
-    $this->forward404Unless($ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_shift does not exist (%s).', $request->getParameter('id')));
-    $this->scenarioshiftform = new agScenarioShiftForm($ag_scenario_shift);
-
-    $this->processScenarioshiftform($request, $this->scenarioshiftform);
-
-    $this->setTemplate('scenarioshiftlist');
-  }
 
   /**
    *
@@ -987,19 +951,6 @@ class scenarioActions extends agActions
     $this->redirect('scenario/grouptype');
   }
 
-  /**
-   * @method executeDeletescenarioshift executes the logic to delete a facility group type
-   * @param sfWebRequest $request
-   */
-  public function executeDeletescenarioshift(sfWebRequest $request)
-  {
-    $request->checkCSRFProtection();
-
-    $this->forward404Unless($ag_scenario_shift = Doctrine_Core::getTable('agScenarioShift')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario_shift does not exist (%s).', $request->getParameter('id')));
-    $ag_scenario_shift->delete();
-
-    $this->redirect('scenario/scenarioshiftlist');
-  }
 
   /**
    * executeDeleteshifttemplategroup()
@@ -1093,16 +1044,6 @@ class scenarioActions extends agActions
       $ag_shift_template = $this->shiftGeneratorForm->saveEmbeddedForms();
       $this->redirect('scenario/newshifttemplates?id=' . $request->getParameter('id'));
     }
-  }
-
-  protected function processScenarioshiftform(sfWebRequest $request, sfForm $scenarioshiftform)
-  {
-    $scenarioshiftform->bind($request->getParameter($scenarioshiftform->getName()), $request->getFiles($scenarioshiftform->getName()));
-    if ($scenarioshiftform->isValid()) {
-      $ag_scenario_shift = $scenarioshiftform->save();
-      $this->redirect('scenario/editscenarioshift?id=' . $ag_scenario_shift->getId());
-    }
-    $this->redirect('scenario/scenarioshiftlist');
   }
 
   public function executeGeneratescenarioshift()

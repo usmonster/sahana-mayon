@@ -3,7 +3,7 @@
   entered are relative, and when an event is created time will become specific to that event.</p>
 <h3>Shift Templates for
   <span class="highlightedText">
-    <?php echo $scenario_name ?>
+    <?php echo $scenarioName ?>
   </span>
   Scenario:
 </h3>

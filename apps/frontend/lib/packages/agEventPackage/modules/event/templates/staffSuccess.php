@@ -1,6 +1,12 @@
 <h2><span class="highlightedText"><?php echo $eventName ?></span> Management</h2>
 
 
+<p>In order for staff to be deployed to locations, you need staff, get some by making some staff resource pools, or existing current ones</p>
+<a href="<?php echo url_for('event/staffpool?id=' . $event_id); ?>" class="linkButton" title="View Staff Resource Pools for Event">Modify Staff Resource Pools for Event</a><br/>
+
+<p>Then you want to make sure there are shifts for these people to work in:</p>
+<a href="<?php echo url_for('event/shifts?id=' . $event_id); ?>" class="linkButton" title="View Shifts for Event">View Shifts for Event</a><br/>
+
 <p>In order for staff to be assigned to facilities they must first report as being available.
   Agasti will use the Staff Deployment Priority rules created during pre-deployment to generate the
   staff for this event and create an export, using the "Generate All Staff Contact List" button below,
@@ -17,7 +23,7 @@
 <a href="<?php echo url_for('event/staffin'); ?>" class="linkButton" title="Generate Staff Assignment Export">Generate Staff Assignment Export</a><br/>
 
 
-<a href="<?php echo url_for('event/shifts?id=' . $event_id); ?>" class="linkButton" title="View Shifts for Event">View Shifts for Event</a><br/>
+
 <hr />
 
 <a href="<?php echo url_for('event/active?id=' . $event_id); ?>" class="linkButton" title="Back to Event Dashboard">Back to Event Dashboard</a><br/>

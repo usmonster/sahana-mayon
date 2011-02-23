@@ -1,6 +1,8 @@
 <h2>Staff Resource Pool</h2> <br>
 Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
 <p> Please define staff resource pools for the <span class="highlightedText"><?php echo $scenarioName ?> </span> Scenario.</p>
+<p> Currently, there are <span class="highlightedText"><?php echo $total_staff ?></span> total staff in the system.</p>
+<p> Of those,  <span class="highlightedText"><?php echo $total_resources ?></span> are available as 'staff resources'</p>
 
 
 <?php if (count($saved_searches) > 0) {
@@ -33,7 +35,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
 ?>
   <hr />
   <h3>Staff Pool Definition</h3>
-<?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
+<?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm,'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
 
   <div id="searchresults">
 
@@ -42,4 +44,4 @@ Your staff resource pool is essentially a set of searches that let you refine wh
     <hr />
   <?php include_partial('global/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results)) ?>
   <?php } ?>
-</div>
+  </div>

@@ -1,16 +1,11 @@
 <?php use_stylesheets_for_form($scenarioshiftform) ?>
 <?php use_javascripts_for_form($scenarioshiftform) ?>
 
-<form name="scenario_shift_form" id="scenario_shift_form" action="
-<?php
-echo url_for('scenario/' . ($scenarioshiftform->getObject()->isNew() ? 'createscenarioshift' : 'updatescenarioshift') .
-    (!$scenarioshiftform->getObject()->isNew() ? '?id=' .
-        $scenarioshiftform->getObject()->getId() : '')) ?>" method="post"
-      <?php $scenarioshiftform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
-        <?php if (!$scenarioshiftform->getObject()->isNew()): ?>
-    <input type="hidden" name="sf_method" value="put" />
-  <?php endif; ?>
+<?php $append = '?shiftid=' . ($scenarioshiftform->getObject()->isNew() ? 'new' : $scenarioshiftform->getObject()->getId()) ?>
 
+
+<form name="scenario_shift_form" id="scenario_shift_form" action="
+<?php echo url_for('scenario/shifts?id=' . $scenario_id) . $append ?>" method="post">
           <br />
 
   <?php echo $scenarioshiftform; ?>
@@ -22,7 +17,7 @@ echo url_for('scenario/' . ($scenarioshiftform->getObject()->isNew() ? 'createsc
               <tr>
                 <td colspan="2">
           <?php echo $scenarioshiftform->renderHiddenFields(false) ?>
-          &nbsp;<a href="<?php echo url_for('scenario/scenarioshiftlist') ?>" class="linkButton">Back to list</a>
+          &nbsp;<a href="<?php echo url_for('scenario/scenarioshiftlist?id=' . $scenario_id) ?>" class="linkButton">Back to list</a>
           <?php if (!$scenarioshiftform->getObject()->isNew()): ?>
             &nbsp;<?php
             echo link_to('Delete', 'scenario/deletescenarioshift?id=' .

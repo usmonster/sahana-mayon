@@ -70,14 +70,14 @@ scenario_shift_templates:
   param:   { module: scenario, action: shifttemplates }
 
 scenario_shift_list:
-  url:     /scenario/:id/scenarioshiftlist
+  url:     /scenario/:id/shifts
   options: { model: agScenario, type: object }
-  param:   { module: scenario, action: scenarioshiftlist }
+  param:   { module: scenario, action: shifts }
 
 scenario_shifts:
-  url:     /scenario/:id/scenarioshifts
+  url:     /scenario/:id/shifts/:shiftid
   options: { model: agScenario, type: object }
-  param:   { module: scenario, action: scenarioshifts }
+  param:   { module: scenario, action: shifts }
 
 scenario_review:
   url:     /scenario/:id/review

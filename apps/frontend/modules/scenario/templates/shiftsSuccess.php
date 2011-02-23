@@ -5,7 +5,6 @@
   //Defines the columns of the scenario shift display list page.
   $columns = array(
     'id' => array('title' => 'Id', 'sortable' => false),
-    'scenario' => array('title' => 'scenario', 'sortable' => false),
     'ScenarioFacilityResource' => array('title' => 'facility resource', 'sortable' => false),
     'staffResourceId' =>  array('title' => 'staff resource id', 'sortable' => false),
     'taskId' =>  array('title' => 'taskId', 'sortable' => false),
@@ -45,8 +44,7 @@
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
     <?php foreach ($pager->getResults() as $ag_scenario_shift): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('scenario/editscenarioshift?id='.$ag_scenario_shift->getId()) ?>" title="View Scenario Shift <?php echo $ag_scenario_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
-      <td><?php echo $scenarioShifts[$ag_scenario_shift->getId()]['scenario']; ?></td>
+      <td><a class=linkButton href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) . '/' . $ag_scenario_shift->getId() ?>" title="View Scenario Shift <?php echo $ag_scenario_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
       <td><?php
 //            $facilityResourceId = $scenarioShifts[$ag_scenario_shift->getId()]['facility_resource_id'];
 //#            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
@@ -70,7 +68,7 @@
 
 <br>
 <div>
-  <a href="<?php echo url_for('scenario/newscenarioshift') ?>" class="linkButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
+  <a href="<?php echo url_for('scenario/shifts?id=' .$scenario_id) .'/new'?>" class="linkButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
   <a href="<?php echo url_for('scenario/staffpool?id=' .$scenario_id ) ?>" class="linkButton" title="Define Staff Pools">Save and Define Staff Pools</a>
 
 </div>

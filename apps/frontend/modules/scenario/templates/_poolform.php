@@ -30,7 +30,7 @@ if (isset($search_id)) {
 <?php echo $poolform->renderHiddenFields(false) ?>
           <input type="submit" value="Save" class="linkButton" name="Save" onclick="queryConstruct()"/>
           <input type="submit" value="Preview" class="linkButton" name="Preview" onclick="queryConstruct()"/>
-          <input type="submit" value="New" name="New" class="linkButton"/>
+          <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton" title="New Staff Pool">New Staff Pool</a>
 <?php if (isset($search_id)) { ?>
           <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
 <?php } ?>
@@ -48,6 +48,7 @@ if (isset($search_id)) {
         <td>
 
           <h3>Construct Search Conditions:</h3>
+
 <?php
     $labels = $filterForm->getWidgetSchema()->getLabels();
     $fields = $filterForm->getWidgetSchema()->getFields();

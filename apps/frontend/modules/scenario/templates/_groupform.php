@@ -48,7 +48,8 @@ echo url_for
     ?>
       <input class="linkButton" type="submit" value="Delete" name="Delete"/>
       <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>
-    <?php }
+    <?php
+    }
     echo $groupform;
     ?>
   </div>
@@ -85,7 +86,7 @@ echo url_for
   <br/>
   <div class="tooltips" >
     <span id="allocated_tip">
-      <?php echo "urltowiki/allocated_tooltip"; ?>
+<?php echo "urltowiki/allocated_tooltip"; ?>
     </span>
   </div>
   <br />
@@ -93,5 +94,12 @@ echo url_for
   <a href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>" class="linkButton">Back</a>
   <input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
   <input class="linkButton" type="submit" value="Save and Assign Staff Requirements to All Facility Groups" name="AssignAll" onclick="serialTran()"/>
-  <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Continue</a>
+
+  <?php
+      if ($existingFgroups == true) {
+  ?>
+ <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Continue</a>
+  <?php
+      }
+  ?>
 </form>
