@@ -30,7 +30,7 @@ class agEventFacilityHelper
 
     $groupStatus = self::returnCurrentEventFacilityGroupStatus($eventId) ;
 
-    $query = Doctrine_Query_Extra::create()
+    $query = agDoctrineQuery::create()
       ->select('efg.id')
         ->addSelect('efg.event_facility_group')
         ->addSelect('fgt.facility_group_type')
@@ -70,7 +70,7 @@ class agEventFacilityHelper
     $singleFirstShifts = array_values(self::returnSingleFirstFacilityResourceShifts($eventId, FALSE)) ;
 
     // here lies the meat of this function
-    $query = Doctrine_Query_Extra::create()
+    $query = agDoctrineQuery::create()
       ->select('efr.id')
         ->addSelect('f.facility_name')
         ->addSelect('f.facility_code')
@@ -158,7 +158,7 @@ class agEventFacilityHelper
     $disabledStatusId = agEventShiftHelper::returnDisabledShiftStatus() ;
 
     // get inserts
-    $insertQuery = Doctrine_Query_Extra::create()
+    $insertQuery = agDoctrineQuery::create()
       ->select('efg.id')
         ->from('agEventFacilityResource efg')
           ->leftJoin('agEventFacilityResourceActivationTime efrat')
@@ -167,14 +167,14 @@ class agEventFacilityHelper
     $insertIds = $insertQuery->execute(array(), 'single_value_array') ;
 
     // define update existing query
-    $updateQuery = Doctrine_Query_Extra::create($conn)
+    $updateQuery = agDoctrineQuery::create($conn)
       ->update('agEventFacilityResourceActivationTime')
       ->set('activation_time', '?', $activationTime)
       ->whereIn('event_facility_resource_id', $eventFacilityResourceIds) ;
 
     // define blackout query
     // @todo JUST MAKE THIS A SELECT AND PASS THE SHIFT IDS TO THE UPDATE
-    $blackoutQuery = Doctrine_Query_Extra::create($conn)
+    $blackoutQuery = agDoctrineQuery::create($conn)
       ->update('ag_event_shift')
       ->set('shift_status_id', '?', $disabledStatusId)
       ->whereIn('event_facility_resource_id', $eventFacilityResourceIds)
@@ -232,7 +232,7 @@ class agEventFacilityHelper
     // disable shifts from before the zero hour
 
     // enable shifts from before based on boolean y/n?
-    $query = Doctrine_Query_Extra::create()
+    $query = agDoctrineQuery::create()
       ->select('efr.id')
         ->addSelect('f.facility_name')
         ->addSelect('f.facility_code')
@@ -278,7 +278,7 @@ class agEventFacilityHelper
    * // To get the current status of all facilities in a current event
    * $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityResourceStatus($eventId) ;
    *
-   * $q = Doctrine_Query_Extra::create()
+   * $q = agDoctrineQuery::create()
    *   ->select('s.*')
    *   ->from('agEventFacilityResourceStatus s')
    *   ->whereIn('s.id', array_keys($currentStatusIds)) ;
@@ -293,7 +293,7 @@ class agEventFacilityHelper
    */
   public static function returnCurrentEventFacilityResourceStatus($eventId)
   {
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('efrs.id')
           ->addSelect('efrs.event_facility_resource_id')
           ->addSelect('efrs.time_stamp')
@@ -319,7 +319,7 @@ class agEventFacilityHelper
    * // To get the current status of all facilities in a current event
    * $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityGroupStatus($eventId) ;
    *
-   * $q = Doctrine_Query_Extra::create()
+   * $q = agDoctrineQuery::create()
    *   ->select('s.*')
    *   ->from('agEventFacilityGroupStatus s')
    *   ->whereIn('s.id', array_keys($currentStatusIds)) ;
@@ -334,7 +334,7 @@ class agEventFacilityHelper
    */
   public static function returnCurrentEventFacilityGroupStatus($eventId)
   {
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('efgs.id')
           ->addSelect('efgs.event_facility_group_id')
           ->addSelect('efgs.time_stamp')
@@ -360,7 +360,7 @@ class agEventFacilityHelper
    */
   public static function returnCurrentEventStatus($eventId)
   {
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('es.event_status_type_id')
         ->from('agEventStatus es')
         ->where('es.event_id = ?', $eventId)
@@ -386,7 +386,7 @@ class agEventFacilityHelper
    */
   public static function returnFirstFacilityResourceShifts($eventId, $staffed = NULL)
   {
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('es.id')
           ->addSelect('es.event_facility_resource_id')
         ->from('agEventShift es')
@@ -435,7 +435,7 @@ class agEventFacilityHelper
   {
     $firstShifts = array_keys( self::returnFirstFacilityResourceShifts($eventId, $staffed) ) ;
 
-    $query = Doctrine_Query_Extra::create()
+    $query = agDoctrineQuery::create()
       ->select('es.event_facility_resource_id')
         ->addSelect('MIN(es.id) AS min_shift_id')
         ->from('agEventShift es')
@@ -493,7 +493,7 @@ class agEventFacilityHelper
     $timestamp = agDateTimeHelper::defaultTimestampFormat($time) ;
 
     // create our basic query
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('es.id')
           ->addSelect('es.event_facility_resource_id')
         ->from('agEventShift es')
@@ -547,7 +547,7 @@ class agEventFacilityHelper
   {
     $currentShifts = array_keys( self::returnCurrentFacilityResourceShifts($eventId, $staffed, $time) ) ;
 
-    $shiftQuery = Doctrine_Query_Extra::create()
+    $shiftQuery = agDoctrineQuery::create()
       ->select('es.event_facility_resource_id')
         ->addSelect('MIN(es.id) AS shift_id')
         ->from('agEventShift es')
@@ -638,7 +638,7 @@ class agEventFacilityHelper
     $queryAndWhereParams = array_merge($queryAndWhereParams, self::$facility_group_status_disabled) ;
 
     // build the query object
-    $query = Doctrine_Query_Extra::create()
+    $query = agDoctrineQuery::create()
       ->select('efr.id')
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')

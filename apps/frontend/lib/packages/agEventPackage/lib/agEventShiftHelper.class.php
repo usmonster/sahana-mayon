@@ -28,7 +28,7 @@ class agEventShiftHelper
    */
   private function updateEventShiftTime($eventShiftId, $startTime, $endTime, $breakStart, $breakEnd)
   {    
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->update('agEventShift')
       ->set('start_time', $startTime)
       ->set('end_time', $endTime)
@@ -51,7 +51,7 @@ class agEventShiftHelper
   public static function activateEventFacilityResourceShifts($eventFacilityResourceId, $activationTime)
   {
     // capture the relative times and shifts associated with the event_facility_resource_id
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('es.id')
         ->addSelect('es.minutes_start_to_facility_activation')
         ->addSelect('es.task_length_minutes')
@@ -97,7 +97,7 @@ class agEventShiftHelper
   public static function activateEventFacilityGroupShifts($eventFacilityGroupId, $activationTime)
   {
     // capture the facilities associated with the event_facility_group_id
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('efr.id')
       ->from('agEventFacilityResource efr')
         ->innerJoin('efr.agEventFacilityResourceStatus efrs')
@@ -135,7 +135,7 @@ class agEventShiftHelper
   public static function activateEventShifts($eventId, $activationTime)
   {
     // capture the facilities associated with the event_facility_group_id
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('efg.id')
       ->from('agEventFacilityGroup efg')
         ->innerJoin('efg.agEventFacilityGroupStatus efgs')
@@ -179,7 +179,7 @@ class agEventShiftHelper
     if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
 
     // query construction
-    $shiftsQuery = Doctrine_Query::create($conn)
+    $shiftsQuery = agDoctrineQuery::create($conn)
       ->update('agEventShift')
         ->set('shift_status_id', '?', $shiftStatusId)
         ->whereIn('id', $eventShiftIds) ;
@@ -219,7 +219,7 @@ class agEventShiftHelper
     // set our default connection if one isn't passed
     if (! is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
 
-    $query = Doctrine_Query::create($conn)
+    $query = agDoctrineQuery::create($conn)
       ->delete('agEventStaffShift ess')
         ->where('NOT EXISTS(
             SELECT essi.id
@@ -250,7 +250,7 @@ class agEventShiftHelper
    */
   public static function returnDisabledShiftStatus()
   {
-    $statusQuery = Doctrine_Query::create()
+    $statusQuery = agDoctrineQuery::create()
       ->select('ss.id')
         ->from('ag_shift_status ss')
         ->where('ss.shift_status = ?', agGlobal::$param['shift_disabled_status']) ;

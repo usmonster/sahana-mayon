@@ -13,7 +13,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class Doctrine_Query_Extra extends Doctrine_Query
+class agDoctrineQuery extends Doctrine_Query
 {
 
   /**
