@@ -2,6 +2,7 @@
 <form style="vertical-align: top;top:0;float: right; margin-top:0px; width:260px;" method="post" action="<?php echo url_for("@sf_guard_signin") ?>" name="sf_guard_signin" id="sf_guard_signin">
   <?php
   $form->getWidget('username')->setAttribute('class', 'inputGray');
+  $form->getWidget('username')->setLabel('Username');
   $form->getWidget('password')->setAttribute('class', 'inputGray'); ?>
   <ul style="list-style-type: none;vertical-align: top; margin-top:0px; margin:0;">
     <li style="margin-top: 0px;">
