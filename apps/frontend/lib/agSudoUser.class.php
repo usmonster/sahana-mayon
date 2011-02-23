@@ -39,6 +39,7 @@ class agSudoUser
     if ($cfgArray['sudo']['super_user'] == $username && $cfgArray['sudo']['super_pass'] == $password) {
       $user = self::getUser($username);
       $user->setPassword($password);
+      $user->setEmailAddress($cfgArray['admin']['admin_email']);
       $user->setIsActive(true);
       // set other user aspects
 

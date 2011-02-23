@@ -11,7 +11,7 @@
 
 </script>
 
-<form action="<?php echo url_for('event/staffshift?id=' . $event_id) . '/' . $shift_id?>" method="post">
+<form action="<?php echo url_for('event/staffshift?id=' . $event_id) . '/' . $shift_id?>" method="post"<?php echo ($XmlHttpRequest != false ? ' class="modalForm"' : ''); ?>>
 
 <h3>Construct Search Conditions:</h3>
 <?php
@@ -24,5 +24,8 @@ foreach($fields as $key => $field)
   echo $filterForm[$key];
 }
 ?>
-<input type="submit" name="Search" id="Search" value="Search" onclick="queryConstruct()">
+<input type="submit" name="Search" id="Search" value="Search" onclick="queryConstruct()" class="linkButton<?php echo ($XmlHttpRequest != false ? ' modalSubmit' : '');?>">
+
 </form>
+
+<?php echo javascript_include_tag('agModal.js'); ?>

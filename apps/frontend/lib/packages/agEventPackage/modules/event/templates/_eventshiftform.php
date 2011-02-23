@@ -2,7 +2,7 @@
   use_stylesheet('jquery/jquery.ui.custom.css');
   ?>
 
-<?php $append = '?shiftid=' . ($eventshiftform->getObject()->isNew() ? 'new' : $eventshiftform->getObject()->getId()) ?>
+<?php $append = '/' . ($eventshiftform->getObject()->isNew() ? 'new' : $eventshiftform->getObject()->getId()) ?>
 
 <form name="event_shift_form" id="event_shift_form" action="
 <?php echo url_for('event/shifts?id=' . $event_id) . $append ?>" method="post">
@@ -11,7 +11,7 @@
 
           <br /><br />
 
-<td><a href="<?php echo url_for('event/staffshift?id=' . $event_id) . '?shiftid=' . $eventshiftform->getObject()->getId() ?>" class="linkButton modalTrigger" title="Add Staff to Shift">add staff</a></td>
+<td><a href="<?php echo url_for('event/staffshift?id=' . $event_id) . $append ?>" class="linkButton modalTrigger" title="Add Staff to Shift">add staff</a></td>
           <table>
             <tfoot>
               <tr>
