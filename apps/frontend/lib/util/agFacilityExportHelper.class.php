@@ -1,55 +1,51 @@
 <?php
-class agFacilityExportHelper
-{
-  public static function export()
-  {
-    // Define some variables and definitions.
-    $primaryOnly = TRUE;
-    $contactType = 'work';
-    $addressStandard = 'us standard';
 
-    // This is the start of the definition list for XLS headers.
-    $exportHeaders = array('Facility Name', 'Facility Code', 'Facility Resource Type Abbr',
+class agFacilityExportHelper {
+
+  public function __construct() {
+    $this->primaryOnly = TRUE;
+    $this->contactType = 'work';
+    $this->addressStandard = 'us standard';
+    $this->exportHeaders = array('Facility Name', 'Facility Code', 'Facility Resource Type Abbr',
         'Facility Resource Status', 'Facility Capacity', 'Facility Activation Sequence',
         'Facility Allocation Status', 'Facility Group', 'Facility Group Type',
-        'Facility Group Allocation Status', 'Faciltiy Group Activation Sequence',
+        'Facility Group Allocation Status', 'Facility Group Activation Sequence',
         'Work Email', 'Work Phone');
-    $staffResourceTypes = self::queryStaffResourceTypes();
-
-    // Use the agFacilityHelper to gather information specific to facilities.
-    $facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario');
-    $facilityAddress = agFacilityHelper::facilityAddress($addressStandard, $primaryOnly, $contactType);
-    $facilityGeo = agFacilityHelper::facilityGeo($primaryOnly, $contactType);
-    $facilityEmail = agFacilityHelper::facilityEmail($primaryOnly, $contactType);
-    $facilityPhone = agFacilityHelper::facilityPhone($primaryOnly, $contactType);
-    $facilityStaffResource = agFacilityHelper::facilityStaffResource();
-
-    $addressFormat = Doctrine_Query::create()
-            ->select('ae.address_element')
-            ->from('agAddressElement ae')
-            ->innerJoin('ae.agAddressFormat af')
-            ->innerJoin('af.agAddressStandard astd')
-            ->where('astd.address_standard=?', $addressStandard)
-            ->andWhere('ae.address_element<>?', 'zip+4')
-            ->orderBy('af.line_sequence, af.inline_sequence')
-            ->execute(array(), 'single_value_array');
-    
-    self::buildAddressHeaders($exportHeaders, $addressStandard, $addressFormat);
-    self::buildGeoHeaders($exportHeaders);
-    self::buildStaffTypeHeaders($exportHeaders, $staffResourceTypes);
-
-    $lookUps = self::buildLookUpArray();
-    $lookUpContent = self::gatherLookupValues($lookUps);
-
-    $facilityExportRecords = self::buildExportRecords($facilityGeneralInfo, $facilityAddress, $facilityGeo, $facilityEmail, $facilityPhone, $facilityStaffResource, $contactType, $addressFormat, $staffResourceTypes);
-    return $facilityExportRecords;
+    $this->facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario');
+    $this->facilityAddress = agFacilityHelper::facilityAddress($this->addressStandard, $this->primaryOnly, $this->contactType);
+    $this->facilityGeo = agFacilityHelper::facilityGeo($this->primaryOnly, $this->contactType);
+    $this->facilityEmail = agFacilityHelper::facilityEmail($this->primaryOnly, $this->contactType);
+    $this->facilityPhone = agFacilityHelper::facilityPhone($this->primaryOnly, $this->contactType);
+    $this->facilityStaffResource = agFacilityHelper::facilityStaffResource();
+    $this->addressFormat = Doctrine_Query::create()
+                    ->select('ae.address_element')
+                    ->from('agAddressElement ae')
+                    ->innerJoin('ae.agAddressFormat af')
+                    ->innerJoin('af.agAddressStandard astd')
+                    ->where('astd.address_standard=?', $this->addressStandard)
+                    ->andWhere('ae.address_element<>?', 'zip+4')
+                    ->orderBy('af.line_sequence, af.inline_sequence')
+                    ->execute(array(), 'single_value_array');
+    $this->staffResourceTypes = $this->queryStaffResourceTypes();
   }
 
-  public static function buildExportRecords($facilityGeneralInfo, $facilityAddress, $facilityGeo, $facilityEmail, $facilityPhone, $facilityStaffResource, $contactType, $addressFormat, $staffResourceTypes)
-  {
+  public function export() {
+    $this->buildAddressHeaders();
+    $this->buildGeoHeaders();
+    $this->buildStaffTypeHeaders();
+
+    $lookUps = $this->buildLookUpArray();
+    $lookUpContent = $this->gatherLookupValues($lookUps);
+
+    $facilityExportRecords = $this->buildExportRecords();
+
+    $exportResponse = $this->buildXls($facilityExportRecords, $lookUpContent);
+    return $exportResponse;
+  }
+
+  public function buildExportRecords() {
     $facilityExportRecords = array();
-    foreach ($facilityGeneralInfo as $fac)
-    {
+    foreach ($this->facilityGeneralInfo as $fac) {
       $entry = array();
       $entry['Facility Name'] = $fac['f_facility_name'];
       $entry['Facility Code'] = $fac['f_facility_code'];
@@ -64,34 +60,29 @@ class agFacilityExportHelper
       $entry['Facility Group Activation Sequence'] = $fac['sfg_activation_sequence'];
 
       // Facility email
-      if (array_key_exists($fac['f_id'], $facilityEmail))
-      {
-        $priorityNumber = key($facilityEmail[$fac['f_id']][$contactType]);
-        $entry['Work Email'] = $facilityEmail[$fac['f_id']][$contactType][$priorityNumber];
+      if (array_key_exists($fac['f_id'], $this->facilityEmail)) {
+        $priorityNumber = key($this->facilityEmail[$fac['f_id']][$this->contactType]);
+        $entry['Work Email'] = $this->facilityEmail[$fac['f_id']][$this->contactType][$priorityNumber];
       } else {
         $entry['Work Email'] = null;
       }
 
       // Facility phone numbers
-      if (array_key_exists($fac['f_id'], $facilityPhone))
-      {
-        $priorityNumber = key($facilityPhone[$fac['f_id']][$contactType]);
-        $entry['Work Phone'] = $facilityPhone[$fac['f_id']][$contactType][$priorityNumber];
+      if (array_key_exists($fac['f_id'], $this->facilityPhone)) {
+        $priorityNumber = key($this->facilityPhone[$fac['f_id']][$this->contactType]);
+        $entry['Work Phone'] = $this->facilityPhone[$fac['f_id']][$this->contactType][$priorityNumber];
       } else {
         $entry['Work Phone'] = null;
       }
 
       // Facility address
       $addressId = null;
-      if (array_key_exists($fac['f_id'], $facilityAddress))
-      {
-        $priorityNumber = key($facilityAddress[ $fac['f_id'] ][$contactType]);
-        $addressId = $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber]['address_id'];
+      if (array_key_exists($fac['f_id'], $this->facilityAddress)) {
+        $priorityNumber = key($this->facilityAddress[$fac['f_id']][$this->contactType]);
+        $addressId = $this->facilityAddress[$fac['f_id']][$this->contactType][$priorityNumber]['address_id'];
 
-        foreach($addressFormat as $key => $addr)
-        {
-          switch ($addr)
-          {
+        foreach ($this->addressFormat as $key => $addr) {
+          switch ($addr) {
             case 'line 1':
               $exp_index = 'Street 1';
               break;
@@ -100,16 +91,16 @@ class agFacilityExportHelper
               break;
             case 'zip5':
               $exp_index = 'Postal Code';
+              break;
             default:
               $exp_index = ucwords($addr);
-           }
+          }
 
 
-          if (array_key_exists($addr, $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber]))
-          {
-            $entry[ $exp_index ] = $facilityAddress[ $fac['f_id'] ][$contactType][$priorityNumber][$addr];
+          if (array_key_exists($addr, $this->facilityAddress[$fac['f_id']][$this->contactType][$priorityNumber])) {
+            $entry[$exp_index] = $this->facilityAddress[$fac['f_id']][$this->contactType][$priorityNumber][$addr];
           } else {
-            $entry[ $exp_index ] = null;
+            $entry[$exp_index] = null;
           }
         }
       } else {
@@ -117,14 +108,11 @@ class agFacilityExportHelper
       }
 
       // facility geo.
-      if (array_key_exists($fac['f_id'], $facilityGeo))
-      {
-        if (isset($addressId))
-        {
-          if (array_key_exists($addressId, $facilityGeo[ $fac['f_id'] ]))
-          {
-            $entry['Longitude'] = $facilityGeo[ $fac['f_id'] ][$addressId]['longitude'];
-            $entry['Latitude'] = $facilityGeo[ $fac['f_id'] ][$addressId]['latitude'];
+      if (array_key_exists($fac['f_id'], $this->facilityGeo)) {
+        if (isset($addressId)) {
+          if (array_key_exists($addressId, $this->facilityGeo[$fac['f_id']])) {
+            $entry['Longitude'] = $this->facilityGeo[$fac['f_id']][$addressId]['longitude'];
+            $entry['Latitude'] = $this->facilityGeo[$fac['f_id']][$addressId]['latitude'];
           } else {
             $entry = $entry + array_combine(array('Longitude', 'Latitude'), array_fill(count($entry), 2, NULL));
           }
@@ -137,21 +125,17 @@ class agFacilityExportHelper
 
       // Use the staff resource types returned from the query above to get the actual
       // staff type minimums and maximums.
-      foreach($staffResourceTypes as $stfResType)
-      {
-        if (strtolower($stfResType) == 'staff')
-        {
+      foreach ($this->staffResourceTypes as $stfResType) {
+        if (strtolower($stfResType) == 'staff') {
           $exp_index = 'generalist';
         } else {
           $exp_index = strtolower(str_replace(' ', '_', $stfResType));
         }
 
-        if (array_key_exists($fac['sfr_id'], $facilityStaffResource))
-        {
-          if(array_key_exists($stfResType, $facilityStaffResource[ $fac['sfr_id'] ]))
-          {
-            $entry[$exp_index . '_min'] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['minimum staff'];
-            $entry[$exp_index . '_max'] = $facilityStaffResource[ $fac['sfr_id'] ][$stfResType]['maximum staff'];
+        if (array_key_exists($fac['sfr_id'], $this->facilityStaffResource)) {
+          if (array_key_exists($stfResType, $this->facilityStaffResource[$fac['sfr_id']])) {
+            $entry[$exp_index . '_min'] = $this->facilityStaffResource[$fac['sfr_id']][$stfResType]['minimum staff'];
+            $entry[$exp_index . '_max'] = $this->facilityStaffResource[$fac['sfr_id']][$stfResType]['maximum staff'];
           } else {
             $entry = $entry + array_combine(array($exp_index . '_min', $exp_index . '_max'), array_fill(count($entry), 2, NULL));
           }
@@ -165,15 +149,116 @@ class agFacilityExportHelper
     }
     return $facilityExportRecords;
   }
-  
-  public static function buildAddressHeaders($exportHeaders, $addressStandard, $addressFormat)
+
+  public function buildXls($facilityExportRecords, $lookUpContent)
   {
+    require_once 'PHPExcel/Cell/AdvancedValueBinder.php';
+    PHPExcel_Cell::setValueBinder(new PHPExcel_Cell_AdvancedValueBinder());
+
+    $objPHPExcel = new sfPhpExcel();
+    $objPHPExcel->setActiveSheetIndex(0);
+    $objPHPExcel->getActiveSheet()->setTitle("Sheet 1");
+
+    $objPHPExcel->getProperties()->setCreator("Agasti 2.0");
+    $objPHPExcel->getProperties()->setLastModifiedBy("Agasti 2.0");
+    $objPHPExcel->getProperties()->setTitle("Facility List");
+
+    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Arial');
+    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
+
+
+    $this->buildSheetHeaders($objPHPExcel);
+
+    // Create the lookup/definition sheet. Function?
+    $lookUpSheet = new PHPExcel_Worksheet($objPHPExcel, 'Lookup');
+    // Populate the lookup sheet.
+    $c = 0;
+    foreach($lookUpContent as $key => $column) {
+      $lookUpSheet->getCellByColumnAndRow($c, 1)->setValue($key);
+      foreach($column as $k => $value) {
+        $lookUpSheet->getCellByColumnAndRow($c, ($k + 2))->setValue($value);
+      }
+      $c++;
+    }
+    
+    $highestColumn = $lookUpSheet->getHighestColumn();
+    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+    for ($i = $highestColumnIndex; $i >= 0; $i--) {
+      $lookUpSheet->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($i))->setAutoSize(true);
+    }
+
+    $row = 2;
+    foreach ($facilityExportRecords as $rKey => $facilityExportRecord) {
+      if($rKey <> 0 && (($rKey) % 4 == 0)) {
+        // check if the row limit has been reached (up this to 64,000 later)
+        // if we get in here, set the cell sizes on the sheet that was just finished.
+        // Then make a new sheet, set it to active, build its headers, and reset
+        // row to 2.
+        $this->sizeCells($objPHPExcel);
+        $objPHPExcel->createSheet();
+        $objPHPExcel->setActiveSheetIndex($objPHPExcel->getActiveSheetIndex() + 1);
+        $objPHPExcel->getActiveSheet()->setTitle("Sheet " . ($objPHPExcel->getActiveSheetIndex() + 1));
+        $this->buildSheetHeaders($objPHPExcel);
+        $row = 2;
+      }
+      foreach ($this->exportHeaders as $hKey => $heading) {
+        $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $row)->setValueExplicit($facilityExportRecord[$heading]);
+        if(array_key_exists($heading, $lookUpContent)) {
+          $columnNumber = array_search($heading, array_keys($lookUpContent));
+          $columnLetter = base_convert(($columnNumber +10), 10, 36);
+          $topRow = count($lookUpContent[$heading]) + 1;
+          $objValidation = $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $row)->getDataValidation();
+          $objValidation->setType( PHPExcel_Cell_DataValidation::TYPE_LIST );
+          $objValidation->setErrorStyle( PHPExcel_Cell_DataValidation::STYLE_INFORMATION );
+          $objValidation->setAllowBlank(true);
+          $objValidation->setShowInputMessage(true);
+          $objValidation->setShowErrorMessage(true);
+          $objValidation->setShowDropDown(true);
+          $objValidation->setErrorTitle('Input error');
+          $objValidation->setError('Value is not in list.');
+          $objValidation->setPromptTitle('Pick from list');
+          $objValidation->setPrompt('Please pick a value from the drop-down list.');
+          $objValidation->setFormula1('Lookup!$' . $columnLetter . '$2:$'. $columnLetter . '$' . $topRow);
+        }
+      }
+      $row++;
+    }
+    $this->sizeCells($objPHPExcel);
+
+    // Add the lookup sheet. The null argument makes it the last sheet.
+    $objPHPExcel->addSheet($lookUpSheet, null);
+
+    $objPHPExcel->setActiveSheetIndex(0);
+    $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+    $todaydate = date("d-m-y");
+    $todaydate = $todaydate . '-' . date("H-i-s");
+    $fileName = 'Facilities';
+    $fileName = $fileName . '-' . $todaydate;
+    $fileName = $fileName . '.xls';
+    $filePath = realpath(sys_get_temp_dir()) . '/' . $fileName;
+    $objWriter->save($filePath);
+    return array('fileName' => $fileName, 'filePath' => $filePath);
+  }
+
+  public function sizeCells($objPHPExcel)
+  {
+    $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
+    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+    for ($i = $highestColumnIndex; $i >= 0; $i--) {
+      $objPHPExcel->getActiveSheet()->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($i))->setAutoSize(true);
+    }
+  }
+  public function buildSheetHeaders($objPHPExcel)
+  {
+    foreach ($this->exportHeaders as $hKey => $heading) {
+      $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, 1)->setValue($heading);
+    }
+  }
+  public function buildAddressHeaders() {
     // Construct header values for address fields.
     $addressHeaders = array();
-    foreach ($addressFormat as $add)
-    {
-      switch ($add)
-      {
+    foreach ($this->addressFormat as $add) {
+      switch ($add) {
         case 'line 1':
           $addressHeaders[] = 'Street 1';
           break;
@@ -182,28 +267,23 @@ class agFacilityExportHelper
           break;
         case 'zip5':
           $addressHeaders[] = 'Postal Code';
+          break;
         default:
           $addressHeaders[] = ucwords($add);
-       }
+      }
     }
     // Add the address headers to the list already defined, then add the geo headers.
-    $exportHeaders = array_merge($exportHeaders,$addressHeaders);
-    return $exportHeaders;
+    $this->exportHeaders = array_merge($this->exportHeaders, $addressHeaders);
   }
 
-  public static function buildGeoHeaders($exportHeaders)
-  {
-    array_push($exportHeaders, "longitude", "latitude");
-    return $exportHeaders;
+  public function buildGeoHeaders() {
+    array_push($this->exportHeaders, "Longitude", "Latitude");
   }
 
-  public static function buildStaffTypeHeaders($exportHeaders, $staffResourceTypes)
-  {
+  public function buildStaffTypeHeaders() {
     $stfHeaders = array();
-    foreach($staffResourceTypes as $stfResType)
-    {
-      if (strtolower($stfResType) == 'staff')
-      {
+    foreach ($this->staffResourceTypes as $stfResType) {
+      if (strtolower($stfResType) == 'staff') {
         $stfResType = 'generalist';
       } else {
         $stfResType = strtolower(str_replace(' ', '_', $stfResType));
@@ -211,62 +291,59 @@ class agFacilityExportHelper
       $stfHeaders[] = $stfResType . '_min';
       $stfHeaders[] = $stfResType . '_max';
     }
-    $exportHeaders = array_merge($exportHeaders, $stfHeaders);
-    return $exportHeaders;
+    $this->exportHeaders = array_merge($this->exportHeaders, $stfHeaders);
   }
 
-  public static function queryStaffResourceTypes()
-  {
+  public function queryStaffResourceTypes() {
     $staffResourceTypes = Doctrine_Query::create()
-            ->select('srt.staff_resource_type, srt.id')
-            ->from('agStaffResourceType srt')
-            ->execute(array(), 'single_value_array');
+                    ->select('srt.staff_resource_type, srt.id')
+                    ->from('agStaffResourceType srt')
+                    ->execute(array(), 'single_value_array');
     return $staffResourceTypes;
   }
 
-  public static function buildLookUpArray()
-  {
+  public function buildLookUpArray() {
     $lookUps = array(
         'Facility Resource Status' => array(
-            'selectTable'  => 'agFacilityResourceStatus',
+            'selectTable' => 'agFacilityResourceStatus',
             'selectColumn' => 'facility_resource_status',
-            'whereColumn'  => null,
+            'whereColumn' => null,
             'whereValue' => null
         ),
         'Facility Resource Type Abbr' => array(
-            'selectTable'  => 'agFacilityResourceType',
+            'selectTable' => 'agFacilityResourceType',
             'selectColumn' => 'facility_resource_type_abbr',
-            'whereColumn'  => null,
+            'whereColumn' => null,
             'whereValue' => null
         ),
         'Facility Allocation Status' => array(
-            'selectTable'  => 'agFacilityResourceAllocationStatus',
+            'selectTable' => 'agFacilityResourceAllocationStatus',
             'selectColumn' => 'facility_resource_allocation_status',
-            'whereColumn'  => null,
+            'whereColumn' => null,
             'whereValue' => null
         ),
         'Facility Group Allocation Status' => array(
-            'selectTable'  => 'agFacilityGroupAllocationStatus',
+            'selectTable' => 'agFacilityGroupAllocationStatus',
             'selectColumn' => 'facility_group_allocation_status',
-            'whereColumn'  => null,
+            'whereColumn' => null,
             'whereValue' => null
         ),
-        'Burrough' => array(
-            'selectTable'  => 'agAddressValue',
+        'Borough' => array(
+            'selectTable' => 'agAddressValue',
             'selectColumn' => 'value',
-            'whereColumn'  => 'address_element_id',
+            'whereColumn' => 'address_element_id',
             'whereValue' => 8
         ),
         'State' => array(
-            'selectTable'  => 'agAddressValue',
+            'selectTable' => 'agAddressValue',
             'selectColumn' => 'value',
-            'whereColumn'  => 'address_element_id',
+            'whereColumn' => 'address_element_id',
             'whereValue' => 4
         ),
         'Facility Group Type' => array(
-            'selectTable'  => 'agFacilityGroupType',
+            'selectTable' => 'agFacilityGroupType',
             'selectColumn' => 'facility_group_type',
-            'whereColumn'  => null,
+            'whereColumn' => null,
             'whereValue' => null
         )
     );
@@ -305,21 +382,22 @@ class agFacilityExportHelper
    *                          The keys of the inner array musy be set to selectTable, selectColumn,
    *                          whereColumn, and whereValue.
    */
-  public static function gatherLookupValues($lookUps = null)
-  {
-    if(!isset($lookUps) || !is_array($lookUps)) {
+
+  public function gatherLookupValues($lookUps = null) {
+    if (!isset($lookUps) || !is_array($lookUps)) {
       return null;
     }
-    foreach($lookUps as $key => $lookUp) {
+    foreach ($lookUps as $key => $lookUp) {
       $lookUpQuery = Doctrine_Query::create()
-        ->select($lookUp['selectColumn'])
-        ->from($lookUp['selectTable']);
-      if(isset($lookUp['whereColumn']) && isset($lookUp['whereValue'])) {
-        $lookUpQuery->where($lookUp['whereColumn'] . " = ?,' " . $lookUp['whereValue']);
-        $lookUpQuery->where('address_element_id = ?', 8);
+                      ->select($lookUp['selectColumn'])
+                      ->from($lookUp['selectTable']);
+      if (isset($lookUp['whereColumn']) && isset($lookUp['whereValue'])) {
+        //$lookUpQuery->where("'" . $lookUp['whereColumn'] . " = ?', " . $lookUp['whereValue']);
+        $lookUpQuery->where($lookUp['whereColumn'] . " = " . $lookUp['whereValue']);
       }
-      $returnedLookups[$key] = $lookUpQuery->execute(null,'single_value_array');
+      $returnedLookups[$key] = $lookUpQuery->execute(null, 'single_value_array');
     }
     return $returnedLookups;
   }
+
 }

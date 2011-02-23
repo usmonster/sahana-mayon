@@ -34,14 +34,17 @@ class navComponents extends sfComponents
     }
 
     foreach ($this->thirdlinks as $item) {
-      if(preg_match('/^[a-z0-9\/\:]*\/\:[a-z0-9]+/i', $item['route'])) {
-        $goop = explode('/', $item['route']);
-        foreach($goop as $g){
-          if(preg_match('/^\:\w+/', $g)) {
-            $matches[] = $g;
-          }
-        }
-      }
+// This if statement is here for matching rout patterns in the menu to actual routes.
+// Still in development, but held off for now, so I commented it out.
+//
+//      if(preg_match('/^[a-z0-9\/\:]*\/\:[a-z0-9]+/i', $item['route'])) {
+//        $goop = explode('/', $item['route']);
+//        foreach($goop as $g){
+//          if(preg_match('/^\:\w+/', $g)) {
+//            $matches[] = $g;
+//          }
+//        }
+//      }
       $secondlink = $this->secondlinks[$item['parent']];
       if (isset($secondlink)) {
         $topname = $this->toplinks[$secondlink['parent']]['label'];
@@ -49,12 +52,17 @@ class navComponents extends sfComponents
         $parent->addChild($item['label'], $item['route'], array('class' => 'menu3'));
       }
     }
+//  The task way of getting routes gets them all, but they're protected.
+//
 //      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
 //      $task = new sfAppRoutesTask($this->dispatcher, new sfFormatter());
 //      $task->run(array('application' => 'frontend'), array());
-      $routing = new sfPatternRouting($this->dispatcher);
-      $routes = $routing->getRoutes();
-      //$x = sfRouting::getRoutes();
+
+//  This way gets accessbile routes, but only sf_guard.
+//
+//      $routing = new sfPatternRouting($this->dispatcher);
+//      $routes = $routing->getRoutes();
+
     $this->menu = $menu;
   }
 }
