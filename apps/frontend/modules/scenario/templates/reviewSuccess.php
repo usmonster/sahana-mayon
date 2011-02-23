@@ -6,7 +6,7 @@
 <a href="<?php echo url_for('scenario/listgroups?id=' . $scenario_id) ?>" class="linkButton">Manage Facilities/Groups</a>
 <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton">Staff Pool Definitions</a>
 <a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton">Shift Templates</a>
-<a href="<?php echo url_for('scenario/scenarioshiftlist?id=' . $scenario_id) ?>" class="linkButton">Scenario Shifts</a>
+<a href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>" class="linkButton">Scenario Shifts</a>
 <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Staff Resource Requirements</a>
 
 

@@ -89,6 +89,8 @@ class agStaffPoolForm extends sfForm
     }
 
     $this->embedForm('staff_generator', $staffGenForm);
+
+
   }
 
   /**
@@ -119,6 +121,7 @@ class agStaffPoolForm extends sfForm
     if(is_array($this->ls_values))
     {
       $luceneForm->setDefault('query_name', $this->ls_values['query_name']);
+      $luceneForm->setDefault('lucene_search_type_id', $this->ls_values['lucene_search_type_id']);
     }
     $this->embedForm('lucene_search', $luceneForm);
   }

@@ -552,7 +552,7 @@ class scenarioActions extends agActions
    */
   public function executeShifttemplates(sfWebRequest $request)
   {
-    if ($this->setScenarioBasics($request)) {
+    $this->setScenarioBasics($request);
 
       //the shift template step, so there may need to be some manual shift template creation, i.e. i didn't say i need at least 2 nurses in a hurricane shelter
       //get all possible staff resource types
@@ -595,7 +595,7 @@ class scenarioActions extends agActions
       //for shift template workflow,
       //get current facility_staff_resource,
       //get the facility resource type ids and staff_resource_type
-    }
+
     if ($request->isMethod(sfRequest::POST)) {
       $this->shifttemplateform->bind($request->getParameter($this->shifttemplateform->getName()), $request->getFiles($this->shifttemplateform->getName()));
       if ($this->shifttemplateform->isValid()) {
