@@ -35,8 +35,7 @@ class scenarioActions extends agActions
 
   public function executeListgroups(sfWebRequest $request)
   {
-    $query = Doctrine_Core::getTable('agScenarioFacilityGroup')
-            ->createQuery('a')
+    $query = Doctrine_Query::create()
             ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
             ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr');
 
@@ -56,8 +55,7 @@ class scenarioActions extends agActions
    */
   public function executeList(sfWebRequest $request)
   {
-    $this->ag_scenarios = Doctrine_Core::getTable('agScenario')
-            ->createQuery('a')
+    $this->ag_scenarios = Doctrine_Query::create()
             ->select('a.*, b.*')
             ->from('agScenario a, a.agScenarioFacilityGroup b')
             ->execute();
@@ -70,8 +68,7 @@ class scenarioActions extends agActions
    */
   public function executeListgroup(sfWebRequest $request)
   {
-    $this->ag_scenario_facility_groups = Doctrine_Core::getTable('agScenarioFacilityGroup')
-            ->createQuery('a')
+    $this->ag_scenario_facility_groups = Doctrine_Query::create()
             ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
             ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
             ->where('a.scenario_id = ?', $request->getParameter('id'))
@@ -136,8 +133,7 @@ class scenarioActions extends agActions
     $this->ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
             ->find(array($request->getParameter('id')));
     $this->scenarioFacilityGroups = $this->scenario->getAgScenarioFacilityGroup();
-    $this->ag_staff_resources = Doctrine_Core::getTable('agScenarioFacilityResource')
-            ->createQuery('agSFR')
+    $this->ag_staff_resources = Doctrine_Query::create()
             ->select('agSFR.*')
             ->from('agScenarioFacilityResource agSFR')
             ->where('scenario_facility_group_id = ?', $request->getParameter('id'))
@@ -159,8 +155,7 @@ class scenarioActions extends agActions
 //are we editing or updating?
             foreach ($facility as $facilityStaffResource) {
 // The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
-              $existing = Doctrine_Core::getTable('agFacilityStaffResource')
-                      ->createQuery('agSFR')
+              $existing = Doctrine_Query::create()
                       ->select('agFSR.*')
                       ->from('agFacilityStaffResource agFSR')
                       ->where('agFSR.staff_resource_type_id = ?', $facilityStaffResource['staff_resource_type_id'])
@@ -232,8 +227,7 @@ class scenarioActions extends agActions
               $subKey = $group['scenario_facility_group'];
               $subSubKey = $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
 //this existing check should be refactored to be more efficient
-              $existing = Doctrine_Core::getTable('AgFacilityStaffResource')
-                      ->createQuery('agSFR')
+              $existing = Doctrine_Query::create()
                       ->select('agFSR.*')
                       ->from('agFacilityStaffResource agFSR')
                       ->where('agFSR.staff_resource_type_id = ?', $srt->id)
@@ -299,8 +293,7 @@ class scenarioActions extends agActions
   {
     if ($this->scenario_id = $request->getParameter('id')) {
       $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
-      $this->ag_scenario_facility_groups = Doctrine_Core::getTable('agScenarioFacilityGroup')
-              ->createQuery('a')
+      $this->ag_scenario_facility_groups = Doctrine_Query::create()
               ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
               ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
               ->where('a.scenario_id = ?', $this->scenario_id)
@@ -463,8 +456,7 @@ class scenarioActions extends agActions
     if ($request->getParameter('groupid')) {
 //EDIT
       $this->group_id = $request->getParameter('groupid');
-      $ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
-              ->createQuery('a')
+      $ag_scenario_facility_group = Doctrine_Query::create()
               ->select('a.*, afr.*, afgt.*, afrt.*, afgas.*, fr.*, af.*, s.*')
               ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, afr.agFacilityResource fr, fr.agFacility af, a.agScenario s, fr.agFacilityResourceType afrt')
               ->where('a.id = ?', $request->getParameter('groupid'))
@@ -838,8 +830,7 @@ class scenarioActions extends agActions
   {
     $this->forward404Unless(
         $ag_scenario = Doctrine_Core::getTable('agScenario')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario does not exist (%s).', $request->getParameter('id')));
-    $this->ag_scenario_facility_groups = Doctrine_Core::getTable('agScenarioFacilityGroup')
-            ->createQuery('a')
+    $this->ag_scenario_facility_groups = Doctrine_Query::create()
             ->select('a.*')
             ->from('agScenarioFacilityGroup a')
             ->where('a.scenario_id = ?', $request->getParameter('id'))

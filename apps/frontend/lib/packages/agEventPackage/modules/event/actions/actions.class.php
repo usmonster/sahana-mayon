@@ -29,8 +29,7 @@ class eventActions extends agActions
     ));
 
     $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
-    $this->ag_events = Doctrine_Core::getTable('agEvent')
-            ->createQuery('a')
+    $this->ag_events = Doctrine_Query::create()
             ->select('a.*')
             ->from('agEvent a')
             ->execute();
@@ -186,8 +185,7 @@ class eventActions extends agActions
 
   public function executeList(sfWebRequest $request)
   {
-    $this->ag_events = Doctrine_Core::getTable('agEvent')
-            ->createQuery('a')
+    $this->ag_events = Doctrine_Query::create()
             ->select('a.*')
             ->from('agEvent a')
             ->execute();
@@ -393,8 +391,7 @@ class eventActions extends agActions
   public function executeListgroups(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    $query = Doctrine_Core::getTable('agEventFacilityGroup')
-            ->createQuery('a')
+    $query = Doctrine_Query::create()
             ->select('a.*, afr.*, afgt.*, fr.*')
             ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
 

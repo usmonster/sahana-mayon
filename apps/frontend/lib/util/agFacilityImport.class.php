@@ -76,11 +76,11 @@ class AgImportXLS
   function __destruct()
   {
 
-    $file = $this->fileInfo["dirname"] . "/" . $this->fileInfo["basename"];
+    $file = $this->fileInfo["dirname"] . '/' . $this->fileInfo["basename"];
     if (!@unlink($file)) {
       $this->events[] = array("type" => "ERROR", "message" => $php_errormsg);
     } else {
-      $this->events[] = array("type" => "OK", "message" => "Deleted {$this->fileInfo['basename']} upload file.");
+      $this->events[] = array('type' => 'OK', "message" => "Deleted {$this->fileInfo['basename']} upload file.");
     }
   }
 
@@ -119,13 +119,13 @@ class AgImportXLS
         $sheetName = $xlsObj->boundsheets[$sheet]["name"];
         $this->events[] = array("type" => "INFO", "message" => "Parsing worksheet $sheetName");
 
-        // We don't import sheets named "Validation"
-        if (strtolower($sheetName) <> "validation") {
+        // We don't import sheets named "Lookup"
+        if (strtolower($sheetName) <> 'Lookup') {
           for ($row = 2; $row <= $numRows; $row++) {
 
             for ($col = 1; $col <= $numCols; $col++) {
 
-              $colName = str_replace(" ", "_", strtolower($xlsObj->val(1, $col, $sheet)));
+              $colName = str_replace(' ', '_', strtolower($xlsObj->val(1, $col, $sheet)));
 
               $val = $xlsObj->raw($row, $col, $sheet);
               if (!($val)) {

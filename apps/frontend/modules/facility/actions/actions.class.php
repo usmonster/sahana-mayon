@@ -46,8 +46,7 @@ class facilityActions extends agActions
      * Query the database for agFacility records joined with
      * agFacilityResource records
      */
-    $query = Doctrine_Core::getTable('agFacility')
-            ->createQuery('a')
+    $query = Doctrine_Query::create()
             ->select('f.*, fr.*')
             ->from('agFacility f, f.agFacilityResource fr');
 
