@@ -21,14 +21,22 @@ class agStaffPoolForm extends sfForm
   public $lucene_search_id;
   public $scenario_id;
   public $staff_gen_id;
-
+  public $sg_values;  //staff generator form posted values
+  public $ls_values;  //lucene search form posted values
   /**
    *
    * @param integer $staff_gen_id an incoming staff generator id to construct the form
+   * @param array $values is used in the event this form is being constructed after a post
+   *        for a preview, to set the defaults of the internal forms
    */
-  public function __construct($staff_gen_id = null)
+  public function __construct($staff_gen_id = null, $values = null)
   {
+    if($values != null){
+      $this->sg_values = $values['sg_values'];
+      $this->ls_values = $values['ls_values'];
+    }else{
     $this->staff_gen_id = $staff_gen_id;
+    }
     parent::__construct(array(), array(), array());
   }
 
@@ -74,6 +82,11 @@ class agStaffPoolForm extends sfForm
     $staffGenForm->setValidator('scenario_id', new sfValidatorPass());
 
     unset($staffGenForm['created_at'], $staffGenForm['updated_at']);
+    
+    if(is_array($this->sg_values))
+    {
+      $staffGenForm->setDefault('search_weight', $this->sg_values['search_weight']);
+    }
 
     $this->embedForm('staff_generator', $staffGenForm);
   }
@@ -103,6 +116,10 @@ class agStaffPoolForm extends sfForm
     unset($luceneForm['created_at'], $luceneForm['updated_at']);
     unset($luceneForm['ag_report_list']);
 
+    if(is_array($this->ls_values))
+    {
+      $luceneForm->setDefault('query_name', $this->ls_values['query_name']);
+    }
     $this->embedForm('lucene_search', $luceneForm);
   }
 

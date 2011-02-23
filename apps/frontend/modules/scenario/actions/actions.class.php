@@ -353,7 +353,7 @@ class scenarioActions extends agActions
         $this->filterForm->setDefault($filterType[0], $defaultValue[0]);
       }
     } else {
-      $this->poolform = new agStaffPoolForm();
+      $this->poolform = new agStaffPoolForm(); //this is redeclared below to construct the form with an
     }
 
     if ($request->isMethod(sfRequest::POST)) {
@@ -365,13 +365,18 @@ class scenarioActions extends agActions
         $staff_generator = $postParam['staff_generator'];
         $lucene_search = $postParam['lucene_search'];
         $lucene_query = $lucene_search['query_condition'];
+        $values = array('sg_values' =>
+                        array('search_weight' => $staff_generator['search_weight']),
+                        'ls_values' =>
+                        array('query_name' => $lucene_search['query_name'])
+          );
+        $this->poolform = new agStaffPoolForm(null,$values);
         //$this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']); //this definitely does NOT work
-        $this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
-        $this->poolform->getEmbeddedForm('staff_generator')->setDefault('search_weight', $staff_generator['search_weight']);
-
+        //$this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
+        //$this->poolform->getEmbeddedForm('staff_generator')->setDefault('search_weight', $staff_generator['search_weight']);
         //$this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
         //$this->poolform->getWidget('lucene_search[query_name]')->setDefault($lucene_search['query_name']);
-        $this->poolform->getEmbeddedForm('lucene_search')->getWidget('query_name')->setDefault($lucene_search['query_name']);
+        //$this->poolform->getEmbeddedForm('lucene_search')->getWidget('query_name')->setDefault($lucene_search['query_name']);
 
         $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
         foreach ($incomingFields as $key => $incomingField) {
