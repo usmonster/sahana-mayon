@@ -134,10 +134,12 @@ class agPerson extends BaseagPerson
 
   /**
    * getPersonPrimaryNames() is a static method to return a multi layer array of person's primary name.
-   * @return array( person id => name type id => array( mj person name id, person name type, person name id, person name, priority) )
+   * @return array( person id => name type id => array( mj person name id,
+   * person name type, person name id, person name, priority) )
    *
    * @param array $personIds - Queries the primary names for the specified person only.
    */
+
   static public function getPersonPrimaryNames($personIds = NULL)
   {
     try
