@@ -63,7 +63,7 @@ $sortOrder = $sf_request->getGetParameter('order');
           echo($sortColumn == 'type' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=type&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
           ?>
           </th>
-<?php if (!(isset($event))): ?>
+          <?php if (!(isset($event))): ?>
             <th class="head">
               <div class="tableHeaderContent">Event</div>
           <?php
@@ -71,7 +71,7 @@ $sortOrder = $sf_request->getGetParameter('order');
             echo($sortColumn == 'event' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=event&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=event&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
           ?>
             </th>
-<?php endif; ?>
+          <?php endif; ?>
           </tr>
         </thead>
         <tbody>

@@ -171,7 +171,6 @@ them via this command:
     - Be sure to test that this change doesn't negatively affect other PHP
       applications you might be running.
 
-
 APPLICATION INSTALLATION
 ========================
 

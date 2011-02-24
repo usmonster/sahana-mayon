@@ -148,6 +148,7 @@ class agStaffImport
       $staff->save();
 
       foreach ($import as $key => $point) {
+        // set_time_limit(30); Cheat to get all the data in for testing.
         // Names
         if (in_array($key, array('Given Name', 'Family Name')) && $point <> null) {
           switch ($key) {
