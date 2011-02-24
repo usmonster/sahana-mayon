@@ -118,6 +118,7 @@ class agEventFacilityHelper
    * Sets the activation time for a group of event facility resources and optionally disables unused
    * or unnecessary resources.
    *
+   * @param integer(4) $eventId The event this action occurs against.
    * @param array $eventFacilityResourceIds A simple, one-dimensional array of event facility
    * resource id's.
    * @param timestamp $activationTime The activation time to be applied.
@@ -131,23 +132,23 @@ class agEventFacilityHelper
    * @return array Returns an array containing the number of disabled shifts, updated records, and
    * inserted records.
    */
-  public static function setFacilityActivationTime ($eventFacilityResourceIds, $activationTime, $shiftChangeRestriction = TRUE, $releaseStaff = FALSE, Doctrine_Connection $conn = NULL)
+  public static function setFacilityActivationTime ($eventId, $eventFacilityResourceIds, $activationTime, $shiftChangeRestriction = TRUE, $releaseStaff = FALSE, Doctrine_Connection $conn = NULL)
   {
-    // convert our $shiftChangeRestriction to seconds
-    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param('shift_change_restriction') * 60) : 0 ;
+    // convert our dates
+    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param['shift_change_restriction'] * 60) : 0 ;
+    $currentTimestamp = time() ;
 
     // do a check for illegal ops (eg staffed facility resource id's < window for set
-    $blacklistFacilities = self::returnActivationBlacklistFacilities($eventId, $activationTime, $shiftChangeRestriction) ;
+    $blacklistFacilities = array_keys(self::returnActivationBlacklistFacilities($eventId, $activationTime, $shiftChangeRestriction)) ; 
     $blacklistCount = count(array_intersect($eventFacilityResourceIds, $blacklistFacilities)) ;
 
     // throw an exception if there is an intersection between the blackout facilities and those
     // to-be acted upon
     if ($blacklistCount > 0) {
-      // HELP ME!!!
+      throw new sfStopException('Not Allowed: You are attempting to set the activation time of facilities that are blacklisted for changes.');
     }
 
     // set vars
-    $disabledShifts = 0 ;
     $updatedActivationTimes = 0 ;
     $insertedActivationTimes = 0 ;
 
@@ -159,34 +160,35 @@ class agEventFacilityHelper
 
     // get inserts
     $insertQuery = agDoctrineQuery::create()
-      ->select('efg.id')
-        ->from('agEventFacilityResource efg')
-          ->leftJoin('agEventFacilityResourceActivationTime efrat')
+      ->select('efr.id')
+        ->from('agEventFacilityResource efr')
+          ->leftJoin('efr.agEventFacilityResourceActivationTime efrat')
         ->where('efrat.id IS NULL')
-          ->andWhereIn('efg.id', $eventFacilityResourceIds) ;
+          ->andWhereIn('efr.id', $eventFacilityResourceIds) ;
     $insertIds = $insertQuery->execute(array(), 'single_value_array') ;
+    $insertedActivationTimes = count($insertIds) ;
 
     // define update existing query
+    $updateIds = array_diff($eventFacilityResourceIds, $insertIds) ;
     $updateQuery = agDoctrineQuery::create($conn)
       ->update('agEventFacilityResourceActivationTime')
       ->set('activation_time', '?', $activationTime)
-      ->whereIn('event_facility_resource_id', $eventFacilityResourceIds) ;
+      ->whereIn('event_facility_resource_id', $updateIds) ;
 
     // define blackout query
-    // @todo JUST MAKE THIS A SELECT AND PASS THE SHIFT IDS TO THE UPDATE
-    $blackoutQuery = agDoctrineQuery::create($conn)
-      ->update('ag_event_shift')
-      ->set('shift_status_id', '?', $disabledStatusId)
-      ->whereIn('event_facility_resource_id', $eventFacilityResourceIds)
-        ->andWhere('(minutes_start_to_facility_activation + ?) < ?', array($shiftOffset, $activationTime)) ;
+    $disabledShiftQuery = agDoctrineQuery::create($conn)
+      ->select('es.id')
+        ->from('agEventShift es')
+        ->whereIn('event_facility_resource_id', $eventFacilityResourceIds)
+          ->andWhere('((minutes_start_to_facility_activation * 60) + ? + ?) < ?', array($shiftOffset, $currentTimestamp, $activationTime)) ;
+    $disabledShiftIds = $disabledShiftQuery->execute(array(), 'single_value_array') ;
 
     // wrap it all in a transaction and a try/catch to rollback if an exception occurs
     $conn->beginTransaction() ;
     try
     {
       // change the status of shifts that will not be used (due to blackout windows)
-      $disabledShifts = $blackoutQuery->execute() ;
-      // $disabledShifts = agEventShiftHelper::setEventShiftStatus($eventShiftIds, $releaseStaff) ;
+      $disabledShifts = agEventShiftHelper::setEventShiftStatus($disabledShiftIds, $releaseStaff) ;
 
       // update existing
       $updatedActivationTimes = $updateQuery->execute() ;
@@ -218,7 +220,11 @@ class agEventFacilityHelper
       $conn->rollback();
     }
 
-    return array($disabledShifts, $updatedActivationTimes, $insertedActivationTimes) ;
+    $results = $disabledShifts ;
+    $results['updatedActivationTimes'] = $updatedActivationTimes ;
+    $results['insertedActivationTimes'] = $insertedActivationTimes ;
+
+    return $results ;
   }
 
   public static function setEventZeroHour ($eventId, $activationTime)
@@ -314,7 +320,6 @@ class agEventFacilityHelper
 
   /**
    * Static function to return the current status id's of all facility groups for a specific event
-   *
    * <code>
    * // To get the current status of all facilities in a current event
    * $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityGroupStatus($eventId) ;
@@ -376,218 +381,6 @@ class agEventFacilityHelper
   }
 
   /**
-   * Function to return the first shifts of each facility resource for a given event.
-   * 
-   * @param integer(4) $eventId The current event being queried
-   * @param boolean $staffed An optional parameter to determine whether or not to restrict results
-   * to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored.
-   * @return array A two-dimensional associative array keyed by event_shift_id with value array
-   * members as event_facility_resource_id
-   */
-  public static function returnFirstFacilityResourceShifts($eventId, $staffed = NULL)
-  {
-    $query = agDoctrineQuery::create()
-      ->select('es.id')
-          ->addSelect('es.event_facility_resource_id')
-        ->from('agEventShift es')
-          ->innerJoin('es.agEventFacilityResource efr')
-          ->innerJoin('efr.agEventFacilityGroup efg')
-        ->where('efg.event_id = ?', $eventId)
-          ->andWhere('EXISTS (
-          SELECT s.id
-            FROM agEventShift s
-            WHERE s.event_facility_resource_id = es.event_facility_resource_id
-            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)') ;
-
-    if (! is_null($staffed))
-    {
-      if ($staffed)
-      {
-        $query->innerJoin('es.agEventStaffShift ess') ;
-      }
-      else
-      {
-        $query->leftJoin('es.agEventStaffShift ess') ;
-        $query->andWhere('ess.id IS NULL') ;
-      }
-    }
-
-    $results = $query->execute(array(), 'key_value_array') ;
-    return $results ;
-  }
-
-  /**
-   * Method to return an associative array keyed by event facility resource id with a value of one
-   * of the first shifts of the facility resource. Because there can be many "first" shifts, only
-   * one is returned. Parameters $staffed and $minEnd limit whether or not only staffed shifts will
-   * be returned or whether or not the returned shift will be among those "first shifts" that ended
-   * first or last.
-   *
-   * @param integer(4) $eventId The event being queried.
-   * @param boolean $staffed An optional parameter to determine whether or not to restrict results
-   * to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored.
-   * @param boolean $minEnd Parameter to determine whether the "first shift" returned will also be
-   * the first or last to end. If $minEnd = TRUE (the default), the the returned shift will be among
-   * those that ended first.
-   * @return array A key value array of ($event_facility_resource_id => $shift_id)
-   */
-  public static function returnSingleFirstFacilityResourceShifts($eventId, $staffed = NULL, $minEnd = TRUE)
-  {
-    $firstShifts = array_keys( self::returnFirstFacilityResourceShifts($eventId, $staffed) ) ;
-
-    $query = agDoctrineQuery::create()
-      ->select('es.event_facility_resource_id')
-        ->addSelect('MIN(es.id) AS min_shift_id')
-        ->from('agEventShift es')
-        ->whereIn('es.id', $firstShifts)
-        ->groupBy('es.event_facility_resource_id') ;
-
-    if ($minEnd)
-    {
-      $query->andWhere('EXISTS (
-        SELECT s.id,
-          MIN(s.minutes_start_to_facility_activation +
-            s.task_length_minutes +
-            s.break_length_minutes) AS endTimeS,
-          (es.minutes_start_to_facility_activation +
-            es.task_length_minutes +
-            es.break_length_minutes) as endTimeEs
-          FROM agEventShift s
-          WHERE s.id = es.id
-          HAVING endTimeS = endTimeEs)') ; 
-    }
-    else
-    {
-      $query->andWhere('EXISTS (
-        SELECT s.id,
-          MAX(s.minutes_start_to_facility_activation +
-            s.task_length_minutes +
-            s.break_length_minutes) AS endTimeS,
-          (es.minutes_start_to_facility_activation +
-            es.task_length_minutes +
-            es.break_length_minutes) as endTimeEs
-          FROM agEventShift s
-          WHERE s.id = es.id
-          HAVING endTimeS = endTimeEs)') ;
-    }
-
-    $singleFirstShifts = $query->execute(array(),'key_value_pair') ;
-    return $singleFirstShifts ;
-  }
-
-  /**
-   * Return an array keyed by the shift id of any shifts that are currently in operation
-   *
-   * @param integer(4) $eventId The event being queried
-   * @param boolean $staffed An optional parameter to determine whether or not to restrict results
-   * to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored.
-   * @param string $time A optional value that adjusted the concept of 'current' from the application's
-   * CURRENT_TIMESTAMP (or PHP time()) to the passed value (essentially enabling the user to ask
-   * what shifts will be active at this point-in-$time
-   * @return array An two-dimensional associative array, keyed by event_shift_id with a value
-   * array of event_facility_resource_id
-   */
-  public static function returnCurrentFacilityResourceShifts($eventId, $staffed = NULL, $time = NULL)
-  {
-    // convert our start time to unix timestamp or set default if null
-    $timestamp = agDateTimeHelper::defaultTimestampFormat($time) ;
-
-    // create our basic query
-    $query = agDoctrineQuery::create()
-      ->select('es.id')
-          ->addSelect('es.event_facility_resource_id')
-        ->from('agEventShift es')
-          ->innerJoin('es.agEventFacilityResource efr')
-          ->innerJoin('efr.agEventFacilityGroup efg')
-          ->leftJoin('efr.agEventFacilityResourceActivationTime efrat')
-        ->where('efg.event_id = ?', $eventId)
-          ->andWhere('(efrat.activation_time +
-            (60 * es.minutes_start_to_facility_activation)) <= ?', $timestamp)
-          ->andWhere('(efrat.activation_time +
-            (60 * (es.minutes_start_to_facility_activation +
-            (es.task_length_minutes + es.break_length_minutes)))) >= ?', $timestamp) ;
-
-    // determine whether or not it needs to be joined to the staff table
-    if (! is_null($staffed))
-    {
-      if ($staffed)
-      {
-        $query->innerJoin('es.agEventStaffShift ess') ;
-      }
-      else
-      {
-        $query->leftJoin('es.agEventStaffShift ess')
-          ->andWhere('ess.id IS NULL') ;
-      }
-    }
-
-    $results = $query->execute(array(), 'key_value_array');
-    return $results;
-  }
-
-  /**
-   * Method to return an associative array keyed by event facility resource id with a value of one
-   * of the current shifts of the facility resource. Because there can be many "current" shifts, only
-   * one is returned. Parameters $staffed and $minEnd limit whether or not only staffed shifts will
-   * be returned or whether or not the returned shift will be among those "current shifts" that ended
-   * first or last.
-   *
-   * @param integer(4) $eventId The event being queried.
-   * @param boolean $staffed An optional parameter to determine whether or not to restrict results
-   * to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored.
-   * @param string $time A optional value that adjusted the concept of 'current' from the application's
-   * CURRENT_TIMESTAMP (or PHP time()) to the passed value (essentially enabling the user to ask
-   * what shifts will be active at this point-in-$time
-   * @param boolean $minEnd Parameter to determine whether the "first shift" returned will also be
-   * the first or last to end. If $minEnd = TRUE (the default), the the returned shift will be among
-   * those that ended first.
-   * @return array A key value array of ($event_facility_resource_id => $shift_id)
-   */
-  public static function returnSingleCurrentFacilityResourceShifts($eventId, $staffed = NULL, $time = NULL, $minEnd = TRUE)
-  {
-    $currentShifts = array_keys( self::returnCurrentFacilityResourceShifts($eventId, $staffed, $time) ) ;
-
-    $shiftQuery = agDoctrineQuery::create()
-      ->select('es.event_facility_resource_id')
-        ->addSelect('MIN(es.id) AS shift_id')
-        ->from('agEventShift es')
-        ->whereIn('es.id', $currentShifts)
-        ->groupBy('es.event_facility_resource_id') ;
-
-    if ($minEnd)
-    {
-      $query->andWhere('EXISTS (
-        SELECT s.id,
-          MIN(s.minutes_start_to_facility_activation +
-            s.task_length_minutes +
-            s.break_length_minutes) AS endTimeS,
-          (es.minutes_start_to_facility_activation +
-            es.task_length_minutes +
-            es.break_length_minutes) as endTimeEs
-          FROM agEventShift s
-          WHERE s.id = es.id
-          HAVING endTimeS = endTimeEs)') ;
-    }
-    else
-    {
-  $query->andWhere('EXISTS (
-        SELECT s.id,
-          MAX(s.minutes_start_to_facility_activation +
-            s.task_length_minutes +
-            s.break_length_minutes) AS endTimeS,
-          (es.minutes_start_to_facility_activation +
-            es.task_length_minutes +
-            es.break_length_minutes) as endTimeEs
-          FROM agEventShift s
-          WHERE s.id = es.id
-          HAVING endTimeS = endTimeEs)') ;
-    }
-
-    $singleCurrentShifts = $shiftQuery->execute(array(),'key_value_pair') ;
-    return $singleCurrentShifts ;
-  }
-
-  /**
    * Returns facilities that are currently in the blackout period based on the passed $activation time.
    *
    * @param integer(4) $eventId The current event being queried.
@@ -603,43 +396,44 @@ class agEventFacilityHelper
     $resourceStatuses = array_keys( self::returnCurrentEventFacilityResourceStatus($eventId) ) ;
 
     // get the first shift per fac resource for time's sake
-    $firstShifts = array_values(self::returnSingleFirstFacilityResourceShifts($eventId, TRUE)) ;
-    if (is_empty($firstShifts)) { $firstShifts[] = NULL ; }
+    $firstShifts = array_values(agEventShiftHelper::returnSingleFirstFacilityResourceShifts($eventId, TRUE)) ;
+    if (empty($firstShifts)) { $firstShifts[] = NULL ; }
     
     // get some time variables setup
-    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param('shift_change_restriction') * 60) : 0 ;
+    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param['shift_change_restriction'] * 60) : 0 ;
     $currentTimestamp = time() ;
+    $activationOffset = ($activationTime - $shiftOffset) ;
 
     // initialize where clause parameter array
     $queryAndWhereParams = array() ;
 
     // build a nested where clause using named parameters
-    $queryAndWhere = '(frs.is_active = :frsActive
-      OR (fgas.allocatable = :fgsAllocatable
-        AND fgas.standby = :fgsStandby
-        AND fgas.active = :fgsActive)
-      OR fras.committed = :frasCommitted
-      OR (es.id IN (:esArray)
-        AND (es.minutes_start_to_facility_activation + :currentTimestamp)
-          < (:activationTime - :shiftOffset)))' ;
+    $queryAndWhere = '(frs.is_available = ?
+      OR (fgas.allocatable = ?
+        AND fgas.standby = ?
+        AND fgas.active = ?)
+      OR fras.committed = ?
+      OR (es.id IN ?
+        AND (es.minutes_start_to_facility_activation + ?) < ?))' ;
 
     // add the relevant params
-    $queryAndWhereParams[':esArray'] = $firstShifts ;
-    $queryAndWhereParams[':currentTimestamp'] = $currentTimestamp ;
-    $queryAndWhereParams[':activationTime'] = $activationTime ;
-    $queryAndWhereParams[':shiftOffset'] = $shiftOffset ;
-    $queryAndWhereParams[':frsActive'] = FALSE ;
-    $queryAndWhereParams[':fgsAllocatable'] = FALSE ;
-    $queryAndWhereParams[':fgsStandby'] = FALSE ;
-    $queryAndWhereParams['fgsActive'] = FALSE ;
-    $queryAndWhereParams[':frasCommitted'] = FALSE ;
+    $queryAndWhereParams[] = FALSE ; // frsAvailable
+    $queryAndWhereParams[] = FALSE ; // fgsAllocatable
+    $queryAndWhereParams[] = FALSE ; // fgsStandby
+    $queryAndWhereParams[] = FALSE ; // fgsActive
+    $queryAndWhereParams[] = FALSE ; // frasCommitted
+    $queryAndWhereParams[] = $firstShifts ; // esArray
+    $queryAndWhereParams[] = $currentTimestamp ; // currentTimestamp
+    $queryAndWhereParams[] = $activationOffset ; //activationOffset
 
-    // merge the results with our class variable for facility group status
-    $queryAndWhereParams = array_merge($queryAndWhereParams, self::$facility_group_status_disabled) ;
 
     // build the query object
     $query = agDoctrineQuery::create()
       ->select('efr.id')
+          ->addSelect('f.facility_name')
+          ->addSelect('f.facility_code')
+          ->addSelect('frt.facility_resource_type_abbr')
+          ->addSelect('efg.event_facility_group')
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')
           ->innerJoin('efr.agEventFacilityResourceStatus efrs')
@@ -648,13 +442,15 @@ class agEventFacilityHelper
           ->innerJoin('efg.agEventFacilityGroupStatus efgs')
           ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
           ->innerJoin('efr.agFacilityResource fr')
-          ->innerJoin('fr.afFacilityResourceStatus frs')
-        ->where('efg.id = ?', $eventId)
+          ->innerJoin('fr.agFacility f')
+          ->innerJoin('fr.agFacilityResourceType frt')
+          ->innerJoin('fr.agFacilityResourceStatus frs')
+        ->where('efg.event_id = ?', $eventId)
           ->andWhereIn('efrs.id', $resourceStatuses)
           ->andWhereIn('efgs.id', $groupStatuses)
           ->andWhere($queryAndWhere, $queryAndWhereParams) ;
 
-    $results = $query->execute(array(), 'single_value_array') ;
+    $results = $query->execute(array(), 'key_value_array') ;
     return $results ;
   }
 

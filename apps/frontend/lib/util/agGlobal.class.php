@@ -19,7 +19,7 @@ class agGlobal
    * This function initializes all global parameters into a static, public associative array
    * @todo Create a function to limit by hostname and use the $hostname argument
    */
-  public static function initGlobalParam()
+  public static function initGlobal()
   {
     $query = Doctrine_Query::create()
       ->select('gp.datapoint')
