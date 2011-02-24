@@ -1,0 +1,6 @@
+# Custom field types
+
+agCustomFieldType:
+  1:
+    custom_field_type: string
+    description: an alpha-numeric string of no more than 255 characters
