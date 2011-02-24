@@ -3,7 +3,7 @@ Emergency Management Software
 
 INSTALLATION INSTRUCTIONS
 
-Updated: 2011-01-31
+Updated: 2011-02-24
 
 *** IMPORTANT NOTE: ***
 
@@ -157,16 +157,20 @@ line in /etc/php5/apache2/php.ini:
 
   memory_limit = 256M
 
-Optionally, you may also want to replace your current php.ini with the
-recommended production settings, via this command:
+If there are any other major differences between your current php.ini and the
+default recommended production settings, it is highly recommended that you reset
+them via this command:
 
   $ sudo cp /usr/share/doc/php5-common/examples/php.ini-production \
       /etc/php5/apache2/php.ini
 
-  * NOTE: You would still need to increase the memory_limit after this copy.
+  * NOTES:
 
-Set short open tags to off in your php.ini file. Locate short_open_tag (which
-has a default value of "On") and set it to "Off" (minus the parantheses). 
+    - The memory_limit would still need to be modified after this copy.
+
+    - Be sure to test that this change doesn't negatively affect other PHP
+      applications you might be running.
+
 
 APPLICATION INSTALLATION
 ========================
@@ -185,8 +189,8 @@ few minutes before the installer reports that is has completed and you can click
 the "Finish" button.
 
 At this point you will need to set the login credentials for the superuser by
-editing the AG_ROOT/config/config.yml file and replacing the null super_user
-and super_pass values with something valid and secure, e.g.:
+editing the AG_ROOT/config/config.yml file (as a superuser) and replacing the
+null super_user and super_pass values with something valid and secure, e.g.:
 
   super_user: 'somesecureusername'
   super_pass: '$ome.$ecure.pa$$w0rd!'
