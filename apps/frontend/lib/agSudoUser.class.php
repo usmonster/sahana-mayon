@@ -28,7 +28,7 @@ class agSudoUser
    */
   public static function checkSudoPassword($username, $password)
   {
-    require_once dirname(__FILE__) . '/../../../lib/vendor/symfony/lib/yaml/sfYaml.php';
+    //require_once dirname(__FILE__) . '/../../../lib/vendor/symfony/lib/yaml/sfYaml.php';
     // check config.yml existence
     if (file_exists(dirname(__FILE__) . '/../../../config/config.yml') == FALSE) {
       header("Location: install.php");

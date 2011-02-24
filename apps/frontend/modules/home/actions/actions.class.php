@@ -18,8 +18,11 @@
 * @todo add description of class in header
 */
 
-class homeActions extends sfActions
+class homeActions extends agActions
 {
+
+  protected $searchedModels = array('agStaff');
+
  /**
   * Executes index action
   *

@@ -21,6 +21,8 @@ class eventActions extends agActions
   public static $eventName;
   public static $event;
 
+  protected $searchedModels = array('agEventStaff');
+
   public function executeIndex(sfWebRequest $request)
   {
     $this->scenarioForm = new sfForm();

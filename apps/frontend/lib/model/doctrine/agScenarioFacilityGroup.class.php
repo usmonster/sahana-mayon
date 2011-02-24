@@ -35,8 +35,8 @@ class agScenarioFacilityGroup extends BaseagScenarioFacilityGroup
         ->where('g.id = ?', $this->id)
         ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
     foreach($query as $result) {
-      $facilityName = $facilityName . ' ' . $result['f_facility_name'];
-      $facilityResourceType = $facilityResourceType . ' ' . $result['frt_facility_resource_type'];
+      $facilityName .=  ' ' . $result['f_facility_name'];
+      $facilityResourceType .= ' ' . $result['frt_facility_resource_type'];
     }
     if(isset($facilityName)) {
       $doc->addField(Zend_Search_Lucene_Field::unStored('facility_name', $facilityName, 'utf-8'));

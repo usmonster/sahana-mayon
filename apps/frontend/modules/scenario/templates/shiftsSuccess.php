@@ -18,7 +18,7 @@
     'deploymentAlgorithmId' => array('title' => 'deployment algorithm id', 'sortable' => false)
   );
 
-  $thisUrl = url_for('scenario/scenarioshiftlist?id=' . $scenario_id);
+  $thisUrl = url_for('scenario/shifts?id=' . $scenario_id);
 
   ($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
   ($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';

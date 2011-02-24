@@ -86,7 +86,7 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
       'break_length_minutes' => new sfValidatorInteger(array('required' => false)),
       'minutes_start_to_facility_activation' => new sfValidatorInteger(array('required' => false)),
       'shift_repeats' => new sfValidatorInteger(array('required' => false)),
-      'max_staff_repeat_shifts' => new sfValidatorInteger(array('required' => false)),
+      'max_staff_repeat_shifts' => new sfValidatorInteger(array('required' => false)),//new agValidatorDaytoMinute(array('required' => false)),
       'shift_status_id' => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agShiftStatus'))),
       'deployment_algorithm_id' => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agDeploymentAlgorithm'))),
       'created_at' => new sfValidatorDateTime(),

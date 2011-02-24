@@ -62,7 +62,6 @@ class agSudoAuth extends sfGuardSecurityUser
     } else {
       //none found, create the user
       $user = new sfGuardUser();
-      // @todo set this to the email address given in the install.
       $user->setUsername($username);
       return $user;
       /** if no DB connection, this will fail
