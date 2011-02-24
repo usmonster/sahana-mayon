@@ -219,6 +219,14 @@ class facilityActions extends agActions
     $import->processImport($this->importPath);
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
+
+    // Setting scenario id and source table for testing purposes.
+    // Source table should be returned from AgImportXLS class.
+    $scenarioId = 1;
+    $sourceTable = 'temp_facilityImport';
+    $dataNorm = new agImportNormalization($scenarioId, $sourceTable, $import->importFacilitySpec);
+    $dataNorm->normalizeImport();
+    
   }
 
   /**
