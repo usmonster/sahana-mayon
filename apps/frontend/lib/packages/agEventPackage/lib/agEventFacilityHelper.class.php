@@ -206,6 +206,9 @@ class agEventFacilityHelper
 
         // add it to the collection.
         $insertCollection->add($efrat);
+        
+        // since we've got it in memory, we can free it, right?
+        // $efrat->free() ;
       }
 
       // save the collection
@@ -263,7 +266,27 @@ class agEventFacilityHelper
     // remove blacklist facilities from the actionable list
     $actionableFacilities = array_diff($activeFacilities, $blacklistFacilities) ;
 
-    $results = self::setFacilityActivationTime($eventId, $actionableFacilities, $activationTime, TRUE, TRUE) ;
+    // create a new connection object if one is not passed and wrap it in a transaction
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+    $conn->beginTransaction() ;
+
+    try
+    {
+      // set the event's zero-hour
+      $event = Doctrine::getTable('agEvent')->find($eventId) ;
+      $event->set('zero_hour',$activationTime) ;
+      $event->save() ;
+      
+      // run the automatic activation time update script
+      $results = self::setFacilityActivationTime($eventId, $actionableFacilities, $activationTime, TRUE, TRUE) ;
+
+      // commit
+      $conn->commit() ;
+    }
+    catch(Exception $e)
+    {
+      $conn->rollback();
+    }
 
     return $results ;
   }
