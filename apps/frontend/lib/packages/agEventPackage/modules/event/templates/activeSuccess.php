@@ -4,6 +4,20 @@
 ?>
 <h3>Congratulations, your event has been deployed</h3>
 
+<?php
+if(isset($blackOutFacilities))
+{
+?>
+  <p><span class="highlightedText">Please Note!</span> the shifts at these facilities, in these facility groups will not be affected.</p>
+
+<?php
+
+  foreach($blackOutFacilities as $facilityKey => $facility){
+    
+
+  }
+}
+?>
 
 <p>The links below should really be buttons so they look nice:</p>
 

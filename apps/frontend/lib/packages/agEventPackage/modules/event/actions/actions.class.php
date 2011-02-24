@@ -20,7 +20,6 @@ class eventActions extends agActions
   public static $event_id;
   public static $eventName;
   public static $event;
-
   protected $searchedModels = array('agEventStaff');
 
   public function executeIndex(sfWebRequest $request)
@@ -63,6 +62,8 @@ class eventActions extends agActions
         $fac_activation = $request->getPostParameters();
         $timeconverter = new agValidatorDateTime();
         $timeconverted = $timeconverter->convertDateArrayToUnix($fac_activation['facility_resource_activation']['activation_time']);
+
+
         foreach ($fac_activation['facility_resource_activation'] as $fac_activate) {
           if (is_array($fac_activate) && isset($fac_activate['operate_on'])) {
             $eFacResActivation = new agEventFacilityResourceActivationTime();
@@ -70,6 +71,8 @@ class eventActions extends agActions
             $eFacResActivation->setActivationTime($timeconverted);
             $eFacResActivation->setEventFacilityResourceId($fac_activate['event_facility_resource_id']);
             $eFacResActivation->save();
+
+            //agEventFacilityHelper::setFacilityActivationTime($eventFacilityResourceIds, $activationTime, $shiftChangeRestriction, $releaseStaff, $conn);
           }
         }
       }
@@ -169,6 +172,8 @@ class eventActions extends agActions
           $ag_event_scenario->save();
           $this->redirect('event/deploy?id=' . $ag_event->getId());
         }
+        $this->blackOutFacilities = agEventFacilityHelper::returnActivationBlacklistFacilities($ag_event->getId(), $ag_event->getZeroHour());
+        $this->redirect('event/active?id=' . $ag_event->getId());
       }
     } else {
       //get scenario information passed from previous form

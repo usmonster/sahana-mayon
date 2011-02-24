@@ -94,22 +94,25 @@ class agScenarioGenerator
     try {
       $staff_resources = array();
       $staff_id = array();
-      $scenarioAction = new agActions(sfContext::getInstance(), 'scenario', 'staffpool');
+      $scenarioAction = new agActions(sfContext::getInstance(), 'scenario', 'staffpool');  //this may be excessive as we are creating an entirely new object
       $scenarioAction->doSearch($lucene_query, FALSE);
       foreach ($scenarioAction->hits as $hit) {
         $staff_id[] = $scenarioAction->results[$hit->model][$hit->pk]['id'];
       }
       if (count($staff_id)>0){
-        $staff_resources = Doctrine_Query::create()
+        $staff_resources = agDoctrineQuery::create()
                 ->select('a.id')
                 ->from('agStaffResource a')
                 ->leftJoin('a.agScenarioStaffResource asr')
                 ->where('asr.id is NULL')
                 ->andWhereIn('a.staff_id', $staff_id)
                 ->andWhere('asr.scenario_id =?', $scenario_id)
+                ->orWhere('asr.scenario_id IS NULL')
                 ->execute(array(), 'single_value_array');
       }
+
       return $staff_resources;
+
     } catch (\Doctrine\ORM\ORMException $e) {
       print_r($e);
       return 0;

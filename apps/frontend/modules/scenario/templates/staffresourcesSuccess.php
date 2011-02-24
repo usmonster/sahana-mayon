@@ -45,6 +45,6 @@ blank.  <b>A facility resource must have at least one staff resource entered.</b
 
 
     <br>
-    <a class=linkButton href="<?php echo url_for('scenario/newshifttemplates?id=' . $scenario->id) ?>" title="View Shift Templates">Create Shift Templates for <span class="highlightedText"><?php echo $scenario->scenario; ?></span> Facilities</a>
+    
 <p>Click "Save" to save any updates and continue editing on this page.  Click "Create Shift 
   Templates" to save and move to the next step.</p>

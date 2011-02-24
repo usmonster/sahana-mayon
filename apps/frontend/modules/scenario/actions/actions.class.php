@@ -361,7 +361,8 @@ class scenarioActions extends agActions
         $values = array('sg_values' =>
                         array('search_weight' => $staff_generator['search_weight']),
                         'ls_values' =>
-                        array('query_name' => $lucene_search['query_name'])
+                        array('query_name' => $lucene_search['query_name'],
+                          'lucene_search_type_id' => $lucene_search['lucene_search_type_id'])
           );
         $this->poolform = new agStaffPoolForm(null,$values);
         //$this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']); //this definitely does NOT work
@@ -397,7 +398,7 @@ class scenarioActions extends agActions
           $lucene_query = $lucene_search['query_condition'];
 
           $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($lucene_query, $this->scenario_id);
-          agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
+          $addedStaff = agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }
       } else {  //or, just make a new form

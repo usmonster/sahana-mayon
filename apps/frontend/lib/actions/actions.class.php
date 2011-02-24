@@ -22,7 +22,7 @@ class agActions extends sfActions
   {
     parent::__construct($context, $moduleName, $actionName);
     if (empty($this->searchedModels)) {
-      $this->searchedModels = array($this->getModuleName());
+      $this->searchedModels = array('agStaff'); // this is the original: $this->getModuleName(), what exists now is a hack
     }
   }
 

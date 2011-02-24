@@ -163,13 +163,14 @@ class agEventMigrationHelper
     foreach ($existingScenarioStaffPools AS $scenStfPool) {
       $eventStaff = new agEventStaff();
       $eventStaff->set('event_id', $event_id)
-          ->set('staff_resource_id', $scenStfPool->staff_resource_id);
+          ->set('staff_resource_id', $scenStfPool->staff_resource_id)
+          ->set('deployment_weight', $scenStfPool->deployment_weight);
       $eventStaff->save();
 
       // @TODO Staff allocation status should be determine by the message responses.  Currently it is hard-coded to 1 as available.
       $unAvailableStaffStatus = Doctrine_Core::getTable('agStaffAllocationStatus')->findby('staff_allocation_status', 'unavailable');
       $eventStaffStatus = new agEventStaffStatus();
-      $eventStaffStatus->set('event_staff-id', $eventStaff->id)
+      $eventStaffStatus->set('event_staff_id', $eventStaff->id)
           ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
           ->set('staff_allocation_status_id', $unAvailableStaffStatus);
       $eventStaffStatus->free(TRUE);
