@@ -67,7 +67,10 @@ class agEventFacilityHelper
     $resourceStatuses = array_keys( self::returnCurrentEventFacilityResourceStatus($eventId) ) ;
 
     // grabbing just one of the first shifts per facility resource
-    $singleFirstShifts = array_values(self::returnSingleFirstFacilityResourceShifts($eventId, FALSE)) ;
+    $singleFirstShifts = array_values(agEventShiftHelper::returnSingleFirstFacilityResourceShifts($eventId, FALSE)) ;
+
+    // grabbing our blackout facilities
+    $blacklistFacilities = array_keys(self::returnActivationBlacklistFacilities($eventId)) ;
 
     // here lies the meat of this function
     $query = agDoctrineQuery::create()
@@ -99,11 +102,7 @@ class agEventFacilityHelper
       ->whereIn('ers.id', $resourceStatuses)
         ->andWhereIn('egs.id', $groupStatuses)
         ->andWhereIn('es.id', $singleFirstShifts)
-        ->andWhere('efat.id IS NULL')
-        ->andWhere('frs.is_available = ?', true)
-        ->andWhere('gas.active = ?', true)
-        ->andWhere('(ras.committed = ?)', true)
-        ->andWhere('efg.event_id = ?', $eventId) ;
+        ->andWhereNotIn('efr.id',$blacklistFacilities) ;
 
     if (! is_null($eventFacilityGroupId)) { $query->andWhere('efg.id = ?', $eventFacilityGroupId) ; }
 
@@ -389,7 +388,7 @@ class agEventFacilityHelper
    * shift_change_restriction global parameter.
    * @return array A single-dimension array containing event_facility_resource_ids.
    */
-  public static function returnActivationBlacklistFacilities($eventId, $activationTime, $shiftChangeRestriction = TRUE)
+  public static function returnActivationBlacklistFacilities($eventId, $activationTime = NULL, $shiftChangeRestriction = FALSE)
   {
     // get our statuses
     $groupStatuses = array_keys( self::returnCurrentEventFacilityGroupStatus($eventId) ) ;
@@ -399,11 +398,6 @@ class agEventFacilityHelper
     $firstShifts = array_values(agEventShiftHelper::returnSingleFirstFacilityResourceShifts($eventId, TRUE)) ;
     if (empty($firstShifts)) { $firstShifts[] = NULL ; }
     
-    // get some time variables setup
-    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param['shift_change_restriction'] * 60) : 0 ;
-    $currentTimestamp = time() ;
-    $activationOffset = ($activationTime - $shiftOffset) ;
-
     // initialize where clause parameter array
     $queryAndWhereParams = array() ;
 
@@ -412,9 +406,7 @@ class agEventFacilityHelper
       OR (fgas.allocatable = ?
         AND fgas.standby = ?
         AND fgas.active = ?)
-      OR fras.committed = ?
-      OR (es.id IN ?
-        AND (es.minutes_start_to_facility_activation + ?) < ?))' ;
+      OR fras.committed = ? ' ; // don't forget the trailing space, please
 
     // add the relevant params
     $queryAndWhereParams[] = FALSE ; // frsAvailable
@@ -422,10 +414,26 @@ class agEventFacilityHelper
     $queryAndWhereParams[] = FALSE ; // fgsStandby
     $queryAndWhereParams[] = FALSE ; // fgsActive
     $queryAndWhereParams[] = FALSE ; // frasCommitted
-    $queryAndWhereParams[] = $firstShifts ; // esArray
-    $queryAndWhereParams[] = $currentTimestamp ; // currentTimestamp
-    $queryAndWhereParams[] = $activationOffset ; //activationOffset
 
+    // if passed an $activationTime add more restrictions
+    if ((! is_null($activationTime)) && (! empty($firstShifts)))
+    {
+        // get some time variables setup
+        $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param['shift_change_restriction'] * 60) : 0 ;
+        $currentTimestamp = time() ;
+        $activationOffset = ($activationTime - $shiftOffset) ;
+
+        // append to the where statement
+        $queryAndWhere =  $queryAndWhere . 'OR (es.id IN ?
+          AND (es.minutes_start_to_facility_activation + ?) < ?)'  ;
+
+        $queryAndWhereParams[] = $firstShifts ; // esArray
+        $queryAndWhereParams[] = $currentTimestamp ; // currentTimestamp
+        $queryAndWhereParams[] = $activationOffset ; //activationOffset
+    }
+
+    // close out the where clause
+    $queryAndWhere = $queryAndWhere . ')' ;
 
     // build the query object
     $query = agDoctrineQuery::create()
@@ -434,6 +442,7 @@ class agEventFacilityHelper
           ->addSelect('f.facility_code')
           ->addSelect('frt.facility_resource_type_abbr')
           ->addSelect('efg.event_facility_group')
+          ->addSelect('fr.id')
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')
           ->innerJoin('efr.agEventFacilityResourceStatus efrs')

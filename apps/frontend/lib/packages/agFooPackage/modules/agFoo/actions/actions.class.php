@@ -61,7 +61,7 @@ class agFooActions extends agActions
 
   public function executeShow(sfWebRequest $request)
   {
-    $results = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus(1) ;
+    $results = agEventFacilityHelper::returnActivationBlacklistFacilities(1,time()) ;
     print_r($results) ;
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
