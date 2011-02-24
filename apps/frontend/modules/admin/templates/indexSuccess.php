@@ -18,5 +18,5 @@ echo '<a href="' . url_for('admin/pacman') . '" class="buttonText" title="Module
 ?>
   </fieldset>
 
-    <p style="color: #848484">This page will allow you to configure your Agasti installation.</p>
-        <p style="color: #848484">Select one of the administration options</p>
+    <p class="greyText">This page will allow you to configure your Agasti installation.</p>
+        <p class="greyText">Select one of the administration options</p>

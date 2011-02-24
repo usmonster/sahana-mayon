@@ -22,7 +22,7 @@ way to fit your requirements.
 /* style the links for the top level */
 #navigation a, #navigation a:visited {display:block;font-size:12px;text-decoration:none; color:#fff; width:138px; height:30px; border:1px solid #585752; border-width:1px 0 1px 1px; background:#a6a299; padding-left:10px; line-height:29px; font-weight:bold;}
 /* a hack so that IE5.5 faulty box model is corrected */
-* html #navigation a, * html #navigation a:visited {width:149px; w\idth:138px;}
+* html #navigation a, * html #navigation a:visited {width:149px; width:138px;}
 
 /* style the second level background */
 /*#navigation ul ul a.drop, #navigation ul ul a.drop:visited {background:#d4d8bd url(http://www.cssplay.co.uk/menus/breadcrumbs/grey-arrow.gif) no-repeat 130px center;}*/

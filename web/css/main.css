@@ -35,7 +35,7 @@ html, body {
 
 #contentLeft {
   width: 300px;
-  float: let;
+/*  float: left;*/
 }
 
 #columnRight {
@@ -769,6 +769,19 @@ th .tableRow {
   padding: 10px;
   margin-top: 10px;
 }
+
+.adminConfig {
+  display:inline-block;
+}
+
+.adminConfig P {
+  color: #848484;
+}
+
+.adminConfigLegend{
+  margin:40px;float: left;width:400px;
+}
+
 .shiftpreview {
   display:inline;
   width: 600px;
@@ -974,3 +987,49 @@ li.menu2 {
 li.menu1:hover > ul {
   display: block;
 }*/
+
+
+/* Login Form */
+.loginPromptForm{
+  vertical-align: top;
+  top:0;
+  float: right;
+  margin-top:0px;
+  width:260px;
+}
+
+.loginPromptForm ul{
+  list-style-type: none;
+  vertical-align: top;
+  margin-top:0px; 
+  margin:0px;
+}
+.loginPromptForm ul li{
+  margin-top: 0px;
+}
+.loginPromptForm ul li.spacer{
+  margin-top: 1px;
+}
+.textBottom{
+  vertical-align: text-bottom;
+}
+
+table.adminConfigRequirements{
+  align:center; width:200px;
+}
+
+table.adminConfigRequirements tr td{
+ font-weight:bold;
+}
+
+.textRight{
+  text-align: right;
+}
+
+.adminConfigForm{
+  margin-right: 40px; float: left;
+}
+
+.greyText{
+    color: #848484
+}

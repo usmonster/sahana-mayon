@@ -17,10 +17,10 @@
 require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
 
 ?>
-<div id="infoHolder" style="display:inline-block;">
+<div class="adminConfig">
   <h2>System Configuration</h2>
-  <p style="color: #848484">This page will allow you to configure your Agasti installation.</p>
-  <p style="color: #848484">Use the form to the top left to enter your system information.
+  <p>This page will allow you to configure your Agasti installation.</p>
+  <p>Use the form to the top left to enter your system information.
   The information to the right provides you with a system configuration check
   </p>
 <div id="contentLeft">
@@ -31,9 +31,9 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
  
   ?>
   
-<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure" style="margin:40px;float: left;width:400px;">
+<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure adminConfigLegend">
     <fieldset>
-      <legend><img src="<?php echo url_for('images/database.png') ?>" style="vertical-align: text-bottom" alt="database icon" />Database Configuration:</legend>
+      <legend><img src="<?php echo url_for('images/database.png') ?>" class="textBottom" alt="database icon" />Database Configuration:</legend>
       <p>
         <?php ?>
       </p>
@@ -57,8 +57,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
       </ul>
     </fieldset>
     <fieldset>
-      <legend><?php echo image_tag('config.png', array('style' => 'vertical-align: text-bottom', 'alt' => 'config gear icon')) ?>Select Authentication Method:</legend>
-
+      <legend><?php echo image_tag('config.png', array('class' => 'textBottom', 'alt' => 'config gear icon')) ?>Select Authentication Method:</legend>
       <ul>
         <li>
           <input id="auth_method1" type="radio" name="auth_method" value="default"<?php if ($agConfig->getConfig('AUTH_METHOD')  == 'default')
@@ -69,7 +68,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
       </ul>
     </fieldset>
     <fieldset>
-      <legend><?php echo image_tag('config.png', array('style' => 'vertical-align: text-bottom', 'alt' => 'config gear icon')) ?>Administrator Configuration:</legend>
+      <legend><?php echo image_tag('config.png', array('class' => 'textBottom', 'alt' => 'config gear icon')) ?>Administrator Configuration:</legend>
       <ul>
         <li>
           <label>name:</label><input type="text" name="admin_name" id="admin_name" class="inputGray" value="<?php echo $agConfig->getConfig('ADMIN_NAME') ?>" /><br />
@@ -81,7 +80,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
       </ul>
     </fieldset>
     <ul>
-      <li style="text-align: right">
+      <li class="textRight">
         <input type="hidden" name="_enter_check" value="1" />
         <input type="hidden" name="_sql_check" value="<?php echo $install_flag; ?>" />
         <input type="submit" name="saveconfig" value="save config" class="linkButton" onclick="submit.disabled=true;" />
@@ -94,11 +93,10 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
   </form>
 </div>
 <div id="columnRight">
-<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure" style="margin-right: 40px; float: left;">
+<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure adminConfigForm">
   <fieldset>
       <legend>Configuration Test</legend>
-    <h2 style="color: #848484"></h2>
-<?php $table = '<table class="requirements" style="align:center;width:200px;"><tr style="font-weight:bold;"><td>&nbsp;</td><td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr>';
+<?php $table = '<table class="adminConfigRequirements"><tr><td>&nbsp;</td><td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr>';
     /**
      * @todo clean up the following code
      */

@@ -31,7 +31,7 @@
     <label class ="filterButton">Filter by Ethnicity:</label>
     <?php echo $filterForm['ethnicity']; ?>
 
-    <label class ="filterButton"">Filter by Religion:</label>
+    <label class ="filterButton">Filter by Religion:</label>
     <?php echo $filterForm['religion']; ?>
 
     <input type="submit" value="Filter" class="buttonWhite" />
