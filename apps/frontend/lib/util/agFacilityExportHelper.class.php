@@ -202,7 +202,7 @@ class agFacilityExportHelper {
         $row = 2;
       }
       foreach ($this->exportHeaders as $hKey => $heading) {
-        $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $row)->setValueExplicit($facilityExportRecord[$heading]);
+        $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $row)->setValue($facilityExportRecord[$heading]);
         if(array_key_exists($heading, $lookUpContent)) {
           $columnNumber = array_search($heading, array_keys($lookUpContent));
           $columnLetter = base_convert(($columnNumber +10), 10, 36);
