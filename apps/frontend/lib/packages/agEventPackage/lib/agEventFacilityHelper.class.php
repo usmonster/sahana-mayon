@@ -151,9 +151,6 @@ class agEventFacilityHelper
     $updatedActivationTimes = 0 ;
     $insertedActivationTimes = 0 ;
 
-    // create a new connection object if one is not passed
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
-
     // collect the disabled status to which blackout facilities will be set
     $disabledStatusId = agEventShiftHelper::returnDisabledShiftStatus() ;
 
@@ -181,6 +178,9 @@ class agEventFacilityHelper
         ->whereIn('event_facility_resource_id', $eventFacilityResourceIds)
           ->andWhere('((minutes_start_to_facility_activation * 60) + ? + ?) < ?', array($shiftOffset, $currentTimestamp, $activationTime)) ;
     $disabledShiftIds = $disabledShiftQuery->execute(array(), 'single_value_array') ;
+
+    // create a new connection object if one is not passed
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
 
     // wrap it all in a transaction and a try/catch to rollback if an exception occurs
     $conn->beginTransaction() ;
@@ -226,54 +226,46 @@ class agEventFacilityHelper
     return $results ;
   }
 
-  public static function setEventZeroHour ($eventId, $activationTime)
+  public static function setEventZeroHour ($eventId, $activationTime, Doctrine_Connection $conn = NULL)
   {
-    // select event facility id
+    // set counters
+    $updates = 0 ;
+    $inserts = 0 ;
 
-    // cannot be staffed
+    // set time variables
+    $currentTimestamp = time() ;
 
+    // select current statuses
+    $resourceStatuses = self::returnCurrentEventFacilityResourceStatus($eventId) ;
+    $groupStatuses = self::returnCurrentEventFacilityGroupStatus($eventId) ;
 
-    // -- in a fac_activation_time_update --//
-    // disable shifts from before the zero hour
-
-    // enable shifts from before based on boolean y/n?
-    $query = agDoctrineQuery::create()
+    // select event facilities where status = committed
+    $activeFacilityQuery = agDoctrineQuery::create()
       ->select('efr.id')
-        ->addSelect('f.facility_name')
-        ->addSelect('f.facility_code')
-        ->addSelect('frt.facility_resource_type')
-        ->addSelect('ras.standby')
-        ->addSelect('ras.facility_resource_allocation_status')
-        ->addSelect('es.minutes_start_to_facility_activation')
-        ->addSelect('f.id')
-        ->addSelect('fr.id')
-        ->addSelect('frt.id')
-        ->addSelect('ras.id')
-        ->addSelect('ers.id')
-        ->addSelect('es.id')
       ->from('agEventFacilityResource efr')
-        ->innerJoin('efr.agFacilityResource fr')
-        ->innerJoin('fr.agFacilityResourceStatus frs')
-        ->innerJoin('fr.agFacilityResourceType frt')
-        ->innerJoin('fr.agFacility f')
         ->innerJoin('efr.agEventFacilityResourceStatus ers')
         ->innerJoin('ers.agFacilityResourceAllocationStatus ras')
         ->innerJoin('efr.agEventFacilityGroup efg')
         ->innerJoin('efg.agEventFacilityGroupStatus egs')
         ->innerJoin('egs.agFacilityGroupAllocationStatus gas')
-        ->leftJoin('efr.agEventFacilityResourceActivationTime efat')
         ->innerJoin('efr.agEventShift es')
       ->whereIn('ers.id', $resourceStatuses)
         ->andWhereIn('egs.id', $groupStatuses)
-        ->andWhereIn('es.id', $shifts)
-        ->andWhere('efat.id IS NULL')
-        ->andWhere('frs.is_available = ?', true)
-        ->andWhere('gas.active = ?', true)
-        ->andWhere('(ras.allocatable = ? OR ras.committed = ?)', array(true, true))
-        ->andWhere('ras.staffed = ?', false)
-        ->andWhere('efg.event_id = ?', $eventId) ;
-    $results = 'I don\'t do anything yet!' ;
-    return $results;
+        ->andWhere('gas.active = ?', TRUE)
+        ->andWhere('ras.committed = ?', TRUE)
+        ->andWhere('ras.standby = ?', FALSE);
+
+    $activeFacilities = $activeFacilityQuery->execute(array(), 'single_value_array') ;
+
+    // do a check for facilities that will not be affected
+    $blacklistFacilities = array_keys(self::returnActivationBlacklistFacilities($eventId, $activationTime, TRUE)) ;
+
+    // remove blacklist facilities from the actionable list
+    $actionableFacilities = array_diff($activeFacilities, $blacklistFacilities) ;
+
+    $results = self::setFacilityActivationTime($eventId, $actionableFacilities, $activationTime, TRUE, TRUE) ;
+
+    return $results ;
   }
 
   /**
