@@ -148,6 +148,8 @@ class eventActions extends agActions
       if ($this->metaForm->isValid()) {
 
         $ag_event = $this->metaForm->save();
+        //agEventFacilityHelper::
+
 
         //$this->migrateScenarioToEvent($request->getParameter('scenario_id'), $ag_event->getId()); //this will create mapping from scenario to event
 //        if($this->metaForm->isNew()){
