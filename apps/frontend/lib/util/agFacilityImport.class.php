@@ -131,7 +131,7 @@ class AgImportXLS
               if (!($val)) {
                 $val = $xlsObj->val($row, $col, $sheet);
               }
-              $importFileData[$importRow][$colName] = $val;
+              $importFileData[$importRow][$colName] = trim($val);
             }
             // Increment import array row
             $importRow++;
