@@ -41,6 +41,7 @@ class AgImportXLS
     'facility_group' => array('type' => "string", 'length' => 64),
     'facility_group_type' => array('type' => "string", 'length' => 30),
     'facility_group_allocation_status' => array('type' => "string", 'length' => 30),
+    'facility_group_activation_sequence' => array('type' => "integer"),
     'work_email' => array('type' => "string", 'length' => 255),
     'work_phone' => array('type' => "string", 'length' => 32),
     'street_1' => array('type' => "string", 'length' => 255),
