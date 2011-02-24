@@ -165,6 +165,8 @@ recommended production settings, via this command:
 
   * NOTE: You would still need to increase the memory_limit after this copy.
 
+Set short open tags to off in your php.ini file. Locate short_open_tag (which
+has a default value of "On") and set it to "Off" (minus the parantheses). 
 
 APPLICATION INSTALLATION
 ========================
