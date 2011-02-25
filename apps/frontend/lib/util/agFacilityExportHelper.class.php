@@ -17,7 +17,7 @@ class agFacilityExportHelper {
     $this->facilityEmail = agFacilityHelper::facilityEmail($this->primaryOnly, $this->contactType);
     $this->facilityPhone = agFacilityHelper::facilityPhone($this->primaryOnly, $this->contactType);
     $this->facilityStaffResource = agFacilityHelper::facilityStaffResource();
-    $this->addressFormat = Doctrine_Query::create()
+    $this->addressFormat = agDoctrineQuery::create()
                     ->select('ae.address_element')
                     ->from('agAddressElement ae')
                     ->innerJoin('ae.agAddressFormat af')
@@ -295,7 +295,7 @@ class agFacilityExportHelper {
   }
 
   public function queryStaffResourceTypes() {
-    $staffResourceTypes = Doctrine_Query::create()
+    $staffResourceTypes = agDoctrineQuery::create()
                     ->select('srt.staff_resource_type, srt.id')
                     ->from('agStaffResourceType srt')
                     ->execute(array(), 'single_value_array');
@@ -388,7 +388,7 @@ class agFacilityExportHelper {
       return null;
     }
     foreach ($lookUps as $key => $lookUp) {
-      $lookUpQuery = Doctrine_Query::create()
+      $lookUpQuery = agDoctrineQuery::create()
                       ->select($lookUp['selectColumn'])
                       ->from($lookUp['selectTable']);
       if (isset($lookUp['whereColumn']) && isset($lookUp['whereValue'])) {

@@ -41,7 +41,7 @@ class PluginagGeoRelationshipForm extends BaseagGeoRelationshipForm
 //      ));
 //        $this->widgetSchema['geo_facility']->addOption(
 //      'query',
-//      Doctrine_Query::create()
+//      agDoctrineQuery::create()
 //        ->select('a.facility_id, af.*, afrt.*')
 //        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
 //        ->whereNotIn('a.id', array_keys($currentoptions))

@@ -30,7 +30,7 @@ class eventActions extends agActions
     ));
 
     $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
-    $this->ag_events = Doctrine_Query::create()
+    $this->ag_events = agDoctrineQuery::create()
             ->select('a.*')
             ->from('agEvent a')
             ->execute();
@@ -86,7 +86,7 @@ class eventActions extends agActions
   public function executeDeploy(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    $this->scenario_id = Doctrine_Query::create()
+    $this->scenario_id = agDoctrineQuery::create()
             ->select('scenario_id')
             ->from('agEventScenario')
             ->where('event_id = ?', $this->event_id)
@@ -119,7 +119,7 @@ class eventActions extends agActions
       //TODO step through to check and see if the second if is needed
     }
     if ($request->getParameter('event')) {
-      $this->event = Doctrine_Query::create()
+      $this->event = agDoctrineQuery::create()
               ->select()
               ->from('agEvent')
               ->where('event_name = ?', urldecode($request->getParameter('event')))
@@ -154,7 +154,7 @@ class eventActions extends agActions
         //$this->migrateScenarioToEvent($request->getParameter('scenario_id'), $ag_event->getId()); //this will create mapping from scenario to event
 //        if($this->metaForm->isNew()){
 //        if (isset($updating)) { //replace with usable check to update
-        $eventStatusObject = Doctrine_Query::create()
+        $eventStatusObject = agDoctrineQuery::create()
                 ->from('agEventStatus a')
                 ->where('a.id =?', $ag_event->getId())
                 ->execute()->getFirst();
@@ -194,7 +194,7 @@ class eventActions extends agActions
 
   public function executeList(sfWebRequest $request)
   {
-    $this->ag_events = Doctrine_Query::create()
+    $this->ag_events = agDoctrineQuery::create()
             ->select('a.*')
             ->from('agEvent a')
             ->execute();
@@ -262,7 +262,7 @@ class eventActions extends agActions
       } else {
 //LIST////list the existing shifts
 
-        $query = Doctrine_Query::create()
+        $query = agDoctrineQuery::create()
                 ->select('es.*, efr.*, efg.id, efg.event_facility_group, e.*, af.*, fr.*, frt.*, srt.*, ess.*, est.*')
                 ->from('agEventShift as es')
                 ->leftJoin('es.agEventStaffShift ess')
@@ -396,7 +396,7 @@ class eventActions extends agActions
   public function executeListgroups(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('a.*, afr.*, afgt.*, fr.*')
             ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
 
@@ -440,7 +440,7 @@ class eventActions extends agActions
 
   public function executeGroupdetail(sfWebRequest $request)
   {
-    $this->eventFacilityGroup = Doctrine_Query::create()
+    $this->eventFacilityGroup = agDoctrineQuery::create()
             ->select()
             ->from('agEventFacilityGroup')
             ->where('event_facility_group = ?', urldecode($request->getParameter('group')))
@@ -463,7 +463,7 @@ class eventActions extends agActions
         $groupAllocation->save();
       }
     }
-    $this->event = Doctrine_Query::create()
+    $this->event = agDoctrineQuery::create()
             ->select()
             ->from('agEvent')
             ->where('event_name = ?', urldecode($request->getParameter('event')))
@@ -472,7 +472,7 @@ class eventActions extends agActions
 
     $statusIds = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
 
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('s.event_facility_group_id')
             ->addSelect('s.facility_group_allocation_status_id')
             ->from('agEventFacilityGroupStatus s')
@@ -490,7 +490,7 @@ class eventActions extends agActions
 
   private function queryForTable($eventFacilityGroupId = null)
   {
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('efr.id')
             ->addSelect('f.facility_name')
             ->addSelect('f.facility_code')

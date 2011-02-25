@@ -61,7 +61,7 @@ class agEmbeddedAddressContactsForm extends sfForm
           $floo->widgetSchema->setLabel('address_to_type', false);
           $floo->widgetSchema['address_to_type']->addOption(
             'query',
-             Doctrine_Query::create()
+             agDoctrineQuery::create()
                ->select('a.value')
                ->from('agAddressValue a')
                ->where('a.address_element_id = 4')
@@ -71,7 +71,7 @@ class agEmbeddedAddressContactsForm extends sfForm
       }
     }
 
-    $q = Doctrine_Query::create()
+    $q = agDoctrineQuery::create()
                               ->select('f.line_sequence AS line_sequence, f.inline_sequence AS inline_sequence, f.pre_delimiter AS pre_delimiter, f.post_delimiter AS post_delimiter, f.is_required AS is_required, e.address_element AS address_element')
                               ->from('agAddressFormat f')
                               ->leftJoin('f.agAddressStandard s')

@@ -25,7 +25,7 @@ class agEntity extends BaseagEntity
    */
   public function getEntityEmailContact() {
     if ($this->getId()) {
-      return Doctrine_Query::create()
+      return agDoctrineQuery::create()
         ->select('eec.*, ec.*, ect.*')
         ->from('agEntityEmailContact eec INDEXBY eec.email_contact_type_id, eec.agEmailContact ec, eec.agEmailContactType ect')
         ->where('eec.entity_id = ?', $this->getId())
@@ -43,7 +43,7 @@ class agEntity extends BaseagEntity
    */
   public function getEntityPhoneContact() {
     if ($this->getId()) {
-      return Doctrine_Query::create()
+      return agDoctrineQuery::create()
         ->select('epc.*, pc.*, pct.*, pf.*')
         ->from('agEntityPhoneContact epc INDEXBY epc.phone_contact_type_id, epc.agPhoneContact pc, epc.agPhoneContactType pct, pc.agPhoneFormat pf')
         ->where('epc.entity_id = ?', $this->getId())

@@ -48,7 +48,7 @@ class PluginagStaffPersonForm extends agPersonForm
   public function embedStaffForm($staffContainerForm)
   {
     if ($id = $this->getObject()->id) {
-      $staffObject = Doctrine_Query::create()
+      $staffObject = agDoctrineQuery::create()
               ->from('agStaff a')
               ->where('a.person_id =?', $id)
               ->execute()->getFirst();
@@ -63,7 +63,7 @@ class PluginagStaffPersonForm extends agPersonForm
   public function embedStaffResourceForm($staffContainerForm)
   {
     if ($staff = $this->getObject()->getAgStaff()->getFirst()) {
-      $staffResourceObject = Doctrine_Query::create()
+      $staffResourceObject = agDoctrineQuery::create()
               ->from('agStaffResource a')
               ->where('a.staff_id = ?', $staff->id)
               ->execute()->getFirst();
@@ -82,7 +82,7 @@ class PluginagStaffPersonForm extends agPersonForm
   public function embedStaffResourceOrganizationForm($staffContainerForm)
   {
     if (!$this->isNew()) {
-      $staffResOrgObject = Doctrine_Query::create()
+      $staffResOrgObject = agDoctrineQuery::create()
               ->from('agStaffResourceOrganization a')
               ->where('a.staff_resource_id = ?', $this->getObject()->getAgStaff()->getFirst()->getAgStaffResource()->getFirst()->id)
               ->execute()->getFirst();

@@ -70,7 +70,7 @@ class agOrganizationForm extends BaseagOrganizationForm
     }
 
     // Query for available staff who only has one resource type assigned.
-    $availOrgStaffResource = Doctrine_Query::create()
+    $availOrgStaffResource = agDoctrineQuery::create()
             ->select('s.id AS staff_id, s.person_id, sr.id AS staff_resource_id,
         sr.staff_resource_type_id, count(*) as count')
             ->from('agStaffResource AS sr, sr.agStaff AS s')

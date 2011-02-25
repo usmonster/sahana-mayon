@@ -61,7 +61,7 @@ class agStaffPoolForm extends sfForm
   public function embedStaffGeneratorForm()
   {
     if (isset($this->staff_gen_id)) {
-      $staffGenObject = Doctrine_Query::create()
+      $staffGenObject = agDoctrineQuery::create()
               ->from('agScenarioStaffGenerator a')
               ->where('a.id = ?', $this->staff_gen_id)
               ->execute()->getFirst();
@@ -99,7 +99,7 @@ class agStaffPoolForm extends sfForm
   public function embedLuceneForm()
   {
     if (isset($this->lucene_search_id)) {
-      $luceneObject = Doctrine_Query::create()
+      $luceneObject = agDoctrineQuery::create()
               ->from('agLuceneSearch a')
               ->where('a.id = ?', $this->lucene_search_id)
               ->execute()->getFirst();

@@ -124,7 +124,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
       if(count($toDelete) >0)
       {
         /** @todo clean this up, a subquery to delete on would be optimal */
-        $deleteRecs = Doctrine_Query::create()
+        $deleteRecs = agDoctrineQuery::create()
         ->select('a.facility_resource_id')
         ->from('agScenarioFacilityResource a')
         ->whereIn('a.facility_resource_id', $toDelete)->execute();

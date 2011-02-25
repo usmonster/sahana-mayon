@@ -83,7 +83,7 @@ class agPersonForm extends BaseagPersonForm
      * */
     $this->widgetSchema['ag_nationality_list']->addOption(
         'query',
-            Doctrine_Query::create()
+            agDoctrineQuery::create()
             ->select('a.nationality')
             ->from('agNationality a')
             ->where('a.app_display = 1')
@@ -91,7 +91,7 @@ class agPersonForm extends BaseagPersonForm
 
     $this->widgetSchema['ag_religion_list']->addOption(
         'query',
-            Doctrine_Query::create()
+            agDoctrineQuery::create()
             ->select('a.religion')
             ->from('agReligion a')
             ->where('a.app_display = 1')
@@ -99,7 +99,7 @@ class agPersonForm extends BaseagPersonForm
 
     $this->widgetSchema['ag_profession_list']->addOption(
         'query',
-            Doctrine_Query::create()
+            agDoctrineQuery::create()
             ->select('a.profession')
             ->from('agProfession a')
             ->where('a.app_display = 1')
@@ -107,7 +107,7 @@ class agPersonForm extends BaseagPersonForm
 
     $this->widgetSchema['ag_ethnicity_list']->addOption(
         'query',
-            Doctrine_Query::create()
+            agDoctrineQuery::create()
             ->select('a.ethnicity')
             ->from('agEthnicity a')
             ->where('a.app_display = 1')
@@ -115,7 +115,7 @@ class agPersonForm extends BaseagPersonForm
 
     $this->widgetSchema['ag_sex_list']->addOption(
         'query',
-            Doctrine_Query::create()
+            agDoctrineQuery::create()
             ->select('a.sex')
             ->from('agSex a')
             ->where('a.app_display = 1')
@@ -123,7 +123,7 @@ class agPersonForm extends BaseagPersonForm
 
     $this->widgetSchema['ag_marital_status_list']->addOption(
         'query',
-            Doctrine_Query::create()
+            agDoctrineQuery::create()
             ->select('a.marital_status')
             ->from('agMaritalStatus a')
             ->where('a.app_display = 1')
@@ -215,7 +215,7 @@ class agPersonForm extends BaseagPersonForm
         $formatForm->setDefault('language_format_id', $langFormat->id);
         // If the $languageForm has a default for language, check for related competencies.
         if ($languageForm->getDefault('language_id') <> null) {
-          $q = Doctrine_Query::create()
+          $q = agDoctrineQuery::create()
                   ->select('a.id')
                   ->from('agPersonMjAgLanguage a')
                   ->where('a.person_id = ?', $this->getObject()->id)
@@ -264,7 +264,7 @@ class agPersonForm extends BaseagPersonForm
     $nameContainer->getWidgetSchema()->setFormFormatterName('nameConDeco');
     foreach ($this->ag_person_name_types as $nameType) {
       if ($id = $this->getObject()->id) {
-        $nameObject = Doctrine_Query::create()
+        $nameObject = agDoctrineQuery::create()
                 ->from('agPersonName pn')
                 ->where('pn.id IN (SELECT jn.person_name_id FROM agPersonMjAgPersonName jn WHERE jn.person_id = ? AND person_name_type_id = ?)', array($id, $nameType->id))
                 ->execute()->getFirst();
@@ -475,7 +475,7 @@ class agPersonForm extends BaseagPersonForm
     $form->updateObject($values);
     // Find the agPersonNameType()->id for the current form using its $key
     // (which corresponds to an agPersonNameType).
-    $typeId = Doctrine_Query::create()
+    $typeId = agDoctrineQuery::create()
             ->select('a.id')
             ->from('agPersonNameType a')
             ->where('a.person_name_type = ?', $key)
@@ -498,7 +498,7 @@ class agPersonForm extends BaseagPersonForm
 
       // See if there is an agPersonMjAgPersonName() object for this agPerson
       // and the agPersonNameType retrived by the above query.
-      $joinObject = Doctrine_Query::create()
+      $joinObject = agDoctrineQuery::create()
               ->from('agPersonMjAgPersonName j')
               ->where('j.person_name_type_id = ? AND j.person_id = ?', array($typeId, $this->getObject()->id))
               ->execute()->getFirst();
@@ -523,7 +523,7 @@ class agPersonForm extends BaseagPersonForm
       // but cleared before submission. If so, the related
       // agPersonMjAgPersonName object will be deleted.
     } elseif ($form->getObject()->isModified() && $form->getObject()->person_name == null) {
-      $joinObject = Doctrine_Query::create()
+      $joinObject = agDoctrineQuery::create()
               ->from('agPersonMjAgPersonName j')
               ->where('j.person_name_type_id = ? AND j.person_id = ?', array($typeId, $this->getObject()->id))
               ->execute()->getFirst();
@@ -545,7 +545,7 @@ class agPersonForm extends BaseagPersonForm
 
     // Find the agEmailContactType()->id for the current form using its $key
     // (which corresponds to an agEmailContactType).
-    $typeId = Doctrine_Query::create()
+    $typeId = agDoctrineQuery::create()
             ->select('a.id')
             ->from('agEmailContactType a')
             ->where('a.email_contact_type = ?', $key)
@@ -562,7 +562,7 @@ class agPersonForm extends BaseagPersonForm
         $emailObject->save();
       }
 
-      $joinObject = Doctrine_Query::create()
+      $joinObject = agDoctrineQuery::create()
               ->from('agEntityEmailContact j')
               ->where('j.email_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->getObject()->entity_id))
               ->execute()->getFirst();
@@ -580,7 +580,7 @@ class agPersonForm extends BaseagPersonForm
         $joinObject->save();
       }
     } elseif ($form->getObject()->isModified() && $form->getObject()->email_contact == null) {
-      $joinObject = Doctrine_Query::create()
+      $joinObject = agDoctrineQuery::create()
               ->from('agEntityEmailContact j')
               ->where('j.email_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->getObject()->entity_id))
               ->execute()->getFirst();
@@ -599,7 +599,7 @@ class agPersonForm extends BaseagPersonForm
   {
     $form->updateObject($values);
 
-    $typeId = Doctrine_Query::create()
+    $typeId = agDoctrineQuery::create()
             ->select('a.id')
             ->from('agPhoneContactType a')
             ->where('a.phone_contact_type = ?', $key)
@@ -617,7 +617,7 @@ class agPersonForm extends BaseagPersonForm
         $phoneObject->save();
       }
 
-      $joinObject = Doctrine_Query::create()
+      $joinObject = agDoctrineQuery::create()
               ->from('agEntityPhoneContact j')
               ->where('j.phone_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->getObject()->entity_id))
               ->execute()->getFirst();
@@ -635,7 +635,7 @@ class agPersonForm extends BaseagPersonForm
         $joinObject->save();
       }
     } elseif ($form->getObject()->isModified() && $form->getObject()->phone_contact == null) {
-      $joinObject = Doctrine_Query::create()
+      $joinObject = agDoctrineQuery::create()
               ->from('agEntityPhoneContact j')
               ->where('j.phone_contact_type_id = ? AND j.entity_id = ?', array($typeId, $this->getObject()->entity_id))
               ->execute()->getFirst();

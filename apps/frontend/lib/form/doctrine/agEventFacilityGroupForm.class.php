@@ -118,7 +118,7 @@ class agEventFacilityGroupForm extends BaseagEventFacilityGroupForm
       if(count($toDelete) >0)
       {
         /** @todo clean this up, a subquery to delete on would be optimal */
-        $deleteRecs = Doctrine_Query::create()
+        $deleteRecs = agDoctrineQuery::create()
         ->select('a.facility_resource_id')
         ->from('agEventFacilityResource a')
         ->whereIn('a.facility_resource_id', $toDelete)->execute();

@@ -213,7 +213,7 @@ class agFacilityForm extends BaseagFacilityForm
     $addressContainer->getWidgetSchema()->addFormFormatter('row', $addressDeco);
     $addressContainer->getWidgetSchema()->setFormFormatterName('row');
 
-    $stateList = Doctrine_Query::create()
+    $stateList = agDoctrineQuery::create()
             ->select('a.value')
             ->from('agAddressValue a')
             ->where('a.address_element_id = 4')
@@ -233,7 +233,7 @@ class agFacilityForm extends BaseagFacilityForm
 //    $entityAddress = $entityAddress;
 //    break;
 //  }
-//  $addressValueElement = Doctrine_Query::create()
+//  $addressValueElement = agDoctrineQuery::create()
 //    ->select('address.*, mj.*, value.*')
 //    ->from('agAddress address, address.agAddressMjAgAddressValue mj, mj.agAddressValue value')
 //    ->where('a.id = ?', $current->getId())

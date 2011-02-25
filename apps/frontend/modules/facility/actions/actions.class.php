@@ -46,7 +46,7 @@ class facilityActions extends agActions
      * Query the database for agFacility records joined with
      * agFacilityResource records
      */
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('f.*, fr.*')
             ->from('agFacility f, f.agFacilityResource fr');
 
@@ -487,7 +487,7 @@ class facilityActions extends agActions
       return null;
     }
     foreach($lookUps as $key => $lookUp) {
-      $lookUpQuery = Doctrine_Query::create()
+      $lookUpQuery = agDoctrineQuery::create()
         ->select($lookUp['selectColumn'])
         ->from($lookUp['selectTable']);
       if(isset($lookUp['whereColumn']) && isset($lookUp['whereValue'])) {

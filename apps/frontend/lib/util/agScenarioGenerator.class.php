@@ -10,7 +10,7 @@ class agScenarioGenerator
   {
     try {
       // Query for the information to populate scenario shift.
-      $scenarioShifts = Doctrine_Query::create()
+      $scenarioShifts = agDoctrineQuery::create()
         ->select('st.*, fsr.*')
         ->from('agShiftTemplate st')
           ->innerJoin('st.agFacilityResourceType fst')
@@ -26,7 +26,7 @@ class agScenarioGenerator
 
       // Delete all scenario shift records prior to generating scenario shifts
       // from shift template tables.
-      $deleteQuery = Doctrine_Query::create()
+      $deleteQuery = agDoctrineQuery::create()
         ->delete()
         ->from('agScenarioShift')
         ->execute();

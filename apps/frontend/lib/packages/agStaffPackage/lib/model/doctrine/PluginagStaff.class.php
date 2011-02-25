@@ -22,7 +22,7 @@ abstract class PluginagStaff extends BaseagStaff
 
     // Saving staff info after staff record is created.
     // Make staff searchable by name.
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('s.id, p.id, pmn.id, pn.id, pn.person_name')
             ->from('agStaff s')
             ->innerJoin('s.agPerson p')
@@ -41,7 +41,7 @@ abstract class PluginagStaff extends BaseagStaff
     }
 
     // Make staff searchable by email.
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('s.id, p.id, e.id, epc.id, pc.id, pc.phone_contact')
             ->from('agStaff s')
             ->innerJoin('s.agPerson p')
@@ -60,7 +60,7 @@ abstract class PluginagStaff extends BaseagStaff
     }
 
     // Make staff searchable by email.
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('s.id, p.id, e.id, eec.id, ec.id, ec.email_contact')
             ->from('agStaff s')
             ->innerJoin('s.agPerson p')
@@ -80,7 +80,7 @@ abstract class PluginagStaff extends BaseagStaff
     }
 
     // Make staff searchable by address
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('s.id, p.id, e.id, eac.id, a.id, ama.id, av.id, aa.id, aa.alias, av.value')
             ->from('agStaff s')
             ->innerJoin('s.agPerson p')
@@ -107,7 +107,7 @@ abstract class PluginagStaff extends BaseagStaff
     }
 
     // Make staff searchable by language
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('s.id, p.id, pml.id, l.language')
             ->from('agStaff s')
             ->innerJoin('s.agPerson p')
@@ -125,7 +125,7 @@ abstract class PluginagStaff extends BaseagStaff
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_lang', $staff_lang, 'utf-8'));
     }
 
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('s.id, sr.id, st.id, st.staff_resource_type, sro.id, o.id, o.organization, o.description')
             ->from('agStaff s')
             ->innerJoin('s.agStaffResource sr')
@@ -158,7 +158,7 @@ abstract class PluginagStaff extends BaseagStaff
     }
 
     # Make a staff searchable by profession.
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('s.id, p.id, pmp.id, pf.id, pf.profession')
             ->from('agStaff s')
             ->innerJoin('s.agPerson p')
@@ -218,14 +218,14 @@ abstract class PluginagStaff extends BaseagStaff
           /**
            * Returns an integer of the total staff count.
            */
-          $staffCount = Doctrine_Query::create()
+          $staffCount = agDoctrineQuery::create()
                   ->select('count(*) as count')
                   ->from('agStaff as s')
                   ->execute(array(), Doctrine::HYDRATE_SINGLE_SCALAR);
           return $staffCount;
 
         case 2:
-          $query = Doctrine_Query::create()
+          $query = agDoctrineQuery::create()
                   ->select('sro.organization_id as orgId, sr.staff_resource_type_id as stfRsrcTypId, count(distinct sr.staff_id) as count')
                   ->from('agStaff as s')
                   ->innerJoin('s.agStaffResource as sr')
@@ -253,7 +253,7 @@ abstract class PluginagStaff extends BaseagStaff
           break;
 
         case 3:
-          $query = Doctrine_Query::create()
+          $query = agDoctrineQuery::create()
                   ->select('o.id as orgId, count(distinct sr.staff_id) as count')
                   ->from('agOrganization as o')
                   ->leftJoin('o.agStaffResourceOrganization as sro')
@@ -273,7 +273,7 @@ abstract class PluginagStaff extends BaseagStaff
           break;
 
         case 4:
-          $query = Doctrine_Query::create()
+          $query = agDoctrineQuery::create()
                   ->select('srt.id as stfRsrcTypId, count(distinct s.id) as count')
                   ->from('agStaffResourceType as srt')
                   ->leftJoin('srt.agStaff as s')

@@ -33,7 +33,7 @@ class agFacility extends BaseagFacility {
         $doc->addField(Zend_Search_Lucene_Field::unStored('facility', $this->facility_name, 'utf-8'));
         $doc->addField(Zend_Search_Lucene_Field::unStored('facility_code', $this->facility_code, 'utf-8'));
 
-        $facilityInfo = Doctrine_Query::create()
+        $facilityInfo = agDoctrineQuery::create()
                         ->select('f.id, fr.id, frt.id, frt.facility_resource_type, frt.facility_resource_type_abbr')
                         ->from('agFacility f')
                         ->innerJoin('f.agFacilityResource fr')
@@ -51,7 +51,7 @@ class agFacility extends BaseagFacility {
         }
 
         // Make facilities searchable by e-mail
-        $query = Doctrine_Query::create()
+        $query = agDoctrineQuery::create()
                         ->select('f.id, s.id, e.id, eec.id, ec.id, ec.email_contact')
                         ->from('agFacility f')
                         ->innerJoin('f.agSite s')
@@ -71,7 +71,7 @@ class agFacility extends BaseagFacility {
         }
 
         // Make facility searchable by address
-        $query = Doctrine_Query::create()
+        $query = agDoctrineQuery::create()
                         ->select('f.id, s.id, e.id, eac.id, a.id, ama.id, av.id, aa.id, aa.alias, av.value')
                         ->from('agFacility f')
                         ->innerJoin('f.agSite s')
@@ -98,7 +98,7 @@ class agFacility extends BaseagFacility {
         }
 
         // Make facility searchable by phone.
-        $query = Doctrine_Query::create()
+        $query = agDoctrineQuery::create()
                         ->select('f.id, s.id, e.id, epc.id, pc.id, pc.phone_contact')
                         ->from('agFacility f')
                         ->innerJoin('f.agSite s')

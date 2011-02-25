@@ -24,7 +24,7 @@ class agFooActions extends agActions
      * Query the database for agFacility records joined with
      * agFacilityResource records
      */
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
             ->select('f.*')
             ->from('agFoo f');
 

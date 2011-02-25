@@ -25,7 +25,7 @@ class agGisQuery {
     $queryStaticClauses['staff'] = 'p.agStaff stf' ;
     $queryStaticClauses['facility'] = 'si.agFacility fac' ;
 
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
                     ->select('a.id, ea.id, ag.id, g.id, gf.id')
                     ->from('agAddress a')
                     ->innerJoin('a.agEntityAddressContact ea')
@@ -48,7 +48,7 @@ class agGisQuery {
    * @return string A query string.
    */
   public static function returnExistingGeoRelation() {
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
                     ->select('geo_id1, geo_id2, c2.longitude, c2.latitude, c1.longitude, c1.latitude, f1.id, f2.id, c1.id, c2.id')
                     ->from('agGeoRelationship r')
                     ->addFrom('agGeoFeature f1')

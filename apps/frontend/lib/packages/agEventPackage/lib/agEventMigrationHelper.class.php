@@ -18,7 +18,7 @@ class agEventMigrationHelper
 {
   public static function facilityGroupCheck($scenario_id)
   {
-    $facilityGroupQuery = Doctrine_Query::create()
+    $facilityGroupQuery = agDoctrineQuery::create()
             ->select('aFG.id, aFG.scenario_facility_group')
             ->from('agScenarioFacilityGroup aFG')
             ->leftJoin('aFG.agScenarioFacilityResource aFR')
@@ -30,7 +30,7 @@ class agEventMigrationHelper
 
   public static function undefinedShiftCheck($scenario_id)
   {
-    $undefinedFacilityShiftQuery = Doctrine_Query::create()
+    $undefinedFacilityShiftQuery = agDoctrineQuery::create()
             ->select('aFR.id')
             ->from('agScenarioFacilityResource aFR')
             ->innerJoin('aFR.agScenarioFacilityGroup aFG')
@@ -40,7 +40,7 @@ class agEventMigrationHelper
     $facilityShiftReturn = $undefinedFacilityShiftQuery->execute(array(), 'single_value_array');
     $undefinedFacilityShiftQuery->free();
 
-    $undefinedStaffShiftQuery = Doctrine_Query::create()
+    $undefinedStaffShiftQuery = agDoctrineQuery::create()
             ->select('aSRT.id, aSSR.*, aSR.id')
             ->from('agScenarioStaffResource aSSR')
             ->innerJoin('aSSR.agStaffResource aSR')
@@ -56,7 +56,7 @@ class agEventMigrationHelper
 
   public static function staffPoolCheck($scenario_id)
   {
-    $staffPoolQuery = Doctrine_Query::create()
+    $staffPoolQuery = agDoctrineQuery::create()
             ->from('agScenarioStaffResource')
             ->where('scenario_id =?', $scenario_id);
     return $staffPoolQuery->count();
@@ -155,7 +155,7 @@ class agEventMigrationHelper
 
   public static function migrateStaffPool($scenario_id, $event_id)
   {
-    $existingScenarioStaffPools = Doctrine_Query::create()
+    $existingScenarioStaffPools = agDoctrineQuery::create()
             ->from('agScenarioStaffResource ssr')
             ->where('scenario_id', $scenario_id)
             ->orderBy('deployment_weight')
@@ -215,7 +215,7 @@ class agEventMigrationHelper
       /**
        * @todo Wrap in an event helper class.
        */
-      $lucene_queries = Doctrine_Query::create()
+      $lucene_queries = agDoctrineQuery::create()
               ->select('ssg.id, ssg.scenario_id, ls.query_condition, ls.id')
               ->from('agScenarioStaffGenerator ssg')
               ->innerJoin('ssg.agLuceneSearch ls')

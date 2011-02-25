@@ -54,7 +54,7 @@ class agReportMakerForm extends sfForm
   public function embedReportGeneratorForm()
   {
     if (isset($this->report_gen_id)) {
-      $staffGenObject = Doctrine_Query::create()
+      $staffGenObject = agDoctrineQuery::create()
               ->from('agReportGenerator a')
               ->where('a.id =?', $this->report_gen_id)
               ->execute()->getFirst();
@@ -79,7 +79,7 @@ class agReportMakerForm extends sfForm
   public function embedLuceneForm()
   {
     if (isset($this->lucene_search_id)) {
-      $luceneObject = Doctrine_Query::create()
+      $luceneObject = agDoctrineQuery::create()
               ->from('agLuceneSearch a')
               ->where('a.id =?', $this->lucene_search_id)
               ->execute()->getFirst();
@@ -94,7 +94,7 @@ class agReportMakerForm extends sfForm
   public function embedReportForm()
   {
     if (isset($this->report_id)) {
-      $reportObject = Doctrine_Query::create()
+      $reportObject = agDoctrineQuery::create()
               ->from('agReport a')
               ->where('a.id =?', $this->report_id)
               ->execute()->getFirst();
@@ -111,7 +111,7 @@ class agReportMakerForm extends sfForm
     $this->available_tables = Doctrine::getLoadedModels();
 
     if (isset($this->lucene_search_id)) {
-      $luceneObject = Doctrine_Query::create()
+      $luceneObject = agDoctrineQuery::create()
               ->from('agLuceneSearch a')
               ->where('a.id =?', $this->lucene_search_id)
               ->execute()->getFirst();

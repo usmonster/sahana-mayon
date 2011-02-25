@@ -63,7 +63,7 @@ class agImportNormalization {
                       ->select('phone_contact_type, id')
                       ->from('agPhoneContactType')
                       ->execute(array(), 'key_value_pair');
-      $phoneFormatTypeIds = Doctrine_Query::create()
+      $phoneFormatTypeIds = agDoctrineQuery::create()
                       ->select('pft.phone_format_type, pf.id')
                       ->from('agPhoneFormatType pft')
                       ->innerJoin('pft.agPhoneFormat pf')

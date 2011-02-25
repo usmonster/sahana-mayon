@@ -43,7 +43,7 @@ class organizationActions extends sfActions
 //    }
     $this->staffCountByOrg = agStaff::getUniqueStaffCount(3);
 
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
     ->select('o.*')
     ->from('agOrganization as o');
 

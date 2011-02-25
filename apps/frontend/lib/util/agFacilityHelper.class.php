@@ -26,7 +26,7 @@ class agFacilityHelper {
   public static function facilityGeneralInfo($packageType = NULL)
   {
     try {
-      $facilityQuery = Doctrine_Query::create()
+      $facilityQuery = agDoctrineQuery::create()
               ->select('f.id, f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
               ->addSelect('e.id, s.id')
               ->from('agFacility f')
@@ -85,7 +85,7 @@ class agFacilityHelper {
   public static function facilityAddress($addressStandard, $primaryOnly=FALSE, $type=NULL )
   {
     try {
-      $facilityQuery = Doctrine_Query::create()
+      $facilityQuery = agDoctrineQuery::create()
               ->select('f.id, eac.entity_id, act.address_contact_type, eac.address_id, eac.priority')
               ->addSelect('ae.address_element, av.value')
               ->addSelect('s.id, e.id, eac.id, a.id, aav.id')
@@ -162,7 +162,7 @@ class agFacilityHelper {
   public static function facilityGeo($primaryOnly=FALSE, $type=NULL)
   {
     try {
-      $facilityQuery = Doctrine_Query::create()
+      $facilityQuery = agDoctrineQuery::create()
               ->select('f.id, act.address_contact_type, eac.address_id, eac.priority')
               ->addSelect('gc.latitude, gc.longitude')
               ->addSelect('s.id, e.id, eac.id, a.id, ag.id, g.id, gf.id')
@@ -214,7 +214,7 @@ class agFacilityHelper {
   {
     try {
       $initialWhereClause = TRUE;
-      $facilityQuery = Doctrine_Query::create()
+      $facilityQuery = agDoctrineQuery::create()
               ->select('f.id, ect.email_contact_type, ec.email_contact, eec.priority')
               ->addSelect('s.id, e.id, eec.id')
               ->from('agFacility f')
@@ -285,7 +285,7 @@ class agFacilityHelper {
   {
     try {
       $initialWhereClause = TRUE;
-      $facilityQuery = Doctrine_Query::create()
+      $facilityQuery = agDoctrineQuery::create()
               ->select('f.id, pct.phone_contact_type, pc.phone_contact, epc.priority')
               ->addSelect('s.id, e.id, epc.id')
               ->from('agFacility f')
@@ -356,7 +356,7 @@ class agFacilityHelper {
   public static function facilityStaffResource()
   {
     try {
-      $facilityQuery = Doctrine_Query::create()
+      $facilityQuery = agDoctrineQuery::create()
               ->select('fstf.scenario_facility_resource_id, srt.staff_resource_type, fstf.minimum_staff, fstf.maximum_staff')
               ->from('agFacilityStaffResource fstf')
               ->innerJoin('fstf.agStaffResourceType srt')

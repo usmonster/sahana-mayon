@@ -29,7 +29,7 @@ abstract class PluginagStaffResourceType extends BaseagStaffResourceType
     try
     {
       // Collect all staff resource types.
-      $staffResourceTypeQuery = Doctrine_Query::create()
+      $staffResourceTypeQuery = agDoctrineQuery::create()
         ->select('srt.*')
         ->from('agStaffResourceType as srt');
 

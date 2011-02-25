@@ -163,7 +163,7 @@ $ag_person_name_types = Doctrine::getTable('agPersonNameType')
 
                   <td>
         <?php
-                  $q = Doctrine_Query::create()
+                  $q = agDoctrineQuery::create()
                           ->select('sex_id')
                           ->from('agPersonSex')
                           ->where('person_id = ?', $staffMember->getId());

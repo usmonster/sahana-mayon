@@ -58,7 +58,7 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
       ));
         $this->widgetSchema['ag_facility_resource_list']->addOption(
       'query',
-      Doctrine_Query::create()
+      agDoctrineQuery::create()
         ->select('a.facility_id, af.*, afrt.*')
         ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
         ->whereNotIn('a.id', array_keys($currentoptions))
@@ -126,7 +126,7 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
       if(count($toDelete) >0)
       {
         /** @todo clean this up, a subquery to delete on would be optimal */
-        $deleteRecs = Doctrine_Query::create()
+        $deleteRecs = agDoctrineQuery::create()
         ->select('a.facility_resource_id')
         ->from('agScenarioFacilityResource a')
         ->whereIn('a.facility_resource_id', $toDelete)->execute();

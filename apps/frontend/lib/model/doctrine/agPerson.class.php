@@ -144,7 +144,7 @@ class agPerson extends BaseagPerson
   {
     try
     {
-//      $query = Doctrine_Query::create()
+//      $query = agDoctrineQuery::create()
 //        ->select('mn.person_id, mn.person_name_type_id, pn.person_name, mn.priority')
 //        ->from('agPersonMjAgPersonName as mn')
 //        ->innerJoin('mn.agPersonName as pn')

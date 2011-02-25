@@ -81,7 +81,7 @@ $desired_fields = array_diff($desired_fields, $relationsLevel1);
 
           <td>
         <?php
-          $q = Doctrine_Query::create()
+          $q = agDoctrineQuery::create()
                   ->select('sex_id')
                   ->from('agPersonSex')
                   ->where('person_id = ?', $staffMember->getId());

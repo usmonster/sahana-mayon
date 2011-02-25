@@ -368,7 +368,7 @@ class agStaffActions extends agActions
 
       $ag_staff = $form->save();
       $refAgStaff = $ag_staff->getAgStaff();
-      $staffObj = Doctrine_Query::create()
+      $staffObj = agDoctrineQuery::create()
               ->from('agStaff s')
               ->where('s.person_id=?', $ag_staff->id)
               ->fetchOne();

@@ -21,7 +21,7 @@ class agGlobal
    */
   public static function initGlobal()
   {
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
       ->select('gp.datapoint')
           ->addSelect('gp.value')
         ->from('agGlobalParam gp') ;

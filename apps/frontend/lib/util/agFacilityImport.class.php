@@ -373,7 +373,7 @@ class AgImportXLS
     $dbManager = new sfDatabaseManager($appConfig);
     $db = $dbManager->getDatabase('doctrine');
 
-    $facRes = Doctrine_Query::create()
+    $facRes = agDoctrineQuery::create()
             ->select('f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
             ->addSelect('sfr.activation_sequence, fras.facility_resource_allocation_status')
             ->addSelect('sfg.scenario_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, sfg.activation_sequence')
