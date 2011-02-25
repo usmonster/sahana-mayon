@@ -520,6 +520,28 @@ class agEventFacilityHelper
    */
   public static function releaseEventFacilityResource ($eventFacilityResourceId, $actionTime = NULL, $shiftChangeRestriction = TRUE, Doctrine_Connection $conn = NULL)
   {
+    // set up our basic time parameters
+    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param['shift_change_restriction'] * 60) : 0 ;
+    if (is_null($actionTime)) { $actionTime = time() ; }
+    $actionTimeOffset = ($actionTime + $shiftOffset) ;
 
+    // pick up our disabled shift status
+    $disabledStatusId = agEventShiftHelper::returnDisabledShiftStatus() ;
+
+    // define a nested where clause
+    $andWhereClause = '(efrat.id IS NULL
+      OR ((efrat.activation_time + es.minutes_start_to_facility_activation) > ?))' ;
+
+    $query = agDoctrineQuery::create()
+      ->select('es.id')
+        ->from('agEventShift es')
+          ->addFrom('es.agEventFacilityResource efr')
+          ->addFrom('efr.agEventFacilityResourceActivationTime efrat')
+        ->where('es.event_facility_resource_id = ?', $eventFacilityResourceId)
+          ->andWhere($andWhereClause, $actionTimeOffset) ;
+    $releasedShifts = $query->execute(array(), 'key_value_array') ;
+
+    $results = agEventShiftHelper::setEventShiftStatus($releasedShifts, $disabledStatusId, TRUE) ;
+    return $results ;
   }
 }

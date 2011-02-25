@@ -61,8 +61,10 @@ class agFooActions extends agActions
 
   public function executeShow(sfWebRequest $request)
   {
-    $results = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', FALSE) ;
+    // <-------- CUT HERE -------->
+    $results = agEventFacilityHelper::releaseEventFacilityResource(1) ;
     print_r($results) ;
+    // <-------- CUT HERE -------->
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_foo);

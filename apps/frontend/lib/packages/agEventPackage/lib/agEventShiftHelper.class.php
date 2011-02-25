@@ -32,31 +32,31 @@ class agEventShiftHelper
     $eventStaffUpdates = 0 ;
     $eventShiftUpdates = 0 ;
 
-    // set our default connection if one is not passed
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+      // set our default connection if one is not passed
+      if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
 
-    // query construction
-    $shiftsQuery = agDoctrineQuery::create($conn)
-      ->update('agEventShift')
-        ->set('shift_status_id', '?', $shiftStatusId)
-        ->whereIn('id', $eventShiftIds) ;
+      // query construction
+      $shiftsQuery = agDoctrineQuery::create($conn)
+        ->update('agEventShift')
+          ->set('shift_status_id', '?', $shiftStatusId)
+          ->whereIn('id', $eventShiftIds) ;
 
-    // wrap it all in a transaction and a try/catch to rollback if an exception occurs
-    $conn->beginTransaction() ;
-    try
-    {
-      // update shifts
-      $eventShiftUpdates = $shiftsQuery->execute() ;
+      // wrap it all in a transaction and a try/catch to rollback if an exception occurs
+      $conn->beginTransaction() ;
+      try
+      {
+        // update shifts
+        $eventShiftUpdates = $shiftsQuery->execute() ;
 
-      // release staff if instructed to do so
-      if ($releaseStaff) { $eventStaffUpdates = self::releaseShiftStaff($eventShiftIds) ; }
-      
-      // commit
-      $conn->commit() ;
-    }
-    catch(Exception $e)
-    {
-      $conn->rollback(); // rollback if we must :(
+        // release staff if instructed to do so
+        if ($releaseStaff) { $eventStaffUpdates = self::releaseShiftStaff($eventShiftIds) ; }
+
+        // commit
+        $conn->commit() ;
+      }
+      catch(Exception $e)
+      {
+        $conn->rollback(); // rollback if we must :(
     }
 
     // return our respective record operation counts
@@ -73,8 +73,8 @@ class agEventShiftHelper
    */
   public static function releaseShiftStaff($eventShiftIds, Doctrine_Connection $conn = NULL )
   {
-    // set our default connection if one isn't passed
-    if (! is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+    // set results default
+    $results = 0 ;
 
     $query = agDoctrineQuery::create($conn)
       ->delete('agEventStaffShift ess')
@@ -84,7 +84,8 @@ class agEventShiftHelper
               WHERE essi.event_staff_shift_id = ess.id)')
           ->andWhereIn('ess.event_shift_id', $eventShiftIds) ;
 
-    // wrap it all in a transaction and make magic happen
+    // set our default connection if one isn't passed and wrap it all in a transaction
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
     $conn->beginTransaction() ;
     try
     {
