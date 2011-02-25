@@ -229,6 +229,15 @@ class agEventFacilityHelper
     return $results ;
   }
 
+  /**
+   * Method to set the zero hour of an event and set facility activation times for committed, non-
+   * standby facilities.
+   *
+   * @param integer(4) $eventId The event being updated.
+   * @param timestamp $activationTime The activation time being applied.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array An array containing the number of facility operations performed.
+   */
   public static function setEventZeroHour ($eventId, $activationTime, Doctrine_Connection $conn = NULL)
   {
     // set counters
@@ -478,5 +487,39 @@ class agEventFacilityHelper
     return $results ;
   }
 
+  /**
+   * Method to return all Unstaffed Facility Resource Status ID's
+   *
+   * @param string $column The boolean column name to be queried.
+   * @param boolean $match The value (negative or positive) of the match. Defaults to TRUE.
+   * @return array An array of facility_resource_allocation_status_ids.
+   * @todo This function, and its kin should be magic so that
+   * getFacilityResourceAllocationStatus('staffed', FALSE) get*
+   */
+  public static function getFacilityResourceAllocationStatus ($column, $match = TRUE)
+  {
+    $query = agDoctrineQuery::create()
+      ->select('id')
+        ->from('agFacilityResourceAllocationStatus')
+        ->where($value . '= ?', $match) ;
 
+    $results = $query->execute(array(), 'single_value_array') ;
+    return $results ;
+  }
+
+  /**
+   * Method to release event facility resource.
+   *
+   * @param integer(5) $eventFacilityResourceId The id of the event facility resource to which this
+   * is applied.
+   * @param timestamp $actionTime An optional time uses as a basis for the time this action is
+   * applied. Defaults to CURRENT_TIMESTAMP.
+   * @param boolean $shiftChangeRestriction An optional boolean determining whether or not the
+   * shift change restriction will be applied in the release of facility resources. Defaults to TRUE.
+   * @param Doctrine_Connection $conn An optional doctrine connection object.
+   */
+  public static function releaseEventFacilityResource ($eventFacilityResourceId, $actionTime = NULL, $shiftChangeRestriction = TRUE, Doctrine_Connection $conn = NULL)
+  {
+
+  }
 }

@@ -61,7 +61,7 @@ class agFooActions extends agActions
 
   public function executeShow(sfWebRequest $request)
   {
-    $results = agEventFacilityHelper::setEventZeroHour(1, time()) ;
+    $results = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', FALSE) ;
     print_r($results) ;
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
