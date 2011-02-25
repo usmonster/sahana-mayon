@@ -501,7 +501,7 @@ class agEventFacilityHelper
     $query = agDoctrineQuery::create()
       ->select('id')
         ->from('agFacilityResourceAllocationStatus')
-        ->where($value . '= ?', $match) ;
+        ->where($column . '= ?', $match) ;
 
     $results = $query->execute(array(), 'single_value_array') ;
     return $results ;

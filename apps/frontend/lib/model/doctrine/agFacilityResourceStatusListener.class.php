@@ -13,7 +13,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agEventFacilityResourceStatusListener extends Doctrine_Record_Listener
+class agFacilityResourceStatusListener extends Doctrine_Record_Listener
 {
 
   protected $_options;
@@ -26,7 +26,7 @@ class agEventFacilityResourceStatusListener extends Doctrine_Record_Listener
   public function postSave(Doctrine_Event $event)
   {
     $invoker = $event->getInvoker();
-    $eventFacilityResourceId = $invoker->event_facility_resource_id;
+    $facilityResourceId = $invoker->id;
     $new_status = $invoker->facility_resource_allocation_status_id;
 
 // $newstatus is the new status id being applied
@@ -44,12 +44,12 @@ class agEventFacilityResourceStatusListener extends Doctrine_Record_Listener
       //$confirmed = $modalWindow->return;
       //if ($confirmed == TRUE)
       if (TRUE == TRUE) {
-        agEventFacilityHelper::releaseEventFacilityResource($eventFacilityResourceId);
+        //agEventFacilityHelper::releaseEventFacilityResource($eventFacilityResourceId);
 
         //sfContext::getInstance()->getLogger()->debug( 'Log this.' );
         //$dispatcher = sfContext::getInstance() -> getEventDispatcher();
 
-        
+
       }
     }
   }

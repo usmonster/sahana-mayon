@@ -13,6 +13,7 @@
  * http://www.gnu.org/copyleft/lesser.html
  *
  * @author Ilya Gulko, CUNY SPS
+ * @author Charles Wisniewski, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
@@ -28,6 +29,17 @@ class agFacilityResource extends BaseagFacilityResource
   {
     return $this->getAgFacility()->facility_name . " : " . $this->getAgFacilityResourceType()->facility_resource_type;
   }
+
+  /**
+   * overloads the setTableDefinition for the baseFacilityResource class, adding a listener
+   */
+  public function setTableDefinition()
+  {
+    parent::setTableDefinition() ;
+
+    $this->addListener(new agFacilityResourceStatusListener());
+  }
+
 
   /**
    * delete()
