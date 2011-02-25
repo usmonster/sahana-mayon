@@ -428,7 +428,7 @@
         echo '<br />' . PHP_EOL;
       }
     ?>
-    <div style="float: left;">
+    <div class="floatLeft">
       <a href="<?php echo url_for('staff/edit?id=' . $agPerson->getId()) ?>"
          class="linkButton">Edit</a>
      <?php
@@ -444,7 +444,7 @@
           '<a href="' . url_for('staff/list') . '" class="linkButton">List</a>';
      ?>
  </div>
- <div style="float: right;">
+ <div class="floatRight">
   <?php
       if (isset($query)) { //check to see if $query exists. True if page has been requested from search results. Links will then have $query appended.
         //If this isn't the FIRST page, echo a link to the FIRST page. Else, create an <a> with no href.

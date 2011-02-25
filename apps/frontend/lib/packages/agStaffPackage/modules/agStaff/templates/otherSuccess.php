@@ -126,11 +126,11 @@ $desired_fields = array_diff($desired_fields, $relationsLevel1);
               </tbody>
             </table>
             <br />
-            <div style="float: left;">
+            <div class="floatLeft">
               <a href="<?php echo url_for('staff/new') ?>" class="linkButton"
                  title="Create New Staff Member">Create New</a>
             </div>
-            <div style="float: right;">
+            <div class="floatRight">
   <?php
 //This block creates the navigation links for paginated staff members.
 //

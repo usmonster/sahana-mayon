@@ -9,14 +9,14 @@
     'religion'     => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReligion')),
   ));
 
- $filterForm->getWidget('sex')->setAttribute('style', 'width: 100%');
- $filterForm->getWidget('nationality')->setAttribute('style', 'width: 100%');
- $filterForm->getWidget('ethnicity')->setAttribute('style', 'width: 100%');
- $filterForm->getWidget('religion')->setAttribute('style', 'width: 100%');
+ $filterForm->getWidget('sex')->setAttribute('class', 'fullWidth');
+ $filterForm->getWidget('nationality')->setAttribute('class', 'fullWidth');
+ $filterForm->getWidget('ethnicity')->setAttribute('class', 'fullWidth');
+ $filterForm->getWidget('religion')->setAttribute('class', 'fullWidth');
 ?>
 <div class="filterBox">
   <h3>Filter:</h3>
-  <form action="<?php echo url_for('staff_search') ?>" method="get" style="display: inline;">
+  <form action="<?php echo url_for('staff_search') ?>" method="get" class="displayInline">
     <label class ="filterButton">Search String:</label>
     <input type="hidden" name="query" value="<?php echo $sf_request->getParameter('query') ?>"/>
     <input type="text" name="filter" value="<?php echo $sf_request->getParameter('filter') ?>" id="search_keywords" class="searchFilter"/>

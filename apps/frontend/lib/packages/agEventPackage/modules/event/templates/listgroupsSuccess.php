@@ -101,7 +101,7 @@ $sortOrder = $sf_request->getGetParameter('order');
 <?php echo javascript_include_tag('agModal.js'); ?>
             </table>
           </div>
-          <div style="float: right;">
+          <div class="floatRight">
   <?php
 //First Page link (or inactive if we're at the first page).
               echo(!$pager->isFirstPage() ? '<a href="' . url_for('event/listgroups?page=' . $pager->getFirstPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '') . $sortAppend . $orderAppend) . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');

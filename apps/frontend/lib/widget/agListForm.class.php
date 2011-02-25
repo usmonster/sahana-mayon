@@ -61,7 +61,7 @@ class agListForm
     $listbody .= '<a href="' . url_for('foo/new') . '" class="linkButton" title="Create New Foo">Create New</a>
         </div>';
 
-    $listfoot = '<div style="float: right;">';
+    $listfoot = '<div class="floatRight">';
 //
 //First Page link (or inactive if we're at the first page).
     $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');

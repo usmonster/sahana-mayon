@@ -13,7 +13,7 @@
   </head>
   <body>
     <div id="header">
-      <div style="float: left;">
+      <div class="floatLeft">
         <h1>Sahana Agasti:</h1><h2> Emergency Management </h2>
         <?php
         $configFilePath = sfConfig::get('sf_config_dir') . '/config.yml';
@@ -34,7 +34,7 @@
         <?php if ($loggedIn): ?>
           <!-- Some of these nav links don't all actually work; some are just placeholders for now so it looks nice. -->
         <?php include_component('nav', 'Menu'); ?>
-        <span style="margin: .1em; float: right;">
+        <span class="floatRight MarginPointOneEm">
           <?php include_partial('global/searchForm'); ?>
         </span>
         <?php endif ?>

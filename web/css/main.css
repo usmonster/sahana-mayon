@@ -565,7 +565,7 @@ input[type="button"]:active, button[type="submit"]:active, form input[type="subm
   background: #98ffb9;
 }
 
-input[type="button"]::-moz-focus-inner, form input[type="submit"]::-moz-focus-inner {
+input[type="button"]:-moz-focus-inner, form input[type="submit"]:-moz-focus-inner {
   border: none;
   padding: .25em;
 }
@@ -1015,7 +1015,7 @@ li.menu1:hover > ul {
 }
 
 table.adminConfigRequirements{
-  align:center; width:200px;
+  margin-left: auto; margin-right: auto; width:200px;
 }
 
 table.adminConfigRequirements tr td{
@@ -1031,5 +1031,72 @@ table.adminConfigRequirements tr td{
 }
 
 .greyText{
-    color: #848484
+  color: #848484
+}
+
+
+.floatLeft{
+  float: left;
+}
+
+.floatRight{
+  float: right;
+}
+
+.MarginPointOneEm{
+  margin: 0.1em;
+}
+
+.warningColor{
+  color:#ff0000;
+}
+
+.fullWidth{
+  width: 100%;
+}
+
+.displayInlineBlock{
+  display: inline-block;
+}
+
+.displayInline{
+  display: inline;
+}
+
+.clearBoth{
+  clear: both;
+}
+
+.displayBlock{
+  display: block;
+}
+
+.colorRed{
+  color: red;
+}
+.clientIndexInputUpload{
+  text-align: right; opacity: 0; -moz-opacity:0; filter: alpha(opacity=0); z-index: 2; position: relative; width: 190px;
+}
+.clientIndexSubmit{
+  display: inline-block; z-index: 3; position: relative;
+}
+
+.centerText{
+ text-align: center;
+}
+
+.noMargin{
+ margin: 0px;
+}
+
+.noPadding{
+ padding:0px;
+}
+
+#importForm div{
+  position: relative; top: 0px; left: 0px; z-index: 1; width: 250px;
+}
+
+.padding3Px{
+  padding: 3px;
 }

@@ -24,7 +24,7 @@
 <thead>
     <tr class="tableRow">
       <th class="head" rowspan="2"></th>
-      <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" style="text-align: center">
+      <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" class="centerText">
       Name
       </th>
       <!-- Sex -->
@@ -71,7 +71,7 @@
    <tr class="tableRow">
      <?php foreach ($ag_person_name_types as $ag_person_name_type_id => $ag_person_name_type): ?>
        <th class="subHead" rowspan="2">
-         <div style="margin: 0; padding: 0"><?php echo ucwords($ag_person_name_type); ?></div>
+         <div class="noMargin noPadding"><?php echo ucwords($ag_person_name_type); ?></div>
          <?php
            echo($sortColumn =='person_name'. '_' . $ag_person_name_type_id && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=person_name'. '_' . $ag_person_name_type_id . '&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=person_name'. '_' . $ag_person_name_type_id . '&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
            echo($sortColumn =='person_name'. '_' . $ag_person_name_type_id && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=person_name'. '_' . $ag_person_name_type_id . '&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=person_name'. '_' . $ag_person_name_type_id . '&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -146,10 +146,10 @@
   </tbody>
 </table>
 <br />
-<div style="float: left;">
+<div class="floatLeft">
   <a href="<?php echo url_for('staff/new') ?>" class="linkButton" title="Create New Staff Member">Create New</a>
 </div>
-<div style="float: right;">
+<div class="floatRight">
   <?php
 
 //This block creates the navigation links for paginated staff members.

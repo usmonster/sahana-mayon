@@ -53,7 +53,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
         <li>
           <input disabled="disabled" id="init_schema" type="checkbox" name="init_schema" />re-initialize database schema
         </li>
-        <li><span style="color:#ff0000;">WARNING: this will drop your current database.</span></li>!-->
+        <li><span class="warningColor">WARNING: this will drop your current database.</span></li>!-->
       </ul>
     </fieldset>
     <fieldset>
