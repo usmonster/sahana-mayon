@@ -34,6 +34,7 @@ class agImportNormalization {
     try {
       $contactType = 'work';
       $phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
+      $addressStandard = 'us standard';
 
       $facilityResourceTypeIds = agDoctrineQuery::create()
                       ->select('frt.facility_resource_type_abbr, frt.id')
@@ -73,6 +74,10 @@ class agImportNormalization {
                       ->select('address_contact_type, id')
                       ->from('agAddressContactType')
                       ->execute(array(), 'key_value_pair');
+      $addressStandardObj = agDoctrineQuery::create()
+                      ->from('agAddressStandard')
+                      ->where('address_standard = ?', $addressStandard)
+                      ->fetchOne();
 
       $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
 
@@ -98,6 +103,14 @@ class agImportNormalization {
         $facility_group_activation_sequence = $record['facility_group_activation_status'];
         $email = $record['work_email'];
         $phone = $record['work_phone'];
+        $fullAddress = array('line 1' => $record['street_1'],
+            'line 2' => $record['street_2'],
+            'city' => $record['city'],
+            'state' => $record['state'],
+            'zip5' => $record['postal_code'],
+            'borough' => $record['borough'],
+            'country' => $record['country']);
+
 // TODO: implement this
         $this->dataValidation();
 //        isValid = validate_row(facility_name, facility_code, facility_resource_type_abbr, facility_resource_status, capacity[, ...])
@@ -112,12 +125,18 @@ class agImportNormalization {
         $facility_resource_allocation_status_id = $facilityResourceAllocationStatusIds[$facility_allocation_status];
         $workEmailTypeId = $emailContactTypeIds[$contactType];
         $workPhoneTypeId = $phoneContactTypeIds[$contactType];
-        $workPhoneFormatId = $phoneFormatTypeIds[ $phoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)] ];
+        $workPhoneFormatId = $phoneFormatTypeIds[$phoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
+        $workAddressTypeId = $addressContactTypeIds[$contactType];
+        $workAddressStandardId = $addressStandardObj->getId();
+        $addressElementIds = agDoctrineQuery::create()
+                        ->select('ae.address_element, ae.id')
+                        ->from('agAddressElement ae')
+                        ->innerJoin('ae.agAddressFormat af')
+                        ->where('af.address_standard_id = ?', $workAddressStandardId)
+                        ->execute(array(), 'key_value_pair');
 
-
-// tries to find an existing record based on a unique identifier.
-//        $facility = Doctrine_Core::getTable('agFacility')->findOneByFacilityCode($record['facility_code']);
         // facility
+        // tries to find an existing record based on a unique identifier.
         $facility = agDoctrineQuery::create()
                         ->from('agFacility f')
                         ->leftJoin('f.agFacilityResource fr')
@@ -144,10 +163,11 @@ class agImportNormalization {
         } else {
           $facilityResource = $this->updateFacilityResource($facilityResource, $facility_resource_status, $capacity);
           $scenarioFacilityResource = agDoctrineQuery::create()
-                          ->from('agScenarioFacilityResource')
+                          ->from('agScenarioFacilityResource sfr')
                           //TODO
-//                        ->where('scenario_id = ?', $this->scenarioId)
-//                        ->andWhere('scenario_facility_group = ?', $facility_group)
+                          ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+                          ->where('sfg.scenario_id = ?', $this->scenarioId)
+                          ->andWhere('facility_resource_id = ?', $facilityResource->id)
                           ->fetchOne();
         }
 
@@ -176,6 +196,9 @@ class agImportNormalization {
 
         // phone
         $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId, $workPhoneFormatId);
+
+        // address
+        $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds);
 
         $facility->save();
         $facilityResource->save();
@@ -309,7 +332,6 @@ class agImportNormalization {
    */
   protected function updateFacilityEmail($facility, $email, $workEmailTypeId) {
     $entityId = $facility->getAgSite()->entity_id;
-
     $facilityEmail = $this->getEntityContactObject('email', $entityId, $workEmailTypeId);
 
     if (empty($facilityEmail)) {
@@ -395,7 +417,6 @@ class agImportNormalization {
   protected function updateFacilityPhone($facility, $phone, $workPhoneTypeId, $phoneFormatId) {
     //TODO
     $entityId = $facility->getAgSite()->entity_id;
-
     $facilityPhone = $this->getEntityContactObject('phone', $entityId, $workPhoneTypeId);
 
     if (empty($facilityPhone)) {
@@ -430,6 +451,133 @@ class agImportNormalization {
 
     $this->updateEntityPhone($facilityPhone, $phoneEntity);
     return TRUE;
+  }
+
+  /* Address */
+
+  protected function getAssociateAddressElementValues($addressId, array $addressElementIds) {
+    $entityAddressElementValues = agDoctrineQuery::create()
+                    ->select('ae.address_element, av.value')
+                    ->from('agAddressElement ae')
+                    ->innerJoin('ae.agAddressValue av')
+                    ->innerJoin('av.agAddressMjAgAddressValue aav')
+                    ->where('aav.address_id = ?', $addressId)
+                    ->andWhereIn('ae.id', array($addressElementIds))
+                    ->execute(array(), 'key_value_pair');
+    return $entityAddressElementValues;
+  }
+
+  private function isEmptyStringArray($vals) {
+    if (empty($vals)) {
+      return FALSE;
+    }
+
+    foreach ($vals as $val) {
+      if (strlen($val) != 0) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  protected function createAddressValues(array $fullAddress, $workAddressStandardId, array $addressElementIds) {
+    $newAddressValueIds = array();
+    foreach ($fullAddress as $elem => $elemVal) {
+      if (empty($elemVal)) {
+        continue;
+      }
+      $addressValue = agDoctrineQuery::create()
+                      ->from('agAddressValue a')
+                      ->innerJoin('a.agAddressElement ae')
+                      ->where('a.value = ?', $elemVal)
+                      ->andWhere('ae.address_element = ?', $elem)
+                      ->fetchOne();
+      if (empty($addressValue)) {
+        $newAddressValue = new agAddressValue();
+        $newAddressValue->set('value', $elemVal)
+                ->set('address_element_id', $addressElementIds[$elem]);
+        $newAddressValue->save();
+        $newAddressValueIds[] = $newAddressValue->id;
+      }
+    }
+    return $newElementIds;
+  }
+
+  protected function createEntityAddress($entityId, $addressTypeId, $fullAddress, $addressStandardId, $addressElementIds) {
+    // create new address with importedElements
+    $address = new agAddress();
+    $address->set('address_standard_id', $addressStandardId);
+    $address->save();
+
+    $addressId = $address->id;
+
+    $newAddressValueIds = $this->createAddressValues($fullAddress, $addressStandardId, $addressElementIds);
+
+    foreach ($newAddressValueIds as $addressValueId) {
+      $mappingAddress = new agAddressMjAgAddressValue();
+      $mappingAddress->set('address_id', $addressId)
+              ->set('address_value_id', $addressValueId);
+      $mappingAddress->save();
+    }
+
+    $priority = $this->getPriorityCounter('address', $entityId);
+
+    $entityAddress = new agEntityAddressContact();
+    $entityAddress->set('entity_id', $entityId)
+            ->set('address_id', $addressId)
+            ->set('priority', $priority)
+            ->set('address_contact_type', $addressTypeId);
+    $entityAddress->save();
+  }
+
+  protected function updateFacilityAddress($facility, array $fullAddress, $workAddressTypeId, $workAddressStandardId, array $addressElementIds) {
+    $entityId = $facility->getAgSite()->entity_id;
+    $facilityAddress = $this->getEntityContactObject('address', $entityId, $workAddressTypeId);
+    $isImportAddressEmpty = $this->isEmptyStringArray($fullAddress);
+
+    // Remove existing facility work address if import address is null.
+    if ((!empty($facilityAddress)) && $isImportAddressEmpty) {
+      $this->deleteEntityAddressMapping($facilityAddress->id);
+      return TRUE;
+    }
+
+    // Create new facility address with import address where facility does not have an address and
+    // an address is given in import.
+    $isCreateNew = FALSE;
+    if (empty($facilityAddress) && !$isImportAddressEmpty) {
+      $isCreateNew = TRUE;
+    }
+
+    $facilityAddress = $this->getEntityContactObject('address', 87, $workAddressTypeId);
+
+    if (!empty($facilityAddress)) {
+//      $intAddressElementIds = $this->convertArrayValueStringToInt($addressElementIds);
+      $facilityAddressElements = $this->getAssociateAddressElementValues($facilityAddress->address_id, $addressElementIds);
+
+      if (empty(array_diff(array_keys($facilityAddressElements), array_keys($fullAddress)))) {
+        foreach ($fullAddress as $eltName => $eltVal) {
+          if ($eltVal != $facilityAddressElements[$eltName]) {
+            $isCreateNew = TRUE;
+            break;
+          }
+        }
+      } else {
+        $isCreateNew = TRUE;
+      }
+    }
+
+    if ($isCreateNew) {
+      $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
+    }
+
+    return $isCreateNew;
+  }
+
+  protected function deleteEntityAddressMapping($entityAddressId) {
+    $query = agDoctrineQuery::create()
+                    ->delete('agEntityAddressContact')
+                    ->where('id = ?', $entityAddressId)
+                    ->execute();
   }
 
   /* ENTITY */
@@ -496,4 +644,11 @@ class agImportNormalization {
     return $priority;
   }
 
+//  protected function convertArrayValueStringToInt($stringValueArray) {
+//    $intValueArray = array();
+//    foreach ($stringValueArray as $key=>$value) {
+//      $intValueArray[$key] = (int)$value;
+//    }
+//    return $intValueArray;
+//  }
 }
