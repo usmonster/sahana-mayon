@@ -11,3 +11,23 @@ agGlobalParam:
     agHost: localhost
     datapoint: shift_disabled_status
     value: inactive
+  facility_resource_disabled_status:
+    id: 3
+    agHost: localhost
+    datapoint: facility_resource_disabled_status
+    value: unavailable
+  facility_resource_enabled_status:
+    id: 4
+    agHost: localhost
+    datapoint: facility_resource_enabled_status
+    value: unknown
+  facility_resource_status_affects_scenarios:
+    id: 5
+    agHost: localhost
+    datapoint: facility_resource_status_affects_scenarios
+    value: 1
+  facility_resource_status_affects_events:
+    id: 5
+    agHost: localhost
+    datapoint: facility_resource_status_affects_events
+    value: 1

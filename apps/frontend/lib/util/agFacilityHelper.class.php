@@ -14,7 +14,6 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
 class agFacilityHelper {
-
   /**
    * @method facilityGeneralInfo()
    * Returns a flat associate array of facility's general information.
@@ -386,4 +385,134 @@ class agFacilityHelper {
     }
   }
 
+  /**
+   * Methond to return the id value of a facility allocation status string
+   * @param string $allocationStatusString The string value of the facility resource allocation
+   * status.
+   * @return integer The facility resource allocation status id.
+   */
+  public static function returnFacilityResourceAllocationStatusId($allocationStatusString)
+  {
+    $statusId = agDoctrineQuery::create()
+      ->select('fras.id')
+        ->from('agFacilityResourceAllocationStatus fras')
+        ->where('fras.facility_resource_allocation_status = ?', $allocationStatusString)
+        ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
+
+    return $statusId ;
+  }
+
+  /**
+   * Method to set facility resource status specifically used as part of the
+   * agFacilityResourceStatus listener.
+   *
+   * @param array $facilityResourceIds An array of facility resource ID's to affect.
+   * @param integer(2) $facilityResourceStatusId The facility resource alloation status being applied.
+   * @param boolean $affectScenarios An optional parameter dictating whether or not this action will
+   * affect scenario facility resources. If left NULL it searches for the global parameter
+   * facility_resource_status_affects_scenarios and applies the value stored there.
+   * @param boolean $affectEvents An optional parameter dictating whether or not this action will
+   * affect event facility resources. If left NULL it searches for the global parameter
+   * facility_resource_status_affects_events and applies the value stored there.
+   * @param Doctrine_Connection $conn An optional Doctrine connection object.
+   * @return array An array containing the number of operations performed. 
+   */
+  public static function setFacilityResourceStatusOnUpdate ($facilityResourceIds, $facilityResourceStatusId, $affectScenarios = NULL, $affectEvents = NULL, Doctrine_Connection $conn = NULL)
+  {
+    $operations = array() ;
+
+    // get the current facility resource statuses
+    $currentStatusQuery = agDoctrineQuery::create()
+      ->select('fr.id')
+          ->addSelect('frs.is_available')
+        ->from('agFacilityResource fr')
+          ->innerJoin('fr.agFacilityResourceStatus frs')
+        ->whereIn('fr.id', $facilityResourceIds) ;
+    $facilityResourceStatuses = $currentStatusQuery->execute(array(),'key_value_pair') ;
+
+    // get available from $facilityResourceStatusId
+    $available = agDoctrineQuery::create()
+      ->select('frs.is_available')
+        ->from('agFacilityResourceStatus frs')
+        ->where('frs.id = ?', $facilityResourceStatusId)
+        ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
+    $inverseMatch = ($available) ? FALSE : TRUE ;
+
+    // get just the ones that are changing (don't want to have spurious expensive operations!)
+    $actionableResources = array_keys($facilityResourceIds, $inverseMatch) ;
+
+    // as a listener this gets fired a lot so we don't even do the rest without check if we have to
+    if (! empty($actionableResources))
+    {
+      // set our default variables to determine if scenarios or events are affected
+      if (is_null($affectScenarios))
+      { 
+        $defaultAffectScenarios = agGlobal::$param['facility_resource_status_affects_scenarios'] ;
+        $affectScenarios = ($defaultAffectScenarios == '1') ? TRUE : FALSE ;
+      }
+      if (is_null($affectEvents))
+      { 
+        $defaultAffectEvents = agGlobal::$param['facility_resource_status_affects_events'] ;
+        $affectEvents = ($defaultAffectEvents == '1') ? TRUE : FALSE ;
+      }
+
+      // only take action if at least one of these is affected
+      if ($affectScenarios || $affectEvents)
+      {
+        // pick up the allocation status we're about to apply from the defaults in the global param table
+        if ($available)
+        {
+          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param['facility_resource_enabled_status']) ;
+        }
+        else
+        {
+          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param['facility_resource_disabled_status']) ;
+        }
+
+        // set our default connection if one is not passed and wrap it all in a transaction
+        if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+        $conn->beginTransaction() ;
+        try
+        {
+          if ($affectScenarios)
+          {
+            // collect all scenarios to be affected
+            $scenarioIds = agDoctrineQuery::create()
+              ->select('s.id')
+                ->from('agScenario s')
+                ->execute(array(), 'single_value_array') ;
+
+            // apply changes to all scenarios
+            $scenarioOperations = agScenarioFacilityHelper::setScenarioFacilityResourceAllocationStatus($scenarioIds, $actionableResources, $allocationStatusId) ;
+            $operations['scenarioOperations'] = $scenarioOperations ;
+          }
+
+          if ($affectEvents)
+          {
+            $eventIds = array() ;
+
+            // get our event id's that have active status
+            $currentEventStatuses = array_values(agEventHelper::returnCurrentEventStatus()) ;
+            foreach ($currentEventStatuses as $eventStatus)
+            {
+              if ($eventStatus[3] == TRUE) { $eventIds[] = $eventStatus[0] ; }
+            }
+
+            // apply changes to all active events
+            $eventOperations = agEventFacilityHelper::setEventFacilityResourceStatus($eventIds, $actionableResources, $allocationStatusId) ;
+            $operations['eventOperations'] = $eventOperations ;
+          }
+
+         // commit
+         $conn->commit() ;
+        }
+        catch(Exception $e)
+        {
+          $conn->rollback(); // rollback if we must :(
+        }
+      }
+    }
+    // collect results and return
+    return $operations ;
+  }
 }

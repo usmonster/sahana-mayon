@@ -169,9 +169,9 @@ class agDateTimeHelper
    * @param timestamp A php datetime (unix epoch) value
    * @return string A MySQL-formatted time string
    */
-  public static function timestampToMySql($timestamp)
+  public static function tsToString($timestamp)
   {
-    $mysqlTimeString = date ('Y-m-d H:i:s', $timestamp) ;
-    return $mysqlTimeString ;
+    $tsTimeString = date ('Y-m-d H:i:s', $timestamp) ;
+    return $tsTimeString ;
   }
 }

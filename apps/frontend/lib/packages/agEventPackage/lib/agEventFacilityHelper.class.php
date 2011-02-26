@@ -302,7 +302,6 @@ class agEventFacilityHelper
 
   /**
    * Static function to return the current status id's of all facility resources for a specific event
-   *
    * <code>
    * // To get the current status of all facilities in a current event
    * $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityResourceStatus($eventId) ;
@@ -488,7 +487,7 @@ class agEventFacilityHelper
   }
 
   /**
-   * Method to return all Unstaffed Facility Resource Status ID's
+   * Method to return all Facility Resource Status ID's that match a columnar parameter
    *
    * @param string $column The boolean column name to be queried.
    * @param boolean $match The value (negative or positive) of the match. Defaults to TRUE.
@@ -543,5 +542,71 @@ class agEventFacilityHelper
 
     $results = agEventShiftHelper::setEventShiftStatus($releasedShifts, $disabledStatusId, TRUE) ;
     return $results ;
+  }
+
+  /**
+   * Method to execute a mass-update to event facility resource statuses.
+   *
+   * @param array $eventIds An array of event id's being affected.
+   * @param array $facilityResourceIds An array of facility resource id's affected by this action.
+   * @param integer(2) $allocationStatusId The status being applied.
+   * @param timestamp $actionTime The time this action will be applied. Defaults to NOW().
+   * @param Doctrine_Connection $conn An optional doctrine connection object.
+   * @return integer The number of operations performed.
+   */
+  public static function setEventFacilityResourceStatus ($eventIds, $facilityResourceIds, $allocationStatusId, $actionTime = NULL, Doctrine_Connection $conn = NULL)
+  {
+    // set up some variables
+    $updates = 0 ;
+    if (is_null($actionTime)) { $actionTime = time() ; }
+    $tsString = agDateTimeHelper::tsToString($actionTime) ;
+
+    // grab our facility resource groups
+    $eventFacilityResourceQuery = agDoctrineQuery::create()
+      ->select('efr.id')
+        ->from('agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityGroup efg')
+        ->whereIn('efg.event_id', $eventIds)
+          ->andWhereIn('efr.facility_resource_id', $facilityResourceIds) ;
+    $eventFacilityResourceIds = $eventFacilityResourceQuery->execute(array(), 'single_value_array') ;
+
+    // set our default connection if one is not passed and wrap it all in a transaction
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+    $conn->beginTransaction() ;
+    try
+    {
+      // set up a new collection for inserts
+      $collection = new Doctrine_Collection('agEventFacilityResourceStatus');
+
+      foreach ($eventFacilityResourceIds as $id)
+      {
+        // build our values array
+        $data = array() ;
+        $data['event_facility_resource_id'] = $id ;
+        $data['time_stamp'] = $tsString ;
+        $data['facility_resource_allocation_status_id'] = $allocationStatusId ;
+
+        // new efrat object
+        $efrs = new agEventFacilityResourceStatus();
+        $efrs->fromArray($data) ;
+
+        // add it to the collection.
+        $collection->add($efrs);
+
+        $updates++ ;
+      }
+
+      // save the collection
+      $collection->save();
+
+      // commit
+      $conn->commit() ;
+    }
+    catch(Exception $e)
+    {
+      $conn->rollback(); // rollback if we must :(
+    }
+
+    return $updates ;
   }
 }
