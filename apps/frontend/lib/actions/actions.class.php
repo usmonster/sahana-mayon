@@ -28,9 +28,10 @@ class agActions extends sfActions
 
   public function executeSearch(sfWebRequest $request)
   {
+
     self::doSearch($request->getParameter('query'));
 
-    $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'search');
+    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
     //$this->setTemplate('global/search');
   }
 

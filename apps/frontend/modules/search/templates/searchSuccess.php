@@ -1,0 +1,1 @@
+<?php include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results)) ?>

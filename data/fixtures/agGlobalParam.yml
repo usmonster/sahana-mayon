@@ -27,7 +27,7 @@ agGlobalParam:
     datapoint: facility_resource_status_affects_scenarios
     value: 1
   facility_resource_status_affects_events:
-    id: 5
+    id: 6
     agHost: localhost
     datapoint: facility_resource_status_affects_events
     value: 1
