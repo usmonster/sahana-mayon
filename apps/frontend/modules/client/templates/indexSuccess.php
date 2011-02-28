@@ -1,6 +1,5 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
-<?php use_javascript('Menu_Shape.js') ?>
 <h3>Staff Management</h3>
 Hello, welcome to the staff management module of Sahana Agasti 2.0, Mayon
 <br />

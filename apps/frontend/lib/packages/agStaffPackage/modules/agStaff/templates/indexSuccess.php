@@ -1,6 +1,5 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
-<?php use_javascript('Menu_Shape.js') ?>
 <h2>Staff Management</h2>
 <p>The Staff Management feature in Agasti 2.0 is used to manage your available staff resources while planning before an emergency response.</p>
 <b>Please select one of the following actions: </b><br />
