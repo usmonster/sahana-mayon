@@ -62,7 +62,7 @@ class agFooActions extends agActions
   public function executeShow(sfWebRequest $request)
   {
 // <-------- CUT HERE -------->
-$results = agFacilityHelper::setFacilityResourceStatusOnUpdate(array(1,2,3,4,5,6), 2);
+$results = agFacilityHelper::setFacilityResourceStatusOnUpdate(array(1), 1);
 print_r($results) ;
 // <-------- CUT HERE -------->
 

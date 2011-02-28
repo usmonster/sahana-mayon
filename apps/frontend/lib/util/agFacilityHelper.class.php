@@ -439,7 +439,7 @@ class agFacilityHelper {
     $inverseMatch = ($available) ? FALSE : TRUE ;
 
     // get just the ones that are changing (don't want to have spurious expensive operations!)
-    $actionableResources = array_keys($facilityResourceIds, $inverseMatch) ;
+    $actionableResources = array_keys($facilityResourceStatuses, $inverseMatch) ;
 
     // as a listener this gets fired a lot so we don't even do the rest without check if we have to
     if (! empty($actionableResources))
