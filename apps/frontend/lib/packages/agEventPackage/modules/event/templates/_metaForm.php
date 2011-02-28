@@ -1,7 +1,13 @@
 <?php use_stylesheets_for_form($metaForm) ?>
 <?php use_javascripts_for_form($metaForm) ?>
-<?php if($event_id != ""){
+
+<?php
+$confirmScript = "";
+if($event_id != ""){
   $formAct = url_for('event/meta?id=' . $event_id);
+
+  //we also need to bind the submit button to a confirmation alert
+  $confirmScript = ' onclick="return confirm(\'Are you sure?\');"';
 }
 else{
   $formAct = url_for('event/meta');
@@ -13,13 +19,14 @@ else{
     <tfoot>
       <tr>
         <td colspan="2">
-          <input type="submit" value="Continue with Pre-Deployment" class="linkButton"/>
+          <input type="submit" value="Continue with Pre-Deployment" class="linkButton"<?php echo $confirmScript ?>>
           <input type="hidden" value="<?php echo $scenario_id ?>" name="scenario_id">
         </td>
       </tr>
     </tfoot>
     <tbody>
       <?php echo $metaForm ?>
+      
     </tbody>
   </table>
 </form>
