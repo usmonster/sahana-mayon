@@ -26,8 +26,12 @@ class agImportNormalization {
     
   }
 
-  private function dataValidation() {
+  private function dataValidation(array $record) {
 // Do data validations here.
+    if (empty($record['facility_code'])) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
   public function normalizeImport() {
@@ -89,6 +93,7 @@ class agImportNormalization {
       $conn->beginTransaction();
 
       foreach ($sourceRecords as $record) {
+//        echo "hold here!";
 
         $facility_name = $record['facility_name'];
         $facility_code = $record['facility_code'];
@@ -112,7 +117,11 @@ class agImportNormalization {
             'country' => $record['country']);
 
 // TODO: implement this
-        $this->dataValidation();
+        $isValidData = $this->dataValidation($record);
+        if (!$isValidData) {
+          // Log record to non-processed data.
+          next;
+        }
 //        isValid = validate_row(facility_name, facility_code, facility_resource_type_abbr, facility_resource_status, capacity[, ...])
 //        if (!isValid):
 //          report warning
@@ -204,6 +213,7 @@ class agImportNormalization {
         $facilityResource->save();
         $scenarioFacilityGroup->save();
         $scenarioFacilityResource->save();
+//        echo "end!";
       } // end foreach
 
       $conn->commit();
@@ -526,7 +536,7 @@ class agImportNormalization {
     $entityAddress->set('entity_id', $entityId)
             ->set('address_id', $addressId)
             ->set('priority', $priority)
-            ->set('address_contact_type', $addressTypeId);
+            ->set('address_contact_type_id', $addressTypeId);
     $entityAddress->save();
   }
 
@@ -548,15 +558,14 @@ class agImportNormalization {
       $isCreateNew = TRUE;
     }
 
-    $facilityAddress = $this->getEntityContactObject('address', 87, $workAddressTypeId);
-
     if (!empty($facilityAddress)) {
-//      $intAddressElementIds = $this->convertArrayValueStringToInt($addressElementIds);
       $facilityAddressElements = $this->getAssociateAddressElementValues($facilityAddress->address_id, $addressElementIds);
 
-      if (empty(array_diff(array_keys($facilityAddressElements), array_keys($fullAddress)))) {
+      $diffAddKeys = array_diff(array_keys($facilityAddressElements), array_keys($fullAddress));
+      if (empty($diffAddKeys)) {
         foreach ($fullAddress as $eltName => $eltVal) {
           if ($eltVal != $facilityAddressElements[$eltName]) {
+            $this->deleteEntityAddressMapping($facilityAddress->id);
             $isCreateNew = TRUE;
             break;
           }
@@ -565,12 +574,12 @@ class agImportNormalization {
         $isCreateNew = TRUE;
       }
     }
-
-    if ($isCreateNew) {
-      $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
-    }
-
-    return $isCreateNew;
+//
+//    if ($isCreateNew) {
+//      $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
+//    }
+//
+//    return $isCreateNew;
   }
 
   protected function deleteEntityAddressMapping($entityAddressId) {
@@ -638,17 +647,10 @@ class agImportNormalization {
     if (empty($currentPriority)) {
       $priority = 1;
     } else {
-      $priority = $currentPriority[0] + 1;
+      $priority = (int)$currentPriority + 1;
     }
 
     return $priority;
   }
 
-//  protected function convertArrayValueStringToInt($stringValueArray) {
-//    $intValueArray = array();
-//    foreach ($stringValueArray as $key=>$value) {
-//      $intValueArray[$key] = (int)$value;
-//    }
-//    return $intValueArray;
-//  }
 }
