@@ -22,5 +22,5 @@ class agWidgetFormSchemaFormatterSubContainer extends sfWidgetFormSchemaFormatte
     $rowFormat       = "%error%%field%%help%%hidden_fields%",
     $errorRowFormat  = "<tr><td colspan=\"2\">\n%errors%</td></tr>\n",
     $helpFormat      = '<br />%help%',
-    $decoratorFormat = "<div style=\"margin: 4px 0px; padding: 0\">\n%content%</div>";
+    $decoratorFormat = "<div class=\"decoratorFormatContent3\">\n%content%</div>";
 }

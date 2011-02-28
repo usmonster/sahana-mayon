@@ -5,7 +5,7 @@
  */
 
 //  if($uploadHeading == 'Import Failure') {
-//    echo '<h3 style="color: red">';
+//    echo '<h3 class="colorRed">';
 //  } else {
 //    echo '<h3>';
 //  }

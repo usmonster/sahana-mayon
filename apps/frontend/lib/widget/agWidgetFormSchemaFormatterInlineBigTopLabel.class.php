@@ -20,7 +20,7 @@ class agWidgetFormSchemaFormatterInlineBigTopLabel extends sfWidgetFormSchemaFor
 {
 
   protected
-  $rowFormat = "<div style=\"display: inline-block; margin-right: 4px; text-align: center;\"><div style=\"color: #848484;font-size: 1.25em; font-weight: bold\">%label%</div><div>%error%%field%%help%%hidden_fields%</div></div>\n",
+  $rowFormat = "<div class=\"rowFormat\"><div class=\"rowFormatLabel\">%label%</div><div>%error%%field%%help%%hidden_fields%</div></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
   $decoratorFormat = "<div class=\"inlinetoplabel\">%content%</div>";

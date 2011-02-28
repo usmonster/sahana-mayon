@@ -103,9 +103,9 @@ class agOrganizationForm extends BaseagOrganizationForm
       'organization' => new sfWidgetFormInputText(),
       'description' => new sfWidgetFormInputText(),
       'ag_staff_resource_organization_list' => new sfWidgetFormChoice(array('choices' =>
-        $currentOrgStaffResourceOption, 'multiple' => true), array('style' => 'height:300px;width:300px;')),
+        $currentOrgStaffResourceOption, 'multiple' => true), array('class' => 'widthAndHeight300')),
       'ag_staff_resource_non_org_list' => new sfWidgetFormChoice(array('choices' =>
-        $availOrgStaffResourceOption, 'multiple' => true), array('style' => 'height:300px;width:300px;')),
+        $availOrgStaffResourceOption, 'multiple' => true), array('class' => 'widthAndHeight300')),
     ));
 
     $this->widgetSchema->setLabel('ag_staff_resource_organization_list', 'Associated Staff Resource List');

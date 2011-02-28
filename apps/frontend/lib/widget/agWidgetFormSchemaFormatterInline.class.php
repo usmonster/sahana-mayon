@@ -23,6 +23,6 @@ class agWidgetFormSchemaFormatterInline extends sfWidgetFormSchemaFormatter
   $rowFormat = "<h5>%label%</h5><span>%error%%field%%help%%hidden_fields%</span>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div style=\"display: inline-block; margin-right: 4px;\">\n  %content%</div>";
+  $decoratorFormat = "<div class=\"decoratorFormat\">\n  %content%</div>";
 
 }

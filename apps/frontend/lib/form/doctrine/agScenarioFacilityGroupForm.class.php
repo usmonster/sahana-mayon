@@ -42,9 +42,9 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
       'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false, 'method' => 'getFacilityGroupAllocationStatus', 'label' => 'Status')),
       'activation_sequence'                 => new sfWidgetFormInputText(),
       //facility resource list needs to minus options that are in $currentoptions
-      //'ag_facility_resource_list'          => new sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('style' => 'height:150px;width:150px;')),
-      'ag_facility_resource_list'           => new sfWidgetFormInputHidden(),//sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('style' => 'height:300px;width:300px;')), //this will be hidden
-      'ag_facility_resource_order'          => new sfWidgetFormInputHidden(),//sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('style' => 'height:300px;width:300px;')) //this will be hidden
+      //'ag_facility_resource_list'          => new sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('class' => 'widthAndHeight150')),
+      'ag_facility_resource_list'           => new sfWidgetFormInputHidden(),//sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('class' => 'widthAndHeight300')), //this will be hidden
+      'ag_facility_resource_order'          => new sfWidgetFormInputHidden(),//sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('class' => 'widthAndHeight300')) //this will be hidden
       ));
 
 

@@ -1093,10 +1093,116 @@ table.adminConfigRequirements tr td{
  padding:0px;
 }
 
+.noDisplay{
+ display: none;
+}
+
 #importForm div{
   position: relative; top: 0px; left: 0px; z-index: 1; width: 250px;
 }
 
 .padding3Px{
   padding: 3px;
+}
+
+.alignMiddle{
+    margin-left: auto; margin-right: auto;
+}
+
+.orgAvaliableStaff{
+    width: 45%;float:left;display:inline-block;text-align:right;BORDER-RIGHT: #FFFFFF 20px solid;
+}
+
+.orgAssignedStaff{
+    width: 45%;float:left;display:inline-block;text-align: left;
+}
+
+.orgBlank{
+    display:block;text-align:center;clear:both;
+}
+.sfGuardAuthLogOut{
+    vertical-align: top;top:0;float: right; margin-top:0px; width:260px;
+}
+
+.width30{
+    width:30px;
+}
+
+.width200{
+    width:200px;
+}
+
+.widthAndHeight300{
+    width: 300px; height:300px;
+}
+
+.widthAndHeight150{
+    width: 150px; height:150px;
+}
+
+.setWidgetsScenario{
+    width: 350px;
+}
+
+.setWidgetsDesc{
+    width: 350px; height: 125px;
+}
+
+.boldText{
+    font-weight: bold;
+}
+
+.relPosition{
+    position: relative;
+}
+
+.agStaffImport{
+    position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px;
+}
+
+.decoratorFormat{
+    display: inline-block; margin-right: 4px;
+}
+
+.decoratorFormatContent{
+    display: inline-block; border: solid 1px #dadada; -moz-border-radius: 5px; margin-right: 4px; padding: 4px;
+}
+
+.decoratorFormatContent2{
+    border-bottom: solid 1px #dadada; margin-bottom: 4px;
+}
+
+.decoratorFormatContent3{
+   margin: 4px 0px; padding: 0px;
+}
+
+.rowFormat{
+    display: inline-block; margin-right: 4px; text-align: center;
+}
+
+.rowFormat2{
+    display: inline-block; margin-right: 4px;
+}
+
+.rowFormat3{
+    display: block; font-weight: bold; color: #848484;
+}
+
+.rowFormat4{
+    display: inline-block; float: left; margin-right: 4px;
+}
+
+.rowFormat5{
+    display: block; margin-right: 4px; text-align: left;
+}
+
+.rowFormatLabel{
+   color: #848484;font-size: 1.25em; font-weight: bold;
+}
+.rowFormatLabel2{
+   color: #848484; font-weight: bold; display: inline-block; margin: 4px;
+}
+
+.margin4Px{
+    margin: 4px;
 }

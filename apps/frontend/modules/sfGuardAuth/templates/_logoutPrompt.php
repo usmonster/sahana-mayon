@@ -1,5 +1,5 @@
 <?php use_helper('I18N') ?>
-<div id="sf_apply_logged_in_as" style="vertical-align: top;top:0;float: right; margin-top:0px; width:260px;">
+<div id="sf_apply_logged_in_as" class="sfGuardAuthLogOut">
   <span class="logLabel">Logged in as:</span>
   <span class="logName">
     <?php echo __('%1%',

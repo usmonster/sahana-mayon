@@ -5,34 +5,34 @@
   <?php if (!$form->getObject()->isNew()): ?>
     <input type="hidden" name="sf_method" value="put" />
   <?php endif; ?>
-    <div class="fooTable" style="display:inline-block;">
+    <div class="fooTable" class="displayInlineBlock">
       <br />
       <h3>Staff Information</h3>
       <div class="infoHolder">
       <?php echo $form['staff'] ?>
     </div>
-    <div style="clear: both;"> </div>
+    <div class="clearBoth"> </div>
 
     <h3>Primary Information</h3>
     <div class="infoHolder">
       <?php echo $form['id'] ?>
       <h4><?php echo $form['name']->renderLabel(); ?></h4>
-      <div style="clear: both;"> </div>
+      <div class="clearBoth"> </div>
       <?php echo $form['name'] ?>
-      <div style="clear: both;"> </div>
-      <div style="display: inline-block">
+      <div class="clearBoth"> </div>
+      <div class="displayInlineBlock">
         <h4><?php echo $form['ag_sex_list']->renderLabel(); ?></h4>
         <?php echo $form['ag_sex_list'] ?>
       </div>
-      <div style="display: inline-block">
+      <div class="displayInlineBlock">
         <h4><?php echo $form['ag_marital_status_list']->renderLabel(); ?></h4>
         <?php echo $form['ag_marital_status_list']; ?>
       </div>
-      <div style="display: inline-block">
+      <div class="displayInlineBlock">
         <h4><?php echo $form['ag_ethnicity_list']->renderLabel(); ?></h4>
         <?php echo $form['ag_ethnicity_list']; ?>
       </div>
-      <div style="display: inline-block">
+      <div class="displayInlineBlock">
         <?php echo $form['date of birth']; ?>
         <script type="text/javascript">
           $(function() {
@@ -50,22 +50,22 @@
       </div>
       <br />
       <br />
-      <div style="display: block;">
+      <div class="displayBlock">
         <h4><?php echo $form['languages']->renderLabel(); ?></h4>
         <?php echo $form['languages']; ?>
       </div>
-      <div style="clear: both;"> </div>
+      <div class="clearBoth"> </div>
       <br />
-      <div style="display: inline-block">
+      <div class="displayInlineBlock">
         <h4><?php echo $form['ag_nationality_list']->renderLabel(); ?></h4>
         <?php echo $form['ag_nationality_list'] ?>
       </div>
-      <div style="clear: both;"> </div>
+      <div class="clearBoth"> </div>
       <br />
       <h4><?php echo $form['ag_religion_list']->renderLabel(); ?></h4>
-      <div style="clear: both;"> </div>
+      <div class="clearBoth"> </div>
       <?php echo $form['ag_religion_list'] ?>
-        <div style="clear: both;"> </div>
+        <div class="clearBoth"> </div>
         <br />
         <h4><?php echo $form['ag_profession_list']->renderLabel(); ?></h4>
       <?php echo $form['ag_profession_list']; ?>
@@ -76,11 +76,11 @@
       <div class="infoHolder">
         <fieldset>
           <h3><?php echo $form['email']->renderLabel(); ?></h3>
-          <div style="clear: both;"> </div>
+          <div class="clearBoth"> </div>
         <?php echo $form['email'] ?>
-        <div style="clear: both;"> </div>
+        <div class="clearBoth"> </div>
         <h3><?php echo $form['phone']->renderLabel(); ?></h3>
-        <div style="clear: both;"> </div>
+        <div class="clearBoth"> </div>
         <?php echo $form['phone'] ?>
       </fieldset>
     </div>

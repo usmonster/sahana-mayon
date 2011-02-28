@@ -36,7 +36,7 @@
 <thead>
     <tr class="tableRow">
       <th class="head" rowspan="2"></th>
-      <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" style="text-align: center">
+      <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" class="centerText">
       Name
       </th>
       <!-- Sex -->

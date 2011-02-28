@@ -17,7 +17,7 @@ class PluginagGeoRelationshipForm extends BaseagGeoRelationshipForm
           );
      $this->setWidgets(array(
       'id'                        => new sfWidgetFormInputHidden(),
-      'geo_staff'                 => new sfWidgetFormInputHidden(),//sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('style' => 'height:150px;width:150px;')),
+      'geo_staff'                 => new sfWidgetFormInputHidden(),//sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('class' => 'widthAndHeight150')),
       'geo_facility'              => new sfWidgetFormInputHidden(),//sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('geo2'), 'add_empty' => false)),
       'geo_relationship_type_id'  => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agGeoRelationshipType'), 'add_empty' => false)),
       'geo_relationship_km_value' => new sfWidgetFormInputText(),
@@ -36,8 +36,8 @@ class PluginagGeoRelationshipForm extends BaseagGeoRelationshipForm
     ));
 
 //
-//      'ag_facility_resource_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('style' => 'height:300px;width:300px;')),
-//      'ag_facility_resource_order'          => new sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('style' => 'height:300px;width:300px;'))
+//      'ag_facility_resource_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('class' => 'widthAndHeight300')),
+//      'ag_facility_resource_order'          => new sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('class' => 'widthAndHeight300'))
 //      ));
 //        $this->widgetSchema['geo_facility']->addOption(
 //      'query',

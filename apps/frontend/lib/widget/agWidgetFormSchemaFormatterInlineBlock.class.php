@@ -20,9 +20,9 @@ class agWidgetFormSchemaFormatterInlineBlock extends sfWidgetFormSchemaFormatter
 {
 
   protected
-  //$rowFormat = "<div style=\"inline-block; float: left; margin-right: 4px;\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
-  $rowFormat = "<span style=\"display: block; font-weight: bold; color: #848484\">%label%</span><div style=\"display: inline-block; margin: 4px;\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
+  //$rowFormat = "<div class=\"rowFormat2\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
+  $rowFormat = "<span class=\"rowFormat3\">%label%</span><div class=\"rowFormat2\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div class=\"facgroup\" style=\"display: inline-block; border: solid 1px #dadada; -moz-border-radius: 5px; margin-right: 4px; padding: 4px;\">\n  %content%</div>";
+  $decoratorFormat = "<div class=\"facgroup decoratorFormatContent\">\n  %content%</div>";
 }

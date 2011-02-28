@@ -12,7 +12,7 @@
 <?php if(isset($scenarioName)){
 
 ?>
-<h3>Event based on the <span style="color: #ff8f00"><?php echo $scenarioName; ?></span> Scenario</h3>
+<h3>Event based on the <span class="highlightedText"><?php echo $scenarioName; ?></span> Scenario</h3>
 <?php
 }
 else{

@@ -1,5 +1,5 @@
 <form action="<?php echo url_for('event/groupdetail?event=' . urlencode($eventFacilityGroup->getAgEvent()->event_name) . '&group=' . urlencode($eventFacilityGroup->event_facility_group)) . (isset($XmlHttpRequest) ? '" class="modalForm"' : ''); ?>" name="group_allocation_status" id="group_allocation_status" method="post">
-  <label for="group_allocation_status" style="font-weight: bold; color: #848484" title="Change to update <?php echo $eventFacilityGroup->event_facility_group;?> status">Current Group Status:</label>
+  <label for="group_allocation_status" class="boldText labelGray" title="Change to update <?php echo $eventFacilityGroup->event_facility_group;?> status">Current Group Status:</label>
   <?php 
     $form->setDefault('group_allocation_status',$statusId);
     echo $form['group_allocation_status'];
@@ -12,7 +12,7 @@
   <tbody>
     <tr>
       <th class="head" colspan="4">
-        <?php echo ucwords($eventFacilityGroup->getAgFacilityGroupType()->facility_group_type) . ' '; ?><span style="color: #ff8f00"><?php echo $eventFacilityGroup->event_facility_group; ?></span>
+        <?php echo ucwords($eventFacilityGroup->getAgFacilityGroupType()->facility_group_type) . ' '; ?><span class="highlightedText"><?php echo $eventFacilityGroup->event_facility_group; ?></span>
       </th>
     </tr>
     <tr>

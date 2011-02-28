@@ -20,8 +20,8 @@ class agWidgetFormSchemaFormatterInlineLeftLabel extends sfWidgetFormSchemaForma
 {
 
   protected
-  $rowFormat = "<div style=\"display: inline-block; margin-right: 4px; text-align: center;\"><div style=\"color: #848484; font-weight: bold; display: inline-block; margin: 4px;\">%label%:</div><div style=\"display: inline-block;\">%error%%field%%help%%hidden_fields%</div></div>\n",
+  $rowFormat = "<div class=\"rowFormat\"><div class=\"rowFormatLabel2\">%label%:</div><div class=\"displayInlineBlock\">%error%%field%%help%%hidden_fields%</div></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div style=\"border-bottom: solid 1px #dadada; margin-bottom: 4px;\">%content%</div>";
+  $decoratorFormat = "<div class=\"decoratorFormatContent2\">%content%</div>";
 }

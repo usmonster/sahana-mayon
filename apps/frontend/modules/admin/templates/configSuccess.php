@@ -138,7 +138,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
     }
 
     echo $table . '</table><br />' . $final_result;
-    ?>a
+    ?>
   </fieldset>
 Here you can set up global parameters (variables) that can be used throughout the application.  This keeps all settings in a single place, click on a global param link to edit that item or add a new one at the bottom
   <fieldset>

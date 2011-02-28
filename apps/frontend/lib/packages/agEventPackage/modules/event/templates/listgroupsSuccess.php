@@ -9,14 +9,14 @@ $sortOrder = $sf_request->getGetParameter('order');
 ($sf_request->getParameter('order')) ? $orderAppend = '&order=' . $sf_request->getParameter('order') : $orderAppend = '';
 ?>
 <h2><?php if (isset($event)) {
-  echo '<span style="color: #ff8f00">' . $event->event_name . ' </span>';
+  echo '<span class="highlightedText">' . $event->event_name . ' </span>';
 } ?> Facilities Management</h2>
 <br />
 <div class="rightFloat" >
   <a href="<?php echo url_for('event/fgroup?id=' . $event_id); ?>" class="linkButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
 </div>
 
-<h3>Facilities <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span style="color: #ff8f00">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
+<h3>Facilities <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
 <div id="tableContainer">
   <table class="singleTable">
     <thead>

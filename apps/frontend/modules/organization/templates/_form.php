@@ -81,7 +81,7 @@
   <div class="infoHolder">
     <h3>Staff Resource Information</h3>
 
-    <div style="width: 45%;float:left;display:inline-block;text-align:right;BORDER-RIGHT: #FFFFFF 20px solid;">
+    <div class="orgAvaliableStaff">
       Available Staff Resources
       <br />
       <?php
@@ -90,7 +90,7 @@
       ?>
     </div>
 
-    <div style="width: 45%;float:left;display:inline-block;text-align: left">
+    <div class="orgAssignedStaff">
       Assigned Staff Resources
       <br />
       <?php
@@ -101,10 +101,10 @@
 
     <br />
 
-    <div style="display:block;text-align:center;clear:both;">
+    <div class="orgBlank">
     </div>
 
-    <div style="text-align: center;">
+    <div class="alignMiddle">
       <input type="Button" value="add &gt;&gt;" id="add">
       <input type="Button" value="remove &lt;&lt;" id="remove">
 

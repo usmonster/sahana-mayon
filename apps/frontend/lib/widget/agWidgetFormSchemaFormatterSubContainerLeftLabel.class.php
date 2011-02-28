@@ -20,8 +20,8 @@ class agWidgetFormSchemaFormatterSubContainerLeftLabel extends sfWidgetFormSchem
 {
   protected
   //"<div class=\"groupLabel\">%label%</div>%error%%field%%help%%hidden_fields%",
-  $rowFormat       = "<div style=\"display: block; margin-right: 4px; text-align: left;\"><div class=\"groupLabel\" style=\"display: inline-block; margin: 4px;\">%label%:</div><div style=\"display: inline-block;\">%error%%field%%help%%hidden_fields%</div></div>\n",
+  $rowFormat       = "<div class=\"rowFormat5\"><div class=\"groupLabel\" class=\"displayInlineBlock margin4Px\">%label%:</div><div class=\"displayInlineBlock\">%error%%field%%help%%hidden_fields%</div></div>\n",
     $errorRowFormat  = "<tr><td colspan=\"2\">\n%errors%</td></tr>\n",
     $helpFormat      = '<br />%help%',
-    $decoratorFormat = "<div style=\"margin: 4px 0px; padding: 0; float: right;\">\n%content%</div>";
+    $decoratorFormat = "<div class=\"decoratorFormatContent3 floatRight\">\n%content%</div>";
 }

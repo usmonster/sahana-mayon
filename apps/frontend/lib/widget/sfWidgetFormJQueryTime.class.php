@@ -76,7 +76,7 @@ class sfWidgetFormJQueryTime extends sfWidgetFormTime
     $hourid = $this->generateId($name.'[hour]');
     $minid = $this->generateId($name.'[minute]');
 
-    $s = '<span style="display: none">' . parent::render($name, $value, $attributes, $errors) . '</span>';
+    $s = '<span class="noDisplay">' . parent::render($name, $value, $attributes, $errors) . '</span>';
     $val = '';
     if (is_array($value))
     {
