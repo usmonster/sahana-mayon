@@ -104,7 +104,7 @@ class agFacilityExportHelper {
           }
         }
       } else {
-        $entry = $entry + array_combine($addressHeaders, array_fill(count($entry), count($addressHeaders), NULL));
+        $entry = $entry + array_combine($this->addressHeaders, array_fill(count($entry), count($this->addressHeaders), NULL));
       }
 
       // facility geo.
@@ -256,24 +256,24 @@ class agFacilityExportHelper {
   }
   public function buildAddressHeaders() {
     // Construct header values for address fields.
-    $addressHeaders = array();
+    $this->addressHeaders = array();
     foreach ($this->addressFormat as $add) {
       switch ($add) {
         case 'line 1':
-          $addressHeaders[] = 'Street 1';
+          $this->addressHeaders[] = 'Street 1';
           break;
         case 'line 2':
-          $addressHeaders[] = 'Street 2';
+          $this->addressHeaders[] = 'Street 2';
           break;
         case 'zip5':
-          $addressHeaders[] = 'Postal Code';
+          $this->addressHeaders[] = 'Postal Code';
           break;
         default:
-          $addressHeaders[] = ucwords($add);
+          $this->addressHeaders[] = ucwords($add);
       }
     }
     // Add the address headers to the list already defined, then add the geo headers.
-    $this->exportHeaders = array_merge($this->exportHeaders, $addressHeaders);
+    $this->exportHeaders = array_merge($this->exportHeaders, $this->addressHeaders);
   }
 
   public function buildGeoHeaders() {
