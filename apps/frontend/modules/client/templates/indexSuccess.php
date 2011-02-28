@@ -1,5 +1,6 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
+<?php use_javascript('Menu_Shape.js') ?>
 <h3>Staff Management</h3>
 Hello, welcome to the staff management module of Sahana Agasti 2.0, Mayon
 <br />
@@ -11,7 +12,7 @@ Please select one of the following staff administration actions:<br />
   <a href="<?php echo url_for('staff/import') ?>" class="buttonText" title="Import Staff" id="import">Import Staff</a>
   <form id="importForm" action="staff/import" method="post" enctype="multipart/form-data">
     <div>
-      <input class="inputGray greyText displayInlineBlock" id="show" />
+      <input class="inputGray displayInlineBlock" id="show" />
       <a class="linkButton displayInlineBlock padding3Px">Browse</a>
     </div>
     <input type="file" name="import" id="fileUpload" class="clientIndexInputUpload"/>

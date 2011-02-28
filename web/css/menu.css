@@ -44,6 +44,7 @@ ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
 	color: #444444;
 	text-decoration:none;
 	cursor:default;
+         
 }
 ul.menu span{
 	overflow:hidden;
@@ -78,7 +79,7 @@ ul.menu li:hover{
 	position:relative;
 }
 ul.menu li:hover>a{
-	background-color:#4792E6;
+	background-color:#adadad; /*4792E6*/
 	border-color:#665500;
 	border-style:solid;
 	font:bold 11px helvetica, arial, verdana;
@@ -87,7 +88,7 @@ ul.menu li:hover>a{
 }
 ul.menu li a:hover{
 	position:relative;
-	background-color:#4792E6;
+	background-color:#adadad; /*4792E6*/
 	border-color:#665500;
 	border-style:solid;
 	font:bold 11px helvetica, arial, verdana;
@@ -126,4 +127,3 @@ ul.menu ul li:hover > a span{	background-image:url(http://purecssmenu.com/ssc-da
 ul.menu table a:hover span,ul.menu table a:hover a:hover span,ul.menu table a:hover a:hover a:hover span{background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arr_double_1o.gif)}
 ul.menu table a:hover table span,ul.menu table a:hover a:hover table span{background-image:url(http://purecssmenu.com/ssc-data/templates/clear-1/images/arr_double_1.gif)}*/
 
-        

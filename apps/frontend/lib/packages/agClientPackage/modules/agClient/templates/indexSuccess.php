@@ -1,5 +1,6 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
+<?php use_javascript('Menu_Shape.js') ?>
 <?php
 //note for devs: anytime you see *Name Of Event* it's a placeholder for where you should make
 //the app display the name of the event the user is working in.

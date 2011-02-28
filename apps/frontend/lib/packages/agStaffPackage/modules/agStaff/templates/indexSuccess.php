@@ -1,5 +1,6 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
+<?php use_javascript('Menu_Shape.js') ?>
 <h2>Staff Management</h2>
 <p>The Staff Management feature in Agasti 2.0 is used to manage your available staff resources while planning before an emergency response.</p>
 <b>Please select one of the following actions: </b><br />
@@ -12,7 +13,7 @@
   <a href="<?php echo url_for('facility/import') ?>" class="buttonText" title="Import Staff" id="import">Import Staff</a>
   <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('staff/import') ?>" method="post" enctype="multipart/form-data">
     <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
-      <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
+      <input style="display: inline-block; color: #848484" class="inputGray" id="show" />
       <a class="linkButton" style="display: inline-block; padding: 3px">Browse</a>
     </div>
     <input type="file" name="import" id="fileUpload" />
