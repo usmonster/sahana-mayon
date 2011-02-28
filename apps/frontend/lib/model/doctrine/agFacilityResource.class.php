@@ -37,7 +37,7 @@ class agFacilityResource extends BaseagFacilityResource
   {
     parent::setTableDefinition() ;
 
-    $this->addListener(new agFacilityResourceStatusListener());
+    $this->addListener(new agFacilityResourceListener());
   }
 
 
