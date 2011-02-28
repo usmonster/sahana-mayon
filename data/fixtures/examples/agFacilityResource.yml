@@ -3,17 +3,17 @@ agFacilityResource:
     agFacility: facility_11
     agFacilityResourceType: ec
     agFacilityResourceStatus: unavailable
-    capacity: 9999
+    capacity: 475
   facility_11_smn:
     agFacility: facility_11
     agFacilityResourceType: smn
     agFacilityResourceStatus: available
-    capacity: 1000
+    capacity: 220
   facility_11_hs:
     agFacility: facility_11
     agFacilityResourceType: hs
     agFacilityResourceStatus: available
-    capacity: 6985
+    capacity: 525
   facility_12_hs:
     agFacility: facility_12
     agFacilityResourceType: hs
@@ -87,11 +87,6 @@ agFacilityResource:
   facility_19_ec:
     agFacility: facility_19
     agFacilityResourceType: ec
-    agFacilityResourceStatus: available
-    capacity: 9999
-  facility_19_whs:
-    agFacility: facility_19
-    agFacilityResourceType: whs
     agFacilityResourceStatus: available
     capacity: 9999
   facility_19_hs:

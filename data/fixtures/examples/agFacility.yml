@@ -39,4 +39,43 @@ agFacility:
     agSite: 20
     facility_name: The Great University
     facility_code: U230
-
+  facility_21:
+    agSite: 21
+    facility_name: Columbia University
+    facility_code: U231
+  facility_22:
+    agSite: 22
+    facility_name: Public School 16
+    facility_code: PS16
+  facility_23:
+    agSite: 23
+    facility_name: City Technical College
+    facility_code: C100
+  facility_24:
+    agSite: 24
+    facility_name: The Graduate Center
+    facility_code: C101
+  facility_25:
+    agSite: 25
+    facility_name: Madison Square Garden
+    facility_code: PB40
+  facility_26:
+    agSite: 26
+    facility_name: Hunter Art School
+    facility_code: PS45
+  facility_27:
+    agSite: 27
+    facility_name: Sunset Park Community Center
+    facility_code: PB52
+  facility_28:
+    agSite: 28
+    facility_name: Astoria United Methodist
+    facility_code: PB56
+  facility_29:
+    agSite: 29
+    facility_name: NYU Gymnasium
+    facility_code: PB67
+  facility_30:
+    agSite: 30
+    facility_name: NYU Auditorium
+    facility_code: PB72

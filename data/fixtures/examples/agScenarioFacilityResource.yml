@@ -184,9 +184,5 @@ agScenarioFacilityResource:
     agScenarioFacilityGroup: hurrC_G03
     agFacilityResourceAllocationStatus: standby
     activation_sequence: 1
-  hurrC03_19_whs: 
-    agFacilityResource: facility_19_whs
-    agScenarioFacilityGroup: hurrC_G03
-    agFacilityResourceAllocationStatus: standby
-    activation_sequence: 1
+
 

@@ -23,15 +23,4 @@ agFacilityResourceType:
     facility_resource_type: pet center
     facility_resource_type_abbr: pet
     description: Area designated to be used as pet center.
-  whs:
-    facility_resource_type: warehouse
-    facility_resource_type_abbr: whs
-    description: Area designated to be used as storage for food, medical supplies, blankets, cot, and others.
-  shelter:
-    facility_resource_type: shelter
-    facility_resource_type_abbr: shl
-    description: Area designated to house clients.
-  admin:
-    facility_resource_type: administrator center
-    facility_resource_type_abbr: admin
-    description: Area designated to be used as an administration center.
+
