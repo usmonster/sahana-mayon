@@ -33,7 +33,7 @@ class agFacilityResourceStatusListener extends Doctrine_Record_Listener
   public function preSave(Doctrine_Event $event)
   {
     $invoker = $event->getInvoker();
-    $facilityResourceId = $invoker->id;
+    $facilityResourceId = array($invoker->id);
     $new_status = $invoker->facility_resource_status_id;
 
     // $newstatus is the new status id being applied
