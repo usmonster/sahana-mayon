@@ -4,4 +4,9 @@ agGeoSource:
     geo_source: shere khan
     data_compiled: '2010-11-29 14:01:07'
     agGeoSourceScore: good_score
+  import:
+    id: 2
+    geo_source: import
+    data_compiled: '2011-02-28 13:08:00'
+    agGeoSourceScore: good_score
 

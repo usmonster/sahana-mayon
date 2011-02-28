@@ -31,3 +31,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: facility_resource_status_affects_events
     value: 1
+  facility_import_geo_source:
+    id: 7
+    agHost: localhost
+    datapoint: facility_import_geo_source 
+    value: import
