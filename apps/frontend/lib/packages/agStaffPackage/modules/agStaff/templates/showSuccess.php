@@ -443,7 +443,7 @@
       ?>
 
     <div class="floatLeft">
-      <a href="<?php echo url_for('staff/edit') . '?id=' . $staff_id ?>"
+      <a href="<?php echo url_for('staff/edit?id=' . $staff_id) ?>"
          class="linkButton">Edit</a>
      <?php
 
