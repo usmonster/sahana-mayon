@@ -209,10 +209,10 @@ class agImportNormalization {
         // address
         $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds);
 
-        $facility->save();
-        $facilityResource->save();
-        $scenarioFacilityGroup->save();
-        $scenarioFacilityResource->save();
+//        $facility->save();
+//        $facilityResource->save();
+//        $scenarioFacilityGroup->save();
+//        $scenarioFacilityResource->save();
 //        echo "end!";
       } // end foreach
 
@@ -465,15 +465,16 @@ class agImportNormalization {
 
   /* Address */
 
-  protected function getAssociateAddressElementValues($addressId, array $addressElementIds) {
+  protected function getAssociateAddressElementValues($addressId, $addressElementIds) {
     $entityAddressElementValues = agDoctrineQuery::create()
                     ->select('ae.address_element, av.value')
                     ->from('agAddressElement ae')
                     ->innerJoin('ae.agAddressValue av')
                     ->innerJoin('av.agAddressMjAgAddressValue aav')
                     ->where('aav.address_id = ?', $addressId)
-                    ->andWhereIn('ae.id', array($addressElementIds))
-                    ->execute(array(), 'key_value_pair');
+                    ->andWhereIn('ae.id', array_values($addressElementIds));
+    $querySql = $entityAddressElementValues->getSqlQuery();
+                    $entityAddressElementValues = $entityAddressElementValues->execute(array(), 'key_value_pair');
     return $entityAddressElementValues;
   }
 
@@ -490,7 +491,7 @@ class agImportNormalization {
     return TRUE;
   }
 
-  protected function createAddressValues(array $fullAddress, $workAddressStandardId, array $addressElementIds) {
+  protected function createAddressValues($fullAddress, $workAddressStandardId, $addressElementIds) {
     $newAddressValueIds = array();
     foreach ($fullAddress as $elem => $elemVal) {
       if (empty($elemVal)) {
@@ -508,9 +509,11 @@ class agImportNormalization {
                 ->set('address_element_id', $addressElementIds[$elem]);
         $newAddressValue->save();
         $newAddressValueIds[] = $newAddressValue->id;
+      } else {
+        $newAddressValueIds[] = $addressValue->id;
       }
     }
-    return $newElementIds;
+    return $newAddressValueIds;
   }
 
   protected function createEntityAddress($entityId, $addressTypeId, $fullAddress, $addressStandardId, $addressElementIds) {
@@ -540,7 +543,7 @@ class agImportNormalization {
     $entityAddress->save();
   }
 
-  protected function updateFacilityAddress($facility, array $fullAddress, $workAddressTypeId, $workAddressStandardId, array $addressElementIds) {
+  protected function updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds) {
     $entityId = $facility->getAgSite()->entity_id;
     $facilityAddress = $this->getEntityContactObject('address', $entityId, $workAddressTypeId);
     $isImportAddressEmpty = $this->isEmptyStringArray($fullAddress);
@@ -574,12 +577,12 @@ class agImportNormalization {
         $isCreateNew = TRUE;
       }
     }
-//
-//    if ($isCreateNew) {
-//      $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
-//    }
-//
-//    return $isCreateNew;
+
+    if ($isCreateNew) {
+      $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
+    }
+
+    return $isCreateNew;
   }
 
   protected function deleteEntityAddressMapping($entityAddressId) {

@@ -1,7 +1,7 @@
 agStaffResourceType:
   staff:
-    staff_resource_type: Staff
-    staff_resource_type_abbr: stf
+    staff_resource_type: Generalist
+    staff_resource_type_abbr: gnt 
     description: General staff
   operator:
     staff_resource_type: Operator
