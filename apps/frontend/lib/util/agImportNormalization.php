@@ -1,10 +1,5 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of agImportNormalization
  *
@@ -39,6 +34,10 @@ class agImportNormalization {
       $contactType = 'work';
       $phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
       $addressStandard = 'us standard';
+      $geoType = 'point';
+      $geoSourceParamVal = agGlobal::$param['facility_import_geo_source'];
+      $geoMatchScore = 'good';
+
 
       $facilityResourceTypeIds = agDoctrineQuery::create()
                       ->select('frt.facility_resource_type_abbr, frt.id')
@@ -82,6 +81,21 @@ class agImportNormalization {
                       ->from('agAddressStandard')
                       ->where('address_standard = ?', $addressStandard)
                       ->fetchOne();
+      $geoSourceId = agDoctrineQuery::create()
+                      ->select('id')
+                      ->from('agGeoSource')
+                      ->where('geo_source = ?', $geoSourceParamVal)
+                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      $geoMatchSourceId = agDoctrineQuery::create()
+                      ->select('id')
+                      ->from('agGeoMatchScore')
+                      ->where('geo_match_score = ?', $geoMatchScore)
+                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      $geoTypeId = agDoctrineQuery::create()
+                      ->select('id')
+                      ->from('agGeoType')
+                      ->where('geo_type = ?', $geoType)
+                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
       $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
 
@@ -93,7 +107,16 @@ class agImportNormalization {
       $conn->beginTransaction();
 
       foreach ($sourceRecords as $record) {
-//        echo "hold here!";
+// TODO: implement this
+        $isValidData = $this->dataValidation($record);
+        if (!$isValidData) {
+          // Log record to non-processed data.
+          next;
+        }
+//        isValid = validate_row(facility_name, facility_code, facility_resource_type_abbr, facility_resource_status, capacity[, ...])
+//        if (!isValid):
+//          report warning
+//          next;
 
         $facility_name = $record['facility_name'];
         $facility_code = $record['facility_code'];
@@ -115,17 +138,9 @@ class agImportNormalization {
             'zip5' => $record['postal_code'],
             'borough' => $record['borough'],
             'country' => $record['country']);
+        $geoInfo = array('longitude' => $record['longitude'],
+            'latitude' => $record['latitude']);
 
-// TODO: implement this
-        $isValidData = $this->dataValidation($record);
-        if (!$isValidData) {
-          // Log record to non-processed data.
-          next;
-        }
-//        isValid = validate_row(facility_name, facility_code, facility_resource_type_abbr, facility_resource_status, capacity[, ...])
-//        if (!isValid):
-//          report warning
-//          next;
 
         $facility_resource_type_id = $facilityResourceTypeIds[$facility_resource_type_abbr];
         $facility_resource_status_id = $facilityResourceStatusIds[$facility_resource_status];
@@ -207,13 +222,10 @@ class agImportNormalization {
         $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId, $workPhoneFormatId);
 
         // address
-        $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds);
+        $addressId = $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds);
 
-//        $facility->save();
-//        $facilityResource->save();
-//        $scenarioFacilityGroup->save();
-//        $scenarioFacilityResource->save();
-//        echo "end!";
+        // geo
+        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchSourceId);
       } // end foreach
 
       $conn->commit();
@@ -474,7 +486,7 @@ class agImportNormalization {
                     ->where('aav.address_id = ?', $addressId)
                     ->andWhereIn('ae.id', array_values($addressElementIds));
     $querySql = $entityAddressElementValues->getSqlQuery();
-                    $entityAddressElementValues = $entityAddressElementValues->execute(array(), 'key_value_pair');
+    $entityAddressElementValues = $entityAddressElementValues->execute(array(), 'key_value_pair');
     return $entityAddressElementValues;
   }
 
@@ -516,11 +528,19 @@ class agImportNormalization {
     return $newAddressValueIds;
   }
 
-  protected function createEntityAddress($entityId, $addressTypeId, $fullAddress, $addressStandardId, $addressElementIds) {
-    // create new address with importedElements
+  protected function createAddress($addressStandardId) {
     $address = new agAddress();
     $address->set('address_standard_id', $addressStandardId);
     $address->save();
+    return $address;
+  }
+
+  protected function createEntityAddress($entityId, $addressTypeId, $fullAddress, $addressStandardId, $addressElementIds) {
+    // create new address with importedElements
+//    $address = new agAddress();
+//    $address->set('address_standard_id', $addressStandardId);
+//    $address->save();
+    $address = $this->createAddress($addressStandardId);
 
     $addressId = $address->id;
 
@@ -541,17 +561,21 @@ class agImportNormalization {
             ->set('priority', $priority)
             ->set('address_contact_type_id', $addressTypeId);
     $entityAddress->save();
+
+    return $addressId;
   }
 
   protected function updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds) {
     $entityId = $facility->getAgSite()->entity_id;
     $facilityAddress = $this->getEntityContactObject('address', $entityId, $workAddressTypeId);
     $isImportAddressEmpty = $this->isEmptyStringArray($fullAddress);
+    $addressId = $facilityAddress->address_id;
 
     // Remove existing facility work address if import address is null.
     if ((!empty($facilityAddress)) && $isImportAddressEmpty) {
       $this->deleteEntityAddressMapping($facilityAddress->id);
-      return TRUE;
+//      return TRUE;
+      return $addressId = NULL;
     }
 
     // Create new facility address with import address where facility does not have an address and
@@ -561,6 +585,7 @@ class agImportNormalization {
       $isCreateNew = TRUE;
     }
 
+    // Compare existing facility address with imported address.
     if (!empty($facilityAddress)) {
       $facilityAddressElements = $this->getAssociateAddressElementValues($facilityAddress->address_id, $addressElementIds);
 
@@ -579,10 +604,11 @@ class agImportNormalization {
     }
 
     if ($isCreateNew) {
-      $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
+      $addressId = $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
     }
 
-    return $isCreateNew;
+//    return $isCreateNew;
+    return $addressId;
   }
 
   protected function deleteEntityAddressMapping($entityAddressId) {
@@ -590,6 +616,85 @@ class agImportNormalization {
                     ->delete('agEntityAddressContact')
                     ->where('id = ?', $entityAddressId)
                     ->execute();
+  }
+
+  /* Geo */
+
+  protected function createGeo($geoTypeId, $geoSourceId) {
+    $geo = new agGeo();
+    $geo->set('geo_type_id', $geoTypeId)
+            ->set('geo_source_id', $geoSourceId);
+    $geo->save();
+    return $geo->id;
+  }
+
+  protected function updateFacilityGeo($facility, $addressId, $addressTypeId, $addressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchSourceId) {
+
+    // Create an address container to assign geo info for facility with no address given in import.
+    if (empty($addressId)) {
+      $entityId = $facility->getAgSite()->entity_id;
+      $addressId = $this->createEntityAddress($entityId, $addressTypeId, array(), $addressStandardId, array());
+//      $addressId = $address->id;
+    }
+
+    $agAddressGeo = agDoctrineQuery::create()
+                    ->from('agAddressGeo ag')
+                    ->innerJoin('ag.agGeo g')
+//                    ->innerJoin('g.agGeoFeature gf')
+//                    ->innerJoin('gf.agGeoCoordinate gc')
+                    ->where('g.geo_source_id = ?', $geoSourceId)
+                    ->andWhere('g.geo_type_id = ?', $geoTypeId)
+                    ->andWhere('ag.address_id = ?', $addressId)
+                    ->fetchOne();
+
+    if (empty($agAddressGeo)) {
+      $geoId = $this->createGeo($geoTypeId, $geoSourceId);
+      $addressGeo = new agAddressGeo();
+      $addressGeo->set('address_id', $addressId)
+              ->set('geo_id', $geoId)
+              ->set('geo_match_score_id', $geoMatchSourceId);
+      $addressGeo->save();
+    } else {
+      $geoId = $agAddressGeo->geo_id;
+    }
+
+    $agAddressCoordinate = agDoctrineQuery::create()
+                    ->select('gc.longitude, gc.latitude')
+                    ->from('agGeoCoordinate gc')
+                    ->innerJoin('gc.agGeoFeature gf')
+                    ->where('gf.geo_id = ?', $geoId)
+                    ->fetchOne();
+
+    if (empty($agAddressCoordinate)) {
+      $geoCoordinate = new agGeoCoordinate();
+      $geoCoordinate->set('longitude', $geoInfo['longitude'])
+              ->set('latitude', $geoInfo['latitude']);
+      $geoCoordinate->save();
+      $geoFeature = new agGeoFeature();
+      $geoFeature->set('geo_id', $geoId)
+                 ->set('geo_coordinate_id', $geoCoordinate->id)
+                 ->set('geo_coordinate_order', 1);
+      $geoFeature->save();
+    } else {
+      if ($agAddressCoordinate->longitude != $geoInfo['longitude']) {
+        $requireUpdate = TRUE;
+      } elseif ($agAddressCoordinate->latitude != $geoInfo['latitude']) {
+        $requireUpdate = TRUE;
+      } else {
+        $requireUpdate = FALSE;
+      }
+
+      $longitude = $geoInfo['longitude'];
+      $latitude = $geoInfo['latitude'];
+      $geoCoordinate = agDoctrineQuery::create()
+                      ->update('agGeoCoordinate gc')
+                      ->set('longitude', (float) $longitude)
+                      ->set('latitude', (float) $latitude)
+                      ->where('id', $agAddressCoordinate->id);
+      $geoSql = $geoCoordinate->getSqlQuery();
+      $geoCoordinate = $geoCoordinate->execute();
+    }
+    echo "<BR>done!";
   }
 
   /* ENTITY */
@@ -650,7 +755,7 @@ class agImportNormalization {
     if (empty($currentPriority)) {
       $priority = 1;
     } else {
-      $priority = (int)$currentPriority + 1;
+      $priority = (int) $currentPriority + 1;
     }
 
     return $priority;
