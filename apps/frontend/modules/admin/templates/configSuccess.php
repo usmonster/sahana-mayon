@@ -83,7 +83,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
       <li class="textRight">
         <input type="hidden" name="_enter_check" value="1" />
         <input type="hidden" name="_sql_check" value="<?php echo $install_flag; ?>" />
-        <input type="submit" name="saveconfig" value="save config" class="linkButton" onclick="submit.disabled=true;" />
+        <input type="submit" name="saveconfig" value="save config" class="saveLinkButton" onclick="submit.disabled=true;" />
         <?php
 //if the right information was passed
 //process and install, with the schema file(s) needed.

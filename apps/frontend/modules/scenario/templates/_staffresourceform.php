@@ -102,8 +102,8 @@ this is in here as a place holder for future development to
   ?>
   <br />
   <br />
-  <input class="linkButton" type="submit" value="Save" />
-  <input class="linkButton" type="submit" value="Save and Continue" name="Continue"/>
+  <input class="saveLinkButton" type="submit" value="Save" />
+  <input class="saveLinkButton" type="submit" value="Save and Continue" name="Continue"/>
 </form>
 
 
