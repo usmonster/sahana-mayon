@@ -19,15 +19,6 @@ agEventFacilityResource:
     agFacilityResource: facility_12_hs
     agEventFacilityGroup: asteroid_apocalypse_event_facility_group_2
     activation_sequence: 3
-  asteroid_apocalypse_event_facility_resource_2:
-    id: 5
-    agFacilityResource: facility_15_pet
-    agEventFacilityGroup: asteroid_apocalypse_event_facility_group_2
-    activation_sequence: 3
-  supervolcano_event_5:
-    id: 6
-    agFacilityResource: facility_15_pet
-    agEventFacilityGroup:  megaquake_event_facility_group_4
-    activation_sequence: 3
+
 
 
