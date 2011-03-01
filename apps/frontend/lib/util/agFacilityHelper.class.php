@@ -386,6 +386,99 @@ class agFacilityHelper
     return array_keys($facilityResourceStatuses, $inverseMatch);
   }
 
+  public static function returnFacilityResourceAbbrTypeIds($inverse = FALSE, $facilityResourceType = NULL)
+  {
+      $facilityResourceTypeIds = agDoctrineQuery::create()
+              ->from('agFacilityResourceType frt');
+
+      if (empty($facilityResourceType)) {
+        $facilityResourceTypeIds = $facilityResourceTypeIds->select('frt.id, frt.facility_resource_type_abbr')
+                ->execute(array(), 'key_value_pair');
+        if ($inverse) {
+          $facilityResourceTypeIds = array_flip($facilityResourceTypeIds);
+        }
+      } else {
+        $faciltiyResourceTypeIds = $faciltiyResourceTypeIds->select('frt.id')
+                ->where('facility_resource_type = ?', $facilityResourceType)
+                ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      }
+
+      return $facilityResourceTypeIds;
+  }
+
+//      $facilityResourceStatusIds = agDoctrineQuery::create()
+//              ->select('frs.facility_resource_status, frs.id')
+//              ->from('agFacilityResourceStatus frs')
+//              ->execute(array(), 'key_value_pair');
+//      $facilityResourceAllocationStatusIds = agDoctrineQuery::create()
+//              ->select('facility_resource_allocation_status, id')
+//              ->from('agFacilityResourceAllocationStatus')
+//              ->execute(array(), 'key_value_pair');
+//      $facilityGroupTypeIds = agDoctrineQuery::create()
+//              ->select('facility_group_type, id')
+//              ->from('agFacilityGroupType')
+//              ->execute(array(), 'key_value_pair');
+//      $facilityGroupAllocationStatusIds = agDoctrineQuery::create()
+//              ->select('facility_group_allocation_status, id')
+//              ->from('agFacilitygroupAllocationStatus')
+//              ->execute(array(), 'key_value_pair');
+//      $emailContactTypeIds = agDoctrineQuery::create()
+//              ->select('email_contact_type, id')
+//              ->from('agEmailContactType')
+//              ->execute(array(), 'key_value_pair');
+//      $phoneContactTypeIds = agDoctrineQuery::create()
+//              ->select('phone_contact_type, id')
+//              ->from('agPhoneContactType')
+//              ->execute(array(), 'key_value_pair');
+//      $phoneFormatTypeIds = agDoctrineQuery::create()
+//              ->select('pft.phone_format_type, pf.id')
+//              ->from('agPhoneFormatType pft')
+//              ->innerJoin('pft.agPhoneFormat pf')
+//              ->whereIn('phone_format_type', $phoneFormatTypes)
+//              ->execute(array(), 'key_value_pair');
+//      $addressContactTypeIds = agDoctrineQuery::create()
+//              ->select('address_contact_type, id')
+//              ->from('agAddressContactType')
+//              ->execute(array(), 'key_value_pair');
+//      $staffResourceTypeIds = agDoctrineQuery::create()
+//              ->select('staff_resource_type, id')
+//              ->from('agStaffResourceType')
+//              ->execute(array(), 'key_value_pair');
+//      $addressStandardObj = agDoctrineQuery::create()
+//              ->from('agAddressStandard')
+//              ->where('address_standard = ?', $addressStandard)
+//              ->fetchOne();
+//
+//      $geoSourceId = agDoctrineQuery::create()
+//                      ->select('id')
+//                      ->from('agGeoSource')
+//                      ->where('geo_source = ?', $geoSourceParamVal)
+//                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+//      $geoMatchSourceId = agDoctrineQuery::create()
+//                      ->select('id')
+//                      ->from('agGeoMatchScore')
+//                      ->where('geo_match_score = ?', $geoMatchScore)
+//                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  public static function returnGeoTypeIds($inverse = FALSE, $geoType = NULL)
+  {
+      $geoTypeIds = agDoctrineQuery::create()
+                      ->from('agGeoType');
+      
+      if (empty($geoType)) {
+        $geoTypeIds = $geoTypeIds->select('id, geo_type')
+                ->execute(array(), 'key_value_pair');
+        if ($inverse) {
+          $geoTypeIds = array_flip($geoTypeIds);
+        }
+      } else {
+        $geoTypeIds = $geoTypeIds->select('id')
+                ->where('geo_type = ?', $geoType)
+                ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      }
+      return $geoTypeIds;
+  }
+
+
   /**
    * Method to set facility resource status specifically used as part of the
    * agFacilityResourceStatus listener.
