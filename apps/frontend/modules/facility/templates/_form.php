@@ -22,7 +22,7 @@ if ($events != "") {
             &nbsp;<a href="<?php echo url_for('facility/delete?id=' . $form->getObject()->getId()) ?>" class="linkButton"<?php echo $confirmScript ?>>Delete</a>
 
 <?php endif; ?>
-          <input type="submit" value="Save" class="linkButton"<?php echo $confirmScript ?>/>
+          <input type="submit" value="Save" class="saveLinkButton" <?php echo $confirmScript ?>/>
         </td>
       </tr>
     </tfoot>

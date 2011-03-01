@@ -23,7 +23,7 @@
             echo link_to('Delete', 'event/shifts?id=' . $event_id . $append,
                 array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton', 'name' => 'Delete')) ?>
 <?php endif; ?>
-          <input type="submit" value="Save" class="linkButton" />
+          <input type="submit" value="Save" class="saveLinkButton" />
         </td>
       </tr>
     </tfoot>
