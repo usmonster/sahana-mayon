@@ -129,7 +129,7 @@ h5 {
 /**** Navigation ****/
 #navigation {
   margin-bottom: 20px;
-  padding: 0px 15px;
+  padding: 0px 5px;
   -moz-border-radius-bottomright: 20px;
   -moz-border-radius-bottomleft: 20px;
   border-bottom-right-radius: 20px;
@@ -139,7 +139,7 @@ h5 {
   border: solid #dadada;
   border-width: 0px 1px 1px;
   background: #f1f1f1;
-  height: 2.3em;
+  height: 32px;
   z-index:100;
 }
 
