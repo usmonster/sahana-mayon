@@ -14,7 +14,8 @@
   <body>
     <div id="header">
       <div class="floatLeft">
-        <h1>Sahana Agasti:</h1><h2> Emergency Management </h2>
+          <img src="<?php echo url_for('images/Sahana_logo.png') ?>" alt="Sahana Agasti: Emergency Management" class="logo"/>
+<!--<h1>Sahana Agasti:</h1><h2> Emergency Management </h2>-->
         <?php
         $configFilePath = sfConfig::get('sf_config_dir') . '/config.yml';
         if (file_exists($configFilePath)) {

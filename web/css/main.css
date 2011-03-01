@@ -1238,3 +1238,7 @@ background: #F1F1F1 !important;
 -moz-box-shadow: 3px 3px 3px #CCC !important;
 -webkit-box-shadow: 3px 3px 3px #CCC !important;
 }
+
+.logo{
+ margin-bottom:5px;
+}
