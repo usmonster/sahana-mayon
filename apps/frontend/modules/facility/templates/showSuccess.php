@@ -226,8 +226,6 @@
 </table>
 
 <hr />
-
-<a href="<?php echo url_for('facility/edit?id='.$ag_facility->getId()) ?>">Edit</a>
+<a href="<?php echo url_for('facility/edit?id='.$ag_facility->getId()) ?>" class="linkButton">Edit</a>
 &nbsp;
-<a href="<?php echo url_for('facility/index') ?>">List</a>
-
+<a href="<?php echo url_for('facility/index') ?>" class="linkButton">List</a>

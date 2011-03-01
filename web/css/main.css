@@ -224,7 +224,7 @@ h5 {
   outline: none;
   background: #f1f1f1;
 
-    -moz-box-shadow: 3px 3px 3px #ccc;
+  -moz-box-shadow: 3px 3px 3px #ccc;
   -webkit-box-shadow: 3px 3px 3px #ccc;
   box-shadow: 3px 3px 3px #ccc;
 }
