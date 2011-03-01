@@ -1217,7 +1217,7 @@ table.adminConfigRequirements tr td{
   margin: 4px;
 }
 .searchTextBox{
-  border: 1px solid #ccc; display: inline; margin-top:3px;vertical-align: top; width:160px; height: 19px;
+  border: 1px solid #ccc; display: inline; margin-top:4px;vertical-align: top; width:160px; height: 18px;
 }
 .searchButton{
   display:inline; margin-top:3px;
