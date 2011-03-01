@@ -13,7 +13,9 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agFacilityHelper {
+class agFacilityHelper
+{
+
   /**
    * @method facilityGeneralInfo()
    * Returns a flat associate array of facility's general information.
@@ -35,35 +37,33 @@ class agFacilityHelper {
               ->leftJoin('fr.agFacilityResourceType frt')
               ->leftJoin('fr.agFacilityResourceStatus frs')
               ->orderBy('f.id');
-      
-      if (isset($packageType))
-      {
-        switch( strtolower($packageType) )
-        {
+
+      if (isset($packageType)) {
+        switch (strtolower($packageType)) {
           case "scenario":
             $facilityQuery->addSelect('sfr.id, sfr.activation_sequence, fras.facility_resource_allocation_status')
-              ->addSelect('sfg.scenario_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, sfg.activation_sequence')
-              ->leftJoin('fr.agScenarioFacilityResource sfr')
-              ->leftJoin('sfr.agFacilityResourceAllocationStatus fras')
-              ->leftJoin('sfr.agScenarioFacilityGroup sfg')
-              ->leftJoin('sfg.agFacilityGroupType fgt')
-              ->leftJoin('sfg.agFacilityGroupAllocationStatus fgas')
-              ->where('sfr.id IS NOT NULL')
-              ->addOrderBy('sfg.id, sfg.activation_sequence, sfr.activation_sequence');
+                ->addSelect('sfg.scenario_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, sfg.activation_sequence')
+                ->leftJoin('fr.agScenarioFacilityResource sfr')
+                ->leftJoin('sfr.agFacilityResourceAllocationStatus fras')
+                ->leftJoin('sfr.agScenarioFacilityGroup sfg')
+                ->leftJoin('sfg.agFacilityGroupType fgt')
+                ->leftJoin('sfg.agFacilityGroupAllocationStatus fgas')
+                ->where('sfr.id IS NOT NULL')
+                ->addOrderBy('sfg.id, sfg.activation_sequence, sfr.activation_sequence');
             break;
           case "event":
             $facilityQuery->addSelect('efr.id, efr.activation_sequence, fras.facility_resource_allocation_status')
-              ->addSelect('efg.event_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, efg.activation_sequence')
-              ->addSelect('efrs.id, efgs.id')
-              ->leftJoin('fr.agEventFacilityResource efr')
-              ->leftJoin('efr.agEventFacilityResourceStatus efrs')
-              ->leftJoin('efrs.agFacilityResourceAllocationStatus fras')
-              ->leftJoin('efr.agEventFacilityGroup efg')
-              ->leftJoin('efg.agFacilityGroupType fgt')
-              ->leftJoin('efg.agEventFacilityGroupStatus efgs')
-              ->leftJoin('efgs.agFacilityGroupAllocationStatus fgas')
-              ->where('efr.id IS NOT NULL')
-              ->addOrderBy('efg.id, efg.activation_sequence, efr.activation_sequence');
+                ->addSelect('efg.event_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, efg.activation_sequence')
+                ->addSelect('efrs.id, efgs.id')
+                ->leftJoin('fr.agEventFacilityResource efr')
+                ->leftJoin('efr.agEventFacilityResourceStatus efrs')
+                ->leftJoin('efrs.agFacilityResourceAllocationStatus fras')
+                ->leftJoin('efr.agEventFacilityGroup efg')
+                ->leftJoin('efg.agFacilityGroupType fgt')
+                ->leftJoin('efg.agEventFacilityGroupStatus efgs')
+                ->leftJoin('efgs.agFacilityGroupAllocationStatus fgas')
+                ->where('efr.id IS NOT NULL')
+                ->addOrderBy('efg.id, efg.activation_sequence, efr.activation_sequence');
             break;
           default:
             // Do nothing.
@@ -74,14 +74,13 @@ class agFacilityHelper {
       $facilityQueryString = $facilityQuery->getSqlQuery();
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       return $facilityInfo;
-      
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
       return NULL;
     }
   }
 
-  public static function facilityAddress($addressStandard, $primaryOnly=FALSE, $type=NULL )
+  public static function facilityAddress($addressStandard, $primaryOnly=FALSE, $type=NULL)
   {
     try {
       $facilityQuery = agDoctrineQuery::create()
@@ -101,13 +100,11 @@ class agFacilityHelper {
               ->innerJoin('af.agAddressStandard as')
               ->where('as.address_standard=?', $addressStandard);
 
-      if (isset($type))
-      {
-          $facilityQuery->addWhere('act.address_contact_type=?', $type);
+      if (isset($type)) {
+        $facilityQuery->addWhere('act.address_contact_type=?', $type);
       }
 
-      if ($primaryOnly)
-      {
+      if ($primaryOnly) {
         $subQuery = 'EXISTS (SELECT eac2.id
                              FROM agEntityAddressContact eac2
                              WHERE eac2.entity_id = eac.entity_id
@@ -123,25 +120,21 @@ class agFacilityHelper {
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
       $cleanFacilityInfo = array();
-      foreach($facilityInfo as $fac)
-      {
-        if (array_key_exists($fac['f_id'], $cleanFacilityInfo))
-        {
-          if (array_key_exists($fac['act_address_contact_type'], $cleanFacilityInfo[ $fac['f_id'] ]))
-          {
-            if (array_key_exists($fac['eac_priority'], $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ]))
-            {
-              $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ][ $fac['eac_priority'] ];
+      foreach ($facilityInfo as $fac) {
+        if (array_key_exists($fac['f_id'], $cleanFacilityInfo)) {
+          if (array_key_exists($fac['act_address_contact_type'], $cleanFacilityInfo[$fac['f_id']])) {
+            if (array_key_exists($fac['eac_priority'], $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']])) {
+              $tempArray = $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']];
               $newArray = $tempArray + array($fac['ae_address_element'] => $fac['av_value']);
-              $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ][ $fac['eac_priority'] ] = $newArray;
+              $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']] = $newArray;
             } else {
-              $cleanFacilityInfo[ $fac['f_id'] ][ $fac['act_address_contact_type'] ][ $fac['eac_priority'] ][ $fac['ae_address_element'] ] = $fac['av_value'];
+              $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']][$fac['ae_address_element']] = $fac['av_value'];
               $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']]['address_id'] = $fac['eac_address_id'];
             }
           } else {
-            $tempArray = $cleanFacilityInfo[ $fac['f_id'] ];
+            $tempArray = $cleanFacilityInfo[$fac['f_id']];
             $newArray = $tempArray + array($fac['act_address_contact_type'] => array($fac['eac_priority'] => array($fac['ae_address_element'] => $fac['av_value'])));
-            $cleanFacilityInfo[ $fac['f_id'] ] = $newArray;
+            $cleanFacilityInfo[$fac['f_id']] = $newArray;
             $cleanFacilityInfo[$fac['f_id']][$fac['act_address_contact_type']][$fac['eac_priority']]['address_id'] = $fac['eac_address_id'];
           }
         } else {
@@ -151,7 +144,6 @@ class agFacilityHelper {
       }
 
       return $cleanFacilityInfo;
-
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
       return NULL;
@@ -179,30 +171,26 @@ class agFacilityHelper {
               ->groupBy('f.id, act.address_contact_type, eac.address_id')
               ->orderBy('f.id, eac.address_id, eac.address_contact_type_id, eac.priority');
 
-      if (isset($type))
-      {
-          $facilityQuery->where('act.address_contact_type=?', $type);
-          $initialWhereClause = FALSE;
+      if (isset($type)) {
+        $facilityQuery->where('act.address_contact_type=?', $type);
+        $initialWhereClause = FALSE;
       }
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
       $cleanFacilityInfo = array();
-      foreach ($facilityInfo as $fac)
-      {
-        if (array_key_exists($fac['f_id'], $cleanFacilityInfo))
-        {
-          $tempArray = $cleanFacilityInfo[ $fac['f_id'] ];
-          $newArray = $tempArray + array( $fac['eac_address_id'] => array( 'latitude' => $fac['gc_latitude'], 'longitude' => $fac['gc_longitude']));
-          $cleanFacilityInfo[ $fac['f_id'] ] = $newArray;
+      foreach ($facilityInfo as $fac) {
+        if (array_key_exists($fac['f_id'], $cleanFacilityInfo)) {
+          $tempArray = $cleanFacilityInfo[$fac['f_id']];
+          $newArray = $tempArray + array($fac['eac_address_id'] => array('latitude' => $fac['gc_latitude'], 'longitude' => $fac['gc_longitude']));
+          $cleanFacilityInfo[$fac['f_id']] = $newArray;
         } else {
-          $cleanFacilityInfo[ $fac['f_id'] ] = array($fac['eac_address_id'] => array( 'latitude' => $fac['gc_latitude'], 'longitude' => $fac['gc_longitude']));
+          $cleanFacilityInfo[$fac['f_id']] = array($fac['eac_address_id'] => array('latitude' => $fac['gc_latitude'], 'longitude' => $fac['gc_longitude']));
         }
       }
 
       return $cleanFacilityInfo;
-
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
       return NULL;
@@ -223,8 +211,7 @@ class agFacilityHelper {
               ->innerJoin('eec.agEmailContact ec')
               ->innerJoin('eec.agEmailContactType ect');
 
-      if (isset($type))
-      {
+      if (isset($type)) {
         if ($initialWhereClause) {
           $facilityQuery->where('ect.email_contact_type=?', $type);
           $initialWhereClause = FALSE;
@@ -233,16 +220,14 @@ class agFacilityHelper {
         }
       }
 
-      if ($primaryOnly)
-      {
+      if ($primaryOnly) {
         $subQuery = 'EXISTS (SELECT eec2.id
                              FROM agEntityEmailContact eec2
                              WHERE eec2.entity_id = eec.entity_id
                                AND eec2.email_contact_type_id = eec.email_contact_type_id
                              HAVING MIN(eec2.priority) = eec.priority)';
 
-        if ($initialWhereClause)
-        {
+        if ($initialWhereClause) {
           $facilityQuery->where($subQuery);
         } else {
           $facilityQuery->addWhere($subQuery);
@@ -255,17 +240,14 @@ class agFacilityHelper {
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
       $cleanFacilityInfo = array();
-      foreach($facilityInfo as $fac)
-      {
-        if (array_key_exists($fac['f_id'], $cleanFacilityInfo))
-        {
-          if (array_key_exists($fac['ect_email_contact_type'], $cleanFacilityInfo[ $fac['f_id'] ]))
-          {
-            $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['ect_email_contact_type'] ];
+      foreach ($facilityInfo as $fac) {
+        if (array_key_exists($fac['f_id'], $cleanFacilityInfo)) {
+          if (array_key_exists($fac['ect_email_contact_type'], $cleanFacilityInfo[$fac['f_id']])) {
+            $tempArray = $cleanFacilityInfo[$fac['f_id']][$fac['ect_email_contact_type']];
             $newArray = $tempArray + array($fac['eec_priority'] => $fac['ec_email_contact']);
-            $cleanFacilityInfo[ $fac['f_id'] ][ $fac['ect_email_contact_type'] ] = $newArray;
+            $cleanFacilityInfo[$fac['f_id']][$fac['ect_email_contact_type']] = $newArray;
           } else {
-            $cleanFacilityInfo[ $fac['f_id'] ][ $fac['ect_email_contact_type'] ][ $fac['eec_priority'] ] = $fac['ec_email_contact'];
+            $cleanFacilityInfo[$fac['f_id']][$fac['ect_email_contact_type']][$fac['eec_priority']] = $fac['ec_email_contact'];
           }
         } else {
           $cleanFacilityInfo[$fac['f_id']] = array($fac['ect_email_contact_type'] => array($fac['eec_priority'] => $fac['ec_email_contact']));
@@ -273,7 +255,6 @@ class agFacilityHelper {
       }
 
       return $cleanFacilityInfo;
-
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
       return NULL;
@@ -294,10 +275,8 @@ class agFacilityHelper {
               ->innerJoin('epc.agPhoneContact pc')
               ->innerJoin('epc.agPhoneContactType pct');
 
-      if (isset($type))
-      {
-        if ($initialWhereClause)
-        {
+      if (isset($type)) {
+        if ($initialWhereClause) {
           $facilityQuery->where('pct.phone_contact_type=?', $type);
           $initialWhereClause = FALSE;
         } else {
@@ -305,16 +284,14 @@ class agFacilityHelper {
         }
       }
 
-      if($primaryOnly)
-      {
+      if ($primaryOnly) {
         $subQuery = 'EXISTS (SELECT epc2.id
                              FROM agEntityPhoneContact epc2
                              WHERE epc2.entity_id = epc.entity_id
                                AND epc2.phone_contact_type_id = epc.phone_contact_type_id
                              HAVING MIN(epc2.priority) = epc.priority)';
 
-        if ($initialWhereClause)
-        {
+        if ($initialWhereClause) {
           $facilityQuery->where($subQuery);
         } else {
           $facilityQuery->addWhere($subQuery);
@@ -327,17 +304,14 @@ class agFacilityHelper {
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
       $cleanFacilityInfo = array();
-      foreach($facilityInfo as $fac)
-      {
-        if (array_key_exists($fac['f_id'], $cleanFacilityInfo))
-        {
-          if (array_key_exists($fac['pct_phone_contact_type'], $cleanFacilityInfo[ $fac['f_id'] ]))
-          {
-            $tempArray = $cleanFacilityInfo[ $fac['f_id'] ][ $fac['pct_phone_contact_type'] ];
+      foreach ($facilityInfo as $fac) {
+        if (array_key_exists($fac['f_id'], $cleanFacilityInfo)) {
+          if (array_key_exists($fac['pct_phone_contact_type'], $cleanFacilityInfo[$fac['f_id']])) {
+            $tempArray = $cleanFacilityInfo[$fac['f_id']][$fac['pct_phone_contact_type']];
             $newArray = $tempArray + array($fac['epc_priority'] => $fac['pc_phone_contact']);
-            $cleanFacilityInfo[ $fac['f_id'] ][ $fac['pct_phone_contact_type'] ] = $newArray;
+            $cleanFacilityInfo[$fac['f_id']][$fac['pct_phone_contact_type']] = $newArray;
           } else {
-            $cleanFacilityInfo[ $fac['f_id'] ][ $fac['pct_phone_contact_type'] ][ $fac['epc_priority'] ] = $fac['pc_phone_contact'];
+            $cleanFacilityInfo[$fac['f_id']][$fac['pct_phone_contact_type']][$fac['epc_priority']] = $fac['pc_phone_contact'];
           }
         } else {
           $cleanFacilityInfo[$fac['f_id']] = array($fac['pct_phone_contact_type'] => array($fac['epc_priority'] => $fac['pc_phone_contact']));
@@ -345,7 +319,6 @@ class agFacilityHelper {
       }
 
       return $cleanFacilityInfo;
-
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
       return NULL;
@@ -365,20 +338,17 @@ class agFacilityHelper {
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
       $cleanFacilityInfo = array();
-      foreach ($facilityInfo as $fac)
-      {
-        if (array_key_exists($fac['fstf_scenario_facility_resource_id'], $cleanFacilityInfo))
-        {
-          $tempArray = $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ];
-          $newArray = $tempArray + array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
-          $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = $newArray;
+      foreach ($facilityInfo as $fac) {
+        if (array_key_exists($fac['fstf_scenario_facility_resource_id'], $cleanFacilityInfo)) {
+          $tempArray = $cleanFacilityInfo[$fac['fstf_scenario_facility_resource_id']];
+          $newArray = $tempArray + array($fac['srt_staff_resource_type'] => array('minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
+          $cleanFacilityInfo[$fac['fstf_scenario_facility_resource_id']] = $newArray;
         } else {
-          $cleanFacilityInfo[ $fac['fstf_scenario_facility_resource_id'] ] = array($fac['srt_staff_resource_type'] => array( 'minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
+          $cleanFacilityInfo[$fac['fstf_scenario_facility_resource_id']] = array($fac['srt_staff_resource_type'] => array('minimum staff' => $fac['fstf_minimum_staff'], 'maximum staff' => $fac['fstf_maximum_staff']));
         }
       }
 
       return $cleanFacilityInfo;
-
     } catch (Exception $e) {
       echo 'Caught exception: ', $e->getMessage(), "\n";
       return NULL;
@@ -394,12 +364,26 @@ class agFacilityHelper {
   public static function returnFacilityResourceAllocationStatusId($allocationStatusString)
   {
     $statusId = agDoctrineQuery::create()
-      ->select('fras.id')
-        ->from('agFacilityResourceAllocationStatus fras')
-        ->where('fras.facility_resource_allocation_status = ?', $allocationStatusString)
-        ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
+            ->select('fras.id')
+            ->from('agFacilityResourceAllocationStatus fras')
+            ->where('fras.facility_resource_allocation_status = ?', $allocationStatusString)
+            ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-    return $statusId ;
+    return $statusId;
+  }
+
+  public static function returnActionableResources($facilityResourceIds, $inverseMatch)
+  {
+    // get the current facility resource statuses
+    $currentStatusQuery = agDoctrineQuery::create()
+            ->select('fr.id')
+            ->addSelect('frs.is_available')
+            ->from('agFacilityResource fr')
+            ->innerJoin('fr.agFacilityResourceStatus frs')
+            ->whereIn('fr.id', $facilityResourceIds);
+    $facilityResourceStatuses = $currentStatusQuery->execute(array(), 'key_value_pair');
+
+    return array_keys($facilityResourceStatuses, $inverseMatch);
   }
 
   /**
@@ -417,102 +401,90 @@ class agFacilityHelper {
    * @param Doctrine_Connection $conn An optional Doctrine connection object.
    * @return array An array containing the number of operations performed. 
    */
-  public static function setFacilityResourceStatusOnUpdate ($facilityResourceIds, $facilityResourceStatusId, $affectScenarios = NULL, $affectEvents = NULL, Doctrine_Connection $conn = NULL)
+  public static function setFacilityResourceStatusOnUpdate($facilityResourceIds,
+                                                           $facilityResourceStatusId,
+                                                           $affectScenarios = NULL,
+                                                           $affectEvents = NULL,
+                                                           Doctrine_Connection $conn = NULL)
   {
-    $operations = array() ;
-
-    // get the current facility resource statuses
-    $currentStatusQuery = agDoctrineQuery::create()
-      ->select('fr.id')
-          ->addSelect('frs.is_available')
-        ->from('agFacilityResource fr')
-          ->innerJoin('fr.agFacilityResourceStatus frs')
-        ->whereIn('fr.id', $facilityResourceIds) ;
-    $facilityResourceStatuses = $currentStatusQuery->execute(array(),'key_value_pair') ;
+    $operations = array();
 
     // get available from $facilityResourceStatusId
     $available = agDoctrineQuery::create()
-      ->select('frs.is_available')
-        ->from('agFacilityResourceStatus frs')
-        ->where('frs.id = ?', $facilityResourceStatusId)
-        ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
-    $inverseMatch = ($available) ? FALSE : TRUE ;
+            ->select('frs.is_available')
+            ->from('agFacilityResourceStatus frs')
+            ->where('frs.id = ?', $facilityResourceStatusId)
+            ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    $inverseMatch = ($available) ? FALSE : TRUE;
+
 
     // get just the ones that are changing (don't want to have spurious expensive operations!)
-    $actionableResources = array_keys($facilityResourceStatuses, $inverseMatch) ;
+    $actionableResources = self::returnActionableResources($facilityResourceIds, $inverseMatch);
 
     // as a listener this gets fired a lot so we don't even do the rest without check if we have to
-    if (! empty($actionableResources))
-    {
+    if (!empty($actionableResources)) {
       // set our default variables to determine if scenarios or events are affected
-      if (is_null($affectScenarios))
-      { 
-        $defaultAffectScenarios = agGlobal::$param['facility_resource_status_affects_scenarios'] ;
-        $affectScenarios = ($defaultAffectScenarios == '1') ? TRUE : FALSE ;
+      if (is_null($affectScenarios)) {
+        $defaultAffectScenarios = agGlobal::$param['facility_resource_status_affects_scenarios'];
+        $affectScenarios = ($defaultAffectScenarios == '1') ? TRUE : FALSE;
       }
-      if (is_null($affectEvents))
-      { 
-        $defaultAffectEvents = agGlobal::$param['facility_resource_status_affects_events'] ;
-        $affectEvents = ($defaultAffectEvents == '1') ? TRUE : FALSE ;
+      if (is_null($affectEvents)) {
+        $defaultAffectEvents = agGlobal::$param['facility_resource_status_affects_events'];
+        $affectEvents = ($defaultAffectEvents == '1') ? TRUE : FALSE;
       }
 
       // only take action if at least one of these is affected
-      if ($affectScenarios || $affectEvents)
-      {
+      if ($affectScenarios || $affectEvents) {
         // pick up the allocation status we're about to apply from the defaults in the global param table
-        if ($available)
-        {
-          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param['facility_resource_enabled_status']) ;
-        }
-        else
-        {
-          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param['facility_resource_disabled_status']) ;
+        if ($available) {
+          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param['facility_resource_enabled_status']);
+        } else {
+          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param['facility_resource_disabled_status']);
         }
 
         // set our default connection if one is not passed and wrap it all in a transaction
-        if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
-        $conn->beginTransaction() ;
-        try
-        {
-          if ($affectScenarios)
-          {
+        if (is_null($conn)) {
+          $conn = Doctrine_Manager::connection();
+        }
+        $conn->beginTransaction();
+        try {
+          if ($affectScenarios) {
             // collect all scenarios to be affected
             $scenarioIds = agDoctrineQuery::create()
-              ->select('s.id')
-                ->from('agScenario s')
-                ->execute(array(), 'single_value_array') ;
+                    ->select('s.id')
+                    ->from('agScenario s')
+                    ->execute(array(), 'single_value_array');
 
             // apply changes to all scenarios
-            $scenarioOperations = agScenarioFacilityHelper::setScenarioFacilityResourceAllocationStatus($scenarioIds, $actionableResources, $allocationStatusId) ;
-            $operations['scenarioOperations'] = $scenarioOperations ;
+            $scenarioOperations = agScenarioFacilityHelper::setScenarioFacilityResourceAllocationStatus($scenarioIds, $actionableResources, $allocationStatusId);
+            $operations['scenarioOperations'] = $scenarioOperations;
           }
 
-          if ($affectEvents)
-          {
-            $eventIds = array() ;
+          if ($affectEvents) {
+            $eventIds = array();
 
             // get our event id's that have active status
-            $currentEventStatuses = array_values(agEventHelper::returnCurrentEventStatus()) ;
-            foreach ($currentEventStatuses as $eventStatus)
-            {
-              if ($eventStatus[3] == TRUE) { $eventIds[] = $eventStatus[0] ; }
+            $currentEventStatuses = array_values(agEventHelper::returnCurrentEventStatus());
+            foreach ($currentEventStatuses as $eventStatus) {
+              if ($eventStatus[3] == TRUE) {
+                $eventIds[] = $eventStatus[0];
+              }
             }
 
             // apply changes to all active events
-            $eventOperations = agEventFacilityHelper::setEventFacilityResourceStatus($eventIds, $actionableResources, $allocationStatusId) ;
-            $operations['eventOperations'] = $eventOperations ;
+            $eventOperations = agEventFacilityHelper::setEventFacilityResourceStatus($eventIds, $actionableResources, $allocationStatusId);
+            $operations['eventOperations'] = $eventOperations;
           }
 
-         // commit
-         $conn->commit() ;
-        }
-        catch(Exception $e)
-        {
+          // commit
+          $conn->commit();
+        } catch (Exception $e) {
           $conn->rollback(); // rollback if we must :(
         }
       }
     }
     // collect results and return
-    return $operations ;
+    return $operations;
   }
+
 }
