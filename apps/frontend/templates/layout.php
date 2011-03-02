@@ -14,8 +14,8 @@
   <body>
     <div id="header">
       <div class="floatLeft">
-          <img src="<?php echo url_for('images/Sahana_logo.png') ?>" alt="Sahana Agasti: Emergency Management" class="logo"/>
-<!--<h1>Sahana Agasti:</h1><h2> Emergency Management </h2>-->
+        <?php echo image_tag('Sahana_logo.png', array('class' => 'logo', 'alt' => 'Sahana Agasti: Emergency Management')) ?>
+        <!--<h1>Sahana Agasti:</h1><h2> Emergency Management </h2>-->
         <?php
         $configFilePath = sfConfig::get('sf_config_dir') . '/config.yml';
         if (file_exists($configFilePath)) {
@@ -35,7 +35,7 @@
         <?php if ($loggedIn): ?>
           <!-- Some of these nav links don't all actually work; some are just placeholders for now so it looks nice. -->
         <?php include_component('nav', 'Menu'); ?>
-        <span class="floatRight MarginPointOneEm">
+          <span class="floatRight MarginPointOneEm">
           <?php include_partial('search/searchForm'); ?>
         </span>
         <?php endif ?>

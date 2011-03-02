@@ -102,6 +102,7 @@ class ProjectConfiguration extends sfProjectConfiguration
 
     // extend where appropriate
     $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CLASS, 'agDoctrineQuery');
+    $manager->setAttribute(Doctrine_Core::ATTR_TABLE_CLASS, 'agDoctrineTable');
   }
 
 }
