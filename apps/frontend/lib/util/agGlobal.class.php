@@ -29,4 +29,26 @@ class agGlobal
 
    self::$param = $query->execute(array(), 'key_value_pair') ;
   }
+
+  /**
+   * Method to return a boolean value from a string 1/0 representation in agGlobalParam
+   * @param string $paramString The parameter being returned.
+   * @return boolean The boolean value of $paramString
+   */
+  public static function returnBool($paramString)
+  {
+    $val = self::$param[$paramString] ;
+
+    if ($val == '0') {
+      $result = FALSE ;
+    }
+    else if ($val == '1') {
+        $result = TRUE ;
+    }
+    else {
+      throw new Doctrine_DataDict_Exception("The parameter value '" . $val . "' is not of the correct type (boolean).") ;
+    }
+
+    return $result ;
+  }
 } agGlobal::initGlobal() ;

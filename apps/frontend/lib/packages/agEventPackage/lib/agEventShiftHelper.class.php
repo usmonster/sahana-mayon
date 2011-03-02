@@ -207,16 +207,16 @@ class agEventShiftHelper
    * @param integer(4) $eventId The event being queried
    * @param boolean $staffed An optional parameter to determine whether or not to restrict results
    * to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored.
-   * @param string $time A optional value that adjusted the concept of 'current' from the application's
+   * @param timestamp $timestamp A optional value that adjusted the concept of 'current' from the application's
    * CURRENT_TIMESTAMP (or PHP time()) to the passed value (essentially enabling the user to ask
    * what shifts will be active at this point-in-$time
    * @return array An two-dimensional associative array, keyed by event_shift_id with a value
    * array of event_facility_resource_id
    */
-  public static function returnCurrentFacilityResourceShifts($eventId, $staffed = NULL, $time = NULL)
+  public static function returnCurrentFacilityResourceShifts($eventId, $staffed = NULL, $timestamp = NULL)
   {
     // convert our start time to unix timestamp or set default if null
-    $timestamp = agDateTimeHelper::defaultTimestampFormat($time) ;
+    if (is_null($timestamp)) { $timestamp = time() ; }
 
     // create our basic query
     $query = agDoctrineQuery::create()
@@ -225,7 +225,7 @@ class agEventShiftHelper
         ->from('agEventShift es')
           ->innerJoin('es.agEventFacilityResource efr')
           ->innerJoin('efr.agEventFacilityGroup efg')
-          ->leftJoin('efr.agEventFacilityResourceActivationTime efrat')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
         ->where('efg.event_id = ?', $eventId)
           ->andWhere('(efrat.activation_time +
             (60 * es.minutes_start_to_facility_activation)) <= ?', $timestamp)
@@ -261,7 +261,7 @@ class agEventShiftHelper
    * @param integer(4) $eventId The event being queried.
    * @param boolean $staffed An optional parameter to determine whether or not to restrict results
    * to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored.
-   * @param string $time A optional value that adjusted the concept of 'current' from the application's
+   * @param timestamp $time A optional value that adjusted the concept of 'current' from the application's
    * CURRENT_TIMESTAMP (or PHP time()) to the passed value (essentially enabling the user to ask
    * what shifts will be active at this point-in-$time
    * @param boolean $minEnd Parameter to determine whether the "first shift" returned will also be
@@ -269,9 +269,9 @@ class agEventShiftHelper
    * those that ended first.
    * @return array A key value array of ($event_facility_resource_id => $shift_id)
    */
-  public static function returnSingleCurrentFacilityResourceShifts($eventId, $staffed = NULL, $time = NULL, $minEnd = TRUE)
+  public static function returnSingleCurrentFacilityResourceShifts($eventId, $staffed = NULL, $timestamp = NULL, $minEnd = TRUE)
   {
-    $currentShifts = array_keys( self::returnCurrentFacilityResourceShifts($eventId, $staffed, $time) ) ;
+    $currentShifts = array_keys( self::returnCurrentFacilityResourceShifts($eventId, $staffed, $timestamp) ) ;
 
     $shiftQuery = agDoctrineQuery::create()
       ->select('es.event_facility_resource_id')

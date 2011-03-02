@@ -14,21 +14,21 @@
 class AssociativeThreeDimHydrator extends Doctrine_Hydrator_Abstract
 {
   /**
-   * Defines the result set as an associative array and groups, assuming the first result position
-   * is an associative key
+   * Defines the result set as an associative array and groups, assuming the first and second result
+   * positions are associative keys
    *
    * @param <type> $stmt
-   * @return array An three-dimensional associative array.
+   * @return array A three-dimensional associative array.
    */
   public function hydrateResultSet($stmt)
   {
     $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM);
     $array = array();
-    $arrayLen = (count($results[0]) - 1) ;
+    $arrayLen = (count($results[0]) - 2) ;
 
     foreach ($results as $result)
     {
-      $array[$result[0]][] = array_slice($result, 1, $arrayLen);
+      $array[$result[0]][$result[1]] = array_slice($result, 2, $arrayLen);
     }
 
     return $array;

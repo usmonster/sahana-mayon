@@ -27,7 +27,7 @@ class AssociativeTwoDimHydrator extends Doctrine_Hydrator_Abstract
 
     foreach ($results as $result)
     {
-      $array[$result[0]][] = $result[1] ;
+      $array[$result[0]][$result[1]] = $result[2] ;
     }
 
     return $array;

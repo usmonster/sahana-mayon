@@ -10,6 +10,7 @@
  * @author     Charles Wisniewski, CUNY SPS
  * @author     Nils Stolpe, CUNY SPS
  * @author     Shirley Chan, CUNY SPS
+ * @author     Chad Heuschober, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */

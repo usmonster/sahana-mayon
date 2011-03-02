@@ -15,6 +15,10 @@
  */
 class agFacilityHelper
 {
+  protected static $affectScenariosGlobal = 'facility_resource_status_affects_scenarios',
+    $affectEventsGlobal = 'facility_resource_status_affects_events',
+    $resourceEnabledGlobal = 'facility_resource_enabled_status',
+    $resourceDisabledGlobal = 'facility_resource_disabled_status' ;
 
   /**
    * @method facilityGeneralInfo()
@@ -356,7 +360,7 @@ class agFacilityHelper
   }
 
   /**
-   * Methond to return the id value of a facility allocation status string
+   * Method to return the id value of a facility allocation status string
    * @param string $allocationStatusString The string value of the facility resource allocation
    * status.
    * @return integer The facility resource allocation status id.
@@ -372,18 +376,56 @@ class agFacilityHelper
     return $statusId;
   }
 
-  public static function returnActionableResources($facilityResourceIds, $inverseMatch)
+  /**
+   * Method to return the available boolean value for the available status of a
+   * $facilityResourceStatusId
+   * @param integer(2) $facilityResourceStatusId The facility_resource_status_id being queried.
+   * @param boolean $inverse Whether or not to apply an inverse match. Defaults to FALSE.
+   * @return boolean The boolean value for available status.
+   */
+  public static function getFacilityResourceAvailableStatus($facilityResourceStatusId, $inverse = FALSE )
   {
+    // pick up the available / unavailable boolean being passed
+    $result = agDoctrineQuery::create()
+            ->select('frs.is_available')
+            ->from('agFacilityResourceStatus frs')
+            ->where('frs.id = ?', $facilityResourceStatusId)
+            ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    
+    // return an inverse match if preferred
+    if ($inverse) { $result = ($result) ? FALSE : TRUE ; }
+
+    return $result ;
+  }
+
+  /**
+   * Method to return actionable facility resources based on the facility status being set
+   * @param array $facilityResourceIds An array of facility_resource_ids
+   * @param integer(2) $facilityResourceStatusId The facility status being set
+   * @return array An array of facility resource id's for facilities that are undergoing an
+   * activation change.
+   */
+  public static function returnActionableResources($facilityResourceIds, $facilityResourceStatusId)
+  {
+    $useInverse = TRUE ;
+
     // get the current facility resource statuses
     $currentStatusQuery = agDoctrineQuery::create()
             ->select('fr.id')
-            ->addSelect('frs.is_available')
+              ->addSelect('frs.is_available')
             ->from('agFacilityResource fr')
-            ->innerJoin('fr.agFacilityResourceStatus frs')
+              ->innerJoin('fr.agFacilityResourceStatus frs')
             ->whereIn('fr.id', $facilityResourceIds);
     $facilityResourceStatuses = $currentStatusQuery->execute(array(), 'key_value_pair');
 
-    return array_keys($facilityResourceStatuses, $inverseMatch);
+    // get the inverse of the passed available status
+    $inverseMatch = self::getFacilityResourceAvailableStatus($facilityResourceStatusId, $useInverse) ;
+
+    // find only those resources that are negative matches
+    $actionableResources = array_keys($facilityResourceStatuses, $inverseMatch);
+
+    $results = $actionableResources ;
+    return $results ;
   }
 
   public static function returnFacilityResourceAbbrTypeIds($inverse = FALSE, $facilityResourceType = NULL)
@@ -500,39 +542,32 @@ class agFacilityHelper
                                                            $affectEvents = NULL,
                                                            Doctrine_Connection $conn = NULL)
   {
+    $useInverse = TRUE ;
     $operations = array();
 
-    // get available from $facilityResourceStatusId
-    $available = agDoctrineQuery::create()
-            ->select('frs.is_available')
-            ->from('agFacilityResourceStatus frs')
-            ->where('frs.id = ?', $facilityResourceStatusId)
-            ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-    $inverseMatch = ($available) ? FALSE : TRUE;
-
-
     // get just the ones that are changing (don't want to have spurious expensive operations!)
-    $actionableResources = self::returnActionableResources($facilityResourceIds, $inverseMatch);
+    $actionableResources = self::returnActionableResources($facilityResourceIds, $facilityResourceStatusId);
+
+    // pick up our available status
+    $available = self::getFacilityResourceAvailableStatus($facilityResourceStatusId, $useInverse) ;
 
     // as a listener this gets fired a lot so we don't even do the rest without check if we have to
-    if (!empty($actionableResources)) {
+    if (! empty($actionableResources)) {
       // set our default variables to determine if scenarios or events are affected
       if (is_null($affectScenarios)) {
-        $defaultAffectScenarios = agGlobal::$param['facility_resource_status_affects_scenarios'];
-        $affectScenarios = ($defaultAffectScenarios == '1') ? TRUE : FALSE;
+        $affectScenarios = agGlobal::returnBool(self::$affectScenariosGlobal) ;
       }
       if (is_null($affectEvents)) {
-        $defaultAffectEvents = agGlobal::$param['facility_resource_status_affects_events'];
-        $affectEvents = ($defaultAffectEvents == '1') ? TRUE : FALSE;
+        $affectEvents = agGlobal::returnBool(self::$affectEventsGlobal) ;
       }
 
       // only take action if at least one of these is affected
       if ($affectScenarios || $affectEvents) {
         // pick up the allocation status we're about to apply from the defaults in the global param table
         if ($available) {
-          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param['facility_resource_enabled_status']);
+          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param[self::$resourceEnabledGlobal]);
         } else {
-          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param['facility_resource_disabled_status']);
+          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param[self::$resourceDisabledGlobal]);
         }
 
         // set our default connection if one is not passed and wrap it all in a transaction
