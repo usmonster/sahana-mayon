@@ -480,4 +480,15 @@ class agPerson extends BaseagPerson
     return parent::delete($conn);
   }
 
+  /**
+   * Returns the instantiated person object's primary name.
+   * @return array An associative array, keyed by name type, of the person's primary name attributes.
+   */
+  public function getPrimaryName()
+  {
+    $agPersonMjAgPersonNameObject = new agPersonMjAgPersonName() ;
+    $primaryNameArray = $agPersonMjAgPersonNameObject->getPrimary(array($this->id)) ;
+    $primaryName = $primaryNameArray[$this->id] ;
+    return $primaryName ;
+  }
 }
