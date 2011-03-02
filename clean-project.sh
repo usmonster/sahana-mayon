@@ -56,5 +56,5 @@ $PROJECT_ROOT/symfony doctrine:build-forms
 $PROJECT_ROOT/symfony doctrine:build-filters
 
 # loads sample data and fixtures from the yml files in the data directory
-sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load #-t
+sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load -t
 

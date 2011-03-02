@@ -1,65 +1,75 @@
 agFacilityStaffResource:
-  1:
+  Hurr_A01_11_Spec:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
     minimum_staff: 8
     maximum_staff: 15
-  2:
+  Hurr_A01_18_sta:
+    agScenarioFacilityResource: hurrA01_18_uorc
+    agStaffResourceType: staff
+    minimum_staff: 8
+    maximum_staff: 20
+  Hurr_A01_33_sta:
+    agScenarioFacilityResource: hurrA01_33_uorc
+    agStaffResourceType: staff
+    minimum_staff: 8
+    maximum_staff: 20
+  Hurr_A01__11_MN:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
     minimum_staff: 2
     maximum_staff: 5
-  3:
+  Hurr_A01_11_MO:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
     minimum_staff: 2
     maximum_staff: 4
-  4:
+  Hurr_A01_11_opp:
     agScenarioFacilityResource: hurrA01_11_hs
     agStaffResourceType: operator
     minimum_staff: 14
     maximum_staff: 20
-  5:
+  Hurr_A01_11_sta:
     agScenarioFacilityResource: hurrA01_11_hs
     agStaffResourceType: staff
     minimum_staff: 25
     maximum_staff: 30
-  6:
+  Hurr_A02_14_spe:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
     minimum_staff: 8
     maximum_staff: 15
-  7:
+  Hurr_A02__14_op:
     agScenarioFacilityResource: hurrA02_14_hs
     agStaffResourceType: operator
     minimum_staff: 14
     maximum_staff: 20
-  8:
+  Hurr_A02_14_sta:
     agScenarioFacilityResource: hurrA02_14_hs
     agStaffResourceType: staff
     minimum_staff: 25
     maximum_staff: 30
-  9:
+  Hurr_A02_15_op:
     agScenarioFacilityResource: hurrA02_15_hs
     agStaffResourceType: operator
     minimum_staff: 6
     maximum_staff: 9
-  10:
+  Hurr_A02_15_hs:
     agScenarioFacilityResource: hurrA02_15_hs
     agStaffResourceType: staff
     minimum_staff: 20
     maximum_staff: 25
-  11:
+  Hurr_A03_17_spe:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
     minimum_staff: 5
     maximum_staff: 8
-  12:
+  Hurr_A03_17_op:
     agScenarioFacilityResource: hurrA03_17_hs
     agStaffResourceType: operator
     minimum_staff: 8
     maximum_staff: 12
-  13:
+  Hurr_A01_17_sta:
     agScenarioFacilityResource: hurrA03_17_hs
     agStaffResourceType: staff
     minimum_staff: 18
