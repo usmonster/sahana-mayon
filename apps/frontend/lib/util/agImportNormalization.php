@@ -31,8 +31,14 @@ class agImportNormalization {
     $this->geoTypeId = agFacilityHelper::returnGeoTypeIds(FALSE, $this->geoType);
   }
 
+  /**
+   * Verify data in record for required fields and valid statuses and types
+   *
+   * @param array $record
+   * @return boolean TRUE if data in record satisfies all requirements for processing.  FALSE otherwise.
+   */
   private function dataValidation(array $record) {
-// Do data validations here.
+    // Check for required fields
     if (empty($record['facility_name']) && empty($record['facility_code'])) {
       return FALSE;
     }
@@ -49,18 +55,50 @@ class agImportNormalization {
       return FALSE;
     }
 
+    // Check for min/max set validation:
+    // (1) Either both min and max are provided or neither should be provided for each staff type.
+    // (2) max >= min.
+    $importStaffList = array();
+    foreach (array_keys($record) as $key) {
+      if (preg_match('/_max$/', $key)) {
+        $importStaffList[] = rtrim($key, '_max');
+      }
+    }
+    foreach ($importStaffList as $staff) {
+      if (( empty($record[$staff . '_min']) && !empty($record[staff . '_max']) )
+              || (!empty($record[$staff . '_min']) && empty($record[$staff . '_max']) )) {
+        return FALSE;
+      }
+    }
+    if ($record['minimum'] > $record['maximum']) {
+      return FALSE;
+    }
+
+    // Check for valid email address
+    if (!empty($record['work_email']) && !preg_match('/^.+\@.+\..+$/', $record['work_email'])) {
+      return FALSE;
+    }
+
+    // Check for valid phone number where it's either 10 digit or
+    // 10 digit follow by an 'x' and the extension.
+    if (!empty($record['work_phone']) && !preg_match('/^\d{10}(x\d+)?/', $record['work_phone'])) {
+      return FALSE;
+    }
+
+    // @TODO Add status and type checks here.
+
     return TRUE;
   }
 
   public function normalizeImport() {
     try {
+      // Declare static variables.
       $contactType = 'work';
       $phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
       $addressStandard = 'us standard';
       $geoType = $this->geoType;
       $geoSourceParamVal = agGlobal::$param['facility_import_geo_source'];
       $geoMatchScore = 'good';
-
 
       $facilityResourceTypeIds = $this->facilityResourceTypeIds;
       $facilityResourceStatusIds = agDoctrineQuery::create()
@@ -118,9 +156,11 @@ class agImportNormalization {
                       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
       $geoTypeId = $this->geoTypeId;
 
-      $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
-
+      // Setup db connection.
       $conn = Doctrine_Manager::connection();
+
+      // Fetch import data.
+      $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
       $pdo = $conn->execute($query);
       $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
       $sourceRecords = $pdo->fetchAll();
@@ -131,14 +171,12 @@ class agImportNormalization {
 // TODO: implement this
         $isValidData = $this->dataValidation($record);
         if (!$isValidData) {
+          echo "Invalid record (%d).  Reject." % ($record['id']);
           // Log record to non-processed data.
           next;
         }
-//        isValid = validate_row(facility_name, facility_code, facility_resource_type_abbr, facility_resource_status, capacity[, ...])
-//        if (!isValid):
-//          report warning
-//          next;
 
+        // Declare variables.
         $facility_name = $record['facility_name'];
         $facility_code = $record['facility_code'];
         $facility_resource_type_abbr = $record['facility_resource_type_abbr'];
@@ -200,6 +238,7 @@ class agImportNormalization {
                         ->where('af.address_standard_id = ?', $workAddressStandardId)
                         ->execute(array(), 'key_value_pair');
 
+
         // facility
         // tries to find an existing record based on a unique identifier.
         $facility = agDoctrineQuery::create()
@@ -229,7 +268,6 @@ class agImportNormalization {
           $facilityResource = $this->updateFacilityResource($facilityResource, $facility_resource_status_id, $capacity);
           $scenarioFacilityResource = agDoctrineQuery::create()
                           ->from('agScenarioFacilityResource sfr')
-                          //TODO
                           ->innerJoin('sfr.agScenarioFacilityGroup sfg')
                           ->where('sfg.scenario_id = ?', $this->scenarioId)
                           ->andWhere('facility_resource_id = ?', $facilityResource->id)
@@ -254,7 +292,7 @@ class agImportNormalization {
         if (empty($scenarioFacilityResource)) {
           $scenarioFacilityResource = $this->createScenarioFacilityResource($facilityResource, $scenarioFacilityGroup, $facility_resource_allocation_status_id, $facility_activation_sequence);
         } else {
-          $scenarioFacilityResource = $this->updateScenarioFacilityResource($scenarioFacilityResource, $facility_resource_allocation_status_id, $facility_activation_sequence);
+          $scenarioFacilityResource = $this->updateScenarioFacilityResource($scenarioFacilityResource, $scenarioFacilityGroup->id, $facility_resource_allocation_status_id, $facility_activation_sequence);
         }
 
 
@@ -270,8 +308,8 @@ class agImportNormalization {
         // geo
         $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchSourceId);
 
-//        //facility staff resource
-//        $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
+        //facility staff resource
+        $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
       } // end foreach
 
       $conn->commit();
@@ -326,8 +364,8 @@ class agImportNormalization {
   protected function updateFacilityResource($facilityResource, $facilityResourceStatusId, $capacity) {
     $doUpdate = FALSE;
     $updateQuery = agDoctrineQuery::create()
-            ->update('agFacilityResource fr')
-            ->where('id = ?', $facilityResource->id);
+                    ->update('agFacilityResource fr')
+                    ->where('id = ?', $facilityResource->id);
 
     if ($facilityResource->facility_resource_status_id != $facilityResourceStatusId) {
       $updateQuery->set('facility_resource_status_id', '?', $facilityResourceStatusId);
@@ -348,22 +386,63 @@ class agImportNormalization {
     return $facilityResource;
   }
 
-  protected function updateFacilityStaffResources($facilityResourceId, $staff_data) {
-    //TODO
-    // we have to get the ids of the staff_resource
-    foreach ($staff_data as $staffTypeId => $count) {
-      //TODO - check to see if records exist, if so, UPDATE, otherwise, create:
+  protected function updateFacilityStaffResources($scenarioFacilityResourceId, $staff_data) {
+    $facilityStaffResource = agDoctrineQuery::create()
+                    ->select('srt.id, fsr.minimum_staff, fsr.maximum_staff, fsr.id')
+                    ->from('agStaffResourceType srt')
+                    ->innerJoin('srt.agFacilityStaffResource fsr')
+                    ->where('fsr.scenario_facility_resource_id = ?', $scenarioFacilityResourceId)
+                    ->execute(array(), 'key_value_array');
 
-      $this->createFacilityStaffResource($facilityResourceId, $staffTypeId, $count['min'], $count['max']);
+    $deleteFacStfResId = array();
+    foreach ($staff_data as $staffTypeId => $count) {
+      if (array_key_exists($staffTypeId, $facilityStaffResource)) {
+        $doUpdate = FALSE;
+        $updateQuery = agDoctrineQuery::create()
+                        ->update('agFacilityStaffResource')
+                        ->where('id = ?', $facilityStaffResource[$staffTypeId][2]);
+
+        if ($count['min'] == 0 && $count['max'] == 0) {
+          $deleteFacStfResId[] = $facilityStaffResource[$staffTypeId][2];
+          next;
+        }
+
+        if ($facilityStaffResource[$staffTypeId][0] != $count['min']) {
+          $updateQuery->set('minimum_staff', $count['min']);
+          $doUpdate = TRUE;
+        }
+
+        if ($facilityStaffResource[$staffTypeId][1] != $count['max']) {
+          $updateQuery->set('maximum_staff', $count['max']);
+          $doUpdate = TRUE;
+        }
+
+        if ($doUpdate) {
+          $updateQuery->execute();
+        } else {
+          $updateQuery = NULL;
+        }
+      } else {
+        if ($count['min'] != 0 && $count['max'] != 0) {
+          $this->createFacilityStaffResource($scenarioFacilityResourceId, $staffTypeId, $count['min'], $count['max']);
+        }
+      }
+    }
+
+    if (!empty($deleteFacStfResId)) {
+      $deleteQuery = agDoctrineQuery::create()
+                      ->delete('agFacilityStaffResource')
+                      ->whereIn('id', $deleteFacStfResId)
+                      ->execute();
     }
 
     return $facilityStaffResource;
   }
 
-  protected function createFacilityStaffResource($facilityResourceId, $staffTypeId, $min_staff, $max_staff) {
+  protected function createFacilityStaffResource($scenarioFacilityResourceId, $staffTypeId, $min_staff, $max_staff) {
     $facilityStaffResource = new agFacilityStaffResource();
     $facilityStaffResource->set('staff_resource_type_id', $staffTypeId)
-            ->set('scenario_facility_resource_id', $facilityResourceId)
+            ->set('scenario_facility_resource_id', $scenarioFacilityResourceId)
             ->set('minimum_staff', $min_staff)
             ->set('maximum_staff', $max_staff);
     $facilityStaffResource->save();
@@ -386,10 +465,10 @@ class agImportNormalization {
   protected function updateScenarioFacilityGroup($scenarioFacilityGroup, $facilityGroupTypeId, $facilityGroupAllocationStatusId, $facilityGroupActivationSequence) {
     $doUpdate = FALSE;
     $updateQuery = agDoctrineQuery::create()
-            ->update('agScenarioFacilityGroup sfg')
-            ->where('id = ?', $scenarioFacilityGroup->id);
+                    ->update('agScenarioFacilityGroup sfg')
+                    ->where('id = ?', $scenarioFacilityGroup->id);
 
-    if ($scenarioFacilityGroup->facility_group_type_id != $facilityGroupTypeId) {
+    if (strtolower($scenarioFacilityGroup->facility_group_type_id) != strtolower($facilityGroupTypeId)) {
       $updateQuery->set('facility_group_type_id', '?', $facilityGroupTypeId);
       $doUpdate = TRUE;
     }
@@ -425,8 +504,33 @@ class agImportNormalization {
     return $scenarioFacilityResource;
   }
 
-  protected function updateScenarioFacilityResource($scenarioFacilityResource, $facilityResourceAllocationStatusId, $facilityActivationSequence) {
-    //TODO
+  protected function updateScenarioFacilityResource($scenarioFacilityResource, $scenarioFacilityGroupId, $facilityResourceAllocationStatusId, $facilityActivationSequence) {
+    $doUpdate = FALSE;
+    $updateQuery = agDoctrineQuery::create()
+                    ->update('agScenarioFacilityResource')
+                    ->where('id = ?', $scenarioFacilityResource->id);
+
+    if ($scenarioFacilityResource->scenario_facility_group_id != $scenarioFacilityGroupId) {
+      $updateQuery->set('scenario_facility_group_id', $scenarioFacilityGroupId);
+      $doUpdate = TRUE;
+    }
+
+    if ($scenarioFacilityResource->facility_resource_allocation_status_id != $scenarioFacilityResourceAllocationStatusId) {
+      $updateQuery->set('facility_resource_allocation_status_id', $facilityResourceAllocationStatusId);
+      $doUpdate = TRUE;
+    }
+
+    if ($scenarioFacilityResource->activation_sequence != $facilityActivationSequence) {
+      $updateQuery->set('activation_sequence', $facilityActivationSequence);
+      $doUpdate = TRUE;
+    }
+
+    if ($doUpdate) {
+      $updateQuery = $updateQuery->execute();
+    } else {
+      $updateQuery = NULL;
+    }
+
     return $scenarioFacilityResource;
   }
 
@@ -461,9 +565,9 @@ class agImportNormalization {
   }
 
   protected function updateEntityEmail($entityEmailObject, $emailObject) {
-    //TODO
-    // Replace existing entity email with new email.
-    return $entityEmail;
+    $entityEmailObject->set('email_contact_id', $emailObject->id);
+    $entityEmailObject->save();
+    return $entityEmailObject;
   }
 
   /**
@@ -475,24 +579,23 @@ class agImportNormalization {
    */
   protected function updateFacilityEmail($facility, $email, $workEmailTypeId) {
     $entityId = $facility->getAgSite()->entity_id;
-    $facilityEmail = $this->getEntityContactObject('email', $entityId, $workEmailTypeId);
+    $entityEmail = $this->getEntityContactObject('email', $entityId, $workEmailTypeId);
 
-    if (empty($facilityEmail)) {
+    if (empty($entityEmail)) {
       $facilityEmail = '';
     } else {
-      $facilityEmail = $facilityEmail->getAgEmailContact()->email_contact;
+      $facilityEmail = $entityEmail->getAgEmailContact()->email_contact;
     }
 
     //  if oldEmail is importedEmail
-    if ($email == $facilityEmail) {
+    if (strtolower($email) == strtolower($facilityEmail)) {
       return FALSE;
     }
 
     // only useful for nonrequired emails
     //  if importedEmail null
-    if (empty($email)) {
-      //    clear f.email
-      //TODO: write delete here
+    if (empty($email) && !empty($facilityEmail)) {
+      $entityEmail->delete();
       return TRUE;
     }
 
@@ -507,7 +610,8 @@ class agImportNormalization {
       return TRUE;
     }
 
-    $this->updateEntityEmail($facilityEmail, $emailEntity);
+    // Facility email exists and does not match import email.
+    $this->updateEntityEmail($entityEmail, $emailEntity);
     return TRUE;
   }
 
@@ -545,8 +649,8 @@ class agImportNormalization {
   }
 
   protected function updateEntityPhone($entityPhoneObject, $phoneObject) {
-    //TODO
-    // Replace existing entity phone with new phone.
+    $entityPhoneObject->set('phone_contact_id', $phoneObject->id);
+    $entityPhoneObject->save();
     return $entityPhone;
   }
 
@@ -560,24 +664,23 @@ class agImportNormalization {
   protected function updateFacilityPhone($facility, $phone, $workPhoneTypeId, $phoneFormatId) {
     //TODO
     $entityId = $facility->getAgSite()->entity_id;
-    $facilityPhone = $this->getEntityContactObject('phone', $entityId, $workPhoneTypeId);
+    $entityPhone = $this->getEntityContactObject('phone', $entityId, $workPhoneTypeId);
 
-    if (empty($facilityPhone)) {
+    if (empty($entityPhone)) {
       $facilityPhone = '';
     } else {
-      $facilityPhone = $facilityPhone->getAgPhoneContact()->phone_contact;
+      $facilityPhone = $entityPhone->getAgPhoneContact()->phone_contact;
     }
 
     //  if oldEmail is importedEmail
-    if ($phone == $facilityPhone) {
+    if (strtolower($phone) == strtolower($facilityPhone)) {
       return FALSE;
     }
 
     // only useful for nonrequired phones
     //  if importedEmail null
     if (empty($phone)) {
-      //    clear f.phone
-      //TODO: write delete here
+      $entityPhone->delete();
       return TRUE;
     }
 
@@ -592,7 +695,8 @@ class agImportNormalization {
       return TRUE;
     }
 
-    $this->updateEntityPhone($facilityPhone, $phoneEntity);
+    // Facility phone exists and does not match import phone
+    $this->updateEntityPhone($entityPhone, $phoneEntity);
     return TRUE;
   }
 
@@ -695,7 +799,6 @@ class agImportNormalization {
     // Remove existing facility work address if import address is null.
     if ((!empty($facilityAddress)) && $isImportAddressEmpty) {
       $this->deleteEntityAddressMapping($facilityAddress->id);
-//      return TRUE;
       return $addressId = NULL;
     }
 
@@ -713,7 +816,7 @@ class agImportNormalization {
       $diffAddKeys = array_diff(array_keys($facilityAddressElements), array_keys($fullAddress));
       if (empty($diffAddKeys)) {
         foreach ($fullAddress as $eltName => $eltVal) {
-          if ($eltVal != $facilityAddressElements[$eltName]) {
+          if (strtolower($eltVal) != strtolower($facilityAddressElements[$eltName])) {
             $this->deleteEntityAddressMapping($facilityAddress->id);
             $isCreateNew = TRUE;
             break;
@@ -728,7 +831,6 @@ class agImportNormalization {
       $addressId = $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
     }
 
-//    return $isCreateNew;
     return $addressId;
   }
 
@@ -751,10 +853,9 @@ class agImportNormalization {
 
   protected function updateFacilityGeo($facility, $addressId, $addressTypeId, $addressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchSourceId) {
 
-    if ($this->isEmptyStringArray($geoInfo) && empty($addressId)) {
-      return;
-    }
-
+//    if ($this->isEmptyStringArray($geoInfo) && empty($addressId)) {
+//      return FALSE;
+//    }
     // Create an address container to assign geo info for facility with no address given in import.
     if (empty($addressId)) {
       $entityId = $facility->getAgSite()->entity_id;
@@ -799,26 +900,21 @@ class agImportNormalization {
               ->set('geo_coordinate_id', $geoCoordinate->id)
               ->set('geo_coordinate_order', 1);
       $geoFeature->save();
-//    } else {
-//      if ($agAddressCoordinate->longitude != $geoInfo['longitude']) {
-//        $requireUpdate = TRUE;
-//      } elseif ($agAddressCoordinate->latitude != $geoInfo['latitude']) {
-//        $requireUpdate = TRUE;
-//      } else {
-//        $requireUpdate = FALSE;
-//      }
-//
-//      $longitude = $geoInfo['longitude'];
-//      $latitude = $geoInfo['latitude'];
-//      $geoCoordinate = agDoctrineQuery::create()
-//                      ->update('agGeoCoordinate gc')
-////                      ->set('gc.longitude = ?, gc.latitude = ?', array($longitude,$latitude))
-//                      ->set('gc.longitude', '?', $longitude)
-//                      ->set('gc.latitude', '?', $latitude)
-//                      ->where('id', $agAddressCoordinate->id);
-//      $geoSql = $geoCoordinate->getSqlQuery();
-//      echo "QUERY: $geoSql<BR>";
-//      $geoCoordinate = $geoCoordinate->execute();
+    } else {
+      if ($agAddressCoordinate->longitude != $geoInfo['longitude']) {
+        $agAddressCoordinate->set('longitude', $geoInfo['longitude']);
+        $saveUpdate = TRUE;
+      } elseif ($agAddressCoordinate->latitude != $geoInfo['latitude']) {
+        $agAddressCoordinate->set('latitude', $geoInfo['latitude']);
+        $saveUpdate = TRUE;
+      } else {
+        $saveUpdate = FALSE;
+      }
+
+      if ($saveUpdate) {
+        $agAddressCoordinate->save();
+      }
+      return TRUE;
     }
   }
 
@@ -827,7 +923,7 @@ class agImportNormalization {
   protected function getEntityContactObject($contactMedium, $entityId, $contactTypeId) {
     $entityContactObject = NULL;
 
-    switch ($contactMedium) {
+    switch (strtolower($contactMedium)) {
       case 'phone':
         $table = 'agEntityPhoneContact';
         $contactType = 'phone_contact_type_id';
@@ -857,7 +953,7 @@ class agImportNormalization {
   protected function getPriorityCounter($contactMedium, $entityId) {
     $priority = NULL;
 
-    switch ($contactMedium) {
+    switch (strtolower($contactMedium)) {
       case 'phone':
         $table = 'agEntityPhoneContact';
         break;
