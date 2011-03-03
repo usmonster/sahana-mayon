@@ -103,17 +103,16 @@ class agScenarioGenerator
       }
       if (count($staff_id) > 0) {
         $staff_resource_dql = agDoctrineQuery::create()
-                ->select('a.id')
-                ->from('agStaffResource a, a.agScenarioStaffResource asr')
-                ->whereIn('a.staff_id', $staff_id)
-                ->andWhereNotIn('a.id', 'asr.staff_resource_id');
 
+          ->select('a.id')
+            ->from('agStaffResource a')
+              ->leftJoin('a.agScenarioStaffResource asr WITH asr.scenario_id = ?', $scenario_id)
+            ->whereIn('a.staff_id', $staff_id)
+              ->andWhere('(asr.staff_resource_id IS NULL');
+                
+        $staff_resource_sql =  $staff_resource_dql->getSqlQuery();
+        $staff_resources  = $staff_resource_dql->execute(array(), 'single_value_array');
 
-//            ->andWhere('asr.id is NULL')
-//            ->andWhere('asr.scenario_id =?', $scenario_id)
-//            ->orWhere('asr.scenario_id IS NULL');
-        $staff_resource_sql = $staff_resource_dql->getSqlQuery();
-        $staff_resources = $staff_resource_dql->execute(array(), 'single_value_array');
       }
 
       return $staff_resources;
