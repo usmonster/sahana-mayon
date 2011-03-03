@@ -1,27 +1,28 @@
-<h2>Staff Resource Pool</h2> <br>
-<h3>for the <span class="highlightedText"><?php echo $eventName ?> </span> Event.</h3>
 <p> Here you can tweak the staff resource pools you have defined in the planning phase. </p>
+<h2><span class="highlightedText"><?php echo $eventName ?></span> Staff Pool Management</h2>
+<br /> <em>maybe show existing saved searches here?</em>
+Filter By Facility Resources:
 
 
-<?php if (count($saved_searches) > 0) {
- ?>
-  <h3>Existing Saved Searches</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Scenario Base</th>
-        <th>Search Name</th>
-        <th>Search Type</th>
-      </tr>
-    </thead>
-    <tbody>
-<?php foreach ($saved_searches as $saved_search): ?>
-    <tr>
-      <td><?php echo $saved_search->getAgScenario()->getScenario() ?></a></td>
-      <td><a href="<?php echo url_for('event/staffpool?id=' . $event_id) . '/' . $saved_search->getId() ?> "><?php echo $saved_search->getAgLuceneSearch()->query_name ?></a></td>
-      <td><?php echo $saved_search->getAgLuceneSearch()->getAgLuceneSearchType() ?></td>
-    </tr>
-<?php endforeach; ?>
-  </tbody>
-</table>
-<?php } ?>
+<?php echo $filterForm ?> <!-- onChange: filter. -->
+
+<h3>Current Event Staff Members, <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $eventName . '</span> Event' : ' for all Events'); ?></h3>
+
+
+
+<?php
+$columns = array(
+  'fn' => array('title' => 'First Name', 'sortable' => false),
+  'ln' => array('title' => 'Last Name', 'sortable' => false),
+  'org' => array('title' => 'Organization Facility Code', 'sortable' => true),
+  'status' => array('title' => 'Statuse', 'sortable' => true),
+  'type' => array('title' => 'Staff Type', 'sortable' => true),
+  'event_status' => array('title' => '', 'sortable' => false),
+);
+
+//pager comes in from the action
+
+include_partial('global/listform', array('sf_request' => $sf_request, 'form_action' => $form_action, 'event_id' => $event_id, 'columns' => $columns, 'pager' => $pager, 'widget' => $widget));
+
+//echo agListForm::eventstafflist($sf_request,'Event Staff Listing', $columns, $pager, $widget);
+?>

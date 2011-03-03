@@ -19,34 +19,7 @@
       </tr>
     </tfoot>
     <tbody>
-      <?php echo $form->renderGlobalErrors() ?>
-      <tr>
-        <th><?php echo $form['account_name']->renderLabel() ?></th>
-        <td>
-          <?php echo $form['account_name']->renderError() ?>
-          <?php echo $form['account_name'] ?>
-        </td>
-      </tr>
-      <tr>
-        <th><?php echo $form['account_status_id']->renderLabel() ?></th>
-        <td>
-          <?php echo $form['account_status_id']->renderError() ?>
-          <?php echo $form['account_status_id'] ?>
-        </td>
-      </tr>
-      <tr>
-        <th><?php echo $form['description']->renderLabel() ?></th>
-        <td>
-          <?php echo $form['description']->renderError() ?>
-          <?php echo $form['description'] ?>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <?php echo $form['sfGuardUser']->renderError() ?>
-          <?php echo $form['sfGuardUser'] ?>
-        </td>
-      </tr>
+      <?php echo $form ?>
     </tbody>
   </table>
 </form>

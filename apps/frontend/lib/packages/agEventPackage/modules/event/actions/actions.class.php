@@ -149,8 +149,6 @@ class eventActions extends agActions
 
         $ag_event = $this->metaForm->save();
         //agEventFacilityHelper::
-
-
         //$this->migrateScenarioToEvent($request->getParameter('scenario_id'), $ag_event->getId()); //this will create mapping from scenario to event
 //        if($this->metaForm->isNew()){
 //        if (isset($updating)) { //replace with usable check to update
@@ -214,11 +212,93 @@ class eventActions extends agActions
     
   }
 
+  /**
+   * provides event staff pool management functions.
+   * @param sfWebRequest $request request coming from web
+   */
   public function executeStaffpool(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+
     $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
             ->findAll();
+
+    //get the possible filters from our request 
+    // eg. &fr=1&type=generalist&org=volunteer
+    $filters = array();
+    foreach ($request->getParameterHolder() as $parameter => $filter) {
+      if ($parameter == 'fr') {
+        $filters['es.event_facility_resource_id'] = $filter;
+      }
+      if ($parameter == 'type') {
+        $filters['sr.staff_resource_type_id'] = $filter;
+      }
+      if ($parameter == 'org') {
+        $filters['sro.organization_id'] = $filter;
+      }
+    }
+
+    $fac_rec_query = Doctrine::getTable('')->createQuery($list)->execute();
+
+    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')), // 'class' => 'filter')),
+      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization')),//, 'class' => 'filter'))
+      'facility_resource' => new sfWidgetFormDoctrineChoice(array('model' => 'agEventFacilityResource', 'label' => 'Facility Resource'))
+    );
+    //set up inputs for form
+    $this->filterForm = new sfForm();
+    foreach ($inputs as $key => $input) {
+      $input->setAttribute('class', 'filter');
+      $this->filterForm->setWidget($key, $input);
+    }
+
+    $query = agDoctrineQuery::create()
+            ->select('es.*, sr.*, s.*, ess.*')
+            ->from('agEventStaff es, es.agStaffResource sr, sr.agStaffResourceOrganization sro, sr.agStaff s, es.agEventStaffShift ess, ess.agEventShift esh')
+            ->where('es.event_id = ?', $this->event_id);
+
+    // If the request has a faciliy resource id
+    if (sizeof($filters) > 0) {
+      foreach ($filters as $field => $filter) {
+        $query->andWhere($field . ' = ?', $filter);
+      }
+    }
+
+    $eventStaff = array();
+    $this->ag_event_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    //$thingy = $query->getSqlQuery();
+//    foreach ($this->ag_event_staff as $eventFacilityGroup) {
+//      $tempArray = $this->queryForTable($eventFacilityGroup->id);
+//      foreach ($tempArray as $ta) {
+//        array_push($eventStaff, $ta);
+//      }
+//    }
+    //$this->facilityGroupArray = $facilityGroupArray;
+    $this->pager = new agArrayPager(null, 10);
+
+//    if ($request->getParameter('sort') && $request->getParameter('order')) {
+//      $sortColumns = array('group' => 'efg_event_facility_group',
+//        'name' => 'f_facility_name',
+//        'code' => 'f_facility_code',
+//        'status' => 'ras_facility_resource_allocation_status',
+//        'time' => 'efrat_activation_time',
+//        'type' => 'fgt_facility_group_type',
+//        'event' => 'e_event_name');
+//      $sort = $sortColumns[$request->getParameter('sort')];
+//      agArraySort::$sort = $sort;
+//      usort($facilityGroupArray, array('agArraySort', 'arraySort'));
+//      if ($request->getParameter('order') == 'DESC') {
+//        $facilityGroupArray = array_reverse($facilityGroupArray);
+//      }
+//    }
+    $this->pager->setResultArray($this->ag_event_staff);
+    $this->pager->setPage($this->getRequestParameter('page', 1));
+    $this->pager->init();
+    $this->widget = new sfForm();
+
+    $this->widget->setWidget('add', new agWidgetFormSelectCheckbox(array('choices' => array(null)), array()));
+
+    $this->widget->getWidgetSchema()->setLabel('add', false);
+    $this->form_action = 'event/staffpool?id=' . $this->event_id;
   }
 
   public function executeShifts(sfWebRequest $request)

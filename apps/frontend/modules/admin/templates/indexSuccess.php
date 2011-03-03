@@ -4,18 +4,18 @@ Hello, welcome to the system administration management module of Sahana Agasti 2
 Please select one of the following staff administration actions:<br />
   <fieldset>
     <legend><?php echo image_tag('config.png', array('alt' => 'config gear icon')) ?>Access Control:</legend>
-<?php
-echo '<a href="' . url_for('admin/new') . '" class="buttonText" title="Create New Account">Create Account<a/><br/>';
-echo '<a href="' . url_for('admin/list') . '" class="buttonText" title="List Existing Accounts">List Accounts</a><br/>';
-echo '<a href="' . url_for('staff/cred') . '" class="buttonText" title="Credential Management">Credential Management</a><br/>';
-?>
+
+<a href="<?php echo url_for('admin/new') ?>" class="linkButton" title="Create New Account">Create Account</a><br/><br/>
+<a href="<?php echo url_for('admin/list') ?>" class="linkButton" title="List Existing Accounts">List Accounts</a><br/><br/>
+<a href="<?php echo url_for('staff/cred') ?>" class="linkButton" title="Credential Management">Credential Management</a><br/><br/>
+
   </fieldset>
   <fieldset>
     <legend><?php echo image_tag('config.png', array('alt' => 'config gear icon')) ?>Configuration:</legend>
-<?php
-echo '<a href="' . url_for('admin/config') . '" class="buttonText" title="System Settings">System Settings<a/><br/>';
-echo '<a href="' . url_for('admin/pacman') . '" class="buttonText" title="Module Manager">Package Manager</a><br/>';
-?>
+
+    <a href="<?php echo url_for('admin/config') ?>" class="linkButton" title="System Settings">System Settings</a><br/><br/>
+    <a href="<?php echo url_for('admin/globals') ?>" class="linkButton" title="System Settings">Global Parameters</a><br/><br/>
+    <a href="<?php echo url_for('admin/pacman') ?>" class="linkButton" title="Module Manager">Package Manager</a><br/><br/>
   </fieldset>
 
     <p class="greyText">This page will allow you to configure your Agasti installation.</p>

@@ -385,7 +385,9 @@ class scenarioActions extends agActions
         $ag_staff_gen->delete();
         $luceneQuery->delete();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
-      } elseif ($request->getParameter('Save')) { //otherwise, we're SAVING/UPDATING
+      }
+//SAVE
+      elseif ($request->getParameter('Save')) { //otherwise, we're SAVING/UPDATING
         $this->poolform = new agStaffPoolForm();
         $this->poolform->scenario_id = $request->getParameter('id');
         $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));

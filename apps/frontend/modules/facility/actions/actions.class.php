@@ -173,10 +173,10 @@ class facilityActions extends agActions
     $this->form = new agFacilityForm($ag_facility);
     $facilityResourceIds  = Doctrine::getTable('agFacilityResource')
             ->createQuery('agFR')
-            ->select('agFR.*, agFRT.*, agFRS.*')
-            ->from('agFacilityResource agFR, agFR.agFacilityResourceType agFRT, agFR.agFacilityResourceStatus')
+            ->select('agFR.*')
+            ->from('agFacilityResource agFR')
             ->where('facility_id = ?', $request->getParameter('id'))
-            ->execute(array(), 'single_value_array');
+            ->execute(array(), 'key_value_array');
 
 
     $this->events = agFacilityHelper::returnActionableResources($facilityResourceIds, FALSE);

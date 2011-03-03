@@ -1,6 +1,8 @@
 <?php
+
 class agScenarioGenerator
 {
+
   /**
    * @method shiftGenerator()
    * Auto-generate shifts from ag_shift_template table to ag_scenario_shift table.
@@ -11,25 +13,25 @@ class agScenarioGenerator
     try {
       // Query for the information to populate scenario shift.
       $scenarioShifts = agDoctrineQuery::create()
-        ->select('st.*, fsr.*')
-        ->from('agShiftTemplate st')
-          ->innerJoin('st.agFacilityResourceType fst')
-          ->innerJoin('fst.agFacilityResource fr')
-          ->innerJoin('fr.agScenarioFacilityResource sfr1')
-          ->innerJoin('sfr1.agScenarioFacilityGroup sfg')
-          ->innerJoin('st.agStaffResourceType srt')
-          ->innerJoin('srt.agFacilityStaffResource fsr')
-          ->innerJoin('fsr.agScenarioFacilityResource sfr2')
-        ->where('sfr1.id = sfr2.id')
-          ->andWhere('st.scenario_id = sfg.scenario_id')
-        ->execute(array(), Doctrine::HYDRATE_SCALAR);
+              ->select('st.*, fsr.*')
+              ->from('agShiftTemplate st')
+              ->innerJoin('st.agFacilityResourceType fst')
+              ->innerJoin('fst.agFacilityResource fr')
+              ->innerJoin('fr.agScenarioFacilityResource sfr1')
+              ->innerJoin('sfr1.agScenarioFacilityGroup sfg')
+              ->innerJoin('st.agStaffResourceType srt')
+              ->innerJoin('srt.agFacilityStaffResource fsr')
+              ->innerJoin('fsr.agScenarioFacilityResource sfr2')
+              ->where('sfr1.id = sfr2.id')
+              ->andWhere('st.scenario_id = sfg.scenario_id')
+              ->execute(array(), Doctrine::HYDRATE_SCALAR);
 
       // Delete all scenario shift records prior to generating scenario shifts
       // from shift template tables.
       $deleteQuery = agDoctrineQuery::create()
-        ->delete()
-        ->from('agScenarioShift')
-        ->execute();
+              ->delete()
+              ->from('agScenarioShift')
+              ->execute();
 
       foreach ($scenarioShifts as $row) {
         $shift_counter = 1;
@@ -37,22 +39,22 @@ class agScenarioGenerator
         $reset_break_length = $row['st_break_length_minutes'];
         $reset_minutes_start_to_facility_activation = $row['st_minutes_start_to_facility_activation'];
 
-        while ( $shift_counter <= $row['st_shift_repeats']+1 ) {
+        while ($shift_counter <= $row['st_shift_repeats'] + 1) {
           // A staff should only be working at one shift and rest while the
           // next following shift starts.  He/she should only be assigned to
           // every other shifts if a staff should work multiple shifts.  Thus,
           // the staff wave is multipled by two.
           $staff_shift_repeat = $row['st_max_staff_repeat_shifts'] * 2;
 
-          if( ($shift_counter != 1) && (($shift_counter % $staff_shift_repeat) == 1) ) {
+          if (($shift_counter != 1) && (($shift_counter % $staff_shift_repeat) == 1)) {
             $staff_wave += 2;
           }
 
           // Release staffs as they finish their last shift.
-          if( (($shift_counter % $staff_shift_repeat) == 0) ||
+          if ((($shift_counter % $staff_shift_repeat) == 0) ||
               (($shift_counter % $staff_shift_repeat) == ($staff_shift_repeat - 1)) ||
               ($shift_counter == ($row['st_shift_repeats'] + 1)) ||
-              ($shift_counter == $row['st_shift_repeats']) ) {
+              ($shift_counter == $row['st_shift_repeats'])) {
             $reset_break_length = 0;
           } else {
             $reset_break_length = $row['st_break_length_minutes'];
@@ -62,17 +64,17 @@ class agScenarioGenerator
 
           $scenarioShift = new agScenarioShift();
           $scenarioShift->set('scenario_facility_resource_id', $row['fsr_scenario_facility_resource_id'])
-                  ->set('staff_resource_type_id', $row['st_staff_resource_type_id'])
-                  ->set('task_id', $row['st_task_id'])
-                  ->set('task_length_minutes', $row['st_task_length_minutes'])
-                  ->set('break_length_minutes', $reset_break_length)
-                  ->set('minutes_start_to_facility_activation', $reset_minutes_start_to_facility_activation)
-                  ->set('minimum_staff', $row['fsr_minimum_staff'])
-                  ->set('maximum_staff', $row['fsr_maximum_staff'])
-                  ->set('staff_wave', $shift_counter&1 ? $staff_wave : $staff_wave+1)
-                  ->set('shift_status_id', $row['st_shift_status_id'])
-                  ->set('deployment_algorithm_id', $row['st_deployment_algorithm_id'])
-                  ->set('originator_id', $row['st_id']);
+              ->set('staff_resource_type_id', $row['st_staff_resource_type_id'])
+              ->set('task_id', $row['st_task_id'])
+              ->set('task_length_minutes', $row['st_task_length_minutes'])
+              ->set('break_length_minutes', $reset_break_length)
+              ->set('minutes_start_to_facility_activation', $reset_minutes_start_to_facility_activation)
+              ->set('minimum_staff', $row['fsr_minimum_staff'])
+              ->set('maximum_staff', $row['fsr_maximum_staff'])
+              ->set('staff_wave', $shift_counter & 1 ? $staff_wave : $staff_wave + 1)
+              ->set('shift_status_id', $row['st_shift_status_id'])
+              ->set('deployment_algorithm_id', $row['st_deployment_algorithm_id'])
+              ->set('originator_id', $row['st_id']);
           $scenarioShift->save();
           $shift_counter++;
         }
@@ -99,30 +101,27 @@ class agScenarioGenerator
       foreach ($scenarioAction->hits as $hit) {
         $staff_id[] = $scenarioAction->results[$hit->model][$hit->pk]['id'];
       }
-      if (count($staff_id)>0){
+      if (count($staff_id) > 0) {
         $staff_resource_dql = agDoctrineQuery::create()
                 ->select('a.id')
                 ->from('agStaffResource a, a.agScenarioStaffResource asr')
-            ->whereIn('a.staff_id', $staff_id)
-            ->andWhere('a.id != asr.staff_resource_id');
-                
+                ->whereIn('a.staff_id', $staff_id)
+                ->andWhereNotIn('a.id', 'asr.staff_resource_id');
+
 
 //            ->andWhere('asr.id is NULL')
 //            ->andWhere('asr.scenario_id =?', $scenario_id)
 //            ->orWhere('asr.scenario_id IS NULL');
-            $staff_resource_sql =  $staff_resource_dql->getSqlQuery();
-            $staff_resources  = $staff_resource_dql->execute(array(), 'single_value_array');
+        $staff_resource_sql = $staff_resource_dql->getSqlQuery();
+        $staff_resources = $staff_resource_dql->execute(array(), 'single_value_array');
       }
 
       return $staff_resources;
-
     } catch (\Doctrine\ORM\ORMException $e) {
       print_r($e);
       return 0;
     }
-
   }
-
 
   /**
    * @method saveStaffPool()
@@ -134,11 +133,19 @@ class agScenarioGenerator
   {
     try {
       foreach ($staff_resources as $staff_resource) {
-        $scenario_staff_resource = new agScenarioStaffResource();
-        $scenario_staff_resource->set('staff_resource_id', $staff_resource)
-            ->set('scenario_id', $scenario_id)
-            ->set('deployment_weight', $search_weight);
-
+        // TODO check to see if staff_resources exist(update), or we are making new
+        //this is a first pass, we should do a bulk check to update/insert as needed
+        $scenario_staff_resource = agDoctrineQuery::create()
+                ->select('asr.id')
+                ->from('agScenarioStaffResource asr')
+                ->where('asr.staff_resource_id = ?', $staff_resource)
+                ->execute();
+        if (count($scenario_staff_resource) < 1) {
+          $scenario_staff_resource = new agScenarioStaffResource();
+          $scenario_staff_resource->set('staff_resource_id', $staff_resource)
+              ->set('scenario_id', $scenario_id)
+              ->set('deployment_weight', $search_weight);
+        }
         $scenario_staff_resource->save();
       }
       return 1;
@@ -147,6 +154,7 @@ class agScenarioGenerator
       return 0;
     }
   }
+
 }
 
 ?>

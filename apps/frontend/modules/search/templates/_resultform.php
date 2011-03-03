@@ -17,7 +17,7 @@
       //  print_r($hit->model);
       //  print_r($results);
 
-        echo get_partial('global/formresult', array(
+        echo get_partial('search/formresult', array(
         'obj' => $results[$hit->model][$hit->pk],
         'pk' => $hit,
         'widget' => $widget)

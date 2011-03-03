@@ -57,11 +57,9 @@ class adminActions extends sfActions
 
 
   }
-  public function executeConfig(sfWebRequest $request)
+
+  public function executeGlobals(sfWebRequest $request)
   {
-    /**
-     * @param sfWebRequest $request is what the user is asking of the server
-     */
     if($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('param')))){
       $this->paramform = new agGlobalParamForm($ag_global_param);
     }
@@ -79,17 +77,24 @@ class adminActions extends sfActions
       $this->forward404Unless($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('deleteparam'))), sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam')));
       $ag_global_param->delete();
 
-      $this->redirect('admin/config');
+      $this->redirect('admin/globalparams');
     }
 
     if($request->getParameter('update'))
     {
       $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
       //$this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
-      
+
       //are we editing or creating a new param
       $this->processParam($request, $this->paramform);
     }
+  }
+  public function executeConfig(sfWebRequest $request)
+  {
+    /**
+     * @param sfWebRequest $request is what the user is asking of the server
+     */
+    
     if($request->getParameter('saveconfig'))
     {
         $file = sfConfig::get('sf_config_dir') . '/config.yml';
@@ -259,7 +264,7 @@ class adminActions extends sfActions
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
-    $this->form = new agAccountForm();
+    $this->form = new sfGuardUserAdminForm();//, $options, $CSRFSecret)agAccountForm();
 
     $this->processForm($request, $this->form);
 
