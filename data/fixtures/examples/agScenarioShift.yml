@@ -11,7 +11,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   2:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
@@ -24,7 +24,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   3:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
@@ -37,7 +37,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   4:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
@@ -50,7 +50,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   5:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
@@ -63,7 +63,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   6:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
@@ -76,7 +76,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   7:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
@@ -89,7 +89,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   8:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
@@ -102,7 +102,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   9:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
@@ -115,7 +115,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   10:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
@@ -128,7 +128,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   11:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
@@ -141,7 +141,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   12:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
@@ -154,7 +154,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   13:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
@@ -167,7 +167,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   14:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
@@ -180,7 +180,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   15:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
@@ -193,7 +193,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   16:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
@@ -206,7 +206,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   17:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
@@ -219,7 +219,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   18:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
@@ -232,7 +232,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   19:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
@@ -245,7 +245,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   20:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
@@ -258,7 +258,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   21:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
@@ -271,7 +271,7 @@ agScenarioShift:
     staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: spe_shft
+    agShiftTemplate: hurrA_ec_spe_shft
   22:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
@@ -284,7 +284,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_nrs_shft
+    agShiftTemplate: hurrA_smn_med_nrs_shft
   23:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
@@ -297,7 +297,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_nrs_shft
+    agShiftTemplate: hurrA_smn_med_nrs_shft
   24:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
@@ -310,7 +310,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_nrs_shft
+    agShiftTemplate: hurrA_smn_med_nrs_shft
   25:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
@@ -323,7 +323,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_nrs_shft
+    agShiftTemplate: hurrA_smn_med_nrs_shft
   26:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
@@ -336,7 +336,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_nrs_shft
+    agShiftTemplate: hurrA_smn_med_nrs_shft
   27:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
@@ -349,7 +349,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_oth_shft
+    agShiftTemplate: hurrA_smn_med_oth_shft
   28:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
@@ -362,7 +362,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_oth_shft
+    agShiftTemplate: hurrA_smn_med_oth_shft
   29:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
@@ -375,7 +375,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_oth_shft
+    agShiftTemplate: hurrA_smn_med_oth_shft
   30:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
@@ -388,7 +388,7 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_oth_shft
+    agShiftTemplate: hurrA_smn_med_oth_shft
   31:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
@@ -401,4 +401,4 @@ agScenarioShift:
     staff_wave: 1
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
-    agShiftTemplate: med_oth_shft
+    agShiftTemplate: hurrA_smn_med_oth_shft
