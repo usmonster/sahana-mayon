@@ -1,0 +1,17 @@
+# Pre-load agScenario table
+
+agScenario:
+  hurricaneA:
+    scenario: Hurricane A
+    description: Hurricane Category A  (Low level impact)
+  hurricaneB: 
+    scenario: Hurricane B
+    description: Hurricane Category B (Moderate level impact)
+  hurricaneC:
+    scenario: Hurricane C
+    description: Hurricane Category C (High level impact)
+  earthquake:
+    scenario: Earthquake
+  plague:
+    scenario: Plague
+
