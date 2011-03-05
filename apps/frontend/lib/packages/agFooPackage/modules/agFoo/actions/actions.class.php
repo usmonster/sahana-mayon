@@ -62,8 +62,15 @@ class agFooActions extends agActions
   public function executeShow(sfWebRequest $request)
   {
 // <-------- CUT HERE -------->
-$agPersonMjAgPersonNameObject = new agPersonMjAgPersonName() ;
-$results = $agPersonMjAgPersonNameObject->getPrimary(array(1,2,3,4,5,6)) ;
+$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
+$obj = agAddress::init($array) ;
+//$results = $obj->getAddressComponentsById() ;
+//$results = $obj->getAddressComponentsByName() ;
+//$results = $obj->getAddressCoordinates() ;
+//$results = $obj->getIncompleteAddresses() ;
+//$results = $obj->getAddressComponentsByLine() ;
+$results = $obj->getAddressAsString() ; 
+//$results = array($obj->addressFormatComponents, $obj->addressFormatRequired);
 print_r($results) ;
 // <-------- CUT HERE -------->
 

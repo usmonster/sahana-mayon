@@ -36,3 +36,9 @@ agGlobalParam:
     agHost: localhost
     datapoint: facility_import_geo_source 
     value: import
+  default_address_standard:
+    id: 8
+    agHost: localhost
+    datapoint: default_address_standard 
+    value: us standard
+

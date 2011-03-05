@@ -1,7 +1,7 @@
 <?php
 
 /** 
- * Contains the BaseagPersonMjAgPersonName class
+ * Extends the BaseagPersonMjAgPersonName class and provides additional functionality
  *
  * PHP Version 5
  *
