@@ -246,7 +246,6 @@ class agAddress extends BaseagAddress
     foreach ($rows as $row)
     {
       $results[$row[0]] = array('latitude' => $row[1], 'longitude' => $row[2]) ;
-      $results[$row[0]]['latitude'] = $row[1] ;
     }
 
     return $results ;
