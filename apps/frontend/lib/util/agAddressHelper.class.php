@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * Provides bulk-address manipulation methods
@@ -20,6 +19,9 @@
  * be returned by the address to string methods.
  * @property boolean $enforceLineNumber Boolean that determines whether or not line numbers will be
  * strictly enforced, sometimes causing blank lines to appear between or before lines with values.
+ * @param boolean $checkValuesForCompleteness Boolean parameter to control whether or not the
+ * addressIsComplete method only searches for keys (FALSE) or checks the actual values for
+ * zero-length strings and/or nulls.
  *
  * @property string $_globalDefaultAddressStandard The value of the default standard address global
  * parameter.
@@ -33,22 +35,24 @@
  * @property integer $_returnStandardId The address standard currently in-use by this class.
  * Defaults to the value provided by the global parameter.
  */
+
 class agAddressHelper
 {
+  public    $addressIds = array(),
+            $lineDelimeter = "\n",
+            $enforceComplete = TRUE,
+            $enforceLineNumber = FALSE,
+            $checkValuesForCompleteness = FALSE ;
 
-  public $addressIds = array(),
-  $lineDelimeter = "\n",
-  $enforceComplete = TRUE,
-  $enforceLineNumber = FALSE;
   protected $_globalDefaultAddressStandard = 'default_address_standard',
-  $_addressGeoType = 'point',
-  $_startingLineNumber = 1,
-  $_addressFormatComponents = array(),
-  $_addressFormatRequired = array(),
-  $_returnStandardId;
+            $_addressGeoType = 'point',
+            $_startingLineNumber = 1,
+            $_addressFormatComponents = array(),
+            $_addressFormatRequired = array(),
+            $_returnStandardId ;
 
   /**
-   * This is the class's constructor which pre-loads the formatting elements according to the default
+   * This is the class's constructor whic pre-loads the formatting elements according to the default
    * return standard.
    */
   public function __construct($addressIds = NULL)
@@ -57,7 +61,7 @@ class agAddressHelper
     $this->setAddressIds($addressIds);
 
     // set our default address standard and pick up the formatting components
-    $this->_setDefaultReturnStandard();
+    $this->_setDefaultReturnStandard() ;
   }
 
   /**
@@ -67,8 +71,8 @@ class agAddressHelper
    */
   public static function init($addressIds = NULL)
   {
-    $class = new agAddress($addressIds);
-    return $class;
+    $class = new agAddress($addressIds) ;
+    return $class ;
   }
 
   /**
@@ -76,14 +80,14 @@ class agAddressHelper
    */
   protected function _setDefaultReturnStandard()
   {
-    $standardName = agGlobal::$param[$this->_globalDefaultAddressStandard];
+    $standardName = agGlobal::$param[$this->_globalDefaultAddressStandard] ;
     $standardId = agDoctrineQuery::create()
-            ->select('as.id')
-            ->from('agAddressStandard as')
-            ->where('as.address_standard = ?', $standardName)
-            ->execute(array(), DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR);
+      ->select('as.id')
+        ->from('agAddressStandard as')
+        ->where('as.address_standard = ?', $standardName)
+        ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
 
-    $this->setReturnStandard($standardId);
+    $this->setReturnStandard($standardId) ;
   }
 
   /**
@@ -91,11 +95,9 @@ class agAddressHelper
    * 
    * @param array $addressIds A single-dimension array of address  id's.
    */
-  public function setAddressIds($addressIds)
+  public function setAddressIds ($addressIds)
   {
-    if (!is_null($addressIds)) {
-      $this->addressIds = $addressIds;
-    }
+    if (! is_null($addressIds)) { $this->addressIds = $addressIds ; }
   }
 
   /**
@@ -105,12 +107,10 @@ class agAddressHelper
    * @param array $addressIds A single-dimension array of address  id's.
    * @return array $addressIds A single-dimension array of address  id's.
    */
-  protected function _getAddressIds($addressIds = NULL)
+  protected function _getAddressIds ($addressIds = NULL)
   {
-    if (is_null($addressIds)) {
-      $addressIds = $this->addressIds;
-    }
-    return $addressIds;
+    if (is_null($addressIds)) { $addressIds = $this->addressIds ; }
+    return $addressIds ;
   }
 
   /**
@@ -120,8 +120,8 @@ class agAddressHelper
    */
   public function setReturnStandard($standardId)
   {
-    $this->_returnStandardId = $standardId;
-    $this->_setAddressFormatComponents();
+    $this->_returnStandardId = $standardId ;
+    $this->_setAddressFormatComponents() ;
   }
 
   /**
@@ -131,44 +131,45 @@ class agAddressHelper
   protected function _setAddressFormatComponents()
   {
     $q = agDoctrineQuery::create()
-            ->select('af.address_element_id')
-            ->addSelect('af.line_sequence')
-            ->addSelect('af.inline_sequence')
-            ->addSelect('af.pre_delimiter')
-            ->addSelect('af.post_delimiter')
-            ->addSelect('af.is_required')
-            ->addSelect('ft.field_type')
-            ->from('agAddressFormat af')
-            ->innerJoin('af.agFieldType ft')
-            ->where('af.address_standard_id = ?', $this->_returnStandardId);
+      ->select('af.address_element_id')
+          ->addSelect('af.line_sequence')
+          ->addSelect('af.inline_sequence')
+          ->addSelect('af.pre_delimiter')
+          ->addSelect('af.post_delimiter')
+          ->addSelect('af.is_required')
+          ->addSelect('ft.field_type')
+        ->from('agAddressFormat af')
+          ->innerJoin('af.agFieldType ft')
+        ->where('af.address_standard_id = ?', $this->_returnStandardId) ;
 
     // here we choose a custom hydration method to allow us to manipulate the results data twice
-    $formatComponents = $q->execute(array(), DOCTRINE_CORE::HYDRATE_NONE);
-    foreach ($formatComponents as $fc) {
+    $formatComponents = $q->execute(array(), DOCTRINE_CORE::HYDRATE_NONE) ;
+    foreach($formatComponents as $fc)
+    {
 
       // pull the end-values into an array so we can walk them quickly for a transform into
       // zero-length strings (a safety measure to ensure pure concatenation)
-      $valueArray = array($fc[0], $fc[3], $fc[4], $fc[5], $fc[6]);
+      $valueArray = array($fc[0], $fc[3], $fc[4], $fc[5], $fc[6]) ;
       array_walk($valueArray,
-          function(&$val, $key) {
-            $val = $val = (is_null($val)) ? '' : $val;
-          }
+        function(&$val, $key) { $val = $val = (is_null($val)) ? '' : $val ; }
       );
 
       // bring it all into an array keyed by line and inline sequence (so we can walk these values)
-      $this->_addressFormatComponents[$fc[1]][$fc[2]] = $valueArray;
+      $this->_addressFormatComponents[$fc[1]][$fc[2]] = $valueArray ;
 
       // check just for the required elements and build a flat array of them for quick diffs
-      if ($fc[5]) {
-        $this->_addressFormatRequired[] = $fc[0];
+      if ($fc[5])
+      {
+        $this->_addressFormatRequired[] = $fc[0] ;
       }
     }
 
     // Because this becomes super important later on, we'll sort the results now so sorting isn't
     // forgetten and/or ends up inside a loop
-    ksort($this->_addressFormatComponents);
-    foreach ($this->_addressFormatComponents as $inlineComponents) {
-      ksort($inlineComponents);
+    ksort($this->_addressFormatComponents) ;
+    foreach ($this->_addressFormatComponents as $inlineComponents)
+    {
+      ksort($inlineComponents) ;
     }
   }
 
@@ -178,21 +179,21 @@ class agAddressHelper
    * @param array $addressIds A single-dimension array of address  id's.
    * @return agDoctrineQuery An extended doctrine query object.
    */
-  protected function _getAddressComponents($addressIds)
+  protected function _getAddressComponents ($addressIds)
   {
     // if no (null) ID's are passed, get the addressId's from the class property
-    $addressIds = $this->_getAddressIds($addressIds);
+    $addressIds = $this->_getAddressIds($addressIds) ;
 
     // construct our base query object
     $q = agDoctrineQuery::create()
-            ->select('amav.address_id')
-            ->addSelect('av.address_element_id')
-            ->addSelect('av.value')
-            ->from('agAddressMjAgAddressValue amav')
-            ->innerJoin('amav.agAddressValue av')
-            ->whereIn('amav.address_id', $addressIds);
+      ->select('amav.address_id')
+          ->addSelect('av.address_element_id')
+          ->addSelect('av.value')
+        ->from('agAddressMjAgAddressValue amav')
+          ->innerJoin('amav.agAddressValue av')
+        ->whereIn('amav.address_id', $addressIds) ;
 
-    return $q;
+    return $q ;
   }
 
   /**
@@ -204,13 +205,13 @@ class agAddressHelper
    * @return array A two dimensional array keyed by address_id, then by address_element_id, and
    * containing the address value.
    */
-  public function getAddressComponentsById($addressIds = NULL)
+  public function getAddressComponentsById ($addressIds = NULL)
   {
     // return our base query object
-    $q = $this->_getAddressComponents($addressIds);
+    $q = $this->_getAddressComponents($addressIds) ;
 
     $results = $q->execute(array(), 'assoc_two_dim');
-    return $results;
+    return $results ;
   }
 
   /**
@@ -221,35 +222,36 @@ class agAddressHelper
    * @return array A two-dimensional associative array, keyed by address id, that has key/value
    * pairs representing latitude and longitude.
    */
-  public function getAddressCoordinates($addressIds = NULL)
+  public function getAddressCoordinates ($addressIds = NULL)
   {
-    $results = array();
-    $addressIds = $this->_getAddressIds($addressIds);
+    $results = array() ;
+    $addressIds = $this->_getAddressIds($addressIds) ;
 
     $q = agDoctrineQuery::create()
-            ->select('a.id')
-            ->addSelect('gc.latitude')
-            ->addSelect('gc.longitude')
-            ->from('agAddress a')
-            ->innerJoin('a.agAddressGeo ag')
-            ->innerJoin('ag.agGeo g')
-            ->innerJoin('g.agGeoType gt')
-            ->innerJoin('g.agGeoFeature gf')
-            ->innerJoin('gf.agGeoCoordinate gc')
-            ->whereIn('a.id', $addressIds)
-            ->andWhere('gt.geo_type = ?', $this->_addressGeoType)
-            ->andWhere(' EXISTS (
+      ->select('a.id')
+          ->addSelect('gc.latitude')
+          ->addSelect('gc.longitude')
+        ->from('agAddress a')
+          ->innerJoin('a.agAddressGeo ag')
+          ->innerJoin('ag.agGeo g')
+          ->innerJoin('g.agGeoType gt')
+          ->innerJoin('g.agGeoFeature gf')
+          ->innerJoin('gf.agGeoCoordinate gc')
+        ->whereIn('a.id', $addressIds)
+          ->andWhere('gt.geo_type = ?', $this->_addressGeoType)
+          ->andWhere(' EXISTS (
             SELECT sq.id
             FROM agGeoFeature sq
             WHERE sq.geo_id = gf.geo_id
-            HAVING MIN(sq.geo_coordinate_order) = gf.geo_coordinate_order)');
+            HAVING MIN(sq.geo_coordinate_order) = gf.geo_coordinate_order)') ;
 
-    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
-    foreach ($rows as $row) {
-      $results[$row[0]] = array('latitude' => $row[1], 'longitude' => $row[2]);
+    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
+    foreach ($rows as $row)
+    {
+      $results[$row[0]] = array('latitude' => $row[1], 'longitude' => $row[2]) ;
     }
 
-    return $results;
+    return $results ;
   }
 
   /**
@@ -264,35 +266,38 @@ class agAddressHelper
    * @return array A two-dimensional associative array, keyed by address_id and the string
    * representation of the address component.
    */
-  public function getAddressComponentsByName($addressIds = NULL, $getGeoCoordinates = TRUE)
+  public function getAddressComponentsByName ($addressIds = NULL, $getGeoCoordinates = TRUE)
   {
-    $results = array();
+    $results = array() ;
 
     // return our base query object
-    $q = $this->_getAddressComponents($addressIds);
+    $q = $this->_getAddressComponents($addressIds) ;
 
     // add the address 'by name' components
     $q->addSelect('ae.address_element')
-        ->innerJoin('av.agAddressElement ae');
-
+      ->innerJoin('av.agAddressElement ae');
+    
     // we have to use our own hydration here to skip over the address_element_id in $row[1]
-    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
-    foreach ($rows as $row) {
-      $results[$row[0]][$row[3]] = $row[2];
+    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
+    foreach ($rows as $row)
+    {
+      $results[$row[0]][$row[3]] = $row[2] ;
     }
 
     // grab our geo coordinates and merge them to the array
     if ($getGeoCoordinates) {
-      $geoCoordinates = $this->getAddressCoordinates($addressIds);
+      $geoCoordinates = $this->getAddressCoordinates($addressIds) ;
 
-      foreach ($results as $key => $value) {
-        if (array_key_exists($key, $geoCoordinates)) {
-          $results[$key] = array_merge($value, $geoCoordinates[$key]);
+      foreach ($results as $key => $value)
+      {
+        if (array_key_exists($key, $geoCoordinates))
+        {
+          $results[$key] = array_merge($value, $geoCoordinates[$key]) ;
         }
       }
     }
 
-    return $results;
+    return $results ;
   }
 
   /**
@@ -303,14 +308,39 @@ class agAddressHelper
    * @param array $addressComponentArray An associative, mono-dimensional array keyed by
    * address_element_id. This is, in-effect, the same output as the second-dimension of
    * getAddressComponentsById (hint, hint, hint...)
+   * @param boolean $checkValues Boolean parameter to control whether or not the method only
+   * searches for keys (FALSE) or checks the actual values for zero-length strings and/or nulls.
+   * Defaults to the class parameter $checkValuesForCompleteness.
    * @return boolean Is it a complete address? True or False. 
    */
-  public function isCompleteAddress($addressComponentArray)
+  public function isCompleteAddress($addressComponentArray, $checkValues = NULL)
   {
-    $diff = array_diff($this->_addressFormatRequired, array_keys($addressComponentArray));
-    $result = empty($diff) ? TRUE : FALSE;
+    // get our class-default checkValues value
+    if (is_null($checkValues)) { $checkValues = $this->checkValuesForCompleteness ; }
 
-    return $result;
+    // loop through the required components
+    foreach ($this->_addressFormatRequired as $reqComponent)
+    {
+      // first check if the component array even has the required component
+      if (! isset($addressComponentArray[$reqComponent]))
+      {
+        return FALSE ;
+      }
+      elseif ($checkValues)
+      {
+        // we only want to do the array search once to satisfy either condition
+        $val = $addressComponentArray[$reqComponent] ;
+
+        // check for null or zero-length
+        if (is_null($val) || $val == '')
+        {
+          return FALSE ;
+        }
+      }
+    }
+
+    // if everything's hunky-dory give it the 10-4
+    return TRUE ;
   }
 
   /**
@@ -323,16 +353,18 @@ class agAddressHelper
    */
   public function getIncompleteAddresses($addressIds = NULL)
   {
-    $results = array();
-    $addresses = $this->getAddressComponentsById($addressIds);
+    $results = array() ;
+    $addresses = $this->getAddressComponentsById($addressIds) ;
 
-    foreach ($addresses as $address => $componentArray) {
-      if (!$this->isCompleteAddress($componentArray)) {
-        $results[] = $address;
+    foreach ($addresses as $address => $componentArray)
+    {
+      if (! $this->isCompleteAddress($componentArray))
+      {
+        $results[] = $address ;
       }
     }
 
-    return $results;
+    return $results ;
   }
 
   /**
@@ -347,51 +379,54 @@ class agAddressHelper
    *
    * @todo This could *perhaps* be turned into some sort of super-efficient walk method
    */
-  public function getAddressComponentsByLine($addressIds = NULL, $enforceComplete = NULL)
+  public function getAddressComponentsByLine ($addressIds = NULL, $enforceComplete = NULL)
   {
     // always a good idea to explicitly declare this
-    $results = array();
+    $results = array() ;
 
     // grab our default if not explicitly passed a completeness parameter
-    if (is_null($enforceComplete)) {
-      $enforceComplete = $this->enforceComplete;
-    }
+    if (is_null($enforceComplete)) { $enforceComplete = $this->enforceComplete ; }
 
     // grab all of our address components by element id
-    $addressComponents = $this->getAddressComponentsById($addressIds);
+    $addressComponents = $this->getAddressComponentsById($addressIds) ;
 
     // start by iterating over the individual addresses
-    foreach ($addressComponents as $addressId => $addrComponents) {
+    foreach ($addressComponents as $addressId => $addrComponents)
+    {
       // test to see if we're only returning complete addresses
-      if (!$enforceComplete || ($enforceComplete && $this->isCompleteAddress($addrComponents))) {
+      if (! $enforceComplete || ($enforceComplete && $this->isCompleteAddress($addrComponents)))
+      {
         // now we traverse our lovely, ordered, format array by line
-        foreach ($this->_addressFormatComponents as $lineId => $lineComponents) {
-          $strLine = '';
+        foreach ($this->_addressFormatComponents as $lineId => $lineComponents)
+        {
+          $strLine = '' ;
 
           // traverse by inline
-          foreach ($lineComponents as $inlineId => $inlineComponents) {
+          foreach ($lineComponents as $inlineId => $inlineComponents)
+          {
             // if we find an address component fitting our spec, we add it in order
-            if (key_exists($inlineComponents[0], $addrComponents)) {
-              $addrValue = $addrComponents[$inlineComponents[0]];
+            if (key_exists($inlineComponents[0], $addrComponents))
+            {
+              $addrValue = $addrComponents[$inlineComponents[0]] ;
 
               // assuming this actually has a value, we concatenate these suckers together
-              if (isset($addrValue)) {
-                $strLine = $strLine . $inlineComponents[1];
-                $strLine = $strLine . $addrValue;
-                $strLine = $strLine . $inlineComponents[2];
+              if (isset($addrValue))
+              {
+                $strLine = $strLine . $inlineComponents[1] ;
+                $strLine = $strLine . $addrValue ;
+                $strLine = $strLine . $inlineComponents[2] ;
               }
             }
           }
 
           // build a results array by address by line, excluding empty lines
-          if ($strLine != '') {
-            $results[$addressId][$lineId] = $strLine;
-          }
+          if ($strLine != '') { $results[$addressId][$lineId] = $strLine ; }
         }
       }
+
     }
 
-    return $results;
+    return $results ;
   }
 
   /**
@@ -407,55 +442,54 @@ class agAddressHelper
    * @return array A mono-dimensional associative array keyed by address_id with the combined
    * address string as a value.
    */
-  public function getAddressAsString($addressIds = NULL, $enforceComplete = NULL,
-                                     $enforceLineNumber = NULL)
+  public function getAddressAsString ($addressIds = NULL,
+                                      $enforceComplete = NULL,
+                                      $enforceLineNumber = NULL)
   {
     // always a good idea to explicitly declare this
-    $results = array();
+    $results = array() ;
 
     // grab our default if not explicitly passed a line number parameter
-    if (is_null($enforceLineNumber)) {
-      $enforceLineNumber = $this->enforceLineNumber;
-    }
+    if (is_null($enforceLineNumber)) { $enforceLineNumber = $this->enforceLineNumber ; }
 
     // now we grab all of our addresses and return them in an array sorted per-line
-    $addresses = $this->getAddressComponentsByLine($addressIds, $enforceComplete);
+    $addresses = $this->getAddressComponentsByLine($addressIds, $enforceComplete) ;
 
     // start by iterating over the individual addresses
-    foreach ($addresses as $addressId => $addrLines) {
-      $strAddr = '';
-      $line = $this->_startingLineNumber;
+    foreach ($addresses as $addressId => $addrLines)
+    {
+      $strAddr = '' ;
+      $line = $this->_startingLineNumber ;
 
       // sort the address lines to make sure we can iterate over them safely
-      ksort($addrLines);
+      ksort($addrLines) ;
 
       // grab the last key so as not to add a delimeter
-      $lineIds = array_keys($addrLines);
-      $lastLineId = array_pop($lineIds);
+      $lineIds = array_keys($addrLines) ;
+      $lastLineId = array_pop($lineIds) ;
 
       // now iterate per-line
-      foreach ($addrLines as $lineId => $lineStr) {
+      foreach ($addrLines as $lineId => $lineStr)
+      {
         // if enforcing line-numbers, append additional line delimeters until $lineId and $line match
-        while ($enforceLineNumber && $line < $lineId) {
-          $strAddr = $strAddr . $this->lineDelimeter;
-          $line++;
+        while ($enforceLineNumber && $line < $lineId)
+        {
+          $strAddr = $strAddr . $this->lineDelimeter ;
+          $line++ ;
         }
 
         // append our address string
-        $strAddr = $strAddr . $lineStr;
+        $strAddr = $strAddr . $lineStr ;
 
         // append a delimeter if one needs to be added
-        if ($lineId != $lastLineId) {
-          $strAddr = $strAddr . $this->lineDelimeter;
-        }
-        $line++;
+        if ($lineId != $lastLineId) { $strAddr = $strAddr . $this->lineDelimeter ; }
+        $line++ ;
       }
 
       // add it to our results array
-      $results[$addressId] = $strAddr;
+      $results[$addressId] = $strAddr ;
     }
 
-    return $results;
+    return $results ;
   }
-
 }
