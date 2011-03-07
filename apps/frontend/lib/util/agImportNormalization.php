@@ -28,8 +28,8 @@ class agImportNormalization
   private function defineStatusTypes()
   {
     $this->geoType = 'point';
-    $this->facilityResourceTypeIds = agFacilityHelper::returnFacilityResourceAbbrTypeIds(TRUE);
-    $this->geoTypeId = agFacilityHelper::returnGeoTypeIds(FALSE, $this->geoType);
+    $this->facilityResourceTypeIds = array_flip(agFacilityHelper::getFacilityResourceAbbrTypeIds());
+    $this->geoTypeId = agFacilityHelper::getGeoTypeIds($this->geoType);
   }
 
   /**
@@ -100,6 +100,7 @@ class agImportNormalization
       $phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
       $addressStandard = 'us standard';
       $geoType = $this->geoType;
+      agGlobal::initGlobal();
       $geoSourceParamVal = agGlobal::$param['facility_import_geo_source'];
       $geoMatchScore = 'good';
 
@@ -193,7 +194,7 @@ class agImportNormalization
         $facility_group = $record['facility_group'];
         $facility_group_type = $record['facility_group_type'];
         $facility_group_allocation_status = $record['facility_group_allocation_status'];
-        $facility_group_activation_sequence = $record['facility_group_activation_status'];
+        $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
         $email = $record['work_email'];
         $phone = $record['work_phone'];
         $fullAddress = array('line 1' => $record['street_1'],

@@ -16,9 +16,9 @@
 class agFacilityHelper
 {
   protected static $affectScenariosGlobal = 'facility_resource_status_affects_scenarios',
-    $affectEventsGlobal = 'facility_resource_status_affects_events',
-    $resourceEnabledGlobal = 'facility_resource_enabled_status',
-    $resourceDisabledGlobal = 'facility_resource_disabled_status' ;
+  $affectEventsGlobal = 'facility_resource_status_affects_events',
+  $resourceEnabledGlobal = 'facility_resource_enabled_status',
+  $resourceDisabledGlobal = 'facility_resource_disabled_status';
 
   /**
    * @method facilityGeneralInfo()
@@ -27,47 +27,46 @@ class agFacilityHelper
    * @param string $packageType Optional.  Currently can pass in scenario,
    *                            event, or NULL.
    */
-//  public static function facilityGeneralInfo($facilityIds = array(), $scenarioId = null)
   public static function facilityGeneralInfo($packageType = NULL)
   {
     try {
       $facilityQuery = agDoctrineQuery::create()
-              ->select('f.id, f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
-              ->addSelect('e.id, s.id')
-              ->from('agFacility f')
-              ->innerJoin('f.agSite s')
-              ->innerJoin('s.agEntity e')
-              ->leftJoin('f.agFacilityResource fr')
-              ->leftJoin('fr.agFacilityResourceType frt')
-              ->leftJoin('fr.agFacilityResourceStatus frs')
-              ->orderBy('f.id');
+                      ->select('f.id, f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
+                      ->addSelect('e.id, s.id')
+                      ->from('agFacility f')
+                      ->innerJoin('f.agSite s')
+                      ->innerJoin('s.agEntity e')
+                      ->leftJoin('f.agFacilityResource fr')
+                      ->leftJoin('fr.agFacilityResourceType frt')
+                      ->leftJoin('fr.agFacilityResourceStatus frs')
+                      ->orderBy('f.id');
 
       if (isset($packageType)) {
         switch (strtolower($packageType)) {
           case "scenario":
             $facilityQuery->addSelect('sfr.id, sfr.activation_sequence, fras.facility_resource_allocation_status')
-                ->addSelect('sfg.scenario_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, sfg.activation_sequence')
-                ->leftJoin('fr.agScenarioFacilityResource sfr')
-                ->leftJoin('sfr.agFacilityResourceAllocationStatus fras')
-                ->leftJoin('sfr.agScenarioFacilityGroup sfg')
-                ->leftJoin('sfg.agFacilityGroupType fgt')
-                ->leftJoin('sfg.agFacilityGroupAllocationStatus fgas')
-                ->where('sfr.id IS NOT NULL')
-                ->addOrderBy('sfg.id, sfg.activation_sequence, sfr.activation_sequence');
+                    ->addSelect('sfg.scenario_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, sfg.activation_sequence')
+                    ->leftJoin('fr.agScenarioFacilityResource sfr')
+                    ->leftJoin('sfr.agFacilityResourceAllocationStatus fras')
+                    ->leftJoin('sfr.agScenarioFacilityGroup sfg')
+                    ->leftJoin('sfg.agFacilityGroupType fgt')
+                    ->leftJoin('sfg.agFacilityGroupAllocationStatus fgas')
+                    ->where('sfr.id IS NOT NULL')
+                    ->addOrderBy('sfg.id, sfg.activation_sequence, sfr.activation_sequence');
             break;
           case "event":
             $facilityQuery->addSelect('efr.id, efr.activation_sequence, fras.facility_resource_allocation_status')
-                ->addSelect('efg.event_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, efg.activation_sequence')
-                ->addSelect('efrs.id, efgs.id')
-                ->leftJoin('fr.agEventFacilityResource efr')
-                ->leftJoin('efr.agEventFacilityResourceStatus efrs')
-                ->leftJoin('efrs.agFacilityResourceAllocationStatus fras')
-                ->leftJoin('efr.agEventFacilityGroup efg')
-                ->leftJoin('efg.agFacilityGroupType fgt')
-                ->leftJoin('efg.agEventFacilityGroupStatus efgs')
-                ->leftJoin('efgs.agFacilityGroupAllocationStatus fgas')
-                ->where('efr.id IS NOT NULL')
-                ->addOrderBy('efg.id, efg.activation_sequence, efr.activation_sequence');
+                    ->addSelect('efg.event_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, efg.activation_sequence')
+                    ->addSelect('efrs.id, efgs.id')
+                    ->leftJoin('fr.agEventFacilityResource efr')
+                    ->leftJoin('efr.agEventFacilityResourceStatus efrs')
+                    ->leftJoin('efrs.agFacilityResourceAllocationStatus fras')
+                    ->leftJoin('efr.agEventFacilityGroup efg')
+                    ->leftJoin('efg.agFacilityGroupType fgt')
+                    ->leftJoin('efg.agEventFacilityGroupStatus efgs')
+                    ->leftJoin('efgs.agFacilityGroupAllocationStatus fgas')
+                    ->where('efr.id IS NOT NULL')
+                    ->addOrderBy('efg.id, efg.activation_sequence, efr.activation_sequence');
             break;
           default:
             // Do nothing.
@@ -88,21 +87,21 @@ class agFacilityHelper
   {
     try {
       $facilityQuery = agDoctrineQuery::create()
-              ->select('f.id, eac.entity_id, act.address_contact_type, eac.address_id, eac.priority')
-              ->addSelect('ae.address_element, av.value')
-              ->addSelect('s.id, e.id, eac.id, a.id, aav.id')
-              ->from('agFacility f')
-              ->innerJoin('f.agSite s')
-              ->innerJoin('s.agEntity e')
-              ->leftJoin('e.agEntityAddressContact eac')
-              ->innerJoin('eac.agAddressContactType act')
-              ->innerJoin('eac.agAddress a')
-              ->leftJoin('a.agAddressMjAgAddressValue aav')
-              ->leftJoin('aav.agAddressValue av')
-              ->leftJoin('av.agAddressElement ae')
-              ->innerJoin('ae.agAddressFormat af')
-              ->innerJoin('af.agAddressStandard as')
-              ->where('as.address_standard=?', $addressStandard);
+                      ->select('f.id, eac.entity_id, act.address_contact_type, eac.address_id, eac.priority')
+                      ->addSelect('ae.address_element, av.value')
+                      ->addSelect('s.id, e.id, eac.id, a.id, aav.id')
+                      ->from('agFacility f')
+                      ->innerJoin('f.agSite s')
+                      ->innerJoin('s.agEntity e')
+                      ->leftJoin('e.agEntityAddressContact eac')
+                      ->innerJoin('eac.agAddressContactType act')
+                      ->innerJoin('eac.agAddress a')
+                      ->leftJoin('a.agAddressMjAgAddressValue aav')
+                      ->leftJoin('aav.agAddressValue av')
+                      ->leftJoin('av.agAddressElement ae')
+                      ->innerJoin('ae.agAddressFormat af')
+                      ->innerJoin('af.agAddressStandard as')
+                      ->where('as.address_standard=?', $addressStandard);
 
       if (isset($type)) {
         $facilityQuery->addWhere('act.address_contact_type=?', $type);
@@ -158,22 +157,22 @@ class agFacilityHelper
   {
     try {
       $facilityQuery = agDoctrineQuery::create()
-              ->select('f.id, act.address_contact_type, eac.address_id, eac.priority')
-              ->addSelect('gc.latitude, gc.longitude')
-              ->addSelect('s.id, e.id, eac.id, a.id, ag.id, g.id, gf.id')
-              ->from('agFacility f')
-              ->innerJoin('f.agSite s')
-              ->innerJoin('s.agEntity e')
-              ->innerJoin('e.agEntityAddressContact eac')
-              ->innerJoin('eac.agAddressContactType act')
-              ->innerJoin('eac.agAddress a')
-              ->innerJoin('a.agAddressGeo ag')
-              ->innerJoin('ag.agGeo g')
-              ->innerJoin('g.agGeoSource gs')
-              ->innerJoin('g.agGeoFeature gf')
-              ->innerJoin('gf.agGeoCoordinate gc')
-              ->groupBy('f.id, act.address_contact_type, eac.address_id')
-              ->orderBy('f.id, eac.address_id, eac.address_contact_type_id, eac.priority');
+                      ->select('f.id, act.address_contact_type, eac.address_id, eac.priority')
+                      ->addSelect('gc.latitude, gc.longitude')
+                      ->addSelect('s.id, e.id, eac.id, a.id, ag.id, g.id, gf.id')
+                      ->from('agFacility f')
+                      ->innerJoin('f.agSite s')
+                      ->innerJoin('s.agEntity e')
+                      ->innerJoin('e.agEntityAddressContact eac')
+                      ->innerJoin('eac.agAddressContactType act')
+                      ->innerJoin('eac.agAddress a')
+                      ->innerJoin('a.agAddressGeo ag')
+                      ->innerJoin('ag.agGeo g')
+                      ->innerJoin('g.agGeoSource gs')
+                      ->innerJoin('g.agGeoFeature gf')
+                      ->innerJoin('gf.agGeoCoordinate gc')
+                      ->groupBy('f.id, act.address_contact_type, eac.address_id')
+                      ->orderBy('f.id, eac.address_id, eac.address_contact_type_id, eac.priority');
 
       if (isset($type)) {
         $facilityQuery->where('act.address_contact_type=?', $type);
@@ -206,14 +205,14 @@ class agFacilityHelper
     try {
       $initialWhereClause = TRUE;
       $facilityQuery = agDoctrineQuery::create()
-              ->select('f.id, ect.email_contact_type, ec.email_contact, eec.priority')
-              ->addSelect('s.id, e.id, eec.id')
-              ->from('agFacility f')
-              ->innerJoin('f.agSite s')
-              ->innerJoin('s.agEntity e')
-              ->innerJoin('e.agEntityEmailContact eec')
-              ->innerJoin('eec.agEmailContact ec')
-              ->innerJoin('eec.agEmailContactType ect');
+                      ->select('f.id, ect.email_contact_type, ec.email_contact, eec.priority')
+                      ->addSelect('s.id, e.id, eec.id')
+                      ->from('agFacility f')
+                      ->innerJoin('f.agSite s')
+                      ->innerJoin('s.agEntity e')
+                      ->innerJoin('e.agEntityEmailContact eec')
+                      ->innerJoin('eec.agEmailContact ec')
+                      ->innerJoin('eec.agEmailContactType ect');
 
       if (isset($type)) {
         if ($initialWhereClause) {
@@ -270,14 +269,14 @@ class agFacilityHelper
     try {
       $initialWhereClause = TRUE;
       $facilityQuery = agDoctrineQuery::create()
-              ->select('f.id, pct.phone_contact_type, pc.phone_contact, epc.priority')
-              ->addSelect('s.id, e.id, epc.id')
-              ->from('agFacility f')
-              ->innerJoin('f.agSite s')
-              ->innerJoin('s.agEntity e')
-              ->innerJoin('e.agEntityPhoneContact epc')
-              ->innerJoin('epc.agPhoneContact pc')
-              ->innerJoin('epc.agPhoneContactType pct');
+                      ->select('f.id, pct.phone_contact_type, pc.phone_contact, epc.priority')
+                      ->addSelect('s.id, e.id, epc.id')
+                      ->from('agFacility f')
+                      ->innerJoin('f.agSite s')
+                      ->innerJoin('s.agEntity e')
+                      ->innerJoin('e.agEntityPhoneContact epc')
+                      ->innerJoin('epc.agPhoneContact pc')
+                      ->innerJoin('epc.agPhoneContactType pct');
 
       if (isset($type)) {
         if ($initialWhereClause) {
@@ -333,10 +332,10 @@ class agFacilityHelper
   {
     try {
       $facilityQuery = agDoctrineQuery::create()
-              ->select('fstf.scenario_facility_resource_id, srt.staff_resource_type, fstf.minimum_staff, fstf.maximum_staff')
-              ->from('agFacilityStaffResource fstf')
-              ->innerJoin('fstf.agStaffResourceType srt')
-              ->orderBy('fstf.scenario_facility_resource_id, srt.staff_resource_type');
+                      ->select('fstf.scenario_facility_resource_id, srt.staff_resource_type, fstf.minimum_staff, fstf.maximum_staff')
+                      ->from('agFacilityStaffResource fstf')
+                      ->innerJoin('fstf.agStaffResourceType srt')
+                      ->orderBy('fstf.scenario_facility_resource_id, srt.staff_resource_type');
 
       $facilityQueryString = $facilityQuery->getSqlQuery();
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
@@ -368,10 +367,10 @@ class agFacilityHelper
   public static function returnFacilityResourceAllocationStatusId($allocationStatusString)
   {
     $statusId = agDoctrineQuery::create()
-            ->select('fras.id')
-            ->from('agFacilityResourceAllocationStatus fras')
-            ->where('fras.facility_resource_allocation_status = ?', $allocationStatusString)
-            ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+                    ->select('fras.id')
+                    ->from('agFacilityResourceAllocationStatus fras')
+                    ->where('fras.facility_resource_allocation_status = ?', $allocationStatusString)
+                    ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     return $statusId;
   }
@@ -383,19 +382,21 @@ class agFacilityHelper
    * @param boolean $inverse Whether or not to apply an inverse match. Defaults to FALSE.
    * @return boolean The boolean value for available status.
    */
-  public static function getFacilityResourceAvailableStatus($facilityResourceStatusId, $inverse = FALSE )
+  public static function getFacilityResourceAvailableStatus($facilityResourceStatusId, $inverse = FALSE)
   {
     // pick up the available / unavailable boolean being passed
     $result = agDoctrineQuery::create()
-            ->select('frs.is_available')
-            ->from('agFacilityResourceStatus frs')
-            ->where('frs.id = ?', $facilityResourceStatusId)
-            ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-    
-    // return an inverse match if preferred
-    if ($inverse) { $result = ($result) ? FALSE : TRUE ; }
+                    ->select('frs.is_available')
+                    ->from('agFacilityResourceStatus frs')
+                    ->where('frs.id = ?', $facilityResourceStatusId)
+                    ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-    return $result ;
+    // return an inverse match if preferred
+    if ($inverse) {
+      $result = ($result) ? FALSE : TRUE;
+    }
+
+    return $result;
   }
 
   /**
@@ -407,119 +408,101 @@ class agFacilityHelper
    */
   public static function returnActionableResources($facilityResourceIds, $facilityResourceStatusId)
   {
-    $useInverse = TRUE ;
+    $useInverse = TRUE;
 
     // get the current facility resource statuses
     $currentStatusQuery = agDoctrineQuery::create()
-            ->select('fr.id')
-              ->addSelect('frs.is_available')
-            ->from('agFacilityResource fr')
-              ->innerJoin('fr.agFacilityResourceStatus frs')
-            ->whereIn('fr.id', $facilityResourceIds);
+                    ->select('fr.id')
+                    ->addSelect('frs.is_available')
+                    ->from('agFacilityResource fr')
+                    ->innerJoin('fr.agFacilityResourceStatus frs')
+                    ->whereIn('fr.id', $facilityResourceIds);
     $facilityResourceStatuses = $currentStatusQuery->execute(array(), 'key_value_pair');
 
     // get the inverse of the passed available status
-    $inverseMatch = self::getFacilityResourceAvailableStatus($facilityResourceStatusId, $useInverse) ;
+    $inverseMatch = self::getFacilityResourceAvailableStatus($facilityResourceStatusId, $useInverse);
 
     // find only those resources that are negative matches
     $actionableResources = array_keys($facilityResourceStatuses, $inverseMatch);
 
-    $results = $actionableResources ;
-    return $results ;
+    $results = $actionableResources;
+    return $results;
   }
 
-  public static function returnFacilityResourceAbbrTypeIds($inverse = FALSE, $facilityResourceType = NULL)
+  /**
+   * Returns the id of the facility resource type either in an associate array or an integer.
+   * @param string $facilityResourceAbbrType Optional.  Pass in a specific abbreviated facility
+   * resource type to retrieve only the id of that instant.  If none pass in, retrieve the ids for
+   * all geo type.
+   * @return array|integer Returns either an associative array,
+   * array(id => facility resource abbr type), for all types if no param is passed.
+   * Otherwise, just the id of the pass-in param.
+   */
+  public static function getFacilityResourceAbbrTypeIds($facilityResourceAbbrType = NULL)
   {
-      $facilityResourceTypeIds = agDoctrineQuery::create()
-              ->from('agFacilityResourceType frt');
+    $facilityResourceTypeIds = agDoctrineQuery::create()
+                    ->from('agFacilityResourceType frt');
 
-      if (empty($facilityResourceType)) {
-        $facilityResourceTypeIds = $facilityResourceTypeIds->select('frt.id, frt.facility_resource_type_abbr')
-                ->execute(array(), 'key_value_pair');
-        if ($inverse) {
-          $facilityResourceTypeIds = array_flip($facilityResourceTypeIds);
-        }
-      } else {
-        $faciltiyResourceTypeIds = $faciltiyResourceTypeIds->select('frt.id')
-                ->where('facility_resource_type = ?', $facilityResourceType)
-                ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-      }
+    if (empty($facilityResourceAbbrType)) {
+      $facilityResourceTypeIds = $facilityResourceTypeIds->select('frt.id, frt.facility_resource_type_abbr')
+                      ->execute(array(), 'key_value_pair');
+    } else {
+      $faciltiyResourceTypeIds = $faciltiyResourceTypeIds->select('frt.id')
+                      ->where('facility_resource_type = ?', $facilityResourceAbbrType)
+                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
 
-      return $facilityResourceTypeIds;
+    return $facilityResourceTypeIds;
   }
 
-//      $facilityResourceStatusIds = agDoctrineQuery::create()
-//              ->select('frs.facility_resource_status, frs.id')
-//              ->from('agFacilityResourceStatus frs')
-//              ->execute(array(), 'key_value_pair');
-//      $facilityResourceAllocationStatusIds = agDoctrineQuery::create()
-//              ->select('facility_resource_allocation_status, id')
-//              ->from('agFacilityResourceAllocationStatus')
-//              ->execute(array(), 'key_value_pair');
-//      $facilityGroupTypeIds = agDoctrineQuery::create()
-//              ->select('facility_group_type, id')
-//              ->from('agFacilityGroupType')
-//              ->execute(array(), 'key_value_pair');
-//      $facilityGroupAllocationStatusIds = agDoctrineQuery::create()
-//              ->select('facility_group_allocation_status, id')
-//              ->from('agFacilitygroupAllocationStatus')
-//              ->execute(array(), 'key_value_pair');
-//      $emailContactTypeIds = agDoctrineQuery::create()
-//              ->select('email_contact_type, id')
-//              ->from('agEmailContactType')
-//              ->execute(array(), 'key_value_pair');
-//      $phoneContactTypeIds = agDoctrineQuery::create()
-//              ->select('phone_contact_type, id')
-//              ->from('agPhoneContactType')
-//              ->execute(array(), 'key_value_pair');
-//      $phoneFormatTypeIds = agDoctrineQuery::create()
-//              ->select('pft.phone_format_type, pf.id')
-//              ->from('agPhoneFormatType pft')
-//              ->innerJoin('pft.agPhoneFormat pf')
-//              ->whereIn('phone_format_type', $phoneFormatTypes)
-//              ->execute(array(), 'key_value_pair');
-//      $addressContactTypeIds = agDoctrineQuery::create()
-//              ->select('address_contact_type, id')
-//              ->from('agAddressContactType')
-//              ->execute(array(), 'key_value_pair');
-//      $staffResourceTypeIds = agDoctrineQuery::create()
-//              ->select('staff_resource_type, id')
-//              ->from('agStaffResourceType')
-//              ->execute(array(), 'key_value_pair');
-//      $addressStandardObj = agDoctrineQuery::create()
-//              ->from('agAddressStandard')
-//              ->where('address_standard = ?', $addressStandard)
-//              ->fetchOne();
-//
-//      $geoSourceId = agDoctrineQuery::create()
-//                      ->select('id')
-//                      ->from('agGeoSource')
-//                      ->where('geo_source = ?', $geoSourceParamVal)
-//                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-//      $geoMatchSourceId = agDoctrineQuery::create()
-//                      ->select('id')
-//                      ->from('agGeoMatchScore')
-//                      ->where('geo_match_score = ?', $geoMatchScore)
-//                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-  public static function returnGeoTypeIds($inverse = FALSE, $geoType = NULL)
+  /**
+   *
+   * @param string $facilityResourceStatus Optional.  Pass in a specific facility resource status 
+   * to retrieve only the id of that instant.  If none pass in, retrieve the ids for
+   * all geo type.
+   * @return array|integer Returns either an associative array,
+   * array(id => facility resource abbr type), for all types if no param is passed.
+   * Otherwise, just the id of the pass-in param.
+   */
+  public static function getFacilityResourceStatusIds($facilityResourceStatus = NULL)
   {
-      $geoTypeIds = agDoctrineQuery::create()
-                      ->from('agGeoType');
-      
-      if (empty($geoType)) {
-        $geoTypeIds = $geoTypeIds->select('id, geo_type')
-                ->execute(array(), 'key_value_pair');
-        if ($inverse) {
-          $geoTypeIds = array_flip($geoTypeIds);
-        }
-      } else {
-        $geoTypeIds = $geoTypeIds->select('id')
-                ->where('geo_type = ?', $geoType)
-                ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-      }
-      return $geoTypeIds;
+    $facilityResourceStatusIds = agDoctrineQuery::create()
+                    ->from('agFacilityResourceStatus');
+
+    if (empty($facilityResourceStatus)) {
+      $facilityResourceStatusIds->select('facility_resource_status, id')
+              ->execute(array(), 'key_value_pair');
+    } else {
+      $facilityResourceStatusIds->select('id')
+              ->where('facility_resource_status = ?', $facilityResourceStatus)
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
+
+    return $facilityResourceStatusIds;
   }
 
+  /**
+   * Returns the id of the geo type either in an associate array or an integer.
+   * @param string $geoType Optional.  Pass in a specific geo type to retrieve only the id of that
+   * instant.  If none pass in, retrieve the ids for all geo type.
+   * @return array|integer Returns either an associate array, array(id => geo type), for all types or
+   * returns only the id for the specified pass-in geo type param.
+   */
+  public static function getGeoTypeIds($geoType = NULL)
+  {
+    $geoTypeIds = agDoctrineQuery::create()
+                    ->from('agGeoType');
+
+    if (empty($geoType)) {
+      $geoTypeIds = $geoTypeIds->select('id, geo_type')
+                      ->execute(array(), 'key_value_pair');
+    } else {
+      $geoTypeIds = $geoTypeIds->select('id')
+                      ->where('geo_type = ?', $geoType)
+                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
+    return $geoTypeIds;
+  }
 
   /**
    * Method to set facility resource status specifically used as part of the
@@ -536,29 +519,25 @@ class agFacilityHelper
    * @param Doctrine_Connection $conn An optional Doctrine connection object.
    * @return array An array containing the number of operations performed. 
    */
-  public static function setFacilityResourceStatusOnUpdate($facilityResourceIds,
-                                                           $facilityResourceStatusId,
-                                                           $affectScenarios = NULL,
-                                                           $affectEvents = NULL,
-                                                           Doctrine_Connection $conn = NULL)
+  public static function setFacilityResourceStatusOnUpdate($facilityResourceIds, $facilityResourceStatusId, $affectScenarios = NULL, $affectEvents = NULL, Doctrine_Connection $conn = NULL)
   {
-    $useInverse = TRUE ;
+    $useInverse = TRUE;
     $operations = array();
 
     // get just the ones that are changing (don't want to have spurious expensive operations!)
     $actionableResources = self::returnActionableResources($facilityResourceIds, $facilityResourceStatusId);
 
     // pick up our available status
-    $available = self::getFacilityResourceAvailableStatus($facilityResourceStatusId, $useInverse) ;
+    $available = self::getFacilityResourceAvailableStatus($facilityResourceStatusId, $useInverse);
 
     // as a listener this gets fired a lot so we don't even do the rest without check if we have to
-    if (! empty($actionableResources)) {
+    if (!empty($actionableResources)) {
       // set our default variables to determine if scenarios or events are affected
       if (is_null($affectScenarios)) {
-        $affectScenarios = agGlobal::returnBool(self::$affectScenariosGlobal) ;
+        $affectScenarios = agGlobal::returnBool(self::$affectScenariosGlobal);
       }
       if (is_null($affectEvents)) {
-        $affectEvents = agGlobal::returnBool(self::$affectEventsGlobal) ;
+        $affectEvents = agGlobal::returnBool(self::$affectEventsGlobal);
       }
 
       // only take action if at least one of these is affected
@@ -579,9 +558,9 @@ class agFacilityHelper
           if ($affectScenarios) {
             // collect all scenarios to be affected
             $scenarioIds = agDoctrineQuery::create()
-                    ->select('s.id')
-                    ->from('agScenario s')
-                    ->execute(array(), 'single_value_array');
+                            ->select('s.id')
+                            ->from('agScenario s')
+                            ->execute(array(), 'single_value_array');
 
             // apply changes to all scenarios
             $scenarioOperations = agScenarioFacilityHelper::setScenarioFacilityResourceAllocationStatus($scenarioIds, $actionableResources, $allocationStatusId);
