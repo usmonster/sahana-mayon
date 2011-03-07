@@ -56,7 +56,7 @@ class agAddress extends BaseagAddress
     parent::construct() ;
 
     // set our default address standard and pick up the formatting components
-    $this->_setDefaultReturnStandard() ;
+    //$this->_setDefaultReturnStandard() ;
   }
 
   /**

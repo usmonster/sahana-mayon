@@ -238,7 +238,7 @@ class eventActions extends agActions
       }
     }
 
-    $fac_rec_query = Doctrine::getTable('')->createQuery($list)->execute();
+//    $fac_rec_query = Doctrine::getTable('')->createQuery($list)->execute();
 
     $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')), // 'class' => 'filter')),
       'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization')),//, 'class' => 'filter'))

@@ -264,7 +264,7 @@ class adminActions extends sfActions
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
-    $this->form = new sfGuardUserAdminForm();//, $options, $CSRFSecret)agAccountForm();
+    $this->form = new agAccountForm();//, $options, $CSRFSecret)agAccountForm();
 
     $this->processForm($request, $this->form);
 
@@ -277,7 +277,7 @@ class adminActions extends sfActions
 */
   public function executeEdit(sfWebRequest $request)
   {
-    $this->forward404Unless($ag_account = Doctrine::getTable('agAccount')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
+    $this->forward404Unless($ag_account = Doctrine::getTable('sfGuardUser')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
     $this->form = new agAccountForm($ag_account);
   }
 /**

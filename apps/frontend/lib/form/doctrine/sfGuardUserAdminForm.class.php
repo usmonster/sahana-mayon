@@ -24,15 +24,4 @@ class sfGuardUserAdminForm extends BasesfGuardUserAdminForm
 * @todo add description of function above and details below
 * @see sfForm
 */
-  public function configure()
-  {
-    parent::configure();
-    unset(
-      $this['username'],
-      $this['algorithm'],
-      $this['groups_list'],
-      $this['permissions_list'],
-      $this['is_active']
-    );
-  }
 }
