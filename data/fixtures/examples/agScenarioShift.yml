@@ -1,5 +1,9 @@
+  # @Todo - need UORC
 agScenarioShift:
-  1:
+  # Hurricane A, Facility 11, Evacuation Center, Specialist
+ # Needs 3 days after zero hour
+ # Needs to alternate staff wave
+  HurrA_11_ec_spec_S1:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
     agTask: hurricane_staffing
@@ -12,7 +16,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
-  2:
+  HurrA_11_ec_spec_S2:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
     agTask: hurricane_staffing
@@ -21,11 +25,11 @@ agScenarioShift:
     minutes_start_to_facility_activation: -3600
     minimum_staff: 8
     maximum_staff: 15
-    staff_wave: 1
+    staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
-  3:
+  HurrA_11_ec_spec_S3:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
     agTask: hurricane_staffing
@@ -38,7 +42,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
-  4:
+  HurrA_11_ec_spec_S4:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
     agTask: hurricane_staffing
@@ -47,11 +51,11 @@ agScenarioShift:
     minutes_start_to_facility_activation: -2160
     minimum_staff: 8
     maximum_staff: 15
-    staff_wave: 1
+    staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
-  5:
+  HurrA_11_ec_spec_S5:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
     agTask: hurricane_staffing
@@ -60,11 +64,11 @@ agScenarioShift:
     minutes_start_to_facility_activation: -1440
     minimum_staff: 8
     maximum_staff: 15
-    staff_wave: 2
+    staff_wave: 3
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
-  6:
+  HurrA_11_ec_spec_S6:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
     agTask: hurricane_staffing
@@ -73,11 +77,11 @@ agScenarioShift:
     minutes_start_to_facility_activation: -720
     minimum_staff: 8
     maximum_staff: 15
-    staff_wave: 2
+    staff_wave: 4
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
-  7:
+  HurrA_11_ec_spec_S7:
     agScenarioFacilityResource: hurrA01_11_ec
     agStaffResourceType: spe
     agTask: hurricane_staffing
@@ -86,10 +90,11 @@ agScenarioShift:
     minutes_start_to_facility_activation: 0
     minimum_staff: 8
     maximum_staff: 15
-    staff_wave: 2
+    staff_wave: 3
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
+    # Hurricane A, Facility 14, Evacuation Center, Specialist
   8:
     agScenarioFacilityResource: hurrA02_14_ec
     agStaffResourceType: spe
@@ -181,6 +186,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
+    # Hurricane A, Facility 17, Evacuation Center, Specialist
   15:
     agScenarioFacilityResource: hurrA03_17_ec
     agStaffResourceType: spe
@@ -272,7 +278,8 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_ec_spe_shft
-  22:
+    # Hurricane A, Facility 11, Special Medical Needs, Nurse
+  HurrA_11_smn_nrs_S1:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
     agTask: hurricane_staffing
@@ -285,7 +292,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_nrs_shft
-  23:
+  HurrA_11_smn_nrs_S2:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
     agTask: hurricane_staffing
@@ -294,11 +301,11 @@ agScenarioShift:
     minutes_start_to_facility_activation: -360
     minimum_staff: 2
     maximum_staff: 5
-    staff_wave: 1
+    staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_nrs_shft
-  24:
+  HurrA_11_smn_nrs_S3:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
     agTask: hurricane_staffing
@@ -311,7 +318,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_nrs_shft
-  25:
+  HurrA_11_smn_nrs_S4:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
     agTask: hurricane_staffing
@@ -320,11 +327,11 @@ agScenarioShift:
     minutes_start_to_facility_activation: 360
     minimum_staff: 2
     maximum_staff: 5
-    staff_wave: 1
+    staff_wave: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_nrs_shft
-  26:
+  HurrA_11_smn_nrs_S5:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_nrs
     agTask: hurricane_staffing
@@ -337,7 +344,8 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_nrs_shft
-  27:
+    # Hurricane A, Facility 11, Special Medical Needs, Med Other
+  HurrA_11_smn_oth_S1:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
     agTask: hurricane_staffing
@@ -350,7 +358,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_oth_shft
-  28:
+  HurrA_11_smn_oth_S2:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
     agTask: hurricane_staffing
@@ -363,7 +371,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_oth_shft
-  29:
+  HurrA_11_smn_oth_S3:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
     agTask: hurricane_staffing
@@ -376,7 +384,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_oth_shft
-  30:
+  HurrA_11_smn_oth_S4:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
     agTask: hurricane_staffing
@@ -389,7 +397,7 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_oth_shft
-  31:
+  HurrA_11_smn_oth_S5:
     agScenarioFacilityResource: hurrA01_11_smn
     agStaffResourceType: med_oth
     agTask: hurricane_staffing
@@ -402,3 +410,135 @@ agScenarioShift:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
     agShiftTemplate: hurrA_smn_med_oth_shft
+    # Hurricane A, Facility 11, Hurricane Shelter, Staff
+  HurrA_11_hs_staff_S1:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 180
+    minutes_start_to_facility_activation: -720
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 1
+    agShiftStatus: active
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_staff_shft
+  HurrA_11_hs_staff_S2:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 180
+    minutes_start_to_facility_activation: -360
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 2
+    agShiftStatus: active
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_staff_shft
+  HurrA_11_hs_staff_S3:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 180
+    minutes_start_to_facility_activation: 0
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 1
+    agShiftStatus: active
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_staff_shft
+  HurrA_11_hs_staff_S4:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 180
+    minutes_start_to_facility_activation: 360
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 2
+    agShiftStatus: active
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_staff_shft
+  HurrA_11_hs_staff_S5:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 0
+    minutes_start_to_facility_activation: 720
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 1
+    agShiftStatus: active
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_staff_shft
+    # Hurricane A, Facility 11, Hurricane Shelter, Staff (standby)
+  HurrA_11_hs_staff_S1:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 180
+    minutes_start_to_facility_activation: -720
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 1
+    agShiftStatus: standby
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_stby_staff_shft
+  HurrA_11_hs_staff_S2:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 180
+    minutes_start_to_facility_activation: -360
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 2
+    agShiftStatus: standby
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_stby_staff_shft
+  HurrA_11_hs_staff_S3:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 180
+    minutes_start_to_facility_activation: 0
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 1
+    agShiftStatus: standby
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_stby_staff_shft
+  HurrA_11_hs_staff_S4:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 180
+    minutes_start_to_facility_activation: 360
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 2
+    agShiftStatus: standby
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_stby_staff_shft
+  HurrA_11_hs_staff_S5:
+    agScenarioFacilityResource: hurrA01_11_hs
+    agStaffResourceType: staff
+    agTask: hurricane_staffing
+    task_length_minutes: 360
+    break_length_minutes: 0
+    minutes_start_to_facility_activation: 720
+    minimum_staff: 25
+    maximum_staff: 30
+    staff_wave: 1
+    agShiftStatus: standby
+    agDeploymentAlgorithm: all_staff
+    agShiftTemplate: hurrA_hs_stby_staff_shft
