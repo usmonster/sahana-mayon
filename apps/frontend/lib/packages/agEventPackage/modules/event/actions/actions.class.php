@@ -414,7 +414,7 @@ class eventActions extends agActions
 
 //$query_condition = implode(' AND ', $lucene_query);
 
-      $this->searchedModels = array('agStaff');  //technically, don't we want the search model to be agEventStaff ?
+//      $this->searchedModels = array('agStaff');  //technically, don't we want the search model to be agEventStaff ?
       parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
     } elseif ($request->getParameter('Add')) {
       $staffPotentials = $request->getPostParameter('resultform'); //('staff_list'); //ideally get only the widgets whose corresponding checkbox

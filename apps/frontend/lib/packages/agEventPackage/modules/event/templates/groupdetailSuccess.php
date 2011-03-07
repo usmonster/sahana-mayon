@@ -38,7 +38,3 @@
   </tbody>
 <?php echo javascript_include_tag('agModal.js'); ?>
 </table>
-
-            echo link_to('Delete', 'event/shifts?id=' . $event_id . $append,
-                array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton', 'name' => 'Delete')) ?>
-The following action will release any staff or facility resources associated with the affected facilities.

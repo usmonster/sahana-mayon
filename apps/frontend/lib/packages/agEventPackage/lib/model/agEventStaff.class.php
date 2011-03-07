@@ -2,6 +2,12 @@
 
 class agEventStaff extends BaseagEventStaff
 {
+//  public function updateLucene()
+//  {
+//    $doc = new Zend_Search_Lucene_Document();
+//    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
+//    return $doc;
+//  }
   public function returnEventStaffList($facilityResource = NULL)
   {
     

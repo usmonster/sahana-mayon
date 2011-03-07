@@ -1,3 +1,4 @@
+<form style="display: block;" action="<?php echo url_for('event/staffshift?id=' . $event_id) . '/' . $shift_id ?>" method="post" name="resultform">
 <table class="staffTable">
   <h3>Search Results:
     <?php
@@ -10,7 +11,7 @@
       echo sprintf("%d results found", $count) . " for '<strong>" . $searchquery . "</strong>':";
     } ?></h3>
 
-<form action="<?php echo url_for('event/staffshift?id=' . $event_id) . '/' . $shift_id ?>" method="post" name="resultform">
+
   <?php
   
     foreach ($hits as $hit) {
@@ -36,6 +37,7 @@
     }
   ?>
   <input type="submit" name="Add" value="Add" id="add">
-</form>
+
 
 </table>
+</form>

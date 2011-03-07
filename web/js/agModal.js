@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 
 $(document).ready(function() {
-  $('.modalSubmit').click(function(){
+  $('.modalSubmit').live('click',function(){
     $.ajax({
      url: $(this).parent().attr('action'),
      type: "POST",
@@ -38,12 +38,15 @@ $(document).ready(function() {
              $('#modalContent').load($(this).parent().attr('action'));
            })
          })
+//         if ($('.modalReloadable').length != 0) {
+//           $('.modalReloadable').load('hi');
+//         }
        }
     })
     return false;
   });
    $('div#modalContent').bind('dialogclose', function(event) {
-     var path = window.location.pathname;
+//     var path = window.location.pathname;
    $('.modalReloadable').load(window.location.pathname + ' .modalReloadable > ');
      location.reload();
    });

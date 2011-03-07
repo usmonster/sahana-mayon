@@ -11,7 +11,7 @@
 
 </script>
 
-<form action="<?php echo url_for('event/staffshift?id=' . $event_id) . '/' . $shift_id?>" method="post"<?php echo ($XmlHttpRequest != false ? ' class="modalForm"' : ''); ?>>
+<form name="staffshiftform" id="staffshiftform" action="<?php echo url_for('event/staffshift?id=' . $event_id) . '/' . $shift_id?>" method="post"<?php echo ($XmlHttpRequest != false ? ' class="modalForm"' : ''); ?>>
 
 <h3>Construct Search Conditions:</h3>
 <?php
@@ -28,4 +28,4 @@ foreach($fields as $key => $field)
 
 </form>
 
-<?php echo javascript_include_tag('agModal.js'); ?>
+<?php //echo javascript_include_tag('agModal.js'); ?>
