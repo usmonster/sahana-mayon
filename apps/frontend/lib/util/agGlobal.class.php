@@ -51,6 +51,6 @@ class agGlobal
 
     return $result ;
   }
-} //agGlobal::initGlobal() ;
+}// agGlobal::initGlobal() ;
 
 //this should only be done as needed
