@@ -1,4 +1,4 @@
-<form action="<?php echo url_for('admin/globalparams') ?>" method="post" class="configure adminConfigLegend">
+<form action="<?php echo url_for('admin/globals') ?>" method="post" class="configure adminConfigLegend">
 
 Here you can set up global parameters (variables) that can be used throughout the application.  This keeps all settings in a single place, click on a global param link to edit that item or add a new one at the bottom
   <fieldset>

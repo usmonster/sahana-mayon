@@ -84,7 +84,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     
     // registers event listeners
     $this->dispatcher->connect('import.facility_file_ready', array('AgImportXLS', 'processFile'));
-
+    $this->dispatcher->connect('global_param.param_updated', array('AgGlobal', 'loadParams'));
   }
 
   /**

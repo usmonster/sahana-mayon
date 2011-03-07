@@ -77,7 +77,7 @@ class adminActions extends sfActions
       $this->forward404Unless($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('deleteparam'))), sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam')));
       $ag_global_param->delete();
 
-      $this->redirect('admin/globalparams');
+      $this->redirect('admin/globals');
     }
 
     if($request->getParameter('update'))
@@ -110,7 +110,7 @@ class adminActions extends sfActions
           echo "hey, something went wrong:" . $e->getMessage();
         }
 
-        $file = sfConfig::get('sf_app_dir') . '/config/app.yml';
+        $file = sfConfig::get('sf_app_config_dir') . '/app.yml';
         $appConfig = sfYaml::load($file);
         
         if($_POST['auth_method'] == 'bypass'){
@@ -334,7 +334,7 @@ class adminActions extends sfActions
     {
       $paramform->save();
 
-      $this->redirect('admin/config');
+      $this->redirect('admin/globals');
     }
   }
   protected function processCredform(sfWebRequest $request, sfForm $credform) {
