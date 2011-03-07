@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Extends BaseagAddress to provide additional Address functionality
+ * Provides bulk-address manipulation methods
  *
  * PHP Version 5
  *
@@ -20,43 +20,44 @@
  * @property boolean $enforceLineNumber Boolean that determines whether or not line numbers will be
  * strictly enforced, sometimes causing blank lines to appear between or before lines with values.
  *
- * @property string $globalDefaultAddressStandard The value of the default standard address global
+ * @property string $_globalDefaultAddressStandard The value of the default standard address global
  * parameter.
- * @property string $addressGeoType The value of the default address geo type.
- * @property integer $startingLineNumber The value of the default starting line number for address
+ * @property string $_addressGeoType The value of the default address geo type.
+ * @property integer $_startingLineNumber The value of the default starting line number for address
  * strings (eg, 1 or 0).
- * @property array $addressFormatComponents A constructed array of the default address formatting
- * components. This is directly tied to the instantiated classes' $returnStandardId.
- * @property array $addressFormatRequired A constructed array containing just the required address
+ * @property array $_addressFormatComponents A constructed array of the default address formatting
+ * components. This is directly tied to the instantiated classes' $_returnStandardId.
+ * @property array $_addressFormatRequired A constructed array containing just the required address
  * elements for the current standard.
- * @property integer $returnStandardId The address standard currently in-use by this class.
+ * @property integer $_returnStandardId The address standard currently in-use by this class.
  * Defaults to the value provided by the global parameter.
  */
 
-class agAddress extends BaseagAddress
+class agAddressHelper
 {
   public    $addressIds = array(),
             $lineDelimeter = "\n",
             $enforceComplete = TRUE,
             $enforceLineNumber = FALSE ;
 
-  protected $globalDefaultAddressStandard = 'default_address_standard',
-            $addressGeoType = 'point',
-            $startingLineNumber = 1,
-            $addressFormatComponents = array(),
-            $addressFormatRequired = array(),
-            $returnStandardId ;
+  protected $_globalDefaultAddressStandard = 'default_address_standard',
+            $_addressGeoType = 'point',
+            $_startingLineNumber = 1,
+            $_addressFormatComponents = array(),
+            $_addressFormatRequired = array(),
+            $_returnStandardId ;
 
   /**
-   * This is the class's constructor (children of Doctrine_Record must use construct() because
-   * __construct() may not be overridden).
+   * This is the class's constructor whic pre-loads the formatting elements according to the default
+   * return standard.
    */
-  public function construct()
+  public function __construct($addressIds = NULL)
   {
-    parent::construct() ;
+    // if passed an array of address id's, set them as a class property
+    $this->setAddressIds($addressIds);
 
     // set our default address standard and pick up the formatting components
-    //$this->_setDefaultReturnStandard() ;
+    $this->_setDefaultReturnStandard() ;
   }
 
   /**
@@ -66,9 +67,7 @@ class agAddress extends BaseagAddress
    */
   public static function init($addressIds = NULL)
   {
-    $class = new agAddress() ;
-    $class->setAddressIds($addressIds) ;
-
+    $class = new agAddress($addressIds) ;
     return $class ;
   }
 
@@ -77,7 +76,7 @@ class agAddress extends BaseagAddress
    */
   protected function _setDefaultReturnStandard()
   {
-    $standardName = agGlobal::$param[$this->globalDefaultAddressStandard] ;
+    $standardName = agGlobal::$param[$this->_globalDefaultAddressStandard] ;
     $standardId = agDoctrineQuery::create()
       ->select('as.id')
         ->from('agAddressStandard as')
@@ -117,7 +116,7 @@ class agAddress extends BaseagAddress
    */
   public function setReturnStandard($standardId)
   {
-    $this->returnStandardId = $standardId ;
+    $this->_returnStandardId = $standardId ;
     $this->_setAddressFormatComponents() ;
   }
 
@@ -137,7 +136,7 @@ class agAddress extends BaseagAddress
           ->addSelect('ft.field_type')
         ->from('agAddressFormat af')
           ->innerJoin('af.agFieldType ft')
-        ->where('af.address_standard_id = ?', $this->returnStandardId) ;
+        ->where('af.address_standard_id = ?', $this->_returnStandardId) ;
 
     // here we choose a custom hydration method to allow us to manipulate the results data twice
     $formatComponents = $q->execute(array(), DOCTRINE_CORE::HYDRATE_NONE) ;
@@ -152,19 +151,19 @@ class agAddress extends BaseagAddress
       );
 
       // bring it all into an array keyed by line and inline sequence (so we can walk these values)
-      $this->addressFormatComponents[$fc[1]][$fc[2]] = $valueArray ;
+      $this->_addressFormatComponents[$fc[1]][$fc[2]] = $valueArray ;
 
       // check just for the required elements and build a flat array of them for quick diffs
       if ($fc[5])
       {
-        $this->addressFormatRequired[] = $fc[0] ;
+        $this->_addressFormatRequired[] = $fc[0] ;
       }
     }
 
     // Because this becomes super important later on, we'll sort the results now so sorting isn't
     // forgetten and/or ends up inside a loop
-    ksort($this->addressFormatComponents) ;
-    foreach ($this->addressFormatComponents as $inlineComponents)
+    ksort($this->_addressFormatComponents) ;
+    foreach ($this->_addressFormatComponents as $inlineComponents)
     {
       ksort($inlineComponents) ;
     }
@@ -235,7 +234,7 @@ class agAddress extends BaseagAddress
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
         ->whereIn('a.id', $addressIds)
-          ->andWhere('gt.geo_type = ?', $this->addressGeoType)
+          ->andWhere('gt.geo_type = ?', $this->_addressGeoType)
           ->andWhere(' EXISTS (
             SELECT sq.id
             FROM agGeoFeature sq
@@ -309,7 +308,7 @@ class agAddress extends BaseagAddress
    */
   public function isCompleteAddress($addressComponentArray)
   {
-    $diff = array_diff($this->addressFormatRequired, array_keys($addressComponentArray)) ;
+    $diff = array_diff($this->_addressFormatRequired, array_keys($addressComponentArray)) ;
     $result = empty($diff) ? TRUE : FALSE ;
 
     return $result ;
@@ -369,7 +368,7 @@ class agAddress extends BaseagAddress
       if (! $enforceComplete || ($enforceComplete && $this->isCompleteAddress($addrComponents)))
       {
         // now we traverse our lovely, ordered, format array by line
-        foreach ($this->addressFormatComponents as $lineId => $lineComponents)
+        foreach ($this->_addressFormatComponents as $lineId => $lineComponents)
         {
           $strLine = '' ;
 
@@ -431,7 +430,7 @@ class agAddress extends BaseagAddress
     foreach ($addresses as $addressId => $addrLines)
     {
       $strAddr = '' ;
-      $line = $this->startingLineNumber ;
+      $line = $this->_startingLineNumber ;
 
       // sort the address lines to make sure we can iterate over them safely
       ksort($addrLines) ;
