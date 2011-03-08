@@ -20,12 +20,13 @@ class agImportNormalization
     $this->sourceTable = $sourceTable;
     $this->defineStatusTypes();
     $this->summary = array();
+    $this->warningMessages = array();
     $this->nonprocessedRecords = array();
     $this->totalProcessedRecordCount = 0;
     $this->totalNewFacilityCount = 0;
     $this->totalNewFacilityGroupCount = 0;
-    $this->processedFacilityIds = array();
-    $this->processedFacilityGroupIds = array();
+//    $this->processedFacilityIds = array();
+    $this->processedFacilityGroups = array();
   }
 
   function __destruct()
@@ -46,7 +47,7 @@ class agImportNormalization
     $this->staffResourceTypes = array_flip(agStaffHelper::getStaffResourceTypes());
     $addressHelper = new agAddressHelper();
     $this->addressStandards = $addressHelper->getAddressStandardId();
-    $this->addressElements = array_flip($addressHelper->getAddressElements());
+    $this->addressElements = array_flip($addressHelper->getAddressAllowedElements());
     $this->geoType = 'point';
     $this->geoTypeId = agFacilityHelper::getGeoTypes($this->geoType);
     $this->defaultGeoMatchScore = 'good';
@@ -114,8 +115,12 @@ class agImportNormalization
         $importStaffList[] = rtrim($key, '_max');
       }
     }
+    $cleanStaff = array();
+    foreach ($this->staffResourceTypes as $s => $i) {
+      $cleanStaff[strtolower(str_replace(' ', '_', $s))] = $i;
+    }
     foreach ($importStaffList as $staff) {
-      if (!array_key_exists($staff, $this->staffResourceTypes)) {
+      if (!array_key_exists($staff, $cleanStaff)) {
         return array('pass' => FALSE,
                      'status' => 'ERROR', 
                      'type' => 'Staff Resource',
@@ -243,6 +248,7 @@ class agImportNormalization
         $validAddress = 1;
         $newFacility = 0;
         $newFacilityGroup = 0;
+        $skipToNext = 0;
 // TODO: implement this
         $isValidData = $this->dataValidation($record);
         if (!$isValidData['pass']) {
@@ -256,26 +262,39 @@ class agImportNormalization
             case 'ERROR':
               $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
                                                    'record' => $record);
-              next;
+              $skipToNext = 1;
+              break;
             case 'WARNING':
               switch ($isValidData['type']) {
                 case 'Email':
                   $validEmail = 0;
+                  $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
                   break;
                 case 'Phone':
                   $validPhone = 0;
+                  $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
                   break;
                 case 'Address':
                   $validAddress = 0;
+                  $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
                   break;
               }
+              break;
             default:
               $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
                                                    'record' => $record);
-              next;
+              $skipToNext = 1;
+              break;
           }
         }
 
+        if ($skipToNext) {
+          continue;
+        }
+        
         // Declare variables.
         $facility_name = $record['facility_name'];
         $facility_resource_code = $record['facility_resource_code'];
@@ -363,19 +382,19 @@ class agImportNormalization
           if(empty($facilityResource) && !empty($facilityResourceBycode)) {
             $this->nonprocessedRecords[] = array('message' => 'Duplicate facility resource code.',
                                                  'record' => $record);
-            next;
+            continue;
           }
           
           if (!empty($facilityResource) && empty($facilityResourceByCode)) {
             $this->nonprocessedRecords[] = array('message' => 'Duplicate facility resource type.',
                                                  'record' => $record);
-            next;
+            continue;
           }
           
           if ($facilityResource->id != $facilityResourceByCode->id) {
             $this->nonprocessedRecords[] = array('message' => 'None unique facility resource code.',
                                                  'record' => $record);
-            next;
+            continue;
           }
         }
 
@@ -383,7 +402,7 @@ class agImportNormalization
         if (empty($facilityResource)) {
           $facilityResource = $this->createFacilityResource($facility, $facility_resource_type_id,
                                                             $facility_resource_status_id,
-                                                            $facilityResourceCode, $capacity);
+                                                            $facility_resource_code, $capacity);
         } else {
           $facilityResource = $this->updateFacilityResource($facilityResource, $facility_resource_status_id, $capacity);
           $scenarioFacilityResource = agDoctrineQuery::create()
@@ -438,6 +457,7 @@ class agImportNormalization
         //facility staff resource
         $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
 
+
         $this->totalNewFacilityCount += $newFacility;
         $this->totalNewFacilityGroupCount += $newFacilityGroup;
         $this->totalProcessedRecordCount++;
@@ -446,17 +466,17 @@ class agImportNormalization
       // @TODO: Clean-up function to remove old facility staff resource, scenario facility resources, and scenario facility groups.
       
       $conn->commit();
-      $this->summary = array('totalNewFacilityCount' => $this->totalNewFacilityCount,
+      $this->summary = array('totalProcessedRecordCount' => $this->totalProcessedRecordCount,
+                             'totalNewFacilityCount' => $this->totalNewFacilityCount,
                              'totalNewFacilityGroupCount' => $this->totalNewFacilityGroupCount,
-                             'totalProcessedRecordCount' => $this->totalProcessedRecordCount,
-                             'nonprocessedRecords' => $this->nonprocessedRecords);
+                             'nonprocessedRecords' => $this->nonprocessedRecords,
+                             'warningMessages' => $this->warningMessages);
       echo "<BR>SUMMARY:<BR>";
       print_r($this->summary);
     } catch (Exception $e) {
       echo '<BR><BR>Unable to normalize data.  Exception error mesage: ' . $e;
-//      $this->event[] = array('type' => 'ERROR', 'message' => 'Unable to normalize data.  Exception error mesage: ' . $e);
       $this->nonprocessedRecords[] = array('message' => 'Unable to normalize data.  Exception error mesage: ' . $e,
-                                         'record' => $record);
+                                           'record' => $record);
       $conn->rollBack();
     }
   }
@@ -550,7 +570,7 @@ class agImportNormalization
 
         if ($count['min'] == 0 && $count['max'] == 0) {
           $deleteFacStfResId[] = $facilityStaffResource[$staffTypeId][2];
-          next;
+          continue;
         }
 
         if ($facilityStaffResource[$staffTypeId][0] != $count['min']) {

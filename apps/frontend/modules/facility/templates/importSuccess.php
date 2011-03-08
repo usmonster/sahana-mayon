@@ -39,7 +39,39 @@ $i = 1;
         </tr>
     <?php endforeach; ?>
         </table>
-<?php endif; ?>
+
+    <?php endif; ?>
+
+    <hr>
+    <BR><BR>Total Number of Processed Records: <?php $summary['totalProcessedRecordCount']; ?>
+    <BR><BR>Total New Facility Created: <?php $summary['totalNewFacilityCount']; ?>
+    <BR><BR>Total New Facility Group Created: <?php $summary['totalNewFacilityGroupCount']; ?>
+    <BR><BR>Total Number of Non-processed Records: <?php count($summary['nonprocessedRecords']); ?>
+    <BR>Non-processed Records: <BR>
+    <table>
+      <?php $i = 0; ?>
+      <?php foreach ($summary['nonprocessedRecords'] as $failedRecord): ?>
+      <tr>
+        <td><?php echo $i++; ?></td>
+        <td><?php $failedRecord['message']; ?></td>
+        <td><?php echo $failedRecord['record']['facility_name']; ?></td>
+        <td><?php echo $failedRecord['record']['facility_resource_code']; ?></td>
+      </tr>
+      <?php endforeach ?>
+    </table>
+
+    <BR><BR>Warning Records:
+    <table>
+      <?php $i = 0; ?>
+      <?php foreach($summary['warningMessages'] as $warning): ?>
+      <tr>
+        <td><?php echo $i++; ?></td>
+        <td><?php $warning['message']; ?></td>
+        <td><?php $warning['record']['facility_name']; ?></td>
+        <td><?php $warning['record']['facility_resource_code']; ?></td>
+      </tr>
+      <?php endforeach ?>
+    </table>
 
 
 
