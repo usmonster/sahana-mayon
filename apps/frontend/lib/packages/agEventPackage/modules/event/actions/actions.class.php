@@ -502,7 +502,7 @@ class eventActions extends agActions
     if ($request->getParameter('sort') && $request->getParameter('order')) {
       $sortColumns = array('group' => 'efg_event_facility_group',
         'name' => 'f_facility_name',
-        'code' => 'fr_facility_code',
+        'code' => 'fr_facility_resource_code',
         'status' => 'ras_facility_resource_allocation_status',
         'time' => 'efrat_activation_time',
         'type' => 'fgt_facility_group_type',
@@ -519,6 +519,13 @@ class eventActions extends agActions
     $this->pager->init();
   }
 
+  /**
+  * Calls the groupdetailSuccess template.
+  *
+  * The template is used to display information about all event facilities in
+  * an event facility group. The status of any of those facilities or of the group
+  * can also be changed. This action will normally post to a modal window.
+  **/
   public function executeGroupdetail(sfWebRequest $request)
   {
     $this->eventFacilityGroup = agDoctrineQuery::create()
@@ -526,6 +533,8 @@ class eventActions extends agActions
             ->from('agEventFacilityGroup')
             ->where('event_facility_group = ?', urldecode($request->getParameter('group')))
             ->fetchOne();
+    // Check for AJAX here. Set XmlHttpRequest to true so it can be used to determine functionality
+    // in the templates and partials.
     if ($request->isXmlHttpRequest()) {
       $this->XmlHttpRequest = true;
     }
@@ -572,12 +581,24 @@ class eventActions extends agActions
     ));
   }
 
+  /**
+  * Gets facility information to display in the groupdetailSuccess template.
+  *
+  * @param int      $eventFacilityGroupId     The id of an agEventFacilityGroup.
+  *                                           Passed in from executeGroupDetail.
+  *                                           If this isn't present, all facilities
+  *                                           for an event will be displayed.
+  * @return array() $results                  A multidimensional array of facility
+  *                                           information. Each top level element
+  *                                           corresponds to a returned facility.
+  *
+  **/
   private function queryForTable($eventFacilityGroupId = null)
   {
     $query = agDoctrineQuery::create()
             ->select('efr.id')
             ->addSelect('f.facility_name')
-            ->addSelect('fr.facility_code')
+            ->addSelect('fr.facility_resource_code')
             ->addSelect('frt.facility_resource_type')
             ->addSelect('ras.facility_resource_allocation_status')
             ->addSelect('f.id')

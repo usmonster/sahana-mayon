@@ -1,4 +1,4 @@
-/* This function is used to launch modal windows. It is currently used by event/listgroups
+/* This function is used to launch modal windows. It is currently used by event/shifts
  *
  * It could be extended later to provide more flexible functionality.
  **/
@@ -22,36 +22,21 @@ $(document).ready(function() {
 	});
 });
 
+/**
+*  This function sumbits to the action and also reloads the content of the modal window.
+*
+*  Once reloaded, a partial loaded with the results of the staff search will be included in
+*  the window. The loading of these contents are determined by the presence of $searchquery
+*  in staffshiftSuccess.php.
+*
+*  The $searchquery PHP variable is built and passed to the server by the queryConstruct
+*  jQuery function in the _staffshiftform.php partial.
+**/
 $(document).ready(function() {
   $('.modalSubmit').live('click',function(){
     $('#modalContent').load($('#staffshiftform').attr('action'), $('#' + $(this).parent().attr('name') + ' :input'));
-//    $('#modalContent').load($('#staffshiftform').attr('action'));
     return false;
   })
 });
-
-//$(document).ready(function() {
-//  $('.modalSubmit').live('click',function(){
-//    $.ajax({
-//     url: $(this).parent().attr('action'),
-//     dataType: 'xml',
-//     type: "GET",
-//     data: $('#' + $(this).parent().attr('name') + ' :input'),
-//     complete:
-//       function(data) {
-////         $('#modalContent').load('/');
-//var thing = $(data.responseText);
-////         $('#modalContent').load(data.responseText);
-//         $('#modalContent').load($('#staffshiftform').attr('action'));
-//       }
-//    })
-//    return false;
-//  });
-////   $('div#modalContent').bind('dialogclose', function(event) {
-//////     var path = window.location.pathname;
-////   $('.modalReloadable').load(window.location.pathname + ' .modalReloadable > ');
-////     location.reload();
-////   });
-//});
 
 

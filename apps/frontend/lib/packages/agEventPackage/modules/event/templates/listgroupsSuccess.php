@@ -80,7 +80,7 @@ $sortOrder = $sf_request->getGetParameter('order');
               <tr>
                 <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText modalTrigger" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
                 <td><?php echo $facility['f_facility_name'] . ": " . $facility['frt_facility_resource_type']; ?></td>
-                <td><?php echo $facility['f_facility_code']; ?></td>
+                <td><?php echo $facility['fr_facility_resource_code']; ?></td>
                 <td class="modalReloadable"><?php echo $facility['ras_facility_resource_allocation_status']; ?></td>
             <td><?php
               if (isset($facility['efrat_activation_time'])) {

@@ -24,7 +24,7 @@
     <?php
       foreach($results as $key => $result) {
         echo '<tr>' . PHP_EOL;
-        echo '<td>' . $result['f_facility_code'] . '</td>';
+        echo '<td>' . $result['fr_facility_resource_code'] . '</td>';
         echo '<td>' . $result['f_facility_name'] . '</td>';
         echo '<td>' . $result['frt_facility_resource_type'] . '</td>';
         $form->setDefault('resource_allocation_status', $result['ras_id']);
