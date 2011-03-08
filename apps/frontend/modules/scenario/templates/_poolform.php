@@ -15,7 +15,14 @@
       $("#staff_pool_lucene_search_query_condition").val(out.join(' AND '));
     }
     else{
-      $("#staff_pool_lucene_search_query_condition").val(out.pop());
+      var query_c = out.pop();
+      if(query_c != undefined){
+        $("#staff_pool_lucene_search_query_condition").val(query_c);
+      }
+      else{
+        query_c = '%';
+        $("#staff_pool_lucene_search_query_condition").val(query_c);
+      }
     }
   }
 

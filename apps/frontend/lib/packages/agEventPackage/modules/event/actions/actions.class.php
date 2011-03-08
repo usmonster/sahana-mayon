@@ -37,6 +37,10 @@ class eventActions extends agActions
             ->execute();
   }
 
+  /**
+   *
+   * @param sfWebRequest $request
+   */
   public function executeFgroup(sfWebRequest $request)
   {
     $this->setEventBasics($request);

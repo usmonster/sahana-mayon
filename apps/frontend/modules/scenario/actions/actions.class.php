@@ -378,6 +378,7 @@ class scenarioActions extends agActions
         foreach ($incomingFields as $key => $incomingField) {
           $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
         }
+        $this->searchedModels = 'agStaff';
         parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {
 
