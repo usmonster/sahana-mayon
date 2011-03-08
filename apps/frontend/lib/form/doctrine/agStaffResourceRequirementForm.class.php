@@ -106,7 +106,7 @@ class agStaffResourceRequirementForm extends BaseagScenarioFacilityResourceForm
     $this->widgetSchema->setLabels(array(
       'resource' => 'Resources',
       'scenario_facility_groupd_id' => 'Facility Group',
-      'facility_code' => 'Facility Code'
+      //'facility_code' => 'Facility Code'
     ));
 
     /**

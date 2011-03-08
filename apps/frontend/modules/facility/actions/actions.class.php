@@ -179,8 +179,8 @@ class facilityActions extends agActions
             ->execute(array(), 'key_value_array');
 
 
-    $this->events = agFacilityHelper::returnActionableResources($facilityResourceIds, FALSE);
-
+    $events = agFacilityHelper::returnActionableResources($facilityResourceIds, FALSE);
+$foo = 'boo';
   }
 
   /**

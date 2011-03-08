@@ -42,7 +42,7 @@ class agFacilityForm extends BaseagFacilityForm
     $this->setWidgets(array(
       'id' => new sfWidgetFormInputHidden(),
       'facility_name' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-      'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+      //'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
     ));
 
 //    $this->agEntity = $this->getObject()->getAgEntity();
@@ -58,7 +58,7 @@ class agFacilityForm extends BaseagFacilityForm
      * of any fields.
      */
     $formFields = $this->getWidgetSchema()->getPositions();
-    $useFields = array('facility_name', 'facility_code');
+    $useFields = array('facility_name');
     $useFields = array_merge($useFields, array_diff($formFields, $useFields));
     $this->useFields($useFields);
 
@@ -69,7 +69,7 @@ class agFacilityForm extends BaseagFacilityForm
     $this->widgetSchema->setLabels(array(
       'resource' => 'Resources',
       'facility_name' => 'Name',
-      'facility_code' => 'Facility Code'
+      //'facility_code' => 'Facility Code'
     ));
 
     /**
