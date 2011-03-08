@@ -46,7 +46,7 @@ class agEventFacilityResourceStatusListener extends Doctrine_Record_Listener
       if (TRUE == TRUE) {
         agEventFacilityHelper::releaseEventFacilityResource($eventFacilityResourceId);
 
-        //sfContext::getInstance()->getLogger()->debug( 'Log this.' );
+        //sfContext::getInstance()->getLogger()->notice($message);
         //$dispatcher = sfContext::getInstance() -> getEventDispatcher();
 
         

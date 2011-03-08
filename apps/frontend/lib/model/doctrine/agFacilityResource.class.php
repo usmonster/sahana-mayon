@@ -20,6 +20,23 @@
 class agFacilityResource extends BaseagFacilityResource
 {
 
+    /**
+     * Builds an index for facility resource
+     *
+     * The Lucene Facility Index allows for a facility to be searched by:
+     * id, Facility Code, Facility Name, Facility Resource Type, Facility e-mail,
+     * and Facility Phone.
+     *
+     * @return Zend_Search_Lucene_Document $doc
+     *
+     */
+    public function updateLucene() {
+        $doc = new Zend_Search_Lucene_Document();
+        $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
+  
+        $doc->addField(Zend_Search_Lucene_Field::unStored('facility_code', $this->facility_code, 'utf-8'));
+    }
+
   /**
    *
    * @return a string representation of the facility resource in question, this
@@ -94,7 +111,7 @@ class agFacilityResource extends BaseagFacilityResource
         $facility_resource_id = $rslt->getId();
         $facility_id = $rslt->getFacilityId();
         $facility_name = $rslt->getAgFacility()->getFacilityName();
-        $facility_code = $rslt->getAgFacility()->getFacilityCode();
+        $facility_code = $rslt->getFacilityCode();
         $facility_resource_type_id = $rslt->getFacilityResourceTypeId();
         $facility_resource_type = $rslt->getAgFacilityResourceType()->getFacilityResourceType();
         $facility_resource_status_id = $rslt->getFacilityResourceStatusId();

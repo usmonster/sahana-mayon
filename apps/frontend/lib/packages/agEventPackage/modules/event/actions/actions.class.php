@@ -29,6 +29,7 @@ class eventActions extends agActions
       'ag_scenario_list' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agScenario'))
     ));
 
+
     $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
     $this->ag_events = agDoctrineQuery::create()
             ->select('a.*')
@@ -501,7 +502,7 @@ class eventActions extends agActions
     if ($request->getParameter('sort') && $request->getParameter('order')) {
       $sortColumns = array('group' => 'efg_event_facility_group',
         'name' => 'f_facility_name',
-        'code' => 'f_facility_code',
+        'code' => 'fr_facility_code',
         'status' => 'ras_facility_resource_allocation_status',
         'time' => 'efrat_activation_time',
         'type' => 'fgt_facility_group_type',
@@ -576,7 +577,7 @@ class eventActions extends agActions
     $query = agDoctrineQuery::create()
             ->select('efr.id')
             ->addSelect('f.facility_name')
-            ->addSelect('f.facility_code')
+            ->addSelect('fr.facility_code')
             ->addSelect('frt.facility_resource_type')
             ->addSelect('ras.facility_resource_allocation_status')
             ->addSelect('f.id')
