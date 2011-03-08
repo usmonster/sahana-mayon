@@ -31,6 +31,8 @@
  * components. This is directly tied to the instantiated classes' $_returnStandardId.
  * @property array $_addressFormatRequired A constructed array containing just the required address
  * elements for the current standard.
+ * @property array $_addressAllowedElements A constructed array containing all available address
+ * elements for the current $_returnStandardId and keyed by address_element_id.
  * @property integer $_returnStandardId The address standard currently in-use by this class.
  * Defaults to the value provided by the global parameter.
  * @property string $_addressGeoTypeId The value of the default address geo type. Defaults to the
@@ -49,6 +51,7 @@ class agAddressHelper extends agBulkRecordHelper
             $_startingLineNumber = 1,
             $_addressFormatComponents = array(),
             $_addressFormatRequired = array(),
+            $_addressAllowedElements = array(),
             $_returnStandardId,
             $_addressGeoTypeId;
 
@@ -119,8 +122,10 @@ class agAddressHelper extends agBulkRecordHelper
           ->addSelect('af.post_delimiter')
           ->addSelect('af.is_required')
           ->addSelect('ft.field_type')
+          ->addSelect('ae.address_element')
         ->from('agAddressFormat af')
-          ->innerJoin('af.agFieldType ft')
+          ->leftJoin('af.agFieldType ft')
+          ->innerJoin('af.agAddressElement ae')
         ->where('af.address_standard_id = ?', $this->_returnStandardId) ;
 
     // here we choose a custom hydration method to allow us to manipulate the results data twice
@@ -143,6 +148,9 @@ class agAddressHelper extends agBulkRecordHelper
       {
         $this->_addressFormatRequired[] = $fc[0] ;
       }
+      
+      // also create our simple allowed elements array
+      $this->_addressAllowedElements[$fc[0]] = $fc[7] ;
     }
 
     // Because this becomes super important later on, we'll sort the results now so sorting isn't
@@ -481,24 +489,22 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
-   * @return address_standard_id.
+   * Simple method to return the current working address standard id.
+   *
+   * @return integer address_standard_id
    */
-  public function getAddressStandardId() {
+  public function getAddressStandardId()
+  {
     return $this->_returnStandardId;
   }
 
   /**
-   * @return array $result An associative array,
-   * array(address_element_id => address_element).
+   * A simple getter to return the current working elements allowed for this address.
+   *
+   * @return array $result An associative array (address_element_id => address_element).
    */
-  public function getAddressElements() {
-    $result = array();
-    $result = agDoctrineQuery::create()
-            ->select('ae.id, ae.address_element')
-            ->from('agAddressElement ae')
-            ->innerJoin('ae.agAddressFormat af')
-            ->where('address_standard_id =?', $this->_returnStandardId)
-            ->execute(array(), 'key_value_pair');
-    return $result;
+  public function getAddressAllowedElements()
+  {
+    return $this->_addressAllowedElements ;
   }
 }

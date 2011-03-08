@@ -69,7 +69,11 @@ $obj = agAddressHelper::init($array) ;
 //$results = $obj->getPrimaryNameById() ;
 //$results = $obj->getPrimaryNameByType() ;
 //$results = $obj->getPrimaryNameAsString() ;
-$results = $obj->getAddressAsString() ;
+//$results = $obj->getAddressAsString() ;
+$results = $obj->getAddressAllowedElements() ;
+//$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
+//$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
+//$results = $obj->getPrimaryNameByType() ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 

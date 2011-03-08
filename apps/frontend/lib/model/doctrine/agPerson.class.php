@@ -16,7 +16,28 @@
  */
 class agPerson extends BaseagPerson
 {
+  private     $agPersonNameHelper ;
+
   public $luceneSearchFields = array('id' => 'keyword');
+
+  public function __call($method, $arguments)
+  {
+    try
+    {
+      if (substr($method, 0, 14) == 'getPrimaryName')
+      {
+        $this->loadAgPersonNameHelper() ;
+        $primaryName = $this->agPersonNameHelper->$method($this->id) ;
+        return $primaryName[$this->id] ;
+      }
+
+      return parent::__call($method, $arguments) ;
+    }
+    catch (Exception $e)
+    {
+      return parent::__call($method, $arguments) ;
+    }
+  }
 
   public function updateLucene()
   {
@@ -480,15 +501,11 @@ class agPerson extends BaseagPerson
     return parent::delete($conn);
   }
 
-  /**
-   * Returns the instantiated person object's primary name.
-   *
-   * @return array An associative array, keyed by name type, of the person's primary name attributes.
-   */
-  public function getPrimaryNameByType()
+  private function loadAgPersonNameHelper()
   {
-    $primaryNameArray = agPersonNameHelper::init()->getPrimaryByType($this->id) ;
-    $primaryName = $primaryNameArray[$this->id] ;
-    return $primaryName ;
+    if (! isset($this->agPersonNameHelper))
+    {
+      $this->agPersonNameHelper = agPersonNameHelper::init() ;
+    }
   }
 }

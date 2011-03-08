@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Provides bulk-address manipulation methods
+ * Abstract class to provide bulk-address manipulation methods
  *
  * PHP Version 5
  *
@@ -13,14 +13,18 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
- * @property array $_recordIds A single-dimension array of record id values.
+ * @property boolean $strictBatchSize Boolean to determine whether batch size will be strictly
+ * enforced and an exception thrown when the record count exceeds this limit.
+ * @property array $recordIds A single-dimension array of record id values.
+ * @property integer $_recordCount A count of the number of records in $recordIds
+ * @property integer $_defaultBatchSize The default batch size allowed by the class.
  */
 
 abstract class agBulkRecordHelper
 {
   public    $strictBatchSize = FALSE ;
 
-  protected $_recordIds = array(),
+  protected $recordIds = array(),
             $_recordCount,
             $_defaultBatchSize ;
 
@@ -60,14 +64,14 @@ abstract class agBulkRecordHelper
     // as long as $recordIds exists, set the class property
     if (isset($recordIds) && is_array($recordIds))
     {
-      $this->_recordIds = $recordIds ;
+      $this->recordIds = $recordIds ;
     }
 
     // just because it might be useful, we'll pick up the count as well
-    $this->_recordCount = count($this->_recordIds) ;
+    $this->_recordCount = count($this->recordIds) ;
 
     // we'll also make a call to show a warning of the default record count has been exceeded
-    $this->__logWarningBatchSizeExceeded() ;
+    $this->_logWarningBatchSizeExceeded() ;
   }
 
   /**
@@ -81,15 +85,18 @@ abstract class agBulkRecordHelper
   {
     if (is_null($recordIds))
     {
-      return $this->_recordIds ;
+      return $this->recordIds ;
     }
     else
     {
-      return $recordIds ;
+      return $this->varToArray($recordIds) ;
     }
   }
 
- private function __logWarningBatchSizeExceeded()
+ /**
+  * Method to log warnings if the batch size is exceeded by the number of variables returned.
+  */
+ private function _logWarningBatchSizeExceeded()
  {
   if ($this->_recordCount > $this->_defaultBatchSize)
   {
@@ -108,4 +115,21 @@ abstract class agBulkRecordHelper
   }
  }
 
+ /**
+  * Method to take a single variable and encapsulate it in an array.
+  * 
+  * @param array|variable $var An array or variable
+  * @return array An array.
+  */
+ protected function varToArray($var)
+ {
+   // check to see if the variable is already an array and reflect if true
+   if (is_array($var))
+   {
+     return $var ;
+   }
+
+   // if that didn't pan-out, wrap it in an array and pass it through.
+   return array($var) ;
+ }
 }
