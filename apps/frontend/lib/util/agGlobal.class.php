@@ -54,6 +54,7 @@ class agGlobal
    */
   public static function loadParams(sfEvent $event = null)
   {
+
     $query = agDoctrineQuery::create()
             ->select('gp.datapoint')
               ->addSelect('gp.value')

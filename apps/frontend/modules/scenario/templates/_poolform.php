@@ -6,14 +6,25 @@
   function queryConstruct() {
     var out = Array();
     $('.filter option:selected').each(function(index) {
-      out[index] = $(this).parent().attr('id') + ":" + $(this).text();
+      if($(this).text() != ''){
+        out.push($(this).parent().attr('id') + ":" + $(this).text());
+      }
+      //ONLY IF text is NOT empty
     })
-    $("#staff_pool_lucene_search_query_condition").val(out.join(' AND '));
+//this is a terrible hack, the only elemenets of the array should be values.
+    if(out.length > 1){
+      $("#staff_pool_lucene_search_query_condition").val(out.join(' AND '));
+    }
+    else{
+      $("#staff_pool_lucene_search_query_condition").val(out.pop());
+      //accessing array element 1 is a hack that corresponds to line 15
+    }
   }
 
 </script>
 
 <?php
+
 $action = url_for('scenario/staffpool?id=' . $scenario_id);
 if (isset($search_id)) {
   $action .= '?search_id=' . $search_id;

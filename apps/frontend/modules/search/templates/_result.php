@@ -5,8 +5,9 @@ $data = $obj;
   <td>
     <a href="
     <?php
+    //$zoo = $sf_request->getParameterHolder();
     // TODO fix the below to take in the module for show or edit action appendagism
-    echo url_for($sf_request->getParameter('module') . '/show?id=' . $data['id']); ?>"
+    echo url_for($target_module . '/show?id=' . $data['id']); ?>"
        title="View Sc... <?php echo $data['id']; ?>"
        class="linkButton"></a>
   </td>

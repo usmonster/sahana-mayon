@@ -210,7 +210,7 @@ class adminActions extends sfActions
   }
   public function executeList(sfWebRequest $request)
   {
-    $this->ag_accounts = Doctrine::getTable('agAccount')
+    $this->ag_accounts = Doctrine::getTable('sfGuardUser')
       ->createQuery('a')
       ->execute();
   }
@@ -221,7 +221,7 @@ class adminActions extends sfActions
 */
   public function executeShow(sfWebRequest $request)
   {
-    $this->ag_account = Doctrine::getTable('agAccount')->find(array($request->getParameter('id')));
+    $this->ag_account = Doctrine::getTable('sfGuardUser')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_account);
   }
 /**
@@ -288,7 +288,7 @@ class adminActions extends sfActions
   public function executeUpdate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
-    $this->forward404Unless($ag_account = Doctrine::getTable('agAccount')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
+    $this->forward404Unless($ag_account = Doctrine::getTable('sfGuardUser')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
     $this->form = new agAccountForm($ag_account);
 
     $this->processForm($request, $this->form);
@@ -305,11 +305,11 @@ class adminActions extends sfActions
     $request->checkCSRFProtection();
 
     $this->forward404Unless($ag_account = Doctrine::getTable('agAccount')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
-    $mj = $ag_account->getAgAccountMjSfGuardUser()->getFirst();
-    $sf = $mj->getSfGuardUser();
-    $sf_user = Doctrine::getTable('sfGuardUser')->find(array($sf->id));
-    $mj->delete();
-    $sf->delete();
+//    $mj = $ag_account->getAgAccountMjSfGuardUser()->getFirst();
+//    $sf = $mj->getSfGuardUser();
+//    $sf_user = Doctrine::getTable('sfGuardUser')->find(array($sf->id));
+//    $mj->delete();
+//    $sf->delete();
     $ag_account->delete();
 
 

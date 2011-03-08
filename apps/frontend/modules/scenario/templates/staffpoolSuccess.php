@@ -42,6 +42,6 @@ Your staff resource pool is essentially a set of searches that let you refine wh
     <!--sometimes this will fail -->
   <?php if (isset($searchquery)) { ?>
     <hr />
-  <?php include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results)) ?>
+  <?php include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'target_module' => $target_module)) ?>
   <?php } ?>
   </div>

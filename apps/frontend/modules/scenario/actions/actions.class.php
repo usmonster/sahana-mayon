@@ -310,17 +310,19 @@ class scenarioActions extends agActions
    *
    * @param sfWebRequest $request
    * set up the form to define staff pools, via saved search
+   * this function handles all CRUD operations for the 'scenario staff pool'
    */
   public function executeStaffpool(sfWebRequest $request)
   {
+    $this->target_module = 'staff';
     $this->setScenarioBasics($request);
     $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
             ->findby('scenario_id', $this->scenario_id);
     //get all available staff
     $this->total_staff =  Doctrine_Core::getTable('agStaff')->count();
     $this->total_resources =  Doctrine_Core::getTable('agStaffResource')->count();
-    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')), // 'class' => 'filter')),
-      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization'))//, 'class' => 'filter'))
+    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => true)), // 'class' => 'filter')),
+      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization','add_empty' => true))//, 'class' => 'filter'))
     );
     //set up inputs for form
     $this->filterForm = new sfForm();
@@ -840,26 +842,6 @@ class scenarioActions extends agActions
             ->execute();
     $this->form = new agScenarioForm($ag_scenario);
 
-    //have to put a for each loop in here.
-    //we need data for each of the facility_groups.
-    foreach ($this->ag_scenario_facility_groups as $ag_scenario_facility_group) {
-      $current = $ag_scenario_facility_group->getAgScenarioFacilityResource();
-      $current->setKeyColumn('activation_sequence');
-      //index these by the activation sequence
-      $currentoptions = array();
-      foreach ($current as $curopt) {
-        $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
-        /**
-         * @todo [$curopt->activation_sequence] needs to still be applied to the list,
-         */
-      }
-
-//      $this->ag_allocated_facility_resources[] = $current;
-      //    $this->ag_facility_resources[] = agDoctrineQuery::create()
-      //          ->select('a.facility_id, af.*, afrt.*')
-      //        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-      //      ->whereNotIn('a.id', array_keys($currentoptions))->execute();
-    }
   }
 
   /**

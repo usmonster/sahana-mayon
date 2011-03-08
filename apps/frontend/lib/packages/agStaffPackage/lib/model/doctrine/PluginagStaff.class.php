@@ -16,6 +16,9 @@ abstract class PluginagStaff extends BaseagStaff
 
   public function updateLucene()
   {
+
+    //Charles Wisniewski @ 00:11 03/08/2011: perhaps this should be abstracted to a 'staff helper'
+    //or parts of it, to be called when updating lucene index for eventstaff AND regular staff
     $doc = new Zend_Search_Lucene_Document();
     $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
     $doc->addField(Zend_Search_Lucene_Field::UnStored('staff_status', $this->getAgStaffStatus()->staff_status, 'utf-8'));
@@ -40,7 +43,7 @@ abstract class PluginagStaff extends BaseagStaff
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_name', $staff_name, 'utf-8'));
     }
 
-    // Make staff searchable by email.
+    // Make staff searchable by phone.
     $query = agDoctrineQuery::create()
             ->select('s.id, p.id, e.id, epc.id, pc.id, pc.phone_contact')
             ->from('agStaff s')

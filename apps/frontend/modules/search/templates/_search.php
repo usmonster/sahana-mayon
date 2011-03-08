@@ -11,12 +11,12 @@
     } ?></h3>
   <?php
     foreach ($hits as $hit) {
-      //  print_r($hit->model);
-      //  print_r($results);
+
 
       echo get_partial('search/result', array(
         'obj' => $results[$hit->model][$hit->pk],
-        'pk' => $hit)
+        'pk' => $hit,
+        'target_module' => $target_module)
       );
 
       //  echo get_partial($hit->model, array(
