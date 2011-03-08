@@ -14,7 +14,7 @@ $(document).ready(function() {
                         modal: true
 		});
 
-	$('.modalTrigger').click(function() {
+	$('.modalTrigger').live('click', function() {
                 $dialog.dialog("option", "title", $(this).attr('title'));
 		$dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
 
@@ -38,17 +38,14 @@ $(document).ready(function() {
              $('#modalContent').load($(this).parent().attr('action'));
            })
          })
-//         if ($('.modalReloadable').length != 0) {
-//           $('.modalReloadable').load('hi');
-//         }
        }
     })
     return false;
   });
-   $('div#modalContent').bind('dialogclose', function(event) {
-//     var path = window.location.pathname;
-   $('.modalReloadable').load(window.location.pathname + ' .modalReloadable > ');
-     location.reload();
+   $('#modalContent').bind('dialogclose', function() {
+     var yo = window.location.pathname;
+     $('#tableContainer').load(window.location.pathname + ' .singleTable');
+//     location.reload();
    });
 });
 

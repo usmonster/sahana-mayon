@@ -6,7 +6,7 @@ class agFacilityExportHelper {
     $this->primaryOnly = TRUE;
     $this->contactType = 'work';
     $this->addressStandard = 'us standard';
-    $this->exportHeaders = array('Facility Name', 'Facility Code', 'Facility Resource Type Abbr',
+    $this->exportHeaders = array('Facility Name', 'Facility Resource Code', 'Facility Resource Type Abbr',
         'Facility Resource Status', 'Facility Capacity', 'Facility Activation Sequence',
         'Facility Allocation Status', 'Facility Group', 'Facility Group Type',
         'Facility Group Allocation Status', 'Facility Group Activation Sequence',
@@ -48,7 +48,7 @@ class agFacilityExportHelper {
     foreach ($this->facilityGeneralInfo as $fac) {
       $entry = array();
       $entry['Facility Name'] = $fac['f_facility_name'];
-      $entry['Facility Code'] = $fac['f_facility_code'];
+      $entry['Facility Resource Code'] = $fac['fr_facility_resource_code'];
       $entry['Facility Resource Type Abbr'] = $fac['frt_facility_resource_type_abbr'];
       $entry['Facility Resource Status'] = $fac['frs_facility_resource_status'];
       $entry['Facility Capacity'] = $fac['fr_capacity'];

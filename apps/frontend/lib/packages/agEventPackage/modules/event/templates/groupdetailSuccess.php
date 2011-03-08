@@ -36,5 +36,5 @@
       }
     ?>
   </tbody>
-<?php echo javascript_include_tag('agModal.js'); ?>
+<?php //echo javascript_include_tag('agModal.js'); ?>
 </table>

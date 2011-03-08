@@ -529,6 +529,9 @@ class eventActions extends agActions
       $this->XmlHttpRequest = true;
     }
     if ($request->isMethod(sfRequest::POST)) {
+      // Check which type of data is coming through. Are you changing resource status
+      // or group status? Then build an object with the incoming values and some
+      // $request parameters.
       if ($request->getParameter('resource_allocation_status')) {
         $resourceAllocation = new agEventFacilityResourceStatus();
         $resourceAllocation->event_facility_resource_id = $request->getParameter('event_facility_resource_id');
