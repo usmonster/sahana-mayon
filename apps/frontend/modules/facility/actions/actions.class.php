@@ -240,6 +240,7 @@ class facilityActions extends agActions
     echo strftime($format);
 
     $dataNorm->normalizeImport();
+    $this->summary = $dataNorm->summary;
 
     echo strftime($format);
   }
