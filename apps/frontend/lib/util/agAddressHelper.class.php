@@ -13,7 +13,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
- * @property string $lineDelimeter The delimeter used between lines of an address.
+ * @property string $lineDelimiter The Delimiter used between lines of an address.
  * @property boolean $enforceComplete Boolean determining whether or not only complete addreses will
  * be returned by the address to string methods.
  * @property boolean $enforceLineNumber Boolean that determines whether or not line numbers will be
@@ -41,7 +41,7 @@
 
 class agAddressHelper
 {
-  public    $lineDelimeter = "\n",
+  public    $lineDelimiter = "\n",
             $enforceComplete = TRUE,
             $enforceLineNumber = FALSE,
             $checkValuesForCompleteness = FALSE ;
@@ -115,7 +115,7 @@ class agAddressHelper
    */
   public function setAddressIds($addressIds)
   {
-    if (! isset($addressIds) && is_array($addressIds))
+    if (isset($addressIds) && is_array($addressIds))
     {
       $this->_addressIds = $addressIds ;
     }
@@ -463,8 +463,8 @@ class agAddressHelper
   }
 
   /**
-   * Method to return an address as a singled formatted string. Uses the $lineDelimeter public class
-   * property as a line delimeter which can be changed to suit the needs of the output.
+   * Method to return an address as a singled formatted string. Uses the $lineDelimiter public class
+   * property as a line Delimiter which can be changed to suit the needs of the output.
    * 
    * @param array $addressIds An optional single-dimension array of address  id's. If NULL, the 
    * classes' $addressIds property is used.
@@ -497,25 +497,25 @@ class agAddressHelper
       // sort the address lines to make sure we can iterate over them safely
       ksort($addrLines) ;
 
-      // grab the last key so as not to add a delimeter
+      // grab the last key so as not to add a Delimiter
       $lineIds = array_keys($addrLines) ;
       $lastLineId = array_pop($lineIds) ;
 
       // now iterate per-line
       foreach ($addrLines as $lineId => $lineStr)
       {
-        // if enforcing line-numbers, append additional line delimeters until $lineId and $line match
+        // if enforcing line-numbers, append additional line Delimiters until $lineId and $line match
         while ($enforceLineNumber && $line < $lineId)
         {
-          $strAddr = $strAddr . $this->lineDelimeter ;
+          $strAddr = $strAddr . $this->lineDelimiter ;
           $line++ ;
         }
 
         // append our address string
         $strAddr = $strAddr . $lineStr ;
 
-        // append a delimeter if one needs to be added
-        if ($lineId != $lastLineId) { $strAddr = $strAddr . $this->lineDelimeter ; }
+        // append a Delimiter if one needs to be added
+        if ($lineId != $lastLineId) { $strAddr = $strAddr . $this->lineDelimiter ; }
         $line++ ;
       }
 

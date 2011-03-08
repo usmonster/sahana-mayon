@@ -63,18 +63,14 @@ class agFooActions extends agActions
   {
 // <-------- CUT HERE -------->
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
-//$obj = agAddressHelper::init($array) ;
-//$results = $obj->getAddressComponentsById() ;
-//$results = $obj->getAddressComponentsByName() ;
-//$results = $obj->getAddressCoordinates() ;
-//$results = $obj->getIncompleteAddresses() ;
-//$results = $obj->getAddressComponentsByLine() ;
-//$results = $obj->getAddressAsString() ;
-//$results = array($obj->addressFormatComponents, $obj->addressFormatRequired);
-$bool = AgGlobal::getParam('facility_resource_status_affects_events') ;
-if (AgGlobal::getParam('facility_resource_status_affects_events')) { echo "This one was true" ;}
-else { echo "Nope it was false" ;}
-//print_r($results) ;
+$obj = agPersonNameHelper::init($array) ;
+//$results = $obj->defaultNameComponents ;
+//$results = $obj->getPersonIds() ;
+//$results = $obj->getPrimaryNameById() ;
+//$results = $obj->getPrimaryNameByType() ;
+//$results = $obj->getPrimaryNameAsString() ;
+$results = $obj->getPrimaryNameAsString(NULL,TRUE) ;
+print_r($results) ;
 // <-------- CUT HERE -------->
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
