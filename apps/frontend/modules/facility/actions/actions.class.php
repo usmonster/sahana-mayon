@@ -326,38 +326,38 @@ $foo = 'boo';
     unlink($exportResponse['filePath']);
   }
 
-  /*
-   * This function constructs a Doctrine Query based on the values of the parameter passed in.
-   *
-   * The query will return the values from a single column of a table, with the possiblity to
-   * add a where clause to the query.
-   *
-   * @param $lookups array()  gatherLookupValues expects $lookups to be a two-dimensional array.
-   *                          Keys of the outer level are expected to be column headers for a
-   *                          lookup column, or some other kind of organized data list. However,
-   *                          submitting a non-associative array will not cause any errors.
-   *
-   *                          The expected structure of the array is something like this:
-   *
-   *                          $lookUps = array(
-   *                                       'Facility Resource Status' => array(
-   *                                           'selectTable'  => 'agFacilityResourceStatus',
-   *                                           'selectColumn' => 'facility_resource_status',
-   *                                           'whereColumn'  => null,
-   *                                           'whereValue' => null
-   *                                       ),
-   *                                       'Facility Resource Status' => array(
-   *                                           'selectTable'  => 'agFacilityResourceStatus',
-   *                                           'selectColumn' => 'facility_resource_status',
-   *                                           'whereColumn'  => null,
-   *                                           'whereValue' => null
-   *                                       )
-   *                          );
-   *
-   *                          Additional values of the $lookUps array can also be included.
-   *                          The keys of the inner array musy be set to selectTable, selectColumn,
-   *                          whereColumn, and whereValue.
-   */
+  /**
+  * This function constructs a Doctrine Query based on the values of the parameter passed in.
+  *
+  * The query will return the values from a single column of a table, with the possiblity to
+  * add a where clause to the query.
+  *
+  * @param $lookups array()  gatherLookupValues expects $lookups to be a two-dimensional array.
+  *                          Keys of the outer level are expected to be column headers for a
+  *                          lookup column, or some other kind of organized data list. However,
+  *                          submitting a non-associative array will not cause any errors.
+  *
+  *                          The expected structure of the array is something like this:
+  *
+  *                          $lookUps = array(
+  *                                       'Facility Resource Status' => array(
+  *                                           'selectTable'  => 'agFacilityResourceStatus',
+  *                                           'selectColumn' => 'facility_resource_status',
+  *                                           'whereColumn'  => null,
+  *                                           'whereValue' => null
+  *                                       ),
+  *                                       'Facility Resource Status' => array(
+  *                                           'selectTable'  => 'agFacilityResourceStatus',
+  *                                           'selectColumn' => 'facility_resource_status',
+  *                                           'whereColumn'  => null,
+  *                                           'whereValue' => null
+  *                                       )
+  *                          );
+  *
+  *                          Additional values of the $lookUps array can also be included.
+  *                          The keys of the inner array musy be set to selectTable, selectColumn,
+  *                          whereColumn, and whereValue.
+  **/
   public function gatherLookupValues($lookUps = null)
   {
     if(!isset($lookUps) || !is_array($lookUps)) {
@@ -370,7 +370,6 @@ $foo = 'boo';
       if(isset($lookUp['whereColumn']) && isset($lookUp['whereValue'])) {
         $lookUpQuery->where($lookUp['whereColumn'] . '=' . $lookUp['whereValue']);
       }
-      $thy = $lookUpQuery->getSqlQuery();
       $returnedLookups[$key] = $lookUpQuery->execute(null,'single_value_array');
     }
     return $returnedLookups;

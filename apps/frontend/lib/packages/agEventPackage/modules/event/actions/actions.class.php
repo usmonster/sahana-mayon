@@ -11,6 +11,7 @@
  *
  * @author Shirley Chan, CUNY SPS
  * @author Charles Wisniewski, CUNY SPS
+ * @author Nils Stolpe, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
@@ -22,6 +23,14 @@ class eventActions extends agActions
   public static $event;
   protected $searchedModels = array('agEventStaff');
 
+  /**
+  * Displays the index page for the event module.
+  *
+  * Users will see a list of existing events and be given the option to create
+  * a new event from a list of existing scenarios.
+  *
+  * @param sfWebRequest $request
+  **/
   public function executeIndex(sfWebRequest $request)
   {
     $this->scenarioForm = new sfForm();
@@ -38,9 +47,9 @@ class eventActions extends agActions
   }
 
   /**
-   *
-   * @param sfWebRequest $request
-   */
+  * Displays a list of 
+  * @param sfWebRequest $request
+  */
   public function executeFgroup(sfWebRequest $request)
   {
     $this->setEventBasics($request);
@@ -487,13 +496,10 @@ class eventActions extends agActions
 
     // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
     if ($this->event != "") {
-
       $query->where('a.event_id = ?', $this->event_id);
     }
     $facilityGroupArray = array();
     $this->ag_event_facility_groups = $query->execute();
-    $thingy = $query->getSqlQuery();
-    $rg = $this->event->id;
     foreach ($this->ag_event_facility_groups as $eventFacilityGroup) {
       $tempArray = $this->queryForTable($eventFacilityGroup->id);
       foreach ($tempArray as $ta) {
@@ -528,14 +534,23 @@ class eventActions extends agActions
   *
   * The template is used to display information about all event facilities in
   * an event facility group. The status of any of those facilities or of the group
-  * can also be changed. This action will normally post to a modal window.
+  * can also be changed. This action will normally post to a modal dialog, but can
+  * also post to the main browser window.
+  *
+  * @param sfWebRequest $request
   **/
   public function executeGroupdetail(sfWebRequest $request)
   {
+    $this->event = agDoctrineQuery::create()
+            ->select()
+            ->from('agEvent')
+            ->where('event_name = ?', urldecode($request->getParameter('event')))
+            ->fetchOne();
     $this->eventFacilityGroup = agDoctrineQuery::create()
             ->select()
             ->from('agEventFacilityGroup')
             ->where('event_facility_group = ?', urldecode($request->getParameter('group')))
+            ->andWhere('event_id = ?', $this->event->id)
             ->fetchOne();
     // Check for AJAX here. Set XmlHttpRequest to true so it can be used to determine functionality
     // in the templates and partials.
@@ -560,11 +575,6 @@ class eventActions extends agActions
         $groupAllocation->save();
       }
     }
-    $this->event = agDoctrineQuery::create()
-            ->select()
-            ->from('agEvent')
-            ->where('event_name = ?', urldecode($request->getParameter('event')))
-            ->fetchOne();
     $this->results = $this->queryForTable($this->eventFacilityGroup->id);
 
     $statusIds = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);

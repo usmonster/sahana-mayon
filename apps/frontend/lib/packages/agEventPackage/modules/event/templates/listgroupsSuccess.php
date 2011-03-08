@@ -12,9 +12,11 @@ $sortOrder = $sf_request->getGetParameter('order');
   echo '<span class="highlightedText">' . $event->event_name . ' </span>';
 } ?> Facilities Management</h2>
 <br />
+<?php if(isset($event_id)): ?>
 <div class="rightFloat" >
   <a href="<?php echo url_for('event/fgroup?id=' . $event_id); ?>" class="linkButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
 </div>
+<?php endif; ?>
 
 <h3>Facilities <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
 <div id="tableContainer">
