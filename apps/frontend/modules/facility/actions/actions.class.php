@@ -312,9 +312,10 @@ class facilityActions extends agActions
 
   public function executeFacilityExport()
   {
-    $facilityExportHelper = new agFacilityExportHelper();
-    $exportResponse = $facilityExportHelper->export();
-    unset($facilityExportHelper);
+    $facilityExporter = new agFacilityExporter();
+    $exportResponse = $facilityExporter->export();
+    // Free up some memory by getting rid of the agFacilityExporter object.
+    unset($facilityExporter);
     $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
     $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportResponse['fileName'] . '"');
 
@@ -323,10 +324,6 @@ class facilityActions extends agActions
     $this->getResponse()->setContent($exportFile);
     $this->getResponse()->send();
     unlink($exportResponse['filePath']);
-
-//    echo '<pre>';
-//    print_r($facilityExportRecords);
-//    echo '</pre>';
   }
 
   /*

@@ -1,6 +1,6 @@
 <?php
 
-class agFacilityExportHelper {
+class agFacilityExporter {
 
   public function __construct() {
     $this->primaryOnly = TRUE;
