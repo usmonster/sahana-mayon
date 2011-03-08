@@ -252,7 +252,7 @@ class eventActions extends agActions
     }
 
     $query = agDoctrineQuery::create()
-            ->select('es.*, sr.*, s.*, ess.*')
+            ->select('es.id, sr.id, s.id, ess.*')
             ->from('agEventStaff es, es.agStaffResource sr, sr.agStaffResourceOrganization sro, sr.agStaff s, es.agEventStaffShift ess, ess.agEventShift esh')
             ->where('es.event_id = ?', $this->event_id);
 

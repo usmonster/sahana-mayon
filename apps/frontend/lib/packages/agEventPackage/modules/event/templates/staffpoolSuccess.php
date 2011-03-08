@@ -15,10 +15,10 @@
 $columns = array(
   'fn' => array('title' => 'First Name', 'sortable' => false),
   'ln' => array('title' => 'Last Name', 'sortable' => false),
-  'org' => array('title' => 'Organization Facility Code', 'sortable' => true),
-  'status' => array('title' => 'Statuse', 'sortable' => true),
+  'org' => array('title' => 'Organization', 'sortable' => true),
+  'status' => array('title' => 'Status', 'sortable' => true),
   'type' => array('title' => 'Staff Type', 'sortable' => true),
-  'event_status' => array('title' => '', 'sortable' => false),
+  'event_status' => array('title' => 'Event Status', 'sortable' => false),
 );
 
 //pager comes in from the action

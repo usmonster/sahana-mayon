@@ -7,6 +7,7 @@
   <?php if (isset($searchquery)) { ?>
     <hr />
   <?php include_partial('search/resultform', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'widget' => $widget, 'shift_id' => $shift_id, 'event_id' => $event_id));
+
       } ?>
     </div>
 </div>
