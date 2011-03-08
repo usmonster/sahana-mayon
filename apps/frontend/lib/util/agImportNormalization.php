@@ -27,19 +27,24 @@ class agImportNormalization
 
   private function defineStatusTypes()
   {
-    $this->phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
+    $this->defaultPhoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
     $this->emailContactTypes = array_flip(agContactHelper::getContactTypes('email'));
     $this->phoneContactTypes = array_flip(agContactHelper::getContactTypes('phone'));
     $this->addressContactTypes = array_flip(agContactHelper::getContactTypes('address'));
-    $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->phoneFormatTypes));
+    $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->defaultPhoneFormatTypes));
     $this->staffResourceTypes = array_flip(agStaffHelper::getStaffResourceTypes());
+    $addressHelper = new agAddressHelper();
+    $this->addressStandards = $addressHelper->getAddressStandardId();
+    $this->addressElements = array_flip($addressHelper->getAddressElements());
+
+
     $this->geoType = 'point';
     $this->geoTypeId = agFacilityHelper::getGeoTypes($this->geoType);
-    $this->geoMatchScore = 'good';
+    $this->defaultGeoMatchScore = 'good';
     $this->geoMatchScores = array_flip(agGisHelper::getGeoMatchScores());
-    $this->geoMatchScoreId = $this->geoMatchScores[$this->geoMatchScore];
+    $geoMatchScores = $this->geoMatchScores;
+    $this->geoMatchScoreId = $geoMatchScores[$this->defaultGeoMatchScore];
     $this->geoSourceParamVal = agGlobal::getParam('facility_import_geo_source');
-//    $this->geoSourceParamVal = 'import';
     $this->geoSources = array_flip(agGisHelper::getGeoSources());
     $this->geoSourceId = $this->geoSources[$this->geoSourceParamVal];
 
@@ -118,12 +123,7 @@ class agImportNormalization
     try {
       // Declare static variables.
       $contactType = 'work';
-//      $phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
       $addressStandard = 'us standard';
-//      $geoType = $this->geoType;
-//      $geoSourceParamVal = agGlobal::getParam('facility_import_geo_source');
-//      $geoSourceParamVal = 'import';
-//      $geoMatchScore = 'good';
 
       $facilityResourceTypeIds = $this->facilityResourceTypes;
       $facilityResourceStatusIds = $this->facilityResourceStatuses;
@@ -138,21 +138,10 @@ class agImportNormalization
       $geoMatchScoreId = $this->geoMatchScoreId;
       $geoSourceId = $this->geoSourceId;
 
-      $addressStandardObj = agDoctrineQuery::create()
-              ->from('agAddressStandard')
-              ->where('address_standard = ?', $addressStandard)
-              ->fetchOne();
-
-//      $geoSourceId = agDoctrineQuery::create()
-//                      ->select('id')
-//                      ->from('agGeoSource')
-//                      ->where('geo_source = ?', $geoSourceParamVal)
-//                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-//      $geoMatchSourceId = agDoctrineQuery::create()
-//                      ->select('id')
-//                      ->from('agGeoMatchScore')
-//                      ->where('geo_match_score = ?', $geoMatchScore)
-//                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+//      $addressStandardObj = agDoctrineQuery::create()
+//              ->from('agAddressStandard')
+//              ->where('address_standard = ?', $addressStandard)
+//              ->fetchOne();
 
       $geoTypeId = $this->geoTypeId;
 
@@ -231,15 +220,19 @@ class agImportNormalization
         $facility_resource_allocation_status_id = $facilityResourceAllocationStatusIds[$facility_allocation_status];
         $workEmailTypeId = $emailContactTypeIds[$contactType];
         $workPhoneTypeId = $phoneContactTypeIds[$contactType];
-        $workPhoneFormatId = $phoneFormatTypeIds[$phoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
+//        $workPhoneFormatId = $phoneFormatTypeIds[$phoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
+        $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
+        $workPhoneFormatId = $phoneFormatTypeIds[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
         $workAddressTypeId = $addressContactTypeIds[$contactType];
-        $workAddressStandardId = $addressStandardObj->getId();
-        $addressElementIds = agDoctrineQuery::create()
-                ->select('ae.address_element, ae.id')
-                ->from('agAddressElement ae')
-                ->innerJoin('ae.agAddressFormat af')
-                ->where('af.address_standard_id = ?', $workAddressStandardId)
-                ->execute(array(), 'key_value_pair');
+        $workAddressStandardId = $this->addressStandards;
+        $addressElementIds = $this->addressElements;
+//        $workAddressStandardId = $addressStandardObj->getId();
+//        $addressElementIds = agDoctrineQuery::create()
+//                ->select('ae.address_element, ae.id')
+//                ->from('agAddressElement ae')
+//                ->innerJoin('ae.agAddressFormat af')
+//                ->where('af.address_standard_id = ?', $workAddressStandardId)
+//                ->execute(array(), 'key_value_pair');
 
 
         // facility
@@ -309,7 +302,7 @@ class agImportNormalization
         $addressId = $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds);
 
         // geo
-        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchSourceId);
+        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchScoreId);
 
         //facility staff resource
         $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
@@ -885,7 +878,7 @@ class agImportNormalization
     return $geo->id;
   }
 
-  protected function updateFacilityGeo($facility, $addressId, $addressTypeId, $addressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchSourceId)
+  protected function updateFacilityGeo($facility, $addressId, $addressTypeId, $addressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchScoreId)
   {
 
     // Create an address container to assign geo info for facility with no address given in import.
@@ -909,7 +902,7 @@ class agImportNormalization
       $addressGeo = new agAddressGeo();
       $addressGeo->set('address_id', $addressId)
               ->set('geo_id', $geoId)
-              ->set('geo_match_score_id', $geoMatchSourceId);
+              ->set('geo_match_score_id', $geoMatchScoreId);
       $addressGeo->save();
     } else {
       $geoId = $agAddressGeo->geo_id;

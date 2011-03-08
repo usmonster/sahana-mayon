@@ -525,4 +525,26 @@ class agAddressHelper
 
     return $results ;
   }
+
+  /**
+   * @return address_standard_id.
+   */
+  public function getAddressStandardId() {
+    return $this->_returnStandardId;
+  }
+
+  /**
+   * @return array $result An associative array,
+   * array(address_element_id => address_element).
+   */
+  public function getAddressElements() {
+    $result = array();
+    $result = agDoctrineQuery::create()
+            ->select('ae.id, ae.address_element')
+            ->from('agAddressElement ae')
+            ->innerJoin('ae.agAddressFormat af')
+            ->where('address_standard_id =?', $this->_returnStandardId)
+            ->execute(array(), 'key_value_pair');
+    return $result;
+  }
 }

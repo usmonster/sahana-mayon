@@ -17,7 +17,10 @@
  */
 class agGisHelper
 {
-
+  /**
+   * @return array $geoMatchSources An associative array,
+   * array(geo_match_score_id => geo_match_score).
+   */
   public static function getGeoMatchScores()
   {
     $geoMatchSources = agDoctrineQuery::create()
@@ -27,6 +30,11 @@ class agGisHelper
     return $geoMatchSources;
   }
 
+  /**
+   *
+   * @return array $geoSources An associative array,
+   * array(geo_source_id => geo_source).
+   */
   public static function getGeoSources()
   {
     $geoSources = agDoctrineQuery::create()
