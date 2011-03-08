@@ -12,24 +12,45 @@ class agImportNormalization
   public $numRecordsNormalized;
   public $numRecordsFailed;
 
-  function __construct($scenarioId, $sourceTable, $XLSColumnHeader)
+  function __construct($scenarioId, $sourceTable, $dataType)
   {
+    $this->dataType = $dataType;
     $this->scenarioId = $scenarioId;
     $this->sourceTable = $sourceTable;
-    $this->XLSColumnHeader = is_array($XLSColumnHeader) ? $XLSColumnHeader : array();
     $this->defineStatusTypes();
   }
 
   function __destruct()
   {
-    
+   //drop temp table.
   }
 
   private function defineStatusTypes()
   {
+    $this->phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
+    $this->emailContactTypes = array_flip(agContactHelper::getContactTypes('email'));
+    $this->phoneContactTypes = array_flip(agContactHelper::getContactTypes('phone'));
+    $this->addressContactTypes = array_flip(agContactHelper::getContactTypes('address'));
+    $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->phoneFormatTypes));
+    $this->staffResourceTypes = array_flip(agStaffHelper::getStaffResourceTypes());
     $this->geoType = 'point';
-    $this->facilityResourceTypeIds = array_flip(agFacilityHelper::getFacilityResourceAbbrTypeIds());
-    $this->geoTypeId = agFacilityHelper::getGeoTypeIds($this->geoType);
+    $this->geoTypeId = agFacilityHelper::getGeoTypes($this->geoType);
+    $this->geoMatchScore = 'good';
+    $this->geoMatchScores = array_flip(agGisHelper::getGeoMatchScores());
+    $this->geoMatchScoreId = $this->geoMatchScores[$this->geoMatchScore];
+    $this->geoSourceParamVal = agGlobal::getParam('facility_import_geo_source');
+//    $this->geoSourceParamVal = 'import';
+    $this->geoSources = array_flip(agGisHelper::getGeoSources());
+    $this->geoSourceId = $this->geoSources[$this->geoSourceParamVal];
+
+    if ($this->dataType == 'facility') {
+      $this->facilityResourceTypes = array_flip(agFacilityHelper::getFacilityResourceAbbrTypes());
+      $this->facilityResourceStatuses = array_flip(agFacilityHelper::getFacilityResourceStatuses());
+      $this->facilityResourceAllocationStatuses = array_flip(agFacilityHelper::getFacilityResourceAllocationStatuses());
+      $this->facilityGroupTypes = array_flip(agFacilityHelper::getFacilityGroupTypes());
+      $this->facilityGroupAllcoationStatuses = array_flip(agFacilityHelper::getFacilityGroupAllocationStatuses());
+    }
+
   }
 
   /**
@@ -46,15 +67,15 @@ class agImportNormalization
     }
 
     if (empty($record['street_1']) && empty($record['street_2'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid street 1/ street 2 address');
+      return array('pass' => FALSE, 'message' => 'Invalid street 1/street 2 address');
     }
 
     if (empty($record['city']) || empty($record['state']) || empty($record['postal_code'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid city / state/ postal_code address');
+      return array('pass' => FALSE, 'message' => 'Invalid city/state/postal_code address');
     }
 
     if (empty($record['longitude']) or empty($record['latitude'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid longitutde / latitude');
+      return array('pass' => FALSE, 'message' => 'Invalid longitutde/latitude');
     }
 
     // Check for min/max set validation:
@@ -97,67 +118,42 @@ class agImportNormalization
     try {
       // Declare static variables.
       $contactType = 'work';
-      $phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
+//      $phoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
       $addressStandard = 'us standard';
-      $geoType = $this->geoType;
-      agGlobal::initGlobal();
-      $geoSourceParamVal = agGlobal::$param['facility_import_geo_source'];
-      $geoMatchScore = 'good';
+//      $geoType = $this->geoType;
+//      $geoSourceParamVal = agGlobal::getParam('facility_import_geo_source');
+//      $geoSourceParamVal = 'import';
+//      $geoMatchScore = 'good';
 
-      $facilityResourceTypeIds = $this->facilityResourceTypeIds;
-      $facilityResourceStatusIds = agDoctrineQuery::create()
-              ->select('frs.facility_resource_status, frs.id')
-              ->from('agFacilityResourceStatus frs')
-              ->execute(array(), 'key_value_pair');
-      $facilityResourceAllocationStatusIds = agDoctrineQuery::create()
-              ->select('facility_resource_allocation_status, id')
-              ->from('agFacilityResourceAllocationStatus')
-              ->execute(array(), 'key_value_pair');
-      $facilityGroupTypeIds = agDoctrineQuery::create()
-              ->select('facility_group_type, id')
-              ->from('agFacilityGroupType')
-              ->execute(array(), 'key_value_pair');
-      $facilityGroupAllocationStatusIds = agDoctrineQuery::create()
-              ->select('facility_group_allocation_status, id')
-              ->from('agFacilitygroupAllocationStatus')
-              ->execute(array(), 'key_value_pair');
-      $emailContactTypeIds = agDoctrineQuery::create()
-              ->select('email_contact_type, id')
-              ->from('agEmailContactType')
-              ->execute(array(), 'key_value_pair');
-      $phoneContactTypeIds = agDoctrineQuery::create()
-              ->select('phone_contact_type, id')
-              ->from('agPhoneContactType')
-              ->execute(array(), 'key_value_pair');
-      $phoneFormatTypeIds = agDoctrineQuery::create()
-              ->select('pft.phone_format_type, pf.id')
-              ->from('agPhoneFormatType pft')
-              ->innerJoin('pft.agPhoneFormat pf')
-              ->whereIn('phone_format_type', $phoneFormatTypes)
-              ->execute(array(), 'key_value_pair');
-      $addressContactTypeIds = agDoctrineQuery::create()
-              ->select('address_contact_type, id')
-              ->from('agAddressContactType')
-              ->execute(array(), 'key_value_pair');
-      $staffResourceTypeIds = agDoctrineQuery::create()
-              ->select('staff_resource_type, id')
-              ->from('agStaffResourceType')
-              ->execute(array(), 'key_value_pair');
+      $facilityResourceTypeIds = $this->facilityResourceTypes;
+      $facilityResourceStatusIds = $this->facilityResourceStatuses;
+      $facilityResourceAllocationStatusIds = $this->facilityResourceAllocationStatuses;
+      $facilityGroupTypeIds = $this->facilityGroupTypes;
+      $facilityGroupAllocationStatusIds = $this->facilityGroupAllcoationStatuses;
+      $emailContactTypeIds = $this->emailContactTypes;
+      $phoneContactTypeIds = $this->phoneContactTypes;
+      $phoneFormatTypeIds = $this->phoneFormatTypes;
+      $addressContactTypeIds = $this->addressContactTypes;
+      $staffResourceTypeIds = $this->staffResourceTypes;
+      $geoMatchScoreId = $this->geoMatchScoreId;
+      $geoSourceId = $this->geoSourceId;
+
       $addressStandardObj = agDoctrineQuery::create()
               ->from('agAddressStandard')
               ->where('address_standard = ?', $addressStandard)
               ->fetchOne();
 
-      $geoSourceId = agDoctrineQuery::create()
-                      ->select('id')
-                      ->from('agGeoSource')
-                      ->where('geo_source = ?', $geoSourceParamVal)
-                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-      $geoMatchSourceId = agDoctrineQuery::create()
-                      ->select('id')
-                      ->from('agGeoMatchScore')
-                      ->where('geo_match_score = ?', $geoMatchScore)
-                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+//      $geoSourceId = agDoctrineQuery::create()
+//                      ->select('id')
+//                      ->from('agGeoSource')
+//                      ->where('geo_source = ?', $geoSourceParamVal)
+//                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+//      $geoMatchSourceId = agDoctrineQuery::create()
+//                      ->select('id')
+//                      ->from('agGeoMatchScore')
+//                      ->where('geo_match_score = ?', $geoMatchScore)
+//                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
       $geoTypeId = $this->geoTypeId;
 
       // Setup db connection.

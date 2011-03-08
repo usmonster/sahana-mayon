@@ -15,10 +15,11 @@
  */
 class agFacilityHelper
 {
+
   protected static $affectScenariosGlobal = 'facility_resource_status_affects_scenarios',
-  $affectEventsGlobal = 'facility_resource_status_affects_events',
-  $resourceEnabledGlobal = 'facility_resource_enabled_status',
-  $resourceDisabledGlobal = 'facility_resource_disabled_status';
+                   $affectEventsGlobal = 'facility_resource_status_affects_events',
+                   $resourceEnabledGlobal = 'facility_resource_enabled_status',
+                   $resourceDisabledGlobal = 'facility_resource_disabled_status';
 
   /**
    * @method facilityGeneralInfo()
@@ -430,55 +431,56 @@ class agFacilityHelper
   }
 
   /**
-   * Returns the id of the facility resource type either in an associate array or an integer.
+   * Returns the id of the abbreviated facility resource type either in an associative array or an
+   * integer.
    * @param string $facilityResourceAbbrType Optional.  Pass in a specific abbreviated facility
    * resource type to retrieve only the id of that instant.  If none pass in, retrieve the ids for
-   * all geo type.
+   * all facility resource type.
    * @return array|integer Returns either an associative array,
    * array(id => facility resource abbr type), for all types if no param is passed.
-   * Otherwise, just the id of the pass-in param.
+   * Otherwise, just the single-value id of the pass-in param.
    */
-  public static function getFacilityResourceAbbrTypeIds($facilityResourceAbbrType = NULL)
+  public static function getFacilityResourceAbbrTypes($facilityResourceAbbrType = NULL)
   {
-    $facilityResourceTypeIds = agDoctrineQuery::create()
+    $facilityResourceTypes = agDoctrineQuery::create()
                     ->from('agFacilityResourceType frt');
 
     if (empty($facilityResourceAbbrType)) {
-      $facilityResourceTypeIds = $facilityResourceTypeIds->select('frt.id, frt.facility_resource_type_abbr')
+      $facilityResourceTypes = $facilityResourceTypes->select('frt.id, frt.facility_resource_type_abbr')
                       ->execute(array(), 'key_value_pair');
     } else {
-      $faciltiyResourceTypeIds = $faciltiyResourceTypeIds->select('frt.id')
+      $facilityResourceTypes = $facilityResourceTypes->select('frt.id')
                       ->where('facility_resource_type = ?', $facilityResourceAbbrType)
                       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     }
 
-    return $facilityResourceTypeIds;
+    return $facilityResourceTypes;
   }
 
   /**
-   *
+   * Returns the id of the facility resource status either in an associative array or an integer.
    * @param string $facilityResourceStatus Optional.  Pass in a specific facility resource status 
    * to retrieve only the id of that instant.  If none pass in, retrieve the ids for
-   * all geo type.
+   * all facility resource status.
    * @return array|integer Returns either an associative array,
-   * array(id => facility resource abbr type), for all types if no param is passed.
-   * Otherwise, just the id of the pass-in param.
+   * array(id => facility resource allocation status), for all types if no param is passed.
+   * Otherwise, just the single-value id of the pass-in param.
    */
-  public static function getFacilityResourceStatusIds($facilityResourceStatus = NULL)
+  public static function getFacilityResourceStatuses($facilityResourceStatus = NULL)
   {
-    $facilityResourceStatusIds = agDoctrineQuery::create()
+    $facilityResourceStatuses = agDoctrineQuery::create()
                     ->from('agFacilityResourceStatus');
 
     if (empty($facilityResourceStatus)) {
-      $facilityResourceStatusIds->select('facility_resource_status, id')
+      $facilityResourceStatuses = $facilityResourceStatuses->select('id, facility_resource_status')
               ->execute(array(), 'key_value_pair');
     } else {
-      $facilityResourceStatusIds->select('id')
+      $facilityResourceStatuses = $facilityResourceStatuses->select('id')
               ->where('facility_resource_status = ?', $facilityResourceStatus)
               ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     }
 
-    return $facilityResourceStatusIds;
+    return $facilityResourceStatuses;
   }
 
   /**
@@ -488,20 +490,99 @@ class agFacilityHelper
    * @return array|integer Returns either an associate array, array(id => geo type), for all types or
    * returns only the id for the specified pass-in geo type param.
    */
-  public static function getGeoTypeIds($geoType = NULL)
+  public static function getGeoTypes($geoType = NULL)
   {
-    $geoTypeIds = agDoctrineQuery::create()
+    $geoTypes = agDoctrineQuery::create()
                     ->from('agGeoType');
 
     if (empty($geoType)) {
-      $geoTypeIds = $geoTypeIds->select('id, geo_type')
+      $geoTypes = $geoTypes->select('id, geo_type')
                       ->execute(array(), 'key_value_pair');
     } else {
-      $geoTypeIds = $geoTypeIds->select('id')
+      $geoTypes = $geoTypes->select('id')
                       ->where('geo_type = ?', $geoType)
                       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     }
-    return $geoTypeIds;
+    return $geoTypes;
+  }
+
+  /**
+   * Returns the id of the facility resource allocation status either in an associate array or an
+   * integer.
+   * @param string $allocationStatus Optional.  Pass in a specific facility resource allocation
+   * status to retrieve only the id of that instant.  If none pass in, retrieve the ids for all
+   * facility resource allocation statuses.
+   * @return array|integer Returns either an associate array,
+   * array(id => facility resource allocation status), for all types or returns only the id for the
+   * specified pass-in facility resource allocation status param.
+   */
+  public static function getFacilityResourceAllocationStatuses($allocationStatus = null)
+  {
+    $facilityResourceAllocationStatuses = agDoctrineQuery::create()
+                    ->from('agFacilityResourceAllocationStatus');
+
+    if (empty($facilityResourceStatus)) {
+      $facilityResourceAllocationStatuses = $facilityResourceAllocationStatuses->select('id, facility_resource_allocation_status')
+              ->execute(array(), 'key_value_pair');
+    } else {
+      $facilityResourceAllocationStatuses = $facilityResourceAllocationStatuses->select('id')
+              ->where('facility_resource_allocation_status = ?', $allocationStatus)
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
+
+    return $facilityResourceAllocationStatuses;
+  }
+
+  /**
+   * @param string $groupType Optional.  None or a specific facility group type.
+   * @return array|integer Returns either an associate array, array(id => facility group type), for
+   * all types or returns only the id for the specified pass-in facility resource allocation
+   * status param.
+   */
+  public static function getFacilityGroupTypes($groupType = null)
+  {
+    $facilityGroupTypes = agDoctrineQuery::create()
+                    ->from('agFacilityGroupType');
+
+    if (empty($groupType)) {
+      $facilityGroupTypes = $facilityGroupTypes->select('id, facility_group_type')
+                    ->execute(array(), 'key_value_pair');
+    } else {
+      $facilityGroupTypes = $facilityGroupTypes->select('id')
+              -where('facility_group_type = ?', $groupType)
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
+
+    return $facilityGroupTypes;
+  }
+
+  /**
+   * @param string $allocationStatus Optional.  None or a specific facility group allocation status.
+   * @return array|integer Returns either an associate array,
+   * array(id => facility group allocation status), for all types or returns only the id for the
+   * specified pass-in facility group allocation status param.
+   */
+  public static function getFacilityGroupAllocationStatuses ($allocationStatus = null) {
+    $facilityGroupAllocationStatuses = agDoctrineQuery::create()
+              ->from('agFacilitygroupAllocationStatus');
+
+    if (empty($allocationStatus)) {
+      $facilityGroupAllocationStatuses = $facilityGroupAllocationStatuses->select('id, facility_group_allocation_status')
+              ->execute(array(), 'key_value_pair');
+    } else {
+      $facilityGroupAllocationStatuses = $facilitygroupAllocationStatuses->select('id')
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
+
+    return $facilityGroupAllocationStatuses;
+  }
+
+  private function getAttributeIds ($tableName, $attributeName) {
+    $returnValue = agDoctrineQuery::create()
+      ->select('id, '. $attributeName)
+      ->from($tableName)
+      ->execute(array(), 'key_value_pair');
+    return $returnValue;
   }
 
   /**
@@ -544,9 +625,9 @@ class agFacilityHelper
       if ($affectScenarios || $affectEvents) {
         // pick up the allocation status we're about to apply from the defaults in the global param table
         if ($available) {
-          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param[self::$resourceEnabledGlobal]);
+          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::getParam(self::$resourceEnabledGlobal));
         } else {
-          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::$param[self::$resourceDisabledGlobal]);
+          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::getParam(self::$resourceDisabledGlobal));
         }
 
         // set our default connection if one is not passed and wrap it all in a transaction
