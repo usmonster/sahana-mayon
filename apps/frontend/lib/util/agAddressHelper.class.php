@@ -21,8 +21,6 @@
  * @param boolean $checkValuesForCompleteness Boolean parameter to control whether or not the
  * addressIsComplete method only searches for keys (FALSE) or checks the actual values for
  * zero-length strings and/or nulls.
- *
- * @property array $_addressIds A single-dimension array of address id values.
  * @property string $_globalDefaultAddressStandard The value of the default standard address global
  * parameter.
  * @property string $_globalDefaultAddressGeoType The value of the default address geo type as
@@ -39,15 +37,14 @@
  * value provided by the global parameter but not instantiated by default (only if geo is used).
  */
 
-class agAddressHelper
+class agAddressHelper extends agBulkRecordHelper
 {
   public    $lineDelimiter = "\n",
             $enforceComplete = TRUE,
             $enforceLineNumber = FALSE,
             $checkValuesForCompleteness = FALSE ;
 
-  protected $_addressIds = array(),
-            $_globalDefaultAddressStandard = 'default_address_standard',
+  protected $_globalDefaultAddressStandard = 'default_address_standard',
             $_globalDefaultAddressGeoType = 'default_address_geo_type',
             $_startingLineNumber = 1,
             $_addressFormatComponents = array(),
@@ -64,21 +61,10 @@ class agAddressHelper
   public function __construct($addressIds = NULL)
   {
     // if passed an array of address id's, set them as a class property
-    $this->setAddressIds($addressIds);
+    parent::__construct($addressIds);
 
     // set our default address standard and pick up the formatting components
     $this->_setDefaultReturnStandard() ;
-  }
-
-  /**
-   * Static method used to instantiate the class.
-   * @param array $addressIds A single dimension array of address ids.
-   * @return object A new instance of agAddressHelper.
-   */
-  public static function init($addressIds = NULL)
-  {
-    $class = new self($addressIds) ;
-    return $class ;
   }
 
   /**
@@ -106,38 +92,6 @@ class agAddressHelper
         ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
 
     $this->_addressGeoTypeId = $geoTypeId ;
-  }
-
-  /**
-   * Helper method used to set the current batch of address id's.
-   * 
-   * @param array $addressIds A single-dimension array of address id's.
-   */
-  public function setAddressIds($addressIds)
-  {
-    if (isset($addressIds) && is_array($addressIds))
-    {
-      $this->_addressIds = $addressIds ;
-    }
-  }
-
-  /**
-   * Helper method to retrieve the $addressId properties in the event that it is passed a null
-   * parameter. For use inside functions that optionally allow addresses to be specified.
-   *
-   * @param array $addressIds A single-dimension array of address  id's.
-   * @return array $addressIds A single-dimension array of address  id's.
-   */
-  public function getAddressIds($addressIds = NULL)
-  {
-    if (is_null($addressIds))
-    {
-      return $this->_addressIds ;
-    }
-    else
-    {
-      return $addressIds ;
-    }
   }
 
   /**
@@ -209,7 +163,7 @@ class agAddressHelper
   protected function _getAddressComponents($addressIds)
   {
     // if no (null) ID's are passed, get the addressId's from the class property
-    $addressIds = $this->getAddressIds($addressIds) ;
+    $addressIds = $this->getRecordIds($addressIds) ;
 
     // construct our base query object
     $q = agDoctrineQuery::create()
@@ -255,7 +209,7 @@ class agAddressHelper
     $results = array() ;
 
     // get our default class-property-provided addressIds if none are passed
-    $addressIds = $this->getAddressIds($addressIds) ;
+    $addressIds = $this->getRecordIds($addressIds) ;
 
     // if we've not yet set our address geo-type, then let's do-so
     if (! isset($this->_addressGeoTypeId)) { $this->_setDefaultAddressGeoType() ; }

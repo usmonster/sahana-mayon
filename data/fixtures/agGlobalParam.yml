@@ -51,4 +51,9 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_name_components
     value: '<?php echo json_encode(array(array('given',FALSE), array('middle',TRUE), array('family',FALSE))); ?>'
+  default_batch_size:
+    id: 11
+    agHost: localhost
+    datapoint: default_batch_size
+    value: 20000
 

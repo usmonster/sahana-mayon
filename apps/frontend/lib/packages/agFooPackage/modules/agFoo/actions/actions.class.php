@@ -63,13 +63,13 @@ class agFooActions extends agActions
   {
 // <-------- CUT HERE -------->
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
-$obj = agPersonNameHelper::init($array) ;
+$obj = agAddressHelper::init($array) ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
 //$results = $obj->getPrimaryNameByType() ;
 //$results = $obj->getPrimaryNameAsString() ;
-$results = $obj->getPrimaryNameAsString(NULL,TRUE) ;
+$results = $obj->getAddressAsString() ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 

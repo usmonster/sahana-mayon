@@ -1,7 +1,8 @@
 <?php
 
 /** 
- * Provides person name helper functions
+ * Provides person name helper functions and inherits several methods and properties from the
+ * bulk record helper.
  *
  * PHP Version 5
  *
@@ -20,19 +21,17 @@
  * @property boolean $invertLastComponent A simple bool to direct whether or not the last component
  * will be returned first (eg, LastName, First Name).
  * @property array $delimiters An associative array of delimiters used by the AsString method.
- * @property array $_personIds A single-dimension array of person id values.
  * @property string $_globalDefaultNameComponents The string datapoint of the name components
  * global parameter.
  */
 
-class agPersonNameHelper
+class agPersonNameHelper extends agBulkRecordHelper
 {
   public    $defaultNameComponents = array(),
             $invertLastComponent = FALSE,
             $delimiters = array('invert' => ',', 'component' => ' ', 'initial' => '.');
 
-  protected $_personIds = array(),
-            $_globalDefaultNameComponents = 'default_name_components' ;
+  protected $_globalDefaultNameComponents = 'default_name_components' ;
 
   /**
    * This is the classes' constructor and is used to set up class properties, where appropriate.
@@ -42,54 +41,10 @@ class agPersonNameHelper
   public function __construct($personIds = NULL)
   {
     // set our person ids if passed any at construction
-    if (! is_null($personIds)) { $this->setPersonIds($personIds) ; }
+    parent::__construct($personIds) ;
 
     // set the default name components
     $this->_setDefaultNameComponents() ;
-  }
-
-  /**
-   * Static method to quickly instantiate the agPersonNameHelper class.
-   *
-   * @param array $personIds A single-dimension array of person id values.
-   * @return object An instantiated agPersonNameHelper object.
-   */
-  public static function init($personIds = NULL)
-  {
-    $class = new self($personIds) ;
-    return $class ;
-  }
-
-  /**
-   * Explicit method to set the protected _personIds class property.
-   *
-   * @param array $personIds A single-dimension array of person id values.
-   */
-  public function setPersonIds($personIds)
-  {
-    if (isset($personIds) && is_array($personIds))
-    {
-      $this->_personIds = $personIds ;
-    }
-  }
-
-  /**
-   * Explicit getter to return an array of personIds. Reflects any arrays passed to it but will
-   * return the class property _personIds if not passed a parameter.
-   *
-   * @param array $personIds A single-dimension array of person id values. Default is NULL.
-   * @return array A single-dimension array of person id values.
-   */
-  public function getPersonIds($personIds = NULL)
-  {
-    if (is_null($personIds))
-    {
-      return $this->_personIds ;
-    }
-    else
-    {
-      return $personIds ;
-    }
   }
 
   /**
@@ -127,7 +82,7 @@ class agPersonNameHelper
    */
   protected function _getPrimaryNameComponents($personIds = NULL)
   {
-    $personIds = $this->getPersonIds($personIds) ;
+    $personIds = $this->getRecordIds($personIds) ;
     
     $q = agDoctrineQuery::create()
       ->select('pmpn.person_id')
