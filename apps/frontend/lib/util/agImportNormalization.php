@@ -7,10 +7,11 @@
  */
 class agImportNormalization
 {
-
-  public $events = array();
-  public $numRecordsNormalized;
-  public $numRecordsFailed;
+  public $summary = array();
+  public $nonprocessRecords = array();
+  public $totalNewFacilityCounts = 0;
+  public $totalNewFacilityGroupCounts = 0;
+  public $totalProcessedRecordCount = 0;
 
   function __construct($scenarioId, $sourceTable, $dataType)
   {
@@ -18,6 +19,11 @@ class agImportNormalization
     $this->scenarioId = $scenarioId;
     $this->sourceTable = $sourceTable;
     $this->defineStatusTypes();
+    $this->summary = array();
+    $this->nonprocessedRecords = array();
+    $this->totalProcessedRecordCount = 0;
+    $this->totalNewFacilityCount = 0;
+    $this->totalNewFacilityGroupCount = 0;
   }
 
   function __destruct()
@@ -25,6 +31,9 @@ class agImportNormalization
    //drop temp table.
   }
 
+  /**
+   * Method to define status and type variables.
+   */
   private function defineStatusTypes()
   {
     $this->defaultPhoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
@@ -36,8 +45,6 @@ class agImportNormalization
     $addressHelper = new agAddressHelper();
     $this->addressStandards = $addressHelper->getAddressStandardId();
     $this->addressElements = array_flip($addressHelper->getAddressElements());
-
-
     $this->geoType = 'point';
     $this->geoTypeId = agFacilityHelper::getGeoTypes($this->geoType);
     $this->defaultGeoMatchScore = 'good';
@@ -68,24 +75,37 @@ class agImportNormalization
   {
     // Check for required fields
     if (empty($record['facility_name']) && empty($record['facility_code'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid facility name/code');
+      return array('pass' => FALSE, 
+                   'status' => 'ERROR', 
+                   'type' => 'Facility Name/Code',
+                   'message' => 'Invalid facility name/code');
     }
 
     if (empty($record['street_1']) && empty($record['street_2'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid street 1/street 2 address');
+      return array('pass' => FALSE, 
+                   'status' => 'ERROR', 
+                   'type' => 'Mailing Address',
+                   'message' => 'Invalid street 1/street 2 address');
     }
 
     if (empty($record['city']) || empty($record['state']) || empty($record['postal_code'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid city/state/postal_code address');
+      return array('pass' => FALSE, 
+                   'status' => 'ERROR', 
+                   'type' => 'Mailing Address',
+                   'message' => 'Invalid city/state/postal_code address');
     }
 
     if (empty($record['longitude']) or empty($record['latitude'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid longitutde/latitude');
+      return array('pass' => FALSE, 
+                   'status' => 'ERROR',
+                   'type' => 'Geo',
+                   'message' => 'Invalid longitutde/latitude');
     }
 
     // Check for min/max set validation:
-    // (1) Either both min and max are provided or neither should be provided for each staff type.
-    // (2) max >= min.
+    // (1) Check for valid staff type.
+    // (2) Either both min and max are provided or neither should be provided for each staff type.
+    // (3) max >= min.
     $importStaffList = array();
     foreach (array_keys($record) as $key) {
       if (preg_match('/_max$/', $key)) {
@@ -93,29 +113,86 @@ class agImportNormalization
       }
     }
     foreach ($importStaffList as $staff) {
+      if (!array_key_exists($staff, $this->staffResourceTypes)) {
+        return array('pass' => FALSE,
+                     'status' => 'ERROR', 
+                     'type' => 'Staff Resource',
+                     'message' => 'Invalid staff resource type.');
+      }
+
       if (( empty($record[$staff . '_min']) && !empty($record[staff . '_max']) )
               || (!empty($record[$staff . '_min']) && empty($record[$staff . '_max']) )) {
-        return array('pass' => FALSE, 'message' => 'Invalid min/max set: missing value');
+        return array('pass' => FALSE,
+                     'status' => 'ERROR',
+                     'type' => 'Staff Resource',
+                     'message' => 'Invalid min/max set: missing value');
       }
     }
     if ($record['minimum'] > $record['maximum']) {
-      return array('pass' => FALSE, 'message' => 'Invalid min/max set: min > max');
+      return array('pass' => FALSE,
+                   'status' => 'ERROR',
+                   'type' => 'Staff Resource',
+                   'message' => 'Invalid min/max set: min > max');
     }
 
     // Check for valid email address
     if (!empty($record['work_email']) && !preg_match('/^.+\@.+\..+$/', $record['work_email'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid email address');
+      return array('pass' => FALSE,
+                   'status' => 'WARNING',
+                   'type' => 'Email',
+                   'message' => 'Invalid email address');
     }
 
     // Check for valid phone number where it's either 10 digit or
     // 10 digit follow by an 'x' and the extension.
     if (!empty($record['work_phone']) && !preg_match('/^\d{10}(x\d+)?/', $record['work_phone'])) {
-      return array('pass' => FALSE, 'message' => 'Invalid phone');
+      return array('pass' => FALSE,
+                   'status' => 'WARNING',
+                   'type' => 'Phone',
+                   'message' => 'Invalid phone');
     }
 
-    // @TODO Add status and type checks here.
+    // Check for valid status and type.
 
-    return array('pass' => TRUE, 'mesage' => '');
+    if (!array_key_exists($record['facility_resource_type_abbr'], $this->facilityResourceTypes)) {
+      return array('pass' => FALSE,
+                   'status' => 'ERROR',
+                   'type' => 'Facility Resource Type Abbr',
+                   'message' => 'Invalid facility resource type abbreviation.');
+    }
+
+    if (!array_key_exists($record['facility_resource_status'], $this->facilityResourceStatuses)) {
+      return array('pass' => FALSE,
+                   'status' => 'ERROR',
+                   'type' => 'Facility Resource status',
+                   'message' => 'Invalid facility resource status.');
+    }
+
+    if (!array_key_exists($record['facility_allocation_status'], $this->facilityResourceAllocationStatuses)) {
+      return array('pass' => FALSE,
+                   'status' => 'ERROR',
+                   'type' => 'Facility Resource Allocation Status',
+                   'message' => 'Invalid facility resource allocation status.');
+    }
+
+    if (!array_key_exists($record['facility_group_type'], $this->facilityGroupTypes)) {
+      return array('pass' => FALSE,
+                   'status' => 'ERROR',
+                   'type' => 'Facility Group Type',
+                   'message' => 'Invalid facility group type.');
+    }
+
+    if (!array_key_exists($record['facility_group_allocation_status'], $this->facilityGroupAllcoationStatuses)) {
+      return array('pass' => FALSE,
+                   'status' => 'ERROR',
+                   'type' => 'Facility Group Allocation Status',
+                   'message' => 'Invalid facility group allocation status.');
+    }
+
+    return array('pass' => TRUE, 
+                 'status' => 'SUCCESS', 
+                 'type' => null, 
+                 'message' => null);
   }
 
   public function normalizeImport()
@@ -123,7 +200,7 @@ class agImportNormalization
     try {
       // Declare static variables.
       $contactType = 'work';
-      $addressStandard = 'us standard';
+//      $addressStandard = 'us standard';
 
       $facilityResourceTypeIds = $this->facilityResourceTypes;
       $facilityResourceStatusIds = $this->facilityResourceStatuses;
@@ -137,12 +214,6 @@ class agImportNormalization
       $staffResourceTypeIds = $this->staffResourceTypes;
       $geoMatchScoreId = $this->geoMatchScoreId;
       $geoSourceId = $this->geoSourceId;
-
-//      $addressStandardObj = agDoctrineQuery::create()
-//              ->from('agAddressStandard')
-//              ->where('address_standard = ?', $addressStandard)
-//              ->fetchOne();
-
       $geoTypeId = $this->geoTypeId;
 
       // Setup db connection.
@@ -157,15 +228,42 @@ class agImportNormalization
       $conn->beginTransaction();
 
       foreach ($sourceRecords as $record) {
+        $validEmail = 1;
+        $validPhone = 1;
+        $validAddress = 1;
+        $newFacility = 0;
+        $newFacilityGroup = 0;
 // TODO: implement this
         $isValidData = $this->dataValidation($record);
         if (!$isValidData['pass']) {
-          echo "<BR>Invalid record (";
-          echo $record['id'];
-          echo ").  Reject.";
-          echo "  Message: " . $isValidData['message'];
+//          echo "<BR>Invalid record (";
+//          echo $record['id'];
+//          echo ").  Reject.";
+//          echo "  Message: " . $isValidData['message'];
           // Log record to non-processed data.
-          next;
+
+          switch ($isValidData['status']) {
+            case 'ERROR':
+              $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
+              next;
+            case 'WARNING':
+              switch ($isValidData['type']) {
+                case 'Email':
+                  $validEmail = 0;
+                  break;
+                case 'Phone':
+                  $validPhone = 0;
+                  break;
+                case 'Address':
+                  $validAddress = 0;
+                  break;
+              }
+            default:
+              $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
+              next;
+          }
         }
 
         // Declare variables.
@@ -191,7 +289,6 @@ class agImportNormalization
           'country' => $record['country']);
         $geoInfo = array('longitude' => $record['longitude'],
             'latitude' => $record['latitude']);
-
 
         //keys of this array match values for staff types that should exist in ag_staff_resource_type
 
@@ -220,20 +317,11 @@ class agImportNormalization
         $facility_resource_allocation_status_id = $facilityResourceAllocationStatusIds[$facility_allocation_status];
         $workEmailTypeId = $emailContactTypeIds[$contactType];
         $workPhoneTypeId = $phoneContactTypeIds[$contactType];
-//        $workPhoneFormatId = $phoneFormatTypeIds[$phoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
         $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
         $workPhoneFormatId = $phoneFormatTypeIds[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
         $workAddressTypeId = $addressContactTypeIds[$contactType];
         $workAddressStandardId = $this->addressStandards;
         $addressElementIds = $this->addressElements;
-//        $workAddressStandardId = $addressStandardObj->getId();
-//        $addressElementIds = agDoctrineQuery::create()
-//                ->select('ae.address_element, ae.id')
-//                ->from('agAddressElement ae')
-//                ->innerJoin('ae.agAddressFormat af')
-//                ->where('af.address_standard_id = ?', $workAddressStandardId)
-//                ->execute(array(), 'key_value_pair');
-
 
         // facility
         // tries to find an existing record based on a unique identifier.
@@ -248,6 +336,7 @@ class agImportNormalization
 
         if (empty($facility)) {
           $facility = $this->createFacility($facility_name, $facility_code);
+          $newFacility = 1;
         } else {
           $facility = $this->updateFacility($facility, $facility_name);
           $facilityResource = agDoctrineQuery::create()
@@ -280,6 +369,7 @@ class agImportNormalization
 
         if (empty($scenarioFacilityGroup)) {
           $scenarioFacilityGroup = $this->createScenarioFacilityGroup($this->scenarioId, $facility_group, $facility_group_type_id, $facility_group_allocation_status_id, $facility_group_activation_sequence);
+          $newFacilityGroup = 1;
         } else {
           $scenarioFacilityGroup = $this->updateScenarioFacilityGroup($scenarioFacilityGroup, $facility_group_type_id, $facility_group_allocation_status_id, $facility_group_activation_sequence);
         }
@@ -293,27 +383,43 @@ class agImportNormalization
 
 
         // email
-        $this->updateFacilityEmail($facility, $email, $workEmailTypeId);
+        if ($validEmail) {
+          $this->updateFacilityEmail($facility, $email, $workEmailTypeId);
+        }
 
         // phone
-        $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId, $workPhoneFormatId);
+        if ($validPhone) {
+          $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId, $workPhoneFormatId);
+        }
 
         // address
-        $addressId = $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds);
+        if ($validAddress) {
+          $addressId = $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds);
+        }
 
         // geo
         $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId, $geoInfo, $geoTypeId, $geoSourceId, $geoMatchScoreId);
 
         //facility staff resource
         $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
+
+        $this->totalNewFacilityCount += $newFacility;
+        $this->totalNewFacilityGroupCount += $newFacilityGroup;
+        $this->totalProcessedRecordCount++;
       } // end foreach
 
       // @TODO: Clean-up function to remove old facility staff resource, scenario facility resources, and scenario facility groups.
       
       $conn->commit();
+      $this->summary = array('totalNewFacilityCount' => $this->totalNewFacilityCount,
+                             'totalNewFacilityGroupCount' => $this->totalNewFacilityGroupCount,
+                             'totalProcessedRecordCount' => $this->totalProcessedRecordCount,
+                             'nonprocessedRecords' => $this->nonprocessedRecords);
     } catch (Exception $e) {
       echo '<BR><BR>Unable to normalize data.  Exception error mesage: ' . $e;
       $this->event[] = array('type' => 'ERROR', 'message' => 'Unable to normalize data.  Exception error mesage: ' . $e);
+      $this->nonprocessedRecords[] = array('message' => 'Unable to normalize data.  Exception error mesage: ' . $e,
+                                         'record' => $record);
       $conn->rollBack();
     }
   }
