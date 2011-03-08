@@ -46,4 +46,9 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_address_geo_type
     value: point
+  default_name_components:
+    id: 10
+    agHost: localhost
+    datapoint: default_name_components
+    value: '<?php echo json_encode(array(array('given',FALSE), array('middle',TRUE), array('family',FALSE))); ?>'
 
