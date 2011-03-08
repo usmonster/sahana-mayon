@@ -63,24 +63,18 @@ agFacility:
     facility_name:
       type: string(64)
       notnull: true
-    facility_code:
-      type: string(10)
-      notnull: true
   actAs:
     Timestampable:
     Luceneable: 
       fields:
         facility_name: unstored
-        facility_code: unstored
   indexes:
     agFacility_siteId_unq:
       fields: [site_id]
       type: unique
-    agFacility_facilityCode_unq:
-      fields: [facility_code]
-      type: unique
-    IX_agFacility_facilityName:
+    agFacility_facilityName_unq:
       fields: [facility_name]
+      type: unique
   relations:
     agSite:
       local: site_id
@@ -97,6 +91,9 @@ agFacilityResource:
       type: integer(4)
       notnull: true
       autoincrement: true
+    facility_resource_code:
+      type: string(10)
+      notnull: true
     facility_id:
       type: integer(4)
       notnull: true
@@ -113,6 +110,9 @@ agFacilityResource:
   indexes:
     agFacilityResource_unq:
       fields: [facility_id, facility_resource_type_id]
+      type: unique
+    agFacilityResource_facilityResourceCode_unq:
+      fields: [facility_resource_code]
       type: unique
   relations:
     agFacility:

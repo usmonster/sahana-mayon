@@ -2,196 +2,148 @@ agFacility:
   facility_11:
     agSite: 11
     facility_name: Fossil University
-    facility_code: FF765
   facility_12:
     agSite: 12
     facility_name: Financial Center
-    facility_code: FC983
   facility_13:
     agSite: 13
     facility_name: Research Center
-    facility_code: R093
   facility_14:
     agSite: 14
     facility_name: Research Center II
-    facility_code: R094
   facility_15:
     agSite: 15
     facility_name: Mass Transportation Resort
-    facility_code: MTR1
   facility_16:
     agSite: 16
     facility_name: Public Resort
-    facility_code: PR001
   facility_17:
     agSite: 17
     facility_name: Recreational Center
-    facility_code: RCR03
   facility_18:
     agSite: 18
     facility_name: School 101
-    facility_code: S101
   facility_19:
     agSite: 19
     facility_name: School 201
-    facility_code: S201
   facility_20:
     agSite: 20
     facility_name: The Great University
-    facility_code: U230
   facility_21:
     agSite: 21
     facility_name: Columbia University
-    facility_code: U231
   facility_22:
     agSite: 22
     facility_name: Public School 16
-    facility_code: PS16
   facility_23:
     agSite: 23
     facility_name: City Technical College
-    facility_code: C100
   facility_24:
     agSite: 24
     facility_name: The Graduate Center
-    facility_code: C101
   facility_25:
     agSite: 25
     facility_name: Madison Square Garden
-    facility_code: PB40
   facility_26:
     agSite: 26
     facility_name: Hunter Art School
-    facility_code: PS45
   facility_27:
     agSite: 27
     facility_name: Sunset Park Community Center
-    facility_code: PB52
   facility_28:
     agSite: 28
     facility_name: Astoria United Methodist
-    facility_code: PB56
   facility_29:
     agSite: 29
     facility_name: NYU Gymnasium
-    facility_code: PB67
   facility_30:
     agSite: 30
     facility_name: NYU Auditorium
-    facility_code: PB72
   facility_31:
     agSite: 31
     facility_name: PS 567
-    facility_code: PS567
   facility_32:
     agSite: 32
     facility_name: UN Shelter
-    facility_code: PB11
   facility_33:
     agSite: 33
     facility_name: Greenpoint Community Center
-    facility_code: PB80
   facility_34:
     agSite: 34
     facility_name: Park Slope Library
-    facility_code: PB94
   facility_35:
     agSite: 35
     facility_name: ACE College
-    facility_code: U485
   facility_36:
     agSite: 36
     facility_name: Brooklyn Hospital Center
-    facility_code: HB01
   facility_37:
     agSite: 37
     facility_name: Queens Hospital
-    facility_code: HQ01
   facility_38:
     agSite: 38
     facility_name: Staten Island Hospital
-    facility_code: HSI01
   facility_39:
     agSite: 39
     facility_name: Manhattan Hospital
-    facility_code: HM01
   facility_40:
     agSite: 40
     facility_name: Bronx Hospital
-    facility_code: HBX01
   facility_41:
     agSite: 41
     facility_name: Rockaway Beach High
-    facility_code: PS075
   facility_42:
     agSite: 42
     facility_name: Public School 195
-    facility_code: PS195
   facility_43:
     agSite: 43
     facility_name: Harlem Community Center
-    facility_code: P89
   facility_44:
     agSite: 44
     facility_name: Astoria Ditmars Community Center
-    facility_code: P44
   facility_45:
     agSite: 45
     facility_name: Bay Ridge Community Center
-    facility_code: P45
   facility_46:
     agSite: 46
     facility_name: Chelsea Community Center
-    facility_code: P46
   facility_47:
     agSite: 47
     facility_name: Brooklyn Community College
-    facility_code: C47
   facility_48:
     agSite: 48
     facility_name: Queens Community College
-    facility_code: C48
   facility_49:
     agSite: 49
     facility_name: Manhattan Community College
-    facility_code: C49
   facility_50:
     agSite: 50
     facility_name: Bronx Community College
-    facility_code: C50
   facility_51:
     agSite: 51
     facility_name: Staten Island Community College
-    facility_code: C51
   facility_52:
     agSite: 52
     facility_name: DUMBO School
-    facility_code: PS052
   facility_53:
     agSite: 53
     facility_name: World Trade Conference Center
-    facility_code: CC53
   facility_54:
     agSite: 54
     facility_name: Javitz Center
-    facility_code: CC54
   facility_55:
     agSite: 55
     facility_name: United Nations Conference Center
-    facility_code: CC55
   facility_56:
     agSite: 56
     facility_name: British International School
-    facility_code: P056
   facility_57:
     agSite: 57
     facility_name: Gantry Plaza Center
-    facility_code: P057
   facility_58:
     agSite: 58
     facility_name: Queens College
-    facility_code: C058
   facility_59:
     agSite: 59
     facility_name: Astoria College
-    facility_code: C059
+

@@ -13,6 +13,7 @@ abstract class BaseagFacilityResourceFormFilter extends BaseFormFilterDoctrine
   public function setup()
   {
     $this->setWidgets(array(
+      'facility_resource_code'          => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'facility_id'                     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacility'), 'add_empty' => true)),
       'facility_resource_type_id'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'), 'add_empty' => true)),
       'facility_resource_status_id'     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceStatus'), 'add_empty' => true)),
@@ -24,6 +25,7 @@ abstract class BaseagFacilityResourceFormFilter extends BaseFormFilterDoctrine
     ));
 
     $this->setValidators(array(
+      'facility_resource_code'          => new sfValidatorPass(array('required' => false)),
       'facility_id'                     => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agFacility'), 'column' => 'id')),
       'facility_resource_type_id'       => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agFacilityResourceType'), 'column' => 'id')),
       'facility_resource_status_id'     => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agFacilityResourceStatus'), 'column' => 'id')),
@@ -88,6 +90,7 @@ abstract class BaseagFacilityResourceFormFilter extends BaseFormFilterDoctrine
   {
     return array(
       'id'                              => 'Number',
+      'facility_resource_code'          => 'Text',
       'facility_id'                     => 'ForeignKey',
       'facility_resource_type_id'       => 'ForeignKey',
       'facility_resource_status_id'     => 'ForeignKey',
