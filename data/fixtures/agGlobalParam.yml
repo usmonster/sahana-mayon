@@ -41,4 +41,9 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_address_standard 
     value: us standard
+  default_address_geo_type:
+    id: 9
+    agHost: localhost
+    datapoint: default_address_geo_type
+    value: point
 

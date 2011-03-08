@@ -63,15 +63,18 @@ class agFooActions extends agActions
   {
 // <-------- CUT HERE -------->
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
-$obj = agAddress::init($array) ;
+//$obj = agAddressHelper::init($array) ;
 //$results = $obj->getAddressComponentsById() ;
 //$results = $obj->getAddressComponentsByName() ;
 //$results = $obj->getAddressCoordinates() ;
 //$results = $obj->getIncompleteAddresses() ;
 //$results = $obj->getAddressComponentsByLine() ;
-$results = $obj->getAddressAsString() ; 
+//$results = $obj->getAddressAsString() ;
 //$results = array($obj->addressFormatComponents, $obj->addressFormatRequired);
-print_r($results) ;
+$bool = AgGlobal::getParam('facility_resource_status_affects_events') ;
+if (AgGlobal::getParam('facility_resource_status_affects_events')) { echo "This one was true" ;}
+else { echo "Nope it was false" ;}
+//print_r($results) ;
 // <-------- CUT HERE -------->
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));

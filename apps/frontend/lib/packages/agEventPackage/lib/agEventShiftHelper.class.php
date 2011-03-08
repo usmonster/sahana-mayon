@@ -323,7 +323,7 @@ class agEventShiftHelper
     $statusQuery = agDoctrineQuery::create()
       ->select('ss.id')
         ->from('agShiftStatus ss')
-        ->where('ss.shift_status = ?', agGlobal::$param['shift_disabled_status']) ;
+        ->where('ss.shift_status = ?', agGlobal::getParam('shift_disabled_status')) ;
 
     $disabledStatusId = $statusQuery->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
     return $disabledStatusId ;

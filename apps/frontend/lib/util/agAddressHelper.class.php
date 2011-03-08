@@ -13,7 +13,6 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
- * @property array $addressIds A single-dimension array of address id values.
  * @property string $lineDelimeter The delimeter used between lines of an address.
  * @property boolean $enforceComplete Boolean determining whether or not only complete addreses will
  * be returned by the address to string methods.
@@ -23,9 +22,11 @@
  * addressIsComplete method only searches for keys (FALSE) or checks the actual values for
  * zero-length strings and/or nulls.
  *
+ * @property array $_addressIds A single-dimension array of address id values.
  * @property string $_globalDefaultAddressStandard The value of the default standard address global
  * parameter.
- * @property string $_addressGeoType The value of the default address geo type.
+ * @property string $_globalDefaultAddressGeoType The value of the default address geo type as
+ * represented in global parameters.
  * @property integer $_startingLineNumber The value of the default starting line number for address
  * strings (eg, 1 or 0).
  * @property array $_addressFormatComponents A constructed array of the default address formatting
@@ -34,26 +35,31 @@
  * elements for the current standard.
  * @property integer $_returnStandardId The address standard currently in-use by this class.
  * Defaults to the value provided by the global parameter.
+ * @property string $_addressGeoTypeId The value of the default address geo type. Defaults to the
+ * value provided by the global parameter but not instantiated by default (only if geo is used).
  */
 
 class agAddressHelper
 {
-  public    $addressIds = array(),
-            $lineDelimeter = "\n",
+  public    $lineDelimeter = "\n",
             $enforceComplete = TRUE,
             $enforceLineNumber = FALSE,
             $checkValuesForCompleteness = FALSE ;
 
-  protected $_globalDefaultAddressStandard = 'default_address_standard',
-            $_addressGeoType = 'point',
+  protected $_addressIds = array(),
+            $_globalDefaultAddressStandard = 'default_address_standard',
+            $_globalDefaultAddressGeoType = 'default_address_geo_type',
             $_startingLineNumber = 1,
             $_addressFormatComponents = array(),
             $_addressFormatRequired = array(),
-            $_returnStandardId ;
+            $_returnStandardId,
+            $_addressGeoTypeId;
 
   /**
    * This is the class's constructor whic pre-loads the formatting elements according to the default
    * return standard.
+   *
+   * @param array $addressIds A single dimension array of address id values.
    */
   public function __construct($addressIds = NULL)
   {
@@ -65,13 +71,13 @@ class agAddressHelper
   }
 
   /**
-   * Static method used to instantiate the agAddress class.
+   * Static method used to instantiate the class.
    * @param array $addressIds A single dimension array of address ids.
-   * @return object A new instance of agAddress.
+   * @return object A new instance of agAddressHelper.
    */
   public static function init($addressIds = NULL)
   {
-    $class = new agAddress($addressIds) ;
+    $class = new self($addressIds) ;
     return $class ;
   }
 
@@ -80,7 +86,7 @@ class agAddressHelper
    */
   protected function _setDefaultReturnStandard()
   {
-    $standardName = agGlobal::$param[$this->_globalDefaultAddressStandard] ;
+    $standardName = agGlobal::getParam($this->_globalDefaultAddressStandard) ;
     $standardId = agDoctrineQuery::create()
       ->select('as.id')
         ->from('agAddressStandard as')
@@ -90,14 +96,29 @@ class agAddressHelper
     $this->setReturnStandard($standardId) ;
   }
 
+  protected function _setDefaultAddressGeoType()
+  {
+    $geoType = agGlobal::getParam($this->_globalDefaultAddressGeoType) ;
+    $geoTypeId = agDoctrineQuery::create()
+      ->select('gt.id')
+        ->from('agGeoType gt')
+        ->where('gt.geo_type = ?', $geoType)
+        ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
+
+    $this->_addressGeoTypeId = $geoTypeId ;
+  }
+
   /**
    * Helper method used to set the current batch of address id's.
    * 
-   * @param array $addressIds A single-dimension array of address  id's.
+   * @param array $addressIds A single-dimension array of address id's.
    */
-  public function setAddressIds ($addressIds)
+  public function setAddressIds($addressIds)
   {
-    if (! is_null($addressIds)) { $this->addressIds = $addressIds ; }
+    if (! isset($addressIds) && is_array($addressIds))
+    {
+      $this->_addressIds = $addressIds ;
+    }
   }
 
   /**
@@ -107,10 +128,16 @@ class agAddressHelper
    * @param array $addressIds A single-dimension array of address  id's.
    * @return array $addressIds A single-dimension array of address  id's.
    */
-  protected function _getAddressIds ($addressIds = NULL)
+  public function getAddressIds($addressIds = NULL)
   {
-    if (is_null($addressIds)) { $addressIds = $this->addressIds ; }
-    return $addressIds ;
+    if (is_null($addressIds))
+    {
+      return $this->_addressIds ;
+    }
+    else
+    {
+      return $addressIds ;
+    }
   }
 
   /**
@@ -179,10 +206,10 @@ class agAddressHelper
    * @param array $addressIds A single-dimension array of address  id's.
    * @return agDoctrineQuery An extended doctrine query object.
    */
-  protected function _getAddressComponents ($addressIds)
+  protected function _getAddressComponents($addressIds)
   {
     // if no (null) ID's are passed, get the addressId's from the class property
-    $addressIds = $this->_getAddressIds($addressIds) ;
+    $addressIds = $this->getAddressIds($addressIds) ;
 
     // construct our base query object
     $q = agDoctrineQuery::create()
@@ -205,7 +232,7 @@ class agAddressHelper
    * @return array A two dimensional array keyed by address_id, then by address_element_id, and
    * containing the address value.
    */
-  public function getAddressComponentsById ($addressIds = NULL)
+  public function getAddressComponentsById($addressIds = NULL)
   {
     // return our base query object
     $q = $this->_getAddressComponents($addressIds) ;
@@ -222,11 +249,18 @@ class agAddressHelper
    * @return array A two-dimensional associative array, keyed by address id, that has key/value
    * pairs representing latitude and longitude.
    */
-  public function getAddressCoordinates ($addressIds = NULL)
+  public function getAddressCoordinates($addressIds = NULL)
   {
+    // always a good idea to set this at the top
     $results = array() ;
-    $addressIds = $this->_getAddressIds($addressIds) ;
 
+    // get our default class-property-provided addressIds if none are passed
+    $addressIds = $this->getAddressIds($addressIds) ;
+
+    // if we've not yet set our address geo-type, then let's do-so
+    if (! isset($this->_addressGeoTypeId)) { $this->_setDefaultAddressGeoType() ; }
+
+    // create the monster query
     $q = agDoctrineQuery::create()
       ->select('a.id')
           ->addSelect('gc.latitude')
@@ -234,11 +268,10 @@ class agAddressHelper
         ->from('agAddress a')
           ->innerJoin('a.agAddressGeo ag')
           ->innerJoin('ag.agGeo g')
-          ->innerJoin('g.agGeoType gt')
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
         ->whereIn('a.id', $addressIds)
-          ->andWhere('gt.geo_type = ?', $this->_addressGeoType)
+          ->andWhere('g.geo_type_id = ?', $this->_addressGeoTypeId)
           ->andWhere(' EXISTS (
             SELECT sq.id
             FROM agGeoFeature sq
@@ -266,7 +299,7 @@ class agAddressHelper
    * @return array A two-dimensional associative array, keyed by address_id and the string
    * representation of the address component.
    */
-  public function getAddressComponentsByName ($addressIds = NULL, $getGeoCoordinates = TRUE)
+  public function getAddressComponentsByName($addressIds = NULL, $getGeoCoordinates = TRUE)
   {
     $results = array() ;
 
@@ -339,7 +372,7 @@ class agAddressHelper
       }
     }
 
-    // if everything's hunky-dory give it the 10-4
+    // if everything's hunky-dory give it the 10-4 go-ho good buddy
     return TRUE ;
   }
 
@@ -379,7 +412,7 @@ class agAddressHelper
    *
    * @todo This could *perhaps* be turned into some sort of super-efficient walk method
    */
-  public function getAddressComponentsByLine ($addressIds = NULL, $enforceComplete = NULL)
+  public function getAddressComponentsByLine($addressIds = NULL, $enforceComplete = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array() ;
@@ -442,7 +475,7 @@ class agAddressHelper
    * @return array A mono-dimensional associative array keyed by address_id with the combined
    * address string as a value.
    */
-  public function getAddressAsString ($addressIds = NULL,
+  public function getAddressAsString( $addressIds = NULL,
                                       $enforceComplete = NULL,
                                       $enforceLineNumber = NULL)
   {

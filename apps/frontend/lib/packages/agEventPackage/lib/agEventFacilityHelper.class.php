@@ -134,7 +134,7 @@ class agEventFacilityHelper
   public static function setFacilityActivationTime ($eventId, $eventFacilityResourceIds, $activationTime, $shiftChangeRestriction = TRUE, $releaseStaff = FALSE, Doctrine_Connection $conn = NULL)
   {
     // convert our dates
-    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param['shift_change_restriction'] * 60) : 0 ;
+    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::getParam('shift_change_restriction') * 60) : 0 ;
     $currentTimestamp = time() ;
 
     // do a check for illegal ops (eg staffed facility resource id's < window for set
@@ -442,7 +442,7 @@ class agEventFacilityHelper
     if ((! is_null($activationTime)) && (! empty($firstShifts)))
     {
         // get some time variables setup
-        $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param['shift_change_restriction'] * 60) : 0 ;
+        $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::getParam('shift_change_restriction') * 60) : 0 ;
         $currentTimestamp = time() ;
         $activationOffset = ($activationTime - $shiftOffset) ;
 
@@ -520,7 +520,7 @@ class agEventFacilityHelper
   public static function releaseEventFacilityResource ($eventFacilityResourceId, $actionTime = NULL, $shiftChangeRestriction = TRUE, Doctrine_Connection $conn = NULL)
   {
     // set up our basic time parameters
-    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::$param['shift_change_restriction'] * 60) : 0 ;
+    $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::getParam('shift_change_restriction') * 60) : 0 ;
     if (is_null($actionTime)) { $actionTime = time() ; }
     $actionTimeOffset = ($actionTime + $shiftOffset) ;
 
