@@ -1,64 +1,64 @@
 <?php
 
 /**
- * Facility Actions extends sfActions
- *
- * PHP Version 5
- *
- * LICENSE: This source file is subject to LGPLv3.0 license
- * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
- *
- * @author     Charles Wisniewski, CUNY SPS
- * @author     Nils Stolpe, CUNY SPS
- * @author     Ilya Gulko, CUNY SPS
- *
- * Copyright of the Sahana Software Foundation, sahanafoundation.org
- */
+* Facility Actions extends sfActions
+*
+* PHP Version 5
+*
+* LICENSE: This source file is subject to LGPLv3.0 license
+* that is available through the world-wide-web at the following URI:
+* http://www.gnu.org/copyleft/lesser.html
+*
+* @author     Charles Wisniewski, CUNY SPS
+* @author     Nils Stolpe, CUNY SPS
+* @author     Ilya Gulko, CUNY SPS
+*
+* Copyright of the Sahana Software Foundation, sahanafoundation.org
+**/
 class facilityActions extends agActions
 {
 
   protected $searchedModels = array('agFacility');
 
   /**
-   * executeIndex()
-   *
-   * Placeholder for the index action. Only the template is
-   * needed, so this method is empty.
-   *
-   * @param $request sfWebRequest object for current page request
-   */
+  * executeIndex()
+  *
+  * Placeholder for the index action. Only the template is
+  * needed, so this method is empty.
+  *
+  * @param $request sfWebRequest object for current page request
+  **/
   public function executeIndex(sfWebRequest $request)
   {
     //do some index stuff
   }
 
   /**
-   * executeList()
-   *
-   * Executes the list action for facility module
-   *
-   * @param $request sfWebRequest object for current page request
-   */
+  * executeList()
+  *
+  * Executes the list action for facility module
+  *
+  * @param $request sfWebRequest object for current page request
+  **/
   public function executeList(sfWebRequest $request)
   {
     /**
-     * Query the database for agFacility records joined with
-     * agFacilityResource records
-     */
+    * Query the database for agFacility records joined with
+    * agFacilityResource records
+    **/
     $query = agDoctrineQuery::create()
             ->select('f.*, fr.*')
             ->from('agFacility f, f.agFacilityResource fr');
 
     /**
-     * Create pager
-     */
+    * Create pager
+    **/
     $this->pager = new sfDoctrinePager('agFacility', 5);
 
     /**
-     * Check if the client wants the results sorted, and set pager
-     * query attributes accordingly
-     */
+    * Check if the client wants the results sorted, and set pager
+    * query attributes accordingly
+    **/
     $this->sortColumn = $request->getParameter('sort') ? $request->getParameter('sort') : 'facility_name';
     $this->sortOrder = $request->getParameter('order') ? $request->getParameter('order') : 'ASC';
 
@@ -67,25 +67,25 @@ class facilityActions extends agActions
     }
 
     /**
-     * Set pager's query to our final query including sort
-     * parameters
-     */
+    * Set pager's query to our final query including sort
+    * parameters
+    **/
     $this->pager->setQuery($query);
 
     /**
-     * Set the pager's page number, defaulting to page 1
-     */
+    * Set the pager's page number, defaulting to page 1
+    **/
     $this->pager->setPage($request->getParameter('page', 1));
     $this->pager->init();
   }
 
   /**
-   * executeShow()
-   *
-   * Show an individual facility record
-   *
-   * @param $request sfWebRequest object for current page request
-   */
+  * executeShow()
+  *
+  * Show an individual facility record
+  *
+  * @param $request sfWebRequest object for current page request
+  **/
   public function executeShow(sfWebRequest $request)
   {
     $this->ag_facility = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id')));
@@ -107,24 +107,24 @@ class facilityActions extends agActions
   }
 
   /**
-   * executeNew()
-   *
-   * Show form for creating a new facility record
-   *
-   * @param $request sfWebRequest object for current page request
-   */
+  * executeNew()
+  *
+  * Show form for creating a new facility record
+  *
+  * @param $request sfWebRequest object for current page request
+  **/
   public function executeNew(sfWebRequest $request)
   {
     $this->form = new agFacilityForm();
   }
 
   /**
-   * executeCreate()
-   *
-   * Create a new facility record (called from executeNew)
-   *
-   * @param $request sfWebRequest object for current page request
-   */
+  * executeCreate()
+  *
+  * Create a new facility record (called from executeNew)
+  *
+  * @param $request sfWebRequest object for current page request
+  **/
   public function executeCreate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
@@ -146,29 +146,20 @@ class facilityActions extends agActions
   }
 
   /**
-   * executeEdit()
-   *
-   * Edit existing facility record. Results in a new instance of
-   * agFacilityForm, which contains most of the logic for this
-   * action.
-   *
-   * @param $request sfWebRequest object for current page request
-   */
+  * executeEdit()
+  *
+  * Edit existing facility record. Results in a new instance of
+  * agFacilityForm, which contains most of the logic for this
+  * action.
+  *
+  * @param $request sfWebRequest object for current page request
+  */
   public function executeEdit(sfWebRequest $request)
   {
     $this->forward404Unless(
         $ag_facility = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id'))),
         sprintf('Object ag_facility does not exist (%s).', $request->getParameter('id'))
     );
-
-//  //->getAgSite()->getAgEntity()->getAgEntityEmailContact()
-//
-//  $this->ag_entity_emails = $ag_facility->getAgSite()->getAgEntity()->getEntityEmails();
-//
-//  foreach($this->ag_entity_emails as $key => $email1) {
-//    echo(get_class($email1).','.$key . ','. $email1->getAgEmailContact());
-//    echo("<br>");
-//  }
 
     $this->form = new agFacilityForm($ag_facility);
     $facilityResourceIds  = Doctrine::getTable('agFacilityResource')
@@ -180,19 +171,18 @@ class facilityActions extends agActions
 
 
     $events = agFacilityHelper::returnActionableResources($facilityResourceIds, FALSE);
-$foo = 'boo';
   }
 
   /**
-   * executeUpdate()
-   *
-   * Update an existing facility record (called from executeEdit).
-   * Most of the logic is contained in agFacilityForm.
-   *
-   * Redirects back to /edit when it is done.
-   *
-   * @param $request sfWebRequest object for current page request
-   */
+  * executeUpdate()
+  *
+  * Update an existing facility record (called from executeEdit).
+  * Most of the logic is contained in agFacilityForm.
+  *
+  * Redirects back to /edit when it is done.
+  *
+  * @param $request sfWebRequest object for current page request
+  */
   public function executeUpdate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
@@ -205,11 +195,11 @@ $foo = 'boo';
   }
 
   /**
-   * Imports facility records from a properly formatted XLS file.
-   *
-   * @todo: define a standard import format and document it for the end user.
-   * @todo: make this more robust and create meaningful error messages for failed import fiels and records.
-   * */
+  * Imports facility records from a properly formatted XLS file.
+  *
+  * @todo: define a standard import format and document it for the end user.
+  * @todo: make this more robust and create meaningful error messages for failed import fields and records.
+  **/
   public function executeImport()
   {
 
@@ -246,13 +236,13 @@ $foo = 'boo';
   }
 
   /**
-   * executeDelete()
-   *
-   * Delete a facility record. Redirects to facility list page
-   * when it is done.
-   *
-   * @param $request sfWebRequest object for current page request
-   */
+  * executeDelete()
+  *
+  * Delete a facility record. Redirects to facility list page
+  * when it is done.
+  *
+  * @param $request sfWebRequest object for current page request
+  **/
   public function executeDelete(sfWebRequest $request)
   {
     $request->checkCSRFProtection();
@@ -260,46 +250,46 @@ $foo = 'boo';
     $this->forward404Unless($ag_facility = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id'))), sprintf('Object ag_facility does not exist (%s).', $request->getParameter('id')));
 
     /**
-     * Locate the associated agEntity record through the associated
-     * agSite record. Call the agEntity object's delete() method,
-     * which results in the deletion of all of the records
-     * associated with this agFacility record, including contact
-     * information.
-     *
-     * agEntity will call its agSite object's delete() method which
-     * will, in turn, call our agFacility object's delete() method.
-     * The agFacility object will also delete the associated
-     * agFacilityResource records.
-     */
+    * Locate the associated agEntity record through the associated
+    * agSite record. Call the agEntity object's delete() method,
+    * which results in the deletion of all of the records
+    * associated with this agFacility record, including contact
+    * information.
+    *
+    * agEntity will call its agSite object's delete() method which
+    * will, in turn, call our agFacility object's delete() method.
+    * The agFacility object will also delete the associated
+    * agFacilityResource records.
+    **/
     if ($agEntity = $ag_facility->getAgSite()->getAgEntity()) {
       $agEntity->delete();
     } else {
       /**
-       * If there was no related agEntity record found, something is
-       * wrong.
-       */
+      * If there was no related agEntity record found, something is
+      * wrong.
+      **/
       throw new LogicException('agFacility is expected to have an agSite and an agEntity.');
     }
 
     /**
-     *  Redirect to facility/list when done.
-     */
+    *  Redirect to facility/list when done.
+    */
     $this->redirect('facility/list');
   }
 
   /**
-   * processForm()
-   *
-   * Generated by Symfony/Doctrine. Called by relevant methods
-   * which require form processing.
-   *
-   * @param $request sfWebRequest object for current page request
-   * @param $form sfForm object to process
-   */
+  * processForm()
+  *
+  * Generated by Symfony/Doctrine. Called by relevant methods
+  * which require form processing.
+  *
+  * @param $request sfWebRequest object for current page request
+  * @param $form sfForm object to process
+  **/
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
-    $poo = $form->getName();
-    $values = $request->getParameter($poo);
+    $formName = $form->getName();
+    $values = $request->getParameter($formName);
     $files = $request->getFiles($form->getName());
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {

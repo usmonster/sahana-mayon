@@ -1,14 +1,20 @@
 ul.menu ul{display:none}
 ul.menu li:hover>ul{display:block}
-ul.menu ul{position: absolute;left:-1px;top:98%;}
+ul.menu ul{
+  position: absolute;
+  left:-1px;
+  top:98%;
+}
 ul.menu ul ul{position: absolute;left:98%;top:-2px;}
 ul.menu,ul.menu ul {
 	margin:0px;
 	list-style:none;
 	padding:0px 2px 2px 0px;
-	background-color:#ffffff;
+	background-color:#f1f1f1;
 	background-repeat:repeat;
-	border-color:#AAAAAA;
+}
+ul.menu ul {
+	border-color:#dadada;
 	border-width:1px;
 	border-style:solid;
 }
@@ -19,13 +25,14 @@ ul.menu {
 	float: left;
         -moz-border-radius: 0px 0px 15px 15px;
         -webkit-border-radius: 0px 0px 15px 15px;
+        margin: 5px 0px;
 }
 ul.menu ul{
 	width:161px;
 }
 ul.menu li{
 	display:block;
-	margin:2px 0px 0px 2px;
+/*	margin:2px 0px 0px 2px;*/
 	font-size:0px;
 }
 ul.menu a:active, ul.menu a:focus {
@@ -34,18 +41,29 @@ outline-style:none;
 ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
 	display:block;
 	vertical-align:middle;
-	background-color:#ffffff;
+	background-color:#f1f1f1;
 	border-width:0px;
-	border-color:#6655ff;
+	border-color:#dadada;
 	border-style:solid;
 	text-align:left;
 	text-decoration:none;
-	padding:4px;
 	_padding-left:0;
-	font:bold 11px helvetica, arial, verdana;
-	color: #444444;
+	font:bold 12px helvetica, arial, verdana;
+	color: #848484;
 	text-decoration:none;
 	cursor:default;
+}
+ul.menu>li>a {
+  padding: 5px 4px;
+}
+/*ul.menu>li>a:hover {
+  border: solid 1px #dadada;
+  padding: 4px 3px;
+  -moz-border-radius: 10px 10px 0px 0px;
+  -webkit-border-radius: 10px 10px 0px 0px;
+}*/
+ul.menu li.dis a:hover, ul.menu li.sep a:hover {
+  padding:4px;
 }
 ul.menu span{
 	overflow:hidden;
@@ -67,11 +85,13 @@ ul.menu li.sep{
 	height:100%;
 }
 ul.menu li.sep span{
-	float:none;	padding-right:0;
+	float:none;
+        padding-right:0;
 	width:5px;
 	height:16px;
 	display:inline-block;
-	background-color:#AAAAAA;	background-image:none;}
+	background-color:#AAAAAA;
+        background-image:none;}
 ul.menu ul li.sep span{
 	width:80%;
 	height:3px;
@@ -80,20 +100,20 @@ ul.menu li:hover{
 	position:relative;
 }
 ul.menu li:hover>a{
-	background-color:#adadad; /*4792E6*/
-	border-color:#665500;
+	/*background-color:#adadad; /*4792E6*/
+	border-color:#dadada;
 	border-style:solid;
-	font:bold 11px helvetica, arial, verdana;
-	color: #ffffff;
+	font:bold 12px helvetica, arial, verdana;
 	text-decoration:none;
 }
 ul.menu li a:hover{
 	position:relative;
-	background-color:#adadad; /*4792E6*/
-	border-color:#665500;
+	/*background-color:#adadad; /*4792E6*/
+	border-color:#dadada;
 	border-style:solid;
-	font:bold 11px helvetica, arial, verdana;
-	color: #ffffff;
+	font:bold 12px helvetica, arial, verdana;
+	color: #ff8f00;
+        text-shadow: 0px 0px 5px #ff8f00;
 	text-decoration:none;
 }
 ul.menu li.dis a {
