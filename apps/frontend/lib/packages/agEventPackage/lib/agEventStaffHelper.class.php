@@ -80,7 +80,7 @@ class agAddressHelper
    */
   protected function _setDefaultReturnStandard()
   {
-    $standardName = agGlobal::$param[$this->_globalDefaultAddressStandard] ;
+    $standardName = agGlobal::getParam($this->_globalDefaultAddressStandard) ;
     $standardId = agDoctrineQuery::create()
       ->select('as.id')
         ->from('agAddressStandard as')
