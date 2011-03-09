@@ -320,7 +320,6 @@ class eventActions extends agActions
       } elseif ($request->getParameter('delete')) {
 //DELETE
       }
-      $poo = $this->eventshiftform->getName(); //unset the staff list
       $this->eventshiftform->bind($request->getParameter($this->eventshiftform->getName()), $request->getFiles($this->eventshiftform->getName()));
       $formvalues = $request->getParameter($this->eventshiftform->getName());
       if ($this->eventshiftform->isValid()) { //form is not passing validation because the bind is failing?
