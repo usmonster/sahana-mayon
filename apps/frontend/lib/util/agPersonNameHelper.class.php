@@ -175,7 +175,7 @@ class agPersonNameHelper extends agBulkRecordHelper
     }
 
     // get all of our primary name components by ID and loop
-    $personNameComonents = $this->getPrimaryNameById($personIds = NULL) ;
+    $personNameComonents = $this->getPrimaryNameById($personIds) ;
     foreach ($personNameComonents as $personId => $nameComponents)
     {
       $strName = '' ;

@@ -62,16 +62,18 @@ abstract class agBulkRecordHelper
   public function setRecordIds($recordIds)
   {
     // as long as $recordIds exists, set the class property
-    if (isset($recordIds) && is_array($recordIds))
+    if (isset($recordIds))
     {
-      $this->recordIds = $recordIds ;
-    }
-
     // just because it might be useful, we'll pick up the count as well
-    $this->_recordCount = count($this->recordIds) ;
+    $this->_recordCount = count($recordIds) ;
 
     // we'll also make a call to show a warning of the default record count has been exceeded
     $this->_logWarningBatchSizeExceeded() ;
+
+    // if all is well, set our recordIds property
+    $this->recordIds = $this->varToArray($recordIds) ;
+    }
+
   }
 
   /**

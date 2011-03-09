@@ -13,22 +13,56 @@
  * @author     Chad Heuschober, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ *
+ * @property array $helperClasses An array of helper class names and the ids used to access them.
+ * @property array $_helperObjects An array of helper objects, lazily loaded upon request.
+ * @property array $_helperMethods A constructed array of methods provided by all named helper
+ * classes.
  */
 class agPerson extends BaseagPerson
 {
-  private     $agPersonNameHelper ;
+  public    $luceneSearchFields = array('id' => 'keyword');
 
-  public $luceneSearchFields = array('id' => 'keyword');
+  protected $helperClasses = array('agPersonNameHelper' => 'id') ;
 
+  private   $_helperObjects = array(),
+            $_helperMethods ;
+
+
+  /**
+   * This classes' constructor.
+   */
+  public function construct()
+  {
+    // call the parent's constructor
+    parent::construct() ;
+
+    // pre-load any helper methods we might want to look for in __call()
+    $this->loadHelperMethods() ;
+  }
+
+  /**
+   * Overloaded magic call method to provide access to helper class functions.
+   *
+   * @param string $method The method being called.
+   * @param array $arguments The arguments being provided to additional functions
+   * (not used by helpers).
+   * @return function call
+   */
   public function __call($method, $arguments)
   {
     try
     {
-      if (substr($method, 0, 14) == 'getPrimaryName')
+      if (array_key_exists($method, $this->_helperMethods))
       {
-        $this->loadAgPersonNameHelper() ;
-        $primaryName = $this->agPersonNameHelper->$method($this->id) ;
-        return $primaryName[$this->id] ;
+        $helperClass = $this->_helperMethods[$method] ;
+        $this->loadHelperClass($helperClass) ;
+        $helperObject = $this->_helperObjects[$helperClass] ;
+
+        $classId = $this->helperClasses[$helperClass] ;
+        $id = $this->$classId ;
+        $primaryName = $helperObject->$method($id) ;
+        return $primaryName[$id] ;
       }
 
       return parent::__call($method, $arguments) ;
@@ -36,6 +70,35 @@ class agPerson extends BaseagPerson
     catch (Exception $e)
     {
       return parent::__call($method, $arguments) ;
+    }
+  }
+
+  /**
+   * A happy little helper function to return all methods explicitly (publicly) defined by a
+   * helper class.
+   */
+  private function loadHelperMethods()
+  {
+    foreach ($this->helperClasses as $class => $id)
+    {
+      $methods = agClassHelper::getExplicitClassMethods($class) ;
+      foreach ($methods as $method)
+      {
+        $this->_helperMethods[$method] = $class ;
+      }
+    }
+  }
+
+  /**
+   * Method to instantiate a helper class object as an array member of the _helperObjects property.
+   *
+   * @param string $class The helper class being loaded.
+   */
+  private function loadHelperClass($class)
+  {
+    if (! isset($this->_helperObjects[$class]))
+    {
+      $this->_helperObjects[$class] = new $class() ;
     }
   }
 
@@ -501,11 +564,4 @@ class agPerson extends BaseagPerson
     return parent::delete($conn);
   }
 
-  private function loadAgPersonNameHelper()
-  {
-    if (! isset($this->agPersonNameHelper))
-    {
-      $this->agPersonNameHelper = agPersonNameHelper::init() ;
-    }
-  }
 }
