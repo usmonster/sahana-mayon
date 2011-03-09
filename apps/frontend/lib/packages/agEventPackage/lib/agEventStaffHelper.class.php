@@ -36,7 +36,7 @@
  * Defaults to the value provided by the global parameter.
  */
 
-class agAddressHelper
+class agEventStaffHelper
 {
   public    $addressIds = array(),
             $lineDelimeter = "\n",
