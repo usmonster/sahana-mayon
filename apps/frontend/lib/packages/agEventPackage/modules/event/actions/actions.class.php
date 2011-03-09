@@ -47,9 +47,11 @@ class eventActions extends agActions
   }
 
   /**
-  * Displays a list of 
-  * @param sfWebRequest $request
-  */
+   * event/fgroup provides the means to manage activation time for facility
+   * resources that are in active groups which do not have activation times set 
+   * @param sfWebRequest $request
+   */
+
   public function executeFgroup(sfWebRequest $request)
   {
     $this->setEventBasics($request);
@@ -96,7 +98,11 @@ class eventActions extends agActions
 
     $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
   }
-
+/**
+ * the event/deploy action provides a user with pre-deployment check information and the ability
+ * to deploy an event if a scenario was given.
+ * @param sfWebRequest $request
+ */
   public function executeDeploy(sfWebRequest $request)
   {
     $this->setEventBasics($request);
@@ -120,7 +126,10 @@ class eventActions extends agActions
       $this->forward404('you cannot deploy an event without a scenario.');
     }
   }
-
+/**
+ * setEventBasics sets up basic information used across most event actions
+ * @param sfWebRequest $request 
+ */
   private function setEventBasics(sfWebRequest $request)
   {
     if ($request->getParameter('id')) {
@@ -144,6 +153,10 @@ class eventActions extends agActions
     }
   }
 
+  /**
+   * the meta action (event/meta) gives the user CRU functionality of event meta information
+   * @param sfWebRequest $request
+   */
   public function executeMeta(sfWebRequest $request)
   {
     $this->setEventBasics($request);
@@ -162,10 +175,7 @@ class eventActions extends agActions
       if ($this->metaForm->isValid()) {
 
         $ag_event = $this->metaForm->save();
-        //agEventFacilityHelper::
-        //$this->migrateScenarioToEvent($request->getParameter('scenario_id'), $ag_event->getId()); //this will create mapping from scenario to event
-//        if($this->metaForm->isNew()){
-//        if (isset($updating)) { //replace with usable check to update
+
         $eventStatusObject = agDoctrineQuery::create()
                 ->from('agEventStatus a')
                 ->where('a.id =?', $ag_event->getId())
@@ -179,7 +189,8 @@ class eventActions extends agActions
         $ag_event_status->save();
 
         //have to do this for delete also, i.e. delete the event_scenario object
-        if ($request->getParameter('scenario_id') && $request->getParameter('scenario_id') != "") { //the way this is constructed we will always have a scenario_id
+        if ($request->getParameter('scenario_id') && $request->getParameter('scenario_id') != "") { 
+          //the way this is constructed we will always have a scenario_id
           $ag_event_scenario = new agEventScenario();
           $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
           $ag_event_scenario->setEventId($ag_event->getId());
@@ -204,26 +215,16 @@ class eventActions extends agActions
     //as a rule of thumb, actions should post to themself and then redirect
   }
 
+  /**
+   * event/list shows a listing of events, this provides the list data to the listSuccess template
+   * @param sfWebRequest $request
+   */
   public function executeList(sfWebRequest $request)
   {
     $this->ag_events = agDoctrineQuery::create()
             ->select('a.*')
             ->from('agEvent a')
             ->execute();
-
-    /**
-     * @todo make query better above to reduce db calls
-     */
-  }
-
-  public function executeReview(sfWebRequest $request)
-  {
-
-  }
-
-  public function executeGis(sfWebRequest $request)
-  {
-    
   }
 
   /**
@@ -251,14 +252,13 @@ class eventActions extends agActions
         $filters['sro.organization_id'] = $filter;
       }
     }
-
-//    $fac_rec_query = Doctrine::getTable('')->createQuery($list)->execute();
-
-    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')), // 'class' => 'filter')),
+    //set up inputs for form
+    $inputs = array(
+      'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')), // 'class' => 'filter')),
       'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization')),//, 'class' => 'filter'))
       'facility_resource' => new sfWidgetFormDoctrineChoice(array('model' => 'agEventFacilityResource', 'label' => 'Facility Resource'))
     );
-    //set up inputs for form
+
     $this->filterForm = new sfForm();
     foreach ($inputs as $key => $input) {
       $input->setAttribute('class', 'filter');
@@ -289,21 +289,7 @@ class eventActions extends agActions
     //$this->facilityGroupArray = $facilityGroupArray;
     $this->pager = new agArrayPager(null, 10);
 
-//    if ($request->getParameter('sort') && $request->getParameter('order')) {
-//      $sortColumns = array('group' => 'efg_event_facility_group',
-//        'name' => 'f_facility_name',
-//        'code' => 'f_facility_code',
-//        'status' => 'ras_facility_resource_allocation_status',
-//        'time' => 'efrat_activation_time',
-//        'type' => 'fgt_facility_group_type',
-//        'event' => 'e_event_name');
-//      $sort = $sortColumns[$request->getParameter('sort')];
-//      agArraySort::$sort = $sort;
-//      usort($facilityGroupArray, array('agArraySort', 'arraySort'));
-//      if ($request->getParameter('order') == 'DESC') {
-//        $facilityGroupArray = array_reverse($facilityGroupArray);
-//      }
-//    }
+
     $this->pager->setResultArray($this->ag_event_staff);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
@@ -314,7 +300,10 @@ class eventActions extends agActions
     $this->widget->getWidgetSchema()->setLabel('add', false);
     $this->form_action = 'event/staffpool?id=' . $this->event_id;
   }
-
+/**
+ * provide event shift CRUD
+ * @param sfWebRequest $request
+ */
   public function executeShifts(sfWebRequest $request)
   {
     $this->setEventBasics($request);
@@ -354,8 +343,7 @@ class eventActions extends agActions
         $this->eventshiftform = new agEventShiftForm($ag_event_shift);
         $this->setTemplate('editshift');
       } else {
-//LIST////list the existing shifts
-
+//LIST
         $query = agDoctrineQuery::create()
                 ->select('es.*, efr.*, efg.id, efg.event_facility_group, e.*, af.*, fr.*, frt.*, srt.*, ess.*, est.*')
                 ->from('agEventShift as es')
@@ -387,7 +375,10 @@ class eventActions extends agActions
       }
     }
   }
-
+/**
+ * provides the ability to add staff members into a shift
+ * @param sfWebRequest $request
+ */
   public function executeStaffshift(sfWebRequest $request)
   {
     $this->setEventBasics($request);
@@ -412,34 +403,25 @@ class eventActions extends agActions
     if ($request->getParameter('Search')) {
 
       $this->staffSearchForm = new sfForm();
-
       $this->staffSearchForm->setWidget('add', new agWidgetFormSelectCheckbox(array('choices' => array(null)), array()));
-
       $this->staffSearchForm->getWidgetSchema()->setLabel('add', false);
-
-//    $fgroupDec = new agWidgetFormSchemaFormatterNoList($this->getWidgetSchema());
-//    $this->getWidgetSchema()->addFormFormatter('row', $fgroupDec);
-//    $this->getWidgetSchema()->setFormFormatterName('row');
-
       $lucene_query = $request->getParameter('query_condition');
       //$lucene_query = $filter_form['query_condition'];
-
       $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
 
-//$query_condition = implode(' AND ', $lucene_query);
-
-//      $this->searchedModels = array('agStaff');  //technically, don't we want the search model to be agEventStaff ?
+/**
+ * @todo abstract the common operations here that are used in staff pool mangement to a helper class
+ */
+      $this->searchedModels = array('agEventStaff');  //we want the search model to be agEventStaff
+      //note, this does not provide ability to add event
       parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
     } elseif ($request->getParameter('Add')) {
       $staffPotentials = $request->getPostParameter('resultform'); //('staff_list'); //ideally get only the widgets whose corresponding checkbox
-      //event_staff_id[] ->
       foreach ($staffPotentials as $key => $staffAdd) {
-//        if (is_array($staffAdd) && isset($staffAdd['add'])) {
         //see if staff member exists in this shift already
         $existing = Doctrine::getTable('agEventStaffShift')
                 ->findByDql('event_staff_id = ?', $this->shift_id)
                 ->getFirst();
-        //      }
         if (!$existing) {
           $existing = new agEventStaffShift();
           $existing->setEventStaffId($key);
@@ -451,42 +433,36 @@ class eventActions extends agActions
       //remove this staff member!
     }
   }
-
+/**
+ * @todo todo
+ * @param sfWebRequest $request
+ */
   public function executeDashboard(sfWebRequest $request)
   {
     
   }
-
+/**
+ * provides basic information about an active event, the template gives links to event management
+ * @param sfWebRequest $request 
+ */
   public function executeActive(sfWebRequest $request)
   {
     $this->setEventBasics($request);
   }
-
+/**
+ * provides basic staff management in an event
+ * @param sfWebRequest $request
+ */
   public function executeStaff(sfWebRequest $request)
   {
     $this->setEventBasics($request);
   }
-
-  public function executeStaffin(sfWebRequest $request)
-  {
-
-  }
-
-  public function executeInconfirm(sfWebRequest $request)
-  {
-
-  }
-
-  public function executeStaffout(sfWebRequest $request)
-  {
-    
-  }
-
-  public function executeOutconfirm(sfWebRequest $request)
-  {
-
-  }
-
+/**
+ * provides a list of facility groups in an event, or all events
+ * also lists the facility resources in those facility groups and provides the ability to modify
+ * each resource's status
+ * @param sfWebRequest $request
+ */
   public function executeListgroups(sfWebRequest $request)
   {
     $this->setEventBasics($request);
@@ -650,21 +626,11 @@ class eventActions extends agActions
     return $results;
   }
 
-  public function executeFacility(sfWebRequest $request)
-  {
-    
-  }
-
-  public function executeReport(sfWebRequest $request)
-  {
-
-  }
-
-  public function executeFacilityupdate(sfWebRequest $request)
-  {
-
-  }
-
+/**
+ * provides the ability to give a description of an event, and close the event
+ * @todo other resolution operations
+ * @param sfWebRequest $request
+ */
   public function executeResolution(sfWebRequest $request)
   {
     if ($request->isMethod(sfRequest::POST)) {
@@ -694,12 +660,18 @@ class eventActions extends agActions
 
     $this->resForm->setDefault('event_status', $current_status);
   }
-
+/**
+ * @todo todo
+ * @param sfWebRequest $request
+ */
   public function executePost(sfWebRequest $request)
   {
     
   }
-
+/**
+ * deletes an event
+ * @param sfWebRequest $request
+ */
   public function executeDelete(sfWebRequest $request)
   {
     $request->checkCSRFProtection();
