@@ -14,7 +14,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
- * @property array $defaultNameComponents A two-dimensional positional array of name components. The
+ * @property array $defaultNameComponents A two-dimensional indexed array of name components. The
  * component orders in the array determine the order of name values returned. The inner value array
  * is comprised of name_type_id and a bit which determines whether or not this name_type is
  * represented by an initial, only.

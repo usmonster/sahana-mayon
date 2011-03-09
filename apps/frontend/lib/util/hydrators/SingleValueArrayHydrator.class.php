@@ -14,10 +14,10 @@
 class SingleValueArrayHydrator extends Doctrine_Hydrator_Abstract
 {
   /**
-   * Defines the result set as a positional array.
+   * Defines the result set as an indexed array.
    *
    * @param <type> $stmt
-   * @return array A positional array.
+   * @return array An indexed array.
    */
   public function hydrateResultSet($stmt)
   {

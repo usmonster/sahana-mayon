@@ -1,8 +1,32 @@
 <?php
+/**
+* agFacilityExporter is used to export all facilities from the system. It is called
+* from facility actions, and this class has basically been constructed to avoid
+* facility actions from growing to an unmanageable length.
+*
+* PHP Version 5
+*
+* LICENSE: This source file is subject to LGPLv3.0 license
+* that is available through the world-wide-web at the following URI:
+* http://www.gnu.org/copyleft/lesser.html
+*
+* @author     Charles Wisniewski, CUNY SPS
+* @author     Nils Stolpe, CUNY SPS
+* @author     Shirley Chan, CUNY SPS
+*
+* Copyright of the Sahana Software Foundation, sahanafoundation.org
+**/
 
 class agFacilityExporter {
 
-  public function __construct() {
+  /**
+  * The constructor sets up several variables, mostly arrays, that will be used
+  * elsewhere in the class. Calls are made to a number of agHelper classes to
+  * gather the datapoints that will be exported and handle the formatting.
+  *
+  * @todo Refactor so these parameters can be dynamically defined.
+  **/
+  function __construct() {
     $this->primaryOnly = TRUE;
     $this->contactType = 'work';
     $this->addressStandard = 'us standard';
@@ -29,6 +53,16 @@ class agFacilityExporter {
     $this->staffResourceTypes = $this->queryStaffResourceTypes();
   }
 
+  /**
+  * This function calls the other functions needed to export facility data and
+  * returns the constructed XLS file.
+  *
+  * @return array() $exportResponse     An associative array of two elements,
+  *                                     fileName and filePath. fileName is the name
+  *                                     of the XLS file that has been constructed
+  *                                     and is held in temporary storage.
+  *                                     filePath is the path to that file.
+  */
   public function export() {
     $this->buildAddressHeaders();
     $this->buildGeoHeaders();
@@ -43,7 +77,18 @@ class agFacilityExporter {
     return $exportResponse;
   }
 
-  public function buildExportRecords() {
+  /**
+  *
+  * @return array() $facilityExportRecords     A two-dimensional array. The first level
+  *                                            is indexed, and each of it's elements
+  *                                            contains all the data for a complete facility
+  *                                            export record. Those datapoints are held in
+  *                                            the second level associative array, the keys
+  *                                            of which correspond to headers in the output XLS.
+  *
+  * @todo break this up into smaller functions.
+  **/
+  private function buildExportRecords() {
     $facilityExportRecords = array();
     foreach ($this->facilityGeneralInfo as $fac) {
       $entry = array();
@@ -150,7 +195,22 @@ class agFacilityExporter {
     return $facilityExportRecords;
   }
 
-  public function buildXls($facilityExportRecords, $lookUpContent)
+  /**
+  *
+  * @param array() $facilityExportRecords   Complete set of facility export records.
+  *                                         from buildExportRecords().
+  *
+  * @param array() $lookUpContent           Values for the lookup columns in the last
+  *                                         sheet of the generated XLS file. From
+  *                                         gatherLookupValues().
+  *
+  *  @return <type>                          An associative array of two elements,
+  *                                         fileName and filePath. fileName is the
+  *                                         name  of the XLS file that has been
+  *                                         constructed and is held in temporary
+  *                                         storage. filePath is the path to that file.
+  **/
+  private function buildXls($facilityExportRecords, $lookUpContent)
   {
     require_once 'PHPExcel/Cell/AdvancedValueBinder.php';
     PHPExcel_Cell::setValueBinder(new PHPExcel_Cell_AdvancedValueBinder());
@@ -194,7 +254,7 @@ class agFacilityExporter {
         // if we get in here, set the cell sizes on the sheet that was just finished.
         // Then make a new sheet, set it to active, build its headers, and reset
         // row to 2.
-        $this->sizeCells($objPHPExcel);
+        $this->sizeColumns($objPHPExcel);
         $objPHPExcel->createSheet();
         $objPHPExcel->setActiveSheetIndex($objPHPExcel->getActiveSheetIndex() + 1);
         $objPHPExcel->getActiveSheet()->setTitle("Sheet " . ($objPHPExcel->getActiveSheetIndex() + 1));
@@ -223,7 +283,7 @@ class agFacilityExporter {
       }
       $row++;
     }
-    $this->sizeCells($objPHPExcel);
+    $this->sizeColumns($objPHPExcel);
 
     // Add the lookup sheet. The null argument makes it the last sheet.
     $objPHPExcel->addSheet($lookUpSheet, null);
@@ -240,7 +300,13 @@ class agFacilityExporter {
     return array('fileName' => $fileName, 'filePath' => $filePath);
   }
 
-  public function sizeCells($objPHPExcel)
+  /**
+  * Each of the column in the XLS's active sheet is sized to display all contents.
+  *
+  * @param sfPhpExcel object $objPHPExcel   The sfPhpExcel object that is being
+  *                                         populated by buildXls.
+  **/
+  private function sizeColumns($objPHPExcel)
   {
     $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
     $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
@@ -248,14 +314,27 @@ class agFacilityExporter {
       $objPHPExcel->getActiveSheet()->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($i))->setAutoSize(true);
     }
   }
-  public function buildSheetHeaders($objPHPExcel)
+
+  /**
+  * $this->exportHeaders are used to create the headers for each sheet in the XLS. This functions is called whenever
+  * a new sheet is added (aside from the final definition sheet).
+  *
+  * @param sfPhpExcel object $objPHPExcel   The sfPhpExcel object that is being
+  *                                         populated by buildXls.
+  **/
+  private function buildSheetHeaders($objPHPExcel)
   {
     foreach ($this->exportHeaders as $hKey => $heading) {
       $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, 1)->setValue($heading);
     }
   }
-  public function buildAddressHeaders() {
-    // Construct header values for address fields.
+
+  /**
+  * Builds the headers for the address fields in the XLS file, then adds them to
+  * the exportHeaders array.
+  **/
+  private function buildAddressHeaders()
+  {
     $this->addressHeaders = array();
     foreach ($this->addressFormat as $add) {
       switch ($add) {
@@ -272,29 +351,40 @@ class agFacilityExporter {
           $this->addressHeaders[] = ucwords($add);
       }
     }
-    // Add the address headers to the list already defined, then add the geo headers.
     $this->exportHeaders = array_merge($this->exportHeaders, $this->addressHeaders);
   }
 
-  public function buildGeoHeaders() {
+  /**
+  * Not much happens here, this function just appends Longitude and Latitude to the
+  * already defined exportHeaders. This is mainly a placeholder function in case it
+  * requires expansion or abstraction in the future.
+  **/
+  private function buildGeoHeaders()
+  {
     array_push($this->exportHeaders, "Longitude", "Latitude");
   }
 
-  public function buildStaffTypeHeaders() {
+  /**
+  * Builds the headers for minimum and maximum staff type requirments.
+  **/
+  private function buildStaffTypeHeaders()
+  {
     $stfHeaders = array();
     foreach ($this->staffResourceTypes as $stfResType) {
-      if (strtolower($stfResType) == 'staff') {
-        $stfResType = 'generalist';
-      } else {
-        $stfResType = strtolower(str_replace(' ', '_', $stfResType));
-      }
+      $stfResType = strtolower(str_replace(' ', '_', $stfResType));
       $stfHeaders[] = $stfResType . '_min';
       $stfHeaders[] = $stfResType . '_max';
     }
     $this->exportHeaders = array_merge($this->exportHeaders, $stfHeaders);
   }
 
-  public function queryStaffResourceTypes() {
+  /**
+  *
+  * @return array() $staffResourceTypes   An array of all values from
+  *                                         agStaffResourceType.staff_resource_type
+  **/
+  private function queryStaffResourceTypes()
+  {
     $staffResourceTypes = agDoctrineQuery::create()
                     ->select('srt.staff_resource_type, srt.id')
                     ->from('agStaffResourceType srt')
@@ -302,7 +392,22 @@ class agFacilityExporter {
     return $staffResourceTypes;
   }
 
-  public function buildLookUpArray() {
+  /**
+  * In the future, this should be more of a function rather than just a multidimensional
+  * array. The values listed here (and in the future, constructed here) are use to
+  * construct doctrine queries in gatherLookupValues.
+  *
+  * @return array $lookUps    A two dimensional associative array. Keys of the first level
+  *                           are headers for the lookup columns in the XLS that will be
+  *                           output once export() has completed. The second level keys
+  *                           are pretty self explanatory, determining the table and column
+  *                           to select from, and the column and value for a WHERE clause
+  *                           (if there is one).
+  *
+  * @todo make this into a function that does more than declare and return an array.
+  **/
+  private function buildLookUpArray()
+  {
     $lookUps = array(
         'Facility Resource Status' => array(
             'selectTable' => 'agFacilityResourceStatus',
@@ -350,43 +455,41 @@ class agFacilityExporter {
     return $lookUps;
   }
 
-  /*
-   * This function constructs a Doctrine Query based on the values of the parameter passed in.
-   *
-   * The query will return the values from a single column of a table, with the possiblity to
-   * add a where clause to the query.
-   *
-   * @param $lookups array()  gatherLookupValues expects $lookups to be a two-dimensional array.
-   *                          Keys of the outer level are expected to be column headers for a
-   *                          lookup column, or some other kind of organized data list. However,
-   *                          submitting a non-associative array will not cause any errors.
-   *
-   *                          The expected structure of the array is something like this:
-   *
-   *                          $lookUps = array(
-   *                                       'Facility Resource Status' => array(
-   *                                           'selectTable'  => 'agFacilityResourceStatus',
-   *                                           'selectColumn' => 'facility_resource_status',
-   *                                           'whereColumn'  => null,
-   *                                           'whereValue' => null
-   *                                       ),
-   *                                       'Facility Resource Status' => array(
-   *                                           'selectTable'  => 'agFacilityResourceStatus',
-   *                                           'selectColumn' => 'facility_resource_status',
-   *                                           'whereColumn'  => null,
-   *                                           'whereValue' => null
-   *                                       )
-   *                          );
-   *
-   *                          Additional values of the $lookUps array can also be included.
-   *                          The keys of the inner array musy be set to selectTable, selectColumn,
-   *                          whereColumn, and whereValue.
-   */
+  /**
+  * This function constructs a Doctrine Query based on the values of the parameter passed in.
+  *
+  * The query will return the values from a single column of a table, with the possiblity to
+  * add a where clause to the query.
+  *
+  * @param $lookups array()  gatherLookupValues expects $lookups to be a two-dimensional array.
+  *                          Keys of the outer level are expected to be column headers for a
+  *                          lookup column, or some other kind of organized data list. However,
+  *                          submitting a non-associative array will not cause any errors.
+  *
+  *                          The expected structure of the array is something like this:
+  *
+  *                          $lookUps = array(
+  *                                       'Facility Resource Status' => array(
+  *                                           'selectTable'  => 'agFacilityResourceStatus',
+  *                                           'selectColumn' => 'facility_resource_status',
+  *                                           'whereColumn'  => null,
+  *                                           'whereValue' => null
+  *                                       ),
+  *                                       'Facility Resource Status' => array(
+  *                                           'selectTable'  => 'agFacilityResourceStatus',
+  *                                           'selectColumn' => 'facility_resource_status',
+  *                                           'whereColumn'  => null,
+  *                                           'whereValue' => null
+  *                                       )
+  *                          );
+  *
+  *                          Additional values of the $lookUps array can also be included.
+  *                          The keys of the inner array musy be set to selectTable, selectColumn,
+  *                          whereColumn, and whereValue.
+  **/
 
-  public function gatherLookupValues($lookUps = null) {
-    if (!isset($lookUps) || !is_array($lookUps)) {
-      return null;
-    }
+  private function gatherLookupValues($lookUps = null)
+  {
     foreach ($lookUps as $key => $lookUp) {
       $lookUpQuery = agDoctrineQuery::create()
                       ->select($lookUp['selectColumn'])
@@ -399,5 +502,4 @@ class agFacilityExporter {
     }
     return $returnedLookups;
   }
-
 }

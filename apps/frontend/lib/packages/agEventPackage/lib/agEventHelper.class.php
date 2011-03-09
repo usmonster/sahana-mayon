@@ -18,7 +18,7 @@ class agEventHelper
 {
   /**
    * Method to return the current status of an event.
-   * @return array A positional array, keyed by agEventStatus.id, containing value members event_id,
+   * @return array An indexed array, keyed by agEventStatus.id, containing value members event_id,
    * time_stamp, and event_status_type_id.
    */
   public static function returnCurrentEventStatus()
