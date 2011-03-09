@@ -21,9 +21,9 @@ if(isset($blackOutFacilities))
 ?>
 
 
-<a href="<?php echo url_for('event/meta?id=' . $event_id); ?>" class="linkButton" title="Change Event Metadata">Change Event Metadata</a><br/><br/>
+<a href="<?php echo url_for('event/meta?event=' . $eventName); ?>" class="linkButton" title="Change Event Metadata">Change Event Metadata</a><br/><br/>
 
-<a href="<?php echo url_for('event/staff?id=' . $event_id); ?>" class="linkButton" class="linkButton" title="Manage Event Staff">Staff Management</a><br/>
+<a href="<?php echo url_for('event/staff?event=' . $eventName); ?>" class="linkButton" class="linkButton" title="Manage Event Staff">Staff Management</a><br/>
 
 <em><a href="<?php echo url_for('agClient/index'); ?>" class="buttonText" title="Manage Clients">Client Data</a></em><br/>
 
@@ -31,6 +31,6 @@ if(isset($blackOutFacilities))
 
 <em><a href="<?php echo url_for('event/reporting'); ?>" class="buttonText" title="Manage Reports">Reporting</a></em><br/>
 <br>
-<a href="<?php echo url_for('event/resolution?id=' . $event_id); ?>" class="linkButton" title="Resolve Event">Resolve Event</a><br/>
+<a href="<?php echo url_for('event/resolution?event=' . $eventName); ?>" class="linkButton" title="Resolve Event">Resolve Event</a><br/>
 
 <br />

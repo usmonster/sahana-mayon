@@ -13,7 +13,7 @@
     'committed_staff' =>  array('title' => 'committed staff', 'sortable' => false)
   );
 
-  $thisUrl = url_for('event/shifts?id=' . $event_id);
+  $thisUrl = url_for('event/shifts?event=' . $eventName);
 
   ($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
   ($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';

@@ -4,7 +4,7 @@ event_deploy:
   param:   { module: event, action: deploy }
 
 event_meta:
-  url:     /event/:id/meta
+  url:     /event/:event/meta
   options: { model: agEvent, type: object }
   param:   { module: event, action: meta }
 
@@ -14,22 +14,22 @@ event_shifts:
   param:   { module: event, action: shifts }
 
 event_shifts_list:
-  url:     /event/:id/shifts
+  url:     /event/:event/shifts
   options: { model: agEvent, type: object }
   param:   { module: event, action: shifts }
 
 event_resolution:
-  url:     /event/:id/resolution
+  url:     /event/:event/resolution
   options: { model: agEvent, type: object }
   param:   { module: event, action: resolution }
 
 event_staffpool:
-  url:     /event/:id/staffpool
+  url:     /event/:event/staffpool
   options: { model: agEvent, type: object }
   param:   { module: event, action: staffpool }
 
 event_staff:
-  url:     /event/:id/staff
+  url:     /event/:event/staff
   options: { model: agEvent, type: object }
   param:   { module: event, action: staff }
 
@@ -44,7 +44,7 @@ event_staffshift_multi:
   param:   { module: event, action: staffshift }
 
 event_active:
-  url:     /event/:id/active
+  url:     /event/:event/active
   options: { model: agEvent, type: object }
   param:   { module: event, action: active }
 

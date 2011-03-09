@@ -132,7 +132,7 @@ class eventActions extends agActions
  */
   private function setEventBasics(sfWebRequest $request)
   {
-    if ($request->getParameter('id')) {
+    if ($request->getParameter('event')) {
       $this->event_id = $request->getParameter('id');
       if ($this->event_id != "") {
         $this->eventName = Doctrine_Core::getTable('agEvent')
@@ -149,6 +149,7 @@ class eventActions extends agActions
               ->execute()->getFirst();
 
       $this->event_id = $this->event->id;
+      $this->eventName = $this->event->event_name;
       //TODO step through to check and see if the second if is needed
     }
   }
@@ -643,10 +644,10 @@ class eventActions extends agActions
       $ag_event_status->save();
     }
     $this->setEventBasics($request);
-    $this->event_id = $request->getParameter('id');
-    $this->eventName = Doctrine::getTable('agEvent')
-            ->findByDql('id = ?', $this->event_id)
-            ->getFirst()->event_name;
+    $this->eventName = urldecode($request->getParameter('event'));
+    $this->event_id = Doctrine::getTable('agEvent')
+            ->findByDql('event_name = ?', $this->eventName)
+            ->getFirst()->id;
     $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
     $this->resForm = new sfForm();
     $this->resForm->setWidgets(array(
