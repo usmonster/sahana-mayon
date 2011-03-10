@@ -227,8 +227,8 @@ class agImportNormalization
           $validEmail = 1;
           $validPhone = 1;
           $validAddress = 1;
-          $newFacility = 0;
-          $newFacilityGroup = 0;
+          $isNewFacilityRecord = 0;
+          $isNewFacilityGroupRecord = 0;
           $skipToNext = 0;
 
           $isValidData = $this->dataValidation($record);
@@ -338,7 +338,7 @@ class agImportNormalization
 
           if (empty($facility)) {
             $facility = $this->createFacility($facility_name);
-            $newFacility = 1;
+            $isNewFacilityRecord = 1;
           } else {
             // Search for facility resource if exists.
             // Facility Resource table has two unique key sets: (1) Facility & Facility Resource  and (2) Facility code.
@@ -402,7 +402,7 @@ class agImportNormalization
                                                                         $facility_group_type_id,
                                                                         $facility_group_allocation_status_id,
                                                                         $facility_group_activation_sequence);
-            $newFacilityGroup = 1;
+            $isNewFacilityGroupRecord = 1;
           } else {
             $scenarioFacilityGroup = $this->updateScenarioFacilityGroup($scenarioFacilityGroup,
                                                                         $facility_group_type_id,
@@ -448,8 +448,14 @@ class agImportNormalization
           $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
 
           $conn->commit();
-          $this->totalNewFacilityCount += $newFacility;
-          $this->totalNewFacilityGroupCount += $newFacilityGroup;
+
+          // Set summary counts
+          if ($isNewFacilityRecord) {
+            $this->totalNewFacilityCount++;
+          }
+          if ($isNewFacilityGroupRecord) {
+            $this->totalNewFacilityGroupCount++;
+          }
           $this->totalProcessedRecordCount++;
 
           $facilityId = $facility->id;
