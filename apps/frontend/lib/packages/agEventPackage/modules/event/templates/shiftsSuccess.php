@@ -1,4 +1,4 @@
-<h3>Event Shifts for <?php echo $eventName ?></h3>
+<h3>Event Shifts for <?php echo $event_name ?></h3>
 
 <?php #include_partial('scenarioshiftform', array('scenarioshiftform' => $scenarioshiftform, 'myRandomParam' => $myRandomParam, 'outputResults' => $outputResults)) ?>
 <?php
@@ -13,7 +13,7 @@
     'committed_staff' =>  array('title' => 'committed staff', 'sortable' => false)
   );
 
-  $thisUrl = url_for('event/shifts?event=' . $eventName);
+  $thisUrl = url_for('event/shifts?event=' . $event_name);
 
   ($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
   ($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';
@@ -39,7 +39,7 @@
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
     <?php foreach ($pager->getResults() as $ag_event_shift): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('event/shifts?id='.$event_id) . '/' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+      <td><a class=linkButton href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) . '/' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
       <td><?php echo $ag_event_shift->getAgEventFacilityResource()->getAgEventFacilityGroup()->getEventFacilityGroup() ?></td>
       <td><?php echo $ag_event_shift->getAgEventFacilityResource()->getAgFacilityResource();//->getAgEventFacilityResource(); ?></td>
       <td><?php echo $ag_event_shift->getAgStaffResourceType()->getStaffResourceType(); ?></td>
@@ -53,7 +53,7 @@
 
 <br>
 <div>
-  <a href="<?php echo url_for('event/shifts?id=' .$event_id) ?>/new" class="linkButton" title="Create New Scenario Shift">Create New Event Shift</a>
+  <a href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) ?>/new" class="linkButton" title="Create New Scenario Shift">Create New Event Shift</a>
 
 </div>
 

@@ -382,8 +382,8 @@ class agEventFacilityHelper
   /**
    * Function to return the event_status_id and event_status_type_id of the passed event_id
    * 
-   * @param integer(4) $eventId The event id being queried
-   * @return array An associative array with event_status_id as the key and event_status_type_id as the value 
+   * @param  integer(4) $eventId The event id being queried
+   * @return integer    An event_status_type_id.
    */
   public static function returnCurrentEventStatus($eventId)
   {

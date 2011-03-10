@@ -3,8 +3,8 @@
 
 <?php
 $confirmScript = "";
-if($event_id != ""){
-  $formAct = url_for('event/meta?id=' . $event_id);
+if($event_name != ""){
+  $formAct = url_for('event/meta?event=' . urlencode($event_name));
 
   //we also need to bind the submit button to a confirmation alert
   $confirmScript = ' onclick="return confirm(\'Are you sure?  Changing the date and time of your event will affect the facilities that are not yet staffed.  For more information click Cancel and the help link.\');"';

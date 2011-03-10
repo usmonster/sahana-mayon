@@ -11,7 +11,7 @@
 
 </script>
 
-<form name="staffshiftform" id="staffshiftform" action="<?php echo url_for('event/staffshift?id=' . $event_id) . '/' . $shift_id?>" method="post"<?php echo ($XmlHttpRequest != false ? ' class="modalForm"' : ''); ?>>
+<form name="staffshiftform" id="staffshiftform" action="<?php echo url_for('event/staffshift?event=' . urlencode($event_name)) . '/' . $shift_id?>" method="post"<?php echo ($XmlHttpRequest != false ? ' class="modalForm"' : ''); ?>>
 
 <h3>Construct Search Conditions:</h3>
 <?php

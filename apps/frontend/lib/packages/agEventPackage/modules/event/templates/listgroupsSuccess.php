@@ -14,7 +14,7 @@ $sortOrder = $sf_request->getGetParameter('order');
 <br />
 <?php if(isset($event_id)): ?>
 <div class="rightFloat" >
-  <a href="<?php echo url_for('event/fgroup?id=' . $event_id); ?>" class="linkButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
+  <a href="<?php echo url_for('event/fgroup?event=' . urlencode($event_name)); ?>" class="linkButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
 </div>
 <?php endif; ?>
 

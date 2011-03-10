@@ -56,18 +56,25 @@ ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
 ul.menu>li>a {
   padding: 5px 4px;
 }
+ul.menu>li>a:hover {
+  z-index: 9999;
+}
 ul.menu>li>a:hover, ul.menu>li:hover>a {
   border: solid 1px #dadada;
+  border-bottom-color: #f1f1f1 !important;
+/*  border-top-color: #dadada;
+  border-right-color: #dadada;
+  border-left-color: #dadada;*/
   padding: 4px 3px;
   -moz-border-radius: 10px 10px 0px 0px;
   -webkit-border-radius: 10px 10px 0px 0px;
   color: #ff8f00;
-  text-shadow: 0px 0px 2px #ff8f00;
+  text-shadow: 0px 0px 5px #ffc479;
   text-decoration:none;
 }
 ul.menu>li>ul>li:hover>a {
   color: #ff8f00;
-  text-shadow: 0px 0px 2px #ff8f00;
+  text-shadow: 0px 0px 5px #ffc479;
   text-decoration:none;
 }
 ul.menu li.dis a:hover, ul.menu li.sep a:hover {
@@ -121,7 +128,7 @@ ul.menu li a:hover{
 	border-style:solid;
 	font:bold 12px helvetica, arial, verdana;
 	color: #ff8f00;
-        text-shadow: 0px 0px 2px #ff8f00;
+        text-shadow: 0px 0px 5px #ffc479;
 	text-decoration:none;
 }
 ul.menu li.dis a {

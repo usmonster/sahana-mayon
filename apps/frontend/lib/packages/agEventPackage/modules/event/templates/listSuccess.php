@@ -3,7 +3,6 @@
 <table>
   <thead>
     <tr>
-      <th>Id</th>
       <th>Event Name</th>
       <th>Scenario Base</th>
       <th>Created at</th>
@@ -15,8 +14,7 @@
   <tbody>
     <?php foreach ($ag_events as $ag_event): ?>
     <tr>
-      <td><a href="<?php echo url_for('event/deploy?id='.$ag_event->getId()) ?>"><?php echo $ag_event->getId() ?></a></td>
-      <td><?php echo $ag_event->getEventName() ?></td>
+      <td><a href="<?php echo url_for('event/deploy?event=' . $ag_event->getEventName()); ?>"><?php echo $ag_event->getEventName() ?></a></td>
       <td><?php echo $ag_event->getAgEventScenario()->getFirst()->getAgScenario() ?></td>
       <td><?php echo $ag_event->getCreatedAt() ?></td>
       <td><?php echo $ag_event->getUpdatedAt() ?></td>
@@ -27,4 +25,4 @@
   </tbody>
 </table>
 
-  <a href="<?php //echo url_for('agEvent') ?>">New</a>
+  <a href="<?php echo url_for('agEvent') ?>">New</a>

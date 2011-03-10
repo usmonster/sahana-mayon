@@ -5,12 +5,12 @@
 
 
 
-<form action="<?php echo url_for('event/fgroup?id=' . $event_id) ?> " method="post">
+<form action="<?php echo url_for('event/fgroup?event=' . urlencode($event_name)) ?> " method="post">
   <?php echo $facilitygroupsForm['facility_group_list']->renderRow(array('onchange' => 'submit();'), 'Facility Group') ?>
   <input type="hidden" value="facility_group_filter" name="facility_group_filter"><input type="button" name="checkall" id="checkall" value="check all">
 </form>
 
-<form action="<?php echo url_for('event/fgroup?id=' . $event_id) ?> " method="post">
+<form action="<?php echo url_for('event/fgroup?event=' . urlencode($event_name)) ?> " method="post">
 
   <table>
     <tfoot>

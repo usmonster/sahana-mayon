@@ -19,7 +19,7 @@ class eventActions extends agActions
 {
 
   public static $event_id;
-  public static $eventName;
+  public static $event_name;
   public static $event;
   protected $searchedModels = array('agEventStaff');
 
@@ -120,7 +120,7 @@ class eventActions extends agActions
 
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
-        $this->redirect('event/active?id=' . $this->event_id);
+        $this->redirect('event/active?event=' . urlencode($this->event_name));
       }
     } else {
       $this->forward404('you cannot deploy an event without a scenario.');
@@ -135,7 +135,7 @@ class eventActions extends agActions
     if ($request->getParameter('id')) {
       $this->event_id = $request->getParameter('id');
       if ($this->event_id != "") {
-        $this->eventName = Doctrine_Core::getTable('agEvent')
+        $this->event_name = Doctrine_Core::getTable('agEvent')
                 ->findByDql('id = ?', $this->event_id)
                 ->getFirst()->getEventName();
       }
@@ -149,7 +149,7 @@ class eventActions extends agActions
               ->execute()->getFirst();
 
       $this->event_id = $this->event->id;
-      $this->eventName = $this->event->event_name;
+      $this->event_name = $this->event->event_name;
       //TODO step through to check and see if the second if is needed
     }
   }
@@ -195,10 +195,10 @@ class eventActions extends agActions
           $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
           $ag_event_scenario->setEventId($ag_event->getId());
           $ag_event_scenario->save();
-          $this->redirect('event/deploy?id=' . $ag_event->getId());
+          $this->redirect('event/deploy?event=' . urlencode($ag_event->getEventName()));
         }
         $this->blackOutFacilities = agEventFacilityHelper::returnActivationBlacklistFacilities($ag_event->getId(), $ag_event->getZeroHour());
-        $this->redirect('event/active?id=' . $ag_event->getId());
+        $this->redirect('event/active?event=' . urlencode($ag_event->getEventName()));
       }
     } else {
       //get scenario information passed from previous form
@@ -298,7 +298,7 @@ class eventActions extends agActions
     $this->widget->setWidget('add', new agWidgetFormSelectCheckbox(array('choices' => array(null)), array()));
 
     $this->widget->getWidgetSchema()->setLabel('add', false);
-    $this->form_action = 'event/staffpool?id=' . $this->event_id;
+    $this->form_action = 'event/staffpool?event=' . $this->event_name;
   }
 /**
  * provide event shift CRUD
@@ -325,9 +325,8 @@ class eventActions extends agActions
         $ag_event_shift = $this->eventshiftform->save();
         $this->generateUrl('event_shifts', array('module' => 'event',
           'action' => 'shifts', 'id' => $this->event_id, 'shiftid' => $ag_event_shift->getId()));
-        //       $this->redirect('event/shifts?id=' . $this->event_id . '&shiftid=' . $ag_event_shift->getId());
       }
-      $this->redirect('event/shifts?id=' . $this->event_id); //need to pass in event id
+      $this->redirect('event/shifts?event=' . urlencode($this->event_name)); //need to pass in event id
     } else {
 //READ
       if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
@@ -632,6 +631,7 @@ class eventActions extends agActions
  */
   public function executeResolution(sfWebRequest $request)
   {
+    $this->setEventBasics($request);
     if ($request->isMethod(sfRequest::POST)) {
       //never going to be updating, will always be 'setting' the status, with the current timestamp
       $ag_event_status = new agEventStatus();
@@ -641,23 +641,14 @@ class eventActions extends agActions
       $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
       $ag_event_status->save();
     }
-    $this->setEventBasics($request);
-    $this->eventName = urldecode($request->getParameter('event'));
-    $this->event_id = Doctrine::getTable('agEvent')
-            ->findByDql('event_name = ?', $this->eventName)
-            ->getFirst()->id;
     $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
     $this->resForm = new sfForm();
     $this->resForm->setWidgets(array(
-      'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType'))
+      'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType')),
+//      'event_id'     => new sfWidgetFormInputHidden()
     ));
     $currentStatus = agEventFacilityHelper::returnCurrentEventStatus($this->event_id);
-    foreach ($currentStatus as $current_stat) {
-      $current_status = $current_stat[0];
-      //this works, but is awful.
-    }
-
-    $this->resForm->setDefault('event_status', $current_status);
+    $this->resForm->setDefault('event_status', $currentStatus);
   }
 /**
  * @todo todo

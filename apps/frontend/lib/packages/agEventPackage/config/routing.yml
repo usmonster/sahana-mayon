@@ -1,5 +1,5 @@
 event_deploy:
-  url:     /event/:id/deploy
+  url:     /event/:event/deploy
   options: { model: agEvent, type: object }
   param:   { module: event, action: deploy }
 
@@ -9,7 +9,7 @@ event_meta:
   param:   { module: event, action: meta }
 
 event_shifts:
-  url:     /event/:id/shifts/:shiftid
+  url:     /event/:event/shifts/:shiftid
   options: { model: agEvent, type: object }
   param:   { module: event, action: shifts }
 
@@ -34,12 +34,12 @@ event_staff:
   param:   { module: event, action: staff }
 
 event_staffshift:
-  url:     /event/:id/staffshift/:shiftid
+  url:     /event/:event/staffshift/:shiftid
   options: { model: agEvent, type: object }
   param:   { module: event, action: staffshift }
 
 event_staffshift_multi:
-  url:     /event/:id/staffshift
+  url:     /event/:event/staffshift
   options: { model: agEvent, type: object }
   param:   { module: event, action: staffshift }
 
@@ -49,7 +49,7 @@ event_active:
   param:   { module: event, action: active }
 
 event_fgroup:
-  url:     /event/:id/fgroup
+  url:     /event/:event/fgroup
   options: { model: agEvent, type: object }
   param:   { module: event, action: fgroup }
 
@@ -59,7 +59,7 @@ event_listgroups:
   param:   { module: event, action: listgroups }
 
 event_editgroup:
-  url:     /event/:id/editgroup
+  url:     /event/:event/editgroup
   options: { model: agEvent, type: object }
   param:   { module: event, action: editgroup }
 

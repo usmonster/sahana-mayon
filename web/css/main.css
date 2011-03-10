@@ -14,7 +14,8 @@ html, body {
 #wrapper {
   margin: 20px 20px;
   padding: 0px 20px;
-  background: #f7f7f7;
+/*  background: #f7f7f7;*/
+  background: #ffffff;
   border: solid 2px #dadada;
   border: solid 2px #dadada;
   -moz-border-radius: 20px;
@@ -51,7 +52,8 @@ html, body {
   height: 67px;
   margin: 0 5px;
   padding: 5px 10px;
-  background: #f7f7f7;
+/*  background: #f7f7f7;*/
+  background: #ffffff;
   border: solid #dadada;
   border-width: 0px 2px 2px;
   -moz-border-radius-bottomright: 20px;
@@ -111,7 +113,8 @@ h5 {
 
 #footer {
   clear: both;
-  background: #f7f7f7;
+/*  background: #f7f7f7;*/
+  background: #ffffff;
   margin: 0px 10px 20px;
   height: 80px;
   border: solid 2px #dadada;
@@ -1242,8 +1245,8 @@ text-align: center !important;
 text-decoration: none !important;
 outline: none !important;
 background: #F1F1F1 !important;
--moz-box-shadow: 3px 3px 3px #CCC !important;
--webkit-box-shadow: 3px 3px 3px #CCC !important;
+/*-moz-box-shadow: 3px 3px 3px #CCC !important;
+-webkit-box-shadow: 3px 3px 3px #CCC !important;*/
 }
 
 .logo{

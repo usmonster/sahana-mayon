@@ -14,11 +14,11 @@ else{
   $scenario_id = "";
 }
 
-if(!isset($event_id)){
-  $event_id ="";
+if(!isset($event_name)){
+  $event_name ="";
 }
 ?>
 <br>
 
 <h3>Event Pre-Deployment</h3>
-<?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_id' => $event_id)) ?>
+<?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_name' => $event_name)) ?>

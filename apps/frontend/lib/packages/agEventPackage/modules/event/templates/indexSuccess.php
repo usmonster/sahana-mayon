@@ -48,7 +48,7 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
 
         ?>
 
-        <td><a href="<?php echo url_for('event/active?event=' . $ag_event->getEventName()) ?>" class="linkButton"><?php echo $ag_event->getEventName() ?></a></td>
+        <td><a href="<?php echo url_for('event/active?event=' . urlencode($ag_event->getEventName())) ?>" class="linkButton"><?php echo $ag_event->getEventName() ?></a></td>
         <td><?php #echo $ag_event->getAgEventScenario()->getFirst()->getAgScenario() ?></td>
         <td><?php echo $ag_event->getCreatedAt() ?></td>
         <td><?php echo $ag_event->getUpdatedAt() ?></td>

@@ -1,5 +1,5 @@
 <p> Here you can tweak the staff resource pools you have defined in the planning phase. </p>
-<h2><span class="highlightedText"><?php echo $eventName ?></span> Staff Pool Management</h2><br/>
+<h2><span class="highlightedText"><?php echo $event_name ?></span> Staff Pool Management</h2><br/>
 <br /> <em>maybe show existing saved searches here?</em>
 <h3>Filter By:</h3>
 <br />
@@ -7,7 +7,7 @@
 
 <?php echo $filterForm ?> <!-- onChange: filter. -->
 <br />
-<h3>Current Event Staff Members, <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $eventName . '</span> Event' : ' for all Events'); ?></h3>
+<h3>Current Event Staff Members, <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event_name . '</span> Event' : ' for all Events'); ?></h3>
 
 
 
