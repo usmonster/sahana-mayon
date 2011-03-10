@@ -2,7 +2,7 @@
   <caption>User Accounts
   </caption>
   <thead>
-    <tr>
+    <tr class="head">
       <th>Username</th>
       <th>Email</th>
       <th>Created at</th>
@@ -20,6 +20,7 @@
     <?php endforeach; ?>
   </tbody>
 </table>
-
+<br>
+<div>
 <a href="<?php echo url_for('admin/new') ?>" class="linkButton" title="Create New User Account">Create New</a>
-
+</div>

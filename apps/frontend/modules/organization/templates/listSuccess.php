@@ -46,7 +46,6 @@ $descArrow = '&#x25BC;';
 <?php endforeach; ?>
         </tbody>
       </table>
-
       <br>
       <div>
         <a href="<?php echo url_for('organization/new') ?>" class="linkButton" title="Create New Organization">Create New</a>

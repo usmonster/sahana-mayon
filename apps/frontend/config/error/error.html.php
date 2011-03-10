@@ -32,9 +32,12 @@
             </div>
             <div id="columns">
                 <h2> New York City Sahana Agasti</h2>
-
+                <br/>
                 <h5>The server returned a "<?php echo $code ?> <?php echo $text ?>".</h5>
-                <?php echo $error_string ?>
+                <br/>
+                <h4>
+                <?php echo $exception->getmessage(); ?>
+                </h4>
                 <br/>
                 <br/>
                 <?php $url = htmlspecialchars($_SERVER['HTTP_REFERER']); echo "<a href='$url' class='linkButton'>Back</a>"; ?>

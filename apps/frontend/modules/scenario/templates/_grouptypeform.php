@@ -18,7 +18,7 @@ echo url_for('scenario/grouptype' .
             &nbsp;<?php
             echo link_to('Delete', 'scenario/deletegrouptype?id=' .
                 $grouptypeform->getObject()->getId(),
-                array('method' => 'delete', 'confirm' => 'Are you sure?')) ?>
+                array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?>
 <?php endif; ?>
             <input type="submit" value="Save" />
           </td>
