@@ -132,7 +132,7 @@ class eventActions extends agActions
  */
   private function setEventBasics(sfWebRequest $request)
   {
-    if ($request->getParameter('event')) {
+    if ($request->getParameter('id')) {
       $this->event_id = $request->getParameter('id');
       if ($this->event_id != "") {
         $this->eventName = Doctrine_Core::getTable('agEvent')
@@ -183,7 +183,6 @@ class eventActions extends agActions
                 ->execute()->getFirst();
 
         $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
-
         $ag_event_status->setEventStatusTypeId(3);
         $ag_event_status->setEventId($ag_event->getId());
         $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');

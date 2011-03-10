@@ -4,5 +4,6 @@
          id="search_keywords" class="searchForm"/>
   <input type="submit" value="Search" class="buttonWhite" />-->
   <input type="text" name="query" value="<?php echo $sf_request->getParameter('query'); ?>"
-         id="search_keywords" class="searchTextBox"/><input type="image" src="<?php echo image_path('Search_Button.png') ?>" value="Search" class="searchButton" />
+         id="search_keywords" class="searchTextBox"/>
+  <div class="searchButton"><input type="submit" name="submit" value="" style="margin-top: 3px; width: 28px; height:23px; display:inline; border: none;background:transparent;"></div>
 </form>

@@ -7,7 +7,7 @@ Please select one of the following staff administration actions:<br />
 
 <a href="<?php echo url_for('admin/new') ?>" class="linkButton" title="Create New Account">Create Account</a><br/><br/>
 <a href="<?php echo url_for('admin/list') ?>" class="linkButton" title="List Existing Accounts">List Accounts</a><br/><br/>
-<a href="<?php echo url_for('staff/cred') ?>" class="linkButton" title="Credential Management">Credential Management</a><br/><br/>
+<a href="<?php echo url_for('admin/cred') ?>" class="linkButton" title="Credential Management">Credential Management</a><br/><br/>
 
   </fieldset>
   <fieldset>

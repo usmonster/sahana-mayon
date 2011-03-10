@@ -1220,7 +1220,13 @@ table.adminConfigRequirements tr td{
   border: 1px solid #ccc; display: inline; margin-top:4px;vertical-align: top; width:160px; height: 18px;
 }
 .searchButton{
-  display:inline; margin-top:3px;
+  display:inline;
+  margin-top:3px;
+  background:url('../images/Search_Button.png') no-repeat;
+  width: 28px;
+  height: 23px;
+  cursor:pointer;
+  border:none;
 }
 
 .saveLinkButton{
