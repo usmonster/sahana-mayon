@@ -1,8 +1,8 @@
 <h3>Scenario Listing</h3>
 
-<table>
+<table class="staffTable">
   <thead>
-    <tr>
+    <tr class="head">
       <th>Id</th>
       <th>Scenario</th>
       <th>Description</th>
@@ -25,5 +25,7 @@
     <?php endforeach; ?>
         </tbody>
       </table>
-
+    <br>
+    <div>
       <a class="linkButton" href="<?php echo url_for('scenario/new') ?>">New</a>
+    </div>
