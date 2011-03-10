@@ -13,6 +13,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
+
 class scenarioActions extends agActions
 {
 
@@ -22,9 +23,9 @@ class scenarioActions extends agActions
   public static $scenarioName;
 
   /**
-   *
+   * sets up basic scenario information from a web request, used in most actions here
    * @param <type> $request a web request
-   * this function sets up basic scenario information from a web request, used in most actions here
+   * 
    */
   public function setScenarioBasics($request)
   {
@@ -32,7 +33,10 @@ class scenarioActions extends agActions
     $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->scenario;
   }
 
-
+/**
+ * provides a listing of facility groups for a scenario to the listFacilityGroup template
+ * @param sfWebRequest $request
+ */
   public function executeListgroups(sfWebRequest $request)
   {
     $query = agDoctrineQuery::create()
@@ -42,9 +46,7 @@ class scenarioActions extends agActions
     if ($request->hasParameter('id')) {
       $query->where('a.scenario_id=?', $request->getParameter('id'));
     }
-
     $this->ag_scenario_facility_groups = $query->execute();
-//$this->forward($module, $action) i think we need to forward here instead of just listfacilitygroup template because we have to
     $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'listFacilityGroup');
   }
 
@@ -293,6 +295,7 @@ class scenarioActions extends agActions
   {
     if ($this->scenario_id = $request->getParameter('id')) {
       $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
+      $this->scenario_description = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getDescription();
       $this->ag_scenario_facility_groups = agDoctrineQuery::create()
               ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
               ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
@@ -427,7 +430,7 @@ class scenarioActions extends agActions
   }
 
   /**
-   * @todo what's this do?
+   * sets up a new scenario form
    * @param sfWebRequest $request
    */
   public function executeNew(sfWebRequest $request)

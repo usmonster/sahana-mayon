@@ -1,6 +1,7 @@
 <table class="staffTable">
   <h3>Search Results:
     <?php
+    if(!isset($target_module)) $target_module = 'staff';
     $count = count($hits);
     if ($count == 0) {
       echo "No results found for '<strong>" . $searchquery . "</strong>'";

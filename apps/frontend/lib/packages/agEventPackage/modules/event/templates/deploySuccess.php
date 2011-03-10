@@ -1,11 +1,4 @@
-<?php
-// This page is currently a stub!  The following random string is a marker for the stub.
-?>
 <h2><b><span class="highlightedText"><?php echo $event_name; ?></span></b> Pre-Deployment</h2>
-<?php
-//note for devs: anytime you see <b>Name Of Event</b> it's my placeholder for where you should make
-//the app display the name of the event the user is working in.
-?>
 <p>The final steps in preparation are often the most critical.  
   In the final steps of pre-deployment, you'll ensure all geographic reference information for
   your staff and facility resources are up to date, and that the shifts for <span class="highlightedText"><?php echo $event_name; ?></span> event are
@@ -30,7 +23,7 @@ if (isset($checkResults)) {
 <br />
 <form action="<?php echo url_for('event/deploy?event=' . urlencode($event_name)) ?> " method="post">
 
-<a href="<?php echo url_for('event/gis'); ?>" class="linkButton" title="Update GIS Data">Generate Geo Information</a>
+<a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id); ?>" class="linkButton" title="Modify Scenario Staff Pool">Modify Scenario Staff Pool</a>
 
 <a href="#" class="linkButton" title="Generate Shifts">Generate Shifts</a>
 

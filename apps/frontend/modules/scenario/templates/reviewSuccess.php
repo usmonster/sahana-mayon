@@ -1,13 +1,12 @@
-<h2>"<?php echo $scenario_name ?>" Scenario Review</h2>
+<h2><span class="highlightedText"><?php echo $scenario_name ?></span> Scenario Review</h2>
 
-<h3>Fill In Meta Information</h3>
-<p>List scenario name and description.  Then the Facility Groups and number.</p>
-<br />
-<a href="<?php echo url_for('scenario/listgroups?id=' . $scenario_id) ?>" class="linkButton">Manage Facilities/Groups</a>
-<a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton">Staff Pool Definitions</a>
-<a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton">Shift Templates</a>
-<a href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>" class="linkButton">Scenario Shifts</a>
-<a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Staff Resource Requirements</a>
+<h3><?php echo $scenario_description ?></h3>
+<br /><hr />
+<a href="<?php echo url_for('scenario/listgroups?id=' . $scenario_id) ?>" class="linkButton">Manage Facilities/Groups</a> <br /><br />
+<a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton">Staff Pool Definitions</a> <br /><br />
+<a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton">Shift Templates</a> <br /><br />
+<a href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>" class="linkButton">Scenario Shifts</a> <br /><br />
+<a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Staff Resource Requirements</a> <br /><br />
 
 
 <form action="<?php echo url_for('event/meta')?>" method="post" name="scenario">

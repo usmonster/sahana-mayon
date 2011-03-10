@@ -43,6 +43,11 @@ scenario_show_facility_staff_resource:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: staffresources }
 
+scenario_listgroups:
+  url:     /scenario/:id/listgroups
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: listgroups }
+
 scenario_staff_pool:
   url:     /scenario/:id/staffpool
   options: { model: agScenario, type: object }
@@ -62,12 +67,6 @@ scenario_fgroup_edit:
   url:     /scenario/:id/fgroup/:groupid
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: fgroup }
-
-
-scenario_new_shift_templates:
-  url:     /scenario/:id/newshifttemplates
-  options: { model: agScenario, type: object }
-  param:   { module: scenario, action: newshifttemplates }
 
 scenario_shift_templates:
   url:     /scenario/:id/shifttemplates
