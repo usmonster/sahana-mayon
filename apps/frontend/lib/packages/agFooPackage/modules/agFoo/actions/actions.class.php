@@ -75,7 +75,7 @@ $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
 //$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
 //$results = $obj->getAddressAllowedElements() ;
 $obj = Doctrine_Core::getTable('agPerson')->find(1) ;
-$results = $obj->getPrimaryNameAsString() ;
+$results = $obj->getNameByTypeAsString() ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 

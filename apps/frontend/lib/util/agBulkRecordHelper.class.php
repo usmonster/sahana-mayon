@@ -68,7 +68,7 @@ abstract class agBulkRecordHelper
     $this->_recordCount = count($recordIds) ;
 
     // we'll also make a call to show a warning of the default record count has been exceeded
-    $this->_logWarningBatchSizeExceeded() ;
+    $this->_logBatchSizeExceeded() ;
 
     // if all is well, set our recordIds property
     $this->recordIds = $this->varToArray($recordIds) ;
@@ -98,7 +98,7 @@ abstract class agBulkRecordHelper
  /**
   * Method to log warnings if the batch size is exceeded by the number of variables returned.
   */
- private function _logWarningBatchSizeExceeded()
+ private function _logBatchSizeExceeded()
  {
   if ($this->_recordCount > $this->_defaultBatchSize)
   {

@@ -20,7 +20,7 @@ class agOrganizationForm extends BaseagOrganizationForm
   /** @method setup()
    * Unset widgets that are auto-filled, unnecessary, or whose relations are not properly defined 
    * without using embedded forms.
-   * */
+   */
   public function setup()
   {
     unset(
@@ -32,7 +32,7 @@ class agOrganizationForm extends BaseagOrganizationForm
 
   /** @method configure()
    *  In the method it is creating and setting both widgets and validtion for the form.
-   * */
+   */
   public function configure()
   {
     /*

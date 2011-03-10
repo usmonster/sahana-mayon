@@ -75,12 +75,14 @@ class agPersonNameHelper extends agBulkRecordHelper
   }
 
   /**
-   * Method to construct and return a basic primary name query object.
+   * Method to construct and return a basic name query object.
    *
    * @param array $personIds A single-dimension array of person id values. Default is NULL.
+   * @param boolean $primary A boolean that controls whether or not the query constructor will
+   * build a query that only returns primary names or all names.
    * @return Doctrine_Query An instantiated doctrine query object.
    */
-  protected function _getPrimaryNameComponents($personIds = NULL)
+  protected function _getNameComponents($personIds = NULL, $primary = TRUE)
   {
     $personIds = $this->getRecordIds($personIds) ;
     
@@ -91,18 +93,23 @@ class agPersonNameHelper extends agBulkRecordHelper
         ->from('agPersonMjAgPersonName pmpn')
           ->innerJoin('pmpn.agPersonName pn')
         ->whereIn('pmpn.person_id', $personIds)
-          ->andwhere(' EXISTS (
-            SELECT p.id
-            FROM agPersonMjAgPersonName p
-            WHERE p.person_id = pmpn.person_id
-              AND p.person_name_type_id = pmpn.person_name_type_id
-            HAVING MIN(p.priority) = pmpn.priority)') ;
+        ->orderBy('pmpn.priority ASC') ;
+
+    if ($primary)
+    {
+      $q->andwhere(' EXISTS (
+        SELECT p.id
+        FROM agPersonMjAgPersonName p
+        WHERE p.person_id = pmpn.person_id
+          AND p.person_name_type_id = pmpn.person_name_type_id
+        HAVING MIN(p.priority) = pmpn.priority)') ;
+    }
 
     return $q ;
   }
 
   /**
-   * Method to return person names in an array keyed by the person_name_type_id.
+   * Method to return primary person names in an array keyed by the person_name_type_id.
    *
    * @param array $personIds A single-dimension array of person id values. Default is NULL.
    * @return array A two-dimensional associative array keyed by person id and name_type_id.
@@ -110,38 +117,98 @@ class agPersonNameHelper extends agBulkRecordHelper
   public function getPrimaryNameById($personIds = NULL)
   {
     // build our components query
-    $q = $this->_getPrimaryNameComponents($personIds) ;
+    $q = $this->_getNameComponents($personIds, TRUE) ;
 
     // execute and return our results
-    $results = $q->execute(array(), 'assoc_two_dim') ;
+    return $q->execute(array(), 'assoc_two_dim') ;
+  }
+
+  /**
+   * Method to return person names in an array keyed by the person_name_type_id.
+   *
+   * @param array $personIds A single-dimension array of person id values. Default is NULL.
+   * @param boolean $primary A boolean that controls whether or not the query constructor will
+   * build a query that only returns primary names or all names.
+   * @return array A three-dimensional associative array keyed by person id and name_type_id.
+   */
+  public function getNameById($personIds = NULL, $primary = FALSE)
+  {
+    // build our components query
+    $q = $this->_getNameComponents($personIds, $primary) ;
+
+    // execute and return our results
+    return $q->execute(array(), 'assoc_three_dim') ;
+  }
+
+  /**
+   * Method to return person names, ordered by most important in an array keyed by the
+   * person_id => person_name_type (string) => array(person_names).
+   *
+   * @param array $personIds A single-dimension array of person id values. Default is NULL.
+   * @param boolean $primary A boolean that controls whether or not the query constructor will
+   * build a query that only returns primary names or all names.
+   * @return array A three-dimensional associative array keyed by person id and person_name_type.
+   */
+  public function getNameByType($personIds = NULL, $primary = FALSE)
+  {
+    // always good to declare results first
+    $results = array() ;
+
+    // build our components query
+    $q = $this->_getNameComponents($personIds, $primary) ;
+    $q->addSelect('pnt.person_name_type')
+      ->innerJoin('pmpn.agPersonNameType pnt') ;
+
+
+    // execute, keeping in mind that we have to use custom hydration because of the new components
+    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
+
+    // otherwise iterate and place our results into a positional array
+    foreach ($rows as $row)
+    {
+      $results[$row[0]][$row[3]][] = $row[2] ;
+    }
+
     return $results ;
   }
+
   /**
-   * Method to return person names in an array keyed by the person_name_type (string).
+   * Method to return primary person names in an array keyed by the person_name_type (string).
    *
    * @param array $personIds A single-dimension array of person id values. Default is NULL.
    * @return array A two-dimensional associative array keyed by person id and person_name_type.
    */
   public function getPrimaryNameByType($personIds = NULL)
   {
-    // always good to declare results first
-    $results = array() ;
+    // Get our names by type
+    $personNames = $this->getNameByType($personIds, TRUE) ;
 
-    // build our components query
-    $q = $this->_getPrimaryNameComponents($personIds) ;
-
-    // add in joins to the new components
-    $q->addSelect('pnt.person_name_type')
-      ->innerJoin('pmpn.agPersonNameType pnt') ;
-
-    // execute, keeping in mind that we have to use custom hydration because of the new components
-    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
-    foreach ($rows as $row)
+    // loop our nested array and pick up the name array as a single value
+    foreach ($personNames as $person => $types)
     {
-      $results[$row[0]][$row[3]] = $row[2] ;
+      foreach ($types as $type => $names)
+      {
+        $personNames[$person][$type] = $names[0] ;
+      }
     }
 
-    return $results ;
+    return $personNames ;
+  }
+
+  public function getNameByTypeAsString ($personIds = NULL)
+  {
+    $personNames = $this->getNameByType($personIds) ;
+    
+    // loop our nested array and pick up the name array as an imploded string
+    foreach ($personNames as $person => $types)
+    {
+      foreach ($types as $type => $names)
+      {
+        $personNames[$person][$type] = implode(agGlobal::getParam('lucene_delimiter'), $names) ;
+      }
+    }
+
+    return $personNames ;
   }
 
   /**
