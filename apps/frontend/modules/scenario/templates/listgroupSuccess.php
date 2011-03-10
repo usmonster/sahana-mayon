@@ -13,7 +13,7 @@
   <tbody>
     <?php foreach ($ag_scenario_facility_groups as $ag_scenario_facility_group): ?>
       <tr>
-        <td><a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id) . '?groupid=' . $ag_scenario_facility_group->id ?>">
+        <td><a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id) . '?groupid=' . $ag_scenario_facility_group->id ?>" class="linkButton">
           <?php echo $ag_scenario_facility_group->getScenarioFacilityGroup() ?></a></td>
       <td><?php echo $ag_scenario_facility_group->getAgFacilityGroupType() ?></td>
       <td><?php echo $ag_scenario_facility_group->getAgFacilityGroupAllocationStatus() ?></td>

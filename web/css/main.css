@@ -1249,3 +1249,8 @@ background: #F1F1F1 !important;
 .logo{
  margin-bottom:5px;
 }
+
+P {
+    line-height: 18px;
+    margin: 12px auto;
+}

@@ -18,7 +18,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
     <tbody>
 <?php foreach ($saved_searches as $saved_search): ?>
     <tr>
-      <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) . '?search_id=' . $saved_search->getId() ?> "><?php echo $saved_search->getAgLuceneSearch()->query_name ?></a></td>
+      <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) . '?search_id=' . $saved_search->getId() ?> " class="linkButton"><?php echo $saved_search->getAgLuceneSearch()->query_name ?></a></td>
       <td><?php echo $saved_search->getAgLuceneSearch()->getAgLuceneSearchType() ?></td>
     </tr>
 <?php endforeach; ?>
