@@ -14,16 +14,14 @@
  */
 class adminActions extends agActions
 {
+
   /**
-   *
-   * @param sfWebRequest $request
+   * necessary function which triggers rendering of the indexSuccess template
+   * @param sfWebRequest $request is what the user is asking of the server
    */
   public function executeIndex(sfWebRequest $request)
   {
-    /**
-     *
-     * @param sfWebRequest $request is what the user is asking of the server
-     */
+
   }
 
   /**
@@ -190,10 +188,11 @@ class adminActions extends agActions
       $this->form->save();
     }
   }
-/**
- * provides a list of sfguardusers to the listSuccess template
- * @param sfWebRequest $request
- */
+
+  /**
+   * provides a list of sfguardusers to the listSuccess template
+   * @param sfWebRequest $request
+   */
   public function executeList(sfWebRequest $request)
   {
     $this->ag_accounts = Doctrine::getTable('sfGuardUser')
@@ -219,29 +218,41 @@ class adminActions extends agActions
   {
     $this->form = new agAccountForm();
   }
-/**
- * provides the credSuccess template with credential management information and forms.
- * all CRUD operations for credentials are performed through this action
- * @todo have all CRUD functions operate through their respective action function
- * @param sfWebRequest $request
- */
+
+  /**
+   * provides the credSuccess template with credential management information and forms.
+   * all CRUD operations for credentials are performed through this action
+   * @todo have all CRUD functions operate through their respective action function
+   * @param sfWebRequest $request
+   */
   public function executeCred(sfWebRequest $request)
   {
-
-    $this->sf_guard_permissions = Doctrine_Core::getTable('sfGuardPermission')
+    //get data needed for the list on credSuccess page
+    $this->sf_guard_permissions = Doctrine_Core::getTable('sfGuardUserPermission')
             ->createQuery('a')
             ->execute();
     $this->sf_guard_group_permissions = Doctrine_Core::getTable('sfGuardGroupPermission')
             ->createQuery('a')
             ->execute();
+    $credObject = null;
 
-    $this->form = new agCredForm();
-    //if a user has entered information, process said information
-    if ($request->isMethod(sfRequest::POST)) {
-      $this->forward404Unless($request->isMethod(sfRequest::POST));
-      $this->processCredform($request, $this->form);
+    //get our post parameters
+    if ($cred_id = $request->getParameter('id')) {
+      $credObject = Doctrine::getTable('sfGuardPermission')->find(array($cred_id));
+    }
 
-      $this->setTemplate('cred');
+    $this->form = new agCredForm($credObject);
+//CREATE/UPDATE
+
+    if ($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT)) {
+      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
+      if ($this->form->isValid()) {
+        $cred_result = $this->form->save();
+        //do i really need to set a variable?
+        $this->redirect('admin/cred?id=' . $cred_result->getId());
+      }
+
+//      $this->setTemplate('cred');
     }
   }
 
@@ -297,7 +308,7 @@ class adminActions extends agActions
   {
     $request->checkCSRFProtection();
 
-    $this->forward404Unless($ag_account = Doctrine::getTable('agAccount')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
+    $this->forward404Unless($ag_account = Doctrine::getTable('sfGuardUser')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
 //    $mj = $ag_account->getAgAccountMjSfGuardUser()->getFirst();
 //    $sf = $mj->getSfGuardUser();
 //    $sf_user = Doctrine::getTable('sfGuardUser')->find(array($sf->id));
@@ -307,13 +318,14 @@ class adminActions extends agActions
 
     $this->redirect('admin/list');
   }
-/**
- * the processform function only processes a form
- * @todo collapse this functionality all into a module-wde processForm function, taking in another
- *       parameter: the redirect.
- * @param sfWebRequest $request
- * @param sfForm $form the form to be processed
- */
+
+  /**
+   * the processform function only processes a form
+   * @todo collapse this functionality all into a module-wde processForm function, taking in another
+   *       parameter: the redirect.
+   * @param sfWebRequest $request
+   * @param sfForm $form the form to be processed
+   */
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
@@ -323,13 +335,14 @@ class adminActions extends agActions
       $this->redirect('admin/edit?id=' . $ag_account->getId());
     }
   }
-/**
- * the processParam function only processes a paramform for modifying global params
- * @todo collapse this functionality all into a module-wde processForm function, taking in another
- *       parameter: the redirect.
- * @param sfWebRequest $request
- * @param sfForm $paramform the form to be processed
- */
+
+  /**
+   * the processParam function only processes a paramform for modifying global params
+   * @todo collapse this functionality all into a module-wde processForm function, taking in another
+   *       parameter: the redirect.
+   * @param sfWebRequest $request
+   * @param sfForm $paramform the form to be processed
+   */
   protected function processParam(sfWebRequest $request, sfForm $paramform)
   {
     $paramform->bind($request->getParameter($paramform->getName()), $request->getFiles($paramform->getName()));
@@ -337,22 +350,6 @@ class adminActions extends agActions
       $paramform->save();
 
       $this->redirect('admin/globals');
-    }
-  }
-/**
- * the processCredform function only processes a form
- * @todo collapse this functionality all into a module-wde processForm function, taking in another
- *       parameter: the redirect.
- * @param sfWebRequest $request
- * @param sfForm $credform the form to be processed
- */
-  protected function processCredform(sfWebRequest $request, sfForm $credform)
-  {
-    $credform->bind($request->getParameter($credform->getName()), $request->getFiles($credform->getName()));
-    if ($credform->isValid()) {
-      $cred_result = $credform->save();
-      //do i really need to set a variable?
-      $this->redirect('admin/cred');
     }
   }
 

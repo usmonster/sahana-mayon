@@ -14,8 +14,8 @@
         <title>Sahana Agasti, Mayon 2.0</title>
         <link rel="shortcut icon" href="/agasti/images/favicon.ico" />
         <link rel="stylesheet" type="text/css" media="screen" href="/agasti/css/main.css" />
-        <script type="text/javascript" src="/agasti/js/jquery.js"></script>
-        <script type="text/javascript" src="/agasti/js/Menu_Shape.js"></script>
+        <script type="text/javascript" src="../../../../web/js/jquery.js"></script>
+        <script type="text/javascript" src="../../../../web/js/Menu_Shape.js"></script>
         <!--[if lt IE 9]>
         <script type="text/javascript" src="/agasti/js/IE9.js"></script>
         <![endif]-->
@@ -23,7 +23,7 @@
     <body>
         <div id="header">
             <div class="floatLeft">
-                <img src="/agasti/images/Sahana_logo.png" alt="Sahana Agasti: Emergency Management" class="logo"/>
+                <img src="../../../../web/images/Sahana_logo.png" alt="Sahana Agasti: Emergency Management" class="logo"/>
                 <!--<h1>Sahana Agasti:</h1><h2> Emergency Management </h2>-->
             </div>
         </div>
@@ -41,11 +41,11 @@
                 <br/>
                 <br/>
                 <?php $url = htmlspecialchars($_SERVER['HTTP_REFERER']); echo "<a href='$url' class='linkButton'>Back</a>"; ?>
-                <a href="/agasti/" class="linkButton">Return to homepage.</a>
+                <a href="home" class="linkButton">Return to homepage.</a>
             </div>
         </div>
         <div id="footer">
-            <img alt="[Agasti Logo]" src="/agasti/images/agasti_logo.png" />      <img alt="[The Seal of the City of New York]" src="/agasti/images/logo.png" />
+            <img alt="[Agasti Logo]" src="../../../../web/images/agasti_logo.png" />      <img alt="[The Seal of the City of New York]" src="../../../../web/images/logo.png" />
         </div>
     </body>
 </html>
