@@ -22,7 +22,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
     ?>
   </caption>
   <thead>
-    <tr class="tableRow">
+    <tr class="tableRow" style="border-bottom:0px">
       <th class="head" rowspan="2"></th>
       <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" class="centerText">
         Name
@@ -70,7 +70,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
     </tr>
     <tr class="tableRow">
       <?php foreach ($ag_person_name_types as $ag_person_name_type_id => $ag_person_name_type): ?>
-          <th class="subHead" rowspan="2">
+          <th class="subHead">
             <div class="noMargin noPadding"><?php echo ucwords($ag_person_name_type); ?></div>
         <?php
           echo($sortColumn == 'person_name' . '_' . $ag_person_name_type_id && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=person_name' . '_' . $ag_person_name_type_id . '&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=person_name' . '_' . $ag_person_name_type_id . '&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
