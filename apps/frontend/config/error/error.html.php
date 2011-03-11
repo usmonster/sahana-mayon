@@ -14,8 +14,8 @@
         <title>Sahana Agasti, Mayon 2.0</title>
         <link rel="shortcut icon" href="/agasti/images/favicon.ico" />
         <link rel="stylesheet" type="text/css" media="screen" href="/agasti/css/main.css" />
-        <script type="text/javascript" src="../../../../web/js/jquery.js"></script>
-        <script type="text/javascript" src="../../../../web/js/Menu_Shape.js"></script>
+        <script type="text/javascript" src="/agasti/js/jquery.js"></script>
+        <script type="text/javascript" src="/agasti/js/Menu_Shape.js"></script>
         <!--[if lt IE 9]>
         <script type="text/javascript" src="/agasti/js/IE9.js"></script>
         <![endif]-->
@@ -23,7 +23,7 @@
     <body>
         <div id="header">
             <div class="floatLeft">
-                <img src="../../../../web/images/Sahana_logo.png" alt="Sahana Agasti: Emergency Management" class="logo"/>
+                <img src="/agasti/images/Sahana_logo.png" alt="Sahana Agasti: Emergency Management" class="logo"/>
                 <!--<h1>Sahana Agasti:</h1><h2> Emergency Management </h2>-->
             </div>
         </div>
