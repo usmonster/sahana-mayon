@@ -11,6 +11,7 @@ class agImportNormalization
 
   function __construct($scenarioId, $sourceTable, $dataType)
   {
+    // declare variables
     $this->dataType = $dataType;
     $this->scenarioId = $scenarioId;
     $this->sourceTable = $sourceTable;
@@ -22,11 +23,14 @@ class agImportNormalization
     $this->totalNewFacilityCount = 0;
     $this->totalNewFacilityGroupCount = 0;
     $this->processedFacilityIds = array();
+    $this->conn = null;
   }
 
   function __destruct()
   {
-   //drop temp table.
+    //drop temp table.
+    $this->conn->export->dropTable($this->sourceTable);
+    $this->conn->close();
   }
 
   /**
@@ -80,18 +84,22 @@ class agImportNormalization
                    'message' => 'Invalid facility name.');
     }
 
-    if (empty($record['street_1']) && empty($record['street_2'])) {
-      return array('pass' => FALSE, 
-                   'status' => 'ERROR', 
-                   'type' => 'Mailing Address',
-                   'message' => 'Invalid street 1/street 2 address.');
-    }
+    $this->fullAddress = array('line 1' => $record['street_1'],
+          'line 2' => $record['street_2'],
+          'city' => $record['city'],
+          'state' => $record['state'],
+          'zip5' => $record['postal_code'],
+          'borough' => $record['borough'],
+          'country' => $record['country']);
 
-    if (empty($record['city']) || empty($record['state']) || empty($record['postal_code'])) {
-      return array('pass' => FALSE, 
-                   'status' => 'ERROR', 
-                   'type' => 'Mailing Address',
-                   'message' => 'Invalid city/state/postal_code address.');
+    if (!$this->isEmptyStringArray($this->fullAddress)) {
+      if (empty($record['street_1']) || empty($record['city']) ||
+             empty($record['state']) || empty($record['postal_code'])) {
+        return array('pass' => FALSE,
+                     'status' => 'WARNING',
+                     'type' => 'Mail Address',
+                     'message' => 'Invalid street 1/city/state/postal_code address.');
+      }
     }
 
     if (empty($record['longitude']) or empty($record['latitude'])) {
@@ -148,7 +156,7 @@ class agImportNormalization
 
     // Check for valid phone number where it's either 10 digit or
     // 10 digit follow by an 'x' and the extension.
-    if (!empty($record['work_phone']) && !preg_match('/^\d{10}(x\d+)?/', $record['work_phone'])) {
+    if (!empty($record['work_phone']) && !preg_match('/^\d{10}(x\d+)?$/', $record['work_phone'])) {
       return array('pass' => FALSE,
                    'status' => 'WARNING',
                    'type' => 'Phone',
@@ -208,274 +216,265 @@ class agImportNormalization
 
   public function normalizeImport()
   {
-      // Declare static variables.
-      $facilityContactType = $this->facilityContactType;
+    // Declare static variables.
+    $facilityContactType = $this->facilityContactType;
 
-      // Setup db connection.
-      $conn = Doctrine_Manager::connection();
+    // Setup db connection.
+    $this->conn = Doctrine_Manager::connection();
 
-      // Fetch import data.
-      $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
-      $pdo = $conn->execute($query);
-      $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
-      $sourceRecords = $pdo->fetchAll();
+    // Fetch import data.
+    $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
+    $pdo = $this->conn->execute($query);
+    $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
+    $sourceRecords = $pdo->fetchAll();
 
-      foreach ($sourceRecords as $record) {
-        try {
-          $conn->beginTransaction();
+      // facility
+    foreach ($sourceRecords as $record) {
+      try {
+        $this->conn->beginTransaction();
 
-          $validEmail = 1;
-          $validPhone = 1;
-          $validAddress = 1;
-          $isNewFacilityRecord = 0;
-          $isNewFacilityGroupRecord = 0;
-          $skipToNext = 0;
+        $validEmail = 1;
+        $validPhone = 1;
+        $validAddress = 1;
+        $isNewFacilityRecord = 0;
+        $isNewFacilityGroupRecord = 0;
+        $skipToNext = 0;
 
-          $isValidData = $this->dataValidation($record);
-          if (!$isValidData['pass']) {
-            switch ($isValidData['status']) {
-              case 'ERROR':
-                $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-                                                     'record' => $record);
-                $skipToNext = 1;
-                break;
-              case 'WARNING':
-                switch ($isValidData['type']) {
-                  case 'Email':
-                    $validEmail = 0;
-                    $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                     'record' => $record);
-                    break;
-                  case 'Phone':
-                    $validPhone = 0;
-                    $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                     'record' => $record);
-                    break;
-                  case 'Address':
-                    $validAddress = 0;
-                    $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                     'record' => $record);
-                    break;
-                }
-                break;
-              default:
-                $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-                                                     'record' => $record);
-                $skipToNext = 1;
-                break;
-            }
+        $isValidData = $this->dataValidation($record);
+        if (!$isValidData['pass']) {
+          switch ($isValidData['status']) {
+            case 'ERROR':
+              $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
+              $skipToNext = 1;
+              break;
+            case 'WARNING':
+              switch ($isValidData['type']) {
+                case 'Email':
+                  $validEmail = 0;
+                  $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
+                  break;
+                case 'Phone':
+                  $validPhone = 0;
+                  $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
+                  break;
+                case 'Mail Address':
+                  $validAddress = 0;
+                  $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
+                  break;
+              }
+              break;
+            default:
+              $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
+                                                   'record' => $record);
+              $skipToNext = 1;
+              break;
           }
+        }
 
-          if ($skipToNext) {
+        if ($skipToNext) {
+          continue;
+        }
+
+        // Declare variables.
+        $facility_name = $record['facility_name'];
+        $facility_resource_code = $record['facility_resource_code'];
+        $facility_resource_type_abbr = $record['facility_resource_type_abbr'];
+        $facility_resource_status = $record['facility_resource_status'];
+        $capacity = $record['facility_capacity'];
+        $facility_activation_sequence = $record['facility_activation_sequence'];
+        $facility_allocation_status = $record['facility_allocation_status'];
+        $facility_group = $record['facility_group'];
+        $facility_group_type = $record['facility_group_type'];
+        $facility_group_allocation_status = $record['facility_group_allocation_status'];
+        $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
+        $email = $record['work_email'];
+        $phone = $record['work_phone'];
+        $fullAddress = $this->fullAddress;
+        $geoInfo = array('longitude' => $record['longitude'],
+            'latitude' => $record['latitude']);
+
+        //keys of this array match values for staff types that should exist in ag_staff_resource_type
+        $staffing = array(
+          $this->staffResourceTypes['Generalist'] =>
+            array('min' => $record['generalist_min'],
+                  'max' => $record['generalist_max']),
+          $this->staffResourceTypes['Specialist'] =>
+            array('min' => $record['specialist_min'],
+                  'max' => $record['specialist_max']),
+          $this->staffResourceTypes['Operator'] =>
+            array('min' => $record['operator_min'],
+                  'max' => $record['operator_max']),
+          $this->staffResourceTypes['Medical Nurse'] =>
+            array('min' => $record['medical_nurse_min'],
+                  'max' => $record['medical_nurse_max']),
+          $this->staffResourceTypes['Medical Other'] =>
+            array('min' => $record['medical_other_min'],
+                  'max' => $record['medical_other_max'])
+        );
+
+        $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
+        $facility_resource_status_id = $this->facilityResourceStatuses[$facility_resource_status];
+        $facility_group_type_id = $this->facilityGroupTypes[$facility_group_type];
+        $facility_group_allocation_status_id = $this->facilityGroupAllocationStatuses[$facility_group_allocation_status];
+        $facility_resource_allocation_status_id = $this->facilityResourceAllocationStatuses[$facility_allocation_status];
+        $workEmailTypeId = $this->emailContactTypes[$facilityContactType];
+        $workPhoneTypeId = $this->phoneContactTypes[$facilityContactType];
+        $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
+        $workPhoneFormatId = $this->phoneFormatTypes[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
+        $workAddressTypeId = $this->addressContactTypes[$facilityContactType];
+        $workAddressStandardId = $this->addressStandards;
+        $addressElementIds = $this->addressElements;
+
+        // tries to find an existing record based on a unique identifier.
+        $facility = agDoctrineQuery::create()
+                ->from('agFacility f')
+                ->where('f.facility_name = ?', $facility_name)
+                ->fetchOne();
+        $facilityResource = NULL;
+        $scenarioFacilityResource = NULL;
+
+        if (empty($facility)) {
+          $facility = $this->createFacility($facility_name);
+          $isNewFacilityRecord = 1;
+        } else {
+          // Search for facility resource if exists.
+          // Facility Resource table has two unique key sets: (1) Facility & Facility Resource  and (2) Facility code.
+          // If facility resource exists, verify that it satisfy both unique criteria.  If not, reject record update.
+          $facilityResource = agDoctrineQuery::create()
+                  ->from('agFacilityResource fr')
+                  ->where('fr.facility_id = ?', $facility->getId())
+                  ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
+                  ->fetchOne();
+
+          $facilityResourceByCode = agDoctrineQuery::create()
+                  ->from('agFacilityResource fr')
+                  ->where('fr.facility_resource_code = ?', $facility_resource_code)
+                  ->fetchOne();
+
+          if(empty($facilityResource) && !empty($facilityResourceBycode)) {
+            $this->nonprocessedRecords[] = array('message' => 'Duplicate facility resource code.',
+                                                 'record' => $record);
             continue;
           }
 
-          // Declare variables.
-          $facility_name = $record['facility_name'];
-          $facility_resource_code = $record['facility_resource_code'];
-          $facility_resource_type_abbr = $record['facility_resource_type_abbr'];
-          $facility_resource_status = $record['facility_resource_status'];
-          $capacity = $record['facility_capacity'];
-          $facility_activation_sequence = $record['facility_activation_sequence'];
-          $facility_allocation_status = $record['facility_allocation_status'];
-          $facility_group = $record['facility_group'];
-          $facility_group_type = $record['facility_group_type'];
-          $facility_group_allocation_status = $record['facility_group_allocation_status'];
-          $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
-          $email = $record['work_email'];
-          $phone = $record['work_phone'];
-          $fullAddress = array('line 1' => $record['street_1'],
-            'line 2' => $record['street_2'],
-            'city' => $record['city'],
-            'state' => $record['state'],
-            'zip5' => $record['postal_code'],
-            'borough' => $record['borough'],
-            'country' => $record['country']);
-          $geoInfo = array('longitude' => $record['longitude'],
-              'latitude' => $record['latitude']);
-
-          //keys of this array match values for staff types that should exist in ag_staff_resource_type
-
-          $staffing = array(
-            $this->staffResourceTypes['Generalist'] =>
-              array('min' => $record['generalist_min'],
-                    'max' => $record['generalist_max']),
-            $this->staffResourceTypes['Specialist'] =>
-              array('min' => $record['specialist_min'],
-                    'max' => $record['specialist_max']),
-            $this->staffResourceTypes['Operator'] =>
-              array('min' => $record['operator_min'],
-                    'max' => $record['operator_max']),
-            $this->staffResourceTypes['Medical Nurse'] =>
-              array('min' => $record['medical_nurse_min'],
-                    'max' => $record['medical_nurse_max']),
-            $this->staffResourceTypes['Medical Other'] =>
-              array('min' => $record['medical_other_min'],
-                    'max' => $record['medical_other_max'])
-          );
-
-          $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
-          $facility_resource_status_id = $this->facilityResourceStatuses[$facility_resource_status];
-          $facility_group_type_id = $this->facilityGroupTypes[$facility_group_type];
-          $facility_group_allocation_status_id = $this->facilityGroupAllocationStatuses[$facility_group_allocation_status];
-          $facility_resource_allocation_status_id = $this->facilityResourceAllocationStatuses[$facility_allocation_status];
-          $workEmailTypeId = $this->emailContactTypes[$facilityContactType];
-          $workPhoneTypeId = $this->phoneContactTypes[$facilityContactType];
-          $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
-          $workPhoneFormatId = $this->phoneFormatTypes[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
-          $workAddressTypeId = $this->addressContactTypes[$facilityContactType];
-          $workAddressStandardId = $this->addressStandards;
-          $addressElementIds = $this->addressElements;
-
-          // facility
-          // tries to find an existing record based on a unique identifier.
-          $facility = agDoctrineQuery::create()
-                  ->from('agFacility f')
-                  ->where('f.facility_name = ?', $facility_name)
-                  ->fetchOne();
-          $facilityResource = NULL;
-          $scenarioFacilityResource = NULL;
-
-          if (empty($facility)) {
-            $facility = $this->createFacility($facility_name);
-            $isNewFacilityRecord = 1;
-          } else {
-            // Search for facility resource if exists.
-            // Facility Resource table has two unique key sets: (1) Facility & Facility Resource  and (2) Facility code.
-            // If facility resource exists, verify that it satisfy both unique criteria.  If not, reject record update.
-            $facilityResource = agDoctrineQuery::create()
-                    ->from('agFacilityResource fr')
-                    ->where('fr.facility_id = ?', $facility->getId())
-                    ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
-                    ->fetchOne();
-
-            $facilityResourceByCode = agDoctrineQuery::create()
-                    ->from('agFacilityResource fr')
-                    ->where('fr.facility_resource_code = ?', $facility_resource_code)
-                    ->fetchOne();
-
-            if(empty($facilityResource) && !empty($facilityResourceBycode)) {
-              $this->nonprocessedRecords[] = array('message' => 'Duplicate facility resource code.',
-                                                   'record' => $record);
-              continue;
-            }
-
-            if (!empty($facilityResource) && empty($facilityResourceByCode)) {
-              $this->nonprocessedRecords[] = array('message' => 'Duplicate facility resource type.',
-                                                   'record' => $record);
-              continue;
-            }
-
-            if ($facilityResource->id != $facilityResourceByCode->id) {
-              $this->nonprocessedRecords[] = array('message' => 'None unique facility resource code.',
-                                                   'record' => $record);
-              continue;
-            }
+          if (!empty($facilityResource) && empty($facilityResourceByCode)) {
+            $this->nonprocessedRecords[] = array('message' => 'Duplicate facility resource type.',
+                                                 'record' => $record);
+            continue;
           }
 
-          // facility resource
-          if (empty($facilityResource)) {
-            $facilityResource = $this->createFacilityResource($facility, $facility_resource_type_id,
-                                                              $facility_resource_status_id,
-                                                              $facility_resource_code, $capacity);
-          } else {
-            $facilityResource = $this->updateFacilityResource($facilityResource,
-                                                              $facility_resource_status_id, $capacity);
-            $scenarioFacilityResource = agDoctrineQuery::create()
-                    ->from('agScenarioFacilityResource sfr')
-                    ->innerJoin('sfr.agScenarioFacilityGroup sfg')
-                    ->where('sfg.scenario_id = ?', $this->scenarioId)
-                    ->andWhere('facility_resource_id = ?', $facilityResource->id)
-                    ->fetchOne();
+          if ($facilityResource->id != $facilityResourceByCode->id) {
+            $this->nonprocessedRecords[] = array('message' => 'Non-unique facility resource code.',
+                                                 'record' => $record);
+            continue;
           }
-
-          // facility group
-
-          $scenarioFacilityGroup = agDoctrineQuery::create()
-                  ->from('agScenarioFacilityGroup')
-                  ->where('scenario_id = ?', $this->scenarioId)
-                  ->andWhere('scenario_facility_group = ?', $facility_group)
-                  ->fetchOne();
-
-          if (empty($scenarioFacilityGroup)) {
-            $scenarioFacilityGroup = $this->createScenarioFacilityGroup($facility_group,
-                                                                        $facility_group_type_id,
-                                                                        $facility_group_allocation_status_id,
-                                                                        $facility_group_activation_sequence);
-            $isNewFacilityGroupRecord = 1;
-          } else {
-            $scenarioFacilityGroup = $this->updateScenarioFacilityGroup($scenarioFacilityGroup,
-                                                                        $facility_group_type_id,
-                                                                        $facility_group_allocation_status_id,
-                                                                        $facility_group_activation_sequence);
-          }
-
-          // facility resource
-          if (empty($scenarioFacilityResource)) {
-            $scenarioFacilityResource = $this->createScenarioFacilityResource($facilityResource,
-                                                                              $scenarioFacilityGroup,
-                                                                              $facility_resource_allocation_status_id,
-                                                                              $facility_activation_sequence);
-          } else {
-            $scenarioFacilityResource = $this->updateScenarioFacilityResource($scenarioFacilityResource,
-                                                                              $scenarioFacilityGroup->id,
-                                                                              $facility_resource_allocation_status_id,
-                                                                              $facility_activation_sequence);
-          }
-
-
-          // email
-          if ($validEmail) {
-            $this->updateFacilityEmail($facility, $email, $workEmailTypeId);
-          }
-
-          // phone
-          if ($validPhone) {
-            $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId, $workPhoneFormatId);
-          }
-
-          // address
-          if ($validAddress) {
-            $addressId = $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId,
-                                                      $workAddressStandardId, $addressElementIds);
-          }
-
-          // geo
-          $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId,
-                                   $geoInfo, $this->geoTypeId, $this->geoSourceId, $this->geoMatchScoreId);
-
-          //facility staff resource
-          $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
-
-          $conn->commit();
-
-          // Set summary counts
-          if ($isNewFacilityRecord) {
-            $this->totalNewFacilityCount++;
-          }
-          if ($isNewFacilityGroupRecord) {
-            $this->totalNewFacilityGroupCount++;
-          }
-          $this->totalProcessedRecordCount++;
-
-          $facilityId = $facility->id;
-          if (!is_integer(array_search($facilityId, $this->processedFacilityIds))) {
-            array_push($this->processedFacilityIds, $facilityId);
-          }
-
-        } catch (Exception $e) {
-          $this->nonprocessedRecords[] = array('message' => 'Unable to normalize data.  Exception error mesage: ' . $e,
-                                               'record' => $record);
-          $conn->rollBack();
         }
-      } // end foreach
 
-      $this->summary = array('totalProcessedRecordCount' => $this->totalProcessedRecordCount,
-                             'TotalFacilityProcessed' => count($this->processedFacilityIds),
-                             'totalNewFacilityCount' => $this->totalNewFacilityCount,
-                             'totalNewFacilityGroupCount' => $this->totalNewFacilityGroupCount,
-                             'nonprocessedRecords' => $this->nonprocessedRecords,
-                             'warningMessages' => $this->warningMessages);
+        // facility resource
+        if (empty($facilityResource)) {
+          $facilityResource = $this->createFacilityResource($facility, $facility_resource_type_id,
+                                                            $facility_resource_status_id,
+                                                            $facility_resource_code, $capacity);
+        } else {
+          $facilityResource = $this->updateFacilityResource($facilityResource,
+                                                            $facility_resource_status_id, $capacity);
+          $scenarioFacilityResource = agDoctrineQuery::create()
+                  ->from('agScenarioFacilityResource sfr')
+                  ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+                  ->where('sfg.scenario_id = ?', $this->scenarioId)
+                  ->andWhere('facility_resource_id = ?', $facilityResource->id)
+                  ->fetchOne();
+        }
+
+        // facility group
+
+        $scenarioFacilityGroup = agDoctrineQuery::create()
+                ->from('agScenarioFacilityGroup')
+                ->where('scenario_id = ?', $this->scenarioId)
+                ->andWhere('scenario_facility_group = ?', $facility_group)
+                ->fetchOne();
+
+        if (empty($scenarioFacilityGroup)) {
+          $scenarioFacilityGroup = $this->createScenarioFacilityGroup($facility_group,
+                                                                      $facility_group_type_id,
+                                                                      $facility_group_allocation_status_id,
+                                                                      $facility_group_activation_sequence);
+          $isNewFacilityGroupRecord = 1;
+        } else {
+          $scenarioFacilityGroup = $this->updateScenarioFacilityGroup($scenarioFacilityGroup,
+                                                                      $facility_group_type_id,
+                                                                      $facility_group_allocation_status_id,
+                                                                      $facility_group_activation_sequence);
+        }
+
+        // facility resource
+        if (empty($scenarioFacilityResource)) {
+          $scenarioFacilityResource = $this->createScenarioFacilityResource($facilityResource,
+                                                                            $scenarioFacilityGroup,
+                                                                            $facility_resource_allocation_status_id,
+                                                                            $facility_activation_sequence);
+        } else {
+          $scenarioFacilityResource = $this->updateScenarioFacilityResource($scenarioFacilityResource,
+                                                                            $scenarioFacilityGroup->id,
+                                                                            $facility_resource_allocation_status_id,
+                                                                            $facility_activation_sequence);
+        }
+
+        // email
+        if ($validEmail) {
+          $this->updateFacilityEmail($facility, $email, $workEmailTypeId);
+        }
+
+        // phone
+        if ($validPhone) {
+          $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId, $workPhoneFormatId);
+        }
+
+        // address
+        if ($validAddress) {
+          $addressId = $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId,
+                                                    $workAddressStandardId, $addressElementIds);
+        }
+
+        // geo
+        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId,
+                                 $geoInfo, $this->geoTypeId, $this->geoSourceId, $this->geoMatchScoreId);
+
+        //facility staff resource
+        $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
+
+        // Set summary counts
+        if ($isNewFacilityRecord) {
+          $this->totalNewFacilityCount++;
+        }
+        if ($isNewFacilityGroupRecord) {
+          $this->totalNewFacilityGroupCount++;
+        }
+        $this->totalProcessedRecordCount++;
+
+        $facilityId = $facility->id;
+        if (!is_integer(array_search($facilityId, $this->processedFacilityIds))) {
+          array_push($this->processedFacilityIds, $facilityId);
+        }
+        $this->conn->commit();
+      } catch (Exception $e) {
+        $this->nonprocessedRecords[] = array('message' => 'Unable to normalize data.  Exception error mesage: ' . $e,
+                                             'record' => $record);
+        $this->conn->rollBack();
+      }
+    } // end foreach
+
+    $this->summary = array('totalProcessedRecordCount' => $this->totalProcessedRecordCount,
+                           'TotalFacilityProcessed' => count($this->processedFacilityIds),
+                           'totalNewFacilityCount' => $this->totalNewFacilityCount,
+                           'totalNewFacilityGroupCount' => $this->totalNewFacilityGroupCount,
+                           'nonprocessedRecords' => $this->nonprocessedRecords,
+                           'warningMessages' => $this->warningMessages);
+
   }
 
   /* Facility */
