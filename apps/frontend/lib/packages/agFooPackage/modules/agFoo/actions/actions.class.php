@@ -65,6 +65,10 @@ class agFooActions extends agActions
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
 //$obj = agAddressHelper::init() ;
 //$obj = agPersonNameHelper::init(4) ;
+//$obj = agEntityAddressHelper::init() ;
+//$obj->setAgAddressHelper() ;
+//$obj->agAddressHelper->lineDelimiter = '<br />' ;
+//$results = $obj->getEntityAddress($array, TRUE, FALSE, agAddressHelper::ADDR_GET_STRING) ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
@@ -75,7 +79,7 @@ $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
 //$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
 //$results = $obj->getAddressAllowedElements() ;
 $obj = Doctrine_Core::getTable('agPerson')->find(1) ;
-$results = $obj->getNameByTypeAsString() ;
+$results = $obj->getEntityAddress(TRUE,TRUE,agAddressHelper::ADDR_GET_STRING) ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 

@@ -12,35 +12,16 @@
  * @author Chad Heuschober, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
- *
- * @property string $lineDelimiter The Delimiter used between lines of an address.
- * @property boolean $enforceComplete Boolean determining whether or not only complete addreses will
- * be returned by the address to string methods.
- * @property boolean $enforceLineNumber Boolean that determines whether or not line numbers will be
- * strictly enforced, sometimes causing blank lines to appear between or before lines with values.
- * @param boolean $checkValuesForCompleteness Boolean parameter to control whether or not the
- * addressIsComplete method only searches for keys (FALSE) or checks the actual values for
- * zero-length strings and/or nulls.
- * @property string $_globalDefaultAddressStandard The value of the default standard address global
- * parameter.
- * @property string $_globalDefaultAddressGeoType The value of the default address geo type as
- * represented in global parameters.
- * @property integer $_startingLineNumber The value of the default starting line number for address
- * strings (eg, 1 or 0).
- * @property array $_addressFormatComponents A constructed array of the default address formatting
- * components. This is directly tied to the instantiated classes' $_returnStandardId.
- * @property array $_addressFormatRequired A constructed array containing just the required address
- * elements for the current standard.
- * @property array $_addressAllowedElements A constructed array containing all available address
- * elements for the current $_returnStandardId and keyed by address_element_id.
- * @property integer $_returnStandardId The address standard currently in-use by this class.
- * Defaults to the value provided by the global parameter.
- * @property string $_addressGeoTypeId The value of the default address geo type. Defaults to the
- * value provided by the global parameter but not instantiated by default (only if geo is used).
  */
-
 class agAddressHelper extends agBulkRecordHelper
 {
+  // these constants map to the address get types that are supported in other function calls
+  const     ADDR_GET_TYPEID = 'getAddressComponentsById',
+            ADDR_GET_GEO = 'getAddressCoordinates',
+            ADDR_GET_TYPE = 'getAddressComponentsByName',
+            ADDR_GET_LINE = 'getAddressComponentsByLine',
+            ADDR_GET_STRING = 'getAddressAsString';
+
   public    $lineDelimiter = "\n",
             $enforceComplete = TRUE,
             $enforceLineNumber = FALSE,

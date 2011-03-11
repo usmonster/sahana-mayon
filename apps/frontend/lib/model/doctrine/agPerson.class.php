@@ -14,16 +14,13 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
- * @property array $helperClasses An array of helper class names and the ids used to access them.
- * @property array $_helperObjects An array of helper objects, lazily loaded upon request.
- * @property array $_helperMethods A constructed array of methods provided by all named helper
- * classes.
  */
 class agPerson extends BaseagPerson
 {
   public    $luceneSearchFields = array('id' => 'keyword');
 
-  protected $helperClasses = array('agPersonNameHelper' => 'id') ;
+  protected $helperClasses = array( 'agPersonNameHelper' => 'id',
+                                    'agEntityAddressHelper' => 'entity_id') ;
 
   private   $_helperObjects = array(),
             $_helperMethods ;
@@ -66,8 +63,11 @@ class agPerson extends BaseagPerson
         $classId = $this->helperClasses[$helperClass] ;
         $id = $this->$classId ;
 
+        // set up our args
+        array_unshift($arguments, $id) ;
+
         // execute and return
-        $results = $helperObject->$method($id) ;
+        $results = call_user_func_array(array($helperObject,$method), $arguments) ;
         return $results[$id] ;
       }
       catch (Exception $e)

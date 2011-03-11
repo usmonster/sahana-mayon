@@ -18,6 +18,9 @@
  * @property array $recordIds A single-dimension array of record id values.
  * @property integer $_recordCount A count of the number of records in $recordIds
  * @property integer $_defaultBatchSize The default batch size allowed by the class.
+ * @property integer $_batchSizeModifier A divisor used on the default batch size to allow tuning
+ * of the default batch size for classes that have high property counts (or large redundant data
+ * caches).
  */
 
 abstract class agBulkRecordHelper
@@ -25,6 +28,7 @@ abstract class agBulkRecordHelper
   public    $strictBatchSize = FALSE ;
 
   protected $recordIds = array(),
+            $_batchSizeModifier = 1,
             $_recordCount,
             $_defaultBatchSize ;
 
@@ -36,7 +40,8 @@ abstract class agBulkRecordHelper
   public function __construct($recordIds = NULL)
   {
     // pick up our default batch size
-    $this->_defaultBatchSize = agGlobal::getParam('default_batch_size') ;
+    $batchSize = ((agGlobal::getParam('default_batch_size'))/$this->_batchSizeModifier) ;
+    $this->_defaultBatchSize = abs($batchSize) ;
 
     // if passed an array of address id's, set them as a class property
     $this->setRecordIds($recordIds);
