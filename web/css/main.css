@@ -1257,3 +1257,7 @@ P {
     line-height: 18px;
     margin: 12px auto;
 }
+
+.noBorderBottom{
+    border-bottom:0px !important;
+}

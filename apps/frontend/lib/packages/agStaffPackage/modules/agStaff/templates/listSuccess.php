@@ -22,7 +22,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
     ?>
   </caption>
   <thead>
-    <tr class="tableRow" style="border-bottom:0px">
+    <tr class="tableRow noBorderBottom">
       <th class="head" rowspan="2"></th>
       <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" class="centerText">
         Name
