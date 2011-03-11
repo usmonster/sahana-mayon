@@ -2,15 +2,15 @@ ul.menu ul{display:none}
 ul.menu li:hover>ul{display:block}
 ul.menu ul{
   position: absolute;
-  left:-1px;
-  top:98%;
+/*  left:-1px;*/
+  top:22px;
 }
 ul.menu ul ul{position: absolute;left:98%;top:-2px;}
 ul.menu,ul.menu ul {
 	margin:0px;
 	list-style:none;
 	padding:0px 2px 2px 0px;
-	background-color:#f1f1f1;
+	background-color:#f7f7f7;
 	background-repeat:repeat;
 }
 ul.menu ul {
@@ -41,7 +41,7 @@ outline-style:none;
 ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
 	display:block;
 	vertical-align:middle;
-	background-color:#f1f1f1;
+	background-color:#f7f7f7;
 	border-width:0px;
 	border-color:#dadada;
 	border-style:solid;
@@ -55,13 +55,14 @@ ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
 }
 ul.menu>li>a {
   padding: 5px 4px;
+/*  position: relative;*/
 }
-ul.menu>li>a:hover {
-  z-index: 9999;
-}
+/*ul.menu>li>a:hover {
+  
+}*/
 ul.menu>li>a:hover, ul.menu>li:hover>a {
   border: solid 1px #dadada;
-  border-bottom-color: #f1f1f1 !important;
+  border-bottom-color: #f7f7f7 !important;
 /*  border-top-color: #dadada;
   border-right-color: #dadada;
   border-left-color: #dadada;*/

@@ -536,11 +536,21 @@ class eventActions extends agActions
       // or group status? Then build an object with the incoming values and some
       // $request parameters.
       if ($request->getParameter('resource_allocation_status')) {
+        // Find the most recent activation status for the facility resource.
+        // $staffed and $unstaffed will also be set for use in the if below.
+        $activationStatus = agEventFacilityHelper::getCurrentEventFacilityResourceStatus($this->event->id, array($request->getParameter('event_facility_resource_id')));
+        $staffed = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', 1);
+        $unstaffed = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', 0);
         $resourceAllocation = new agEventFacilityResourceStatus();
         $resourceAllocation->event_facility_resource_id = $request->getParameter('event_facility_resource_id');
         $resourceAllocation->facility_resource_allocation_status_id = $request->getParameter('resource_allocation_status');
-        $resourceAllocation->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+        $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
+        if(in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
+          $awesome = true;
+        }
+
         $resourceAllocation->save();
+        $a = 'yay';
       } elseif ($request->getParameter('group_allocation_status')) {
         $groupAllocation = new agEventFacilityGroupStatus();
         $groupAllocation->event_facility_group_id = $this->eventFacilityGroup->id;
@@ -617,6 +627,7 @@ class eventActions extends agActions
             WHERE efrs.event_facility_resource_id = ers.event_facility_resource_id
               AND efrs.time_stamp <= CURRENT_TIMESTAMP
             HAVING MAX(efrs.time_stamp) = ers.time_stamp)');
+
     if (isset($eventFacilityGroupId)) {
       $query->andWhere('efg.id = ?', $eventFacilityGroupId);
     }

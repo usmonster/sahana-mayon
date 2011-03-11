@@ -300,10 +300,26 @@ class agEventFacilityHelper
     return $results ;
   }
 
+  public static function getCurrentEventFacilityResourceStatus($eventId, $eventFacilityResourceIds)
+  {
+    $currentStatusIds = agEventFacilityHelper::returnCurrentEventFacilityResourceStatus($eventId) ;
+
+    $q = agDoctrineQuery::create()
+      ->select('efrs.event_facility_resource_id')
+          ->addSelect('efrs.facility_resource_allocation_status_id')
+        ->from('agEventFacilityResourceStatus efrs')
+        ->whereIn('efrs.id', array_keys($currentStatusIds))
+          ->andWhereIn('efrs.event_facility_resource_id', $eventFacilityResourceIds);
+
+      $results = $q->execute(array(), 'key_value_pair') ;
+
+      return $results ;
+  }
+
   /**
    * Static function to return the current status id's of all facility resources for a specific event
-   * <code>
-   * // To get the current status of all facilities in a current event
+   * 
+   * To get the current status of all facilities in a current event
    * $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityResourceStatus($eventId) ;
    *
    * $q = agDoctrineQuery::create()
