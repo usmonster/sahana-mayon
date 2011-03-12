@@ -188,8 +188,8 @@ class agEntityAddressHelper extends agBulkRecordHelper
    * address value as index[1].
    */
   public function getEntityAddress ($entityIds = NULL,
-                                    $strType = FALSE,
-                                    $primary = FALSE,
+                                    $strType = NULL,
+                                    $primary = NULL,
                                     $addressHelperMethod = NULL,
                                     $addressArgs = array())
   {
