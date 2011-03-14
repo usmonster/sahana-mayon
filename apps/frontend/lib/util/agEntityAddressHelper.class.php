@@ -16,8 +16,8 @@
 class agEntityAddressHelper extends agBulkRecordHelper
 {
   public    $agAddressHelper,
-            $defaultFetchPrimary = FALSE,
-            $defaultFetchStrType = FALSE;
+            $defaultIsPrimary = FALSE,
+            $defaultIsStrType = FALSE;
 
   protected $_batchSizeModifier = 2 ;
 
@@ -45,7 +45,7 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $entityIds = $this->getRecordIds($entityIds) ;
 
     // if strType is not passed, get the default
-    if (is_null($strType)) { $strType = $this->defaultFetchStrType ; }
+    if (is_null($strType)) { $strType = $this->defaultIsStrType ; }
 
     // the most basic version of this query
     $q = agDoctrineQuery::create()
@@ -79,7 +79,8 @@ class agEntityAddressHelper extends agBulkRecordHelper
    * @param boolean $primary Boolean that determines whether or not only the primary address will
    * be returned (for that type).
    * @param string $addressHelperMethod The address helper method that will be called to format or
-   * process the addresses. This should be an agAddressHelper::ADDR_GET_* constant.
+   * process the addresses. This should be an agAddressHelper::ADDR_GET_* constant. If left NULL,
+   * only address ID's will be returned.
    * @param array $addressArgs An array of arguments to pass forward to the address helper.
    * @return array A two or three dimensional array (depending up on the setting of the $primary
    * parameter), by entityId, by addressContactType.
@@ -95,7 +96,7 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $addressIds = array() ;
 
     // if primary is not passed, get the default
-    if (is_null($primary)) { $primary = $this->defaultFetchPrimary ; }
+    if (is_null($primary)) { $primary = $this->defaultIsPrimary ; }
 
     // build our query object
     $q = $this->_getEntityAddressQuery($entityIds, $strType) ;
@@ -181,7 +182,8 @@ class agEntityAddressHelper extends agBulkRecordHelper
    * @param boolean $primary Boolean that determines whether or not only the primary address will
    * be returned (for that type).
    * @param string $addressHelperMethod The address helper method that will be called to format or
-   * process the addresses. This should be an agAddressHelper::ADDR_GET_* constant.
+   * process the addresses. This should be an agAddressHelper::ADDR_GET_* constant. If left NULL,
+   * only address ID's will be returned.
    * @param array $addressArgs An array of arguments to pass forward to the address helper.
    * @return array A three dimensional array, by entityId, then indexed from highest priority
    * address to lowest, with a third dimension containing the address type as index[0], and the
@@ -198,7 +200,7 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $addressIds = array() ;
 
     // if primary is not passed, get the default
-    if (is_null($primary)) { $primary = $this->defaultFetchPrimary ; }
+    if (is_null($primary)) { $primary = $this->defaultIsPrimary ; }
 
     // build our query object
     $q = $this->_getEntityAddressQuery($entityIds, $strType) ;

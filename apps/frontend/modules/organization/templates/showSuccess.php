@@ -106,18 +106,15 @@
                <select id="staffList" name="staffList" size="10" multiple="multiple">
         -->
 
-<?php
-      print_r($staffResource);
-      foreach ($organizationStaffResources as $orgStfRes) {
-        if ($orgStfRes['staff_resource_organization_id'] == NULL) {
-          echo '<option value="none">none</option>';
-          break;
-        } else {
-          $staffResourceString = $personFullName[$orgStfRes['person_id']] . ' (' . $orgStfRes['staff_id'] . ') : ' . $staffResourceTypes[$orgStfRes['staff_resource_type_id']];
-          echo '<option value="' . $orgStfRes['staff_resource_organization_id'] . '">' . $staffResourceString . '</option>';
-        }
-      }
-?>
+<?php $staffResourceList = $sf_data->getRaw('staffResourceList'); ?>
+<?php if (empty($staffResourceList)): ?>
+  <option value="none">none</option>
+<?php else: ?>
+  <?php foreach ($staffResourceList as $staffResourceOrgId => $staffString): ?>
+     <option value="<?php echo $staffResourceOrgId ?>"><?php echo $staffString; ?></option>
+  <?php endforeach ?>
+<?php endif ?>
+
     </SELECT>
   </div>
   <!--

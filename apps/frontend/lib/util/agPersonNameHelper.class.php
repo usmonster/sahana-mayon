@@ -27,6 +27,14 @@
 
 class agPersonNameHelper extends agBulkRecordHelper
 {
+  const     NAME_BY_ID = 'getNameById',
+            NAME_BY_TYPE = 'getNameByType',
+            NAME_BY_TYPE_AS_STRING = 'getNameByTypeAsString',
+            PRIMARY_INITIALS = 'getPrimaryNameAsInitials',
+            PRIMARY_AS_STRING = 'getPrimaryNameAsString',
+            PRIMARY_BY_ID = 'getPrimaryNameById',
+            PRIMARY_BY_TYPE = 'getPrimaryNameByType';
+
   public    $defaultNameComponents = array(),
             $invertLastComponent = FALSE,
             $delimiters = array('invert' => ',', 'component' => ' ', 'initial' => '.');
@@ -44,20 +52,23 @@ class agPersonNameHelper extends agBulkRecordHelper
     parent::__construct($personIds) ;
 
     // set the default name components
-    $this->_setDefaultNameComponents() ;
+    $this->setDefaultNameComponents() ;
   }
 
   /**
    * Helper method to retrieve and set the defaultNameComponents class property.
    */
-  protected function _setDefaultNameComponents()
+  public function setDefaultNameComponents($strNameComponents = NULL)
   {
     // always good to define this first
     $results = array() ;
 
     // fetch and decode our global param
-    $strNameComponents = json_decode(agGlobal::getParam($this->_globalDefaultNameComponents)) ;
-
+    if (is_null($strNameComponents))
+    {
+      $strNameComponents = json_decode(agGlobal::getParam($this->_globalDefaultNameComponents)) ;
+    }
+ 
     // grab all of the name types into an array (once) for quick-reference later on
     $nameTypes = agDoctrineQuery::create()
       ->select('pnt.person_name_type')

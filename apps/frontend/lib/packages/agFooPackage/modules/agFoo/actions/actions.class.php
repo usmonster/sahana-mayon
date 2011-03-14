@@ -62,7 +62,7 @@ class agFooActions extends agActions
   public function executeShow(sfWebRequest $request)
   {
 // <-------- CUT HERE -------->
-$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
+$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13, 51, 52, 53, 57, 59) ;
 //$obj = agAddressHelper::init() ;
 //$obj = agPersonNameHelper::init(4) ;
 //$obj = agEntityAddressHelper::init() ;
@@ -78,8 +78,9 @@ $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13) ;
 //$results = $obj->getAddressStandardId() ;
 //$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
 //$results = $obj->getAddressAllowedElements() ;
-$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
-$results = $obj->getEntityAddress(TRUE,TRUE,agAddressHelper::ADDR_GET_STRING) ;
+//$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
+$obj = agOrganizationHelper::init() ;
+$results = $obj->getOrganizationStaffInfo(57,FALSE) ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 
