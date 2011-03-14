@@ -551,12 +551,18 @@ class eventActions extends agActions
         $activationStatus = agEventFacilityHelper::getCurrentEventFacilityResourceStatus($this->event->id, array($request->getParameter('event_facility_resource_id')));
         $staffed = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', 1);
         $unstaffed = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', 0);
+
         $resourceAllocation = new agEventFacilityResourceStatus();
         $resourceAllocation->event_facility_resource_id = $request->getParameter('event_facility_resource_id');
         $resourceAllocation->facility_resource_allocation_status_id = $request->getParameter('resource_allocation_status');
         $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if(in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
-          $awesome = true;
+          $resourceAllocation->save();
+//          $this->redirect('event/' . urlencode($this->event->event_name) . 'fgroup');
+          $b = $this->getResponse();
+// Looks like I out-thought myself here. Just fgroup works, think the rest of the URL comes from the parent page. Might need it later though, if things go wrong.
+//          return $this->renderText('event/' . urlencode($this->event->event_name) . '/fgroup');
+          return $this->renderText('fgroup');
         }
 
         $resourceAllocation->save();
