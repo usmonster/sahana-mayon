@@ -1,5 +1,5 @@
 #!/bin/bash
-PROJECT_ROOT=`dirname $0`
+PROJECT_ROOT=$(dirname $0)
 
 # echoes commands as they're executed
 set -x
@@ -8,7 +8,7 @@ set -x
 set -e
 
 # Tries to infer the web user from a running Apache instance
-WEB_USER=`ps axho user,comm|grep -E "httpd|apache"|uniq|awk 'END {print $1}'`
+WEB_USER=$(ps axho user,comm|grep -E "httpd|apache"|uniq|awk 'END {print $1}')
 WEB_GROUP=$WEB_USER
 
 # This will drop your database, your data, and recreate everything anew
