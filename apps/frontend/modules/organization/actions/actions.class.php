@@ -84,6 +84,7 @@ class organizationActions extends sfActions
    */
   public function executeShow(sfWebRequest $request)
   {
+    
     $this->ag_organization = Doctrine_Core::getTable('agOrganization')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_organization);
 

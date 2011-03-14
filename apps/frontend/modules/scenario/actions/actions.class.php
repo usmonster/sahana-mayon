@@ -306,10 +306,9 @@ class scenarioActions extends agActions
 
   public function executePre(sfWebRequest $request)
   {
-
   }
 
-  /**
+  /**e
    *
    * @param sfWebRequest $request
    * set up the form to define staff pools, via saved search
@@ -317,8 +316,11 @@ class scenarioActions extends agActions
    */
   public function executeStaffpool(sfWebRequest $request)
   {
-    $this->target_module = 'staff';
     $this->setScenarioBasics($request);
+    $this->scenario_staff_count = Doctrine_Core::getTable('AgScenarioStaffResource')
+            ->findby('scenario_id', $this->scenario_id)->count();
+    $this->target_module = 'staff';
+    
     $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
             ->findby('scenario_id', $this->scenario_id);
     //get all available staff

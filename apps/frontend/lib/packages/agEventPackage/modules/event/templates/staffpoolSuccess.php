@@ -18,7 +18,7 @@ $columns = array(
   'org' => array('title' => 'Organization', 'sortable' => true),
   'status' => array('title' => 'Status', 'sortable' => true),
   'type' => array('title' => 'Staff Type', 'sortable' => true),
-  'event_status' => array('title' => 'Event Status', 'sortable' => false),
+  'widget' => array('title' => 'Event Status', 'sortable' => false),
 );
 
 //pager comes in from the action

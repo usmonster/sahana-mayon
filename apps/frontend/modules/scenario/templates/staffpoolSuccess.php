@@ -2,8 +2,7 @@
 Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
 <p> Please define staff resource pools for the <span class="highlightedText"><?php echo $scenarioName ?> </span> Scenario.</p>
 <p> Currently, there are <span class="highlightedText"><?php echo $total_staff ?></span> total staff in the system.</p>
-<p> Of those,  <span class="highlightedText"><?php echo $total_resources ?></span> are available as 'staff resources'</p>
-
+<p> In the current scenario you have <span class="highlightedText"><?php echo $scenario_staff_count ?></span> Staff Members set as available for</p>
 
 <?php if (count($saved_searches) > 0) {
  ?>

@@ -44,7 +44,6 @@ $sortColumn = $sf_request->getGetParameter('sort');
     }
   ?>
     </tbody>
+</table>
   <input type="submit" name="Save" value="Save" id="save">
 </form>
-
-</table>

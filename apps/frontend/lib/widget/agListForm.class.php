@@ -1,8 +1,7 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * agListForm is a basic list constructing/rendering class, for now it only renders a list.
  */
 
 class agListForm
@@ -158,7 +157,7 @@ class agListForm
     return $nice_list;
   }
 
-  public static function facilitylist($sf_request, $title, $columns, $pager, $widget)
+  public static function facilitylist($sf_request, $title, $columns, $pager, $widget = NULL)
   {
     $sortColumn = $sf_request->getGetParameter('sort');
     $sortOrder = $sf_request->getGetParameter('order');
@@ -195,17 +194,35 @@ class agListForm
 
       $listbody .='<tr>
           <td><a class=linkButton href="' . url_for('facility/show?id=' . $result->getId()) . '"> ' . $result->getId() . '</a></td>';
-      $listbody .='<td>' . $result->getFacilityCode() . '</td>';
+      //$listbody .='<td>' . $result->getFacilityCode() . '</td>';
       $listbody .='<td>' . $result->getFacilityName() . '</td>';
 
-      $listbody .='<td>';
+
       $comma = 0;
+      $listbody .='<td>';
       foreach ($result->getAgFacilityResource() as $n) {
-        $listbody .= ( $comma++ > 0 ? ', <br />' : '') . ucwords($n->getAgFacilityResourceType()->getFacilityResourceType());
-        $listbody .= ( count($result->getAgFacilityResource()) ? ' (' . count($result->getAgFacilityResource()) . ')' : '(None)');
+        $nextrow = ( $comma++ > 0 ? ', <br />' : '') . ucwords($n->getAgFacilityResourceType()->getFacilityResourceType());//  ( $comma++ > 0 ? ', <br />' : '') .
+        $listbody .= $nextrow;
+        //$listbody .= ( count($result->getAgFacilityResource()) ? ' (' . count($result->getAgFacilityResource()) . ')' : '(None)');
+        //$listbody .='<td>' . $result->getFacilityCode() . '</td>';
+
+      }
+      $listbody .='</td>';
+      
+      $comma = 0;
+      $listbody .='<td>';
+      foreach ($result->getAgFacilityResource() as $n) {
+
+        //$listbody .= ucwords($n->getAgFacilityResourceType()->getFacilityResourceType());
+        //$listbody .= ( count($result->getAgFacilityResource()) ? ' (' . count($result->getAgFacilityResource()) . ')' : '(None)');
+        $listbody .=  ( $comma++ > 0 ? ', <br />' : '') . $n->getFacilityResourceCode();
+
       }
 
-      $listbody .= '</td></tr>';
+        $listbody .='</td>';
+      //$listbody .= '</td></tr>';
+
+      $listbody .= '</tr>';
     }
 
     $listbody .='
@@ -228,8 +245,6 @@ class agListForm
 //Last Page link (or inactive if we're at the last page).
     $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
     $listfoot .= '</div>';
-
-//we should put in some new lines here so that we don't destroy the
 
     $nice_list = $listheader . $listbody . $listfoot;
 

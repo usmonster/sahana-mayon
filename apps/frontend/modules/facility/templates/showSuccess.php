@@ -7,10 +7,6 @@
       <th class="headLeft">Facility Name:</th>
       <td><?php echo $ag_facility->getFacilityName() ?></td>
     </tr>
-    <tr>
-      <th class="headLeft">Facility Code:</th>
-      <td><?php echo $ag_facility->getFacilityCode() ?></td>
-    </tr>
   </tbody>
 </table>
 
@@ -23,6 +19,7 @@
   <tbody>
   <tr>
     <th class="headLeft">Facility Resource Type</th>
+    <th class="headLeft">Facility Code</th>
     <th class="subHead">Status</th>
     <th class="subHead">Description</th>
     <th class="subHead">Capacity</th>
@@ -30,9 +27,10 @@
   <?php foreach($ag_facility->getAgFacilityResource() as $ag_facility_resource): ?>
   <tr>
     <th class="subHead"><?php echo ucwords($ag_facility_resource->getAgFacilityResourceType()->getFacilityResourceType()) ?></th>
-    <td><?php echo $ag_facility_resource->getAgFacilityResourceStatus()->getFacilityResourceStatus(); ?></td>
-    <td><?php echo $ag_facility_resource->getAgFacilityResourceType(); ?></td>
-    <td><?php echo $ag_facility_resource->getCapacity(); ?></td>
+    <th class="subHead"><?php echo ucwords($ag_facility_resource->getFacilityResourceCode()) ?></th>
+    <td><?php echo $ag_facility_resource->getAgFacilityResourceStatus()->getFacilityResourceStatus() ?></td>
+    <td><?php echo $ag_facility_resource->getAgFacilityResourceType() ?></td>
+    <td><?php echo $ag_facility_resource->getCapacity() ?></td>
   </tr>
   <?php endforeach; ?>
   </tbody>
