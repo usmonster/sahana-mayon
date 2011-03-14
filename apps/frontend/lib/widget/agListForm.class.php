@@ -43,7 +43,7 @@ class agListForm
     foreach ($pager->getResults() as $result) {
 
       $listbody .='<tr>
-          <td><a class=linkButton href="' . url_for('foo/show?id=' . $result->getId()) . '"> ' . $result->getId() . '</a></td>';
+          <td><a class=linkButton href="' . url_for('foo/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
       $listbody .='<td>' . $result->getFoo() . '</td>';
       $listbody .='<td>' . $result->getBar() . '</td>';
       $listbody .='<td>';
@@ -115,7 +115,7 @@ class agListForm
     foreach ($pager->getResults() as $result) {
 
       $listbody .='<tr>
-          <td><a class=linkButton href="' . url_for('facility/show?id=' . $result->getId()) . '"> ' . $result->getId() . '</a></td>';
+          <td><a class=linkButton href="' . url_for('facility/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
       $listbody .='<td>' . $result->getFacilityCode() . '</td>';
       $listbody .='<td>' . $result->getFacilityName() . '</td>';
 
@@ -193,7 +193,7 @@ class agListForm
     foreach ($pager->getResults() as $result) {
 
       $listbody .='<tr>
-          <td><a class=linkButton href="' . url_for('facility/show?id=' . $result->getId()) . '"> ' . $result->getId() . '</a></td>';
+          <td><a class=linkButton href="' . url_for('facility/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
       //$listbody .='<td>' . $result->getFacilityCode() . '</td>';
       $listbody .='<td>' . $result->getFacilityName() . '</td>';
 
