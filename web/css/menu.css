@@ -209,10 +209,16 @@ ul.menu li ul.menu_level_1 li.menu2 a:hover {
   color: #ff8f00;
   text-shadow: 0px 0px 5px #ffc479;
   text-decoration:none;
+
 }
 
-ul.menu li ul.menu_level_1 li.menu2{
+ 
+
+
+
+ul.menu li ul.menu_level_1 li.menu2, ul.menu li ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3{
     padding: 0px 0px 0px 3px;
+ 
 }
 
 
@@ -228,4 +234,11 @@ li.menu2.first{
 
 li.menu3 a:hover{
     border:0px !important;
+}
+
+ul.menu_level_1 li.menu2 a{
+        border: solid 1px #f7f7f7;;
+}
+ul.menu_level_1 li.menu2 a:hover{
+        border: solid 1px #dadada;
 }
