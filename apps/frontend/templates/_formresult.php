@@ -23,8 +23,15 @@ $data = $obj;
 
       // OR ->render(array('class' => 'email')) with the name attribute inserted there.
       //$widget['add']->setAttribute('name', $value);
-      echo $widget['add']->render(array('name' =>  'resultform[' . $value . ']')); //set the name of the checkbox to the id of the staff resource to be checked
+      $default = 0;
+      if (isset($data['ess_staff_allocation_status_id'])){
+        $default = $data['ess_staff_allocation_status_id'];
+        //$widget->setDefault('status', $data['ess_staff_allocation_status_id']);
+      }
+      $widget->setDefault('status', $default);//ata['ess_staff_allocation_status_id']);
+      echo $widget['status'];
+      ////->render(array('name' =>  'status[' . $data['es_id'] . ']', 'selected' => $default)); //set the name of the checkbox to the id of the staff resource to be checked
     ?>
-
+      <input type="hidden" name="event_status[event_staff_id]" value="<?php echo $data['es_id'] ?>">
       </td>
 </tr>

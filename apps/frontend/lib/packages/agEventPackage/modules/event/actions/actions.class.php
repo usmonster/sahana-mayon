@@ -241,26 +241,27 @@ class eventActions extends agActions
     //get the possible filters from our request 
     // eg. &fr=1&type=generalist&org=volunteer
     $filters = array();
-    foreach ($request->getParameterHolder() as $parameter => $filter) {
+    foreach ($request->getParameterHolder() as $parameter => $filter) { //('filter')
       if ($parameter == 'fr') {
-        $filters['es.event_facility_resource_id'] = $filter;
+        $filters['essh.event_facility_resource_id'] = $filter;
       }
-      if ($parameter == 'type') {
+      if ($parameter == 'st') {
         $filters['sr.staff_resource_type_id'] = $filter;
       }
-      if ($parameter == 'org') {
+      if ($parameter == 'so') {
         $filters['sro.organization_id'] = $filter;
       }
     }
     //set up inputs for filter form
     $inputs = array(
-      'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type','add_empty' => true)), // 'class' => 'filter')),
-      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => true)),//, 'class' => 'filter'))
-      'facility_resource' => new sfWidgetFormDoctrineChoice(array('model' => 'agEventFacilityResource', 'label' => 'Facility Resource', 'add_empty' => true))
+      'st' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type','add_empty' => true)), // 'class' => 'filter')),
+      'so' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => true)),//, 'class' => 'filter'))
+      'fr' => new sfWidgetFormDoctrineChoice(array('model' => 'agEventFacilityResource', 'label' => 'Facility Resource', 'add_empty' => true))
     );
     //sets up filter form
     /** @todo set defaults from the request */
-    $this->filterForm = new sfForm();
+    $this->filterForm = new sfForm(null,array(),false);
+    //$this->filterForm->getWidgetSchema()->setNameFormat('filter[%s]');
     foreach ($inputs as $key => $input) {
       $input->setAttribute('class', 'filter');
       $this->filterForm->setWidget($key, $input);
@@ -268,14 +269,20 @@ class eventActions extends agActions
 
     //begin construction of query used for listing
     $query = agDoctrineQuery::create()
-            ->select('es.id, sr.id  , s.id, ess.*, sas.staff_allocation_status') //maybe we should only get the id since it's needed for dropdown
+            ->select('es.id, essh.id, esh.event_facility_resource_id, sr.id, sro.id, s.id, ess.staff_allocation_status_id')//, sas.staff_allocation_status') //maybe we should only get the id since it's needed for dropdown
             ->from('agEventStaff es,
+              es.agEventStaffShift essh,
+              essh.agEventShift esh,
               es.agStaffResource sr,
               sr.agStaffResourceOrganization sro,
               sr.agStaff s,
-              es.agEventStaffStatus ess,
-              ess.agStaffAllocationStatus sas')
+              es.agEventStaffStatus ess')
+              //ess.agStaffAllocationStatus sas')
             ->where('es.event_id = ?', $this->event_id);
+    
+    /** @todo need to get the staff peoples most recent staff allocation status
+     * 
+     */
 
     // If the request has valid filter(s) append the query
     if (sizeof($filters) > 0) {
@@ -284,8 +291,30 @@ class eventActions extends agActions
       }
     }
 
+if($request->isMethod(sfRequest::POST)){
+  if($request->getParameter('event_status')){
+    foreach($request->getParameter('event_status') as $event_status){
+      $event_staff_status = new agEventStaffStatus();
+      $event_staff_status->time_stamp =  date('Y-m-d H:i:s', time());
+      $event_staff_status->event_staff_id = $event_status['event_staff_id'];
+      $event_staff_status->staff_allocation_status_id = $event_status['status'];
+      $event_staff_status->save();
+      //we should throw a check here to see if the most recent status is the same as incoming
+    }
+  }
+  
+}
     $eventStaff = array();
     $this->ag_event_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    
+    // NOW PASS the event_staff returned above to our helper functions to get the correct data.
+    //
+    // THEN set the results_array to our new return
+    //
+    //
+    //
+    // 
     //$thingy = $query->getSqlQuery();
 //    foreach ($this->ag_event_staff as $eventFacilityGroup) {
 //      $tempArray = $this->queryForTable($eventFacilityGroup->id);
@@ -302,10 +331,11 @@ class eventActions extends agActions
     $this->pager->init();
     //set up the widget for use in the ' list form '
     $this->widget = new sfForm();
-    $this->widget->setWidget('add', new sfWidgetFormDoctrineChoice(array('model' => 'agStaffAllocationStatus', 'method' => 'getStaffAllocationStatus')));
+    $this->widget->getWidgetSchema()->setNameFormat('event_status[%s]');
+    $this->widget->setWidget('status', new sfWidgetFormDoctrineChoice(array('model' => 'agStaffAllocationStatus', 'method' => 'getStaffAllocationStatus')));
 
     //the agStaffAllocationStatus ID coming from each of the selections will be saved to ag_Event_staff_status.
-    $this->widget->getWidgetSchema()->setLabel('add', false);
+    $this->widget->getWidgetSchema()->setLabel('status', false);
     /** @todo set defaults for each status drop down from the web request */
 
     $this->form_action = 'event/staffpool?event=' . $this->event_name;

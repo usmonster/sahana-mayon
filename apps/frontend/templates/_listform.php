@@ -40,6 +40,14 @@ $sortColumn = $sf_request->getGetParameter('sort');
         echo get_partial('global/formresult', array(
         'obj' => $result,
         'widget' => $widget)
+
+            //ideally the set of columns passed here should be something like:
+            //query_field_name (with table alias... the query has to be on point)
+            //then we can foreach of that array....
+            //e.g. $columns is:
+            /**
+             * $columns = array('query_field_alias' => array(
+             */
       );
     }
   ?>
