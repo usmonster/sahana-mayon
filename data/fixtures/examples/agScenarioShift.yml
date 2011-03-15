@@ -543,7 +543,7 @@ agScenarioShift:
 # Hurricane A, Facility 11, Hurricane Shelter, Operator
   HurrA_11_hs_op_S1:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -556,7 +556,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_11_hs_op_S2:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -569,7 +569,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_11_hs_op_S3:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -582,7 +582,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_11_hs_op_S4:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -595,7 +595,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_11_hs_op_S5:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 0
@@ -609,7 +609,7 @@ agScenarioShift:
     # Hurricane A, Facility 11, Hurricane Shelter, Operator (standby)
   HurrA_11_hs_op_S1:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -622,7 +622,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_11_hs_op_S2:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -635,7 +635,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_11_hs_op_S3:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -648,7 +648,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_11_hs_op_S4:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -661,7 +661,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_11_hs_op_S5:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 0
@@ -807,7 +807,7 @@ agScenarioShift:
 # Hurricane A, Facility 14, Hurricane Shelter, Operator
   HurrA_14_hs_op_S1:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -820,7 +820,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_14_hs_op_S2:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -833,7 +833,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_14_hs_op_S3:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -846,7 +846,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_14_hs_op_S4:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -859,7 +859,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_14_hs_op_S5:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 0
@@ -873,7 +873,7 @@ agScenarioShift:
 # Hurricane A, Facility 14, Hurricane Shelter, Operator (standby)
   HurrA_14_hs_op_S1:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -886,7 +886,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_14_hs_op_S2:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -899,7 +899,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_14_hs_op_S3:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -912,7 +912,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_14_hs_op_S4:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -925,7 +925,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_14_hs_op_S5:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 0
@@ -1072,7 +1072,7 @@ agScenarioShift:
 # Hurricane A, Facility 15, Hurricane Shelter, Operator
   HurrA_15_hs_op_S1:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1085,7 +1085,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_15_hs_op_S2:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1098,7 +1098,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_15_hs_op_S3:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1111,7 +1111,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_15_hs_op_S4:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1124,7 +1124,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_15_hs_op_S5:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 0
@@ -1138,7 +1138,7 @@ agScenarioShift:
 # Hurricane A, Facility 15, Hurricane Shelter, Operator (standby)
   HurrA_15_hs_op_S1:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1151,7 +1151,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_15_hs_op_S2:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1164,7 +1164,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_15_hs_op_S3:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1177,7 +1177,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_15_hs_op_S4:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1190,7 +1190,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_15_hs_op_S5:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 0
@@ -1337,7 +1337,7 @@ agScenarioShift:
 # Hurricane A, Facility 17, Hurricane Shelter, Operator
   HurrA_17_hs_op_S1:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1350,7 +1350,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_17_hs_op_S2:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1363,7 +1363,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_17_hs_op_S3:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1376,7 +1376,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_17_hs_op_S4:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1389,7 +1389,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_staff_shft
   HurrA_17_hs_op_S5:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 0
@@ -1403,7 +1403,7 @@ agScenarioShift:
 # Hurricane A, Facility 17, Hurricane Shelter, Operator (standby)
   HurrA_17_hs_op_S1:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1416,7 +1416,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_17_hs_op_S2:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1429,7 +1429,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_17_hs_op_S3:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1442,7 +1442,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_17_hs_op_S4:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -1455,7 +1455,7 @@ agScenarioShift:
     agShiftTemplate: hurrA_hs_stby_staff_shft
   HurrA_17_hs_op_S5:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 0

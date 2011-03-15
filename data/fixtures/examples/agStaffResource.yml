@@ -40,7 +40,7 @@ agStaffResource:
   anna_operator:
     id: 10
     agStaff: 8
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
   antonio_nurse:
     id: 11
     agStaff: 9

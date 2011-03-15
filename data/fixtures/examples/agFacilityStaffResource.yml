@@ -26,7 +26,7 @@ agFacilityStaffResource:
     maximum_staff: 4
   Hurr_A01_11_opp:
     agScenarioFacilityResource: hurrA01_11_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 14
     maximum_staff: 20
   Hurr_A01_11_sta:
@@ -41,7 +41,7 @@ agFacilityStaffResource:
     maximum_staff: 15
   Hurr_A02__14_op:
     agScenarioFacilityResource: hurrA02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 14
     maximum_staff: 20
   Hurr_A02_14_sta:
@@ -51,7 +51,7 @@ agFacilityStaffResource:
     maximum_staff: 30
   Hurr_A02_15_op:
     agScenarioFacilityResource: hurrA02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 6
     maximum_staff: 9
   Hurr_A02_15_hs:
@@ -66,7 +66,7 @@ agFacilityStaffResource:
     maximum_staff: 8
   Hurr_A03_17_op:
     agScenarioFacilityResource: hurrA03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 8
     maximum_staff: 12
   Hurr_A01_17_sta:
@@ -92,7 +92,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_B01_11_ec:
     agScenarioFacilityResource: hurrB01_11_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_B01_11_smn:
@@ -118,7 +118,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_B02_14_ec:
     agScenarioFacilityResource: hurrB02_14_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_B02_14_ec:
@@ -143,7 +143,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B02_14_hs:
     agScenarioFacilityResource: hurrB02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_B02_15_hs:
@@ -163,7 +163,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B02_15_hs:
     agScenarioFacilityResource: hurrB02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_B02_13_hs:
@@ -183,7 +183,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B02_13_hs:
     agScenarioFacilityResource: hurrB02_13_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 # Hurrican B Group 3
@@ -194,7 +194,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_B03_17_ec:
     agScenarioFacilityResource: hurrB03_17_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_B03_17_ec:
@@ -219,7 +219,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B03_17_hs:
     agScenarioFacilityResource: hurrB03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 # Hurricane B Group 4
@@ -245,7 +245,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_B04_22_ec:
     agScenarioFacilityResource: hurrB04_22_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_B04_22_ec:
@@ -270,7 +270,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B04_23_hs:
     agScenarioFacilityResource: hurrB04_23_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_B04_20_hs:
@@ -290,7 +290,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B04_20_hs:
     agScenarioFacilityResource: hurrB04_20_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_B04_40_hs:
@@ -310,7 +310,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B04_40_hs:
     agScenarioFacilityResource: hurrB04_40_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 # Hurricane B Group 5
@@ -321,7 +321,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_B05_38_ec:
     agScenarioFacilityResource: hurrB05_38_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_B05_38_ec:
@@ -336,7 +336,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_B05_36_ec:
     agScenarioFacilityResource: hurrB05_36_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_B05_36_ec:
@@ -391,7 +391,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B05_41_hs:
     agScenarioFacilityResource: hurrB05_41_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_B05_42_hs:
@@ -411,7 +411,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B05_42_hs:
     agScenarioFacilityResource: hurrB05_42_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_B05_43_hs:
@@ -431,7 +431,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B05_43_hs:
     agScenarioFacilityResource: hurrB05_43_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_B05_44_hs:
@@ -451,7 +451,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_B05_44_hs:
     agScenarioFacilityResource: hurrB05_44_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 # Hurricane C Group 1
@@ -472,7 +472,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_C01_11_ec:
     agScenarioFacilityResource: hurrC01_11_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_C01_11_smn:
@@ -498,7 +498,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_C02_14_ec:
     agScenarioFacilityResource: hurrC02_14_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_C02_14_ec:
@@ -523,7 +523,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C02_14_hs:
     agScenarioFacilityResource: hurrC02_14_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C02_15_hs:
@@ -543,7 +543,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C02_15_hs:
     agScenarioFacilityResource: hurrC02_15_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C02_13_hs:
@@ -563,7 +563,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C02_13_hs:
     agScenarioFacilityResource: hurrC02_13_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 # Hurricane C Group 3
@@ -574,7 +574,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_C03_17_ec:
     agScenarioFacilityResource: hurrC03_17_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_C03_17_ec:
@@ -599,7 +599,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C03_17_hs:
     agScenarioFacilityResource: hurrC03_17_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 # Hurricane C Group 4
@@ -625,7 +625,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_C04_22_ec:
     agScenarioFacilityResource: hurrC04_22_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_C04_22_ec:
@@ -650,7 +650,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C04_23_hs:
     agScenarioFacilityResource: hurrC04_23_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C04_20_hs:
@@ -670,7 +670,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C04_20_hs:
     agScenarioFacilityResource: hurrC04_20_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C04_40_hs:
@@ -690,7 +690,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C04_40_hs:
     agScenarioFacilityResource: hurrC04_40_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 # Hurricane C Group 5
@@ -701,7 +701,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_C05_38_ec:
     agScenarioFacilityResource: hurrC05_38_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_C05_38_ec:
@@ -716,7 +716,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_C05_36_ec:
     agScenarioFacilityResource: hurrC05_36_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_C05_36_ec:
@@ -771,7 +771,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C05_41_hs:
     agScenarioFacilityResource: hurrC05_41_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C05_42_hs:
@@ -791,7 +791,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C05_42_hs:
     agScenarioFacilityResource: hurrC05_42_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C05_43_hs:
@@ -811,7 +811,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C05_43_hs:
     agScenarioFacilityResource: hurrC05_43_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C05_44_hs:
@@ -831,7 +831,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C05_44_hs:
     agScenarioFacilityResource: hurrC05_44_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 # Hurricane C Group 6
@@ -842,7 +842,7 @@ agFacilityStaffResource:
     maximum_staff: 20
   Hurr_C06_54_ec:
     agScenarioFacilityResource: hurrC06_54_ec
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 5
     maximum_staff: 10
   Hurr_C06_54_ec:
@@ -867,7 +867,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C06_55_hs:
     agScenarioFacilityResource: hurrC06_55_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C06_55_smn:
@@ -902,7 +902,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C06_56_hs:
     agScenarioFacilityResource: hurrC06_56_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C06_57_hs:
@@ -922,7 +922,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C06_57_hs:
     agScenarioFacilityResource: hurrC06_57_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C06_58_hs:
@@ -942,7 +942,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C06_58_hs:
     agScenarioFacilityResource: hurrC06_58_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
   Hurr_C06_59_hs:
@@ -962,7 +962,7 @@ agFacilityStaffResource:
     maximum_staff: 2
   Hurr_C06_59_hs:
     agScenarioFacilityResource: hurrC06_59_hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     minimum_staff: 1
     maximum_staff: 3
 

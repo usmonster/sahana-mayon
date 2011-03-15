@@ -75,7 +75,7 @@ agShiftTemplate:
     description: Operator in hurricane shelters.
     scenario_id: 1
     agFacilityResourceType: hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -89,7 +89,7 @@ agShiftTemplate:
     description: Operator in hurricane shelters.
     scenario_id: 1
     agFacilityResourceType: hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 360
     break_length_minutes: 180
@@ -132,7 +132,7 @@ agShiftTemplate:
     description: Operator shifts in hurricane shelters.
     scenario_id: 2
     agFacilityResourceType: hs
-    agStaffResourceType: operator
+    agStaffResourceType: uorc
     agTask: hurricane_staffing
     task_length_minutes: 720
     break_length_minutes: 720
