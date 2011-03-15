@@ -127,7 +127,7 @@ ul.menu li:hover{
 }
 ul.menu li:hover>a{
 	/*background-color:#adadad; /*4792E6*/
-	border-color:#dadada;
+
 	border-style:solid;
 	font:bold 12px helvetica, arial, verdana;
 	text-decoration:none;
@@ -135,8 +135,8 @@ ul.menu li:hover>a{
 ul.menu li a:hover{
 	position:relative;
 	/*background-color:#adadad; /*4792E6*/
-	border-color:#dadada;
-	border-style:solid;
+	 
+
 	font:bold 12px helvetica, arial, verdana;
 	color: #ff8f00;
         text-shadow: 0px 0px 5px #ffc479;
@@ -243,10 +243,10 @@ ul.menu_level_1 li.menu2 a:hover{
         border: solid 1px #dadada; padding-left: 4px;
 }
 
-ul.menu_level_2 li.menu3 a{
+ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3 a{
         border: solid 1px #f7f7f7 !important; padding-left: 4px;
 }
-ul.menu_level_2 li.menu3 a:hover{
+ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3 a:hover{
         border: solid 1px #f7f7f7 !important; padding-left: 4px;
 }
 
