@@ -3,9 +3,9 @@
 <?php
 if ($events != "") {
   //we also need to bind the submit button to a confirmation alert
-  $confirmScript = ' onclick="return confirm(\'Are you sure?  This facility is currently used in some scenarios or events and the change may affect deployment and response.\');"';
+  $confirm = 'Are you sure?  This facility is currently used in some scenarios or events and the change may affect deployment and response.';
 } else {
-  $confirmScript = ' onclick="return confirm(\'Are you sure?\');"';
+  $confirm = 'Are you sure?';
 }
 ?>
 
@@ -19,7 +19,7 @@ if ($events != "") {
         <td colspan="2">
           &nbsp;<a href="<?php echo url_for('facility/list') ?>" class="linkButton">Back to list</a>
 <?php if (!$form->getObject()->isNew()): ?>
-            &nbsp;<a href="<?php echo url_for('facility/delete?id=' . $form->getObject()->getId()) ?>" class="linkButton"<?php echo $confirmScript ?>>Delete</a>
+<?php echo link_to('Delete', 'facility/delete?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'linkButton')) ?>
 
 <?php endif; ?>
           <input type="submit" value="Save" class="saveLinkButton" <?php echo $confirmScript ?>/>

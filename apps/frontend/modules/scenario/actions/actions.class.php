@@ -907,8 +907,35 @@ class scenarioActions extends agActions
     $request->checkCSRFProtection();
 
     $this->forward404Unless($ag_scenario = Doctrine_Core::getTable('agScenario')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario does not exist (%s).', $request->getParameter('id')));
-    $sfGroups = $ag_scenario->getAgScenarioFacilityGroup();
 
+    $shiftTemplates = $ag_scenario->getAgShiftTemplate();
+    //get all scenario shift templates
+    foreach ($shiftTemplates as $shiftTemplate) {
+      $shiftTemplate->delete();
+    }
+
+    $scenarioStaffGenerators = $ag_scenario->getAgScenarioStaffGenerator();
+    //get all scenario staff generator records (staff pool definitions) associated with the scenario
+    foreach ($scenarioStaffGenerators as $scenarioStaffGenerator) {
+      $scenarioStaffGenerator->delete();
+    }
+
+    $scenarioStaffResources = $ag_scenario->getAgScenarioStaffResource();
+    //get all scenario staff resources
+    foreach ($scenarioStaffResources as $scenarioStaffResource) {
+      $scenarioStaffResource->delete();
+    }
+
+
+
+
+    $scenarioStaffResources = $ag_scenario->getAgScenarioStaffResource();
+    //get all scenario staff resources
+    foreach ($scenarioStaffResources as $scenarioStaffResource) {
+      $scenarioStaffResource->delete();
+    }
+
+    $sfGroups = $ag_scenario->getAgScenarioFacilityGroup();
     //get all facility groups associated with the scenario
     foreach ($sfGroups as $sfRes) {
       $groupRes = $sfRes->getAgScenarioFacilityResource();

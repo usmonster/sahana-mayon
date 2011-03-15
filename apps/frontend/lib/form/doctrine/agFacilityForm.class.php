@@ -29,6 +29,7 @@ class agFacilityForm extends BaseagFacilityForm
      * Method below of explicitly stating the widgets we want might be better...Might not too,
      * depends on validator maybe?
      */
+    parent::configure();
     unset(
         $this['updated_at'],
         $this['created_at'],
@@ -36,14 +37,16 @@ class agFacilityForm extends BaseagFacilityForm
         $this['ag_facility_resource_type_list']
 //      $this['facility_name'],
 //      $this['facility_code']
+
+
     );
 
 
-    $this->setWidgets(array(
-      'id' => new sfWidgetFormInputHidden(),
-      'facility_name' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+    $this->setWidget('id', new sfWidgetFormInputHidden());
+
+      $this->setWidget('facility_name', new sfWidgetFormInputText(array(), array('class' => 'inputGray')));
       //'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-    ));
+    //));
 
 //    $this->agEntity = $this->getObject()->getAgEntity();
     $this->agEntity = $this->getObject()->getAgSite()->getAgEntity();
@@ -57,6 +60,10 @@ class agFacilityForm extends BaseagFacilityForm
      * that will be displayed, we have to take care to not get rid
      * of any fields.
      */
+    
+    //add csrf protection to the form that has been modified
+    $this->addCSRFProtection();
+
     $formFields = $this->getWidgetSchema()->getPositions();
     $useFields = array('facility_name');
     $useFields = array_merge($useFields, array_diff($formFields, $useFields));
@@ -79,6 +86,7 @@ class agFacilityForm extends BaseagFacilityForm
     $sectionsDeco = new agWidgetFormSchemaFormatterSection($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('section', $sectionsDeco);
     $this->getWidgetSchema()->setFormFormatterName('section');
+
   }
 
   public function embedPhoneForm($contactContainer)

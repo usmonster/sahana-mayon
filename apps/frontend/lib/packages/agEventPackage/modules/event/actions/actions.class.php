@@ -276,7 +276,7 @@ class eventActions extends agActions
               es.agStaffResource sr,
               sr.agStaffResourceOrganization sro,
               sr.agStaff s,
-              es.agEventStaffStatus ess')
+              es.agEventStaffStatus ess') 
               //ess.agStaffAllocationStatus sas')
             ->where('es.event_id = ?', $this->event_id);
     
@@ -601,7 +601,7 @@ if($request->isMethod(sfRequest::POST)){
         $groupAllocation = new agEventFacilityGroupStatus();
         $groupAllocation->event_facility_group_id = $this->eventFacilityGroup->id;
         $groupAllocation->facility_group_allocation_status_id = $request->getParameter('group_allocation_status');
-        $groupAllocation->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+        $groupAllocation->time_stamp = date('Y-m-d H:i:s', time());//time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
         $groupAllocation->save();
       }
     }
