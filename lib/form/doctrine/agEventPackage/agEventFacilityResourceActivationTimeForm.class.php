@@ -12,5 +12,6 @@ class agEventFacilityResourceActivationTimeForm extends PluginagEventFacilityRes
 {
   public function configure()
   {
+    $this->setWidget('operate_on', new agWidgetFormSelectCheckbox(array('choices' => array(null), 'label' => false), array('class' => 'checkToggle')));
   }
 }

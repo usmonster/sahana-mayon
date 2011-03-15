@@ -300,6 +300,11 @@ class facilityActions extends agActions
     }
   }
 
+  /**
+  * Instantiates agFacilityExporter() and calls its functions to export all facilities
+  * in the system. After the exporter returns, the instance is unset to free up memory,
+  * then the browser directs to the exported xls.
+  **/
   public function executeFacilityExport()
   {
     $facilityExporter = new agFacilityExporter();
