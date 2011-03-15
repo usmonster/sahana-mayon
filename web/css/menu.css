@@ -1,11 +1,11 @@
-ul.menu ul{display:none}
+ul.menu ul{display:none; z-index:-1}
 ul.menu li:hover>ul{display:block}
 ul.menu ul{
   position: absolute;
 /*  left:-1px;*/
   top:22px;
 }
-ul.menu ul ul{position: absolute;left:98%;top:-2px;}
+ul.menu ul ul{position: absolute;left:99%;top:0px;}
 ul.menu,ul.menu ul {
 	margin:0px;
 	list-style:none;
@@ -72,11 +72,21 @@ ul.menu>li>a:hover, ul.menu>li:hover>a {
   color: #ff8f00;
   text-shadow: 0px 0px 5px #ffc479;
   text-decoration:none;
+
 }
 ul.menu>li>ul>li:hover>a {
+    border: solid 1px #dadada;
+   border-right-color: #f7f7f7 !important;
+  /*border-top-color: #dadada;
+  border-right-color: #dadada;
+  border-left-color: #dadada;
+  padding: 4px 3px;*/
+  -moz-border-radius: 10px 0px 0px 10px;
+  -webkit-border-radius: 10px 0px 0px 10px;
   color: #ff8f00;
   text-shadow: 0px 0px 5px #ffc479;
   text-decoration:none;
+   
 }
 ul.menu li.dis a:hover, ul.menu li.sep a:hover {
   padding:4px;
@@ -172,4 +182,50 @@ ul.menu li.menu1.last a{
     -moz-border-radius: 0px 0px 15px 0px;
     -webkit-border-radius: 0px 0px 15px 0px;
 
+}
+
+li.menu1{
+    z-index:20;
+}
+
+ul.menu li.menu1 ul.menu_level_1{
+    position:absolute; top: 23px !important;
+}
+
+ul.menu_level_2{
+    z-index: -3 !important;
+}
+
+
+ul.menu li ul.menu_level_1 li.menu2 a:hover {
+  border: solid 1px #dadada;
+  border-right-color: #f7f7f7 !important;
+  /*border-top-color: #dadada;
+  border-right-color: #dadada;
+  border-left-color: #dadada;
+  padding: 4px 3px;*/
+  -moz-border-radius: 10px 0px 0px 10px;
+  -webkit-border-radius: 10px 0px 0px 10px;
+  color: #ff8f00;
+  text-shadow: 0px 0px 5px #ffc479;
+  text-decoration:none;
+}
+
+ul.menu li ul.menu_level_1 li.menu2{
+    padding: 0px 0px 0px 3px;
+}
+
+
+
+ul.menu_level_1 li.menu2:hover, ul.menu_level_1 li.menu2 a:hover {
+    z-index: 22;
+}
+
+li.menu2.first{
+    margin-top:5px;
+}
+
+
+li.menu3 a:hover{
+    border:0px !important;
 }
