@@ -237,8 +237,16 @@ li.menu3 a:hover{
 }
 
 ul.menu_level_1 li.menu2 a{
-        border: solid 1px #f7f7f7;;
+        border: solid 1px #f7f7f7; padding-left: 4px;
 }
 ul.menu_level_1 li.menu2 a:hover{
-        border: solid 1px #dadada;
+        border: solid 1px #dadada; padding-left: 4px;
 }
+
+ul.menu_level_2 li.menu3 a{
+        border: solid 1px #f7f7f7 !important; padding-left: 4px;
+}
+ul.menu_level_2 li.menu3 a:hover{
+        border: solid 1px #f7f7f7 !important; padding-left: 4px;
+}
+
