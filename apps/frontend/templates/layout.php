@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <?php include_partial('global/Header');?>
+    <?php include_partial('global/Header'); ?>
   </head>
   <body>
     <div id="header">
@@ -14,7 +14,10 @@
           $cfgArray = sfYaml::load($configFilePath);
           $configArray['authMethod'] = $cfgArray['admin']['auth_method']['value'];
           if ($configArray['authMethod'] == 'bypass' && $sf_user->isAuthenticated()) {
-            echo '<a href="' . url_for('admin/config') . '" class="alertButton" title="System Settings">Super Administrator Mode is currently enabled. Click here to disable.</a>' . PHP_EOL;
+            echo link_to(
+                'Super Administrator Mode is currently enabled. Click here to disable.',
+                'admin/config',
+                array('class' => 'alertButton', 'title' => 'System Settings'));
           }
         }
         ?>
@@ -38,6 +41,6 @@
 
         </div>
       </div>
-      <?php include_partial('global/Footer');?>
+    <?php include_partial('global/Footer'); ?>
   </body>
 </html>
