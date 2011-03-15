@@ -17,6 +17,7 @@ abstract class BaseagAddressForm extends BaseFormDoctrine
     $this->setWidgets(array(
       'id'                           => new sfWidgetFormInputHidden(),
       'address_standard_id'          => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agAddressStandard'), 'add_empty' => false)),
+      'address_hash'                 => new sfWidgetFormInputText(),
       'created_at'                   => new sfWidgetFormDateTime(),
       'updated_at'                   => new sfWidgetFormDateTime(),
       'ag_address_value_list'        => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agAddressValue')),
@@ -26,6 +27,7 @@ abstract class BaseagAddressForm extends BaseFormDoctrine
     $this->setValidators(array(
       'id'                           => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'address_standard_id'          => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agAddressStandard'))),
+      'address_hash'                 => new sfValidatorString(array('max_length' => 128, 'required' => false)),
       'created_at'                   => new sfValidatorDateTime(),
       'updated_at'                   => new sfValidatorDateTime(),
       'ag_address_value_list'        => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agAddressValue', 'required' => false)),
