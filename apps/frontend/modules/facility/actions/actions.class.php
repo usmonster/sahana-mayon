@@ -299,6 +299,7 @@ class facilityActions extends agActions
           $agEntity->delete();
           $this->redirect('facility/list');
         }
+        $agEntity->delete();
     } else {
 
       /**
