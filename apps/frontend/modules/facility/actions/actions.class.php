@@ -232,6 +232,14 @@ class facilityActions extends agActions
     $dataNorm->normalizeImport();
     $this->summary = $dataNorm->summary;
 
+
+    //this below block is a bit hard coded and experimental, it should be changed to use gparams
+      //Zend_Search_Lucene_Storage_Directory_Filesystem::setDefaultFilePermissions('0666');
+      //chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+      //$dispatcher = sfContext::getInstance()->getEventDispatcher();
+      //$task = new luceneReindexTask($this->dispatcher, new sfFormatter());
+      //$task->run(array('model' => 'agFacility'), array('connection' => 'doctrine', 'application' => 'frontend'));
+
 //    echo strftime($format);
   }
 
