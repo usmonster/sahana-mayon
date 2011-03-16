@@ -4,7 +4,7 @@
 <table cellspacing="20">
 <tr>
     <td><a href="<?php echo url_for('staff/index'); ?>" class="linkButton" style="width:140px;" title="Manage Staff">Manage<br>Staff</a></td>
-    <td><a href="<?php echo url_for('faculty/index'); ?>" class="linkButton"  style="width:140px" title="Manage Faculty">Manage<br>Faculty</a></td>
+    <td><a href="<?php echo url_for('facility/index'); ?>" class="linkButton"  style="width:140px" title="Manage Facility">Manage<br>Facility</a></td>
     <td><a href="<?php echo url_for('organization/index'); ?>" class="linkButton"  style="width:140px" title="Manage Organization">Manage<br>Organization</a></td>
     <td><a href="<?php echo url_for('scenario/index'); ?>" class="linkButton" style="width:140px"  title="Deploy a Scenario">Deploy a<br>Scenario</a></td>
 </tr>
