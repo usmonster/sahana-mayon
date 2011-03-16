@@ -37,5 +37,9 @@ class homeActions extends agActions
   $this->math = 2+2;
     $this->error_code = $this->response;
   }
+   public function executePrepare(sfWebRequest $request)
+  {
+#    $this->forward('default', 'module');
+  }
 
 }
