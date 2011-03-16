@@ -3,15 +3,15 @@
 <b>Please select one of the following actions: </b>
 <table cellspacing="20">
 <tr>
-    <td><a href="<?php echo url_for('staff/index'); ?>" class="linkButton" style="width:140px;" title="Manage Staff">Manage<br>Staff</a></td>
-    <td><a href="<?php echo url_for('facility/index'); ?>" class="linkButton"  style="width:140px" title="Manage Facility">Manage<br>Facility</a></td>
-    <td><a href="<?php echo url_for('organization/index'); ?>" class="linkButton"  style="width:140px" title="Manage Organization">Manage<br>Organization</a></td>
-    <td><a href="<?php echo url_for('scenario/index'); ?>" class="linkButton" style="width:140px"  title="Deploy a Scenario">Deploy a<br>Scenario</a></td>
+    <td><a href="<?php echo link_to('staff/index'); ?>" class="linkButton" style="width:140px;" title="Manage Staff">Manage<br>Staff</a></td>
+    <td><a href="<?php echo link_to('facility/index'); ?>" class="linkButton"  style="width:140px" title="Manage Facility">Manage<br>Facility</a></td>
+    <td><a href="<?php echo link_to('organization/index'); ?>" class="linkButton"  style="width:140px" title="Manage Organization">Manage<br>Organization</a></td>
+    <td><a href="<?php echo link_to('scenario/index'); ?>" class="linkButton" style="width:140px"  title="Deploy a Scenario">Deploy a<br>Scenario</a></td>
 </tr>
 <tr>
-    <td><a href="<?php echo url_for('scenario/pre'); ?>" class="linkButton" style="width:140px"  title="Create New Scenario">Create<br>New Scenario</a></td>
-    <td><a href="<?php echo url_for('wiki/doku.php?id=manual:user:scenario:walkthrough'); ?>" class="linkButton"  style="width:140px" title="Scenario Creator Walkthrough">Scenario Creator<br>Walkthrough</a></td>
-    <td><a href="<?php echo url_for('scenario/list'); ?>" class="linkButton"  style="width:140px" title="Manage Existing Scenarios">Manage<br>Existing Scenarios</a></td>
+    <td><a href="<?php echo link_to('scenario/pre'); ?>" class="linkButton" style="width:140px"  title="Create New Scenario">Create<br>New Scenario</a></td>
+    <td><a href="<?php echo link_to('wiki/doku.php?id=manual:user:scenario:walkthrough'); ?>" class="linkButton"  style="width:140px" title="Scenario Creator Walkthrough">Scenario Creator<br>Walkthrough</a></td>
+    <td><a href="<?php echo link_to('scenario/list'); ?>" class="linkButton"  style="width:140px" title="Manage Existing Scenarios">Manage<br>Existing Scenarios</a></td>
     <td></td>
 </tr>
 </table>
