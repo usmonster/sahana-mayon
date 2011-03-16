@@ -28,7 +28,7 @@ class agSudoUser
    */
   public static function checkSudoPassword($username, $password)
   {
-    require_once dirname(__FILE__) . '/../../../lib/vendor/symfony/lib/yaml/sfYaml.php';
+    //require_once dirname(__FILE__) . '/../../../lib/vendor/symfony/lib/yaml/sfYaml.php';
     // check config.yml existence
     if (file_exists(dirname(__FILE__) . '/../../../config/config.yml') == FALSE) {
       header("Location: install.php");
@@ -39,6 +39,7 @@ class agSudoUser
     if ($cfgArray['sudo']['super_user'] == $username && $cfgArray['sudo']['super_pass'] == $password) {
       $user = self::getUser($username);
       $user->setPassword($password);
+      $user->setEmailAddress($cfgArray['admin']['admin_email']);
       $user->setIsActive(true);
       // set other user aspects
 

@@ -17,11 +17,13 @@
  * @property integer $staff_wave
  * @property integer $shift_status_id
  * @property integer $deployment_algorithm_id
+ * @property integer $originator_id
  * @property agStaffResourceType $agStaffResourceType
  * @property agTask $agTask
  * @property agShiftStatus $agShiftStatus
  * @property agDeploymentAlgorithm $agDeploymentAlgorithm
  * @property agScenarioFacilityResource $agScenarioFacilityResource
+ * @property agShiftTemplate $agShiftTemplate
  * 
  * @method integer                    getId()                                   Returns the current record's "id" value
  * @method integer                    getScenarioFacilityResourceId()           Returns the current record's "scenario_facility_resource_id" value
@@ -35,11 +37,13 @@
  * @method integer                    getStaffWave()                            Returns the current record's "staff_wave" value
  * @method integer                    getShiftStatusId()                        Returns the current record's "shift_status_id" value
  * @method integer                    getDeploymentAlgorithmId()                Returns the current record's "deployment_algorithm_id" value
+ * @method integer                    getOriginatorId()                         Returns the current record's "originator_id" value
  * @method agStaffResourceType        getAgStaffResourceType()                  Returns the current record's "agStaffResourceType" value
  * @method agTask                     getAgTask()                               Returns the current record's "agTask" value
  * @method agShiftStatus              getAgShiftStatus()                        Returns the current record's "agShiftStatus" value
  * @method agDeploymentAlgorithm      getAgDeploymentAlgorithm()                Returns the current record's "agDeploymentAlgorithm" value
  * @method agScenarioFacilityResource getAgScenarioFacilityResource()           Returns the current record's "agScenarioFacilityResource" value
+ * @method agShiftTemplate            getAgShiftTemplate()                      Returns the current record's "agShiftTemplate" value
  * @method agScenarioShift            setId()                                   Sets the current record's "id" value
  * @method agScenarioShift            setScenarioFacilityResourceId()           Sets the current record's "scenario_facility_resource_id" value
  * @method agScenarioShift            setStaffResourceTypeId()                  Sets the current record's "staff_resource_type_id" value
@@ -52,11 +56,13 @@
  * @method agScenarioShift            setStaffWave()                            Sets the current record's "staff_wave" value
  * @method agScenarioShift            setShiftStatusId()                        Sets the current record's "shift_status_id" value
  * @method agScenarioShift            setDeploymentAlgorithmId()                Sets the current record's "deployment_algorithm_id" value
+ * @method agScenarioShift            setOriginatorId()                         Sets the current record's "originator_id" value
  * @method agScenarioShift            setAgStaffResourceType()                  Sets the current record's "agStaffResourceType" value
  * @method agScenarioShift            setAgTask()                               Sets the current record's "agTask" value
  * @method agScenarioShift            setAgShiftStatus()                        Sets the current record's "agShiftStatus" value
  * @method agScenarioShift            setAgDeploymentAlgorithm()                Sets the current record's "agDeploymentAlgorithm" value
  * @method agScenarioShift            setAgScenarioFacilityResource()           Sets the current record's "agScenarioFacilityResource" value
+ * @method agScenarioShift            setAgShiftTemplate()                      Sets the current record's "agShiftTemplate" value
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -129,6 +135,10 @@ abstract class BaseagScenarioShift extends sfDoctrineRecord
              'notnull' => true,
              'length' => 4,
              ));
+        $this->hasColumn('originator_id', 'integer', 4, array(
+             'type' => 'integer',
+             'length' => 4,
+             ));
     }
 
     public function setUp()
@@ -152,6 +162,10 @@ abstract class BaseagScenarioShift extends sfDoctrineRecord
 
         $this->hasOne('agScenarioFacilityResource', array(
              'local' => 'scenario_facility_resource_id',
+             'foreign' => 'id'));
+
+        $this->hasOne('agShiftTemplate', array(
+             'local' => 'originator_id',
              'foreign' => 'id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();

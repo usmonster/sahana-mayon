@@ -1,8 +1,20 @@
-        <p>Welcome to the Office of Emergency Management's NYC Coastal Storm Plan's web application. This Agasti installation will allow you to manage staff, resources, clients and facilities through an easy to use web interface.</p>
-        <?php
-          if (!$sf_user->isAuthenticated())
-          {
-            echo "<p>Please login on the top right.</p>";
-          }
-        ?>
-        <p>Built with PHP, MySQL, Doctrine ORM and Symfony.</p>
+
+<h2> New York City Sahana Agasti</h2>
+
+<?php
+if (!$sf_user->isAuthenticated()) {
+  echo "<h2> To begin, please login in the upper right.</h2>";
+}
+?>
+
+<?php
+if ($sf_user->isAuthenticated()) {
+  echo "<h3> Welcome to Sahana Agasti Emergency Preparedness and Response Software</h3>";
+}
+?>
+
+<p> Agasti 2.0 is the NYC Office of Emergency Management Coastal Storm Plan web application.
+  Agasti is an emergency management application with tools to manage staff, resources, client
+  information and facilities through an easy to use web interface. </p>
+
+<p>To begin, select an option from the menus above.</p>

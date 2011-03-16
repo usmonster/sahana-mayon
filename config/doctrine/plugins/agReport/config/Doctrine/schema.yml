@@ -53,17 +53,25 @@ agLuceneSearch:
       type: integer(2)
       notnull: true
       autoincrement: true
+    lucene_search_type_id:
+      type: integer(2)
+      notnull: true
     query_name:
       type: string(64)
       notnull: true
     query_condition:
-      type: gzip
+      type: clob(65532)
       notnull: true
   indexes:
     agLuceneSearch_unq:
       fields: [query_name]
       type: unique
   relations:
+    agLuceneSearchType:
+      class: agLuceneSearchType
+      foreignAlias: agLuceneSearch
+      local: lucene_search_type_id
+      foreign: id
     agReport:
       class: agReport
       refClass: agReportGenerator
@@ -93,5 +101,21 @@ agReportGenerator:
     agLuceneSearch:
       local: lucene_search_id
       foreign: id
+agLuceneSearchType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    lucene_search_type:
+      type: string(64)
+      notnull: true
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
 actAs:
   Timestampable: 

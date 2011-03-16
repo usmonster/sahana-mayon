@@ -24,6 +24,7 @@ abstract class BaseagScenarioShiftFormFilter extends BaseFormFilterDoctrine
       'staff_wave'                           => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'shift_status_id'                      => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'), 'add_empty' => true)),
       'deployment_algorithm_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'add_empty' => true)),
+      'originator_id'                        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftTemplate'), 'add_empty' => true)),
       'created_at'                           => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'updated_at'                           => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
     ));
@@ -40,6 +41,7 @@ abstract class BaseagScenarioShiftFormFilter extends BaseFormFilterDoctrine
       'staff_wave'                           => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'shift_status_id'                      => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agShiftStatus'), 'column' => 'id')),
       'deployment_algorithm_id'              => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'column' => 'id')),
+      'originator_id'                        => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agShiftTemplate'), 'column' => 'id')),
       'created_at'                           => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'updated_at'                           => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
     ));
@@ -73,6 +75,7 @@ abstract class BaseagScenarioShiftFormFilter extends BaseFormFilterDoctrine
       'staff_wave'                           => 'Number',
       'shift_status_id'                      => 'ForeignKey',
       'deployment_algorithm_id'              => 'ForeignKey',
+      'originator_id'                        => 'ForeignKey',
       'created_at'                           => 'Date',
       'updated_at'                           => 'Date',
     );

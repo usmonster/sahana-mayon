@@ -1,0 +1,80 @@
+agEventFacilityGroupStatus:
+  zombie_apocalypse_event_1_facility_group_pre_deployment_status:
+    id: 1
+    agEventFacilityGroup: zombie_apocalypse_event_facility_group_1
+    time_stamp: '2012-01-01 01:00:00'
+    agFacilityGroupAllocationStatus: standby
+  zombie_apocalypse_event_1_facility_group_open_status:
+    id: 2
+    agEventFacilityGroup: zombie_apocalypse_event_facility_group_1
+    time_stamp: '2012-01-01 01:15:00'
+    agFacilityGroupAllocationStatus: active
+  zombie_apocalypse_event_1_facility_group_closed_status:
+    id: 3
+    agEventFacilityGroup: zombie_apocalypse_event_facility_group_1
+    time_stamp: '2012-01-01 01:30:00'
+    agFacilityGroupAllocationStatus: closed
+  asteroid_apocalypse_event_facility_group_2_pre_deployment_status:
+    id: 4
+    agEventFacilityGroup: asteroid_apocalypse_event_facility_group_2
+    time_stamp: '2012-01-01 01:00:00'
+    agFacilityGroupAllocationStatus: standby
+  asteroid_apocalypse_event_facility_group_2_open_status:
+    id: 5
+    agEventFacilityGroup: asteroid_apocalypse_event_facility_group_2
+    time_stamp: '2012-01-01 01:15:00'
+    agFacilityGroupAllocationStatus: active
+  asteroid_apocalypse_event_facility_group_2_closed_status:
+    id: 6
+    agEventFacilityGroup: asteroid_apocalypse_event_facility_group_2
+    time_stamp: '2012-01-01 01:30:00'
+    agFacilityGroupAllocationStatus: closed
+  tsunami_warning_event_facility_group_3_pre_deployment_status:
+    id: 7
+    agEventFacilityGroup: tsunami_warning_event_facility_group_3
+    time_stamp: '2012-01-01 01:00:00'
+    agFacilityGroupAllocationStatus: standby
+  tsunami_warning_event_facility_group_3_pre_open_status:
+    id: 8
+    agEventFacilityGroup: tsunami_warning_event_facility_group_3
+    time_stamp: '2012-01-01 01:15:00'
+    agFacilityGroupAllocationStatus: active
+  tsunami_warning_event_facility_group_3_pre_closed_status:
+    id: 9
+    agEventFacilityGroup: tsunami_warning_event_facility_group_3
+    time_stamp: '2012-01-01 01:30:00'
+    agFacilityGroupAllocationStatus: closed
+  megaquake_event_facility_group_4_pre_deployment_status:
+    id: 10
+    agEventFacilityGroup: megaquake_event_facility_group_4
+    time_stamp: '2012-01-01 01:00:00'
+    agFacilityGroupAllocationStatus: standby
+  megaquake_event_facility_group_4_open_status:
+    id: 11
+    agEventFacilityGroup: megaquake_event_facility_group_4
+    time_stamp: '2012-01-01 01:15:00'
+    agFacilityGroupAllocationStatus: active
+  megaquake_event_facility_group_4_closed_status:
+    id: 12
+    agEventFacilityGroup: megaquake_event_facility_group_4
+    time_stamp: '2012-01-01 01:30:00'
+    agFacilityGroupAllocationStatus: closed
+  supervolcano_event_facility_group_5_pre_deployment_status:
+    id: 13
+    agEventFacilityGroup: supervolcano_event_facility_group_5
+    time_stamp: '2012-01-01 01:00:00'
+    agFacilityGroupAllocationStatus: standby
+  supervolcano_event_facility_group_5_open_status:
+    id: 14
+    agEventFacilityGroup: supervolcano_event_facility_group_5
+    time_stamp: '2012-01-01 01:15:00'
+    agFacilityGroupAllocationStatus: active
+  supervolcano_event_facility_group_5_closed_status:
+    id: 15
+    agEventFacilityGroup: supervolcano_event_facility_group_5
+    time_stamp: '2012-01-01 01:30:00'
+    agFacilityGroupAllocationStatus: closed
+
+
+
+

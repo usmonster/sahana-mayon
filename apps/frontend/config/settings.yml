@@ -24,9 +24,6 @@ test:
 
 all:
   .settings:
-    jquery_web_dir:         /sfJqueryReloadedPlugin
-    jquery_core:            jquery-1.4.2.min.js
-
     # Form security secret (CSRF protection)
     csrf_secret:            ba4a0880a5bf046b8bf3415427684d5762cc3e28
 
@@ -37,7 +34,7 @@ all:
     # Enable the database manager
     use_database:           true
 
-    enabled_modules:        [default, sfGuardAuth, sfGuardUser, agGis]
+    enabled_modules:        [default, sfGuardAuth, sfGuardUser, sfGuardPermission, sfGuardGroup, agStaff, agGis, agFoo, scenario, event, report, agClient, agPet, search ]
     i18n:                   on
 
   .actions:

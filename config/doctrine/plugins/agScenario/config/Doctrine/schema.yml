@@ -9,6 +9,12 @@ agScenario:
       notnull: true
     description:
       type: string(255)
+  actAs:
+    Timestampable:
+    Luceneable:
+      fields:
+        scenario: unstored
+        description: unstored
   indexes:
     agScenario_unq:
       fields: [scenario]
@@ -196,13 +202,13 @@ agScenarioFacilityGroup:
       unsigned: true
       type: integer(1)
       notnull: true
+  actAs: [Luceneable]
   indexes:
     UX_agScenarioFacilityGroup:
       fields: [scenario_id, scenario_facility_group]
       type: unique
-    agScenarioFacilityGroup_unq:
+    IX_agScenarioFacilityGroup_scenarioFacilityGroup:
       fields: [scenario_facility_group]
-      type: unique
   relations:
     agScenario:
       local: scenario_id
@@ -258,6 +264,8 @@ agScenarioShift:
     deployment_algorithm_id:
       type: integer(4)
       notnull: true
+    originator_id:
+      type: integer(4)
   relations:
     agStaffResourceType:
       local: staff_resource_type_id
@@ -275,6 +283,11 @@ agScenarioShift:
       class: agScenarioFacilityResource
       foreignAlias: agScenarioShift
       local: scenario_facility_resource_id
+      foreign: id
+    agShiftTemplate:
+      class: agShiftTemplate
+      foreignAlias: agScenarioShift
+      local: originator_id
       foreign: id
 agTask:
   columns:
@@ -403,6 +416,10 @@ agShiftStatus:
       default: 0
       type: boolean
       notnull: true
+    disabled:
+      default: 0
+      type: boolean
+      notnull: true
   indexes:
     UX_agShiftStatus:
       fields: [shift_status]
@@ -415,10 +432,13 @@ agScenarioStaffResource:
       autoincrement: true
     scenario_id:
       type: integer(2)
+      notnull: true
     staff_resource_id:
       type: integer(5)
+      notnull: true
     deployment_weight:
       type: integer(1)
+      notnull: true
   indexes:
     UX_agScenarioStaffResource:
       fields: [scenario_id, staff_resource_id]
@@ -527,5 +547,82 @@ agScenarioStaffGenerator:
     agLuceneSearch:
       local: lucene_search_id
       foreign: id
+tempFacilityImport:
+  options:
+    type: MyISAM
+    collate: utf8_unicode_ci
+    charset: utf8
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    facility_name:
+      type: string(64)
+    facility_code:
+      type: string(10)
+    facility_resource_type_abbr:
+      type: string(10)
+    facility_resource_status:
+      type: string(40)
+    facility_capacity:
+      type: integer(2)
+    facility_activation_sequece:
+      unsigned: true
+      type: integer(1)
+    facility_allocation_status:
+      type: string(30)
+    facility_group:
+      type: string(64)
+    facility_group_allocation_status:
+      type: string(30)
+    faciltiy_group_activation_sequence:
+      unsigned: true
+      type: integer(1)
+    work_email:
+      type: string(255)
+    work_phone:
+      type: string(16)
+    street_1:
+      type: string(128)
+    street_2:
+      type: string(128)
+    city:
+      type: string(128)
+    state:
+      type: string(128)
+    zip_code:
+      type: string(128)
+    borough:
+      type: string(128)
+    country:
+      type: string(128)
+    longitude:
+      scale: 6
+      type: decimal(12)
+    latitude:
+      scale: 6
+      type: decimal(12)
+    generalist_min:
+      type: integer(2)
+    generalist_max:
+      type: integer(2)
+    specialist_min:
+      type: integer(2)
+    specialist_max:
+      type: integer(2)
+    operator_min:
+      type: integer(2)
+    operator_max:
+      type: integer(2)
+    medical_nurse_min:
+      type: integer(2)
+    medical_nurse_max:
+      type: integer(2)
+    medical_other_min:
+      type: integer(2)
+    medical_other_max:
+      type: integer(2)
 actAs:
   Timestampable: 

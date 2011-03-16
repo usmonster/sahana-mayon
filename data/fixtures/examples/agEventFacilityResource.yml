@@ -1,0 +1,24 @@
+agEventFacilityResource:
+  zombie_apocalypse_event_facility_resource_ec_1:
+    id: 1
+    agFacilityResource: facility_11_ec
+    agEventFacilityGroup: zombie_apocalypse_event_facility_group_1
+    activation_sequence: 1
+  zombie_apocalypse_event_facility_resource_smn_2:
+    id: 2
+    agFacilityResource: facility_11_smn
+    agEventFacilityGroup: zombie_apocalypse_event_facility_group_1
+    activation_sequence: 2
+  zombie_apocalypse_event_facility_resource_hs_3:
+    id: 3
+    agFacilityResource: facility_11_hs
+    agEventFacilityGroup: zombie_apocalypse_event_facility_group_1
+    activation_sequence: 3
+  asteroid_apocalypse_event_facility_resource_1:
+    id: 4
+    agFacilityResource: facility_12_hs
+    agEventFacilityGroup: asteroid_apocalypse_event_facility_group_2
+    activation_sequence: 3
+
+
+

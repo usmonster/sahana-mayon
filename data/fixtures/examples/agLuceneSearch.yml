@@ -1,0 +1,13 @@
+agLuceneSearch:
+  1:
+    agLuceneSearchType: staff
+    query_name: All staff
+    query_condition: %
+  2:
+    agLuceneSearchType: staff
+    query_name: General Volunteers
+    query_condition: 'staff_type: General Staff AND staff_org: American Red Cross'
+  3:
+    agLuceneSearchType: staff
+    query_name: DOE
+    query_condition: 'staff_org: DOE'

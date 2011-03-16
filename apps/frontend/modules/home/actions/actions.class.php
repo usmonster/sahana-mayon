@@ -18,8 +18,11 @@
 * @todo add description of class in header
 */
 
-class homeActions extends sfActions
+class homeActions extends agActions
 {
+
+  protected $searchedModels = array('agStaff');
+
  /**
   * Executes index action
   *
@@ -31,7 +34,12 @@ class homeActions extends sfActions
   }
   public function executeError(sfWebRequest $request)
   {
-  $this->error_code = $this->response;
+  $this->math = 2+2;
+    $this->error_code = $this->response;
+  }
+   public function executePrepare(sfWebRequest $request)
+  {
+#    $this->forward('default', 'module');
   }
 
 }

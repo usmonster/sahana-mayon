@@ -17,44 +17,6 @@
 class agEntity extends BaseagEntity
 {
   /**
-   * getEntityEmailContact()
-   *
-   * @return collection of this entity's emails and email contact
-   *         types, indexed by email contact type
-   *
-   */
-  public function getEntityEmailContact() {
-    if ($this->getId()) {
-      return Doctrine_Core::getTable('agEmailContact')
-        ->createQuery('a')
-        ->select('eec.*, ec.*, ect.*')
-        ->from('agEntityEmailContact eec INDEXBY eec.email_contact_type_id, eec.agEmailContact ec, eec.agEmailContactType ect')
-        ->where('eec.entity_id = ?', $this->getId())
-        ->execute();
-      ;
-    }
-  }
-
-  /**
-   * getEntityPhoneContact()
-   *
-   * @return collection of this entity's emails and email contact
-   *         types, indexed by email contact type
-   *
-   */
-  public function getEntityPhoneContact() {
-    if ($this->getId()) {
-      return Doctrine_Core::getTable('agPhoneContact')
-        ->createQuery('a')
-        ->select('epc.*, pc.*, pct.*, pf.*')
-        ->from('agEntityPhoneContact epc INDEXBY epc.phone_contact_type_id, epc.agPhoneContact pc, epc.agPhoneContactType pct, pc.agPhoneFormat pf')
-        ->where('epc.entity_id = ?', $this->getId())
-        ->execute();
-      ;
-    }
-  }
-
-  /**
    * delete()
    *
    * extends the base class's delete() function to delete related
@@ -118,5 +80,19 @@ class agEntity extends BaseagEntity
     return parent::delete($conn);
   }
 
+  public function getAgPhoneContact($primary = FALSE)
+  {
+
+  }
+  
+  public function getAgEmailContact($primary = FALSE)
+  {
+
+  }
+
+  public function getAgAddressContact($primary = FALSE)
+  {
+
+  }
 }
 

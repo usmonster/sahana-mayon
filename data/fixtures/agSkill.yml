@@ -1,0 +1,8 @@
+agSkill:
+  cpr:
+    id: 1
+    skill: Cardiopulmonary Resuscitation (CPR)
+  birthing:
+    id: 2
+    skill: birthing child
+

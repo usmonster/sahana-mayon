@@ -31,23 +31,17 @@ class SmokeTest extends AgSeleniumTestCase
     $this
         // opens the main URI
         ->open()//;$this
-        // clicks around to each menu item
-        //TODO: verify expected text is there
-        ->navigateToHome()
-        ->navigateToFacilites()
-        ->navigateToStaff()
-        ->navigateToClients()
-        ->navigateToScenario()
-        ->navigateToAdmin()
         // tries to login with correct credentials
         ->doLogin()
         // clicks around to each menu item
         //TODO: verify expected text is there
         ->navigateToHome()
-        ->navigateToFacilites()
         ->navigateToStaff()
-        ->navigateToClients()
+        ->navigateToGis()
+        ->navigateToFacility()
+        ->navigateToOrganization()
         ->navigateToScenario()
+        ->navigateToEvent()
         ->navigateToAdmin()
         ->navigateToHome()
         // and logs out
@@ -66,7 +60,7 @@ class SmokeTest extends AgSeleniumTestCase
         // tries to login with bad password
         ->tryLogin(self::$_appUsername, self::$_appPassword . '...NOT!')
         // verifies login failed
-        ->verifyTextNotPresent('Logged in as:');
+        ->assertTextNotPresent('Logged in as:');
   }
 
 }

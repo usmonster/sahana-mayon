@@ -25,6 +25,7 @@
  * @property agShiftStatus $agShiftStatus
  * @property agDeploymentAlgorithm $agDeploymentAlgorithm
  * @property agScenario $agScenario
+ * @property Doctrine_Collection $agScenarioShift
  * @property Doctrine_Collection $agShiftTemplateMessage
  * 
  * @method integer                getId()                                   Returns the current record's "id" value
@@ -47,6 +48,7 @@
  * @method agShiftStatus          getAgShiftStatus()                        Returns the current record's "agShiftStatus" value
  * @method agDeploymentAlgorithm  getAgDeploymentAlgorithm()                Returns the current record's "agDeploymentAlgorithm" value
  * @method agScenario             getAgScenario()                           Returns the current record's "agScenario" value
+ * @method Doctrine_Collection    getAgScenarioShift()                      Returns the current record's "agScenarioShift" collection
  * @method Doctrine_Collection    getAgShiftTemplateMessage()               Returns the current record's "agShiftTemplateMessage" collection
  * @method agShiftTemplate        setId()                                   Sets the current record's "id" value
  * @method agShiftTemplate        setShiftTemplate()                        Sets the current record's "shift_template" value
@@ -68,6 +70,7 @@
  * @method agShiftTemplate        setAgShiftStatus()                        Sets the current record's "agShiftStatus" value
  * @method agShiftTemplate        setAgDeploymentAlgorithm()                Sets the current record's "agDeploymentAlgorithm" value
  * @method agShiftTemplate        setAgScenario()                           Sets the current record's "agScenario" value
+ * @method agShiftTemplate        setAgScenarioShift()                      Sets the current record's "agScenarioShift" collection
  * @method agShiftTemplate        setAgShiftTemplateMessage()               Sets the current record's "agShiftTemplateMessage" collection
  * 
  * @package    AGASTI_CORE
@@ -178,6 +181,10 @@ abstract class BaseagShiftTemplate extends sfDoctrineRecord
         $this->hasOne('agScenario', array(
              'local' => 'scenario_id',
              'foreign' => 'id'));
+
+        $this->hasMany('agScenarioShift', array(
+             'local' => 'id',
+             'foreign' => 'originator_id'));
 
         $this->hasMany('agShiftTemplateMessage', array(
              'local' => 'id',

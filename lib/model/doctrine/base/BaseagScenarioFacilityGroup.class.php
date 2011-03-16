@@ -97,12 +97,11 @@ abstract class BaseagScenarioFacilityGroup extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
-        $this->index('agScenarioFacilityGroup_unq', array(
+        $this->index('IX_agScenarioFacilityGroup_scenarioFacilityGroup', array(
              'fields' => 
              array(
               0 => 'scenario_facility_group',
              ),
-             'type' => 'unique',
              ));
     }
 
@@ -134,7 +133,8 @@ abstract class BaseagScenarioFacilityGroup extends sfDoctrineRecord
              'local' => 'id',
              'foreign' => 'scenario_facility_group_id'));
 
-        $timestampable0 = new Doctrine_Template_Timestampable();
-        $this->actAs($timestampable0);
+        $luceneable0 = new Luceneable(array(
+             ));
+        $this->actAs($luceneable0);
     }
 }

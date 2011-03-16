@@ -16,6 +16,7 @@ abstract class BaseagFacilityResourceForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'id'                              => new sfWidgetFormInputHidden(),
+      'facility_resource_code'          => new sfWidgetFormInputText(),
       'facility_id'                     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacility'), 'add_empty' => false)),
       'facility_resource_type_id'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'), 'add_empty' => false)),
       'facility_resource_status_id'     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceStatus'), 'add_empty' => false)),
@@ -28,6 +29,7 @@ abstract class BaseagFacilityResourceForm extends BaseFormDoctrine
 
     $this->setValidators(array(
       'id'                              => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
+      'facility_resource_code'          => new sfValidatorString(array('max_length' => 10)),
       'facility_id'                     => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacility'))),
       'facility_resource_type_id'       => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'))),
       'facility_resource_status_id'     => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceStatus'))),
@@ -39,7 +41,10 @@ abstract class BaseagFacilityResourceForm extends BaseFormDoctrine
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorDoctrineUnique(array('model' => 'agFacilityResource', 'column' => array('facility_id', 'facility_resource_type_id')))
+      new sfValidatorAnd(array(
+        new sfValidatorDoctrineUnique(array('model' => 'agFacilityResource', 'column' => array('facility_id', 'facility_resource_type_id'))),
+        new sfValidatorDoctrineUnique(array('model' => 'agFacilityResource', 'column' => array('facility_resource_code'))),
+      ))
     );
 
     $this->widgetSchema->setNameFormat('ag_facility_resource[%s]');

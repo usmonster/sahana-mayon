@@ -1,0 +1,12 @@
+# Set of person custom fields
+
+agPersonCustomField:
+  licence_class:
+    person_custom_field: Drivers License Class
+    agCustomFieldType: 1
+  pmsid:
+    person_custom_field: PMS ID
+    agCustomFieldType: 1
+  civil_service_title:
+    person_custom_field: Civil Service Title
+    agCustomFieldType: 1

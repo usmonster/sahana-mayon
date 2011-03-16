@@ -3,15 +3,25 @@ agGlobalParam:
     id:
       primary: true
       type: integer(2)
+      autoincrement: true
+    host_id:
+      type: integer(2)
+      notnull: true
     datapoint:
-      primary: true
       type: string(128)
+      notnull: true
     value:
       type: string(128)
       notnull: true
+  indexes:
+    agGlobalParam_unq:
+      fields: [host_id, datapoint]
+      type: unique
   relations:
     agHost:
-      local: id
+      class: agHost
+      foreignAlias: agGlobalParam
+      local: host_id
       foreign: id
 agHost:
   columns:
@@ -109,4 +119,4 @@ agEntityRelationshipTypeInverse:
       local: entity_inverse_relationship_type_id
       foreign: id
 actAs:
-  Timestampable: 
+  Timestampable:

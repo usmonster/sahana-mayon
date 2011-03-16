@@ -18,11 +18,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
 function check_php_version()
 {
-  $required = '5.0';
-  $recommended = '5.3.0';
+  $required = '5.2.12';
+  $recommended = '5.3.2';
 
   if (version_compare(phpversion(), $recommended, '>=')) {
     $req = 2;
@@ -476,6 +475,16 @@ function check_php_requirements()
 
   $result[] = check_php_version();
   $result[] = check_php_memory_limit();
+  # TODO: uncomment this when staff/facility import is working
+  #$result[] = check_php_post_max_size(); 
+//  $result[] = check_file_permissions(sfConfig::get('sf_cache_dir'),'0775');
+//  $result[] = check_file_permissions(sfConfig::get('sf_log_dir'),'0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_config_dir'), '0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_app_config_dir'), '0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/indexes/', '0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/search/', '0775');
+  $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/sql/', '0775');
+
   // removing these for now, since they're not explicit requirements
 //      $result[] = check_php_post_max_size();
 //		$result[] = check_php_upload_max_filesize();
@@ -495,29 +504,22 @@ function check_php_requirements()
   return $result;
 }
 
-function check_file_permissions($path, $perm)
+function check_file_permissions($path, $requiredPerms)
 {
+  // TODO: just use is_readable/is_writeable instead? -UA.
   clearstatcache();
-  $configmod = substr(sprintf('%o', fileperms($path)), -4);
-  $trcss = (($configmod != $perm) ? "background-color:#fd7a7a;" : "background-color:#91f587;");
-  echo "<tr style=" . $trcss . ">";
-  echo "<td style=\"border:0px;\">" . $path . "</td>";
-  echo "<td style=\"border:0px;\">$perm</td>";
-  echo "<td style=\"border:0px;\">$configmod</td>";
-  echo "</tr>";
-  //if config.yml is writeable by the server
-  //if cache is writeable by the server
-  //if data/indexes is writeable by the server
-  //if apps/frontent/config.yml is writeable by the server
+  $current = substr(sprintf('%o', fileperms($path)), -4);
+  $ret = (($current >= $perm) ? 2 : 0);
 
   $result = array(
-    'name' => S_PHP_MEMORY_LIMIT,
+    'name' => $path,
     'current' => $current,
-    'required' => mem2str($required),
-    'recommended' => mem2str($recommended),
-    'result' => $req,
-    'error' => mem2str($required) . SPACE . S_IS_A_MINIMAL_PHP_MEMORY_LIMITATION_SMALL
+    'required' => $requiredPerms,
+    'recommended' => $requiredPerms,
+    'result' => $ret,
+    'error' => 'fail'
   );
+  return $result;
 }
 
 ?>

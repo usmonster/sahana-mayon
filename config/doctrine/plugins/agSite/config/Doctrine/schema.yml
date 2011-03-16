@@ -176,6 +176,9 @@ agAddress:
     address_standard_id:
       type: integer(2)
       notnull: true
+    address_hash:
+      type: string(128)
+      fixed: true
   indexes:
     agSiteAddress_addressStandardId:
       fields: [address_standard_id]

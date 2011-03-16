@@ -19,6 +19,7 @@ abstract class BaseagShiftStatusForm extends BaseFormDoctrine
       'shift_status' => new sfWidgetFormInputText(),
       'description'  => new sfWidgetFormInputText(),
       'standby'      => new sfWidgetFormInputCheckbox(),
+      'disabled'     => new sfWidgetFormInputCheckbox(),
       'created_at'   => new sfWidgetFormDateTime(),
       'updated_at'   => new sfWidgetFormDateTime(),
     ));
@@ -28,6 +29,7 @@ abstract class BaseagShiftStatusForm extends BaseFormDoctrine
       'shift_status' => new sfValidatorString(array('max_length' => 32)),
       'description'  => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'standby'      => new sfValidatorBoolean(array('required' => false)),
+      'disabled'     => new sfValidatorBoolean(array('required' => false)),
       'created_at'   => new sfValidatorDateTime(),
       'updated_at'   => new sfValidatorDateTime(),
     ));

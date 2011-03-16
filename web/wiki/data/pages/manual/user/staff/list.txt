@@ -1,0 +1,30 @@
+====== Staff Management Walk-Through ======
+
+
+===== List Staff =====
+
+===== Reference Information =====
+
+
+===== Walk-Through =====
+
+
+===== FAQ =====
+
+
+====== Continue ======
+
+[[manual:user:staff:edit|{{ :manual:user:next.png|}}]] 
+[[manual:user:staff:new|{{:manual:user:previous.png?135 }}]]
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+
+  - [[manual:user:staff:staff_creation_walkthrough|Introduction]]
+  - [[manual:user:staff:new|Create New Staff]]
+  - **Listing Staff**
+  - [[manual:user:staff:edit|Editing Staff Records]]
+  - [[manual:user:staff:import|Importing Staff]]
+  - [[manual:user:staff:export|Exporting Staff]]
+  - [[manual:user:staff:review|Staff Management Review]]

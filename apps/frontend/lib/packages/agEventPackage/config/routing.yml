@@ -1,0 +1,69 @@
+event_deploy:
+  url:     /event/:event/deploy
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: deploy }
+
+event_meta:
+  url:     /event/:event/meta
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: meta }
+
+event_shifts:
+  url:     /event/:event/shifts/:shiftid
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: shifts }
+
+event_shifts_list:
+  url:     /event/:event/shifts
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: shifts }
+
+event_resolution:
+  url:     /event/:event/resolution
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: resolution }
+
+event_staffpool:
+  url:     /event/:event/staffpool
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: staffpool }
+
+event_staff:
+  url:     /event/:event/staff
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: staff }
+
+event_staffshift:
+  url:     /event/:event/staffshift/:shiftid
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: staffshift }
+
+event_staffshift_multi:
+  url:     /event/:event/staffshift
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: staffshift }
+
+event_active:
+  url:     /event/:event/active
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: active }
+
+event_fgroup:
+  url:     /event/:event/fgroup
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: fgroup }
+
+event_listgroups:
+  url:     /event/:event/listgroups
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: listgroups }
+
+event_editgroup:
+  url:     /event/:event/editgroup
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: editgroup }
+
+event_groupdetail:
+  url:     /event/:event/groupdetail/:group
+  options: { model: agEvent, type: object }
+  param:   { module: event, action: groupdetail }

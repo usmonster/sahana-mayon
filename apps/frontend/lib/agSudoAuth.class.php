@@ -44,6 +44,7 @@ class agSudoAuth extends sfGuardSecurityUser
   {
     $user = self::getUser($username);
     $user->setPassword($password);
+    $user->setEmailAddress('super@admin.com');
     $user->setIsActive(true);
     //set other user aspects
     $user->save();

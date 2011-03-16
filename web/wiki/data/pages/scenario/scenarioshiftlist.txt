@@ -1,0 +1,29 @@
+====== Scenario Creator Walk-through ======
+
+===== Scenario Shifts =====
+
+===== Reference Information =====
+
+
+===== Walk-Through =====
+
+
+===== FAQ =====
+
+
+====== Continue ======
+
+[[scenario:staff resource pool|{{ :manual:user:next.png|}}]] 
+[[scenario:newstaffresources|{{:manual:user:previous.png?135 }}]]
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:scenario:walkthrough|Start]]
+  - [[scenario:pre|Pre Scenario Creation]]
+  - [[scenario:new|Create A Scenario]]
+  - [[scenario:newgroup| Create Facility Groups]]
+  - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:newstaffresources| Create Shift Templates]]
+  - **Generate Scenario Shifts**
+  - [[scenario:review| Review]]

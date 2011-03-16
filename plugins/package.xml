@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.8.1" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
- <name>sfDoctrineGuardPlugin</name>
+<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.9.0" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>ioEditableContentPlugin</name>
  <channel>plugins.symfony-project.org</channel>
- <summary>Identity management plugin.</summary>
- <description>Identity management plugin.</description>
+ <summary>Allows for frontend/inline editing of fields and forms. The goal is to allow content to be inline-editable without getting in the way of the developer.</summary>
+ <description>Allows for frontend/inline editing of fields and forms. The goal is to allow content to be inline-editable without getting in the way of the developer.</description>
  <lead>
-  <name>Jonathan H. Wage</name>
-  <user>jwage</user>
-  <email>jonwage@gmail.com</email>
+  <name>Ryan Weaver</name>
+  <user>weaverryan</user>
+  <email>ryan.weaver@iostudio.com</email>
   <active>yes</active>
  </lead>
- <date>2009-12-01</date>
- <time>18:17:26</time>
+ <date>2010-06-25</date>
+ <time>02:11:09</time>
  <version>
-  <release>4.0.1</release>
-  <api>4.0.0</api>
+  <release>0.6.0</release>
+  <api>0.6.0</api>
  </version>
  <stability>
-  <release>stable</release>
-  <api>stable</api>
+  <release>beta</release>
+  <api>beta</api>
  </stability>
  <license uri="http://www.symfony-project.org/license">MIT license</license>
  <notes>
@@ -26,73 +26,60 @@
  </notes>
  <contents>
   <dir name="/">
-   <file md5sum="be7d55dce9220bd9b3f84449dfaeaece" name="config/doctrine/schema.yml" role="data"/>
-   <file md5sum="cfbb8e05d14af55c299a72e29a6be397" name="config/sfDoctrineGuardPluginConfiguration.class.php" role="data"/>
-   <file md5sum="60436a50d3e021a4a8aaa3034df05667" name="data/fixtures/fixtures.yml.sample" role="data"/>
-   <file md5sum="d41d8cd98f00b204e9800998ecf8427e" name="data/tasks/.sf" role="data"/>
-   <file md5sum="101f9bbcbaa267eafa15f02c4d50fc54" name="lib/filter/doctrine/PluginsfGuardGroupFormFilter.class.php" role="data"/>
-   <file md5sum="9810be787898c8f9e23420641eb1d91c" name="lib/filter/doctrine/PluginsfGuardPermissionFormFilter.class.php" role="data"/>
-   <file md5sum="43d9ab4ae113cb4b5b6737b5a2aae763" name="lib/filter/doctrine/PluginsfGuardUserFormFilter.class.php" role="data"/>
-   <file md5sum="3842d9b769b7c560581463ba59520c77" name="lib/form/doctrine/base/BasesfGuardFormSignin.class.php" role="data"/>
-   <file md5sum="7d804eefe39db18937400e7f21e0368a" name="lib/form/doctrine/base/BasesfGuardUserAdminForm.class.php" role="data"/>
-   <file md5sum="f83df81535416afbf4092de3a51fd4e9" name="lib/form/doctrine/PluginsfGuardGroupForm.class.php" role="data"/>
-   <file md5sum="b60af08f9d91c3b6199e9d09a0e084fc" name="lib/form/doctrine/PluginsfGuardPermissionForm.class.php" role="data"/>
-   <file md5sum="dec6cbe98b4758b5ba47e10136fc106f" name="lib/form/doctrine/PluginsfGuardUserForm.class.php" role="data"/>
-   <file md5sum="a1a2c0b155669573e6aed7ca6f6098dc" name="lib/form/doctrine/sfGuardFormSignin.class.php" role="data"/>
-   <file md5sum="49e97a5348709571e3940f7ed36905fa" name="lib/form/doctrine/sfGuardUserAdminForm.class.php" role="data"/>
-   <file md5sum="64b14ecc66b82c50e60dbb9ff6866ea6" name="lib/model/doctrine/PluginsfGuardGroup.class.php" role="data"/>
-   <file md5sum="58656139612d55d1a9e9f01bcc210a93" name="lib/model/doctrine/PluginsfGuardGroupPermission.class.php" role="data"/>
-   <file md5sum="b067424d471a792d14a0736ad9b69267" name="lib/model/doctrine/PluginsfGuardGroupPermissionTable.class.php" role="data"/>
-   <file md5sum="faaf250974d45ae0a6746dd8fe39b41a" name="lib/model/doctrine/PluginsfGuardGroupTable.class.php" role="data"/>
-   <file md5sum="03227aa1ccc859bfac39282075c82b50" name="lib/model/doctrine/PluginsfGuardPermission.class.php" role="data"/>
-   <file md5sum="4aadf5fe3aac9833c152bc9e96b0d339" name="lib/model/doctrine/PluginsfGuardPermissionTable.class.php" role="data"/>
-   <file md5sum="640fc203c8776a8da9cc4649c6334e9e" name="lib/model/doctrine/PluginsfGuardRememberKey.class.php" role="data"/>
-   <file md5sum="08f4cfa0b834e4400b58a9bd87d7ef7a" name="lib/model/doctrine/PluginsfGuardRememberKeyTable.class.php" role="data"/>
-   <file md5sum="511331af67fc4489a980ef5afe525696" name="lib/model/doctrine/PluginsfGuardUser.class.php" role="data"/>
-   <file md5sum="5de2799df4d410f75133ac9e7eeb00f2" name="lib/model/doctrine/PluginsfGuardUserGroup.class.php" role="data"/>
-   <file md5sum="3862105ec9ad46883643ce14c04f5975" name="lib/model/doctrine/PluginsfGuardUserGroupTable.class.php" role="data"/>
-   <file md5sum="c7dcd1815447be277dfe3e2fa18c55b1" name="lib/model/doctrine/PluginsfGuardUserPermission.class.php" role="data"/>
-   <file md5sum="05c72e44d7c24d8c727d0ffd1efa399c" name="lib/model/doctrine/PluginsfGuardUserPermissionTable.class.php" role="data"/>
-   <file md5sum="a209f09cb6fd3d35045eadfaffb85ae4" name="lib/model/doctrine/PluginsfGuardUserTable.class.php" role="data"/>
-   <file md5sum="d92d93c1b51b856f05f177f281cb0cf6" name="lib/routing/sfGuardRouting.class.php" role="data"/>
-   <file md5sum="ed639223a8853e01f3c14ee69cca4bee" name="lib/task/sfGuardAddGroupTask.class.php" role="data"/>
-   <file md5sum="6f62311b9ccbc18b48ee652e9ee61c87" name="lib/task/sfGuardAddPermissionTask.class.php" role="data"/>
-   <file md5sum="55eb433d22ad9e056d12faadf4d91b45" name="lib/task/sfGuardChangePasswordTask.class.php" role="data"/>
-   <file md5sum="78129a6b6b5ed15618e5be4980a764e8" name="lib/task/sfGuardCreateAdminTask.class.php" role="data"/>
-   <file md5sum="0463fc2d12ba31b541ceb7a05a692772" name="lib/task/sfGuardCreateUserTask.class.php" role="data"/>
-   <file md5sum="c28e14c30cd15b714c911c56f731709c" name="lib/task/sfGuardPromoteSuperAdminTask.class.php" role="data"/>
-   <file md5sum="ee0a2e081090ba924ef802c11f85bedf" name="lib/user/sfGuardSecurityUser.class.php" role="data"/>
-   <file md5sum="8f1f0b15363df677edb8ecb2bcddc4bc" name="lib/validator/sfGuardValidatorUser.class.php" role="data"/>
-   <file md5sum="920f2b02fbd719df8a3f4076815b5251" name="lib/sfGuardBasicSecurityFilter.class.php" role="data"/>
-   <file md5sum="50bdb27b0c03a584052be47abc7d5d15" name="lib/sfGuardRememberMeFilter.class.php" role="data"/>
-   <file md5sum="6767d8ae5de76c251ea19a6110b7de65" name="modules/sfGuardAuth/actions/actions.class.php" role="data"/>
-   <file md5sum="8c0ab1149735a8d00496a8b27893851e" name="modules/sfGuardAuth/config/security.yml" role="data"/>
-   <file md5sum="1c70f73287dc11ef189d18bd60387c6a" name="modules/sfGuardAuth/lib/BasesfGuardAuthActions.class.php" role="data"/>
-   <file md5sum="1542d292d80a8ad66fe48f0e374d54a0" name="modules/sfGuardAuth/templates/secureSuccess.php" role="data"/>
-   <file md5sum="e2d9759e2af59208c55c68cdb296908f" name="modules/sfGuardAuth/templates/signinSuccess.php" role="data"/>
-   <file md5sum="b171f3f79de6c421a0460d99f3c9b0db" name="modules/sfGuardGroup/actions/actions.class.php" role="data"/>
-   <file md5sum="6725392b1a39a49ad783babb103cae29" name="modules/sfGuardGroup/config/generator.yml" role="data"/>
-   <file md5sum="1767c775e59535c1a5de12861bc01c93" name="modules/sfGuardGroup/lib/sfGuardGroupGeneratorConfiguration.class.php" role="data"/>
-   <file md5sum="aabb03e32b750c57556a7765aafcb19f" name="modules/sfGuardGroup/lib/sfGuardGroupGeneratorHelper.class.php" role="data"/>
-   <file md5sum="c71c3e53cc2fc4082fdca8a81273041b" name="modules/sfGuardPermission/actions/actions.class.php" role="data"/>
-   <file md5sum="a650e8d6740b413d12be93e22c2133a2" name="modules/sfGuardPermission/config/generator.yml" role="data"/>
-   <file md5sum="35467b10c2d18e589d0a4fd88f53ddbd" name="modules/sfGuardPermission/lib/sfGuardPermissionGeneratorConfiguration.class.php" role="data"/>
-   <file md5sum="a1e2b8e7b9cddf9346910e47127a5ca3" name="modules/sfGuardPermission/lib/sfGuardPermissionGeneratorHelper.class.php" role="data"/>
-   <file md5sum="579a6d952cc2d1fb0886fdc2c47dd68d" name="modules/sfGuardUser/actions/actions.class.php" role="data"/>
-   <file md5sum="f40bcbefa982ea7ad603133e7707632b" name="modules/sfGuardUser/config/generator.yml" role="data"/>
-   <file md5sum="86714dc18572a73f6c4b5e79a2af75a2" name="modules/sfGuardUser/lib/BasesfGuardUserActions.class.php" role="data"/>
-   <file md5sum="368e0a7898e83020de2d13abc64dea6f" name="modules/sfGuardUser/lib/sfGuardUserGeneratorConfiguration.class.php" role="data"/>
-   <file md5sum="8def28367455d5fb9f606c2e22b7330f" name="modules/sfGuardUser/lib/sfGuardUserGeneratorHelper.class.php" role="data"/>
-   <file md5sum="dd7a1449ac7e9ef79093ce133e1b593a" name=".DS_Store" role="data"/>
-   <file md5sum="c0ab88a4687e9ff8e0fb6c95ca49ed74" name="LICENSE" role="data"/>
-   <file md5sum="e832ad7df536e4e23e58f9bb82fc624b" name="README" role="data"/>
-   <file md5sum="c0879261b3ffe363f27a5d1a6bb5ffcd" name="VERSION" role="data"/>
+   <file md5sum="a16159fc2c5e8eb425b262eee1a9f2a0" name="lib/helper/EditableContentHelper.php" role="data"/>
+   <file md5sum="222c57f8a1452496f7adbff22fb09e3d" name="lib/service/ioEditableContentService.class.php" role="data"/>
+   <file md5sum="39cfddf2a73e57290e348b19c9e4f686" name="modules/ioEditableContent/lib/BaseioEditableContentActions.class.php" role="data"/>
+   <file md5sum="fbe2e9c0a5d0c48ebeac67f9ec15fe02" name="modules/ioEditableContent/actions/actions.class.php" role="data"/>
+   <file md5sum="2555977f7ce1c030eaf227dffa04bd6c" name="modules/ioEditableContent/templates/_formFields.php" role="data"/>
+   <file md5sum="5473830eb71f015a3f73521123d0b389" name="modules/ioEditableContent/templates/cssSuccess.css.php" role="data"/>
+   <file md5sum="c9f980dc385b72b2e3bbc34df07235ec" name="modules/ioEditableContent/templates/jsSuccess.js.php" role="data"/>
+   <file md5sum="e3a362b49b032bc15ec11ef0a9c3c768" name="modules/ioEditableContent/templates/formSuccess.php" role="data"/>
+   <file md5sum="fd4f491080d29fade5080877f1ba4c8b" name="web/fancybox/fancy_shadow_e.png" role="data"/>
+   <file md5sum="c820c878aedb7a7f9ebd7135a58e7c65" name="web/fancybox/fancy_shadow_nw.png" role="data"/>
+   <file md5sum="6cbe0c935511e7f9a2555ccb6a7324c4" name="web/fancybox/fancy_title_right.png" role="data"/>
+   <file md5sum="def257dbb0ab805c4996fd8abb1a6b49" name="web/fancybox/jquery.easing-1.3.pack.js" role="data"/>
+   <file md5sum="3be4a3aa1bb4ef20d2405720fbb05342" name="web/fancybox/jquery.fancybox-1.3.1.css" role="data"/>
+   <file md5sum="36a58859beb9a6b19322a37466b9f78e" name="web/fancybox/fancybox-y.png" role="data"/>
+   <file md5sum="8e8c18a9e7a147606a74ad2a5f4d2cff" name="web/fancybox/jquery.fancybox-1.3.1.js" role="data"/>
+   <file md5sum="11e57e492ee0311540967cc7a1e6e3e2" name="web/fancybox/fancybox.png" role="data"/>
+   <file md5sum="216e4bde5bddeeaa60dc3d692890a68e" name="web/fancybox/fancy_nav_right.png" role="data"/>
+   <file md5sum="f81cc0fee5581d76ad3cebe47e7e791b" name="web/fancybox/fancy_shadow_sw.png" role="data"/>
+   <file md5sum="a8afd5a008884380ee712d177105268f" name="web/fancybox/fancy_shadow_se.png" role="data"/>
+   <file md5sum="3f3e406102152cd8236383568a40ba35" name="web/fancybox/fancy_nav_left.png" role="data"/>
+   <file md5sum="59b0e63eb059e58d932cfd53da4d87e6" name="web/fancybox/fancy_shadow_w.png" role="data"/>
+   <file md5sum="1582ac2d3bef6a6445bf02ceca2741cd" name="web/fancybox/fancy_title_left.png" role="data"/>
+   <file md5sum="63adf788acf193d4e4f3642d7d793125" name="web/fancybox/fancy_shadow_ne.png" role="data"/>
+   <file md5sum="38dad6c1ed4bdc81c0bec721b2deb8c2" name="web/fancybox/fancy_title_main.png" role="data"/>
+   <file md5sum="325472601571f31e1bf00674c368d335" name="web/fancybox/blank.gif" role="data"/>
+   <file md5sum="9b9e5c888028aaef40fe5b6a363f1e29" name="web/fancybox/fancy_shadow_s.png" role="data"/>
+   <file md5sum="6e2879a324a76e9972ebc98201aae1d8" name="web/fancybox/fancy_close.png" role="data"/>
+   <file md5sum="e07dd7b5b3789e7521a2c1ba5c883055" name="web/fancybox/jquery.mousewheel-3.0.2.pack.js" role="data"/>
+   <file md5sum="638bf561b90f322f3a204300aee50294" name="web/fancybox/jquery.fancybox-1.3.1.pack.js" role="data"/>
+   <file md5sum="168696d8a694214090ef90e029cdf393" name="web/fancybox/fancybox-x.png" role="data"/>
+   <file md5sum="b886fd165d4b7ac77d41fb52d87ffc60" name="web/fancybox/fancy_title_over.png" role="data"/>
+   <file md5sum="b1d54c240cf06e7f41e372d56919b738" name="web/fancybox/fancy_loading.png" role="data"/>
+   <file md5sum="18cde16379b2ceadef714d9b346d09ec" name="web/fancybox/fancy_shadow_n.png" role="data"/>
+   <file md5sum="2e36d45735c47c4d2e5a479fef335a9a" name="web/js/jquery.form.js" role="data"/>
+   <file md5sum="1910e4f6f1a0c7ce784a2e7d13c3765c" name="web/js/jquery.metadata.js" role="data"/>
+   <file md5sum="df0ff7fe7cd0e9795a02c58de82f6d69" name="web/js/jquery-1.4.2.min.js" role="data"/>
+   <file md5sum="7d76003212cdfc2bbec1ec690895298c" name="web/js/jquery-ui-core-widget.min.js" role="data"/>
+   <file md5sum="78c9ad31619ef6ec5e898d3bc9d52379" name="web/js/ioEditableContent.js" role="data"/>
+   <file md5sum="5313386427144f190f3abab9685f34a8" name="web/js/ioContentEditor.js" role="data"/>
+   <file md5sum="c811d6ae56003499286cdf3288ee4c2b" name="web/js/jquery.blockUI.js" role="data"/>
+   <file md5sum="09237024af6f734a3a25b7bbab404eb4" name="config/ioEditableContentPluginConfiguration.class.php" role="data"/>
+   <file md5sum="482e2dac3881a40c778c0a6b2287c95f" name="config/app.yml" role="data"/>
+   <file md5sum="a6f815f4dd1fed8cdd371161f266cd71" name="config/routing.yml" role="data"/>
+   <file md5sum="1be2e08d50d23da6cf7e6dc44f2fb984" name="docs/editors.png" role="data"/>
+   <file md5sum="e9eeba69c11d3135cc9e5310f7071cc2" name="docs/view.png" role="data"/>
+   <file md5sum="d41d8cd98f00b204e9800998ecf8427e" name="LICENSE" role="data"/>
+   <file md5sum="55977512cdf5bbcd82ec01dfc0fc8008" name=".gitignore" role="data"/>
+   <file md5sum="0a6b7aa94bba8aae2eb578d456db5b35" name="README" role="data"/>
   </dir>
  </contents>
  <dependencies>
   <required>
    <php>
-    <min>5.0.0</min>
+    <min>5.2.4</min>
    </php>
    <pearinstaller>
     <min>1.4.1</min>
@@ -104,18 +91,18 @@
  <changelog>
   <release>
    <version>
-    <release>4.0.1</release>
-    <api>4.0.0</api>
+    <release>0.6.0</release>
+    <api>0.6.0</api>
    </version>
    <stability>
-    <release>stable</release>
-    <api>stable</api>
+    <release>beta</release>
+    <api>beta</api>
    </stability>
    <license uri="http://www.symfony-project.com/license">MIT license</license>
    <license>MIT</license>
-   <date>2009-12-01</date>
+   <date>2010-06-24</date>
    <notes>
-Fixing issue with previous package
+Initial release of the plugin - young, but well-tested and simple.
    </notes>
   </release>
  </changelog>

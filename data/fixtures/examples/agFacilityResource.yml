@@ -1,117 +1,404 @@
 agFacilityResource:
   facility_11_ec:
+    facility_resource_code: FF11EC
     agFacility: facility_11
     agFacilityResourceType: ec
-    agFacilityResourceStatus: available
-    capacity: 9999
+    agFacilityResourceStatus: unavailable
+    capacity: 475
   facility_11_smn:
+    facility_resource_code: FF11SMN
     agFacility: facility_11
     agFacilityResourceType: smn
     agFacilityResourceStatus: available
-    capacity: 1000
+    capacity: 220
   facility_11_hs:
+    facility_resource_code: FF11HS
     agFacility: facility_11
     agFacilityResourceType: hs
     agFacilityResourceStatus: available
-    capacity: 6985
+    capacity: 525
   facility_12_hs:
+    facility_resource_code: FC12HS
     agFacility: facility_12
     agFacilityResourceType: hs
     agFacilityResourceStatus: available
     capacity: 784
   facility_13_hs:
+    facility_resource_code: FC13HS
     agFacility: facility_13
     agFacilityResourceType: hs
     agFacilityResourceStatus: available
     capacity: 796
   facility_14_ec:
+    facility_resource_code: FF14EC
     agFacility: facility_14
     agFacilityResourceType: ec
     agFacilityResourceStatus: available
-    capacity: 9999
+    capacity: 500
   facility_14_hs:
+    facility_resource_code: FF14HS
     agFacility: facility_14
     agFacilityResourceType: hs
     agFacilityResourceStatus: available
     capacity: 1208
   facility_15_hs:
+    facility_resource_code: FF15HS
     agFacility: facility_15
     agFacilityResourceType: hs
     agFacilityResourceStatus: available
     capacity: 1227
-  facility_15_pet:
-    agFacility: facility_15
-    agFacilityResourceType: pet
-    agFacilityResourceStatus: available
-    capacity: 9999
   facility_16_ec:
+    facility_resource_code: FF16EC
     agFacility: facility_16
     agFacilityResourceType: ec
     agFacilityResourceStatus: available
     capacity: 9999
   facility_16_smn:
+    facility_resource_code: FF16SMN
     agFacility: facility_16
     agFacilityResourceType: smn
-    agFacilityResourceStatus: available
+    agFacilityResourceStatus: unavailable
     capacity: 3691
   facility_16_hs:
+    facility_resource_code: FF16HS
     agFacility: facility_16
     agFacilityResourceType: hs
-    agFacilityResourceStatus: available
+    agFacilityResourceStatus: unavailable
     capacity: 3821
   facility_17_ec:
+    facility_resource_code: FF17EC
     agFacility: facility_17
     agFacilityResourceType: ec
     agFacilityResourceStatus: available
     capacity: 9999
-  facility_17_pet:
-    agFacility: facility_17
-    agFacilityResourceType: pet
-    agFacilityResourceStatus: available
-    capacity: 9999
   facility_17_hs:
+    facility_resource_code: FF17HS
     agFacility: facility_17
     agFacilityResourceType: hs
-    agFacilityResourceStatus: available
+    agFacilityResourceStatus: unavailable
     capacity: 868
   facility_18_hs:
+    facility_resource_code: FF18HS
     agFacility: facility_18
     agFacilityResourceType: hs
-    agFacilityResourceStatus: available
+    agFacilityResourceStatus: unavailable
     capacity: 1540
   facility_18_uorc:
+    facility_resource_code: FF18UORC
     agFacility: facility_18
     agFacilityResourceType: uorc
     agFacilityResourceStatus: available
     capacity: 9999
   facility_19_ec:
+    facility_resource_code: FF19EC
     agFacility: facility_19
     agFacilityResourceType: ec
     agFacilityResourceStatus: available
     capacity: 9999
-  facility_19_whs:
-    agFacility: facility_19
-    agFacilityResourceType: whs
-    agFacilityResourceStatus: available
-    capacity: 9999
   facility_19_hs:
+    facility_resource_code: FF19HS
     agFacility: facility_19
     agFacilityResourceType: hs
-    agFacilityResourceStatus: available
+    agFacilityResourceStatus: unavailable
     capacity: 1550
   facility_20_ec:
+    facility_resource_code: FF20EC
     agFacility: facility_20
     agFacilityResourceType: ec
     agFacilityResourceStatus: available
     capacity: 9999
   facility_20_hs:
+    facility_resource_code: FF20HS
     agFacility: facility_20
     agFacilityResourceType: hs
-    agFacilityResourceStatus: available
+    agFacilityResourceStatus: unavailable
     capacity: 960
   facility_20_smn:
+    facility_resource_code: FF20SMN
     agFacility: facility_20
     agFacilityResourceType: smn
     agFacilityResourceStatus: unavailable
     capacity: 1288
+  facility_21_ec:
+    facility_resource_code: FF21EC
+    agFacility: facility_21
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: unavailable
+    capacity: 475
+  facility_21_smn:
+    facility_resource_code: FF21SMN
+    agFacility: facility_21
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 220
+  facility_21_hs:
+    facility_resource_code: FF21HS
+    agFacility: facility_21
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: unavailable
+    capacity: 525
+  facility_22_ec:
+    facility_resource_code: FF22EC
+    agFacility: facility_22
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: available
+    capacity: 784
+  facility_23_hs:
+    facility_resource_code: FF23HS
+    agFacility: facility_23
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: unavailable
+    capacity: 796
+  facility_24_smn:
+    facility_resource_code: FF24SMN
+    agFacility: facility_24
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 500
+  facility_25_smn:
+    facility_resource_code: FF25SMN
+    agFacility: facility_25
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 1208
+  facility_26_smn:
+    facility_resource_code: FF26SMN
+    agFacility: facility_26
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 1227
+  facility_27_smn:
+    facility_resource_code: FF27SMN
+    agFacility: facility_27
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 480
+  facility_28_smn:
+    facility_resource_code: FF28SMN
+    agFacility: facility_28
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: unavailable
+    capacity: 3691
+  facility_29_smn:
+    facility_resource_code: FF29SMN
+    agFacility: facility_29
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: unavailable
+    capacity: 3821
+  facility_30_smn:
+    facility_resource_code: FF30SMN
+    agFacility: facility_30
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 5000
+  facility_31_smn:
+    facility_resource_code: FF31SMN
+    agFacility: facility_31
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: unavailable
+    capacity: 868
+  facility_32_smn:
+    facility_resource_code: FF32SMN
+    agFacility: facility_32
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 1540
+  facility_33_uorc:
+    facility_resource_code: FF33UORC
+    agFacility: facility_33
+    agFacilityResourceType: uorc
+    agFacilityResourceStatus: unavailable
+    capacity: 9999
+  facility_34_ec:
+    facility_resource_code: FF34EC
+    agFacility: facility_34
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: unavailable
+    capacity: 1520
+  facility_35_ec:
+    facility_resource_code: FF35EC
+    agFacility: facility_35
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: unavailable
+    capacity: 1520
+  facility_36_smn:
+    facility_resource_code: FF36SMN
+    agFacility: facility_36
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 1520
+  facility_36_ec:
+    facility_resource_code: FF36EC
+    agFacility: facility_36
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: unavailable
+    capacity: 1520
+  facility_37_smn:
+    facility_resource_code: FF37SMN
+    agFacility: facility_37
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 1520
+  facility_37_ec:
+    facility_resource_code: FF37EC
+    agFacility: facility_37
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: unavailable
+    capacity: 1520
+  facility_38_smn:
+    facility_resource_code: FF38SMN
+    agFacility: facility_38
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 1520
+  facility_38_ec:
+    facility_resource_code: FF38EC
+    agFacility: facility_38
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: available
+    capacity: 500
+  facility_39_smn:
+    facility_resource_code: FF39SMN
+    agFacility: facility_39
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 1520
+  facility_39_ec:
+    facility_resource_code: FF39EC
+    agFacility: facility_39
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: available
+    capacity: 500
+  facility_40_smn:
+    facility_resource_code: FF40SMN
+    agFacility: facility_40
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 1520
+  facility_40_hs:
+    facility_resource_code: FF40HS
+    agFacility: facility_40
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_41_hs:
+    facility_resource_code: FF41HS
+    agFacility: facility_41
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_42_hs:
+    facility_resource_code: FF42HS
+    agFacility: facility_42
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_43_hs:
+    facility_resource_code: FF43HS
+    agFacility: facility_43
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_44_hs:
+    facility_resource_code: FF44HS
+    agFacility: facility_44
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_45_hs:
+    facility_resource_code: FF45HS
+    agFacility: facility_45
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_46_hs:
+    facility_resource_code: FF46HS
+    agFacility: facility_46
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_47_hs:
+    facility_resource_code: FF47HS
+    agFacility: facility_47
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_48_hs:
+    facility_resource_code: FF48HS
+    agFacility: facility_48
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_49_hs:
+    facility_resource_code: FF49HS
+    agFacility: facility_49
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_50_hs:
+    facility_resource_code: FF50HS
+    agFacility: facility_50
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_51_hs:
+    facility_resource_code: FF51HS
+    agFacility: facility_51
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 1200
+  facility_52_hs:
+    facility_resource_code: FF52HS
+    agFacility: facility_52
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 120
+  facility_53_ec:
+    facility_resource_code: FF53EC
+    agFacility: facility_53
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: available
+    capacity: 5000
+  facility_54_ec:
+    facility_resource_code: FF54EC
+    agFacility: facility_54
+    agFacilityResourceType: ec
+    agFacilityResourceStatus: available
+    capacity: 5000
+  facility_55_hs:
+    facility_resource_code: FF55HS
+    agFacility: facility_55
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 5000
+  facility_55_smn:
+    facility_resource_code: FF55SMN
+    agFacility: facility_55
+    agFacilityResourceType: smn
+    agFacilityResourceStatus: available
+    capacity: 500
+  facility_56_hs:
+    facility_resource_code: FF56HS
+    agFacility: facility_56
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 500
+  facility_57_hs:
+    facility_resource_code: FF57HS
+    agFacility: facility_57
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 5000
+  facility_58_hs:
+    facility_resource_code: FF58HS
+    agFacility: facility_58
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 5000
+  facility_59_hs:
+    facility_resource_code: FF59HS
+    agFacility: facility_59
+    agFacilityResourceType: hs
+    agFacilityResourceStatus: available
+    capacity: 5000
 

@@ -88,6 +88,7 @@ function mem2str($size){
         return round($size, 6).$prefix;
 }
 
+
 function parseDsn($dsnString)
 {
   $dsnArray = explode(':', $dsnString, 2);
@@ -218,4 +219,5 @@ function buildDsnString($dbType, $dbHost, $dbName, $dbPort = null)
       $cache = new sfFileCache(array('cache_dir' => $cacheDir));
       $cache->clean();
   }
+
 ?>

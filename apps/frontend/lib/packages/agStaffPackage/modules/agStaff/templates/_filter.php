@@ -1,0 +1,39 @@
+<?php use_helper('I18N') ?>
+<?php
+  $filterForm = new sfForm();
+  $choices = array('male' => 'male', 'female' => 'female');
+  $filterForm->setWidgets(array(
+    'sex'          => new sfWidgetFormChoice(array('multiple' => true, 'choices' => $choices)),
+    'nationality'  => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agNationality')),
+    'ethnicity'    => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agEthnicity'  )),
+    'religion'     => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReligion')),
+  ));
+
+ $filterForm->getWidget('sex')->setAttribute('class', 'fullWidth');
+ $filterForm->getWidget('nationality')->setAttribute('class', 'fullWidth');
+ $filterForm->getWidget('ethnicity')->setAttribute('class', 'fullWidth');
+ $filterForm->getWidget('religion')->setAttribute('class', 'fullWidth');
+?>
+<div class="filterBox">
+  <h3>Filter:</h3>
+  <form action="<?php echo url_for('staff_search') ?>" method="get" class="displayInline">
+    <label class="boldText">Search String:</label>
+    <input type="hidden" name="query" value="<?php echo $sf_request->getParameter('query') ?>"/>
+    <input type="text" name="filter" value="<?php echo $sf_request->getParameter('filter') ?>
+           "id="search_keywords" class="searchFilter"/>
+
+    <label class ="filterButton">Filter By Sex:</label>
+    <?php echo $filterForm['sex']; ?>
+
+    <label class ="filterButton">Filter by Nationality:</label>
+    <?php echo $filterForm['nationality']; ?>
+
+    <label class ="filterButton">Filter by Ethnicity:</label>
+    <?php echo $filterForm['ethnicity']; ?>
+
+    <label class ="filterButton">Filter by Religion:</label>
+    <?php echo $filterForm['religion']; ?>
+
+    <input type="submit" value="Filter" class="buttonWhite" />
+  </form>
+</div>

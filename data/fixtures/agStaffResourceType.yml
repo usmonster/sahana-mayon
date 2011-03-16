@@ -1,12 +1,24 @@
 agStaffResourceType:
+  ec_manager:
+    staff_resource_type: EC Manager
+    staff_resource_type_abbr: ECM
+    description: EC Manager
+  hs_manager:
+    staff_resource_type: HS Manager
+    staff_resource_type_abbr: HSM
+    description: HS Manager
+  spe:
+    staff_resource_type: Specialist
+    staff_resource_type_abbr: spe
+    description: Data entry specialist
+  uorc:
+    staff_resource_type: UORC
+    staff_resource_type_abbr: UORC
+    description: UORC Staff
   staff:
-    staff_resource_type: Staff
-    staff_resource_type_abbr: stf
+    staff_resource_type: Generalist
+    staff_resource_type_abbr: gnt
     description: General staff
-  operator:
-    staff_resource_type: Operator
-    staff_resource_type_abbr: Op
-    description: Data entry operator
   med_nrs:
     staff_resource_type: Medical Nurse
     staff_resource_type_abbr: med nrs
@@ -15,8 +27,4 @@ agStaffResourceType:
     staff_resource_type: Medical Other
     staff_resource_type_abbr: med oth
     description: Licensed medical practioner
-  spe:
-    staff_resource_type: Specialist
-    staff_resource_type_abbr: spe
-    description: administrator
 

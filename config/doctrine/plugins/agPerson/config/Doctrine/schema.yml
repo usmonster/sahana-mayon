@@ -8,6 +8,9 @@ agPerson:
     entity_id:
       type: integer(5)
       notnull: true
+  actAs:
+    Luceneable:
+    Timestampable:
   indexes:
     agPerson_unq:
       fields: [entity_id]
@@ -526,6 +529,10 @@ agPersonMjAgPersonName:
     agPersonMjAgPersonName_priority_unq:
       fields: [person_id, person_name_type_id, priority]
       type: unique
+    IX_agPersonMjAgPersonName_personId:
+      fields: [person_id]
+    IX_agPersonMjAgPersonName_personNameTypeId:
+      fields: [person_name_type_id]
   relations:
     agPerson:
       local: person_id

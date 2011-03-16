@@ -17,6 +17,14 @@
  */
 class agScenarioFacilityResource extends BaseagScenarioFacilityResource
 {
+  /**
+   *
+   * @return a string representation of the scenario facility resource
+   */
+  public function __toString()
+  {
+    return $this->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $this->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
+  }
 
   /**
    *

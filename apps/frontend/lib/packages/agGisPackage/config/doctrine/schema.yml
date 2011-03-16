@@ -1,0 +1,226 @@
+agGeo:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    geo_type_id:
+      type: integer(2)
+      notnull: true
+    geo_source_id:
+      type: integer(4)
+      notnull: true
+  relations:
+    agGeoType:
+      local: geo_type_id
+      foreign: id
+    agGeoSource:
+      local: geo_source_id
+      foreign: id
+agGeoType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    geo_type:
+      type: string(30)
+      notnull: true
+    minimum_coordinate_points:
+      default: 1
+      type: integer(1)
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agGeoType_unq:
+      fields: [geo_type]
+      type: unique
+agGeoCoordinate:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    longitude:
+      scale: 8
+      type: decimal(12)
+      notnull: true
+    latitude:
+      scale: 8
+      type: decimal(12)
+      notnull: true
+agGeoFeature:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    geo_id:
+      type: integer(5)
+      notnull: true
+    geo_coordinate_id:
+      type: integer(4)
+      notnull: true
+    geo_coordinate_order:
+      type: integer(4)
+      notnull: true
+  indexes:
+    UX_agGeoFeature_coordinate:
+      fields: [geo_id, geo_coordinate_id]
+      type: unique
+    agGeoFeature_geoId:
+      fields: [geo_id]
+    agGeoFeature_geoCoordinateId:
+      fields: [geo_coordinate_id]
+    UX_agGeoFeature_order:
+      fields: [geo_id, geo_coordinate_order]
+      type: unique
+  relations:
+    agGeoCoordinate:
+      local: geo_coordinate_id
+      foreign: id
+    agGeo:
+      local: geo_id
+      foreign: id
+agAddressGeo:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      autoincrement: true
+    address_id:
+      type: integer(5)
+      notnull: true
+    geo_id:
+      type: integer(5)
+      notnull: true
+    geo_match_score_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agAddressGeo:
+      fields: [address_id]
+      type: unique
+    IX_agAddressGeo_addrGeo:
+      fields: [address_id, geo_id]
+      type: unique
+  relations:
+    agGeo:
+      local: geo_id
+      foreign: id
+    agGeoMatchScore:
+      local: geo_match_score_id
+      foreign: id
+    agAddress:
+      class: agAddress
+      foreignAlias: agAddressGeo
+      local: address_id
+      foreign: id
+agGeoRelationshipType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+    geo_relationship_type:
+      type: string(32)
+      notnull: true
+  indexes:
+    UX_agGeoRelationshipType:
+      fields: [geo_relationship_type]
+agGeoMatchScore:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+    geo_match_score:
+      type: string(32)
+      notnull: true
+    geo_match_score_value:
+      type: integer(2)
+      notnull: true
+agGeoSource:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      autoincrement: true
+    geo_source:
+      type: string(64)
+      notnull: true
+    data_compiled:
+      type: timestamp
+      notnull: true
+    geo_source_score_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agGeoSource:
+      fields: [geo_source, data_compiled]
+      type: unique
+  relations:
+    agGeoSourceScore:
+      local: geo_source_score_id
+      foreign: id
+agGeoSourceScore:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+    geo_source_score:
+      type: string(32)
+      notnull: true
+    geo_source_score_value:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agGeoSourceScore:
+      fields: [geo_source_score]
+      type: unique
+agGeoRelationship:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    geo_id1:
+      type: integer(5)
+      notnull: true
+    geo_id2:
+      type: integer(5)
+      notnull: true
+    geo_relationship_type_id:
+      type: integer(2)
+      notnull: true
+    geo_relationship_km_value:
+      scale: 8
+      type: decimal(12)
+      notnull: true
+  indexes:
+    UX_agGeoRelationship:
+      fields: [geo_id1, geo_id2]
+      type: unique
+  relations:
+    agGeoRelationshipType:
+      local: geo_relationship_type_id
+      foreign: id
+    geo1:
+      class: agGeo
+      local: geo_id1
+      foreign: id
+    geo2:
+      class: agGeo
+      local: geo_id2
+      foreign: id
+actAs:
+  Timestampable: 

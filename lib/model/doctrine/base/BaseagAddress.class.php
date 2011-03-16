@@ -7,6 +7,7 @@
  * 
  * @property integer $id
  * @property integer $address_standard_id
+ * @property string $address_hash
  * @property agAddressStandard $agAddressStandard
  * @property Doctrine_Collection $agAddressValue
  * @property Doctrine_Collection $agAddressGeo
@@ -16,6 +17,7 @@
  * 
  * @method integer             getId()                        Returns the current record's "id" value
  * @method integer             getAddressStandardId()         Returns the current record's "address_standard_id" value
+ * @method string              getAddressHash()               Returns the current record's "address_hash" value
  * @method agAddressStandard   getAgAddressStandard()         Returns the current record's "agAddressStandard" value
  * @method Doctrine_Collection getAgAddressValue()            Returns the current record's "agAddressValue" collection
  * @method Doctrine_Collection getAgAddressGeo()              Returns the current record's "agAddressGeo" collection
@@ -24,6 +26,7 @@
  * @method Doctrine_Collection getAgAddressMjAgAddressValue() Returns the current record's "agAddressMjAgAddressValue" collection
  * @method agAddress           setId()                        Sets the current record's "id" value
  * @method agAddress           setAddressStandardId()         Sets the current record's "address_standard_id" value
+ * @method agAddress           setAddressHash()               Sets the current record's "address_hash" value
  * @method agAddress           setAgAddressStandard()         Sets the current record's "agAddressStandard" value
  * @method agAddress           setAgAddressValue()            Sets the current record's "agAddressValue" collection
  * @method agAddress           setAgAddressGeo()              Sets the current record's "agAddressGeo" collection
@@ -52,6 +55,11 @@ abstract class BaseagAddress extends sfDoctrineRecord
              'notnull' => true,
              'length' => 2,
              ));
+        $this->hasColumn('address_hash', 'string', 128, array(
+             'type' => 'string',
+             'fixed' => 1,
+             'length' => 128,
+             ));
 
 
         $this->index('agSiteAddress_addressStandardId', array(
@@ -76,7 +84,7 @@ abstract class BaseagAddress extends sfDoctrineRecord
 
         $this->hasMany('agAddressGeo', array(
              'local' => 'id',
-             'foreign' => 'geo_id'));
+             'foreign' => 'address_id'));
 
         $this->hasMany('agAddressContactType', array(
              'refClass' => 'agEntityAddressContact',

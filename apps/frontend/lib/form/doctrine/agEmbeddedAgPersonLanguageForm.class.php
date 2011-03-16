@@ -34,7 +34,7 @@ class agEmbeddedAgPersonLanguageForm extends agPersonMjAgLanguageForm
     $this->setWidgets(array(
       'id' => new sfWidgetFormInputHidden(),
       #'person_id'                   => new sfWidgetFormInputHidden(),
-      'language_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agLanguage'), 'add_empty' => true), array('style' => 'width:200px;')),
+      'language_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agLanguage'), 'add_empty' => true), array('class' => 'width200')),
       'priority' => new sfWidgetFormInputHidden(),
         #'created_at'                  => new sfWidgetFormDateTime(),
         #'updated_at'                  => new sfWidgetFormDateTime(),

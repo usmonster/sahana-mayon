@@ -8,21 +8,18 @@
  * @property integer $id
  * @property integer $site_id
  * @property string $facility_name
- * @property string $facility_code
  * @property agSite $agSite
  * @property Doctrine_Collection $agFacilityResource
  * 
  * @method integer             getId()                     Returns the current record's "id" value
  * @method integer             getSiteId()                 Returns the current record's "site_id" value
  * @method string              getFacilityName()           Returns the current record's "facility_name" value
- * @method string              getFacilityCode()           Returns the current record's "facility_code" value
  * @method agSite              getAgSite()                 Returns the current record's "agSite" value
  * @method Doctrine_Collection getAgFacilityResourceType() Returns the current record's "agFacilityResourceType" collection
  * @method Doctrine_Collection getAgFacilityResource()     Returns the current record's "agFacilityResource" collection
  * @method agFacility          setId()                     Sets the current record's "id" value
  * @method agFacility          setSiteId()                 Sets the current record's "site_id" value
  * @method agFacility          setFacilityName()           Sets the current record's "facility_name" value
- * @method agFacility          setFacilityCode()           Sets the current record's "facility_code" value
  * @method agFacility          setAgSite()                 Sets the current record's "agSite" value
  * @method agFacility          setAgFacilityResourceType() Sets the current record's "agFacilityResourceType" collection
  * @method agFacility          setAgFacilityResource()     Sets the current record's "agFacilityResource" collectionType
@@ -31,14 +28,12 @@
  * @method integer             getId()                     Returns the current record's "id" value
  * @method integer             getSiteId()                 Returns the current record's "site_id" value
  * @method string              getFacilityName()           Returns the current record's "facility_name" value
- * @method string              getFacilityCode()           Returns the current record's "facility_code" value
  * @method agSite              getAgSite()                 Returns the current record's "agSite" value
  * @method Doctrine_Collection getAgFacilityResourceType() Returns the current record's "agFacilityResourceType" collection
  * @method Doctrine_Collection getAgFacilityResource()     Returns the current record's "agFacilityResource" collection
  * @method agFacility          setId()                     Sets the current record's "id" value
  * @method agFacility          setSiteId()                 Sets the current record's "site_id" value
  * @method agFacility          setFacilityName()           Sets the current record's "facility_name" value
- * @method agFacility          setFacilityCode()           Sets the current record's "facility_code" value
  * @method agFacility          setAgSite()                 Sets the current record's "agSite" value
  * @method agFacility          setAgFacilityResourceType() Sets the current record's "agFacilityResourceType" collection
  * @method agFacility          setAgFacilityResource()     Sets the current record's "agFacilityResource" collection
@@ -69,11 +64,6 @@ abstract class BaseagFacility extends sfDoctrineRecord
              'notnull' => true,
              'length' => 64,
              ));
-        $this->hasColumn('facility_code', 'string', 10, array(
-             'type' => 'string',
-             'notnull' => true,
-             'length' => 10,
-             ));
 
 
         $this->index('agFacility_siteId_unq', array(
@@ -87,13 +77,6 @@ abstract class BaseagFacility extends sfDoctrineRecord
              'fields' => 
              array(
               0 => 'facility_name',
-             ),
-             'type' => 'unique',
-             ));
-        $this->index('agFacility_facilityCode_unq', array(
-             'fields' => 
-             array(
-              0 => 'facility_code',
              ),
              'type' => 'unique',
              ));
@@ -116,6 +99,13 @@ abstract class BaseagFacility extends sfDoctrineRecord
              'foreign' => 'facility_id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();
+        $luceneable0 = new Luceneable(array(
+             'fields' => 
+             array(
+              'facility_name' => 'unstored',
+             ),
+             ));
         $this->actAs($timestampable0);
+        $this->actAs($luceneable0);
     }
 }

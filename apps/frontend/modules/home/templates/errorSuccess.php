@@ -8,7 +8,6 @@
         <p>Built with PHP, MySQL, Doctrine ORM and Symfony.</p>
         <?php
           echo "error 404";
-          
         ?>
       </div>
     </div>

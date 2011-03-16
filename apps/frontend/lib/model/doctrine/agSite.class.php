@@ -31,6 +31,8 @@ class agSite extends BaseagSite
 //    $agFacility->delete();
 //  }
     foreach ($this->getAgFacility() as $agF) {
+
+
       $agF->delete();
     }
 

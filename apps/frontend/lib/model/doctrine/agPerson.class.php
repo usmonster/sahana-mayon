@@ -10,190 +10,175 @@
  * @author     Charles Wisniewski, CUNY SPS
  * @author     Nils Stolpe, CUNY SPS
  * @author     Shirley Chan, CUNY SPS
+ * @author     Chad Heuschober, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ *
  */
 class agPerson extends BaseagPerson
 {
+  public    $luceneSearchFields = array('id' => 'keyword');
+
+  protected $helperClasses = array( 'agPersonNameHelper' => 'id',
+                                    'agEntityAddressHelper' => 'entity_id') ;
+
+  private   $_helperObjects = array(),
+            $_helperMethods ;
+
   /**
-   * getPersonPrimaryNames() is a static method to return a multi layer array of person's primary name.
-   * @return array( person id => name type id => array( mj person name id, person name type, person name id, person name, priority) )
-   *
-   * @param array $personIds - Queries the primary names for the specified person only.
+   * This classes' constructor.
    */
-  static public function getPersonPrimaryNames($personIds = NULL)
+  public function construct()
   {
-    try
+    // call the parent's constructor
+    parent::construct() ;
+
+    // pre-load any helper methods we might want to look for in __call()
+    $this->loadHelperMethods() ;
+  }
+
+  /**
+   * Overloaded magic call method to provide access to helper class functions.
+   *
+   * @param string $method The method being called.
+   * @param array $arguments The arguments being provided to additional functions
+   * (not used by helpers).
+   * @return function call
+   */
+  public function __call($method, $arguments)
+  {
+    // check to see if our method exists in our helpers
+    if (array_key_exists($method, $this->_helperMethods))
     {
-//      $query = Doctrine_Query::create()
-//        ->select('mn.person_id, mn.person_name_type_id, pn.person_name, mn.priority')
-//        ->from('agPersonMjAgPersonName as mn')
-//        ->innerJoin('mn.agPersonName as pn')
-//        ->where('1=1');
-//
-//      /*
-//       * Append a where clause to query for specific persons if an
-//       * array of person ids is passed in as argument.
-//       */
-//      if (is_array($personIds) and count($personIds) > 0)
-//      {
-//        $query->whereIn('mn.person_id', $personIds);
-//      }
-//      $query->groupBy('mn.person_id, mn.person_name_type_id')
-//        ->orderBy('mn.person_id, mn.person_name_type_id, priority desc');
-//
-//      print_r($query->getSqlQuery());
-//
-////      $resultSet = $query->execute(array(), Doctrine::HYDRATE_SCALAR);
-//      $resultSet = $query->execute(array(), Doctrine::HYDRATE_SCALAR);
-//      print_r($resultSet);
-
-      $rawQuery = new Doctrine_RawSql();
-      $rawQuery->select('{sub.id},{sub.person_id},{sub.person_name_type_id},{sub.priority},{sub.person_name_id}, {pn.person_name}, {pnt.person_name_type}')
-        ->from('(select smn.id, smn.person_id, smn.person_name_type_id,  smn.priority, smn.person_name_id FROM ag_person_mj_ag_person_name AS smn ORDER BY smn.person_id, smn.person_name_type_id, smn.priority) as sub ')
-        ->innerJoin('ag_person_name AS pn ON pn.id=sub.person_name_id')
-        ->innerJoin('ag_person_name_type As pnt ON pnt.id=sub.person_name_type_id')
-        ->where('1=1');
-
-      if (is_array($personIds) and count($personIds) > 0)
+      try
       {
-        $rawQuery->whereIn('sub.person_id', $personIds);
+        // discover the class that owns the method being called
+        $helperClass = $this->_helperMethods[$method] ;
+
+        // lazily load that helper class
+        $this->loadHelperClass($helperClass) ;
+        
+        // get our object out of the objects array and the string value of the id to use
+        $helperObject = $this->_helperObjects[$helperClass] ;
+        $classId = $this->helperClasses[$helperClass] ;
+        $id = $this->$classId ;
+
+        // set up our args
+        array_unshift($arguments, $id) ;
+
+        // execute and return
+        $results = call_user_func_array(array($helperObject,$method), $arguments) ;
+        return $results[$id] ;
       }
-
-      $rawQuery->groupBY('sub.person_id, sub.person_name_type_id')
-        ->addComponent('sub', 'agPersonMjAgPersonName m')
-        ->addComponent('pn', 'm.agPersonName pn')
-        ->addComponent('pnt', 'm.agPersonNameType pnt');
-      
-      $resultSet = $rawQuery->execute();
-
-      $personNameArray = array();
-      foreach ($resultSet as $rslt)
+      catch (Exception $e)
       {
-        $person_id = $rslt->getPersonId();
-        $join_table_id = $rslt->getId();
-        $person_name_type_id = $rslt->getPersonNameTypeId();
-        $person_name_id = $rslt->getPersonNameId();
-        $priority = $rslt->getPriority();
-        $person_name = $rslt['agPersonName']['person_name'];
-        $person_name_type = $rslt['agPersonNameType']['person_name_type'];
-
-        $newRecord = array ( $person_name_type_id => array ( 'join_table_id' => $join_table_id,
-                                                             'name_type' => $person_name_type,
-                                                             'name_id' => $person_name_id,
-                                                             'name' => $person_name,
-                                                             'priority' =>$priority
-                                                        )
-                           );
-
-        if (array_key_exists($person_id, $personNameArray))
-        {
-          $tempArray = $personNameArray[$person_id];
-          $newArray = $tempArray + $newRecord;
-          $personNameArray[$person_id] = $newArray;
-
-        } else {
-          $personNameArray[$person_id] = $newRecord;
-        }
+        // if there's an error, write to log and return
+        $notice = sprintf('Execution of the %s method, found in %s failed. Attempted to use the
+          parent class.', $method, $helperClass) ;
+        sfContext::getInstance()->getLogger()->notice($notice) ;
       }
-
-//      print_r($personNameArray);
-      return $personNameArray;
-    }catch (\Doctrine\ORM\ORMException $e) {
-      return NULL;
     }
+    // since no method matched, call the parent's methods
+    return parent::__call($method, $arguments) ;
   }
 
   /**
-   * getPersonFullName() is a static method to return an array of person's full name where person_id is the array key.
-   * @return array(person_id => person full name)
-   *
-   * @param array $personIds - return an array of person's full name for the specified person only.
+   * A happy little helper function to return all methods explicitly (publicly) defined by a
+   * helper class.
    */
-  static public function getPersonFullName($personIds = NULL)
+  private function loadHelperMethods()
   {
-    $personPrimaryNames = self::getPersonPrimaryNames($personIds);
-//    print_r($personPrimaryNames);
-
-    $personFullName = array();
-    foreach($personPrimaryNames as $personId => $personNameInfo)
+    // iterate through all the helper classes defined
+    foreach ($this->helperClasses as $class => $id)
     {
-      $givenName = array_key_exists(1, $personNameInfo) ? $personNameInfo[1]['name'] : '';
-      $middleName = array_key_exists(2, $personNameInfo) ? ' ' . $personNameInfo[2]['name'] : '';
-      $familyName = array_key_exists(3, $personNameInfo) ? ' ' . $personNameInfo[3]['name'] : '';
-      $fullName = $givenName . $middleName . $familyName;
-      $fullName = ucwords($fullName);
-      $personFullName[$personId] = $fullName;
-    }
+      // get just the explicit children of those classes
+      $methods = agClassHelper::getExplicitClassMethods($class) ;
 
-    return $personFullName;
-  }
-
-
-  /* function getAgPersonNameByTypeId($type) {
-    //$type = intval($type);
-    $type = $type->getAgNameType();
-
-    if (!$type) return null;
-
-    foreach($this->getAgPersonName() as $agPersonName) {
-    if ($agPersonName->getAgPersonNameType() == $type) {
-    return $agPersonName;
-    }
-    }
-
-    return null;
-    } */
-
-  /**
-   * agPersonNameGet() returns an array of the names for the current agPerson object
-   * @return an array of names for the current agPerson object
-   */
-  function agPersonNameGet()
-  {
-    // TODO pass in array for person info to be paginated in the showSuccess page:
-    $name_array = array();
-    $ag_person_name_types = Doctrine::getTable('agPersonNameType')
-            ->createQuery('b')
-            ->execute();
-
-    foreach ($ag_person_name_types as $ag_person_name_type) {
-      $names = $this->getAgPersonMjAgPersonName();
-      foreach ($names as $name) {
-        if ($name->getPersonNameTypeId() == $ag_person_name_type->getId()) {
-          $name_array[ucwords($ag_person_name_type)] = $name->getAgPersonName();
-        }
+      // build our methods array and assign the owner of each method
+      // @note This is *extremely* naive and if more than one helper provides the same method no
+      // guarantees will be made as to which will load it. Lesson: don't use the same method name!
+      foreach ($methods as $method)
+      {
+        $this->_helperMethods[$method] = $class ;
       }
     }
-
-    return $name_array;
   }
 
   /**
-   * getAgPersonNameByType() retrieves the person's name for the supplied name type
+   * Method to instantiate a helper class object as an array member of the _helperObjects property.
    *
-   * @param $agPersonNameTypeId ID of name type that we want returned.
-   *
-   * @return String value of person's name for the specified name type.
-   *
+   * @param string $class The helper class being loaded.
    */
-  function getPersonNameByType($agPersonNameTypeId)
+  private function loadHelperClass($class)
   {
-    $agPersonNameTypeId = intval($agPersonNameTypeId);
-    if (!$agPersonNameTypeId) {
-      return null;
+    if (! isset($this->_helperObjects[$class]))
+    {
+      $this->_helperObjects[$class] = new $class() ;
+    }
+  }
+
+  public function updateLucene()
+  {
+    $doc = new Zend_Search_Lucene_Document();
+    //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));
+
+    // uses the agPersonNameHelper method that includes all names / aliases of type in a string
+    $names = $this->getNameByTypeAsString();
+    foreach ($names as $key => $name) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
     }
 
-    $personNames = $this->getAgPersonMjAgPersonName();
-
-    foreach ($personNames as $personName) {
-      $thisNameType = $personName->getAgPersonNameType()->getId();
-      if ($personName->getAgPersonNameType()->getId() == $agPersonNameTypeId) {
-        return $personName->getAgPersonName()->getPersonName();
+    $sex = $this->getSex();
+      $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
+    
+      $nationalities = $this->getNationality();
+      foreach($nationalities as $nationality)
+      {
+        $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
       }
-    }
+   
+    $ethnicity = $this->getEthnicity();
+    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
 
-    return null;
+    return $doc;
+  }
+
+  public function getSex()
+  {
+      $sexstore = $this->getAgPersonSex();
+      foreach ($sexstore as $gender)
+      {
+        $sex = $gender->getAgSex()->sex;
+      }
+
+      return $sex;
+  }
+
+  public function getNationality()
+  {
+      foreach($this->getAgPersonMjAgNationality() as $nationality)
+             $nationalities[] = $nationality->getAgNationality()->nationality;
+
+      return $nationalities;
+  }
+
+  public function getEthnicity()
+  {
+      foreach ($this->getAgPersonEthnicity() as $ethnicity)
+      {
+          $ethnicities = $ethnicity->getAgEthnicity()->ethnicity;
+      }
+      return $ethnicities;
+  }
+
+  public function getLanguages()
+  {
+      foreach($this->getAgPersonMjAgLanguage() as $languageCompetency)
+      {
+          $languages = $languageCompetency->getAgLanguage()->language;
+      }
+      return $languages;
   }
 
   /**
@@ -257,105 +242,4 @@ class agPerson extends BaseagPerson
 
     return null;
   }
-
-  /**
-   * adds new values for the Lucene Index for an agPerson/staff-member.
-   * The terms added to the index will allow the agPerson they are associated with to be
-   * returned after running a search.
-   * @return an updated Lucene Index
-   *
-   * See further comments inside the code for more information.
-   */
-  public function updateLuceneIndex()
-  {
-    $index = agPersonTable::getLuceneIndex();
-
-    foreach ($index->find('pk:' . $this->getId()) as $hit) {
-      $index->delete($hit->id);
-    }
-
-// This creates the new document for the index and sets a field with a pk value of the created/edited person's ID.
-    $doc = new Zend_Search_Lucene_Document();
-    $doc->addField(Zend_Search_Lucene_Field::Keyword('pk', $this->getId()));
-// Generate the variables to concat field values into so we don't get an exception.
-    $natBuild = "";
-    $relBuild = "";
-    $nameBuild = "";
-
-// The loops below index the agPerson's associated values and assign them to the PK.
-    foreach ($this->getAgEthnicity() as $ethnicity) {
-      $doc->addField(Zend_Search_Lucene_Field::UnStored('ethnicity', $ethnicity->ethnicity, 'utf-8'));
-      $index->addDocument($doc);
-    }
-
-    foreach ($this->getAgNationality() as $nationality) {
-      $natBuild = $natBuild . $nationality->nationality . ' ';
-    }
-
-    if (isset($natBuild)) {
-      $doc->addField(Zend_Search_Lucene_Field::UnStored('nationality', $natBuild, 'utf-8'));
-    }
-
-    foreach ($this->getAgReligion() as $religion) {
-      $relBuild = $relBuild . $religion->religion . ' ';
-    }
-
-    if (isset($relBuild)) {
-      $doc->addField(Zend_Search_Lucene_Field::UnStored('religion', $relBuild, 'utf-8'));
-    }
-
-    foreach ($this->getAgPersonName() as $name) {
-      $nameBuild = $nameBuild . $name->person_name . ' ';
-    }
-
-    if (isset($nameBuild)) {
-      $doc->addField(Zend_Search_Lucene_Field::UnStored('name', $nameBuild, 'utf-8'));
-    }
-
-    $index->addDocument($doc);
-    $index->commit();
-  }
-
-  /** Extends the save() function by adding an updateIndex hook to the Lucene search engine
-   * @param conn the connection to Doctrine
-   * @return current save state of the object being saved
-   */
-  public function save(Doctrine_Connection $conn = null)
-  {
-    $conn = $conn ? $conn : $this->getTable()->getConnection();
-    $conn->beginTransaction();
-
-    try {
-      $ret = parent::save($conn);
-
-      //$this->updateLuceneIndex(); This has been moved to apps/frontend/lib/BaseFormDoctrine to ensure names are indexed properly.
-
-      $conn->commit();
-
-      return $ret;
-    } catch (Exception $e) {
-      $conn->rollBack();
-      throw $e;
-    }
-  }
-
-  /**
-   * Deletes an agPerson. The function has been extended to update the Lucene index
-   * as well, since a deleted agPerson should no longer show up in search results.
-   *
-   * @param $conn the connection to Doctrine
-   * @return parent::delete($conn) Removes an agPerson object from the database.
-   *
-   */
-  public function delete(Doctrine_Connection $conn = null)
-  {
-    $index = agPersonTable::getLuceneIndex();
-
-    foreach ($index->find('pk:' . $this->getId()) as $hit) {
-      $index->delete($hit->id);
-    }
-
-    return parent::delete($conn);
-  }
-
 }

@@ -1,7 +1,20 @@
 <?php
 
 /**
- * Sahana Agasti 1.99999 , Mayon install.inc.php
+ * Agasti 2.0 Installer
+ *
+ * PHP Version 5
+ *
+ * LICENSE: This source file is subject to LGPLv3.0 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/lesser.html
+ *
+ * @author Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ */
+/**
+ * Sahana Agasti 2.0 install.inc.php
  * this file houses installation specific functions, primarily called from install.php
  */
 require_once (dirname(__FILE__) . '/../lib/vendor/symfony/lib/yaml/sfYaml.php');
@@ -31,8 +44,8 @@ class agInstall
 
     $this->steps = array(
       0 => array('title' => '1. Introduction', 'fun' => 'stage0'),
-      1 => array('title' => '2. Licence Agreement', 'fun' => 'stage1'),
-      2 => array('title' => '3. Pre-requisite Check', 'fun' => 'stage2'),
+      1 => array('title' => '2. License Agreement', 'fun' => 'stage1'),
+      2 => array('title' => '3. Prerequisite Check', 'fun' => 'stage2'),
       3 => array('title' => '4. Configure Database', 'fun' => 'stage3'),
       4 => array('title' => '5. Configuration Summary', 'fun' => 'stage4'),
       5 => array('title' => '6. Installation Summary', 'fun' => 'stage5'),
@@ -41,7 +54,7 @@ class agInstall
     $this->EventHandler();
     GLOBAL $trans;
     $trans = array(
-      //     requirements.inc.php
+//     requirements.inc.php
       'S_PHP_VERSION' => 'PHP version',
       'S_MINIMAL_VERSION_OF_PHP_IS' => 'Minimal version of PHP is',
       'S_PHP_MEMORY_LIMIT' => 'PHP memory limit',
@@ -86,6 +99,7 @@ class agInstall
 
   function getConfig($name, $default = null)
   {
+//if entry method to this function is admin/config instead of install, set the global
     return isset($this->AG_CONFIG[$name]) ? $this->AG_CONFIG[$name] : $default;
   }
 
@@ -146,28 +160,31 @@ class agInstall
 
   function stage0()
   {
-    return '<div class=info>Welcome to the Sahana Agasti 1.99999, Mayon Installation Wizard.<br />
-      The installation wizard will guide you through the installation of Sahana Agasti 1.99999, Mayon <br />
-      Click the "Next" button to proceed to the next screen. If you want to change something <br />
-      at a previous step, click the "Previous" button <br />
-      You may cancel installation at any time by clicking the "Cancel" button</div>';
+    return '<div class=info><h2>Welcome to the Sahana Agasti 2.0 Installation Wizard</h2><br />
+      <p>Agasti is an emergency management application with tools to manage staff, resources, 
+      client information and facilities through an easy to use web interface. The Installation
+      Wizard will guide you through the installation of Agasti 2.0.</p> <br />
+      Click the "Next" button to proceed to the next screen. If you want to change something at 
+      a previous step, click the "Previous" button.  You may cancel installation at any time by
+      clicking the "Cancel" button.</p>
+      <p><b> Click the "Next" button to continue.</p></b></div>';
   }
 
   function stage1()
   {
-    $LICENCE_FILE = '../LICENSE';
+    $LICENSE_FILE = sfConfig::get('sf_root_dir') . '/LICENSE';
 
     $this->DISABLE_NEXT = !$this->getConfig('agree', false);
 
     $license = 'Missing licence file. See GPL licence.';
-    if (file_exists($LICENCE_FILE))
-      $license = file_get_contents($LICENCE_FILE);
+    if (file_exists($LICENSE_FILE))
+      $license = file_get_contents($LICENSE_FILE);
 
 
     $agree = '<input class="checkbox" type="checkbox" value="yes" name="agree" id="agree" onclick="submit();"';
     $this->getConfig('agree', false) == 'yes' ? $agree .= ' checked=checked>' : $agree .= '>';
 
-    return '<div class=info>' . $license . "</div><br />" . $agree . '<label for="agree">I agree</label>';
+    return '<div class=info>' . nl2br($license) . "</div><br />" . $agree . '<label for="agree">I agree</label>';
   }
 
   /**
@@ -177,7 +194,9 @@ class agInstall
   function stage2()
   {
 
-    $table = '<table class="requirements" style="align:center"><tr style="font-weight:bold;"><td>&nbsp;</td><td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr>';
+    $table = '<table class="requirements" style="align:center; width:100%;">
+                <th><tr style="font-weight:bold;">
+                  <td>Option</td><td>Current Value</td><td>Required</td><td>Recommended</td><td>&nbsp;</td></tr></th>';
     /**
      * @todo clean up the following code
      */
@@ -194,10 +213,10 @@ class agInstall
         $result = '<span class="green">Ok</span>';
       } else if ($req['result'] == 0) {
         $result = '<span class="fail">Fail</span>';
-        // this will be useful$result->setHint($req['error']);
+// this will be useful$result->setHint($req['error']);
       }
 
-      $current = '<tr><td>&nbsp;</td><td><strong>' . $req['name'] . '</strong></td>' . '<td>' . $req['current'] . '</td>';
+      $current = '<tr><td><strong>' . $req['name'] . '</strong></td>' . '<td>' . $req['current'] . '</td>';
       $required = $req['required'] ? $req['required'] : '&nbsp;';
       $recommend = $req['recommended'] ? $req['recommended'] : '&nbsp;';
       $res = $req['result'] ? '&nbsp;' : 'fail';
@@ -212,10 +231,12 @@ class agInstall
       $this->DISABLE_NEXT = true;
 
       $retry = '<input type="submit" class="inputGray" id="retry" name="retry" value="retry" />';
-      $final_result = '<span class="fail">Please correct all issues and press the "retry" button</span><br /><br />' . $retry;
+      $final_result = '<span class="fail">There are errors in your configuration.  
+        Please correct all issues and press the "retry" button.  For additional assistance
+        reference the README file.</span><br /><br />' . $retry;
     } else {
       $this->DISABLE_NEXT = false;
-      $final_result = '<span class="green">Ok</span>';
+      $final_result = '<span class="green">Your system is properly configured.  Please continue.</span>';
     }
 
     return $table . '</table><br />' . $final_result;
@@ -228,8 +249,9 @@ class agInstall
 
     if (isset($_REQUEST['retry']) && $this->RETRY_SUCCESS == false) {
       $retry_label = 'retry';
-      $instruct = '<span class="fail">fail</span><br />
-      <br />Error Message:' . $this->ERROR_MESSAGE . '<br /><span class="fail">please press retry</span>';
+      $instruct = '<span class="fail">Error</span><br />
+      <br />Error Message:' . $this->ERROR_MESSAGE . '<br /><span class="fail">Please correct the
+        error and press retry.</span>';
     } else if ($this->RETRY_SUCCESS == false) {
       $retry_label = 'test connection';
       $instruct = 'Press "Test connection" button when done.';
@@ -238,7 +260,7 @@ class agInstall
     }
     $retry = '';
     if ($this->RETRY_SUCCESS == false) {
-      $retry = '<input type="submit" class="inputGray" id="retry" name="retry" value="' . $retry_label . '" />';
+      $retry = '<input type="submit" class="linkButton" id="retry" name="retry" value="' . $retry_label . '" />';
     }
     $table = '<fieldset>
               <legend><img src="images/database.png" alt="database icon" />Database Configuration:</legend>
@@ -283,11 +305,12 @@ class agInstall
                 </li>
               </ul>
             </fieldset>';
-    $results = 'Please create database manually,<br />and set the configuration parameters for connection to this database.<br /><br/>'
+    $results = 'The database is created manually.  First, the Agasti Installer will test your
+      configuration settings before continuing.  Enter your database settings and click "Test Connection". <br /><br/>'
         . $instruct . $table . $retry;
 
-    //$this->DISABLE_NEXT ? new CSpan(S_OK,'ok') :  new CSpan(S_FAIL, 'fail'),
-    //new  CButton('retry', 'Test connection')
+//$this->DISABLE_NEXT ? new CSpan(S_OK,'ok') :  new CSpan(S_FAIL, 'fail'),
+//new  CButton('retry', 'Test connection')
     return $results;
   }
 
@@ -299,23 +322,27 @@ class agInstall
         <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
     '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
     '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
-    '<br /><strong>Database Password</strong>:' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
-    '<br /><strong>Administrator</strong>:' . $this->getConfig('ADMIN_NAME') .
-    '<br /><strong>Admin E-mail</strong>:' . $this->getConfig('ADMIN_EMAIL') .
-    '</div><br /> now is your last chance to go back, by clicking next you will install Sahana Agasti';
+    '<br /><strong>Database Password</strong>: ' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
+    '<br /><strong>Administrator</strong>: ' . $this->getConfig('ADMIN_NAME') .
+    '<br /><strong>Admin E-mail</strong>: ' . $this->getConfig('ADMIN_EMAIL') .
+    '</div><br /> Please verify your settings.  By clicking next you will install Sahana Agasti.';
   }
 
   function stage5()
   {
     if ($this->INSTALL_RESULT == 'Success!') {
-      return 'Congratulations! here is your installation summary:<br /><div class="info">
+      return '<span class="okay">Congratulations!  Installation was successful:</span> <br /><div class="info">
         <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
       '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
       '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
-      '<br /><strong>Database Password</strong>:' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
-      '<br /><strong>Administrator</strong>:' . $this->getConfig('ADMIN_NAME') .
-      '<br /><strong>Admin E-mail</strong>:' . $this->getConfig('ADMIN_EMAIL') .
-      '</div><br /> BUT WAIT, you still have to create your admin user. please click finish to be authenticated, you will then create your first user.';
+      '<br /><strong>Database Password</strong>: ' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
+      '<br /><strong>Administrator</strong>: ' . $this->getConfig('ADMIN_NAME') .
+      '<br /><strong>Admin E-mail</strong>: ' . $this->getConfig('ADMIN_EMAIL') .
+      '</div><br /> NOTE: to continue with Agasti setup you must first create the "Super User"
+        account by editing the config file.  In .../config please edit the config.yml file with the
+        Super User username and password.  After you have done so, click finish and you will be 
+        redirected to log in with the Super User username and password and thenthen create your
+        first user.';
     } else {
       return '<span class="fail">There was an error with your installation:</span><br /><div class="info">' . $this->INSTALL_RESULT . '</div>';
     }
@@ -328,13 +355,15 @@ class agInstall
 
   function getCurrent()
   {
-    if (file_exists(dirname(__FILE__) . '/../config/databases.yml') == TRUE) {
-      $dbArray = sfYaml::load(dirname(__FILE__) . '/../config/databases.yml');
+    $filename = sfConfig::get('sf_config_dir') . '/databases.yml';
+    if (file_exists($filename)) {
+      $dbArray = sfYaml::load($filename);
     } else {
       $install_flag = false;
     }
-    if (file_exists(dirname(__FILE__) . '/../config/config.yml') == TRUE) {
-      $cfgArray = sfYaml::load(dirname(__FILE__) . '/../config/config.yml');
+    $filename = sfConfig::get('sf_config_dir') . '/config.yml';
+    if (file_exists($filename)) {
+      $cfgArray = sfYaml::load($filename);
     } else {
       $install_flag = true;
       $existing_auth_method = "bypass";
@@ -348,6 +377,7 @@ class agInstall
       $this->setConfig('DB_PASSWORD', $dbArray['all']['doctrine']['param']['password']);
       $this->setConfig('ADMIN_NAME', $cfgArray['admin']['admin_name']);
       $this->setConfig('ADMIN_EMAIL', $cfgArray['admin']['admin_email']);
+      $this->setConfig('AUTH_METHOD', $cfgArray['admin']['auth_method']['value']);
     } catch (Exception $e) {
       return 'file was unreadable';
     }
@@ -360,7 +390,7 @@ class agInstall
       'task' => 'configure:database',
       //'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
       'dsn' => $db_params['dsn'], // ilya 2010-07-21 15:16:58
-      //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+//'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
       'username' => $db_params['username'],
       'password' => $db_params['password'],
     );
@@ -422,7 +452,7 @@ class agInstall
         throw new Doctrine_Exception($dropDb->ask());
       }
     } catch (Exception $e) {
-      $installed = 'Could not drop DB! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not drop DB! : ' . "\n" . $e->getMessage();
     }
     try {
       if ($createDb->validate()) {
@@ -430,109 +460,79 @@ class agInstall
       } else {
         throw new Doctrine_Exception($createDb->ask());
       }
+      $installed[] = 'Successfully created database';
     } catch (Exception $e) {
-      $installed = 'Could not create DB! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not create DB! : ' . "\n" . $e->getMessage();
     }
     try {
       if ($buildSql->validate()) {
         $buildSql->execute();
       }
+      $installed[] = 'Successfully built SQL';
     } catch (Exception $e) {
-      $installed = 'Could not build SQL! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not build SQL! : ' . "\n" . $e->getMessage();
     }
 
     try {
-      Doctrine_Core::loadModels(
+      $allmodels = Doctrine_Core::loadModels(
               sfConfig::get('sf_lib_dir') . '/model/doctrine',
               Doctrine_Core::MODEL_LOADING_CONSERVATIVE);
+      $installed[] = 'Sucessefully loaded all data models';
     } catch (Exception $e) {
-      $installed = 'Could not load models! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not load models! : ' . "\n" . $e->getMessage();
     }
     try {
       Doctrine_Core::createTablesFromArray(Doctrine_Core::getLoadedModels());
+      $installed[] = 'Successfully created database tables from models';
     } catch (Exception $e) {
 
-      $installed = 'Could not create tables! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not create tables! : ' . "\n" . $e->getMessage();
     }
 
-    $insertSql = new Doctrine_Task_LoadData();
-    $insertSql->setArguments(array(
-      'data_fixtures_path' => sfConfig::get('sf_data_dir') . '/fixtures',
-      'models_path' => sfConfig::get('sf_lib_dir') . '/model/doctrine',
-      'append' => false,
-    ));
-
-    try {
-      if ($insertSql->validate()) {
-        $insertSql->execute();
+     try {
+        Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
+        //$installed[] = 'Successfully loaded core data fixtures';
         $installed = 'Success!';
-      } else {
-        // TODO: wait, what exception? is $e defined here? -UA
-        $installed = 'SQL insert not valid! : ' . "\n" . $e->getMessage();
+      } catch (Exception $e) {
+        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
       }
-    } catch (Exception $e) {
-      $installed = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
-    }
-    return $installed;
-  }
+//
+//    $packages = agPluginManager::getPackagesByStatus(1); //get all enabled packages
+//    foreach($packages as $package)
+//    {
+//      try {
+////        if($package == 'agStaffPackage'){
+////          Doctrine_Core::loadModels(sfConfig::get('sf_lib_dir') . '/model/doctrine', Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
+////        }
+////        else{
+//          Doctrine_Core::loadModels(sfConfig::get('sf_app_dir') . '/lib/packages/' . $package . '/lib/model/doctrine', Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
+////        }
+//        Doctrine_Core::loadData(sfConfig::get('sf_app_dir') . '/lib/packages/' . $package  . '/data/fixtures', true);
+//        $installed[] = 'Successfully loaded packaged data fixtures';
+//      } catch (Exception $e) {
+//        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
+//      }
+//    }
 
-  function agSaveSetup($config)
-  {
-    /** remember to set the superadmin config.yml up!!!  */
-    sfClearCache('frontend', 'all');
-    sfClearCache('frontend', 'dev');
-    sfClearCache('frontend', 'prod');
-    require_once dirname(__FILE__) . '/../lib/vendor/symfony/lib/yaml/sfYaml.php';
-    $file = sfConfig::get('sf_config_dir') . '/config.yml';
-    // update config.yml
-    try {
-      file_put_contents($file, sfYaml::dump($config, 4));
-    } catch (Exception $e) {
-      echo "hey, something went wrong:" . $e->getMessage();
-    }
+//    this entry is achieved by proxy of the agHost.yml fixture/example
+//
+//    try {
+//      $ag_host = new agHost();
+//      $ag_host->setHostname($this->getConfig('DB_SERVER'));
+//      $ag_host->save();
+//      //$installed[] = 'Successfully generated host record based on database server host';
 
-    $file = dirname(__FILE__) . '/../apps/frontend/config/app.yml';
-    touch($file);
-    //if app.yml doesn't exist
-    $appConfig = sfYaml::load(dirname(__FILE__) . '/../apps/frontend/config/app.yml');
-    $appConfig['all']['sf_guard_plugin'] =
-        array('check_password_callable'
-          => array('agSudoAuth', 'authenticate'));
-    $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
+//    } catch (Exception $e) {
+//      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
+//    }
 
-    $appConfig['all']['.array']['navpages'] =
-        array(
-          'homepage' => array('name' => 'Home', 'route' => '@homepage'),
-          'facility' => array('name' => 'Facility', 'route' => '@facility'),
-          'staff' => array('name' => 'Staff', 'route' => '@staff'),
-          'client' => array('name' => 'Client', 'route' => '@client'),
-          'scenario' => array('name' => 'Scenario', 'route' => '@scenario'),
-          'gis' => array('name' => 'GIS', 'route' => '@gis'),
-          'org' => array('name' => 'Organization', 'route' => '@org'),
-          'admin' => array('name' => 'Admin', 'route' => '@admin'),
-          'about' => array('name' => 'About', 'route' => '@about'));
-    // update config.yml
-    try {
-      file_put_contents($file, sfYaml::dump($appConfig, 4));
-    } catch (Exception $e) {
-      echo "hey, something went wrong:" . $e->getMessage();
-      return false;
+    if(is_array($installed)){
+      return implode('<br>', $installed);
     }
-    $file = sfConfig::get('sf_config_dir') . '/databases.yml';
-    $dbConfiguration = sfYaml::load(dirname(__FILE__) . '/../config/databases.yml');
-    $dbConfiguration['all']['doctrine']['param']['attributes'] = array(
-      'default_table_type' => 'INNODB',
-      'default_table_charset' => 'utf8',
-      'default_table_collate' => 'utf8_general_ci'
-    );
-    try {
-      file_put_contents($file, sfYaml::dump($dbConfiguration, 4));
-    } catch (Exception $e) {
-      echo "hey, something went wrong:" . $e->getMessage();
-      return false;
+      else{
+      return $installed;
     }
 
-    return true;
   }
 
   function EventHandler()
@@ -543,6 +543,7 @@ class agInstall
     if ($this->getStep() == 1) {
       if (!isset($_REQUEST['next'][0]) && !isset($_REQUEST['back'][2])) {
         $this->setConfig('agree', isset($_REQUEST['agree']));
+        //$this->doNext();
       }
 
       if (isset($_REQUEST['next'][$this->getStep()]) && $this->getConfig('agree', false)) {
@@ -550,16 +551,20 @@ class agInstall
       }
     }
 
+    $foo = $this->getStep();
+    $zoo = $_REQUEST['next'][$this->getStep()];
+    $poo = $_REQUEST['problem'];
+
     if ($this->getStep() == 2 && isset($_REQUEST['next'][$this->getStep()]) && !isset($_REQUEST['problem'])) {
       $this->dbParams($db_params);
       $this->DoNext();
     }
     if ($this->getStep() == 3) {
-      //on our first pass, these values won't exist (or if someone has returned with no POST
+//on our first pass, these values won't exist (or if someone has returned with no POST
       $current = $this->getCurrent();
       $db_params = array(
         'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name']), // ilya 2010-07-21 15:16:58
-        //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+//'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
         'username' => $_POST['db_user'],
         'password' => $_POST['db_pass']);
       $this->setConfig('DB_SERVER', $_POST['db_host']);
@@ -579,34 +584,34 @@ class agInstall
           'auth_method' => array('value' => 'bypass'),
           'log_level' => array('value' => 'default'),
         //'db_type' => $_POST['db_type'],
-        //'db_host' => $_POST['db_host'],
-        //'db_name' => $_POST['db_port'], //ilya 2010-07-21 15:17:13
+//'db_host' => $_POST['db_host'],
+//'db_name' => $_POST['db_port'], //ilya 2010-07-21 15:17:13
           ));
-      //we've set our config to post values, now let's try to save
-      //agSaveSetup only saves config.yml and app.yml, databases.yml is not touched
-      //to save our databases.yml,
-      //$this->dbParams($db_params);
-      //database parameters are good here.
+//we've set our config to post values, now let's try to save
+//agSaveSetup only saves config.yml and app.yml, databases.yml is not touched
+//to save our databases.yml,
+//$this->dbParams($db_params);
+//database parameters are good here.
       if (!($this->agSaveSetup($config_array))) {
         $this->DISABLE_NEXT = true;
         unset($_REQUEST['next']);
-        //if we cannot save our configuration
+//if we cannot save our configuration
       } else {
         $dbcheck = $this->CheckConnection($db_params);
         if ($dbcheck == 'good') {
           $this->RETRY_SUCCESS = true;
         } else {
-          //if we cannot establish a db connection
+//if we cannot establish a db connection
           $this->RETRY_SUCCESS = false;
           $this->DISABLE_NEXT = true;
           $this->ERROR_MESSAGE = $dbcheck;
-          //set the installer's global error message to the return of our connection attempt
+//set the installer's global error message to the return of our connection attempt
           unset($_REQUEST['next']);
         }
       }
       if (isset($_REQUEST['next'][$this->getStep()])) {
-        //the validation comment below can be handled by:
-        //$this->getCurrent();
+//the validation comment below can be handled by:
+//$this->getCurrent();
         $this->setConfig('db_config', $db_params);
         $this->setConfig('DB_SERVER', $_POST['db_host']);
         $this->setConfig('DB_DATABASE', $_POST['db_name']);
@@ -615,23 +620,23 @@ class agInstall
         $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
         $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
         $this->DoNext();
-        //we should validate here in case someone changes correct information
+//we should validate here in case someone changes correct information
       }
     }
 
     if ($this->getStep() == 4) {
-      //present user with configuration settings, show 'install button'
+//present user with configuration settings, show 'install button'
       if (isset($_REQUEST['next'][$this->getStep()])) {
         $this->INSTALL_RESULT = $this->doInstall($this->getConfig('db_config'));
         $this->DoNext();
       }
     }
     if (isset($_REQUEST['finish'])) {       //isset($_REQUEST['next'][$this->getStep()]
-      //$this->doNext();
+//$this->doNext();
       $sudo = $this->getCurrent();
       $sudoer = $sudo[1]['sudo']['super_user']; //get username and password from config.yml, should be cleaner.
       $supw = $sudo[1]['sudo']['super_pass'];
-      //authenticate with this
+//authenticate with this
       try {
         $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
         $databaseManager = new sfDatabaseManager($configuration);
@@ -648,6 +653,95 @@ class agInstall
     if (isset($_REQUEST['next'][$this->getStep()])) {
       $this->DoNext();
     }
+  }
+
+  function agSaveSetup($config)
+  {
+    /** remember to set the superadmin config.yml up!!!  */
+    sfClearCache('frontend', 'all');
+    sfClearCache('frontend', 'dev');
+    sfClearCache('frontend', 'prod');
+    require_once sfConfig::get('sf_lib_dir') . '/vendor/symfony/lib/yaml/sfYaml.php';
+    $file = sfConfig::get('sf_config_dir') . '/config.yml';
+// update config.yml
+    try {
+      file_put_contents($file, sfYaml::dump($config, 4));
+    } catch (Exception $e) {
+      echo "hey, something went wrong:" . $e->getMessage();
+    }
+
+    $file = sfConfig::get('sf_app_config_dir') . '/app.yml';
+    touch($file);
+//if app.yml doesn't exist
+    $appConfig = sfYaml::load($file);
+    $appConfig['all']['sf_guard_plugin'] =
+        array('check_password_callable'
+          => array('agSudoAuth', 'authenticate'));
+    $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
+
+    $appConfig['all']['.array']['menu_top'] =
+        array(
+          'homepage' => array('label' => 'Home', 'route' => '@homepage'),
+          'prepare' => array('label' => 'Prepare', 'route' => '@homepage'),
+          'respond' => array('label' => 'Respond', 'route' => '@homepage'),
+          'recover' => array('label' => 'Recover', 'route' => '@homepage'),
+          'mitigate' => array('label' => 'Mitigate', 'route' => '@homepage'),
+          'foo' => array('label' => 'Foo', 'route' => '@foo'),
+          'modules' => array('label' => 'Modules', 'route' => '@homepage'),
+          'admin' => array('label' => 'Administration', 'route' => '@admin'),
+          'help' => array('label' => 'Help', 'route' => '@about'));
+
+    $appConfig['all']['.array']['menu_children'] =
+        array(
+          'facility' => array('label' => 'Facilities', 'route' => '@facility', 'parent' => 'prepare'),
+          'org' => array('label' => 'Organizations', 'route' => '@org', 'parent' => 'prepare'),
+          'scenario' => array('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'prepare'),
+          'activate' => array('label' => 'Activate a Scenario', 'route' => '@scenario', 'parent' => 'respond'),
+          'event' => array('label' => 'Manage Events', 'route' => '@homepage', 'parent' => 'respond'),
+          'event_active' => array('label' => 'Manage [Active Event]', 'route' => '@homepage', 'parent' => 'respond'));
+
+    $appConfig['all']['.array']['menu_grandchildren'] =
+        array(
+          'facility_new' => array('label' => 'Add New Facility', 'route' => 'facility/new', 'parent' => 'facility'),
+          'facility_list' => array('label' => 'List Facilities', 'route' => 'facility/list', 'parent' => 'facility'),
+          'facility_import' => array('label' => 'Import Facilities', 'route' => '@facility', 'parent' => 'facility'),
+          'facility_export' => array('label' => 'Export Facilities', 'route' => '@facility', 'parent' => 'facility'),
+          'facility_types' => array('label' => 'Manage Facility Types', 'route' => '@facility', 'parent' => 'facility'),
+          'org_new' => array('label' => 'Add New Organization', 'route' => 'organization/new', 'parent' => 'org'),
+          'org_list' => array('label' => 'List Organizations', 'route' => 'organization/list', 'parent' => 'org'),
+          'scenario_create' => array('label' => 'Build New Scenario', 'route' => 'scenario/new', 'parent' => 'scenario'),
+          'scenario_list' => array('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
+          'scenario_facilitygrouptypes' => array('label' => 'Edit Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
+          'scenario_active' => array('label' => '[Active Scenario]', 'route' => '@scenario', 'parent' => 'scenario'),
+          'event_active_staff' => array('label' => 'Staff', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_facilities' => array('label' => 'Facilities', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_clients' => array('label' => 'Clients', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_reporting' => array('label' => 'Reporting', 'route' => '@homepage', 'parent' => 'event_active'));
+
+// updates config.yml
+    try {
+      file_put_contents($file, sfYaml::dump($appConfig, 4));
+    } catch (Exception $e) {
+      echo 'hey, something went wrong: ', $e->getMessage();
+      return false;
+    }
+    $file = sfConfig::get('sf_config_dir') . '/databases.yml';
+//the below line will fail if the permissions are not correct, should be wrapped in a try/catch
+    $dbConfiguration = sfYaml::load($file);
+    $dbConfiguration['all']['doctrine']['param']['attributes'] = array(
+      'default_table_type' => 'INNODB',
+      'default_table_charset' => 'utf8',
+      'default_table_collate' => 'utf8_general_ci'
+    );
+    try {
+      file_put_contents($file, sfYaml::dump($dbConfiguration, 4));
+    } catch (Exception $e) {
+      echo "hey, something went wrong:" . $e->getMessage();
+      return false;
+    }
+
+    return true;
+    //once save setup is complete, create entry in ag_host (needed for global params
   }
 
 }

@@ -9,6 +9,7 @@
  * @property string $shift_status
  * @property string $description
  * @property boolean $standby
+ * @property boolean $disabled
  * @property Doctrine_Collection $agEventShift
  * @property Doctrine_Collection $agScenarioShift
  * @property Doctrine_Collection $agShiftTemplate
@@ -17,6 +18,7 @@
  * @method string              getShiftStatus()     Returns the current record's "shift_status" value
  * @method string              getDescription()     Returns the current record's "description" value
  * @method boolean             getStandby()         Returns the current record's "standby" value
+ * @method boolean             getDisabled()        Returns the current record's "disabled" value
  * @method Doctrine_Collection getAgEventShift()    Returns the current record's "agEventShift" collection
  * @method Doctrine_Collection getAgScenarioShift() Returns the current record's "agScenarioShift" collection
  * @method Doctrine_Collection getAgShiftTemplate() Returns the current record's "agShiftTemplate" collection
@@ -24,6 +26,7 @@
  * @method agShiftStatus       setShiftStatus()     Sets the current record's "shift_status" value
  * @method agShiftStatus       setDescription()     Sets the current record's "description" value
  * @method agShiftStatus       setStandby()         Sets the current record's "standby" value
+ * @method agShiftStatus       setDisabled()        Sets the current record's "disabled" value
  * @method agShiftStatus       setAgEventShift()    Sets the current record's "agEventShift" collection
  * @method agShiftStatus       setAgScenarioShift() Sets the current record's "agScenarioShift" collection
  * @method agShiftStatus       setAgShiftTemplate() Sets the current record's "agShiftTemplate" collection
@@ -54,6 +57,11 @@ abstract class BaseagShiftStatus extends sfDoctrineRecord
              'length' => 255,
              ));
         $this->hasColumn('standby', 'boolean', null, array(
+             'default' => 0,
+             'type' => 'boolean',
+             'notnull' => true,
+             ));
+        $this->hasColumn('disabled', 'boolean', null, array(
              'default' => 0,
              'type' => 'boolean',
              'notnull' => true,

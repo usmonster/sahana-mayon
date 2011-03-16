@@ -45,7 +45,7 @@ abstract class BaseagHost extends sfDoctrineRecord
         parent::setUp();
         $this->hasMany('agGlobalParam', array(
              'local' => 'id',
-             'foreign' => 'id'));
+             'foreign' => 'host_id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();
         $this->actAs($timestampable0);

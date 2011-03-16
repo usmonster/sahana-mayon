@@ -1,0 +1,43 @@
+====== Scenario Creator Walk-through ======
+
+===== Staff Resource Requirements =====
+
+**What it does:**
+
+For Agasti to assign staff personnel to a facility the system must know how many of each type of staff is required for that facility to open.  In this step the minimum and maximum required staff will be entered for the facilities you included in your groups.
+===== Reference Information =====
+
+**Good things to know about Staff Resource Requirements.**:
+
+  * Every facility must have at least one staff type with staff assigned (otherwise, there will be facilities open without staff in them).
+  * Not every facility needs to have every staff type assigned. (Shelters without medical facilities don't need doctors).
+  * If you assign a minimum you must assign a maximum.
+  * The facilities are broken up by group, so if there are multiple groups they will be listed with the facilities together in the order you put them in when creating your facility groups.
+
+===== Walk-Through =====
+
+{{:scenario:screenshot_024.png?900}}
+
+  - For each facility record listed enter **at least some staff** required for **at least one staff type** for __**every facility**__.  
+  - When you've finished entering the staff requirements click "Save and Continue".
+
+After you've clicked "Save and Continue" hit the "Next" button below.
+===== FAQ =====
+
+  - **Does a facility need to have every staff type assigned?** - No, you do not need to have every staff type assigned to every facility.  If a facility does not need some staff then those fields can be blank.
+====== Continue ======
+
+[[scenario:newstaffresources|{{ :manual:user:next.png|}}]] 
+[[scenario:newgroup|{{:manual:user:previous.png?135 }}]]
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:scenario:walkthrough|Start]]
+  - [[scenario:pre|Pre Scenario Creation]]
+  - [[scenario:new|Create A Scenario]]
+  - [[scenario:newgroup| Create Facility Groups]]
+  - **Set Staff Resource Requirements**
+  - [[scenario:newstaffresources| Create Shift Templates]]
+  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:review| Review]]

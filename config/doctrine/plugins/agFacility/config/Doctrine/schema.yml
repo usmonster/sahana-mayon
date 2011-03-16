@@ -63,18 +63,17 @@ agFacility:
     facility_name:
       type: string(64)
       notnull: true
-    facility_code:
-      type: string(10)
-      notnull: true
+  actAs:
+    Timestampable:
+    Luceneable: 
+      fields:
+        facility_name: unstored
   indexes:
     agFacility_siteId_unq:
       fields: [site_id]
       type: unique
     agFacility_facilityName_unq:
       fields: [facility_name]
-      type: unique
-    agFacility_facilityCode_unq:
-      fields: [facility_code]
       type: unique
   relations:
     agSite:
@@ -92,6 +91,9 @@ agFacilityResource:
       type: integer(4)
       notnull: true
       autoincrement: true
+    facility_resource_code:
+      type: string(10)
+      notnull: true
     facility_id:
       type: integer(4)
       notnull: true
@@ -108,6 +110,9 @@ agFacilityResource:
   indexes:
     agFacilityResource_unq:
       fields: [facility_id, facility_resource_type_id]
+      type: unique
+    agFacilityResource_facilityResourceCode_unq:
+      fields: [facility_resource_code]
       type: unique
   relations:
     agFacility:
@@ -131,7 +136,15 @@ agFacilityResourceAllocationStatus:
       notnull: true
     description:
       type: string(255)
+    available:
+      default: 1
+      type: boolean
+      notnull: true
     committed:
+      default: 0
+      type: boolean
+      notnull: true
+    standby:
       default: 0
       type: boolean
       notnull: true
@@ -144,14 +157,6 @@ agFacilityResourceAllocationStatus:
       type: boolean
       notnull: true
     accepting_clients:
-      default: 0
-      type: boolean
-      notnull: true
-    allocatable:
-      default: 1
-      type: boolean
-      notnull: true
-    standby:
       default: 0
       type: boolean
       notnull: true

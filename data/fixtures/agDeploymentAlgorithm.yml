@@ -1,4 +1,4 @@
 agDeploymentAlgorithm:
   all_staff:
-    deployment_algorithm: all available staff
+    deployment_algorithm: All Available Staff
     description: Deployment method for all available staff.

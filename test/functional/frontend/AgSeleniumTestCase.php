@@ -149,24 +149,9 @@ abstract class AgSeleniumTestCase extends SilverSelenide
     return $this->navigateTo('Home');
   }
 
-  protected function navigateToFacilites()
-  {
-    return $this->navigateTo('Facility');
-  }
-
   protected function navigateToStaff()
   {
     return $this->navigateTo('Staff');
-  }
-
-  protected function navigateToClients()
-  {
-    return $this->navigateTo('Client');
-  }
-
-  protected function navigateToScenario()
-  {
-    return $this->navigateTo('Scenario');
   }
 
   protected function navigateToGis()
@@ -174,9 +159,29 @@ abstract class AgSeleniumTestCase extends SilverSelenide
     return $this->navigateTo('GIS');
   }
 
+  protected function navigateToFacility()
+  {
+    return $this->navigateTo('Facilities');
+  }
+
+  protected function navigateToScenario()
+  {
+    return $this->navigateTo('Scenarios');
+  }
+
+  protected function navigateToOrganization()
+  {
+    return $this->navigateTo('Organizations');
+  }
+
+  protected function navigateToEvent()
+  {
+    return $this->navigateTo('Manage Events');
+  }
+
   protected function navigateToAdmin()
   {
-    return $this->navigateTo('Admin');
+    return $this->navigateTo('Administration');
   }
 
   protected function navigateToAbout()

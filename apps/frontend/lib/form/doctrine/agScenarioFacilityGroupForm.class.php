@@ -33,36 +33,20 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
   **/
   public function setup()
   {
-    $current = $this->getObject()->getAgScenarioFacilityResource();
-
-    $currentoptions = array();
-    foreach($current as $curopt)
-    {
-      $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
-      /**
-       * @todo [$curopt->activation_sequence] needs to still be applied to the list,
-       */
-
-    }
+    
     $this->setWidgets(array(
       'id'                                  => new sfWidgetFormInputHidden(),
-      'scenario_id'                         => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => false)),
-      'scenario_facility_group'             => new sfWidgetFormInputText(),
+      'scenario_id'                         => new sfWidgetFormInputHidden(),
+      'scenario_facility_group'             => new sfWidgetFormInputText(array('label' => 'Status')),
       'facility_group_type_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupType'), 'add_empty' => false)),
-      'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false)),
+      'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false, 'method' => 'getFacilityGroupAllocationStatus', 'label' => 'Status')),
       'activation_sequence'                 => new sfWidgetFormInputText(),
       //facility resource list needs to minus options that are in $currentoptions
-      //'ag_facility_resource_list'          => new sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('style' => 'height:150px;width:150px;')),
-      'ag_facility_resource_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('style' => 'height:300px;width:300px;')),
-      'ag_facility_resource_order'          => new sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('style' => 'height:300px;width:300px;'))
+      //'ag_facility_resource_list'          => new sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('class' => 'widthAndHeight150')),
+      'ag_facility_resource_list'           => new sfWidgetFormInputHidden(),//sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('class' => 'widthAndHeight300')), //this will be hidden
+      'ag_facility_resource_order'          => new sfWidgetFormInputHidden(),//sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('class' => 'widthAndHeight300')) //this will be hidden
       ));
-        $this->widgetSchema['ag_facility_resource_list']->addOption(
-      'query',
-      Doctrine_Query::create()
-        ->select('a.facility_id, af.*, afrt.*')
-        ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-        ->whereNotIn('a.id', array_keys($currentoptions))
-    );
+
 
     $this->setValidators(array(
       'id'                                  => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
@@ -71,7 +55,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
       'facility_group_type_id'              => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupType'))),
       'facility_group_allocation_status_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'))),
       'activation_sequence'                 => new sfValidatorInteger(),
-      'ag_facility_resource_list'           => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'required' => false)),
+      //'ag_facility_resource_list'           => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'required' => false)),
       //'ag_facility_resource_order'          => new sfValidatorChoice(array('required' => false))
     ));
     $this->validatorSchema->setOption('allow_extra_fields', true);
@@ -85,9 +69,15 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
     $this->widgetSchema->setLabel('scenario_facility_group','Facility Group Name');
     $this->widgetSchema->setNameFormat('ag_scenario_facility_group[%s]');
 
-    $custDeco = new agWidgetFormSchemaFormatterInline($this->getWidgetSchema());
+    $custDeco = new agWidgetFormSchemaFormatterShift($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
     $this->getWidgetSchema()->setFormFormatterName('custDeco');
+
+    $groupDeco = new agWidgetFormSchemaFormatterInlineBigTopLabel($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupDeco);
+    $this->getWidgetSchema()->setFormFormatterName('groupFormDeco');
+    $this->getWidget('scenario_facility_group')->setAttribute('class', 'inputGray');
+    $this->getWidget('activation_sequence')->setAttribute('class', 'inputGray');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
@@ -105,28 +95,36 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
    *
    * @param sfDatabaseConnection $con
    * This is a private function that processes existing relationships
-   * relevant to
+   * relevant to scenario facility groups, facility resources and their activation sequence
    */
   protected function doSave($con = null)
   {
     $existing = $this->getObject()->getAgScenarioFacilityResource();
-    foreach($existing as $rec){$current[] = $rec;}
+    foreach($existing as $rec){
+      $current[] = $rec->facility_resource_id;
+    }
     //$existing = $this->object->agFacilityResource->getPrimaryKeys();
     $values = $this->getTaintedValues();
     //all we need to save, is the allocated list: it's order included(this is proving to be clumsy while working with a listbox, jquery is prefered)
-    if($values) $values = $values['ag_facility_resource_order'];
+    $alloc_array = json_decode($values['ag_facility_resource_order']);
     unset($this['ag_facility_resource_order']);
     unset($this['ag_facility_resource_list']);
     parent::doSave($con);
-    if($values)
+    if($alloc_array)
     {
-      /** this should be $current->getAgScenarioFacilityResource(), will it return an array? will it be cached? */
-      if($current)  $toDelete = array_diff($current,$values);
+      //current is what is currently in that facility group
+      //alloc_array is what the form is bringing in, so, we should do a diff.
+      if(isset($current)) {
+        $toDelete = array_diff ($current,$alloc_array);
+      } else {
+        $current = array();
+        $toDelete = array_diff ($current,$alloc_array);
+      }
 
       if(count($toDelete) >0)
       {
         /** @todo clean this up, a subquery to delete on would be optimal */
-        $deleteRecs = Doctrine_Query::create()
+        $deleteRecs = agDoctrineQuery::create()
         ->select('a.facility_resource_id')
         ->from('agScenarioFacilityResource a')
         ->whereIn('a.facility_resource_id', $toDelete)->execute();
@@ -135,17 +133,26 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
           $deletor->delete();
         }
       }
-      foreach($values as $key => $value)
+      foreach($alloc_array as $key => $value)
       {
-        if( in_array($value,$current)) $agScenarioFacilityResource = $currentCheck;
+        if( in_array($value,$current)){
+            
+          $agScenarioFacilityResource = Doctrine_Core::getTable('agScenarioFacilityResource')
+          ->findByDql('facility_resource_id = ? AND scenario_facility_group_id = ?', array($value,$this->getObject()->getId()))->getFirst();
+          $agScenarioFacilityResource->setActivationSequence($key +1);
+           //= new agScenarioFacilityResource($value);
+            //if this already exists in the scenariofacilitygroup as a resource, don't do anything
+        }
         else{
           //if there isn't an entry in agScenarioFacilityResource for this group/facility_resource...
+          //if this item exists, but the order is different. fail.
           $agScenarioFacilityResource = new agScenarioFacilityResource();
+
           $agScenarioFacilityResource->scenario_facility_group_id = $this->getObject()->getId();
           $agScenarioFacilityResource->activation_sequence = $key +1;
           $agScenarioFacilityResource->facility_resource_id = $value;
-          $agScenarioFacilityResource->facility_resource_allocation_status_id = 4;
-          }
+          $agScenarioFacilityResource->facility_resource_allocation_status_id = 2; //ready / awaiting activation / committed  
+        }
         $agScenarioFacilityResource->save();
       }
     }

@@ -22,6 +22,8 @@
  * @property Doctrine_Collection $agPersonName
  * @property Doctrine_Collection $agPersonNameType
  * @property Doctrine_Collection $agPersonCustomField
+ * @property Doctrine_Collection $agStaff
+ * @property Doctrine_Collection $agStaffStatus
  * @property Doctrine_Collection $agPersonLastImport
  * @property Doctrine_Collection $agImportType
  * @property Doctrine_Collection $agClient
@@ -37,8 +39,6 @@
  * @property Doctrine_Collection $agPersonCustomFieldValue
  * @property Doctrine_Collection $agPersonSkill
  * @property Doctrine_Collection $agPersonCertification
- * @property Doctrine_Collection $agStaff
- * @property Doctrine_Collection $agStaffStatus
  * 
  * @method integer             getId()                        Returns the current record's "id" value
  * @method integer             getEntityId()                  Returns the current record's "entity_id" value
@@ -57,6 +57,8 @@
  * @method Doctrine_Collection getAgPersonName()              Returns the current record's "agPersonName" collection
  * @method Doctrine_Collection getAgPersonNameType()          Returns the current record's "agPersonNameType" collection
  * @method Doctrine_Collection getAgPersonCustomField()       Returns the current record's "agPersonCustomField" collection
+ * @method Doctrine_Collection getAgStaff()                   Returns the current record's "agStaff" collection
+ * @method Doctrine_Collection getAgStaffStatus()             Returns the current record's "agStaffStatus" collection
  * @method Doctrine_Collection getAgPersonLastImport()        Returns the current record's "agPersonLastImport" collection
  * @method Doctrine_Collection getAgImportType()              Returns the current record's "agImportType" collection
  * @method Doctrine_Collection getAgClient()                  Returns the current record's "agClient" collection
@@ -72,8 +74,6 @@
  * @method Doctrine_Collection getAgPersonCustomFieldValue()  Returns the current record's "agPersonCustomFieldValue" collection
  * @method Doctrine_Collection getAgPersonSkill()             Returns the current record's "agPersonSkill" collection
  * @method Doctrine_Collection getAgPersonCertification()     Returns the current record's "agPersonCertification" collection
- * @method Doctrine_Collection getAgStaff()                   Returns the current record's "agStaff" collection
- * @method Doctrine_Collection getAgStaffStatus()             Returns the current record's "agStaffStatus" collection
  * @method agPerson            setId()                        Sets the current record's "id" value
  * @method agPerson            setEntityId()                  Sets the current record's "entity_id" value
  * @method agPerson            setAgEntity()                  Sets the current record's "agEntity" value
@@ -91,6 +91,8 @@
  * @method agPerson            setAgPersonName()              Sets the current record's "agPersonName" collection
  * @method agPerson            setAgPersonNameType()          Sets the current record's "agPersonNameType" collection
  * @method agPerson            setAgPersonCustomField()       Sets the current record's "agPersonCustomField" collection
+ * @method agPerson            setAgStaff()                   Sets the current record's "agStaff" collection
+ * @method agPerson            setAgStaffStatus()             Sets the current record's "agStaffStatus" collection
  * @method agPerson            setAgPersonLastImport()        Sets the current record's "agPersonLastImport" collection
  * @method agPerson            setAgImportType()              Sets the current record's "agImportType" collection
  * @method agPerson            setAgClient()                  Sets the current record's "agClient" collection
@@ -106,8 +108,6 @@
  * @method agPerson            setAgPersonCustomFieldValue()  Sets the current record's "agPersonCustomFieldValue" collection
  * @method agPerson            setAgPersonSkill()             Sets the current record's "agPersonSkill" collection
  * @method agPerson            setAgPersonCertification()     Sets the current record's "agPersonCertification" collection
- * @method agPerson            setAgStaff()                   Sets the current record's "agStaff" collection
- * @method agPerson            setAgStaffStatus()             Sets the current record's "agStaffStatus" collection
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -217,6 +217,15 @@ abstract class BaseagPerson extends sfDoctrineRecord
              'local' => 'person_id',
              'foreign' => 'person_custom_field_id'));
 
+        $this->hasMany('agStaff', array(
+             'local' => 'id',
+             'foreign' => 'person_id'));
+
+        $this->hasMany('agStaffStatus', array(
+             'refClass' => 'agStaff',
+             'local' => 'person_id',
+             'foreign' => 'staff_status_id'));
+
         $this->hasMany('agPersonLastImport', array(
              'local' => 'id',
              'foreign' => 'person_id'));
@@ -278,16 +287,9 @@ abstract class BaseagPerson extends sfDoctrineRecord
              'local' => 'id',
              'foreign' => 'person_id'));
 
-        $this->hasMany('agStaff', array(
-             'local' => 'id',
-             'foreign' => 'person_id'));
-
-        $this->hasMany('agStaffStatus', array(
-             'refClass' => 'agStaff',
-             'local' => 'person_id',
-             'foreign' => 'staff_status_id'));
-
+        $luceneable0 = new Luceneable();
         $timestampable0 = new Doctrine_Template_Timestampable();
+        $this->actAs($luceneable0);
         $this->actAs($timestampable0);
     }
 }

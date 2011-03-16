@@ -1,0 +1,176 @@
+agStaffAllocationStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    staff_allocation_status:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    allocatable:
+      default: 1
+      type: boolean
+      notnull: true
+    committed:
+      type: boolean
+      notnull: true
+    standby:
+      type: boolean
+      notnull: true
+    active:
+      type: boolean
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    UX_agEventStaffStatus:
+      fields: [staff_allocation_status]
+      type: unique
+agStaff:
+  columns:
+    id:
+      primary: true
+      type: integer(4)
+      notnull: true
+      autoincrement: true
+    person_id:
+      type: integer(5)
+      notnull: true
+    staff_status_id:
+      type: integer(2)
+      notnull: true
+  actAs: [Luceneable, Timestampable]
+  indexes:
+    agStaff_unq:
+      fields: [person_id]
+      type: unique
+  relations:
+    agPerson:
+      local: person_id
+      foreign: id
+    agStaffStatus:
+      local: staff_status_id
+      foreign: id
+    agStaffResourceType:
+      class: agStaffResourceType
+      refClass: agStaffResource
+      local: staff_id
+      foreign: staff_resource_type_id
+agStaffResourceType:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    staff_resource_type:
+      type: string(64)
+      notnull: true
+    staff_resource_type_abbr:
+      type: string(10)
+    description:
+      type: string(255)
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agStaffResourceType_unq:
+      fields: [staff_resource_type]
+      type: unique
+    UX_agStaffResourceType:
+      fields: [staff_resource_type_abbr]
+      type: unique
+  relations:
+    agStaff:
+      class: agStaff
+      refClass: agStaffResource
+      local: staff_resource_type_id
+      foreign: staff_id
+    agSkill:
+      class: agSkill
+      refClass: agStaffResourceTypeProvision
+      local: staff_resource_type_id
+      foreign: skill_id
+agStaffResource:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+      notnull: true
+      autoincrement: true
+    staff_id:
+      type: integer(4)
+      notnull: true
+    staff_resource_type_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    agStaffResource_unq:
+      fields: [staff_id, staff_resource_type_id]
+      type: unique
+  relations:
+    agStaff:
+      local: staff_id
+      foreign: id
+    agStaffResourceType:
+      local: staff_resource_type_id
+      foreign: id
+agStaffStatus:
+  columns:
+    id:
+      primary: true
+      type: integer(2)
+      notnull: true
+      autoincrement: true
+    staff_status:
+      type: string(30)
+      notnull: true
+    description:
+      type: string(255)
+    is_available:
+      type: boolean
+      notnull: true
+    app_display:
+      default: 1
+      type: boolean
+      notnull: true
+  indexes:
+    agStaffStatus_unq:
+      fields: [staff_status]
+      type: unique
+  relations:
+    agPerson:
+      class: agPerson
+      refClass: agStaff
+      local: staff_status_id
+      foreign: person_id
+agStaffResourceOrganization:
+  columns:
+    id:
+      primary: true
+      type: integer(5)
+    staff_resource_id:
+      type: integer(5)
+      notnull: true
+    organization_id:
+      type: integer(2)
+      notnull: true
+  indexes:
+    UX_agStaffResourceOrganization:
+      fields: [staff_resource_id]
+      type: unique
+  relations:
+    agStaffResource:
+      local: staff_resource_id
+      foreign: id
+    agOrganization:
+      local: organization_id
+      foreign: id
+actAs:
+  Timestampable: 

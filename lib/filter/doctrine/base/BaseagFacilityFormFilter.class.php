@@ -15,7 +15,6 @@ abstract class BaseagFacilityFormFilter extends BaseFormFilterDoctrine
     $this->setWidgets(array(
       'site_id'                        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agSite'), 'add_empty' => true)),
       'facility_name'                  => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'facility_code'                  => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'created_at'                     => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'updated_at'                     => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'ag_facility_resource_type_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResourceType')),
@@ -24,7 +23,6 @@ abstract class BaseagFacilityFormFilter extends BaseFormFilterDoctrine
     $this->setValidators(array(
       'site_id'                        => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agSite'), 'column' => 'id')),
       'facility_name'                  => new sfValidatorPass(array('required' => false)),
-      'facility_code'                  => new sfValidatorPass(array('required' => false)),
       'created_at'                     => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'updated_at'                     => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'ag_facility_resource_type_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResourceType', 'required' => false)),
@@ -68,7 +66,6 @@ abstract class BaseagFacilityFormFilter extends BaseFormFilterDoctrine
       'id'                             => 'Number',
       'site_id'                        => 'ForeignKey',
       'facility_name'                  => 'Text',
-      'facility_code'                  => 'Text',
       'created_at'                     => 'Date',
       'updated_at'                     => 'Date',
       'ag_facility_resource_type_list' => 'ManyKey',

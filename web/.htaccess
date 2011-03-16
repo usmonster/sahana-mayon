@@ -6,6 +6,9 @@ Options +FollowSymLinks +ExecCGI
   # uncomment the following line, if you are having trouble
   # getting no_script_name to work
   #RewriteBase /
+  
+  # Allow access to the wiki
+  RewriteRule ^wiki/ - [L]
 
   # we skip all files with .something
   #RewriteCond %{REQUEST_URI} \..+$

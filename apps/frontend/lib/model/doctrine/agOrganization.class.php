@@ -24,7 +24,7 @@ class agOrganization extends BaseagOrganization
     try
     {
       // Collect all organizations.
-      $organizationQuery = Doctrine_Query::create()
+      $organizationQuery = agDoctrineQuery::create()
         ->select('o.*')
         ->from('agOrganization as o');
 
@@ -54,7 +54,7 @@ class agOrganization extends BaseagOrganization
     {
       // Should check if ag_staff_resource_organization table is empty.  If table is empty, staff resources are not associated to organization.
 
-      $query = Doctrine_Query::create()
+      $query = agDoctrineQuery::create()
         ->select('o.id, sro.id, sr.id, s.id, s.person_id, sr.staff_resource_type_id')
         ->from('agOrganization as o')
         ->leftJoin('o.agStaffResourceOrganization as sro')
@@ -82,10 +82,12 @@ class agOrganization extends BaseagOrganization
         $staffId = $rslt['s_id'];
         $personId = $rslt['s_person_id'];
         $stfResTypeId = $rslt['sr_staff_resource_type_id'];
+        $stfResId = $rslt['sr_id'];
         $orgStfByRes[] = array('staff_resource_organization_id' => $stfResOrgId,
                                'organization_id' => $orgId,
                                'staff_id' => $staffId,
-                               'staff_resource_type_id' =>$stfResTypeId,
+                               'staff_resource_type_id' => $stfResTypeId,
+                               'staff_resource_id' => $stfResId,
                                'person_id' => $personId
                               );
       }

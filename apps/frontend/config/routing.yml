@@ -8,9 +8,6 @@ homepage:
 facility:
   url:  /facility
   param: { module: facility, action: index }
-staff:
-  url: /staff
-  param: { module: staff, action: index }
 client:
   url: /client
   param: { module: client, action: index }
@@ -20,12 +17,6 @@ scenario:
 org:
   url: /organization
   param: { module: organization, action: index }
-gis_index:
-  url: /gis
-  param: { module: agGis, action: index }
-gis:
-  url: /gis/:action
-  param: { module: agGis}
 admin:
   url: /admin
   param: { module: admin, action: index }
@@ -38,6 +29,70 @@ default_index:
   url:   /:module
   param: { action: index }
 
+facility_import:
+  url:  /facility/import
+  param: { module: facility, action: import }
+
+scenario_edit:
+  url:     /scenario/:id/edit
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: edit }
+
+scenario_show_facility_staff_resource:
+  url:     /scenario/:id/staffresources
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: staffresources }
+
+scenario_listgroups:
+  url:     /scenario/:id/listgroups
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: listgroups }
+
+scenario_staff_pool:
+  url:     /scenario/:id/staffpool
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: staffpool }
+
+scenario_search:
+  url:     /scenario/:id/search
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action search }
+
+scenario_fgroup:
+  url:     /scenario/:id/fgroup
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: fgroup }
+
+scenario_fgroup_edit:
+  url:     /scenario/:id/fgroup/:groupid
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: fgroup }
+
+scenario_shift_templates:
+  url:     /scenario/:id/shifttemplates
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: shifttemplates }
+
+scenario_shift_list:
+  url:     /scenario/:id/shifts
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: shifts }
+
+scenario_shifts:
+  url:     /scenario/:id/shifts/:shiftid
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: shifts }
+
+scenario_review:
+  url:     /scenario/:id/review
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: review }
+
+scenario_facility_group:
+  url:     /scenario/:id/listgroup
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: listgroup }
+
 default:
   url:   /:module/:action/*
 
@@ -48,9 +103,3 @@ sf_guard_signin:
 sf_guard_signout:
   url:   /logout
   param: { module: sfGuardAuth, action: signout }
-staff_search:
-  url:   /staff/search
-  param: { module: staff, action: search }
-staff_filter:
-  url:   /staff/filter
-  param: { module: staff, action: filter }

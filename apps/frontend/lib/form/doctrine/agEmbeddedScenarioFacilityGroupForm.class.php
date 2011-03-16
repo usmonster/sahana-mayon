@@ -49,16 +49,16 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
       'scenario_id'                         => new sfWidgetFormInputHidden(),
       'scenario_facility_group'             => new sfWidgetFormInputText(),
       'facility_group_type_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupType'), 'add_empty' => false)),
-      'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false)),
+      'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false, 'method' => 'getFacilityGroupAllocationStatus')),
       'activation_sequence'                 => new sfWidgetFormInputText(),
       //facility resource list needs to minus options that are in $currentoptions
-      //'ag_facility_resource_list'          => new sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('style' => 'height:150px;width:150px;')),
-      'ag_facility_resource_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('style' => 'height:300px;width:300px;')),
-      'ag_facility_resource_order'          => new sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('style' => 'height:300px;width:300px;'))
+      //'ag_facility_resource_list'          => new sfWidgetFormChoice(array('choices' => $availtoptions,'multiple' => true),array('class' => 'widthAndHeight150')),
+      'ag_facility_resource_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false), array('class' => 'widthAndHeight300')),
+      'ag_facility_resource_order'          => new sfWidgetFormChoice(array('choices' => $currentoptions,'multiple' => true),array('class' => 'widthAndHeight300'))
       ));
         $this->widgetSchema['ag_facility_resource_list']->addOption(
       'query',
-      Doctrine_Query::create()
+      agDoctrineQuery::create()
         ->select('a.facility_id, af.*, afrt.*')
         ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
         ->whereNotIn('a.id', array_keys($currentoptions))
@@ -126,7 +126,7 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
       if(count($toDelete) >0)
       {
         /** @todo clean this up, a subquery to delete on would be optimal */
-        $deleteRecs = Doctrine_Query::create()
+        $deleteRecs = agDoctrineQuery::create()
         ->select('a.facility_resource_id')
         ->from('agScenarioFacilityResource a')
         ->whereIn('a.facility_resource_id', $toDelete)->execute();

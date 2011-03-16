@@ -1,192 +1,628 @@
+# Scenario Facility Resources - defines what Facility Resources are in which groups and what status they will have.
+
+# Hurricane A Resources
 agScenarioFacilityResource:
   hurrA01_18_uorc:
     agFacilityResource: facility_18_uorc
     agScenarioFacilityGroup: hurrA_uorc
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrA01_33_uorc:
+    agFacilityResource: facility_33_uorc
+    agScenarioFacilityGroup: hurrA_uorc
+    agFacilityResourceAllocationStatus: unavailable
     activation_sequence: 1
   hurrA01_11_ec:
     agFacilityResource: facility_11_ec
     agScenarioFacilityGroup: hurrA_G01
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
   hurrA01_11_smn:
     agFacilityResource: facility_11_smn
     agScenarioFacilityGroup: hurrA_G01
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
   hurrA01_11_hs:
     agFacilityResource: facility_11_hs
     agScenarioFacilityGroup: hurrA_G01
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
   hurrA02_14_ec:
     agFacilityResource: facility_14_ec
     agScenarioFacilityGroup: hurrA_G02
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
   hurrA02_14_hs:
     agFacilityResource: facility_14_hs
     agScenarioFacilityGroup: hurrA_G02
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
   hurrA02_15_hs:
     agFacilityResource: facility_15_hs
     agScenarioFacilityGroup: hurrA_G02
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 2
   hurrA03_17_ec:
     agFacilityResource: facility_17_ec
     agScenarioFacilityGroup: hurrA_G03
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
   hurrA03_17_hs:
     agFacilityResource: facility_17_hs
     agScenarioFacilityGroup: hurrA_G03
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: standby
     activation_sequence: 1
+# Hurricane B Resources
   hurrB01_18_uorc:
     agFacilityResource: facility_18_uorc
     agScenarioFacilityGroup: hurrB_uorc
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrB01_33_uorc:
+    agFacilityResource: facility_33_uorc
+    agScenarioFacilityGroup: hurrB_uorc
+    agFacilityResourceAllocationStatus: unavailable
     activation_sequence: 1
   hurrB01_11_ec:
     agFacilityResource: facility_11_ec
     agScenarioFacilityGroup: hurrB_G01
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
   hurrB01_11_smn:
     agFacilityResource: facility_11_smn
     agScenarioFacilityGroup: hurrB_G01
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
   hurrB01_11_hs:
     agFacilityResource: facility_11_hs
     agScenarioFacilityGroup: hurrB_G01
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
   hurrB02_14_ec:
     agFacilityResource: facility_14_ec
     agScenarioFacilityGroup: hurrB_G02
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
-  hurrB02_hs:
+  hurrB02_14_hs:
     agFacilityResource: facility_14_hs
     agScenarioFacilityGroup: hurrB_G02
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
   hurrB02_15_hs:
     agFacilityResource: facility_15_hs
     agScenarioFacilityGroup: hurrB_G02
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: standby
     activation_sequence: 3
   hurrB02_13_hs:
     agFacilityResource: facility_13_hs
     agScenarioFacilityGroup: hurrB_G02
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 2
   hurrB03_17_ec:
     agFacilityResource: facility_17_ec
     agScenarioFacilityGroup: hurrB_G03
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: standby
     activation_sequence: 1
   hurrB03_17_hs:
     agFacilityResource: facility_17_hs
     agScenarioFacilityGroup: hurrB_G03
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: standby
     activation_sequence: 1
-  hurrB03_17_pet:
-    agFacilityResource: facility_17_pet
-    agScenarioFacilityGroup: hurrB_G03
-    agFacilityResourceAllocationStatus: committed
+  hurrB04_26_smn:
+    agFacilityResource: facility_26_smn
+    agScenarioFacilityGroup: hurrB_G04
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
-  hurrB03_19_hs:
-    agFacilityResource: facility_19_hs
-    agScenarioFacilityGroup: hurrB_G03
-    agFacilityResourceAllocationStatus: committed
+  hurrB04_22_ec:
+    agFacilityResource: facility_22_ec
+    agScenarioFacilityGroup: hurrB_G04
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrB04_23_hs:
+    agFacilityResource: facility_23_hs
+    agScenarioFacilityGroup: hurrB_G04
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrB04_20_hs:
+    agFacilityResource: facility_20_hs
+    agScenarioFacilityGroup: hurrB_G04
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 1
+  hurrB04_40_hs:
+    agFacilityResource: facility_40_hs
+    agScenarioFacilityGroup: hurrB_G04
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 2
+  hurrB05_38_ec:
+    agFacilityResource: facility_38_ec
+    agScenarioFacilityGroup: hurrB_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrB05_36_ec:
+    agFacilityResource: facility_36_ec
+    agScenarioFacilityGroup: hurrB_G05
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 1
+  hurrB05_39_smn:
+    agFacilityResource: facility_39_smn
+    agScenarioFacilityGroup: hurrB_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrB05_40_smn:
+    agFacilityResource: facility_40_smn
+    agScenarioFacilityGroup: hurrB_G05
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 2
+  hurrB05_41_hs:
+    agFacilityResource: facility_41_hs
+    agScenarioFacilityGroup: hurrB_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  hurrB05_42_hs:
+    agFacilityResource: facility_42_hs
+    agScenarioFacilityGroup: hurrB_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
+  hurrB05_43_hs:
+    agFacilityResource: facility_43_hs
+    agScenarioFacilityGroup: hurrB_G05
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 4
+  hurrB05_44_hs:
+    agFacilityResource: facility_44_hs
+    agScenarioFacilityGroup: hurrB_G05
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 5
+# Hurricane C Resource
   hurrC01_18_uorc:
     agFacilityResource: facility_18_uorc
     agScenarioFacilityGroup: hurrC_uorc
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrC01_33_uorc:
+    agFacilityResource: facility_33_uorc
+    agScenarioFacilityGroup: hurrC_uorc
+    agFacilityResourceAllocationStatus: unavailable
     activation_sequence: 1
   hurrC01_11_ec:
     agFacilityResource: facility_11_ec
     agScenarioFacilityGroup: hurrC_G01
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
   hurrC01_11_smn:
     agFacilityResource: facility_11_smn
     agScenarioFacilityGroup: hurrC_G01
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
   hurrC01_11_hs:
     agFacilityResource: facility_11_hs
     agScenarioFacilityGroup: hurrC_G01
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
-  hurrC01_12_hs:
-    agFacilityResource: facility_12_hs
-    agScenarioFacilityGroup: hurrC_G01
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 2
-  hurrC02_ec:
+  hurrC02_14_ec:
     agFacilityResource: facility_14_ec
     agScenarioFacilityGroup: hurrC_G02
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
   hurrC02_14_hs:
     agFacilityResource: facility_14_hs
     agScenarioFacilityGroup: hurrC_G02
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
   hurrC02_15_hs:
     agFacilityResource: facility_15_hs
     agScenarioFacilityGroup: hurrC_G02
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: standby
     activation_sequence: 3
   hurrC02_13_hs:
     agFacilityResource: facility_13_hs
     agScenarioFacilityGroup: hurrC_G02
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 4
-  hurrC02_16_smn:
-    agFacilityResource: facility_16_smn
-    agScenarioFacilityGroup: hurrC_G02
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 1
-  hurrC02_16_hs:
-    agFacilityResource: facility_16_hs
-    agScenarioFacilityGroup: hurrC_G02
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 2
   hurrC03_17_ec:
     agFacilityResource: facility_17_ec
     agScenarioFacilityGroup: hurrC_G03
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: standby
     activation_sequence: 1
   hurrC03_17_hs:
     agFacilityResource: facility_17_hs
     agScenarioFacilityGroup: hurrC_G03
-    agFacilityResourceAllocationStatus: committed
+    agFacilityResourceAllocationStatus: standby
     activation_sequence: 1
-  hurrC03_17_pet:
-    agFacilityResource: facility_17_pet
-    agScenarioFacilityGroup: hurrC_G03
-    agFacilityResourceAllocationStatus: committed
+  hurrC04_26_smn:
+    agFacilityResource: facility_26_smn
+    agScenarioFacilityGroup: hurrC_G04
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
-  hurrC03_19_hs:
-    agFacilityResource: facility_19_hs
-    agScenarioFacilityGroup: hurrC_G03
-    agFacilityResourceAllocationStatus: committed
-    activation_sequence: 2
-  hurrC03_20_hs:
+  hurrC04_22_ec:
+    agFacilityResource: facility_22_ec
+    agScenarioFacilityGroup: hurrC_G04
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrC04_23_hs:
+    agFacilityResource: facility_23_hs
+    agScenarioFacilityGroup: hurrC_G04
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrC04_20_hs:
     agFacilityResource: facility_20_hs
-    agScenarioFacilityGroup: hurrC_G03
-    agFacilityResourceAllocationStatus: committed
+    agScenarioFacilityGroup: hurrC_G04
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 1    
+  hurrC04_40_hs:
+    agFacilityResource: facility_40_hs
+    agScenarioFacilityGroup: hurrC_G04
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  hurrC05_38_ec:
+    agFacilityResource: facility_38_ec
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1    
+  hurrC05_36_ec:
+    agFacilityResource: facility_36_ec
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: unavailable
     activation_sequence: 1
-  hurrC03_19_whs: 
-    agFacilityResource: facility_19_whs
-    agScenarioFacilityGroup: hurrC_G03
-    agFacilityResourceAllocationStatus: committed
+  hurrC05_39_smn:
+    agFacilityResource: facility_39_smn
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1    
+  hurrC05_40_smn:
+    agFacilityResource: facility_40_smn
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 2
+  hurrC05_41_hs:
+    agFacilityResource: facility_41_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  hurrC05_42_hs:
+    agFacilityResource: facility_42_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3 
+  hurrC05_43_hs:
+    agFacilityResource: facility_43_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 4 
+  hurrC05_44_hs:
+    agFacilityResource: facility_44_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 5 
+  hurrC06_54_ec:
+    agFacilityResource: facility_54_ec
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
     activation_sequence: 1
-
+  hurrC06_55_hs:
+    agFacilityResource: facility_55_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrC06_55_smn:
+    agFacilityResource: facility_55_smn
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrC06_56_hs:
+    agFacilityResource: facility_56_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrC06_57_hs:
+    agFacilityResource: facility_57_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  hurrC06_58_hs:
+    agFacilityResource: facility_58_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 1
+  hurrC06_59_hs:
+    agFacilityResource: facility_59_hs
+    agScenarioFacilityGroup: hurrC_G05
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 1
+# earthquake
+  equake_11:
+    agFacilityResource: facility_11_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_12:
+    agFacilityResource: facility_12_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_13:
+    agFacilityResource: facility_13_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_14:
+    agFacilityResource: facility_14_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_15:
+    agFacilityResource: facility_15_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_16:
+    agFacilityResource: facility_16_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 2
+  equake_17:
+    agFacilityResource: facility_17_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 2
+  equake_18:
+    agFacilityResource: facility_18_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 2
+  equake_19:
+    agFacilityResource: facility_19_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 3
+  equake_20:
+    agFacilityResource: facility_20_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 3
+  equake_21:
+    agFacilityResource: facility_21_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 3
+  equake_23:
+    agFacilityResource: facility_23_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 4
+  equake_31:
+    agFacilityResource: facility_23_hs
+    agScenarioFacilityGroup: equake_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 4
+  equake_40:
+    agFacilityResource: facility_40_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_41:
+    agFacilityResource: facility_41_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_42:
+    agFacilityResource: facility_42_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  equake_43:
+    agFacilityResource: facility_43_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  equake_44:
+    agFacilityResource: facility_44_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
+  equake_45:
+    agFacilityResource: facility_45_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
+  equake_46:
+    agFacilityResource: facility_46_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 4
+  equake_47:
+    agFacilityResource: facility_47_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 4
+  equake_48:
+    agFacilityResource: facility_48_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 1
+  equake_49:
+    agFacilityResource: facility_49_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 1
+  equake_50:
+    agFacilityResource: facility_50_hs
+    agScenarioFacilityGroup: equake_G02
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 1
+  equake_11:
+    agFacilityResource: facility_11_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_16:
+    agFacilityResource: facility_16_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  equake_20:
+    agFacilityResource: facility_20_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 1
+  equake_21:
+    agFacilityResource: facility_21_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  equake_24:
+    agFacilityResource: facility_24_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  equake_25:
+    agFacilityResource: facility_25_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
+  equake_26:
+    agFacilityResource: facility_26_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
+  equake_27:
+    agFacilityResource: facility_27_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 4
+  equake_28:
+    agFacilityResource: facility_28_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 4
+  equake_29:
+    agFacilityResource: facility_29_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 5
+  equake_30:
+    agFacilityResource: facility_30_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 5
+  equake_31:
+    agFacilityResource: facility_31_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 5
+  equake_32:
+    agFacilityResource: facility_32_smn
+    agScenarioFacilityGroup: equake_G03
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 5
+# plaque
+  plague_11:
+    agFacilityResource: facility_11_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  plague_12:
+    agFacilityResource: facility_12_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  plague_13:
+    agFacilityResource: facility_13_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  plague_14:
+    agFacilityResource: facility_14_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  plague_15:
+    agFacilityResource: facility_15_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  plague_16:
+    agFacilityResource: facility_16_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 2
+  plague_17:
+    agFacilityResource: facility_17_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 2
+  plague_18:
+    agFacilityResource: facility_18_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 2
+  plague_19:
+    agFacilityResource: facility_19_hs
+    agScenarioFacilityGroup: plague_G01
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 3
+  plague_11:
+    agFacilityResource: facility_11_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  plague_16:
+    agFacilityResource: facility_16_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 1
+  plague_20:
+    agFacilityResource: facility_20_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 1
+  plague_21:
+    agFacilityResource: facility_21_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  plague_24:
+    agFacilityResource: facility_24_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 2
+  plague_25:
+    agFacilityResource: facility_25_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
+  plague_26:
+    agFacilityResource: facility_26_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 3
+  plague_27:
+    agFacilityResource: facility_27_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: setup
+    activation_sequence: 4
+  plague_28:
+    agFacilityResource: facility_28_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 4
+  plague_29:
+    agFacilityResource: facility_29_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 5
+  plague_30:
+    agFacilityResource: facility_30_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 5
+  plague_31:
+    agFacilityResource: facility_31_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: unavailable
+    activation_sequence: 5
+  plague_32:
+    agFacilityResource: facility_32_smn
+    agScenarioFacilityGroup: plague_G02
+    agFacilityResourceAllocationStatus: standby
+    activation_sequence: 5

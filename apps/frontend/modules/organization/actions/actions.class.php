@@ -15,6 +15,25 @@
  */
 class organizationActions extends sfActions
 {
+  protected $agOrganizationHelper ;
+
+  /**
+   * Method to lazily load the agOrganizationHelper helper class.
+   *
+   * @return agOrganizationHelper an instance of agOrganizationHelper
+   */
+  protected function getOrganizationHelper()
+  {
+    // lazily load the sucker if she's not yet set
+    if (! isset($this->agOrganizationHelper))
+    {
+      $this->agOrganizationHelper = agOrganizationHelper::init() ;
+    }
+
+    // return the recently instantiated (or pre-existing) object
+    return $this->agOrganizationHelper ;
+  }
+
   /**
    * executeIndex() is an empty method, a placeholder for indexing.
    *
@@ -43,7 +62,7 @@ class organizationActions extends sfActions
 //    }
     $this->staffCountByOrg = agStaff::getUniqueStaffCount(3);
 
-    $query = Doctrine_Query::create()
+    $query = agDoctrineQuery::create()
     ->select('o.*')
     ->from('agOrganization as o');
 
@@ -84,17 +103,13 @@ class organizationActions extends sfActions
    */
   public function executeShow(sfWebRequest $request)
   {
+    $this->orgId = $request->getParameter('id') ;
+
     $this->ag_organization = Doctrine_Core::getTable('agOrganization')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_organization);
 
     // Get staff resource type in an array.
      $this->staffResourceTypes = agStaffResourceType::staffResourceTypeInArray();
-//     $staffResourceTypesObj = Doctrine_Core::getTable('agStaffResourceType')->findAll();
-//     $this->staffResourceTypes = array();
-//     foreach ($staffResourceTypesObj as $stfResType)
-//     {
-//       $this->staffResourceTypes[$stfResType->getId()] = $stfResType->getStaffResourceType();
-//     }
 
     // Get the organization's unique staff count by staff resource type.
     $this->uniqueStaffCount = agStaff::getUniqueStaffCount(2, array($this->ag_organization->getId()));
@@ -103,13 +118,28 @@ class organizationActions extends sfActions
     $totalStaffCountByOrg = agStaff::getUniqueStaffCount(3, array($this->ag_organization->getId()));
     $this->totalStaffCount = $totalStaffCountByOrg[$this->ag_organization->getId()];
 
-    // Get the staffs and their staff resource type associated to the organization.
-    $this->organizationStaffResources = agOrganization::organizationStaffByResource(array($this->ag_organization->getId()));
-//    print_r($this->organizationStaffResources);
-    $this->personPrimaryNames = agPerson::getPersonPrimaryNames();
-//    print_r($this->personPrimaryNames);
-    $this->personFullName = agPerson::getPersonFullName();
-    
+    // lazily load the organization helper
+    $organizationHelper = $this->getOrganizationHelper() ;
+
+    // get all staff info for this organization
+    $organizationStaffResources = $organizationHelper->getOrganizationStaffInfo($this->orgId, FALSE) ;
+
+    // instantiate the array that will store our final display string
+    $this->staffResourceList = array() ;
+
+    // first, explicitly check that this organization even HAS staff resources
+    if (array_key_exists($this->orgId, $organizationStaffResources))
+    {
+      // assuming it does, loop through them and build our string
+      foreach ($organizationStaffResources[$this->orgId] as $staffResourceId => $staffInfo)
+      {
+        $staffResourceString = sprintf('%s (%d): %s', $staffInfo['name'], $staffInfo['staff_id'], $staffInfo['type']);
+        $this->staffResourceList[$staffInfo['staff_resource_organization_id']] = $staffResourceString ;
+      }
+
+      // a final sort on the values will ensure that strings (names) sort sequentially
+      asort($this->staffResourceList) ;
+    }
   }
 
   /**
@@ -135,7 +165,10 @@ class organizationActions extends sfActions
 
     $this->form = new agOrganizationForm();
 
+
     $entity = new agEntity();
+    $foo = $entity->id;
+
     $entity->save();
     $this->form->getObject()->setAgEntity($entity);
 

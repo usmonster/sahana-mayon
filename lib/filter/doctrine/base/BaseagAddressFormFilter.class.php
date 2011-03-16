@@ -14,6 +14,7 @@ abstract class BaseagAddressFormFilter extends BaseFormFilterDoctrine
   {
     $this->setWidgets(array(
       'address_standard_id'          => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agAddressStandard'), 'add_empty' => true)),
+      'address_hash'                 => new sfWidgetFormFilterInput(),
       'created_at'                   => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'updated_at'                   => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
       'ag_address_value_list'        => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agAddressValue')),
@@ -22,6 +23,7 @@ abstract class BaseagAddressFormFilter extends BaseFormFilterDoctrine
 
     $this->setValidators(array(
       'address_standard_id'          => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agAddressStandard'), 'column' => 'id')),
+      'address_hash'                 => new sfValidatorPass(array('required' => false)),
       'created_at'                   => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'updated_at'                   => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
       'ag_address_value_list'        => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agAddressValue', 'required' => false)),
@@ -83,6 +85,7 @@ abstract class BaseagAddressFormFilter extends BaseFormFilterDoctrine
     return array(
       'id'                           => 'Number',
       'address_standard_id'          => 'ForeignKey',
+      'address_hash'                 => 'Text',
       'created_at'                   => 'Date',
       'updated_at'                   => 'Date',
       'ag_address_value_list'        => 'ManyKey',

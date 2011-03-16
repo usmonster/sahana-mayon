@@ -13,7 +13,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agAccountForm extends BaseagAccountForm
+class agAccountForm extends sfGuardUserAdminForm
 {
 
   /**
@@ -23,15 +23,24 @@ class agAccountForm extends BaseagAccountForm
   public function configure()
   {
     //$mjform = new agAccountMjSfGuardUserForm(new agAccountMjSfGuardUser());
-    $form = new sfGuardUserAdminForm(new sfGuardUser());
+    //$form = new sfGuardUserAdminForm(new sfGuardUser());
     //$mj = $this->object->getAgAccountMjSfGuardUser();
     //unset($mjform['ag_person_id']);
-    unset($this['created_at'], $this['updated_at'], $this['ag_person_id']);
+    unset($this['created_at'], $this['updated_at']);//, $this['ag_person_id']);
+    //
+        unset(
+      $this['first_name'],
+      $this['last_name'],
+      $this['algorithm'],
+      $this['groups_list'],
+      $this['permissions_list'],
+      $this['is_active']
+    );
     //$mjform->setDefault('account_id',$theId);
     //$form->getObject()->id = $mj->object->sf_guard_user_id;
     //$mjform->setDefault('sf_guard_user_id',$theId);
     //$this->embedForm('agAccountMjSfGuardUserForm',$mjform);
-    $this->embedForm('sfGuardUser', $form);
+    //$this->embedForm('sfGuardUser', $form);
   }
 
   /**

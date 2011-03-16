@@ -99,16 +99,17 @@ class agEmbeddedFacilityResourceForm extends agFacilityResourceForm
     );
 
     /**
-     * Add the Capacity field and add the inputGray style to it
+     * Add the Capacity field and Facility Code and add the inputGray style to it
      */
     $this->setWidget('capacity', new sfWidgetFormInputText(array(), array('class' => 'inputGray')));
-
+    $this->setWidget('facility_resource_code', new sfWidgetFormInputText(array(), array('class' => 'inputGray')));
     /**
      * Set the validators for all visible fields to not required.
      * This will allow us to delete facility resource records by
      * leaving the fields blank.
      */
     $this->setValidator('capacity', new sfValidatorInteger(array('required' => false)));
+    $this->setValidator('facility_resource_code', new sfValidatorPass(array('required' => false)));
     $this->setValidator(
         'facility_resource_status_id',
         new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agFacilityResourceStatus'))));
@@ -127,9 +128,9 @@ class agEmbeddedFacilityResourceForm extends agFacilityResourceForm
     /**
      * Remove labels from all visible fields
      */
-    $this->widgetSchema->setLabel('facility_resource_type_id', false);
-    $this->widgetSchema->setLabel('facility_resource_status_id', false);
-    $this->widgetSchema->setLabel('capacity', false);
+    $this->widgetSchema->setLabel('facility_resource_type_id', 'Resource Type');
+    $this->widgetSchema->setLabel('facility_resource_status_id', 'Resource Status');
+    $this->widgetSchema->setLabel('capacity', 'Capacity');
   }
 
 }

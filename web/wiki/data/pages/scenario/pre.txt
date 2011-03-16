@@ -1,0 +1,44 @@
+====== Scenario Creator Walk-through ======
+
+===== Pre-Creation =====
+
+**What it does:**
+
+Because a scenario is used to plan staff and facility resource deployment it's important that you have added your staff and facilities to Agasti before planning a Scenario.  Also, though not required, Organization information can be helpful if there are city or non-profit agencies that typically aid with your emergency response.
+
+**If you have not entered staff and facility details to Agasti, click the links to do so now before continuing with the Scenario Creator.**
+
+===== Walk-Through =====
+
+The three links on this page each perform a separate action:
+
+{{:scenario:pre.png?900}}
+
+Click **"Continue and Create a Scenario"** if you have already uploaded or entered your staff and facilities.
+
+Click **"Exit Scenario Creator and Edit Facilities"** if you have facilities records to enter.
+
+Click **"Exit Scenario Creator and Edit Staff"** if you have staff records to enter.
+
+After you've completed one of these actions click the "Next" button below.
+===== FAQ =====
+**Frequently Asked Questions:**
+
+  - **Why do Scenarios need Facilities and Staff?** - Scenarios are plans for deploying different types of staff to different facilities in the affected area of your emergency response.  Agasti will need staff and facility records to use for these plans and you, as the users, will use specific information within the system to build your plan.
+  - **I only have some of my staff and facilities in the system, can I create a Scenario and update it later?"** - Yes!  You can always edit a scenario from the Scenario List (reachable by visiting the Scenario Management page and clicking "List Scenarios).  It's fine to get started now and come back later with more details.
+  - **Will I be able to update my staff before I create an Event later?** - Yes.  Because Agasti uses Staff Resource Types and not individual staff members in Scenario planning you can add more staff later and they will be automatically assigned based on the Deployment Priority rules made in the Scenario Creator.
+====== Continue ======
+
+[[scenario:new|{{ :manual:user:next.png|}}]] 
+[[manual:user:scenario:walkthrough|{{:manual:user:previous.png?135 }}]]
+
+====== Jump to Another Step ======
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:scenario:walkthrough|Start]]
+  - **Pre Scenario Creation**
+  - [[scenario:new|Create A Scenario]]
+  - [[scenario:newgroup| Create Facility Groups]]
+  - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:newstaffresources| Create Shift Templates]]
+  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:review| Review]]

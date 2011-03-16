@@ -87,6 +87,18 @@ abstract class BaseagPersonMjAgPersonName extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
+        $this->index('IX_agPersonMjAgPersonName_personId', array(
+             'fields' => 
+             array(
+              0 => 'person_id',
+             ),
+             ));
+        $this->index('IX_agPersonMjAgPersonName_personNameTypeId', array(
+             'fields' => 
+             array(
+              0 => 'person_name_type_id',
+             ),
+             ));
     }
 
     public function setUp()
