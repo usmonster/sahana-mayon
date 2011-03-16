@@ -34,7 +34,8 @@ class homeActions extends agActions
   }
   public function executeError(sfWebRequest $request)
   {
-  $this->error_code = $this->response;
+  $this->math = 2+2;
+    $this->error_code = $this->response;
   }
 
 }

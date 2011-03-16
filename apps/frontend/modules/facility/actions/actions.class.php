@@ -170,7 +170,7 @@ class facilityActions extends agActions
             ->execute(array(), 'key_value_array');
 
 
-    $events = agFacilityHelper::returnActionableResources($facilityResourceIds, FALSE);
+    $this->events = null;//agFacilityHelper::returnActionableResources($facilityResourceIds, FALSE);
   }
 
   /**
@@ -236,6 +236,27 @@ class facilityActions extends agActions
   }
 
   /**
+  * executeDisable()
+  *
+  * Delete a facility record's associated facility resources. Redirects to facility edit page
+  * when it is done.
+  *
+  * @param $request sfWebRequest object for current page request
+  **/
+  public function executeDisable(sfWebRequest $request)
+  {
+    $request->checkCSRFProtection();
+    $this->forward404Unless($ag_facility = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id'))), sprintf('Object ag_facility does not exist (%s).', $request->getParameter('id')));
+    
+    foreach($ag_facility->getAgFacilityResource() as $agFR){
+      $agFR->set('facility_resource_status_id', 1);//agGlobal::getParam('facility_resource_disabled_status'));
+      $agFR->save();
+    }
+
+
+    $this->redirect('facility/edit?id=' . $ag_facility->getId());
+  }
+  /**
   * executeDelete()
   *
   * Delete a facility record. Redirects to facility list page
@@ -243,6 +264,7 @@ class facilityActions extends agActions
   *
   * @param $request sfWebRequest object for current page request
   **/
+
   public function executeDelete(sfWebRequest $request)
   {
     $request->checkCSRFProtection();
@@ -262,8 +284,23 @@ class facilityActions extends agActions
     * agFacilityResource records.
     **/
     if ($agEntity = $ag_facility->getAgSite()->getAgEntity()) {
-      $agEntity->delete();
+        if($agF = $ag_facility->getAgFacilityResource()){
+          foreach($agF as $agFR){
+            if(!($agFR->getAgScenarioFacilityResource()) && !($agFR->getAgEventFacilityResource())){
+              $agEntity->delete();
+              $this->redirect('facility/list');
+             }
+              else{
+                throw new sfDoctrineException('This facility is currently used in scenarios/events, try disabling it instead.');
+              }
+          }
+        }
+        else{
+          $agEntity->delete();
+          $this->redirect('facility/list');
+        }
     } else {
+
       /**
       * If there was no related agEntity record found, something is
       * wrong.
@@ -272,7 +309,7 @@ class facilityActions extends agActions
     }
 
     /**
-    *  Redirect to facility/list when done.
+    *  Redirect to facility/list when done if it hasn't happened already
     */
     $this->redirect('facility/list');
   }

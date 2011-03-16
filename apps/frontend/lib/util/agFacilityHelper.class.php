@@ -615,10 +615,10 @@ class agFacilityHelper
     if (!empty($actionableResources)) {
       // set our default variables to determine if scenarios or events are affected
       if (is_null($affectScenarios)) {
-        $affectScenarios = agGlobal::returnBool(self::$affectScenariosGlobal);
+        $affectScenarios = agGlobal::getParam(self::$affectScenariosGlobal);
       }
       if (is_null($affectEvents)) {
-        $affectEvents = agGlobal::returnBool(self::$affectEventsGlobal);
+        $affectEvents = agGlobal::getParam(self::$affectEventsGlobal);
       }
 
       // only take action if at least one of these is affected
