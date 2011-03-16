@@ -237,7 +237,7 @@ li.menu3 a:hover{
 }
 
 ul.menu_level_1 li.menu2 a{
-        border: solid 1px #f7f7f7; padding-left: 4px;
+        border: solid 1px #f7f7f7; padding-left: 4px; position: relative;
 }
 ul.menu_level_1 li.menu2 a:hover{
         border: solid 1px #dadada; padding-left: 4px;
