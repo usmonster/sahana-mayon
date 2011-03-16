@@ -34,7 +34,7 @@ class navComponents extends sfComponents
     }
 
     foreach ($this->thirdlinks as $item) {
-// This if statement is here for matching rout patterns in the menu to actual routes.
+// This if statement is here for matching route patterns in the menu to actual routes.
 // Still in development, but held off for now, so I commented it out.
 //
 //      if(preg_match('/^[a-z0-9\/\:]*\/\:[a-z0-9]+/i', $item['route'])) {
@@ -63,6 +63,26 @@ class navComponents extends sfComponents
 //      $routing = new sfPatternRouting($this->dispatcher);
 //      $routes = $routing->getRoutes();
 
+    foreach ($menu->getChildren() as $toplink) {
+      if(!$toplink->hasChildren()) {
+        $toplink->setAttribute('class', 'menu1 noBorder');
+      } else {
+        foreach($toplink->getChildren() as $secondlink) {
+          if(!$secondlink->hasChildren()) {
+            $secondlink->setAttribute('class', 'menu2 noBorder');
+          }
+        }
+      }
+    }
+//    $a = $menu->getChildren();
+//    foreach($a as $child) {
+//      $b = $child->getChildren();
+//      if(!count($b)) {
+//        $g = 8;
+//      }
+//      $c = 7;
+//    }
+//    $b = count($a->_children);
     $this->menu = $menu;
   }
 }

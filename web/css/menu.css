@@ -189,7 +189,7 @@ li.menu1{
 }
 
 ul.menu li.menu1 ul.menu_level_1{
-    position:absolute; top: 23px !important;
+/*    position:absolute; top: 23px !important;*/
 }
 
 ul.menu_level_2{
@@ -250,3 +250,6 @@ ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3 a:hover{
         border: solid 1px #f7f7f7 !important; padding-left: 4px;
 }
 
+li.noBorder>a:hover {
+  border: 1px solid #f7f7f7 !important;
+}
