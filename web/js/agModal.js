@@ -1,13 +1,16 @@
 /**
-* This function is used to launch modal windows. It is currently used by event/listgroups
-*
-* It could be extended later to provide more flexible functionality.
+* This function is used to check or uncheck a series of checkboxes.
 **/
 $(document).ready(function(){
+  // Checking the checkbox w/ id checkAll will check all boxes w/ class chekToggle
+  // unchecking checkAll will uncheck all checkToggles.
   $("#checkall").live('click', function () {
     $('.checkToggle').attr('checked', this.checked);
   });
-  $(".checkToggle").click(function(){
+  // This unsets the check in checkAll if one of the checkToggles are unchecked.
+  // or it will set the check on checkAll if all the checkToggles have been checked
+  // individually.
+  $(".checkToggle").live('click', function(){
     if($(".checkToggle").length == $(".checkToggle:checked").length) {
       $("#checkall").attr("checked", "checked");
     } else {
@@ -52,10 +55,8 @@ $(document).ready(function() {
            })
          })
          pattern = /event\/[a-zA-Z_0-9\+\%\-]*\/fgroup/;
-         var textString = data.responseText;
-         result = pattern.exec(textString);
-         var b = 5;
-         if(textString == result) {
+         if(data.responseText == pattern.exec(textString)) {
+//         if(textString == result) {
            var $fgroupDialog = $('<div id="#modalFgroup"></div>')
              .dialog({
                autoOpen: false,
@@ -66,14 +67,10 @@ $(document).ready(function() {
                modal: true
            });
            $fgroupDialog.dialog("option", "title", "yeah");
-//           $fgroupDialog.load(textString, function() {$fgroupDialog.dialog('open')});
-           content = $.ajax({
-             url: "fgroup",
-             type: "POST",
-             processData: "false",
-             complete:
-               $fgroupDialog.load('fgroup', function() {$fgroupDialog.dialog('open')})
-           });
+           $.post('fgroup', function(data) {
+             $fgroupDialog.html(data);
+             $fgroupDialog.dialog('open');
+           })
          }
        }
     })

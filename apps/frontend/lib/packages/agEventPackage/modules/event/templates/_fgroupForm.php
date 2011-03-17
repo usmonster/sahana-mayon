@@ -7,7 +7,7 @@
   <br />
   <span class="borderBottom">
     <input type="checkbox" name="checkall" id="checkall" value="check all">
-    <label for="checkall" class="labelSmall">Select All Facility Resources</label>
+    <label for="checkAll" class="labelSmall">Select All Facility Resources</label>
   </span>
 </form>
 <br />

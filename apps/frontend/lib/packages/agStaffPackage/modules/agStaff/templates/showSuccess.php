@@ -263,6 +263,8 @@
     <tbody>
   <?php
       echo '<tr>';
+      $thiny = $agStaff->getAgPerson()->getRawValue();
+      $aaa = $thiny->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_STRING, null);
       foreach ($ag_address_contact_types as $agAddressContactType) {
         echo '<th class="head">' . ucwords($agAddressContactType->getAddressContactType())
         . '</th>';

@@ -22,7 +22,7 @@ class agAddressHelper extends agBulkRecordHelper
             ADDR_GET_LINE = 'getAddressComponentsByLine',
             ADDR_GET_STRING = 'getAddressAsString';
 
-  public    $lineDelimiter = "\n",
+  public    $lineDelimiter = "<br />",
             $enforceComplete = TRUE,
             $enforceLineNumber = FALSE,
             $checkValuesForCompleteness = FALSE ;
