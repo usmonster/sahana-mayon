@@ -3,6 +3,18 @@
 *
 * It could be extended later to provide more flexible functionality.
 **/
+$(document).ready(function(){
+  $("#checkall").live('click', function () {
+    $('.checkToggle').attr('checked', this.checked);
+  });
+  $(".checkToggle").click(function(){
+    if($(".checkToggle").length == $(".checkToggle:checked").length) {
+      $("#checkall").attr("checked", "checked");
+    } else {
+      $("#checkall").removeAttr("checked");
+    }
+  });
+});
 
 $(document).ready(function() {
   var $dialog = $('<div id="modalContent"></div>')

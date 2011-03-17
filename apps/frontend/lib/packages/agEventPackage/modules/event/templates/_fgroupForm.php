@@ -28,17 +28,17 @@
   </table>
 </form>
 <script type="text/javascript">
-$(document).ready(function(){
-  $("#checkall").click(function () {
-    $('.checkToggle').attr('checked', this.checked);
-  });
-  $(".checkToggle").click(function(){
-    if($(".checkToggle").length == $(".checkToggle:checked").length) {
-      $("#checkall").attr("checked", "checked");
-    } else {
-      $("#checkall").removeAttr("checked");
-    }
-  });
+//$(document).ready(function(){
+//  $("#checkall").click(function () {
+//    $('.checkToggle').attr('checked', this.checked);
+//  });
+//  $(".checkToggle").click(function(){
+//    if($(".checkToggle").length == $(".checkToggle:checked").length) {
+//      $("#checkall").attr("checked", "checked");
+//    } else {
+//      $("#checkall").removeAttr("checked");
+//    }
+//  });
 
 // $("#checkall").click(function()
 //  {
