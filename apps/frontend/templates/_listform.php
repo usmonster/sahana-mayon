@@ -39,7 +39,8 @@ $sortColumn = $sf_request->getGetParameter('sort');
     foreach ($pager->getResults() as $result) {
         echo get_partial('global/formresult', array(
         'obj' => $result,
-        'widget' => $widget)
+        'widget' => $widget,
+         'columns' => $columns)
 
             //ideally the set of columns passed here should be something like:
             //query_field_name (with table alias... the query has to be on point)

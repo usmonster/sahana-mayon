@@ -1,11 +1,13 @@
 <?php
 $data = $obj;
 //this is used draw each result as a row, coming from _listform.php
+
+//$columns are our desired columns.. keyed by the name of the value array to echo
+//so we need
 ?>
 <tr>
-<!--  <td>
 
-  </td>-->
+<?php foreach($columns as $display_column => $value){  //key => $value ?>
   <?php foreach ($data as $column => $value) {
  ?>
 

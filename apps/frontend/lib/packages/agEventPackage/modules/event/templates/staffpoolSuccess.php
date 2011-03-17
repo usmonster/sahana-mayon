@@ -14,10 +14,10 @@
 
 <?php
 $columns = array(
-  'es_id' => array('title' => 'First Name', 'sortable' => false),
-  'es_id' => array('title' => 'Last Name', 'sortable' => false),
+  'fn' => array('title' => 'First Name', 'sortable' => false),
+  'ln' => array('title' => 'Last Name', 'sortable' => false),
   'organization_name' => array('title' => 'Organization', 'sortable' => true),
-  'staff_status' => array('title' => 'Staff Status', 'sortable' => true),
+  'status' => array('title' => 'Staff Status', 'sortable' => true),
   'type' => array('title' => 'Staff Type', 'sortable' => true),
   'widget' => array('title' => 'Event Status', 'sortable' => false),
 );

@@ -269,13 +269,17 @@ class eventActions extends agActions
 
     //begin construction of query used for listing
     $query = agDoctrineQuery::create()
-            ->select('es.id, essh.id, esh.event_facility_resource_id, sr.id, sro.id, s.id, ess.staff_allocation_status_id')//, sas.staff_allocation_status') //maybe we should only get the id since it's needed for dropdown
+            ->select('es.id, essh.id, esh.event_facility_resource_id, sr.id, srt.staff_resource_type, sro.id, o.organization, s.id, s.staff_status_id, ss.staff_status, p.id, ess.staff_allocation_status_id')//, sas.staff_allocation_status') //maybe we should only get the id since it's needed for dropdown
             ->from('agEventStaff es,
               es.agEventStaffShift essh,
               essh.agEventShift esh,
               es.agStaffResource sr,
+              sr.agStaffResourceType srt,
               sr.agStaffResourceOrganization sro,
+              sro.agOrganization o,
               sr.agStaff s,
+              s.agStaffStatus ss,
+              s.agPerson p,
               es.agEventStaffStatus ess') 
               //ess.agStaffAllocationStatus sas')
             ->where('es.event_id = ?', $this->event_id);
@@ -305,8 +309,29 @@ if($request->isMethod(sfRequest::POST)){
   
 }
     $eventStaff = array();
-    $this->ag_event_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $ag_event_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    foreach($ag_event_staff as $key => $value){
+      $person_array[] = $value['p_id'];
+      //$remapped_array[$ag_event_staff['es_id']] = $
+    }
+    $names = new agPersonNameHelper($person_array); //we need to get persons from the event staff ids that are returned here
+    $person_names = $names->getPrimaryNameByType();
 
+    //$names->
+    //this is the desired format of the return array:
+    foreach($ag_event_staff as $staff => $value){
+      $result_array[] = array(
+        'fn' => $person_names[$value['p_id']]['given'],
+        'ln' => $person_names[$value['p_id']]['family'],
+        'organization_name' => $value['o_organization'],
+        'status' => $value['ss_staff_status'],
+        'type' => $value['srt_staff_resource_type'],
+        'es_id' => $value['es_id'],
+        'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
+        );
+    }
+    
+    $this->ag_event_staff = $result_array;
     
     // NOW PASS the event_staff returned above to our helper functions to get the correct data.
     //
