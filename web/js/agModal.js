@@ -43,7 +43,7 @@ $(document).ready(function() {
          var textString = data.responseText;
          result = pattern.exec(textString);
          var b = 5;
-         if(data.responseText == "fgroup") {
+         if(textString == result) {
            var $fgroupDialog = $('<div id="#modalFgroup"></div>')
              .dialog({
                autoOpen: false,
@@ -54,7 +54,14 @@ $(document).ready(function() {
                modal: true
            });
            $fgroupDialog.dialog("option", "title", "yeah");
-           $fgroupDialog.load("fgroup", function() {$fgroupDialog.dialog('open')});
+//           $fgroupDialog.load(textString, function() {$fgroupDialog.dialog('open')});
+           content = $.ajax({
+             url: "fgroup",
+             type: "POST",
+             processData: "false",
+             complete:
+               $fgroupDialog.load('fgroup', function() {$fgroupDialog.dialog('open')})
+           });
          }
        }
     })

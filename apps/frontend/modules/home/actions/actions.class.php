@@ -39,7 +39,7 @@ class homeActions extends agActions
   }
    public function executePrepare(sfWebRequest $request)
   {
-#    $this->forward('default', 'module');
+//    $this->forward('default', 'module');
   }
 
 }

@@ -616,8 +616,8 @@ if($request->isMethod(sfRequest::POST)){
 //          $this->redirect('event/' . urlencode($this->event->event_name) . 'fgroup');
           $b = $this->getResponse();
 // Looks like I out-thought myself here. Just fgroup works, think the rest of the URL comes from the parent page. Might need it later though, if things go wrong.
-//          return $this->renderText('event/' . urlencode($this->event->event_name) . '/fgroup');
-          return $this->renderText('fgroup');
+          return $this->renderText('event/' . urlencode($this->event->event_name) . '/fgroup');
+//          return $this->renderText('fgroup');
         }
 
         $resourceAllocation->save();
