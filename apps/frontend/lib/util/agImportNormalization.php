@@ -306,14 +306,20 @@ class agImportNormalization
             array('min' => $record['specialist_min'],
                   'max' => $record['specialist_max']),
           $this->staffResourceTypes['Operator'] =>
-            array('min' => $record['operator_min'],
-                  'max' => $record['operator_max']),
+            array('min' => $record['uorc_min'],
+                  'max' => $record['uorc_max']),
           $this->staffResourceTypes['Medical Nurse'] =>
             array('min' => $record['medical_nurse_min'],
                   'max' => $record['medical_nurse_max']),
           $this->staffResourceTypes['Medical Other'] =>
             array('min' => $record['medical_other_min'],
-                  'max' => $record['medical_other_max'])
+                  'max' => $record['medical_other_max']),
+          $this->staffResourceTypes['EC Manager'] =>
+            array('min' => $record['ec_manager_min'],
+                  'max' => $record['ec_manager_max']),
+          $this->staffResourceTypes['HS Manager'] =>
+            array('min' => $record['hs_manager_min'],
+                  'max' => $record['hs_manager_max'])
         );
 
         $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];

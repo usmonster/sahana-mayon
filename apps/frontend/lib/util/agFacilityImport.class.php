@@ -29,6 +29,9 @@
 class AgImportXLS
 {
 
+  /**
+   * @TODO Convert staff resource min/max fields to be dynamically generated from the import file.
+   */
   public $importFacilitySpec = array(
     'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
     'facility_name' => array('type' => "string", 'length' => 64),
@@ -57,12 +60,16 @@ class AgImportXLS
     'generalist_max' => array('type' => "integer"),
     'specialist_min' => array('type' => "integer"),
     'specialist_max' => array('type' => "integer"),
-    'operator_min' => array('type' => "integer"),
-    'operator_max' => array('type' => "integer"),
+    'uorc_min' => array('type' => "integer"),
+    'uorc_max' => array('type' => "integer"),
     'medical_nurse_min' => array('type' => "integer"),
     'medical_nurse_max' => array('type' => "integer"),
     'medical_other_min' => array('type' => "integer"),
-    'medical_other_max' => array('type' => "integer")
+    'medical_other_max' => array('type' => "integer"),
+    'ec_manager_min' => array('type' => "integer"),
+    'ec_manager_max' => array('type' => "integer"),
+    'hs_manager_min' => array('type' => "integer"),
+    'hs_manager_max' => array('type' => "integer")
   );
   // Public variables declared here
   public $events = array();
