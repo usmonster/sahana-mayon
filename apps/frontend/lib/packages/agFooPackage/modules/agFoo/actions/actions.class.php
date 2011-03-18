@@ -70,7 +70,7 @@ $fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '5'=>'10031'
 $obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
-$results = $obj->getEntityAddressByType($array, TRUE, TRUE, agAddressHelper::ADDR_GET_STRING) ;
+$results = $obj->getEntityAddress($array, FALSE, FALSE, agAddressHelper::ADDR_GET_STRING) ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;

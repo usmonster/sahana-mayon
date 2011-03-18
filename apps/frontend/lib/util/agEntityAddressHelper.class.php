@@ -161,8 +161,10 @@ class agEntityAddressHelper extends agBulkRecordHelper
         // in our output and safely make this assumption
         if ($primary)
         {
+          // flatten the results
           $addresses = $addresses[0] ;
           $addresses[0] = $formattedAddresses[$addresses[0]] ;
+
           $entityAddresses[$entityId][$addressType][0] = $addresses ;
         }
         // if not primary, we have one more loop in our return for another array nesting
@@ -264,8 +266,11 @@ class agEntityAddressHelper extends agBulkRecordHelper
       // in our output and safely make this assumption
       if ($primary)
       {
-        $entityAddresses[$entityId] = array($addresses[0][0], $formattedAddresses[$addresses[0][1]],
-          $addresses[0][2], $addresses[0][3]) ;
+        // flatten for just one return
+        $addresses = $addresses[0] ;
+        $addresses[1] = $formattedAddresses[$addresses[1]] ;
+
+        $entityAddresses[$entityId] = $addresses ;
       }
       // if not primary, we have one more loop in our return for another array nesting
       else
