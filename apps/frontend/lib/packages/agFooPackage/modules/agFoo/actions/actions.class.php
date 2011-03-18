@@ -62,8 +62,10 @@ class agFooActions extends agActions
   public function executeShow(sfWebRequest $request)
   {
 // <-------- CUT HERE -------->
-$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13, 51, 52, 53, 57, 59) ;
-//$obj = agAddressHelper::init() ;
+$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
+$fakeAddr = array(array('1'=>'monkeybanana', '2'=>'raffle', '5'=>'10031'),
+    array('1'=>'peachpitt', '5'=>'10031')) ;
+$obj = agAddressHelper::init() ;
 //$obj = agPersonNameHelper::init(4) ;
 //$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
@@ -79,8 +81,12 @@ $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13, 51, 52, 53, 57, 59) ;
 //$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
 //$results = $obj->getAddressAllowedElements() ;
 //$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
-$obj = agOrganizationHelper::init() ;
-$results = $obj->getOrganizationStaffInfo(57,FALSE) ;
+$results = $obj->updateAddressHashes($array) ;
+//$addr = $obj->getAddressComponentsById($array) ;
+//$results = $obj->setAddresses($addr) ;
+//$results = $obj->getAddressValueId('1', '10031') ;
+
+//$results = $obj->setNewAddresses($fakeAddr) ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 

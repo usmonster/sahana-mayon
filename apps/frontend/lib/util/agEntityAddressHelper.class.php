@@ -146,6 +146,9 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $userFunc = array($addressHelper,$addressHelperMethod) ;
     $formattedAddresses = call_user_func_array($userFunc,$addressHelperArgs) ;
 
+    // we can release the address helper args, since we don't need them anymore
+    unset($addressHelperArgs) ;
+
     // now loop through our entities and attach their addresses
     foreach ($entityAddresses as $entityId => $addressTypes)
     {
@@ -205,7 +208,8 @@ class agEntityAddressHelper extends agBulkRecordHelper
     // build our query object
     $q = $this->_getEntityAddressQuery($entityIds, $strType) ;
 
-    // if this is a primary query we add the restrictor
+    // if this is a primary query we add the restrictor, note this one is different
+    // from the one used in the by-type method
     if ($primary)
     {
       $q->addWhere(' EXISTS (

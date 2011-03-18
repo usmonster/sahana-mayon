@@ -470,6 +470,282 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
+   * Method to return a flattened address query object, based on the standard being applied.
+   * @return Doctrine Query A doctrine query object.
+   * @deprecated This function was never used/implemented.
+   */
+  protected function _getFlatAddresses()
+  {
+    // start a basic query object with just the address
+    $q = agDoctrineQuery::create()
+      ->select('a.id')
+        ->from('agAddress a') ;
+
+    // had to be a little creative here using subqueries in the select because doctrine's rather
+    // fussy, but the workaround suits the need
+    // basically, we just loop through 'all' of the elements in our current standard and build a
+    // pivoted (aka crosstab) variant of the address with a column for each of those elements
+    foreach ($this->_addressAllowedElements as $elemId => $elem)
+    {
+      // don't ask me why, but doctrine freaks if you try to move the ON clause to a new line
+      $selectStatement = '(SELECT av%1$02d.id
+        FROM agAddressMjAgAddressValue amav%1$02d
+          INNER JOIN amav%1$02d.agAddressValue av%1$02d ON amav%1$02d.address_value_id = av%1$02d.id
+          WHERE amav%1$02d.address_id = a.id
+            AND av%1$02d.address_element_id = %1$02d) AS %s' ;
+      $selectStatement = sprintf($selectStatement, $elemId, $elemId) ;
+      $q->addSelect($selectStatement);
+    }
+
+    return $q ;
+  }
+
+  /**
+   * Method to update the address hash values of existing addresses. This should not normally be
+   * necessary as address hashes should be generated properly at address creation.
+   *
+   * @param array $addressIds A single dimension array of addressIds.
+   * @param Doctrine_Connection $conn An optional doctrine connection object.
+   */
+  public function updateAddressHashes($addressIds = NULL, $conn = NULL)
+  {
+    // reflect our addressIds
+    $addressIds = $this->getRecordIds($addressIds) ;
+
+    // pick up a default conneciton if none is passed
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    // use our componentsId getter to get all of the relevant components for these ids
+    $addressComponents = $this->getAddressComponentsById($addressIds) ;
+
+    // here we set up our collection of address records, selecting only those with the addressIds
+    // we're affecting. Note: INDEXBY is very important if we intend to access this collection via
+    // array access as we do later.
+    $q = agDoctrineQuery::create($conn)
+      ->select('a.*')
+        ->from('agAddress a INDEXBY a.id')
+        ->whereIn('a.id', $addressIds) ;
+    $addressCollection = $q->execute() ;
+
+    foreach ($addressComponents as $addressId => $components)
+    {
+      // calculate the component hash
+      $addrHash = $this->hashAddress($components) ;
+
+      // update the address hash value of this addressId by array access
+      $addressCollection[$addressId]['address_hash'] = $addrHash ;
+    }
+
+    // start our transaction
+    $conn->beginTransaction() ;
+    try
+    {
+     $addressCollection->save() ;
+     $conn->commit() ;
+    }
+    catch(Exception $e)
+    {
+      // if that didn't pan out so well, execute a rollback and log our woes
+      $conn->rollback() ;
+      
+      $message = ('One of the addresses in your addressId collection could not be updated.
+        No changes were applied.') ;
+      sfContext::getInstance()->getLogger()->err($message) ;
+      throw new sfException($message, $e) ;
+    }
+  }
+
+  protected function hashAddress($addressComponentArray)
+  {
+    // first off, we don't trust the sorting of the address components so we do our own
+    ksort($addressComponentArray) ;
+
+    // we json encode the return to
+    return md5(json_encode($addressComponentArray)) ;
+  }
+
+  public function getAddressIdsByHash($addressHashes)
+  {
+    $q = agDoctrineQuery::create()
+      ->select('a.address_hash')
+          ->addSelect('a.id')
+        ->from('agAddress a')
+        ->whereIn('a.address_hash',$addressHashes) ;
+
+    return $q->execute(array(), 'key_value_pair') ;
+  }
+
+  /**
+   *
+   * @param <type> $addresses
+   * array( [someIndex] => array( array([elementId] => 'String Value'), [standardId])
+   *
+   * @return <type>
+   */
+  public function setAddresses($addresses, Doctrine_Connection $conn = NULL)
+  {
+    // declare our results array
+    $results = array() ;
+
+    // declare the flipped array we use for the first pass search
+    $searchArray = array() ;
+    
+    // loop through the addresses, hash the components, and build the hash-keyed search array
+    foreach($addresses as $index => $addressComponents)
+    {
+      $hash = $this->hashAddress($addressComponents) ;
+      $addrHashes[$index] = $hash ;
+    }
+
+    // return any found hashes
+    $dbHashes = $this->getAddressIdsByHash(array_unique(array_values($addrHashes))) ;
+
+    // loop through the generated hashes and build a couple of arrays
+    foreach ($addrHashes as $addrIndex => $addrHash)
+    {
+      // if we found an address id already, our life is much easier
+      if (array_key_exists($addrHash, $dbHashes))
+      {
+        // for each of the addresses with that ID, build our results set and
+        // unset the value from the stuff left to be processed (we're going to use that later!)
+        $results[$addrIndex] = $dbHashes[$addrHash] ;
+        unset($addresses[$addrIndex]) ;
+        unset($addrHashes[$addrIndex]) ;
+      }
+    }
+
+    // just 'cause this is going to be a very memory-hungry method, we'll unset the hashes too
+    // since we don't need it anymore
+    unset($dbHashes) ;
+    unset($addrHashes) ;
+
+    // now that we have all of the 'existing' addresses, let's build the ones that have yet to
+    // come into being
+
+    
+    return $results ;
+  }
+
+  public function setNewAddresses($addresses, Doctrine_Connection $conn = NULL)
+  {
+    // we'll use this like a cache and check against it with each successive execution
+    $valuesCache = array() ;
+
+    // declare our results array
+    $results = array() ;
+
+    // pick up the default connection if one is not passed
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    // loop through our addresses and the components
+    foreach ($addresses as $index => $components)
+    {
+      // we do this so we only have to call rollback / unset once, plus it's nice to have a bool to
+      // check on our own
+      $err = FALSE ;
+
+      // similarly, we want to wrap this whole sucker in a transaction
+      $conn->beginTransaction() ;
+
+      // build a results cache so we commit entire addresses at once, not just individual elements
+      $resultsCache = array() ;
+
+      foreach($components as $elementId => $value)
+      {
+        // if we've already picked up this address value, GREAT! just load it from our
+        // cache and keep going!
+        if (isset($valuesCache[$elementId][$value]))
+        {
+          $resultsCache[$elementId] = $valuesCache[$elementId][$value] ;
+        }
+        else
+        {
+          // since we didn't find it in cache, we'll try to grab it from the db
+          $valueId = $this->getAddressValueId($elementId, $value) ;
+
+          // unfortunately, if we didn't get value we've got to add it!
+          if (empty($valueId))
+          {
+            // start by starting our transaction
+            $conn->beginTransaction('addrValue') ;
+
+            $addrValue = new agAddressValue() ;
+            $addrValue['address_element_id'] = $elementId ;
+            $addrValue['value'] = $value ;
+            try
+            {
+              // save the address
+              $addrValue->save($conn) ;
+              $valueId = $addrValue->getId() ;
+              
+              // and since that went right, add it to our results arrays
+              $valuesCache[$elementId][$value] = $valueId ;
+              $resultsCache[$elementId] = $valueId ;
+            }
+            catch(Exception $e)
+            {
+              // if we run into a problem, set this once rollback will roll it all back at the end
+              $err = TRUE ;
+              break ;
+
+            }
+          }
+        }
+      }
+
+      // now we attempt to insert the new address_id with all of our value bits, again only useful
+      // if we've not already had an error
+      if (! $err)
+      {
+        $addrHash = $this->hashAddress($components) ;
+
+        // attempt to insert the actual address
+        $newAddr = new agAddress() ;
+        $newAddr['address_hash'] = $addrHash ;
+
+        // -------------------- CUT HERE --------------------
+        // @todo this should never be hardcoded in to just the *return* standard; it needs to be
+        // dynamic PER-ADDRESS.
+        $newAddr['address_standard_id'] = $this->_returnStandardId ;
+        // -------------------- CUT HERE --------------------
+      }
+
+     // if there's been an error, at any point, we rollback any transactions for this address
+      if ($err)
+      {
+        $conn->rollback() ;
+      }
+      else
+      {
+        // most excellent! no errors at all, so we commit!
+        $conn->commit() ;
+
+        // commit our results to our final results array
+        $results[$index] = $resultsCache ;
+
+        // release the value on our input array
+        unset($addresses[$index]) ;
+      }
+    }
+    // addrStrVal ([idx] => [elemId] => 'str')
+    // we want --^ to be empty at the end
+    // addIdVal ([idx] => [elemId] => id)
+  }
+
+  public function getAddressValueId($elementId, $value, $conn = NULL)
+  {
+    $q = agDoctrineQuery::create()
+      ->select('av.id')
+        ->from('agAddressValue av')
+        ->where('av.address_element_id = ?', $elementId)
+          ->andWhere('av.value = ?', $value) ;
+
+    if (! is_null($conn)) { $q->setConnection($conn) ; }
+
+    return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+  /**
    * Simple method to return the current working address standard id.
    *
    * @return integer address_standard_id
