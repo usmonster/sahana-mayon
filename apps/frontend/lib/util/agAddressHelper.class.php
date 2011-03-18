@@ -501,11 +501,12 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
-   * Method to update the address hash values of existing addresses. This should not normally be
-   * necessary as address hashes should be generated properly at address creation.
+   * Method to update the address hash values of existing addresses.
    *
    * @param array $addressIds A single dimension array of addressIds.
    * @param Doctrine_Connection $conn An optional doctrine connection object.
+   * @deprecated This should not normally be necessary as address hashes should be generated
+   * at address creation.
    */
   public function updateAddressHashes($addressIds = NULL, $conn = NULL)
   {
@@ -555,6 +556,12 @@ class agAddressHelper extends agBulkRecordHelper
     }
   }
 
+  /**
+   * Method to take an address component array and return a json encoded, md5sum'ed address hash.
+   * @param array $addressComponentArray An associative array of address components keyed by
+   * elementId with the string value.
+   * @return string(128) A 128-bit md5sum string.
+   */
   protected function hashAddress($addressComponentArray)
   {
     // first off, we don't trust the sorting of the address components so we do our own
@@ -564,6 +571,11 @@ class agAddressHelper extends agBulkRecordHelper
     return md5(json_encode($addressComponentArray)) ;
   }
 
+  /**
+   * A quick helper method to take in an array address hashes and return an array of address ids.
+   * @param array $addressHashes A monodimensional array of md5sum, json_encoded address hashes.
+   * @return array An associative array, keyed by address hash, with a value of address_id.
+   */
   public function getAddressIdsByHash($addressHashes)
   {
     $q = agDoctrineQuery::create()
@@ -576,11 +588,34 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
+   * Method to take in address components and return address ids, inserting new addresses as
+   * necessary.
    *
-   * @param <type> $addresses
-   * array( [someIndex] => array( array([elementId] => 'String Value'), [standardId])
+   * NOTE: This method does not fail fast. Addresses for which address id's could not be returned,
+   * either by failed search or failed insert, are returned by index as part of the results set.
    *
-   * @return <type>
+   * @param array $addresses This multi-dimensional array of address data is keyed by an arbitrary
+   * index. The values of each index are: an array of address components, keyed by element id, and the
+   * default address standard of this address.
+   * <code>
+   * array(
+   *    [$index] => array(
+   *      [0] => array( [$elementId] => $valueString, ...),
+   *      [1] => $addressStanardId
+   *    ),
+   *    ...
+   * )
+   * </code>
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array A two dimensional array. The first array element ([0]), returns an array of
+   * address indexes and the newly inserted addressIds. The second array element [1], returns all
+   * address indexes that could not be inserted.
+   * <code>
+   * array(
+   *  [0] => array( [$addressIndex] => [$addressId], ... )
+   *  [1] => array( $addressIndex, ... )
+   * )
+   * </code>
    */
   public function setAddresses($addresses, Doctrine_Connection $conn = NULL)
   {
@@ -593,7 +628,7 @@ class agAddressHelper extends agBulkRecordHelper
     // loop through the addresses, hash the components, and build the hash-keyed search array
     foreach($addresses as $index => $addressComponents)
     {
-      $hash = $this->hashAddress($addressComponents) ;
+      $hash = $this->hashAddress($addressComponents[0]) ;
       $addrHashes[$index] = $hash ;
     }
 
@@ -610,23 +645,75 @@ class agAddressHelper extends agBulkRecordHelper
         // unset the value from the stuff left to be processed (we're going to use that later!)
         $results[$addrIndex] = $dbHashes[$addrHash] ;
         unset($addresses[$addrIndex]) ;
-        unset($addrHashes[$addrIndex]) ;
       }
+      else
+      {
+        // if that didn't work out for us we move the hash to the addresses array for pass-through
+        $addresses[$addrIndex][2] = $addrHash ;
+      }
+
+      // either way, we've already processed this address hash, so we can release it
+      unset($addrHashes[$addrIndex]) ;
     }
 
     // just 'cause this is going to be a very memory-hungry method, we'll unset the hashes too
-    // since we don't need it anymore
     unset($dbHashes) ;
-    unset($addrHashes) ;
 
-    // now that we have all of the 'existing' addresses, let's build the ones that have yet to
-    // come into being
+    // now that we have all of the 'existing' addresses, let's build the new ones
+    $newAddresses = $this->setNewAddresses($addresses) ;
+    $successes = array_shift($newAddresses) ;
 
-    
-    return $results ;
+    // we don't need this anymore!
+    unset($newAddresses) ;
+
+    foreach ($successes as $index => $addrId)
+    {
+      // add our successes to the final results set
+      $results[$index] = $addrId ;
+
+      // release the address from our initial input array
+      unset($addresses[$index]) ;
+
+      // release it from the successes array while we're at it
+      unset($successes[$index]) ;
+    }
+
+    // and finally we return our results, both the successes and the failures
+    return array($results, array_keys($addresses)) ;
   }
 
-  public function setNewAddresses($addresses, Doctrine_Connection $conn = NULL)
+  /**
+   * A big honkin' method to create a new address and, if also necessary, the address elements that
+   * don't yet exist to support the address.
+   *
+   * NOTE: This method does not fail fast. Failed address inserts are returned by index as part of
+   * the results set.
+   *
+   * @param array $addresses This multi-dimensional array of address data is keyed by an arbitrary
+   * index. The values of each index are: an array of address components, keyed by element id, the
+   * default address standard of this address, and the address hash of the components.
+   * <code>
+   * array(
+   *    [$index] => array(
+   *      [0] => array( [$elementId] => $valueString, ...),
+   *      [1] => $addressStanardId,
+   *      [2] => $addressHash
+   *    ),
+   *    ...
+   * )
+   * </code>
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array A two dimensional array. The first array element ([0]), returns an array of
+   * address indexes and the newly inserted addressIds. The second array element [1], returns all
+   * address indexes that could not be inserted.
+   * <code>
+   * array(
+   *  [0] => array( [$addressIndex] => [$addressId], ... )
+   *  [1] => array( $addressIndex, ... )
+   * )
+   * </code>
+   */
+  protected function setNewAddresses($addresses, Doctrine_Connection $conn = NULL)
   {
     // we'll use this like a cache and check against it with each successive execution
     $valuesCache = array() ;
@@ -644,13 +731,17 @@ class agAddressHelper extends agBulkRecordHelper
       // check on our own
       $err = FALSE ;
 
+      // if for whatever reason we're not passed a standard, pick up the default
+      if (! isset($components[1])) { $components[1] = $this->_returnStandardId ; }
+
+
       // similarly, we want to wrap this whole sucker in a transaction
       $conn->beginTransaction() ;
 
       // build a results cache so we commit entire addresses at once, not just individual elements
       $resultsCache = array() ;
 
-      foreach($components as $elementId => $value)
+      foreach($components[0] as $elementId => $value)
       {
         // if we've already picked up this address value, GREAT! just load it from our
         // cache and keep going!
@@ -666,10 +757,8 @@ class agAddressHelper extends agBulkRecordHelper
           // unfortunately, if we didn't get value we've got to add it!
           if (empty($valueId))
           {
-            // start by starting our transaction
-            $conn->beginTransaction('addrValue') ;
 
-            $addrValue = new agAddressValue() ;
+            $addrValue = new agAddressValue();
             $addrValue['address_element_id'] = $elementId ;
             $addrValue['value'] = $value ;
             try
@@ -697,41 +786,78 @@ class agAddressHelper extends agBulkRecordHelper
       // if we've not already had an error
       if (! $err)
       {
-        $addrHash = $this->hashAddress($components) ;
-
         // attempt to insert the actual address
         $newAddr = new agAddress() ;
-        $newAddr['address_hash'] = $addrHash ;
+        $newAddr['address_standard_id'] = $components[1] ;
+        $newAddr['address_hash'] = $components[2] ;
 
-        // -------------------- CUT HERE --------------------
-        // @todo this should never be hardcoded in to just the *return* standard; it needs to be
-        // dynamic PER-ADDRESS.
-        $newAddr['address_standard_id'] = $this->_returnStandardId ;
-        // -------------------- CUT HERE --------------------
+        try
+        {
+          // save the address
+          $newAddr->save($conn) ;
+          $addrId = $newAddr->getId() ;
+        }
+        catch(Exception $e)
+        {
+          // if we run into a problem, set this once rollback will roll it all back at the end
+          $err = TRUE ;
+        }
       }
 
-     // if there's been an error, at any point, we rollback any transactions for this address
+      // the final step!!! inserting into agAddressMjAgAddressValue
+      foreach ($resultsCache as $rElem => $rValueId)
+      {
+        // if we at any point pick up an error, don't bother
+        if ($err) { break ; }
+
+        $newAmav = new agAddressMjAgAddressValue() ;
+        $newAmav['address_id'] = $addrId ;
+        $newAmav['address_value_id'] = $rValueId ;
+
+        try
+        {
+          // save the address
+          $newAmav->save($conn) ;
+        }
+        catch(Exception $e)
+        {
+          // if we run into a problem, set this once rollback will roll it all back at the end
+          $err = TRUE ;
+        }
+      }
+
+      // if there's been an error, at any point, we rollback any transactions for this address
       if ($err)
       {
         $conn->rollback() ;
       }
       else
       {
-        // most excellent! no errors at all, so we commit!
+        // most excellent! no erors at all, so we commit... finally!
         $conn->commit() ;
 
         // commit our results to our final results array
-        $results[$index] = $resultsCache ;
+        $results[$index] = $addrId ;
 
         // release the value on our input array
         unset($addresses[$index]) ;
       }
     }
-    // addrStrVal ([idx] => [elemId] => 'str')
-    // we want --^ to be empty at the end
-    // addIdVal ([idx] => [elemId] => id)
+
+    // Whew!! Now that that's over, let's just return our two results
+    return array($results, array_keys($addresses)) ;
   }
 
+  /**
+   * Simple method to retrieve an address value / element.
+   *
+   * @param integer $elementId The element id being queried.
+   * @param string $value String value being searched for.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return integer|array This is a little funny behaviour or HYDRATE_SINGLE_SCALAR's part. If no
+   * value is returned from the query it actually returns an empty array instead of a NULL (which
+   * would seem more appropriate). Use empty() to check if there's an actual value.
+   */
   public function getAddressValueId($elementId, $value, $conn = NULL)
   {
     $q = agDoctrineQuery::create()
