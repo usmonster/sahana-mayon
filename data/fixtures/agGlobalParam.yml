@@ -62,3 +62,8 @@ agGlobalParam:
     datapoint: lucene_delimiter
     value: ' '
 
+  default_phone_format_type:
+    id: 13
+    agHost: localhost
+    datapoint: default_phone_format_type
+    value: USA 10 digit

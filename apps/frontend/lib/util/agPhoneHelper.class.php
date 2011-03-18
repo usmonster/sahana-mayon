@@ -61,7 +61,7 @@ class agPhoneHelper extends agBulkRecordHelper
    */
   protected function _setDefaultReturnFormat()
   {
-    $phoneFormatType = agGlobal::getParam($this->$_globalDefaultPhoneFormatType);
+    $phoneFormatType = agGlobal::getParam($this->_globalDefaultPhoneFormatType);
     $q = $this->_getPhoneFormatType($phoneFormatType);
     $formatId = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
@@ -123,6 +123,8 @@ class agPhoneHelper extends agBulkRecordHelper
           ->addSelect('pc.phone_contact')
           ->addSelect('pft.match_pattern')
           ->addSelect('pft.replacement_pattern')
+          ->addSelect('pf.id')
+          ->addSelect('pft.id')
         ->from('agPhoneContact pc')
           ->innerJoin('pc.agPhoneFormat pf')
           ->innerJoin('pf.agPhoneFormatType pft')
@@ -168,8 +170,8 @@ class agPhoneHelper extends agBulkRecordHelper
     foreach ($phones as $phoneId => $phone)
     {
       // format phone
-      $formattedPhone = preg_replace($phone[1],
-                                     $phone[2],
+      $formattedPhone = preg_replace($phone[2],
+                                     $phone[3],
                                      $phone[0]);
 
       // add formatted phone to our results array
@@ -204,7 +206,7 @@ class agPhoneHelper extends agBulkRecordHelper
    *
    * @return array $result A two dimensional array (phone_format_id => array(match_pattern string, replacement_pattern string)).
    */
-  public function getPhoneValidation()
+  public function getPhoneDisplayFormat()
   {
     return $this->_phoneDisplayFormat;
   }

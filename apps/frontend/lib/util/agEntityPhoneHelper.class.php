@@ -27,7 +27,7 @@ class agEntityPhoneHelper extends agBulkRecordHelper
    */
   public function getAgPhoneHelper()
   {
-    if (! isset($this->agPhoneHelper)) { $this->agPhoneHelper = agAddressHelper::init() ; }
+    if (! isset($this->agPhoneHelper)) { $this->agPhoneHelper = agPhoneHelper::init() ; }
     return $this->agPhoneHelper ;
   }
 
@@ -92,6 +92,7 @@ class agEntityPhoneHelper extends agBulkRecordHelper
   {
     // initial results declarations
     $entityPhones = array();
+    $phoneIds = array();
 
     // if primary is not passed, get the default
     if (is_null($primary)) { $primary = $this->defaultIsPrimary; }
@@ -117,20 +118,13 @@ class agEntityPhoneHelper extends agBulkRecordHelper
     $priorContactType = '';
     foreach ($rows as $row)
     {
+      $entityPhones[$row[0]][$row[2]][] = $row[1];
 
-      // if we're only returning the primary, change the third dimension from an array to a value
-      // NOTE: because of the restricted query, we can trust there is only one component per type
-      // in our output and safely make this assumption
-      if ($primary)
+      // here we build the mono-dimensional addressId array, excluding dupes as we go; only useful
+      // if we're actually going to use the address helper
+      if (! is_null($phoneHelperMethod) && ! in_array($row[2], $phoneIds))
       {
-        $entityPhones[$row[0]][$row[2]][] = $row[1];
-      }
-      // if not primary, we have one more loop in our return for another array nesting
-      else {
-        if ($row[0] != $priorEntityId || $row[2] != $priorContactType) { $index = 0; }
-        $entityPhones[$row[0]][$row[2]][$index++] = $row[1];
-        $priorEntityId = $row[0];
-        $priorContactType = $row[2];
+        $phoneHelperArgs[0][] = $row[1];
       }
     }
 
@@ -138,24 +132,24 @@ class agEntityPhoneHelper extends agBulkRecordHelper
     // stop right here!
     if (is_null($phoneHelperMethod))
     {
-      return $entityPhones ;
+      return $entityPhones;
     }
 
     // otherwise... we keep going and lazily load our phone helper, 'cause we'll need her
-    $phoneHelper = $this->getAgPhoneHelper() ;
+    $phoneHelper = $this->getAgPhoneHelper();
 
-    // finish appending the rest of our address helper args
+    // finish appending the rest of our phone helper args
     foreach ($phoneArgs as $arg)
     {
-      $phoneHelperArgs[] = $arg ;
+      $phoneHelperArgs[] = $arg;
     }
 
     // use the phone helper to format the phone results
     $userFunc = array($phoneHelper,$phoneHelperMethod) ;
-    $formattedPhones = call_user_func_array($userFunc,$phoneHelperArgs) ;
+    $formattedPhones = call_user_func_array($userFunc,$phoneHelperArgs);
 
     // we can release the phone helper args, since we don't need them anymore
-    unset($phoneHelperArgs) ;
+    unset($phoneHelperArgs);
 
     // now loop through our entities and replace phone value with formatted phone.
     foreach ($entityPhones as $entityId => $phoneTypes)
@@ -167,20 +161,20 @@ class agEntityPhoneHelper extends agBulkRecordHelper
         // in our output and safely make this assumption
         if ($primary)
         {
-          $entityPhones[$entityId][$phoneType] = $formattedPhone[$phones[0]];
+          $entityPhones[$entityId][$phoneType] = $formattedPhones[$phones[0]];
         }
         // if not primary, we have one more loop in our return for another array nesting
         else
         {
           foreach ($phones as $index => $phone)
           {
-            $entityPhones[$entityId][$phoneType][$index] = $formattedAddresses[$phone] ;
+            $entityPhones[$entityId][$phoneType][$index] = $formattedPhones[$phone];
           }
         }
       }
     }
 
-    return $entityPhones ;
+    return $entityPhones;
 
   }
 
@@ -209,6 +203,7 @@ class agEntityPhoneHelper extends agBulkRecordHelper
   {
     // initial results declarations
     $entityPhones = array();
+    $phoneIds = array();
 
     // if primary is not passed, get the default
     if (is_null($primary)) { $primary = $this->defaultIsPrimary; }
@@ -228,44 +223,38 @@ class agEntityPhoneHelper extends agBulkRecordHelper
     // build this as custom hydration to 'double tap' the data
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
 
-    $index = 0;
-    $priorEntityId = '';
-    $priorContactType = '';
     foreach ($rows as $row)
     {
-      // if we're only returning the primary, change the second dimension from an array to a value
-      // NOTE: because of the restricted query, we can trust there is only one component per type
-      // in our output and safely make this assumption
-      if ($primary) {
-        $entityPhones[$row[0]][]= array($row[2],$row[1]);
-      }
-      // if not primary, we have one more loop in our return for another array nesting
-      else {
-        if ($row[0] != $priorEntityId || $row[2] != $priorContactType) { $index = 0; }
-        $entityPhones[$row[0]][$index++] = array($row[2], $row[1]);
-      }
+      $entityPhones[$row[0]][]= array($row[2],$row[1]) ;
 
+      // here we build the mono-dimensional phoneId array, excluding dupes as we go; only useful
+      // if we're actually going to use the phone helper
+      if (! is_null($phoneHelperMethod) && ! in_array($row[2], $phoneIds))
+      {
+        $phoneHelperArgs[0][] = $row[1];
+      }
     }
+
 
     // if no phone helper method was passed, assume that all we need are the phone id's and
     // stop right here!
     if (is_null($phoneHelperMethod))
     {
-      return $entityPhones ;
+      return $entityPhones;
     }
 
     // otherwise... we keep going and lazily load our phone helper, 'cause we'll need her
-    $phoneHelper = $this->getAgPhoneHelper() ;
+    $phoneHelper = $this->getAgPhoneHelper();
 
-    // finish appending the rest of our address helper args
+    // finish appending the rest of our phone helper args
     foreach ($phoneArgs as $arg)
     {
-      $phoneHelperArgs[] = $arg ;
+      $phoneHelperArgs[] = $arg;
     }
 
     // use the phone helper to format the phone results
     $userFunc = array($phoneHelper,$phoneHelperMethod) ;
-    $formattedPhones = call_user_func_array($userFunc,$phoneHelperArgs) ;
+    $formattedPhones = call_user_func_array($userFunc,$phoneHelperArgs);
 
     // we can release the phone helper args, since we don't need them anymore
     unset($phoneHelperArgs) ;
@@ -278,14 +267,14 @@ class agEntityPhoneHelper extends agBulkRecordHelper
       // in our output and safely make this assumption
       if ($primary)
       {
-        $entityPhones[$entityId] = array($phones[0][0],$formattedPhones[$phones[0][1]]) ;
+        $entityPhones[$entityId] = array($phones[0][0],$formattedPhones[$phones[0][1]]);
       }
       // if not primary, we have one more loop in our return for another array nesting
       else
       {
         foreach ($phones as $index => $phone)
         {
-          $entityPhones[$entityId][$index][1] = array($formattedPhones[$phone[1]]) ;
+          $entityPhones[$entityId][$index][1] = $formattedPhones[$phone[1]];
         }
       }
     }
