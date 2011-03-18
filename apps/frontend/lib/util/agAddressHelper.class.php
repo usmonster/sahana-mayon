@@ -588,8 +588,8 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
-   * Method to take in address components and return address ids, inserting new addresses as
-   * necessary.
+   * Method to take in address components and return address ids, inserting new addresses OR
+   * address components as necessary.
    *
    * NOTE: This method does not fail fast. Addresses for which address id's could not be returned,
    * either by failed search or failed insert, are returned by index as part of the results set.
