@@ -65,12 +65,12 @@ class agFooActions extends agActions
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
 $fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '5'=>'10031'), 1) ,
     array(array('1'=>'peachpitters', '5'=>'10035'), 1)) ;
-$obj = agAddressHelper::init() ;
+//$obj = agAddressHelper::init() ;
 //$obj = agPersonNameHelper::init(4) ;
-//$obj = agEntityAddressHelper::init() ;
+$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
-//$results = $obj->getEntityAddress($array, TRUE, FALSE, agAddressHelper::ADDR_GET_STRING) ;
+$results = $obj->getEntityAddressByType($array, TRUE, TRUE, agAddressHelper::ADDR_GET_STRING) ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
@@ -85,7 +85,7 @@ $obj = agAddressHelper::init() ;
 //$addr = $obj->getAddressComponentsById($array) ;
 //$results = $obj->setAddresses($addr) ;
 
-$results = $obj->setAddresses($fakeAddr) ;
+//$results = $obj->setAddresses($fakeAddr) ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 

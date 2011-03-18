@@ -95,7 +95,7 @@ class agEntityAddressHelper extends agBulkRecordHelper
   {
     // initial results declarations
     $entityAddresses = array() ;
-    $addressIds = array() ;
+    $addressHelperArgs = array(array()) ;
 
     // if primary is not passed, get the default
     if (is_null($primary)) { $primary = $this->defaultIsPrimary ; }
@@ -118,11 +118,11 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
     foreach ($rows as $row)
     {
-      $entityAddresses[$row[0]][$row[2]][] = array($row[1], $row[3], $row[4]) ;
+      $entityAddresses[$row[0]][$row[4]][] = array($row[1], $row[2], $row[3]) ;
 
       // here we build the mono-dimensional addressId array, excluding dupes as we go; only useful
       // if we're actually going to use the address helper
-      if (! is_null($addressHelperMethod) && ! in_array($row[2], $addressIds))
+      if (! is_null($addressHelperMethod) && ! in_array($row[1], $addressHelperArgs[0]))
       {
         $addressHelperArgs[0][] = $row[1] ;
       }
@@ -161,14 +161,16 @@ class agEntityAddressHelper extends agBulkRecordHelper
         // in our output and safely make this assumption
         if ($primary)
         {
-          $entityAddresses[$entityId][$addressType][0] = $formattedAddresses[$addresses[0]] ;
+          $addresses = $addresses[0] ;
+          $addresses[0] = $formattedAddresses[$addresses[0]] ;
+          $entityAddresses[$entityId][$addressType][0] = $addresses ;
         }
         // if not primary, we have one more loop in our return for another array nesting
         else
         {
-          foreach ($addresses[0] as $index => $address)
+          foreach ($addresses as $index => $address)
           {
-            $entityAddresses[$entityId][$addressType][0][$index] = $formattedAddresses[$address] ;
+            $entityAddresses[$entityId][$addressType][$index][0] = $formattedAddresses[$address[0]] ;
           }
         }
       }
@@ -202,7 +204,7 @@ class agEntityAddressHelper extends agBulkRecordHelper
   {
     // initial results declarations
     $entityAddresses = array() ;
-    $addressIds = array() ;
+    $addressHelperArgs = array(array()) ;
 
     // if primary is not passed, get the default
     if (is_null($primary)) { $primary = $this->defaultIsPrimary ; }
@@ -224,11 +226,11 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
     foreach ($rows as $row)
     {
-      $entityAddresses[$row[0]][]= array($row[2],$row[1], $row[3], $row[4]) ;
+      $entityAddresses[$row[0]][]= array($row[4],$row[1], $row[2], $row[3]) ;
 
       // here we build the mono-dimensional addressId array, excluding dupes as we go; only useful
       // if we're actually going to use the address helper
-      if (! is_null($addressHelperMethod) && ! in_array($row[2], $addressIds))
+      if (! is_null($addressHelperMethod) && ! in_array($row[1], $addressHelperArgs[0]))
       {
         $addressHelperArgs[0][] = $row[1] ;
       }
