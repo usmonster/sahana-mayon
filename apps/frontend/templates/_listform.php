@@ -20,7 +20,7 @@ $sortColumn = $sf_request->getGetParameter('sort');
     <tr class="head">
      <?php
      $listhead = "";
-    foreach ($columns as $column => $columnCaption) {
+    foreach ($displayColumns as $column => $columnCaption) {
 
       $listhead .= '  <th>' . $columnCaption['title'];
       if ($columnCaption['sortable']) {
@@ -40,7 +40,7 @@ $sortColumn = $sf_request->getGetParameter('sort');
         echo get_partial('global/formresult', array(
         'obj' => $result,
         'widget' => $widget,
-         'columns' => $columns)
+         'displayColumns' => $displayColumns)
 
             //ideally the set of columns passed here should be something like:
             //query_field_name (with table alias... the query has to be on point)
