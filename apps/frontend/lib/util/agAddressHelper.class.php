@@ -20,7 +20,10 @@ class agAddressHelper extends agBulkRecordHelper
             ADDR_GET_GEO = 'getAddressCoordinates',
             ADDR_GET_TYPE = 'getAddressComponentsByName',
             ADDR_GET_LINE = 'getAddressComponentsByLine',
-            ADDR_GET_STRING = 'getAddressAsString';
+            ADDR_GET_STRING = 'getAddressAsString',
+            ADDR_GET_NATIVE_LINE = 'getNativeAddressComponentsByLine',
+            ADDR_GET_NATIVE_STRING = 'getNativeAddressAsString' ;
+
 
   public    $lineDelimiter = "<br />",
             $enforceComplete = FALSE,
@@ -268,8 +271,7 @@ class agAddressHelper extends agBulkRecordHelper
     // return our base query object
     $q = $this->_getAddressComponents($addressIds) ;
 
-    $results = $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_TWO_DIM);
-    return $results ;
+    return $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_TWO_DIM);
   }
 
   /**
@@ -347,6 +349,9 @@ class agAddressHelper extends agBulkRecordHelper
     {
       $results[$row[0]][$row[3]] = $row[2] ;
     }
+
+    // release the rows resource
+    unset($rows) ;
 
     // grab our geo coordinates and merge them to the array
     if ($getGeoCoordinates) {
@@ -510,14 +515,14 @@ class agAddressHelper extends agBulkRecordHelper
                                       $enforceComplete = NULL,
                                       $enforceLineNumber = NULL)
   {
-    // always a good idea to explicitly declare this
-    $results = array() ;
-
     // grab our default if not explicitly passed a line number parameter
     if (is_null($enforceLineNumber)) { $enforceLineNumber = $this->enforceLineNumber ; }
 
     // now we grab all of our addresses and return them in an array sorted per-line
     $addresses = $this->getAddressComponentsByLine($addressIds, $enforceComplete) ;
+
+    // release the addressId array
+    unset($addressIds) ;
 
     // start by iterating over the individual addresses
     foreach ($addresses as $addressId => $addrLines)
@@ -551,10 +556,10 @@ class agAddressHelper extends agBulkRecordHelper
       }
 
       // add it to our results array
-      $results[$addressId] = $strAddr ;
+      $addresses[$addressId] = $strAddr ;
     }
 
-    return $results ;
+    return $addresses ;
   }
 
   /**
