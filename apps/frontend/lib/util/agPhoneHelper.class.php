@@ -16,12 +16,25 @@
 class agPhoneHelper extends agBulkRecordHelper
 {
   // these constants map to the phone get types that are supported in other function calls
-  const     PHN_GET_FORMATTED = 'getFormattedPhone';
+  const     PHN_GET_FORMATTED = 'getFormattedPhone',
+            PHN_GET_COMPONENT_SEGMENTS = 'getPhoneComponentSegments',
+            PHN_GET_COMPONENT = 'getPhoneComponent',
+            PHN_AREA_CODE = '_phn_area_code',
+            PHN_FIRST_THREE = '_phn_first_three',
+            PHN_LAST_FOUR = '_phn_last_four',
+            PHN_EXTENSION = '_phn_extension',
+            PHN_DEFAULT = '_phn_default';
 
   protected $_globalDefaultPhoneFormatType = 'default_phone_format_type',
             $_phoneValidation = array(),
             $_phoneDisplayFormat = array(),
-            $_returnFormatId;
+            $_returnFormatId,
+            $_startIndex = 0,
+            $_phn_area_code = array('startIndex' => 0, 'length' => 3),
+            $_phn_first_three = array('startIndex' => 3, 'length' => 3),
+            $_phn_last_four = array('startIndex' => 6, 'length' => 4),
+            $_phn_extension = array('startIndex' => 10, 'length' => NULL),
+            $_phn_default = array('startIndex' => 0, 'length' => NULL);
 
   /**
    * This is the class's constructor whic pre-loads the formatting elements according to the default
@@ -181,6 +194,122 @@ class agPhoneHelper extends agBulkRecordHelper
     return $results;
   }
 
+  /**
+   * Method to get the explicit part of the phone (either area code, extension, etc.)
+   *
+   * @param array $phones An two-dimension associative array, keyed by phone id and valued with
+   * phone info.
+   * @param boolean $keepAsDefault Determine whether or not to remove all non-numeric characters from phone.
+   * @param integer $startIndex An integer used as the first param of the substr method.
+   * @param integer $length An optional integer used as the second param of the substr method.  If
+   * NULL, pass in the first param and leave out the second param of substr method.
+   * @return array A mono-dimensional associative array, where
+   * array( phoneId => A phone segment)
+   */
+  protected function _getPhoneComponent($phones = NULL, $keepAsDefault, $startIndex = NULL, $length = NULL )
+  {
+    // always a good idea to explicitly declare this
+    $results = array();
+
+    // if no (null) start index is passed, get the start index from the class property
+    if (is_null($startIndex)) {
+      $startIndex = $this->_startIndex;
+    }
+
+    foreach($phones as $phoneId => $phone) {
+      if ($keepAsDefault) { $numericPhone = $phone[0]; }
+      else { $numericPhone = preg_replace('/[^0-9]/', '', $phone[0]); }
+      $results[$phoneId] = (is_null($length)) ? substr($numericPhone, $startIndex) :
+                                                substr($numericPhone, $startIndex, $length);
+    }
+    return $results;
+  }
+
+  /**
+   * Method to call another method to get the explicit part of 
+   * the phone (either area code, extension, etc.)
+   * 
+   * @param array $phoneIds An optional single-dimension array of phone id's. If NULL, the
+   * classes' $phoneIds property is used.
+   * @param array $strSubsetType An optional associative array defining the param for the method substr.
+   * @return array A mono-dimensional associative array, where
+   * array( phoneId => A phone segment)
+   */
+  public function getPhoneComponent( $phoneIds = NULL, $strSubsetType = NULL)
+  {
+    // always a good idea to explicitly declare this
+    $results = array();
+
+    // now we grab all of our phones.
+    $phones = $this->getPhone($phoneIds);
+
+    $strSubsetInfo = $this->_setPhoneComponent($strSubsetType);
+
+    $strSubset = $strSubsetInfo[1];
+    if ($strSubsetInfo[0] == self::PHN_DEFAULT) { $keepAsDefault = 1; }
+    else { $keepAsDefault = 0; }
+    $results = $this->_getPhoneComponent($phones, $keepAsDefault, $strSubset['startIndex'], $strSubset['length']);
+
+    return $results;
+  }
+
+  /**
+   * Method to return the appropriate phone component substr array set.
+   *
+   * @param string $strSubsetType A string to determine the phone substr array.  If NULL, return class
+   * default property.
+   * @return array $this->array An associative array of params for the method substr, which is
+   * defined in class properties.
+   */
+  protected function _setPhoneComponent( $strSubsetType = NULL )
+  {
+    switch($strSubsetType) {
+      case self::PHN_AREA_CODE:
+        return array(self::PHN_AREA_CODE, $this->_phn_area_code);
+
+      case self::PHN_FIRST_THREE:
+        return array(self::PHN_FIRST_THREE, $this->_phn_first_three);
+
+      case self::PHN_LAST_FOUR:
+        return array(self::PHN_LAST_FOUR, $this->_phn_last_four);
+
+      case self::PHN_EXTENSION:
+        return array(self::PHN_EXTENSION, $this->_phn_extension);
+        
+      default:
+        return array(self::PHN_DEFAULT, $this->_phn_default);
+    }
+  }
+
+  /**
+   * Method to return phone in segments.
+   *
+   * @param array $phoneIds An optional single-dimension array of phone id's. If NULL, the
+   * classes' $phoneIds property is used.
+   * @return array $results A two-dimensional associative array, where
+   * array( phoneId => array( 'area code' => area code of phone number,
+   *                          'phone'     => body of phone number,
+   *                          'extension  => extension of phone number ))
+   */
+  public function getPhoneComponentSegments( $phoneIds = NULL )
+  {
+    // always a good idea to explicitly declare this
+    $results = array();
+
+    // now we grab all of our phones.
+    $phones = $this->getPhone($phoneIds);
+
+    foreach($phones as $phoneId => $phone) {
+      $numericPhone = preg_replace('/[^0-9]/', '', $phone[0]);
+      $areaCode = substr($numericPhone, 0, 3);
+      $phoneNum = substr($numericPhone, 3, 10);
+      $extNum = substr($numericPhone, 10);
+      $results[$phoneId] = array('area code' => $areaCode, 'phone' => $phoneNum, 'extension' => $extNum);
+    }
+
+    return $results;
+  }
+  
   /**
    * Simple method to return the current phone format id.
    *
