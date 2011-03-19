@@ -45,11 +45,13 @@ class agEventShiftHelper
       $conn->beginTransaction() ;
       try
       {
+        $components = $shiftsQuery->getDql() ;
+        echo $components ;
         // update shifts
         $eventShiftUpdates = $shiftsQuery->execute() ;
 
         // release staff if instructed to do so
-        if ($releaseStaff) { $eventStaffUpdates = self::releaseShiftStaff($eventShiftIds) ; }
+        if ($releaseStaff) { $eventStaffUpdates = self::releaseShiftStaff($eventShiftIds, $conn) ; }
 
         // commit
         $conn->commit() ;

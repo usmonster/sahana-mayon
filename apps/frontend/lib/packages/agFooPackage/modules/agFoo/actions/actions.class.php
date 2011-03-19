@@ -65,18 +65,18 @@ class agFooActions extends agActions
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
 $fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '5'=>'10031'), 1) ,
     array(array('1'=>'peachpitters', '5'=>'10035'), 1)) ;
-//$obj = agAddressHelper::init() ;
+$obj = agAddressHelper::init() ;
 //$obj = agPersonNameHelper::init(4) ;
-$obj = agEntityAddressHelper::init() ;
+//$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
-$results = $obj->getEntityAddress($array, FALSE, FALSE, agAddressHelper::ADDR_GET_STRING) ;
+//$results = $obj->getEntityAddress($array, FALSE, FALSE, agAddressHelper::ADDR_GET_STRING) ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
 //$results = $obj->getPrimaryNameByType() ;
 //$results = $obj->getPrimaryNameAsString() ;
-//$results = $obj->getAddressAsString() ;
+$results = $obj->getNativeAddressAsString($array) ;
 //$results = $obj->getAddressStandardId() ;
 //$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
 //$results = $obj->getAddressAllowedElements() ;

@@ -98,6 +98,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $manager->registerHydrator('key_value_array', 'KeyValueArrayHydrator');
     $manager->registerHydrator('assoc_three_dim', 'AssociativeThreeDimHydrator');
     $manager->registerHydrator('assoc_two_dim', 'AssociativeTwoDimHydrator');
+    $manager->registerHydrator('assoc_one_dim', 'AssociativeOneDimHydrator');
     $manager->registerHydrator('single_value_array', 'SingleValueArrayHydrator') ;
 
     // extend where appropriate

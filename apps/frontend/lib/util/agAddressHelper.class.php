@@ -23,7 +23,7 @@ class agAddressHelper extends agBulkRecordHelper
             ADDR_GET_STRING = 'getAddressAsString';
 
   public    $lineDelimiter = "<br />",
-            $enforceComplete = TRUE,
+            $enforceComplete = FALSE,
             $enforceLineNumber = FALSE,
             $checkValuesForCompleteness = FALSE ;
 
@@ -35,6 +35,41 @@ class agAddressHelper extends agBulkRecordHelper
             $_addressAllowedElements = array(),
             $_returnStandardId,
             $_addressGeoTypeId;
+
+  /**
+   * Overloaded magic call method to provide access to the getNativeAddress* variants.
+   *
+   * @param string $method The method being called.
+   * @param array $arguments The arguments being passed.
+   * @return function call
+   */
+  public function __call($method, $arguments)
+  {
+    $nativePreg = '/^getNativeAddress/i' ;
+    
+    // check to see if our method exists in our helpers
+    if (preg_match($nativePreg, $method))
+    {
+      try
+      {
+        // parse out the function that's *really* being called
+        $returnMethod = array($this, preg_replace($nativePreg, 'getAddress', $method)) ;
+        $nativeMethod = array($this, '_getNativeAddress') ;
+
+        // execute and return
+        return call_user_func_array($nativeMethod, array($returnMethod, $arguments)) ;
+      }
+      catch (Exception $e)
+      {
+        // if there's an error, write to log and return
+        $notice = sprintf('Execution of the %s method, found in %s failed. Attempted to use the
+          parent class.', $method, $helperClass) ;
+        sfContext::getInstance()->getLogger()->notice($notice) ;
+      }
+    }
+    
+    return parent::__call($method, $arguments) ;
+  }
 
   /**
    * This is the class's constructor whic pre-loads the formatting elements according to the default
@@ -144,6 +179,59 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
+   *
+   * @param <type> $method
+   * @param <type> $arguments
+   */
+  protected function _getNativeAddress($returnMethod, $arguments)
+  {
+    // always nice to have results, don'cha think?
+    $results = array() ;
+
+    // pick this up so we can reset it when done!
+    $origStandardId = $this->_returnStandardId ;
+
+    // pick up our all of our address ids
+    $addressIds = array_shift($arguments) ;
+    $addressIds = $this->getRecordIds($addressIds) ;
+
+    // seems a little insane but we do this so our foreach can always replace [0]
+    array_unshift($arguments, array()) ;
+
+    // construct our standards query
+    $q = agDoctrineQuery::create()
+      ->select('a.address_standard_id')
+          ->addSelect('a.id')
+        ->from('agAddress a')
+        ->whereIn('a.id', $addressIds) ;
+
+    // execute the standards query and return a grouped array
+    $addrStandards = $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_ONE_DIM) ;
+
+    // loop through the standards and set the formatting components appropriately
+    foreach ($addrStandards as $standardId => $addressIds)
+    {
+      // start by setting the new standard to be processed (use the if to avoid spurious sets)
+      if ($standardId != $this->_returnStandardId) { $this->setReturnStandard($standardId) ; }
+
+      // set the addressIds argument (always first)
+      $arguments[0] = $addressIds ;
+
+      // append the call for just those standards to our results set
+      $subResults = call_user_func_array($returnMethod, $arguments) ;
+      $results = $results + $subResults ;
+
+      // release the resources for this standard
+      unset($addrStandards[$standardId]) ;
+    }
+
+    // reset our original standard (use the if to avoid spurious sets)
+    if ($origStandardId != $this->_returnStandardId) { $this->setReturnStandard($origStandardId) ; }
+
+    return $results ;
+  }
+
+  /**
    * Method used to construct the base query object used by other objects in this class.
    *
    * @param array $addressIds A single-dimension array of address  id's.
@@ -180,7 +268,7 @@ class agAddressHelper extends agBulkRecordHelper
     // return our base query object
     $q = $this->_getAddressComponents($addressIds) ;
 
-    $results = $q->execute(array(), 'assoc_two_dim');
+    $results = $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_TWO_DIM);
     return $results ;
   }
 
@@ -584,7 +672,7 @@ class agAddressHelper extends agBulkRecordHelper
         ->from('agAddress a')
         ->whereIn('a.address_hash',$addressHashes) ;
 
-    return $q->execute(array(), 'key_value_pair') ;
+    return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
   }
 
   /**
