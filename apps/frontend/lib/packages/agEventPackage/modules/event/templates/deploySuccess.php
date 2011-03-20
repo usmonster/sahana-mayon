@@ -21,7 +21,7 @@ if (isset($checkResults)) {
 }
 ?>
 <br />
-<form action="<?php echo url_for('event/deploy?event=' . urlencode($event_name)) ?> " method="post">
+<form action="<?php echo url_for('event/deploy?event=' . urlencode($event_name)) ?>" method="post">
 
 <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id); ?>" class="linkButton" title="Modify Scenario Staff Pool">Modify Scenario Staff Pool</a>
 

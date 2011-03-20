@@ -13,18 +13,18 @@
 
 
 <?php
-$columns = array(
-  'es_id' => array('title' => 'First Name', 'sortable' => false),
-  'es_id' => array('title' => 'Last Name', 'sortable' => false),
+$displayColumns = array(
+  'fn' => array('title' => 'First Name', 'sortable' => false),
+  'ln' => array('title' => 'Last Name', 'sortable' => false),
   'organization_name' => array('title' => 'Organization', 'sortable' => true),
-  'staff_status' => array('title' => 'Staff Status', 'sortable' => true),
+  'status' => array('title' => 'Staff Status', 'sortable' => true),
   'type' => array('title' => 'Staff Type', 'sortable' => true),
   'widget' => array('title' => 'Event Status', 'sortable' => false),
 );
 
 //pager comes in from the action
 
-include_partial('global/listform', array('sf_request' => $sf_request, 'form_action' => $form_action, 'event_id' => $event_id, 'columns' => $columns, 'pager' => $pager, 'widget' => $widget));
+include_partial('global/listform', array('sf_request' => $sf_request, 'form_action' => $form_action, 'event_id' => $event_id, 'displayColumns' => $displayColumns, 'pager' => $pager, 'widget' => $widget));
 
 //echo agListForm::eventstafflist($sf_request,'Event Staff Listing', $columns, $pager, $widget);
 ?>

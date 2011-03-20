@@ -261,91 +261,37 @@
       <caption>Address</caption>
     </thead>
     <tbody>
-  <?php
-      echo '<tr>';
-      foreach ($ag_address_contact_types as $agAddressContactType) {
-        echo '<th class="head">' . ucwords($agAddressContactType->getAddressContactType())
-        . '</th>';
+    <?php
+      $person = $agStaff->getAgPerson()->getRawValue();
+//      $addressArray = $person->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_STRING, null);
+      $addressArray = array(
+                         'home' => array('88 East End Avenue<br />New York, NY 10028-8024<br />United States of America',
+                                         '15 W 31st St<br />New York, NY 10011<br />United States of America',
+                                         '7 80th St<br />New York, NY 10024<br />United States of America'),
+                         'work' => array('227 West 46 Street<br />New York, NY 10036<br />United States of America',
+                                         '33 8th Ave<br />New York, NY 10456<br />United States of America'));
+      foreach ($addressArray as $type => $address) {
+        $counts[$type] = count($address);
       }
-      echo '</tr>';
-
-      #    $arrangeAddresses = array();
-      $siteContacts = $agStaff->getAgPerson()->getAgEntity()->getAgEntityAddressContact();
-      foreach ($siteContacts as $siteContact) {
-        $address = $siteContact->getAgAddress();
-        $formats = $siteContact->getAgAddress()->getAgAddressStandard()->getAgAddressFormat();
-        foreach ($formats as $format) {
-          $string = '';
-
-          $addressValues = $address->getAgAddressMjAgAddressValue();
-          foreach ($addressValues as $addressValue) {
-            if ($addressValue->getAgAddressValue()->getAddressElementId()
-                == $format->getAddressElementId()) {
-              if ($format->getLineSequence() <> 1 && $format->getInlineSequence() == 1) {
-                $string .= '<br />';
-              }
-              $string .= $format->getPreDelimiter() . $addressValue->getAgAddressValue() .
-                  $format->getPostDelimiter();
-            }
-          }
-          $order[$format->getLineSequence()][$format->getInlineSequence()] = $string;
+      $maxRows = max($counts);
+      $headers = array_keys($addressArray);
+      $tableHead = '      <tr>' . PHP_EOL;
+      foreach ($addressArray as $type => $addresses) {
+        $tableHead .= '        <th class="head">' . ucwords($type) . '</th>' . PHP_EOL;
+        $i = 0;
+        $rows[$type] = '<tr>' . PHP_EOL;
+        while($i <=$maxRows) {
+          $rows[$type] .= $addresses[$i];
+          $i++;
         }
-
-        $formattedAddress = '';
-        foreach ($order as $key => $line) {
-          foreach ($line as $key2 => $inLine) {
-            $formattedAddress .= $order[$key][$key2];
-          }
+        $rows[$i] .='<\tr>' . PHP_EOL;
+        foreach ($addresses as $key => $address) {
+          $tableRow[$key] = '      <tr>' . PHP_EOL . '        <td>' . $address . '</td>' . PHP_EOL . '      </tr>' . PHP_EOL;
         }
-        $arrangeAddresses
-            [$siteContact->getAddressContactTypeId()]
-            [$siteContact->getPriority()] = $formattedAddress;
       }
-
-      if (isset($arrangeAddresses) == 'true') {
-        # Reassigning second key values in double array.
-        $rowMax = 0;
-        foreach ($arrangeAddresses as $key => $innerArray) {
-          ksort($innerArray);
-          $arrayMax = count($innerArray);
-          if ($arrayMax > $rowMax) {
-            $rowMax = $arrayMax;
-          }
-          $reAssignKeyValue = array();
-          foreach ($innerArray as $a) {
-            array_push($reAssignKeyValue, $a);
-          }
-          $arrangeAddresses[$key] = $reAssignKeyValue;
-        }
-
-        # Displaying address per row per column.
-        for ($rowCount = 0; $rowCount < $rowMax; $rowCount++) {
-          echo '<tr>';
-          $columnCount = 0;
-          foreach ($ag_address_contact_types as $agAddressContactType) {
-            $addressTypeId = $agAddressContactType->getId();
-            if (array_key_exists($addressTypeId, $arrangeAddresses)) {
-              $addressForType = $arrangeAddresses[$addressTypeId];
-              if (array_key_exists($rowCount, $addressForType)) {
-                echo '<td>' . $addressForType[$rowCount] . '</td>';
-              } else {
-                echo '<td>---</td>';
-              }
-            } else {
-              echo '<td>---</td>';
-            }
-            $columnCount++;
-          }
-          echo '</tr>';
-        }
-      } else {
-        echo '<tr>';
-        foreach ($ag_address_contact_types as $agAddressContactType) {
-          echo '<td>---</td>';
-        }
-        echo '</tr>';
-      }
-  ?>
+      $tableHead .= '      </tr>' . PHP_EOL;
+      echo $tableHead . $tableRow;
+    ?>
     </tbody>
     </table>
 
