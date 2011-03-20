@@ -49,6 +49,7 @@ class agFacilityResourceAcvitationForm extends sfForm
       foreach ($this->facility_resources as $facility_resource) {
 
         $fgroupForm = new agEventFacilityResourceActivationTimeForm();
+        $fgroupForm->getWidget('operate_on')->setAttribute('class', 'checkToggle');
         $facility_type = $facility_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
 
         $facility_name = $facility_resource->getAgFacilityResource()->getAgFacility()->facility_name;
@@ -59,11 +60,13 @@ class agFacilityResourceAcvitationForm extends sfForm
         //$fgroupForm->setDefault('event_facility_group_id', $facility_resource->event_facility_group_id);
         $fgroupForm->setDefault('event_facility_resource_id', $facility_resource->id);
         $this->embedForm($facility_label, $fgroupForm);
+        $c = $fgroupForm->getWidget('operate_on');
       }
     } else {
 
       //this portion should be removed entirely
       $fgroupForm = new agEventFacilityResourceActivationTimeForm();
+      $fgroupForm->getWidget('operate_on')->setAttribute('class', 'checkToggle');
       //$fgroupForm = new PluginagEventFacilityResourceActivationTimeForm();
       $fgroupDec = new agWidgetFormSchemaFormatterRow($fgroupForm->getWidgetSchema());
       $fgroupForm->getWidgetSchema()->addFormFormatter('row', $fgroupDec);

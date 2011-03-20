@@ -133,6 +133,9 @@ class agEventFacilityHelper
    */
   public static function setFacilityActivationTime ($eventId, $eventFacilityResourceIds, $activationTime, $shiftChangeRestriction = TRUE, $releaseStaff = FALSE, Doctrine_Connection $conn = NULL)
   {
+    // create a new connection object if one is not passed
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
     // convert our dates
     $shiftOffset = ($shiftChangeRestriction) ? (agGlobal::getParam('shift_change_restriction') * 60) : 0 ;
     $currentTimestamp = time() ;
@@ -169,7 +172,8 @@ class agEventFacilityHelper
     $updateQuery = agDoctrineQuery::create($conn)
       ->update('agEventFacilityResourceActivationTime')
       ->set('activation_time', '?', $activationTime)
-      ->whereIn('event_facility_resource_id', $updateIds) ;
+      ->whereIn('event_facility_resource_id', $updateIds)
+      ->setConnection($conn);
 
     // define blackout query
     $disabledShiftQuery = agDoctrineQuery::create($conn)
@@ -178,9 +182,6 @@ class agEventFacilityHelper
         ->whereIn('event_facility_resource_id', $eventFacilityResourceIds)
           ->andWhere('((minutes_start_to_facility_activation * 60) + ? + ?) < ?', array($shiftOffset, $currentTimestamp, $activationTime)) ;
     $disabledShiftIds = $disabledShiftQuery->execute(array(), 'single_value_array') ;
-
-    // create a new connection object if one is not passed
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
 
     // wrap it all in a transaction and a try/catch to rollback if an exception occurs
     $conn->beginTransaction() ;
@@ -212,7 +213,7 @@ class agEventFacilityHelper
       }
 
       // save the collection
-      $insertCollection->save();
+      $insertCollection->save($conn);
 
       // commit
       $conn->commit() ;

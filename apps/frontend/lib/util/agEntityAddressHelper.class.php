@@ -51,6 +51,8 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $q = agDoctrineQuery::create()
       ->select('eac.entity_id')
           ->addSelect('eac.address_id')
+          ->addSelect('eac.created_at')
+          ->addSelect('eac.updated_at')
         ->from('agEntityAddressContact eac')
         ->whereIn('eac.entity_id', $entityIds)
         ->orderBy('eac.priority') ;
@@ -93,7 +95,7 @@ class agEntityAddressHelper extends agBulkRecordHelper
   {
     // initial results declarations
     $entityAddresses = array() ;
-    $addressIds = array() ;
+    $addressHelperArgs = array(array()) ;
 
     // if primary is not passed, get the default
     if (is_null($primary)) { $primary = $this->defaultIsPrimary ; }
@@ -116,11 +118,11 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
     foreach ($rows as $row)
     {
-      $entityAddresses[$row[0]][$row[2]][] = $row[1] ;
+      $entityAddresses[$row[0]][$row[4]][] = array($row[1], $row[2], $row[3]) ;
 
       // here we build the mono-dimensional addressId array, excluding dupes as we go; only useful
       // if we're actually going to use the address helper
-      if (! is_null($addressHelperMethod) && ! in_array($row[2], $addressIds))
+      if (! is_null($addressHelperMethod) && ! in_array($row[1], $addressHelperArgs[0]))
       {
         $addressHelperArgs[0][] = $row[1] ;
       }
@@ -146,6 +148,9 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $userFunc = array($addressHelper,$addressHelperMethod) ;
     $formattedAddresses = call_user_func_array($userFunc,$addressHelperArgs) ;
 
+    // we can release the address helper args, since we don't need them anymore
+    unset($addressHelperArgs) ;
+
     // now loop through our entities and attach their addresses
     foreach ($entityAddresses as $entityId => $addressTypes)
     {
@@ -156,14 +161,18 @@ class agEntityAddressHelper extends agBulkRecordHelper
         // in our output and safely make this assumption
         if ($primary)
         {
-          $entityAddresses[$entityId][$addressType] = $formattedAddresses[$addresses[0]] ;
+          // flatten the results
+          $addresses = $addresses[0] ;
+          $addresses[0] = $formattedAddresses[$addresses[0]] ;
+
+          $entityAddresses[$entityId][$addressType][0] = $addresses ;
         }
         // if not primary, we have one more loop in our return for another array nesting
         else
         {
           foreach ($addresses as $index => $address)
           {
-            $entityAddresses[$entityId][$addressType][$index] = $formattedAddresses[$address] ;
+            $entityAddresses[$entityId][$addressType][$index][0] = $formattedAddresses[$address[0]] ;
           }
         }
       }
@@ -197,7 +206,7 @@ class agEntityAddressHelper extends agBulkRecordHelper
   {
     // initial results declarations
     $entityAddresses = array() ;
-    $addressIds = array() ;
+    $addressHelperArgs = array(array()) ;
 
     // if primary is not passed, get the default
     if (is_null($primary)) { $primary = $this->defaultIsPrimary ; }
@@ -205,7 +214,8 @@ class agEntityAddressHelper extends agBulkRecordHelper
     // build our query object
     $q = $this->_getEntityAddressQuery($entityIds, $strType) ;
 
-    // if this is a primary query we add the restrictor
+    // if this is a primary query we add the restrictor, note this one is different
+    // from the one used in the by-type method
     if ($primary)
     {
       $q->addWhere(' EXISTS (
@@ -218,11 +228,11 @@ class agEntityAddressHelper extends agBulkRecordHelper
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
     foreach ($rows as $row)
     {
-      $entityAddresses[$row[0]][]= array($row[2],$row[1]) ;
+      $entityAddresses[$row[0]][]= array($row[4],$row[1], $row[2], $row[3]) ;
 
       // here we build the mono-dimensional addressId array, excluding dupes as we go; only useful
       // if we're actually going to use the address helper
-      if (! is_null($addressHelperMethod) && ! in_array($row[2], $addressIds))
+      if (! is_null($addressHelperMethod) && ! in_array($row[1], $addressHelperArgs[0]))
       {
         $addressHelperArgs[0][] = $row[1] ;
       }
@@ -256,14 +266,18 @@ class agEntityAddressHelper extends agBulkRecordHelper
       // in our output and safely make this assumption
       if ($primary)
       {
-        $entityAddresses[$entityId] = array($addresses[0][0],$formattedAddresses[$addresses[0][1]]) ;
+        // flatten for just one return
+        $addresses = $addresses[0] ;
+        $addresses[1] = $formattedAddresses[$addresses[1]] ;
+
+        $entityAddresses[$entityId] = $addresses ;
       }
       // if not primary, we have one more loop in our return for another array nesting
       else
       {
         foreach ($addresses as $index => $address) 
         {
-          $entityAddresses[$entityId][$index][1] = array($formattedAddresses[$address[1]]) ;
+          $entityAddresses[$entityId][$index][1] = $formattedAddresses[$address[1]] ;
         }
       }
     }

@@ -76,14 +76,14 @@ unset($_POST);
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Sahana Agasti 1.99999, Mayon Installer</title>
+    <title>Sahana Agasti 2.0 (Mayon), Installer</title>
     <link rel="shortcut icon" href="images/favicon.ico" />
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" /> 
   </head>
   <body>
     <div id="header">
       <h1>
-        Sahana Agasti 1.99999, Mayon Installer
+        Sahana Agasti 2.0 (Mayon), Installer
       </h1>
     </div>
     <div id="wrapper">

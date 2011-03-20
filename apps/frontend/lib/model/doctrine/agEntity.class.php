@@ -79,20 +79,5 @@ class agEntity extends BaseagEntity
      */
     return parent::delete($conn);
   }
-
-  public function getAgPhoneContact($primary = FALSE)
-  {
-
-  }
-  
-  public function getAgEmailContact($primary = FALSE)
-  {
-
-  }
-
-  public function getAgAddressContact($primary = FALSE)
-  {
-
-  }
 }
 

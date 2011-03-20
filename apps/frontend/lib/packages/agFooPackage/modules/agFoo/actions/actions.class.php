@@ -62,25 +62,30 @@ class agFooActions extends agActions
   public function executeShow(sfWebRequest $request)
   {
 // <-------- CUT HERE -------->
-$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13, 51, 52, 53, 57, 59) ;
-//$obj = agAddressHelper::init() ;
+$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
+$fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '5'=>'10031'), 1) ,
+    array(array('1'=>'peachpitters', '5'=>'10035'), 1)) ;
+$obj = agAddressHelper::init() ;
 //$obj = agPersonNameHelper::init(4) ;
 //$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
-//$results = $obj->getEntityAddress($array, TRUE, FALSE, agAddressHelper::ADDR_GET_STRING) ;
+//$results = $obj->getEntityAddress($array, FALSE, FALSE, agAddressHelper::ADDR_GET_STRING) ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
 //$results = $obj->getPrimaryNameByType() ;
 //$results = $obj->getPrimaryNameAsString() ;
-//$results = $obj->getAddressAsString() ;
+$results = $obj->getNativeAddressAsString($array) ;
 //$results = $obj->getAddressStandardId() ;
 //$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
 //$results = $obj->getAddressAllowedElements() ;
 //$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
-$obj = agOrganizationHelper::init() ;
-$results = $obj->getOrganizationStaffInfo(57,FALSE) ;
+//$results = $obj->updateAddressHashes($array) ;
+//$addr = $obj->getAddressComponentsById($array) ;
+//$results = $obj->setAddresses($addr) ;
+
+//$results = $obj->setAddresses($fakeAddr) ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 
