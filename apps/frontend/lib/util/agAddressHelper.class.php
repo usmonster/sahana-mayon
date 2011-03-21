@@ -104,6 +104,9 @@ class agAddressHelper extends agBulkRecordHelper
     $this->setReturnStandard($standardId) ;
   }
 
+  /**
+   *  Small helper function to pick up the default geo-type for addresses.
+   */
   protected function _setDefaultAddressGeoType()
   {
     $geoType = agGlobal::getParam($this->_globalDefaultAddressGeoType) ;
@@ -182,9 +185,12 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
+   * Method to wrap the non-native address functions and process addresses per-address standard so
+   * that results are returned in the standard in which they were submitted.
    *
-   * @param <type> $method
-   * @param <type> $arguments
+   * @param string $returnMethod The address return method to wrap.
+   * @param array $arguments The arguments to be passed to the address return method.
+   * @return array The results of the $returnMethod.
    */
   protected function _getNativeAddress($returnMethod, $arguments)
   {
