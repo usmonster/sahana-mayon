@@ -305,7 +305,7 @@ class agImportNormalization
           $this->staffResourceTypes['Specialist'] =>
             array('min' => $record['specialist_min'],
                   'max' => $record['specialist_max']),
-          $this->staffResourceTypes['Operator'] =>
+          $this->staffResourceTypes['UORC'] =>
             array('min' => $record['uorc_min'],
                   'max' => $record['uorc_max']),
           $this->staffResourceTypes['Medical Nurse'] =>
