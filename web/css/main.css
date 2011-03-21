@@ -1274,3 +1274,11 @@ P {
 .borderBottom {
   border-bottom: solid 1px #848484;
 }
+
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
+}

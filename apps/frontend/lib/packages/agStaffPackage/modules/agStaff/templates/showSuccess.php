@@ -263,34 +263,42 @@
     <tbody>
     <?php
       $person = $agStaff->getAgPerson()->getRawValue();
-//      $addressArray = $person->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_STRING, null);
-      $addressArray = array(
-                         'home' => array('88 East End Avenue<br />New York, NY 10028-8024<br />United States of America',
-                                         '15 W 31st St<br />New York, NY 10011<br />United States of America',
-                                         '7 80th St<br />New York, NY 10024<br />United States of America'),
-                         'work' => array('227 West 46 Street<br />New York, NY 10036<br />United States of America',
-                                         '33 8th Ave<br />New York, NY 10456<br />United States of America'));
+      $addressArray = $person->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_NATIVE_STRING, null);
       foreach ($addressArray as $type => $address) {
         $counts[$type] = count($address);
       }
+
+      // Then determine the maximum rows we'll get.
       $maxRows = max($counts);
+      // Get the headers for the table. And start building the HTML for the tables header.
       $headers = array_keys($addressArray);
-      $tableHead = '      <tr>' . PHP_EOL;
-      foreach ($addressArray as $type => $addresses) {
-        $tableHead .= '        <th class="head">' . ucwords($type) . '</th>' . PHP_EOL;
-        $i = 0;
-        $rows[$type] = '<tr>' . PHP_EOL;
-        while($i <=$maxRows) {
-          $rows[$type] .= $addresses[$i];
-          $i++;
+      $tableHead = '<tr>' . PHP_EOL;
+      // Set the iterator and build the table rows.
+      $i = 0;
+      while ($i < $maxRows) {
+        // Begin to onstruct the table rows.
+        $rows[$i] = '<tr>' . PHP_EOL;
+        $created[$i] = '<tr>' . PHP_EOL;
+        foreach ($headers as $header) {
+          // On the first iteration through, finish creating the table headers.
+          if ($i == 0) {
+            $tableHead .= '<th class="head">' . ucwords($header) . '</th>' . PHP_EOL;
+          }
+          $rows[$i] .= '<td>' . (isset($addressArray[$header][$i][0]) ? $addressArray[$header][$i][0] : '') . '</td>' . PHP_EOL;
+          $created[$i] .= '<td>' . (isset($addressArray[$header][$i][1]) ? '<span class="bold">Last Updated: </span><span class="italic">'  . substr($addressArray[$header][$i][1], 0, 10) : '') . '</span></td>' . PHP_EOL;
         }
-        $rows[$i] .='<\tr>' . PHP_EOL;
-        foreach ($addresses as $key => $address) {
-          $tableRow[$key] = '      <tr>' . PHP_EOL . '        <td>' . $address . '</td>' . PHP_EOL . '      </tr>' . PHP_EOL;
-        }
+        $rows[$i] .= '</tr>' . PHP_EOL;
+        $created[$i] .= '</tr>' . PHP_EOL;
+        $i++;
       }
-      $tableHead .= '      </tr>' . PHP_EOL;
-      echo $tableHead . $tableRow;
+      // Close the table header row.
+      $tableHead .= '</tr>' . PHP_EOL;
+      // Spit it all out.
+      echo $tableHead;
+      foreach ($rows as $key => $row) {
+        echo $row;
+        echo $created[$key];
+      }
     ?>
     </tbody>
     </table>
