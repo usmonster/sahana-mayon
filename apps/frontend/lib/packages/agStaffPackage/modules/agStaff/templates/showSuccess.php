@@ -260,7 +260,10 @@
     <caption>Address</caption>
   </thead>
   <tbody>
-    <?php echo urldecode($addressTable); ?>
+    <?php
+      $addressTable = agTemplateHelper::buildAddressTable($addressArray->getRawValue());
+      echo $addressTable;
+    ?>
   </tbody>
   </table>
 
@@ -436,7 +439,3 @@
     }
 ?>
 </div>
-
-
-
-
