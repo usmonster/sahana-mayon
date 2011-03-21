@@ -5,7 +5,7 @@ ul.menu li:hover>ul{display:block}
  left:-1px;
   top:22px;
 }*/
-ul.menu ul ul {position: absolute;left:94%;top:0px;}
+ul.menu ul ul {position: absolute;left:93%;top:0px;}
 
 ul.menu,ul.menu ul {
 	margin:0px;
@@ -213,7 +213,7 @@ ul.menu li ul.menu_level_1 li.menu2 a:hover {
 
 
 ul.menu li ul.menu_level_1 li.menu2, ul.menu li ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3{
-    padding:2px 0px 2px 4px;
+    padding:0px 0px 0px 4px;
 
 }
 
@@ -244,6 +244,6 @@ ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3 a:hover{
         border: solid 1px #f7f7f7 !important; padding:2px 0px 2px 4px;
 }
 
-.noBorder a:hover , .noBorder:hover a {
-  border: 1px solid #f7f7f7 !important;
+li.noBorder>a:hover , li.noBorder:hover>a {
+  padding:2px 0px 2px 4px; border: 1px solid #f7f7f7 !important;
 }
