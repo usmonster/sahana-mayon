@@ -14,10 +14,16 @@ $thisUrl = url_for('organization/list');
 $ascArrow = '&#x25B2;';
 $descArrow = '&#x25BC;';
 ?>
-<h3>Organization Listing</h3>
 <p>Below are the current organizations in Agasti.  To search for a specific organization use the
   search box above.</p>
 <table class="staffTable">
+    <caption>Organizations
+    <?php
+    // Output the current staff members being shown, as well total number in the list.
+    echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count();
+    ?>
+  </caption>
+
   <thead>
     <tr class="head">
 <?php foreach ($columns as $column => $columnCaption): ?>

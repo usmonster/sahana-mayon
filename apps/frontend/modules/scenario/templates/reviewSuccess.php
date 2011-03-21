@@ -1,7 +1,9 @@
 <h2><span class="highlightedText"><?php echo $scenario_name ?></span> Scenario Review</h2>
 
 <h3><?php echo $scenario_description ?></h3>
+<!-- ideally the above should be 'editable text', i.e. when clicked on they convert to input fields -->
 <br /><hr />
+<a href="<?php echo url_for('scenario/edit?id=' . $scenario_id) ?>" class="linkButton">Modify Scenario Meta Information</a> <br /><br />
 <a href="<?php echo url_for('scenario/listgroups?id=' . $scenario_id) ?>" class="linkButton">Manage Facilities/Groups</a> <br /><br />
 <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton">Staff Pool Definitions</a> <br /><br />
 <a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton">Shift Templates</a> <br /><br />

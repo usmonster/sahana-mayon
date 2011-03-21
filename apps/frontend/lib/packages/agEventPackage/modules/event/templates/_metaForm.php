@@ -14,7 +14,7 @@ else{
 }
 ?>
 
-<form action="<?php echo $formAct; ?>" method="post">
+<form action="<?php echo $formAct;?>" method="post">
   <table>
     <tfoot>
       <tr>
