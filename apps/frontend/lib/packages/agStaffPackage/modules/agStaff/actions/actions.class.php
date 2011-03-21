@@ -191,7 +191,7 @@ class agStaffActions extends agActions
             ->execute();
     $this->agStaff = $this->pager->getResults()->getFirst();
     $agPerson = $this->agStaff->getAgPerson();
-    $this->addressTable = $this->buildStaffTable($agPerson);
+    $this->addressTable = $this->buildAddressTable($agPerson);
   }
 
   /**
@@ -702,7 +702,7 @@ class agStaffActions extends agActions
     }
   }
 
-  private function buildStaffTable($agPerson)
+  private function buildAddressTable($agPerson)
   {
     $addressArray = $agPerson->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_NATIVE_STRING);
     foreach ($addressArray as $type => $address) {
