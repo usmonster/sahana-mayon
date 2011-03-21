@@ -63,7 +63,7 @@ class agFooActions extends agActions
   {
 // <-------- CUT HERE -------->
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
-$fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '5'=>'10031'), 1) ,
+$fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1),
     array(array('1'=>'peachpitters', '5'=>'10035'), 1)) ;
 $obj = agAddressHelper::init() ;
 //$obj = agPersonNameHelper::init(4) ;
@@ -76,14 +76,14 @@ $obj = agAddressHelper::init() ;
 //$results = $obj->getPrimaryNameById() ;
 //$results = $obj->getPrimaryNameByType() ;
 //$results = $obj->getPrimaryNameAsString() ;
-$results = $obj->getNativeAddressAsString($array) ;
+//$results = $obj->getNativeAddressAsString($array) ;
 //$results = $obj->getAddressStandardId() ;
 //$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
 //$results = $obj->getAddressAllowedElements() ;
 //$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
 //$results = $obj->updateAddressHashes($array) ;
 //$addr = $obj->getAddressComponentsById($array) ;
-//$results = $obj->setAddresses($addr) ;
+$results = $obj->setAddresses($fakeAddr, TRUE) ;
 
 //$results = $obj->setAddresses($fakeAddr) ;
 print_r($results) ;
