@@ -351,10 +351,10 @@ class agPersonForm extends BaseagPersonForm
     // the third level value).
 
     /**
-     * @todo this works fine for now, since we only have one address format, but should be
-     * refactored to create a new array from values in the agAddressFormat table for each
-     * address_standard_id in that table.
-     */
+    * @todo this works fine for now, since we only have one address format, but should be
+    * refactored to create a new array from values in the agAddressFormat table for each
+    * address_standard_id in that table.
+    **/
     foreach ($this->address_formats as $af) {
       $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element] = $af->getAgAddressElement()->id;
     }

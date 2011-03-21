@@ -521,7 +521,12 @@ input[type="button"], button[type="submit"], form input[type="submit"] {
   -webkit-box-shadow: 3px 3px 3px #ccc;
   box-shadow: 3px 3px 3px #ccc;*/
 }
-
+.ruleGray {
+  color: #bcbcbc;
+  background-color: #bcbcbc;
+  border: 0px;
+  height: 1px;
+}
 .inputGray, .inputGraySmall {
   border: 1px solid #dadada;
   background-color: #efefef;
