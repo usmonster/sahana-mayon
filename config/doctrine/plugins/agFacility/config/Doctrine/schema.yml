@@ -63,6 +63,9 @@ agFacility:
     facility_name:
       type: string(64)
       notnull: true
+    facility_code:
+      type: string(10)
+      notnull: true
   actAs:
     Timestampable:
     Luceneable: 
@@ -72,9 +75,11 @@ agFacility:
     agFacility_siteId_unq:
       fields: [site_id]
       type: unique
-    agFacility_facilityName_unq:
-      fields: [facility_name]
+    agFacility_facilityCode_unq:
+      fields: [facility_code]
       type: unique
+    IX_agFacility_facilityName:
+      fields: [facility_name]
   relations:
     agSite:
       local: site_id
