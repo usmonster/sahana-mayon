@@ -210,7 +210,7 @@ class facilityActions extends agActions
   **/
   public function executeImport(sfWebRequest $request)
   {
-    $scenarioId = $request->getParameter('scenario_id');
+    $this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
 
     $uploadedFile = $_FILES["import"];
 
@@ -223,14 +223,14 @@ class facilityActions extends agActions
     // TODO: eventually use this ^^^ to replace this vvv.
 
     $import = new AgImportXLS();
-    $returned = $import->createTempTable();
+//    $returned = $import->createTempTable();
 
     $import->processImport($this->importPath);
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
 
     // Source table should be returned from AgImportXLS class.
-    $sourceTable = 'temp_facilityImport';
+    $sourceTable = $import->tempTable ;
     $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
 
     $format="%d/%m/%Y %H:%M:%S";

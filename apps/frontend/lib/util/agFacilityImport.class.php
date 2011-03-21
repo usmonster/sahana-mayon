@@ -10,6 +10,7 @@
  * http://www.gnu.org/copyleft/lesser.html
  *
  * @author     Clayton Kramer, CUNY SPS
+ * @author     Shirley Chan, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
@@ -28,14 +29,11 @@
  */
 class AgImportXLS
 {
-
-  /**
-   * @TODO Convert staff resource min/max fields to be dynamically generated from the import file.
-   */
   public $importFacilitySpec = array(
     'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
     'facility_name' => array('type' => "string", 'length' => 64),
     'facility_resource_code' => array('type' => "string", 'length' => 10),
+    'facility_code' => array('type' => "string", 'length' => 10),
     'facility_resource_type_abbr' => array('type' => "string", 'length' => 10),
     'facility_resource_status' => array('type' => "string", 'length' => 40),
     'facility_capacity' => array('type' => "integer"),
@@ -55,25 +53,27 @@ class AgImportXLS
     'borough' => array('type' => "string", 'length' => 30),
     'country' => array('type' => "string", 'length' => 64),
     'longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'generalist_min' => array('type' => "integer"),
-    'generalist_max' => array('type' => "integer"),
-    'specialist_min' => array('type' => "integer"),
-    'specialist_max' => array('type' => "integer"),
-    'uorc_min' => array('type' => "integer"),
-    'uorc_max' => array('type' => "integer"),
-    'medical_nurse_min' => array('type' => "integer"),
-    'medical_nurse_max' => array('type' => "integer"),
-    'medical_other_min' => array('type' => "integer"),
-    'medical_other_max' => array('type' => "integer"),
-    'ec_manager_min' => array('type' => "integer"),
-    'ec_manager_max' => array('type' => "integer"),
-    'hs_manager_min' => array('type' => "integer"),
-    'hs_manager_max' => array('type' => "integer")
+    'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8)//,
+//    'generalist_min' => array('type' => "integer"),
+//    'generalist_max' => array('type' => "integer"),
+//    'specialist_min' => array('type' => "integer"),
+//    'specialist_max' => array('type' => "integer"),
+//    'uorc_min' => array('type' => "integer"),
+//    'uorc_max' => array('type' => "integer"),
+//    'medical_nurse_min' => array('type' => "integer"),
+//    'medical_nurse_max' => array('type' => "integer"),
+//    'medical_other_min' => array('type' => "integer"),
+//    'medical_other_max' => array('type' => "integer"),
+//    'ec_manager_min' => array('type' => "integer"),
+//    'ec_manager_max' => array('type' => "integer"),
+//    'hs_manager_min' => array('type' => "integer"),
+//    'hs_manager_max' => array('type' => "integer")
   );
+  public $staffRequirementFieldType = array('type' => "integer");
   // Public variables declared here
   public $events = array();
   public $numRecordsImported = 0;
+  public $tempTable = 'temp_facilityImport';
 
   function __construct()
   {
@@ -90,6 +90,22 @@ class AgImportXLS
     } else {
       $this->events[] = array('type' => 'OK', "message" => "Deleted {$this->fileInfo['basename']} upload file.");
     }
+  }
+
+  /**
+   * Method to clean column headers, removing leading and trailing spaces and replacing between-word
+   * spaces with an underscore.
+   * 
+   * @param mix $value The value of the array.
+   * @param mix $key The key of the array.
+   */
+  protected function cleanColumnHeaders($columnHeaders)
+  {
+    foreach ($columnHeaders as $index => $column)
+    {
+      $columnHeaders[$index] = str_replace(' ', '_', trim(strtolower($column)));
+    }
+    return $columnHeaders;
   }
 
   /**
@@ -129,6 +145,29 @@ class AgImportXLS
 
         // We don't import sheets named "Lookup"
         if (strtolower($sheetName) <> 'Lookup') {
+          // Grab column headers at the beginning of each sheet.
+          $currentSheetHeaders = array_values($xlsObj->sheets[0]['cells'][1]);
+          $currentSheetHeaders = $this->cleanColumnHeaders($currentSheetHeaders);
+          
+          // Check if all following worksheets within the same workbook has the same column header 
+          // set by the first worksheet.
+          if ($sheet == 0) {
+            // Extend import spec headers with dynamic staff resource requirement columns from xls file.
+            $this->extendsImportSpecHeaders($currentSheetHeaders);
+            $this->createTempTable();
+          } else {
+            $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
+
+            if ($this->validateColumnHeaders($currentSheetHeaders)) {
+
+              $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
+            } else {
+
+              $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
+              return false;
+            }
+          }
+
           for ($row = 2; $row <= $numRows; $row++) {
 
             for ($col = 1; $col <= $numCols; $col++) {
@@ -144,22 +183,28 @@ class AgImportXLS
             // Increment import array row
             $importRow++;
           }
+
+          $this->events[] = array("type" => "INFO", "message" => "Inserting records into temp table.");
+          $this->saveImportTemp($importFileData);
         } else {
           $this->events[] = array("type" => "INFO", "message" => "Ignoring $sheetName worksheet");
         }
       }
+      $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
+      return true;
+    }
+  }
 
-      $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
-
-      if ($this->validateColumnHeaders($importFileData)) {
-
-        $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
-        $this->events[] = array("type" => "INFO", "message" => "Inserting records into temp table.");
-        $this->saveImportTemp($importFileData);
-        $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
-      } else {
-
-        $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
+  /**
+   * Method to extend import spec headers with dynamic staff requirement columns.
+   *
+   * @param array $importFileHeaders An array of column headers from import file.
+   */
+  private function extendsImportSpecHeaders($importFileHeaders)
+  {
+    foreach($importFileHeaders as $index => $column) {
+      if (preg_match('/_(min|max)$/', $column)) {
+        $this->importFacilitySpec[$column] = $this->staffRequirementFieldType;
       }
     }
   }
@@ -173,12 +218,11 @@ class AgImportXLS
    */
   private function validateColumnHeaders($importFileData)
   {
+    // Check first row for expected column header names
+    $importFileHeaders = array_keys(array_shift($importFileData));
 
     // Cache the import header specification
     $importSpecHeaders = array_keys($this->importFacilitySpec);
-
-    // Check first row for expected column header names
-    $importFileHeaders = array_keys(array_shift($importFileData));
 
     // The import spec will start with an ID column. Shift off of it.
     $idColumn = array_shift($importSpecHeaders);
@@ -226,7 +270,7 @@ class AgImportXLS
           $this->events[] = array("type" => "WARN", "message" => "Ignoring empty row.");
         } else {
 
-          $query = "INSERT INTO temp_facilityImport (%s) \nVALUES (%s\n)";
+          $query = "INSERT INTO %s (%s) \nVALUES (%s\n)";
           $cols = "";
           $vals = "";
 
@@ -268,7 +312,7 @@ class AgImportXLS
           $cols = substr($cols, 0, -1);
           $vals = substr($vals, 0, -1);
 
-          $query = sprintf($query, $cols, $vals);
+          $query = sprintf($query, $this->tempTable, $cols, $vals);
 
           // Insert records into temp table
           try {
@@ -311,7 +355,7 @@ class AgImportXLS
 
     // Drop temp if it exists
     try {
-      $conn->export->dropTable('temp_facilityImport');
+      $conn->export->dropTable($this->tempTable);
     } catch (Doctrine_Exception $e) {
       
     }
@@ -324,7 +368,7 @@ class AgImportXLS
     // Create the table
     try {
 
-      $conn->export->createTable('temp_facilityImport', $this->importFacilitySpec, $options);
+      $conn->export->createTable($this->tempTable, $this->importFacilitySpec, $options);
       $this->events[] = array("type" => "OK", "message" => "Successfully created temp table.");
     } catch (Doctrine_Exception $e) {
 
