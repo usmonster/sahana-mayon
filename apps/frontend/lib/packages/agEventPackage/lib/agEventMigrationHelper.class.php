@@ -216,13 +216,13 @@ class agEventMigrationHelper
        * @todo Wrap in an event helper class.
        */
       $lucene_queries = agDoctrineQuery::create()
-              ->select('ssg.id, ssg.scenario_id, ls.query_condition, ls.id')
+              ->select('ssg.id, ssg.scenario_id, ssg.search_weight, ls.query_condition, ls.id')
               ->from('agScenarioStaffGenerator ssg')
               ->innerJoin('ssg.agLuceneSearch ls')
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       foreach ($lucene_queries as $lucene_query) {
         $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($lucene_query['ls_query_condition'], $lucene_query['ssg_scenario_id']);
-        agScenarioGenerator::saveStaffPool($staff_resource_ids);
+        agScenarioGenerator::saveStaffPool($staff_resource_ids, $scenario_id, $lucene_query['ssg_search_weight']);
       }
 
       // 4. Copy over staff pool
