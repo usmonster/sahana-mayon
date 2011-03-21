@@ -217,7 +217,7 @@ ul.menu li ul.menu_level_1 li.menu2 a:hover {
 
 
 ul.menu li ul.menu_level_1 li.menu2, ul.menu li ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3{
-    padding: 0px 0px 0px 3px;
+    padding: 3px 0px 0px 3px;
  
 }
 
@@ -237,17 +237,17 @@ li.menu3 a:hover{
 }
 
 ul.menu_level_1 li.menu2 a{
-        border: solid 1px #f7f7f7; padding-left: 4px; position: relative;
+        border: solid 1px #f7f7f7; padding: 1px 0px 1px 4px; position: relative;
 }
 ul.menu_level_1 li.menu2 a:hover{
-        border: solid 1px #dadada; padding-left: 4px;
+        border: solid 1px #dadada; padding: 1px 0px 1px 4px;
 }
 
 ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3 a{
-        border: solid 1px #f7f7f7 !important; padding-left: 4px;
+        border: solid 1px #f7f7f7 !important; padding: 1px 0px 1px 4px;
 }
 ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3 a:hover{
-        border: solid 1px #f7f7f7 !important; padding-left: 4px;
+        border: solid 1px #f7f7f7 !important; padding: 1px 0px 1px 4px;
 }
 
 li.noBorder>a:hover {

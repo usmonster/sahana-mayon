@@ -533,6 +533,7 @@ class eventActions extends agActions
   public function executeStaff(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+    $this->getResponse()->setTitle('Event staff Webpage');
   }
 
   /**
