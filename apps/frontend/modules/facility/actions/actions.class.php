@@ -31,6 +31,14 @@ class facilityActions extends agActions
   public function executeIndex(sfWebRequest $request)
   {
     //do some index stuff
+    $inputs = array('scenario_id' => new sfWidgetFormDoctrineChoice(array('model' => 'agScenario', 'label' => 'scenario', 'add_empty' => true)),
+    );
+    //set up inputs for form
+    $this->filterForm = new sfForm();
+    foreach ($inputs as $key => $input) {
+      $input->setAttribute('class', 'filter');
+      $this->filterForm->setWidget($key, $input);
+    }
   }
 
   /**
@@ -200,8 +208,9 @@ class facilityActions extends agActions
   * @todo: define a standard import format and document it for the end user.
   * @todo: make this more robust and create meaningful error messages for failed import fields and records.
   **/
-  public function executeImport()
+  public function executeImport(sfWebRequest $request)
   {
+    $scenarioId = $request->getParameter('scenario_id');
 
     $uploadedFile = $_FILES["import"];
 
@@ -220,9 +229,7 @@ class facilityActions extends agActions
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
 
-    // Setting scenario id and source table for testing purposes.
     // Source table should be returned from AgImportXLS class.
-    $scenarioId = 1;
     $sourceTable = 'temp_facilityImport';
     $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
 
