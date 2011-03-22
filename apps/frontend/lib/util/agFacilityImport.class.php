@@ -53,21 +53,7 @@ class AgImportXLS
     'borough' => array('type' => "string", 'length' => 30),
     'country' => array('type' => "string", 'length' => 64),
     'longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8)//,
-//    'generalist_min' => array('type' => "integer"),
-//    'generalist_max' => array('type' => "integer"),
-//    'specialist_min' => array('type' => "integer"),
-//    'specialist_max' => array('type' => "integer"),
-//    'uorc_min' => array('type' => "integer"),
-//    'uorc_max' => array('type' => "integer"),
-//    'medical_nurse_min' => array('type' => "integer"),
-//    'medical_nurse_max' => array('type' => "integer"),
-//    'medical_other_min' => array('type' => "integer"),
-//    'medical_other_max' => array('type' => "integer"),
-//    'ec_manager_min' => array('type' => "integer"),
-//    'ec_manager_max' => array('type' => "integer"),
-//    'hs_manager_min' => array('type' => "integer"),
-//    'hs_manager_max' => array('type' => "integer")
+    'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8)
   );
   public $staffRequirementFieldType = array('type' => "integer");
   // Public variables declared here
@@ -149,23 +135,21 @@ class AgImportXLS
           $currentSheetHeaders = array_values($xlsObj->sheets[0]['cells'][1]);
           $currentSheetHeaders = $this->cleanColumnHeaders($currentSheetHeaders);
           
-          // Check if all following worksheets within the same workbook has the same column header 
-          // set by the first worksheet.
+          // Check for consistant column header in all data worksheets.  Use the column header from
+          // the first worksheet as the import column header for all data worksheets.  
           if ($sheet == 0) {
             // Extend import spec headers with dynamic staff resource requirement columns from xls file.
             $this->extendsImportSpecHeaders($currentSheetHeaders);
             $this->createTempTable();
+          }
+
+          $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
+
+          if ($this->validateColumnHeaders($currentSheetHeaders)) {
+            $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
           } else {
-            $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
-
-            if ($this->validateColumnHeaders($currentSheetHeaders)) {
-
-              $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
-            } else {
-
-              $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
-              return false;
-            }
+            $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
+            return false;
           }
 
           for ($row = 2; $row <= $numRows; $row++) {
@@ -214,12 +198,25 @@ class AgImportXLS
    *
    * Validates import data for correct schema. Returns bool.
    *
-   * @param $importFileData
+   * @param $importFileHeaders
    */
-  private function validateColumnHeaders($importFileData)
+  private function validateColumnHeaders($importFileHeaders)
   {
-    // Check first row for expected column header names
-    $importFileHeaders = array_keys(array_shift($importFileData));
+    // Check min/max set columns.  These two columns must come in a set.  Cannot add one column and
+    // not the other.
+    $setHeaders = preg_grep('/_(min|max)$/i', $importFileHeaders);
+    foreach($setHeaders as $key => $column) {
+      $setHeaders[$key] = rtrim(rtrim(strtolower($column), '_min'), '_max');
+    }
+    $setHeaders = array_unique($setHeaders);
+    foreach($setHeaders as $key => $header) {
+      if ( !in_array($header.'_min', $importFileHeaders)
+           || !in_array($header.'_max', $importFileHeaders))
+      {
+        $this->events[] = array("type" => "ERROR", "message" => "Incomplete $header min/max set columns.");
+        return false;
+      }
+    }
 
     // Cache the import header specification
     $importSpecHeaders = array_keys($this->importFacilitySpec);

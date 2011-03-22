@@ -8,6 +8,9 @@
 class agImportNormalization
 {
   public $summary = array();
+  private $importStaffList = array();
+  private $staffingRequirements = array();
+  private $staffMapping = array();
 
   function __construct($scenarioId, $sourceTable, $dataType)
   {
@@ -45,6 +48,7 @@ class agImportNormalization
     $this->addressContactTypes = array_flip(agContactHelper::getContactTypes('address'));
     $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->defaultPhoneFormatTypes));
     $this->staffResourceTypes = array_flip(agStaffHelper::getStaffResourceTypes());
+    $this->mapStaffColumn();
     $addressHelper = new agAddressHelper();
     $this->addressStandards = $addressHelper->getAddressStandardId();
     $this->addressElements = array_flip($addressHelper->getAddressAllowedElements());
@@ -113,37 +117,39 @@ class agImportNormalization
     // (1) Check for valid staff type.
     // (2) Either both min and max are provided or neither should be provided for each staff type.
     // (3) max >= min.
-    $importStaffList = array();
-    foreach (array_keys($record) as $key) {
-      if (preg_match('/_max$/', $key)) {
-        $importStaffList[] = rtrim($key, '_max');
-      }
-    }
-    $cleanStaff = array();
-    foreach ($this->staffResourceTypes as $s => $i) {
-      $cleanStaff[strtolower(str_replace(' ', '_', $s))] = $i;
-    }
-    foreach ($importStaffList as $staff) {
-      if (!array_key_exists($staff, $cleanStaff)) {
+    foreach ($this->importStaffList as $staff) {
+      $staffMin = $staff . '_min';
+      $staffMax = $staff . '_max';
+      if (!array_key_exists($staff, $this->staffMapping)) {
         return array('pass' => FALSE,
                      'status' => 'ERROR', 
                      'type' => 'Staff Resource',
                      'message' => 'Invalid staff resource type.');
       }
 
-      if (( empty($record[$staff . '_min']) && !empty($record[staff . '_max']) )
-              || (!empty($record[$staff . '_min']) && empty($record[$staff . '_max']) )) {
+      // Check if column min/max exists.
+      if (!array_key_exists($staffMin, $record) || !array_key_exists($staffMax, $record)) {
+        return array('pass' => FALSE,
+                     'status' => 'ERROR',
+                     'type' => 'Staff Resource',
+                     'message' => 'Invalid min/max set: missing column.');
+      }
+
+      // Check if a set value is provided.
+      if (( empty($record[$staffMin]) && !empty($record[$staffMax]) )
+              || (!empty($record[$staffMin]) && empty($record[$staffMax]) )) {
         return array('pass' => FALSE,
                      'status' => 'ERROR',
                      'type' => 'Staff Resource',
                      'message' => 'Invalid min/max set: missing value.');
       }
-    }
-    if ($record['minimum'] > $record['maximum']) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Staff Resource',
-                   'message' => 'Invalid min/max set: min > max.');
+      // Check if min <= max
+      if ($record[$staffMin] > $record[$staffMax]) {
+        return array('pass' => FALSE,
+                     'status' => 'ERROR',
+                     'type' => 'Staff Resource',
+                     'message' => 'Invalid min/max set: min > max.');
+      }
     }
 
     // Check for valid email address
@@ -214,6 +220,69 @@ class agImportNormalization
                  'message' => null);
   }
 
+  private function getImportStaffList($columnHeaders) {
+
+    $setHeaders = preg_grep('/_(min|max)$/i', $columnHeaders);
+    foreach($setHeaders as $key => $column) {
+      $this->importStaffList[] = rtrim(rtrim(strtolower($column), '_min'), '_max');
+    }
+    $this->importStaffList = array_unique($this->importStaffList);
+
+//    foreach ($columnHeaders as $index => $column)
+//    {
+//      if (preg_match('/_(min|max)$/', $column)) {
+//        $this->importStaffList[] = rtrim(rtrim($column, '_max'), '_min');
+//      }
+//    }
+//    $this->importStaffList = array_unique($this->importStaffList);
+  }
+
+  /**
+   * Method to replace a white space with underscore.
+   *
+   * @param string $name A string for replacement.
+   * @return string $name A reformatted string.
+   */
+  private function stripName ($name = NULL) {
+    if ( is_null($name) || !is_string($name) ) {
+      return $name;
+    }
+
+    $strippedName = strtolower(str_replace(' ', '_', $name));
+    return $strippedName;
+  }
+
+  /**
+   * Method to create a mapping of the staff resource types to their save column header formats.
+   */
+  private function mapStaffColumn()
+  {
+    foreach($this->staffResourceTypes as $staff => $id)
+    {
+      $cleanName = $this->stripName($staff);
+      $this->staffMapping[$cleanName] = $staff;
+    }
+  }
+
+  /**
+   * Method to dynamically generate staff requirements based off of the the pass in record.
+   *
+   * @param array $record An associative array of an entry from the import temp table.
+   */
+  private function dynamicStaffing($record) {
+    foreach ($this->importStaffList as $staff)
+    {
+      $staffId = $this->staffResourceTypes[$this->staffMapping[$staff]];
+      $staffMin = $staff . '_min';
+      $staffMax = $staff . '_max';
+      $this->staffingRequirements[$staffId] = array('min' => $record[$staffMin],
+                                                    'max' => $record[$staffMax]);
+    }
+  }
+
+  /**
+   * Method to normalize data from temp table.
+   */
   public function normalizeImport()
   {
     // Declare static variables.
@@ -228,7 +297,12 @@ class agImportNormalization
     $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
     $sourceRecords = $pdo->fetchAll();
 
-      // facility
+    // Grab the dynamical columns of staff requirements.
+    if (count($sourceRecords) > 0) {
+      $this->getImportStaffList(array_keys($sourceRecords[0]));
+    }
+
+    //loop through records.
     foreach ($sourceRecords as $record) {
       try {
         $this->conn->beginTransaction();
@@ -296,31 +370,7 @@ class agImportNormalization
         $fullAddress = $this->fullAddress;
         $geoInfo = array('longitude' => $record['longitude'],
             'latitude' => $record['latitude']);
-
-        //keys of this array match values for staff types that should exist in ag_staff_resource_type
-        $staffing = array(
-          $this->staffResourceTypes['Generalist'] =>
-            array('min' => $record['generalist_min'],
-                  'max' => $record['generalist_max']),
-          $this->staffResourceTypes['Specialist'] =>
-            array('min' => $record['specialist_min'],
-                  'max' => $record['specialist_max']),
-          $this->staffResourceTypes['UORC'] =>
-            array('min' => $record['uorc_min'],
-                  'max' => $record['uorc_max']),
-          $this->staffResourceTypes['Medical Nurse'] =>
-            array('min' => $record['medical_nurse_min'],
-                  'max' => $record['medical_nurse_max']),
-          $this->staffResourceTypes['Medical Other'] =>
-            array('min' => $record['medical_other_min'],
-                  'max' => $record['medical_other_max']),
-          $this->staffResourceTypes['EC Manager'] =>
-            array('min' => $record['ec_manager_min'],
-                  'max' => $record['ec_manager_max']),
-          $this->staffResourceTypes['HS Manager'] =>
-            array('min' => $record['hs_manager_min'],
-                  'max' => $record['hs_manager_max'])
-        );
+        $staffing = $this->dynamicStaffing($record);
 
         $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
         $facility_resource_status_id = $this->facilityResourceStatuses[$facility_resource_status];
@@ -334,6 +384,8 @@ class agImportNormalization
         $workAddressTypeId = $this->addressContactTypes[$facilityContactType];
         $workAddressStandardId = $this->addressStandards;
         $addressElementIds = $this->addressElements;
+
+        // facility
 
         // tries to find an existing record based on a unique identifier.
         $facility = agDoctrineQuery::create()
