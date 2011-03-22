@@ -5,5 +5,3 @@ default:
   is_secure: true
 search:
   is_secure: true
-prepare:
-  is_secure: true
