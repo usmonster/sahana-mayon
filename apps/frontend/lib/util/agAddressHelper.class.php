@@ -609,6 +609,9 @@ class agAddressHelper extends agBulkRecordHelper
    */
   public function updateAddressHashes($addressIds = NULL, $conn = NULL)
   {
+    // what is our transaction called?
+    $savepoint = 'updateAddrHash' ;
+
     // reflect our addressIds
     $addressIds = $this->getRecordIds($addressIds) ;
 

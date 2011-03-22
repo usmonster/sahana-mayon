@@ -13,7 +13,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agEntityAddressHelper extends agBulkRecordHelper
+class agEntityAddressHelper extends agEntityContactHelper
 {
   public    $agAddressHelper,
             $defaultIsPrimary = FALSE,
@@ -197,6 +197,12 @@ class agEntityAddressHelper extends agBulkRecordHelper
    * @return array A three dimensional array, by entityId, then indexed from highest priority
    * address to lowest, with a third dimension containing the address type as index[0], and the
    * address value as index[1].
+   * <code>
+   * array( [$entityId] => array( array($firstPriorityType, $firstPriorityValue),
+   *     array($secondPriorityType, $secondPriorityValue),
+   *     ... )
+   *   ... )
+   * </code>
    */
   public function getEntityAddress ($entityIds = NULL,
                                     $strType = NULL,
@@ -283,5 +289,71 @@ class agEntityAddressHelper extends agBulkRecordHelper
     }
    
     return $entityAddresses ;
+  }
+
+  /**
+
+   */
+
+  /**
+   * Method to set entity address data using address ID 's instead of values.
+   * 
+   * @param array $entityContacts A multidimensional array of address contact information that
+   * mimics the output of getEntityAddress($entityIds, FALSE, FALSE).
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return integer The number of operations performed.
+   */
+  public function setEntityAddressById($entityContacts, Doctrine_Connection $conn = NULL)
+  {
+    // explicit results declaration
+    $results = array() ;
+
+    // set our connection object if not explicitly passed one
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    // execute the reprioritization helper and pass it our current addresses as found in the db
+    $entityContacts = $this->reprioritizeContacts($entityContacts,
+        $this->getEntityAddress(array_keys($entityContacts), FALSE, FALSE)) ;
+
+    // define our blank collection
+    $coll = new Doctrine_Collection('agEntityAddressContact') ;
+
+    // loop through our entityContacts
+    foreach ($entityContacts as $entityId => $contacts)
+    {
+      foreach($contacts as $index => $contact)
+      {
+        // create a doctrine record with this info
+        $newRec = new agEntityAddressContact() ;
+        $newRec['entity_id'] = $entityId ;
+        $newRec['priority'] = ($index + 1) ;
+        $newRec['address_id'] = $contact[1] ;
+        $newRec['address_contact_type_id'] = $contact[0] ;
+
+        // add the record to our collection
+        $coll->add($newRec) ;
+      }
+    }
+
+    // wowee, zowee, now that the hard stuff's done, let's just commit this sucker
+    $conn->beginTransaction() ;
+    try
+    {
+      $coll->replace() ;
+      $conn->commit() ;
+    }
+    catch(Exception $e)
+    {
+      // if we run into a problem, rollback and throw an error
+      $conn->rollback() ;
+      throw new Doctrine_Exception('Failed to insert entity addresses.', $e) ;
+    }
+
+    return count($coll) ;
+  }
+
+  public function setEntityAddress()
+  {
+
   }
 }
