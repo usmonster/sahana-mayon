@@ -51,7 +51,6 @@ ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
 	font:bold 12px helvetica, arial, verdana;
 	color: #848484;
 	text-decoration:none;
-	cursor:default;
 }
 ul.menu>li>a {
   padding: 5px 4px;
