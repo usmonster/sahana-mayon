@@ -167,25 +167,31 @@ class adminActions extends agActions
   }
 
   public function executeDisplay(sfWebRequest $request)
-  { /**
-   *
-   * @param sfWebRequest $request should be passing in information that was submitted in the form created
-   * $this->processForm($request, $this->form);
-   */
-    $this->form = new agReligionForm();
-    $this->form->setWidgets(array('ag_religion_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReligion'))));
-    $this->form->setValidators(array(new sfValidatorDoctrineChoice(array('model' => $this->form->getModelName(), 'column' => 'app_display'))));
-    $food = $this->form->getObject();
-    $foog = $this->form->getObject()->getReligion();
-    $garb = $this->form->getObject()->id;
+  {
+    /**
+     *
+     * @param sfWebRequest $request should be passing in information that was submitted in the form created
+     * $this->processForm($request, $this->form);
+     */
+    $this->form = new sfForm();
+    $this->form->getWidgetSchema()->setNameFormat('display[%s]');
+    $this->form->setWidget('agProfession', new sfWidgetFormDoctrineChoice(array('multiple' => true, 'expanded' => true, 'model' => 'agProfession')));
+
+    //$this->form->setValidator(array(new sfValidatorDoctrineChoice(array('model' => $this->form->getModelName(), 'column' => 'app_display'))));
     //if submitted
-    $this->form->bind($request->getParameter($this->form->getName()));
-    if ($this->form->isValid()) {
-      foreach ($foog as $religion) {
-        $food = $this->form->getObject();
-        $this->form->getObject()->app_display[$religion] = 1;
-      }
-      $this->form->save();
+    if ($request->isMethod(sfRequest::POST)) {
+      //$this->form->bind($request->getParameter($this->form->getName()));
+//      if ($this->form->isValid()) {
+        foreach ($request->getParameter('display') as $process_display) {
+          //$array_of_all = get
+          $profession = new agProfession();
+          $profession->setAppDisplay(1);
+
+          //$process_display =
+          
+        }
+//        $this->form->save();
+//      }
     }
   }
 
