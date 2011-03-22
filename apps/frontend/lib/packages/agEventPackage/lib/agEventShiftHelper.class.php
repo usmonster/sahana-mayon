@@ -46,6 +46,10 @@ class agEventShiftHelper
       try
       {
         $components = $shiftsQuery->getDql() ;
+//   Chad, if you work on this soon, I commented out the line below because it was causing 
+//   errors w/ the modal-modal. Somehow, the echo here was getting all the way back to the response,
+//   so the string that was expected to be event/[event-name]/fgroup turned out to be something like
+//   UPDATE agEventShift SET shift_status_id = ? WHERE id IN (?, ?, ?, ?, ?, ?, ?)event/[event-name]/fgroup.
         echo $components ;
         // update shifts
         $eventShiftUpdates = $shiftsQuery->execute() ;
