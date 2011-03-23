@@ -75,7 +75,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagStaffPoolForm.html#ad66e7c68e48c45c1677d2ee02bd7d3ce">__construct</a> ($staff_gen_id=null)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagStaffPoolForm.html#a6dda6131916dd1ca1677472f1d52699e">__construct</a> ($staff_gen_id=null, $values=null)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af5546e8a9da61704f0202e126b931084"></a><!-- doxytag: member="agStaffPoolForm::embedAgSearchForms" ref="af5546e8a9da61704f0202e126b931084" args="()" -->
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagStaffPoolForm.html#af5546e8a9da61704f0202e126b931084">embedAgSearchForms</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Configures the form and starts off the embedding chain. <br/></td></tr>
@@ -102,6 +102,10 @@ Public Attributes</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>$scenario_id</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1eee0bb317fe2bdb82d2c55611362bb"></a><!-- doxytag: member="agStaffPoolForm::$staff_gen_id" ref="ad1eee0bb317fe2bdb82d2c55611362bb" args="" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>$staff_gen_id</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a408541914ee4700052ad4f98f79f5726"></a><!-- doxytag: member="agStaffPoolForm::$sg_values" ref="a408541914ee4700052ad4f98f79f5726" args="" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>$sg_values</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab0cfdf9bef2ec99612b5b882f2870b54"></a><!-- doxytag: member="agStaffPoolForm::$ls_values" ref="ab0cfdf9bef2ec99612b5b882f2870b54" args="" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>$ls_values</b></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Agasti ag Staff Pool Form Class - A class to generate either a new staff pool form or an edit staff pool form. </p>
@@ -112,7 +116,7 @@ Public Attributes</h2></td></tr>
 
 <p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00018">18</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ad66e7c68e48c45c1677d2ee02bd7d3ce"></a><!-- doxytag: member="agStaffPoolForm::__construct" ref="ad66e7c68e48c45c1677d2ee02bd7d3ce" args="($staff_gen_id=null)" -->
+<a class="anchor" id="a6dda6131916dd1ca1677472f1d52699e"></a><!-- doxytag: member="agStaffPoolForm::__construct" ref="a6dda6131916dd1ca1677472f1d52699e" args="($staff_gen_id=null, $values=null)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -120,8 +124,18 @@ Public Attributes</h2></td></tr>
           <td class="memname">agStaffPoolForm::__construct </td>
           <td>(</td>
           <td class="paramtype">$&#160;</td>
-          <td class="paramname"><em>staff_gen_id</em> = <code>null</code></td><td>)</td>
+          <td class="paramname"><em>staff_gen_id</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>values</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div>
@@ -129,11 +143,12 @@ Public Attributes</h2></td></tr>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramtype">integer</td><td class="paramname">$staff_gen_id</td><td>an incoming staff generator id to construct the form </td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$values</td><td>is used in the event this form is being constructed after a post for a preview, to set the defaults of the internal forms </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00029">29</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00032">32</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
 
 </div>
 </div>
@@ -172,7 +187,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00123">123</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00143">143</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
 
 </div>
 </div>
@@ -210,7 +225,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00145">145</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00165">165</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
 
 </div>
 </div>
@@ -248,7 +263,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00158">158</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agStaffPoolForm_8class_8php_source.html#l00178">178</a> of file <a class="el" href="agStaffPoolForm_8class_8php_source.html">agStaffPoolForm.class.php</a>.</p>
 
 </div>
 </div>
@@ -261,7 +276,7 @@ Public Attributes</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

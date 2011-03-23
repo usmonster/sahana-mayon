@@ -67,7 +67,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00022"></a>00022 
 <a name="l00029"></a><a class="code" href="classagSudoUser.html#a2a1d54717e029ce2519914fdded3e798">00029</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagSudoUser.html#a2a1d54717e029ce2519914fdded3e798">checkSudoPassword</a>($username, $password)
 <a name="l00030"></a>00030   {
-<a name="l00031"></a>00031     require_once dirname(__FILE__) . <span class="stringliteral">&#39;/../../../lib/vendor/symfony/lib/yaml/sfYaml.php&#39;</span>;
+<a name="l00031"></a>00031     <span class="comment">//require_once dirname(__FILE__) . &#39;/../../../lib/vendor/symfony/lib/yaml/sfYaml.php&#39;;</span>
 <a name="l00032"></a>00032     <span class="comment">// check config.yml existence</span>
 <a name="l00033"></a>00033     <span class="keywordflow">if</span> (file_exists(dirname(__FILE__) . <span class="stringliteral">&#39;/../../../config/config.yml&#39;</span>) == FALSE) {
 <a name="l00034"></a>00034       header(<span class="stringliteral">&quot;Location: install.php&quot;</span>);
@@ -78,33 +78,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00039"></a>00039     <span class="keywordflow">if</span> ($cfgArray[<span class="stringliteral">&#39;sudo&#39;</span>][<span class="stringliteral">&#39;super_user&#39;</span>] == $username &amp;&amp; $cfgArray[<span class="stringliteral">&#39;sudo&#39;</span>][<span class="stringliteral">&#39;super_pass&#39;</span>] == $password) {
 <a name="l00040"></a>00040       $user = self::getUser($username);
 <a name="l00041"></a>00041       $user-&gt;setPassword($password);
-<a name="l00042"></a>00042       $user-&gt;setIsActive(<span class="keyword">true</span>);
-<a name="l00043"></a>00043       <span class="comment">// set other user aspects</span>
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045       $user-&gt;save();
-<a name="l00046"></a>00046       <span class="keywordflow">return</span> $user;
-<a name="l00047"></a>00047     } <span class="keywordflow">else</span> {
-<a name="l00048"></a>00048       <span class="keywordflow">throw</span> <span class="keyword">new</span> sfException(sprintf(<span class="stringliteral">&#39;The username/password combination did not match&#39;</span>));
-<a name="l00049"></a>00049       <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00050"></a>00050     }
-<a name="l00051"></a>00051   }
-<a name="l00052"></a>00052 
-<a name="l00053"></a>00053   <span class="keyword">protected</span> <span class="keyword">static</span> function getUser($username)
-<a name="l00054"></a>00054   {
-<a name="l00055"></a>00055     <span class="keywordflow">if</span> ($user = Doctrine::getTable(<span class="stringliteral">&#39;sfGuardUser&#39;</span>)-&gt;retrieveByUsername($username)) {
-<a name="l00056"></a>00056       <span class="comment">//user exists, return it</span>
-<a name="l00057"></a>00057       <span class="keywordflow">return</span> $user;
-<a name="l00058"></a>00058     } <span class="keywordflow">else</span> {
-<a name="l00059"></a>00059       <span class="comment">//none found, create it</span>
-<a name="l00060"></a>00060       $user = <span class="keyword">new</span> sfGuardUser();
-<a name="l00061"></a>00061       $user-&gt;setUsername($username);
-<a name="l00062"></a>00062       <span class="keywordflow">return</span> $user;
-<a name="l00063"></a>00063       <span class="comment">//if no DB connection, this will fail</span>
-<a name="l00064"></a>00064     }
-<a name="l00065"></a>00065   }
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067 }
-<a name="l00068"></a>00068 
+<a name="l00042"></a>00042       $user-&gt;setEmailAddress($cfgArray[<span class="stringliteral">&#39;admin&#39;</span>][<span class="stringliteral">&#39;admin_email&#39;</span>]);
+<a name="l00043"></a>00043       $user-&gt;setIsActive(<span class="keyword">true</span>);
+<a name="l00044"></a>00044       <span class="comment">// set other user aspects</span>
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046       $user-&gt;save();
+<a name="l00047"></a>00047       <span class="keywordflow">return</span> $user;
+<a name="l00048"></a>00048     } <span class="keywordflow">else</span> {
+<a name="l00049"></a>00049       <span class="keywordflow">throw</span> <span class="keyword">new</span> sfException(sprintf(<span class="stringliteral">&#39;The username/password combination did not match&#39;</span>));
+<a name="l00050"></a>00050       <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00051"></a>00051     }
+<a name="l00052"></a>00052   }
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054   <span class="keyword">protected</span> <span class="keyword">static</span> function getUser($username)
+<a name="l00055"></a>00055   {
+<a name="l00056"></a>00056     <span class="keywordflow">if</span> ($user = Doctrine::getTable(<span class="stringliteral">&#39;sfGuardUser&#39;</span>)-&gt;retrieveByUsername($username)) {
+<a name="l00057"></a>00057       <span class="comment">//user exists, return it</span>
+<a name="l00058"></a>00058       <span class="keywordflow">return</span> $user;
+<a name="l00059"></a>00059     } <span class="keywordflow">else</span> {
+<a name="l00060"></a>00060       <span class="comment">//none found, create it</span>
+<a name="l00061"></a>00061       $user = <span class="keyword">new</span> sfGuardUser();
+<a name="l00062"></a>00062       $user-&gt;setUsername($username);
+<a name="l00063"></a>00063       <span class="keywordflow">return</span> $user;
+<a name="l00064"></a>00064       <span class="comment">//if no DB connection, this will fail</span>
+<a name="l00065"></a>00065     }
+<a name="l00066"></a>00066   }
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068 }
+<a name="l00069"></a>00069 
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->
@@ -112,7 +113,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

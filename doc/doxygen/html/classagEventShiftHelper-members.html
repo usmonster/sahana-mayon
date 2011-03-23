@@ -65,16 +65,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 This is the complete list of members for <a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a>, including all inherited members.<table>
-  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#af15841b576343fd6a8450255fbce8e5a">activateEventFacilityGroupShifts</a>($eventFacilityGroupId, $activationTime)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#a0f08aa23eb147fc20309d8e38eb92fdd">activateEventFacilityResourceShifts</a>($eventFacilityResourceId, $activationTime)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#af0afc47752014f5c45975c93a243d455">activateEventShifts</a>($eventId, $activationTime)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#a15fdfbdfae430832b8d5deeaf86e482e">releaseShiftStaff</a>($eventShiftIds, Doctrine_Connection $conn=NULL)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#a353e968c9f73b007738253ff0f301e8c">returnCurrentFacilityResourceShifts</a>($eventId, $staffed=NULL, $timestamp=NULL)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#ad93bea46362782bd3bef52879391335c">returnDisabledShiftStatus</a>()</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#a8c75b8ef0e491f4fe1c0ae1602ee5bc9">returnFirstFacilityResourceShifts</a>($eventId, $staffed=NULL)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#a31446299589952706157bdf7b2ec9152">returnSingleCurrentFacilityResourceShifts</a>($eventId, $staffed=NULL, $timestamp=NULL, $minEnd=TRUE)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#a0636fb19d8930cd0d5b7ddac8c009497">returnSingleFirstFacilityResourceShifts</a>($eventId, $staffed=NULL, $minEnd=TRUE)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagEventShiftHelper.html#ae7070d16b08fdf9dcf37f60cc7ae6087">setEventShiftStatus</a>($eventShiftIds, $shiftStatusId, $releaseStaff=FALSE, Doctrine_Connection $conn=NULL)</td><td><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td><code> [static]</code></td></tr>
 </table></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

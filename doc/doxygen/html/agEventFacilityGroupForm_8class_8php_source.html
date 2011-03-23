@@ -82,9 +82,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00042"></a>00042       <span class="stringliteral">&#39;facility_group_allocation_status_id&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; $this-&gt;getRelatedModelName(<span class="stringliteral">&#39;agFacilityGroupAllocationStatus&#39;</span>), <span class="stringliteral">&#39;add_empty&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getFacilityGroupAllocationStatus&#39;</span>, <span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Status&#39;</span>)),
 <a name="l00043"></a>00043       <span class="stringliteral">&#39;activation_sequence&#39;</span>                 =&gt; <span class="keyword">new</span> sfWidgetFormInputText(),
 <a name="l00044"></a>00044       <span class="comment">//facility resource list needs to minus options that are in $currentoptions</span>
-<a name="l00045"></a>00045       <span class="comment">//&#39;ag_facility_resource_list&#39;          =&gt; new sfWidgetFormChoice(array(&#39;choices&#39; =&gt; $availtoptions,&#39;multiple&#39; =&gt; true),array(&#39;style&#39; =&gt; &#39;height:150px;width:150px;&#39;)),</span>
-<a name="l00046"></a>00046       <span class="stringliteral">&#39;ag_facility_resource_list&#39;</span>           =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),<span class="comment">//sfWidgetFormDoctrineChoice(array(&#39;multiple&#39; =&gt; true, &#39;model&#39; =&gt; &#39;agFacilityResource&#39;, &#39;expanded&#39; =&gt; false), array(&#39;style&#39; =&gt; &#39;height:300px;width:300px;&#39;)), //this will be hidden</span>
-<a name="l00047"></a>00047       <span class="stringliteral">&#39;ag_facility_resource_order&#39;</span>          =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),<span class="comment">//sfWidgetFormChoice(array(&#39;choices&#39; =&gt; $currentoptions,&#39;multiple&#39; =&gt; true),array(&#39;style&#39; =&gt; &#39;height:300px;width:300px;&#39;)) //this will be hidden</span>
+<a name="l00045"></a>00045       <span class="comment">//&#39;ag_facility_resource_list&#39;          =&gt; new sfWidgetFormChoice(array(&#39;choices&#39; =&gt; $availtoptions,&#39;multiple&#39; =&gt; true),array(&#39;class&#39; =&gt; &#39;widthAndHeight150&#39;)),</span>
+<a name="l00046"></a>00046       <span class="stringliteral">&#39;ag_facility_resource_list&#39;</span>           =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),<span class="comment">//sfWidgetFormDoctrineChoice(array(&#39;multiple&#39; =&gt; true, &#39;model&#39; =&gt; &#39;agFacilityResource&#39;, &#39;expanded&#39; =&gt; false), array(&#39;class&#39; =&gt; &#39;widthAndHeight150&#39;)), //this will be hidden</span>
+<a name="l00047"></a>00047       <span class="stringliteral">&#39;ag_facility_resource_order&#39;</span>          =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),<span class="comment">//sfWidgetFormChoice(array(&#39;choices&#39; =&gt; $currentoptions,&#39;multiple&#39; =&gt; true),array(&#39;class&#39; =&gt; &#39;widthAndHeight150&#39;)) //this will be hidden</span>
 <a name="l00048"></a>00048       ));
 <a name="l00049"></a>00049 
 <a name="l00050"></a>00050 
@@ -147,7 +147,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00117"></a>00117 
 <a name="l00118"></a>00118       <span class="keywordflow">if</span>(count($toDelete) &gt;0)
 <a name="l00119"></a>00119       {
-<a name="l00121"></a>00121         $deleteRecs = Doctrine_Query::create()
+<a name="l00121"></a>00121         $deleteRecs = agDoctrineQuery::create()
 <a name="l00122"></a>00122         -&gt;select(<span class="stringliteral">&#39;a.facility_resource_id&#39;</span>)
 <a name="l00123"></a>00123         -&gt;from(<span class="stringliteral">&#39;agEventFacilityResource a&#39;</span>)
 <a name="l00124"></a>00124         -&gt;whereIn(<span class="stringliteral">&#39;a.facility_resource_id&#39;</span>, $toDelete)-&gt;execute();
@@ -195,7 +195,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

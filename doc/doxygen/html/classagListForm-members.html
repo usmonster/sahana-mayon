@@ -65,15 +65,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 This is the complete list of members for <a class="el" href="classagListForm.html">agListForm</a>, including all inherited members.<table>
-  <tr bgcolor="#f0f0f0"><td><b>facilitylist</b>($sf_request, $title, $columns, $pager) (defined in <a class="el" href="classagListForm.html">agListForm</a>)</td><td><a class="el" href="classagListForm.html">agListForm</a></td><td><code> [static]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>facilitylist</b>($sf_request, $title, $columns, $pager, $widget=NULL) (defined in <a class="el" href="classagListForm.html">agListForm</a>)</td><td><a class="el" href="classagListForm.html">agListForm</a></td><td><code> [static]</code></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>foolist</b>($sf_request, $title, $columns, $pager) (defined in <a class="el" href="classagListForm.html">agListForm</a>)</td><td><a class="el" href="classagListForm.html">agListForm</a></td><td><code> [static]</code></td></tr>
+  <tr bgcolor="#f0f0f0"><td><b>staffpoollist</b>($sf_request, $title, $columns, $pager) (defined in <a class="el" href="classagListForm.html">agListForm</a>)</td><td><a class="el" href="classagListForm.html">agListForm</a></td><td><code> [static]</code></td></tr>
 </table></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

@@ -74,12 +74,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#a0f08aa23eb147fc20309d8e38eb92fdd">activateEventFacilityResourceShifts</a> ($eventFacilityResourceId, $activationTime)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates all shifts associated with $eventFacilityResourceID to use absolute timestamps per activation protocol.  <a href="#a0f08aa23eb147fc20309d8e38eb92fdd"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#af15841b576343fd6a8450255fbce8e5a">activateEventFacilityGroupShifts</a> ($eventFacilityGroupId, $activationTime)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates all shifts associated with $eventFacilityGroupID to use absolute timestamps per activation protocol.  <a href="#af15841b576343fd6a8450255fbce8e5a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#af0afc47752014f5c45975c93a243d455">activateEventShifts</a> ($eventId, $activationTime)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates all shifts associated with $event to use absolute timestamps per activation protocol.  <a href="#af0afc47752014f5c45975c93a243d455"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#ae7070d16b08fdf9dcf37f60cc7ae6087">setEventShiftStatus</a> ($eventShiftIds, $shiftStatusId, $releaseStaff=FALSE, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the status of a specified event shift and optionally calls a function to release staff of disabled shifts.  <a href="#ae7070d16b08fdf9dcf37f60cc7ae6087"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#a15fdfbdfae430832b8d5deeaf86e482e">releaseShiftStaff</a> ($eventShiftIds, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a delete query to release allocated staff from the passed event shift ids.  <a href="#a15fdfbdfae430832b8d5deeaf86e482e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#a8c75b8ef0e491f4fe1c0ae1602ee5bc9">returnFirstFacilityResourceShifts</a> ($eventId, $staffed=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to return the first shifts of each facility resource for a given event.  <a href="#a8c75b8ef0e491f4fe1c0ae1602ee5bc9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#a0636fb19d8930cd0d5b7ddac8c009497">returnSingleFirstFacilityResourceShifts</a> ($eventId, $staffed=NULL, $minEnd=TRUE)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return an associative array keyed by event facility resource id with a value of one of the first shifts of the facility resource.  <a href="#a0636fb19d8930cd0d5b7ddac8c009497"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#a353e968c9f73b007738253ff0f301e8c">returnCurrentFacilityResourceShifts</a> ($eventId, $staffed=NULL, $timestamp=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an array keyed by the shift id of any shifts that are currently in operation.  <a href="#a353e968c9f73b007738253ff0f301e8c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#a31446299589952706157bdf7b2ec9152">returnSingleCurrentFacilityResourceShifts</a> ($eventId, $staffed=NULL, $timestamp=NULL, $minEnd=TRUE)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return an associative array keyed by event facility resource id with a value of one of the current shifts of the facility resource.  <a href="#a31446299589952706157bdf7b2ec9152"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventShiftHelper.html#ad93bea46362782bd3bef52879391335c">returnDisabledShiftStatus</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the shift status id of the shift_disabled_status global parameter.  <a href="#ad93bea46362782bd3bef52879391335c"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>provides event shift management functions </p>
@@ -90,21 +98,21 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00017">17</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
 </div><hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="af15841b576343fd6a8450255fbce8e5a"></a><!-- doxytag: member="agEventShiftHelper::activateEventFacilityGroupShifts" ref="af15841b576343fd6a8450255fbce8e5a" args="($eventFacilityGroupId, $activationTime)" -->
+<a class="anchor" id="a15fdfbdfae430832b8d5deeaf86e482e"></a><!-- doxytag: member="agEventShiftHelper::releaseShiftStaff" ref="a15fdfbdfae430832b8d5deeaf86e482e" args="($eventShiftIds, Doctrine_Connection $conn=NULL)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static agEventShiftHelper::activateEventFacilityGroupShifts </td>
+          <td class="memname">static agEventShiftHelper::releaseShiftStaff </td>
           <td>(</td>
           <td class="paramtype">$&#160;</td>
-          <td class="paramname"><em>eventFacilityGroupId</em>, </td>
+          <td class="paramname"><em>eventShiftIds</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">$&#160;</td>
-          <td class="paramname"><em>activationTime</em>&#160;</td>
+          <td class="paramtype">Doctrine_Connection $&#160;</td>
+          <td class="paramname"><em>conn</em> = <code>NULL</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -115,66 +123,26 @@ Static Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Updates all shifts associated with $eventFacilityGroupID to use absolute timestamps per activation protocol. </p>
-<p>Note: This only activates those facilities that are committed, but are not standby</p>
+<p>Execute a delete query to release allocated staff from the passed event shift ids. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramtype">integer</td><td class="paramname">$eventFacilityGroupId</td><td>The facility group ID to update </td></tr>
-    <tr><td class="paramtype">timestamp</td><td class="paramname">$activationTime</td><td>The initial activation time for shifts </td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$eventShiftIds</td><td>A single-dimension array of all event shift id's from which staff can be released </td></tr>
+    <tr><td class="paramtype">Doctrine_Connection</td><td class="paramname">$conn</td><td>A doctrine connection object. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>none </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>integer The number of rows affected </dd></dl>
 
-<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00097">97</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00080">80</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a0f08aa23eb147fc20309d8e38eb92fdd"></a><!-- doxytag: member="agEventShiftHelper::activateEventFacilityResourceShifts" ref="a0f08aa23eb147fc20309d8e38eb92fdd" args="($eventFacilityResourceId, $activationTime)" -->
+<a class="anchor" id="a353e968c9f73b007738253ff0f301e8c"></a><!-- doxytag: member="agEventShiftHelper::returnCurrentFacilityResourceShifts" ref="a353e968c9f73b007738253ff0f301e8c" args="($eventId, $staffed=NULL, $timestamp=NULL)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static agEventShiftHelper::activateEventFacilityResourceShifts </td>
-          <td>(</td>
-          <td class="paramtype">$&#160;</td>
-          <td class="paramname"><em>eventFacilityResourceId</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">$&#160;</td>
-          <td class="paramname"><em>activationTime</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td><code> [static]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Updates all shifts associated with $eventFacilityResourceID to use absolute timestamps per activation protocol. </p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramtype">integer</td><td class="paramname">$eventFacilityResourceId</td><td>The facility resource ID to update </td></tr>
-    <tr><td class="paramtype">timestamp</td><td class="paramname">$activationTime</td><td>The initial activation time for shifts </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>none </dd></dl>
-
-<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00051">51</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="af0afc47752014f5c45975c93a243d455"></a><!-- doxytag: member="agEventShiftHelper::activateEventShifts" ref="af0afc47752014f5c45975c93a243d455" args="($eventId, $activationTime)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">static agEventShiftHelper::activateEventShifts </td>
+          <td class="memname">static agEventShiftHelper::returnCurrentFacilityResourceShifts </td>
           <td>(</td>
           <td class="paramtype">$&#160;</td>
           <td class="paramname"><em>eventId</em>, </td>
@@ -183,7 +151,13 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">$&#160;</td>
-          <td class="paramname"><em>activationTime</em>&#160;</td>
+          <td class="paramname"><em>staffed</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>timestamp</em> = <code>NULL</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -194,18 +168,232 @@ Static Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Updates all shifts associated with $event to use absolute timestamps per activation protocol. </p>
-<p>Note: This only activates those facilities that are committed, but are not standby</p>
+<p>Return an array keyed by the shift id of any shifts that are currently in operation. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramtype">integer</td><td class="paramname">$eventId</td><td>The event ID to update </td></tr>
-    <tr><td class="paramtype">timestamp</td><td class="paramname">$activationTime</td><td>The initial activation time for shifts </td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The event being queried </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$staffed</td><td>An optional parameter to determine whether or not to restrict results to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored. </td></tr>
+    <tr><td class="paramtype">timestamp</td><td class="paramname">$timestamp</td><td>A optional value that adjusted the concept of 'current' from the application's CURRENT_TIMESTAMP (or PHP time()) to the passed value (essentially enabling the user to ask what shifts will be active at this point-in-$time </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>none </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array An two-dimensional associative array, keyed by event_shift_id with a value array of event_facility_resource_id </dd></dl>
 
-<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00135">135</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00222">222</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad93bea46362782bd3bef52879391335c"></a><!-- doxytag: member="agEventShiftHelper::returnDisabledShiftStatus" ref="ad93bea46362782bd3bef52879391335c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventShiftHelper::returnDisabledShiftStatus </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the shift status id of the shift_disabled_status global parameter. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>integer(2) The shift status id of the global parameterized disabled shift status. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00327">327</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a8c75b8ef0e491f4fe1c0ae1602ee5bc9"></a><!-- doxytag: member="agEventShiftHelper::returnFirstFacilityResourceShifts" ref="a8c75b8ef0e491f4fe1c0ae1602ee5bc9" args="($eventId, $staffed=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventShiftHelper::returnFirstFacilityResourceShifts </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>staffed</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function to return the first shifts of each facility resource for a given event. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The current event being queried </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$staffed</td><td>An optional parameter to determine whether or not to restrict results to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array A two-dimensional associative array keyed by event_shift_id with value array members as event_facility_resource_id </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00119">119</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a31446299589952706157bdf7b2ec9152"></a><!-- doxytag: member="agEventShiftHelper::returnSingleCurrentFacilityResourceShifts" ref="a31446299589952706157bdf7b2ec9152" args="($eventId, $staffed=NULL, $timestamp=NULL, $minEnd=TRUE)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventShiftHelper::returnSingleCurrentFacilityResourceShifts </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>staffed</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>timestamp</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>minEnd</em> = <code>TRUE</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to return an associative array keyed by event facility resource id with a value of one of the current shifts of the facility resource. </p>
+<p>Because there can be many "current" shifts, only one is returned. Parameters $staffed and $minEnd limit whether or not only staffed shifts will be returned or whether or not the returned shift will be among those "current shifts" that ended first or last.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The event being queried. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$staffed</td><td>An optional parameter to determine whether or not to restrict results to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored. </td></tr>
+    <tr><td class="paramtype">timestamp</td><td class="paramname">$time</td><td>A optional value that adjusted the concept of 'current' from the application's CURRENT_TIMESTAMP (or PHP time()) to the passed value (essentially enabling the user to ask what shifts will be active at this point-in-$time </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$minEnd</td><td>Parameter to determine whether the "first shift" returned will also be the first or last to end. If $minEnd = TRUE (the default), the the returned shift will be among those that ended first. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array A key value array of ($event_facility_resource_id =&gt; $shift_id) </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00278">278</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a0636fb19d8930cd0d5b7ddac8c009497"></a><!-- doxytag: member="agEventShiftHelper::returnSingleFirstFacilityResourceShifts" ref="a0636fb19d8930cd0d5b7ddac8c009497" args="($eventId, $staffed=NULL, $minEnd=TRUE)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventShiftHelper::returnSingleFirstFacilityResourceShifts </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>staffed</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>minEnd</em> = <code>TRUE</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to return an associative array keyed by event facility resource id with a value of one of the first shifts of the facility resource. </p>
+<p>Because there can be many "first" shifts, only one is returned. Parameters $staffed and $minEnd limit whether or not only staffed shifts will be returned or whether or not the returned shift will be among those "first shifts" that ended first or last.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The event being queried. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$staffed</td><td>An optional parameter to determine whether or not to restrict results to those that are staffed (TRUE) or not staffed (FALSE). By default this parameter is ignored. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$minEnd</td><td>Parameter to determine whether the "first shift" returned will also be the first or last to end. If $minEnd = TRUE (the default), the the returned shift will be among those that ended first. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array A key value array of ($event_facility_resource_id =&gt; $shift_id) </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00166">166</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae7070d16b08fdf9dcf37f60cc7ae6087"></a><!-- doxytag: member="agEventShiftHelper::setEventShiftStatus" ref="ae7070d16b08fdf9dcf37f60cc7ae6087" args="($eventShiftIds, $shiftStatusId, $releaseStaff=FALSE, Doctrine_Connection $conn=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventShiftHelper::setEventShiftStatus </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventShiftIds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>shiftStatusId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>releaseStaff</em> = <code>FALSE</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Doctrine_Connection $&#160;</td>
+          <td class="paramname"><em>conn</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Changes the status of a specified event shift and optionally calls a function to release staff of disabled shifts. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$eventShiftIds</td><td>An array of event shift id's. </td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">integer(2)</td><td>$shiftStatusId The shift status id that will be set via this action </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$releaseStaff</td><td>An optional boolean that determines whether or not existing staff will be released from these shifts. </td></tr>
+    <tr><td class="paramtype">Doctrine_Connection</td><td class="paramname">$conn</td><td>A doctrine connection object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array An array representing the number of shifts affected and number of staff released. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventShiftHelper_8class_8php_source.html#l00030">30</a> of file <a class="el" href="agEventShiftHelper_8class_8php_source.html">agEventShiftHelper.class.php</a>.</p>
 
 </div>
 </div>
@@ -218,7 +406,7 @@ Static Public Member Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

@@ -90,7 +90,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00054"></a><a class="code" href="classagReportMakerForm.html#a628696158f7397b37ec660b1f1068f4d">00054</a>   <span class="keyword">public</span> function <a class="code" href="classagReportMakerForm.html#a628696158f7397b37ec660b1f1068f4d" title="Embeds the Report Generator Form.">embedReportGeneratorForm</a>()
 <a name="l00055"></a>00055   {
 <a name="l00056"></a>00056     <span class="keywordflow">if</span> (isset($this-&gt;report_gen_id)) {
-<a name="l00057"></a>00057       $staffGenObject = Doctrine_Query::create()
+<a name="l00057"></a>00057       $staffGenObject = agDoctrineQuery::create()
 <a name="l00058"></a>00058               -&gt;from(<span class="stringliteral">&#39;agReportGenerator a&#39;</span>)
 <a name="l00059"></a>00059               -&gt;where(<span class="stringliteral">&#39;a.id =?&#39;</span>, $this-&gt;report_gen_id)
 <a name="l00060"></a>00060               -&gt;execute()-&gt;getFirst();
@@ -112,7 +112,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00079"></a><a class="code" href="classagReportMakerForm.html#a4c6ccc9bc72c6593e87e2281cb5fe7b0">00079</a>   <span class="keyword">public</span> function <a class="code" href="classagReportMakerForm.html#a4c6ccc9bc72c6593e87e2281cb5fe7b0" title="Embeds the Lucene Form.">embedLuceneForm</a>()
 <a name="l00080"></a>00080   {
 <a name="l00081"></a>00081     <span class="keywordflow">if</span> (isset($this-&gt;lucene_search_id)) {
-<a name="l00082"></a>00082       $luceneObject = Doctrine_Query::create()
+<a name="l00082"></a>00082       $luceneObject = agDoctrineQuery::create()
 <a name="l00083"></a>00083               -&gt;from(<span class="stringliteral">&#39;agLuceneSearch a&#39;</span>)
 <a name="l00084"></a>00084               -&gt;where(<span class="stringliteral">&#39;a.id =?&#39;</span>, $this-&gt;lucene_search_id)
 <a name="l00085"></a>00085               -&gt;execute()-&gt;getFirst();
@@ -127,7 +127,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00094"></a>00094   <span class="keyword">public</span> function embedReportForm()
 <a name="l00095"></a>00095   {
 <a name="l00096"></a>00096     <span class="keywordflow">if</span> (isset($this-&gt;report_id)) {
-<a name="l00097"></a>00097       $reportObject = Doctrine_Query::create()
+<a name="l00097"></a>00097       $reportObject = agDoctrineQuery::create()
 <a name="l00098"></a>00098               -&gt;from(<span class="stringliteral">&#39;agReport a&#39;</span>)
 <a name="l00099"></a>00099               -&gt;where(<span class="stringliteral">&#39;a.id =?&#39;</span>, $this-&gt;report_id)
 <a name="l00100"></a>00100               -&gt;execute()-&gt;getFirst();
@@ -144,7 +144,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00111"></a>00111     $this-&gt;available_tables = Doctrine::getLoadedModels();
 <a name="l00112"></a>00112 
 <a name="l00113"></a>00113     <span class="keywordflow">if</span> (isset($this-&gt;lucene_search_id)) {
-<a name="l00114"></a>00114       $luceneObject = Doctrine_Query::create()
+<a name="l00114"></a>00114       $luceneObject = agDoctrineQuery::create()
 <a name="l00115"></a>00115               -&gt;from(<span class="stringliteral">&#39;agLuceneSearch a&#39;</span>)
 <a name="l00116"></a>00116               -&gt;where(<span class="stringliteral">&#39;a.id =?&#39;</span>, $this-&gt;lucene_search_id)
 <a name="l00117"></a>00117               -&gt;execute()-&gt;getFirst();
@@ -209,7 +209,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

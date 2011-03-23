@@ -76,26 +76,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00044"></a>00044   {
 <a name="l00045"></a>00045     $user = <a class="code" href="classagSudoAuth.html#a71dffb911eeb90a594fe9222c6d9ab1c">self::getUser</a>($username);
 <a name="l00046"></a>00046     $user-&gt;setPassword($password);
-<a name="l00047"></a>00047     $user-&gt;setIsActive(<span class="keyword">true</span>);
-<a name="l00048"></a>00048     <span class="comment">//set other user aspects</span>
-<a name="l00049"></a>00049     $user-&gt;save();
-<a name="l00050"></a>00050     <span class="keywordflow">return</span> $user;
-<a name="l00051"></a>00051   }
-<a name="l00052"></a>00052 
-<a name="l00053"></a><a class="code" href="classagSudoAuth.html#a71dffb911eeb90a594fe9222c6d9ab1c">00053</a>   <span class="keyword">protected</span> <span class="keyword">static</span> function <a class="code" href="classagSudoAuth.html#a71dffb911eeb90a594fe9222c6d9ab1c">getUser</a>($username)
-<a name="l00054"></a>00054   {
-<a name="l00055"></a>00055     <span class="keywordflow">if</span> ($user = Doctrine::getTable(<span class="stringliteral">&#39;sfGuardUser&#39;</span>)-&gt;
-<a name="l00056"></a>00056             retrieveByUsername($username)) {
-<a name="l00060"></a>00060       <span class="keywordflow">return</span> $user;
-<a name="l00061"></a>00061     } <span class="keywordflow">else</span> {
-<a name="l00062"></a>00062       <span class="comment">//none found, create the user</span>
-<a name="l00063"></a>00063       $user = <span class="keyword">new</span> sfGuardUser();
-<a name="l00064"></a>00064       $user-&gt;setUsername($username);
-<a name="l00065"></a>00065       <span class="keywordflow">return</span> $user;
-<a name="l00068"></a>00068     }
-<a name="l00069"></a>00069   }
-<a name="l00070"></a>00070 
-<a name="l00071"></a>00071 }
+<a name="l00047"></a>00047     $user-&gt;setEmailAddress(<span class="stringliteral">&#39;super@admin.com&#39;</span>);
+<a name="l00048"></a>00048     $user-&gt;setIsActive(<span class="keyword">true</span>);
+<a name="l00049"></a>00049     <span class="comment">//set other user aspects</span>
+<a name="l00050"></a>00050     $user-&gt;save();
+<a name="l00051"></a>00051     <span class="keywordflow">return</span> $user;
+<a name="l00052"></a>00052   }
+<a name="l00053"></a>00053 
+<a name="l00054"></a><a class="code" href="classagSudoAuth.html#a71dffb911eeb90a594fe9222c6d9ab1c">00054</a>   <span class="keyword">protected</span> <span class="keyword">static</span> function <a class="code" href="classagSudoAuth.html#a71dffb911eeb90a594fe9222c6d9ab1c">getUser</a>($username)
+<a name="l00055"></a>00055   {
+<a name="l00056"></a>00056     <span class="keywordflow">if</span> ($user = Doctrine::getTable(<span class="stringliteral">&#39;sfGuardUser&#39;</span>)-&gt;
+<a name="l00057"></a>00057             retrieveByUsername($username)) {
+<a name="l00061"></a>00061       <span class="keywordflow">return</span> $user;
+<a name="l00062"></a>00062     } <span class="keywordflow">else</span> {
+<a name="l00063"></a>00063       <span class="comment">//none found, create the user</span>
+<a name="l00064"></a>00064       $user = <span class="keyword">new</span> sfGuardUser();
+<a name="l00065"></a>00065       $user-&gt;setUsername($username);
+<a name="l00066"></a>00066       <span class="keywordflow">return</span> $user;
+<a name="l00069"></a>00069     }
+<a name="l00070"></a>00070   }
+<a name="l00071"></a>00071 
+<a name="l00072"></a>00072 }
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->
@@ -103,7 +104,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

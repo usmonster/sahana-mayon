@@ -135,12 +135,12 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>array Depending on the pass in param, this method can return either the total record count of undefined geo relation (as the sole element of an array) or returns an array of undefined geo relations as a form of array[geo id1] = geo id2. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000053">Todo:</a></b></dt><dd>It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000059">Todo:</a></b></dt><dd>It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's. </dd></dl>
 
 <p><p>This little magic array handles all of our joins for the right and left parameters </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000054">Todo:</a></b></dt><dd>this should really be a pre-defined class so we don't have to keep writing nested array stuff </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000060">Todo:</a></b></dt><dd>this should really be a pre-defined class so we don't have to keep writing nested array stuff </dd></dl>
 <p>This content block establishes a core query against which the other components of the geo relation may be joined. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000055">Todo:</a></b></dt><dd>Remove the geo-coordinate count blocks and replace them with a centroid calculation aggregate function. This is, currently, a hack to prevent geo features with more than one coordinate from returning. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000061">Todo:</a></b></dt><dd>Remove the geo-coordinate count blocks and replace them with a centroid calculation aggregate function. This is, currently, a hack to prevent geo features with more than one coordinate from returning. </dd></dl>
 </p>
 
 <p>Definition at line <a class="el" href="agGisQuery_8class_8php_source.html#l00134">134</a> of file <a class="el" href="agGisQuery_8class_8php_source.html">agGisQuery.class.php</a>.</p>
@@ -188,7 +188,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>int|array Depending on the pass in param, this method can return either the total record count of undefined geo relation or returns an array of undefined geo relations as a form of array[geo id1] = geo id2. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000056">Todo:</a></b></dt><dd><p class="startdd">It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000062">Todo:</a></b></dt><dd><p class="startdd">It would be nice if this could be made flexible enough to relate elements beyond just persons and sites. Functionally, it shouldn't be too hard to objectify but the larger issue is how to pass other necessary variables like event and scenario id's. </p>
 <p class="enddd">For this to work properly and without danger to the system, this needs to be encapsulated with exception handlers that do garbage cleanup </p>
 </dd></dl>
 
@@ -284,7 +284,7 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Determines which unrelated geo method to execute to find unrelated geo. </p>
 <p>One method is MySQL DB specific whereas the other uses ANSII standard queries.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000052">Todo:</a></b></dt><dd>Build logic to determine which find unrelated geo method to use. If db engine is MySQL, run the mysql specific version. Otherwise, run the ANSII standard.</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000058">Todo:</a></b></dt><dd>Build logic to determine which find unrelated geo method to use. If db engine is MySQL, run the mysql specific version. Otherwise, run the ANSII standard.</dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramtype">boolean</td><td class="paramname">$countRecord</td><td>Turn on/off count of undefined geo distance relations. </td></tr>
@@ -345,7 +345,7 @@ Static Public Member Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

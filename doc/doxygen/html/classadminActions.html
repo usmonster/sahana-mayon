@@ -67,44 +67,59 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h1>adminActions Class Reference</h1>  </div>
 </div>
 <div class="contents">
-<!-- doxytag: class="adminActions" -->
-<p>PHP Version 5.  
+<!-- doxytag: class="adminActions" --><!-- doxytag: inherits="agActions" -->
+<p>extends <a class="el" href="classagActions.html" title="extends sfActions for common functionality">agActions</a> for the administration module  
 <a href="#_details">More...</a></p>
+<div class="dynheader">
+Inheritance diagram for adminActions:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classadminActions.png" usemap="#adminActions_map" alt=""/>
+  <map id="adminActions_map" name="adminActions_map">
+<area href="classagActions.html" alt="agActions" shape="rect" coords="0,0,87,24"/>
+</map>
+ </div></div>
 
 <p><a href="classadminActions-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a2bd3c3e8954ba9006cb1ac88764e83dd">executeIndex</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">necessary function which triggers rendering of the indexSuccess template  <a href="#a2bd3c3e8954ba9006cb1ac88764e83dd"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a3f994acd588b9a8083431de21b2d4337">executePacman</a> (sfWebRequest $request)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8594dfb55f9cf93aa38a77449d377c7e"></a><!-- doxytag: member="adminActions::executeGlobals" ref="a8594dfb55f9cf93aa38a77449d377c7e" args="(sfWebRequest $request)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>executeGlobals</b> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a5d37797995ed376431fe9270b17e50e7">executeConfig</a> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a53032b1a926a5ecd2896e139a2c40cae">executeDisplay</a> (sfWebRequest $request)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a95a1106aa969105b57008582598a58ec"></a><!-- doxytag: member="adminActions::executeList" ref="a95a1106aa969105b57008582598a58ec" args="(sfWebRequest $request)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>executeList</b> (sfWebRequest $request)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a95a1106aa969105b57008582598a58ec">executeList</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">provides a list of sfguardusers to the listSuccess template  <a href="#a95a1106aa969105b57008582598a58ec"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a0aa92d11ba843c39bc9cb68e60811c33">executeShow</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">provides sfguarduser information to display on the showSuccess template  <a href="#a0aa92d11ba843c39bc9cb68e60811c33"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a497c467213a396f88ed873ad46759ccb">executeNew</a> (sfWebRequest $request)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a780fd22ced379f6b935de9088bd52bb4"></a><!-- doxytag: member="adminActions::executeCred" ref="a780fd22ced379f6b935de9088bd52bb4" args="(sfWebRequest $request)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>executeCred</b> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">provides the newSuccess template with an <a class="el" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &#39;user&#39; data to an &#39;account&#39;">agAccountForm</a> for creating a user account  <a href="#a497c467213a396f88ed873ad46759ccb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a780fd22ced379f6b935de9088bd52bb4">executeCred</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">provides the credSuccess template with credential management information and forms.  <a href="#a780fd22ced379f6b935de9088bd52bb4"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a1d7a3de88ebf7914896759af9dde3b64">executeCreate</a> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a2cd8951d810b029580da8bfbbe6e338d">executeEdit</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">provides the editSuccess template with an <a class="el" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &#39;user&#39; data to an &#39;account&#39;">agAccountForm</a> bound to the requested user id  <a href="#a2cd8951d810b029580da8bfbbe6e338d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a3f66ef494050ff5ca70b1a6d0a6062e8">executeUpdate</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">this function is only used to perform updates to a user account  <a href="#a3f66ef494050ff5ca70b1a6d0a6062e8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#abdcb714f833105e8ad1f0ddd0be97d0d">executeDelete</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">this function is used only to delete a user account  <a href="#abdcb714f833105e8ad1f0ddd0be97d0d"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4dd178186384c1d7af791cccc2a8b7b"></a><!-- doxytag: member="adminActions::processForm" ref="af4dd178186384c1d7af791cccc2a8b7b" args="(sfWebRequest $request, sfForm $form)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>processForm</b> (sfWebRequest $request, sfForm $form)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a644e8d49f65617190a2b5ac5877b78cf"></a><!-- doxytag: member="adminActions::processParam" ref="a644e8d49f65617190a2b5ac5877b78cf" args="(sfWebRequest $request, sfForm $paramform)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>processParam</b> (sfWebRequest $request, sfForm $paramform)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac509ea97d4758e9cc04e1d4ed827e584"></a><!-- doxytag: member="adminActions::processCredform" ref="ac509ea97d4758e9cc04e1d4ed827e584" args="(sfWebRequest $request, sfForm $credform)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>processCredform</b> (sfWebRequest $request, sfForm $credform)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#af4dd178186384c1d7af791cccc2a8b7b">processForm</a> (sfWebRequest $request, sfForm $form)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">the processform function only processes a form  <a href="#af4dd178186384c1d7af791cccc2a8b7b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classadminActions.html#a644e8d49f65617190a2b5ac5877b78cf">processParam</a> (sfWebRequest $request, sfForm $paramform)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">the processParam function only processes a paramform for modifying global params  <a href="#a644e8d49f65617190a2b5ac5877b78cf"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>PHP Version 5. </p>
+<div class="textblock"><p>extends <a class="el" href="classagActions.html" title="extends sfActions for common functionality">agActions</a> for the administration module </p>
+<p>PHP Version 5</p>
 <p>LICENSE: This source file is subject to LGPLv3.0 license that is available through the world-wide-web at the following URI: <a href="http://www.gnu.org/copyleft/lesser.html">http://www.gnu.org/copyleft/lesser.html</a></p>
-<dl class="author"><dt><b>Author:</b></dt><dd>Full Name, Organization Copyright of the Sahana Software Foundation, sahanafoundation.org </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000066">Todo:</a></b></dt><dd>add description of class in header </dd></dl>
+<dl class="author"><dt><b>Author:</b></dt><dd>Charles Wisniewski, CUNY SPS Copyright of the Sahana Software Foundation, sahanafoundation.org </dd></dl>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00020">20</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00015">15</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 </div><hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="a5d37797995ed376431fe9270b17e50e7"></a><!-- doxytag: member="adminActions::executeConfig" ref="a5d37797995ed376431fe9270b17e50e7" args="(sfWebRequest $request)" -->
 <div class="memitem">
@@ -129,7 +144,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 </p>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00060">60</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00077">77</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -147,7 +162,7 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000070">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000081">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">$request</td><td>(add description) </td></tr>
@@ -155,7 +170,36 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00258">258</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00270">270</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a780fd22ced379f6b935de9088bd52bb4"></a><!-- doxytag: member="adminActions::executeCred" ref="a780fd22ced379f6b935de9088bd52bb4" args="(sfWebRequest $request)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">adminActions::executeCred </td>
+          <td>(</td>
+          <td class="paramtype">sfWebRequest $&#160;</td>
+          <td class="paramname"><em>request</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>provides the credSuccess template with credential management information and forms. </p>
+<p>all CRUD operations for credentials are performed through this action </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000080">Todo:</a></b></dt><dd>have all CRUD functions operate through their respective action function </dd></dl>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">sfWebRequest</td><td class="paramname">$request</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00234">234</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -173,7 +217,9 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000073">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+
+<p>this function is used only to delete a user account </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000084">Todo:</a></b></dt><dd>the functionality in here should be collapsed into the executeUser or executeAccount action </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">$request</td><td>(add description) </td></tr>
@@ -181,7 +227,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00298">298</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00313">313</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -208,7 +254,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 </p>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00182">182</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00169">169</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -226,7 +272,9 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000071">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+
+<p>provides the editSuccess template with an <a class="el" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &#39;user&#39; data to an &#39;account&#39;">agAccountForm</a> bound to the requested user id </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000082">Todo:</a></b></dt><dd>collapse this functionality all into executeUser or executeAccount function </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">$request</td><td>(add description) </td></tr>
@@ -234,7 +282,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00273">273</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00286">286</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -252,23 +300,43 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000067">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+
+<p>necessary function which triggers rendering of the indexSuccess template </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">$request</td><td>(add description) </td></tr>
+    <tr><td class="paramtype">sfWebRequest</td><td class="paramname">$request</td><td>is what the user is asking of the server </td></tr>
   </table>
   </dd>
 </dl>
 
-<p><dl><dt><b>Parameters:</b></dt><dd>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00022">22</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a95a1106aa969105b57008582598a58ec"></a><!-- doxytag: member="adminActions::executeList" ref="a95a1106aa969105b57008582598a58ec" args="(sfWebRequest $request)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">adminActions::executeList </td>
+          <td>(</td>
+          <td class="paramtype">sfWebRequest $&#160;</td>
+          <td class="paramname"><em>request</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>provides a list of sfguardusers to the listSuccess template </p>
+<dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramtype">sfWebRequest</td><td class="paramname">$request</td><td>is what the user is asking of the server</td></tr>
+    <tr><td class="paramtype">sfWebRequest</td><td class="paramname">$request</td><td></td></tr>
   </table>
   </dd>
 </dl>
-</p>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00027">27</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00202">202</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -286,7 +354,8 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000069">Todo:</a></b></dt><dd>learn how description should be explained properly </dd></dl>
+
+<p>provides the newSuccess template with an <a class="el" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &#39;user&#39; data to an &#39;account&#39;">agAccountForm</a> for creating a user account </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">$request</td><td>(add description) </td></tr>
@@ -294,7 +363,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00227">227</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00223">223</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -312,16 +381,14 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p><dl><dt><b>Parameters:</b></dt><dd>
+<dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramtype">sfWebRequest</td><td class="paramname">$request</td><td>is what the user is asking of the server</td></tr>
+    <tr><td class="paramtype">sfWebRequest</td><td class="paramname">$request</td><td>is what the user is asking of the server </td></tr>
   </table>
   </dd>
 </dl>
-</p>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00034">34</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00031">31</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -339,7 +406,8 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000068">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+
+<p>provides sfguarduser information to display on the showSuccess template </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">$request</td><td>(add description) </td></tr>
@@ -347,7 +415,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00217">217</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00213">213</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -365,7 +433,9 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000072">Todo:</a></b></dt><dd>add description of function above and details below </dd></dl>
+
+<p>this function is only used to perform updates to a user account </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000083">Todo:</a></b></dt><dd>collapse this functionality all into the executeUser or executeAccount function </dd></dl>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">$request</td><td>(add description) </td></tr>
@@ -373,7 +443,85 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00283">283</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00297">297</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af4dd178186384c1d7af791cccc2a8b7b"></a><!-- doxytag: member="adminActions::processForm" ref="af4dd178186384c1d7af791cccc2a8b7b" args="(sfWebRequest $request, sfForm $form)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">adminActions::processForm </td>
+          <td>(</td>
+          <td class="paramtype">sfWebRequest $&#160;</td>
+          <td class="paramname"><em>request</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">sfForm $&#160;</td>
+          <td class="paramname"><em>form</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>the processform function only processes a form </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000085">Todo:</a></b></dt><dd>collapse this functionality all into a module-wde processForm function, taking in another parameter: the redirect.</dd></dl>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">sfWebRequest</td><td class="paramname">$request</td><td></td></tr>
+    <tr><td class="paramtype">sfForm</td><td class="paramname">$form</td><td>the form to be processed </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00335">335</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a644e8d49f65617190a2b5ac5877b78cf"></a><!-- doxytag: member="adminActions::processParam" ref="a644e8d49f65617190a2b5ac5877b78cf" args="(sfWebRequest $request, sfForm $paramform)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">adminActions::processParam </td>
+          <td>(</td>
+          <td class="paramtype">sfWebRequest $&#160;</td>
+          <td class="paramname"><em>request</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">sfForm $&#160;</td>
+          <td class="paramname"><em>paramform</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>the processParam function only processes a paramform for modifying global params </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000086">Todo:</a></b></dt><dd>collapse this functionality all into a module-wde processForm function, taking in another parameter: the redirect.</dd></dl>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">sfWebRequest</td><td class="paramname">$request</td><td></td></tr>
+    <tr><td class="paramtype">sfForm</td><td class="paramname">$paramform</td><td>the form to be processed </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html#l00352">352</a> of file <a class="el" href="modules_2admin_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -386,7 +534,7 @@ Protected Member Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

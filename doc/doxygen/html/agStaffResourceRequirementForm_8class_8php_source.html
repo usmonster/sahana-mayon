@@ -130,7 +130,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00106"></a>00106     $this-&gt;widgetSchema-&gt;setLabels(array(
 <a name="l00107"></a>00107       <span class="stringliteral">&#39;resource&#39;</span> =&gt; <span class="stringliteral">&#39;Resources&#39;</span>,
 <a name="l00108"></a>00108       <span class="stringliteral">&#39;scenario_facility_groupd_id&#39;</span> =&gt; <span class="stringliteral">&#39;Facility Group&#39;</span>,
-<a name="l00109"></a>00109       <span class="stringliteral">&#39;facility_code&#39;</span> =&gt; <span class="stringliteral">&#39;Facility Code&#39;</span>
+<a name="l00109"></a>00109       <span class="comment">//&#39;facility_code&#39; =&gt; &#39;Facility Code&#39;</span>
 <a name="l00110"></a>00110     ));
 <a name="l00111"></a>00111 
 <a name="l00116"></a>00116     $sectionsDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterSection.html">agWidgetFormSchemaFormatterSection</a>($this-&gt;getWidgetSchema());
@@ -184,7 +184,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

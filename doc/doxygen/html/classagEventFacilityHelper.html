@@ -69,38 +69,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <!-- doxytag: class="agEventFacilityHelper" -->
 <p>provides event facility management functions  
 <a href="#_details">More...</a></p>
-<div class="dynheader">
-Inheritance diagram for agEventFacilityHelper:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classagEventFacilityHelper.png" usemap="#agEventFacilityHelper_map" alt=""/>
-  <map id="agEventFacilityHelper_map" name="agEventFacilityHelper_map">
-<area href="classagEventFacilityHelperMySql.html" alt="agEventFacilityHelperMySql" shape="rect" coords="0,56,172,80"/>
-</map>
- </div></div>
 
 <p><a href="classagEventFacilityHelper-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a25661b9352dd8b2defb5095dbd4fa014"></a><!-- doxytag: member="agEventFacilityHelper::returnActiveFacilityGroups" ref="a25661b9352dd8b2defb5095dbd4fa014" args="($eventId)" -->
-static&#160;</td><td class="memItemRight" valign="bottom"><b>returnActiveFacilityGroups</b> ($eventId)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a951d821bdb142796d9d62f06ef4afeba"></a><!-- doxytag: member="agEventFacilityHelper::returnFacilityResourceActivation" ref="a951d821bdb142796d9d62f06ef4afeba" args="($eventId, $eventFacilityGroupId= '%', $facilityStandbyStatus='%')" -->
-static&#160;</td><td class="memItemRight" valign="bottom"><b>returnFacilityResourceActivation</b> ($eventId, $eventFacilityGroupId= '%', $facilityStandbyStatus='%')</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92ffc86b85c987e4ce45db6a1b926899"></a><!-- doxytag: member="agEventFacilityHelper::activateZeroHourFacilityResources" ref="a92ffc86b85c987e4ce45db6a1b926899" args="($eventId, $activationTime)" -->
-static&#160;</td><td class="memItemRight" valign="bottom"><b>activateZeroHourFacilityResources</b> ($eventId, $activationTime)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#a8fe7506f97ba4a8a2e93eb939c32b235">returnEventFacilityGroups</a> ($eventId, $active=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to return event facility groups with an optional parameter to restrict to active or inactive facility group allocation status.  <a href="#a8fe7506f97ba4a8a2e93eb939c32b235"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#a5f4f7439b8a2f648776dddae507f776f">returnFacilityResourceActivation</a> ($eventId, $eventFacilityGroupId=NULL, $facilityStandbyStatus=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return facilities that are candidates for having their activation times set.  <a href="#a5f4f7439b8a2f648776dddae507f776f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#a544ef5982b7504c9be3e1a257feca926">setFacilityActivationTime</a> ($eventId, $eventFacilityResourceIds, $activationTime, $shiftChangeRestriction=TRUE, $releaseStaff=FALSE, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the activation time for a group of event facility resources and optionally disables unused or unnecessary resources.  <a href="#a544ef5982b7504c9be3e1a257feca926"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#aa9dd92dec6e732550dc5cffee581855f">setEventZeroHour</a> ($eventId, $activationTime, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to set the zero hour of an event and set facility activation times for committed, non- standby facilities.  <a href="#aa9dd92dec6e732550dc5cffee581855f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a591b2809c0195bfea880c8fca8d7e9e3"></a><!-- doxytag: member="agEventFacilityHelper::getCurrentEventFacilityResourceStatus" ref="a591b2809c0195bfea880c8fca8d7e9e3" args="($eventId, $eventFacilityResourceIds)" -->
+static&#160;</td><td class="memItemRight" valign="bottom"><b>getCurrentEventFacilityResourceStatus</b> ($eventId, $eventFacilityResourceIds)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#a739ad5eded3869fd2ecd7c07e9e1907a">returnCurrentEventFacilityResourceStatus</a> ($eventId)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Static function to return the current status id's of all facility resources for a specific event.  <a href="#a739ad5eded3869fd2ecd7c07e9e1907a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#aff2165775791e7bb6bf3dd2a4f7571a6">returnCurrentEventFacilityGroupStatus</a> ($eventId)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Static function to return the current status id's of all facility groups for a specific event.  <a href="#aff2165775791e7bb6bf3dd2a4f7571a6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2b686f76c55d420a4f00f5ebfda2480a"></a><!-- doxytag: member="agEventFacilityHelper::returnCurrentEventStatus" ref="a2b686f76c55d420a4f00f5ebfda2480a" args="($eventId)" -->
-static&#160;</td><td class="memItemRight" valign="bottom"><b>returnCurrentEventStatus</b> ($eventId)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a20e7f5ec167f962286ca531b51a7e46d"></a><!-- doxytag: member="agEventFacilityHelper::returnFirstFacilityResourceShifts" ref="a20e7f5ec167f962286ca531b51a7e46d" args="($eventId)" -->
-static&#160;</td><td class="memItemRight" valign="bottom"><b>returnFirstFacilityResourceShifts</b> ($eventId)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9055e47ed934a07f61adc1af95cb0ac"></a><!-- doxytag: member="agEventFacilityHelper::returnFirstFacilityStaffedShifts" ref="af9055e47ed934a07f61adc1af95cb0ac" args="($eventId)" -->
-static&#160;</td><td class="memItemRight" valign="bottom"><b>returnFirstFacilityStaffedShifts</b> ($eventId)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad90427631e2d4ec189c30f56eb0277a6"></a><!-- doxytag: member="agEventFacilityHelper::returnCurrentFacilityResourceShifts" ref="ad90427631e2d4ec189c30f56eb0277a6" args="($eventId, $time=NULL)" -->
-static&#160;</td><td class="memItemRight" valign="bottom"><b>returnCurrentFacilityResourceShifts</b> ($eventId, $time=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Static function to return the current status id's of all facility groups for a specific event <code> // To get the current status of all facilities in a current event $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityGroupStatus($eventId) ;. </code> <a href="#aff2165775791e7bb6bf3dd2a4f7571a6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#a2b686f76c55d420a4f00f5ebfda2480a">returnCurrentEventStatus</a> ($eventId)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to return the event_status_id and event_status_type_id of the passed event_id.  <a href="#a2b686f76c55d420a4f00f5ebfda2480a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#ae69a607b1055b735b7b44f6c0e91f6fb">returnActivationBlacklistFacilities</a> ($eventId, $activationTime=NULL, $shiftChangeRestriction=FALSE)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns facilities that are currently in the blackout period based on the passed $activation time.  <a href="#ae69a607b1055b735b7b44f6c0e91f6fb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#ace9699a6efe35fb79fdcf4d7dd7bd532">getFacilityResourceAllocationStatus</a> ($column, $match=TRUE)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return all Facility Resource Status ID's that match a columnar parameter.  <a href="#ace9699a6efe35fb79fdcf4d7dd7bd532"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#a91cf2b431cebfcc96b387443e5fe1a09">releaseEventFacilityResource</a> ($eventFacilityResourceId, $actionTime=NULL, $shiftChangeRestriction=TRUE, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to release event facility resource.  <a href="#a91cf2b431cebfcc96b387443e5fe1a09"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEventFacilityHelper.html#aff46114d9ef76acf0bdbd46666cd94ee">setEventFacilityResourceStatus</a> ($eventIds, $facilityResourceIds, $allocationStatusId, $actionTime=NULL, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to execute a mass-update to event facility resource statuses.  <a href="#aff46114d9ef76acf0bdbd46666cd94ee"></a><br/></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>provides event facility management functions </p>
@@ -111,6 +108,144 @@ static&#160;</td><td class="memItemRight" valign="bottom"><b>returnCurrentFacili
 
 <p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00017">17</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
 </div><hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="ace9699a6efe35fb79fdcf4d7dd7bd532"></a><!-- doxytag: member="agEventFacilityHelper::getFacilityResourceAllocationStatus" ref="ace9699a6efe35fb79fdcf4d7dd7bd532" args="($column, $match=TRUE)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::getFacilityResourceAllocationStatus </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>column</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>match</em> = <code>TRUE</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to return all Facility Resource Status ID's that match a columnar parameter. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$column</td><td>The boolean column name to be queried. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$match</td><td>The value (negative or positive) of the match. Defaults to TRUE. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array An array of facility_resource_allocation_status_ids. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000047">Todo:</a></b></dt><dd>This function, and its kin should be magic so that getFacilityResourceAllocationStatus('staffed', FALSE) get* </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00515">515</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a91cf2b431cebfcc96b387443e5fe1a09"></a><!-- doxytag: member="agEventFacilityHelper::releaseEventFacilityResource" ref="a91cf2b431cebfcc96b387443e5fe1a09" args="($eventFacilityResourceId, $actionTime=NULL, $shiftChangeRestriction=TRUE, Doctrine_Connection $conn=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::releaseEventFacilityResource </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventFacilityResourceId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>actionTime</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>shiftChangeRestriction</em> = <code>TRUE</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Doctrine_Connection $&#160;</td>
+          <td class="paramname"><em>conn</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to release event facility resource. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(5)</td><td>$eventFacilityResourceId The id of the event facility resource to which this is applied. </td></tr>
+    <tr><td class="paramtype">timestamp</td><td class="paramname">$actionTime</td><td>An optional time uses as a basis for the time this action is applied. Defaults to CURRENT_TIMESTAMP. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$shiftChangeRestriction</td><td>An optional boolean determining whether or not the shift change restriction will be applied in the release of facility resources. Defaults to TRUE. </td></tr>
+    <tr><td class="paramtype">Doctrine_Connection</td><td class="paramname">$conn</td><td>An optional doctrine connection object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00537">537</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ae69a607b1055b735b7b44f6c0e91f6fb"></a><!-- doxytag: member="agEventFacilityHelper::returnActivationBlacklistFacilities" ref="ae69a607b1055b735b7b44f6c0e91f6fb" args="($eventId, $activationTime=NULL, $shiftChangeRestriction=FALSE)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::returnActivationBlacklistFacilities </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>activationTime</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>shiftChangeRestriction</em> = <code>FALSE</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns facilities that are currently in the blackout period based on the passed $activation time. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The current event being queried. </td></tr>
+    <tr><td class="paramtype">timestamp</td><td class="paramname">$activationTime</td><td>The activation time being checked against. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$shiftChangeRestriction</td><td>Determines whether or not to apply the offset of the shift_change_restriction global parameter. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array A single-dimension array containing event_facility_resource_ids. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00431">431</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="aff2165775791e7bb6bf3dd2a4f7571a6"></a><!-- doxytag: member="agEventFacilityHelper::returnCurrentEventFacilityGroupStatus" ref="aff2165775791e7bb6bf3dd2a4f7571a6" args="($eventId)" -->
 <div class="memitem">
 <div class="memproto">
@@ -126,19 +261,18 @@ static&#160;</td><td class="memItemRight" valign="bottom"><b>returnCurrentFacili
 </div>
 <div class="memdoc">
 
-<p>Static function to return the current status id's of all facility groups for a specific event. </p>
+<p>Static function to return the current status id's of all facility groups for a specific event <code> // To get the current status of all facilities in a current event $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityGroupStatus($eventId) ;. </code></p>
+<p>$q = agDoctrineQuery::create() -&gt;select('s.*') -&gt;from('agEventFacilityGroupStatus s') -&gt;whereIn('s.id', array_keys($currentStatusIds)) ;</p>
+<p>$results = $q-&gt;execute() ; </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">integer(4)</td><td>$eventId The event currently being queried </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>array A two-dimensional associative array, keyed by agEventFacilityGroupStatus.id with a value array containing the surrogate key: (agEventFacilityGroupStatus.event_facility_group_id, agEventFacilityGroupStatus.time_stamp)</dd></dl>
-<p><code> // To get the current status of all facilities in a current event $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityGroupStatus($eventId) ;</code></p>
-<p><code> $q = Doctrine_Query::create() -&gt;select('s.*') -&gt;from('agEventFacilityGroupStatus s') -&gt;whereIn('s.id', array_keys($currentStatusIds)) ;</code></p>
-<p><code> $results = $q-&gt;execute() ; </code> </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array A two-dimensional associative array, keyed by agEventFacilityGroupStatus.id with a value array containing the surrogate key: (agEventFacilityGroupStatus.event_facility_group_id, agEventFacilityGroupStatus.time_stamp) </dd></dl>
 
-<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00219">219</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00379">379</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
 
 </div>
 </div>
@@ -158,18 +292,304 @@ static&#160;</td><td class="memItemRight" valign="bottom"><b>returnCurrentFacili
 <div class="memdoc">
 
 <p>Static function to return the current status id's of all facility resources for a specific event. </p>
+<p>To get the current status of all facilities in a current event $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityResourceStatus($eventId) ;</p>
+<p>$q = agDoctrineQuery::create() -&gt;select('s.*') -&gt;from('agEventFacilityResourceStatus s') -&gt;whereIn('s.id', array_keys($currentStatusIds)) ;</p>
+<p>$results = $q-&gt;execute() ; </p>
 <dl><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">integer(4)</td><td>$eventId The event currently being queried </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>array A two-dimensional associative array, keyed by agEventFacilityResourceStatus.id with a value array containing the surrogate key: (agEventFacilityResourceStatus.event_facility_resource_id, agEventFacilityResourceStatus.time_stamp)</dd></dl>
-<p><code> // To get the current status of all facilities in a current event $currentStatusIds = agEventFacilityHelper::returnCurrentFacilityResourceStatus($eventId) ;</code></p>
-<p><code> $q = Doctrine_Query::create() -&gt;select('s.*') -&gt;from('agEventFacilityResourceStatus s') -&gt;whereIn('s.id', array_keys($currentStatusIds)) ;</code></p>
-<p><code> $results = $q-&gt;execute() ; </code> </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array A two-dimensional associative array, keyed by agEventFacilityResourceStatus.id with a value array containing the surrogate key: (agEventFacilityResourceStatus.event_facility_resource_id, agEventFacilityResourceStatus.time_stamp) </dd></dl>
 
-<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00178">178</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00339">339</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a2b686f76c55d420a4f00f5ebfda2480a"></a><!-- doxytag: member="agEventFacilityHelper::returnCurrentEventStatus" ref="a2b686f76c55d420a4f00f5ebfda2480a" args="($eventId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::returnCurrentEventStatus </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function to return the event_status_id and event_status_type_id of the passed event_id. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">integer(4)</td><td>$eventId The event id being queried </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>integer An event_status_type_id. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00405">405</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a8fe7506f97ba4a8a2e93eb939c32b235"></a><!-- doxytag: member="agEventFacilityHelper::returnEventFacilityGroups" ref="a8fe7506f97ba4a8a2e93eb939c32b235" args="($eventId, $active=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::returnEventFacilityGroups </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>active</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Function to return event facility groups with an optional parameter to restrict to active or inactive facility group allocation status. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The event id being queried </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$active</td><td>Optional parameter to restrict returned only active or inactive facility groups. Default setting (null) returns both. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array A scalar array of event facility groups with the group type, and group name. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00028">28</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a5f4f7439b8a2f648776dddae507f776f"></a><!-- doxytag: member="agEventFacilityHelper::returnFacilityResourceActivation" ref="a5f4f7439b8a2f648776dddae507f776f" args="($eventId, $eventFacilityGroupId=NULL, $facilityStandbyStatus=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::returnFacilityResourceActivation </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventFacilityGroupId</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityStandbyStatus</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to return facilities that are candidates for having their activation times set. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The event id being queried. </td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventFacilityGroupId An optional parameter to set a specific group by which results can be filtered; default (NULL) returns all groups. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$facilityStandbyStatus</td><td>An optional parameter to restrict results only to those facilities that are in a standby state; default (NULL) imposes no restriciton. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>doctrine_collection Returns a collection of doctrine objects related to facility resources. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00063">63</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aff46114d9ef76acf0bdbd46666cd94ee"></a><!-- doxytag: member="agEventFacilityHelper::setEventFacilityResourceStatus" ref="aff46114d9ef76acf0bdbd46666cd94ee" args="($eventIds, $facilityResourceIds, $allocationStatusId, $actionTime=NULL, Doctrine_Connection $conn=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::setEventFacilityResourceStatus </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventIds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityResourceIds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>allocationStatusId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>actionTime</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Doctrine_Connection $&#160;</td>
+          <td class="paramname"><em>conn</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to execute a mass-update to event facility resource statuses. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$eventIds</td><td>An array of event id's being affected. </td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$facilityResourceIds</td><td>An array of facility resource id's affected by this action. </td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">integer(2)</td><td>$allocationStatusId The status being applied. </td></tr>
+    <tr><td class="paramtype">timestamp</td><td class="paramname">$actionTime</td><td>The time this action will be applied. Defaults to NOW(). </td></tr>
+    <tr><td class="paramtype">Doctrine_Connection</td><td class="paramname">$conn</td><td>An optional doctrine connection object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>integer The number of operations performed. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00574">574</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa9dd92dec6e732550dc5cffee581855f"></a><!-- doxytag: member="agEventFacilityHelper::setEventZeroHour" ref="aa9dd92dec6e732550dc5cffee581855f" args="($eventId, $activationTime, Doctrine_Connection $conn=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::setEventZeroHour </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>activationTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Doctrine_Connection $&#160;</td>
+          <td class="paramname"><em>conn</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to set the zero hour of an event and set facility activation times for committed, non- standby facilities. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The event being updated. </td></tr>
+    <tr><td class="paramtype">timestamp</td><td class="paramname">$activationTime</td><td>The activation time being applied. </td></tr>
+    <tr><td class="paramtype">Doctrine_Connection</td><td class="paramname">$conn</td><td>A doctrine connection object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array An array containing the number of facility operations performed. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00242">242</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a544ef5982b7504c9be3e1a257feca926"></a><!-- doxytag: member="agEventFacilityHelper::setFacilityActivationTime" ref="a544ef5982b7504c9be3e1a257feca926" args="($eventId, $eventFacilityResourceIds, $activationTime, $shiftChangeRestriction=TRUE, $releaseStaff=FALSE, Doctrine_Connection $conn=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agEventFacilityHelper::setFacilityActivationTime </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>eventFacilityResourceIds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>activationTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>shiftChangeRestriction</em> = <code>TRUE</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>releaseStaff</em> = <code>FALSE</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Doctrine_Connection $&#160;</td>
+          <td class="paramname"><em>conn</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Sets the activation time for a group of event facility resources and optionally disables unused or unnecessary resources. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(4)</td><td>$eventId The event this action occurs against. </td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$eventFacilityResourceIds</td><td>A simple, one-dimensional array of event facility resource id's. </td></tr>
+    <tr><td class="paramtype">timestamp</td><td class="paramname">$activationTime</td><td>The activation time to be applied. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$shiftChangeRestriction</td><td>An optional parameter whether or not to utilize the global shift_change_restriction (aka a time offset barrier). </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$releaseStaff</td><td>An optional parameter to control whether or not staff are automatically released from any of the shifts that might be disabled due to this action. Defaults to FALSE. </td></tr>
+    <tr><td class="paramtype">Doctrine_Connection</td><td class="paramname">$conn</td><td>An optional doctrine connection object. If one is not passed a new one will be created automatically. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array Returns an array containing the number of disabled shifts, updated records, and inserted records. </dd></dl>
+
+<p>Definition at line <a class="el" href="agEventFacilityHelper_8class_8php_source.html#l00134">134</a> of file <a class="el" href="agEventFacilityHelper_8class_8php_source.html">agEventFacilityHelper.class.php</a>.</p>
 
 </div>
 </div>
@@ -182,7 +602,7 @@ static&#160;</td><td class="memItemRight" valign="bottom"><b>returnCurrentFacili
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

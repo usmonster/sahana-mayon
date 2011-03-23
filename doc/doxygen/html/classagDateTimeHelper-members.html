@@ -66,7 +66,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 This is the complete list of members for <a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a>, including all inherited members.<table>
   <tr class="memlist"><td><a class="el" href="classagDateTimeHelper.html#ae7d4aa693b80f9c1fdbddb8a33b6b5be">__construct</a>($timeInterval, $unitsOfTime)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td></td></tr>
-  <tr bgcolor="#f0f0f0"><td><b>defaultDateTimeFormat</b>($time=NULL) (defined in <a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a>)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagDateTimeHelper.html#a985af9b99824d9fc7c5e8bfd96e1581b">defaultTimestampFormat</a>($time=NULL)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="classagDateTimeHelper.html#a5966c90570f9562d5caf24fd3382d8c8">getParsedTime</a>()</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>MSEC_IN_DAY</b> (defined in <a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a>)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td></td></tr>
   <tr bgcolor="#f0f0f0"><td><b>MSEC_IN_HOUR</b> (defined in <a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a>)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td></td></tr>
@@ -78,13 +78,14 @@ This is the complete list of members for <a class="el" href="classagDateTimeHelp
   <tr bgcolor="#f0f0f0"><td><b>SEC_IN_MINUTE</b> (defined in <a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a>)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classagDateTimeHelper.html#aba2a177699fcf8ea4fdb64b74a104233">setMillisecondsToParsedTime</a>($milliseconds)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classagDateTimeHelper.html#a0bbfb12b53e6a459a1dd0a169b2076be">setSecondsToParsedTime</a>($seconds)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classagDateTimeHelper.html#ab6217771f5006b8de6544e1c50831e5f">tsToString</a>($timestamp)</td><td><a class="el" href="classagDateTimeHelper.html">agDateTimeHelper</a></td><td><code> [static]</code></td></tr>
 </table></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

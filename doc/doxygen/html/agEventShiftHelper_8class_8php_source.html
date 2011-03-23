@@ -64,111 +64,247 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00002"></a>00002 
 <a name="l00017"></a><a class="code" href="classagEventShiftHelper.html">00017</a> <span class="keyword">class </span><a class="code" href="classagEventShiftHelper.html" title="provides event shift management functions">agEventShiftHelper</a>
 <a name="l00018"></a>00018 {
-<a name="l00029"></a>00029   <span class="keyword">private</span> function updateEventShiftTime($eventShiftId, $startTime, $endTime, $breakStart, $breakEnd)
-<a name="l00030"></a>00030   {    
-<a name="l00031"></a>00031     $query = Doctrine_Query::create()
-<a name="l00032"></a>00032       -&gt;update(<span class="stringliteral">&#39;agEventShift&#39;</span>)
-<a name="l00033"></a>00033       -&gt;set(<span class="stringliteral">&#39;start_time&#39;</span>, $startTime)
-<a name="l00034"></a>00034       -&gt;set(<span class="stringliteral">&#39;end_time&#39;</span>, $endTime)
-<a name="l00035"></a>00035       -&gt;set(<span class="stringliteral">&#39;break_start&#39;</span>, $breakStart)
-<a name="l00036"></a>00036       -&gt;set(<span class="stringliteral">&#39;break_end&#39;</span>, $breakEnd)
-<a name="l00037"></a>00037       -&gt;where(<span class="stringliteral">&#39;id = ?&#39;</span>, $eventShiftId);
-<a name="l00038"></a>00038 
-<a name="l00039"></a>00039     $query-&gt;execute() ;
-<a name="l00040"></a>00040     $query-&gt;free(<span class="keyword">true</span>) ;
-<a name="l00041"></a>00041   }
-<a name="l00042"></a>00042 
-<a name="l00051"></a><a class="code" href="classagEventShiftHelper.html#a0f08aa23eb147fc20309d8e38eb92fdd">00051</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#a0f08aa23eb147fc20309d8e38eb92fdd" title="Updates all shifts associated with $eventFacilityResourceID to use absolute timestamps per activation...">activateEventFacilityResourceShifts</a>($eventFacilityResourceId, $activationTime)
-<a name="l00052"></a>00052   {
-<a name="l00053"></a>00053     <span class="comment">// capture the relative times and shifts associated with the event_facility_resource_id</span>
-<a name="l00054"></a>00054     $query = Doctrine_Query::create()
-<a name="l00055"></a>00055       -&gt;select(<span class="stringliteral">&#39;es.id&#39;</span>)
-<a name="l00056"></a>00056         -&gt;addSelect(<span class="stringliteral">&#39;es.minutes_start_to_facility_activation&#39;</span>)
-<a name="l00057"></a>00057         -&gt;addSelect(<span class="stringliteral">&#39;es.task_length_minutes&#39;</span>)
-<a name="l00058"></a>00058         -&gt;addSelect(<span class="stringliteral">&#39;es.break_length_minutes&#39;</span>)
-<a name="l00059"></a>00059       -&gt;from(<span class="stringliteral">&#39;agEventShift es&#39;</span>)
-<a name="l00060"></a>00060       -&gt;where(<span class="stringliteral">&#39;es.event_facility_resource_id = ?&#39;</span>, $eventFacilityResourceId) ;
-<a name="l00061"></a>00061 
-<a name="l00062"></a>00062     <span class="comment">// don&#39;t hydrate for quicker operation</span>
-<a name="l00063"></a>00063     $results = $query-&gt;execute(array(), Doctrine_Core::HYDRATE_NONE);
-<a name="l00064"></a>00064 
-<a name="l00065"></a>00065     <span class="comment">// loop through each shift and update times to absolute</span>
-<a name="l00066"></a>00066     <span class="keywordflow">foreach</span> ($results as $result)
-<a name="l00067"></a>00067     {
-<a name="l00068"></a>00068       $eventShiftId = $result[0] ;
-<a name="l00069"></a>00069       $relativeStart = $result[1] ;
-<a name="l00070"></a>00070       $taskLength = $result[2] ;
-<a name="l00071"></a>00071       $breakLength = $result[3] ;
-<a name="l00072"></a>00072 
-<a name="l00073"></a>00073       <span class="comment">// need this bit to gracefully handle $relativeStart&#39;s +/- status</span>
-<a name="l00074"></a>00074       $startModifier = ($relativeStart &gt;= 0) ? <span class="stringliteral">&#39;+{$relativeStart} minutes&#39;</span> : <span class="stringliteral">&#39;{$relativeStart} minutes&#39;</span> ;
-<a name="l00075"></a>00075 
-<a name="l00076"></a>00076       <span class="comment">// build our new timestamp values</span>
-<a name="l00077"></a>00077       $startTime = strtotime($startModifier, $relativeStart) ;
-<a name="l00078"></a>00078       $endTime = strtotime(<span class="stringliteral">&#39;+{$taskLength} minutes&#39;</span>, $startTime) ;
-<a name="l00079"></a>00079       $breakStart = $endTime ;
-<a name="l00080"></a>00080       $breakEnd = strtotime(<span class="stringliteral">&#39;+{$breakLength} minutes&#39;</span>, $breakStart) ;
-<a name="l00081"></a>00081 
-<a name="l00082"></a>00082       <span class="comment">// update the shift</span>
-<a name="l00083"></a>00083       $this-&gt;updateEventShiftTime($eventShiftId, $startTime, $endTime, $breakStart, $breakEnd) ;
-<a name="l00084"></a>00084     }
-<a name="l00085"></a>00085   }
-<a name="l00086"></a>00086 
-<a name="l00097"></a><a class="code" href="classagEventShiftHelper.html#af15841b576343fd6a8450255fbce8e5a">00097</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#af15841b576343fd6a8450255fbce8e5a" title="Updates all shifts associated with $eventFacilityGroupID to use absolute timestamps per activation pr...">activateEventFacilityGroupShifts</a>($eventFacilityGroupId, $activationTime)
-<a name="l00098"></a>00098   {
-<a name="l00099"></a>00099     <span class="comment">// capture the facilities associated with the event_facility_group_id</span>
-<a name="l00100"></a>00100     $query = Doctrine_Query::create()
-<a name="l00101"></a>00101       -&gt;select(<span class="stringliteral">&#39;efr.id&#39;</span>)
-<a name="l00102"></a>00102       -&gt;from(<span class="stringliteral">&#39;agEventFacilityResource efr&#39;</span>)
-<a name="l00103"></a>00103         -&gt;innerJoin(<span class="stringliteral">&#39;efr.agEventFacilityResourceStatus efrs&#39;</span>)
-<a name="l00104"></a>00104         -&gt;innerJoin(<span class="stringliteral">&#39;efrs.agFacilityResourceAllocationStatus fras&#39;</span>)
-<a name="l00105"></a>00105       -&gt;where(<span class="stringliteral">&#39;EXISTS (</span>
-<a name="l00106"></a>00106 <span class="stringliteral">          SELECT s.id</span>
-<a name="l00107"></a>00107 <span class="stringliteral">            FROM agEventFacilityResourceStatus s</span>
-<a name="l00108"></a>00108 <span class="stringliteral">            WHERE s.event_facility_resource_id = efrs.id</span>
-<a name="l00109"></a>00109 <span class="stringliteral">              AND s.time_stamp &lt;= CURRENT_TIMESTAMP</span>
-<a name="l00110"></a>00110 <span class="stringliteral">            HAVING MAX(s.time_stamp) = efrs.time_stamp)&#39;</span>)
-<a name="l00111"></a>00111         -&gt;andWhere(<span class="stringliteral">&#39;efr.event_facility_group_id = ?&#39;</span>, $eventFacilityGroupId)
-<a name="l00112"></a>00112         -&gt;andWhere(<span class="stringliteral">&#39;fras.committed = ?&#39;</span>, <span class="keyword">true</span>)
-<a name="l00113"></a>00113         -&gt;andWhere(<span class="stringliteral">&#39;fras.standby = ?&#39;</span>, <span class="keyword">false</span>) ;
-<a name="l00114"></a>00114 
-<a name="l00115"></a>00115     <span class="comment">// don&#39;t hydrate for quicker operation</span>
-<a name="l00116"></a>00116     $results = $query-&gt;execute(array(), Doctrine_Core::HYDRATE_NONE);
-<a name="l00117"></a>00117 
-<a name="l00118"></a>00118     <span class="comment">// loop through each facility and update</span>
-<a name="l00119"></a>00119     <span class="keywordflow">foreach</span> ($results as $result)
-<a name="l00120"></a>00120     {
-<a name="l00121"></a>00121       <a class="code" href="classagEventShiftHelper.html#a0f08aa23eb147fc20309d8e38eb92fdd" title="Updates all shifts associated with $eventFacilityResourceID to use absolute timestamps per activation...">self::activateEventFacilityResourceShifts</a>($result[0], $activationTime) ;
-<a name="l00122"></a>00122     }
-<a name="l00123"></a>00123   }
-<a name="l00124"></a>00124 
-<a name="l00135"></a><a class="code" href="classagEventShiftHelper.html#af0afc47752014f5c45975c93a243d455">00135</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#af0afc47752014f5c45975c93a243d455" title="Updates all shifts associated with $event to use absolute timestamps per activation protocol...">activateEventShifts</a>($eventId, $activationTime)
-<a name="l00136"></a>00136   {
-<a name="l00137"></a>00137     <span class="comment">// capture the facilities associated with the event_facility_group_id</span>
-<a name="l00138"></a>00138     $query = Doctrine_Query::create()
-<a name="l00139"></a>00139       -&gt;select(<span class="stringliteral">&#39;efg.id&#39;</span>)
-<a name="l00140"></a>00140       -&gt;from(<span class="stringliteral">&#39;agEventFacilityGroup efg&#39;</span>)
-<a name="l00141"></a>00141         -&gt;innerJoin(<span class="stringliteral">&#39;efg.agEventFacilityGroupStatus efgs&#39;</span>)
-<a name="l00142"></a>00142         -&gt;innerJoin(<span class="stringliteral">&#39;efgs.agFacilityGroupAllocationStatus fgas&#39;</span>)
-<a name="l00143"></a>00143       -&gt;where(<span class="stringliteral">&#39;EXISTS (</span>
-<a name="l00144"></a>00144 <span class="stringliteral">          SELECT s.id</span>
-<a name="l00145"></a>00145 <span class="stringliteral">            FROM agEventFacilityGroupStatus s</span>
-<a name="l00146"></a>00146 <span class="stringliteral">            WHERE s.event_facility_group_id = efgs.id</span>
-<a name="l00147"></a>00147 <span class="stringliteral">              AND s.time_stamp &lt;= CURRENT_TIMESTAMP</span>
-<a name="l00148"></a>00148 <span class="stringliteral">            HAVING MAX(s.time_stamp) = efgs.time_stamp)&#39;</span>)
-<a name="l00149"></a>00149         -&gt;andWhere(<span class="stringliteral">&#39;efg.event_id = ?&#39;</span>, $eventId)
-<a name="l00150"></a>00150         -&gt;andWhere(<span class="stringliteral">&#39;fgas.active = ?&#39;</span>, <span class="keyword">true</span>) ;
-<a name="l00151"></a>00151 
-<a name="l00152"></a>00152     <span class="comment">// don&#39;t hydrate for quicker operation</span>
-<a name="l00153"></a>00153     $results = $query-&gt;execute(array(), Doctrine_Core::HYDRATE_NONE);
-<a name="l00154"></a>00154 
-<a name="l00155"></a>00155     <span class="comment">// loop through each facility and update</span>
-<a name="l00156"></a>00156     <span class="keywordflow">foreach</span> ($results as $result)
-<a name="l00157"></a>00157     {
-<a name="l00158"></a>00158       <a class="code" href="classagEventShiftHelper.html#af15841b576343fd6a8450255fbce8e5a" title="Updates all shifts associated with $eventFacilityGroupID to use absolute timestamps per activation pr...">self::activateEventFacilityGroupShifts</a>($result[0], $activationTime) ;
-<a name="l00159"></a>00159     }
-<a name="l00160"></a>00160   }
-<a name="l00161"></a>00161 }
+<a name="l00030"></a><a class="code" href="classagEventShiftHelper.html#ae7070d16b08fdf9dcf37f60cc7ae6087">00030</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#ae7070d16b08fdf9dcf37f60cc7ae6087" title="Changes the status of a specified event shift and optionally calls a function to release staff of dis...">setEventShiftStatus</a> ($eventShiftIds, $shiftStatusId, $releaseStaff = FALSE, Doctrine_Connection $conn = NULL)
+<a name="l00031"></a>00031   {
+<a name="l00032"></a>00032     $eventStaffUpdates = 0 ;
+<a name="l00033"></a>00033     $eventShiftUpdates = 0 ;
+<a name="l00034"></a>00034 
+<a name="l00035"></a>00035       <span class="comment">// set our default connection if one is not passed</span>
+<a name="l00036"></a>00036       <span class="keywordflow">if</span> (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+<a name="l00037"></a>00037 
+<a name="l00038"></a>00038       <span class="comment">// query construction</span>
+<a name="l00039"></a>00039       $shiftsQuery = agDoctrineQuery::create($conn)
+<a name="l00040"></a>00040         -&gt;update(<span class="stringliteral">&#39;agEventShift&#39;</span>)
+<a name="l00041"></a>00041           -&gt;set(<span class="stringliteral">&#39;shift_status_id&#39;</span>, <span class="charliteral">&#39;?&#39;</span>, $shiftStatusId)
+<a name="l00042"></a>00042           -&gt;whereIn(<span class="stringliteral">&#39;id&#39;</span>, $eventShiftIds) ;
+<a name="l00043"></a>00043 
+<a name="l00044"></a>00044       <span class="comment">// wrap it all in a transaction and a try/catch to rollback if an exception occurs</span>
+<a name="l00045"></a>00045       $conn-&gt;beginTransaction() ;
+<a name="l00046"></a>00046       <span class="keywordflow">try</span>
+<a name="l00047"></a>00047       {
+<a name="l00048"></a>00048         $components = $shiftsQuery-&gt;getDql() ;
+<a name="l00049"></a>00049 <span class="comment">//   Chad, if you work on this soon, I commented out the line below because it was causing </span>
+<a name="l00050"></a>00050 <span class="comment">//   errors w/ the modal-modal. Somehow, the echo here was getting all the way back to the response,</span>
+<a name="l00051"></a>00051 <span class="comment">//   so the string that was expected to be event/[event-name]/fgroup turned out to be something like</span>
+<a name="l00052"></a>00052 <span class="comment">//   UPDATE agEventShift SET shift_status_id = ? WHERE id IN (?, ?, ?, ?, ?, ?, ?)event/[event-name]/fgroup.</span>
+<a name="l00053"></a>00053 <span class="comment">//        echo $components ;</span>
+<a name="l00054"></a>00054         <span class="comment">// update shifts</span>
+<a name="l00055"></a>00055         $eventShiftUpdates = $shiftsQuery-&gt;execute() ;
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057         <span class="comment">// release staff if instructed to do so</span>
+<a name="l00058"></a>00058         <span class="keywordflow">if</span> ($releaseStaff) { $eventStaffUpdates = <a class="code" href="classagEventShiftHelper.html#a15fdfbdfae430832b8d5deeaf86e482e" title="Execute a delete query to release allocated staff from the passed event shift ids.">self::releaseShiftStaff</a>($eventShiftIds, $conn) ; }
+<a name="l00059"></a>00059 
+<a name="l00060"></a>00060         <span class="comment">// commit</span>
+<a name="l00061"></a>00061         $conn-&gt;commit() ;
+<a name="l00062"></a>00062       }
+<a name="l00063"></a>00063       <span class="keywordflow">catch</span>(Exception $e)
+<a name="l00064"></a>00064       {
+<a name="l00065"></a>00065         $conn-&gt;rollback(); <span class="comment">// rollback if we must :(</span>
+<a name="l00066"></a>00066     }
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068     <span class="comment">// return our respective record operation counts</span>
+<a name="l00069"></a>00069     <span class="keywordflow">return</span> array(<span class="stringliteral">&#39;shiftUpdates&#39;</span> =&gt; $eventShiftUpdates, <span class="stringliteral">&#39;staffUpdates&#39;</span> =&gt; $eventStaffUpdates) ;
+<a name="l00070"></a>00070   }
+<a name="l00071"></a>00071 
+<a name="l00080"></a><a class="code" href="classagEventShiftHelper.html#a15fdfbdfae430832b8d5deeaf86e482e">00080</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#a15fdfbdfae430832b8d5deeaf86e482e" title="Execute a delete query to release allocated staff from the passed event shift ids.">releaseShiftStaff</a>($eventShiftIds, Doctrine_Connection $conn = NULL )
+<a name="l00081"></a>00081   {
+<a name="l00082"></a>00082     <span class="comment">// set results default</span>
+<a name="l00083"></a>00083     $results = 0 ;
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085     $query = agDoctrineQuery::create($conn)
+<a name="l00086"></a>00086       -&gt;delete(<span class="stringliteral">&#39;agEventStaffShift ess&#39;</span>)
+<a name="l00087"></a>00087         -&gt;where(<span class="stringliteral">&#39;NOT EXISTS(</span>
+<a name="l00088"></a>00088 <span class="stringliteral">            SELECT essi.id</span>
+<a name="l00089"></a>00089 <span class="stringliteral">              FROM agEventStaffSignIn essi</span>
+<a name="l00090"></a>00090 <span class="stringliteral">              WHERE essi.event_staff_shift_id = ess.id)&#39;</span>)
+<a name="l00091"></a>00091           -&gt;andWhereIn(<span class="stringliteral">&#39;ess.event_shift_id&#39;</span>, $eventShiftIds) ;
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093     <span class="comment">// set our default connection if one isn&#39;t passed and wrap it all in a transaction</span>
+<a name="l00094"></a>00094     <span class="keywordflow">if</span> (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+<a name="l00095"></a>00095     $conn-&gt;beginTransaction() ;
+<a name="l00096"></a>00096     <span class="keywordflow">try</span>
+<a name="l00097"></a>00097     {
+<a name="l00098"></a>00098       $results = $query-&gt;execute() ;
+<a name="l00099"></a>00099       $conn-&gt;commit() ;
+<a name="l00100"></a>00100     }
+<a name="l00101"></a>00101     <span class="keywordflow">catch</span>(Exception $e)
+<a name="l00102"></a>00102     {
+<a name="l00103"></a>00103       $conn-&gt;rollback() ;
+<a name="l00104"></a>00104     }
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106     <span class="comment">// returns the record count</span>
+<a name="l00107"></a>00107     <span class="keywordflow">return</span> $results ;
+<a name="l00108"></a>00108   }
+<a name="l00109"></a>00109 
+<a name="l00119"></a><a class="code" href="classagEventShiftHelper.html#a8c75b8ef0e491f4fe1c0ae1602ee5bc9">00119</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#a8c75b8ef0e491f4fe1c0ae1602ee5bc9" title="Function to return the first shifts of each facility resource for a given event.">returnFirstFacilityResourceShifts</a>($eventId, $staffed = NULL)
+<a name="l00120"></a>00120   {
+<a name="l00121"></a>00121     $query = agDoctrineQuery::create()
+<a name="l00122"></a>00122       -&gt;select(<span class="stringliteral">&#39;es.id&#39;</span>)
+<a name="l00123"></a>00123           -&gt;addSelect(<span class="stringliteral">&#39;es.event_facility_resource_id&#39;</span>)
+<a name="l00124"></a>00124         -&gt;from(<span class="stringliteral">&#39;agEventShift es&#39;</span>)
+<a name="l00125"></a>00125           -&gt;innerJoin(<span class="stringliteral">&#39;es.agEventFacilityResource efr&#39;</span>)
+<a name="l00126"></a>00126           -&gt;innerJoin(<span class="stringliteral">&#39;efr.agEventFacilityGroup efg&#39;</span>)
+<a name="l00127"></a>00127         -&gt;where(<span class="stringliteral">&#39;efg.event_id = ?&#39;</span>, $eventId)
+<a name="l00128"></a>00128           -&gt;andWhere(<span class="stringliteral">&#39;EXISTS (</span>
+<a name="l00129"></a>00129 <span class="stringliteral">          SELECT s.id</span>
+<a name="l00130"></a>00130 <span class="stringliteral">            FROM agEventShift s</span>
+<a name="l00131"></a>00131 <span class="stringliteral">            WHERE s.event_facility_resource_id = es.event_facility_resource_id</span>
+<a name="l00132"></a>00132 <span class="stringliteral">            HAVING MIN(s.minutes_start_to_facility_activation) = es.minutes_start_to_facility_activation)&#39;</span>) ;
+<a name="l00133"></a>00133 
+<a name="l00134"></a>00134     <span class="keywordflow">if</span> (! is_null($staffed))
+<a name="l00135"></a>00135     {
+<a name="l00136"></a>00136       <span class="keywordflow">if</span> ($staffed)
+<a name="l00137"></a>00137       {
+<a name="l00138"></a>00138         $query-&gt;innerJoin(<span class="stringliteral">&#39;es.agEventStaffShift ess&#39;</span>) ;
+<a name="l00139"></a>00139       }
+<a name="l00140"></a>00140       <span class="keywordflow">else</span>
+<a name="l00141"></a>00141       {
+<a name="l00142"></a>00142         $query-&gt;leftJoin(<span class="stringliteral">&#39;es.agEventStaffShift ess&#39;</span>) ;
+<a name="l00143"></a>00143         $query-&gt;andWhere(<span class="stringliteral">&#39;ess.id IS NULL&#39;</span>) ;
+<a name="l00144"></a>00144       }
+<a name="l00145"></a>00145     }
+<a name="l00146"></a>00146 
+<a name="l00147"></a>00147     $results = $query-&gt;execute(array(), <span class="stringliteral">&#39;key_value_array&#39;</span>) ;
+<a name="l00148"></a>00148     <span class="keywordflow">return</span> $results ;
+<a name="l00149"></a>00149   }
+<a name="l00150"></a>00150 
+<a name="l00166"></a><a class="code" href="classagEventShiftHelper.html#a0636fb19d8930cd0d5b7ddac8c009497">00166</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#a0636fb19d8930cd0d5b7ddac8c009497" title="Method to return an associative array keyed by event facility resource id with a value of one of the ...">returnSingleFirstFacilityResourceShifts</a>($eventId, $staffed = NULL, $minEnd = TRUE)
+<a name="l00167"></a>00167   {
+<a name="l00168"></a>00168     $firstShifts = array_keys( self::returnFirstFacilityResourceShifts($eventId, $staffed) ) ;
+<a name="l00169"></a>00169 
+<a name="l00170"></a>00170     $query = agDoctrineQuery::create()
+<a name="l00171"></a>00171       -&gt;select(<span class="stringliteral">&#39;es.event_facility_resource_id&#39;</span>)
+<a name="l00172"></a>00172         -&gt;addSelect(<span class="stringliteral">&#39;MIN(es.id) AS min_shift_id&#39;</span>)
+<a name="l00173"></a>00173         -&gt;from(<span class="stringliteral">&#39;agEventShift es&#39;</span>)
+<a name="l00174"></a>00174         -&gt;whereIn(<span class="stringliteral">&#39;es.id&#39;</span>, $firstShifts)
+<a name="l00175"></a>00175         -&gt;groupBy(<span class="stringliteral">&#39;es.event_facility_resource_id&#39;</span>) ;
+<a name="l00176"></a>00176 
+<a name="l00177"></a>00177     <span class="keywordflow">if</span> ($minEnd)
+<a name="l00178"></a>00178     {
+<a name="l00179"></a>00179       $query-&gt;andWhere(<span class="stringliteral">&#39;EXISTS (</span>
+<a name="l00180"></a>00180 <span class="stringliteral">        SELECT s.id,</span>
+<a name="l00181"></a>00181 <span class="stringliteral">          MIN(s.minutes_start_to_facility_activation +</span>
+<a name="l00182"></a>00182 <span class="stringliteral">            s.task_length_minutes +</span>
+<a name="l00183"></a>00183 <span class="stringliteral">            s.break_length_minutes) AS endTimeS,</span>
+<a name="l00184"></a>00184 <span class="stringliteral">          (es.minutes_start_to_facility_activation +</span>
+<a name="l00185"></a>00185 <span class="stringliteral">            es.task_length_minutes +</span>
+<a name="l00186"></a>00186 <span class="stringliteral">            es.break_length_minutes) as endTimeEs</span>
+<a name="l00187"></a>00187 <span class="stringliteral">          FROM agEventShift s</span>
+<a name="l00188"></a>00188 <span class="stringliteral">          WHERE s.id = es.id</span>
+<a name="l00189"></a>00189 <span class="stringliteral">          HAVING endTimeS = endTimeEs)&#39;</span>) ;
+<a name="l00190"></a>00190     }
+<a name="l00191"></a>00191     <span class="keywordflow">else</span>
+<a name="l00192"></a>00192     {
+<a name="l00193"></a>00193       $query-&gt;andWhere(<span class="stringliteral">&#39;EXISTS (</span>
+<a name="l00194"></a>00194 <span class="stringliteral">        SELECT s.id,</span>
+<a name="l00195"></a>00195 <span class="stringliteral">          MAX(s.minutes_start_to_facility_activation +</span>
+<a name="l00196"></a>00196 <span class="stringliteral">            s.task_length_minutes +</span>
+<a name="l00197"></a>00197 <span class="stringliteral">            s.break_length_minutes) AS endTimeS,</span>
+<a name="l00198"></a>00198 <span class="stringliteral">          (es.minutes_start_to_facility_activation +</span>
+<a name="l00199"></a>00199 <span class="stringliteral">            es.task_length_minutes +</span>
+<a name="l00200"></a>00200 <span class="stringliteral">            es.break_length_minutes) as endTimeEs</span>
+<a name="l00201"></a>00201 <span class="stringliteral">          FROM agEventShift s</span>
+<a name="l00202"></a>00202 <span class="stringliteral">          WHERE s.id = es.id</span>
+<a name="l00203"></a>00203 <span class="stringliteral">          HAVING endTimeS = endTimeEs)&#39;</span>) ;
+<a name="l00204"></a>00204     }
+<a name="l00205"></a>00205 
+<a name="l00206"></a>00206     $singleFirstShifts = $query-&gt;execute(array(),<span class="stringliteral">&#39;key_value_pair&#39;</span>) ;
+<a name="l00207"></a>00207     <span class="keywordflow">return</span> $singleFirstShifts ;
+<a name="l00208"></a>00208   }
+<a name="l00209"></a>00209 
+<a name="l00222"></a><a class="code" href="classagEventShiftHelper.html#a353e968c9f73b007738253ff0f301e8c">00222</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#a353e968c9f73b007738253ff0f301e8c" title="Return an array keyed by the shift id of any shifts that are currently in operation.">returnCurrentFacilityResourceShifts</a>($eventId, $staffed = NULL, $timestamp = NULL)
+<a name="l00223"></a>00223   {
+<a name="l00224"></a>00224     <span class="comment">// convert our start time to unix timestamp or set default if null</span>
+<a name="l00225"></a>00225     <span class="keywordflow">if</span> (is_null($timestamp)) { $timestamp = time() ; }
+<a name="l00226"></a>00226 
+<a name="l00227"></a>00227     <span class="comment">// create our basic query</span>
+<a name="l00228"></a>00228     $query = agDoctrineQuery::create()
+<a name="l00229"></a>00229       -&gt;select(<span class="stringliteral">&#39;es.id&#39;</span>)
+<a name="l00230"></a>00230           -&gt;addSelect(<span class="stringliteral">&#39;es.event_facility_resource_id&#39;</span>)
+<a name="l00231"></a>00231         -&gt;from(<span class="stringliteral">&#39;agEventShift es&#39;</span>)
+<a name="l00232"></a>00232           -&gt;innerJoin(<span class="stringliteral">&#39;es.agEventFacilityResource efr&#39;</span>)
+<a name="l00233"></a>00233           -&gt;innerJoin(<span class="stringliteral">&#39;efr.agEventFacilityGroup efg&#39;</span>)
+<a name="l00234"></a>00234           -&gt;innerJoin(<span class="stringliteral">&#39;efr.agEventFacilityResourceActivationTime efrat&#39;</span>)
+<a name="l00235"></a>00235         -&gt;where(<span class="stringliteral">&#39;efg.event_id = ?&#39;</span>, $eventId)
+<a name="l00236"></a>00236           -&gt;andWhere(<span class="stringliteral">&#39;(efrat.activation_time +</span>
+<a name="l00237"></a>00237 <span class="stringliteral">            (60 * es.minutes_start_to_facility_activation)) &lt;= ?&#39;</span>, $timestamp)
+<a name="l00238"></a>00238           -&gt;andWhere(<span class="stringliteral">&#39;(efrat.activation_time +</span>
+<a name="l00239"></a>00239 <span class="stringliteral">            (60 * (es.minutes_start_to_facility_activation +</span>
+<a name="l00240"></a>00240 <span class="stringliteral">            (es.task_length_minutes + es.break_length_minutes)))) &gt;= ?&#39;</span>, $timestamp) ;
+<a name="l00241"></a>00241 
+<a name="l00242"></a>00242     <span class="comment">// determine whether or not it needs to be joined to the staff table</span>
+<a name="l00243"></a>00243     <span class="keywordflow">if</span> (! is_null($staffed))
+<a name="l00244"></a>00244     {
+<a name="l00245"></a>00245       <span class="keywordflow">if</span> ($staffed)
+<a name="l00246"></a>00246       {
+<a name="l00247"></a>00247         $query-&gt;innerJoin(<span class="stringliteral">&#39;es.agEventStaffShift ess&#39;</span>) ;
+<a name="l00248"></a>00248       }
+<a name="l00249"></a>00249       <span class="keywordflow">else</span>
+<a name="l00250"></a>00250       {
+<a name="l00251"></a>00251         $query-&gt;leftJoin(<span class="stringliteral">&#39;es.agEventStaffShift ess&#39;</span>)
+<a name="l00252"></a>00252           -&gt;andWhere(<span class="stringliteral">&#39;ess.id IS NULL&#39;</span>) ;
+<a name="l00253"></a>00253       }
+<a name="l00254"></a>00254     }
+<a name="l00255"></a>00255 
+<a name="l00256"></a>00256     $results = $query-&gt;execute(array(), <span class="stringliteral">&#39;key_value_array&#39;</span>);
+<a name="l00257"></a>00257     <span class="keywordflow">return</span> $results;
+<a name="l00258"></a>00258   }
+<a name="l00259"></a>00259 
+<a name="l00278"></a><a class="code" href="classagEventShiftHelper.html#a31446299589952706157bdf7b2ec9152">00278</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#a31446299589952706157bdf7b2ec9152" title="Method to return an associative array keyed by event facility resource id with a value of one of the ...">returnSingleCurrentFacilityResourceShifts</a>($eventId, $staffed = NULL, $timestamp = NULL, $minEnd = TRUE)
+<a name="l00279"></a>00279   {
+<a name="l00280"></a>00280     $currentShifts = array_keys( self::returnCurrentFacilityResourceShifts($eventId, $staffed, $timestamp) ) ;
+<a name="l00281"></a>00281 
+<a name="l00282"></a>00282     $shiftQuery = agDoctrineQuery::create()
+<a name="l00283"></a>00283       -&gt;select(<span class="stringliteral">&#39;es.event_facility_resource_id&#39;</span>)
+<a name="l00284"></a>00284         -&gt;addSelect(<span class="stringliteral">&#39;MIN(es.id) AS shift_id&#39;</span>)
+<a name="l00285"></a>00285         -&gt;from(<span class="stringliteral">&#39;agEventShift es&#39;</span>)
+<a name="l00286"></a>00286         -&gt;whereIn(<span class="stringliteral">&#39;es.id&#39;</span>, $currentShifts)
+<a name="l00287"></a>00287         -&gt;groupBy(<span class="stringliteral">&#39;es.event_facility_resource_id&#39;</span>) ;
+<a name="l00288"></a>00288 
+<a name="l00289"></a>00289     <span class="keywordflow">if</span> ($minEnd)
+<a name="l00290"></a>00290     {
+<a name="l00291"></a>00291       $query-&gt;andWhere(<span class="stringliteral">&#39;EXISTS (</span>
+<a name="l00292"></a>00292 <span class="stringliteral">        SELECT s.id,</span>
+<a name="l00293"></a>00293 <span class="stringliteral">          MIN(s.minutes_start_to_facility_activation +</span>
+<a name="l00294"></a>00294 <span class="stringliteral">            s.task_length_minutes +</span>
+<a name="l00295"></a>00295 <span class="stringliteral">            s.break_length_minutes) AS endTimeS,</span>
+<a name="l00296"></a>00296 <span class="stringliteral">          (es.minutes_start_to_facility_activation +</span>
+<a name="l00297"></a>00297 <span class="stringliteral">            es.task_length_minutes +</span>
+<a name="l00298"></a>00298 <span class="stringliteral">            es.break_length_minutes) as endTimeEs</span>
+<a name="l00299"></a>00299 <span class="stringliteral">          FROM agEventShift s</span>
+<a name="l00300"></a>00300 <span class="stringliteral">          WHERE s.id = es.id</span>
+<a name="l00301"></a>00301 <span class="stringliteral">          HAVING endTimeS = endTimeEs)&#39;</span>) ;
+<a name="l00302"></a>00302     }
+<a name="l00303"></a>00303     <span class="keywordflow">else</span>
+<a name="l00304"></a>00304     {
+<a name="l00305"></a>00305   $query-&gt;andWhere(<span class="stringliteral">&#39;EXISTS (</span>
+<a name="l00306"></a>00306 <span class="stringliteral">        SELECT s.id,</span>
+<a name="l00307"></a>00307 <span class="stringliteral">          MAX(s.minutes_start_to_facility_activation +</span>
+<a name="l00308"></a>00308 <span class="stringliteral">            s.task_length_minutes +</span>
+<a name="l00309"></a>00309 <span class="stringliteral">            s.break_length_minutes) AS endTimeS,</span>
+<a name="l00310"></a>00310 <span class="stringliteral">          (es.minutes_start_to_facility_activation +</span>
+<a name="l00311"></a>00311 <span class="stringliteral">            es.task_length_minutes +</span>
+<a name="l00312"></a>00312 <span class="stringliteral">            es.break_length_minutes) as endTimeEs</span>
+<a name="l00313"></a>00313 <span class="stringliteral">          FROM agEventShift s</span>
+<a name="l00314"></a>00314 <span class="stringliteral">          WHERE s.id = es.id</span>
+<a name="l00315"></a>00315 <span class="stringliteral">          HAVING endTimeS = endTimeEs)&#39;</span>) ;
+<a name="l00316"></a>00316     }
+<a name="l00317"></a>00317 
+<a name="l00318"></a>00318     $singleCurrentShifts = $shiftQuery-&gt;execute(array(),<span class="stringliteral">&#39;key_value_pair&#39;</span>) ;
+<a name="l00319"></a>00319     <span class="keywordflow">return</span> $singleCurrentShifts ;
+<a name="l00320"></a>00320   }
+<a name="l00321"></a>00321 
+<a name="l00327"></a><a class="code" href="classagEventShiftHelper.html#ad93bea46362782bd3bef52879391335c">00327</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagEventShiftHelper.html#ad93bea46362782bd3bef52879391335c" title="Returns the shift status id of the shift_disabled_status global parameter.">returnDisabledShiftStatus</a>()
+<a name="l00328"></a>00328   {
+<a name="l00329"></a>00329     $statusQuery = agDoctrineQuery::create()
+<a name="l00330"></a>00330       -&gt;select(<span class="stringliteral">&#39;ss.id&#39;</span>)
+<a name="l00331"></a>00331         -&gt;from(<span class="stringliteral">&#39;agShiftStatus ss&#39;</span>)
+<a name="l00332"></a>00332         -&gt;where(<span class="stringliteral">&#39;ss.shift_status = ?&#39;</span>, <a class="code" href="classagGlobal.html#a3860c5e7f0dcd22c1da77879b51b696a" title="Static method to return the requested parameter.">agGlobal::getParam</a>(<span class="stringliteral">&#39;shift_disabled_status&#39;</span>)) ;
+<a name="l00333"></a>00333 
+<a name="l00334"></a>00334     $disabledStatusId = $statusQuery-&gt;fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
+<a name="l00335"></a>00335     <span class="keywordflow">return</span> $disabledStatusId ;
+<a name="l00336"></a>00336   }
+<a name="l00337"></a>00337 }
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->
@@ -176,7 +312,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

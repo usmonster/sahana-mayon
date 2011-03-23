@@ -95,7 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00061"></a>00061           $floo-&gt;widgetSchema-&gt;setLabel(<span class="stringliteral">&#39;address_to_type&#39;</span>, <span class="keyword">false</span>);
 <a name="l00062"></a>00062           $floo-&gt;widgetSchema[<span class="stringliteral">&#39;address_to_type&#39;</span>]-&gt;addOption(
 <a name="l00063"></a>00063             <span class="stringliteral">&#39;query&#39;</span>,
-<a name="l00064"></a>00064              Doctrine_Query::create()
+<a name="l00064"></a>00064              agDoctrineQuery::create()
 <a name="l00065"></a>00065                -&gt;select(<span class="stringliteral">&#39;a.value&#39;</span>)
 <a name="l00066"></a>00066                -&gt;from(<span class="stringliteral">&#39;agAddressValue a&#39;</span>)
 <a name="l00067"></a>00067                -&gt;where(<span class="stringliteral">&#39;a.address_element_id = 4&#39;</span>)
@@ -105,7 +105,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00071"></a>00071       }
 <a name="l00072"></a>00072     }
 <a name="l00073"></a>00073 
-<a name="l00074"></a>00074     $q = Doctrine_Query::create()
+<a name="l00074"></a>00074     $q = agDoctrineQuery::create()
 <a name="l00075"></a>00075                               -&gt;select(<span class="stringliteral">&#39;f.line_sequence AS line_sequence, f.inline_sequence AS inline_sequence, f.pre_delimiter AS pre_delimiter, f.post_delimiter AS post_delimiter, f.is_required AS is_required, e.address_element AS address_element&#39;</span>)
 <a name="l00076"></a>00076                               -&gt;from(<span class="stringliteral">&#39;agAddressFormat f&#39;</span>)
 <a name="l00077"></a>00077                               -&gt;leftJoin(<span class="stringliteral">&#39;f.agAddressStandard s&#39;</span>)
@@ -162,7 +162,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
