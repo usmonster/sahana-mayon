@@ -18,10 +18,14 @@
 class agStaffHelper
 {
 
-  public static function getStaffResourceTypes()
+  public static function getStaffResourceTypes($returnAbbr = FALSE)
   {
+    $typeField = 'staff_resource_type';
+
+    if ($returnAbbr) { $typeField = 'staff_resource_type_abbr'; }
+
     $staffResourceTypes = agDoctrineQuery::create()
-            ->select('id, staff_resource_type')
+            ->select('id, ' . $typeField)
             ->from('agStaffResourceType')
             ->execute(array(), 'key_value_pair');
     return $staffResourceTypes;

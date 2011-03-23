@@ -225,19 +225,22 @@ class facilityActions extends agActions
     $import = new AgImportXLS();
 //    $returned = $import->createTempTable();
 
-    $import->processImport($this->importPath);
+    $processedToTemp = $import->processImport($this->importPath);
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
 
-    // Source table should be returned from AgImportXLS class.
-    $sourceTable = $import->tempTable ;
-    $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
+    if ($processedToTemp)
+    {
+      // Grab table name from AgImportXLS class.
+      $sourceTable = $import->tempTable ;
+      $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
 
-    $format="%d/%m/%Y %H:%M:%S";
+      $format="%d/%m/%Y %H:%M:%S";
 //    echo strftime($format);
 
-    $dataNorm->normalizeImport();
-    $this->summary = $dataNorm->summary;
+      $dataNorm->normalizeImport();
+      $this->summary = $dataNorm->summary;
+    }
 
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams

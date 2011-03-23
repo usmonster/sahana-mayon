@@ -47,7 +47,7 @@ class agImportNormalization
     $this->phoneContactTypes = array_flip(agContactHelper::getContactTypes('phone'));
     $this->addressContactTypes = array_flip(agContactHelper::getContactTypes('address'));
     $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->defaultPhoneFormatTypes));
-    $this->staffResourceTypes = array_flip(agStaffHelper::getStaffResourceTypes());
+    $this->staffResourceTypes = array_flip(agStaffHelper::getStaffResourceTypes(TRUE));
     $this->mapStaffColumn();
     $addressHelper = new agAddressHelper();
     $this->addressStandards = $addressHelper->getAddressStandardId();
@@ -220,21 +220,18 @@ class agImportNormalization
                  'message' => null);
   }
 
+  /**
+   * Method to identify all the staff requirement fields, suffixed with either a _min or _max string.
+   *
+   * @param array $columnHeaders  An array of column headers.
+   */
   private function getImportStaffList($columnHeaders) {
 
     $setHeaders = preg_grep('/_(min|max)$/i', $columnHeaders);
     foreach($setHeaders as $key => $column) {
       $this->importStaffList[] = rtrim(rtrim(strtolower($column), '_min'), '_max');
     }
-    $this->importStaffList = array_unique($this->importStaffList);
-
-//    foreach ($columnHeaders as $index => $column)
-//    {
-//      if (preg_match('/_(min|max)$/', $column)) {
-//        $this->importStaffList[] = rtrim(rtrim($column, '_max'), '_min');
-//      }
-//    }
-//    $this->importStaffList = array_unique($this->importStaffList);
+    $this->importStaffList = array_values(array_unique($this->importStaffList));
   }
 
   /**
@@ -320,8 +317,7 @@ class agImportNormalization
             case 'ERROR':
               $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
                                                    'record' => $record);
-              $skipToNext = 1;
-              break;
+              continue 2;
             case 'WARNING':
               switch ($isValidData['type']) {
                 case 'Email':
@@ -344,18 +340,14 @@ class agImportNormalization
             default:
               $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
                                                    'record' => $record);
-              $skipToNext = 1;
-              break;
+              continue 2;
           }
-        }
-
-        if ($skipToNext) {
-          continue;
         }
 
         // Declare variables.
         $facility_name = $record['facility_name'];
         $facility_resource_code = $record['facility_resource_code'];
+        $facility_code = $record['facility_code'];
         $facility_resource_type_abbr = $record['facility_resource_type_abbr'];
         $facility_resource_status = $record['facility_resource_status'];
         $capacity = $record['facility_capacity'];
@@ -390,15 +382,17 @@ class agImportNormalization
         // tries to find an existing record based on a unique identifier.
         $facility = agDoctrineQuery::create()
                 ->from('agFacility f')
-                ->where('f.facility_name = ?', $facility_name)
+                ->where('f.facility_code = ?', $facility_code)
                 ->fetchOne();
         $facilityResource = NULL;
         $scenarioFacilityResource = NULL;
 
         if (empty($facility)) {
-          $facility = $this->createFacility($facility_name);
+          $facility = $this->createFacility($facility_name, $facility_code);
           $isNewFacilityRecord = 1;
         } else {
+          $facility = $this->updateFacility($facility, $facility_name);
+//        }
           // Search for facility resource if exists.
           // Facility Resource table has two unique key sets: (1) Facility & Facility Resource  and (2) Facility code.
           // If facility resource exists, verify that it satisfy both unique criteria.  If not, reject record update.
@@ -431,6 +425,7 @@ class agImportNormalization
             continue;
           }
         }
+
 
         // facility resource
         if (empty($facilityResource)) {
@@ -537,7 +532,7 @@ class agImportNormalization
 
   /* Facility */
 
-  protected function createFacility($facilityName)
+  protected function createFacility($facilityName, $facilityCode)
   {
     $entity = new agEntity();
     $entity->save();
@@ -546,8 +541,22 @@ class agImportNormalization
     $site->save();
     $facility = new agFacility();
     $facility->set('site_id', $site->id)
-        ->set('facility_name', $facilityName);
+        ->set('facility_name', $facilityName)
+        ->set('facility_code', $facilityCode);
     $facility->save();
+    return $facility;
+  }
+
+  protected function updateFacility($facility, $facilityName)
+  {
+    if ($facility->facility_name != $facilityName)
+    {
+      $updateQuery = Doctrine_Query::create()
+             ->update('agFacility f')
+             ->set('f.facility_name', '?', $facilityName)
+             ->where('f.id = ?', $facility->id)
+             ->execute();
+    }
     return $facility;
   }
 

@@ -122,17 +122,18 @@ class AgImportXLS
       $numCols = $xlsObj->colcount($sheet_index = 0);
 
       // Create a simplified array from the worksheets
-      $importRow = 0;
       for ($sheet = 0; $sheet < $numSheets; $sheet++) {
-
+        $importRow = 0;
+        $importFileData = array();
+        
         // Get the sheet name
         $sheetName = $xlsObj->boundsheets[$sheet]["name"];
         $this->events[] = array("type" => "INFO", "message" => "Parsing worksheet $sheetName");
 
         // We don't import sheets named "Lookup"
-        if (strtolower($sheetName) <> 'Lookup') {
+        if (strtolower($sheetName) <> 'lookup') {
           // Grab column headers at the beginning of each sheet.
-          $currentSheetHeaders = array_values($xlsObj->sheets[0]['cells'][1]);
+          $currentSheetHeaders = array_values($xlsObj->sheets[$sheet]['cells'][1]);
           $currentSheetHeaders = $this->cleanColumnHeaders($currentSheetHeaders);
           
           // Check for consistant column header in all data worksheets.  Use the column header from
@@ -145,7 +146,7 @@ class AgImportXLS
 
           $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
 
-          if ($this->validateColumnHeaders($currentSheetHeaders)) {
+          if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName)) {
             $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
           } else {
             $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
@@ -200,8 +201,15 @@ class AgImportXLS
    *
    * @param $importFileHeaders
    */
-  private function validateColumnHeaders($importFileHeaders)
+  private function validateColumnHeaders($importFileHeaders, $sheetName)
   {
+    // Check if import file header is null
+    if (empty($importFileHeaders))
+    {
+      $this->events[] = array("type" => "ERROR", "message" => "Worksheet \"$sheetName\" is missing column headers.");
+      return false;
+    }
+
     // Check min/max set columns.  These two columns must come in a set.  Cannot add one column and
     // not the other.
     $setHeaders = preg_grep('/_(min|max)$/i', $importFileHeaders);
