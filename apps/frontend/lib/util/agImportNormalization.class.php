@@ -53,11 +53,11 @@ class agImportNormalization
   {
     $this->facilityContactType = 'work';
     $this->defaultPhoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
-    $this->emailContactTypes = array_flip(agContactHelper::getContactTypes('email'));
-    $this->phoneContactTypes = array_flip(agContactHelper::getContactTypes('phone'));
-    $this->addressContactTypes = array_flip(agContactHelper::getContactTypes('address'));
+    $this->emailContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('email')), CASE_LOWER);
+    $this->phoneContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('phone')), CASE_LOWER);
+    $this->addressContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('address')), CASE_LOWER);
     $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->defaultPhoneFormatTypes));
-    $this->staffResourceTypes = array_flip(agStaffHelper::getStaffResourceTypes(TRUE));
+    $this->staffResourceTypes = array_change_key_case(array_flip(agStaffHelper::getStaffResourceTypes(TRUE)), CASE_LOWER);
     $this->mapStaffColumn();
     $addressHelper = new agAddressHelper();
     $this->addressStandards = $addressHelper->getAddressStandardId();
@@ -73,11 +73,11 @@ class agImportNormalization
     $this->geoSourceId = $this->geoSources[$this->geoSourceParamVal];
 
     if ($this->dataType == 'facility') {
-      $this->facilityResourceTypes = array_flip(agFacilityHelper::getFacilityResourceAbbrTypes());
-      $this->facilityResourceStatuses = array_flip(agFacilityHelper::getFacilityResourceStatuses());
-      $this->facilityResourceAllocationStatuses = array_flip(agFacilityHelper::getFacilityResourceAllocationStatuses());
-      $this->facilityGroupTypes = array_flip(agFacilityHelper::getFacilityGroupTypes());
-      $this->facilityGroupAllocationStatuses = array_flip(agFacilityHelper::getFacilityGroupAllocationStatuses());
+      $this->facilityResourceTypes = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceAbbrTypes()), CASE_LOWER);
+      $this->facilityResourceStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceStatuses()), CASE_LOWER);
+      $this->facilityResourceAllocationStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceAllocationStatuses()), CASE_LOWER);
+      $this->facilityGroupTypes = array_change_key_case(array_flip(agFacilityHelper::getFacilityGroupTypes()), CASE_LOWER);
+      $this->facilityGroupAllocationStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityGroupAllocationStatuses()), CASE_LOWER);
     }
 
   }
@@ -96,6 +96,22 @@ class agImportNormalization
                    'status' => 'ERROR', 
                    'type' => 'Facility Name',
                    'message' => 'Invalid facility name.');
+    }
+
+    // Check for valid facility_resource_code
+    if (empty($record['facility_resource_code'])) {
+      return array('pass' => FALSE,
+                   'status' => 'ERROR',
+                   'type' => 'Facility Resource Code',
+                   'message' => 'Invalid facility resource code.');
+    }
+
+    // Check for valid facility_code
+    if (empty($record['facility_resource_code'])) {
+      return array('pass' => FALSE,
+                   'status' => 'ERROR',
+                   'type' => 'Facility Code',
+                   'message' => 'Invalid facility code.');
     }
 
     $this->fullAddress = array('line 1' => $record['street_1'],
@@ -181,53 +197,46 @@ class agImportNormalization
 
     // Check for valid status and type.
 
-    if (!array_key_exists($record['facility_resource_type_abbr'], $this->facilityResourceTypes)) {
+    if (!array_key_exists(strtolower($record['facility_resource_type_abbr']), $this->facilityResourceTypes)) {
       return array('pass' => FALSE,
                    'status' => 'ERROR',
                    'type' => 'Facility Resource Type Abbr',
                    'message' => 'Undefined facility resource type abbreviation.');
     }
 
-    if (!array_key_exists($record['facility_resource_status'], $this->facilityResourceStatuses)) {
+    if (!array_key_exists(strtolower($record['facility_resource_status']), $this->facilityResourceStatuses)) {
       return array('pass' => FALSE,
                    'status' => 'ERROR',
                    'type' => 'Facility Resource status',
                    'message' => 'Undefined facility resource status.');
     }
 
-    if (!array_key_exists($record['facility_allocation_status'], $this->facilityResourceAllocationStatuses)) {
+    if (!array_key_exists(strtolower($record['facility_allocation_status']), $this->facilityResourceAllocationStatuses)) {
       return array('pass' => FALSE,
                    'status' => 'ERROR',
                    'type' => 'Facility Resource Allocation Status',
                    'message' => 'Undefined facility resource allocation status.');
     }
 
-    if (!array_key_exists($record['facility_group_type'], $this->facilityGroupTypes)) {
+    if (!array_key_exists(strtolower($record['facility_group_type']), $this->facilityGroupTypes)) {
       return array('pass' => FALSE,
                    'status' => 'ERROR',
                    'type' => 'Facility Group Type',
                    'message' => 'Undefined facility group type.');
     }
 
-    if (!array_key_exists($record['facility_group_allocation_status'], $this->facilityGroupAllocationStatuses)) {
+    if (!array_key_exists(strtolower($record['facility_group_allocation_status']), $this->facilityGroupAllocationStatuses)) {
       return array('pass' => FALSE,
                    'status' => 'ERROR',
                    'type' => 'Facility Group Allocation Status',
                    'message' => 'Undefined facility group allocation status.');
     }
 
-    // Check for valid facility_resource_code
-    if (empty($record['facility_resource_code'])) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Resource Code',
-                   'message' => 'Invalid facility resource code.');
-    }
-
-    return array('pass' => TRUE, 
-                 'status' => 'SUCCESS', 
-                 'type' => null, 
+    return array('pass' => TRUE,
+                 'status' => 'SUCCESS',
+                 'type' => null,
                  'message' => null);
+
   }
 
   /**
@@ -358,14 +367,14 @@ class agImportNormalization
         $facility_name = $record['facility_name'];
         $facility_resource_code = $record['facility_resource_code'];
         $facility_code = $record['facility_code'];
-        $facility_resource_type_abbr = $record['facility_resource_type_abbr'];
-        $facility_resource_status = $record['facility_resource_status'];
+        $facility_resource_type_abbr = strtolower($record['facility_resource_type_abbr']);
+        $facility_resource_status = strtolower($record['facility_resource_status']);
         $capacity = $record['facility_capacity'];
         $facility_activation_sequence = $record['facility_activation_sequence'];
-        $facility_allocation_status = $record['facility_allocation_status'];
+        $facility_allocation_status = strtolower($record['facility_allocation_status']);
         $facility_group = $record['facility_group'];
-        $facility_group_type = $record['facility_group_type'];
-        $facility_group_allocation_status = $record['facility_group_allocation_status'];
+        $facility_group_type = strtolower($record['facility_group_type']);
+        $facility_group_allocation_status = strtolower($record['facility_group_allocation_status']);
         $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
         $email = $record['work_email'];
         $phone = $record['work_phone'];
@@ -404,57 +413,68 @@ class agImportNormalization
           $facility = $this->updateFacility($facility, $facility_name);
         }
 
+        // Facility Resource
 
-          // Search for facility resource if exists.
-          // Facility Resource table has two unique key sets: (1) Facility & Facility Resource  and (2) Facility code.
-          // If facility resource exists, verify that it satisfy both unique criteria.  If not, reject record update.
-          $facilityResource = agDoctrineQuery::create()
-                  ->from('agFacilityResource fr')
-                  ->where('fr.facility_id = ?', $facility->getId())
-                  ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
-                  ->fetchOne();
+        // Search for facility resource if exists.
+        // Facility Resource table has two unique key sets: (1) Facility & Facility Resource  and (2) Facility resource code.
+        // If facility resource does not exists, create new facility resource.
+        // If facility resource exists, verify that it satisfy both unique criteria.  If not, reject record update.
+        $facilityResource = agDoctrineQuery::create()
+                ->from('agFacilityResource fr')
+                ->where('fr.facility_resource_code = ?', $facility_resource_code)
+                ->fetchOne();
+        $facilityResourceByType = agDoctrineQuery::create()
+                ->from('agFacilityResource fr')
+                ->where('fr.facility_id = ?', $facility->id)
+                ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
+                ->fetchOne();
 
-          $facilityResourceByCode = agDoctrineQuery::create()
-                  ->from('agFacilityResource fr')
-                  ->where('fr.facility_resource_code = ?', $facility_resource_code)
-                  ->fetchOne();
-
-          if(empty($facilityResource) && !empty($facilityResourceBycode)) {
-            $this->nonprocessedRecords[] = array('message' => 'Duplicate facility resource code.',
-                                                 'record' => $record);
-            continue;
-          }
-
-          if (!empty($facilityResource) && empty($facilityResourceByCode)) {
-            $this->nonprocessedRecords[] = array('message' => 'Duplicate facility resource type.',
-                                                 'record' => $record);
-            continue;
-          }
-
-          if (!empty($facilityResource) && !empty($facilityResourceByCode))
+        if (empty($facilityResource))
+        {
+          if (empty($facilityResourceByType))
           {
-            if ($facilityResource->id != $facilityResourceByCode->id) {
-              $this->nonprocessedRecords[] = array('message' => 'Non-unique facility resource code.',
+            $facilityResource = $this->createFacilityResource($facility, $facility_resource_type_id,
+                                          $facility_resource_status_id, $facility_resource_code,
+                                          $capacity);
+          } else {
+            $this->nonprocessedRecords[] = array('message' => 'Facility resource already exists with a different facility resource code.',
+                                                 'record' => $record);
+
+            $this->conn->rollback();
+
+            continue;
+          }
+        } else {
+          if (empty($facilityResourceByType))
+          {
+            $this->nonprocessedRecords[] = array('message' => 'Facility resource code is already assigned to another facility resource.',
+                                                 'record' => $record);
+
+            $this->conn->rollback();
+
+            continue;
+          } else {
+            if ($facilityResource->id == $facilityResourceByType->id)
+            {
+              $facilityResource = $this->updateFacilityResource($facilityResource, $facility->id,
+                                            $facility_resource_type_id,
+                                            $facility_resource_status_id, $capacity);
+            } else {
+              $this->nonprocessedRecords[] = array('message' => 'Facility resource already exists and facility resource code is assigned to a different facility resource.',
                                                    'record' => $record);
+
+              $this->conn->rollback();
+
               continue;
             }
-        }
+          }
 
-
-        // facility resource
-        if (empty($facilityResource)) {
-          $facilityResource = $this->createFacilityResource($facility, $facility_resource_type_id,
-                                                            $facility_resource_status_id,
-                                                            $facility_resource_code, $capacity);
-        } else {
-          $facilityResource = $this->updateFacilityResource($facilityResource,
-                                                            $facility_resource_status_id, $capacity);
           $scenarioFacilityResource = agDoctrineQuery::create()
-                  ->from('agScenarioFacilityResource sfr')
-                  ->innerJoin('sfr.agScenarioFacilityGroup sfg')
-                  ->where('sfg.scenario_id = ?', $this->scenarioId)
-                  ->andWhere('facility_resource_id = ?', $facilityResource->id)
-                  ->fetchOne();
+                ->from('agScenarioFacilityResource sfr')
+                ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+                ->where('sfg.scenario_id = ?', $this->scenarioId)
+                ->andWhere('facility_resource_id = ?', $facilityResource->id)
+                ->fetchOne();
         }
 
         // facility group
@@ -590,12 +610,23 @@ class agImportNormalization
     return $facilityResource;
   }
 
-  protected function updateFacilityResource($facilityResource, $facilityResourceStatusId, $capacity)
+  protected function updateFacilityResource($facilityResource, $facilityId, $facilityResourceTypeId,
+                                            $facilityResourceStatusId, $capacity)
   {
     $doUpdate = FALSE;
     $updateQuery = agDoctrineQuery::create()
                     ->update('agFacilityResource fr')
                     ->where('id = ?', $facilityResource->id);
+
+    if ($facilityResource->facility_id != $facilityId) {
+      $updateQuery->set('facility_id', '?', $facilityId);
+      $doUpdate = TRUE;
+    }
+
+    if ($facilityResource->facility_resource_type_id != $facilityResourceTypeId) {
+      $updateQuery->set('facility_resource_type_id', '?', $facilityResourceTypeId);
+      $doUpdate = TRUE;
+    }
 
     if ($facilityResource->facility_resource_status_id != $facilityResourceStatusId) {
       $updateQuery->set('facility_resource_status_id', '?', $facilityResourceStatusId);
