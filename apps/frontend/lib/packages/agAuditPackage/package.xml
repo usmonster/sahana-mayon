@@ -19,7 +19,7 @@
   <release>stable</release>
   <api>stable</api>
  </stability>
- <license uri="http://www.gnu.org/licenses/lgpl.html">LGPL license</license>
+ <license uri="http://www.gnu.org/licenses/lgpl-2.1.html">LGPL v2.1 License</license>
  <notes>-</notes>
  <contents>
    <dir name="/">
