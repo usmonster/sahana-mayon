@@ -69,5 +69,5 @@ event_groupdetail:
   param:   { module: event, action: groupdetail }
 
 event_facilityresource:
-  url:     /event/:event/facilityresource/:facilityresource
+  url:     /event/:event/facilityresource/:facilityresourcecode
   param:   { module: event, action: facilityresource }

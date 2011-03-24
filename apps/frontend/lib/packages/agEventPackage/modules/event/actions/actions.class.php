@@ -49,15 +49,32 @@ class eventActions extends agActions
   public function executeFacilityresource(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+    $this->xmlHttpRequest = $request->isXmlHttpRequest();
+    $this->facility_resource = agDoctrineQuery::create()
+            ->select()
+            ->from('agFacilityResource')
+            ->where('facility_resource_code = ?', $request->getParameter('facilityresourcecode'))
+            ->execute()->getFirst();
+    $groupIds = agDoctrineQuery::create()
+            ->select('id')
+            ->from('agEventFacilityGroup')
+            ->where('event_id = ?', $this->event_id)
+            ->execute(array(), 'single_value_array');
+    $this->event_facility_resource = agDoctrineQuery::create()
+            ->select('')
+            ->from('agEventFacilityResource')
+            ->where('facility_resource_id = ?', $this->facility_resource['id'])
+              ->andWhereIn('event_facility_group_id', $groupIds)
+            ->execute()->getFirst();
+    $this->facilityResourceActivationTimeForm = new agSingleEventFacilityResourceActivationTimeForm();//new agFacilityResourceAcvitationForm($this->event_facility_resource);
+    $this->facilityResourceActivationTimeForm->setDefault('event_facility_resource_id', $this->event_facility_resource['id']);
+    $b = $this->facilityResourceActivationTimeForm;
+    $c = $this->event_facility_resource;
+    $d = 3;
   }
 
-  public function checkXmlHttpRequest($request)
-  {
-    $request->isXmlHttpRequest() ? $XmlHttpRequest = true : $XmlHttpRequest = false;
-    return $XmlHttpRequest;
-  }
   /**
-   * event/fgroup provides the means to manage activation time for facility
+   * event/facilitygroups provides the means to manage activation time for facility
    * resources that are in active groups which do not have activation times set 
    * @param sfWebRequest $request
    */
@@ -77,7 +94,7 @@ class eventActions extends agActions
       'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups))// ,'onClick' => 'submit()'))
     ));
 
-    $this->XmlHttpRequest = $this->checkXmlHttpRequest($request);
+    $this->xmlHttpRequest = $request->isXmlHttpRequest();
     //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
     if ($request->isMethod(sfRequest::POST)) {
       if ($request->getParameter('facility_group_filter')) {
@@ -463,12 +480,8 @@ class eventActions extends agActions
   public function executeStaffshift(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    if ($request->isXmlHttpRequest()) {
-      $this->XmlHttpRequest = true;
-    }
+    $this->xmlHttpRequest = $request->isXmlHttpRequest();
     $this->shift_id = $request->getParameter('shiftid');
-
-    
 
     $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => TRUE)), // 'class' => 'filter')),
       'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => TRUE)),
@@ -617,11 +630,7 @@ class eventActions extends agActions
             ->where('event_facility_group = ?', urldecode($request->getParameter('group')))
             ->andWhere('event_id = ?', $this->event->id)
             ->fetchOne();
-    // Check for AJAX here. Set XmlHttpRequest to true so it can be used to determine functionality
-    // in the templates and partials.
-    if ($request->isXmlHttpRequest()) {
-      $this->XmlHttpRequest = true;
-    }
+    $this->xmlHttpRequest = $request->isXmlHttpRequest();
     if ($request->isMethod(sfRequest::POST)) {
       // Check which type of data is coming through. Are you changing resource status
       // or group status? Then build an object with the incoming values and some
@@ -639,7 +648,8 @@ class eventActions extends agActions
         $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
           $resourceAllocation->save();
-          return $this->renderText('event/' . urlencode($this->event->event_name) . '/facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
+//          return $this->renderText('event/' . urlencode($this->event->event_name) . '/facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
+          return $this->renderText('facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
         }
 
         $resourceAllocation->save();

@@ -20,8 +20,6 @@ $(document).ready(function() {
 
 $(document).ready(function() {
   $('.modalSubmit').live('click',function(){
-    var ble = $(this).parent().attr('name') + ' :input';
-    var blere = '#' + $(this).parent().attr('id') + ' :input';
     $.ajax({
      url: $(this).parent().attr('action'),
      type: "POST",
@@ -34,8 +32,8 @@ $(document).ready(function() {
            $('.overlay').fadeOut(1200, function() {
              $('.overlay').remove();
 //             pattern = /event\/[a-zA-Z_0-9\+\%\-]*\/facilitygroups/;
-             pattern = /event\/[a-zA-Z_0-9\+\%\-]*\/facilityresource\/[a-zA-Z_0-9\+\%\-]*/;
-             var theer = pattern.exec(data.responseText);
+//             pattern = /event\/[a-zA-Z_0-9\+\%\-]*\/facilityresource\/[a-zA-Z_0-9\+\%\-]*/;
+             pattern = /facilityresource\/[a-zA-Z_0-9\+\%\-]*/;
              if(data.responseText == pattern.exec(data.responseText)) {
                var $fgroupDialog = $('<div id="#modalFgroup"></div>')
                  .dialog({
@@ -48,7 +46,8 @@ $(document).ready(function() {
                });
                $fgroupDialog.dialog("option", "title", "yeah");
 //               Get the name in there somehow.
-               $.post('facilityresource/FF11EC', function(data) {
+//               $.post('facilityresource/FF11EC', function(data) {
+               $.post(data.responseText, function(data) {
                  $fgroupDialog.html(data);
                  $fgroupDialog.dialog('open');
                });

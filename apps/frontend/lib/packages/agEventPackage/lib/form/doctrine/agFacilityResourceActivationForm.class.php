@@ -48,7 +48,7 @@ class agFacilityResourceAcvitationForm extends sfForm
     if (isset($this->facility_resources)) {
       foreach ($this->facility_resources as $facility_resource) {
 
-        $fgroupForm = new agEventFacilityResourceActivationTimeForm();
+        $fgroupForm = new agMultipleEventFacilityResourceActivationTimeForm();
         $fgroupForm->getWidget('operate_on')->setAttribute('class', 'checkToggle');
         $facility_type = $facility_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
 

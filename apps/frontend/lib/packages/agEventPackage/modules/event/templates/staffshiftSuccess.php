@@ -1,6 +1,5 @@
 <h3>Add Staff to shift id: <span class="highlightedText"><?php echo $shift_id ?></span></h3>
-<?php if (!isset($XmlHttpRequest))  $XmlHttpRequest = false ?>
-<?php include_partial('staffshiftform', array('filterForm' => $filterForm, 'shift_id' => $shift_id, 'event_id' => $event_id, 'XmlHttpRequest' => $XmlHttpRequest)) ?>
+<?php include_partial('staffshiftform', array('filterForm' => $filterForm, 'shift_id' => $shift_id, 'event_id' => $event_id, 'xmlHttpRequest' => $xmlHttpRequest)) ?>
   <div id="searchresults">
     <div class="modalReloadable">
     <!--sometimes this will fail -->
