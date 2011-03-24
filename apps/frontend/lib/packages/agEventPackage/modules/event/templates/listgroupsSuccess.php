@@ -1,5 +1,6 @@
 <?php
 use_javascript('jquery.ui.custom.js');
+use_javascript('agMain.js');
 use_stylesheet('jquery/jquery.ui.custom.css');
 //  use_javascript('agModal.js');
 $sortColumn = $sf_request->getGetParameter('sort');

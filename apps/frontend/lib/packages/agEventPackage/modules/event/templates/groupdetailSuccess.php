@@ -28,9 +28,11 @@
         echo '<td>' . $result['f_facility_name'] . '</td>';
         echo '<td>' . $result['frt_facility_resource_type'] . '</td>';
         $form->setDefault('resource_allocation_status', $result['ras_id']);
-        echo '<td><form action="' . url_for('event/groupdetail?event=' . urlencode($result['e_event_name']) . '&group=' . urlencode($result['efg_event_facility_group'])) . '" name="' . $key . '_resource_allocation_status" id="' . $key. '_resource_allocation_status" method="post">';
+//        echo '<td><form action="' . url_for('event/groupdetail?event=' . urlencode($result['e_event_name']) . '&group=' . urlencode($result['efg_event_facility_group'])) . '" name="' . urlencode(strtolower(str_replace(' ', '_', $result['f_facility_name'] . ' ' . $result['frt_facility_resource_type']))). ' id="' . $key. '_resource_allocation_status" method="post">';
+        echo '<td><form action="' . url_for('event/groupdetail?event=' . urlencode($result['e_event_name']) . '&group=' . urlencode($result['efg_event_facility_group'])) . '" name="' . $key. '_resource_allocation_status" id="' . $key. '_resource_allocation_status" method="post">';
         echo $form['resource_allocation_status']; //set the form value to $result['ras_id'] $result['ras_facility_resource_allocation_status'] . '</td>
         echo '<input type="hidden" id="event_facility_resource_id" name="event_facility_resource_id" value="' . $result['efr_id'] . '">';
+        echo '<input type="hidden" id="facility_resource_code" name="facility_resource_code" value="' . $result['fr_facility_resource_code'] . '">';
         echo '<input type="submit" value="Set Status" name="submit" class="linkButton' . (isset($XmlHttpRequest) ? ' modalSubmit' : '') . '"></form></td>';
         echo '</tr>';
       }

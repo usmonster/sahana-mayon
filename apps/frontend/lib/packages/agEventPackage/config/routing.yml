@@ -48,10 +48,10 @@ event_active:
   options: { model: agEvent, type: object }
   param:   { module: event, action: active }
 
-event_fgroup:
-  url:     /event/:event/fgroup
+event_facilitygroups:
+  url:     /event/:event/facilitygroups
   options: { model: agEvent, type: object }
-  param:   { module: event, action: fgroup }
+  param:   { module: event, action: facilitygroups }
 
 event_listgroups:
   url:     /event/:event/listgroups
@@ -67,3 +67,7 @@ event_groupdetail:
   url:     /event/:event/groupdetail/:group
   options: { model: agEvent, type: object }
   param:   { module: event, action: groupdetail }
+
+event_facilityresource:
+  url:     /event/:event/facilityresource/:facilityresource
+  param:   { module: event, action: facilityresource }

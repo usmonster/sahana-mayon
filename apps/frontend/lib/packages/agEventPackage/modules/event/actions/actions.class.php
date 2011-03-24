@@ -46,12 +46,22 @@ class eventActions extends agActions
             ->execute();
   }
 
+  public function executeFacilityresource(sfWebRequest $request)
+  {
+    $this->setEventBasics($request);
+  }
+
+  public function checkXmlHttpRequest($request)
+  {
+    $request->isXmlHttpRequest() ? $XmlHttpRequest = true : $XmlHttpRequest = false;
+    return $XmlHttpRequest;
+  }
   /**
    * event/fgroup provides the means to manage activation time for facility
    * resources that are in active groups which do not have activation times set 
    * @param sfWebRequest $request
    */
-  public function executeFgroup(sfWebRequest $request)
+  public function executeFacilitygroups(sfWebRequest $request)
   {
     $this->setEventBasics($request);
 
@@ -67,9 +77,9 @@ class eventActions extends agActions
       'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups))// ,'onClick' => 'submit()'))
     ));
 
+    $this->XmlHttpRequest = $this->checkXmlHttpRequest($request);
     //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
     if ($request->isMethod(sfRequest::POST)) {
-
       if ($request->getParameter('facility_group_filter')) {
         $this->facility_group = $request->getParameter('facility_group_list');
         $this->facilitygroupsForm->setDefault('facility_group_list', $this->facility_group);
@@ -629,11 +639,7 @@ class eventActions extends agActions
         $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
           $resourceAllocation->save();
-//          $this->redirect('event/' . urlencode($this->event->event_name) . 'fgroup');
-          $b = $this->getResponse();
-// Looks like I out-thought myself here. Just fgroup works, think the rest of the URL comes from the parent page. Might need it later though, if things go wrong.
-          return $this->renderText('event/' . urlencode($this->event->event_name) . '/fgroup');
-//          return $this->renderText('fgroup');
+          return $this->renderText('event/' . urlencode($this->event->event_name) . '/facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
         }
 
         $resourceAllocation->save();
