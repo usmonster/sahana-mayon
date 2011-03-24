@@ -1,9 +1,19 @@
 <?php
 
 /**
- * Description of agImportNormalization
  *
- * @author shirley.chan
+ * Normalizing import data.
+ *
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/lesser.html
+ *
+ * @author Shirley Chan, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ *
  */
 class agImportNormalization
 {
@@ -392,7 +402,9 @@ class agImportNormalization
           $isNewFacilityRecord = 1;
         } else {
           $facility = $this->updateFacility($facility, $facility_name);
-//        }
+        }
+
+
           // Search for facility resource if exists.
           // Facility Resource table has two unique key sets: (1) Facility & Facility Resource  and (2) Facility code.
           // If facility resource exists, verify that it satisfy both unique criteria.  If not, reject record update.
@@ -419,11 +431,13 @@ class agImportNormalization
             continue;
           }
 
-          if ($facilityResource->id != $facilityResourceByCode->id) {
-            $this->nonprocessedRecords[] = array('message' => 'Non-unique facility resource code.',
-                                                 'record' => $record);
-            continue;
-          }
+          if (!empty($facilityResource) && !empty($facilityResourceByCode))
+          {
+            if ($facilityResource->id != $facilityResourceByCode->id) {
+              $this->nonprocessedRecords[] = array('message' => 'Non-unique facility resource code.',
+                                                   'record' => $record);
+              continue;
+            }
         }
 
 
