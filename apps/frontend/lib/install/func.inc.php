@@ -209,6 +209,73 @@ function buildDsnString($dbType, $dbHost, $dbName, $dbPort = null)
 
   }
 
+/**
+ * Function used by installer and admin configuration for writing the app.yml file
+ * @param $authMethod changes the app.yml to set the authentication method
+ * @return boolean success or failure (was app.yml written)
+ */
+  function writeAppYml($authMethod = NULL){
+    $appYmlFile = sfConfig::get('sf_app_config_dir') . '/app.yml';
+    $appConfig = sfYaml::load($appYmlFile);
+    if($authMethod == NULL){
+    $appConfig['all']['sf_guard_plugin'] =
+        array('check_password_callable'
+          => array('agSudoAuth', 'authenticate'));
+    $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
+    }
+    else{
+      $appConfig['all'] = '';
+    }
+    $appConfig['all']['.array']['menu_top'] =
+        array(
+          'homepage' => array('label' => 'Home', 'route' => '@homepage'),
+          'prepare' => array('label' => 'Prepare', 'route' => '@homepage'),
+          'respond' => array('label' => 'Respond', 'route' => '@homepage'),
+          'recover' => array('label' => 'Recover', 'route' => '@homepage'),
+          'mitigate' => array('label' => 'Mitigate', 'route' => '@homepage'),
+          'foo' => array('label' => 'Foo', 'route' => '@foo'),
+          'modules' => array('label' => 'Modules', 'route' => '@homepage'),
+          'admin' => array('label' => 'Administration', 'route' => '@admin'),
+          'help' => array('label' => 'Help', 'route' => '@about'));
+
+    $appConfig['all']['.array']['menu_children'] =
+        array(
+          'facility' => array('label' => 'Facilities', 'route' => '@facility', 'parent' => 'prepare'),
+          'org' => array('label' => 'Organizations', 'route' => '@org', 'parent' => 'prepare'),
+          'scenario' => array('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'prepare'),
+          'activate' => array('label' => 'Activate a Scenario', 'route' => '@scenario', 'parent' => 'respond'),
+          'event' => array('label' => 'Manage Events', 'route' => '@homepage', 'parent' => 'respond'),
+          'event_active' => array('label' => 'Manage [Active Event]', 'route' => '@homepage', 'parent' => 'respond'));
+
+    $appConfig['all']['.array']['menu_grandchildren'] =
+        array(
+          'facility_new' => array('label' => 'Add New Facility', 'route' => 'facility/new', 'parent' => 'facility'),
+          'facility_list' => array('label' => 'List Facilities', 'route' => 'facility/list', 'parent' => 'facility'),
+          'facility_import' => array('label' => 'Import Facilities', 'route' => '@facility', 'parent' => 'facility'),
+          'facility_export' => array('label' => 'Export Facilities', 'route' => '@facility', 'parent' => 'facility'),
+          'facility_types' => array('label' => 'Manage Facility Types', 'route' => '@facility', 'parent' => 'facility'),
+          'org_new' => array('label' => 'Add New Organization', 'route' => 'organization/new', 'parent' => 'org'),
+          'org_list' => array('label' => 'List Organizations', 'route' => 'organization/list', 'parent' => 'org'),
+          'scenario_create' => array('label' => 'Build New Scenario', 'route' => 'scenario/new', 'parent' => 'scenario'),
+          'scenario_list' => array('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
+          'scenario_facilitygrouptypes' => array('label' => 'Edit Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
+          'scenario_active' => array('label' => '[Active Scenario]', 'route' => '@scenario', 'parent' => 'scenario'),
+          'event_active_staff' => array('label' => 'Staff', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_facilities' => array('label' => 'Facilities', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_clients' => array('label' => 'Clients', 'route' => '@homepage', 'parent' => 'event_active'),
+          'event_active_reporting' => array('label' => 'Reporting', 'route' => '@homepage', 'parent' => 'event_active'));
+
+// updates app.yml
+    try {
+      file_put_contents($file, sfYaml::dump($appConfig, 4));
+      return true;
+    } catch (Exception $e) {
+      echo 'There was an error writing the app.yml file: ', $e->getMessage();
+      return false;
+    }
+  }
+
+
   function sfClearCache($app, $env)
   {
       $cacheDir = sfConfig::get('sf_cache_dir') . '/' . $app . '/' . $env . '/';

@@ -23,37 +23,20 @@ abstract class PluginagEventStaff extends BaseagEventStaff
     $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
     //$doc->addField(Zend_Search_Lucene_Field::UnStored('staff_status', $this->getAgStaffStatus()->staff_status, 'utf-8'));
     $query = agDoctrineQuery::create()
-            ->select('e.id, s.id, sr.id, st.id, st.staff_resource_type, sro.id, o.id, o.organization, o.description')
+            ->select('e.id, sr.id, s.id')
              ->from('agEventStaff e')
-            ->innerJoin('e.agStaff s')
-            ->innerJoin('s.agStaffResource sr')
-            ->innerJoin('sr.agStaffResourceType st')
-            ->innerJoin('sr.agStaffResourceOrganization sro')
-            ->innerJoin('sro.agOrganization o')
+            ->innerJoin('e.agStaffResource sr')
+            ->innerJoin('sr.agStaff s')
             ->where('e.id = ?', $this->id);
 
-    $staffOrgs = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $staffResources = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
-    $staff_org = null;
-    $staff_type = null;
-    foreach ($staffOrgs as $stf) {
-      if ($stf['o_organization'] != null) {
-        $staff_org .= ' ' . $stf['o_organization'];
-        $org_desc = $stf['o_description'];
-        if ($org_desc != null) {
-          $staff_org .= ' ' . $org_desc;
-        }
-      }
-      if ($stf['st_staff_resource_type'] != null) {
-        $staff_type .= ' ' . $stf['st_staff_resource_type'];
-      }
+    //the event staff member will ALWAYS be a staff resource first
+
+    foreach ($staffResources as $stf) {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff', $stf['s_id'], 'utf-8'));
     }
-    if (isset($staff_org)) {
-      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_org', $staff_org, 'utf-8'));
-    }
-    if (isset($staff_type)) {
-      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_type', $staff_type, 'utf-8'));
-    }
+
     return $doc;
 
   }

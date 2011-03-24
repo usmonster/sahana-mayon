@@ -79,6 +79,9 @@ class adminActions extends agActions
     /**
      * @param sfWebRequest $request is what the user is asking of the server
      */
+    require_once (dirname(__FILE__) . '../apps/frontend/lib/install/func.inc.php');
+    //OR sfProjectConfiguration::getActive()->loadHelpers(array('Install)); ^
+    
     if ($request->getParameter('saveconfig')) {
       $file = sfConfig::get('sf_config_dir') . '/config.yml';
       $config_array = sfYaml::load($file);
@@ -92,18 +95,17 @@ class adminActions extends agActions
       } catch (Exception $e) {
         echo "hey, something went wrong:" . $e->getMessage();
       }
-
+      //try to create the default app.yml file, function called from func.inc.php
+      if ($_POST['auth_method'] == 'bypass') {
+        $authMethod = NULL;
+      } else {
+        $authMethod = '';
+      }
+      
+      $appYmlWriteResult = writeAppYml($authMethod);
       $file = sfConfig::get('sf_app_config_dir') . '/app.yml';
       $appConfig = sfYaml::load($file);
 
-      if ($_POST['auth_method'] == 'bypass') {
-        $appConfig['all']['sf_guard_plugin'] =
-            array('check_password_callable'
-              => array('agSudoAuth', 'authenticate'));
-        $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
-      } else {
-        $appConfig['all'] = '';
-      }
       $appConfig['all']['.array']['menu_top'] =
           array(
             'homepage' => array('label' => 'Home', 'route' => '@homepage'),
@@ -174,23 +176,24 @@ class adminActions extends agActions
      * $this->processForm($request, $this->form);
      */
     $this->form = new sfForm();
+
     $this->form->getWidgetSchema()->setNameFormat('display[%s]');
     $this->form->setWidget('agProfession', new sfWidgetFormDoctrineChoice(array('multiple' => true, 'expanded' => true, 'model' => 'agProfession')));
 
     //$this->form->setValidator(array(new sfValidatorDoctrineChoice(array('model' => $this->form->getModelName(), 'column' => 'app_display'))));
     //if submitted
     if ($request->isMethod(sfRequest::POST)) {
+
       //$this->form->bind($request->getParameter($this->form->getName()));
 //      if ($this->form->isValid()) {
         foreach ($request->getParameter('display') as $process_display) {
           //$array_of_all = get
-          $profession = new agProfession();
-          $profession->setAppDisplay(1);
-
+          $profession = new agProfession;
+          $profession->setAppDisplay(1); 
+          $profession->save();
           //$process_display =
           
         }
-//        $this->form->save();
 //      }
     }
   }
