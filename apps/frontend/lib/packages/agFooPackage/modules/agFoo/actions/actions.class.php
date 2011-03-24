@@ -87,7 +87,8 @@ $obj = agEntityAddressHelper::init() ;
 //$results = $obj->updateAddressHashes($array) ;
 //$addr = $obj->getAddressComponentsById($array) ;
 //$results = $obj->setAddresses($fakeAddr, TRUE) ;
-$results = $obj->setEntityAddressById($addrContact) ;
+//$results = $obj->setEntityAddressById($addrContact) ;
+$results = $obj->exceptionTest() ;
 //$results = $obj->setAddresses($fakeAddr) ;
 print_r($results) ;
 // <-------- CUT HERE -------->

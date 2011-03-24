@@ -3,9 +3,9 @@
  * Provides entity phone helper functions and inherits several methods and properties from the
  * bulk record helper.
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/copyleft/lesser.html
  *

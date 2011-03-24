@@ -2,9 +2,9 @@
 /**
  * Extends the bulk record helper to provide contact-specific features.
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/copyleft/lesser.html
  *
@@ -20,6 +20,7 @@ abstract class agEntityContactHelper extends agBulkRecordHelper
    * @param array $entityContacts The array of new entity contacts to apply.
    * @param array $currContacts The array of current contacts as found in the database
    * @return array A reprioritized $entityContacts with additions from $currContacts as appropriate.
+   * @todo Add the $keepHistory functionality 
    */
   protected function reprioritizeContacts($entityContacts, $currContacts)
   {
@@ -53,6 +54,7 @@ abstract class agEntityContactHelper extends agBulkRecordHelper
       }
 
       // now that we've got all contact info on our $contacts array, let's reshape our array and exclude dupes
+      // we intentionally don't use array_unique() here because types might differ and it is strict
       foreach ($contacts as $contact)
       {
         if (! in_array($contact, $newContacts))

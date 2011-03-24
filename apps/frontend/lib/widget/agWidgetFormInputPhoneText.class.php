@@ -3,9 +3,9 @@
 * This widget is used to format values from an agPhoneContact object so they'll
 * use that they will use phone number formatting that has been defined in the schema.
 *
-* PHP Version 5
+* PHP Version 5.3
 *
-* LICENSE: This source file is subject to LGPLv3.0 license
+* LICENSE: This source file is subject to LGPLv2.1 license
 * that is available through the world-wide-web at the following URI:
 * http://www.gnu.org/copyleft/lesser.html
 *

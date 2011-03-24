@@ -2,7 +2,7 @@
 /**
  * DatabaseHelper this class defines queries associated custom functions.
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/copyleft/lesser.html
  *
