@@ -7,6 +7,7 @@
   <input type="hidden" name="sf_method" value="put" />
   -->
   <?php #endif; ?>
+  <div style="overflow:scroll; padding:0px 10px 0px 0px">
   <table>
     <tfoot>
       <tr>
@@ -26,4 +27,5 @@
           <?php echo $shifttemplateform ?>
         </td></tr></tbody>
   </table>
+  </div>
 </form>
