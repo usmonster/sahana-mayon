@@ -45,10 +45,10 @@ public static function include_customTitle()
 {
   $title = sfContext::getInstance()->getResponse()->getTitle();
   $titleinfo = sfConfig::get('app_title');
-  $uri = $_SERVER['REQUEST_URI'];
+  // $uri = $_SERVER['REQUEST_URI'];
    //echo $uri . '    ';
-  //$r= preg_replace("/frontend_devp.php/", "/", $uri);
- // echo $r;
+   $uri= str_replace("/frontend_dev.php/", "/", $_SERVER['REQUEST_URI']);
+   echo $r;
   foreach ($titleinfo as $titlename){
     // echo $titlename['url'];
     // echo $test;
