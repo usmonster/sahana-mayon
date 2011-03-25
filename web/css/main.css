@@ -515,7 +515,7 @@ input[type="button"], button[type="submit"], form input[type="submit"] {
   font-family: helvetica, arial, verdana;
   outline: none;
   text-decoration: none;
-  padding: 0;
+/*  padding: 0;*/
 
 /*  -moz-box-shadow: 3px 3px 3px #ccc;
   -webkit-box-shadow: 3px 3px 3px #ccc;
