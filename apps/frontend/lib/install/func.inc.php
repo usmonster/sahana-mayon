@@ -244,7 +244,7 @@ function buildDsnString($dbType, $dbHost, $dbName, $dbPort = null)
           'org' => array('label' => 'Organizations', 'route' => '@org', 'parent' => 'prepare'),
           'scenario' => array('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'prepare'),
           'activate' => array('label' => 'Activate a Scenario', 'route' => '@scenario', 'parent' => 'respond'),
-          'event' => array('label' => 'Manage Events', 'route' => '@homepage', 'parent' => 'respond'),
+          'event' => array('label' => 'Manage Events', 'route' => 'event', 'parent' => 'respond'),
           'event_active' => array('label' => 'Manage [Active Event]', 'route' => '@homepage', 'parent' => 'respond'));
 
     $appConfig['all']['.array']['menu_grandchildren'] =
@@ -264,6 +264,28 @@ function buildDsnString($dbType, $dbHost, $dbName, $dbPort = null)
           'event_active_facilities' => array('label' => 'Facilities', 'route' => '@homepage', 'parent' => 'event_active'),
           'event_active_clients' => array('label' => 'Clients', 'route' => '@homepage', 'parent' => 'event_active'),
           'event_active_reporting' => array('label' => 'Reporting', 'route' => '@homepage', 'parent' => 'event_active'));
+
+    $appConfig['all']['.array']['title'] =
+        array(
+            'homepage' => array('url' => '/', 'title' => 'Sahana Agasti Home'),
+            'staff_page' => array('url' => '/staff/index', 'title' => 'Sahana Agasti Staff'),
+            'staff_list' => array('url' => '/staff/list', 'title' => 'Sahana Agasti Staff List'),
+            'staff_new' => array('url' => '/staff/new', 'title' => 'Sahana Agasti Staff New'),
+            'staff_import' => array('url' => '/staff/import', 'title' => 'Sahana Agasti Staff Import'),
+            'faciltiy_page' => array('url' => '/facility/index', 'title' => 'Sahana Agasti Facilities'),
+            'faciltiy_list' => array('url' => '/facility/list', 'title' => 'Sahana Agasti Facility List'),
+            'faciltiy_new' => array('url' => '/facility/new', 'title' => 'Sahana Agasti Facility New'),
+            'faciltiy_import' => array('url' => '/facility/import', 'title' => 'Sahana Agasti Facility Import'),
+            'organization_page' => array('url' => '/organization/index', 'title' => 'Sahana Agasti Organization'),
+            'organization_list' => array('url' => '/organization/list', 'title' => 'Sahana Agasti Organization List'),
+            'organization_new' => array('url' => '/organization/new', 'title' => 'Sahana Agasti Organization New'),
+            'scenario_page' => array('url' => '/scenario/index', 'title' => 'Sahana Agasti Scenario'),
+            'scenario_list' => array('url' => '/scenario/list', 'title' => 'Sahana Agasti Scenario List'),
+            'scenario_pre' => array('url' => '/scenario/pre', 'title' => 'Sahana Agasti Scenario Pre-Creator'),
+            'scenario_new' => array('url' => '/scenario/new', 'title' => 'Sahana Agasti Scenario Creator'),
+            'events_page' => array('url' => '/event/index', 'title' => 'Sahana Agasti Events')
+        );
+
 
 // updates app.yml
     try {
