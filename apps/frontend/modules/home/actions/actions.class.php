@@ -30,20 +30,15 @@ class homeActions extends agActions
   */
   public function executeIndex(sfWebRequest $request)
   {
-#    $this->forward('default', 'module');
+  //$this->forward('default', 'module');
   }
   public function executeError(sfWebRequest $request)
   {
-<<<<<<< TREE
-=======
-  
->>>>>>> MERGE-SOURCE
     $this->error_code = $this->response;
   }
    public function executePrepare(sfWebRequest $request)
   {
-//    $this->forward('default', 'module');
-
+  //$this->forward('default', 'module');
   }
 
 }

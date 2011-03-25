@@ -254,6 +254,10 @@ class agStaffActions extends agActions
 
     $ag_person = $ag_staff->getAgPerson();
     $this->form = new PluginagStaffPersonForm($ag_person);
+
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Staff Edit');
+    //end p-code
   
   }
 

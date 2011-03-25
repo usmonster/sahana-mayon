@@ -47,6 +47,8 @@ public static function include_customTitle()
   $titleinfo = sfConfig::get('app_title');
   $uri = $_SERVER['REQUEST_URI'];
    //echo $uri . '    ';
+  //$r= preg_replace("/frontend_devp.php/", "/", $uri);
+ // echo $r;
   foreach ($titleinfo as $titlename){
     // echo $titlename['url'];
     // echo $test;

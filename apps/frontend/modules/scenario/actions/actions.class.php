@@ -889,14 +889,9 @@ class scenarioActions extends agActions
             ->where('a.scenario_id = ?', $request->getParameter('id'))
             ->execute();
     $this->form = new agScenarioForm($ag_scenario);
-<<<<<<< TREE
-
     //p-code
  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $ag_scenario . ' Scenario');
    //end p-code
-
-=======
->>>>>>> MERGE-SOURCE
   }
 
   /**
