@@ -19,7 +19,6 @@ class agImportNormalization
 {
   public $summary = array();
   private $importStaffList = array();
-  private $staffingRequirements = array();
   private $staffMapping = array();
 
   function __construct($scenarioId, $sourceTable, $dataType)
@@ -286,14 +285,16 @@ class agImportNormalization
    * @param array $record An associative array of an entry from the import temp table.
    */
   private function dynamicStaffing($record) {
+    $staffingRequirements = array();
     foreach ($this->importStaffList as $staff)
     {
       $staffId = $this->staffResourceTypes[$this->staffMapping[$staff]];
       $staffMin = $staff . '_min';
       $staffMax = $staff . '_max';
-      $this->staffingRequirements[$staffId] = array('min' => $record[$staffMin],
-                                                    'max' => $record[$staffMax]);
+      $staffingRequirements[$staffId] = array('min' => $record[$staffMin],
+                                              'max' => $record[$staffMax]);
     }
+    return $staffingRequirements;
   }
 
   /**
@@ -328,7 +329,6 @@ class agImportNormalization
         $validAddress = 1;
         $isNewFacilityRecord = 0;
         $isNewFacilityGroupRecord = 0;
-        $skipToNext = 0;
 
         $isValidData = $this->dataValidation($record);
         if (!$isValidData['pass']) {
@@ -379,8 +379,7 @@ class agImportNormalization
         $email = $record['work_email'];
         $phone = $record['work_phone'];
         $fullAddress = $this->fullAddress;
-        $geoInfo = array('longitude' => $record['longitude'],
-            'latitude' => $record['latitude']);
+        $geoInfo = array('longitude' => $record['longitude'], 'latitude' => $record['latitude']);
         $staffing = $this->dynamicStaffing($record);
 
         $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
@@ -415,15 +414,8 @@ class agImportNormalization
 
         // Facility Resource
 
-        // Search for facility resource if exists.
-        // Facility Resource table has two unique key sets: (1) Facility & Facility Resource  and (2) Facility resource code.
-        // If facility resource does not exists, create new facility resource.
-        // If facility resource exists, verify that it satisfy both unique criteria.  If not, reject record update.
+        // tries to find an existing record based on a set of unique identifiers.
         $facilityResource = agDoctrineQuery::create()
-                ->from('agFacilityResource fr')
-                ->where('fr.facility_resource_code = ?', $facility_resource_code)
-                ->fetchOne();
-        $facilityResourceByType = agDoctrineQuery::create()
                 ->from('agFacilityResource fr')
                 ->where('fr.facility_id = ?', $facility->id)
                 ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
@@ -547,6 +539,7 @@ class agImportNormalization
         if (!is_integer(array_search($facilityId, $this->processedFacilityIds))) {
           array_push($this->processedFacilityIds, $facilityId);
         }
+
         $this->conn->commit();
       } catch (Exception $e) {
         $this->nonprocessedRecords[] = array('message' => 'Unable to normalize data.  Exception error mesage: ' . $e,
