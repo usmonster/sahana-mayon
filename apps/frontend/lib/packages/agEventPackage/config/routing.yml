@@ -1,3 +1,6 @@
+event:
+  url:     /event
+  param:   { module: event, action: index }
 event_deploy:
   url:     /event/:event/deploy
   options: { model: agEvent, type: object }
