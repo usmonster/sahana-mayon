@@ -53,7 +53,7 @@ class eventActions extends agActions
     $this->facility_resource = agDoctrineQuery::create()
             ->select()
             ->from('agFacilityResource')
-            ->where('facility_resource_code = ?', $request->getParameter('facilityresourcecode'))
+            ->where('id = ?', $request->getParameter('facilityResourceId'))
             ->execute()->getFirst();
     $groupIds = agDoctrineQuery::create()
             ->select('id')
@@ -684,7 +684,7 @@ class eventActions extends agActions
         if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
           $resourceAllocation->save();
 //          return $this->renderText('event/' . urlencode($this->event->event_name) . '/facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
-          return $this->renderText('facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
+          return $this->renderText('facilityresource/' . urlencode($request->getParameter('facility_resource_id')));
         }
 
         $resourceAllocation->save();

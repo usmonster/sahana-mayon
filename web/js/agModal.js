@@ -33,7 +33,8 @@ $(document).ready(function() {
              $('.overlay').remove();
 //             pattern = /event\/[a-zA-Z_0-9\+\%\-]*\/facilitygroups/;
 //             pattern = /event\/[a-zA-Z_0-9\+\%\-]*\/facilityresource\/[a-zA-Z_0-9\+\%\-]*/;
-             pattern = /facilityresource\/[a-zA-Z_0-9\+\%\-]*/;
+             pattern = /facilityresource\/[\w\d+%-]*/;
+             var goop = pattern.exec(data.responseText);
              if(data.responseText == pattern.exec(data.responseText)) {
                var $facResDialog = $('<div id="#modalFgroup"></div>')
                  .dialog({

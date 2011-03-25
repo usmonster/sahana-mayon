@@ -32,32 +32,6 @@ class scenarioActions extends agActions
   }
 
   /**
-   * provides a listing of facility groups for a scenario to the listFacilityGroup template
-   * @param sfWebRequest $request
-   */
-  public function executeListgroups(sfWebRequest $request)
-  {
-    $query = agDoctrineQuery::create()
-            ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
-            ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr');
-
-    if ($request->hasParameter('id')) {
-      $query->where('a.scenario_id=?', $request->getParameter('id'));
-    }
-    $this->ag_scenario_facility_groups = $query->execute();
-    $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'listFacilityGroup');
-
-    $this->scenario = agDoctrineQuery::create()
-            ->select('')
-            ->from('agScenario')
-            ->where('id = ?', $request->getParameter('id'))
-            ->execute()->getFirst();
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario['scenario'] . ' Scenario Facility Groups');
-   //end p-code
-  }
-
-  /**
    *
    * @param sfWebRequest $request
    * generates a list of scenarios that are passed to the view
@@ -77,11 +51,13 @@ class scenarioActions extends agActions
    */
   public function executeListgroup(sfWebRequest $request)
   {
+    $this->setScenarioBasics($request);
     $this->ag_scenario_facility_groups = agDoctrineQuery::create()
             ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
             ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
             ->where('a.scenario_id = ?', $request->getParameter('id'))
             ->execute();
+    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario Facility Groups');
   }
 
   /**
@@ -285,7 +261,7 @@ class scenarioActions extends agActions
     $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray);
 
    //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario->scenario . ' Scenario');
+  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario['scenario'] . ' Scenario');
    //end p-code
 
 
@@ -892,6 +868,10 @@ class scenarioActions extends agActions
     //p-code
  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $ag_scenario . ' Scenario');
    //end p-code
+  }
+  public function executeEditgroup(sfWebRequest $request)
+  {
+    
   }
 
   /**
