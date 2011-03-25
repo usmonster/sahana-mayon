@@ -40,6 +40,26 @@ class agTemplateHelper
     }
     return $output;
   }
+  //start p-code
+public static function include_customTitle()
+{
+  $title = sfContext::getInstance()->getResponse()->getTitle();
+  $titleinfo = sfConfig::get('app_title');
+  $uri = $_SERVER['REQUEST_URI'];
+   //echo $uri . '    ';
+  foreach ($titleinfo as $titlename){
+    // echo $titlename['url'];
+    // echo $test;
+     // $title_stack = $titlename['url'];
+     // echo $title_stack . '          ';
+      if($titlename['url'] == $uri){
+       $title = $titlename['title'];
+         }
+  }
+  echo content_tag('title', $title)."\n";
+}
+  //end p-code
+
 }
 
 ?>

@@ -416,7 +416,7 @@ span.green{
 }
 
 .configure {
-  width: 670px;
+/*  width: 670px;*/
   border: solid 1px #dadada;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;

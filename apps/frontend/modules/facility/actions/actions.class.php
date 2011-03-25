@@ -121,6 +121,12 @@ class facilityActions extends agActions
 //  $query = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id')));
 //
 //  $this->pager = new sfDoctrinePager('agPerson', 1);
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Facility - ' . $this->ag_facility->getFacilityName());
+    //end p-code
+
+
   }
 
   /**
@@ -188,7 +194,11 @@ class facilityActions extends agActions
 
 
     $this->events = null;//agFacilityHelper::returnActionableResources($facilityResourceIds, FALSE);
-  }
+
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Facility Edit');
+    //end p-code
+    }
 
   /**
   * executeUpdate()

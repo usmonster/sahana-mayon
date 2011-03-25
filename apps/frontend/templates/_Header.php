@@ -1,6 +1,6 @@
 <?php include_http_metas() ?>
     <?php include_metas(); ?>
-    <?php include_title(); ?>
+    <?php agTemplateHelper::include_customTitle(); ?>
     <link rel="shortcut icon" href="<?php echo url_for('images/favicon.ico'); ?>" />
     <?php include_stylesheets(); ?>
     <!--[if lte IE 6]>

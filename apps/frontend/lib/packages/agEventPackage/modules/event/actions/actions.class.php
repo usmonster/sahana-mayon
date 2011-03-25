@@ -144,7 +144,9 @@ class eventActions extends agActions
               ->getFirst()->scenario;
 
       $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
-
+   //p-code
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event['event_name'] . ' Deploy');
+  //end p-code
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
         $this->redirect('event/active?event=' . urlencode($this->event_name));
@@ -152,6 +154,8 @@ class eventActions extends agActions
     } else {
       $this->forward404('you cannot deploy an event without a scenario.');
     }
+
+
   }
 
   /**
@@ -241,6 +245,13 @@ class eventActions extends agActions
     }
 
     //as a rule of thumb, actions should post to themself and then redirect
+   //p-code
+  if(isset($eventMeta->event_name)){
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Event Management');
+  } else{
+    $this->getResponse()->setTitle('Sahana Agasti New Event Management');
+  }
+  //end p-code
   }
 
   /**
@@ -397,6 +408,10 @@ class eventActions extends agActions
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
     //set up the widget for use in the ' list form '
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+   //end p-code
   }
 
   /**
@@ -471,6 +486,10 @@ class eventActions extends agActions
         $this->pager->init();
       }
     }
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
+   //end p-code
   }
 
   /**
@@ -529,6 +548,10 @@ class eventActions extends agActions
     } elseif ($request->getParameter('Remove')) {
       //remove this staff member!
     }
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff Shift');
+   //end p-code
   }
 
   /**
@@ -547,6 +570,11 @@ class eventActions extends agActions
   public function executeActive(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
+   //end p-code
+    
   }
 
   /**
@@ -556,7 +584,10 @@ class eventActions extends agActions
   public function executeStaff(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    $this->getResponse()->setTitle('Event staff Webpage');
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+   //end p-code
   }
 
   /**
@@ -605,6 +636,10 @@ class eventActions extends agActions
     $this->pager->setResultArray($facilityGroupArray);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Facility Groups');
+   //end p-code
   }
 
   /**

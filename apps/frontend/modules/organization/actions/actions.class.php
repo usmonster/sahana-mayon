@@ -140,6 +140,10 @@ class organizationActions extends sfActions
       // a final sort on the values will ensure that strings (names) sort sequentially
       asort($this->staffResourceList) ;
     }
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Organization - ' . $this->ag_organization->getOrganization());
+   //end p-code
   }
 
   /**

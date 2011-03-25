@@ -192,6 +192,13 @@ class agStaffActions extends agActions
     $this->agStaff = $this->pager->getResults()->getFirst();
     $agPerson = $this->agStaff->getAgPerson();
     $this->addressArray = $agPerson->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_NATIVE_STRING);
+
+    //p-code
+  $names_title = new agPersonNameHelper($agPerson->getId());
+  $person_names_title = $names_title->getPrimaryNameByType();
+  $this->getResponse()->setTitle('Sahana Agasti Staff - ' . $person_names_title[$agPerson->getId()]['given'] ." ". $person_names_title[$agPerson->getId()]['family']);
+    //end p-code
+
   }
 
   /**
@@ -247,6 +254,7 @@ class agStaffActions extends agActions
 
     $ag_person = $ag_staff->getAgPerson();
     $this->form = new PluginagStaffPersonForm($ag_person);
+  
   }
 
   /**

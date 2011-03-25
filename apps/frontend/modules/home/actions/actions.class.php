@@ -34,7 +34,10 @@ class homeActions extends agActions
   }
   public function executeError(sfWebRequest $request)
   {
+<<<<<<< TREE
+=======
   
+>>>>>>> MERGE-SOURCE
     $this->error_code = $this->response;
   }
    public function executePrepare(sfWebRequest $request)

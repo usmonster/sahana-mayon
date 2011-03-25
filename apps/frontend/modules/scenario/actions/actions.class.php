@@ -46,6 +46,15 @@ class scenarioActions extends agActions
     }
     $this->ag_scenario_facility_groups = $query->execute();
     $this->setTemplate(sfConfig::get('sf_app_template_dir') . DIRECTORY_SEPARATOR . 'listFacilityGroup');
+
+    $this->scenario = agDoctrineQuery::create()
+            ->select('')
+            ->from('agScenario')
+            ->where('id = ?', $request->getParameter('id'))
+            ->execute()->getFirst();
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario['scenario'] . ' Scenario Facility Groups');
+   //end p-code
   }
 
   /**
@@ -274,6 +283,12 @@ class scenarioActions extends agActions
       $this->formsArray = $formsArray;
     }
     $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray);
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario->scenario . ' Scenario');
+   //end p-code
+
+
   }
 
   /**
@@ -300,6 +315,9 @@ class scenarioActions extends agActions
               ->where('a.scenario_id = ?', $this->scenario_id)
               ->execute();
     }
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario_name . ' Scenario');
+   //end p-code
   }
 
   public function executePre(sfWebRequest $request)
@@ -422,6 +440,9 @@ class scenarioActions extends agActions
         //$this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
     }
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
+   //end p-code
   }
 
   /**
@@ -561,6 +582,12 @@ class scenarioActions extends agActions
         }
       }
     }
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
+   //end p-code
+
+
   }
 
   /**
@@ -626,6 +653,11 @@ class scenarioActions extends agActions
         }
       }
     }
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
+   //end p-code
+
   }
 
   /**
@@ -705,6 +737,11 @@ class scenarioActions extends agActions
         $this->pager->init();
       }
     }
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario_name . ' Scenario');
+   //end p-code
+
   }
 
   /**
@@ -852,6 +889,14 @@ class scenarioActions extends agActions
             ->where('a.scenario_id = ?', $request->getParameter('id'))
             ->execute();
     $this->form = new agScenarioForm($ag_scenario);
+<<<<<<< TREE
+
+    //p-code
+ $this->getResponse()->setTitle('Sahana Agasti Edit ' . $ag_scenario . ' Scenario');
+   //end p-code
+
+=======
+>>>>>>> MERGE-SOURCE
   }
 
   /**
