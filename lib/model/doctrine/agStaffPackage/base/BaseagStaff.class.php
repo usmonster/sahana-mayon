@@ -94,9 +94,6 @@ abstract class BaseagStaff extends sfDoctrineRecord
 
         $luceneable0 = new Luceneable(array(
              ));
-        $timestampable0 = new Doctrine_Template_Timestampable(array(
-             ));
         $this->actAs($luceneable0);
-        $this->actAs($timestampable0);
     }
 }

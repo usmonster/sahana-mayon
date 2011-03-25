@@ -20,6 +20,15 @@ class facilityActions extends agActions
 
   protected $searchedModels = array('agFacility');
 
+  public function executeSearch(sfWebRequest $request)
+  {
+
+    parent::doSearch($request->getParameter('query'));
+    $this->target_module = 'facility';
+    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
+    //$this->setTemplate('global/search');
+  }
+
   /**
   * executeIndex()
   *
@@ -30,7 +39,7 @@ class facilityActions extends agActions
   **/
   public function executeIndex(sfWebRequest $request)
   {
-    //do some index stuff
+    //add scenario
     $inputs = array('scenario_id' => new sfWidgetFormDoctrineChoice(array('model' => 'agScenario', 'label' => 'scenario', 'add_empty' => true)),
     );
     //set up inputs for form
@@ -245,11 +254,11 @@ class facilityActions extends agActions
 
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams
-      //Zend_Search_Lucene_Storage_Directory_Filesystem::setDefaultFilePermissions('0666');
-      //chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-      //$dispatcher = sfContext::getInstance()->getEventDispatcher();
-      //$task = new luceneReindexTask($this->dispatcher, new sfFormatter());
-      //$task->run(array('model' => 'agFacility'), array('connection' => 'doctrine', 'application' => 'frontend'));
+
+      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+      $dispatcher = sfContext::getInstance()->getEventDispatcher();
+      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher 
+      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
 
 //    echo strftime($format);
   }
