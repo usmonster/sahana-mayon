@@ -1,8 +1,18 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/**
+* agTemplateHelper class
+*
+* PHP Version 5.3
+*
+* LICENSE: This source file is subject to LGPLv2.1 license
+* that is available through the world-wide-web at the following URI:
+* http://www.gnu.org/licenses/lgpl-2.1.html
+*
+* @author     Nils Stolpe, CUNY SPS
+* @author     Pradeep Vijayagiri, CUNY SPS
+*
+* Copyright of the Sahana Software Foundation, sahanafoundation.org
+**/
 class agTemplateHelper
 {
   public static function buildAddressTable($addressArray)
@@ -41,26 +51,19 @@ class agTemplateHelper
     return $output;
   }
   //start p-code
-public static function include_customTitle()
-{
-  $title = sfContext::getInstance()->getResponse()->getTitle();
-  $titleinfo = sfConfig::get('app_title');
-  // $uri = $_SERVER['REQUEST_URI'];
-   //echo $uri . '    ';
-   $uri= str_replace("/frontend_dev.php/", "/", $_SERVER['REQUEST_URI']);
-  foreach ($titleinfo as $titlename){
-    // echo $titlename['url'];
-    // echo $test;
-     // $title_stack = $titlename['url'];
-     // echo $title_stack . '          ';
+  public static function include_customTitle()
+  {
+    $title = sfContext::getInstance()->getResponse()->getTitle();
+    $titleinfo = sfConfig::get('app_title');
+    $uri= str_replace("/frontend_dev.php/", "/", $_SERVER['REQUEST_URI']);
+    foreach ($titleinfo as $titlename){
       if($titlename['url'] == $uri){
        $title = $titlename['title'];
          }
+    }
+    echo content_tag('title', $title)."\n";
   }
-  echo content_tag('title', $title)."\n";
-}
-  //end p-code
-
+    //end p-code
 }
 
 ?>

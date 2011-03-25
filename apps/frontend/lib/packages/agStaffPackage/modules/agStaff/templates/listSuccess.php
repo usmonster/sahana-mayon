@@ -5,7 +5,6 @@ $agPersonNameTypesResultSet = Doctrine::getTable('agPersonNameType')
 foreach ($agPersonNameTypesResultSet as $nameType) {
   $agPersonNameTypes[$nameType->getId()] = $nameType->getPersonNameType();
 }
-
 $sortColumn = $sf_request->getGetParameter('sort');
 $sortOrder = $sf_request->getGetParameter('order');
 ($sf_request->getGetParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
