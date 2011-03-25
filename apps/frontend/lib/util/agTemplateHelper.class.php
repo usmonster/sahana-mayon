@@ -48,7 +48,6 @@ public static function include_customTitle()
   // $uri = $_SERVER['REQUEST_URI'];
    //echo $uri . '    ';
    $uri= str_replace("/frontend_dev.php/", "/", $_SERVER['REQUEST_URI']);
-   echo $r;
   foreach ($titleinfo as $titlename){
     // echo $titlename['url'];
     // echo $test;
