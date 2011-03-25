@@ -35,7 +35,7 @@ $(document).ready(function() {
 //             pattern = /event\/[a-zA-Z_0-9\+\%\-]*\/facilityresource\/[a-zA-Z_0-9\+\%\-]*/;
              pattern = /facilityresource\/[a-zA-Z_0-9\+\%\-]*/;
              if(data.responseText == pattern.exec(data.responseText)) {
-               var $fgroupDialog = $('<div id="#modalFgroup"></div>')
+               var $facResDialog = $('<div id="#modalFgroup"></div>')
                  .dialog({
                    autoOpen: false,
                    resizable: false,
@@ -44,12 +44,12 @@ $(document).ready(function() {
                    draggable: false,
                    modal: true
                });
-               $fgroupDialog.dialog("option", "title", "yeah");
+               $facResDialog.dialog("option", "title", "Set Facility Resource Activation Time");
 //               Get the name in there somehow.
 //               $.post('facilityresource/FF11EC', function(data) {
                $.post(data.responseText, function(data) {
-                 $fgroupDialog.html(data);
-                 $fgroupDialog.dialog('open');
+                 $facResDialog.html(data);
+                 $facResDialog.dialog('open');
                });
              }
              $('#modalContent').load($(this).parent().attr('action'));
