@@ -3,11 +3,11 @@
 /**
  * provides event shift management functions
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Chad Heuschober, CUNY SPS
  *
@@ -46,7 +46,11 @@ class agEventShiftHelper
       try
       {
         $components = $shiftsQuery->getDql() ;
-        echo $components ;
+//   Chad, if you work on this soon, I commented out the line below because it was causing 
+//   errors w/ the modal-modal. Somehow, the echo here was getting all the way back to the response,
+//   so the string that was expected to be event/[event-name]/fgroup turned out to be something like
+//   UPDATE agEventShift SET shift_status_id = ? WHERE id IN (?, ?, ?, ?, ?, ?, ?)event/[event-name]/fgroup.
+//        echo $components ;
         // update shifts
         $eventShiftUpdates = $shiftsQuery->execute() ;
 

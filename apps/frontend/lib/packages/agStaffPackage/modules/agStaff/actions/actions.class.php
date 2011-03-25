@@ -3,11 +3,11 @@
 /**
  * Staff Actions extends agActions
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author     Charles Wisniewski, CUNY SPS
  * @author     Nils Stolpe, CUNY SPS
@@ -189,6 +189,16 @@ class agStaffActions extends agActions
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
             ->createQuery('f')
             ->execute();
+    $this->agStaff = $this->pager->getResults()->getFirst();
+    $agPerson = $this->agStaff->getAgPerson();
+    $this->addressArray = $agPerson->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_NATIVE_STRING);
+
+    //p-code
+  $names_title = new agPersonNameHelper($agPerson->getId());
+  $person_names_title = $names_title->getPrimaryNameByType();
+  $this->getResponse()->setTitle('Sahana Agasti Staff - ' . $person_names_title[$agPerson->getId()]['given'] ." ". $person_names_title[$agPerson->getId()]['family']);
+    //end p-code
+
   }
 
   /**
@@ -244,6 +254,11 @@ class agStaffActions extends agActions
 
     $ag_person = $ag_staff->getAgPerson();
     $this->form = new PluginagStaffPersonForm($ag_person);
+
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Staff Edit');
+    //end p-code
+  
   }
 
   /**
@@ -698,5 +713,4 @@ class agStaffActions extends agActions
       $this->message = $returned;
     }
   }
-
 }

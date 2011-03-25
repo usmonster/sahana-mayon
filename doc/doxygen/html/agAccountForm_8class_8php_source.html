@@ -62,56 +62,65 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
 <a name="l00002"></a>00002 
-<a name="l00016"></a><a class="code" href="classagAccountForm.html">00016</a> <span class="keyword">class </span><a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;">agAccountForm</a> <span class="keyword">extends</span> BaseagAccountForm
+<a name="l00016"></a><a class="code" href="classagAccountForm.html">00016</a> <span class="keyword">class </span><a class="code" href="classagAccountForm.html" title="extends BaseagAccountForm by allowing binding of &amp;#39;user&amp;#39; data to an &amp;#39;account&amp;#39;">agAccountForm</a> <span class="keyword">extends</span> sfGuardUserAdminForm
 <a name="l00017"></a>00017 {
 <a name="l00018"></a>00018 
 <a name="l00023"></a><a class="code" href="classagAccountForm.html#ac13da3d174522710f59ea728d130a0f2">00023</a>   <span class="keyword">public</span> function <a class="code" href="classagAccountForm.html#ac13da3d174522710f59ea728d130a0f2">configure</a>()
 <a name="l00024"></a>00024   {
 <a name="l00025"></a>00025     <span class="comment">//$mjform = new agAccountMjSfGuardUserForm(new agAccountMjSfGuardUser());</span>
-<a name="l00026"></a>00026     $form = <span class="keyword">new</span> sfGuardUserAdminForm(<span class="keyword">new</span> sfGuardUser());
+<a name="l00026"></a>00026     <span class="comment">//$form = new sfGuardUserAdminForm(new sfGuardUser());</span>
 <a name="l00027"></a>00027     <span class="comment">//$mj = $this-&gt;object-&gt;getAgAccountMjSfGuardUser();</span>
 <a name="l00028"></a>00028     <span class="comment">//unset($mjform[&#39;ag_person_id&#39;]);</span>
-<a name="l00029"></a>00029     unset($this[<span class="stringliteral">&#39;created_at&#39;</span>], $this[<span class="stringliteral">&#39;updated_at&#39;</span>], $this[<span class="stringliteral">&#39;ag_person_id&#39;</span>]);
-<a name="l00030"></a>00030     <span class="comment">//$mjform-&gt;setDefault(&#39;account_id&#39;,$theId);</span>
-<a name="l00031"></a>00031     <span class="comment">//$form-&gt;getObject()-&gt;id = $mj-&gt;object-&gt;sf_guard_user_id;</span>
-<a name="l00032"></a>00032     <span class="comment">//$mjform-&gt;setDefault(&#39;sf_guard_user_id&#39;,$theId);</span>
-<a name="l00033"></a>00033     <span class="comment">//$this-&gt;embedForm(&#39;agAccountMjSfGuardUserForm&#39;,$mjform);</span>
-<a name="l00034"></a>00034     $this-&gt;embedForm(<span class="stringliteral">&#39;sfGuardUser&#39;</span>, $form);
-<a name="l00035"></a>00035   }
-<a name="l00036"></a>00036 
-<a name="l00043"></a>00043 <span class="comment">//  protected function doSave($con = null)</span>
-<a name="l00044"></a>00044 <span class="comment">//  {</span>
-<a name="l00045"></a>00045 <span class="comment">//        unset($this[&#39;ag_facility_resource_order&#39;]);</span>
-<a name="l00046"></a>00046 <span class="comment">//    unset($this[&#39;ag_facility_resource_list&#39;]);</span>
-<a name="l00047"></a>00047 <span class="comment">//    parent::doSave($con);</span>
-<a name="l00048"></a>00048 <span class="comment">//   //unset some stuff, get the data we need, save our main form</span>
-<a name="l00049"></a>00049 <span class="comment">//</span>
-<a name="l00050"></a>00050 <span class="comment">//</span>
-<a name="l00051"></a>00051 <span class="comment">//  }</span>
-<a name="l00052"></a><a class="code" href="classagAccountForm.html#ad5ea6725c38d7c3a66b37d491e6f0e32">00052</a>   <span class="keyword">public</span> function <a class="code" href="classagAccountForm.html#ad5ea6725c38d7c3a66b37d491e6f0e32" title="before the saving actually happens, data is validated: e.g.">saveEmbeddedForms</a>($con = null, $forms = null)
-<a name="l00053"></a>00053   {
-<a name="l00054"></a>00054     $forms = $this-&gt;embeddedForms;
-<a name="l00055"></a>00055     <span class="keywordflow">foreach</span> ($forms as $form) {
-<a name="l00056"></a>00056       <span class="comment">//create agAccountMjSfGuardUser object, update it... boom.</span>
-<a name="l00057"></a>00057       <span class="keywordflow">if</span> ($form-&gt;getName() == <span class="stringliteral">&#39;ag_account_mj_sf_guard_user&#39;</span>) {
-<a name="l00058"></a>00058         $form-&gt;getObject()-&gt;setAccountId($this-&gt;getObject()-&gt;getId());
-<a name="l00059"></a>00059         $form-&gt;saveEmbeddedForms($con);
-<a name="l00060"></a>00060         $form-&gt;getObject()-&gt;save($con);
-<a name="l00061"></a>00061       }
-<a name="l00062"></a>00062       <span class="keywordflow">if</span> ($form-&gt;getName() == <span class="stringliteral">&#39;sf_guard_user&#39;</span>) {
-<a name="l00063"></a>00063         $form-&gt;getObject()-&gt;setUsername($this-&gt;getObject()-&gt;getAccountName());
-<a name="l00064"></a>00064         <span class="comment">//$forms[&#39;agAccountMjSfGuardUserForm&#39;]-&gt;getObject()-&gt;setSfGuardUserId($form-&gt;getObject()-&gt;getId());</span>
-<a name="l00065"></a>00065         $form-&gt;getObject()-&gt;save();
-<a name="l00066"></a>00066         $accountMjUser = <span class="keyword">new</span> agAccountMjSfGuardUser();
-<a name="l00067"></a>00067         $accountMjUser-&gt;account_id = $this-&gt;getObject()-&gt;getId();
-<a name="l00068"></a>00068         $accountMjUser-&gt;sf_guard_user_id = $form-&gt;getObject()-&gt;getId();
-<a name="l00069"></a>00069         $accountMjUser-&gt;save();
+<a name="l00029"></a>00029     unset($this[<span class="stringliteral">&#39;created_at&#39;</span>], $this[<span class="stringliteral">&#39;updated_at&#39;</span>]);<span class="comment">//, $this[&#39;ag_person_id&#39;]);</span>
+<a name="l00030"></a>00030     <span class="comment">//</span>
+<a name="l00031"></a>00031         unset(
+<a name="l00032"></a>00032       $this[<span class="stringliteral">&#39;first_name&#39;</span>],
+<a name="l00033"></a>00033       $this[<span class="stringliteral">&#39;last_name&#39;</span>],
+<a name="l00034"></a>00034       $this[<span class="stringliteral">&#39;algorithm&#39;</span>],
+<a name="l00035"></a>00035       $this[<span class="stringliteral">&#39;groups_list&#39;</span>],
+<a name="l00036"></a>00036       $this[<span class="stringliteral">&#39;permissions_list&#39;</span>],
+<a name="l00037"></a>00037       $this[<span class="stringliteral">&#39;is_active&#39;</span>]
+<a name="l00038"></a>00038     );
+<a name="l00039"></a>00039     <span class="comment">//$mjform-&gt;setDefault(&#39;account_id&#39;,$theId);</span>
+<a name="l00040"></a>00040     <span class="comment">//$form-&gt;getObject()-&gt;id = $mj-&gt;object-&gt;sf_guard_user_id;</span>
+<a name="l00041"></a>00041     <span class="comment">//$mjform-&gt;setDefault(&#39;sf_guard_user_id&#39;,$theId);</span>
+<a name="l00042"></a>00042     <span class="comment">//$this-&gt;embedForm(&#39;agAccountMjSfGuardUserForm&#39;,$mjform);</span>
+<a name="l00043"></a>00043     <span class="comment">//$this-&gt;embedForm(&#39;sfGuardUser&#39;, $form);</span>
+<a name="l00044"></a>00044   }
+<a name="l00045"></a>00045 
+<a name="l00052"></a>00052 <span class="comment">//  protected function doSave($con = null)</span>
+<a name="l00053"></a>00053 <span class="comment">//  {</span>
+<a name="l00054"></a>00054 <span class="comment">//        unset($this[&#39;ag_facility_resource_order&#39;]);</span>
+<a name="l00055"></a>00055 <span class="comment">//    unset($this[&#39;ag_facility_resource_list&#39;]);</span>
+<a name="l00056"></a>00056 <span class="comment">//    parent::doSave($con);</span>
+<a name="l00057"></a>00057 <span class="comment">//   //unset some stuff, get the data we need, save our main form</span>
+<a name="l00058"></a>00058 <span class="comment">//</span>
+<a name="l00059"></a>00059 <span class="comment">//</span>
+<a name="l00060"></a>00060 <span class="comment">//  }</span>
+<a name="l00061"></a><a class="code" href="classagAccountForm.html#ad5ea6725c38d7c3a66b37d491e6f0e32">00061</a>   <span class="keyword">public</span> function <a class="code" href="classagAccountForm.html#ad5ea6725c38d7c3a66b37d491e6f0e32" title="before the saving actually happens, data is validated: e.g.">saveEmbeddedForms</a>($con = null, $forms = null)
+<a name="l00062"></a>00062   {
+<a name="l00063"></a>00063     $forms = $this-&gt;embeddedForms;
+<a name="l00064"></a>00064     <span class="keywordflow">foreach</span> ($forms as $form) {
+<a name="l00065"></a>00065       <span class="comment">//create agAccountMjSfGuardUser object, update it... boom.</span>
+<a name="l00066"></a>00066       <span class="keywordflow">if</span> ($form-&gt;getName() == <span class="stringliteral">&#39;ag_account_mj_sf_guard_user&#39;</span>) {
+<a name="l00067"></a>00067         $form-&gt;getObject()-&gt;setAccountId($this-&gt;getObject()-&gt;getId());
+<a name="l00068"></a>00068         $form-&gt;saveEmbeddedForms($con);
+<a name="l00069"></a>00069         $form-&gt;getObject()-&gt;save($con);
 <a name="l00070"></a>00070       }
-<a name="l00071"></a>00071     }
-<a name="l00072"></a>00072   }
-<a name="l00073"></a>00073 
-<a name="l00074"></a>00074 }
-<a name="l00075"></a>00075 
+<a name="l00071"></a>00071       <span class="keywordflow">if</span> ($form-&gt;getName() == <span class="stringliteral">&#39;sf_guard_user&#39;</span>) {
+<a name="l00072"></a>00072         $form-&gt;getObject()-&gt;setUsername($this-&gt;getObject()-&gt;getAccountName());
+<a name="l00073"></a>00073         <span class="comment">//$forms[&#39;agAccountMjSfGuardUserForm&#39;]-&gt;getObject()-&gt;setSfGuardUserId($form-&gt;getObject()-&gt;getId());</span>
+<a name="l00074"></a>00074         $form-&gt;getObject()-&gt;save();
+<a name="l00075"></a>00075         $accountMjUser = <span class="keyword">new</span> agAccountMjSfGuardUser();
+<a name="l00076"></a>00076         $accountMjUser-&gt;account_id = $this-&gt;getObject()-&gt;getId();
+<a name="l00077"></a>00077         $accountMjUser-&gt;sf_guard_user_id = $form-&gt;getObject()-&gt;getId();
+<a name="l00078"></a>00078         $accountMjUser-&gt;save();
+<a name="l00079"></a>00079       }
+<a name="l00080"></a>00080     }
+<a name="l00081"></a>00081   }
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083 }
+<a name="l00084"></a>00084 
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->
@@ -119,7 +128,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

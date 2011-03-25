@@ -62,618 +62,653 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
 <a name="l00002"></a>00002 
-<a name="l00017"></a><a class="code" href="classeventActions.html">00017</a> <span class="keyword">class </span><a class="code" href="classeventActions.html" title="extends agActions for event">eventActions</a> <span class="keyword">extends</span> <a class="code" href="classagActions.html" title="extends sfActions for common functionality">agActions</a>
-<a name="l00018"></a>00018 {
-<a name="l00019"></a>00019 
-<a name="l00020"></a>00020   <span class="keyword">public</span> function executeIndex(sfWebRequest $request)
-<a name="l00021"></a>00021   {
-<a name="l00022"></a>00022     $this-&gt;scenarioForm = <span class="keyword">new</span> sfForm();
-<a name="l00023"></a>00023     $this-&gt;scenarioForm-&gt;setWidgets(array(
-<a name="l00024"></a>00024       <span class="stringliteral">&#39;ag_scenario_list&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;multiple&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agScenario&#39;</span>))
-<a name="l00025"></a>00025     ));
-<a name="l00026"></a>00026 
-<a name="l00027"></a>00027     $this-&gt;scenarioForm-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;ag_scenario_list&#39;</span>, <span class="keyword">false</span>);
-<a name="l00028"></a>00028     $this-&gt;ag_events = Doctrine_Core::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00029"></a>00029             -&gt;createQuery(<span class="charliteral">&#39;a&#39;</span>)
-<a name="l00030"></a>00030             -&gt;select(<span class="stringliteral">&#39;a.*&#39;</span>)
-<a name="l00031"></a>00031             -&gt;from(<span class="stringliteral">&#39;agEvent a&#39;</span>)
-<a name="l00032"></a>00032             -&gt;execute();
-<a name="l00033"></a>00033   }
-<a name="l00034"></a>00034 
-<a name="l00035"></a>00035   <span class="keyword">public</span> function executeFgroup(sfWebRequest $request)
-<a name="l00036"></a>00036   {
-<a name="l00037"></a>00037     $this-&gt;event_id = $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>);
-<a name="l00038"></a>00038     $this-&gt;eventName = Doctrine::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00039"></a>00039             -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;event_id)
-<a name="l00040"></a>00040             -&gt;getFirst()-&gt;event_name;
+<a name="l00018"></a><a class="code" href="classeventActions.html">00018</a> <span class="keyword">class </span><a class="code" href="classeventActions.html" title="extends agActions for event">eventActions</a> <span class="keyword">extends</span> <a class="code" href="classagActions.html" title="extends sfActions for common functionality">agActions</a>
+<a name="l00019"></a>00019 {
+<a name="l00020"></a>00020 
+<a name="l00021"></a>00021   <span class="keyword">public</span> <span class="keyword">static</span> $event_id;
+<a name="l00022"></a>00022   <span class="keyword">public</span> <span class="keyword">static</span> $event_name;
+<a name="l00023"></a>00023   <span class="keyword">public</span> <span class="keyword">static</span> $event;
+<a name="l00024"></a>00024   <span class="keyword">protected</span> $searchedModels = array(<span class="stringliteral">&#39;agEventStaff&#39;</span>);
+<a name="l00025"></a>00025 
+<a name="l00034"></a><a class="code" href="classeventActions.html#adb0039391c57ca92790adf2ccb2f40a7">00034</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#adb0039391c57ca92790adf2ccb2f40a7" title="Displays the index page for the event module.">executeIndex</a>(sfWebRequest $request)
+<a name="l00035"></a>00035   {
+<a name="l00036"></a>00036     $this-&gt;scenarioForm = <span class="keyword">new</span> sfForm();
+<a name="l00037"></a>00037     $this-&gt;scenarioForm-&gt;setWidgets(array(
+<a name="l00038"></a>00038       <span class="stringliteral">&#39;ag_scenario_list&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;multiple&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agScenario&#39;</span>))
+<a name="l00039"></a>00039     ));
+<a name="l00040"></a>00040 
 <a name="l00041"></a>00041 
-<a name="l00042"></a>00042     $this-&gt;active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this-&gt;event_id);
-<a name="l00043"></a>00043     $this-&gt;facility_group = <span class="charliteral">&#39;%&#39;</span>;
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045     <span class="keywordflow">foreach</span> ($this-&gt;active_facility_groups as $event_fgroup) {
-<a name="l00046"></a>00046       $facility_groups[$event_fgroup[<span class="stringliteral">&#39;efg_id&#39;</span>]] = $event_fgroup[<span class="stringliteral">&#39;efg_event_facility_group&#39;</span>];
-<a name="l00047"></a>00047     }
+<a name="l00042"></a>00042     $this-&gt;scenarioForm-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;ag_scenario_list&#39;</span>, <span class="keyword">false</span>);
+<a name="l00043"></a>00043     $this-&gt;ag_events = agDoctrineQuery::create()
+<a name="l00044"></a>00044             -&gt;select(<span class="stringliteral">&#39;a.*&#39;</span>)
+<a name="l00045"></a>00045             -&gt;from(<span class="stringliteral">&#39;agEvent a&#39;</span>)
+<a name="l00046"></a>00046             -&gt;execute();
+<a name="l00047"></a>00047   }
 <a name="l00048"></a>00048 
-<a name="l00049"></a>00049     $this-&gt;facilitygroupsForm = <span class="keyword">new</span> sfForm();
-<a name="l00050"></a>00050     $this-&gt;facilitygroupsForm-&gt;setWidgets(array(
-<a name="l00051"></a>00051       <span class="stringliteral">&#39;facility_group_list&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormChoice(array(<span class="stringliteral">&#39;multiple&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;choices&#39;</span> =&gt; $facility_groups))<span class="comment">// ,&#39;onClick&#39; =&gt; &#39;submit()&#39;))</span>
-<a name="l00052"></a>00052     ));
-<a name="l00053"></a>00053 
-<a name="l00054"></a>00054     <span class="comment">//the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group</span>
-<a name="l00055"></a>00055     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;facility_group_filter&#39;</span>)) {
-<a name="l00058"></a>00058         $this-&gt;facility_group = $request-&gt;getParameter(<span class="stringliteral">&#39;facility_group_list&#39;</span>);
-<a name="l00059"></a>00059         $this-&gt;facilitygroupsForm-&gt;setDefault(<span class="stringliteral">&#39;facility_group_list&#39;</span>, $this-&gt;facility_group);
-<a name="l00060"></a>00060       } <span class="keywordflow">else</span> {
-<a name="l00061"></a>00061         $fac_activation = $request-&gt;getPostParameters();
-<a name="l00062"></a>00062         $timeconverter = <span class="keyword">new</span> <a class="code" href="classagValidatorDateTime.html">agValidatorDateTime</a>();
-<a name="l00063"></a>00063         $timeconverted = $timeconverter-&gt;convertDateArrayToString($fac_activation[<span class="stringliteral">&#39;facility_resource_activation&#39;</span>][<span class="stringliteral">&#39;activation_time&#39;</span>]);
-<a name="l00064"></a>00064         <span class="keywordflow">foreach</span> ($fac_activation[<span class="stringliteral">&#39;facility_resource_activation&#39;</span>] as $fac_activate) {
-<a name="l00065"></a>00065           <span class="keywordflow">if</span> (is_array($fac_activate) &amp;&amp; isset($fac_activate[<span class="stringliteral">&#39;operate_on&#39;</span>])) {
-<a name="l00066"></a>00066             $eFacResActivation = <span class="keyword">new</span> <a class="code" href="classagEventFacilityResourceActivationTime.html">agEventFacilityResourceActivationTime</a>();
-<a name="l00067"></a>00067 
-<a name="l00068"></a>00068             $eFacResActivation-&gt;setActivationTime($timeconverted);
-<a name="l00069"></a>00069             $eFacResActivation-&gt;setEventFacilityResourceId($fac_activate[<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>]);
-<a name="l00070"></a>00070             $eFacResActivation-&gt;save();
-<a name="l00071"></a>00071           }
-<a name="l00072"></a>00072         }
-<a name="l00073"></a>00073       }
-<a name="l00074"></a>00074     }
-<a name="l00075"></a>00075 
-<a name="l00076"></a>00076     $this-&gt;event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this-&gt;event_id, $this-&gt;facility_group);
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078     $this-&gt;fgroupForm = <span class="keyword">new</span> <a class="code" href="classagFacilityResourceAcvitationForm.html" title="agFacilityResourceActivationForm class takes in an array of forms with which to construct a set of em...">agFacilityResourceAcvitationForm</a>($this-&gt;event_facility_resources);
-<a name="l00079"></a>00079   }
+<a name="l00054"></a><a class="code" href="classeventActions.html#a95dfcc9ba9302a12c9d0685336baa8f7">00054</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a95dfcc9ba9302a12c9d0685336baa8f7" title="event/fgroup provides the means to manage activation time for facility resources that are in active g...">executeFgroup</a>(sfWebRequest $request)
+<a name="l00055"></a>00055   {
+<a name="l00056"></a>00056     $this-&gt;setEventBasics($request);
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058     $this-&gt;active_facility_groups = <a class="code" href="classagEventFacilityHelper.html#a8fe7506f97ba4a8a2e93eb939c32b235" title="Function to return event facility groups with an optional parameter to restrict to active or inactive...">agEventFacilityHelper::returnEventFacilityGroups</a>($this-&gt;event_id, TRUE);
+<a name="l00059"></a>00059     $this-&gt;facility_group = NULL;
+<a name="l00060"></a>00060     $facility_groups = array();
+<a name="l00061"></a>00061     <span class="keywordflow">foreach</span> ($this-&gt;active_facility_groups as $event_fgroup) {
+<a name="l00062"></a>00062       $facility_groups[$event_fgroup[<span class="stringliteral">&#39;efg_id&#39;</span>]] = $event_fgroup[<span class="stringliteral">&#39;efg_event_facility_group&#39;</span>];
+<a name="l00063"></a>00063     }
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065     $this-&gt;facilitygroupsForm = <span class="keyword">new</span> sfForm();
+<a name="l00066"></a>00066     $this-&gt;facilitygroupsForm-&gt;setWidgets(array(
+<a name="l00067"></a>00067       <span class="stringliteral">&#39;facility_group_list&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormChoice(array(<span class="stringliteral">&#39;multiple&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;choices&#39;</span> =&gt; $facility_groups))<span class="comment">// ,&#39;onClick&#39; =&gt; &#39;submit()&#39;))</span>
+<a name="l00068"></a>00068     ));
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070     <span class="comment">//the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group</span>
+<a name="l00071"></a>00071     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
+<a name="l00072"></a>00072 
+<a name="l00073"></a>00073       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;facility_group_filter&#39;</span>)) {
+<a name="l00074"></a>00074         $this-&gt;facility_group = $request-&gt;getParameter(<span class="stringliteral">&#39;facility_group_list&#39;</span>);
+<a name="l00075"></a>00075         $this-&gt;facilitygroupsForm-&gt;setDefault(<span class="stringliteral">&#39;facility_group_list&#39;</span>, $this-&gt;facility_group);
+<a name="l00076"></a>00076       } <span class="keywordflow">else</span> {
+<a name="l00077"></a>00077         $fac_activation = $request-&gt;getPostParameters();
+<a name="l00078"></a>00078         $timeconverter = <span class="keyword">new</span> <a class="code" href="classagValidatorDateTime.html">agValidatorDateTime</a>();
+<a name="l00079"></a>00079         $timeconverted = $timeconverter-&gt;convertDateArrayToUnix($fac_activation[<span class="stringliteral">&#39;facility_resource_activation&#39;</span>][<span class="stringliteral">&#39;activation_time&#39;</span>]);
 <a name="l00080"></a>00080 
-<a name="l00081"></a>00081   <span class="keyword">public</span> function executeDeploy(sfWebRequest $request)
-<a name="l00082"></a>00082   {
-<a name="l00083"></a>00083     $this-&gt;event_id = $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>);
-<a name="l00084"></a>00084     $this-&gt;eventName = Doctrine::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00085"></a>00085             -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;event_id)
-<a name="l00086"></a>00086             -&gt;getFirst()-&gt;event_name;
-<a name="l00087"></a>00087     $this-&gt;scenario_id = Doctrine_Query::create()
-<a name="l00088"></a>00088             -&gt;select(<span class="stringliteral">&#39;scenario_id&#39;</span>)
-<a name="l00089"></a>00089             -&gt;from(<span class="stringliteral">&#39;agEventScenario&#39;</span>)
-<a name="l00090"></a>00090             -&gt;where(<span class="stringliteral">&#39;event_id = ?&#39;</span>, $this-&gt;event_id)
-<a name="l00091"></a>00091             -&gt;execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
-<a name="l00092"></a>00092     <span class="keywordflow">if</span> ($this-&gt;scenario_id) {
-<a name="l00093"></a>00093       $this-&gt;scenarioName = Doctrine::getTable(<span class="stringliteral">&#39;agScenario&#39;</span>)
-<a name="l00094"></a>00094               -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;scenario_id)
-<a name="l00095"></a>00095               -&gt;getFirst()-&gt;scenario;
-<a name="l00096"></a>00096 
-<a name="l00097"></a>00097       $this-&gt;checkResults = $this-&gt;preMigrationCheck($this-&gt;scenario_id);
-<a name="l00098"></a>00098 
-<a name="l00099"></a>00099       <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
-<a name="l00100"></a>00100         $this-&gt;<a class="code" href="classeventActions.html#a764d91d45a4ba0774070229b7657cc06">migrateScenarioToEvent</a>($this-&gt;scenario_id, $this-&gt;event_id);
-<a name="l00101"></a>00101         $this-&gt;redirect(<span class="stringliteral">&#39;event/active?id=&#39;</span> . $this-&gt;event_id);
-<a name="l00102"></a>00102       }
-<a name="l00103"></a>00103     } <span class="keywordflow">else</span> {
-<a name="l00104"></a>00104       $this-&gt;forward404(<span class="stringliteral">&#39;you cannot deploy an event without a scenario.&#39;</span>);
-<a name="l00105"></a>00105     }
-<a name="l00106"></a>00106   }
-<a name="l00107"></a>00107 
-<a name="l00108"></a>00108   <span class="keyword">public</span> function executeMeta(sfWebRequest $request)
-<a name="l00109"></a>00109   {
-<a name="l00110"></a>00110 
-<a name="l00111"></a>00111     <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)) { <span class="comment">//if someone is coming here from an edit context</span>
-<a name="l00112"></a>00112       $this-&gt;event_id = $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>);
-<a name="l00113"></a>00113       $eventMeta = Doctrine::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00114"></a>00114               -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;event_id)
-<a name="l00115"></a>00115               -&gt;getFirst();
-<a name="l00116"></a>00116     } <span class="keywordflow">else</span> {
-<a name="l00117"></a>00117       $eventMeta = null;
-<a name="l00118"></a>00118     }
-<a name="l00119"></a>00119 
-<a name="l00120"></a>00120     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST) &amp;&amp; !$request-&gt;getParameter(<span class="stringliteral">&#39;ag_scenario_list&#39;</span>)) {
-<a name="l00121"></a>00121       <span class="comment">//if someone has posted, but is not creating an event from a scenario.</span>
-<a name="l00122"></a>00122       $this-&gt;metaForm = <span class="keyword">new</span> <a class="code" href="classPluginagEventDefForm.html">PluginagEventDefForm</a>($eventMeta);
-<a name="l00123"></a>00123       $this-&gt;metaForm-&gt;bind($request-&gt;getParameter($this-&gt;metaForm-&gt;getName()), $request-&gt;getFiles($this-&gt;metaForm-&gt;getName()));
-<a name="l00124"></a>00124       <span class="keywordflow">if</span> ($this-&gt;metaForm-&gt;isValid()) {
-<a name="l00125"></a>00125 
-<a name="l00126"></a>00126         $ag_event = $this-&gt;metaForm-&gt;save();
-<a name="l00127"></a>00127 
-<a name="l00128"></a>00128 
-<a name="l00129"></a>00129         <span class="comment">//$this-&gt;migrateScenarioToEvent($request-&gt;getParameter(&#39;scenario_id&#39;), $ag_event-&gt;getId()); //this will create mapping from scenario to event</span>
-<a name="l00130"></a>00130 <span class="comment">//        if($this-&gt;metaForm-&gt;isNew()){</span>
-<a name="l00131"></a>00131 <span class="comment">//        if (isset($updating)) { //replace with usable check to update</span>
-<a name="l00132"></a>00132         $eventStatusObject = Doctrine_Query::create()
-<a name="l00133"></a>00133                 -&gt;from(<span class="stringliteral">&#39;agEventStatus a&#39;</span>)
-<a name="l00134"></a>00134                 -&gt;where(<span class="stringliteral">&#39;a.id =?&#39;</span>, $ag_event-&gt;getId())
-<a name="l00135"></a>00135                 -&gt;execute()-&gt;getFirst();
-<a name="l00136"></a>00136 
-<a name="l00137"></a>00137         $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : <span class="keyword">new</span> agEventStatus();
-<a name="l00138"></a>00138 
-<a name="l00139"></a>00139         $ag_event_status-&gt;setEventStatusTypeId(3);
-<a name="l00140"></a>00140         $ag_event_status-&gt;setEventId($ag_event-&gt;getId());
-<a name="l00141"></a>00141         $ag_event_status-&gt;time_stamp = <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>);
-<a name="l00142"></a>00142         $ag_event_status-&gt;save();
-<a name="l00143"></a>00143 
-<a name="l00144"></a>00144         <span class="comment">//have to do this for delete also, i.e. delete the event_scenario object</span>
-<a name="l00145"></a>00145         <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;scenario_id&#39;</span>) &amp;&amp; $request-&gt;getParameter(<span class="stringliteral">&#39;scenario_id&#39;</span>) != <span class="stringliteral">&quot;&quot;</span>) { <span class="comment">//the way this is constructed we will always have a scenario_id</span>
-<a name="l00146"></a>00146           $ag_event_scenario = <span class="keyword">new</span> agEventScenario();
-<a name="l00147"></a>00147           $ag_event_scenario-&gt;setScenarioId($request-&gt;getParameter(<span class="stringliteral">&#39;scenario_id&#39;</span>));
-<a name="l00148"></a>00148           $ag_event_scenario-&gt;setEventId($ag_event-&gt;getId());
-<a name="l00149"></a>00149           $ag_event_scenario-&gt;save();
-<a name="l00150"></a>00150           $this-&gt;redirect(<span class="stringliteral">&#39;event/deploy?id=&#39;</span> . $ag_event-&gt;getId());
-<a name="l00151"></a>00151         }
-<a name="l00152"></a>00152       }
-<a name="l00153"></a>00153     } <span class="keywordflow">else</span> {
-<a name="l00154"></a>00154       <span class="comment">//get scenario information passed from previous form</span>
-<a name="l00155"></a>00155       <span class="comment">//we should save the scenario that this event is based on</span>
-<a name="l00156"></a>00156       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;ag_scenario_list&#39;</span>)) {
-<a name="l00157"></a>00157         $this-&gt;scenario_id = $request-&gt;getParameter(<span class="stringliteral">&#39;ag_scenario_list&#39;</span>);
-<a name="l00158"></a>00158         $this-&gt;scenarioName = Doctrine::getTable(<span class="stringliteral">&#39;agScenario&#39;</span>)
-<a name="l00159"></a>00159                 -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;scenario_id)
-<a name="l00160"></a>00160                 -&gt;getFirst()-&gt;scenario;
-<a name="l00161"></a>00161       }
-<a name="l00162"></a>00162       $this-&gt;metaForm = <span class="keyword">new</span> <a class="code" href="classPluginagEventDefForm.html">PluginagEventDefForm</a>($eventMeta);
-<a name="l00163"></a>00163     }
-<a name="l00164"></a>00164 
-<a name="l00165"></a>00165     <span class="comment">//as a rule of thumb, actions should post to themself and then redirect</span>
-<a name="l00166"></a>00166   }
-<a name="l00167"></a>00167 
-<a name="l00168"></a>00168   <span class="keyword">public</span> function facilityGroupCheck($scenario_id)
-<a name="l00169"></a>00169   {
-<a name="l00170"></a>00170     $facilityGroupQuery = Doctrine_Query::create()
-<a name="l00171"></a>00171             -&gt;select(<span class="stringliteral">&#39;aFG.id, aFG.scenario_facility_group&#39;</span>)
-<a name="l00172"></a>00172             -&gt;from(<span class="stringliteral">&#39;agScenarioFacilityGroup aFG&#39;</span>)
-<a name="l00173"></a>00173             -&gt;leftJoin(<span class="stringliteral">&#39;aFG.agScenarioFacilityResource aFR&#39;</span>)
-<a name="l00174"></a>00174             -&gt;where(<span class="stringliteral">&#39;aFR.id is NULL&#39;</span>);
-<a name="l00175"></a>00175     $returnvalue = $facilityGroupQuery-&gt;execute(array(), <span class="stringliteral">&#39;key_value_pair&#39;</span>);
-<a name="l00176"></a>00176     $facilityGroupQuery-&gt;free();
-<a name="l00177"></a>00177     <span class="keywordflow">return</span> $returnvalue;
-<a name="l00178"></a>00178   }
-<a name="l00179"></a>00179 
-<a name="l00180"></a>00180   <span class="keyword">public</span> function undefinedShiftCheck($scenario_id)
-<a name="l00181"></a>00181   {
-<a name="l00182"></a>00182     $undefinedFacilityShiftQuery = Doctrine_Query::create()
-<a name="l00183"></a>00183             -&gt;select(<span class="stringliteral">&#39;aFR.id&#39;</span>)
-<a name="l00184"></a>00184             -&gt;from(<span class="stringliteral">&#39;agScenarioFacilityResource aFR&#39;</span>)
-<a name="l00185"></a>00185             -&gt;innerJoin(<span class="stringliteral">&#39;aFR.agScenarioFacilityGroup aFG&#39;</span>)
-<a name="l00186"></a>00186             -&gt;leftJoin(<span class="stringliteral">&#39;aFR.agScenarioShift aSS&#39;</span>)
-<a name="l00187"></a>00187             -&gt;where(<span class="stringliteral">&#39;aSS.id is NULL&#39;</span>)
-<a name="l00188"></a>00188             -&gt;andWhere(<span class="stringliteral">&#39;aFG.scenario_id =?&#39;</span>, $scenario_id); <span class="comment">//returns the facility resources without shift</span>
-<a name="l00189"></a>00189     $facilityShiftReturn = $undefinedFacilityShiftQuery-&gt;execute(array(), <span class="stringliteral">&#39;single_value_array&#39;</span>);
-<a name="l00190"></a>00190     $undefinedFacilityShiftQuery-&gt;free();
+<a name="l00081"></a>00081 
+<a name="l00082"></a>00082         <span class="keywordflow">foreach</span> ($fac_activation[<span class="stringliteral">&#39;facility_resource_activation&#39;</span>] as $fac_activate) {
+<a name="l00083"></a>00083           <span class="keywordflow">if</span> (is_array($fac_activate) &amp;&amp; isset($fac_activate[<span class="stringliteral">&#39;operate_on&#39;</span>])) {
+<a name="l00084"></a>00084             $eFacResActivation = <span class="keyword">new</span> agEventFacilityResourceActivationTime();
+<a name="l00085"></a>00085 
+<a name="l00086"></a>00086             $eFacResActivation-&gt;setActivationTime($timeconverted);
+<a name="l00087"></a>00087             $eFacResActivation-&gt;setEventFacilityResourceId($fac_activate[<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>]);
+<a name="l00088"></a>00088             $eFacResActivation-&gt;save();
+<a name="l00089"></a>00089 
+<a name="l00090"></a>00090             <span class="comment">//agEventFacilityHelper::setFacilityActivationTime($eventFacilityResourceIds, $activationTime, $shiftChangeRestriction, $releaseStaff, $conn);</span>
+<a name="l00091"></a>00091           }
+<a name="l00092"></a>00092         }
+<a name="l00093"></a>00093       }
+<a name="l00094"></a>00094     }
+<a name="l00095"></a>00095 
+<a name="l00096"></a>00096     $this-&gt;event_facility_resources = <a class="code" href="classagEventFacilityHelper.html#a5f4f7439b8a2f648776dddae507f776f" title="Method to return facilities that are candidates for having their activation times set...">agEventFacilityHelper::returnFacilityResourceActivation</a>($this-&gt;event_id, $this-&gt;facility_group);
+<a name="l00097"></a>00097 
+<a name="l00098"></a>00098     $this-&gt;fgroupForm = <span class="keyword">new</span> <a class="code" href="classagFacilityResourceAcvitationForm.html" title="agFacilityResourceActivationForm class takes in an array of forms with which to construct a set of em...">agFacilityResourceAcvitationForm</a>($this-&gt;event_facility_resources);
+<a name="l00099"></a>00099   }
+<a name="l00100"></a>00100 
+<a name="l00106"></a><a class="code" href="classeventActions.html#af464c60365508de5a791052ce64a971c">00106</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#af464c60365508de5a791052ce64a971c" title="the event/deploy action provides a user with pre-deployment check information and the ability to depl...">executeDeploy</a>(sfWebRequest $request)
+<a name="l00107"></a>00107   {
+<a name="l00108"></a>00108     $this-&gt;setEventBasics($request);
+<a name="l00109"></a>00109     $this-&gt;scenario_id = agDoctrineQuery::create()
+<a name="l00110"></a>00110             -&gt;select(<span class="stringliteral">&#39;scenario_id&#39;</span>)
+<a name="l00111"></a>00111             -&gt;from(<span class="stringliteral">&#39;agEventScenario&#39;</span>)
+<a name="l00112"></a>00112             -&gt;where(<span class="stringliteral">&#39;event_id = ?&#39;</span>, $this-&gt;event_id)
+<a name="l00113"></a>00113             -&gt;execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
+<a name="l00114"></a>00114     <span class="keywordflow">if</span> ($this-&gt;scenario_id) {
+<a name="l00115"></a>00115       $this-&gt;scenarioName = Doctrine::getTable(<span class="stringliteral">&#39;agScenario&#39;</span>)
+<a name="l00116"></a>00116               -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;scenario_id)
+<a name="l00117"></a>00117               -&gt;getFirst()-&gt;scenario;
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119       $this-&gt;checkResults = agEventMigrationHelper::preMigrationCheck($this-&gt;scenario_id);
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121       <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
+<a name="l00122"></a>00122         <a class="code" href="classagEventMigrationHelper.html#a01841fd8a7697baabe14382367e8c28e">agEventMigrationHelper::migrateScenarioToEvent</a>($this-&gt;scenario_id, $this-&gt;event_id);
+<a name="l00123"></a>00123         $this-&gt;redirect(<span class="stringliteral">&#39;event/active?event=&#39;</span> . urlencode($this-&gt;event_name));
+<a name="l00124"></a>00124       }
+<a name="l00125"></a>00125     } <span class="keywordflow">else</span> {
+<a name="l00126"></a>00126       $this-&gt;forward404(<span class="stringliteral">&#39;you cannot deploy an event without a scenario.&#39;</span>);
+<a name="l00127"></a>00127     }
+<a name="l00128"></a>00128   }
+<a name="l00129"></a>00129 
+<a name="l00134"></a>00134   <span class="keyword">private</span> function setEventBasics(sfWebRequest $request)
+<a name="l00135"></a>00135   {
+<a name="l00136"></a>00136     <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)) {
+<a name="l00137"></a>00137       $this-&gt;event_id = $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>);
+<a name="l00138"></a>00138       <span class="keywordflow">if</span> ($this-&gt;event_id != <span class="stringliteral">&quot;&quot;</span>) {
+<a name="l00139"></a>00139         $this-&gt;event_name = Doctrine_Core::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
+<a name="l00140"></a>00140                 -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;event_id)
+<a name="l00141"></a>00141                 -&gt;getFirst()-&gt;getEventName();
+<a name="l00142"></a>00142       }
+<a name="l00143"></a>00143       <span class="comment">//TODO step through to check and see if the second if is needed</span>
+<a name="l00144"></a>00144     }
+<a name="l00145"></a>00145     <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;event&#39;</span>)) {
+<a name="l00146"></a>00146       $this-&gt;<span class="keyword">event</span> = agDoctrineQuery::create()
+<a name="l00147"></a>00147               -&gt;select()
+<a name="l00148"></a>00148               -&gt;from(<span class="stringliteral">&#39;agEvent&#39;</span>)
+<a name="l00149"></a>00149               -&gt;where(<span class="stringliteral">&#39;event_name = ?&#39;</span>, urldecode($request-&gt;getParameter(<span class="stringliteral">&#39;event&#39;</span>)))
+<a name="l00150"></a>00150               -&gt;execute()-&gt;getFirst();
+<a name="l00151"></a>00151 
+<a name="l00152"></a>00152       $this-&gt;event_id = $this-&gt;<span class="keyword">event</span>-&gt;id;
+<a name="l00153"></a>00153       $this-&gt;event_name = $this-&gt;<span class="keyword">event</span>-&gt;event_name;
+<a name="l00154"></a>00154       <span class="comment">//TODO step through to check and see if the second if is needed</span>
+<a name="l00155"></a>00155     }
+<a name="l00156"></a>00156   }
+<a name="l00157"></a>00157 
+<a name="l00162"></a><a class="code" href="classeventActions.html#ac8a264721dcedbacfa40e7850a1354c0">00162</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#ac8a264721dcedbacfa40e7850a1354c0" title="the meta action (event/meta) gives the user CRU functionality of event meta information">executeMeta</a>(sfWebRequest $request)
+<a name="l00163"></a>00163   {
+<a name="l00164"></a>00164     $this-&gt;setEventBasics($request);
+<a name="l00165"></a>00165     <span class="keywordflow">if</span> ($this-&gt;event_id != <span class="stringliteral">&quot;&quot;</span>) { <span class="comment">//if someone is coming here from an edit context</span>
+<a name="l00166"></a>00166       $eventMeta = Doctrine::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
+<a name="l00167"></a>00167               -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;event_id)
+<a name="l00168"></a>00168               -&gt;getFirst();
+<a name="l00169"></a>00169     } <span class="keywordflow">else</span> {
+<a name="l00170"></a>00170       $eventMeta = null;
+<a name="l00171"></a>00171     }
+<a name="l00172"></a>00172 
+<a name="l00173"></a>00173     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST) &amp;&amp; !$request-&gt;getParameter(<span class="stringliteral">&#39;ag_scenario_list&#39;</span>)) {
+<a name="l00174"></a>00174       <span class="comment">//if someone has posted, but is not creating an event from a scenario.</span>
+<a name="l00175"></a>00175       $this-&gt;metaForm = <span class="keyword">new</span> <a class="code" href="classPluginagEventDefForm.html">PluginagEventDefForm</a>($eventMeta);
+<a name="l00176"></a>00176       $this-&gt;metaForm-&gt;bind($request-&gt;getParameter($this-&gt;metaForm-&gt;getName()), $request-&gt;getFiles($this-&gt;metaForm-&gt;getName()));
+<a name="l00177"></a>00177       <span class="keywordflow">if</span> ($this-&gt;metaForm-&gt;isValid()) {
+<a name="l00178"></a>00178 
+<a name="l00179"></a>00179         $ag_event = $this-&gt;metaForm-&gt;save();
+<a name="l00180"></a>00180 
+<a name="l00181"></a>00181         $eventStatusObject = agDoctrineQuery::create()
+<a name="l00182"></a>00182                 -&gt;from(<span class="stringliteral">&#39;agEventStatus a&#39;</span>)
+<a name="l00183"></a>00183                 -&gt;where(<span class="stringliteral">&#39;a.id =?&#39;</span>, $ag_event-&gt;getId())
+<a name="l00184"></a>00184                 -&gt;execute()-&gt;getFirst();
+<a name="l00185"></a>00185 
+<a name="l00186"></a>00186         $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : <span class="keyword">new</span> agEventStatus();
+<a name="l00187"></a>00187         $ag_event_status-&gt;setEventStatusTypeId(3);
+<a name="l00188"></a>00188         $ag_event_status-&gt;setEventId($ag_event-&gt;getId());
+<a name="l00189"></a>00189         $ag_event_status-&gt;time_stamp = <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>);
+<a name="l00190"></a>00190         $ag_event_status-&gt;save();
 <a name="l00191"></a>00191 
-<a name="l00192"></a>00192     $undefinedStaffShiftQuery = Doctrine_Query::create()
-<a name="l00193"></a>00193             -&gt;select(<span class="stringliteral">&#39;aSRT.id, aSSR.*, aSR.id&#39;</span>)
-<a name="l00194"></a>00194             -&gt;from(<span class="stringliteral">&#39;agScenarioStaffResource aSSR&#39;</span>)
-<a name="l00195"></a>00195             -&gt;innerJoin(<span class="stringliteral">&#39;aSSR.agStaffResource aSR&#39;</span>)
-<a name="l00196"></a>00196             -&gt;innerJoin(<span class="stringliteral">&#39;aSR.agStaffResourceType aSRT&#39;</span>)
-<a name="l00197"></a>00197             -&gt;leftJoin(<span class="stringliteral">&#39;aSRT.agScenarioShift aSS&#39;</span>)
-<a name="l00198"></a>00198             -&gt;where(<span class="stringliteral">&#39;aSSR.scenario_id =?&#39;</span>, $scenario_id)
-<a name="l00199"></a>00199             -&gt;andWhere(<span class="stringliteral">&#39;aSRT.id is NULL&#39;</span>); <span class="comment">//returns the staff resource types without a shift</span>
-<a name="l00200"></a>00200     $staffShiftReturn = $undefinedStaffShiftQuery-&gt;execute(array(), <span class="stringliteral">&#39;single_value_array&#39;</span>);
-<a name="l00201"></a>00201     $undefinedStaffShiftQuery-&gt;free();
-<a name="l00202"></a>00202 
-<a name="l00203"></a>00203     <span class="keywordflow">return</span> array($facilityShiftReturn, $staffShiftReturn);
-<a name="l00204"></a>00204   }
-<a name="l00205"></a>00205 
-<a name="l00206"></a>00206   <span class="keyword">public</span> function staffPoolCheck($scenario_id)
-<a name="l00207"></a>00207   {
-<a name="l00208"></a>00208     $staffPoolQuery = Doctrine_Query::create()
-<a name="l00209"></a>00209             -&gt;from(<span class="stringliteral">&#39;agScenarioStaffResource&#39;</span>)
-<a name="l00210"></a>00210             -&gt;where(<span class="stringliteral">&#39;scenario_id =?&#39;</span>, $scenario_id);
-<a name="l00211"></a>00211     <span class="keywordflow">return</span> $staffPoolQuery-&gt;count();
-<a name="l00212"></a>00212   }
-<a name="l00213"></a>00213 
-<a name="l00214"></a>00214   <span class="keyword">public</span> function preMigrationCheck($scenario_id)
-<a name="l00215"></a>00215   {
-<a name="l00216"></a>00216     <span class="comment">// 0. Pre check: check event status (only proceed if event status is pre-deploy), clean event related tables in pre-deploy state, empty facility group, undefined staff pool rules making sure pools not empty, undefined shifts for staff/facility resource.</span>
-<a name="l00217"></a>00217     $facilityGroupCheck = $this-&gt;facilityGroupCheck($scenario_id);
-<a name="l00218"></a>00218     $staffPoolCheck = $this-&gt;staffPoolCheck($scenario_id);
-<a name="l00219"></a>00219     $undefinedShiftCheck = $this-&gt;undefinedShiftCheck($scenario_id);
-<a name="l00220"></a>00220     $undefinedFacilityShifts = $undefinedShiftCheck[0];
-<a name="l00221"></a>00221     $undefinedStaffShifts = $undefinedShiftCheck[1];
-<a name="l00222"></a>00222 
-<a name="l00223"></a>00223     <span class="keywordflow">return</span> array(<span class="stringliteral">&#39;Empty facility groups&#39;</span> =&gt; $facilityGroupCheck, <span class="stringliteral">&#39;Staff pool count&#39;</span> =&gt; $staffPoolCheck, <span class="stringliteral">&#39;Undefined facility shifts&#39;</span> =&gt; $undefinedFacilityShifts, <span class="stringliteral">&#39;Undefined staff shifts&#39;</span> =&gt; $undefinedStaffShifts);
-<a name="l00224"></a>00224   }
-<a name="l00225"></a>00225 
-<a name="l00226"></a>00226   <span class="keyword">public</span> function migrateFacilityGroups($scenario_id, $event_id)
-<a name="l00227"></a>00227   {
-<a name="l00228"></a>00228     $existingScenarioFacilityGroups = Doctrine_Core::getTable(<span class="stringliteral">&#39;agScenarioFacilityGroup&#39;</span>)-&gt;findBy(<span class="stringliteral">&#39;scenario_id&#39;</span>, $scenario_id);
-<a name="l00229"></a>00229 
-<a name="l00230"></a>00230     <span class="keywordflow">foreach</span> ($existingScenarioFacilityGroups as $scenFacGrp) {
-<a name="l00231"></a>00231       $eventFacilityGroup = <span class="keyword">new</span> agEventFacilityGroup();
-<a name="l00232"></a>00232       $eventFacilityGroup-&gt;set(<span class="stringliteral">&#39;event_id&#39;</span>, $event_id)
-<a name="l00233"></a>00233           -&gt;set(<span class="stringliteral">&#39;event_facility_group&#39;</span>, $scenFacGrp-&gt;scenario_facility_group)
-<a name="l00234"></a>00234           -&gt;set(<span class="stringliteral">&#39;facility_group_type_id&#39;</span>, $scenFacGrp-&gt;facility_group_type_id)
-<a name="l00235"></a>00235           -&gt;set(<span class="stringliteral">&#39;activation_sequence&#39;</span>, $scenFacGrp-&gt;activation_sequence);
-<a name="l00236"></a>00236       $eventFacilityGroup-&gt;save();
-<a name="l00237"></a>00237 
-<a name="l00238"></a>00238       $eventFacilityGroupStatus = <span class="keyword">new</span> agEventFacilityGroupStatus();
-<a name="l00239"></a>00239       $eventFacilityGroupStatus-&gt;set(<span class="stringliteral">&#39;event_facility_group_id&#39;</span>, $eventFacilityGroup-&gt;id)
-<a name="l00240"></a>00240           -&gt;set(<span class="stringliteral">&#39;time_stamp&#39;</span>, <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>))
-<a name="l00241"></a>00241           -&gt;set(<span class="stringliteral">&#39;facility_group_allocation_status_id&#39;</span>, $scenFacGrp-&gt;facility_group_allocation_status_id);
-<a name="l00242"></a>00242       $eventFacilityGroupStatus-&gt;save();
-<a name="l00243"></a>00243 
-<a name="l00244"></a>00244       $existingFacilityResources = $this-&gt;migrateFacilityResources($scenFacGrp, $eventFacilityGroup-&gt;id);
-<a name="l00245"></a>00245 
-<a name="l00246"></a>00246       $eventFacilityGroup-&gt;free(TRUE);
-<a name="l00247"></a>00247       $eventFacilityGroupStatus-&gt;free(TRUE);
-<a name="l00248"></a>00248     }
-<a name="l00249"></a>00249     $existingScenarioFacilityGroups-&gt;free(TRUE);
-<a name="l00250"></a>00250   }
-<a name="l00251"></a>00251 
-<a name="l00252"></a>00252   <span class="keyword">public</span> function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id)
-<a name="l00253"></a>00253   {
-<a name="l00254"></a>00254     $existingScenarioFacilityResources = $scenarioFacilityGroup-&gt;getAgScenarioFacilityResource();
-<a name="l00255"></a>00255     <span class="keywordflow">foreach</span> ($existingScenarioFacilityResources as $scenFacRes) {
-<a name="l00256"></a>00256       $eventFacilityResource = <span class="keyword">new</span> agEventFacilityResource();
-<a name="l00257"></a>00257       $eventFacilityResource-&gt;set(<span class="stringliteral">&#39;event_facility_group_id&#39;</span>, $event_facility_group_id)
-<a name="l00258"></a>00258           -&gt;set(<span class="stringliteral">&#39;facility_resource_id&#39;</span>, $scenFacRes-&gt;facility_resource_id)
-<a name="l00259"></a>00259           -&gt;set(<span class="stringliteral">&#39;activation_sequence&#39;</span>, $scenFacRes-&gt;activation_sequence);
-<a name="l00260"></a>00260       $eventFacilityResource-&gt;save();
-<a name="l00261"></a>00261 
-<a name="l00262"></a>00262       $eventFacilityResourceStatus = <span class="keyword">new</span> agEventFacilityResourceStatus();
-<a name="l00263"></a>00263       $eventFacilityResourceStatus-&gt;set(<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>, $eventFacilityResource-&gt;id)
-<a name="l00264"></a>00264           -&gt;set(<span class="stringliteral">&#39;time_stamp&#39;</span>, <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>))
-<a name="l00265"></a>00265           -&gt;set(<span class="stringliteral">&#39;facility_resource_allocation_status_id&#39;</span>, $scenFacRes-&gt;facility_resource_allocation_status_id);
-<a name="l00266"></a>00266       $eventFacilityResourceStatus-&gt;save();
-<a name="l00267"></a>00267 
-<a name="l00268"></a>00268       <span class="comment">// Should the shifts be process as the facility resources get processed?  Another solution is to create a temp table mapping the scenario to event faciltiy resources?</span>
-<a name="l00269"></a>00269       $this-&gt;migrateShifts($scenFacRes-&gt;id, $eventFacilityResource-&gt;id);
-<a name="l00270"></a>00270 
-<a name="l00271"></a>00271       $eventFacilityResource-&gt;free(TRUE);
-<a name="l00272"></a>00272       $eventFacilityResourceStatus-&gt;free(TRUE);
-<a name="l00273"></a>00273     }
-<a name="l00274"></a>00274 
-<a name="l00275"></a>00275     $existingScenarioFacilityResources-&gt;free(TRUE);
-<a name="l00276"></a>00276     <span class="keywordflow">return</span> 1;
-<a name="l00277"></a>00277   }
-<a name="l00278"></a>00278 
-<a name="l00279"></a>00279   <span class="keyword">public</span> function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId)
-<a name="l00280"></a>00280   {
-<a name="l00281"></a>00281     $scenarioShifts = Doctrine_Core::getTable(<span class="stringliteral">&#39;agScenarioShift&#39;</span>)-&gt;findby(<span class="stringliteral">&#39;scenario_facility_resource_id&#39;</span>, $scenarioFacilityResourceId);
-<a name="l00282"></a>00282     <span class="keywordflow">foreach</span> ($scenarioShifts as $scenShift) {
-<a name="l00283"></a>00283       <span class="comment">// At this point all fields in agEventShifts will be populated with agScenarioShifts.  Only</span>
-<a name="l00284"></a>00284       <span class="comment">// the real time fields in agEvnetShifts will not be populated.  It will be done so at a later</span>
-<a name="l00285"></a>00285       <span class="comment">// time when agEventFacilityActivationTime is populated.</span>
-<a name="l00286"></a>00286       $eventShift = <span class="keyword">new</span> agEventShift();
-<a name="l00287"></a>00287       $eventShift-&gt;set(<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>, $eventFacilityResourceId)
-<a name="l00288"></a>00288           -&gt;set(<span class="stringliteral">&#39;staff_resource_type_id&#39;</span>, $scenShift-&gt;staff_resource_type_id)
-<a name="l00289"></a>00289           -&gt;set(<span class="stringliteral">&#39;minimum_staff&#39;</span>, $scenShift-&gt;minimum_staff)
-<a name="l00290"></a>00290           -&gt;set(<span class="stringliteral">&#39;maximum_staff&#39;</span>, $scenShift-&gt;maximum_staff)
-<a name="l00291"></a>00291           -&gt;set(<span class="stringliteral">&#39;minutes_start_to_facility_activation&#39;</span>, $scenShift-&gt;minutes_start_to_facility_activation)
-<a name="l00292"></a>00292           -&gt;set(<span class="stringliteral">&#39;task_length_minutes&#39;</span>, $scenShift-&gt;task_length_minutes)
-<a name="l00293"></a>00293           -&gt;set(<span class="stringliteral">&#39;break_length_minutes&#39;</span>, $scenShift-&gt;break_length_minutes)
-<a name="l00294"></a>00294           -&gt;set(<span class="stringliteral">&#39;task_id&#39;</span>, $scenShift-&gt;task_id)
-<a name="l00295"></a>00295           -&gt;set(<span class="stringliteral">&#39;shift_status_id&#39;</span>, $scenShift-&gt;shift_status_id)
-<a name="l00296"></a>00296           -&gt;set(<span class="stringliteral">&#39;staff_wave&#39;</span>, $scenShift-&gt;staff_wave)
-<a name="l00297"></a>00297           -&gt;set(<span class="stringliteral">&#39;deployment_algorithm_id&#39;</span>, $scenShift-&gt;deployment_algorithm_id);
-<a name="l00298"></a>00298       $eventShift-&gt;save();
-<a name="l00299"></a>00299       $eventShift-&gt;free(TRUE);
-<a name="l00300"></a>00300     }
-<a name="l00301"></a>00301     $scenarioShifts-&gt;free(TRUE);
-<a name="l00302"></a>00302     <span class="keywordflow">return</span> 1;
-<a name="l00303"></a>00303   }
-<a name="l00304"></a>00304 
-<a name="l00305"></a>00305   <span class="keyword">public</span> function migrateStaffPool($scenario_id, $event_id)
-<a name="l00306"></a>00306   {
-<a name="l00307"></a>00307     $existingScenarioStaffPools = Doctrine_Query::create()
-<a name="l00308"></a>00308             -&gt;from(<span class="stringliteral">&#39;agScenarioStaffResource ssr&#39;</span>)
-<a name="l00309"></a>00309             -&gt;where(<span class="stringliteral">&#39;scenario_id&#39;</span>, $scenario_id)
-<a name="l00310"></a>00310             -&gt;orderBy(<span class="stringliteral">&#39;deployment_weight&#39;</span>)
-<a name="l00311"></a>00311             -&gt;execute();
-<a name="l00312"></a>00312     <span class="keywordflow">foreach</span> ($existingScenarioStaffPools AS $scenStfPool) {
-<a name="l00313"></a>00313       $eventStaff = <span class="keyword">new</span> agEventStaff();
-<a name="l00314"></a>00314       $eventStaff-&gt;set(<span class="stringliteral">&#39;event_id&#39;</span>, $event_id)
-<a name="l00315"></a>00315           -&gt;set(<span class="stringliteral">&#39;staff_resource_id&#39;</span>, $scenStfPool-&gt;staff_resource_id);
-<a name="l00316"></a>00316       $eventStaff-&gt;save();
-<a name="l00317"></a>00317 
-<a name="l00318"></a>00318       <span class="comment">// @TODO Staff allocation status should be determine by the message responses.  Currently it is hard-coded to 1 as available.</span>
-<a name="l00319"></a>00319       $unAvailableStaffStatus = Doctrine_Core::getTable(<span class="stringliteral">&#39;agStaffAllocationStatus&#39;</span>)-&gt;findby(<span class="stringliteral">&#39;staff_allocation_status&#39;</span>, <span class="stringliteral">&#39;unavailable&#39;</span>);
-<a name="l00320"></a>00320       $eventStaffStatus = <span class="keyword">new</span> agEventStaffStatus();
-<a name="l00321"></a>00321       $eventStaffStatus-&gt;set(<span class="stringliteral">&#39;event_staff-id&#39;</span>, $eventStaff-&gt;id)
-<a name="l00322"></a>00322           -&gt;set(<span class="stringliteral">&#39;time_stamp&#39;</span>, <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>))
-<a name="l00323"></a>00323           -&gt;set(<span class="stringliteral">&#39;staff_allocation_status_id&#39;</span>, $unAvailableStaffStatus);
-<a name="l00324"></a>00324       $eventStaffStatus-&gt;free(TRUE);
-<a name="l00325"></a>00325 
-<a name="l00326"></a>00326       $eventStaff-&gt;free(TRUE);
-<a name="l00327"></a>00327     }
-<a name="l00328"></a>00328 
-<a name="l00329"></a>00329     $existingScenarioStaffPools-&gt;free(TRUE);
-<a name="l00330"></a>00330     <span class="keywordflow">return</span> 1;
-<a name="l00331"></a>00331   }
-<a name="l00332"></a>00332 
-<a name="l00333"></a><a class="code" href="classeventActions.html#a764d91d45a4ba0774070229b7657cc06">00333</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a764d91d45a4ba0774070229b7657cc06">migrateScenarioToEvent</a>($scenario_id, $event_id)
-<a name="l00334"></a>00334   {
-<a name="l00335"></a>00335 
-<a name="l00336"></a>00336     $con = Doctrine_Manager::getInstance()-&gt;getConnectionForComponent(<span class="stringliteral">&#39;agEvent&#39;</span>);
-<a name="l00337"></a>00337 
-<a name="l00338"></a>00338     <span class="keywordflow">try</span> {
-<a name="l00339"></a>00339       $con-&gt;beginTransaction();
-<a name="l00340"></a>00340 
-<a name="l00347"></a>00347       <a class="code" href="classagScenarioGenerator.html#a4b1edfe20431775f4a3757d306117657" title="shiftGenerator() Auto-generate shifts from ag_shift_template table to ag_scenario_shift table...">agScenarioGenerator::shiftGenerator</a>();
-<a name="l00354"></a>00354       $this-&gt;migrateFacilityGroups($scenario_id, $event_id);
-<a name="l00355"></a>00355 
-<a name="l00361"></a>00361       Doctrine_query::create()-&gt;from(<span class="stringliteral">&#39;agScenarioStaffResource&#39;</span>)-&gt;delete();
-<a name="l00362"></a>00362       Doctrine_query::create()-&gt;from(<span class="stringliteral">&#39;agEventStaff&#39;</span>)-&gt;delete();
-<a name="l00366"></a>00366       $lucene_queries = Doctrine_Query::create()
-<a name="l00367"></a>00367               -&gt;select(<span class="stringliteral">&#39;ssg.id, ssg.scenario_id, ls.query_condition, ls.id&#39;</span>)
-<a name="l00368"></a>00368               -&gt;from(<span class="stringliteral">&#39;agScenarioStaffGenerator ssg&#39;</span>)
-<a name="l00369"></a>00369               -&gt;innerJoin(<span class="stringliteral">&#39;ssg.agLuceneSearch ls&#39;</span>)
-<a name="l00370"></a>00370               -&gt;execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-<a name="l00371"></a>00371       <span class="keywordflow">foreach</span> ($lucene_queries as $lucene_query) {
-<a name="l00372"></a>00372         $staff_resource_ids = <a class="code" href="classagScenarioGenerator.html#aedf38a810e3df80a82a8e03753f577d4" title="staffPoolGenerator() Auto-generate staff pool using lucene search defined in agScenarioStaffGenerator...">agScenarioGenerator::staffPoolGenerator</a>($lucene_query[<span class="stringliteral">&#39;ls_query_condition&#39;</span>], $lucene_query[<span class="stringliteral">&#39;ssg_scenario_id&#39;</span>]);
-<a name="l00373"></a>00373         <a class="code" href="classagScenarioGenerator.html#ac70a8b9c1365504782cb12589af8cc62" title="saveStaffPool() Save staff resource pool to db.">agScenarioGenerator::saveStaffPool</a>($staff_resource_ids);
-<a name="l00374"></a>00374       }
-<a name="l00375"></a>00375 
-<a name="l00376"></a>00376       <span class="comment">// 4. Copy over staff pool</span>
-<a name="l00377"></a>00377       $this-&gt;migrateStaffPool($scenario_id, $event_id);
-<a name="l00378"></a>00378       <span class="comment">// 5. Populate agEventStaffShift (assigning event staffs to shifts).</span>
-<a name="l00379"></a>00379       <span class="comment">// 6. Update event status to deployed/active?</span>
-<a name="l00380"></a>00380 
-<a name="l00381"></a>00381       $con-&gt;commit();
-<a name="l00382"></a>00382     } <span class="keywordflow">catch</span> (Exception $e) {
-<a name="l00383"></a>00383       $con-&gt;rollBack();
-<a name="l00384"></a>00384 
-<a name="l00385"></a>00385       <span class="keywordflow">throw</span> $e;
-<a name="l00386"></a>00386     }
-<a name="l00387"></a>00387 
-<a name="l00388"></a>00388     <span class="keywordflow">return</span> $migrationResult;
-<a name="l00389"></a>00389   }
-<a name="l00390"></a>00390 
-<a name="l00391"></a><a class="code" href="classeventActions.html#ab7d138b9e2b6f47d58c90394384178ab">00391</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#ab7d138b9e2b6f47d58c90394384178ab">executeList</a>(sfWebRequest $request)
-<a name="l00392"></a>00392   {
-<a name="l00393"></a>00393     $this-&gt;ag_events = Doctrine_Core::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00394"></a>00394             -&gt;createQuery(<span class="charliteral">&#39;a&#39;</span>)
-<a name="l00395"></a>00395             -&gt;select(<span class="stringliteral">&#39;a.*&#39;</span>)
-<a name="l00396"></a>00396             -&gt;from(<span class="stringliteral">&#39;agEvent a&#39;</span>)
-<a name="l00397"></a>00397             -&gt;execute();
-<a name="l00398"></a>00398 
-<a name="l00402"></a>00402   }
-<a name="l00403"></a>00403 
-<a name="l00404"></a>00404   <span class="keyword">public</span> function executeReview(sfWebRequest $request)
-<a name="l00405"></a>00405   {
-<a name="l00406"></a>00406 
-<a name="l00407"></a>00407   }
+<a name="l00192"></a>00192         <span class="comment">//have to do this for delete also, i.e. delete the event_scenario object</span>
+<a name="l00193"></a>00193         <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;scenario_id&#39;</span>) &amp;&amp; $request-&gt;getParameter(<span class="stringliteral">&#39;scenario_id&#39;</span>) != <span class="stringliteral">&quot;&quot;</span>) {
+<a name="l00194"></a>00194           <span class="comment">//the way this is constructed we will always have a scenario_id</span>
+<a name="l00195"></a>00195           $ag_event_scenario = <span class="keyword">new</span> agEventScenario();
+<a name="l00196"></a>00196           $ag_event_scenario-&gt;setScenarioId($request-&gt;getParameter(<span class="stringliteral">&#39;scenario_id&#39;</span>));
+<a name="l00197"></a>00197           $ag_event_scenario-&gt;setEventId($ag_event-&gt;getId());
+<a name="l00198"></a>00198           $ag_event_scenario-&gt;save();
+<a name="l00199"></a>00199           $this-&gt;redirect(<span class="stringliteral">&#39;event/deploy?event=&#39;</span> . urlencode($ag_event-&gt;getEventName()));
+<a name="l00200"></a>00200         }
+<a name="l00201"></a>00201         $this-&gt;blackOutFacilities = <a class="code" href="classagEventFacilityHelper.html#ae69a607b1055b735b7b44f6c0e91f6fb" title="Returns facilities that are currently in the blackout period based on the passed $activation time...">agEventFacilityHelper::returnActivationBlacklistFacilities</a>($ag_event-&gt;getId(), $ag_event-&gt;getZeroHour());
+<a name="l00202"></a>00202         $this-&gt;redirect(<span class="stringliteral">&#39;event/active?event=&#39;</span> . urlencode($ag_event-&gt;getEventName()));
+<a name="l00203"></a>00203       }
+<a name="l00204"></a>00204     } <span class="keywordflow">else</span> {
+<a name="l00205"></a>00205       <span class="comment">//get scenario information passed from previous form</span>
+<a name="l00206"></a>00206       <span class="comment">//we should save the scenario that this event is based on</span>
+<a name="l00207"></a>00207       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;ag_scenario_list&#39;</span>)) {
+<a name="l00208"></a>00208         $this-&gt;scenario_id = $request-&gt;getParameter(<span class="stringliteral">&#39;ag_scenario_list&#39;</span>);
+<a name="l00209"></a>00209         $this-&gt;scenarioName = Doctrine::getTable(<span class="stringliteral">&#39;agScenario&#39;</span>)
+<a name="l00210"></a>00210                 -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;scenario_id)
+<a name="l00211"></a>00211                 -&gt;getFirst()-&gt;scenario;
+<a name="l00212"></a>00212       }
+<a name="l00213"></a>00213       $this-&gt;metaForm = <span class="keyword">new</span> <a class="code" href="classPluginagEventDefForm.html">PluginagEventDefForm</a>($eventMeta);
+<a name="l00214"></a>00214     }
+<a name="l00215"></a>00215 
+<a name="l00216"></a>00216     <span class="comment">//as a rule of thumb, actions should post to themself and then redirect</span>
+<a name="l00217"></a>00217   }
+<a name="l00218"></a>00218 
+<a name="l00223"></a><a class="code" href="classeventActions.html#ab7d138b9e2b6f47d58c90394384178ab">00223</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#ab7d138b9e2b6f47d58c90394384178ab" title="event/list shows a listing of events, this provides the list data to the listSuccess template...">executeList</a>(sfWebRequest $request)
+<a name="l00224"></a>00224   {
+<a name="l00225"></a>00225     $this-&gt;ag_events = agDoctrineQuery::create()
+<a name="l00226"></a>00226             -&gt;select(<span class="stringliteral">&#39;a.*&#39;</span>)
+<a name="l00227"></a>00227             -&gt;from(<span class="stringliteral">&#39;agEvent a&#39;</span>)
+<a name="l00228"></a>00228             -&gt;execute();
+<a name="l00229"></a>00229   }
+<a name="l00230"></a>00230 
+<a name="l00235"></a><a class="code" href="classeventActions.html#a71808bd9dfe73252f25a39b7c2b63f76">00235</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a71808bd9dfe73252f25a39b7c2b63f76" title="provides event staff pool management functions.">executeStaffpool</a>(sfWebRequest $request)
+<a name="l00236"></a>00236   {
+<a name="l00237"></a>00237     $this-&gt;setEventBasics($request);
+<a name="l00238"></a>00238 
+<a name="l00239"></a>00239     $this-&gt;saved_searches = $existing = Doctrine_Core::getTable(<span class="stringliteral">&#39;AgScenarioStaffGenerator&#39;</span>)
+<a name="l00240"></a>00240             -&gt;findAll();
+<a name="l00241"></a>00241 
+<a name="l00242"></a>00242     <span class="comment">//get the possible filters from our request eg. &amp;fr=1&amp;type=generalist&amp;org=volunteer</span>
+<a name="l00243"></a>00243     $filters = array();
+<a name="l00244"></a>00244     <span class="keywordflow">foreach</span> ($request-&gt;getParameterHolder() as $parameter =&gt; $filter) { <span class="comment">//(&#39;filter&#39;)</span>
+<a name="l00245"></a>00245       <span class="keywordflow">if</span> ($parameter == <span class="stringliteral">&#39;fr&#39;</span>) {
+<a name="l00246"></a>00246         $filters[<span class="stringliteral">&#39;essh.event_facility_resource_id&#39;</span>] = $filter;
+<a name="l00247"></a>00247       }
+<a name="l00248"></a>00248       <span class="keywordflow">if</span> ($parameter == <span class="stringliteral">&#39;st&#39;</span>) {
+<a name="l00249"></a>00249         $filters[<span class="stringliteral">&#39;sr.staff_resource_type_id&#39;</span>] = $filter;
+<a name="l00250"></a>00250       }
+<a name="l00251"></a>00251       <span class="keywordflow">if</span> ($parameter == <span class="stringliteral">&#39;so&#39;</span>) {
+<a name="l00252"></a>00252         $filters[<span class="stringliteral">&#39;sro.organization_id&#39;</span>] = $filter;
+<a name="l00253"></a>00253       }
+<a name="l00254"></a>00254     }
+<a name="l00255"></a>00255     <span class="comment">//set up inputs for filter form</span>
+<a name="l00256"></a>00256     $inputs = array(
+<a name="l00257"></a>00257       <span class="stringliteral">&#39;st&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agStaffResourceType&#39;</span>, <span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Staff Type&#39;</span>, <span class="stringliteral">&#39;add_empty&#39;</span> =&gt; <span class="keyword">true</span>)), <span class="comment">// &#39;class&#39; =&gt; &#39;filter&#39;)),</span>
+<a name="l00258"></a>00258       <span class="stringliteral">&#39;so&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agOrganization&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getOrganization&#39;</span>, <span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Staff Organization&#39;</span>, <span class="stringliteral">&#39;add_empty&#39;</span> =&gt; <span class="keyword">true</span>)), <span class="comment">//, &#39;class&#39; =&gt; &#39;filter&#39;))</span>
+<a name="l00259"></a>00259       <span class="stringliteral">&#39;fr&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agEventFacilityResource&#39;</span>, <span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Facility Resource&#39;</span>, <span class="stringliteral">&#39;add_empty&#39;</span> =&gt; <span class="keyword">true</span>))
+<a name="l00260"></a>00260     );
+<a name="l00262"></a>00262     $this-&gt;filterForm = <span class="keyword">new</span> sfForm(null, array(), <span class="keyword">false</span>);
+<a name="l00263"></a>00263     <span class="comment">//$this-&gt;filterForm-&gt;getWidgetSchema()-&gt;setNameFormat(&#39;filter[%s]&#39;);</span>
+<a name="l00264"></a>00264     <span class="keywordflow">foreach</span> ($inputs as $key =&gt; $input) {
+<a name="l00265"></a>00265       $input-&gt;setAttribute(<span class="stringliteral">&#39;class&#39;</span>, <span class="stringliteral">&#39;filter&#39;</span>);
+<a name="l00266"></a>00266       $this-&gt;filterForm-&gt;setWidget($key, $input);
+<a name="l00267"></a>00267     }
+<a name="l00268"></a>00268 
+<a name="l00269"></a>00269     <span class="comment">//begin construction of query used for listing</span>
+<a name="l00270"></a>00270     $query = agDoctrineQuery::create()
+<a name="l00271"></a>00271             -&gt;select(<span class="stringliteral">&#39;es.id, essh.id, esh.event_facility_resource_id, efr.facility_resource_id, fr.facility_id, f.facility_name, sr.id, srt.staff_resource_type, sro.id, o.organization, s.id, s.staff_status_id, ss.staff_status, p.id, ess.staff_allocation_status_id&#39;</span>)<span class="comment">//, sas.staff_allocation_status&#39;) //maybe we should only get the id since it&#39;s needed for dropdown</span>
+<a name="l00272"></a>00272             -&gt;from(<span class="stringliteral">&#39;agEventStaff es,</span>
+<a name="l00273"></a>00273 <span class="stringliteral">              es.agEventStaffShift essh,</span>
+<a name="l00274"></a>00274 <span class="stringliteral">              essh.agEventShift esh,</span>
+<a name="l00275"></a>00275 <span class="stringliteral">              esh.agEventFacilityResource efr,</span>
+<a name="l00276"></a>00276 <span class="stringliteral">              efr.agFacilityResource fr,</span>
+<a name="l00277"></a>00277 <span class="stringliteral">              fr.agFacility f,</span>
+<a name="l00278"></a>00278 <span class="stringliteral">              es.agStaffResource sr,</span>
+<a name="l00279"></a>00279 <span class="stringliteral">              sr.agStaffResourceType srt,</span>
+<a name="l00280"></a>00280 <span class="stringliteral">              sr.agStaffResourceOrganization sro,</span>
+<a name="l00281"></a>00281 <span class="stringliteral">              sro.agOrganization o,</span>
+<a name="l00282"></a>00282 <span class="stringliteral">              sr.agStaff s,</span>
+<a name="l00283"></a>00283 <span class="stringliteral">              s.agStaffStatus ss,</span>
+<a name="l00284"></a>00284 <span class="stringliteral">              s.agPerson p,</span>
+<a name="l00285"></a>00285 <span class="stringliteral">              es.agEventStaffStatus ess&#39;</span>)
+<a name="l00286"></a>00286             <span class="comment">//ess.agStaffAllocationStatus sas&#39;)</span>
+<a name="l00287"></a>00287             -&gt;where(<span class="stringliteral">&#39;es.event_id = ?&#39;</span>, $this-&gt;event_id);
+<a name="l00288"></a>00288 
+<a name="l00289"></a>00289     <span class="keywordflow">if</span> (<span class="keyword">sizeof</span>($filters) &gt; 0) {
+<a name="l00290"></a>00290       <span class="keywordflow">foreach</span> ($filters as $field =&gt; $filter) {
+<a name="l00291"></a>00291         $query-&gt;andWhere($field . <span class="stringliteral">&#39; = ?&#39;</span>, $filter);
+<a name="l00292"></a>00292       }
+<a name="l00293"></a>00293     }
+<a name="l00294"></a>00294 
+<a name="l00295"></a>00295     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
+<a name="l00296"></a>00296       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;event_status&#39;</span>)) {
+<a name="l00297"></a>00297         <span class="keywordflow">foreach</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;event_status&#39;</span>) as $event_status) {
+<a name="l00298"></a>00298           <span class="comment">//this is inefficient here as we are executing the same query in a loop to get associated objects</span>
+<a name="l00299"></a>00299 <span class="comment">//check to see if this staff member already has a status set.</span>
+<a name="l00300"></a>00300           $eventStaffStatusObject = agDoctrineQuery::create()
+<a name="l00301"></a>00301                   -&gt;from(<span class="stringliteral">&#39;agEventStaffStatus a&#39;</span>)
+<a name="l00302"></a>00302                   -&gt;where(<span class="stringliteral">&#39;a.event_staff_id =?&#39;</span>, $event_status[<span class="stringliteral">&#39;event_staff_id&#39;</span>])
+<a name="l00303"></a>00303                   -&gt;fetchOne();
+<a name="l00304"></a>00304 <span class="comment">//NEW</span>
+<a name="l00305"></a>00305           <span class="keywordflow">if</span> (!$eventStaffStatusObject) {
+<a name="l00306"></a>00306             $eventStaffStatusObject = <span class="keyword">new</span> agEventStaffStatus();
+<a name="l00307"></a>00307             $eventStaffStatusObject-&gt;time_stamp = date(<span class="stringliteral">&#39;Y-m-d H:i:s&#39;</span>, time());
+<a name="l00308"></a>00308             $eventStaffStatusObject-&gt;event_staff_id = $event_status[<span class="stringliteral">&#39;event_staff_id&#39;</span>];
+<a name="l00309"></a>00309             $eventStaffStatusObject-&gt;staff_allocation_status_id = $event_status[<span class="stringliteral">&#39;status&#39;</span>];
+<a name="l00310"></a>00310             $eventStaffStatusObject-&gt;save();
+<a name="l00311"></a>00311           } <span class="keywordflow">else</span> {
+<a name="l00312"></a>00312 <span class="comment">//UPDATE  ONLY IF staff_allocation_status has changed</span>
+<a name="l00313"></a>00313             <span class="comment">//technically this should always be an update, by the time a staff member is in an event</span>
+<a name="l00314"></a>00314             <span class="keywordflow">if</span> ($eventStaffStatusObject-&gt;staff_allocation_status_id != $event_status[<span class="stringliteral">&#39;status&#39;</span>]) {
+<a name="l00315"></a>00315               $eventStaffStatusObject-&gt;time_stamp = date(<span class="stringliteral">&#39;Y-m-d H:i:s&#39;</span>, time());
+<a name="l00316"></a>00316               <span class="comment">//$eventStaffStatusObject-&gt;event_staff_id = $event_status[&#39;event_staff_id&#39;];</span>
+<a name="l00317"></a>00317               $eventStaffStatusObject-&gt;staff_allocation_status_id = $event_status[<span class="stringliteral">&#39;status&#39;</span>];
+<a name="l00318"></a>00318               $eventStaffStatusObject-&gt;save();
+<a name="l00319"></a>00319             }
+<a name="l00320"></a>00320           }
+<a name="l00321"></a>00321           <span class="comment">//we should throw a check here to see if the most recent status is the same as incoming</span>
+<a name="l00322"></a>00322         }
+<a name="l00323"></a>00323       }
+<a name="l00324"></a>00324     }
+<a name="l00325"></a>00325     $eventStaff = array();
+<a name="l00326"></a>00326     $ag_event_staff = $query-&gt;execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+<a name="l00327"></a>00327     <span class="keywordflow">foreach</span> ($ag_event_staff as $key =&gt; $value) {
+<a name="l00328"></a>00328       $person_array[] = $value[<span class="stringliteral">&#39;p_id&#39;</span>];
+<a name="l00329"></a>00329       <span class="comment">//$remapped_array[$ag_event_staff[&#39;es_id&#39;]] = $</span>
+<a name="l00330"></a>00330     }
+<a name="l00331"></a>00331     $names = <span class="keyword">new</span> <a class="code" href="classagPersonNameHelper.html">agPersonNameHelper</a>($person_array); <span class="comment">//we need to get persons from the event staff ids that are returned here</span>
+<a name="l00332"></a>00332     $person_names = $names-&gt;getPrimaryNameByType();
+<a name="l00333"></a>00333 
+<a name="l00334"></a>00334     <span class="comment">//$names-&gt;</span>
+<a name="l00335"></a>00335     <span class="comment">//this is the desired format of the return array:</span>
+<a name="l00336"></a>00336     $this-&gt;widget = <span class="keyword">new</span> sfForm();
+<a name="l00337"></a>00337     $this-&gt;widget-&gt;getWidgetSchema()-&gt;setNameFormat(<span class="stringliteral">&#39;event_status[][%s]&#39;</span>);
+<a name="l00338"></a>00338     $this-&gt;widget-&gt;setWidget(<span class="stringliteral">&#39;status&#39;</span>, <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agStaffAllocationStatus&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getStaffAllocationStatus&#39;</span>)));
+<a name="l00339"></a>00339 
+<a name="l00340"></a>00340     <span class="comment">//the agStaffAllocationStatus ID coming from each of the selections will be saved to ag_Event_staff_status.</span>
+<a name="l00341"></a>00341     $this-&gt;widget-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;status&#39;</span>, <span class="keyword">false</span>);
+<a name="l00343"></a>00343     $this-&gt;form_action = <span class="stringliteral">&#39;event/staffpool?event=&#39;</span> . $this-&gt;event_name;
+<a name="l00344"></a>00344     <span class="keywordflow">foreach</span> ($ag_event_staff as $staff =&gt; $value) {
+<a name="l00345"></a>00345       $result_array[] = array(
+<a name="l00346"></a>00346         <span class="stringliteral">&#39;fn&#39;</span> =&gt; $person_names[$value[<span class="stringliteral">&#39;p_id&#39;</span>]][<span class="stringliteral">&#39;given&#39;</span>],
+<a name="l00347"></a>00347         <span class="stringliteral">&#39;ln&#39;</span> =&gt; $person_names[$value[<span class="stringliteral">&#39;p_id&#39;</span>]][<span class="stringliteral">&#39;family&#39;</span>],
+<a name="l00348"></a>00348         <span class="stringliteral">&#39;organization_name&#39;</span> =&gt; $value[<span class="stringliteral">&#39;o_organization&#39;</span>],
+<a name="l00349"></a>00349         <span class="stringliteral">&#39;status&#39;</span> =&gt; $value[<span class="stringliteral">&#39;ss_staff_status&#39;</span>],
+<a name="l00350"></a>00350         <span class="stringliteral">&#39;type&#39;</span> =&gt; $value[<span class="stringliteral">&#39;srt_staff_resource_type&#39;</span>],
+<a name="l00351"></a>00351         <span class="stringliteral">&#39;facility&#39;</span> =&gt; $value[<span class="stringliteral">&#39;f_facility_name&#39;</span>],
+<a name="l00352"></a>00352         <span class="stringliteral">&#39;es_id&#39;</span> =&gt; $value[<span class="stringliteral">&#39;es_id&#39;</span>],
+<a name="l00353"></a>00353         <span class="stringliteral">&#39;ess_staff_allocation_status_id&#39;</span> =&gt; $value[<span class="stringliteral">&#39;ess_staff_allocation_status_id&#39;</span>]
+<a name="l00354"></a>00354       );
+<a name="l00355"></a>00355     }
+<a name="l00356"></a>00356 
+<a name="l00357"></a>00357     $this-&gt;ag_event_staff = $result_array;
+<a name="l00358"></a>00358     <span class="comment">//$thingy = $query-&gt;getSqlQuery();</span>
+<a name="l00359"></a>00359 <span class="comment">//    foreach ($this-&gt;ag_event_staff as $eventFacilityGroup) {</span>
+<a name="l00360"></a>00360 <span class="comment">//      $tempArray = $this-&gt;queryForTable($eventFacilityGroup-&gt;id);</span>
+<a name="l00361"></a>00361 <span class="comment">//      foreach ($tempArray as $ta) {</span>
+<a name="l00362"></a>00362 <span class="comment">//        array_push($eventStaff, $ta);</span>
+<a name="l00363"></a>00363 <span class="comment">//      }</span>
+<a name="l00364"></a>00364 <span class="comment">//    }</span>
+<a name="l00365"></a>00365     <span class="comment">//$this-&gt;facilityGroupArray = $facilityGroupArray;</span>
+<a name="l00366"></a>00366     $this-&gt;pager = <span class="keyword">new</span> <a class="code" href="classagArrayPager.html" title="This class is used to provide paging for array-based datasets.">agArrayPager</a>(null, 10);
+<a name="l00367"></a>00367 
+<a name="l00368"></a>00368 
+<a name="l00369"></a>00369     $this-&gt;pager-&gt;setResultArray($this-&gt;ag_event_staff);
+<a name="l00370"></a>00370     $this-&gt;pager-&gt;setPage($this-&gt;getRequestParameter(<span class="stringliteral">&#39;page&#39;</span>, 1));
+<a name="l00371"></a>00371     $this-&gt;pager-&gt;init();
+<a name="l00372"></a>00372     <span class="comment">//set up the widget for use in the &#39; list form &#39;</span>
+<a name="l00373"></a>00373   }
+<a name="l00374"></a>00374 
+<a name="l00379"></a><a class="code" href="classeventActions.html#a50a8857c6a3263d25ca18c6989feea9d">00379</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a50a8857c6a3263d25ca18c6989feea9d" title="provide event shift CRUD">executeShifts</a>(sfWebRequest $request)
+<a name="l00380"></a>00380   {
+<a name="l00381"></a>00381     $this-&gt;setEventBasics($request);
+<a name="l00382"></a>00382 <span class="comment">//CREATE  / UPDATE</span>
+<a name="l00383"></a>00383     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
+<a name="l00384"></a>00384       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>) &amp;&amp; $request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>) == <span class="stringliteral">&#39;new&#39;</span>) {
+<a name="l00385"></a>00385         $this-&gt;eventshiftform = <span class="keyword">new</span> agEventShiftForm();
+<a name="l00386"></a>00386       } elseif ($request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>) &amp;&amp; is_numeric($request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>))) {
+<a name="l00387"></a>00387         $ag_event_shift = Doctrine_Core::getTable(<span class="stringliteral">&#39;agEventShift&#39;</span>)
+<a name="l00388"></a>00388                 -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>))
+<a name="l00389"></a>00389                 -&gt;getFirst();
+<a name="l00390"></a>00390         $this-&gt;eventshiftform = <span class="keyword">new</span> agEventShiftForm($ag_event_shift);
+<a name="l00391"></a>00391       } elseif ($request-&gt;getParameter(<span class="stringliteral">&#39;delete&#39;</span>)) {
+<a name="l00392"></a>00392 <span class="comment">//DELETE</span>
+<a name="l00393"></a>00393       }
+<a name="l00394"></a>00394       $this-&gt;eventshiftform-&gt;bind($request-&gt;getParameter($this-&gt;eventshiftform-&gt;getName()), $request-&gt;getFiles($this-&gt;eventshiftform-&gt;getName()));
+<a name="l00395"></a>00395       $formvalues = $request-&gt;getParameter($this-&gt;eventshiftform-&gt;getName());
+<a name="l00396"></a>00396       <span class="keywordflow">if</span> ($this-&gt;eventshiftform-&gt;isValid()) { <span class="comment">//form is not passing validation because the bind is failing?</span>
+<a name="l00397"></a>00397         $ag_event_shift = $this-&gt;eventshiftform-&gt;save();
+<a name="l00398"></a>00398         $this-&gt;generateUrl(<span class="stringliteral">&#39;event_shifts&#39;</span>, array(<span class="stringliteral">&#39;module&#39;</span> =&gt; <span class="stringliteral">&#39;event&#39;</span>,
+<a name="l00399"></a>00399           <span class="stringliteral">&#39;action&#39;</span> =&gt; <span class="stringliteral">&#39;shifts&#39;</span>, <span class="stringliteral">&#39;event&#39;</span> =&gt; $this-&gt;event_name, <span class="stringliteral">&#39;shiftid&#39;</span> =&gt; $ag_event_shift-&gt;getId()));
+<a name="l00400"></a>00400       }
+<a name="l00401"></a>00401       $this-&gt;redirect(<span class="stringliteral">&#39;event/shifts?event=&#39;</span> . urlencode($this-&gt;event_name)); <span class="comment">//need to pass in event id</span>
+<a name="l00402"></a>00402     } <span class="keywordflow">else</span> {
+<a name="l00403"></a>00403 <span class="comment">//READ</span>
+<a name="l00404"></a>00404       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>) &amp;&amp; $request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>) == <span class="stringliteral">&#39;new&#39;</span>) {
+<a name="l00405"></a>00405         $this-&gt;eventshiftform = <span class="keyword">new</span> agEventShiftForm();
+<a name="l00406"></a>00406         $this-&gt;setTemplate(<span class="stringliteral">&#39;editshift&#39;</span>);
+<a name="l00407"></a>00407       } elseif ($request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>) &amp;&amp; is_numeric($request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>))) {
 <a name="l00408"></a>00408 
-<a name="l00409"></a>00409   <span class="keyword">public</span> function executeGis(sfWebRequest $request)
-<a name="l00410"></a>00410   {
-<a name="l00411"></a>00411     
-<a name="l00412"></a>00412   }
-<a name="l00413"></a>00413 
-<a name="l00414"></a>00414   <span class="keyword">public</span> function executeDashboard(sfWebRequest $request)
-<a name="l00415"></a>00415   {
-<a name="l00416"></a>00416     
-<a name="l00417"></a>00417   }
-<a name="l00418"></a>00418 
-<a name="l00419"></a>00419   <span class="keyword">public</span> function executeActive(sfWebRequest $request)
-<a name="l00420"></a>00420   {
-<a name="l00421"></a>00421     $this-&gt;event_id = $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>);
-<a name="l00422"></a>00422     $this-&gt;eventName = Doctrine::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00423"></a>00423             -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;event_id)
-<a name="l00424"></a>00424             -&gt;getFirst()-&gt;event_name;
-<a name="l00425"></a>00425   }
-<a name="l00426"></a>00426 
-<a name="l00427"></a>00427   <span class="keyword">public</span> function executeStaff(sfWebRequest $request)
-<a name="l00428"></a>00428   {
-<a name="l00429"></a>00429     
-<a name="l00430"></a>00430   }
-<a name="l00431"></a>00431 
-<a name="l00432"></a>00432   <span class="keyword">public</span> function executeStaffin(sfWebRequest $request)
-<a name="l00433"></a>00433   {
-<a name="l00434"></a>00434 
-<a name="l00435"></a>00435   }
-<a name="l00436"></a>00436 
-<a name="l00437"></a>00437   <span class="keyword">public</span> function executeInconfirm(sfWebRequest $request)
-<a name="l00438"></a>00438   {
+<a name="l00409"></a>00409         $ag_event_shift = Doctrine_Core::getTable(<span class="stringliteral">&#39;agEventShift&#39;</span>)
+<a name="l00410"></a>00410                 -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>))
+<a name="l00411"></a>00411                 -&gt;getFirst();
+<a name="l00412"></a>00412 
+<a name="l00413"></a>00413         $this-&gt;eventshiftform = <span class="keyword">new</span> agEventShiftForm($ag_event_shift);
+<a name="l00414"></a>00414         $this-&gt;setTemplate(<span class="stringliteral">&#39;editshift&#39;</span>);
+<a name="l00415"></a>00415       } <span class="keywordflow">else</span> {
+<a name="l00416"></a>00416 <span class="comment">//LIST</span>
+<a name="l00417"></a>00417         $query = agDoctrineQuery::create()
+<a name="l00418"></a>00418                 -&gt;select(<span class="stringliteral">&#39;es.*, efr.*, efg.id, efg.event_facility_group, e.*, af.*, fr.*, frt.*, srt.*, ess.*, est.*&#39;</span>)
+<a name="l00419"></a>00419                 -&gt;from(<span class="stringliteral">&#39;agEventShift as es&#39;</span>)
+<a name="l00420"></a>00420                 -&gt;leftJoin(<span class="stringliteral">&#39;es.agEventStaffShift ess&#39;</span>)
+<a name="l00421"></a>00421                 -&gt;leftJoin(<span class="stringliteral">&#39;ess.agEventStaff est&#39;</span>)
+<a name="l00422"></a>00422                 -&gt;leftJoin(<span class="stringliteral">&#39;es.agStaffResourceType srt&#39;</span>)
+<a name="l00423"></a>00423                 -&gt;leftJoin(<span class="stringliteral">&#39;es.agEventFacilityResource AS efr&#39;</span>)
+<a name="l00424"></a>00424                 -&gt;leftJoin(<span class="stringliteral">&#39;efr.agEventFacilityGroup AS efg&#39;</span>)
+<a name="l00425"></a>00425                 -&gt;leftJoin(<span class="stringliteral">&#39;efr.agFacilityResource fr, fr.agFacility af, fr.agFacilityResourceType frt&#39;</span>)
+<a name="l00426"></a>00426                 -&gt;leftJoin(<span class="stringliteral">&#39;efg.agEvent AS e&#39;</span>)
+<a name="l00427"></a>00427                 -&gt;where(<span class="stringliteral">&#39;e.id = ?&#39;</span>, $this-&gt;event_id);
+<a name="l00428"></a>00428 
+<a name="l00432"></a>00432         $this-&gt;pager = <span class="keyword">new</span> sfDoctrinePager(<span class="stringliteral">&#39;agEventShift&#39;</span>, 20);
+<a name="l00433"></a>00433 
+<a name="l00438"></a>00438         $this-&gt;pager-&gt;setQuery($query);
 <a name="l00439"></a>00439 
-<a name="l00440"></a>00440   }
-<a name="l00441"></a>00441 
-<a name="l00442"></a>00442   <span class="keyword">public</span> function executeStaffout(sfWebRequest $request)
-<a name="l00443"></a>00443   {
-<a name="l00444"></a>00444     
-<a name="l00445"></a>00445   }
-<a name="l00446"></a>00446 
-<a name="l00447"></a>00447   <span class="keyword">public</span> function executeOutconfirm(sfWebRequest $request)
-<a name="l00448"></a>00448   {
-<a name="l00449"></a>00449 
-<a name="l00450"></a>00450   }
-<a name="l00451"></a>00451 
-<a name="l00452"></a>00452   <span class="keyword">public</span> function executeListgroups(sfWebRequest $request)
-<a name="l00453"></a>00453   {
-<a name="l00454"></a>00454     $query = Doctrine_Core::getTable(<span class="stringliteral">&#39;agEventFacilityGroup&#39;</span>)
-<a name="l00455"></a>00455             -&gt;createQuery(<span class="charliteral">&#39;a&#39;</span>)
-<a name="l00456"></a>00456             -&gt;select(<span class="stringliteral">&#39;a.*, afr.*, afgt.*, fr.*&#39;</span>)
-<a name="l00457"></a>00457             -&gt;from(<span class="stringliteral">&#39;agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr&#39;</span>);
-<a name="l00458"></a>00458 
-<a name="l00459"></a>00459     <span class="comment">// If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.</span>
-<a name="l00460"></a>00460     <span class="keywordflow">if</span> ($request-&gt;hasParameter(<span class="stringliteral">&#39;event&#39;</span>)) {
-<a name="l00461"></a>00461       $this-&gt;<span class="keyword">event</span> = Doctrine_Query::create()
-<a name="l00462"></a>00462               -&gt;select()
-<a name="l00463"></a>00463               -&gt;from(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00464"></a>00464               -&gt;where(<span class="stringliteral">&#39;event_name = ?&#39;</span>, urldecode($request-&gt;getParameter(<span class="stringliteral">&#39;event&#39;</span>)))
-<a name="l00465"></a>00465               -&gt;execute()-&gt;getFirst();
-<a name="l00466"></a>00466       $query-&gt;where(<span class="stringliteral">&#39;a.event_id = ?&#39;</span>, $this-&gt;event-&gt;id);
-<a name="l00467"></a>00467     }
-<a name="l00468"></a>00468     $facilityGroupArray = array();
-<a name="l00469"></a>00469     $this-&gt;ag_event_facility_groups = $query-&gt;execute();
-<a name="l00470"></a>00470     <span class="keywordflow">foreach</span> ($this-&gt;ag_event_facility_groups as $eventFacilityGroup) {
-<a name="l00471"></a>00471       $tempArray = $this-&gt;queryForTable($eventFacilityGroup-&gt;id);
-<a name="l00472"></a>00472       <span class="keywordflow">foreach</span> ($tempArray as $ta) {
-<a name="l00473"></a>00473         array_push($facilityGroupArray, $ta);
-<a name="l00474"></a>00474       }
-<a name="l00475"></a>00475     }
-<a name="l00476"></a>00476     $this-&gt;facilityGroupArray = $facilityGroupArray;
-<a name="l00477"></a>00477     $this-&gt;pager = <span class="keyword">new</span> <a class="code" href="classagArrayPager.html" title="This class is used to provide paging for array-based datasets.">agArrayPager</a>(null, 10);
+<a name="l00443"></a>00443         $this-&gt;pager-&gt;setPage($request-&gt;getParameter(<span class="stringliteral">&#39;page&#39;</span>, 1));
+<a name="l00444"></a>00444         $this-&gt;pager-&gt;init();
+<a name="l00445"></a>00445       }
+<a name="l00446"></a>00446     }
+<a name="l00447"></a>00447   }
+<a name="l00448"></a>00448 
+<a name="l00453"></a><a class="code" href="classeventActions.html#a4b158719b62e7d37d5d39e9e28195f8e">00453</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a4b158719b62e7d37d5d39e9e28195f8e" title="provides the ability to add staff members into a shift">executeStaffshift</a>(sfWebRequest $request)
+<a name="l00454"></a>00454   {
+<a name="l00455"></a>00455     $this-&gt;setEventBasics($request);
+<a name="l00456"></a>00456     <span class="keywordflow">if</span> ($request-&gt;isXmlHttpRequest()) {
+<a name="l00457"></a>00457       $this-&gt;XmlHttpRequest = <span class="keyword">true</span>;
+<a name="l00458"></a>00458     }
+<a name="l00459"></a>00459     $this-&gt;shift_id = $request-&gt;getParameter(<span class="stringliteral">&#39;shiftid&#39;</span>);
+<a name="l00460"></a>00460 
+<a name="l00461"></a>00461     
+<a name="l00462"></a>00462 
+<a name="l00463"></a>00463     $inputs = array(<span class="stringliteral">&#39;staff_type&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agStaffResourceType&#39;</span>, <span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Staff Type&#39;</span>, <span class="stringliteral">&#39;add_empty&#39;</span> =&gt; TRUE)), <span class="comment">// &#39;class&#39; =&gt; &#39;filter&#39;)),</span>
+<a name="l00464"></a>00464       <span class="stringliteral">&#39;staff_org&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agOrganization&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getOrganization&#39;</span>, <span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Staff Organization&#39;</span>, <span class="stringliteral">&#39;add_empty&#39;</span> =&gt; TRUE)),
+<a name="l00465"></a>00465       <span class="stringliteral">&#39;query_condition&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden()
+<a name="l00467"></a>00467     ); <span class="comment">//will have to set the class for the form elements elsewhere</span>
+<a name="l00468"></a>00468     <span class="comment">//set up inputs for form</span>
+<a name="l00469"></a>00469     $filterForm = <span class="keyword">new</span> sfForm();
+<a name="l00470"></a>00470 
+<a name="l00471"></a>00471     <span class="keywordflow">foreach</span> ($inputs as $key =&gt; $input) {
+<a name="l00472"></a>00472       $input-&gt;setAttribute(<span class="stringliteral">&#39;class&#39;</span>, <span class="stringliteral">&#39;filter&#39;</span>);
+<a name="l00473"></a>00473       $filterForm-&gt;setWidget($key, $input);
+<a name="l00474"></a>00474     }
+<a name="l00475"></a>00475     $this-&gt;filterForm = $filterForm;
+<a name="l00476"></a>00476 
+<a name="l00477"></a>00477     <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;Search&#39;</span>)) {
 <a name="l00478"></a>00478 
-<a name="l00479"></a>00479     <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;sort&#39;</span>) &amp;&amp; $request-&gt;getParameter(<span class="stringliteral">&#39;order&#39;</span>)) {
-<a name="l00480"></a>00480       $sortColumns = array(<span class="stringliteral">&#39;group&#39;</span> =&gt; <span class="stringliteral">&#39;efg_event_facility_group&#39;</span>,
-<a name="l00481"></a>00481         <span class="stringliteral">&#39;name&#39;</span> =&gt; <span class="stringliteral">&#39;f_facility_name&#39;</span>,
-<a name="l00482"></a>00482         <span class="stringliteral">&#39;code&#39;</span> =&gt; <span class="stringliteral">&#39;f_facility_code&#39;</span>,
-<a name="l00483"></a>00483         <span class="stringliteral">&#39;status&#39;</span> =&gt; <span class="stringliteral">&#39;ras_facility_resource_allocation_status&#39;</span>,
-<a name="l00484"></a>00484         <span class="stringliteral">&#39;time&#39;</span> =&gt; <span class="stringliteral">&#39;efrat_activation_time&#39;</span>,
-<a name="l00485"></a>00485         <span class="stringliteral">&#39;type&#39;</span> =&gt; <span class="stringliteral">&#39;fgt_facility_group_type&#39;</span>,
-<a name="l00486"></a>00486         <span class="stringliteral">&#39;event&#39;</span> =&gt; <span class="stringliteral">&#39;e_event_name&#39;</span>);
-<a name="l00487"></a>00487       $sort = $sortColumns[$request-&gt;getParameter(<span class="stringliteral">&#39;sort&#39;</span>)];
-<a name="l00488"></a>00488       agArraySort::$sort = $sort;
-<a name="l00489"></a>00489       usort($facilityGroupArray, array(<span class="stringliteral">&#39;agArraySort&#39;</span>, <span class="stringliteral">&#39;arraySort&#39;</span>));
-<a name="l00490"></a>00490       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;order&#39;</span>) == <span class="stringliteral">&#39;DESC&#39;</span>) {
-<a name="l00491"></a>00491         $facilityGroupArray = array_reverse($facilityGroupArray);
-<a name="l00492"></a>00492       }
-<a name="l00493"></a>00493     }
-<a name="l00494"></a>00494     $this-&gt;pager-&gt;setResultArray($facilityGroupArray);
-<a name="l00495"></a>00495     $this-&gt;pager-&gt;setPage($this-&gt;getRequestParameter(<span class="stringliteral">&#39;page&#39;</span>, 1));
-<a name="l00496"></a>00496     $this-&gt;pager-&gt;init();
-<a name="l00497"></a>00497   }
-<a name="l00498"></a>00498 
-<a name="l00499"></a>00499   <span class="keyword">public</span> function executeGroupdetail(sfWebRequest $request)
-<a name="l00500"></a>00500   {
-<a name="l00501"></a>00501     $this-&gt;eventFacilityGroup = Doctrine_Query::create()
-<a name="l00502"></a>00502             -&gt;select()
-<a name="l00503"></a>00503             -&gt;from(<span class="stringliteral">&#39;agEventFacilityGroup&#39;</span>)
-<a name="l00504"></a>00504             -&gt;where(<span class="stringliteral">&#39;event_facility_group = ?&#39;</span>, urldecode($request-&gt;getParameter(<span class="stringliteral">&#39;group&#39;</span>)))
-<a name="l00505"></a>00505             -&gt;fetchOne();
-<a name="l00506"></a>00506     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
-<a name="l00507"></a>00507       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;resource_allocation_status&#39;</span>)) {
-<a name="l00508"></a>00508         $resourceAllocation = <span class="keyword">new</span> agEventFacilityResourceStatus();
-<a name="l00509"></a>00509         $resourceAllocation-&gt;event_facility_resource_id = $request-&gt;getParameter(<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>);
-<a name="l00510"></a>00510         $resourceAllocation-&gt;facility_resource_allocation_status_id = $request-&gt;getParameter(<span class="stringliteral">&#39;resource_allocation_status&#39;</span>);
-<a name="l00511"></a>00511         $resourceAllocation-&gt;time_stamp = <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>);
-<a name="l00512"></a>00512         $resourceAllocation-&gt;save();
-<a name="l00513"></a>00513       } elseif ($request-&gt;getParameter(<span class="stringliteral">&#39;group_allocation_status&#39;</span>)) {
-<a name="l00514"></a>00514         $groupAllocation = <span class="keyword">new</span> agEventFacilityGroupStatus();
-<a name="l00515"></a>00515         $groupAllocation-&gt;event_facility_group_id = $this-&gt;eventFacilityGroup-&gt;id;
-<a name="l00516"></a>00516         $groupAllocation-&gt;facility_group_allocation_status_id = $request-&gt;getParameter(<span class="stringliteral">&#39;group_allocation_status&#39;</span>);
-<a name="l00517"></a>00517         $groupAllocation-&gt;time_stamp = <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>);
-<a name="l00518"></a>00518         $groupAllocation-&gt;save();
-<a name="l00519"></a>00519       }
-<a name="l00520"></a>00520     }
-<a name="l00521"></a>00521 
-<a name="l00522"></a>00522 
-<a name="l00523"></a>00523     $this-&gt;<span class="keyword">event</span> = Doctrine_Query::create()
-<a name="l00524"></a>00524             -&gt;select()
-<a name="l00525"></a>00525             -&gt;from(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00526"></a>00526             -&gt;where(<span class="stringliteral">&#39;event_name = ?&#39;</span>, urldecode($request-&gt;getParameter(<span class="stringliteral">&#39;event&#39;</span>)))
-<a name="l00527"></a>00527             -&gt;fetchOne();
-<a name="l00528"></a>00528     $this-&gt;results = $this-&gt;queryForTable($this-&gt;eventFacilityGroup-&gt;id);
-<a name="l00529"></a>00529 
-<a name="l00530"></a>00530     $statusIds = <a class="code" href="classagEventFacilityHelper.html#aff2165775791e7bb6bf3dd2a4f7571a6" title="Static function to return the current status id&amp;#39;s of all facility groups for a specific event...">agEventFacilityHelper::returnCurrentEventFacilityGroupStatus</a>($this-&gt;event-&gt;id);
-<a name="l00531"></a>00531 
-<a name="l00532"></a>00532     $query = Doctrine_Query::create()
-<a name="l00533"></a>00533             -&gt;select(<span class="stringliteral">&#39;s.event_facility_group_id&#39;</span>)
-<a name="l00534"></a>00534             -&gt;addSelect(<span class="stringliteral">&#39;s.facility_group_allocation_status_id&#39;</span>)
-<a name="l00535"></a>00535             -&gt;from(<span class="stringliteral">&#39;agEventFacilityGroupStatus s&#39;</span>)
-<a name="l00536"></a>00536             -&gt;whereIn(<span class="stringliteral">&#39;s.id&#39;</span>, array_keys($statusIds));
-<a name="l00537"></a>00537     <span class="comment">// Returns fgroup_id as key, status_id as val</span>
-<a name="l00538"></a>00538     $statusQuery = $query-&gt;execute(array(), <span class="stringliteral">&#39;key_value_pair&#39;</span>);
-<a name="l00539"></a>00539 
-<a name="l00540"></a>00540     $this-&gt;statusId = $statusQuery[$this-&gt;eventFacilityGroup-&gt;id];
-<a name="l00541"></a>00541     $this-&gt;form = <span class="keyword">new</span> sfForm();
-<a name="l00542"></a>00542     $this-&gt;form-&gt;setWidgets(array(
-<a name="l00543"></a>00543       <span class="stringliteral">&#39;group_allocation_status&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agFacilityGroupAllocationStatus&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getFacilityGroupAllocationStatus&#39;</span>)),
-<a name="l00544"></a>00544       <span class="stringliteral">&#39;resource_allocation_status&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agFacilityResourceAllocationStatus&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getFacilityResourceAllocationStatus&#39;</span>)),
-<a name="l00545"></a>00545     ));
-<a name="l00546"></a>00546   }
-<a name="l00547"></a>00547 
-<a name="l00548"></a>00548   <span class="keyword">private</span> function queryForTable($eventFacilityGroupId = null)
-<a name="l00549"></a>00549   {
-<a name="l00550"></a>00550     $query = Doctrine_Query::create()
-<a name="l00551"></a>00551             -&gt;select(<span class="stringliteral">&#39;efr.id&#39;</span>)
-<a name="l00552"></a>00552             -&gt;addSelect(<span class="stringliteral">&#39;f.facility_name&#39;</span>)
-<a name="l00553"></a>00553             -&gt;addSelect(<span class="stringliteral">&#39;f.facility_code&#39;</span>)
-<a name="l00554"></a>00554             -&gt;addSelect(<span class="stringliteral">&#39;frt.facility_resource_type&#39;</span>)
-<a name="l00555"></a>00555             -&gt;addSelect(<span class="stringliteral">&#39;ras.facility_resource_allocation_status&#39;</span>)
-<a name="l00556"></a>00556             -&gt;addSelect(<span class="stringliteral">&#39;f.id&#39;</span>)
-<a name="l00557"></a>00557             -&gt;addSelect(<span class="stringliteral">&#39;fr.id&#39;</span>)
-<a name="l00558"></a>00558             -&gt;addSelect(<span class="stringliteral">&#39;frt.id&#39;</span>)
-<a name="l00559"></a>00559             -&gt;addSelect(<span class="stringliteral">&#39;ras.id&#39;</span>)
-<a name="l00560"></a>00560             -&gt;addSelect(<span class="stringliteral">&#39;ers.id&#39;</span>)
-<a name="l00561"></a>00561             -&gt;addSelect(<span class="stringliteral">&#39;es.id&#39;</span>)
-<a name="l00562"></a>00562             -&gt;addSelect(<span class="stringliteral">&#39;efg.event_facility_group&#39;</span>)
-<a name="l00563"></a>00563             -&gt;addSelect(<span class="stringliteral">&#39;fgt.facility_group_type&#39;</span>)
-<a name="l00564"></a>00564             -&gt;addSelect(<span class="stringliteral">&#39;e.event_name&#39;</span>)
-<a name="l00565"></a>00565             -&gt;addSelect(<span class="stringliteral">&#39;efrat.id&#39;</span>)
-<a name="l00566"></a>00566             -&gt;addSelect(<span class="stringliteral">&#39;efrat.activation_time&#39;</span>)
-<a name="l00567"></a>00567             -&gt;from(<span class="stringliteral">&#39;agEventFacilityResource efr&#39;</span>)
-<a name="l00568"></a>00568             -&gt;innerJoin(<span class="stringliteral">&#39;efr.agFacilityResource fr&#39;</span>)
-<a name="l00569"></a>00569             -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacilityResourceStatus frs&#39;</span>)
-<a name="l00570"></a>00570             -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacilityResourceType frt&#39;</span>)
-<a name="l00571"></a>00571             -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacility f&#39;</span>)
-<a name="l00572"></a>00572             -&gt;innerJoin(<span class="stringliteral">&#39;efr.agEventFacilityResourceStatus ers&#39;</span>)
-<a name="l00573"></a>00573             -&gt;innerJoin(<span class="stringliteral">&#39;ers.agFacilityResourceAllocationStatus ras&#39;</span>)
-<a name="l00574"></a>00574             -&gt;innerJoin(<span class="stringliteral">&#39;efr.agEventFacilityGroup efg&#39;</span>)
-<a name="l00575"></a>00575             -&gt;innerJoin(<span class="stringliteral">&#39;efg.agFacilityGroupType fgt&#39;</span>)
-<a name="l00576"></a>00576             -&gt;innerJoin(<span class="stringliteral">&#39;efg.agEvent e&#39;</span>)
-<a name="l00577"></a>00577             -&gt;leftJoin(<span class="stringliteral">&#39;efr.agEventFacilityResourceActivationTime efrat&#39;</span>)
-<a name="l00578"></a>00578             -&gt;where(<span class="stringliteral">&#39;EXISTS (</span>
-<a name="l00579"></a>00579 <span class="stringliteral">          SELECT efrs.id</span>
-<a name="l00580"></a>00580 <span class="stringliteral">            FROM agEventFacilityResourceStatus efrs</span>
-<a name="l00581"></a>00581 <span class="stringliteral">            WHERE efrs.event_facility_resource_id = ers.event_facility_resource_id</span>
-<a name="l00582"></a>00582 <span class="stringliteral">              AND efrs.time_stamp &lt;= CURRENT_TIMESTAMP</span>
-<a name="l00583"></a>00583 <span class="stringliteral">            HAVING MAX(efrs.time_stamp) = ers.time_stamp)&#39;</span>);
-<a name="l00584"></a>00584     <span class="keywordflow">if</span> (isset($eventFacilityGroupId)) {
-<a name="l00585"></a>00585       $query-&gt;andWhere(<span class="stringliteral">&#39;efg.id = ?&#39;</span>, $eventFacilityGroupId);
-<a name="l00586"></a>00586     }
-<a name="l00587"></a>00587     $results = $query-&gt;execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-<a name="l00588"></a>00588     <span class="keywordflow">return</span> $results;
-<a name="l00589"></a>00589   }
-<a name="l00590"></a>00590 
-<a name="l00591"></a>00591   <span class="keyword">public</span> function executeFacility(sfWebRequest $request)
-<a name="l00592"></a>00592   {
-<a name="l00593"></a>00593     
-<a name="l00594"></a>00594   }
-<a name="l00595"></a>00595 
-<a name="l00596"></a>00596   <span class="keyword">public</span> function executeReport(sfWebRequest $request)
-<a name="l00597"></a>00597   {
-<a name="l00598"></a>00598 
-<a name="l00599"></a>00599   }
-<a name="l00600"></a>00600 
-<a name="l00601"></a>00601   <span class="keyword">public</span> function executeFacilityupdate(sfWebRequest $request)
-<a name="l00602"></a>00602   {
-<a name="l00603"></a>00603 
-<a name="l00604"></a>00604   }
-<a name="l00605"></a>00605 
-<a name="l00606"></a>00606   <span class="keyword">public</span> function executeResolution(sfWebRequest $request)
-<a name="l00607"></a>00607   {
-<a name="l00608"></a>00608     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
-<a name="l00609"></a>00609       <span class="comment">//never going to be updating, will always be &#39;setting&#39; the status, with the current timestamp</span>
-<a name="l00610"></a>00610       $ag_event_status = <span class="keyword">new</span> agEventStatus();
-<a name="l00611"></a>00611 
-<a name="l00612"></a>00612       $ag_event_status-&gt;setEventStatusTypeId($request-&gt;getParameter(<span class="stringliteral">&#39;event_status&#39;</span>));
-<a name="l00613"></a>00613       $ag_event_status-&gt;setEventId($this-&gt;event_id);
-<a name="l00614"></a>00614       $ag_event_status-&gt;time_stamp = <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>);
-<a name="l00615"></a>00615       $ag_event_status-&gt;save();
-<a name="l00616"></a>00616     }
-<a name="l00617"></a>00617 
-<a name="l00618"></a>00618     $this-&gt;event_id = $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>);
-<a name="l00619"></a>00619     $this-&gt;eventName = Doctrine::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)
-<a name="l00620"></a>00620             -&gt;findByDql(<span class="stringliteral">&#39;id = ?&#39;</span>, $this-&gt;event_id)
-<a name="l00621"></a>00621             -&gt;getFirst()-&gt;event_name;
-<a name="l00622"></a>00622     $this-&gt;active_facility_groups = agEventFacilityHelper::returnActiveFacilityGroups($this-&gt;event_id);
-<a name="l00623"></a>00623     $this-&gt;resForm = <span class="keyword">new</span> sfForm();
-<a name="l00624"></a>00624     $this-&gt;resForm-&gt;setWidgets(array(
-<a name="l00625"></a>00625       <span class="stringliteral">&#39;event_status&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;multiple&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agEventStatusType&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getEventStatusType&#39;</span>))
-<a name="l00626"></a>00626     ));
-<a name="l00627"></a>00627     $currentStatus = agEventFacilityHelper::returnCurrentEventStatus($this-&gt;event_id);
-<a name="l00628"></a>00628     <span class="keywordflow">foreach</span> ($currentStatus as $current_stat) {
-<a name="l00629"></a>00629       $current_status = $current_stat[0];
-<a name="l00630"></a>00630       <span class="comment">//this works, but is awful.</span>
-<a name="l00631"></a>00631     }
-<a name="l00632"></a>00632 
-<a name="l00633"></a>00633     $this-&gt;resForm-&gt;setDefault(<span class="stringliteral">&#39;event_status&#39;</span>, $current_status);
-<a name="l00634"></a>00634   }
-<a name="l00635"></a>00635 
-<a name="l00636"></a>00636   <span class="keyword">public</span> function executePost(sfWebRequest $request)
-<a name="l00637"></a>00637   {
-<a name="l00638"></a>00638     
-<a name="l00639"></a>00639   }
-<a name="l00640"></a>00640 
-<a name="l00641"></a>00641   <span class="keyword">public</span> function executeDelete(sfWebRequest $request)
-<a name="l00642"></a>00642   {
-<a name="l00643"></a>00643     $request-&gt;checkCSRFProtection();
-<a name="l00644"></a>00644 
-<a name="l00645"></a>00645     $this-&gt;forward404Unless($ag_event = Doctrine_Core::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>))), sprintf(<span class="stringliteral">&#39;Object ag_event does not exist (%s).&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
-<a name="l00646"></a>00646     $ag_event-&gt;delete();
-<a name="l00647"></a>00647 
-<a name="l00648"></a>00648     $this-&gt;redirect(<span class="stringliteral">&#39;event/index&#39;</span>);
-<a name="l00649"></a>00649   }
+<a name="l00479"></a>00479       $this-&gt;staffSearchForm = <span class="keyword">new</span> sfForm();
+<a name="l00480"></a>00480       $this-&gt;staffSearchForm-&gt;setWidget(<span class="stringliteral">&#39;add&#39;</span>, <span class="keyword">new</span> <a class="code" href="classagWidgetFormSelectCheckbox.html">agWidgetFormSelectCheckbox</a>(array(<span class="stringliteral">&#39;choices&#39;</span> =&gt; array(null)), array()));
+<a name="l00481"></a>00481       $this-&gt;staffSearchForm-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;add&#39;</span>, <span class="keyword">false</span>);
+<a name="l00482"></a>00482       $lucene_query = $request-&gt;getParameter(<span class="stringliteral">&#39;query_condition&#39;</span>);
+<a name="l00483"></a>00483       <span class="comment">//$lucene_query = $filter_form[&#39;query_condition&#39;];</span>
+<a name="l00484"></a>00484       $incomingFields = $this-&gt;filterForm-&gt;getWidgetSchema()-&gt;getFields();
+<a name="l00485"></a>00485 
+<a name="l00489"></a>00489       $this-&gt;searchedModels = array(<span class="stringliteral">&#39;agEventStaff&#39;</span>);  <span class="comment">//we want the search model to be agEventStaff</span>
+<a name="l00490"></a>00490       <span class="comment">//note, this does not provide ability to add event</span>
+<a name="l00491"></a>00491       parent::doSearch($lucene_query, FALSE, $this-&gt;staffSearchForm);
+<a name="l00492"></a>00492     } elseif ($request-&gt;getParameter(<span class="stringliteral">&#39;Add&#39;</span>)) {
+<a name="l00493"></a>00493       $staffPotentials = $request-&gt;getPostParameter(<span class="stringliteral">&#39;resultform&#39;</span>); <span class="comment">//(&#39;staff_list&#39;); //ideally get only the widgets whose corresponding checkbox</span>
+<a name="l00494"></a>00494       <span class="keywordflow">foreach</span> ($staffPotentials as $key =&gt; $staffAdd) {
+<a name="l00495"></a>00495         <span class="comment">//see if staff member exists in this shift already</span>
+<a name="l00496"></a>00496         $existing = Doctrine::getTable(<span class="stringliteral">&#39;agEventStaffShift&#39;</span>)
+<a name="l00497"></a>00497                 -&gt;findByDql(<span class="stringliteral">&#39;event_staff_id = ?&#39;</span>, $this-&gt;shift_id)
+<a name="l00498"></a>00498                 -&gt;getFirst();
+<a name="l00499"></a>00499         <span class="keywordflow">if</span> (!$existing) {
+<a name="l00500"></a>00500           $existing = <span class="keyword">new</span> agEventStaffShift();
+<a name="l00501"></a>00501           $existing-&gt;setEventStaffId($key);
+<a name="l00502"></a>00502           $existing-&gt;setEventShiftId($this-&gt;shift_id);
+<a name="l00503"></a>00503         }
+<a name="l00504"></a>00504         $existing-&gt;save();
+<a name="l00505"></a>00505       }
+<a name="l00506"></a>00506     } elseif ($request-&gt;getParameter(<span class="stringliteral">&#39;Remove&#39;</span>)) {
+<a name="l00507"></a>00507       <span class="comment">//remove this staff member!</span>
+<a name="l00508"></a>00508     }
+<a name="l00509"></a>00509   }
+<a name="l00510"></a>00510 
+<a name="l00515"></a><a class="code" href="classeventActions.html#a7ca3065c498ff2df12663f53503ac527">00515</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a7ca3065c498ff2df12663f53503ac527">executeDashboard</a>(sfWebRequest $request)
+<a name="l00516"></a>00516   {
+<a name="l00517"></a>00517     
+<a name="l00518"></a>00518   }
+<a name="l00519"></a>00519 
+<a name="l00524"></a><a class="code" href="classeventActions.html#aaeeef433bc904ec7c39785e15009e4e7">00524</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#aaeeef433bc904ec7c39785e15009e4e7" title="provides basic information about an active event, the template gives links to event management...">executeActive</a>(sfWebRequest $request)
+<a name="l00525"></a>00525   {
+<a name="l00526"></a>00526     $this-&gt;setEventBasics($request);
+<a name="l00527"></a>00527   }
+<a name="l00528"></a>00528 
+<a name="l00533"></a><a class="code" href="classeventActions.html#acddfbdc89995f702ef3004b69fd21a0a">00533</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#acddfbdc89995f702ef3004b69fd21a0a" title="provides basic staff management in an event">executeStaff</a>(sfWebRequest $request)
+<a name="l00534"></a>00534   {
+<a name="l00535"></a>00535     $this-&gt;setEventBasics($request);
+<a name="l00536"></a>00536     $this-&gt;getResponse()-&gt;setTitle(<span class="stringliteral">&#39;Event staff Webpage&#39;</span>);
+<a name="l00537"></a>00537   }
+<a name="l00538"></a>00538 
+<a name="l00545"></a><a class="code" href="classeventActions.html#a61c60247af1ada1328021c420bea25aa">00545</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a61c60247af1ada1328021c420bea25aa" title="provides a list of facility groups in an event, or all events also lists the facility resources in th...">executeListgroups</a>(sfWebRequest $request)
+<a name="l00546"></a>00546   {
+<a name="l00547"></a>00547     $this-&gt;setEventBasics($request);
+<a name="l00548"></a>00548     $query = agDoctrineQuery::create()
+<a name="l00549"></a>00549             -&gt;select(<span class="stringliteral">&#39;a.*, afr.*, afgt.*, fr.*&#39;</span>)
+<a name="l00550"></a>00550             -&gt;from(<span class="stringliteral">&#39;agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr&#39;</span>);
+<a name="l00551"></a>00551 
+<a name="l00552"></a>00552     <span class="comment">// If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.</span>
+<a name="l00553"></a>00553     <span class="keywordflow">if</span> ($this-&gt;event != <span class="stringliteral">&quot;&quot;</span>) {
+<a name="l00554"></a>00554       $query-&gt;where(<span class="stringliteral">&#39;a.event_id = ?&#39;</span>, $this-&gt;event_id);
+<a name="l00555"></a>00555     }
+<a name="l00556"></a>00556     $facilityGroupArray = array();
+<a name="l00557"></a>00557     $this-&gt;ag_event_facility_groups = $query-&gt;execute();
+<a name="l00558"></a>00558     <span class="keywordflow">foreach</span> ($this-&gt;ag_event_facility_groups as $eventFacilityGroup) {
+<a name="l00559"></a>00559       $tempArray = $this-&gt;queryForTable($eventFacilityGroup-&gt;id);
+<a name="l00560"></a>00560       <span class="keywordflow">foreach</span> ($tempArray as $ta) {
+<a name="l00561"></a>00561         array_push($facilityGroupArray, $ta);
+<a name="l00562"></a>00562       }
+<a name="l00563"></a>00563     }
+<a name="l00564"></a>00564     $this-&gt;facilityGroupArray = $facilityGroupArray;
+<a name="l00565"></a>00565     $this-&gt;pager = <span class="keyword">new</span> <a class="code" href="classagArrayPager.html" title="This class is used to provide paging for array-based datasets.">agArrayPager</a>(null, 10);
+<a name="l00566"></a>00566 
+<a name="l00567"></a>00567     <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;sort&#39;</span>) &amp;&amp; $request-&gt;getParameter(<span class="stringliteral">&#39;order&#39;</span>)) {
+<a name="l00568"></a>00568       $sortColumns = array(<span class="stringliteral">&#39;group&#39;</span> =&gt; <span class="stringliteral">&#39;efg_event_facility_group&#39;</span>,
+<a name="l00569"></a>00569         <span class="stringliteral">&#39;name&#39;</span> =&gt; <span class="stringliteral">&#39;f_facility_name&#39;</span>,
+<a name="l00570"></a>00570         <span class="stringliteral">&#39;code&#39;</span> =&gt; <span class="stringliteral">&#39;fr_facility_resource_code&#39;</span>,
+<a name="l00571"></a>00571         <span class="stringliteral">&#39;status&#39;</span> =&gt; <span class="stringliteral">&#39;ras_facility_resource_allocation_status&#39;</span>,
+<a name="l00572"></a>00572         <span class="stringliteral">&#39;time&#39;</span> =&gt; <span class="stringliteral">&#39;efrat_activation_time&#39;</span>,
+<a name="l00573"></a>00573         <span class="stringliteral">&#39;type&#39;</span> =&gt; <span class="stringliteral">&#39;fgt_facility_group_type&#39;</span>,
+<a name="l00574"></a>00574         <span class="stringliteral">&#39;event&#39;</span> =&gt; <span class="stringliteral">&#39;e_event_name&#39;</span>);
+<a name="l00575"></a>00575       $sort = $sortColumns[$request-&gt;getParameter(<span class="stringliteral">&#39;sort&#39;</span>)];
+<a name="l00576"></a>00576       agArraySort::$sort = $sort;
+<a name="l00577"></a>00577       usort($facilityGroupArray, array(<span class="stringliteral">&#39;agArraySort&#39;</span>, <span class="stringliteral">&#39;arraySort&#39;</span>));
+<a name="l00578"></a>00578       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;order&#39;</span>) == <span class="stringliteral">&#39;DESC&#39;</span>) {
+<a name="l00579"></a>00579         $facilityGroupArray = array_reverse($facilityGroupArray);
+<a name="l00580"></a>00580       }
+<a name="l00581"></a>00581     }
+<a name="l00582"></a>00582     $this-&gt;pager-&gt;setResultArray($facilityGroupArray);
+<a name="l00583"></a>00583     $this-&gt;pager-&gt;setPage($this-&gt;getRequestParameter(<span class="stringliteral">&#39;page&#39;</span>, 1));
+<a name="l00584"></a>00584     $this-&gt;pager-&gt;init();
+<a name="l00585"></a>00585   }
+<a name="l00586"></a>00586 
+<a name="l00597"></a><a class="code" href="classeventActions.html#a2f58f3036b59536c9cb001289c60d262">00597</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a2f58f3036b59536c9cb001289c60d262" title="Calls the groupdetailSuccess template.">executeGroupdetail</a>(sfWebRequest $request)
+<a name="l00598"></a>00598   {
+<a name="l00599"></a>00599     $this-&gt;<span class="keyword">event</span> = agDoctrineQuery::create()
+<a name="l00600"></a>00600             -&gt;select()
+<a name="l00601"></a>00601             -&gt;from(<span class="stringliteral">&#39;agEvent&#39;</span>)
+<a name="l00602"></a>00602             -&gt;where(<span class="stringliteral">&#39;event_name = ?&#39;</span>, urldecode($request-&gt;getParameter(<span class="stringliteral">&#39;event&#39;</span>)))
+<a name="l00603"></a>00603             -&gt;fetchOne();
+<a name="l00604"></a>00604     $this-&gt;eventFacilityGroup = agDoctrineQuery::create()
+<a name="l00605"></a>00605             -&gt;select()
+<a name="l00606"></a>00606             -&gt;from(<span class="stringliteral">&#39;agEventFacilityGroup&#39;</span>)
+<a name="l00607"></a>00607             -&gt;where(<span class="stringliteral">&#39;event_facility_group = ?&#39;</span>, urldecode($request-&gt;getParameter(<span class="stringliteral">&#39;group&#39;</span>)))
+<a name="l00608"></a>00608             -&gt;andWhere(<span class="stringliteral">&#39;event_id = ?&#39;</span>, $this-&gt;event-&gt;id)
+<a name="l00609"></a>00609             -&gt;fetchOne();
+<a name="l00610"></a>00610     <span class="comment">// Check for AJAX here. Set XmlHttpRequest to true so it can be used to determine functionality</span>
+<a name="l00611"></a>00611     <span class="comment">// in the templates and partials.</span>
+<a name="l00612"></a>00612     <span class="keywordflow">if</span> ($request-&gt;isXmlHttpRequest()) {
+<a name="l00613"></a>00613       $this-&gt;XmlHttpRequest = <span class="keyword">true</span>;
+<a name="l00614"></a>00614     }
+<a name="l00615"></a>00615     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
+<a name="l00616"></a>00616       <span class="comment">// Check which type of data is coming through. Are you changing resource status</span>
+<a name="l00617"></a>00617       <span class="comment">// or group status? Then build an object with the incoming values and some</span>
+<a name="l00618"></a>00618       <span class="comment">// $request parameters.</span>
+<a name="l00619"></a>00619       <span class="keywordflow">if</span> ($request-&gt;getParameter(<span class="stringliteral">&#39;resource_allocation_status&#39;</span>)) {
+<a name="l00620"></a>00620         <span class="comment">// Find the most recent activation status for the facility resource.</span>
+<a name="l00621"></a>00621         <span class="comment">// $staffed and $unstaffed will also be set for use in the if below.</span>
+<a name="l00622"></a>00622         $activationStatus = agEventFacilityHelper::getCurrentEventFacilityResourceStatus($this-&gt;event-&gt;id, array($request-&gt;getParameter(<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>)));
+<a name="l00623"></a>00623         $staffed = <a class="code" href="classagEventFacilityHelper.html#ace9699a6efe35fb79fdcf4d7dd7bd532" title="Method to return all Facility Resource Status ID&amp;#39;s that match a columnar parameter.">agEventFacilityHelper::getFacilityResourceAllocationStatus</a>(<span class="stringliteral">&#39;staffed&#39;</span>, 1);
+<a name="l00624"></a>00624         $unstaffed = <a class="code" href="classagEventFacilityHelper.html#ace9699a6efe35fb79fdcf4d7dd7bd532" title="Method to return all Facility Resource Status ID&amp;#39;s that match a columnar parameter.">agEventFacilityHelper::getFacilityResourceAllocationStatus</a>(<span class="stringliteral">&#39;staffed&#39;</span>, 0);
+<a name="l00625"></a>00625 
+<a name="l00626"></a>00626         $resourceAllocation = <span class="keyword">new</span> <a class="code" href="classagEventFacilityResourceStatus.html">agEventFacilityResourceStatus</a>();
+<a name="l00627"></a>00627         $resourceAllocation-&gt;event_facility_resource_id = $request-&gt;getParameter(<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>);
+<a name="l00628"></a>00628         $resourceAllocation-&gt;facility_resource_allocation_status_id = $request-&gt;getParameter(<span class="stringliteral">&#39;resource_allocation_status&#39;</span>);
+<a name="l00629"></a>00629         $resourceAllocation-&gt;time_stamp = date(<span class="stringliteral">&#39;Y-m-d H:i:s&#39;</span>, time());
+<a name="l00630"></a>00630         <span class="keywordflow">if</span> (in_array($activationStatus[$request-&gt;getParameter(<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>)], $unstaffed)) {
+<a name="l00631"></a>00631           $resourceAllocation-&gt;save();
+<a name="l00632"></a>00632 <span class="comment">//          $this-&gt;redirect(&#39;event/&#39; . urlencode($this-&gt;event-&gt;event_name) . &#39;fgroup&#39;);</span>
+<a name="l00633"></a>00633           $b = $this-&gt;getResponse();
+<a name="l00634"></a>00634 <span class="comment">// Looks like I out-thought myself here. Just fgroup works, think the rest of the URL comes from the parent page. Might need it later though, if things go wrong.</span>
+<a name="l00635"></a>00635           <span class="keywordflow">return</span> $this-&gt;renderText(<span class="stringliteral">&#39;event/&#39;</span> . urlencode($this-&gt;event-&gt;event_name) . <span class="stringliteral">&#39;/fgroup&#39;</span>);
+<a name="l00636"></a>00636 <span class="comment">//          return $this-&gt;renderText(&#39;fgroup&#39;);</span>
+<a name="l00637"></a>00637         }
+<a name="l00638"></a>00638 
+<a name="l00639"></a>00639         $resourceAllocation-&gt;save();
+<a name="l00640"></a>00640         $a = <span class="stringliteral">&#39;yay&#39;</span>;
+<a name="l00641"></a>00641       } elseif ($request-&gt;getParameter(<span class="stringliteral">&#39;group_allocation_status&#39;</span>)) {
+<a name="l00642"></a>00642         $groupAllocation = <span class="keyword">new</span> agEventFacilityGroupStatus();
+<a name="l00643"></a>00643         $groupAllocation-&gt;event_facility_group_id = $this-&gt;eventFacilityGroup-&gt;id;
+<a name="l00644"></a>00644         $groupAllocation-&gt;facility_group_allocation_status_id = $request-&gt;getParameter(<span class="stringliteral">&#39;group_allocation_status&#39;</span>);
+<a name="l00645"></a>00645         $groupAllocation-&gt;time_stamp = date(<span class="stringliteral">&#39;Y-m-d H:i:s&#39;</span>, time()); <span class="comment">//time_stamp = new Doctrine_Expression(&#39;CURRENT_TIMESTAMP&#39;);</span>
+<a name="l00646"></a>00646         $groupAllocation-&gt;save();
+<a name="l00647"></a>00647       }
+<a name="l00648"></a>00648     }
+<a name="l00649"></a>00649     $this-&gt;results = $this-&gt;queryForTable($this-&gt;eventFacilityGroup-&gt;id);
 <a name="l00650"></a>00650 
-<a name="l00651"></a>00651 }
+<a name="l00651"></a>00651     $statusIds = <a class="code" href="classagEventFacilityHelper.html#aff2165775791e7bb6bf3dd2a4f7571a6" title="Static function to return the current status id&amp;#39;s of all facility groups for a specific event  //...">agEventFacilityHelper::returnCurrentEventFacilityGroupStatus</a>($this-&gt;event-&gt;id);
+<a name="l00652"></a>00652 
+<a name="l00653"></a>00653     $query = agDoctrineQuery::create()
+<a name="l00654"></a>00654             -&gt;select(<span class="stringliteral">&#39;s.event_facility_group_id&#39;</span>)
+<a name="l00655"></a>00655             -&gt;addSelect(<span class="stringliteral">&#39;s.facility_group_allocation_status_id&#39;</span>)
+<a name="l00656"></a>00656             -&gt;from(<span class="stringliteral">&#39;agEventFacilityGroupStatus s&#39;</span>)
+<a name="l00657"></a>00657             -&gt;whereIn(<span class="stringliteral">&#39;s.id&#39;</span>, array_keys($statusIds));
+<a name="l00658"></a>00658     <span class="comment">// Returns fgroup_id as key, status_id as val</span>
+<a name="l00659"></a>00659     $statusQuery = $query-&gt;execute(array(), <span class="stringliteral">&#39;key_value_pair&#39;</span>);
+<a name="l00660"></a>00660 
+<a name="l00661"></a>00661     $this-&gt;statusId = $statusQuery[$this-&gt;eventFacilityGroup-&gt;id];
+<a name="l00662"></a>00662     $this-&gt;form = <span class="keyword">new</span> sfForm();
+<a name="l00663"></a>00663     $this-&gt;form-&gt;setWidgets(array(
+<a name="l00664"></a>00664       <span class="stringliteral">&#39;group_allocation_status&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agFacilityGroupAllocationStatus&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getFacilityGroupAllocationStatus&#39;</span>)),
+<a name="l00665"></a>00665       <span class="stringliteral">&#39;resource_allocation_status&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agFacilityResourceAllocationStatus&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getFacilityResourceAllocationStatus&#39;</span>)),
+<a name="l00666"></a>00666     ));
+<a name="l00667"></a>00667   }
+<a name="l00668"></a>00668 
+<a name="l00681"></a>00681   <span class="keyword">private</span> function queryForTable($eventFacilityGroupId = null)
+<a name="l00682"></a>00682   {
+<a name="l00683"></a>00683     $query = agDoctrineQuery::create()
+<a name="l00684"></a>00684             -&gt;select(<span class="stringliteral">&#39;efr.id&#39;</span>)
+<a name="l00685"></a>00685             -&gt;addSelect(<span class="stringliteral">&#39;f.facility_name&#39;</span>)
+<a name="l00686"></a>00686             -&gt;addSelect(<span class="stringliteral">&#39;fr.facility_resource_code&#39;</span>)
+<a name="l00687"></a>00687             -&gt;addSelect(<span class="stringliteral">&#39;frt.facility_resource_type&#39;</span>)
+<a name="l00688"></a>00688             -&gt;addSelect(<span class="stringliteral">&#39;ras.facility_resource_allocation_status&#39;</span>)
+<a name="l00689"></a>00689             -&gt;addSelect(<span class="stringliteral">&#39;f.id&#39;</span>)
+<a name="l00690"></a>00690             -&gt;addSelect(<span class="stringliteral">&#39;fr.id&#39;</span>)
+<a name="l00691"></a>00691             -&gt;addSelect(<span class="stringliteral">&#39;frt.id&#39;</span>)
+<a name="l00692"></a>00692             -&gt;addSelect(<span class="stringliteral">&#39;ras.id&#39;</span>)
+<a name="l00693"></a>00693             -&gt;addSelect(<span class="stringliteral">&#39;ers.id&#39;</span>)
+<a name="l00694"></a>00694             -&gt;addSelect(<span class="stringliteral">&#39;es.id&#39;</span>)
+<a name="l00695"></a>00695             -&gt;addSelect(<span class="stringliteral">&#39;efg.event_facility_group&#39;</span>)
+<a name="l00696"></a>00696             -&gt;addSelect(<span class="stringliteral">&#39;fgt.facility_group_type&#39;</span>)
+<a name="l00697"></a>00697             -&gt;addSelect(<span class="stringliteral">&#39;e.event_name&#39;</span>)
+<a name="l00698"></a>00698             -&gt;addSelect(<span class="stringliteral">&#39;efrat.id&#39;</span>)
+<a name="l00699"></a>00699             -&gt;addSelect(<span class="stringliteral">&#39;efrat.activation_time&#39;</span>)
+<a name="l00700"></a>00700             -&gt;from(<span class="stringliteral">&#39;agEventFacilityResource efr&#39;</span>)
+<a name="l00701"></a>00701             -&gt;innerJoin(<span class="stringliteral">&#39;efr.agFacilityResource fr&#39;</span>)
+<a name="l00702"></a>00702             -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacilityResourceStatus frs&#39;</span>)
+<a name="l00703"></a>00703             -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacilityResourceType frt&#39;</span>)
+<a name="l00704"></a>00704             -&gt;innerJoin(<span class="stringliteral">&#39;fr.agFacility f&#39;</span>)
+<a name="l00705"></a>00705             -&gt;innerJoin(<span class="stringliteral">&#39;efr.agEventFacilityResourceStatus ers&#39;</span>)
+<a name="l00706"></a>00706             -&gt;innerJoin(<span class="stringliteral">&#39;ers.agFacilityResourceAllocationStatus ras&#39;</span>)
+<a name="l00707"></a>00707             -&gt;innerJoin(<span class="stringliteral">&#39;efr.agEventFacilityGroup efg&#39;</span>)
+<a name="l00708"></a>00708             -&gt;innerJoin(<span class="stringliteral">&#39;efg.agFacilityGroupType fgt&#39;</span>)
+<a name="l00709"></a>00709             -&gt;innerJoin(<span class="stringliteral">&#39;efg.agEvent e&#39;</span>)
+<a name="l00710"></a>00710             -&gt;leftJoin(<span class="stringliteral">&#39;efr.agEventFacilityResourceActivationTime efrat&#39;</span>)
+<a name="l00711"></a>00711             -&gt;where(<span class="stringliteral">&#39;EXISTS (</span>
+<a name="l00712"></a>00712 <span class="stringliteral">          SELECT efrs.id</span>
+<a name="l00713"></a>00713 <span class="stringliteral">            FROM agEventFacilityResourceStatus efrs</span>
+<a name="l00714"></a>00714 <span class="stringliteral">            WHERE efrs.event_facility_resource_id = ers.event_facility_resource_id</span>
+<a name="l00715"></a>00715 <span class="stringliteral">              AND efrs.time_stamp &lt;= CURRENT_TIMESTAMP</span>
+<a name="l00716"></a>00716 <span class="stringliteral">            HAVING MAX(efrs.time_stamp) = ers.time_stamp)&#39;</span>);
+<a name="l00717"></a>00717 
+<a name="l00718"></a>00718     <span class="keywordflow">if</span> (isset($eventFacilityGroupId)) {
+<a name="l00719"></a>00719       $query-&gt;andWhere(<span class="stringliteral">&#39;efg.id = ?&#39;</span>, $eventFacilityGroupId);
+<a name="l00720"></a>00720     }
+<a name="l00721"></a>00721     $results = $query-&gt;execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+<a name="l00722"></a>00722     <span class="keywordflow">return</span> $results;
+<a name="l00723"></a>00723   }
+<a name="l00724"></a>00724 
+<a name="l00730"></a><a class="code" href="classeventActions.html#adf18063a4b4b7458242093ca48f14e36">00730</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#adf18063a4b4b7458242093ca48f14e36" title="provides the ability to give a description of an event, and close the event">executeResolution</a>(sfWebRequest $request)
+<a name="l00731"></a>00731   {
+<a name="l00732"></a>00732     $this-&gt;setEventBasics($request);
+<a name="l00733"></a>00733     <span class="keywordflow">if</span> ($request-&gt;isMethod(sfRequest::POST)) {
+<a name="l00734"></a>00734       <span class="comment">//never going to be updating, will always be &#39;setting&#39; the status, with the current timestamp</span>
+<a name="l00735"></a>00735       $ag_event_status = <span class="keyword">new</span> agEventStatus();
+<a name="l00736"></a>00736 
+<a name="l00737"></a>00737       $ag_event_status-&gt;setEventStatusTypeId($request-&gt;getParameter(<span class="stringliteral">&#39;event_status&#39;</span>));
+<a name="l00738"></a>00738       $ag_event_status-&gt;setEventId($this-&gt;event_id);
+<a name="l00739"></a>00739       $ag_event_status-&gt;time_stamp = <span class="keyword">new</span> Doctrine_Expression(<span class="stringliteral">&#39;CURRENT_TIMESTAMP&#39;</span>);
+<a name="l00740"></a>00740       $ag_event_status-&gt;save();
+<a name="l00741"></a>00741     }
+<a name="l00742"></a>00742     $this-&gt;active_facility_groups = <a class="code" href="classagEventFacilityHelper.html#a8fe7506f97ba4a8a2e93eb939c32b235" title="Function to return event facility groups with an optional parameter to restrict to active or inactive...">agEventFacilityHelper::returnEventFacilityGroups</a>($this-&gt;event_id, TRUE);
+<a name="l00743"></a>00743     $this-&gt;resForm = <span class="keyword">new</span> sfForm();
+<a name="l00744"></a>00744     $this-&gt;resForm-&gt;setWidgets(array(
+<a name="l00745"></a>00745       <span class="stringliteral">&#39;event_status&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;multiple&#39;</span> =&gt; <span class="keyword">false</span>, <span class="stringliteral">&#39;model&#39;</span> =&gt; <span class="stringliteral">&#39;agEventStatusType&#39;</span>, <span class="stringliteral">&#39;method&#39;</span> =&gt; <span class="stringliteral">&#39;getEventStatusType&#39;</span>)),
+<a name="l00746"></a>00746 <span class="comment">//      &#39;event_id&#39;     =&gt; new sfWidgetFormInputHidden()</span>
+<a name="l00747"></a>00747     ));
+<a name="l00748"></a>00748     $currentStatus = <a class="code" href="classagEventFacilityHelper.html#a2b686f76c55d420a4f00f5ebfda2480a" title="Function to return the event_status_id and event_status_type_id of the passed event_id.">agEventFacilityHelper::returnCurrentEventStatus</a>($this-&gt;event_id);
+<a name="l00749"></a>00749     $this-&gt;resForm-&gt;setDefault(<span class="stringliteral">&#39;event_status&#39;</span>, $currentStatus);
+<a name="l00750"></a>00750   }
+<a name="l00751"></a>00751 
+<a name="l00756"></a><a class="code" href="classeventActions.html#abdb55541d3d01b9a005a1d547ccefd05">00756</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#abdb55541d3d01b9a005a1d547ccefd05">executePost</a>(sfWebRequest $request)
+<a name="l00757"></a>00757   {
+<a name="l00758"></a>00758     
+<a name="l00759"></a>00759   }
+<a name="l00760"></a>00760 
+<a name="l00765"></a><a class="code" href="classeventActions.html#a4a0dc27296ca9f2a797a65e376d47adf">00765</a>   <span class="keyword">public</span> function <a class="code" href="classeventActions.html#a4a0dc27296ca9f2a797a65e376d47adf" title="deletes an event">executeDelete</a>(sfWebRequest $request)
+<a name="l00766"></a>00766   {
+<a name="l00767"></a>00767     $request-&gt;checkCSRFProtection();
+<a name="l00768"></a>00768 
+<a name="l00769"></a>00769     $this-&gt;forward404Unless($ag_event = Doctrine_Core::getTable(<span class="stringliteral">&#39;agEvent&#39;</span>)-&gt;find(array($request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>))), sprintf(<span class="stringliteral">&#39;Object ag_event does not exist (%s).&#39;</span>, $request-&gt;getParameter(<span class="stringliteral">&#39;id&#39;</span>)));
+<a name="l00770"></a>00770     $ag_event-&gt;delete();
+<a name="l00771"></a>00771 
+<a name="l00772"></a>00772     $this-&gt;redirect(<span class="stringliteral">&#39;event/index&#39;</span>);
+<a name="l00773"></a>00773   }
+<a name="l00774"></a>00774 
+<a name="l00775"></a>00775 }
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->
@@ -681,7 +716,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

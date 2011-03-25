@@ -1,19 +1,19 @@
 <?php
 /**
  * Provides person name helper functions and inherits several methods and properties from the
- * bulk record helper.
+ * EntityContactHelper.
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Chad Heuschober, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agEntityAddressHelper extends agBulkRecordHelper
+class agEntityAddressHelper extends agEntityContactHelper
 {
   public    $agAddressHelper,
             $defaultIsPrimary = FALSE,
@@ -197,6 +197,12 @@ class agEntityAddressHelper extends agBulkRecordHelper
    * @return array A three dimensional array, by entityId, then indexed from highest priority
    * address to lowest, with a third dimension containing the address type as index[0], and the
    * address value as index[1].
+   * <code>
+   * array( [$entityId] => array( array($firstPriorityType, $firstPriorityValue),
+   *     array($secondPriorityType, $secondPriorityValue),
+   *     ... )
+   *   ... )
+   * </code>
    */
   public function getEntityAddress ($entityIds = NULL,
                                     $strType = NULL,
@@ -283,5 +289,188 @@ class agEntityAddressHelper extends agBulkRecordHelper
     }
    
     return $entityAddresses ;
+  }
+
+  /**
+   * Method to set entity address data using address ID 's instead of values.
+   * 
+   * @param array $entityContacts A multidimensional array of address contact information that
+   * mimics the output of getEntityAddress($entityIds, FALSE, FALSE).
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return integer The number of operations performed.
+   * @todo Add the $keepHistory functionality
+   * @todo make results more meaningful (with errs)
+   */
+  public function setEntityAddressById( $entityContacts,
+                                        $keepHistory = TRUE,
+                                        Doctrine_Connection $conn = NULL)
+  {
+    $tableName = 'agEntityAddressContact' ;
+
+    // explicit results declaration
+    $results = array('upserted'=>0, 'removed'=>0, 'failures'=>array()) ;
+    $currContacts = array() ;
+
+
+    // set our connection object if not explicitly passed one
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    if ($keepHistory)
+    {
+      // if we're going to process existing addresses and keep them, then hold on
+      $currContacts = $this->getEntityAddress(array_keys($entityContacts, FALSE, FALSE)) ;
+    }
+    else
+    {
+      // if we're not going to keep a history, let's build a delete query we'll execute on each
+      // entity
+      $q = agDoctrineQuery::create($conn)
+        ->delete($tableName . ' ec') ;
+    }
+
+    // execute the reprioritization helper and pass it our current addresses as found in the db
+    $entityContacts = $this->reprioritizeContacts($entityContacts, $currContacts ) ;
+
+
+    // loop through our entityContacts
+    foreach ($entityContacts as $entityId => $contacts)
+    {
+      // define our blank collection
+      $coll = new Doctrine_Collection($tableName) ;
+
+      foreach($contacts as $index => $contact)
+      {
+        // create a doctrine record with this info
+        $newRec = new agEntityAddressContact() ;
+        $newRec['entity_id'] = $entityId ;
+        $newRec['priority'] = ($index + 1) ;
+        $newRec['address_id'] = $contact[1] ;
+        $newRec['address_contact_type_id'] = $contact[0] ;
+
+        // add the record to our collection
+        $coll->add($newRec) ;
+      }
+
+      // add our delete query to our where clause ;
+      $q->where('ec.entity_id = ?', $entityId) ;
+
+      // wowee, zowee, now that the hard stuff's done, let's just commit this sucker
+      $conn->beginTransaction() ;
+      try
+      {
+        // if we're not keeping our history, just blow them all out!
+        if (! $keepHistory) { $results['removed'] = $results['removed'] + $q->execute() ; }
+
+        // execute our commit and, while we're at it, add our successes to the bin
+        $coll->replace() ;
+        $conn->commit() ;
+        $results['upserted'] = $results['upserted'] + count($coll) ;
+      }
+      catch(Exception $e)
+      {
+        // if we run into a problem, rollback and add the failed entity to the failures bin
+        $conn->rollback() ;
+        $results['failures'][] = $entityId ;
+      }
+    }
+
+    return $results ;
+  }
+
+  /**
+   *
+   * @param <type> $entityContacts
+   * @param <type> $keepHistory
+   * @param <type> $enforceComplete
+   * @param Doctrine_Connection $conn
+   * @todo Figure out what our purge policy is going to be (failed inserts)
+   */
+  public function setEntityAddress( $entityContacts,
+                                    $keepHistory = NULL,
+                                    $enforceComplete = NULL,
+                                    Doctrine_Connection $conn = NULL)
+  {
+    // some explicit declarations at the top
+    $uniqContacts = array() ;
+    $wontSet = array() ;
+
+    // loop through our contacts and pull our unique addresses from the fire
+    foreach ($entityContacts as $entityId => $contacts)
+    {
+      foreach ($contacts as $index => $contact)
+      {
+        // find the position of the element or return false
+        $pos = array_search($contact[1], $uniqContacts, TRUE) ;
+
+        // need to be really strict here because we don't want any [0] positions throwing us
+        if ($pos === FALSE)
+        {
+          // add it to our unique contacts array
+          $uniqContacts[] = $contact[1] ;
+
+          // the the most recently inserted key
+          $pos = max(array_keys($uniqContacts)) ;
+        }
+
+        // either way we'll have to point the entities back to their addresses
+        $entityContacts[$entityId][$index][1] = $pos ;
+      }
+    }
+
+    // whelp, if we haven't loaded it already, let's get our address helper
+    $addressHelper = $this->getAgAddressHelper() ;
+
+    // process addresses, setting or returning, whichever is better with our s/getter
+    $uniqContacts = $addressHelper->setAddresses($uniqContacts, $enforceComplete, $conn) ;
+
+    // now loop through the contacts again and give them their real values
+    foreach ($entityContacts as $entityId => $contacts)
+    {
+      foreach ($contacts as $index => $contact)
+      {
+        // check to see if this index found in our 'unsettable' return from setAddresses
+        if (array_key_exists($contact[1], $uniqContacts[1]))
+        {
+          // purge this address
+
+          unset($entityContacts[$entityId][$index]) ;
+        }
+        else
+        {
+          // otherwise, get our real addressId
+          $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]] ;
+        }
+      }
+    }
+    
+    // we're done with uniqContacts now
+    unset($uniqContacts) ;
+
+    // just submit the entity addresses for setting
+    $results = $this->setEntityAddressById($entityContacts, $keepHistory) ;
+
+    return $results ;
+  }
+
+  public function exceptionTest()
+  {
+    // set our connection object if not explicitly passed one
+   $conn = Doctrine_Manager::connection() ; 
+
+    $q = agDoctrineQuery::create($conn)
+      ->update('agGlobalParam')
+        ->set('value', 20009)
+        ->where('datapoint = ?', 'default_batch_size') ;
+
+    $savepoint = __FUNCTION__  ;
+    print_r($q->getConnection()->getTransactionLevel() . ', ') ;
+
+    $conn->beginTransaction() ;
+    $conn->beginTransaction($savepoint) ;
+    $updates = $q->execute() ;
+    $conn->rollback() ;
+    $conn->commit() ;
+
+    return $updates ;
   }
 }

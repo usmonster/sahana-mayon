@@ -18,6 +18,7 @@ abstract class BaseagFacilityForm extends BaseFormDoctrine
       'id'                             => new sfWidgetFormInputHidden(),
       'site_id'                        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agSite'), 'add_empty' => false)),
       'facility_name'                  => new sfWidgetFormInputText(),
+      'facility_code'                  => new sfWidgetFormInputText(),
       'created_at'                     => new sfWidgetFormDateTime(),
       'updated_at'                     => new sfWidgetFormDateTime(),
       'ag_facility_resource_type_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResourceType')),
@@ -27,6 +28,7 @@ abstract class BaseagFacilityForm extends BaseFormDoctrine
       'id'                             => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'site_id'                        => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agSite'))),
       'facility_name'                  => new sfValidatorString(array('max_length' => 64)),
+      'facility_code'                  => new sfValidatorString(array('max_length' => 10)),
       'created_at'                     => new sfValidatorDateTime(),
       'updated_at'                     => new sfValidatorDateTime(),
       'ag_facility_resource_type_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResourceType', 'required' => false)),
@@ -35,7 +37,7 @@ abstract class BaseagFacilityForm extends BaseFormDoctrine
     $this->validatorSchema->setPostValidator(
       new sfValidatorAnd(array(
         new sfValidatorDoctrineUnique(array('model' => 'agFacility', 'column' => array('site_id'))),
-        new sfValidatorDoctrineUnique(array('model' => 'agFacility', 'column' => array('facility_name'))),
+        new sfValidatorDoctrineUnique(array('model' => 'agFacility', 'column' => array('facility_code'))),
       ))
     );
 

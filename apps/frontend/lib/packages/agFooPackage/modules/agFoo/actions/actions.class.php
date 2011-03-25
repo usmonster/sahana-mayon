@@ -16,6 +16,72 @@ class agFooActions extends agActions
     $this->ag_foos = Doctrine_Core::getTable('agFoo')
             ->createQuery('a')
             ->execute();
+
+    $addressHelper = new agEntityAddressHelper();
+//    $addressHelper= agEntityAddressHelper::init();
+    $addressByType = $addressHelper->getEntityAddressByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agAddressHelper::ADDR_GET_STRING);
+    $addressAll = $addressHelper->getEntityAddress(array(1, 2, 3, 4, 5), TRUE, FALSE, agAddressHelper::ADDR_GET_STRING);
+    unset($addressHelper);
+    echo 'Address By Type: <br />';
+    print_r($addressByType);
+    echo '<br /><br />Address all: <br />';
+    print_r($addressAll);
+    echo '<br /><br />';
+
+//    $emailHelper = new agEntityEmailHelper();
+//    $emailByType = $emailHelper->getEntityEmailByType(array(1, 2, 3, 4, 5), TRUE);
+//    $emailAll = $emailHelper->getEntityEmail(array(1, 2, 3, 4, 5), TRUE);
+//    unset($emailHelper);
+//    echo '<br /><br />Email By Type: <br />';
+//    print_r($emailByType);
+//    echo '<br /><br />Email All: <br />';
+//    print_r($emailAll);
+//    echo '<br /><br />';
+
+    $phoneHelper = new agEntityPhoneHelper();
+//    $phoneByType = $phoneHelper->getEntityPhoneByType(array(3, 4, 5), TRUE);
+//    $phoneAll = $phoneHelper->getEntityPhone(array(3, 4, 5), TRUE);
+    $phoneByType = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agPhoneHelper::PHN_GET_FORMATTED);
+    $phoneAll = $phoneHelper->getEntityPhone(array(1, 2, 3, 4, 5), TRUE, FALSE, agPhoneHelper::PHN_GET_FORMATTED);
+    $phoneAreaCode = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_AREA_CODE));
+    $phoneFirstThree = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_FIRST_THREE));
+    $phoneLastFour = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_LAST_FOUR));
+    $phoneExtension = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_EXTENSION));
+    $phoneDefault = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_DEFAULT));
+    $phoneByComponents = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT_SEGMENTS);
+    unset($phoneHelper);
+    echo '<br /><br />Phone By Type: <br />';
+    print_r($phoneByType);
+    echo '<br /><br />Phone All: <br />';
+    print_r($phoneAll);
+    echo '<br /><br />';
+    echo '<br /><br />Phone Area Code: <br />';
+    print_r($phoneAreaCode);
+    echo '<br /><br />Phone First Three: <br />';
+    print_r($phoneFirstThree);
+    echo '<br /><br />Phone Last Four: <br />';
+    print_r($phoneLastFour);
+    echo '<br /><br />Phone Extension: <br />';
+    print_r($phoneExtension);
+    echo '<br /><br />Phone Default: <br />';
+    print_r($phoneDefault);
+    echo '<br /><br />Phone By Component: <br />';
+    print_r($phoneByComponents);
+
+
+//    $phoneAreaCode = $agPhoneHelper::getPhoneComponent(array(1,2, 3, 4, 5), agPhoneHelper::PHN_AREA_CODE);
+//    echo '<br /><br />Phone Area Code: <br />';
+//    print_r($phoneAreaCode);
+//    $phoneFirstThree = $agPhoneHelper::getPhoneComponent(array(1,2, 3, 4, 5), agPhoneHelper::PHN_FIRST_THREE);
+//    echo '<br /><br />Phone First Three: <br />';
+//    print_r($phoneFirstThree);
+//    $phoneLastFour = $phoneHelper->getPhoneComponent(array(1,2, 3, 4, 5), agPhoneHelper::PHN_LAST_FOUR);
+//    echo '<br /><br />Phone Last Four: <br />';
+//    print_r($phoneLastFour);
+//    $phoneExtension = $phoneHelper->getPhoneComponent(array(1,2, 3, 4, 5), agPhoneHelper::PHN_EXTENSION);
+//    echo '<br /><br />Phone Extension: <br />';
+//    print_r($phoneExtension);
+//    unset($phoneHelper);
   }
 
   public function executeList(sfWebRequest $request)
@@ -63,28 +129,32 @@ class agFooActions extends agActions
   {
 // <-------- CUT HERE -------->
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
-$fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '5'=>'10031'), 1) ,
+$fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1),
     array(array('1'=>'peachpitters', '5'=>'10035'), 1)) ;
-$obj = agAddressHelper::init() ;
+$addrContact = array( '1'=>array(array(3,4), array(2,1)),
+    '10'=>array(array(3,10)),
+    '87'=>array(array(1,9))) ;
+//$obj = agAddressHelper::init() ;
 //$obj = agPersonNameHelper::init(4) ;
-//$obj = agEntityAddressHelper::init() ;
+$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
-//$results = $obj->getEntityAddress($array, FALSE, FALSE, agAddressHelper::ADDR_GET_STRING) ;
+//$addr = $obj->getEntityAddress($array, FALSE, FALSE) ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
 //$results = $obj->getPrimaryNameByType() ;
 //$results = $obj->getPrimaryNameAsString() ;
-$results = $obj->getNativeAddressAsString($array) ;
+//$results = $obj->getNativeAddressAsString($array) ;
 //$results = $obj->getAddressStandardId() ;
 //$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
 //$results = $obj->getAddressAllowedElements() ;
 //$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
 //$results = $obj->updateAddressHashes($array) ;
 //$addr = $obj->getAddressComponentsById($array) ;
-//$results = $obj->setAddresses($addr) ;
-
+//$results = $obj->setAddresses($fakeAddr, TRUE) ;
+//$results = $obj->setEntityAddressById($addrContact) ;
+$results = $obj->exceptionTest() ;
 //$results = $obj->setAddresses($fakeAddr) ;
 print_r($results) ;
 // <-------- CUT HERE -------->

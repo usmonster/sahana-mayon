@@ -3,11 +3,11 @@
 /**
  * provides event facility management functions
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Chad Heuschober, CUNY SPS
  *
@@ -216,13 +216,13 @@ class agEventMigrationHelper
        * @todo Wrap in an event helper class.
        */
       $lucene_queries = agDoctrineQuery::create()
-              ->select('ssg.id, ssg.scenario_id, ls.query_condition, ls.id')
+              ->select('ssg.id, ssg.scenario_id, ssg.search_weight, ls.query_condition, ls.id')
               ->from('agScenarioStaffGenerator ssg')
               ->innerJoin('ssg.agLuceneSearch ls')
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       foreach ($lucene_queries as $lucene_query) {
         $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($lucene_query['ls_query_condition'], $lucene_query['ssg_scenario_id']);
-        agScenarioGenerator::saveStaffPool($staff_resource_ids);
+        agScenarioGenerator::saveStaffPool($staff_resource_ids, $scenario_id, $lucene_query['ssg_search_weight']);
       }
 
       // 4. Copy over staff pool

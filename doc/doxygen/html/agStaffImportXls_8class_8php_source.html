@@ -238,7 +238,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00176"></a>00176       $nameCheck-&gt;person_name = $point;
 <a name="l00177"></a>00177       $nameCheck-&gt;save();
 <a name="l00178"></a>00178     }
-<a name="l00179"></a>00179     $nameJoin = <span class="keyword">new</span> <a class="code" href="classagPersonMjAgPersonName.html" title="Contains the BaseagPersonMjAgPersonName class.">agPersonMjAgPersonName</a>();
+<a name="l00179"></a>00179     $nameJoin = <span class="keyword">new</span> agPersonMjAgPersonName();
 <a name="l00180"></a>00180     $nameJoin-&gt;person_id = $person-&gt;id;
 <a name="l00181"></a>00181     $nameJoin-&gt;person_name_id = $nameCheck-&gt;id;
 <a name="l00182"></a>00182     $nameJoin-&gt;person_name_type_id = $type;
@@ -717,7 +717,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

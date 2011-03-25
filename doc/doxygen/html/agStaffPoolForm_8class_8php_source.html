@@ -68,122 +68,140 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00021"></a>00021   <span class="keyword">public</span> $lucene_search_id;
 <a name="l00022"></a>00022   <span class="keyword">public</span> $scenario_id;
 <a name="l00023"></a>00023   <span class="keyword">public</span> $staff_gen_id;
-<a name="l00024"></a>00024 
-<a name="l00029"></a><a class="code" href="classagStaffPoolForm.html#ad66e7c68e48c45c1677d2ee02bd7d3ce">00029</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#ad66e7c68e48c45c1677d2ee02bd7d3ce">__construct</a>($staff_gen_id = null)
-<a name="l00030"></a>00030   {
-<a name="l00031"></a>00031     $this-&gt;staff_gen_id = $staff_gen_id;
-<a name="l00032"></a>00032     <a class="code" href="classagStaffPoolForm.html#ad66e7c68e48c45c1677d2ee02bd7d3ce">parent::__construct</a>(array(), array(), array());
-<a name="l00033"></a>00033   }
-<a name="l00034"></a>00034 
-<a name="l00038"></a><a class="code" href="classagStaffPoolForm.html#af5546e8a9da61704f0202e126b931084">00038</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#af5546e8a9da61704f0202e126b931084" title="Configures the form and starts off the embedding chain.">embedAgSearchForms</a>()
-<a name="l00039"></a>00039   {
-<a name="l00040"></a>00040     $this-&gt;<a class="code" href="classagStaffPoolForm.html#af62e6d967c0668517fecbd7b72b5ffd5" title="Embeds the Staff Generator Form.">embedStaffGeneratorForm</a>();
-<a name="l00041"></a>00041     $this-&gt;<a class="code" href="classagStaffPoolForm.html#af7b8be0c56e7ec7d2796b0c071e3519a" title="Embeds the Lucene Form.">embedLuceneForm</a>();
-<a name="l00042"></a>00042     $this-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;staff_generator&#39;</span>, <span class="keyword">false</span>);
-<a name="l00043"></a>00043     $this-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;lucene_search&#39;</span>, <span class="keyword">false</span>);
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045     $staffpoolDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterInlineTopLabel.html">agWidgetFormSchemaFormatterInlineTopLabel</a>($this-&gt;getWidgetSchema());
-<a name="l00046"></a>00046     $this-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;row&#39;</span>, $staffpoolDeco);
-<a name="l00047"></a>00047     $this-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;row&#39;</span>);
-<a name="l00048"></a>00048   }
-<a name="l00049"></a>00049 
-<a name="l00053"></a><a class="code" href="classagStaffPoolForm.html#af62e6d967c0668517fecbd7b72b5ffd5">00053</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#af62e6d967c0668517fecbd7b72b5ffd5" title="Embeds the Staff Generator Form.">embedStaffGeneratorForm</a>()
-<a name="l00054"></a>00054   {
-<a name="l00055"></a>00055     <span class="keywordflow">if</span> (isset($this-&gt;staff_gen_id)) {
-<a name="l00056"></a>00056       $staffGenObject = Doctrine_Query::create()
-<a name="l00057"></a>00057               -&gt;from(<span class="stringliteral">&#39;agScenarioStaffGenerator a&#39;</span>)
-<a name="l00058"></a>00058               -&gt;where(<span class="stringliteral">&#39;a.id = ?&#39;</span>, $this-&gt;staff_gen_id)
-<a name="l00059"></a>00059               -&gt;execute()-&gt;getFirst();
-<a name="l00060"></a>00060       $this-&gt;lucene_search_id = $staffGenObject-&gt;lucene_search_id;
-<a name="l00061"></a>00061     }
-<a name="l00062"></a>00062     $staffGenForm = <span class="keyword">new</span> agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
-<a name="l00063"></a>00063 
-<a name="l00064"></a>00064     $staffGenDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterRow.html">agWidgetFormSchemaFormatterRow</a>($staffGenForm-&gt;getWidgetSchema());
-<a name="l00065"></a>00065     $staffGenForm-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;row&#39;</span>, $staffGenDeco);
-<a name="l00066"></a>00066     $staffGenForm-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;row&#39;</span>);
-<a name="l00067"></a>00067 
-<a name="l00068"></a>00068     $staffGenForm-&gt;setWidget(<span class="stringliteral">&#39;lucene_search_id&#39;</span>, <span class="keyword">new</span> sfWidgetFormInputHidden());
-<a name="l00069"></a>00069     $staffGenForm-&gt;setWidget(<span class="stringliteral">&#39;scenario_id&#39;</span>, <span class="keyword">new</span> sfWidgetFormInputHidden());
-<a name="l00070"></a>00070     $staffGenForm-&gt;setWidget(<span class="stringliteral">&#39;search_weight&#39;</span>, <span class="keyword">new</span> sfWidgetFormChoice(array(<span class="stringliteral">&#39;choices&#39;</span> =&gt; range(0, 10))));
+<a name="l00024"></a>00024   <span class="keyword">public</span> $sg_values;  <span class="comment">//staff generator form posted values</span>
+<a name="l00025"></a>00025   <span class="keyword">public</span> $ls_values;  <span class="comment">//lucene search form posted values</span>
+<a name="l00032"></a><a class="code" href="classagStaffPoolForm.html#a6dda6131916dd1ca1677472f1d52699e">00032</a> <span class="comment"></span>  <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#a6dda6131916dd1ca1677472f1d52699e">__construct</a>($staff_gen_id = null, $values = null)
+<a name="l00033"></a>00033   {
+<a name="l00034"></a>00034     <span class="keywordflow">if</span>($values != null){
+<a name="l00035"></a>00035       $this-&gt;sg_values = $values[<span class="stringliteral">&#39;sg_values&#39;</span>];
+<a name="l00036"></a>00036       $this-&gt;ls_values = $values[<span class="stringliteral">&#39;ls_values&#39;</span>];
+<a name="l00037"></a>00037     }<span class="keywordflow">else</span>{
+<a name="l00038"></a>00038     $this-&gt;staff_gen_id = $staff_gen_id;
+<a name="l00039"></a>00039     }
+<a name="l00040"></a>00040     <a class="code" href="classagStaffPoolForm.html#a6dda6131916dd1ca1677472f1d52699e">parent::__construct</a>(array(), array(), array());
+<a name="l00041"></a>00041   }
+<a name="l00042"></a>00042 
+<a name="l00046"></a><a class="code" href="classagStaffPoolForm.html#af5546e8a9da61704f0202e126b931084">00046</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#af5546e8a9da61704f0202e126b931084" title="Configures the form and starts off the embedding chain.">embedAgSearchForms</a>()
+<a name="l00047"></a>00047   {
+<a name="l00048"></a>00048     $this-&gt;<a class="code" href="classagStaffPoolForm.html#af62e6d967c0668517fecbd7b72b5ffd5" title="Embeds the Staff Generator Form.">embedStaffGeneratorForm</a>();
+<a name="l00049"></a>00049     $this-&gt;<a class="code" href="classagStaffPoolForm.html#af7b8be0c56e7ec7d2796b0c071e3519a" title="Embeds the Lucene Form.">embedLuceneForm</a>();
+<a name="l00050"></a>00050     $this-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;staff_generator&#39;</span>, <span class="keyword">false</span>);
+<a name="l00051"></a>00051     $this-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;lucene_search&#39;</span>, <span class="keyword">false</span>);
+<a name="l00052"></a>00052 
+<a name="l00053"></a>00053     $staffpoolDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterInlineTopLabel.html">agWidgetFormSchemaFormatterInlineTopLabel</a>($this-&gt;getWidgetSchema());
+<a name="l00054"></a>00054     $this-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;row&#39;</span>, $staffpoolDeco);
+<a name="l00055"></a>00055     $this-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;row&#39;</span>);
+<a name="l00056"></a>00056   }
+<a name="l00057"></a>00057 
+<a name="l00061"></a><a class="code" href="classagStaffPoolForm.html#af62e6d967c0668517fecbd7b72b5ffd5">00061</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#af62e6d967c0668517fecbd7b72b5ffd5" title="Embeds the Staff Generator Form.">embedStaffGeneratorForm</a>()
+<a name="l00062"></a>00062   {
+<a name="l00063"></a>00063     <span class="keywordflow">if</span> (isset($this-&gt;staff_gen_id)) {
+<a name="l00064"></a>00064       $staffGenObject = agDoctrineQuery::create()
+<a name="l00065"></a>00065               -&gt;from(<span class="stringliteral">&#39;agScenarioStaffGenerator a&#39;</span>)
+<a name="l00066"></a>00066               -&gt;where(<span class="stringliteral">&#39;a.id = ?&#39;</span>, $this-&gt;staff_gen_id)
+<a name="l00067"></a>00067               -&gt;execute()-&gt;getFirst();
+<a name="l00068"></a>00068       $this-&gt;lucene_search_id = $staffGenObject-&gt;lucene_search_id;
+<a name="l00069"></a>00069     }
+<a name="l00070"></a>00070     $staffGenForm = <span class="keyword">new</span> agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
 <a name="l00071"></a>00071 
-<a name="l00072"></a>00072     $staffGenForm-&gt;setValidator(<span class="stringliteral">&#39;lucene_search_id&#39;</span>, <span class="keyword">new</span> sfValidatorPass(array(<span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>)));
-<a name="l00073"></a>00073 <span class="comment">//    $staffGenForm-&gt;setValidator(&#39;search_weight&#39;, new sfValidatorPass(array(&#39;required&#39; =&gt; false)));</span>
-<a name="l00074"></a>00074     $staffGenForm-&gt;setValidator(<span class="stringliteral">&#39;scenario_id&#39;</span>, <span class="keyword">new</span> sfValidatorPass());
+<a name="l00072"></a>00072     $staffGenDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterRow.html">agWidgetFormSchemaFormatterRow</a>($staffGenForm-&gt;getWidgetSchema());
+<a name="l00073"></a>00073     $staffGenForm-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;row&#39;</span>, $staffGenDeco);
+<a name="l00074"></a>00074     $staffGenForm-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;row&#39;</span>);
 <a name="l00075"></a>00075 
-<a name="l00076"></a>00076     unset($staffGenForm[<span class="stringliteral">&#39;created_at&#39;</span>], $staffGenForm[<span class="stringliteral">&#39;updated_at&#39;</span>]);
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078     $this-&gt;embedForm(<span class="stringliteral">&#39;staff_generator&#39;</span>, $staffGenForm);
-<a name="l00079"></a>00079   }
-<a name="l00080"></a>00080 
-<a name="l00084"></a><a class="code" href="classagStaffPoolForm.html#af7b8be0c56e7ec7d2796b0c071e3519a">00084</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#af7b8be0c56e7ec7d2796b0c071e3519a" title="Embeds the Lucene Form.">embedLuceneForm</a>()
-<a name="l00085"></a>00085   {
-<a name="l00086"></a>00086     <span class="keywordflow">if</span> (isset($this-&gt;lucene_search_id)) {
-<a name="l00087"></a>00087       $luceneObject = Doctrine_Query::create()
-<a name="l00088"></a>00088               -&gt;from(<span class="stringliteral">&#39;agLuceneSearch a&#39;</span>)
-<a name="l00089"></a>00089               -&gt;where(<span class="stringliteral">&#39;a.id = ?&#39;</span>, $this-&gt;lucene_search_id)
-<a name="l00090"></a>00090               -&gt;execute()-&gt;getFirst();
-<a name="l00091"></a>00091     }
-<a name="l00092"></a>00092     $luceneForm = <span class="keyword">new</span> agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);
+<a name="l00076"></a>00076     $staffGenForm-&gt;setWidget(<span class="stringliteral">&#39;lucene_search_id&#39;</span>, <span class="keyword">new</span> sfWidgetFormInputHidden());
+<a name="l00077"></a>00077     $staffGenForm-&gt;setWidget(<span class="stringliteral">&#39;scenario_id&#39;</span>, <span class="keyword">new</span> sfWidgetFormInputHidden());
+<a name="l00078"></a>00078     $staffGenForm-&gt;setWidget(<span class="stringliteral">&#39;search_weight&#39;</span>, <span class="keyword">new</span> sfWidgetFormChoice(array(<span class="stringliteral">&#39;choices&#39;</span> =&gt; range(0, 10))));
+<a name="l00079"></a>00079 
+<a name="l00080"></a>00080     $staffGenForm-&gt;setValidator(<span class="stringliteral">&#39;lucene_search_id&#39;</span>, <span class="keyword">new</span> sfValidatorPass(array(<span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>)));
+<a name="l00081"></a>00081 <span class="comment">//    $staffGenForm-&gt;setValidator(&#39;search_weight&#39;, new sfValidatorPass(array(&#39;required&#39; =&gt; false)));</span>
+<a name="l00082"></a>00082     $staffGenForm-&gt;setValidator(<span class="stringliteral">&#39;scenario_id&#39;</span>, <span class="keyword">new</span> sfValidatorPass());
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084     unset($staffGenForm[<span class="stringliteral">&#39;created_at&#39;</span>], $staffGenForm[<span class="stringliteral">&#39;updated_at&#39;</span>]);
+<a name="l00085"></a>00085     
+<a name="l00086"></a>00086     <span class="keywordflow">if</span>(is_array($this-&gt;sg_values))
+<a name="l00087"></a>00087     {
+<a name="l00088"></a>00088       $staffGenForm-&gt;setDefault(<span class="stringliteral">&#39;search_weight&#39;</span>, $this-&gt;sg_values[<span class="stringliteral">&#39;search_weight&#39;</span>]);
+<a name="l00089"></a>00089     }
+<a name="l00090"></a>00090 
+<a name="l00091"></a>00091     $this-&gt;embedForm(<span class="stringliteral">&#39;staff_generator&#39;</span>, $staffGenForm);
+<a name="l00092"></a>00092 
 <a name="l00093"></a>00093 
-<a name="l00094"></a>00094     <span class="comment">//although this is the third time we&#39;ve made this object, what it&#39;s constructed from each time is different</span>
-<a name="l00095"></a>00095     $luceneDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterRow.html">agWidgetFormSchemaFormatterRow</a>($luceneForm-&gt;getWidgetSchema());
-<a name="l00096"></a>00096     $luceneForm-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;row&#39;</span>, $luceneDeco);
-<a name="l00097"></a>00097     $luceneForm-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;row&#39;</span>);
-<a name="l00098"></a>00098     $luceneForm-&gt;setWidget(<span class="stringliteral">&#39;query_condition&#39;</span>, <span class="keyword">new</span> sfWidgetFormInputHidden());
-<a name="l00099"></a>00099     $luceneForm-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;query_name&#39;</span>, <span class="stringliteral">&#39;Name of Staff Pool&#39;</span>);
-<a name="l00100"></a>00100     $luceneForm-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;lucene_search_type_id&#39;</span>, <span class="stringliteral">&#39;Search Type&#39;</span>);
-<a name="l00101"></a>00101 
-<a name="l00102"></a>00102 
-<a name="l00103"></a>00103     unset($luceneForm[<span class="stringliteral">&#39;created_at&#39;</span>], $luceneForm[<span class="stringliteral">&#39;updated_at&#39;</span>]);
-<a name="l00104"></a>00104     unset($luceneForm[<span class="stringliteral">&#39;ag_report_list&#39;</span>]);
-<a name="l00105"></a>00105 
-<a name="l00106"></a>00106     $this-&gt;embedForm(<span class="stringliteral">&#39;lucene_search&#39;</span>, $luceneForm);
-<a name="l00107"></a>00107   }
+<a name="l00094"></a>00094   }
+<a name="l00095"></a>00095 
+<a name="l00099"></a><a class="code" href="classagStaffPoolForm.html#af7b8be0c56e7ec7d2796b0c071e3519a">00099</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#af7b8be0c56e7ec7d2796b0c071e3519a" title="Embeds the Lucene Form.">embedLuceneForm</a>()
+<a name="l00100"></a>00100   {
+<a name="l00101"></a>00101     <span class="keywordflow">if</span> (isset($this-&gt;lucene_search_id)) {
+<a name="l00102"></a>00102       $luceneObject = agDoctrineQuery::create()
+<a name="l00103"></a>00103               -&gt;from(<span class="stringliteral">&#39;agLuceneSearch a&#39;</span>)
+<a name="l00104"></a>00104               -&gt;where(<span class="stringliteral">&#39;a.id = ?&#39;</span>, $this-&gt;lucene_search_id)
+<a name="l00105"></a>00105               -&gt;execute()-&gt;getFirst();
+<a name="l00106"></a>00106     }
+<a name="l00107"></a>00107     $luceneForm = <span class="keyword">new</span> agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);
 <a name="l00108"></a>00108 
-<a name="l00112"></a><a class="code" href="classagStaffPoolForm.html#a3ab00fc3a3bce1901110077cfceda1e3">00112</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#a3ab00fc3a3bce1901110077cfceda1e3" title="sets the form up, gives it a name and embeds the forms">configure</a>()
-<a name="l00113"></a>00113   {
-<a name="l00114"></a>00114     $this-&gt;widgetSchema-&gt;setNameFormat(<span class="stringliteral">&#39;staff_pool[%s]&#39;</span>);
-<a name="l00115"></a>00115     $this-&gt;<a class="code" href="classagStaffPoolForm.html#af5546e8a9da61704f0202e126b931084" title="Configures the form and starts off the embedding chain.">embedAgSearchForms</a>();
-<a name="l00116"></a>00116   }
+<a name="l00109"></a>00109     <span class="comment">//although this is the third time we&#39;ve made this object, what it&#39;s constructed from each time is different</span>
+<a name="l00110"></a>00110     $luceneDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterRow.html">agWidgetFormSchemaFormatterRow</a>($luceneForm-&gt;getWidgetSchema());
+<a name="l00111"></a>00111     $luceneForm-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;row&#39;</span>, $luceneDeco);
+<a name="l00112"></a>00112     $luceneForm-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;row&#39;</span>);
+<a name="l00113"></a>00113     $luceneForm-&gt;setWidget(<span class="stringliteral">&#39;query_condition&#39;</span>, <span class="keyword">new</span> sfWidgetFormInputHidden());
+<a name="l00114"></a>00114     $luceneForm-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;query_name&#39;</span>, <span class="stringliteral">&#39;Name of Staff Pool&#39;</span>);
+<a name="l00115"></a>00115     $luceneForm-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;lucene_search_type_id&#39;</span>, <span class="stringliteral">&#39;Search Type&#39;</span>);
+<a name="l00116"></a>00116 
 <a name="l00117"></a>00117 
-<a name="l00123"></a><a class="code" href="classagStaffPoolForm.html#a6bca492922286d1fa8b2493a14f73da2">00123</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#a6bca492922286d1fa8b2493a14f73da2" title="this is the only saving that takes place since the sfForm has nothing but embedded forms...">saveEmbeddedForms</a>($con = null, $forms = null)
-<a name="l00124"></a>00124   {
-<a name="l00125"></a>00125     <span class="keywordflow">if</span> (isset($this-&gt;embeddedForms[<span class="stringliteral">&#39;lucene_search&#39;</span>])) {
-<a name="l00126"></a>00126       $form = $this-&gt;embeddedForms[<span class="stringliteral">&#39;lucene_search&#39;</span>];
-<a name="l00127"></a>00127       $values = $this-&gt;values[<span class="stringliteral">&#39;lucene_search&#39;</span>];
-<a name="l00128"></a>00128       $this-&gt;<a class="code" href="classagStaffPoolForm.html#a220179d6f45a2187b0991c0efdd04699" title="save the embedded lucene form">saveLuceneForm</a>($form, $values);
-<a name="l00129"></a>00129       unset($this-&gt;embeddedForms[<span class="stringliteral">&#39;lucene_search&#39;</span>]);
-<a name="l00130"></a>00130     }
-<a name="l00131"></a>00131 
-<a name="l00132"></a>00132     <span class="keywordflow">if</span> (isset($this-&gt;embeddedForms[<span class="stringliteral">&#39;staff_generator&#39;</span>])) {
-<a name="l00133"></a>00133       $form = $this-&gt;embeddedForms[<span class="stringliteral">&#39;staff_generator&#39;</span>];
-<a name="l00134"></a>00134       $values = $this-&gt;values[<span class="stringliteral">&#39;staff_generator&#39;</span>];
-<a name="l00135"></a>00135       $this-&gt;<a class="code" href="classagStaffPoolForm.html#af2199a214ed2d7578c3e5b5a4650bc20" title="save the embedded scenario staff generator form">saveStaffGenForm</a>($form, $values);
-<a name="l00136"></a>00136       unset($this-&gt;embeddedForms[<span class="stringliteral">&#39;staff_generator&#39;</span>]);
-<a name="l00137"></a>00137     }
-<a name="l00138"></a>00138   }
-<a name="l00139"></a>00139 
-<a name="l00145"></a><a class="code" href="classagStaffPoolForm.html#a220179d6f45a2187b0991c0efdd04699">00145</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#a220179d6f45a2187b0991c0efdd04699" title="save the embedded lucene form">saveLuceneForm</a>($form, $values)
-<a name="l00146"></a>00146   {
-<a name="l00147"></a>00147     $form-&gt;updateObject($values);
-<a name="l00148"></a>00148 
-<a name="l00149"></a>00149     $form-&gt;getObject()-&gt;save();
-<a name="l00150"></a>00150     $this-&gt;lucene_search_id = $form-&gt;getObject()-&gt;getId();
-<a name="l00151"></a>00151   }
-<a name="l00152"></a>00152 
-<a name="l00158"></a><a class="code" href="classagStaffPoolForm.html#af2199a214ed2d7578c3e5b5a4650bc20">00158</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#af2199a214ed2d7578c3e5b5a4650bc20" title="save the embedded scenario staff generator form">saveStaffGenForm</a>($form, $values)
-<a name="l00159"></a>00159   {
-<a name="l00160"></a>00160     $form-&gt;updateObject($values);
-<a name="l00161"></a>00161     <span class="keywordflow">if</span> ($form-&gt;getObject()-&gt;lucene_search_id == null) {
-<a name="l00162"></a>00162       $form-&gt;getObject()-&gt;lucene_search_id = $this-&gt;lucene_search_id;
-<a name="l00163"></a>00163       $form-&gt;getObject()-&gt;scenario_id = $this-&gt;scenario_id;
-<a name="l00164"></a>00164     }
-<a name="l00165"></a>00165     $form-&gt;getObject()-&gt;save();
-<a name="l00166"></a>00166     <span class="comment">//$this-&gt;staff_resource_id = $form-&gt;getObject()-&gt;id;</span>
-<a name="l00167"></a>00167   }
+<a name="l00118"></a>00118     unset($luceneForm[<span class="stringliteral">&#39;created_at&#39;</span>], $luceneForm[<span class="stringliteral">&#39;updated_at&#39;</span>]);
+<a name="l00119"></a>00119     unset($luceneForm[<span class="stringliteral">&#39;ag_report_list&#39;</span>]);
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121     <span class="keywordflow">if</span>(is_array($this-&gt;ls_values))
+<a name="l00122"></a>00122     {
+<a name="l00123"></a>00123       $luceneForm-&gt;setDefault(<span class="stringliteral">&#39;query_name&#39;</span>, $this-&gt;ls_values[<span class="stringliteral">&#39;query_name&#39;</span>]);
+<a name="l00124"></a>00124       $luceneForm-&gt;setDefault(<span class="stringliteral">&#39;lucene_search_type_id&#39;</span>, $this-&gt;ls_values[<span class="stringliteral">&#39;lucene_search_type_id&#39;</span>]);
+<a name="l00125"></a>00125     }
+<a name="l00126"></a>00126     $this-&gt;embedForm(<span class="stringliteral">&#39;lucene_search&#39;</span>, $luceneForm);
+<a name="l00127"></a>00127   }
+<a name="l00128"></a>00128 
+<a name="l00132"></a><a class="code" href="classagStaffPoolForm.html#a3ab00fc3a3bce1901110077cfceda1e3">00132</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#a3ab00fc3a3bce1901110077cfceda1e3" title="sets the form up, gives it a name and embeds the forms">configure</a>()
+<a name="l00133"></a>00133   {
+<a name="l00134"></a>00134     $this-&gt;widgetSchema-&gt;setNameFormat(<span class="stringliteral">&#39;staff_pool[%s]&#39;</span>);
+<a name="l00135"></a>00135     $this-&gt;<a class="code" href="classagStaffPoolForm.html#af5546e8a9da61704f0202e126b931084" title="Configures the form and starts off the embedding chain.">embedAgSearchForms</a>();
+<a name="l00136"></a>00136   }
+<a name="l00137"></a>00137 
+<a name="l00143"></a><a class="code" href="classagStaffPoolForm.html#a6bca492922286d1fa8b2493a14f73da2">00143</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#a6bca492922286d1fa8b2493a14f73da2" title="this is the only saving that takes place since the sfForm has nothing but embedded forms...">saveEmbeddedForms</a>($con = null, $forms = null)
+<a name="l00144"></a>00144   {
+<a name="l00145"></a>00145     <span class="keywordflow">if</span> (isset($this-&gt;embeddedForms[<span class="stringliteral">&#39;lucene_search&#39;</span>])) {
+<a name="l00146"></a>00146       $form = $this-&gt;embeddedForms[<span class="stringliteral">&#39;lucene_search&#39;</span>];
+<a name="l00147"></a>00147       $values = $this-&gt;values[<span class="stringliteral">&#39;lucene_search&#39;</span>];
+<a name="l00148"></a>00148       $this-&gt;<a class="code" href="classagStaffPoolForm.html#a220179d6f45a2187b0991c0efdd04699" title="save the embedded lucene form">saveLuceneForm</a>($form, $values);
+<a name="l00149"></a>00149       unset($this-&gt;embeddedForms[<span class="stringliteral">&#39;lucene_search&#39;</span>]);
+<a name="l00150"></a>00150     }
+<a name="l00151"></a>00151 
+<a name="l00152"></a>00152     <span class="keywordflow">if</span> (isset($this-&gt;embeddedForms[<span class="stringliteral">&#39;staff_generator&#39;</span>])) {
+<a name="l00153"></a>00153       $form = $this-&gt;embeddedForms[<span class="stringliteral">&#39;staff_generator&#39;</span>];
+<a name="l00154"></a>00154       $values = $this-&gt;values[<span class="stringliteral">&#39;staff_generator&#39;</span>];
+<a name="l00155"></a>00155       $this-&gt;<a class="code" href="classagStaffPoolForm.html#af2199a214ed2d7578c3e5b5a4650bc20" title="save the embedded scenario staff generator form">saveStaffGenForm</a>($form, $values);
+<a name="l00156"></a>00156       unset($this-&gt;embeddedForms[<span class="stringliteral">&#39;staff_generator&#39;</span>]);
+<a name="l00157"></a>00157     }
+<a name="l00158"></a>00158   }
+<a name="l00159"></a>00159 
+<a name="l00165"></a><a class="code" href="classagStaffPoolForm.html#a220179d6f45a2187b0991c0efdd04699">00165</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#a220179d6f45a2187b0991c0efdd04699" title="save the embedded lucene form">saveLuceneForm</a>($form, $values)
+<a name="l00166"></a>00166   {
+<a name="l00167"></a>00167     $form-&gt;updateObject($values);
 <a name="l00168"></a>00168 
-<a name="l00169"></a>00169 }
-<a name="l00170"></a>00170 
+<a name="l00169"></a>00169     $form-&gt;getObject()-&gt;save();
+<a name="l00170"></a>00170     $this-&gt;lucene_search_id = $form-&gt;getObject()-&gt;getId();
+<a name="l00171"></a>00171   }
+<a name="l00172"></a>00172 
+<a name="l00178"></a><a class="code" href="classagStaffPoolForm.html#af2199a214ed2d7578c3e5b5a4650bc20">00178</a>   <span class="keyword">public</span> function <a class="code" href="classagStaffPoolForm.html#af2199a214ed2d7578c3e5b5a4650bc20" title="save the embedded scenario staff generator form">saveStaffGenForm</a>($form, $values)
+<a name="l00179"></a>00179   {
+<a name="l00180"></a>00180     $form-&gt;updateObject($values);
+<a name="l00181"></a>00181     <span class="keywordflow">if</span> ($form-&gt;getObject()-&gt;lucene_search_id == null) {
+<a name="l00182"></a>00182       $form-&gt;getObject()-&gt;lucene_search_id = $this-&gt;lucene_search_id;
+<a name="l00183"></a>00183       $form-&gt;getObject()-&gt;scenario_id = $this-&gt;scenario_id;
+<a name="l00184"></a>00184     }
+<a name="l00185"></a>00185     $form-&gt;getObject()-&gt;save();
+<a name="l00186"></a>00186     <span class="comment">//$this-&gt;staff_resource_id = $form-&gt;getObject()-&gt;id;</span>
+<a name="l00187"></a>00187   }
+<a name="l00188"></a>00188 
+<a name="l00189"></a>00189 }
+<a name="l00190"></a>00190 
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->
@@ -191,7 +209,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

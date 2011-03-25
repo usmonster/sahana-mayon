@@ -5,7 +5,6 @@ $agPersonNameTypesResultSet = Doctrine::getTable('agPersonNameType')
 foreach ($agPersonNameTypesResultSet as $nameType) {
   $agPersonNameTypes[$nameType->getId()] = $nameType->getPersonNameType();
 }
-
 $sortColumn = $sf_request->getGetParameter('sort');
 $sortOrder = $sf_request->getGetParameter('order');
 ($sf_request->getGetParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
@@ -45,7 +44,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
       </th>
       <!-- work_contact -->
       <th class="head" rowspan="2">
-        <div class="tableHeaderContent">Work Contact</div>
+        <div class="tableHeaderContent">Phone Contact(s)</div>
         <?php
         echo($sortColumn == 'work_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
         echo($sortColumn == 'work_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -53,7 +52,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
       </th>
       <!-- home_contact -->
       <th class="head" rowspan="2">
-        <div class="tableHeaderContent">Home Contact</div>
+        <div class="tableHeaderContent">Email Contact(s)</div>
         <?php
         echo($sortColumn == 'home_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
         echo($sortColumn == 'home_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -157,6 +156,11 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
               }
             }
         ?>
+          </td>
+          <td>
+            <?php
+            echo $staffMember->getAgStaffStatus()->getStaffStatus();;
+            ?>
           </td>
         </tr>
     <?php endforeach; ?>

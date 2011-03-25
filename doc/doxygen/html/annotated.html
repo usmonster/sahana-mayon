@@ -66,17 +66,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="textblock">Here are the classes, structs, unions and interfaces with brief descriptions:</div><table>
   <tr><td class="indexkey"><a class="el" href="classaboutActions.html">aboutActions</a></td><td class="indexvalue">PHP Version 5 </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classadminActions.html">adminActions</a></td><td class="indexvalue">PHP Version 5 </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classadminActions.html">adminActions</a></td><td class="indexvalue">Extends <a class="el" href="classagActions.html" title="extends sfActions for common functionality">agActions</a> for the administration module </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagAccountForm.html">agAccountForm</a></td><td class="indexvalue">Extends BaseagAccountForm by allowing binding of 'user' data to an 'account' </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classagAccountStatus.html">agAccountStatus</a></td><td class="indexvalue">AgAccountStatus </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagActions.html">agActions</a></td><td class="indexvalue">Extends sfActions for common functionality </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagAddressContactType.html">agAddressContactType</a></td><td class="indexvalue">Extends BaseagAddressContactType for person records </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagAddressGeoForm.html">agAddressGeoForm</a></td><td class="indexvalue">Extended agAddressGeo form base class </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagAddressHelper.html">agAddressHelper</a></td><td class="indexvalue">Provides bulk-address manipulation methods </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagAddressValue.html">agAddressValue</a></td><td class="indexvalue">Extends BaseagAddressValue for person records </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagArrayPager.html">agArrayPager</a></td><td class="indexvalue">This class is used to provide paging for array-based datasets </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagArraySort.html">agArraySort</a></td><td class="indexvalue">Sorting function for arrays that will be passed to <a class="el" href="classagArrayPager.html" title="This class is used to provide paging for array-based datasets.">agArrayPager</a> </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagBulkRecordHelper.html">agBulkRecordHelper</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagClassHelper.html">agClassHelper</a></td><td class="indexvalue">Class to provide helper methods for class manipulation </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagClientActions.html">agClientActions</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagConfig.html">agConfig</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagContactHelper.html">agContactHelper</a></td><td class="indexvalue">Provides bulk-contact manipulation methods </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagCountry.html">agCountry</a></td><td class="indexvalue">Extends BaseagCountry for person, returns country field </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagCredForm.html">agCredForm</a></td><td class="indexvalue">Extends BaseagAccountForm by allowing binding of 'user' data to an 'account' </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagDatabaseHelper.html">agDatabaseHelper</a></td><td class="indexvalue">DatabaseHelper this class defines queries associated custom functions </td></tr>
@@ -84,6 +87,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classagDeploymentAlgorithm.html">agDeploymentAlgorithm</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagDoctrineBuildSqlTask.html">agDoctrineBuildSqlTask</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagDoctrineConfigureDatabaseTask.html">agDoctrineConfigureDatabaseTask</a></td><td class="indexvalue">These two extended classes are for configuring doctrine </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagDoctrineQuery.html">agDoctrineQuery</a></td><td class="indexvalue">Extended Doctrine_Query to provide safe and additional methods </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagDoctrineTable.html">agDoctrineTable</a></td><td class="indexvalue">Extended Doctrine_Table to provide safe and additional methods </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEmailContact.html">agEmailContact</a></td><td class="indexvalue">Extends BaseagEmailContact to return email_contact field for person records </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEmbeddedAddressContactForm.html">agEmbeddedAddressContactForm</a></td><td class="indexvalue">Entitiy Address Contact </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEmbeddedAddressContactsForm.html">agEmbeddedAddressContactsForm</a></td><td class="indexvalue">Agasti Embedded Address Contacts Form is the container form for multiple phone contact entry </td></tr>
@@ -105,20 +110,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classagEmbeddedScenarioShiftForm.html">agEmbeddedScenarioShiftForm</a></td><td class="indexvalue">AgEmbeddedScenarioShiftForm.class.php </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEmbeddedShiftTemplateForm.html">agEmbeddedShiftTemplateForm</a></td><td class="indexvalue">AgEmbeddedShiftTemplateForm.class.php </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEntity.html">agEntity</a></td><td class="indexvalue">Extends BaseagEntity and returns entity information </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEntityAddressHelper.html">agEntityAddressHelper</a></td><td class="indexvalue">Provides person name helper functions and inherits several methods and properties from the bulk record helper </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEntityContactHelper.html">agEntityContactHelper</a></td><td class="indexvalue">Extends the bulk record helper to provide contact-specific features </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEntityEmailHelper.html">agEntityEmailHelper</a></td><td class="indexvalue">Provides entity email helper functions and inherits several methods and properties from the bulk record helper </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEntityPhoneHelper.html">agEntityPhoneHelper</a></td><td class="indexvalue">Provides entity phone helper functions and inherits several methods and properties from the bulk record helper </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEthnicity.html">agEthnicity</a></td><td class="indexvalue">Extends BaseagEthnicity to return ethnicity field for person records </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEventFacilityGroupForm.html">agEventFacilityGroupForm</a></td><td class="indexvalue">AgEventFacilityGroupForm extended class for creating event specific facility groups </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEventFacilityHelper.html">agEventFacilityHelper</a></td><td class="indexvalue">Event facility management functions </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classagEventFacilityHelperMySql.html">agEventFacilityHelperMySql</a></td><td class="indexvalue">Mysql-optimized event facility management functions </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classagEventFacilityResourceActivationTime.html">agEventFacilityResourceActivationTime</a></td><td class="indexvalue"></td></tr>
-  <tr><td class="indexkey"><a class="el" href="classagEventFacilityResourceActivationTimeListener.html">agEventFacilityResourceActivationTimeListener</a></td><td class="indexvalue">Event shift management functions </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEventFacilityResourceStatus.html">agEventFacilityResourceStatus</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEventFacilityResourceStatusListener.html">agEventFacilityResourceStatusListener</a></td><td class="indexvalue">Event shift management functions </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEventHelper.html">agEventHelper</a></td><td class="indexvalue">Event management functions </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEventMigrationHelper.html">agEventMigrationHelper</a></td><td class="indexvalue">Event facility management functions </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagEventShiftHelper.html">agEventShiftHelper</a></td><td class="indexvalue">Event shift management functions </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEventStaff.html">agEventStaff</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagEventStaffHelper.html">agEventStaffHelper</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacility.html">agFacility</a></td><td class="indexvalue">Extends the base Facility class for added functionality </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagFacilityExporter.html">agFacilityExporter</a></td><td class="indexvalue">AgFacilityExporter is used to export all facilities from the system </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityForm.html">agFacilityForm</a></td><td class="indexvalue">Implements top-level form for creating and editing facility records and associated facility resource records </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityGroupType.html">agFacilityGroupType</a></td><td class="indexvalue">AgFacilityGroupType extended class for creating scenario specific facility groups </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityGroupTypeForm.html">agFacilityGroupTypeForm</a></td><td class="indexvalue">AgFacilityGroupTypeForm.class.php extended base class </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityHelper.html">agFacilityHelper</a></td><td class="indexvalue">This class is used to provide facility's basic information </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityResource.html">agFacilityResource</a></td><td class="indexvalue">AgFacilityResource </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityResourceAcvitationForm.html">agFacilityResourceAcvitationForm</a></td><td class="indexvalue">AgFacilityResourceActivationForm class takes in an array of forms with which to construct a set of embedded forms </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagFacilityResourceListener.html">agFacilityResourceListener</a></td><td class="indexvalue">Listener class for facility resource status changes </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityResourceStatusForm.html">agFacilityResourceStatusForm</a></td><td class="indexvalue">AgFacilityResourceStatusForm class takes in an array of forms with which to construct a set of embedded forms </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityResourceType.html">agFacilityResourceType</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagFacilityStaffResource.html">agFacilityStaffResource</a></td><td class="indexvalue">Extends BaseagFacilityStaffResource (for why) </td></tr>
@@ -161,28 +175,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classagGeoTypeTable.html">agGeoTypeTable</a></td><td class="indexvalue">AgGeoTypeTable </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagGis.html">agGis</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagGisActions.html">agGisActions</a></td><td class="indexvalue">AgEmbeddedShiftTemplateForm.class.php </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagGisHelper.html">agGisHelper</a></td><td class="indexvalue">Provides bulk-gis manipulation methods </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagGisQuery.html">agGisQuery</a></td><td class="indexvalue">AgGisQuery this class defines gis related queries </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classagGlobalParam.html">agGlobalParam</a></td><td class="indexvalue">AgGlobalParam this class extends the <a class="el" href="classagGlobalParam.html" title="agGlobalParam this class extends the agGlobalParam object for various purposes">agGlobalParam</a> object for various purposes </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagGlobal.html">agGlobal</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagGlobalParam.html">agGlobalParam</a></td><td class="indexvalue">Extends <a class="el" href="classagGlobalParam.html" title="Extends agGlobalParam.">agGlobalParam</a> </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagGlobalParamForm.html">agGlobalParamForm</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagImportNormalization.html">agImportNormalization</a></td><td class="indexvalue">Description of <a class="el" href="classagImportNormalization.html" title="Description of agImportNormalization.">agImportNormalization</a> </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classAgImportXLS.html">AgImportXLS</a></td><td class="indexvalue">Facility Import Class </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagInstall.html">agInstall</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagLanguage.html">agLanguage</a></td><td class="indexvalue">Extends BaseagLanguage to return language field for person records </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagLanguageCompetency.html">agLanguageCompetency</a></td><td class="indexvalue">Extends BaseagEmailContact to return email_contact field for person records </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagLanguageFormat.html">agLanguageFormat</a></td><td class="indexvalue">Extends BaseagEmailContact to return email_contact field for person records </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classagListForm.html">agListForm</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagListForm.html">agListForm</a></td><td class="indexvalue">AgListForm is a basic list constructing/rendering class, for now it only renders a list </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagMaritalStatus.html">agMaritalStatus</a></td><td class="indexvalue">Extends BaseagMaritalStatus to return marial status for person records </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagNationality.html">agNationality</a></td><td class="indexvalue">Extends BaseagNationality and provides access to the data model </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagOrganization.html">agOrganization</a></td><td class="indexvalue">AgOrganization extends the base organization object to capture additional organization related information </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagOrganizationForm.html">agOrganizationForm</a></td><td class="indexvalue">An extension of an organization base form to process the edit and show forms of organization and its related records </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagOrganizationHelper.html">agOrganizationHelper</a></td><td class="indexvalue">AgOrganizationHelper this class extends the bulk record helper </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPerson.html">agPerson</a></td><td class="indexvalue">AgPerson this class extends the person object for various purposes </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPersonForm.html">agPersonForm</a></td><td class="indexvalue">Agasti Person Form Class - A class to generate either a 'new person' or 'edit person' form </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPersonMjAgNationality.html">agPersonMjAgNationality</a></td><td class="indexvalue">Extends BaseagPersonMjAgNationality and returns ??? </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classagPersonMjAgPersonName.html">agPersonMjAgPersonName</a></td><td class="indexvalue">Contains the BaseagPersonMjAgPersonName class </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPersonMjAgPhoneContactForm.html">agPersonMjAgPhoneContactForm</a></td><td class="indexvalue">Form extending BaseagPersonMjAgPhoneContactForm </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPersonName.html">agPersonName</a></td><td class="indexvalue">Agasti Sudo User Class </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagPersonNameHelper.html">agPersonNameHelper</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPersonNameType.html">agPersonNameType</a></td><td class="indexvalue">Extends the Doctrine-generated BaseagPersonNameType model </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classagPersonTable.html">agPersonTable</a></td><td class="indexvalue">The table representation of a person </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPetActions.html">agPetActions</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPhoneContact.html">agPhoneContact</a></td><td class="indexvalue">Extends the BaseagPhoneContact </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagPhoneHelper.html">agPhoneHelper</a></td><td class="indexvalue">Provides bulk-phone manipulation methods </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagPluginManager.html">agPluginManager</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagProfession.html">agProfession</a></td><td class="indexvalue">Extends baseAgProfession </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagQueryHelper.html">agQueryHelper</a></td><td class="indexvalue">AgQueryHelper this class defines queries associated custom functions </td></tr>
@@ -194,6 +213,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classagScenarioFacilityGroup.html">agScenarioFacilityGroup</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagScenarioFacilityGroupForm.html">agScenarioFacilityGroupForm</a></td><td class="indexvalue">AgScenarioFacilityGroupForm extended class for creating scenario specific facility groups </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagScenarioFacilityGroupTable.html">agScenarioFacilityGroupTable</a></td><td class="indexvalue">AgScenarioFacilityGroupTable </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagScenarioFacilityHelper.html">agScenarioFacilityHelper</a></td><td class="indexvalue">Scenario facility management functions </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagScenarioFacilityResource.html">agScenarioFacilityResource</a></td><td class="indexvalue">Extends the base ScenarioFacilityResource class for added functionality </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagScenarioForm.html">agScenarioForm</a></td><td class="indexvalue">Extends BaseagScenarioForm </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagScenarioGenerator.html">agScenarioGenerator</a></td><td class="indexvalue"></td></tr>
@@ -203,17 +223,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classagShiftStatus.html">agShiftStatus</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagSite.html">agSite</a></td><td class="indexvalue">Extends BaseagSite </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagStaffActions.html">agStaffActions</a></td><td class="indexvalue">Staff Actions extends <a class="el" href="classagActions.html" title="extends sfActions for common functionality">agActions</a> </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagStaffHelper.html">agStaffHelper</a></td><td class="indexvalue">Provides bulk-staff manipulation methods </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagStaffImport.html">agStaffImport</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagStaffImportXls.html">agStaffImportXls</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagStaffPoolForm.html">agStaffPoolForm</a></td><td class="indexvalue">Agasti ag Staff Pool Form Class - A class to generate either a new staff pool form or an edit staff pool form </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagStaffResourceHelper.html">agStaffResourceHelper</a></td><td class="indexvalue">AgStaffResourceHelper this class extends the bulk record helper </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagStaffResourceRequirementForm.html">agStaffResourceRequirementForm</a></td><td class="indexvalue">AgStaffResourceRequirementForm extended <a class="el" href="classagScenarioFacilityResource.html" title="extends the base ScenarioFacilityResource class for added functionality">agScenarioFacilityResource</a> form base class, for assigning staff resource requirements </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagSudoAuth.html">agSudoAuth</a></td><td class="indexvalue">Extends sfGuardSecurityUser class </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagSudoSigninForm.html">agSudoSigninForm</a></td><td class="indexvalue">Agasti Sudo Signin Form extends the basic sfGuardSigninForm class to allow for a bypass of the normal sfGuard Validator </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagSudoUser.html">agSudoUser</a></td><td class="indexvalue">Agasti Sudo User Class extends the basic functionality of sfGuardSecurity </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagTask.html">agTask</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagTemplateHelper.html">agTemplateHelper</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagValidatorDateTime.html">agValidatorDateTime</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagValidatorDaytoMinute.html">agValidatorDaytoMinute</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagWidgetFormInputPhoneText.html">agWidgetFormInputPhoneText</a></td><td class="indexvalue">This widget is used to format values from an <a class="el" href="classagPhoneContact.html" title="extends the BaseagPhoneContact">agPhoneContact</a> object so they'll use that they will use phone number formatting that has been defined in the schema </td></tr>
   <tr><td class="indexkey"><a class="el" href="classagWidgetFormSchemaFormatterInline.html">agWidgetFormSchemaFormatterInline</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classagWidgetFormSchemaFormatterInlineBigTopLabel.html">agWidgetFormSchemaFormatterInlineBigTopLabel</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagWidgetFormSchemaFormatterInlineBlock.html">agWidgetFormSchemaFormatterInlineBlock</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagWidgetFormSchemaFormatterInlineLabels.html">agWidgetFormSchemaFormatterInlineLabels</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagWidgetFormSchemaFormatterInlineLeftLabel.html">agWidgetFormSchemaFormatterInlineLeftLabel</a></td><td class="indexvalue"></td></tr>
@@ -226,17 +251,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classagWidgetFormSchemaFormatterSubContainerLabel.html">agWidgetFormSchemaFormatterSubContainerLabel</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagWidgetFormSchemaFormatterSubContainerLeftLabel.html">agWidgetFormSchemaFormatterSubContainerLeftLabel</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classagWidgetFormSelectCheckbox.html">agWidgetFormSelectCheckbox</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classAssociativeOneDimHydrator.html">AssociativeOneDimHydrator</a></td><td class="indexvalue"><a class="el" href="classAssociativeTwoDimHydrator.html" title="AssociativeTwoDimHydrator this class extends the Doctrine_Hydrator_Abstract class.">AssociativeTwoDimHydrator</a> this class extends the Doctrine_Hydrator_Abstract class </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classAssociativeThreeDimHydrator.html">AssociativeThreeDimHydrator</a></td><td class="indexvalue"><a class="el" href="classAssociativeThreeDimHydrator.html" title="AssociativeThreeDimHydrator this class extends the Doctrine_Hydrator_Abstract class.">AssociativeThreeDimHydrator</a> this class extends the Doctrine_Hydrator_Abstract class </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classAssociativeTwoDimHydrator.html">AssociativeTwoDimHydrator</a></td><td class="indexvalue"><a class="el" href="classAssociativeTwoDimHydrator.html" title="AssociativeTwoDimHydrator this class extends the Doctrine_Hydrator_Abstract class.">AssociativeTwoDimHydrator</a> this class extends the Doctrine_Hydrator_Abstract class </td></tr>
   <tr><td class="indexkey"><a class="el" href="classBaseFormDoctrine.html">BaseFormDoctrine</a></td><td class="indexvalue">Project form base class </td></tr>
   <tr><td class="indexkey"><a class="el" href="classclientActions.html">clientActions</a></td><td class="indexvalue">Client Actions extends sfActions </td></tr>
   <tr><td class="indexkey"><a class="el" href="classeventActions.html">eventActions</a></td><td class="indexvalue">Extends <a class="el" href="classagActions.html" title="extends sfActions for common functionality">agActions</a> for event </td></tr>
   <tr><td class="indexkey"><a class="el" href="classfacilityActions.html">facilityActions</a></td><td class="indexvalue">Facility Actions extends sfActions </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classGisPointCoordinateHydrator.html">GisPointCoordinateHydrator</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classhomeActions.html">homeActions</a></td><td class="indexvalue">Home actions </td></tr>
   <tr><td class="indexkey"><a class="el" href="protocolhostspec-p.html">&lt;hostspec&gt;</a></td><td class="indexvalue">Parse a data source name </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classKeyValueArrayHydrator.html">KeyValueArrayHydrator</a></td><td class="indexvalue"><a class="el" href="classKeyValuePairHydrator.html" title="KeyValuePairHydrator this class extends the Doctrine_Hydrator_Abstract class.">KeyValuePairHydrator</a> this class extends the Doctrine_Hydrator_Abstract class </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classKeyValueArrayHydrator.html">KeyValueArrayHydrator</a></td><td class="indexvalue"><a class="el" href="classKeyValueArrayHydrator.html" title="KeyValueArrayHydrator this class extends the Doctrine_Hydrator_Abstract class.">KeyValueArrayHydrator</a> this class extends the Doctrine_Hydrator_Abstract class </td></tr>
   <tr><td class="indexkey"><a class="el" href="classKeyValuePairHydrator.html">KeyValuePairHydrator</a></td><td class="indexvalue"><a class="el" href="classKeyValuePairHydrator.html" title="KeyValuePairHydrator this class extends the Doctrine_Hydrator_Abstract class.">KeyValuePairHydrator</a> this class extends the Doctrine_Hydrator_Abstract class </td></tr>
   <tr><td class="indexkey"><a class="el" href="classmyUser.html">myUser</a></td><td class="indexvalue">Extends <a class="el" href="classagSudoAuth.html" title="Extends sfGuardSecurityUser class.">agSudoAuth</a> </td></tr>
   <tr><td class="indexkey"><a class="el" href="classnavComponents.html">navComponents</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classOLERead.html">OLERead</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classorganizationActions.html">organizationActions</a></td><td class="indexvalue">Organization Actions extends sfActions </td></tr>
   <tr><td class="indexkey"><a class="el" href="classpkDate.html">pkDate</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classPluginagAddressGeo.html">PluginagAddressGeo</a></td><td class="indexvalue"></td></tr>
@@ -319,7 +347,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classPluginagEventShiftForm.html">PluginagEventShiftForm</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classPluginagEventShiftFormFilter.html">PluginagEventShiftFormFilter</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classPluginagEventShiftTable.html">PluginagEventShiftTable</a></td><td class="indexvalue"><a class="el" href="classPluginagEventShiftTable.html" title="PluginagEventShiftTable.">PluginagEventShiftTable</a> </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classPluginagEventStaff.html">PluginagEventStaff</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classPluginagEventStaff.html">PluginagEventStaff</a></td><td class="indexvalue"><a class="el" href="classPluginagEventStaff.html" title="PluginagEventStaff is an extension of base class agEventStaff.">PluginagEventStaff</a> is an extension of base class <a class="el" href="classagEventStaff.html">agEventStaff</a> </td></tr>
   <tr><td class="indexkey"><a class="el" href="classPluginagEventStaffForm.html">PluginagEventStaffForm</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classPluginagEventStaffFormFilter.html">PluginagEventStaffFormFilter</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classPluginagEventStaffRotation.html">PluginagEventStaffRotation</a></td><td class="indexvalue"></td></tr>
@@ -415,7 +443,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey"><a class="el" href="classPluginagStaffTable.html">PluginagStaffTable</a></td><td class="indexvalue"><a class="el" href="classPluginagStaffTable.html" title="PluginagStaffTable.">PluginagStaffTable</a> </td></tr>
   <tr><td class="indexkey"><a class="el" href="classreportActions.html">reportActions</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classscenarioActions.html">scenarioActions</a></td><td class="indexvalue">Extends <a class="el" href="classagActions.html" title="extends sfActions for common functionality">agActions</a> for scenario </td></tr>
-  <tr><td class="indexkey"><a class="el" href="classSingleValueArrayHydrator.html">SingleValueArrayHydrator</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="classsearchActions.html">searchActions</a></td><td class="indexvalue">Extends sfActions for common functionality </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classSingleValueArrayHydrator.html">SingleValueArrayHydrator</a></td><td class="indexvalue"><a class="el" href="classSingleValueArrayHydrator.html" title="SingleValueArrayHydrator this class extends the Doctrine_Hydrator_Abstract class.">SingleValueArrayHydrator</a> this class extends the Doctrine_Hydrator_Abstract class </td></tr>
+  <tr><td class="indexkey"><a class="el" href="classSpreadsheet__Excel__Reader.html">Spreadsheet_Excel_Reader</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="classxlsStream.html">xlsStream</a></td><td class="indexvalue">MS-Excel stream handler This class read/writes a data stream directly from/to a Microsoft Excel spreadsheet opened with the xlsfile:// protocol This is used to export associative array data directly to MS-Excel  PHP 4 &gt;= 4.3.2 </td></tr>
 </table>
 </div>
@@ -424,7 +454,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

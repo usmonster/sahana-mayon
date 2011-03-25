@@ -1,13 +1,10 @@
 <?php include_http_metas() ?>
     <?php include_metas(); ?>
-    <?php include_title(); ?>
+    <?php agTemplateHelper::include_customTitle(); ?>
     <link rel="shortcut icon" href="<?php echo url_for('images/favicon.ico'); ?>" />
     <?php include_stylesheets(); ?>
     <!--[if lte IE 6]>
     <?php echo stylesheet_tag('lte_ie6_css'); ?>
-    <![endif]-->
-    <!--[if !lte IE 6]>
-    <?php echo stylesheet_tag('menu'); ?>
     <![endif]-->
     <?php include_javascripts(); ?>
     <!--[if lt IE 9]>

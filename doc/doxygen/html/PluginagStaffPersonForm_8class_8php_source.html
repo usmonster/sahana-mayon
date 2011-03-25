@@ -88,7 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00048"></a><a class="code" href="classPluginagStaffPersonForm.html#a731294e23c6cb18bbc8357ab40021b96">00048</a>   <span class="keyword">public</span> function <a class="code" href="classPluginagStaffPersonForm.html#a731294e23c6cb18bbc8357ab40021b96" title="Embeds an instance of PluginEmbedddedAgStaffForm()">embedStaffForm</a>($staffContainerForm)
 <a name="l00049"></a>00049   {
 <a name="l00050"></a>00050     <span class="keywordflow">if</span> ($id = $this-&gt;getObject()-&gt;<span class="keywordtype">id</span>) {
-<a name="l00051"></a>00051       $staffObject = Doctrine_Query::create()
+<a name="l00051"></a>00051       $staffObject = agDoctrineQuery::create()
 <a name="l00052"></a>00052               -&gt;from(<span class="stringliteral">&#39;agStaff a&#39;</span>)
 <a name="l00053"></a>00053               -&gt;where(<span class="stringliteral">&#39;a.person_id =?&#39;</span>, $id)
 <a name="l00054"></a>00054               -&gt;execute()-&gt;getFirst();
@@ -100,7 +100,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00063"></a><a class="code" href="classPluginagStaffPersonForm.html#ae47dd92f50ba6dc602486965d1ae6a5c">00063</a>   <span class="keyword">public</span> function <a class="code" href="classPluginagStaffPersonForm.html#ae47dd92f50ba6dc602486965d1ae6a5c" title="Embeds an instance of PluginEmbedddedAgStaffResourceForm()">embedStaffResourceForm</a>($staffContainerForm)
 <a name="l00064"></a>00064   {
 <a name="l00065"></a>00065     <span class="keywordflow">if</span> ($staff = $this-&gt;getObject()-&gt;getAgStaff()-&gt;getFirst()) {
-<a name="l00066"></a>00066       $staffResourceObject = Doctrine_Query::create()
+<a name="l00066"></a>00066       $staffResourceObject = agDoctrineQuery::create()
 <a name="l00067"></a>00067               -&gt;from(<span class="stringliteral">&#39;agStaffResource a&#39;</span>)
 <a name="l00068"></a>00068               -&gt;where(<span class="stringliteral">&#39;a.staff_id = ?&#39;</span>, $staff-&gt;id)
 <a name="l00069"></a>00069               -&gt;execute()-&gt;getFirst();
@@ -116,7 +116,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00082"></a><a class="code" href="classPluginagStaffPersonForm.html#a24a334d82aa1f62be24d0879183f1f0b">00082</a>   <span class="keyword">public</span> function <a class="code" href="classPluginagStaffPersonForm.html#a24a334d82aa1f62be24d0879183f1f0b" title="Embeds an instance of PluginEmbedddedAgStaffResourceOrganizationForm()">embedStaffResourceOrganizationForm</a>($staffContainerForm)
 <a name="l00083"></a>00083   {
 <a name="l00084"></a>00084     <span class="keywordflow">if</span> (!$this-&gt;isNew()) {
-<a name="l00085"></a>00085       $staffResOrgObject = Doctrine_Query::create()
+<a name="l00085"></a>00085       $staffResOrgObject = agDoctrineQuery::create()
 <a name="l00086"></a>00086               -&gt;from(<span class="stringliteral">&#39;agStaffResourceOrganization a&#39;</span>)
 <a name="l00087"></a>00087               -&gt;where(<span class="stringliteral">&#39;a.staff_resource_id = ?&#39;</span>, $this-&gt;getObject()-&gt;getAgStaff()-&gt;getFirst()-&gt;getAgStaffResource()-&gt;getFirst()-&gt;<span class="keywordtype">id</span>)
 <a name="l00088"></a>00088               -&gt;execute()-&gt;getFirst();
@@ -189,7 +189,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

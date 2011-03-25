@@ -3,11 +3,11 @@
  *
  * Provides bulk-address manipulation methods
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Chad Heuschober, CUNY SPS
  *
@@ -104,6 +104,9 @@ class agAddressHelper extends agBulkRecordHelper
     $this->setReturnStandard($standardId) ;
   }
 
+  /**
+   *  Small helper function to pick up the default geo-type for addresses.
+   */
   protected function _setDefaultAddressGeoType()
   {
     $geoType = agGlobal::getParam($this->_globalDefaultAddressGeoType) ;
@@ -182,9 +185,12 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
+   * Method to wrap the non-native address functions and process addresses per-address standard so
+   * that results are returned in the standard in which they were submitted.
    *
-   * @param <type> $method
-   * @param <type> $arguments
+   * @param string $returnMethod The address return method to wrap.
+   * @param array $arguments The arguments to be passed to the address return method.
+   * @return array The results of the $returnMethod.
    */
   protected function _getNativeAddress($returnMethod, $arguments)
   {
@@ -603,6 +609,9 @@ class agAddressHelper extends agBulkRecordHelper
    */
   public function updateAddressHashes($addressIds = NULL, $conn = NULL)
   {
+    // what is our transaction called?
+    $savepoint = 'updateAddrHash' ;
+
     // reflect our addressIds
     $addressIds = $this->getRecordIds($addressIds) ;
 
@@ -699,6 +708,9 @@ class agAddressHelper extends agBulkRecordHelper
    *    ...
    * )
    * </code>
+   * @param boolean $enforceComplete Determines whether or not only complete addresses will be
+   * processed and set. Warning! It still won't process addresses that were previously allowed to
+   * be incomplete meaning users should attempt to be consistent in the use of this parameter.
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return array A two dimensional array. The first array element ([0]), returns an array of
    * address indexes and the newly inserted addressIds. The second array element [1], returns all
@@ -710,13 +722,108 @@ class agAddressHelper extends agBulkRecordHelper
    * )
    * </code>
    */
-  public function setAddresses($addresses, Doctrine_Connection $conn = NULL)
+  public function setAddresses( $addresses,
+                                $enforceComplete = NULL,
+                                Doctrine_Connection $conn = NULL)
+  {
+    // determine whether or not we're enforcing completeness in addresses
+    if (is_null($enforceComplete)) { $enforceComplete = $this->enforceComplete ; }
+
+    // if we're going to do this, let's set up our required elements and kick out incompletes
+    if ($enforceComplete)
+    {
+      // set up the incompletes (non-processed) array
+      $incompleteAddresses = array() ;
+
+      // we'll want this flipped array to process all address standards one at a time
+      $addressesByStandard = array() ;
+      foreach ($addresses as $index => $components)
+      {
+        $addressesByStandard[$components[1]][$index] = $components[0] ;
+      }
+
+      // remember what our default standard was
+      $origStandard = $this->_returnStandardId ;
+
+      // now loop through our flipped array and test
+      foreach ($addressesByStandard as $standardId => $addrComponents)
+      {
+        // we do this to avoid spurious sets of the required components
+        if ($standardId != $this->_returnStandardId) { $this->setReturnStandard($standardId) ; }
+
+        // now loop the addresses individually
+        foreach ($addrComponents as $index => $components)
+        {
+          if (! $this->isCompleteAddress($components))
+          {
+            // add it to our incompletes
+            $incompleteAddresses[] = $index ;
+
+            // also remove it from the group to be processed
+            unset($addresses[$index]) ;
+          }
+
+          // release the array!
+          unset($addrComponents[$index]) ;
+        }
+
+        // oh heck, release this one too
+        unset($addressesByStandard[$standardId]) ;
+      }
+
+      // return the original standard
+      if ($origStandard != $this->_returnStandardId) { $this->setReturnStandard($origStandard) ; }
+    }
+
+    // either way, we eventually pass the 'cleared' addresses to our setter
+    $results = $this->_setAddresses($addresses, $conn) ;
+
+    // append our incompletes to the other failed addresses
+    $results[1] = $results[1] + $incompleteAddresses ;
+
+    return $results ;
+  }
+
+  /**
+   * Method to take in address components and return address ids, inserting new addresses OR
+   * address components as necessary.
+   *
+   * NOTE: This method does not fail fast. Addresses for which address id's could not be returned,
+   * either by failed search or failed insert, are returned by index as part of the results set.
+   *
+   * @param array $addresses This multi-dimensional array of address data is keyed by an arbitrary
+   * index. The values of each index are: an array of address components, keyed by element id, and the
+   * default address standard of this address.
+   * <code>
+   * array(
+   *    [$index] => array(
+   *      [0] => array( [$elementId] => $valueString, ...),
+   *      [1] => $addressStanardId
+   *    ),
+   *    ...
+   * )
+   * </code>
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array A two dimensional array. The first array element ([0]), returns an array of
+   * address indexes and the newly inserted addressIds. The second array element [1], returns all
+   * address indexes that could not be inserted.
+   * <code>
+   * array(
+   *  [0] => array( [$addressIndex] => [$addressId], ... )
+   *  [1] => array( $addressIndex, ... )
+   * )
+   * </code>
+   */
+  protected function _setAddresses( $addresses, Doctrine_Connection $conn = NULL)
   {
     // declare our results array
     $results = array() ;
 
     // declare the flipped array we use for the first pass search
     $searchArray = array() ;
+
+    // declare the addrHashes array explicitly too
+    $addrHashes = array() ;
     
     // loop through the addresses, hash the components, and build the hash-keyed search array
     foreach($addresses as $index => $addressComponents)

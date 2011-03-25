@@ -4,11 +4,11 @@
  * Agasti Person Form Class - A class to generate either a 'new person' or
  * 'edit person' form
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Charles Wisniewski, CUNY SPS
  * @author Nils Stolpe, CUNY SPS
@@ -351,10 +351,10 @@ class agPersonForm extends BaseagPersonForm
     // the third level value).
 
     /**
-     * @todo this works fine for now, since we only have one address format, but should be
-     * refactored to create a new array from values in the agAddressFormat table for each
-     * address_standard_id in that table.
-     */
+    * @todo this works fine for now, since we only have one address format, but should be
+    * refactored to create a new array from values in the agAddressFormat table for each
+    * address_standard_id in that table.
+    **/
     foreach ($this->address_formats as $af) {
       $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element] = $af->getAgAddressElement()->id;
     }

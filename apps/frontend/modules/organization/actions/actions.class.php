@@ -3,11 +3,11 @@
 /**
  * Organization Actions extends sfActions
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author     Shirley Chan, CUNY SPS
  *
@@ -140,6 +140,10 @@ class organizationActions extends sfActions
       // a final sort on the values will ensure that strings (names) sort sequentially
       asort($this->staffResourceList) ;
     }
+
+     //p-code
+      $this->getResponse()->setTitle('Sahana Agasti Organization - ' . $this->ag_organization->getOrganization());
+     //end p-code
   }
 
   /**
@@ -186,6 +190,9 @@ class organizationActions extends sfActions
   {
     $this->forward404Unless($ag_organization = Doctrine_Core::getTable('agOrganization')->find(array($request->getParameter('id'))), sprintf('Object ag_organization does not exist (%s).', $request->getParameter('id')));
     $this->form = new agOrganizationForm($ag_organization);
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Organization Edit');
+    //end p-code
   }
 
   /**

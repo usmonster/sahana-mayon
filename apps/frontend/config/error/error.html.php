@@ -16,6 +16,7 @@
       <div id="navigation">
       </div>
       <div id="columns">
+          <br/> <?php echo $_SERVER['REQUEST_URI'] ?>
         <h2> New York City Sahana Agasti</h2>
         <br/>
         <h5>The server returned a "<?php echo $code ?> <?php echo $text ?>".</h5>

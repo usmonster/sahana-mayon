@@ -3,11 +3,11 @@
 /** 
 * home actions.
 *
-* PHP Version 5
+* PHP Version 5.3
 *
-* LICENSE: This source file is subject to LGPLv3.0 license
+* LICENSE: This source file is subject to LGPLv2.1 license
 * that is available through the world-wide-web at the following URI:
-* http://www.gnu.org/copyleft/lesser.html
+* http://www.gnu.org/licenses/lgpl-2.1.html
 *
 * @author Full Name, Organization
 *
@@ -30,16 +30,15 @@ class homeActions extends agActions
   */
   public function executeIndex(sfWebRequest $request)
   {
-#    $this->forward('default', 'module');
+  //$this->forward('default', 'module');
   }
   public function executeError(sfWebRequest $request)
   {
-  $this->math = 2+2;
     $this->error_code = $this->response;
   }
    public function executePrepare(sfWebRequest $request)
   {
-//    $this->forward('default', 'module');
+  //$this->forward('default', 'module');
   }
 
 }

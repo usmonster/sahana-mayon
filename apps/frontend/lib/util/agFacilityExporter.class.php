@@ -4,11 +4,11 @@
 * from facility actions, and this class has basically been constructed to avoid
 * facility actions from growing to an unmanageable length.
 *
-* PHP Version 5
+* PHP Version 5.3
 *
-* LICENSE: This source file is subject to LGPLv3.0 license
+* LICENSE: This source file is subject to LGPLv2.1 license
 * that is available through the world-wide-web at the following URI:
-* http://www.gnu.org/copyleft/lesser.html
+* http://www.gnu.org/licenses/lgpl-2.1.html
 *
 * @author     Nils Stolpe, CUNY SPS
 * @author     Shirley Chan, CUNY SPS

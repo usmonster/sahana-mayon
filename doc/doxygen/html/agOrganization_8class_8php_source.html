@@ -69,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00024"></a>00024     <span class="keywordflow">try</span>
 <a name="l00025"></a>00025     {
 <a name="l00026"></a>00026       <span class="comment">// Collect all organizations.</span>
-<a name="l00027"></a>00027       $organizationQuery = Doctrine_Query::create()
+<a name="l00027"></a>00027       $organizationQuery = agDoctrineQuery::create()
 <a name="l00028"></a>00028         -&gt;select(<span class="stringliteral">&#39;o.*&#39;</span>)
 <a name="l00029"></a>00029         -&gt;from(<span class="stringliteral">&#39;agOrganization as o&#39;</span>);
 <a name="l00030"></a>00030 
@@ -93,7 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00054"></a>00054     {
 <a name="l00055"></a>00055       <span class="comment">// Should check if ag_staff_resource_organization table is empty.  If table is empty, staff resources are not associated to organization.</span>
 <a name="l00056"></a>00056 
-<a name="l00057"></a>00057       $query = Doctrine_Query::create()
+<a name="l00057"></a>00057       $query = agDoctrineQuery::create()
 <a name="l00058"></a>00058         -&gt;select(<span class="stringliteral">&#39;o.id, sro.id, sr.id, s.id, s.person_id, sr.staff_resource_type_id&#39;</span>)
 <a name="l00059"></a>00059         -&gt;from(<span class="stringliteral">&#39;agOrganization as o&#39;</span>)
 <a name="l00060"></a>00060         -&gt;leftJoin(<span class="stringliteral">&#39;o.agStaffResourceOrganization as sro&#39;</span>)
@@ -143,7 +143,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

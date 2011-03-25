@@ -99,11 +99,16 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a77af7195003cab8a335000218db33287" title="executeEdit()">executeEdit()</a>  <a href="#a77af7195003cab8a335000218db33287"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a0ac4cbb2c2e98d1ca376d40fd2fdd33f">executeUpdate</a> (sfWebRequest $request)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a0ac4cbb2c2e98d1ca376d40fd2fdd33f" title="executeUpdate()">executeUpdate()</a>  <a href="#a0ac4cbb2c2e98d1ca376d40fd2fdd33f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a9c5b895098a1ccbd6aaa47c7b359729a">executeImport</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Imports facility records from a properly formatted XLS file.  <a href="#a9c5b895098a1ccbd6aaa47c7b359729a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a121b5ad09b23d54d3af663ea0cb17b7c">executeDisable</a> (sfWebRequest $request)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a121b5ad09b23d54d3af663ea0cb17b7c" title="executeDisable()">executeDisable()</a>  <a href="#a121b5ad09b23d54d3af663ea0cb17b7c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a5dcf191e74998dffa8848e73b784ce53">executeDelete</a> (sfWebRequest $request)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a5dcf191e74998dffa8848e73b784ce53" title="executeDelete()">executeDelete()</a>  <a href="#a5dcf191e74998dffa8848e73b784ce53"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a68530b806445c9a04c23c4e437019541">executeExport</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a68530b806445c9a04c23c4e437019541" title="executeExport()">executeExport()</a>  <a href="#a68530b806445c9a04c23c4e437019541"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#acdc878e820fbe9f15bc1d469e8cd1ae8">executeFacilityExport</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiates agFacilityExporter() and calls its functions to export all facilities in the system.  <a href="#acdc878e820fbe9f15bc1d469e8cd1ae8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a9e75892f60fb4bae39731668447fb1e7">gatherLookupValues</a> ($lookUps=null)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">This function constructs a Doctrine Query based on the values of the parameter passed in.  <a href="#a9e75892f60fb4bae39731668447fb1e7"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a818d90af02e0faea8bf0e9a3938baf6a">processForm</a> (sfWebRequest $request, sfForm $form)</td></tr>
@@ -150,7 +155,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00127">127</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00136">136</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -181,10 +186,38 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <p><p>Locate the associated <a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> record through the associated <a class="el" href="classagSite.html" title="Extends BaseagSite.">agSite</a> record. Call the <a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> object's delete() method, which results in the deletion of all of the records associated with this <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> record, including contact information.</p>
 <p><a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> will call its <a class="el" href="classagSite.html" title="Extends BaseagSite.">agSite</a> object's delete() method which will, in turn, call our <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> object's delete() method. The <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> object will also delete the associated <a class="el" href="classagFacilityResource.html" title="agFacilityResource">agFacilityResource</a> records.</p>
 <p>If there was no related <a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> record found, something is wrong.</p>
-<p>Redirect to facility/list when done.</p>
+<p>Redirect to facility/list when done if it hasn't happened already</p>
 </p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00204">204</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00283">283</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a121b5ad09b23d54d3af663ea0cb17b7c"></a><!-- doxytag: member="facilityActions::executeDisable" ref="a121b5ad09b23d54d3af663ea0cb17b7c" args="(sfWebRequest $request)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">facilityActions::executeDisable </td>
+          <td>(</td>
+          <td class="paramtype">sfWebRequest $&#160;</td>
+          <td class="paramname"><em>request</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><a class="el" href="classfacilityActions.html#a121b5ad09b23d54d3af663ea0cb17b7c" title="executeDisable()">executeDisable()</a> </p>
+<p>Delete a facility record's associated facility resources. Redirects to facility edit page when it is done.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$request</td><td>sfWebRequest object for current page request </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00261">261</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -212,34 +245,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00156">156</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a68530b806445c9a04c23c4e437019541"></a><!-- doxytag: member="facilityActions::executeExport" ref="a68530b806445c9a04c23c4e437019541" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">facilityActions::executeExport </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><a class="el" href="classfacilityActions.html#a68530b806445c9a04c23c4e437019541" title="executeExport()">executeExport()</a> </p>
-<p>Export all facility data to an Excel file using PHPExcel plugin.</p>
-<dl><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">$request</td><td>sfWebRequest object for current page request </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00266">266</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00165">165</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -257,12 +263,34 @@ Ilya Gulko, CUNY SPS</dd></dl>
 </div>
 <div class="memdoc">
 
-<p><p>Error reporting</p>
-<p>PHPExcel</p>
-<p>PHPExcel_Writer_Excel2007.php </p>
-</p>
+<p>Instantiates agFacilityExporter() and calls its functions to export all facilities in the system. </p>
+<p>After the exporter returns, the instance is unset to free up memory, then the browser directs to the exported xls. </p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00394">394</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00361">361</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9c5b895098a1ccbd6aaa47c7b359729a"></a><!-- doxytag: member="facilityActions::executeImport" ref="a9c5b895098a1ccbd6aaa47c7b359729a" args="(sfWebRequest $request)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">facilityActions::executeImport </td>
+          <td>(</td>
+          <td class="paramtype">sfWebRequest $&#160;</td>
+          <td class="paramname"><em>request</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Imports facility records from a properly formatted XLS file. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000094">Todo:</a></b></dt><dd><p class="startdd">: define a standard import format and document it for the end user. </p>
+<p class="enddd">: make this more robust and create meaningful error messages for failed import fields and records. </p>
+</dd></dl>
+
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00211">211</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -290,7 +318,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00029">29</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00031">31</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -325,7 +353,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <p>Set the pager's page number, defaulting to page 1</p>
 </p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00041">41</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00051">51</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -353,7 +381,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00115">115</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00124">124</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -381,7 +409,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00088">88</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00097">97</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -410,7 +438,38 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00185">185</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00194">194</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9e75892f60fb4bae39731668447fb1e7"></a><!-- doxytag: member="facilityActions::gatherLookupValues" ref="a9e75892f60fb4bae39731668447fb1e7" args="($lookUps=null)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">facilityActions::gatherLookupValues </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>lookUps</em> = <code>null</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>This function constructs a Doctrine Query based on the values of the parameter passed in. </p>
+<p>The query will return the values from a single column of a table, with the possiblity to add a where clause to the query.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$lookups</td><td>array() gatherLookupValues expects $lookups to be a two-dimensional array. Keys of the outer level are expected to be column headers for a lookup column, or some other kind of organized data list. However, submitting a non-associative array will not cause any errors.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>The expected structure of the array is something like this:</p>
+<p>$lookUps = array( 'Facility Resource Status' =&gt; array( 'selectTable' =&gt; 'agFacilityResourceStatus', 'selectColumn' =&gt; 'facility_resource_status', 'whereColumn' =&gt; null, 'whereValue' =&gt; null ), 'Facility Resource Status' =&gt; array( 'selectTable' =&gt; 'agFacilityResourceStatus', 'selectColumn' =&gt; 'facility_resource_status', 'whereColumn' =&gt; null, 'whereValue' =&gt; null ) );</p>
+<p>Additional values of the $lookUps array can also be included. The keys of the inner array musy be set to selectTable, selectColumn, whereColumn, and whereValue. </p>
+
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00409">409</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -449,7 +508,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00247">247</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00342">342</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -462,7 +521,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

@@ -416,7 +416,7 @@ span.green{
 }
 
 .configure {
-  width: 670px;
+/*  width: 670px;*/
   border: solid 1px #dadada;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
@@ -515,13 +515,18 @@ input[type="button"], button[type="submit"], form input[type="submit"] {
   font-family: helvetica, arial, verdana;
   outline: none;
   text-decoration: none;
-  padding: 0;
+/*  padding: 0;*/
 
 /*  -moz-box-shadow: 3px 3px 3px #ccc;
   -webkit-box-shadow: 3px 3px 3px #ccc;
   box-shadow: 3px 3px 3px #ccc;*/
 }
-
+.ruleGray {
+  color: #bcbcbc;
+  background-color: #bcbcbc;
+  border: 0px;
+  height: 1px;
+}
 .inputGray, .inputGraySmall {
   border: 1px solid #dadada;
   background-color: #efefef;
@@ -1273,4 +1278,12 @@ P {
 
 .borderBottom {
   border-bottom: solid 1px #848484;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
 }

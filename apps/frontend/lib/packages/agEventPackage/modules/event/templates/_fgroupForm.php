@@ -27,27 +27,3 @@
     </tbody>
   </table>
 </form>
-<script type="text/javascript">
-//$(document).ready(function(){
-//  $("#checkall").click(function () {
-//    $('.checkToggle').attr('checked', this.checked);
-//  });
-//  $(".checkToggle").click(function(){
-//    if($(".checkToggle").length == $(".checkToggle:checked").length) {
-//      $("#checkall").attr("checked", "checked");
-//    } else {
-//      $("#checkall").removeAttr("checked");
-//    }
-//  });
-
-// $("#checkall").click(function()
-//  {
-//   var checked_status = 'checked';
-//   $(".inputGray").each(function()
-//   {
-//    this.checked = checked_status;
-//   });
-//  });
-
-});
-</script>

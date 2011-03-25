@@ -6,11 +6,11 @@
  *
  * Provides embedded subform for editing facility resources
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Charles Wisniewski, CUNY SPS
  *
@@ -48,7 +48,7 @@ class agFacilityResourceAcvitationForm extends sfForm
     if (isset($this->facility_resources)) {
       foreach ($this->facility_resources as $facility_resource) {
 
-        $fgroupForm = new agEventFacilityResourceActivationTimeForm();
+        $fgroupForm = new agMultipleEventFacilityResourceActivationTimeForm();
         $fgroupForm->getWidget('operate_on')->setAttribute('class', 'checkToggle');
         $facility_type = $facility_resource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type;
 

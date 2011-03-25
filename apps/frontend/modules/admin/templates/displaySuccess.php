@@ -3,8 +3,8 @@
 <br />
 
 
-<form action="<?php echo url_for('admin/display') ?>"method="post" enctype="multipart/form-data">
-<input type="hidden" name="sf_method" value="put" />
+<form action="<?php echo url_for('admin/display') ?>" method="post" enctype="multipart/form-data" name="display">
+<!--<input type="hidden" name="sf_method" value="put" />-->
 
 <?php
 //code here and some default buttons to set app_display of items to 0

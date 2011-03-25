@@ -3,11 +3,11 @@
 /**
 * Facility Actions extends sfActions
 *
-* PHP Version 5
+* PHP Version 5.3
 *
-* LICENSE: This source file is subject to LGPLv3.0 license
+* LICENSE: This source file is subject to LGPLv2.1 license
 * that is available through the world-wide-web at the following URI:
-* http://www.gnu.org/copyleft/lesser.html
+* http://www.gnu.org/licenses/lgpl-2.1.html
 *
 * @author     Charles Wisniewski, CUNY SPS
 * @author     Nils Stolpe, CUNY SPS
@@ -20,6 +20,15 @@ class facilityActions extends agActions
 
   protected $searchedModels = array('agFacility');
 
+  public function executeSearch(sfWebRequest $request)
+  {
+
+    parent::doSearch($request->getParameter('query'));
+    $this->target_module = 'facility';
+    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
+    //$this->setTemplate('global/search');
+  }
+
   /**
   * executeIndex()
   *
@@ -30,7 +39,15 @@ class facilityActions extends agActions
   **/
   public function executeIndex(sfWebRequest $request)
   {
-    //do some index stuff
+    //add scenario
+    $inputs = array('scenario_id' => new sfWidgetFormDoctrineChoice(array('model' => 'agScenario', 'label' => 'scenario', 'add_empty' => true)),
+    );
+    //set up inputs for form
+    $this->filterForm = new sfForm();
+    foreach ($inputs as $key => $input) {
+      $input->setAttribute('class', 'filter');
+      $this->filterForm->setWidget($key, $input);
+    }
   }
 
   /**
@@ -104,6 +121,12 @@ class facilityActions extends agActions
 //  $query = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id')));
 //
 //  $this->pager = new sfDoctrinePager('agPerson', 1);
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti Facility - ' . $this->ag_facility->getFacilityName());
+    //end p-code
+
+
   }
 
   /**
@@ -171,7 +194,11 @@ class facilityActions extends agActions
 
 
     $this->events = null;//agFacilityHelper::returnActionableResources($facilityResourceIds, FALSE);
-  }
+
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Facility Edit');
+    //end p-code
+    }
 
   /**
   * executeUpdate()
@@ -200,8 +227,9 @@ class facilityActions extends agActions
   * @todo: define a standard import format and document it for the end user.
   * @todo: make this more robust and create meaningful error messages for failed import fields and records.
   **/
-  public function executeImport()
+  public function executeImport(sfWebRequest $request)
   {
+    $this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
 
     $uploadedFile = $_FILES["import"];
 
@@ -214,31 +242,33 @@ class facilityActions extends agActions
     // TODO: eventually use this ^^^ to replace this vvv.
 
     $import = new AgImportXLS();
-    $returned = $import->createTempTable();
+//    $returned = $import->createTempTable();
 
-    $import->processImport($this->importPath);
+    $processedToTemp = $import->processImport($this->importPath);
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
 
-    // Setting scenario id and source table for testing purposes.
-    // Source table should be returned from AgImportXLS class.
-    $scenarioId = 1;
-    $sourceTable = 'temp_facilityImport';
-    $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
+    // Normalize imported temp data only if import is successful.
+    if ($processedToTemp)
+    {
+      // Grab table name from AgImportXLS class.
+      $sourceTable = $import->tempTable ;
+      $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
 
-    $format="%d/%m/%Y %H:%M:%S";
+      $format="%d/%m/%Y %H:%M:%S";
 //    echo strftime($format);
 
-    $dataNorm->normalizeImport();
-    $this->summary = $dataNorm->summary;
+      $dataNorm->normalizeImport();
+      $this->summary = $dataNorm->summary;
+    }
 
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams
-      //Zend_Search_Lucene_Storage_Directory_Filesystem::setDefaultFilePermissions('0666');
-      //chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-      //$dispatcher = sfContext::getInstance()->getEventDispatcher();
-      //$task = new luceneReindexTask($this->dispatcher, new sfFormatter());
-      //$task->run(array('model' => 'agFacility'), array('connection' => 'doctrine', 'application' => 'frontend'));
+
+      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+      $dispatcher = sfContext::getInstance()->getEventDispatcher();
+      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher 
+      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
 
 //    echo strftime($format);
   }

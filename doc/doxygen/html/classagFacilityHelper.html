@@ -61,7 +61,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#pub-static-methods">Static Public Member Functions</a>  </div>
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a>  </div>
   <div class="headertitle">
 <h1>agFacilityHelper Class Reference</h1>  </div>
 </div>
@@ -76,8 +78,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#ad4ae7a656b06427eb1f2439fa92dd2ca">facilityGeneralInfo</a> ($packageType=NULL)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classagFacilityHelper.html#ad4ae7a656b06427eb1f2439fa92dd2ca" title="facilityGeneralInfo() Returns a flat associate array of facility&#39;s general information.">facilityGeneralInfo()</a> Returns a flat associate array of facility's general information.  <a href="#ad4ae7a656b06427eb1f2439fa92dd2ca"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a16250f2531701a84b1a5af32d68f636b"></a><!-- doxytag: member="agFacilityHelper::facilityAddress" ref="a16250f2531701a84b1a5af32d68f636b" args="($primaryOnly=FALSE, $type=NULL, $countryFormat= 'United States')" -->
-static&#160;</td><td class="memItemRight" valign="bottom"><b>facilityAddress</b> ($primaryOnly=FALSE, $type=NULL, $countryFormat= 'United States')</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0d60806a05f6ad7f2b9a7877499696b"></a><!-- doxytag: member="agFacilityHelper::facilityAddress" ref="af0d60806a05f6ad7f2b9a7877499696b" args="($addressStandard, $primaryOnly=FALSE, $type=NULL)" -->
+static&#160;</td><td class="memItemRight" valign="bottom"><b>facilityAddress</b> ($addressStandard, $primaryOnly=FALSE, $type=NULL)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22402a9e76ec0e41bfddbac3c75e798e"></a><!-- doxytag: member="agFacilityHelper::facilityGeo" ref="a22402a9e76ec0e41bfddbac3c75e798e" args="($primaryOnly=FALSE, $type=NULL)" -->
 static&#160;</td><td class="memItemRight" valign="bottom"><b>facilityGeo</b> ($primaryOnly=FALSE, $type=NULL)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ca4c32f9180b605722be57aa8d80725"></a><!-- doxytag: member="agFacilityHelper::facilityEmail" ref="a9ca4c32f9180b605722be57aa8d80725" args="($primaryOnly=FALSE, $type=NULL)" -->
@@ -86,6 +88,36 @@ static&#160;</td><td class="memItemRight" valign="bottom"><b>facilityEmail</b> (
 static&#160;</td><td class="memItemRight" valign="bottom"><b>facilityPhone</b> ($primaryOnly=FALSE, $type=NULL)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ada2cd5b713805d0156e198bb913f69b7"></a><!-- doxytag: member="agFacilityHelper::facilityStaffResource" ref="ada2cd5b713805d0156e198bb913f69b7" args="()" -->
 static&#160;</td><td class="memItemRight" valign="bottom"><b>facilityStaffResource</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#a03cd29657d89f5d0ee6c9d59dfe381ce">returnFacilityResourceAllocationStatusId</a> ($allocationStatusString)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return the id value of a facility allocation status string.  <a href="#a03cd29657d89f5d0ee6c9d59dfe381ce"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#a623e6b68aadfb836f608cf924af0eb60">getFacilityResourceAvailableStatus</a> ($facilityResourceStatusId, $inverse=FALSE)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return the available boolean value for the available status of a $facilityResourceStatusId.  <a href="#a623e6b68aadfb836f608cf924af0eb60"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#abf1260908aee086235cbbc5201e4a8ff">returnActionableResources</a> ($facilityResourceIds, $facilityResourceStatusId)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return actionable facility resources based on the facility status being set.  <a href="#abf1260908aee086235cbbc5201e4a8ff"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#ac0bddc89cc454787129a14d6478329d6">getFacilityResourceAbbrTypes</a> ($facilityResourceAbbrType=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the id of the abbreviated facility resource type either in an associative array or an integer.  <a href="#ac0bddc89cc454787129a14d6478329d6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#af96bd2540d71928f73aa68cea9e78c45">getFacilityResourceStatuses</a> ($facilityResourceStatus=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the id of the facility resource status either in an associative array or an integer.  <a href="#af96bd2540d71928f73aa68cea9e78c45"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#a5ab54dd572a8b658f02a627811d5f3bc">getGeoTypes</a> ($geoType=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the id of the geo type either in an associate array or an integer.  <a href="#a5ab54dd572a8b658f02a627811d5f3bc"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#a13b358b55b23a665174972db82381da0">getFacilityResourceAllocationStatuses</a> ($allocationStatus=null)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the id of the facility resource allocation status either in an associate array or an integer.  <a href="#a13b358b55b23a665174972db82381da0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#aa25bf96020f7704531b0abf068e17e52">getFacilityGroupTypes</a> ($groupType=null)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#a47118d56da03996b7194cb4ef7eabff9">getFacilityGroupAllocationStatuses</a> ($allocationStatus=null)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagFacilityHelper.html#a311c9fa82110002bde5fe8fe492a1cfc">setFacilityResourceStatusOnUpdate</a> ($facilityResourceIds, $facilityResourceStatusId, $affectScenarios=NULL, $affectEvents=NULL, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to set facility resource status specifically used as part of the agFacilityResourceStatus listener.  <a href="#a311c9fa82110002bde5fe8fe492a1cfc"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7fe0ef34b92a1aab6c07635f806a508"></a><!-- doxytag: member="agFacilityHelper::$affectEventsGlobal" ref="ab7fe0ef34b92a1aab6c07635f806a508" args="" -->
+static&#160;</td><td class="memItemRight" valign="bottom"><b>$affectEventsGlobal</b> = 'facility_resource_status_affects_events'</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a829388b90aef1f931e560f20c32b19d3"></a><!-- doxytag: member="agFacilityHelper::$resourceEnabledGlobal" ref="a829388b90aef1f931e560f20c32b19d3" args="" -->
+static&#160;</td><td class="memItemRight" valign="bottom"><b>$resourceEnabledGlobal</b> = 'facility_resource_enabled_status'</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59b8666e3911170f35e2d9fc96b709f4"></a><!-- doxytag: member="agFacilityHelper::$resourceDisabledGlobal" ref="a59b8666e3911170f35e2d9fc96b709f4" args="" -->
+static&#160;</td><td class="memItemRight" valign="bottom"><b>$resourceDisabledGlobal</b> = 'facility_resource_disabled_status'</td></tr>
+<tr><td colspan="2"><h2><a name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33bd5531afdcfc78d2709cc6889bafdd"></a><!-- doxytag: member="agFacilityHelper::$affectScenariosGlobal" ref="a33bd5531afdcfc78d2709cc6889bafdd" args="" -->
+static&#160;</td><td class="memItemRight" valign="bottom"><b>$affectScenariosGlobal</b> = 'facility_resource_status_affects_scenarios'</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>This class is used to provide facility's basic information. </p>
@@ -119,7 +151,337 @@ static&#160;</td><td class="memItemRight" valign="bottom"><b>facilityStaffResour
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00026">26</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00031">31</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a47118d56da03996b7194cb4ef7eabff9"></a><!-- doxytag: member="agFacilityHelper::getFacilityGroupAllocationStatuses" ref="a47118d56da03996b7194cb4ef7eabff9" args="($allocationStatus=null)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::getFacilityGroupAllocationStatuses </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>allocationStatus</em> = <code>null</code></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$allocationStatus</td><td>Optional. None or a specific facility group allocation status. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array|integer Returns either an associate array, array(id =&gt; facility group allocation status), for all types or returns only the id for the specified pass-in facility group allocation status param. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00565">565</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa25bf96020f7704531b0abf068e17e52"></a><!-- doxytag: member="agFacilityHelper::getFacilityGroupTypes" ref="aa25bf96020f7704531b0abf068e17e52" args="($groupType=null)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::getFacilityGroupTypes </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>groupType</em> = <code>null</code></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$groupType</td><td>Optional. None or a specific facility group type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array|integer Returns either an associate array, array(id =&gt; facility group type), for all types or returns only the id for the specified pass-in facility resource allocation status param. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00542">542</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac0bddc89cc454787129a14d6478329d6"></a><!-- doxytag: member="agFacilityHelper::getFacilityResourceAbbrTypes" ref="ac0bddc89cc454787129a14d6478329d6" args="($facilityResourceAbbrType=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::getFacilityResourceAbbrTypes </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityResourceAbbrType</em> = <code>NULL</code></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the id of the abbreviated facility resource type either in an associative array or an integer. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$facilityResourceAbbrType</td><td>Optional. Pass in a specific abbreviated facility resource type to retrieve only the id of that instant. If none pass in, retrieve the ids for all facility resource type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array|integer Returns either an associative array, array(id =&gt; facility resource abbr type), for all types if no param is passed. Otherwise, just the single-value id of the pass-in param. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00443">443</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a13b358b55b23a665174972db82381da0"></a><!-- doxytag: member="agFacilityHelper::getFacilityResourceAllocationStatuses" ref="a13b358b55b23a665174972db82381da0" args="($allocationStatus=null)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::getFacilityResourceAllocationStatuses </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>allocationStatus</em> = <code>null</code></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the id of the facility resource allocation status either in an associate array or an integer. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$allocationStatus</td><td>Optional. Pass in a specific facility resource allocation status to retrieve only the id of that instant. If none pass in, retrieve the ids for all facility resource allocation statuses. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array|integer Returns either an associate array, array(id =&gt; facility resource allocation status), for all types or returns only the id for the specified pass-in facility resource allocation status param. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00519">519</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a623e6b68aadfb836f608cf924af0eb60"></a><!-- doxytag: member="agFacilityHelper::getFacilityResourceAvailableStatus" ref="a623e6b68aadfb836f608cf924af0eb60" args="($facilityResourceStatusId, $inverse=FALSE)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::getFacilityResourceAvailableStatus </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityResourceStatusId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>inverse</em> = <code>FALSE</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to return the available boolean value for the available status of a $facilityResourceStatusId. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">integer(2)</td><td>$facilityResourceStatusId The facility_resource_status_id being queried. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$inverse</td><td>Whether or not to apply an inverse match. Defaults to FALSE. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>boolean The boolean value for available status. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00386">386</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af96bd2540d71928f73aa68cea9e78c45"></a><!-- doxytag: member="agFacilityHelper::getFacilityResourceStatuses" ref="af96bd2540d71928f73aa68cea9e78c45" args="($facilityResourceStatus=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::getFacilityResourceStatuses </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityResourceStatus</em> = <code>NULL</code></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the id of the facility resource status either in an associative array or an integer. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$facilityResourceStatus</td><td>Optional. Pass in a specific facility resource status to retrieve only the id of that instant. If none pass in, retrieve the ids for all facility resource status. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array|integer Returns either an associative array, array(id =&gt; facility resource allocation status), for all types if no param is passed. Otherwise, just the single-value id of the pass-in param. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00469">469</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a5ab54dd572a8b658f02a627811d5f3bc"></a><!-- doxytag: member="agFacilityHelper::getGeoTypes" ref="a5ab54dd572a8b658f02a627811d5f3bc" args="($geoType=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::getGeoTypes </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>geoType</em> = <code>NULL</code></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the id of the geo type either in an associate array or an integer. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$geoType</td><td>Optional. Pass in a specific geo type to retrieve only the id of that instant. If none pass in, retrieve the ids for all geo type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array|integer Returns either an associate array, array(id =&gt; geo type), for all types or returns only the id for the specified pass-in geo type param. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00493">493</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abf1260908aee086235cbbc5201e4a8ff"></a><!-- doxytag: member="agFacilityHelper::returnActionableResources" ref="abf1260908aee086235cbbc5201e4a8ff" args="($facilityResourceIds, $facilityResourceStatusId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::returnActionableResources </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityResourceIds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityResourceStatusId</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to return actionable facility resources based on the facility status being set. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$facilityResourceIds</td><td>An array of facility_resource_ids </td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">integer(2)</td><td>$facilityResourceStatusId The facility status being set </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array An array of facility resource id's for facilities that are undergoing an activation change. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00410">410</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a03cd29657d89f5d0ee6c9d59dfe381ce"></a><!-- doxytag: member="agFacilityHelper::returnFacilityResourceAllocationStatusId" ref="a03cd29657d89f5d0ee6c9d59dfe381ce" args="($allocationStatusString)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::returnFacilityResourceAllocationStatusId </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>allocationStatusString</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to return the id value of a facility allocation status string. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$allocationStatusString</td><td>The string value of the facility resource allocation status. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>integer The facility resource allocation status id. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00368">368</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a311c9fa82110002bde5fe8fe492a1cfc"></a><!-- doxytag: member="agFacilityHelper::setFacilityResourceStatusOnUpdate" ref="a311c9fa82110002bde5fe8fe492a1cfc" args="($facilityResourceIds, $facilityResourceStatusId, $affectScenarios=NULL, $affectEvents=NULL, Doctrine_Connection $conn=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static agFacilityHelper::setFacilityResourceStatusOnUpdate </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityResourceIds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>facilityResourceStatusId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>affectScenarios</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>affectEvents</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Doctrine_Connection $&#160;</td>
+          <td class="paramname"><em>conn</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Method to set facility resource status specifically used as part of the agFacilityResourceStatus listener. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">array</td><td class="paramname">$facilityResourceIds</td><td>An array of facility resource ID's to affect. </td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">integer(2)</td><td>$facilityResourceStatusId The facility resource alloation status being applied. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$affectScenarios</td><td>An optional parameter dictating whether or not this action will affect scenario facility resources. If left NULL it searches for the global parameter facility_resource_status_affects_scenarios and applies the value stored there. </td></tr>
+    <tr><td class="paramtype">boolean</td><td class="paramname">$affectEvents</td><td>An optional parameter dictating whether or not this action will affect event facility resources. If left NULL it searches for the global parameter facility_resource_status_affects_events and applies the value stored there. </td></tr>
+    <tr><td class="paramtype">Doctrine_Connection</td><td class="paramname">$conn</td><td>An optional Doctrine connection object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>array An array containing the number of operations performed. </dd></dl>
+
+<p>Definition at line <a class="el" href="agFacilityHelper_8class_8php_source.html#l00603">603</a> of file <a class="el" href="agFacilityHelper_8class_8php_source.html">agFacilityHelper.class.php</a>.</p>
 
 </div>
 </div>
@@ -132,7 +494,7 @@ static&#160;</td><td class="memItemRight" valign="bottom"><b>facilityStaffResour
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

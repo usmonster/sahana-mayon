@@ -21,6 +21,8 @@ abstract class BaseagScenarioFacilityGroupForm extends BaseFormDoctrine
       'facility_group_type_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupType'), 'add_empty' => false)),
       'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false)),
       'activation_sequence'                 => new sfWidgetFormInputText(),
+      'created_at'                          => new sfWidgetFormDateTime(),
+      'updated_at'                          => new sfWidgetFormDateTime(),
       'ag_facility_resource_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource')),
     ));
 
@@ -31,6 +33,8 @@ abstract class BaseagScenarioFacilityGroupForm extends BaseFormDoctrine
       'facility_group_type_id'              => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupType'))),
       'facility_group_allocation_status_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'))),
       'activation_sequence'                 => new sfValidatorInteger(array('required' => false)),
+      'created_at'                          => new sfValidatorDateTime(),
+      'updated_at'                          => new sfValidatorDateTime(),
       'ag_facility_resource_list'           => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agFacilityResource', 'required' => false)),
     ));
 

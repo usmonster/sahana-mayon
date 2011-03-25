@@ -51,7 +51,6 @@ ul.menu a, ul.menu li.dis a:hover, ul.menu li.sep a:hover {
 	font:bold 12px helvetica, arial, verdana;
 	color: #848484;
 	text-decoration:none;
-	cursor:default;
 }
 ul.menu>li>a {
   padding: 5px 4px;
@@ -217,7 +216,7 @@ ul.menu li ul.menu_level_1 li.menu2 a:hover {
 
 
 ul.menu li ul.menu_level_1 li.menu2, ul.menu li ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3{
-    padding: 0px 0px 0px 3px;
+    padding:0px 0px 0px 4px;
  
 }
 
@@ -237,19 +236,19 @@ li.menu3 a:hover{
 }
 
 ul.menu_level_1 li.menu2 a{
-        border: solid 1px #f7f7f7; padding-left: 4px; position: relative;
+        border: solid 1px #f7f7f7; padding:3px 0px 3px 4px; position: relative;
 }
 ul.menu_level_1 li.menu2 a:hover{
-        border: solid 1px #dadada; padding-left: 4px;
+        border: solid 1px #dadada; padding:3px 0px 3px 4px;
 }
 
 ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3 a{
-        border: solid 1px #f7f7f7 !important; padding-left: 4px;
+        border: solid 1px #f7f7f7 !important; padding:3px 0px 3px 4px;
 }
 ul.menu_level_1 li.menu2 ul.menu_level_2 li.menu3 a:hover{
-        border: solid 1px #f7f7f7 !important; padding-left: 4px;
+        border: solid 1px #f7f7f7 !important; padding:3px 0px 3px 4px;
 }
 
-li.noBorder>a:hover {
-  border: 1px solid #f7f7f7 !important;
+li.noBorder>a:hover, li.noBorder:hover a {
+   padding:3px 0px 3px 4px; border: 1px solid #f7f7f7 !important;
 }

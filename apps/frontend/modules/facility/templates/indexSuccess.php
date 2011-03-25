@@ -16,6 +16,16 @@ echo '<a href="' . url_for('facility/list') . '" class="buttonText" title="List 
       <a class="linkButton" style="display: inline-block; padding: 3px">Browse</a>
     </div>
     <input type="file" name="import" id="fileUpload" />
+<?php
+    $labels = $filterForm->getWidgetSchema()->getLabels();
+    $fields = $filterForm->getWidgetSchema()->getFields();
+    $wSchema = $filterForm->getWidgetSchema();
+foreach($fields as $key => $field)
+{
+  echo '<label class ="filterButton">' . $labels[$key] . '</label>';
+  echo $filterForm[$key];
+}
+?>
     <input type="submit" name="submit" value="Submit" class="submitLinkButton" />
   </form>
 </span>

@@ -3,11 +3,11 @@
 /**
  * extends agActions for event
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Shirley Chan, CUNY SPS
  * @author Charles Wisniewski, CUNY SPS
@@ -46,12 +46,39 @@ class eventActions extends agActions
             ->execute();
   }
 
+  public function executeFacilityresource(sfWebRequest $request)
+  {
+    $this->setEventBasics($request);
+    $this->xmlHttpRequest = $request->isXmlHttpRequest();
+    $this->facility_resource = agDoctrineQuery::create()
+            ->select()
+            ->from('agFacilityResource')
+            ->where('id = ?', $request->getParameter('facilityResourceId'))
+            ->execute()->getFirst();
+    $groupIds = agDoctrineQuery::create()
+            ->select('id')
+            ->from('agEventFacilityGroup')
+            ->where('event_id = ?', $this->event_id)
+            ->execute(array(), 'single_value_array');
+    $this->event_facility_resource = agDoctrineQuery::create()
+            ->select('')
+            ->from('agEventFacilityResource')
+            ->where('facility_resource_id = ?', $this->facility_resource['id'])
+              ->andWhereIn('event_facility_group_id', $groupIds)
+            ->execute()->getFirst();
+    $this->facilityResourceActivationTimeForm = new agSingleEventFacilityResourceActivationTimeForm();//new agFacilityResourceAcvitationForm($this->event_facility_resource);
+    $this->facilityResourceActivationTimeForm->setDefault('event_facility_resource_id', $this->event_facility_resource['id']);
+    $b = $this->facilityResourceActivationTimeForm;
+    $c = $this->event_facility_resource;
+    $d = 3;
+  }
+
   /**
-   * event/fgroup provides the means to manage activation time for facility
+   * event/facilitygroups provides the means to manage activation time for facility
    * resources that are in active groups which do not have activation times set 
    * @param sfWebRequest $request
    */
-  public function executeFgroup(sfWebRequest $request)
+  public function executeFacilitygroups(sfWebRequest $request)
   {
     $this->setEventBasics($request);
 
@@ -67,9 +94,9 @@ class eventActions extends agActions
       'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups))// ,'onClick' => 'submit()'))
     ));
 
+    $this->xmlHttpRequest = $request->isXmlHttpRequest();
     //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
     if ($request->isMethod(sfRequest::POST)) {
-
       if ($request->getParameter('facility_group_filter')) {
         $this->facility_group = $request->getParameter('facility_group_list');
         $this->facilitygroupsForm->setDefault('facility_group_list', $this->facility_group);
@@ -117,7 +144,9 @@ class eventActions extends agActions
               ->getFirst()->scenario;
 
       $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
-
+   //p-code
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event['event_name'] . ' Deploy');
+  //end p-code
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
         $this->redirect('event/active?event=' . urlencode($this->event_name));
@@ -125,6 +154,8 @@ class eventActions extends agActions
     } else {
       $this->forward404('you cannot deploy an event without a scenario.');
     }
+
+
   }
 
   /**
@@ -214,6 +245,13 @@ class eventActions extends agActions
     }
 
     //as a rule of thumb, actions should post to themself and then redirect
+   //p-code
+  if(isset($eventMeta->event_name)){
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Event Management');
+  } else{
+    $this->getResponse()->setTitle('Sahana Agasti New Event Management');
+  }
+  //end p-code
   }
 
   /**
@@ -268,10 +306,13 @@ class eventActions extends agActions
 
     //begin construction of query used for listing
     $query = agDoctrineQuery::create()
-            ->select('es.id, essh.id, esh.event_facility_resource_id, sr.id, srt.staff_resource_type, sro.id, o.organization, s.id, s.staff_status_id, ss.staff_status, p.id, ess.staff_allocation_status_id')//, sas.staff_allocation_status') //maybe we should only get the id since it's needed for dropdown
+            ->select('es.id, essh.id, esh.event_facility_resource_id, efr.facility_resource_id, fr.facility_id, f.facility_name, sr.id, srt.staff_resource_type, sro.id, o.organization, s.id, s.staff_status_id, ss.staff_status, p.id, ess.staff_allocation_status_id')//, sas.staff_allocation_status') //maybe we should only get the id since it's needed for dropdown
             ->from('agEventStaff es,
               es.agEventStaffShift essh,
               essh.agEventShift esh,
+              esh.agEventFacilityResource efr,
+              efr.agFacilityResource fr,
+              fr.agFacility f,
               es.agStaffResource sr,
               sr.agStaffResourceType srt,
               sr.agStaffResourceOrganization sro,
@@ -345,6 +386,7 @@ class eventActions extends agActions
         'organization_name' => $value['o_organization'],
         'status' => $value['ss_staff_status'],
         'type' => $value['srt_staff_resource_type'],
+        'facility' => $value['f_facility_name'],
         'es_id' => $value['es_id'],
         'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
       );
@@ -366,6 +408,10 @@ class eventActions extends agActions
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
     //set up the widget for use in the ' list form '
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+   //end p-code
   }
 
   /**
@@ -392,7 +438,7 @@ class eventActions extends agActions
       if ($this->eventshiftform->isValid()) { //form is not passing validation because the bind is failing?
         $ag_event_shift = $this->eventshiftform->save();
         $this->generateUrl('event_shifts', array('module' => 'event',
-          'action' => 'shifts', 'id' => $this->event_id, 'shiftid' => $ag_event_shift->getId()));
+          'action' => 'shifts', 'event' => $this->event_name, 'shiftid' => $ag_event_shift->getId()));
       }
       $this->redirect('event/shifts?event=' . urlencode($this->event_name)); //need to pass in event id
     } else {
@@ -440,6 +486,10 @@ class eventActions extends agActions
         $this->pager->init();
       }
     }
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
+   //end p-code
   }
 
   /**
@@ -449,12 +499,11 @@ class eventActions extends agActions
   public function executeStaffshift(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    if ($request->isXmlHttpRequest()) {
-      $this->XmlHttpRequest = true;
-    }
+    $this->xmlHttpRequest = $request->isXmlHttpRequest();
     $this->shift_id = $request->getParameter('shiftid');
-    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type')), // 'class' => 'filter')),
-      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization')),
+
+    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => TRUE)), // 'class' => 'filter')),
+      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => TRUE)),
       'query_condition' => new sfWidgetFormInputHidden()
         ////, 'class' => 'filter'))
     ); //will have to set the class for the form elements elsewhere
@@ -499,6 +548,10 @@ class eventActions extends agActions
     } elseif ($request->getParameter('Remove')) {
       //remove this staff member!
     }
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff Shift');
+   //end p-code
   }
 
   /**
@@ -517,6 +570,11 @@ class eventActions extends agActions
   public function executeActive(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
+   //end p-code
+    
   }
 
   /**
@@ -526,6 +584,10 @@ class eventActions extends agActions
   public function executeStaff(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+   //end p-code
   }
 
   /**
@@ -574,6 +636,10 @@ class eventActions extends agActions
     $this->pager->setResultArray($facilityGroupArray);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
+
+   //p-code
+  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Facility Groups');
+   //end p-code
   }
 
   /**
@@ -599,11 +665,7 @@ class eventActions extends agActions
             ->where('event_facility_group = ?', urldecode($request->getParameter('group')))
             ->andWhere('event_id = ?', $this->event->id)
             ->fetchOne();
-    // Check for AJAX here. Set XmlHttpRequest to true so it can be used to determine functionality
-    // in the templates and partials.
-    if ($request->isXmlHttpRequest()) {
-      $this->XmlHttpRequest = true;
-    }
+    $this->xmlHttpRequest = $request->isXmlHttpRequest();
     if ($request->isMethod(sfRequest::POST)) {
       // Check which type of data is coming through. Are you changing resource status
       // or group status? Then build an object with the incoming values and some
@@ -621,11 +683,8 @@ class eventActions extends agActions
         $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
           $resourceAllocation->save();
-//          $this->redirect('event/' . urlencode($this->event->event_name) . 'fgroup');
-          $b = $this->getResponse();
-// Looks like I out-thought myself here. Just fgroup works, think the rest of the URL comes from the parent page. Might need it later though, if things go wrong.
-          return $this->renderText('event/' . urlencode($this->event->event_name) . '/fgroup');
-//          return $this->renderText('fgroup');
+//          return $this->renderText('event/' . urlencode($this->event->event_name) . '/facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
+          return $this->renderText('facilityresource/' . urlencode($request->getParameter('facility_resource_id')));
         }
 
         $resourceAllocation->save();

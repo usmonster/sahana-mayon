@@ -173,9 +173,12 @@ class agListForm
     $ascArrow = '&#x25B2;';
     $descArrow = '&#x25BC;';
 
-    $listheader = '<h3>' . $title . '</h3>';
-    $listbody = '<table class="staffTable">
-  <thead>
+    //$listheader = '<h3>' . $title . '</h3>';
+
+
+    $listbody = '<table class="staffTable">';
+    $listbody .= '<caption>Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
+    $listbody .= '<thead>
     <tr class="head">';
     foreach ($columns as $column => $columnCaption) {
 

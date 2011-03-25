@@ -3,11 +3,11 @@
 /**
  * extends agActions for the administration module
  *
- * PHP Version 5
+ * PHP Version 5.3
  *
- * LICENSE: This source file is subject to LGPLv3.0 license
+ * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/lesser.html
+ * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Charles Wisniewski, CUNY SPS
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
@@ -79,6 +79,9 @@ class adminActions extends agActions
     /**
      * @param sfWebRequest $request is what the user is asking of the server
      */
+    require_once (dirname(__FILE__) . '../apps/frontend/lib/install/func.inc.php');
+    //OR sfProjectConfiguration::getActive()->loadHelpers(array('Install)); ^
+    
     if ($request->getParameter('saveconfig')) {
       $file = sfConfig::get('sf_config_dir') . '/config.yml';
       $config_array = sfYaml::load($file);
@@ -92,18 +95,17 @@ class adminActions extends agActions
       } catch (Exception $e) {
         echo "hey, something went wrong:" . $e->getMessage();
       }
-
+      //try to create the default app.yml file, function called from func.inc.php
+      if ($_POST['auth_method'] == 'bypass') {
+        $authMethod = NULL;
+      } else {
+        $authMethod = '';
+      }
+      
+      $appYmlWriteResult = writeAppYml($authMethod);
       $file = sfConfig::get('sf_app_config_dir') . '/app.yml';
       $appConfig = sfYaml::load($file);
 
-      if ($_POST['auth_method'] == 'bypass') {
-        $appConfig['all']['sf_guard_plugin'] =
-            array('check_password_callable'
-              => array('agSudoAuth', 'authenticate'));
-        $appConfig['all']['sf_guard_plugin_signin_form'] = 'agSudoSigninForm';
-      } else {
-        $appConfig['all'] = '';
-      }
       $appConfig['all']['.array']['menu_top'] =
           array(
             'homepage' => array('label' => 'Home', 'route' => '@homepage'),
@@ -167,25 +169,32 @@ class adminActions extends agActions
   }
 
   public function executeDisplay(sfWebRequest $request)
-  { /**
-   *
-   * @param sfWebRequest $request should be passing in information that was submitted in the form created
-   * $this->processForm($request, $this->form);
-   */
-    $this->form = new agReligionForm();
-    $this->form->setWidgets(array('ag_religion_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReligion'))));
-    $this->form->setValidators(array(new sfValidatorDoctrineChoice(array('model' => $this->form->getModelName(), 'column' => 'app_display'))));
-    $food = $this->form->getObject();
-    $foog = $this->form->getObject()->getReligion();
-    $garb = $this->form->getObject()->id;
+  {
+    /**
+     *
+     * @param sfWebRequest $request should be passing in information that was submitted in the form created
+     * $this->processForm($request, $this->form);
+     */
+    $this->form = new sfForm();
+
+    $this->form->getWidgetSchema()->setNameFormat('display[%s]');
+    $this->form->setWidget('agProfession', new sfWidgetFormDoctrineChoice(array('multiple' => true, 'expanded' => true, 'model' => 'agProfession')));
+
+    //$this->form->setValidator(array(new sfValidatorDoctrineChoice(array('model' => $this->form->getModelName(), 'column' => 'app_display'))));
     //if submitted
-    $this->form->bind($request->getParameter($this->form->getName()));
-    if ($this->form->isValid()) {
-      foreach ($foog as $religion) {
-        $food = $this->form->getObject();
-        $this->form->getObject()->app_display[$religion] = 1;
-      }
-      $this->form->save();
+    if ($request->isMethod(sfRequest::POST)) {
+
+      //$this->form->bind($request->getParameter($this->form->getName()));
+//      if ($this->form->isValid()) {
+        foreach ($request->getParameter('display') as $process_display) {
+          //$array_of_all = get
+          $profession = new agProfession;
+          $profession->setAppDisplay(1); 
+          $profession->save();
+          //$process_display =
+          
+        }
+//      }
     }
   }
 

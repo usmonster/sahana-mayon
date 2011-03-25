@@ -1,6 +1,6 @@
 ====== Sahana 2.0 Manual ======
 
-This is the Sahana 2.0.x manual developed for the New York City Office of Emergency Management.
+This is the Sahana Agasti 2.0 manual developed for the New York City Office of Emergency Management.
 
 ====== About Sahana ======
 
