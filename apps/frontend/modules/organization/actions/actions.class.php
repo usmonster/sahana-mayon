@@ -141,9 +141,9 @@ class organizationActions extends sfActions
       asort($this->staffResourceList) ;
     }
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Organization - ' . $this->ag_organization->getOrganization());
-   //end p-code
+     //p-code
+      $this->getResponse()->setTitle('Sahana Agasti Organization - ' . $this->ag_organization->getOrganization());
+     //end p-code
   }
 
   /**
@@ -190,6 +190,9 @@ class organizationActions extends sfActions
   {
     $this->forward404Unless($ag_organization = Doctrine_Core::getTable('agOrganization')->find(array($request->getParameter('id'))), sprintf('Object ag_organization does not exist (%s).', $request->getParameter('id')));
     $this->form = new agOrganizationForm($ag_organization);
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Organization Edit');
+    //end p-code
   }
 
   /**
