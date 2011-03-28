@@ -289,10 +289,10 @@ function buildDsnString($dbType, $dbHost, $dbName, $dbPort = null)
 
 // updates app.yml
     try {
-      file_put_contents($file, sfYaml::dump($appConfig, 4));
+      file_put_contents($appYmlFile, sfYaml::dump($appConfig, 4));
       return true;
     } catch (Exception $e) {
-      echo 'There was an error writing the app.yml file: ', $e->getMessage();
+      //echo 'There was an error writing the app.yml file: ', $e->getMessage();
       return false;
     }
   }

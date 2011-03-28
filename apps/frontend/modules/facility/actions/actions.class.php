@@ -265,10 +265,13 @@ class facilityActions extends agActions
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams
 
-      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-      $dispatcher = sfContext::getInstance()->getEventDispatcher();
-      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher 
-      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
+      $agLuceneIndex = new agLuceneIndex('agFacility');
+      $indexResult = $agLuceneIndex->indexAll();
+
+//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+//      $dispatcher = sfContext::getInstance()->getEventDispatcher();
+//      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
+//      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
 
 //    echo strftime($format);
   }
