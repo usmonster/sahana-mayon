@@ -116,7 +116,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
         // this will be useful$result->setHint($req['error']);
       }
 
-      $current = '<tr><td>&nbsp;</td><td><strong>' . $req['name'] . '</strong></td>' . '<td>' . $req['current'] . '</td>';
+      $current = '<tr><td>&nbsp;</td><td><span class="boldText">' . $req['name'] . '</span></td>' . '<td>' . $req['current'] . '</td>';
       $required = $req['required'] ? $req['required'] : '&nbsp;';
       $recommend = $req['recommended'] ? $req['recommended'] : '&nbsp;';
       $res = $req['result'] ? '&nbsp;' : 'fail';
