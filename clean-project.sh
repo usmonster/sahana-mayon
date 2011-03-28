@@ -58,3 +58,8 @@ $PROJECT_ROOT/symfony doctrine:build-filters
 # loads sample data and fixtures from the yml files in the data directory
 sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load 
 
+#indexes the data loaded so it is searchable to the user
+sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenario
+sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenarioFacilityGroup
+sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agFacility
+sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agStaff

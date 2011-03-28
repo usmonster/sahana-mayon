@@ -30,6 +30,14 @@ facility_import:
   url:  /facility/import
   param: { module: facility, action: import }
 
+api_facility:
+  url:     /facility/facilities.:sf_format
+  param:   { module: facility, action: list } 
+  class:   sfDoctrineRoute
+  options: { model: agFacility, type: object }
+  requirements: 
+    sf_format: (?:json)
+
 scenario_edit:
   url:     /scenario/:id/edit
   options: { model: agScenario, type: object }

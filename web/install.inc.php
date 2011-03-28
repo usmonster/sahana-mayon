@@ -541,7 +541,7 @@ class agInstall
   {
     if (isset($_REQUEST['back'][$this->getStep()]))
       $this->DoBack();
-
+//STEP ONE
     if ($this->getStep() == 1) {
       if (!isset($_REQUEST['next'][0]) && !isset($_REQUEST['back'][2])) {
         $this->setConfig('agree', isset($_REQUEST['agree']));
@@ -556,7 +556,7 @@ class agInstall
     $foo = $this->getStep();
     $zoo = $_REQUEST['next'][$this->getStep()];
     $poo = $_REQUEST['problem'];
-
+//STEP TWO
     if ($this->getStep() == 2 && isset($_REQUEST['next'][$this->getStep()]) && !isset($_REQUEST['problem'])) {
       $this->dbParams($db_params);
       $this->DoNext();

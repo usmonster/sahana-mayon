@@ -529,14 +529,6 @@ class scenarioActions extends agActions
         $ag_scenario_facility_group = $this->groupform->save();          // The Group object has been created here.
         LuceneRecord::updateLuceneRecord($ag_scenario_facility_group);
 
-//      Keep these lines here. They are the first steps of investigation into solving the permissions
-//      issue on reindex.
-//
-//      Zend_Search_Lucene_Storage_Directory_Filesystem::setDefaultFilePermissions('0775');
-//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-//      $task = new luceneReindexTask($this->dispatcher, new sfFormatter());
-//      $task->run(array(), array('connection' => 'doctrine'));
-
         if ($request->hasParameter('Continue')) {
 
           $this->redirect('scenario/staffresources?id=' . $this->scenario_id);

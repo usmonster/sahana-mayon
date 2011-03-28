@@ -311,7 +311,6 @@ class facilityActions extends agActions
     $request->checkCSRFProtection();
 
     $this->forward404Unless($ag_facility = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id'))), sprintf('Object ag_facility does not exist (%s).', $request->getParameter('id')));
-
     /**
     * Locate the associated agEntity record through the associated
     * agSite record. Call the agEntity object's delete() method,
@@ -327,7 +326,9 @@ class facilityActions extends agActions
     if ($agEntity = $ag_facility->getAgSite()->getAgEntity()) {
         if($agF = $ag_facility->getAgFacilityResource()){
           foreach($agF as $agFR){
-            if(!($agFR->getAgScenarioFacilityResource()) && !($agFR->getAgEventFacilityResource())){
+            $agSFR = $agFR->getAgScenarioFacilityResource()->getData();
+            $agEFR = $agFR->getAgEventFacilityResource()->getData();
+            if(empty($agSFR) && empty($agEFR) ){
               $agEntity->delete();
               $this->redirect('facility/list');
              }

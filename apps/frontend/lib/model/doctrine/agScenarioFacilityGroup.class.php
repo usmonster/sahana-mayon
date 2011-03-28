@@ -39,6 +39,8 @@ class agScenarioFacilityGroup extends BaseagScenarioFacilityGroup
         ->innerJoin('fr.agFacilityResourceType frt')
         ->where('g.id = ?', $this->id)
         ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $facilityName ='';
+    $facilityResourceType ='';
     foreach($query as $result) {
       $facilityName .=  ' ' . $result['f_facility_name'];
       $facilityResourceType .= ' ' . $result['frt_facility_resource_type'];
