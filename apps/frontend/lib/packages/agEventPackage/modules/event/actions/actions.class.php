@@ -670,7 +670,7 @@ class eventActions extends agActions
       if ($request->getParameter('resource_allocation_status')) {
         // Find the most recent activation status for the facility resource.
         // $staffed and $unstaffed will also be set for use in the if below.
-        $activationStatus = agEventFacilityHelper::getCurrentEventFacilityResourceStatus($this->event->id, array($request->getParameter('event_facility_resource_id')));
+        $activationStatus = agEventFacilityHelper::getCurrentEventFacilityResourceStatus($this->event['id'], array($request->getParameter('event_facility_resource_id')));
         $staffed = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', 1);
         $unstaffed = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', 0);
 
@@ -680,16 +680,21 @@ class eventActions extends agActions
         $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
           $resourceAllocation->save();
-          return $this->renderText('facilityresource/' . urlencode($request->getParameter('facility_resource_id')));
+          return $this->renderText('facilityresource/' . $request->getParameter('facility_resource_id'));
         }
-
         $resourceAllocation->save();
-        $a = 'yay';
       } elseif ($request->getParameter('group_allocation_status')) {
+        $activationStatus = agEventFacilityHelper::getCurrentEventFacilityGroupStatus($this->event['id'], array($request->getParameter('event_facility_group_id')));
+        $active = agEventFacilityHelper::getFacilityGroupOrResourceAllocationStatus('group', 'active', 1);
+        $inactive = agEventFacilityHelper::getFacilityGroupOrResourceAllocationStatus('group', 'active', 0);
         $groupAllocation = new agEventFacilityGroupStatus();
         $groupAllocation->event_facility_group_id = $this->eventFacilityGroup->id;
         $groupAllocation->facility_group_allocation_status_id = $request->getParameter('group_allocation_status');
         $groupAllocation->time_stamp = date('Y-m-d H:i:s', time()); //time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+        if (in_array($activationStatus[$request->getParameter('event_facility_group_id')], $inactive)) {
+          $groupAllocation->save();
+          return $this->renderText('facilitygroups');
+        }
         $groupAllocation->save();
       }
     }

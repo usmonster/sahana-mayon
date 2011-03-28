@@ -300,6 +300,22 @@ class agEventFacilityHelper
     return $results ;
   }
 
+  public static function getCurrentEventFacilityGroupStatus($eventId, $eventFacilityGroupIds)
+  {
+    $currentStatusIds = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($eventId);
+
+    $q = agDoctrineQuery::create()
+      ->select('efgs.event_facility_group_id')
+          ->addSelect('efgs.facility_group_allocation_status_id')
+        ->from('agEventFacilityGroupStatus efgs')
+        ->whereIn('efgs.id', array_keys($currentStatusIds))
+          ->andWhereIn('efgs.event_facility_group_id', $eventFacilityGroupIds);
+
+    $results = $q->execute(array(), 'key_value_pair');
+
+    return $results;
+  }
+  
   public static function getCurrentEventFacilityResourceStatus($eventId, $eventFacilityResourceIds)
   {
     $currentStatusIds = agEventFacilityHelper::returnCurrentEventFacilityResourceStatus($eventId) ;
@@ -521,6 +537,21 @@ class agEventFacilityHelper
     return $results ;
   }
 
+  public static function getFacilityGroupOrResourceAllocationStatus ($key, $column, $match = TRUE)
+  {
+    $tables = array(
+      'resource' => 'agFacilityResourceAllocationStatus',
+      'group'    => 'agFacilityGroupAllocationStatus'
+    );
+    $query = agDoctrineQuery::create()
+      ->select('id')
+        ->from($tables[$key])
+        ->where($column . '= ?', $match);
+    $b = $query->getSqlQuery();
+    $results = $query->execute(array(), 'single_value_array') ;
+
+    return $results ;
+  }
   /**
    * Method to release event facility resource.
    *
