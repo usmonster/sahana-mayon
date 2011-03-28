@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Abstract class to provide bulk-address manipulation methods
  *
  * PHP Version 5.3
@@ -13,14 +12,6 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
- * @property boolean $strictBatchSize Boolean to determine whether batch size will be strictly
- * enforced and an exception thrown when the record count exceeds this limit.
- * @property array $recordIds A single-dimension array of record id values.
- * @property integer $_recordCount A count of the number of records in $recordIds
- * @property integer $_defaultBatchSize The default batch size allowed by the class.
- * @property integer $_batchSizeModifier A divisor used on the default batch size to allow tuning
- * of the default batch size for classes that have high property counts (or large redundant data
- * caches).
  */
 
 abstract class agBulkRecordHelper

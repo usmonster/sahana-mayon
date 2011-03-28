@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Provides Event Staff Data sets and Manipulation functions
  *
  * PHP Version 5.3
@@ -12,8 +11,6 @@
  * @author Charles Wisniewski, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
- *
- * @property array $addressIds A single-dimension array of address id values.
  */
 
 

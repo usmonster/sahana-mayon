@@ -1,7 +1,8 @@
 <?php
 /**
-* agFacilityExporter is used to export all facilities from the system. It is called
-* from facility actions, and this class has basically been constructed to avoid
+* Export all facilities from the system.
+*
+* It is called from facility actions, and this class has basically been constructed to avoid
 * facility actions from growing to an unmanageable length.
 *
 * PHP Version 5.3

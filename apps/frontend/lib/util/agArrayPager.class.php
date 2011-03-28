@@ -1,6 +1,6 @@
 <?php
 /**
- * This class is used to provide paging for array-based datasets.
+ * Used to provide paging for array-based datasets.
  *
  * PHP Version 5.3
  *

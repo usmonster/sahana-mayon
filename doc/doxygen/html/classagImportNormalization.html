@@ -69,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <!-- doxytag: class="agImportNormalization" -->
-<p>Description of <a class="el" href="classagImportNormalization.html" title="Description of agImportNormalization.">agImportNormalization</a>.  
+<p>Normalizing import data.  
 <a href="#_details">More...</a></p>
 
 <p><a href="classagImportNormalization-members.html">List of all members.</a></p>
@@ -87,12 +87,14 @@ Public Attributes</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>$summary</b> = array()</td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53a99ffd0971448622db1d7f56958f82"></a><!-- doxytag: member="agImportNormalization::createFacility" ref="a53a99ffd0971448622db1d7f56958f82" args="($facilityName)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>createFacility</b> ($facilityName)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa83cb3f55366ffd5ce299b07c3a7efea"></a><!-- doxytag: member="agImportNormalization::createFacility" ref="aa83cb3f55366ffd5ce299b07c3a7efea" args="($facilityName, $facilityCode)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>createFacility</b> ($facilityName, $facilityCode)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ea007a09eea2240fffd44bf0ba358a8"></a><!-- doxytag: member="agImportNormalization::updateFacility" ref="a1ea007a09eea2240fffd44bf0ba358a8" args="($facility, $facilityName)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>updateFacility</b> ($facility, $facilityName)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a450a940517160eaa35584254b8697ed2"></a><!-- doxytag: member="agImportNormalization::createFacilityResource" ref="a450a940517160eaa35584254b8697ed2" args="($facility, $facilityResourceTypeAbbrId, $facilityResourceStatusId, $facilityResourceCode, $capacity)" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>createFacilityResource</b> ($facility, $facilityResourceTypeAbbrId, $facilityResourceStatusId, $facilityResourceCode, $capacity)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36ca95435485d7c4a8b016ca45c9110a"></a><!-- doxytag: member="agImportNormalization::updateFacilityResource" ref="a36ca95435485d7c4a8b016ca45c9110a" args="($facilityResource, $facilityResourceStatusId, $capacity)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>updateFacilityResource</b> ($facilityResource, $facilityResourceStatusId, $capacity)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa55cf2af255d12ece6a16b0615087fad"></a><!-- doxytag: member="agImportNormalization::updateFacilityResource" ref="aa55cf2af255d12ece6a16b0615087fad" args="($facilityResource, $facilityId, $facilityResourceTypeId, $facilityResourceStatusId, $capacity)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>updateFacilityResource</b> ($facilityResource, $facilityId, $facilityResourceTypeId, $facilityResourceStatusId, $capacity)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad08f6900980fc9c9c992be585316812e"></a><!-- doxytag: member="agImportNormalization::updateFacilityStaffResources" ref="ad08f6900980fc9c9c992be585316812e" args="($scenarioFacilityResourceId, $staff_data)" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>updateFacilityStaffResources</b> ($scenarioFacilityResourceId, $staff_data)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab274c41fb52f5e7d732f43af9bedc3f6"></a><!-- doxytag: member="agImportNormalization::createFacilityStaffResource" ref="ab274c41fb52f5e7d732f43af9bedc3f6" args="($scenarioFacilityResourceId, $staffTypeId, $min_staff, $max_staff)" -->
@@ -145,10 +147,13 @@ Protected Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>getPriorityCounter</b> ($contactMedium, $entityId)</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>Description of <a class="el" href="classagImportNormalization.html" title="Description of agImportNormalization.">agImportNormalization</a>. </p>
-<dl class="author"><dt><b>Author:</b></dt><dd>shirley.chan </dd></dl>
+<div class="textblock"><p>Normalizing import data. </p>
+<p>PHP Version 5.3</p>
+<p>LICENSE: This source file is subject to LGPLv2.1 license that is available through the world-wide-web at the following URI: <a href="http://www.gnu.org/licenses/lgpl-2.1.html">http://www.gnu.org/licenses/lgpl-2.1.html</a></p>
+<dl class="author"><dt><b>Author:</b></dt><dd>Shirley Chan, CUNY SPS</dd></dl>
+<p>Copyright of the Sahana Software Foundation, sahanafoundation.org </p>
 
-<p>Definition at line <a class="el" href="agImportNormalization_8php_source.html#l00008">8</a> of file <a class="el" href="agImportNormalization_8php_source.html">agImportNormalization.php</a>.</p>
+<p>Definition at line <a class="el" href="agImportNormalization_8class_8php_source.html#l00017">17</a> of file <a class="el" href="agImportNormalization_8class_8php_source.html">agImportNormalization.class.php</a>.</p>
 </div><hr/><h2>Member Function Documentation</h2>
 <a class="anchor" id="a17fbc0a02fd43d692ece8bf4ee4adc24"></a><!-- doxytag: member="agImportNormalization::updateFacilityEmail" ref="a17fbc0a02fd43d692ece8bf4ee4adc24" args="($facility, $email, $workEmailTypeId)" -->
 <div class="memitem">
@@ -190,7 +195,7 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>bool true if an update or create happened, false otherwise. </dd></dl>
 
-<p>Definition at line <a class="el" href="agImportNormalization_8php_source.html#l00802">802</a> of file <a class="el" href="agImportNormalization_8php_source.html">agImportNormalization.php</a>.</p>
+<p>Definition at line <a class="el" href="agImportNormalization_8class_8php_source.html#l00848">848</a> of file <a class="el" href="agImportNormalization_8class_8php_source.html">agImportNormalization.class.php</a>.</p>
 
 </div>
 </div>
@@ -240,12 +245,12 @@ Protected Member Functions</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>bool true if an update or create happened, false otherwise. </dd></dl>
 
-<p>Definition at line <a class="el" href="agImportNormalization_8php_source.html#l00891">891</a> of file <a class="el" href="agImportNormalization_8php_source.html">agImportNormalization.php</a>.</p>
+<p>Definition at line <a class="el" href="agImportNormalization_8class_8php_source.html#l00937">937</a> of file <a class="el" href="agImportNormalization_8class_8php_source.html">agImportNormalization.class.php</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>apps/frontend/lib/util/<a class="el" href="agImportNormalization_8php_source.html">agImportNormalization.php</a></li>
+<li>apps/frontend/lib/util/<a class="el" href="agImportNormalization_8class_8php_source.html">agImportNormalization.class.php</a></li>
 </ul>
 </div>
 <!--- window showing the filter options -->

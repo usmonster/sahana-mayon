@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This class is used to provide facility's basic information.
+ * Provides basic facility information.
  *
  * PHP Version 5.3
  *

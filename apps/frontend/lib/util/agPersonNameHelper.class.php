@@ -14,15 +14,6 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
- * @property array $defaultNameComponents A two-dimensional indexed array of name components. The
- * component orders in the array determine the order of name values returned. The inner value array
- * is comprised of name_type_id and a bit which determines whether or not this name_type is
- * represented by an initial, only.
- * @property boolean $invertLastComponent A simple bool to direct whether or not the last component
- * will be returned first (eg, LastName, First Name).
- * @property array $delimiters An associative array of delimiters used by the AsString method.
- * @property string $_globalDefaultNameComponents The string datapoint of the name components
- * global parameter.
  */
 
 class agPersonNameHelper extends agBulkRecordHelper

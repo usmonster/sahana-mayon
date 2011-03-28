@@ -64,36 +64,38 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00002"></a>00002 
 <a name="l00016"></a><a class="code" href="classagEmbeddedAgPersonMjAgLanguageForm.html">00016</a> <span class="keyword">class </span><a class="code" href="classagEmbeddedAgPersonMjAgLanguageForm.html" title="agEmbeddedAgPersonMjAgLanguageForm.">agEmbeddedAgPersonMjAgLanguageForm</a> <span class="keyword">extends</span> agPersonMjAgLanguageForm
 <a name="l00017"></a>00017 {
-<a name="l00018"></a>00018   <span class="keyword">private</span> <span class="keyword">static</span> $agLanguageList;
-<a name="l00019"></a>00019 
-<a name="l00020"></a>00020   <span class="keyword">public</span> function setup()
-<a name="l00021"></a>00021   {
-<a name="l00022"></a>00022     <span class="keywordflow">if</span> (!isset($this::$agLanguageList)) {
-<a name="l00023"></a>00023       $this::$agLanguageList = Doctrine::getTable(<span class="stringliteral">&#39;agLanguage&#39;</span>)-&gt;createQuery(<span class="charliteral">&#39;a&#39;</span>)-&gt;execute();
-<a name="l00024"></a>00024     }
-<a name="l00025"></a>00025 
-<a name="l00026"></a>00026     $this-&gt;setWidgets(array(
-<a name="l00027"></a>00027       <span class="stringliteral">&#39;id&#39;</span>                          =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),
-<a name="l00028"></a>00028       <span class="comment">//&#39;person_id&#39;                   =&gt; new sfWidgetFormInputHidden(),</span>
-<a name="l00029"></a>00029       <span class="stringliteral">&#39;language_id&#39;</span>                 =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; $this-&gt;getRelatedModelName(<span class="stringliteral">&#39;agLanguage&#39;</span>), <span class="stringliteral">&#39;query&#39;</span> =&gt; $this::$agLanguageList, <span class="stringliteral">&#39;add_empty&#39;</span> =&gt; <span class="keyword">true</span>), array(<span class="stringliteral">&#39;class&#39;</span> =&gt; <span class="stringliteral">&#39;inputGray&#39;</span>)),
-<a name="l00030"></a>00030       <span class="stringliteral">&#39;priority&#39;</span>                    =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),
-<a name="l00031"></a>00031     ));
-<a name="l00032"></a>00032 
-<a name="l00033"></a>00033     $this-&gt;setValidators(array(
-<a name="l00034"></a>00034       <span class="stringliteral">&#39;id&#39;</span>                          =&gt; <span class="keyword">new</span> sfValidatorInteger(array(<span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>)),<span class="comment">//new sfValidatorChoice(array(&#39;choices&#39; =&gt; array($this-&gt;getObject()-&gt;get(&#39;id&#39;)), &#39;empty_value&#39; =&gt; $this-&gt;getObject()-&gt;get(&#39;id&#39;), &#39;required&#39; =&gt; false)),</span>
-<a name="l00035"></a>00035       <span class="comment">//&#39;person_id&#39;                   =&gt; new sfValidatorDoctrineChoice(array(&#39;model&#39; =&gt; $this-&gt;getRelatedModelName(&#39;agPerson&#39;))),</span>
-<a name="l00036"></a>00036       <span class="stringliteral">&#39;language_id&#39;</span>                 =&gt; <span class="keyword">new</span> sfValidatorDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; $this-&gt;getRelatedModelName(<span class="stringliteral">&#39;agLanguage&#39;</span>), <span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>)),
-<a name="l00037"></a>00037       <span class="stringliteral">&#39;priority&#39;</span>                    =&gt; <span class="keyword">new</span> sfValidatorInteger(),
-<a name="l00038"></a>00038     ));
-<a name="l00039"></a>00039   }
-<a name="l00040"></a>00040 
-<a name="l00041"></a>00041   <span class="keyword">public</span> function configure()
-<a name="l00042"></a>00042   {
-<a name="l00043"></a>00043     $custDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterInline.html">agWidgetFormSchemaFormatterInline</a>($this-&gt;getWidgetSchema());
-<a name="l00044"></a>00044     $this-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;custDeco&#39;</span>, $custDeco);
-<a name="l00045"></a>00045     $this-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;custDeco&#39;</span>);
-<a name="l00046"></a>00046   }
-<a name="l00047"></a>00047 }
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019   <span class="keyword">private</span> <span class="keyword">static</span> $agLanguageList;
+<a name="l00020"></a>00020 
+<a name="l00021"></a>00021   <span class="keyword">public</span> function setup()
+<a name="l00022"></a>00022   {
+<a name="l00023"></a>00023     <span class="keywordflow">if</span> (!isset($this::$agLanguageList)) {
+<a name="l00024"></a>00024       $this::$agLanguageList = Doctrine::getTable(<span class="stringliteral">&#39;agLanguage&#39;</span>)-&gt;createQuery(<span class="charliteral">&#39;a&#39;</span>)-&gt;execute();
+<a name="l00025"></a>00025     }
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027     $this-&gt;setWidgets(array(
+<a name="l00028"></a>00028       <span class="stringliteral">&#39;id&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),
+<a name="l00029"></a>00029       <span class="comment">//&#39;person_id&#39;                   =&gt; new sfWidgetFormInputHidden(),</span>
+<a name="l00030"></a>00030       <span class="stringliteral">&#39;language_id&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; $this-&gt;getRelatedModelName(<span class="stringliteral">&#39;agLanguage&#39;</span>), <span class="stringliteral">&#39;query&#39;</span> =&gt; $this::$agLanguageList, <span class="stringliteral">&#39;add_empty&#39;</span> =&gt; <span class="keyword">true</span>), array(<span class="stringliteral">&#39;class&#39;</span> =&gt; <span class="stringliteral">&#39;inputGray&#39;</span>)),
+<a name="l00031"></a>00031       <span class="stringliteral">&#39;priority&#39;</span> =&gt; <span class="keyword">new</span> sfWidgetFormInputHidden(),
+<a name="l00032"></a>00032     ));
+<a name="l00033"></a>00033 
+<a name="l00034"></a>00034     $this-&gt;setValidators(array(
+<a name="l00035"></a>00035       <span class="stringliteral">&#39;id&#39;</span> =&gt; <span class="keyword">new</span> sfValidatorInteger(array(<span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>)), <span class="comment">//new sfValidatorChoice(array(&#39;choices&#39; =&gt; array($this-&gt;getObject()-&gt;get(&#39;id&#39;)), &#39;empty_value&#39; =&gt; $this-&gt;getObject()-&gt;get(&#39;id&#39;), &#39;required&#39; =&gt; false)),</span>
+<a name="l00036"></a>00036       <span class="comment">//&#39;person_id&#39;                   =&gt; new sfValidatorDoctrineChoice(array(&#39;model&#39; =&gt; $this-&gt;getRelatedModelName(&#39;agPerson&#39;))),</span>
+<a name="l00037"></a>00037       <span class="stringliteral">&#39;language_id&#39;</span> =&gt; <span class="keyword">new</span> sfValidatorDoctrineChoice(array(<span class="stringliteral">&#39;model&#39;</span> =&gt; $this-&gt;getRelatedModelName(<span class="stringliteral">&#39;agLanguage&#39;</span>), <span class="stringliteral">&#39;required&#39;</span> =&gt; <span class="keyword">false</span>)),
+<a name="l00038"></a>00038       <span class="stringliteral">&#39;priority&#39;</span> =&gt; <span class="keyword">new</span> sfValidatorInteger(),
+<a name="l00039"></a>00039     ));
+<a name="l00040"></a>00040   }
+<a name="l00041"></a>00041 
+<a name="l00042"></a>00042   <span class="keyword">public</span> function configure()
+<a name="l00043"></a>00043   {
+<a name="l00044"></a>00044     $custDeco = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterInline.html">agWidgetFormSchemaFormatterInline</a>($this-&gt;getWidgetSchema());
+<a name="l00045"></a>00045     $this-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;custDeco&#39;</span>, $custDeco);
+<a name="l00046"></a>00046     $this-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;custDeco&#39;</span>);
+<a name="l00047"></a>00047   }
+<a name="l00048"></a>00048 
+<a name="l00049"></a>00049 }
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * agPerson this class extends the person object for various purposes
+ * Extends the person object for various purposes
  *
  * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:

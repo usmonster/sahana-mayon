@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * Normalizing import data.
  *
  * PHP Version 5.3
