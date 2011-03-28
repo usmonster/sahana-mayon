@@ -68,9 +68,6 @@ class eventActions extends agActions
             ->execute()->getFirst();
     $this->facilityResourceActivationTimeForm = new agSingleEventFacilityResourceActivationTimeForm();//new agFacilityResourceAcvitationForm($this->event_facility_resource);
     $this->facilityResourceActivationTimeForm->setDefault('event_facility_resource_id', $this->event_facility_resource['id']);
-    $b = $this->facilityResourceActivationTimeForm;
-    $c = $this->event_facility_resource;
-    $d = 3;
   }
 
   /**
@@ -734,7 +731,7 @@ class eventActions extends agActions
     $query = agDoctrineQuery::create()
             ->select('efr.id')
             ->addSelect('f.facility_name')
-            ->addSelect('fr.facility_resource_code')
+            ->addSelect('f.facility_code')
             ->addSelect('frt.facility_resource_type')
             ->addSelect('ras.facility_resource_allocation_status')
             ->addSelect('f.id')

@@ -23,7 +23,7 @@
     </tr>
     <?php foreach($results as $key => $result) : ?>
     <tr>
-      <td><?php echo $result['fr_facility_resource_code'] ?></td>
+      <td><?php echo $result['f_facility_code'] ?></td>
       <td><?php echo $result['f_facility_name'] ?></td>
       <td><?php echo $result['frt_facility_resource_type'] ?></td>
       <?php $form->setDefault('resource_allocation_status', $result['ras_id']) ?>
