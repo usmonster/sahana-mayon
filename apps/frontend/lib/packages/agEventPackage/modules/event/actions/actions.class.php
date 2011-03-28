@@ -618,7 +618,7 @@ class eventActions extends agActions
     if ($request->getParameter('sort') && $request->getParameter('order')) {
       $sortColumns = array('group' => 'efg_event_facility_group',
         'name' => 'f_facility_name',
-        'code' => 'fr_facility_resource_code',
+        'code' => 'f_facility_code',
         'status' => 'ras_facility_resource_allocation_status',
         'time' => 'efrat_activation_time',
         'type' => 'fgt_facility_group_type',
@@ -680,7 +680,6 @@ class eventActions extends agActions
         $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
           $resourceAllocation->save();
-//          return $this->renderText('event/' . urlencode($this->event->event_name) . '/facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
           return $this->renderText('facilityresource/' . urlencode($request->getParameter('facility_resource_id')));
         }
 

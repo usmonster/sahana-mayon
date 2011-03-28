@@ -64,7 +64,6 @@ $i = 1;
             <td>Facility Name: <?php echo $failedRecord['record']['facility_name']; ?>
               <br />Facility Code: <?php echo $failedRecord['record']['facility_code']; ?>
               <br />Facility Resource Type Abbr: <?php echo $failedRecord['record']['facility_resource_type_abbr']; ?>
-              <br />Facility Resource Code: <?php echo $failedRecord['record']['facility_resource_code']; ?></td>
           </tr>
           <?php endforeach ?>
         </table>
@@ -84,7 +83,6 @@ $i = 1;
           <td>Facility Name: <?php echo $warning['record']['facility_name']; ?>
             <br />Facility Code: <?php echo $failedRecord['record']['facility_code']; ?>
             <br />Facility Resource Type Abbr: <?php echo $failedRecord['record']['facility_resource_type_abbr']; ?>
-            <br />Facility Resource Code: <?php echo $warning['record']['facility_resource_code']; ?></td>
         </tr>
         <?php endforeach ?>
       </table>

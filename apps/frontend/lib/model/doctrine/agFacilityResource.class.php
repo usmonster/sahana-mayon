@@ -34,8 +34,6 @@ class agFacilityResource extends BaseagFacilityResource
     public function updateLucene() {
         $doc = new Zend_Search_Lucene_Document();
         $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
-  
-        $doc->addField(Zend_Search_Lucene_Field::unStored('facility_code', $this->facility_resource_code, 'utf-8'));
     }
 
   /**

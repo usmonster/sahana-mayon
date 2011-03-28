@@ -92,7 +92,7 @@ class agFacilityExporter {
     foreach ($this->facilityGeneralInfo as $fac) {
       $entry = array();
       $entry['Facility Name'] = $fac['f_facility_name'];
-      $entry['Facility Resource Code'] = $fac['fr_facility_resource_code'];
+      $entry['Facility Code'] = $fac['f_facility_code'];
       $entry['Facility Resource Type Abbr'] = $fac['frt_facility_resource_type_abbr'];
       $entry['Facility Resource Status'] = $fac['frs_facility_resource_status'];
       $entry['Facility Capacity'] = $fac['fr_capacity'];

@@ -368,7 +368,7 @@ class agFacilityForm extends BaseagFacilityForm
           if ($form->isNew()) {
             $newFacilityResource = $form->getObject();
             if ($newFacilityResource->capacity && $newFacilityResource->facility_resource_type_id
-                && $newFacilityResource->facility_resource_status_id && $newFacilityResource->facility_resource_code) {
+                && $newFacilityResource->facility_resource_status_id) {
               $newFacilityResource->setFacilityId($this->getObject()->getId());
               $newFacilityResource->save();
               $this->getObject()->getAgFacilityResource()->add($newFacilityResource);
@@ -379,7 +379,7 @@ class agFacilityForm extends BaseagFacilityForm
           } else {
             $objFacilityResource = $form->getObject();
             if ($objFacilityResource->capacity && $objFacilityResource->facility_resource_type_id
-                && $objFacilityResource->facility_resource_status_id && $objFacilityResource->facility_resource_code) {
+                && $objFacilityResource->facility_resource_status_id) {
               $form->getObject()->save();
             } else {
               $form->getObject()->delete();
