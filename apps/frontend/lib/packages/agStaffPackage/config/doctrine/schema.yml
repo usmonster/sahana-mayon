@@ -44,7 +44,7 @@ agStaff:
     staff_status_id:
       type: integer(2)
       notnull: true
-  actAs: [Luceneable]
+  actAs: [Luceneable, Timestampable]
   indexes:
     agStaff_unq:
       fields: [person_id]
