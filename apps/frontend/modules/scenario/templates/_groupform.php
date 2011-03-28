@@ -53,7 +53,6 @@ echo url_for
     echo $groupform;
     ?>
   </div>
-      <a href="#" title="HI THERE!">hello</a>
   <div class="bucketHolder" >
     <ul id="available" class="bucket">
       <?php
