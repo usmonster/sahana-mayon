@@ -34,7 +34,7 @@ class agFacility extends BaseagFacility {
         //$doc->addField(Zend_Search_Lucene_Field::unStored('facility_code', $this->facility_code, 'utf-8'));
 
         $facilityInfo = agDoctrineQuery::create()
-                        ->select('f.id, fr.id, frt.id, frt.facility_resource_type, frt.facility_resource_type_abbr, fr.facility_resource_code')
+                        ->select('f.id, fr.id, frt.id, frt.facility_resource_type, frt.facility_resource_type_abbr')
                         ->from('agFacility f')
                         ->innerJoin('f.agFacilityResource fr')
                         ->innerJoin('fr.agFacilityResourceType frt')
@@ -42,19 +42,14 @@ class agFacility extends BaseagFacility {
                         ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
         $resourceType = null;
-        $resourceCode = null;
         // Cannot save facility's resource type info until after the facility is saved.
         foreach ($facilityInfo as $fac) {
           $resourceType = $resourceType . ' ' . $fac['frt_facility_resource_type'] . ' ' . $fac['frt_facility_resource_type_abbr'];
-          $resourceCode = $resourceCode . ' ' . $fac['fr_facility_resource_code'];
         }
         if (isset($resourceType)) {
           $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource', $resourceType, 'utf-8'));
         }
 
-        if (isset($resourceCode)) {
-          $doc->addField(Zend_Search_Lucene_Field::unStored('facility_resource_code', $resourceCode, 'utf-8'));
-        }
         // Make facilities searchable by e-mail
         $query = agDoctrineQuery::create()
                         ->select('f.id, s.id, e.id, eec.id, ec.id, ec.email_contact')
