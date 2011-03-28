@@ -173,8 +173,6 @@ class agListForm
     $ascArrow = '&#x25B2;';
     $descArrow = '&#x25BC;';
 
-    //$listheader = '<h3>' . $title . '</h3>';
-
 
     $listbody = '<table class="staffTable">';
     $listbody .= '<caption>Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
@@ -250,7 +248,7 @@ class agListForm
     $listfoot .= '</div>';
 
     // Commented out $listheader here. It's declaration is commented above. Ask Charles.
-    $nice_list = /*$listheader . */$listbody . $listfoot;
+    $nice_list = $listbody . $listfoot;
 
     return $nice_list;
   }

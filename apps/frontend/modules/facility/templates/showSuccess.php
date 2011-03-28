@@ -27,7 +27,7 @@
   <?php foreach ($ag_facility->getAgFacilityResource() as $ag_facility_resource): ?>
     <tr>
       <th class="subHead"><?php echo ucwords($ag_facility_resource->getAgFacilityResourceType()->getFacilityResourceType()) ?></th>
-      <th class="subHead"><?php echo ucwords($ag_facility_resource->getFacilityResourceCode()) ?></th>
+      <th class="subHead"><?php echo ucwords($ag_facility_resource->getAgFacility()->getFacilityCode()) ?></th>
       <td><?php echo $ag_facility_resource->getAgFacilityResourceStatus()->getFacilityResourceStatus() ?></td>
       <td><?php echo $ag_facility_resource->getAgFacilityResourceType() ?></td>
       <td><?php echo $ag_facility_resource->getCapacity() ?></td>
