@@ -2,7 +2,7 @@
 require_once (dirname(__FILE__) . '/../../../../../lib/vendor/symfony/lib/yaml/sfYaml.php');
 require_once (sfConfig::get('sf_config_dir') . '/ProjectConfiguration.class.php');
 require_once (sfConfig::get('sf_web_dir') . '/requirements.inc.php');
-require_once (sfConfig::get('sf_web_dir') . '/func.inc.php');
+require_once (sfConfig::get('sf_app_lib_dir') . '/install/func.inc.php');
 $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
 
 class agConfig

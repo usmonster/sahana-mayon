@@ -79,7 +79,7 @@ class adminActions extends agActions
     /**
      * @param sfWebRequest $request is what the user is asking of the server
      */
-    require_once (dirname(__FILE__) . '../apps/frontend/lib/install/func.inc.php');
+    require_once (sfConfig::get('sf_app_lib_dir') . '/install/func.inc.php');
     //OR sfProjectConfiguration::getActive()->loadHelpers(array('Install)); ^
     
     if ($request->getParameter('saveconfig')) {
