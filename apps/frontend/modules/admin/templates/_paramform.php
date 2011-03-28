@@ -9,10 +9,10 @@
           <?php echo $paramform->renderHiddenFields(false) ?>
           <?php if (!$paramform->getObject()->isNew()): ?>
             &nbsp;
-              <input type="submit" value="Delete" name="delete" class="saveLinkButton"/>
+              <input type="submit" value="Delete" name="delete" class="linkButton"/>
               <input type="hidden" value="<?php echo $paramform->getObject()->getId() ?>" name="deleteparam">
           <?php endif; ?>
-          <input type="submit" value="Save" name="update" class="saveLinkButton"/>
+          <input type="submit" value="Save" name="update" class="linkButton"/>
         </td>
       </tr>
     </tfoot>

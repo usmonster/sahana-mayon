@@ -32,7 +32,7 @@
     <tfoot>
       <tr>
         <td>
-        <input type="submit" value="Save" class="saveLinkButton" />
+        <input type="submit" value="Save" class="linkButton" />
         </td>
       </tr>
     </tfoot>

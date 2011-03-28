@@ -512,7 +512,7 @@ span.green{
 input[type="button"], button[type="submit"], form input[type="submit"] {
   border: 1px solid #dadada;
   font-weight: bold;
-  font-family: helvetica, arial, verdana;
+/*  font-family: helvetica, arial, verdana;*/
   outline: none;
   text-decoration: none;
 /*  padding: 0;*/

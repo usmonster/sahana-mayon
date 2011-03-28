@@ -22,7 +22,7 @@ if ($events != "") {
 <?php echo link_to('Delete', 'facility/delete?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'linkButton')) ?>
 <?php echo link_to('Disable', 'facility/disable?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'linkButton')) ?>
 <?php endif; ?>
-          <input type="submit" value="Save" class="saveLinkButton" <?php //
+          <input type="submit" value="Save" class="linkButton" <?php //
           //TODO we should have the confirmation script above actually work and pipe to the save method here.
           //echo $confirmScript ?>/>
         </td>
