@@ -31,7 +31,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
  
   ?>
   
-<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure adminConfigLegend">
+<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure adminConfig">
     <fieldset>
       <legend><img src="<?php echo url_for('images/database.png') ?>" class="textBottom" alt="database icon" />Database Configuration:</legend>
       <p>

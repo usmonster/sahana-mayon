@@ -790,6 +790,7 @@ th .tableRow {
 
 .adminConfig {
   display:inline-block;
+  margin: 10px 0px;
 }
 
 .adminConfig P {
