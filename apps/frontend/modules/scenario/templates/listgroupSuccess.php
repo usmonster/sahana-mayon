@@ -23,5 +23,5 @@
     <?php endforeach; ?>
         </tbody>
       </table>
-
-      <a href="<?php echo url_for('scenario/fgroup') ?>" class="buttonText" title="New Facility Group">New</a>
+<hr />
+      <a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id) ?>" class="linkButton" title="New Facility Group">New</a>

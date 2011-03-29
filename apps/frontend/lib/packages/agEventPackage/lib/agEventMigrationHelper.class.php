@@ -88,7 +88,7 @@ class agEventMigrationHelper
 
       $eventFacilityGroupStatus = new agEventFacilityGroupStatus();
       $eventFacilityGroupStatus->set('event_facility_group_id', $eventFacilityGroup->id)
-          ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
+          ->set('time_stamp', date('Y-m-d H:i:s', time()))
           ->set('facility_group_allocation_status_id', $scenFacGrp->facility_group_allocation_status_id);
       $eventFacilityGroupStatus->save();
 
@@ -112,7 +112,7 @@ class agEventMigrationHelper
 
       $eventFacilityResourceStatus = new agEventFacilityResourceStatus();
       $eventFacilityResourceStatus->set('event_facility_resource_id', $eventFacilityResource->id)
-          ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
+          ->set('time_stamp', date('Y-m-d H:i:s', time()))
           ->set('facility_resource_allocation_status_id', $scenFacRes->facility_resource_allocation_status_id);
       $eventFacilityResourceStatus->save();
 
@@ -171,7 +171,7 @@ class agEventMigrationHelper
       $unAvailableStaffStatus = Doctrine_Core::getTable('agStaffAllocationStatus')->findby('staff_allocation_status', 'unavailable');
       $eventStaffStatus = new agEventStaffStatus();
       $eventStaffStatus->set('event_staff_id', $eventStaff->id)
-          ->set('time_stamp', new Doctrine_Expression('CURRENT_TIMESTAMP'))
+          ->set('time_stamp', date('Y-m-d H:i:s', time()))
           ->set('staff_allocation_status_id', $unAvailableStaffStatus);
       $eventStaffStatus->free(TRUE);
 
