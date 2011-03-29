@@ -10,12 +10,18 @@
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Chad Heuschober, CUNY SPS
+ * @author Charles Wisniewski, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
 
 class agEventMigrationHelper
 {
+  /**
+ * Provides check information (count of empty facility groups) for this scenario
+ * @param integer $scenario_id the scenario to pre-check for migration
+ * @return integer count of empty facility groups
+ */
   public static function facilityGroupCheck($scenario_id)
   {
     $facilityGroupQuery = agDoctrineQuery::create()
@@ -27,7 +33,11 @@ class agEventMigrationHelper
     $facilityGroupQuery->free();
     return $returnvalue;
   }
-
+/**
+ * Provides check information (count of undefined facility and staff shifts) for this scenario
+ * @param integer $scenario_id the scenario to pre-check for migration
+ * @return array : count of undefined facility shifts, count of undefined staff shifts
+ */
   public static function undefinedShiftCheck($scenario_id)
   {
     $undefinedFacilityShiftQuery = agDoctrineQuery::create()
@@ -53,7 +63,11 @@ class agEventMigrationHelper
 
     return array($facilityShiftReturn, $staffShiftReturn);
   }
-
+/**
+ * Provides check information (count of staff resources) available for this scenario
+ * @param integer $scenario_id the scenario to pre-check for migration
+ * @return integer count of staff resources
+ */
   public static function staffPoolCheck($scenario_id)
   {
     $staffPoolQuery = agDoctrineQuery::create()
@@ -61,7 +75,12 @@ class agEventMigrationHelper
             ->where('scenario_id =?', $scenario_id);
     return $staffPoolQuery->count();
   }
-
+/**
+ * Performs checks to see if a scenario is ready for deployment
+ * @param integer $scenario_id the scenario to pre-check for migration
+ * @return array of Empty Facility Groups, the count of Staff Pool, Undefined Facility Shifts
+ *                  Undefined Staff Shifts
+ */
   public static function preMigrationCheck($scenario_id)
   {
     // 0. Pre check: check event status (only proceed if event status is pre-deploy), clean event related tables in pre-deploy state, empty facility group, undefined staff pool rules making sure pools not empty, undefined shifts for staff/facility resource.
@@ -73,7 +92,11 @@ class agEventMigrationHelper
 
     return array('Empty facility groups' => $facilityGroupCheck, 'Staff pool count' => $staffPoolCheck, 'Undefined facility shifts' => $undefinedFacilityShifts, 'Undefined staff shifts' => $undefinedStaffShifts);
   }
-
+/**
+ * Migrates facility groups from a scenario to an event
+ * @param integer $scenario_id the id of the scenario from which we will copy facility groups
+ * @param integer $event_id the id of the event to which facility groups are migrated
+ */
   public static function migrateFacilityGroups($scenario_id, $event_id)
   {
     $existingScenarioFacilityGroups = Doctrine_Core::getTable('agScenarioFacilityGroup')->findBy('scenario_id', $scenario_id);
@@ -99,7 +122,12 @@ class agEventMigrationHelper
     }
     $existingScenarioFacilityGroups->free(TRUE);
   }
-
+/**
+ * Migrates facility resources from a scenario facility group to an event facility group
+ * @param integer $scenarioFacilityResourceId the facility resource with shifts to be migrated
+ * @param integer $eventFacilityResourceId the facility resource with shifts for migration
+ * @return integer Count of shifts migrated from Scenario to Event
+ */
   public static function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id)
   {
     $existingScenarioFacilityResources = $scenarioFacilityGroup->getAgScenarioFacilityResource();
@@ -124,9 +152,14 @@ class agEventMigrationHelper
     }
 
     $existingScenarioFacilityResources->free(TRUE);
-    return 1;
+    //return 1;
   }
-
+/**
+ * Migrates shifts from a scenrio facility resource to an event facility resource
+ * @param integer $scenarioFacilityResourceId the facility resource with shifts to be migrated
+ * @param integer $eventFacilityResourceId the facility resource with shifts for migration
+ * @return integer Count of shifts migrated from Scenario to Event
+ */
   public static function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId)
   {
     $scenarioShifts = Doctrine_Core::getTable('agScenarioShift')->findby('scenario_facility_resource_id', $scenarioFacilityResourceId);
@@ -150,9 +183,15 @@ class agEventMigrationHelper
       $eventShift->free(TRUE);
     }
     $scenarioShifts->free(TRUE);
-    return 1;
+    return count($scenarioShifts);
+    //return 1;
   }
-
+/**
+ * Migrates a pool of staff resources from a scenario to an event
+ * @param integer $scenario_id the id of the scenario being operated on
+ * @param integer $event_id the id of the event being operated on
+ * @return integer Count of how many staff members were migrated.
+ */
   public static function migrateStaffPool($scenario_id, $event_id)
   {
     $existingScenarioStaffPools = agDoctrineQuery::create()
@@ -167,7 +206,7 @@ class agEventMigrationHelper
           ->set('deployment_weight', $scenStfPool->deployment_weight);
       $eventStaff->save();
 
-      // @TODO Staff allocation status should be determine by the message responses.  Currently it is hard-coded to 1 as available.
+      // @TODO Staff allocation status should be determined by the message responses.  Currently it is hard-coded to 1 as unavailable.
       $unAvailableStaffStatus = Doctrine_Core::getTable('agStaffAllocationStatus')->findby('staff_allocation_status', 'unavailable');
       $eventStaffStatus = new agEventStaffStatus();
       $eventStaffStatus->set('event_staff_id', $eventStaff->id)
@@ -179,9 +218,15 @@ class agEventMigrationHelper
     }
 
     $existingScenarioStaffPools->free(TRUE);
-    return 1;
+    //return 1;
+    return count($existingScenarioStaffPools);
   }
-
+/**
+ * Parent function to migrate a scenario to an event
+ * @param integer $scenario_id the id of the scenario being operated on
+ * @param integer $event_id the id of the event being operated on
+ * @return status code indicating whether the migration was a success or not
+ */
   public static function migrateScenarioToEvent($scenario_id, $event_id)
   {
 

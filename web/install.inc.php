@@ -527,7 +527,13 @@ class agInstall
 //    } catch (Exception $e) {
 //      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
 //    }
-
+     try {
+       $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup'));
+       $luceneIndex->indexAll();
+       $installed = 'Success!';
+      } catch (Exception $e) {
+        $installed[] = 'Could not index Data! : ' . "\n" . $e->getMessage();
+      }
     if(is_array($installed)){
       return implode('<br>', $installed);
     }

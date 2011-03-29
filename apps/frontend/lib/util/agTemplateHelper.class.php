@@ -15,6 +15,11 @@
 **/
 class agTemplateHelper
 {
+  /**
+   *
+   * @param array of address
+   * @return string html formatted table of address for display in templates
+   */
   public static function buildAddressTable($addressArray)
   {
     foreach ($addressArray as $type => $address) {

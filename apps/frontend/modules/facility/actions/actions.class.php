@@ -31,9 +31,7 @@ class facilityActions extends agActions
 
   /**
   * executeIndex()
-  *
-  * Placeholder for the index action. Only the template is
-  * needed, so this method is empty.
+  * provides the user with a scenario drop down for facility import and the facility landing page
   *
   * @param $request sfWebRequest object for current page request
   **/
