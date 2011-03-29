@@ -261,8 +261,10 @@
   </thead>
   <tbody>
     <?php
-      $addressTable = agTemplateHelper::buildAddressTable($addressArray->getRawValue());
-      echo $addressTable;
+      if(isset($addressArray)) {
+        $addressTable = agTemplateHelper::buildAddressTable($addressArray->getRawValue());
+        echo $addressTable;
+      }
     ?>
   </tbody>
   </table>
