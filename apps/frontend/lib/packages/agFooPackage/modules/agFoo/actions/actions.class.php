@@ -131,6 +131,7 @@ class agFooActions extends agActions
 $array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
 $fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1),
     array(array('1'=>'peachpitters', '5'=>'10035'), 1)) ;
+$fakeEntityAddr = array('1' => array(array(2, array(array('1'=>'peachpitters', '5'=>'10035'), 1)), array(3, array(array('1'=>'monkeybanana4', '2'=>'raffles', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1))), 3 => array(array(1,array(array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1)))) ;
 $addrContact = array( '1'=>array(array(3,4), array(2,1)),
     '10'=>array(array(3,10)),
     '87'=>array(array(1,9))) ;
@@ -153,9 +154,8 @@ $obj = agEntityAddressHelper::init() ;
 //$results = $obj->updateAddressHashes($array) ;
 //$addr = $obj->getAddressComponentsById($array) ;
 //$results = $obj->setAddresses($fakeAddr, TRUE) ;
-//$results = $obj->setEntityAddressById($addrContact) ;
-$results = $obj->exceptionTest() ;
-//$results = $obj->setAddresses($fakeAddr) ;
+$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, FALSE, TRUE) ;
+//$results = $obj->exceptionTest() ;
 print_r($results) ;
 // <-------- CUT HERE -------->
 
