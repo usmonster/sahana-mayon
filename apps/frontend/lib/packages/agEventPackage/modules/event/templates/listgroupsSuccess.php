@@ -116,4 +116,3 @@ $sortOrder = $sf_request->getGetParameter('order');
               echo(!$pager->isLastPage() ? '<a href="' . url_for('event/listgroups?page=' . $pager->getLastPage() . (isset($event) ? '&event=' . urlencode($event->event_name) : '') . $sortAppend . $orderAppend) . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
   ?>
             </div>
-            <a href="<?php echo url_for('event/newgroup') ?>" class="buttonText" title="New Facility Group">New</a>

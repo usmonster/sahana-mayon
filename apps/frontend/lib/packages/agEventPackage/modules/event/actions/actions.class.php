@@ -651,6 +651,7 @@ class eventActions extends agActions
    * */
   public function executeGroupdetail(sfWebRequest $request)
   {
+// General
     $this->event = agDoctrineQuery::create()
             ->select()
             ->from('agEvent')
@@ -663,6 +664,7 @@ class eventActions extends agActions
             ->andWhere('event_id = ?', $this->event->id)
             ->fetchOne();
     $this->xmlHttpRequest = $request->isXmlHttpRequest();
+// Create
     if ($request->isMethod(sfRequest::POST)) {
       // Check which type of data is coming through. Are you changing resource status
       // or group status? Then build an object with the incoming values and some
