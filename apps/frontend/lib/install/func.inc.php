@@ -211,13 +211,13 @@ function buildDsnString($dbType, $dbHost, $dbName, $dbPort = null)
 
 /**
  * Function used by installer and admin configuration for writing the app.yml file
- * @param $authMethod changes the app.yml to set the authentication method
+ * @param $authMethod changes the app.yml to set the authentication method, if NULL, then superadmin
  * @return boolean success or failure (was app.yml written)
  */
   function writeAppYml($authMethod = NULL){
     $appYmlFile = sfConfig::get('sf_app_config_dir') . '/app.yml';
     $appConfig = sfYaml::load($appYmlFile);
-    if($authMethod == NULL){
+    if($authMethod === NULL){
     $appConfig['all']['sf_guard_plugin'] =
         array('check_password_callable'
           => array('agSudoAuth', 'authenticate'));
