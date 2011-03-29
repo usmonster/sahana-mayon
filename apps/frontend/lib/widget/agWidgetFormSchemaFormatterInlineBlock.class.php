@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <description of what the class does here>
+ * Form formatter Inline blocks
  *
  * PHP Version 5.3
  *
@@ -25,4 +25,5 @@ class agWidgetFormSchemaFormatterInlineBlock extends sfWidgetFormSchemaFormatter
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
   $decoratorFormat = "<div class=\"facgroup decoratorFormatContent\">\n  %content%</div>";
+
 }

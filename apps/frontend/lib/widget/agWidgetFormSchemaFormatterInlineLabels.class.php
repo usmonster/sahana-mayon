@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <description of what the class does here>
+ * Form formatter for labels
  *
  * PHP Version 5.3
  *

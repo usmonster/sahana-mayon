@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <description of what the class does here>
+ * Form formatter for inline label left
  *
  * PHP Version 5.3
  *

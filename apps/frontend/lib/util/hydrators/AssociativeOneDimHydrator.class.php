@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AssociativeTwoDimHydrator this class extends the Doctrine_Hydrator_Abstract class.
+ * Extends the Doctrine_Hydrator_Abstract class.
  *
  * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
@@ -13,6 +13,7 @@
  */
 class AssociativeOneDimHydrator extends Doctrine_Hydrator_Abstract
 {
+
   /**
    * Defines the result set as an associative array and groups, assuming the first result position
    * is an associative key
@@ -25,11 +26,11 @@ class AssociativeOneDimHydrator extends Doctrine_Hydrator_Abstract
     $results = $stmt->fetchAll(Doctrine_Core::FETCH_NUM);
     $array = array();
 
-    foreach ($results as $result)
-    {
-      $array[$result[0]][] = $result[1] ;
+    foreach ($results as $result) {
+      $array[$result[0]][] = $result[1];
     }
 
     return $array;
   }
+
 }

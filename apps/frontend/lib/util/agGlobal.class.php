@@ -12,8 +12,6 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
- * @property array $_params The global parameters, as fetched from the database, as an associative
- * array.
  */
 class agGlobal
 {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <description of what the class does here>
+ * Form formatter for label
  *
  * PHP Version 5.3
  *
@@ -24,4 +24,5 @@ class agWidgetFormSchemaFormatterInlineBigTopLabel extends sfWidgetFormSchemaFor
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
   $decoratorFormat = "<div class=\"inlinetoplabel\">%content%</div>";
+
 }

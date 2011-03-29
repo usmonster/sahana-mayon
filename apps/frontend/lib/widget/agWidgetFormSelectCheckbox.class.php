@@ -1,20 +1,20 @@
 <?php
 
-/*
- * This file is part of the symfony package.
- * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 /**
- * sfWidgetFormSelectCheckbox represents an array of checkboxes.
+ * Form formatter for checkboxes
  *
- * @package    symfony
- * @subpackage widget
- * @author     Fabien Potencier <fabien.potencier@symfony-project.com>
- * @version    SVN: $Id: sfWidgetFormSelectCheckbox.class.php 30762 2010-08-25 12:33:33Z fabien $
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @author Nils Stolpe, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ *
+ * This file is modifed from the symfony package.
+ * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  */
 class agWidgetFormSelectCheckbox extends sfWidgetFormSelectCheckbox
 {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <description of what the class does here>
+ * Form formatter without list
  *
  * PHP Version 5.3
  *
