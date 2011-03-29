@@ -44,6 +44,17 @@ $i = 1;
 
     <hr>
 
+    <?php #if (isset($errMsg)) echo $errMsg; ?>
+    <?php
+      if (isset($errMsg))
+      {
+        echo '<br />app: ' . $errMsg['app'];
+        echo '<br />env: ' . $errMsg['env'];
+        echo '<br />debug: ' . $errMsg['debug'];
+        echo '<br />no_script_name: ' . $errMsg['no_script_name'];
+      }
+    ?>
+
     <?php if (isset($summary)): ?>
       <br /><br /><b>Total Number of Processed Records:</b> <?php echo $summary['totalProcessedRecordCount']; ?>
       <br /><br /><b>Total New Facility Created:</b> <?php echo $summary['totalNewFacilityCount']; ?>
@@ -85,6 +96,7 @@ $i = 1;
             <br />Facility Resource Type Abbr: <?php echo $failedRecord['record']['facility_resource_type_abbr']; ?>
         </tr>
         <?php endforeach ?>
+
       </table>
       <?php endif ?>
     <?php else: ?>

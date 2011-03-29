@@ -256,10 +256,12 @@ class facilityActions extends agActions
       $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
 
       $format="%d/%m/%Y %H:%M:%S";
-//    echo strftime($format);
+      echo strftime($format);
 
       $dataNorm->normalizeImport();
+      
       $this->summary = $dataNorm->summary;
+      echo strftime($format);
     }
 
 
@@ -273,7 +275,6 @@ class facilityActions extends agActions
 //      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
 //      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
 
-//    echo strftime($format);
   }
 
   /**

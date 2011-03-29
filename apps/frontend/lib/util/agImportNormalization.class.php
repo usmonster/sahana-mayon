@@ -19,6 +19,7 @@ class agImportNormalization
   public $summary = array();
   private $importStaffList = array();
   private $staffMapping = array();
+  private $errMsg;
 
   function __construct($scenarioId, $sourceTable, $dataType)
   {
@@ -35,13 +36,14 @@ class agImportNormalization
     $this->totalNewFacilityGroupCount = 0;
     $this->processedFacilityIds = array();
     $this->conn = null;
+    $this->errMsg;
   }
 
   function __destruct()
   {
-    //drop temp table.
-    $this->conn->export->dropTable($this->sourceTable);
-    $this->conn->close();
+//    //drop temp table.
+//    $this->conn->export->dropTable($this->sourceTable);
+//    $this->conn->close();
   }
 
   /**
@@ -96,16 +98,8 @@ class agImportNormalization
                    'message' => 'Invalid facility name.');
     }
 
-    // Check for valid facility_resource_code
-    if (empty($record['facility_resource_code'])) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Resource Code',
-                   'message' => 'Invalid facility resource code.');
-    }
-
     // Check for valid facility_code
-    if (empty($record['facility_resource_code'])) {
+    if (empty($record['facility_code'])) {
       return array('pass' => FALSE,
                    'status' => 'ERROR',
                    'type' => 'Facility Code',
@@ -305,11 +299,13 @@ class agImportNormalization
     $facilityContactType = $this->facilityContactType;
 
     // Setup db connection.
-    $this->conn = Doctrine_Manager::connection();
+//    $this->conn = Doctrine_Manager::connection();
+    $conn = Doctrine_Manager::connection();
 
     // Fetch import data.
     $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
-    $pdo = $this->conn->execute($query);
+//    $pdo = $this->conn->execute($query);
+    $pdo = $conn->execute($query);
     $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
     $sourceRecords = $pdo->fetchAll();
 
@@ -319,85 +315,95 @@ class agImportNormalization
     }
 
     //loop through records.
-    foreach ($sourceRecords as $record) {
-      try {
-        $this->conn->beginTransaction();
+    foreach ($sourceRecords as $record)
+    {
+      $validEmail = 1;
+      $validPhone = 1;
+      $validAddress = 1;
+      $isNewFacilityRecord = 0;
+      $isNewFacilityGroupRecord = 0;
 
-        $validEmail = 1;
-        $validPhone = 1;
-        $validAddress = 1;
-        $isNewFacilityRecord = 0;
-        $isNewFacilityGroupRecord = 0;
-
-        $isValidData = $this->dataValidation($record);
-        if (!$isValidData['pass']) {
-          switch ($isValidData['status']) {
-            case 'ERROR':
-              $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-              continue 2;
-            case 'WARNING':
-              switch ($isValidData['type']) {
-                case 'Email':
-                  $validEmail = 0;
-                  $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-                  break;
-                case 'Phone':
-                  $validPhone = 0;
-                  $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-                  break;
-                case 'Mail Address':
-                  $validAddress = 0;
-                  $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-                  break;
-              }
-              break;
-            default:
-              $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-              continue 2;
-          }
+      $isValidData = $this->dataValidation($record);
+      if (!$isValidData['pass']) {
+        switch ($isValidData['status']) {
+          case 'ERROR':
+            $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
+                                                 'record' => $record);
+            continue 2;
+          case 'WARNING':
+            switch ($isValidData['type']) {
+              case 'Email':
+                $validEmail = 0;
+                $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                 'record' => $record);
+                break;
+              case 'Phone':
+                $validPhone = 0;
+                $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                 'record' => $record);
+                break;
+              case 'Mail Address':
+                $validAddress = 0;
+                $this->warningMessages[] = array('message' => $isValidData['message'],
+                                                 'record' => $record);
+                break;
+            }
+            break;
+          default:
+            $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
+                                                 'record' => $record);
+            continue 2;
         }
+      }
 
-        // Declare variables.
-        $facility_name = $record['facility_name'];
-        $facility_resource_code = $record['facility_resource_code'];
-        $facility_code = $record['facility_code'];
-        $facility_resource_type_abbr = strtolower($record['facility_resource_type_abbr']);
-        $facility_resource_status = strtolower($record['facility_resource_status']);
-        $capacity = $record['facility_capacity'];
-        $facility_activation_sequence = $record['facility_activation_sequence'];
-        $facility_allocation_status = strtolower($record['facility_allocation_status']);
-        $facility_group = $record['facility_group'];
-        $facility_group_type = strtolower($record['facility_group_type']);
-        $facility_group_allocation_status = strtolower($record['facility_group_allocation_status']);
-        $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
-        $email = $record['work_email'];
-        $phone = $record['work_phone'];
-        $fullAddress = $this->fullAddress;
-        $geoInfo = array('longitude' => $record['longitude'], 'latitude' => $record['latitude']);
-        $staffing = $this->dynamicStaffing($record);
+      // Declare variables.
+      $facility_name = $record['facility_name'];
+      $facility_code = $record['facility_code'];
+      $facility_resource_type_abbr = strtolower($record['facility_resource_type_abbr']);
+      $facility_resource_status = strtolower($record['facility_resource_status']);
+      $capacity = $record['facility_capacity'];
+      $facility_activation_sequence = $record['facility_activation_sequence'];
+      $facility_allocation_status = strtolower($record['facility_allocation_status']);
+      $facility_group = $record['facility_group'];
+      $facility_group_type = strtolower($record['facility_group_type']);
+      $facility_group_allocation_status = strtolower($record['facility_group_allocation_status']);
+      $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
+      $email = $record['work_email'];
+      $phone = $record['work_phone'];
+      $fullAddress = $this->fullAddress;
+      $geoInfo = array('longitude' => $record['longitude'], 'latitude' => $record['latitude']);
+      $staffing = $this->dynamicStaffing($record);
 
-        $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
-        $facility_resource_status_id = $this->facilityResourceStatuses[$facility_resource_status];
-        $facility_group_type_id = $this->facilityGroupTypes[$facility_group_type];
-        $facility_group_allocation_status_id = $this->facilityGroupAllocationStatuses[$facility_group_allocation_status];
-        $facility_resource_allocation_status_id = $this->facilityResourceAllocationStatuses[$facility_allocation_status];
-        $workEmailTypeId = $this->emailContactTypes[$facilityContactType];
-        $workPhoneTypeId = $this->phoneContactTypes[$facilityContactType];
-        $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
-        $workPhoneFormatId = $this->phoneFormatTypes[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
-        $workAddressTypeId = $this->addressContactTypes[$facilityContactType];
-        $workAddressStandardId = $this->addressStandards;
-        $addressElementIds = $this->addressElements;
+      $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
+      $facility_resource_status_id = $this->facilityResourceStatuses[$facility_resource_status];
+      $facility_group_type_id = $this->facilityGroupTypes[$facility_group_type];
+      $facility_group_allocation_status_id = $this->facilityGroupAllocationStatuses[$facility_group_allocation_status];
+      $facility_resource_allocation_status_id = $this->facilityResourceAllocationStatuses[$facility_allocation_status];
+      $workEmailTypeId = $this->emailContactTypes[$facilityContactType];
+      $workPhoneTypeId = $this->phoneContactTypes[$facilityContactType];
+      $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
+      $workPhoneFormatId = $this->phoneFormatTypes[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
+      $workAddressTypeId = $this->addressContactTypes[$facilityContactType];
+      $workAddressStandardId = $this->addressStandards;
+      $addressElementIds = $this->addressElements;
+
+      try {
+//        $this->conn->beginTransaction();
+            // here we check our current transaction scope and create a transaction or savepoint based on need
+        $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+        if ($useSavepoint)
+        {
+          $conn->beginTransaction(__FUNCTION__);
+        }
+        else
+        {
+          $conn->beginTransaction();
+        }
 
         // facility
 
         // tries to find an existing record based on a unique identifier.
-        $facility = agDoctrineQuery::create()
+        $facility = agDoctrineQuery::create($conn)
                 ->from('agFacility f')
                 ->where('f.facility_code = ?', $facility_code)
                 ->fetchOne();
@@ -405,67 +411,34 @@ class agImportNormalization
         $scenarioFacilityResource = NULL;
 
         if (empty($facility)) {
-          $facility = $this->createFacility($facility_name, $facility_code);
+          $facility = $this->createFacility($facility_name, $facility_code, $conn);
           $isNewFacilityRecord = 1;
         } else {
-          $facility = $this->updateFacility($facility, $facility_name);
+          $facility = $this->updateFacility($facility, $facility_name, $conn);
+
+          // tries to find an existing record based on a set of unique identifiers.
+          $facilityResource = agDoctrineQuery::create($conn)
+                  ->from('agFacilityResource fr')
+                  ->where('fr.facility_id = ?', $facility->id)
+                  ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
+                  ->fetchOne();
         }
 
         // Facility Resource
-
-        // tries to find an existing record based on a set of unique identifiers.
-        $facilityResource = agDoctrineQuery::create()
-                ->from('agFacilityResource fr')
-                ->where('fr.facility_id = ?', $facility->id)
-                ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
-                ->fetchOne();
-
         if (empty($facilityResource))
         {
-          if (empty($facilityResourceByType))
-          {
             $facilityResource = $this->createFacilityResource($facility, $facility_resource_type_id,
-                                          $facility_resource_status_id, $facility_resource_code,
-                                          $capacity);
-          } else {
-            $this->nonprocessedRecords[] = array('message' => 'Facility resource already exists with a different facility resource code.',
-                                                 'record' => $record);
-
-            $this->conn->rollback();
-
-            continue;
-          }
+                                          $facility_resource_status_id, $capacity, $conn);
         } else {
-          if (empty($facilityResourceByType))
-          {
-            $this->nonprocessedRecords[] = array('message' => 'Facility resource code is already assigned to another facility resource.',
-                                                 'record' => $record);
+            $facilityResource = $this->updateFacilityResource($facilityResource,
+                                          $facility_resource_status_id, $capacity, $conn);
 
-            $this->conn->rollback();
-
-            continue;
-          } else {
-            if ($facilityResource->id == $facilityResourceByType->id)
-            {
-              $facilityResource = $this->updateFacilityResource($facilityResource, $facility->id,
-                                            $facility_resource_type_id,
-                                            $facility_resource_status_id, $capacity);
-            } else {
-              $this->nonprocessedRecords[] = array('message' => 'Facility resource already exists and facility resource code is assigned to a different facility resource.',
-                                                   'record' => $record);
-
-              $this->conn->rollback();
-
-              continue;
-            }
-          }
-
-          $scenarioFacilityResource = agDoctrineQuery::create()
-                ->from('agScenarioFacilityResource sfr')
-                ->innerJoin('sfr.agScenarioFacilityGroup sfg')
-                ->where('sfg.scenario_id = ?', $this->scenarioId)
-                ->andWhere('facility_resource_id = ?', $facilityResource->id)
-                ->fetchOne();
+            $scenarioFacilityResource = agDoctrineQuery::create($conn)
+                  ->from('agScenarioFacilityResource sfr')
+                  ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+                  ->where('sfg.scenario_id = ?', $this->scenarioId)
+                  ->andWhere('facility_resource_id = ?', $facilityResource->id)
+                  ->fetchOne();
         }
 
         // facility group
@@ -480,13 +453,15 @@ class agImportNormalization
           $scenarioFacilityGroup = $this->createScenarioFacilityGroup($facility_group,
                                                                       $facility_group_type_id,
                                                                       $facility_group_allocation_status_id,
-                                                                      $facility_group_activation_sequence);
+                                                                      $facility_group_activation_sequence,
+                                                                      $conn);
           $isNewFacilityGroupRecord = 1;
         } else {
           $scenarioFacilityGroup = $this->updateScenarioFacilityGroup($scenarioFacilityGroup,
                                                                       $facility_group_type_id,
                                                                       $facility_group_allocation_status_id,
-                                                                      $facility_group_activation_sequence);
+                                                                      $facility_group_activation_sequence,
+                                                                      $conn);
         }
 
         // facility resource
@@ -539,13 +514,26 @@ class agImportNormalization
           array_push($this->processedFacilityIds, $facilityId);
         }
 
-        $this->conn->commit();
+//        $this->conn->commit();
+        $conn->commit();
       } catch (Exception $e) {
-        $this->nonprocessedRecords[] = array('message' => 'Unable to normalize data.  Exception error mesage: ' . $e,
+        $this->errMsg .= '  Unable to normalize data.  Exception error message: ' . $e->getMessage();
+        $this->nonprocessedRecords[] = array('message' => $this->errMsg,
                                              'record' => $record);
-        $this->conn->rollBack();
+//        $this->conn->rollBack();
+        sfContext::getInstance()->getLogger()->err($errMsg);
+        // if we started with a savepoint, let's end with one, otherwise, rollback globally
+        if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+
+//        throw $e;
+        break;
       }
     } // end foreach
+
+    //drop temp table.
+    $conn->export->dropTable($this->sourceTable);
+    $conn->close();
+
 
     $this->summary = array('totalProcessedRecordCount' => $this->totalProcessedRecordCount,
                            'TotalFacilityProcessed' => count($this->processedFacilityIds),
@@ -556,84 +544,108 @@ class agImportNormalization
 
   }
 
+//  protected function captureErrorMessage ($error, $record) {
+//    $this->nonprocessedRecords[] = array('message' => $e,
+//                                         'record' => $record);
+//  }
+//
   /* Facility */
 
-  protected function createFacility($facilityName, $facilityCode)
+  protected function createFacility($facilityName, $facilityCode, $conn)
   {
-    $entity = new agEntity();
-    $entity->save();
-    $site = new agSite();
-    $site->set('entity_id', $entity->id);
-    $site->save();
-    $facility = new agFacility();
-    $facility->set('site_id', $site->id)
-        ->set('facility_name', $facilityName)
-        ->set('facility_code', $facilityCode);
-    $facility->save();
+    try {
+      $entity = new agEntity();
+      $entity->save($conn);
+      $site = new agSite();
+      $site->set('entity_id', $entity->id);
+      $site->save($conn);
+      $facility = new agFacility();
+      $facility->set('site_id', $site->id)
+          ->set('facility_name', $facilityName)
+          ->set('facility_code', $facilityCode);
+      $facility->save($conn);
+    } catch(Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t insert facility %s! Rolled back changes!', $facilityCode);
+      throw $e; // always remember to throw an exception after rollback
+    }
+
     return $facility;
   }
 
-  protected function updateFacility($facility, $facilityName)
+  protected function updateFacility($facility, $facilityName, $conn)
   {
-    if ($facility->facility_name != $facilityName)
-    {
-      $updateQuery = Doctrine_Query::create()
-             ->update('agFacility f')
-             ->set('f.facility_name', '?', $facilityName)
-             ->where('f.id = ?', $facility->id)
-             ->execute();
+    try {
+      if ($facility->facility_name != $facilityName)
+      {
+        $updateQuery = Doctrine_Query::create($conn)
+               ->update('agFacility f')
+               ->set('f.facility_name', '?', $facilityName)
+               ->where('f.id = ?', $facility->id)
+               ->execute();
+      }
+    } catch(Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t update facility %s! Rolled back changes!', $facility->facility_code);
+      throw $e; // always remember to throw an exception after rollback
     }
+
     return $facility;
   }
 
   /* Facility Resource */
 
   protected function createFacilityResource($facility, $facilityResourceTypeAbbrId,
-                                            $facilityResourceStatusId, $facilityResourceCode,
-                                            $capacity)
+                                            $facilityResourceStatusId, $capacity, $conn)
   {
-    $facilityResource = new agFacilityResource();
-    $facilityResource->set('facility_id', $facility->id)
-        ->set('facility_resource_type_id', $facilityResourceTypeAbbrId)
-        ->set('facility_resource_status_id', $facilityResourceStatusId)
-        ->set('facility_resource_code', $facilityResourceCode)
-        ->set('capacity', $capacity);
-    $facilityResource->save();
+    try {
+      $facilityResource = new agFacilityResource();
+      $facilityResource->set('facility_id', $facility->id)
+          ->set('facility_resource_type_id', $facilityResourceTypeAbbrId)
+          ->set('facility_resource_status_id', $facilityResourceStatusId)
+          ->set('capacity', $capacity);
+      $facilityResource->save($conn);
+    } catch(Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t insert facility resource (%s, %s)! Rolled back changes!',
+                              $facility->facility_code,
+                              array_search($facilityResourceTypeAbbrId, $this->facilityResourceTypes));
+     throw $e; // always remember to throw an exception after rollback
+    }
+
     return $facilityResource;
   }
 
-  protected function updateFacilityResource($facilityResource, $facilityId, $facilityResourceTypeId,
-                                            $facilityResourceStatusId, $capacity)
+  protected function updateFacilityResource($facilityResource, $facilityResourceStatusId,
+                                            $capacity, $conn)
   {
-    $doUpdate = FALSE;
-    $updateQuery = agDoctrineQuery::create()
-                    ->update('agFacilityResource fr')
-                    ->where('id = ?', $facilityResource->id);
+    try {
+      $doUpdate = FALSE;
+      $updateQuery = agDoctrineQuery::create()
+                      ->update('agFacilityResource fr')
+                      ->where('id = ?', $facilityResource->id);
 
-    if ($facilityResource->facility_id != $facilityId) {
-      $updateQuery->set('facility_id', '?', $facilityId);
-      $doUpdate = TRUE;
-    }
+      if ($facilityResource->facility_resource_status_id != $facilityResourceStatusId) {
+        $updateQuery->set('facility_resource_status_id', '?', $facilityResourceStatusId);
+        $doUpdate = TRUE;
+      }
 
-    if ($facilityResource->facility_resource_type_id != $facilityResourceTypeId) {
-      $updateQuery->set('facility_resource_type_id', '?', $facilityResourceTypeId);
-      $doUpdate = TRUE;
-    }
+      if ($facilityResource->capacity != $capacity) {
+        $updateQuery->set('capacity', '?', $capacity);
+        $doUpdate = TRUE;
+      }
 
-    if ($facilityResource->facility_resource_status_id != $facilityResourceStatusId) {
-      $updateQuery->set('facility_resource_status_id', '?', $facilityResourceStatusId);
-      $doUpdate = TRUE;
-    }
-
-    if ($facilityResource->capacity != $capacity) {
-      $updateQuery->set('capacity', '?', $capacity);
-      $doUpdate = TRUE;
-    }
-
-    if ($doUpdate) {
-      $updateQuery = $updateQuery->execute();
-    } else {
-      $updateQuery = NULL;
+      if ($doUpdate) {
+        $updateQuery = $updateQuery->execute();
+      } else {
+        $updateQuery = NULL;
+      }
+    } catch(Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t update facility resource (%s, %s)! Rolled back changes!',
+                              $facility->facility_code,
+                              array_search($facilityResource->facility_resource_type_id, $this->facilityResourceTypes));
+      throw $e; // always remember to throw an exception after rollback
     }
 
     return $facilityResource;
@@ -709,44 +721,62 @@ class agImportNormalization
 
   protected function createScenarioFacilityGroup($facilityGroup, $facilityGroupTypeId,
                                                  $facilityGroupAllocationStatusId,
-                                                 $facilityGroupActivationSequence)
+                                                 $facilityGroupActivationSequence, 
+                                                 $conn)
   {
-    $scenarioFacilityGroup = new agScenarioFacilityGroup();
-    $scenarioFacilityGroup->set('scenario_id', $this->scenarioId)
-        ->set('scenario_facility_group', $facilityGroup)
-        ->set('facility_group_type_id', $facilityGroupTypeId)
-        ->set('facility_group_allocation_status_id', $facilityGroupAllocationStatusId)
-        ->set('activation_sequence', $facilityGroupActivationSequence);
-    $scenarioFacilityGroup->save();
+    try {
+      $scenarioFacilityGroup = new agScenarioFacilityGroup();
+      $scenarioFacilityGroup->set('scenario_id', $this->scenarioId)
+          ->set('scenario_facility_group', $facilityGroup)
+          ->set('facility_group_type_id', $facilityGroupTypeId)
+          ->set('facility_group_allocation_status_id', $facilityGroupAllocationStatusId)
+          ->set('activation_sequence', $facilityGroupActivationSequence);
+      $scenarioFacilityGroup->save();
+    } catch(Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t insert facility group %s! Rolled back changes!',
+                              $facilityGroup);
+      throw $e; // always remember to throw an exception after rollback
+    }
+
     return $scenarioFacilityGroup;
   }
 
-  protected function updateScenarioFacilityGroup($scenarioFacilityGroup, $facilityGroupTypeId, $facilityGroupAllocationStatusId, $facilityGroupActivationSequence)
+  protected function updateScenarioFacilityGroup($scenarioFacilityGroup, $facilityGroupTypeId,
+                                                 $facilityGroupAllocationStatusId,
+                                                 $facilityGroupActivationSequence, $conn)
   {
-    $doUpdate = FALSE;
-    $updateQuery = agDoctrineQuery::create()
-                    ->update('agScenarioFacilityGroup sfg')
-                    ->where('id = ?', $scenarioFacilityGroup->id);
+    try {
+      $doUpdate = FALSE;
+      $updateQuery = agDoctrineQuery::create()
+                      ->update('agScenarioFacilityGroup sfg')
+                      ->where('id = ?', $scenarioFacilityGroup->id);
 
-    if (strtolower($scenarioFacilityGroup->facility_group_type_id) != strtolower($facilityGroupTypeId)) {
-      $updateQuery->set('facility_group_type_id', '?', $facilityGroupTypeId);
-      $doUpdate = TRUE;
-    }
+      if (strtolower($scenarioFacilityGroup->facility_group_type_id) != strtolower($facilityGroupTypeId)) {
+        $updateQuery->set('facility_group_type_id', '?', $facilityGroupTypeId);
+        $doUpdate = TRUE;
+      }
 
-    if ($scenarioFacilityGroup->facility_group_allocation_status_id != $facilityGroupAllocationStatusId) {
-      $updateQuery->set('facility_group_allocation_status_id', '?', $facilityGroupAllocationStatusId);
-      $doUpdate = TRUE;
-    }
+      if ($scenarioFacilityGroup->facility_group_allocation_status_id != $facilityGroupAllocationStatusId) {
+        $updateQuery->set('facility_group_allocation_status_id', '?', $facilityGroupAllocationStatusId);
+        $doUpdate = TRUE;
+      }
 
-    if ($facilityResource->activation_sequence != $facilityGroupActivationSequence) {
-      $updateQuery->set('activation_sequence', '?', $facilityGroupActivationSequence);
-      $doUpdate = TRUE;
-    }
+      if ($facilityResource->activation_sequence != $facilityGroupActivationSequence) {
+        $updateQuery->set('activation_sequence', '?', $facilityGroupActivationSequence);
+        $doUpdate = TRUE;
+      }
 
-    if ($doUpdate) {
-      $updateQuery = $updateQuery->execute();
-    } else {
-      $updateQuery = NULL;
+      if ($doUpdate) {
+        $updateQuery = $updateQuery->execute();
+      } else {
+        $updateQuery = NULL;
+      }
+    } catch(Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t update facility group %s! Rolled back changes!',
+                              $scenarioFacilityGroup->scenario_facility_group);
+      throw $e; // always remember to throw an exception after rollback
     }
 
     return $scenarioFacilityGroup;

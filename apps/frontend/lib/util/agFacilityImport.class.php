@@ -32,7 +32,6 @@ class AgImportXLS
   public $importFacilitySpec = array(
     'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
     'facility_name' => array('type' => "string", 'length' => 64),
-    'facility_resource_code' => array('type' => "string", 'length' => 10),
     'facility_code' => array('type' => "string", 'length' => 10),
     'facility_resource_type_abbr' => array('type' => "string", 'length' => 10),
     'facility_resource_status' => array('type' => "string", 'length' => 40),
@@ -256,8 +255,9 @@ class AgImportXLS
   {
     require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
-    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
-    $dbManager = new sfDatabaseManager($appConfig);
+    $dbManager = new sfDatabaseManager($configuration);
+//    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
+//    $dbManager = new sfDatabaseManager($appConfig);
     $db = $dbManager->getDatabase('doctrine');
 
     $conn = Doctrine_Manager::connection();
@@ -430,7 +430,7 @@ class AgImportXLS
     $db = $dbManager->getDatabase('doctrine');
 
     $facRes = agDoctrineQuery::create()
-            ->select('f.facility_name, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity, fr.facility_resource_code,')
+            ->select('f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
             ->addSelect('sfr.activation_sequence, fras.facility_resource_allocation_status')
             ->addSelect('sfg.scenario_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, sfg.activation_sequence')
             ->addSelect('gc.longitude, gc.latitude')
