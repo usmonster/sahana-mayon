@@ -528,6 +528,11 @@ class agInstall
 //      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
 //    }
      try {
+        $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+        $databaseManager = new sfDatabaseManager($configuration);
+//        $connection = Doctrine_Manager::connection()->connect();
+        sfContext::createInstance($configuration)->dispatch();
+
        $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup'));
        $luceneIndex->indexAll();
        $installed = 'Success!';
