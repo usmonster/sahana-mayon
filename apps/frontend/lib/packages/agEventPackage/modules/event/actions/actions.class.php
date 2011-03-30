@@ -390,7 +390,6 @@ class eventActions extends agActions
     }
 
     $this->ag_event_staff = $result_array;
-    //$thingy = $query->getSqlQuery();
 //    foreach ($this->ag_event_staff as $eventFacilityGroup) {
 //      $tempArray = $this->queryForTable($eventFacilityGroup->id);
 //      foreach ($tempArray as $ta) {
