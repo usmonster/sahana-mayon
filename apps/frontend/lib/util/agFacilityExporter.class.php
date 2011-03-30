@@ -30,7 +30,7 @@ class agFacilityExporter {
     $this->primaryOnly = TRUE;
     $this->contactType = 'work';
     $this->addressStandard = 'us standard';
-    $this->exportHeaders = array('Facility Name', 'Facility Resource Code', 'Facility Resource Type Abbr',
+    $this->exportHeaders = array('Facility Name', 'Facility Resource Type Abbr',
         'Facility Resource Status', 'Facility Capacity', 'Facility Activation Sequence',
         'Facility Allocation Status', 'Facility Group', 'Facility Group Type',
         'Facility Group Allocation Status', 'Facility Group Activation Sequence',

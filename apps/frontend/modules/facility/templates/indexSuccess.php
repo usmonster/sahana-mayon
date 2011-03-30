@@ -31,10 +31,8 @@ foreach($fields as $key => $field)
 </span>
 <br/>
 
-  <?php
-
-echo '<a href="' . url_for('facility/export') . '" class="buttonText" title="Export Facilities">Export Facilities</a><br/>';
-echo '<a href="' . public_path('wiki/doku.php?id=manual:user:facilities') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
-echo '<a href="' . url_for('facility/facilityExport') . '" class="buttonText" title="Facility Export II">Facility Export II</a><br/>';
-?><br>
-If you would like to search for a facility, please use the search box on the top right.
+<a href="<?php echo url_for('facility/facilityExport') ?>" class="buttonText" title="Export Facilities">Export Facilities</a>
+<br />
+<a href="<?php echo public_path('wiki/doku.php?id=manual:user:facilities') ?>" target="new" class="buttonText" title="Help">Help</a>
+<br />
+<p>If you would like to search for a facility, please use the search box on the top right.</p>
