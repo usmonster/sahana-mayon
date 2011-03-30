@@ -17,16 +17,21 @@ class agEmbeddedAgAddressValueForm extends agAddressValueForm
 {
   public function setup()
   {
-    $this->setWidgets(array(
-      'id'                 => new sfWidgetFormInputHidden(),
-      'value'              => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-      'address_element_id' => new sfWidgetFormInputHidden(),
-    ));
+    $this->setWidgets(
+      array('id'                 => new sfWidgetFormInputHidden(),
+            'value'              => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+            'address_element_id' => new sfWidgetFormInputHidden())
+    );
 
-    $this->setValidators(array(
-      'id'                 => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'value'              => new sfValidatorString(array('max_length' => 255, 'required' => false)),
-      'address_element_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agAddressElement'))),
-    ));
+    $this->setValidators(
+      array(
+        'id'                 => new sfValidatorChoice(
+                                  array('choices' => array($this->getObject()->get('id')),
+                                        'empty_value' => $this->getObject()->get('id'),
+                                        'required' => false)),
+        'value'              => new sfValidatorString(array('max_length' => 255, 'required' => false)),
+        'address_element_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agAddressElement')))
+      )
+    );
   }
 }
