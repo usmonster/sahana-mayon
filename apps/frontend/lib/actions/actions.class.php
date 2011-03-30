@@ -16,13 +16,15 @@
 class agActions extends sfActions
 {
 
-  protected $searchedModels;
+  protected $_searchedModels;
 
   public function __construct($context, $moduleName, $actionName)
   {
     parent::__construct($context, $moduleName, $actionName);
-    if (empty($this->searchedModels)) {
-      $this->searchedModels = array('agStaff'); // this is the original: $this->getModuleName(), what exists now is a hack
+    if (empty($this->_searchedModels)) {
+      // this is the original line below: $this->getModuleName(),
+      // what exists now is a hack
+      $this->_searchedModels = array('agStaff'); 
     }
   }
 
@@ -36,14 +38,14 @@ class agActions extends sfActions
     //$this->setTemplate('global/search');
   }
 
-  public function doSearch($searchquery, $is_fuzzy = TRUE, $widget = NULL)
+  public function doSearch($searchquery, $isFuzzy = TRUE, $widget = NULL)
   {
     $models = $this->getSearchedModels();
 
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
     $query = LuceneSearch::find($this->searchquery);
-    if ($is_fuzzy == TRUE) {
+    if ($isFuzzy == TRUE) {
       $query->fuzzy();
     }
     $query->in($models);
@@ -54,7 +56,7 @@ class agActions extends sfActions
 
   public function getSearchedModels()
   {
-    return $this->searchedModels;
+    return $this->_searchedModels;
   }
 
 }
