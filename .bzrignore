@@ -1,7 +1,6 @@
 apps/*/config/app.yml
 config/config.yml
 config/databases.yml
-data/indexes/**
 data/search/**
 data/sql/schema.sql
 cache/**
