@@ -194,11 +194,16 @@ class agStaffActions extends agActions
     $this->addressArray = $agPerson->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_NATIVE_STRING);
 
     //p-code
-  $names_title = new agPersonNameHelper($agPerson->getId());
-  $person_names_title = $names_title->getPrimaryNameByType();
-  $this->getResponse()->setTitle('Sahana Agasti Staff - ' . $person_names_title[$agPerson->getId()]['given'] ." ". $person_names_title[$agPerson->getId()]['family']);
+    $names_title = new agPersonNameHelper($agPerson->getId());
+    $person_names_title = $names_title->getPrimaryNameByType();
+    $this->getResponse()
+           ->setTitle(
+             'Sahana Agasti Staff - ' .
+             (isset($person_names_title[$agPerson->getId()]['given']) ? $person_names_title[$agPerson->getId()]['given'] : '') .
+             ' ' .
+             (isset($person_names_title[$agPerson->getId()]['family']) ? $person_names_title[$agPerson->getId()]['family'] : '' )
+           );
     //end p-code
-
   }
 
   /**
@@ -258,7 +263,6 @@ class agStaffActions extends agActions
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti Staff Edit');
     //end p-code
-  
   }
 
   /**
@@ -713,4 +717,5 @@ class agStaffActions extends agActions
       $this->message = $returned;
     }
   }
+
 }

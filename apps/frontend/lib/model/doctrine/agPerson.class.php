@@ -68,7 +68,12 @@ class agPerson extends BaseagPerson
 
         // execute and return
         $results = call_user_func_array(array($helperObject,$method), $arguments) ;
-        return $results[$id] ;
+        // stop an undefined index notice in case results is unpopulated.
+        if (isset($results[$id])) {
+          return $results[$id];
+        } else {
+          return;
+        }
       }
       catch (Exception $e)
       {

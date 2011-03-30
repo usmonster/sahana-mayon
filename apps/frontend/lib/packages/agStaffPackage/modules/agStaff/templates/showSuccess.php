@@ -264,6 +264,8 @@
       if(isset($addressArray)) {
         $addressTable = agTemplateHelper::buildAddressTable($addressArray->getRawValue());
         echo $addressTable;
+      } else {
+        echo '<tr><td class="subHead">This staff person does not have any associated address information</td></tr>';
       }
     ?>
   </tbody>
