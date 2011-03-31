@@ -16,5 +16,8 @@ default:
 
   javascripts:    [jquery.js]
 
+  #JQuery Search Box JS
+  #javascripts:    [jquery.js, jquery.tipsy.js]
+
   has_layout:     true
   layout:         layout

@@ -1288,3 +1288,69 @@ P {
 .italic {
   font-style: italic;
 }
+
+
+/**************JQuery Search Box CSS *************/
+
+a.signin {
+	position:relative;
+	margin-left:3px;
+	margin-top: 8px;
+	outline: none;
+}
+
+a.signin span {
+	background-image:url("../images/toggle_down_light.png");
+	background-repeat:no-repeat;
+	background-position:100% 50%;
+	padding:6px 16px 6px 0px;
+}
+
+
+a.signin.menu-open span {
+	background-image:url("../images/toggle_up_dark.png");
+	color:#789;
+}
+
+#signin_menu {
+	-moz-border-radius-topleft:0px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-webkit-border-top-left-radius:0px;
+	-webkit-border-bottom-left-radius:5px;
+	-webkit-border-bottom-right-radius:5px;
+	display:none;
+	background-color:#f7f7f7;
+
+	/*width:210px;*/
+	z-index:100;
+	border-bottom:1px solid #dadada;
+	border-left:1px solid #dadada;
+	border-right:1px solid #dadada;
+	border-top:0px;
+	text-align:left;
+	padding:6px 4px 4px;
+	position:absolute;
+	top: 129px;
+        right:58px;
+	margin-top:5px;
+	margin-right: 0px;
+	/**margin-right: -1px;*/
+	color:#789;
+	font-size:11px;
+}
+
+#signin_menu input[type=text], #signin_menu input[type=password] {
+
+	-moz-border-radius:4px 0px 0px 4px;
+	-webkit-border-radius:4px 0px 0px 4px;
+        border: 1px solid #ccc;
+        display: inline;
+        margin-top: 4px;
+        vertical-align: top;
+        width: 160px;
+        height: 18px;
+}
+
+
+/**************End JQuery Search Box CSS *************/
