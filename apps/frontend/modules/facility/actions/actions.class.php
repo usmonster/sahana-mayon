@@ -254,12 +254,12 @@ class facilityActions extends agActions
       $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
 
       $format="%d/%m/%Y %H:%M:%S";
-      echo strftime($format);
+//      echo strftime($format);
 
       $dataNorm->normalizeImport();
       
       $this->summary = $dataNorm->summary;
-      echo strftime($format);
+//      echo strftime($format);
     }
 
 
