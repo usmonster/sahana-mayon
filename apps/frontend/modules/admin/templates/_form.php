@@ -15,6 +15,7 @@
             &nbsp;<?php echo link_to('Delete', 'admin/delete?id='.$form->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?','class' => 'linkButton')) ?>
           <?php endif; ?>
           <input type="submit" value="Save" class="linkButton" />
+          <input type="submit" value="Save and Continue" name="Continue" class="linkButton" />
         </td>
       </tr>
     </tfoot>

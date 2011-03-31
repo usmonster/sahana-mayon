@@ -81,14 +81,14 @@ class eventActions extends agActions
 
     $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
     $this->facility_group = NULL;
-    $facility_groups = array();
+    $facility_groups = array(' ' => ' ');
     foreach ($this->active_facility_groups as $event_fgroup) {
       $facility_groups[$event_fgroup['efg_id']] = $event_fgroup['efg_event_facility_group'];
     }
 
     $this->facilitygroupsForm = new sfForm();
     $this->facilitygroupsForm->setWidgets(array(
-      'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups))// ,'onClick' => 'submit()'))
+      'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups)),// 'add_empty' => true))// ,'onClick' => 'submit()'))
     ));
 
     $this->xmlHttpRequest = $request->isXmlHttpRequest();
@@ -116,10 +116,16 @@ class eventActions extends agActions
         }
       }
     }
+    //$this->event_facility_resources = null;
+    if(count($facility_groups) > 1)
+    {
+      $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group);
+      $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
+    }
+    else{
+      $this->fgroupForm = null;
+    }
 
-    $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group);
-
-    $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
   }
 
   /**

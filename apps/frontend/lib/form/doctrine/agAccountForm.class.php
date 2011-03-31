@@ -36,6 +36,8 @@ class agAccountForm extends sfGuardUserAdminForm
       $this['permissions_list'],
       $this['is_active']
     );
+    //we should set the validator of the password widget to
+    //agValidatorPassword::
     //$mjform->setDefault('account_id',$theId);
     //$form->getObject()->id = $mj->object->sf_guard_user_id;
     //$mjform->setDefault('sf_guard_user_id',$theId);

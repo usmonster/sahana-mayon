@@ -257,7 +257,7 @@ class adminActions extends agActions
   public function executeUpdate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
-    $this->forward404Unless($ag_account = Doctrine::getTable('sfGuardUser')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
+    $this->forward404Unless($ag_account = Doctrine::getTable('sfGuardUser')->find(array($request->getParameter('id'))), sprintf('Object sf_guard_user does not exist (%s).', $request->getParameter('id')));
     $this->form = new agAccountForm($ag_account);
 
     $this->processForm($request, $this->form);
@@ -297,8 +297,13 @@ class adminActions extends agActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_account = $form->save();
-
-      $this->redirect('admin/edit?id=' . $ag_account->getId());
+      if($request->getParameter('Continue')){
+        /** @todo pass the previously created username to the new template for verification */
+        $this->redirect('admin/new');
+      }
+      else{
+        $this->redirect('admin/list'); //edit?id=' . $ag_account->getId());
+      }
     }
   }
 
