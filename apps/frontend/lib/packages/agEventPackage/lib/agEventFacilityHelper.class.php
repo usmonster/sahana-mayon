@@ -57,10 +57,12 @@ class agEventFacilityHelper
    * results can be filtered; default (NULL) returns all groups.
    * @param boolean $facilityStandbyStatus An optional parameter to restrict results only to those
    * facilities that are in a standby state; default (NULL) imposes no restriciton.
+   * @param boolean $noActivationTime An optional parameter to restrict results only to those
+   * facilities that do not have any activation time
    * @return doctrine_collection Returns a collection of doctrine objects related to facility
    * resources.
    */
-  public static function returnFacilityResourceActivation ($eventId, $eventFacilityGroupId = NULL, $facilityStandbyStatus = NULL)
+  public static function returnFacilityResourceActivation ($eventId, $eventFacilityGroupId = NULL, $facilityStandbyStatus = NULL, $noActivationTime = NULL)
   {
     // these are relatively simple where clauses
     $groupStatuses = array_keys( self::returnCurrentEventFacilityGroupStatus($eventId) ) ;
@@ -106,7 +108,9 @@ class agEventFacilityHelper
     if (! is_null($eventFacilityGroupId)) { $query->andWhere('efg.id = ?', $eventFacilityGroupId) ; }
 
     if (! is_null($facilityStandbyStatus)) { $query->andWhere('ras.standby = ?', $facilityStandbyStatus) ; }
-        
+
+    if (! is_null($noActivationTime)) { $query->andWhere('efat.activation_time = ?', null) ; }
+
     $results = $query->execute() ;
 
     return $results ;

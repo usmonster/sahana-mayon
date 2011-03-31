@@ -119,7 +119,7 @@ class eventActions extends agActions
     //$this->event_facility_resources = null;
     if(count($facility_groups) > 1)
     {
-      $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group);
+      $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group,null,1);
       $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
     }
     else{

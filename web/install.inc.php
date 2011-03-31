@@ -343,7 +343,7 @@ class agInstall
       '</div><br /> NOTE: to continue with Agasti setup you must first create the "Super User"
         account by editing the config file.  In .../config please edit the config.yml file with the
         Super User username and password.  After you have done so, click finish and you will be 
-        redirected to log in with the Super User username and password and thenthen create your
+        redirected to log in with the Super User username and password and then create your
         first user.';
     } else {
       return '<span class="fail">There was an error with your installation:</span><br /><div class="info">' . $this->INSTALL_RESULT . '</div>';
