@@ -37,8 +37,8 @@ $PROJECT_ROOT/symfony cc
 sudo -u $WEB_USER rm -rf $PROJECT_ROOT/data/search/*
 
 # resets file and directory perms (NOTE: chmod does NOT recurse in this case)
-sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/indexes/ \$PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
-chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/indexes/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
+sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
+chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
 #considered harmful?:
 #sudo $PROJECT_ROOT/symfony project:permissions
 
