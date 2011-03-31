@@ -48,13 +48,17 @@ $(document).ready(function() {
 **/
 $(document).ready(function() {
   $('.modalSubmit').live('click',function(){
+    var $submitter = $(this);
+    console.log($submitter);
     $.ajax({
+      context: $submitter,
       url: $(this).parent().attr('action'),
       type: "POST",
       data: $('#' + $(this).parent().attr('id') + ' :input'),
-      complete:
-        function (data) {
-          showFeedBack(data, processReturn);
+      success:
+        function (data, $submitter) {
+        console.log($submitter);
+          showFeedBack(data, $(this), processReturn);
         }
     });
     return false;
@@ -74,13 +78,13 @@ $(document).ready(function() {
 *
 * @todo  Abstract and parametize this function.
 **/
-function showFeedBack(data, callBackFunc) {
+function showFeedBack(data, $submitter, callBackFunc) {
   $('#modalContent').append('<h2 class="overlay">Status Changed</h2>');
   $('.overlay').fadeIn(1200, function() {
     $('.overlay').fadeOut(1200, function() {
       $('.overlay').remove();
       if($.isFunction(callBackFunc)) {
-        callBackFunc.call(null, data);
+        callBackFunc.call($submitter, data);
       }
     });
   });
@@ -94,7 +98,7 @@ function showFeedBack(data, callBackFunc) {
 **/
 function returnContent(data) {
     var $dialog = buildModal('<div id="#modalFgroup"></div>', 'Set Facility Resource Activation Time');
-    $.post(data.responseText, function(data) {
+    $.post(data, function(data) {
       $dialog.html(data);
       $dialog.dialog('open');
     });
@@ -105,7 +109,7 @@ function returnContent(data) {
 **/
 function processReturn(data) {
   pattern = /facilityresource\/[\w\d+%-]*/
-  if(data.responseText == pattern.exec(data.responseText)) {
+  if(data == $(this).attr('id')) {
     returnContent(data);
   }
 }

@@ -5,7 +5,7 @@
     echo $form['group_allocation_status'];
   ?>
   <input type="hidden" name="event_facility_group_id" value="<?php echo $eventFacilityGroup->id;?>">
-  <input type="submit" name="submit" value="Set Group Status" class="buttonWhite<?php echo (isset($xmlHttpRequest) ? ' modalSubmit' : '');?>">
+  <input type="submit" name="submit" value="Set Group Status" class="buttonWhite<?php echo (isset($xmlHttpRequest) ? ' modalSubmit" id="facilitygroups' : '');?>">
 </form>
 
 <table class="singleTable" id="dialog">
@@ -32,7 +32,7 @@
           <?php  echo $form['resource_allocation_status']; ?>
           <input type="hidden" id="event_facility_resource_id" name="event_facility_resource_id" value="<?php echo $result['efr_id'] ?>">
           <input type="hidden" id="facility_resource_id" name="facility_resource_id" value="<?php echo $result['fr_id']?>">
-          <input type="submit" value="Set Status" name="submit" class="linkButton <?php echo (isset($xmlHttpRequest) ? ' modalSubmit' : '') ?>">
+          <input type="submit" value="Set Status" name="submit" class="linkButton <?php echo (isset($xmlHttpRequest) ? ' modalSubmit" id="facilityresource/' . $result['efr_id'] : '') ?>">
         </form>
       </td>
     </tr>

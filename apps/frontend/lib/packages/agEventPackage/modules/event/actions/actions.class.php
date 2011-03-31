@@ -687,7 +687,8 @@ class eventActions extends agActions
         $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
           $resourceAllocation->save();
-          return $this->renderText('facilityresource/' . $request->getParameter('facility_resource_id'));
+          $b = $this->getResponse()->getOptions();
+          return $this->renderText('facilityresource/' . $request->getParameter('event_facility_resource_id'));
         }
         $resourceAllocation->save();
       } elseif ($request->getParameter('group_allocation_status')) {
