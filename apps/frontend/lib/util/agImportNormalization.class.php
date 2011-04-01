@@ -299,12 +299,10 @@ class agImportNormalization
     $facilityContactType = $this->facilityContactType;
 
     // Setup db connection.
-//    $this->conn = Doctrine_Manager::connection();
     $conn = Doctrine_Manager::connection();
 
     // Fetch import data.
     $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
-//    $pdo = $this->conn->execute($query);
     $pdo = $conn->execute($query);
     $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
     $sourceRecords = $pdo->fetchAll();
@@ -388,8 +386,7 @@ class agImportNormalization
       $addressElementIds = $this->addressElements;
 
       try {
-//        $this->conn->beginTransaction();
-            // here we check our current transaction scope and create a transaction or savepoint based on need
+        // here we check our current transaction scope and create a transaction or savepoint based on need
         $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
         if ($useSavepoint)
         {
@@ -479,6 +476,9 @@ class agImportNormalization
                                                                             $conn);
         }
 
+        //facility staff resource
+        $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing, $conn);
+
         // email
         if ($validEmail) {
           $this->updateFacilityEmail($facility, $email, $workEmailTypeId, $conn);
@@ -486,21 +486,20 @@ class agImportNormalization
 
         // phone
         if ($validPhone) {
-          $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId, $workPhoneFormatId, $conn);
+          $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId,
+                                     $workPhoneFormatId, $conn);
         }
 
         // address
         if ($validAddress) {
-          $addressId = $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId,
-                                                    $workAddressStandardId, $addressElementIds);
+          $addressId = $this->updateFacilityAddress($facility, $fullAddress,
+                                                    $workAddressTypeId,
+                                                    $workAddressStandardId, 
+                                                    $addressElementIds, $conn);
         }
 
-        // geo
-        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId,
-                                 $geoInfo, $this->geoTypeId, $this->geoSourceId, $this->geoMatchScoreId);
-
-        //facility staff resource
-        $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing, $conn);
+        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, 
+                                 $workAddressStandardId, $geoInfo, $conn);
 
         // Set summary counts
         if ($isNewFacilityRecord) {
@@ -516,19 +515,16 @@ class agImportNormalization
           array_push($this->processedFacilityIds, $facilityId);
         }
 
-//        $this->conn->commit();
         if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
       } catch (Exception $e) {
         $this->errMsg .= '  Unable to normalize data.  Exception error message: ' . $e->getMessage();
         $this->nonprocessedRecords[] = array('message' => $this->errMsg,
                                              'record' => $record);
-//        $this->conn->rollBack();
         sfContext::getInstance()->getLogger()->err($errMsg);
 
         // if we started with a savepoint, let's end with one, otherwise, rollback globally
         if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
 
-//        throw $e;
         break;
       }
     } // end foreach
@@ -547,11 +543,6 @@ class agImportNormalization
 
   }
 
-//  protected function captureErrorMessage ($error, $record) {
-//    $this->nonprocessedRecords[] = array('message' => $e,
-//                                         'record' => $record);
-//  }
-//
   /* Facility */
 
   protected function createFacility($facilityName, $facilityCode, $conn = NULL)
@@ -559,16 +550,11 @@ class agImportNormalization
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $entity = new agEntity();
@@ -582,13 +568,18 @@ class agImportNormalization
           ->set('facility_code', $facilityCode);
       $facility->save($conn);
 
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch(Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t insert facility  with facility code %s! Rolled back changes!', $facilityCode);
+      $this->errMsg = sprintf('Couldn\'t insert facility  with facility code %s!
+                               Rolled back changes!', $facilityCode);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
@@ -601,16 +592,11 @@ class agImportNormalization
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       if ($facility->facility_name != $facilityName)
@@ -622,14 +608,18 @@ class agImportNormalization
                ->execute();
       }
 
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch(Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update facility with facility code %s! Rolled back changes!', $facility->facility_code);
+      $this->errMsg = sprintf('Couldn\'t update facility with facility code %s!
+                               Rolled back changes!', $facility->facility_code);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
-
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
@@ -638,22 +628,19 @@ class agImportNormalization
 
   /* Facility Resource */
 
-  protected function createFacilityResource($facility, $facilityResourceTypeAbbrId,
-                                            $facilityResourceStatusId, $capacity, $conn = NULL)
+  protected function createFacilityResource($facility,
+                                            $facilityResourceTypeAbbrId,
+                                            $facilityResourceStatusId,
+                                            $capacity, $conn = NULL)
   {
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $facilityResource = new agFacilityResource();
@@ -663,38 +650,38 @@ class agImportNormalization
           ->set('capacity', $capacity);
       $facilityResource->save($conn);
 
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch(Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t insert facility resource (%s, %s)! Rolled back changes!',
-                              $facility->facility_code,
-                              array_search($facilityResourceTypeAbbrId, $this->facilityResourceTypes));
+      $this->errMsg = sprintf('Couldn\'t insert facility resource (%s, %s)!
+                              Rolled back changes!', $facility->facility_code,
+                              array_search($facilityResourceTypeAbbrId,
+                                           $this->facilityResourceTypes));
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
      throw $e; // always remember to throw an exception after rollback
     }
-
     return $facilityResource;
   }
 
-  protected function updateFacilityResource($facilityResource, $facilityResourceStatusId,
+  protected function updateFacilityResource($facilityResource,
+                                            $facilityResourceStatusId,
                                             $capacity, $conn = NULL)
   {
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $doUpdate = FALSE;
@@ -714,173 +701,35 @@ class agImportNormalization
 
       if ($doUpdate) {
         $updateQuery = $updateQuery->execute();
-        if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
       } else {
         $updateQuery = NULL;
       }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch(Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update facility resource (%s, %s)! Rolled back changes!',
+      $this->errMsg = sprintf('Couldn\'t update facility resource (%s, %s)!
+                               Rolled back changes!',
                               $facilityResource->getAgFacility()->facility_code,
-                              array_search($facilityResource->facility_resource_type_id, $this->facilityResourceTypes));
+                              array_search($facilityResource->facility_resource_type_id,
+                                           $this->facilityResourceTypes));
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $facilityResource;
-  }
-
-  protected function updateFacilityStaffResources($scenarioFacilityResourceId, $staff_data, $conn = NULL)
-  {
-    $facilityStaffResource = agDoctrineQuery::create()
-                    ->select('srt.id, fsr.minimum_staff, fsr.maximum_staff, fsr.id')
-                    ->from('agStaffResourceType srt')
-                    ->innerJoin('srt.agFacilityStaffResource fsr')
-                    ->where('fsr.scenario_facility_resource_id = ?', $scenarioFacilityResourceId)
-                    ->execute(array(), 'key_value_array');
-
-    $deleteFacStfResId = array();
-    foreach ($staff_data as $staffTypeId => $count) {
-      if (array_key_exists($staffTypeId, $facilityStaffResource)) {
-        // here you can pick up the default connection if not passed one explicitly
-        if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
-
-        // here we check our current transaction scope and create a transaction or savepoint based on need
-        $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-        if ($useSavepoint)
-        {
-          $conn->beginTransaction(__FUNCTION__);
-        }
-        else
-        {
-          $conn->beginTransaction();
-        }
-
-        try {
-          $doUpdate = FALSE;
-          $updateQuery = agDoctrineQuery::create($conn)
-                          ->update('agFacilityStaffResource')
-                          ->where('id = ?', $facilityStaffResource[$staffTypeId][2]);
-
-          if ($count['min'] == 0 && $count['max'] == 0) {
-            $deleteFacStfResId[] = $facilityStaffResource[$staffTypeId][2];
-            continue;
-          }
-
-          if ($facilityStaffResource[$staffTypeId][0] != $count['min']) {
-            $updateQuery->set('minimum_staff', $count['min']);
-            $doUpdate = TRUE;
-          }
-
-          if ($facilityStaffResource[$staffTypeId][1] != $count['max']) {
-            $updateQuery->set('maximum_staff', $count['max']);
-            $doUpdate = TRUE;
-          }
-
-          if ($doUpdate) {
-            $updateQuery->execute();
-            if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
-          } else {
-            $updateQuery = NULL;
-          }
-        } catch(Exception $e) {
-          // ALWAYS log rollbacks with as much useful information as possible
-          $this->errMsg = sprintf('Couldn\'t update facility staff resource! Rolled back changes!');
-
-          // if we started with a savepoint, let's end with one, otherwise, rollback globally
-          if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
-
-          throw $e; // always remember to throw an exception after rollback
-        }
-      } else {
-        if ($count['min'] != 0 && $count['max'] != 0) {
-          $this->createFacilityStaffResource($scenarioFacilityResourceId, $staffTypeId, $count['min'], $count['max'], $conn);
-        }
-      }
-    }
-
-    if (!empty($deleteFacStfResId)) {
-      // here you can pick up the default connection if not passed one explicitly
-      if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
-
-      // here we check our current transaction scope and create a transaction or savepoint based on need
-      $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-      if ($useSavepoint)
-      {
-        $conn->beginTransaction(__FUNCTION__);
-      }
-      else
-      {
-        $conn->beginTransaction();
-      }
-
-      try {
-        $deleteQuery = agDoctrineQuery::create($conn)
-                        ->delete('agFacilityStaffResource')
-                        ->whereIn('id', $deleteFacStfResId)
-                        ->execute();
-        if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
-      } catch(Exception $e) {
-        // ALWAYS log rollbacks with as much useful information as possible
-        $this->errMsg = sprintf('Couldn\'t update facility staff resource! Rolled back changes!');
-
-        // if we started with a savepoint, let's end with one, otherwise, rollback globally
-        if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
-
-        throw $e; // always remember to throw an exception after rollback
-      }
-    }
-
-    return $facilityStaffResource;
-  }
-
-  protected function createFacilityStaffResource($scenarioFacilityResourceId,
-                                                 $staffTypeId, $min_staff,
-                                                 $max_staff, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
-
-    // here we check our current transaction scope and create a transaction or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $facilityStaffResource = new agFacilityStaffResource();
-      $facilityStaffResource->set('staff_resource_type_id', $staffTypeId)
-          ->set('scenario_facility_resource_id', $scenarioFacilityResourceId)
-          ->set('minimum_staff', $min_staff)
-          ->set('maximum_staff', $max_staff);
-      $facilityStaffResource->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
-    } catch(Exception $e) {
-      $scenarioFacilityResource = Doctrine_Core::getTable('agScenarioFacilityResource')->find($scenarioFacilityResourceId);
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t create facility staff resource (%s, %s)! Rolled back changes!',
-                              $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name,
-                              $scenarioFacilityResource->getAgStaffResourceType()->staff_resource_type);
-
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $facilityStaffResource;
   }
 
   /* Scenario Facility Group */
 
-  protected function createScenarioFacilityGroup($facilityGroup, $facilityGroupTypeId,
+  protected function createScenarioFacilityGroup($facilityGroup,
+                                                 $facilityGroupTypeId,
                                                  $facilityGroupAllocationStatusId,
                                                  $facilityGroupActivationSequence, 
                                                  $conn = NULL)
@@ -888,16 +737,11 @@ class agImportNormalization
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $scenarioFacilityGroup = new agScenarioFacilityGroup();
@@ -907,14 +751,19 @@ class agImportNormalization
           ->set('facility_group_allocation_status_id', $facilityGroupAllocationStatusId)
           ->set('activation_sequence', $facilityGroupActivationSequence);
       $scenarioFacilityGroup->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch(Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
       $this->errMsg = sprintf('Couldn\'t insert facility group %s! Rolled back changes!',
                               $facilityGroup);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
@@ -922,23 +771,20 @@ class agImportNormalization
     return $scenarioFacilityGroup;
   }
 
-  protected function updateScenarioFacilityGroup($scenarioFacilityGroup, $facilityGroupTypeId,
+  protected function updateScenarioFacilityGroup($scenarioFacilityGroup,
+                                                 $facilityGroupTypeId,
                                                  $facilityGroupAllocationStatusId,
-                                                 $facilityGroupActivationSequence, $conn = NULL)
+                                                 $facilityGroupActivationSequence,
+                                                 $conn = NULL)
   {
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $doUpdate = FALSE;
@@ -946,10 +792,10 @@ class agImportNormalization
                       ->update('agScenarioFacilityGroup sfg')
                       ->where('id = ?', $scenarioFacilityGroup->id);
 
-//      if (strtolower($scenarioFacilityGroup->facility_group_type_id) != strtolower($facilityGroupTypeId)) {
+      if (strtolower($scenarioFacilityGroup->facility_group_type_id) != strtolower($facilityGroupTypeId)) {
         $updateQuery->set('facility_group_type_id', '?', $facilityGroupTypeId);
         $doUpdate = TRUE;
-//      }
+      }
 
       if ($scenarioFacilityGroup->facility_group_allocation_status_id != $facilityGroupAllocationStatusId) {
         $updateQuery->set('facility_group_allocation_status_id', '?', $facilityGroupAllocationStatusId);
@@ -963,43 +809,45 @@ class agImportNormalization
 
       if ($doUpdate) {
         $updateQuery = $updateQuery->execute();
-        if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
       } else {
         $updateQuery = NULL;
       }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch(Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update facility group %s! Rolled back changes!',
+      $this->errMsg = sprintf('Couldn\'t update facility group %s!
+                               Rolled back changes!',
                               $scenarioFacilityGroup->scenario_facility_group);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $scenarioFacilityGroup;
   }
 
   /* Scenario Facility Resource */
 
-  protected function createScenarioFacilityResource($facilityResource, $scenarioFacilityGroup,
+  protected function createScenarioFacilityResource($facilityResource,
+                                                    $scenarioFacilityGroup,
                                                     $facilityResourceAllocationStatusId,
-                                                    $facilityActivationSequence, $conn = NULL)
+                                                    $facilityActivationSequence,
+                                                    $conn = NULL)
   {
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $scenarioFacilityResource = new agScenarioFacilityResource();
@@ -1008,41 +856,41 @@ class agImportNormalization
               ->set('facility_resource_allocation_status_id', $facilityResourceAllocationStatusId)
               ->set('activation_sequence', $facilityActivationSequence);
       $scenarioFacilityResource->save($conn);
+
       if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
     } catch(Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t insert scenario facility resource (%s, %s, %s)! Rolled back changes!',
+      $this->errMsg = sprintf('Couldn\'t insert scenario facility resource
+                               (%s, %s, %s)! Rolled back changes!',
                               $facilityResource->getAgFacility()->facility_name,
                               $facilityResource->getAgFacilityResourceType()->facility_resource_type_abbr,
                               $scenarioFacilityGroup->scenario_facility_group);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $scenarioFacilityResource;
   }
 
   protected function updateScenarioFacilityResource($scenarioFacilityResource, 
                                                     $scenarioFacilityGroupId,
                                                     $facilityResourceAllocationStatusId,
-                                                    $facilityActivationSequence, $conn = NULL)
+                                                    $facilityActivationSequence,
+                                                    $conn = NULL)
   {
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $doUpdate = FALSE;
@@ -1067,24 +915,152 @@ class agImportNormalization
 
       if ($doUpdate) {
         $updateQuery = $updateQuery->execute();
-        if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
       } else {
         $updateQuery = NULL;
       }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch(Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update scenario facility resource (%s, %s, %s)! Rolled back changes!',
+      $this->errMsg = sprintf('Couldn\'t update scenario facility resource
+                               (%s, %s, %s)! Rolled back changes!',
                               $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name,
                               $scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type_abbr,
                               Doctrine_Core::getTable('agScenarioFacilityGroup')->find($scenarioFacilityGroupId)->scenario_facility_group);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $scenarioFacilityResource;
+  }
+
+  protected function updateFacilityStaffResources($scenarioFacilityResourceId,
+                                                  $staff_data, $conn = NULL)
+  {
+    $facilityStaffResource = agDoctrineQuery::create()
+                    ->select('srt.id, fsr.minimum_staff, fsr.maximum_staff, fsr.id')
+                    ->from('agStaffResourceType srt')
+                    ->innerJoin('srt.agFacilityStaffResource fsr')
+                    ->where('fsr.scenario_facility_resource_id = ?', $scenarioFacilityResourceId)
+                    ->execute(array(), 'key_value_array');
+
+    // here you can pick up the default connection if not passed one explicitly
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
+
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
+
+    try
+    {
+      $deleteFacStfResId = array();
+      foreach ($staff_data as $staffTypeId => $count) {
+        if (array_key_exists($staffTypeId, $facilityStaffResource)) {
+            $doUpdate = FALSE;
+            $updateQuery = agDoctrineQuery::create($conn)
+                            ->update('agFacilityStaffResource')
+                            ->where('id = ?', $facilityStaffResource[$staffTypeId][2]);
+
+            if ($count['min'] == 0 && $count['max'] == 0) {
+              $deleteFacStfResId[] = $facilityStaffResource[$staffTypeId][2];
+              continue;
+            }
+
+            if ($facilityStaffResource[$staffTypeId][0] != $count['min']) {
+              $updateQuery->set('minimum_staff', $count['min']);
+              $doUpdate = TRUE;
+            }
+
+            if ($facilityStaffResource[$staffTypeId][1] != $count['max']) {
+              $updateQuery->set('maximum_staff', $count['max']);
+              $doUpdate = TRUE;
+            }
+
+            if ($doUpdate) {
+              $updateQuery->execute();
+            } else {
+              $updateQuery = NULL;
+            }
+        } else {
+          if ($count['min'] != 0 && $count['max'] != 0) {
+            $this->createFacilityStaffResource($scenarioFacilityResourceId, $staffTypeId, $count['min'], $count['max'], $conn);
+          }
+        }
+      }
+
+      if (!empty($deleteFacStfResId)) {
+          $deleteQuery = agDoctrineQuery::create($conn)
+                          ->delete('agFacilityStaffResource')
+                          ->whereIn('id', $deleteFacStfResId)
+                          ->execute();
+      }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
+    } catch(Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg .= sprintf('  Couldn\'t update facility staff resource!
+                                Rolled back changes!');
+
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
+
+      throw $e; // always remember to throw an exception after rollback
+    }
+    return $facilityStaffResource;
+  }
+
+  protected function createFacilityStaffResource($scenarioFacilityResourceId,
+                                                 $staffTypeId, $min_staff,
+                                                 $max_staff, $conn = NULL)
+  {
+    // here you can pick up the default connection if not passed one explicitly
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
+
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
+
+    try {
+      $facilityStaffResource = new agFacilityStaffResource();
+      $facilityStaffResource->set('staff_resource_type_id', $staffTypeId)
+          ->set('scenario_facility_resource_id', $scenarioFacilityResourceId)
+          ->set('minimum_staff', $min_staff)
+          ->set('maximum_staff', $max_staff);
+      $facilityStaffResource->save($conn);
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
+    } catch(Exception $e) {
+      $scenarioFacilityResource = Doctrine_Core::getTable('agScenarioFacilityResource')
+                                     ->find($scenarioFacilityResourceId);
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t create facility staff resource (%s, %s)!',
+                              $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name,
+                              array_search($staffTypeId, $this->staffResourceTypes));
+
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
+
+      throw $e; // always remember to throw an exception after rollback
+    }
+    return $facilityStaffResource;
   }
 
   /* EMAIL */
@@ -1103,52 +1079,47 @@ class agImportNormalization
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $emailContact = new agEmailContact();
       $emailContact->set('email_contact', $email);
       $emailContact->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch (Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
       $this->errMsg = sprintf('Couldn\'t create email %s! Rolled back changes!', $email);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $emailContact;
   }
 
-  protected function createEntityEmail($entityId, $emailId, $typeId, $conn = NULl)
+  protected function createEntityEmail($entityId, $emailId,
+                                       $typeId, $conn = NULl)
   {
     $priority = $this->getPriorityCounter('email', $entityId);
 
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $entityEmail = new agEntityEmailContact();
@@ -1157,54 +1128,58 @@ class agImportNormalization
           ->set('email_contact_type_id', $typeId)
           ->set('priority', $priority);
       $entityEmail->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch (Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
       $this->errMsg = sprintf('Couldn\'t create entity email (%s, %s)! Rolled back changes!',
                               array_search($typeId, $this->emailContactTypes),
                               Doctrine_Core::getTable('agEmailContact')->find($emailId)->email_contact);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $entityEmail;
   }
 
-  protected function updateEntityEmail($entityEmailObject, $emailObject, $conn = NULL)
+  protected function updateEntityEmail($entityEmailObject,
+                                       $emailObject, $conn = NULL)
   {
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $entityEmailObject->set('email_contact_id', $emailObject->id);
       $entityEmailObject->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch (Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
       $this->errMsg = sprintf('Couldn\'t update entity email (%s, %s)! Rolled back changes!',
                               $entityEmailObject->getAgEmailContactType()->email_contact_type,
                               $emailObject->email_contact);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $entityEmailObject;
   }
 
@@ -1215,7 +1190,8 @@ class agImportNormalization
    * @param <type> $workEmailTypeId
    * @return bool true if an update or create happened, false otherwise.
    */
-  protected function updateFacilityEmail($facility, $email, $workEmailTypeId, $conn)
+  protected function updateFacilityEmail($facility, $email,
+                                         $workEmailTypeId, $conn)
   {
     $entityId = $facility->getAgSite()->entity_id;
     $entityEmail = $this->getEntityContactObject('email', $entityId, $workEmailTypeId);
@@ -1234,28 +1210,29 @@ class agImportNormalization
     // only useful for nonrequired emails
     //  if importedEmail null
     if (empty($email) && !empty($facilityEmail)) {
-      // here we check our current transaction scope and create a transaction or savepoint based on need
+      // here we check our current transaction scope and create a transaction
+      // or savepoint based on need
       $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-      if ($useSavepoint)
-      {
-        $conn->beginTransaction(__FUNCTION__);
-      }
-      else
-      {
-        $conn->beginTransaction();
-      }
+      if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+      else { $conn->beginTransaction(); }
+
       try {
         $entityEmail->delete($conn);
-        if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+        if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+        else { $conn->commit(); }
         return TRUE;
       } catch (Exception $e) {
         // ALWAYS log rollbacks with as much useful information as possible
-        $this->errMsg = sprintf('Couldn\'t remove old entity email (%s, %s)! Rolled back changes!',
-                                array_search($workEmailTypeId, $this->emailContactTypes),
+        $this->errMsg = sprintf('Couldn\'t remove old entity email (%s, %s)!
+                                 Rolled back changes!',
+                                array_search($workEmailTypeId,
+                                             $this->emailContactTypes),
                                 $facilityEmail);
 
-        // if we started with a savepoint, let's end with one, otherwise, rollback globally
-        if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+        // if we started with a savepoint, let's end with one,
+        // otherwise, rollback globally
+        if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+        else { $conn->rollback(); }
 
         throw $e; // always remember to throw an exception after rollback
       }
@@ -1295,16 +1272,11 @@ class agImportNormalization
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $phoneContact = new agPhoneContact();
@@ -1312,13 +1284,18 @@ class agImportNormalization
           ->set('phone_contact', $phone)
           ->set('phone_format_id', $phoneFormatId);
       $phoneContact->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch (Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
       $this->errMsg = sprintf('Couldn\'t insert phone %s! Rolled back changes!', $phone);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
@@ -1326,23 +1303,19 @@ class agImportNormalization
     return $phoneContact;
   }
 
-  protected function createEntityPhone($entityId, $phoneContactId, $typeId, $conn = NULL)
+  protected function createEntityPhone($entityId, $phoneContactId,
+                                       $typeId, $conn = NULL)
   {
     $priority = $this->getPriorityCounter('phone', $entityId);
 
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    // here we check our current transaction scope and create a transaction or savepoint based on need
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $entityPhone = new agEntityPhoneContact();
@@ -1351,54 +1324,57 @@ class agImportNormalization
           ->set('phone_contact_type_id', $typeId)
           ->set('priority', $priority);
       $entityPhone->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch (Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
       $this->errMsg = sprintf('Couldn\'t create entity phone (%s, %s)! Rolled back changes!',
                               array_search($typeId, $this->phoneContactTypes),
                               Doctrine_Core::getTable('agPhoneContact')->find($phoneContactId)->phone_contact);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $entityPhone;
   }
 
-  protected function updateEntityPhone($entityPhoneObject, $phoneObject, $conn = NULL)
+  protected function updateEntityPhone($entityPhoneObject,
+                                       $phoneObject, $conn = NULL)
   {
     // here you can pick up the default connection if not passed one explicitly
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
     // here we check our current transaction scope and create a transaction or savepoint based on need
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
     try {
       $entityPhoneObject->set('phone_contact_id', $phoneObject->id);
       $entityPhoneObject->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+
     } catch (Exception $e) {
       // ALWAYS log rollbacks with as much useful information as possible
       $this->errMsg = sprintf('Couldn\'t update entity email (%s, %s)! Rolled back changes!',
                               $entityEmailObject->getAgEmailContactType()->email_contact_type,
                               $emailObject->email_contact);
 
-      // if we started with a savepoint, let's end with one, otherwise, rollback globally
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
 
       throw $e; // always remember to throw an exception after rollback
     }
-
     return $entityPhone;
   }
 
@@ -1409,7 +1385,8 @@ class agImportNormalization
    * @param <type> $workEmailTypeId
    * @return bool true if an update or create happened, false otherwise.
    */
-  protected function updateFacilityPhone($facility, $phone, $workPhoneTypeId, $phoneFormatId, $conn = NULL)
+  protected function updateFacilityPhone($facility, $phone, $workPhoneTypeId,
+                                         $phoneFormatId, $conn = NULL)
   {
     //TODO
     $entityId = $facility->getAgSite()->entity_id;
@@ -1429,27 +1406,26 @@ class agImportNormalization
     // only useful for nonrequired phones
     //  if importedEmail null
     if (empty($phone)) {
-      // here we check our current transaction scope and create a transaction or savepoint based on need
+      // here we check our current transaction scope and create a transaction
+      // or savepoint based on need
       $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-      if ($useSavepoint)
-      {
-        $conn->beginTransaction(__FUNCTION__);
-      }
-      else
-      {
-        $conn->beginTransaction();
-      }
+      if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+      else { $conn->beginTransaction(); }
+
       try {
         $entityPhone->delete($conn);
-        if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+        if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+        else { $conn->commit(); }
       } catch (Exception $e) {
         // ALWAYS log rollbacks with as much useful information as possible
         $this->errMsg = sprintf('Couldn\'t remove old entity phone (%s, %s)! Rolled back changes!',
                                 array_search($workPhoneTypeId, $this->phoneContactTypes),
                                 $facilityPhone);
 
-        // if we started with a savepoint, let's end with one, otherwise, rollback globally
-        if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+        // if we started with a savepoint, let's end with one,
+        // otherwise, rollback globally
+        if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+        else { $conn->rollback(); }
 
         throw $e; // always remember to throw an exception after rollback
       }
@@ -1474,7 +1450,8 @@ class agImportNormalization
 
   /* Address */
 
-  protected function getAssociateAddressElementValues($addressId, $addressElementIds)
+  protected function getAssociateAddressElementValues($addressId,
+                                                      $addressElementIds)
   {
     $entityAddressElementValues = agDoctrineQuery::create()
             ->select('ae.address_element, av.value')
@@ -1502,7 +1479,8 @@ class agImportNormalization
     return TRUE;
   }
 
-  protected function createAddressValues($fullAddress, $workAddressStandardId, $addressElementIds)
+  protected function createAddressValues($fullAddress, $workAddressStandardId,
+                                         $addressElementIds, $conn = NULL)
   {
     $newAddressValueIds = array();
     foreach ($fullAddress as $elem => $elemVal) {
@@ -1516,11 +1494,32 @@ class agImportNormalization
                       ->andWhere('ae.address_element = ?', $elem)
                       ->fetchOne();
       if (empty($addressValue)) {
-        $newAddressValue = new agAddressValue();
-        $newAddressValue->set('value', $elemVal)
-                ->set('address_element_id', $addressElementIds[$elem]);
-        $newAddressValue->save();
-        $newAddressValueIds[] = $newAddressValue->id;
+        // here we check our current transaction scope and create a transaction
+        // or savepoint based on need
+        $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+        if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+        else { $conn->beginTransaction(); }
+
+        try {
+          $newAddressValue = new agAddressValue();
+          $newAddressValue->set('value', $elemVal)
+                  ->set('address_element_id', $addressElementIds[$elem]);
+          $newAddressValue->save($conn);
+          $newAddressValueIds[] = $newAddressValue->id;
+          if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+          else { $conn->commit(); }
+        } catch (Exception $e) {
+          // ALWAYS log rollbacks with as much useful information as possible
+          $this->errMsg = sprintf('Couldn\'t create address element value %s!
+                                   Rolled back changes!', $elemVal);
+
+          // if we started with a savepoint, let's end with one,
+          // otherwise, rollback globally
+          if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+          else { $conn->rollback(); }
+
+          throw $e; // always remember to throw an exception after rollback
+        }
       } else {
         $newAddressValueIds[] = $addressValue->id;
       }
@@ -1528,43 +1527,88 @@ class agImportNormalization
     return $newAddressValueIds;
   }
 
-  protected function createAddress($addressStandardId)
+  protected function createAddress($addressStandardId, $conn)
   {
-    $address = new agAddress();
-    $address->set('address_standard_id', $addressStandardId);
-    $address->save();
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
+
+    try {
+      $address = new agAddress();
+      $address->set('address_standard_id', $addressStandardId);
+      $address->save($conn);
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+    } catch (Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t create address! Rolled back changes!');
+
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
+
+      throw $e; // always remember to throw an exception after rollback
+    }
     return $address;
   }
 
-  protected function createEntityAddress($entityId, $addressTypeId, $fullAddress, $addressStandardId, $addressElementIds)
+  protected function createEntityAddress($entityId, $addressTypeId, 
+                                         $fullAddress, $addressStandardId,
+                                         $addressElementIds, $conn = NULL)
   {
-    // create new address with importedElements
-    $address = $this->createAddress($addressStandardId);
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
-    $addressId = $address->id;
+    try {
+      // create new address with importedElements
+      $address = $this->createAddress($addressStandardId, $conn);
 
-    $newAddressValueIds = $this->createAddressValues($fullAddress, $addressStandardId, $addressElementIds);
+      $addressId = $address->id;
 
-    foreach ($newAddressValueIds as $addressValueId) {
-      $mappingAddress = new agAddressMjAgAddressValue();
-      $mappingAddress->set('address_id', $addressId)
-          ->set('address_value_id', $addressValueId);
-      $mappingAddress->save();
+      $newAddressValueIds = $this->createAddressValues($fullAddress, $addressStandardId, $addressElementIds, $conn);
+
+      foreach ($newAddressValueIds as $addressValueId) {
+        $mappingAddress = new agAddressMjAgAddressValue();
+        $mappingAddress->set('address_id', $addressId)
+            ->set('address_value_id', $addressValueId);
+        $mappingAddress->save($conn);
+      }
+
+      $priority = $this->getPriorityCounter('address', $entityId);
+
+      $entityAddress = new agEntityAddressContact();
+      $entityAddress->set('entity_id', $entityId)
+          ->set('address_id', $addressId)
+          ->set('priority', $priority)
+          ->set('address_contact_type_id', $addressTypeId);
+      $entityAddress->save($conn);
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+    } catch (Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t create entity address! Rolled back changes!');
+
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
+
+      throw $e; // always remember to throw an exception after rollback
     }
-
-    $priority = $this->getPriorityCounter('address', $entityId);
-
-    $entityAddress = new agEntityAddressContact();
-    $entityAddress->set('entity_id', $entityId)
-        ->set('address_id', $addressId)
-        ->set('priority', $priority)
-        ->set('address_contact_type_id', $addressTypeId);
-    $entityAddress->save();
-
     return $addressId;
   }
 
-  protected function updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds)
+  protected function updateFacilityAddress($facility, 
+                                           $fullAddress,
+                                           $workAddressTypeId,
+                                           $workAddressStandardId,
+                                           $addressElementIds, $conn = NULL)
   {
     $entityId = $facility->getAgSite()->entity_id;
     $facilityAddress = $this->getEntityContactObject('address', $entityId, $workAddressTypeId);
@@ -1573,7 +1617,7 @@ class agImportNormalization
 
     // Remove existing facility work address if import address is null.
     if ((!empty($facilityAddress)) && $isImportAddressEmpty) {
-      $this->deleteEntityAddressMapping($facilityAddress->id);
+      $this->deleteEntityAddressMapping($facilityAddress->id, $conn);
       return $addressId = NULL;
     }
 
@@ -1592,7 +1636,7 @@ class agImportNormalization
       if (empty($diffAddKeys)) {
         foreach ($fullAddress as $eltName => $eltVal) {
           if (strtolower($eltVal) != strtolower($facilityAddressElements[$eltName])) {
-            $this->deleteEntityAddressMapping($facilityAddress->id);
+            $this->deleteEntityAddressMapping($facilityAddress->id, $conn);
             $isCreateNew = TRUE;
             break;
           }
@@ -1603,38 +1647,80 @@ class agImportNormalization
     }
 
     if ($isCreateNew) {
-      $addressId = $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
+      $addressId = $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds, $conn);
     }
 
     return $addressId;
   }
 
-  protected function deleteEntityAddressMapping($entityAddressId)
+  protected function deleteEntityAddressMapping($entityAddressId, $conn = NULL)
   {
-    $query = agDoctrineQuery::create()
-            ->delete('agEntityAddressContact')
-            ->where('id = ?', $entityAddressId)
-            ->execute();
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
+
+    try {
+      $query = agDoctrineQuery::create($conn)
+              ->delete('agEntityAddressContact')
+              ->where('id = ?', $entityAddressId)
+              ->execute();
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+    } catch (Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t remove old address! Rolled back changes!');
+
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
+
+      throw $e; // always remember to throw an exception after rollback
+    }
   }
 
   /* Geo */
 
-  protected function createGeo()
+  protected function createGeo($conn = NULL)
   {
-    $geo = new agGeo();
-    $geo->set('geo_type_id', $this->geoTypeId)
-            ->set('geo_source_id', $this->geoSourceId);
-    $geo->save();
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
+
+    try {
+      $geo = new agGeo();
+      $geo->set('geo_type_id', $this->geoTypeId)
+              ->set('geo_source_id', $this->geoSourceId);
+      $geo->save($conn);
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+    } catch (Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t create geo! Rolled back changes!');
+
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
+
+      throw $e; // always remember to throw an exception after rollback
+    }
     return $geo->id;
   }
 
-  protected function updateFacilityGeo($facility, $addressId, $addressTypeId, $addressStandardId, $geoInfo)
+  protected function updateFacilityGeo($facility, $addressId, $addressTypeId,
+                                       $addressStandardId, $geoInfo, $conn = NULL)
   {
 
     // Create an address container to assign geo info for facility with no address given in import.
     if (empty($addressId)) {
       $entityId = $facility->getAgSite()->entity_id;
-      $addressId = $this->createEntityAddress($entityId, $addressTypeId, array(), $addressStandardId, array());
+      $addressId = $this->createEntityAddress($entityId, $addressTypeId, array(), $addressStandardId, array(), $conn);
     }
 
     $agAddressGeo = agDoctrineQuery::create()
@@ -1645,55 +1731,77 @@ class agImportNormalization
                     ->andWhere('ag.address_id = ?', $addressId)
                     ->fetchOne();
 
-    if (empty($agAddressGeo)) {
-      $geoId = $this->createGeo();
-      $addressGeo = new agAddressGeo();
-      $addressGeo->set('address_id', $addressId)
-              ->set('geo_id', $geoId)
-              ->set('geo_match_score_id', $this->geoMatchScoreId);
-      $addressGeo->save();
-    } else {
-      $geoId = $agAddressGeo->geo_id;
-    }
+    // here we check our current transaction scope and create a transaction
+    // or savepoint based on need
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint) { $conn->beginTransaction(__FUNCTION__); }
+    else { $conn->beginTransaction(); }
 
-    $agAddressCoordinate = agDoctrineQuery::create()
-                    ->select('gc.longitude, gc.latitude')
-                    ->from('agGeoCoordinate gc')
-                    ->innerJoin('gc.agGeoFeature gf')
-                    ->where('gf.geo_id = ?', $geoId)
-                    ->fetchOne();
-
-    if (empty($agAddressCoordinate)) {
-      $geoCoordinate = new agGeoCoordinate();
-      $geoCoordinate->set('longitude', $geoInfo['longitude'])
-              ->set('latitude', $geoInfo['latitude']);
-      $geoCoordinate->save();
-      $geoFeature = new agGeoFeature();
-      $geoFeature->set('geo_id', $geoId)
-              ->set('geo_coordinate_id', $geoCoordinate->id)
-              ->set('geo_coordinate_order', 1);
-      $geoFeature->save();
-    } else {
-      if ($agAddressCoordinate->longitude != $geoInfo['longitude']) {
-        $agAddressCoordinate->set('longitude', $geoInfo['longitude']);
-        $saveUpdate = TRUE;
-      } elseif ($agAddressCoordinate->latitude != $geoInfo['latitude']) {
-        $agAddressCoordinate->set('latitude', $geoInfo['latitude']);
-        $saveUpdate = TRUE;
+    try {
+      if (empty($agAddressGeo)) {
+        $geoId = $this->createGeo($conn);
+        $addressGeo = new agAddressGeo();
+        $addressGeo->set('address_id', $addressId)
+                ->set('geo_id', $geoId)
+                ->set('geo_match_score_id', $this->geoMatchScoreId);
+        $addressGeo->save($conn);
       } else {
-        $saveUpdate = FALSE;
+        $geoId = $agAddressGeo->geo_id;
       }
 
-      if ($saveUpdate) {
-        $agAddressCoordinate->save();
+      $agAddressCoordinate = agDoctrineQuery::create()
+                      ->select('gc.longitude, gc.latitude')
+                      ->from('agGeoCoordinate gc')
+                      ->innerJoin('gc.agGeoFeature gf')
+                      ->where('gf.geo_id = ?', $geoId)
+                      ->fetchOne();
+
+      if (empty($agAddressCoordinate)) {
+        $geoCoordinate = new agGeoCoordinate();
+        $geoCoordinate->set('longitude', $geoInfo['longitude'])
+                      ->set('latitude', $geoInfo['latitude']);
+        $geoCoordinate->save($conn);
+        $geoFeature = new agGeoFeature();
+        $geoFeature->set('geo_id', $geoId)
+                   ->set('geo_coordinate_id', $geoCoordinate->id)
+                   ->set('geo_coordinate_order', 1);
+        $geoFeature->save($conn);
+      } else {
+        if ($agAddressCoordinate->longitude != $geoInfo['longitude']) {
+          $agAddressCoordinate->set('longitude', $geoInfo['longitude']);
+          $saveUpdate = TRUE;
+        } elseif ($agAddressCoordinate->latitude != $geoInfo['latitude']) {
+          $agAddressCoordinate->set('latitude', $geoInfo['latitude']);
+          $saveUpdate = TRUE;
+        } else {
+          $saveUpdate = FALSE;
+        }
+
+        if ($saveUpdate) {
+          $agAddressCoordinate->save($conn);
+        }
       }
-      return TRUE;
+
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); }
+      else { $conn->commit(); }
+    } catch (Exception $e) {
+      // ALWAYS log rollbacks with as much useful information as possible
+      $this->errMsg = sprintf('Couldn\'t update geo! Rolled back changes!');
+
+      // if we started with a savepoint, let's end with one,
+      // otherwise, rollback globally
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); }
+      else { $conn->rollback(); }
+
+      throw $e; // always remember to throw an exception after rollback
     }
+    return TRUE;
   }
 
   /* ENTITY */
 
-  protected function getEntityContactObject($contactMedium, $entityId, $contactTypeId)
+  protected function getEntityContactObject($contactMedium,
+                                            $entityId, $contactTypeId)
   {
     $entityContactObject = NULL;
 
