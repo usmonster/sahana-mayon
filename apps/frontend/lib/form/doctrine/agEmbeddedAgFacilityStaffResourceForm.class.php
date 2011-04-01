@@ -16,7 +16,8 @@ class agEmbeddedAgFacilityStaffResourceForm extends agFacilityStaffResourceForm
 
   public function setup()
   {
-    $this->setWidgets(array(
+    $this->setWidgets(array
+      (
       //'id'                            => new sfWidgetFormInputHidden(),
       'scenario_facility_resource_id' => new sfWidgetFormInputHidden(),
       'staff_resource_type_id' => new sfWidgetFormInputHidden(),
@@ -26,9 +27,11 @@ class agEmbeddedAgFacilityStaffResourceForm extends agFacilityStaffResourceForm
           array('class' => 'inputGraySmall')),
         //'created_at'                    => new sfWidgetFormDateTime(),
         //'updated_at'                    => new sfWidgetFormDateTime(),
-    ));
+        )
+    );
 
-    $this->setValidators(array(
+    $this->setValidators(array
+      (
       //'id' => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')),
       //  'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'scenario_facility_resource_id' => new sfValidatorDoctrineChoice(array('model' =>
@@ -39,7 +42,8 @@ class agEmbeddedAgFacilityStaffResourceForm extends agFacilityStaffResourceForm
       'maximum_staff' => new sfValidatorInteger(),
         //'created_at'                    => new sfValidatorDateTime(),
         //'updated_at'                    => new sfValidatorDateTime(),
-    ));
+        )
+    );
   }
 
 }
