@@ -92,8 +92,8 @@ $i = 1;
           <td><?php echo $i++; ?></td>
           <td><?php echo $warning['message']; ?></td>
           <td>Facility Name: <?php echo $warning['record']['facility_name']; ?>
-            <br />Facility Code: <?php echo $failedRecord['record']['facility_code']; ?>
-            <br />Facility Resource Type Abbr: <?php echo $failedRecord['record']['facility_resource_type_abbr']; ?>
+            <br />Facility Code: <?php echo $warning['record']['facility_code']; ?>
+            <br />Facility Resource Type Abbr: <?php echo $warning['record']['facility_resource_type_abbr']; ?>
         </tr>
         <?php endforeach ?>
 

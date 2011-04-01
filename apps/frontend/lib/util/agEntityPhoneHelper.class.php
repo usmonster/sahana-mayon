@@ -51,6 +51,8 @@ class agEntityPhoneHelper extends agBulkRecordHelper
     $q = agDoctrineQuery::create()
        ->select('epc.entity_id')
          ->addSelect('epc.phone_contact_id')
+         ->addSelect('epc.created_at')
+         ->addSelect('epc.updated_at')
        ->from('agEntityPhoneContact epc')
        ->whereIn('epc.entity_id', $entityIds)
        ->orderBy('epc.priority');
@@ -118,11 +120,11 @@ class agEntityPhoneHelper extends agBulkRecordHelper
     $priorContactType = '';
     foreach ($rows as $row)
     {
-      $entityPhones[$row[0]][$row[2]][] = $row[1];
+      $entityPhones[$row[0]][$row[4]][] = array($row[1], $row[2], $row[3]);
 
-      // here we build the mono-dimensional addressId array, excluding dupes as we go; only useful
-      // if we're actually going to use the address helper
-      if (! is_null($phoneHelperMethod) && ! in_array($row[2], $phoneIds))
+      // here we build the mono-dimensional phoneId array, excluding dupes as we go; only useful
+      // if we're actually going to use the phone helper
+      if (! is_null($phoneHelperMethod) && ! in_array($row[1], $phoneIds))
       {
         $phoneHelperArgs[0][] = $row[1];
       }
@@ -161,14 +163,14 @@ class agEntityPhoneHelper extends agBulkRecordHelper
         // in our output and safely make this assumption
         if ($primary)
         {
-          $entityPhones[$entityId][$phoneType] = $formattedPhones[$phones[0]];
+          $entityPhones[$entityId][$phoneType][0][0] = $formattedPhones[$phones[0][0]];
         }
         // if not primary, we have one more loop in our return for another array nesting
         else
         {
           foreach ($phones as $index => $phone)
-          {
-            $entityPhones[$entityId][$phoneType][$index] = $formattedPhones[$phone];
+          { 
+            $entityPhones[$entityId][$phoneType][$index][0] = $formattedPhones[$phone[0]];
           }
         }
       }
@@ -225,11 +227,11 @@ class agEntityPhoneHelper extends agBulkRecordHelper
 
     foreach ($rows as $row)
     {
-      $entityPhones[$row[0]][]= array($row[2],$row[1]) ;
+      $entityPhones[$row[0]][]= array($row[4], $row[1], $row[2], $row[3]) ;
 
       // here we build the mono-dimensional phoneId array, excluding dupes as we go; only useful
       // if we're actually going to use the phone helper
-      if (! is_null($phoneHelperMethod) && ! in_array($row[2], $phoneIds))
+      if (! is_null($phoneHelperMethod) && ! in_array($row[1], $phoneIds))
       {
         $phoneHelperArgs[0][] = $row[1];
       }
@@ -267,7 +269,9 @@ class agEntityPhoneHelper extends agBulkRecordHelper
       // in our output and safely make this assumption
       if ($primary)
       {
-        $entityPhones[$entityId] = array($phones[0][0],$formattedPhones[$phones[0][1]]);
+        $phones = $phones[0];
+        $phones[1] = $formattedPhones[$phones[1]];
+        $entityPhones[$entityId] = $phones;
       }
       // if not primary, we have one more loop in our return for another array nesting
       else
