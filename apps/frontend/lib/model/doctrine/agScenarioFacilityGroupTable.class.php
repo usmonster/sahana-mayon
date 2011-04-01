@@ -7,6 +7,7 @@
  */
 class agScenarioFacilityGroupTable extends Doctrine_Table
 {
+
   /**
    * Returns an instance of this class.
    *
@@ -39,13 +40,13 @@ class agScenarioFacilityGroupTable extends Doctrine_Table
 //    return $q->execute();
 //  }
 
-/**
-* getLuceneQuery uses the results of the Lucene query to construct a Doctrine query.
-*
-* @param $query
-* @return $q, a constructed Doctrine query
-*
-**/
+  /**
+   * getLuceneQuery uses the results of the Lucene query to construct a Doctrine query.
+   *
+   * @param $query
+   * @return $q, a constructed Doctrine query
+   *
+   * */
 //  public function getLuceneQuery($query)
 //  {
 //    $hits = self::getLuceneIndex()->find($query);
@@ -68,13 +69,15 @@ class agScenarioFacilityGroupTable extends Doctrine_Table
 //    return $q;
 //  }
 
-/**
-* getLuceneIndex creates a new Lucene index directory, or opens one if it already exists. Permissions
-* in the data/[index] directory are important here, as the webserver will be writing there.
-*
-* @return Zend_Search_Lucene::create($index) or Zend_Search_Lucene::open($index)
-*
-**/
+  /**
+   * getLuceneIndex creates a new Lucene index directory,
+   * or opens one if it already exists. Permissions
+   * in the data/[index] directory are important here,
+   * as the webserver will be writing there.
+   *
+   * @return Zend_Search_Lucene::create($index) or Zend_Search_Lucene::open($index)
+   *
+   * */
 //  static public function getLuceneIndex()
 //  {
 //    ProjectConfiguration::registerZend();
@@ -87,11 +90,12 @@ class agScenarioFacilityGroupTable extends Doctrine_Table
 //    return Zend_Search_Lucene::create($index);
 //  }
 
-/**
-* getLuceneIndexFile accesses a Lucene index file within the directory accessed with getLuceneIndex.
-* @return sfConfig::get('sf_data_dir').'/indexes/person.'.sfConfig::get('sf_environment').'.index'
-*
-**/
+  /**
+   * getLuceneIndexFile accesses a Lucene index file within
+   * the directory accessed with getLuceneIndex.
+   * @return sfConfig::get('sf_data_dir').'/indexes/person.'.sfConfig::get('sf_environment').'.index'
+   *
+   * */
 //  static public function getLuceneIndexFile()
 //  {
 ////    return sfConfig::get('sf_data_dir').'/indexes/person.index';

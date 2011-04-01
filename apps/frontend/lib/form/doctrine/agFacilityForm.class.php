@@ -37,20 +37,18 @@ class agFacilityForm extends BaseagFacilityForm
         $this['ag_facility_resource_type_list']
 //      $this['facility_name'],
 //      $this['facility_code']
-
-
     );
 
 
     $this->setWidget('id', new sfWidgetFormInputHidden());
 
-      $this->setWidget('facility_name', new sfWidgetFormInputText(array(), array('class' => 'inputGray')));
-      //'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+    $this->setWidget('facility_name', new sfWidgetFormInputText(array
+      (), array('class' => 'inputGray')));
+    //'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
     //));
-
 //    $this->agEntity = $this->getObject()->getAgEntity();
     $this->agEntity = $this->getObject()->getAgSite()->getAgEntity();
-    
+
     $this->embedAgFacilityForms();
 
 
@@ -60,7 +58,6 @@ class agFacilityForm extends BaseagFacilityForm
      * that will be displayed, we have to take care to not get rid
      * of any fields.
      */
-    
     //add csrf protection to the form that has been modified
     $this->addCSRFProtection();
 
@@ -73,10 +70,11 @@ class agFacilityForm extends BaseagFacilityForm
     /**
      * Set labels on a few fields
      */
-    $this->widgetSchema->setLabels(array(
+    $this->widgetSchema->setLabels(array
+      (
       'resource' => 'Resources',
       'facility_name' => 'Name',
-      //'facility_code' => 'Facility Code'
+        //'facility_code' => 'Facility Code'
     ));
 
     /**
@@ -86,7 +84,6 @@ class agFacilityForm extends BaseagFacilityForm
     $sectionsDeco = new agWidgetFormSchemaFormatterSection($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('section', $sectionsDeco);
     $this->getWidgetSchema()->setFormFormatterName('section');
-
   }
 
   public function embedPhoneForm($contactContainer)
@@ -150,8 +147,9 @@ class agFacilityForm extends BaseagFacilityForm
             ->execute()) {
 
       /**
-       *  for every existing facility resource, create an agEmbeddedFacilityResourceForm and embed it into $facilityResourceContainer
-       *   */
+       * for every existing facility resource, create an
+       * agEmbeddedFacilityResourceForm and embed it into $facilityResourceContainer
+       */
       foreach ($this->agFacilityResources as $facilityResource) {
         $facilityResourceForm = new agEmbeddedFacilityResourceForm($facilityResource);
 
@@ -177,9 +175,7 @@ class agFacilityForm extends BaseagFacilityForm
     /**
      *  embed the facility resource container form into the facility form
      *   */
-    
     $resourceContainer->embedForm('resource', $facilityResourceContainer);
-
   }
 
   public function embedAddressForm($contactContainer)
@@ -201,9 +197,9 @@ class agFacilityForm extends BaseagFacilityForm
             ->from('agAddressFormat af, af.agAddressElement ae')
             ->execute();
 
-    // This loop makes a 3d array of line sequence values (as the first level key), inline sequence values (as
-    // the second level key), address element values(as the third level string key), and address element ids (as
-    // the third level value).
+    // This loop makes a 3d array of line sequence values (as the first level key),
+    // inline sequence values (as the second level key), address element values
+    // (as the third level string key), and address element ids (as the third level value).
 
     /**
      * @todo this works fine for now, since we only have one address format, but should be
@@ -316,7 +312,7 @@ class agFacilityForm extends BaseagFacilityForm
 
     $resourceContainer = new sfForm();
     $this->embedResourcesForm($resourceContainer);
-    $resourceContainer->getWidgetSchema()->setLabel('resource',false);
+    $resourceContainer->getWidgetSchema()->setLabel('resource', false);
     $this->embedForm('resources', $resourceContainer);
 //
     $this->embedAddressForm($contactContainer);
@@ -328,8 +324,6 @@ class agFacilityForm extends BaseagFacilityForm
   /*
    * setup() extends the base method to remove unused fields and embed subforms
    */
-
-
 
   /**
    * saveEmbeddedForms() is a recursive function that saves all

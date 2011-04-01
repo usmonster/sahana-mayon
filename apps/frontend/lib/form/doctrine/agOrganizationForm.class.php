@@ -1,8 +1,8 @@
 <?php
 
 /**
- * An extension of an organization base form to process the edit and show forms of organization
- * and its related records.
+ * An extension of an organization base form to process the edit and
+ * show forms of organization and its related records.
  *
  * PHP Version 5.3
  *
@@ -18,8 +18,8 @@ class agOrganizationForm extends BaseagOrganizationForm
 {
 
   /** @method setup()
-   * Unset widgets that are auto-filled, unnecessary, or whose relations are not properly defined 
-   * without using embedded forms.
+   * Unset widgets that are auto-filled, unnecessary, or whose relations
+   * are not properly defined without using embedded forms.
    */
   public function setup()
   {
@@ -31,7 +31,8 @@ class agOrganizationForm extends BaseagOrganizationForm
   }
 
   /** @method configure()
-   *  In the method it is creating and setting both widgets and validtion for the form.
+   * In the method it is creating and setting both widgets and
+   * validtion for the form.
    */
   public function configure()
   {
@@ -53,13 +54,21 @@ class agOrganizationForm extends BaseagOrganizationForm
       'description' => new sfWidgetFormInputText(),
     ));
 
-    $this->setValidators(array(
-      'id' => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')),
-        'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'organization' => new sfValidatorString(array('required' => true, 'max_length' => 128)),
-      'description' => new sfValidatorString(array('required' => false, 'min_length' => 1,
+    $this->setValidators(array
+      (
+      'id' => new sfValidatorChoice(array
+        (
+        'choices' => array($this->getObject()->get('id')),
+        'empty_value' => $this->getObject()->get('id'),
+        'required' => false)
+      ),
+      'organization' => new sfValidatorString(array
+        ('required' => true, 'max_length' => 128)),
+      'description' => new sfValidatorString(array
+        ('required' => false, 'min_length' => 1,
         'max_length' => 255)),
-    ));
+        )
+    );
 
     $this->validatorSchema->setOption('allow_extra_fields', true);
     $this->widgetSchema->setNameFormat('ag_staff_resource_organization[%s]');

@@ -37,8 +37,8 @@ class agShiftGeneratorForm extends sfForm
   public function configure()
   {
     //we need to get all unique facility resources for every facility group in the scenario
-    //this will be useful in the 'final stage', showing the user that they do not have shift templates
-    //defined for those scenario/facility/staff types
+    //this will be useful in the 'final stage', showing the user that
+    //they do not have shift templates defined for those scenario/facility/staff types
 
     /* create new shifttemplatecontainerform */
 
@@ -138,7 +138,8 @@ class agShiftGeneratorForm extends sfForm
         }
       }
     }
-    return; // parent::saveEmbeddedForms($con, $forms); <-correct, this should never have been here, sfForm will save nothing
+    return; // parent::saveEmbeddedForms($con, $forms); <-correct,
+    //this should never have been here, sfForm will save nothing
   }
 
 }

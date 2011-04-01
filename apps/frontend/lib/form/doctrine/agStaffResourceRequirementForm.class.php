@@ -1,7 +1,8 @@
 <?php
 
 /**
- * agStaffResourceRequirementForm extended agScenarioFacilityResource form base class, for assigning staff resource requirements
+ * agStaffResourceRequirementForm extended agScenarioFacilityResource form base class,
+ * for assigning staff resource requirements
  *
  * PHP Version 5.3
  *
@@ -15,9 +16,10 @@
  */
 class agStaffResourceRequirementForm extends BaseagScenarioFacilityResourceForm
 {
-    /*
+  /*
    * configure() extends the base method to remove unused fields
    */
+
   public function configure()
   {
     parent::configure();
@@ -31,6 +33,7 @@ class agStaffResourceRequirementForm extends BaseagScenarioFacilityResourceForm
         $this['facility_resource_id']
     );
   }
+
   public function setup()
   {
     parent::setup();
@@ -61,7 +64,8 @@ class agStaffResourceRequirementForm extends BaseagScenarioFacilityResourceForm
 //            ->execute()) {
 //
 //      /**
-//       *  for every existing facility resource, create an agEmbeddedFacilityResourceForm and embed it into $facilityResourceContainer
+//       *  for every existing facility resource,
+//       create an agEmbeddedFacilityResourceForm and embed it into $facilityResourceContainer
 //       *   */
 //      foreach ($this->agFacilityResources as $facilityResource) {
 //        $facilityResourceForm = new agEmbeddedFacilityStaffResourceForm($facilityResource);
@@ -76,11 +80,11 @@ class agStaffResourceRequirementForm extends BaseagScenarioFacilityResourceForm
      *  create a up to 2 new blank agEmbeddedFacilityResourceForm
      *  instances in case the user wants to add another staff resource type
      *   */
-    for ($iNewForm = 0; $iNewForm < max(2-count($this->agFacilityResources), 1); $iNewForm++) {
+    for ($iNewForm = 0; $iNewForm < max(2 - count($this->agFacilityResources), 1); $iNewForm++) {
       $facilityResourceForm = new agEmbeddedFacilityStaffResourceForm();
 
-      $facilityResourceContainer->embedForm('new'.$iNewForm, $facilityResourceForm);
-      $facilityResourceContainer->widgetSchema->setLabel('new'.$iNewForm, false);
+      $facilityResourceContainer->embedForm('new' . $iNewForm, $facilityResourceForm);
+      $facilityResourceContainer->widgetSchema->setLabel('new' . $iNewForm, false);
     }
 
     /**
@@ -106,7 +110,7 @@ class agStaffResourceRequirementForm extends BaseagScenarioFacilityResourceForm
     $this->widgetSchema->setLabels(array(
       'resource' => 'Resources',
       'scenario_facility_groupd_id' => 'Facility Group',
-      //'facility_code' => 'Facility Code'
+        //'facility_code' => 'Facility Code'
     ));
 
     /**
@@ -163,7 +167,6 @@ class agStaffResourceRequirementForm extends BaseagScenarioFacilityResourceForm
             //$form->getObject()->setFacilityId($this->getObject()->getId());
           }
         }
-
       }
     }
     return parent::saveEmbeddedForms($con, $forms);

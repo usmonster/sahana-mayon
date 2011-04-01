@@ -47,8 +47,8 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
        * @todo [$curopt->activation_sequence] needs to still be applied to the list,
        */
     }
-    $this->setWidgets(array(
-      'id' => new sfWidgetFormInputHidden(),
+    $this->setWidgets(array
+      ('id' => new sfWidgetFormInputHidden(),
       'scenario_id' => new sfWidgetFormInputHidden(),
       'scenario_facility_group' => new sfWidgetFormInputText(),
       'facility_group_type_id' => new sfWidgetFormDoctrineChoice(array('model' =>
@@ -65,7 +65,8 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
           array('class' => 'widthAndHeight300')),
       'ag_facility_resource_order' => new sfWidgetFormChoice(array('choices' => $currentoptions,
         'multiple' => true), array('class' => 'widthAndHeight300'))
-    ));
+        )
+    );
     $this->widgetSchema['ag_facility_resource_list']->addOption(
         'query',
             agDoctrineQuery::create()
@@ -74,7 +75,8 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
             ->whereNotIn('a.id', array_keys($currentoptions))
     );
 
-    $this->setValidators(array(
+    $this->setValidators(array
+      (
       'id' => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')),
         'empty_value' => $this->getObject()->get('id'), 'required' => false)),
       'scenario_id' => new sfValidatorDoctrineChoice(array('model' =>
@@ -88,7 +90,8 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
       'ag_facility_resource_list' => new sfValidatorDoctrineChoice(array('multiple' => true,
         'model' => 'agFacilityResource', 'required' => false)),
         //'ag_facility_resource_order'          => new sfValidatorChoice(array('required' => false))
-    ));
+        )
+    );
     $this->validatorSchema->setOption('allow_extra_fields', true);
     $this->validatorSchema->setPostValidator(
         new sfValidatorAnd(array(
@@ -135,16 +138,18 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
     }
     //$existing = $this->object->agFacilityResource->getPrimaryKeys();
     $values = $this->getTaintedValues();
-    //all we need to save, is the allocated list: it's order included(this is proving to be clumsy
-    //while working with a listbox, jquery is prefered)
+    //all we need to save, is the allocated list: it's order included
+    //(this is proving to be clumsy while working with a listbox,
+    //jquery is prefered)
     if ($values)
       $values = $values['ag_facility_resource_order'];
     unset($this['ag_facility_resource_order']);
     unset($this['ag_facility_resource_list']);
     parent::doSave($con);
     if ($values) {
-      /** this should be $current->getAgScenarioFacilityResource(), will it return an array?
-       * will it be cached? */
+      /** this should be $current->getAgScenarioFacilityResource(),
+       * will it return an array? will it be cached?
+       */
       if ($current)
         $toDelete = array_diff($current, $values);
 
@@ -162,7 +167,8 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
         if (in_array($value, $current))
           $agScenarioFacilityResource = $currentCheck;
         else {
-          //if there isn't an entry in agScenarioFacilityResource for this group/facility_resource..
+          //if there isn't an entry in agScenarioFacilityResource for
+          //this group/facility_resource..
           $agScenarioFacilityResource = new agScenarioFacilityResource();
           $agScenarioFacilityResource->scenario_facility_group_id = $this->getObject()->getId();
           $agScenarioFacilityResource->activation_sequence = $key + 1;
@@ -189,9 +195,10 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
   public function saveEmbeddedForms($con = null, $forms = null)
   {
     /**
-     * @todo add a hook here to handle the selected facility resources' activation sequence.
-     * currently, we select the activation of the facility GROUP, we need to also set the
-     *  activation sequence of each individual facility resource
+     * @todo add a hook here to handle the selected facility resources'
+     * activation sequence. currently, we select the activation of the
+     * facility GROUP, we need to also set the activation sequence of
+     * each individual facility resource
      */
   }
 

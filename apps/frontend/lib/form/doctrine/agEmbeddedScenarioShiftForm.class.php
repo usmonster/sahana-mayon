@@ -1,22 +1,23 @@
 <?php
-/**
-* agEmbeddedScenarioShiftForm.class.php
-*
-* Provides embedded subform for editing facility resources
-*
-* PHP Version 5.3
-*
-* LICENSE: This source file is subject to LGPLv2.1 license
-* that is available through the world-wide-web at the following URI:
-* http://www.gnu.org/licenses/lgpl-2.1.html
-*
-* @author Charles Wisniewski, CUNY SPS
-*
-* Copyright of the Sahana Software Foundation, sahanafoundation.org
-*/
 
+/**
+ * Extention of Scenario Shift form
+ *
+ * Provides embedded subform for editing facility resources
+ *
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @author Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ */
 class agEmbeddedScenarioShiftForm extends agScenarioShiftForm
 {
+
   /**
    * configure()
    *
@@ -42,7 +43,6 @@ class agEmbeddedScenarioShiftForm extends agScenarioShiftForm
 
 //  private static $staticLists;
 
-
   /**
    * setup()
    *
@@ -53,56 +53,68 @@ class agEmbeddedScenarioShiftForm extends agScenarioShiftForm
   {
     parent::setup();
     $this->setWidget(
-    'scenario_facility_resource_id',
-    new sfWidgetFormDoctrineChoice(array(
-      'model' => $this->getRelatedModelName('agScenarioFacilityResource'),
-      'add_empty' => true,
-      'method' => 'getAgFacilityResource',
-      //'query' => $this::$staticLists['agFacilityResourceType']
-        //does the group match? it should...
+        'scenario_facility_resource_id',
+        new sfWidgetFormDoctrineChoice(array
+          (
+          'model' => $this->getRelatedModelName('agScenarioFacilityResource'),
+          'add_empty' => true,
+          'method' => 'getAgFacilityResource',
+            //'query' => $this::$staticLists['agFacilityResourceType']
+            //does the group match? it should...
+            )
         )
-    ));
+    );
     $this->setWidget(
-    'task_id',
-    new sfWidgetFormDoctrineChoice(array(
-      'model' => $this->getRelatedModelName('agTask'),
-      'add_empty' => true,
-      'method' => 'getTask',
-      //'query' => $this::$staticLists['agFacilityResourceType']
+        'task_id',
+        new sfWidgetFormDoctrineChoice(array
+          (
+          'model' => $this->getRelatedModelName('agTask'),
+          'add_empty' => true,
+          'method' => 'getTask',
+            //'query' => $this::$staticLists['agFacilityResourceType']
+            )
         )
-    ));
+    );
     $this->setWidget(
-    'staff_resource_type_id',
-    new sfWidgetFormDoctrineChoice(array(
-      'model' => $this->getRelatedModelName('agStaffResourceType'),
-      'add_empty' => true,
-      'method' => 'getStaffResourceType',
-      //'query' => $this::$staticLists['agFacilityResourceType']
+        'staff_resource_type_id',
+        new sfWidgetFormDoctrineChoice(array
+          (
+          'model' => $this->getRelatedModelName('agStaffResourceType'),
+          'add_empty' => true,
+          'method' => 'getStaffResourceType',
+            //'query' => $this::$staticLists['agFacilityResourceType']
+            )
         )
-    ));
+    );
     $this->setWidget(
-    'deployment_algorithm_id',
-    new sfWidgetFormDoctrineChoice(array(
-      'model' => $this->getRelatedModelName('agDeploymentAlgorithm'),
-      'add_empty' => true,
-      'method' => 'getDeploymentAlgorithm',
-      //'query' => $this::$staticLists['agFacilityResourceType']
+        'deployment_algorithm_id',
+        new sfWidgetFormDoctrineChoice(array
+          (
+          'model' => $this->getRelatedModelName('agDeploymentAlgorithm'),
+          'add_empty' => true,
+          'method' => 'getDeploymentAlgorithm',
+            //'query' => $this::$staticLists['agFacilityResourceType']
+            )
         )
-    ));
+    );
     $this->setWidget(
-    'shift_status_id',
-    new sfWidgetFormDoctrineChoice(array(
-      'model' => $this->getRelatedModelName('agShiftStatus'),
-      'add_empty' => true,
-      'method' => 'getShiftStatus',
-      //'query' => $this::$staticLists['agFacilityResourceType']
+        'shift_status_id',
+        new sfWidgetFormDoctrineChoice(array
+          (
+          'model' => $this->getRelatedModelName('agShiftStatus'),
+          'add_empty' => true,
+          'method' => 'getShiftStatus',
+            //'query' => $this::$staticLists['agFacilityResourceType']
+            )
         )
-    ));
-    $this->widgetSchema->setLabels(array(
-        'shift_template' =>'Name',
-        'minutes_start_to_facility_activation' =>'Minutes to facility activation',
-        'staff_resource_type_id' => 'Staff Type'
-        ));
+    );
+    $this->widgetSchema->setLabels(array
+      (
+      'shift_template' => 'Name',
+      'minutes_start_to_facility_activation' => 'Minutes to facility activation',
+      'staff_resource_type_id' => 'Staff Type'
+        )
+    );
     $this->getWidget('task_length_minutes')->setAttribute('size', '8');
     $this->getWidget('break_length_minutes')->setAttribute('size', '8');
     $this->getWidget('minutes_start_to_facility_activation')->setAttribute('size', '8');
