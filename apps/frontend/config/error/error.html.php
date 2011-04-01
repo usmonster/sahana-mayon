@@ -1,6 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<?php $path = sfConfig::get('sf_relative_url_root', preg_replace('#/[^/]+\.php5?$#', '', isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : (isset($_SERVER['ORIG_SCRIPT_NAME']) ? $_SERVER['ORIG_SCRIPT_NAME'] : ''))) ?>
-<?php sfProjectConfiguration::getActive()->loadHelpers(array('Helper', 'Tag', 'Url', 'Asset', 'Partial')); ?>
+<?php $path = sfConfig::get('sf_relative_url_root', preg_replace
+    ('#/[^/]+\.php5?$#', '', isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] :
+    (isset($_SERVER['ORIG_SCRIPT_NAME']) ? $_SERVER['ORIG_SCRIPT_NAME'] : ''))) ?>
+<?php sfProjectConfiguration::getActive()->loadHelpers(array
+  ('Helper', 'Tag', 'Url', 'Asset', 'Partial')); ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <?php include_partial('global/Header'); ?>
@@ -8,7 +11,8 @@
   <body>
     <div id="header">
       <div class="floatLeft">
-        <?php echo image_tag('Sahana_logo.png', array('class' => 'logo', 'alt' => 'Sahana Agasti: Emergency Management')) ?>
+        <?php echo image_tag('Sahana_logo.png', array('class' => 'logo',
+          'alt' => 'Sahana Agasti: Emergency Management')) ?>
         <!--<h1>Sahana Agasti:</h1><h2> Emergency Management </h2>-->
       </div>
     </div>
@@ -16,7 +20,7 @@
       <div id="navigation">
       </div>
       <div id="columns">
-          <br/> <?php echo $_SERVER['REQUEST_URI'] ?>
+        <br/> <?php echo $_SERVER['REQUEST_URI'] ?>
         <h2> New York City Sahana Agasti</h2>
         <br/>
         <h5>The server returned a "<?php echo $code ?> <?php echo $text ?>".</h5>

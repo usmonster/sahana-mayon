@@ -5,16 +5,13 @@
 <h3>Congratulations, your event has been deployed</h3>
 
 <?php
-if(isset($blackOutFacilities))
-{
+if (isset($blackOutFacilities)) {
 ?>
 
   <p><span class="highlightedText">Please Note!</span> the shifts at these facilities, in these facility groups have not been affected (their activation times have not been changed).</p>
   <a href="<?php echo url_for('event/fgroup?event=' . urlencode($event_name)) ?>" class="linkButton" title="Facilities and Resources">Maually set Facility Resource Activation Times</a><br/>
 <?php
-
-  foreach($blackOutFacilities as $facilityKey => $facility){
-    
+  foreach ($blackOutFacilities as $facilityKey => $facility) {
 
   }
 }

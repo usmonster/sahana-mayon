@@ -33,7 +33,8 @@ class agEmbeddedAgEmailContactForm extends agEmailContactForm
 
     $this->setValidators(array(
       'id' => new sfValidatorChoice(array('choices' =>
-        array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
+        array($this->getObject()->get('id')), 'empty_value' =>
+        $this->getObject()->get('id'), 'required' => false)),
       'email_contact' => new sfValidatorEmail(array('required' => false, 'empty_value' => null)),
     ));
   }
