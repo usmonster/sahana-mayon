@@ -119,6 +119,7 @@ class eventActions extends agActions
     //$this->event_facility_resources = null;
     if(count($facility_groups) > 1)
     {
+      //return only facility resources with no activation times for active facility groups
       $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group,null,1);
       $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
     }

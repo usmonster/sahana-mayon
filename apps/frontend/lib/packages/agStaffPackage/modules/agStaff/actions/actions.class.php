@@ -718,4 +718,53 @@ class agStaffActions extends agActions
     }
   }
 
+  public function executeNewImport(sfWebRequest $request)
+  {
+    //$this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
+
+    $uploadedFile = $_FILES["import"];
+
+    $uploadDir = sfConfig::get('sf_upload_dir') . '/';
+    move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"]);
+    $this->importPath = $uploadDir . $uploadedFile["name"];
+
+    // fires event so listener will process the file (see ProjectConfiguration.class.php)
+    $this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready'));
+    // TODO: eventually use this ^^^ to replace this vvv.
+
+    $import = new AgImportXLS();
+//    $returned = $import->createTempTable();
+
+    $processedToTemp = $import->processImport($this->importPath);
+    $this->numRecordsImported = $import->numRecordsImported;
+    $this->events = $import->events;
+
+    // Normalize imported temp data only if import is successful.
+    if ($processedToTemp)
+    {
+      // Grab table name from AgImportXLS class.
+      $sourceTable = $import->tempTable ;
+      $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
+
+      $format="%d/%m/%Y %H:%M:%S";
+//      echo strftime($format);
+
+      $dataNorm->normalizeImport();
+
+      $this->summary = $dataNorm->summary;
+//      echo strftime($format);
+    }
+
+
+    //this below block is a bit hard coded and experimental, it should be changed to use gparams
+
+      $agLuceneIndex = new agLuceneIndex('agFacility');
+      $indexResult = $agLuceneIndex->indexAll();
+
+//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+//      $dispatcher = sfContext::getInstance()->getEventDispatcher();
+//      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
+//      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
+
+  }
 }
