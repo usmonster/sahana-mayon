@@ -47,6 +47,28 @@ class agStaffActions extends agActions
 //              p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
 //              name.agPersonNameType nametype'
 //    );
+
+    $staffStatus = 'active';
+    $staffStatusOptions = agDoctrineQuery::create()
+            ->select('s.staff_status, s.staff_status')
+            ->from('agStaffStatus s')
+            ->execute(array(), 'key_value_pair');
+    //the above query returns an array of keys matching their values.
+    //ideally the above should exist in a global param, so the database is not queried all the time
+    $staffStatusOptions['all'] = 'all';
+    if ($request->getParameter('status') && in_array($request->getParameter('status'),$staffStatusOptions)) {
+      $staffStatus = $request->getParameter('status');
+    }
+    $this->statusFilterForm = new sfForm();
+    $this->statusFilterForm->setWidgets(array(
+      'status' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $staffStatusOptions, 'label' => 'Staff Status'), array('onchange' => 'submit();')),// 'add_empty' => true))// ,'onClick' => 'submit()'))
+    ));
+    $this->statusFilterForm->setDefault('status', $staffStatus);
+
+    $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusFilterForm->getWidgetSchema());
+    $this->statusFilterForm->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
+    $this->statusFilterForm->getWidgetSchema()->setFormFormatterName('inline');
+
     $query = Doctrine::getTable('agStaff')
             ->createQuery('a')
             ->select('p.*, s.*, namejoin.*, name.*, nametype.*, stfrsco.*, o.organization agency, stfrsc.staff_resource_type_id, e.id, ememail1.id, ec1.id, ect1.email_contact_type work_email, ememail2.id, ec2.id, ect2.email_contact_type home_email')
@@ -58,8 +80,10 @@ class agStaffActions extends agActions
               s.agStaffStatus ss, p.agEntity e,
               e.agEntityEmailContact ememail1, ememail1.agEmailContact ec1, ec1.agEmailContactType ect1,
               e.agEntityEmailContact ememail2, ememail2.agEmailContact ec2, ec2.agEmailContactType ect2'
-            )
-            ->where('ss.staff_status=?', 'active');
+            );
+            if($staffStatus != 'all'){
+              $query->where('ss.staff_status=?', $staffStatus);
+            }
 
     $this->pager = new sfDoctrinePager('agStaff', 20);
     /**
@@ -197,12 +221,12 @@ class agStaffActions extends agActions
     $names_title = new agPersonNameHelper($agPerson->getId());
     $person_names_title = $names_title->getPrimaryNameByType();
     $this->getResponse()
-           ->setTitle(
-             'Sahana Agasti Staff - ' .
-             (isset($person_names_title[$agPerson->getId()]['given']) ? $person_names_title[$agPerson->getId()]['given'] : '') .
-             ' ' .
-             (isset($person_names_title[$agPerson->getId()]['family']) ? $person_names_title[$agPerson->getId()]['family'] : '' )
-           );
+        ->setTitle(
+            'Sahana Agasti Staff - ' .
+            (isset($person_names_title[$agPerson->getId()]['given']) ? $person_names_title[$agPerson->getId()]['given'] : '') .
+            ' ' .
+            (isset($person_names_title[$agPerson->getId()]['family']) ? $person_names_title[$agPerson->getId()]['family'] : '' )
+    );
     //end p-code
   }
 
@@ -740,13 +764,12 @@ class agStaffActions extends agActions
     $this->events = $import->events;
 
     // Normalize imported temp data only if import is successful.
-    if ($processedToTemp)
-    {
+    if ($processedToTemp) {
       // Grab table name from AgImportXLS class.
-      $sourceTable = $import->tempTable ;
+      $sourceTable = $import->tempTable;
       $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
 
-      $format="%d/%m/%Y %H:%M:%S";
+      $format = "%d/%m/%Y %H:%M:%S";
 //      echo strftime($format);
 
       $dataNorm->normalizeImport();
@@ -758,13 +781,13 @@ class agStaffActions extends agActions
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams
 
-      $agLuceneIndex = new agLuceneIndex('agFacility');
-      $indexResult = $agLuceneIndex->indexAll();
+    $agLuceneIndex = new agLuceneIndex('agFacility');
+    $indexResult = $agLuceneIndex->indexAll();
 
 //      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
 //      $dispatcher = sfContext::getInstance()->getEventDispatcher();
 //      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
 //      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
-
   }
+
 }

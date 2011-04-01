@@ -1,3 +1,11 @@
+<script type="text/javascript">
+<!--
+function go(){
+window.location = window.location.pathname + '?status=' + document.statusForm.status.options[document.statusForm.status.selectedIndex].value
+}
+//-->
+</script>
+
 <?php
 $agPersonNameTypesResultSet = Doctrine::getTable('agPersonNameType')
         ->createQuery('b')
@@ -13,12 +21,14 @@ $sortOrder = $sf_request->getGetParameter('order');
 
 $ag_person_name_types = $agPersonNameTypesResultSet;
 ?>
+
 <table class="staffTable">
   <caption>Staff Members
     <?php
     // Output the current staff members being shown, as well total number in the list.
     echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count();
     ?>
+    <div class="floatRight" style="font-size: 12px;"><form name="statusForm" action="/staff/list" method="get"><?php echo $statusFilterForm ?></form></div>
   </caption>
   <thead>
     <tr class="tableRow noBorderBottom">
@@ -159,7 +169,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
           </td>
           <td>
             <?php
-            echo $staffMember->getAgStaffStatus()->getStaffStatus();;
+            echo $staffMember->getAgStaffStatus()->getStaffStatus();
             ?>
           </td>
         </tr>
