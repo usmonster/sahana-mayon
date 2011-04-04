@@ -49,15 +49,13 @@ $(document).ready(function() {
 $(document).ready(function() {
   $('.modalSubmit').live('click',function(){
     var $submitter = $(this);
-    console.log($submitter);
     $.ajax({
       context: $submitter,
       url: $(this).parent().attr('action'),
       type: "POST",
       data: $('#' + $(this).parent().attr('id') + ' :input'),
       success:
-        function (data, $submitter) {
-        console.log($submitter);
+        function (data) {
           showFeedBack(data, $(this), processReturn);
         }
     });
@@ -110,6 +108,11 @@ function returnContent(data) {
 function processReturn(data) {
   pattern = /facilityresource\/[\w\d+%-]*/
   if(data == $(this).attr('id')) {
-    returnContent(data);
+    appendContent(data);
+//    returnContent(data);
   }
+}
+
+function appendContent(data) {
+  $('#modalContent').append('<h2>'+data+'</h2');
 }
