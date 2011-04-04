@@ -1,5 +1,5 @@
 
-<h2> New York City Sahana Agasti</h2>
+<h2>New York City Sahana Agasti</h2>
 
 <?php
 if (!$sf_user->isAuthenticated()) {
@@ -13,7 +13,7 @@ if ($sf_user->isAuthenticated()) {
 }
 ?>
 
-<p> Agasti 2.0 is the NYC Office of Emergency Management Coastal Storm Plan web application.
+<p>Agasti 2.0 is the NYC Office of Emergency Management Coastal Storm Plan web application.
   Agasti is an emergency management application with tools to manage staff, resources, client
   information and facilities through an easy to use web interface. </p>
 
@@ -21,15 +21,16 @@ if ($sf_user->isAuthenticated()) {
 
 <?php
 if ($sf_user->isAuthenticated()) {
-  echo "<table cellspacing='20'>
+?><table cellspacing='20'>
     <tr>
-      <td><a href='./prepare' class='linkButton width140'>Prepare</a></td>
-      <td><a href='./scenario' class='linkButton width140'>Respond</a></td>
+      <td><?php echo link_to('Prepare', 'home/prepare', array('class' => 'linkButton width140', 'title' => 'Prepare')); ?></td>
+      <td><?php echo link_to('Respond', 'scenario/index', array('class' => 'linkButton width140', 'title' => 'Respond')); ?></td>
     </tr>
     <tr>
-      <td><a href='./wiki' class='linkButton width140'>Wiki Home</a></td>
-      <td><a href='./admin' class='linkButton width140'>Administration</a></td>
+      <td><?php echo link_to('Wiki Home', public_path('wiki/doku.php'), array('class' => 'linkButton width140', 'title' => 'Wiki Home')); ?></td>
+      <td><?php echo link_to('Administration', 'admin/index', array('class' => 'linkButton width140', 'title' => 'Administration')); ?></td>
     </tr>
-</table>";
+  </table>
+<?php
 }
 ?>
