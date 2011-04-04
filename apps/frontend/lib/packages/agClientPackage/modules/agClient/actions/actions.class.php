@@ -12,7 +12,6 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
-
 class agClientActions extends sfActions
 {
 

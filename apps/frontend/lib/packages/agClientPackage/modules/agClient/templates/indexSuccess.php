@@ -1,14 +1,17 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
 <?php
-//note for devs: anytime you see *Name Of Event* it's a placeholder for where you should make
-//the app display the name of the event the user is working in.
+//note for devs: anytime you see *Name Of Event* it's a placeholder
+//for where you should make the app display the name of the event
+//the user is working in.
 //
-// This page is currently a stub!  The following random string is a marker for the stub.
+// This page is currently a stub!  The following random string is
+// a marker for the stub.
 // PnaODfcm3Kiz4MV4vzbtr4
 // PLEASE REMOVE THIS COMMENT BLOCK WHEN YOU DEVELOP THIS PAGE!
 //
-//You should probably add a confirmation that the event was deployed here when it's first created.
+//You should probably add a confirmation that the event was deployed
+//here when it's first created.
 ?>
 <h2> *Event Name* Client Management </h2>
 <p>During an emergency response staff and volunteers working within the shelter system will use

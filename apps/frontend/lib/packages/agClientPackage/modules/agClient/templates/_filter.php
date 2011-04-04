@@ -1,18 +1,24 @@
 <?php use_helper('I18N') ?>
 <?php
-  $filterForm = new sfForm();
-  $choices = array('male' => 'male', 'female' => 'female');
-  $filterForm->setWidgets(array(
-    'sex'          => new sfWidgetFormChoice(array('multiple' => true, 'choices' => $choices)),
-    'nationality'  => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agNationality')),
-    'ethnicity'    => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agEthnicity'  )),
-    'religion'     => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReligion')),
-  ));
+$filterForm = new sfForm();
+$choices = array('male' => 'male', 'female' => 'female');
+$filterForm->setWidgets(
+    array(
+      'sex' => new sfWidgetFormChoice(
+          array('multiple' => true, 'choices' => $choices)),
+      'nationality' => new sfWidgetFormDoctrineChoice(
+          array('multiple' => true, 'model' => 'agNationality')),
+      'ethnicity' => new sfWidgetFormDoctrineChoice(
+          array('multiple' => true, 'model' => 'agEthnicity')),
+      'religion' => new sfWidgetFormDoctrineChoice(
+          array('multiple' => true, 'model' => 'agReligion')),
+    )
+);
 
- $filterForm->getWidget('sex')->setAttribute('class', 'fullWidth');
- $filterForm->getWidget('nationality')->setAttribute('class', 'fullWidth');
- $filterForm->getWidget('ethnicity')->setAttribute('class', 'fullWidth');
- $filterForm->getWidget('religion')->setAttribute('class', 'fullWidth');
+$filterForm->getWidget('sex')->setAttribute('class', 'fullWidth');
+$filterForm->getWidget('nationality')->setAttribute('class', 'fullWidth');
+$filterForm->getWidget('ethnicity')->setAttribute('class', 'fullWidth');
+$filterForm->getWidget('religion')->setAttribute('class', 'fullWidth');
 ?>
 <div class="filterBox">
   <h3>Filter:</h3>

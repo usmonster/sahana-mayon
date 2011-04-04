@@ -34,8 +34,7 @@ class agActions extends sfActions
     self::doSearch($request->getParameter('query'));
 
 
-    $this->setTemplate(sfConfig::get('sf_app_dir')
-        . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
+    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
     //$this->setTemplate('global/search');
   }
 
