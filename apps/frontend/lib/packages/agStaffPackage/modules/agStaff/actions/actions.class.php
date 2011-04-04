@@ -31,8 +31,98 @@ class agStaffActions extends agActions
     //do some index stuff here.
   }
 
+
+  public function executeNewlist(sfWebRequest $request)
+  {
+    $staffStatus = 'active';
+    $staffStatusOptions = agDoctrineQuery::create()
+            ->select('s.staff_status, s.staff_status')
+            ->from('agStaffStatus s')
+            ->execute(array(), 'key_value_pair');
+    //the above query returns an array of keys matching their values.
+    //ideally the above should exist in a global param, so the database is not queried all the time
+    $staffStatusOptions['all'] = 'all';
+    if ($request->getParameter('status') && in_array($request->getParameter('status'),$staffStatusOptions)) {
+      $staffStatus = $request->getParameter('status');
+    }
+    $this->statusFilterForm = new sfForm();
+    $this->statusFilterForm->setWidgets(array(
+      'status' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $staffStatusOptions, 'label' => 'Staff Status'), array('onchange' => 'submit();')),// 'add_empty' => true))// ,'onClick' => 'submit()'))
+    ));
+    $this->statusFilterForm->setDefault('status', $staffStatus);
+
+    $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusFilterForm->getWidgetSchema());
+    $this->statusFilterForm->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
+    $this->statusFilterForm->getWidgetSchema()->setFormFormatterName('inline');
+
+    $query = Doctrine::getTable('agStaff')
+            ->createQuery('a')
+            ->select('p.*, s.*, namejoin.*, name.*, nametype.*, stfrsco.*, o.organization agency, stfrsc.staff_resource_type_id, e.id, ememail1.id, ec1.id, ect1.email_contact_type work_email, ememail2.id, ec2.id, ect2.email_contact_type home_email')
+            ->from(
+                'agStaff s, s.agPerson p,
+              p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
+              name.agPersonNameType nametype, s.agStaffResource stfrsc,
+              stfrsc.agStaffResourceOrganization stfrsco, stfrsc.agStaffResourceType, stfrsco.agOrganization o,
+              s.agStaffStatus ss, p.agEntity e,
+              e.agEntityEmailContact ememail1, ememail1.agEmailContact ec1, ec1.agEmailContactType ect1,
+              e.agEntityEmailContact ememail2, ememail2.agEmailContact ec2, ec2.agEmailContactType ect2'
+            );
+            if($staffStatus != 'all'){
+              $query->where('ss.staff_status=?', $staffStatus);
+            }
+  $query = agDoctrineQuery::create()
+            ->select('a.*, afr.*, afgt.*, fr.*')
+            ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
+
+    // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
+    if ($this->event != "") {
+      $query->where('a.event_id = ?', $this->event_id);
+    }
+    $facilityGroupArray = array();
+    $this->ag_event_facility_groups = $query->execute();
+    foreach ($this->ag_event_facility_groups as $eventFacilityGroup) {
+      $tempArray = $this->queryForTable($eventFacilityGroup->id);
+      foreach ($tempArray as $ta) {
+        array_push($facilityGroupArray, $ta);
+      }
+    }
+    $this->staffArray = $staffArray;
+    $this->pager = new agArrayPager(null, 10);
+
+    if ($request->getParameter('sort') && $request->getParameter('order')) {
+      $sortColumns = array('group' => 'efg_event_facility_group',
+        'name' => 'f_facility_name',
+        'code' => 'f_facility_code',
+        'status' => 'ras_facility_resource_allocation_status',
+        'time' => 'efrat_activation_time',
+        'type' => 'fgt_facility_group_type',
+        'event' => 'e_event_name');
+      $sort = $sortColumns[$request->getParameter('sort')];
+      agArraySort::$sort = $sort;
+      usort($facilityGroupArray, array('agArraySort', 'arraySort'));
+      if ($request->getParameter('order') == 'DESC') {
+        $staffArray = array_reverse($staffArray);
+      }
+    }
+    $this->pager->setResultArray($staffArray);
+    $this->pager->setPage($this->getRequestParameter('page', 1));
+    $this->pager->init();
+
+    
+    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
+            ->createQuery('c')
+            ->execute();
+    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
+            ->createQuery('d')
+            ->execute();
+   //p-code
+  //$this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' ');
+   //end p-code
+  }
+
+
   /**
-   * @todo detail this function
+   * provides staff listing data to the staff list template
    * @param sfWebRequest $request
    */
   public function executeList(sfWebRequest $request)

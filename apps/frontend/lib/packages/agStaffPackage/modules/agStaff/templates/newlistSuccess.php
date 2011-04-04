@@ -1,3 +1,11 @@
+<script type="text/javascript">
+<!--
+function go(){
+window.location = window.location.pathname + '?status=' + document.statusForm.status.options[document.statusForm.status.selectedIndex].value
+}
+//-->
+</script>
+
 <?php
 $agPersonNameTypesResultSet = Doctrine::getTable('agPersonNameType')
         ->createQuery('b')
@@ -7,15 +15,24 @@ foreach ($agPersonNameTypesResultSet as $nameType) {
 }
 $sortColumn = $sf_request->getGetParameter('sort');
 $sortOrder = $sf_request->getGetParameter('order');
-($sf_request->getGetParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
-($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
-($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';
+
+//actions.class.php global list actions
+
+if($request->getGetParameter('filter')) $this->filter = $request->getGetParameter('filter');
+if($request->getGetParameter('sort')) $this->sort = $request->getGetParameter('sort');
+if($request->getGetParameter('order')) $this->order = $request->getGetParameter('order');
+
+//template
+(isset($filter)) ? $filterAppend = '&filter=' . $filter : $filterAppend = '';
+(isset($sort)) ? $sortAppend = '&sort=' . $sort : $sortAppend = '';
+(isset($order)) ? $orderAppend = '&order=' . $order : $orderAppend = '';
 
 $ag_person_name_types = $agPersonNameTypesResultSet;
 ?>
-<div class="floatRight" style="font-size: 12px;"><form name="statusForm" action="<?php echo url_for('staff/list') ?>" method="get"><?php echo $statusFilterForm ?></form></div>
+
 <table class="staffTable">
   <caption>Staff List
+        <div class="floatRight" style="font-size: 12px;"><form name="statusForm" action="<?php echo url_for('staff/list') ?>" method="get"><?php echo $statusFilterForm ?></form></div>
   </caption>
   <thead>
     <tr class="tableRow noBorderBottom">

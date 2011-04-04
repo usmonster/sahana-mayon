@@ -906,109 +906,6 @@ th .tableRow {
   display: none;
 }
 
-/* MENU */
-
-/*@import url('/css/menu.css');*/
-
-/*#navigation li ul
-{
-  margin:0px;
-  padding:0px;
-  display:none;
-  position:absolute;
-  left:0px;
-  top:20px;
-  background-color:#999;
-}
-
-#navigation li:hover ul
-{
-  display:block;
-  width:120px;
-}
-
-#navigation li li
-{
-  list-style:none;
-  display:list-item;
-}
-
-#navigation ul li
-{
-  display:inline;
-  height:30px;
-  float:left;
-  list-style:none;
-  margin-left:15px;
-  position:relative;
-}*/
-
-/*#navigation ul {
-  list-style-type: none;
-}*/
-
-/*.menu li ul
-{
-  margin:0px;
-  padding:0px;
-  display:none;
-  position:absolute;
-  left:0px;
-  top:20px;
-}*/
-
-/* This is the top level UL that contains all top level nav elements
-ul.menu {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  list-style-type: none;
-}*/
-
-
-/*
- These are the top level nav elements 
-li.menu1 {
-  float: left;
-  border: solid 1px red;
-  padding: 5px;
-  position: relative;
-  width: 10em;
-  list-style-type: none;
-}
-
-This is the container UL for the second level LI elements
-li.menu1 ul {
-  display: none;
-  position: absolute; 
-  top: 1em;
-  left: 0;
-  list-style: none;
-  list-style-type: none;
-}
-
- This is the UL that holds the 2nd level menu items
-li.menu1 > ul {
-  top: auto;
-  left: auto;
-  list-style-type: none;
-}
-
-li.menu2 {
-  color: blue;
-  padding: 5px;
-  border: solid 1px #000000;
-  margin: 0;
-  list-style: none;
-  list-style-type: none;
-  left: 0;
-}
-
-li.menu1:hover > ul {
-  display: block;
-}*/
-
-
 /* Login Form */
 .loginPromptForm{
   vertical-align: top;
@@ -1291,6 +1188,27 @@ P {
 }
 
 
+.staffTable tr, .singleTable tr {
+
+}
+
+.staffTable td, .staffTable th {
+  padding: .25em;
+  
+  text-align: center;
+}
+
+tfoot.tFootInfo tr
+{
+    font-size:  .75em;
+    margin: 0;
+    border-bottom: none;
+}
+
+tfoot.tFootInfo td
+{
+  text-align: right;
+}
 /**************JQuery Search Box CSS *************/
 
 a.signin {
@@ -1355,3 +1273,8 @@ a.signin.menu-open span {
 
 
 /**************End JQuery Search Box CSS *************/
+
+
+#modalAppend {
+  display: none;
+}
