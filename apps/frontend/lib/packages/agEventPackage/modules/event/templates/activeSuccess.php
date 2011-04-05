@@ -2,7 +2,7 @@
 <?php
 //You should probably add a confirmation that the event was deployed here when it's first created.
 ?>
-<h3>Congratulations, your event has been deployed</h3>
+<h3>Congratulations, Your Event Has Been Deployed</h3>
 
 <?php
 if (isset($blackOutFacilities)) {
