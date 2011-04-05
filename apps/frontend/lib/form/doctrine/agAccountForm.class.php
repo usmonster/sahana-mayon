@@ -60,6 +60,7 @@ class agAccountForm extends sfGuardUserAdminForm
 //
 //
 //  }
+
   public function saveEmbeddedForms($con = null, $forms = null)
   {
     $forms = $this->embeddedForms;

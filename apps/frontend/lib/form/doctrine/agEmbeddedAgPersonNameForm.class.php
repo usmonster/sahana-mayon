@@ -25,15 +25,26 @@ class agEmbeddedAgPersonNameForm extends agPersonNameForm
   {
     parent::setup();
 
-    $this->setWidgets(array(
-      'id' => new sfWidgetFormInputHidden(),
-      'person_name' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-    ));
+    $this->setWidgets(
+        array(
+          'id' => new sfWidgetFormInputHidden(),
+          'person_name' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+        )
+    );
 
-    $this->setValidators(array(
-      'id' => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'person_name' => new sfValidatorString(array('max_length' => 64, 'required' => false, 'empty_value' => null)),
-    ));
+    $this->setValidators(
+        array(
+          'id' => new sfValidatorChoice(
+              array('choices' => array(
+                  $this->getObject()->get('id')),
+                'empty_value' => $this->getObject()->get('id'),
+                'required' => false)
+          ),
+          'person_name' => new sfValidatorString(
+              array('max_length' => 64, 'required' => false, 'empty_value' => null)
+          ),
+        )
+    );
   }
 
   public function configure()

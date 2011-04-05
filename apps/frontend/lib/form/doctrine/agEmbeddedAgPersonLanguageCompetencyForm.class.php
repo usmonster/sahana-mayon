@@ -40,23 +40,35 @@ class agEmbeddedAgPersonLanguageCompetencyForm extends agPersonLanguageCompetenc
       }
     }
 
-    $this->setWidgets(array(
-      'person_language_id' => new sfWidgetFormInputHidden(),
-      'language_format_id' => new sfWidgetFormInputHidden(),
-      'language_competency_id' => new sfWidgetFormDoctrineChoice(array('query' =>
-        $this::$staticLists['agLanguageCompetency'], 'model' =>
-        $this->getRelatedModelName('agLanguageCompetency'), 'add_empty' => true),
-          array('class' => 'inputGray')),
-    ));
+    $this->setWidgets(
+        array(
+          'person_language_id' => new sfWidgetFormInputHidden(),
+          'language_format_id' => new sfWidgetFormInputHidden(),
+          'language_competency_id' => new sfWidgetFormDoctrineChoice(
+              array('query' => $this::$staticLists['agLanguageCompetency'],
+                'model' => $this->getRelatedModelName('agLanguageCompetency'),
+                'add_empty' => true),
+              array('class' => 'inputGray')
+          ),
+        )
+    );
 
-    $this->setValidators(array(
-      'person_language_id' => new sfValidatorDoctrineChoice(array('model' =>
-        $this->getRelatedModelName('agPersonMjAgLanguage'), 'required' => false)),
-      'language_format_id' => new sfValidatorDoctrineChoice(array('model' =>
-        $this->getRelatedModelName('agLanguageFormat'), 'required' => false)),
-      'language_competency_id' => new sfValidatorDoctrineChoice(array('model' =>
-        $this->getRelatedModelName('agLanguageCompetency'), 'required' => false)),
-    ));
+    $this->setValidators(
+        array(
+          'person_language_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agPersonMjAgLanguage'),
+                'required' => false)
+          ),
+          'language_format_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agLanguageFormat'),
+                'required' => false)
+          ),
+          'language_competency_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agLanguageCompetency'),
+                'required' => false)
+          ),
+        )
+    );
   }
 
   /**

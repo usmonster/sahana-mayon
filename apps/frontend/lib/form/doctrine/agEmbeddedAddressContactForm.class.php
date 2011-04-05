@@ -16,9 +16,6 @@
 class agEmbeddedAddressContactForm extends agEntityAddressContactForm
 {
 
-  /**
-   * @todo - comment this function
-   */
   public function setup()
   {
     $this->setWidgets(
@@ -37,22 +34,29 @@ class agEmbeddedAddressContactForm extends agEntityAddressContactForm
 
     $this->setValidators(
         array(
-          'id' => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')),
-            'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-          'entity_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agEntity'))),
-          'address_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agAddress'))),
-          'address_contact_type_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agAddressContactType'))),
+          'id' => new sfValidatorChoice(
+              array('choices' => array($this->getObject()->get('id')),
+                'empty_value' => $this->getObject()->get('id'), 'required' => false)
+          ),
+          'entity_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agEntity'))
+          ),
+          'address_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agAddress'))
+          ),
+          'address_contact_type_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agAddressContactType'))
+          ),
           'priority' => new sfValidatorInteger(),
           'created_at' => new sfValidatorDateTime(),
           'updated_at' => new sfValidatorDateTime(),
-          'address_to_type' => new sfValidatorString(array('max_length' => 255)),
+          'address_to_type' => new sfValidatorString(
+              array('max_length' => 255)
+          ),
         )
     );
   }
 
-  /**
-   * @todo - comment this function
-   */
   public function configure()
   {
     unset($this['entity_id'], $this['created_at'], $this['updated_at']);

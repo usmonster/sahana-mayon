@@ -13,10 +13,6 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-
-/**
- * @todo add description of class in header
- */
 class agSudoUser
 {
 

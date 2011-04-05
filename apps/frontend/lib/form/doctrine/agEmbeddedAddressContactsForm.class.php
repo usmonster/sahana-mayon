@@ -53,12 +53,14 @@ class agEmbeddedAddressContactsForm extends sfForm
         // only by address values that have address element 4/state as their address_element value.
         // Refactor to use agAddressFormat's field_type_id in conjunction with agFieldType.
         if ($addressElement == 'state') {
-          $floo->setWidget('address_to_type', new sfWidgetFormDoctrineChoice(array('multiple' =>
-                false, 'model' => 'agAddressValue')));
+          $floo->setWidget(
+              'address_to_type', new sfWidgetFormDoctrineChoice(
+                  array('multiple' => false, 'model' => 'agAddressValue')
+              )
+          );
           $floo->widgetSchema->setLabel('address_to_type', false);
           $floo->widgetSchema['address_to_type']->addOption(
-              'query',
-                  agDoctrineQuery::create()
+              'query', agDoctrineQuery::create()
                   ->select('a.value')
                   ->from('agAddressValue a')
                   ->where('a.address_element_id = 4')
@@ -69,12 +71,7 @@ class agEmbeddedAddressContactsForm extends sfForm
     }
 
     $q = agDoctrineQuery::create()
-            ->select('f.line_sequence AS line_sequence,
-              f.inline_sequence AS inline_sequence,
-              f.pre_delimiter AS pre_delimiter,
-              f.post_delimiter AS post_delimiter,
-              f.is_required AS is_required,
-              e.address_element AS address_element')
+            ->select('f.line_sequence AS line_sequence, f.inline_sequence AS inline_sequence, f.pre_delimiter AS pre_delimiter, f.post_delimiter AS post_delimiter, f.is_required AS is_required, e.address_element AS address_element')
             ->from('agAddressFormat f')
             ->leftJoin('f.agAddressStandard s')
             ->leftJoin('s.agCountry c')
