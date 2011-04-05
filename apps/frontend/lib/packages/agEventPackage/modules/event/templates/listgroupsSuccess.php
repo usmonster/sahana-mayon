@@ -1,3 +1,8 @@
+<?php if(isset($missingEvent)) : ?>
+<h3>You need a selected and active event to use this page. Please return to the Event Dashboard using the link below, or browse to the appropriate page through the navigation menu.</h3>
+<a href="<?php echo url_for('event/index'); ?>" class="linkButton">Event Dashboard</a>
+<?php return; ?>
+<?php endif; ?>
 <?php
 use_javascript('jquery.ui.custom.js');
 use_javascript('agMain.js');
@@ -9,16 +14,8 @@ $sortOrder = $sf_request->getGetParameter('order');
 ($sf_request->getParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getParameter('sort') : $sortAppend = '';
 ($sf_request->getParameter('order')) ? $orderAppend = '&order=' . $sf_request->getParameter('order') : $orderAppend = '';
 ?>
-<h2><?php if (isset($event)) {
-  echo '<span class="highlightedText">' . $event->event_name . ' </span>';
-} ?> Facilities Management</h2>
+<h2><?php if (isset($event)) : ?><span class="highlightedText"><?php echo $event->event_name; ?></span><?php endif; ?> Facilities Management</h2>
 <br />
-<?php if(isset($event_id)): ?>
-<div class="rightFloat" >
-  <a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="linkButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
-</div>
-<?php endif; ?>
-
 <h3>Facilities <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
 <div id="tableContainer">
   <table class="singleTable">
@@ -29,6 +26,13 @@ $sortOrder = $sf_request->getGetParameter('order');
           <?php
           echo($sortColumn == 'group' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=group&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=group&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
           echo($sortColumn == 'group' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=group&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=group&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
+          ?>
+        </th>
+        <th class="head">
+          <div class="tableHeaderContent">Facility Group Type</div>
+          <?php
+          echo($sortColumn == 'type' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=type&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
+          echo($sortColumn == 'type' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=type&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
           ?>
         </th>
         <th class="head">
@@ -59,51 +63,49 @@ $sortOrder = $sf_request->getGetParameter('order');
           echo($sortColumn == 'time' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=time&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=time&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
           ?>
         </th>
+        <?php if (!(isset($event))): ?>
         <th class="head">
-          <div class="tableHeaderContent">Facility Group Type</div>
-          <?php
-          echo($sortColumn == 'type' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=type&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=ASC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="ascending">&#x25B2;</a>');
-          echo($sortColumn == 'type' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=type&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=type&order=DESC' . (isset($event) ? '&event=' . urlencode($event->event_name) : '')) . '" class="buttonSort" title="descending">&#x25BC;</a>');
-          ?>
-          </th>
-          <?php if (!(isset($event))): ?>
-            <th class="head">
-              <div class="tableHeaderContent">Event</div>
+          <div class="tableHeaderContent">Event</div>
           <?php
             echo($sortColumn == 'event' && $sortOrder == 'ASC' ? '<a href="' . url_for('event/listgroups?sort=event&order=ASC') . '" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('event/listgroups?sort=event&order=ASC') . '" class="buttonSort" title="ascending">&#x25B2;</a>');
             echo($sortColumn == 'event' && $sortOrder == 'DESC' ? '<a href="' . url_for('event/listgroups?sort=event&order=DESC') . '" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('event/listgroups?sort=event&order=DESC') . '" class="buttonSort" title="descending">&#x25BC;</a>');
           ?>
-            </th>
-          <?php endif; ?>
+        </th>
+        <?php endif; ?>
           </tr>
         </thead>
         <tbody>
 <?php foreach ($pager->getResults() as $facility): ?>
-<?php // foreach ($facilityGroup as $facility):  ?>
-              <tr>
-                <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText modalTrigger" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Scenario"><?php echo $facility['efg_event_facility_group'] ?></a></td>
-                <td><?php echo $facility['f_facility_name'] . ": " . $facility['frt_facility_resource_type']; ?></td>
-                <td><?php echo $facility['f_facility_code']; ?></td>
-                <td class="modalReloadable"><?php echo $facility['ras_facility_resource_allocation_status']; ?></td>
-            <td><?php
-              if (isset($facility['efrat_activation_time'])) {
-                $timeSplit = explode(' ', $facility['efrat_activation_time']);
-                echo $timeSplit[0];
-              } else {
-                echo '----';
-              }
-?></td>
-              <td><?php echo $facility['fgt_facility_group_type'] ?></td>
+          <tr>
+            <td><a href="<?php echo url_for('event/groupdetail?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>" class="linkText modalTrigger" title="Facility Group <?php echo $facility['efg_event_facility_group']; ?> for the <?php echo $facility['e_event_name']; ?> Event"><?php echo $facility['efg_event_facility_group'] ?></a></td>
+            <td><?php echo $facility['fgt_facility_group_type'] ?></td>
+            <td><?php echo $facility['f_facility_name'] . ": " . $facility['frt_facility_resource_type']; ?></td>
+            <td><?php echo $facility['f_facility_code']; ?></td>
+            <td class="modalReloadable"><?php echo $facility['ras_facility_resource_allocation_status']; ?></td>
+            <td>
+              <?php
+                if (isset($facility['efrat_activation_time'])) {
+                  $timeSplit = explode(' ', $facility['efrat_activation_time']);
+                  echo $timeSplit[0];
+                } else {
+                  echo '----';
+                }
+              ?>
+            </td>
 <?php if (!(isset($event))) {
-                echo '<td>' . $facility['e_event_name'] . '</td>';
-              } ?>
-              </tr>
+            echo '<td>' . $facility['e_event_name'] . '</td>';
+          } ?>
+          </tr>
     <?php //endforeach; ?>
 <?php endforeach; ?>
               </tbody>
 <?php echo javascript_include_tag('agModal.js'); ?>
             </table>
           </div>
+<?php if(isset($event_id)): ?>
+  <br />
+  <a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="linkButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
+<?php endif; ?>
           <div class="floatRight">
   <?php
 //First Page link (or inactive if we're at the first page).

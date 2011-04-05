@@ -40,3 +40,6 @@
   </tbody>
 <?php //echo javascript_include_tag('agModal.js'); ?>
 </table>
+<?php if ($xmlHttpRequest == true): ?>
+<div id="modalAppend"></div>
+<?php endif; ?>

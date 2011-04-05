@@ -50,21 +50,22 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
     $this->xmlHttpRequest = $request->isXmlHttpRequest();
-    $this->facility_resource = agDoctrineQuery::create()
+    // This is the event_facility_resource.
+    $this->event_facility_resource = agDoctrineQuery::create()
             ->select()
-            ->from('agFacilityResource')
-            ->where('id = ?', $request->getParameter('facilityResourceId'))
+            ->from('agEventFacilityResource')
+            ->where('id = ?', $request->getParameter('eventFacilityResourceId'))
             ->execute()->getFirst();
     $groupIds = agDoctrineQuery::create()
             ->select('id')
             ->from('agEventFacilityGroup')
             ->where('event_id = ?', $this->event_id)
             ->execute(array(), 'single_value_array');
-    $this->event_facility_resource = agDoctrineQuery::create()
+    // This is the actual facility resource that will have access to names and other information.
+    $this->facility_resource = agDoctrineQuery::create()
             ->select('')
-            ->from('agEventFacilityResource')
-            ->where('facility_resource_id = ?', $this->facility_resource['id'])
-              ->andWhereIn('event_facility_group_id', $groupIds)
+            ->from('agFacilityResource')
+            ->where('id = ?', $this->event_facility_resource['facility_resource_id'])
             ->execute()->getFirst();
     $this->facilityResourceActivationTimeForm = new agSingleEventFacilityResourceActivationTimeForm();//new agFacilityResourceAcvitationForm($this->event_facility_resource);
     $this->facilityResourceActivationTimeForm->setDefault('event_facility_resource_id', $this->event_facility_resource['id']);
@@ -96,6 +97,7 @@ class eventActions extends agActions
     if ($request->isMethod(sfRequest::POST)) {
       if ($request->getParameter('facility_group_filter')) {
         $this->facility_group = $request->getParameter('facility_group_list');
+        $b = $this->facility_group;
         $this->facilitygroupsForm->setDefault('facility_group_list', $this->facility_group);
       } else {
         $fac_activation = $request->getPostParameters();
@@ -168,15 +170,15 @@ class eventActions extends agActions
    */
   private function setEventBasics(sfWebRequest $request)
   {
-    if ($request->getParameter('id')) {
-      $this->event_id = $request->getParameter('id');
-      if ($this->event_id != "") {
-        $this->event_name = Doctrine_Core::getTable('agEvent')
-                ->findByDql('id = ?', $this->event_id)
-                ->getFirst()->getEventName();
-      }
-      //TODO step through to check and see if the second if is needed
-    }
+//    if ($request->getParameter('id')) {
+//      $this->event_id = $request->getParameter('id');
+//      if ($this->event_id != "") {
+//        $this->event_name = Doctrine_Core::getTable('agEvent')
+//                ->findByDql('id = ?', $this->event_id)
+//                ->getFirst()->getEventName();
+//      }
+//      //TODO step through to check and see if the second if is needed
+//    }
     if ($request->getParameter('event')) {
       $this->event = agDoctrineQuery::create()
               ->select()
@@ -186,7 +188,6 @@ class eventActions extends agActions
 
       $this->event_id = $this->event->id;
       $this->event_name = $this->event->event_name;
-      //TODO step through to check and see if the second if is needed
     }
   }
 
@@ -601,15 +602,24 @@ class eventActions extends agActions
    */
   public function executeListgroups(sfWebRequest $request)
   {
+    // Check to see if there is an event parameter and, if so, if the parameter is a valid event
+    // name. If it exists but is invalid, redirect to the eventless listgroups.
+    // Commented out for now, as groupDetail won't work right now w/o an event in the URL.
+//    if($request->getParameter('event') != null && Doctrine::getTable('agEvent')->findByDql('where event_name = ?', $request->getParameter('event'))->getFirst() == false) {
+//      $this->redirect('event/listgroups');
+//    }
+    if($request->getParameter('event') == null) {
+      $this->missingEvent = true;
+    }
     $this->setEventBasics($request);
     $query = agDoctrineQuery::create()
             ->select('a.*, afr.*, afgt.*, fr.*')
             ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
-
     // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
     if ($this->event != "") {
       $query->where('a.event_id = ?', $this->event_id);
     }
+    
     $facilityGroupArray = array();
     $this->ag_event_facility_groups = $query->execute();
     foreach ($this->ag_event_facility_groups as $eventFacilityGroup) {

@@ -109,7 +109,7 @@ class agEventFacilityHelper
 
     if (! is_null($facilityStandbyStatus)) { $query->andWhere('ras.standby = ?', $facilityStandbyStatus) ; }
 
-    if (! is_null($noActivationTime)) { $query->andWhere('efat.activation_time = ?', null) ; }
+    if (! is_null($noActivationTime)) { $query->andWhere('efat.activation_time is NULL') ; }
 
     $results = $query->execute() ;
 

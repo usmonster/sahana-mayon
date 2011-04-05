@@ -108,11 +108,13 @@ function returnContent(data) {
 function processReturn(data) {
   pattern = /facilityresource\/[\w\d+%-]*/
   if(data == $(this).attr('id')) {
-    appendContent(data);
+    appendContent($(this), data);
 //    returnContent(data);
   }
 }
 
-function appendContent(data) {
-  $('#modalContent').append('<h2>'+data+'</h2');
+function appendContent($submitter, data) {
+  $('#modalAppend').load(($submitter).attr('id'), function() {
+    $('#modalAppend').slideDown(1000);
+  });
 }
