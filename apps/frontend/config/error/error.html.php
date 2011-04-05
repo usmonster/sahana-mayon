@@ -1,12 +1,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<?php $path = sfConfig::get('sf_relative_url_root', preg_replace
-    ('#/[^/]+\.php5?$#', '', isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] :
-    (isset($_SERVER['ORIG_SCRIPT_NAME']) ? $_SERVER['ORIG_SCRIPT_NAME'] : ''))) ?>
+<?php
+$path = sfConfig::get('sf_relative_url_root', preg_replace
+            ('#/[^/]+\.php5?$#', '', isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] :
+                (isset($_SERVER['ORIG_SCRIPT_NAME']) ? $_SERVER['ORIG_SCRIPT_NAME'] : ''))) ?>
 <?php sfProjectConfiguration::getActive()->loadHelpers(array
   ('Helper', 'Tag', 'Url', 'Asset', 'Partial')); ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <?php include_partial('global/Header'); ?>
+    <!--This page allows only static content-->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="title" content="Sahana Agasti, Mayon 2.0" />
+    <meta name="description" content="Emergency Management" />
+    <meta name="language" content="en" />
+    <title>Sahana Agasti, Mayon 2.0</title>
+    <link rel="shortcut icon" href="<?php echo url_for('images/favicon.ico'); ?>" />
+    <?php echo stylesheet_tag('main'); ?>
+    <!--[if lte IE 6]>
+    <?php echo stylesheet_tag('lte_ie6_css'); ?>
+    <![endif]-->
+    <!--[if lt IE 9]>
+    <?php echo javascript_include_tag('IE9'); ?>
+    <![endif]-->
   </head>
   <body>
     <div id="header">
