@@ -15,11 +15,25 @@
  */
 class agEntityEmailHelper extends agEntityContactHelper
 {
-  public    $defaultIsPrimary = FALSE,
+  public    $agEmailHelpder,
+            $defaultIsPrimary = FALSE,
             $defaultIsStrType = FALSE;
 
-  protected $_batchSizeModifier = 2;
+  protected $_batchSizeModifier = 2,
+            $_contactTableMetadata = array( 'table' => 'agEntityEmailContact',
+                                            'method' => 'getEntityEmail',
+                                            'type' => 'email_contact_type_id',
+                                            'value' => 'email_contact_id');
 
+  /**
+   * Method to lazily load the $agEmailHelper class property (an instance of agEmailHelper)
+   * @return object The instantiated agEmailHelper object
+   */
+  public function getAgEmailHelper()
+  {
+    if (! isset($this->agEmailHelper)) { $this->agEmailHelper = agEmailHelper::init(); }
+    return $this->agEmailHelper ;
+  }
 
   /**
    * Method to return an agDocrineQuery object, preconfigured to collect entity emails.
@@ -40,7 +54,7 @@ class agEntityEmailHelper extends agEntityContactHelper
     // the most basic version of this query
     $q = agDoctrineQuery::create()
        ->select('eec.entity_id')
-         ->addSelect('ec.email_contact')
+         ->addSelect('eec.email_contact_id')
          ->addSelect('eec.created_at')
          ->addSelect('eec.updated_at')
        ->from('agEntityEmailContact eec')
@@ -69,15 +83,23 @@ class agEntityEmailHelper extends agEntityContactHelper
    * be returned as an ID value or its string equivalent.
    * @param boolean $primary Boolean that determines whether or not only the primary email will
    * be returned (for that type).
+   * @param string $emailHelperMethod The email helper method that will be called to format or
+   * process the emails. This should be an agEmailHelper::EML_GET_* constant. If left NULL,
+   * only email ID's will be returned.
+   * @param array $emailArgs An array of arguments to pass forward to the email helper.
    * @return array A two or three dimensional array (depending on the setting of the $primary
    * parameter), by entityId, by emailContactType.
    */
   public function getEntityEmailByType ($entityIds = NULL,
                                         $strType = NULL,
-                                        $primary = NULL)
+                                        $primary = NULL,
+                                        $emailHelperMethod = NULL,
+                                        $emailArgs = array())
   {
     // initial results declarations
     $entityEmails = array();
+    $emailIds = array();
+    $emailHelperArgs = array(array());
 
     // if primary is not passed, get the default
     if (is_null($primary)) { $primary = $this->defaultIsPrimary; }
@@ -98,30 +120,72 @@ class agEntityEmailHelper extends agEntityContactHelper
 
     // build this as custom hydration to 'double tap' the data
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
-    $index = 0;
-    $priorEntityId = '';
-    $priorContactType = '';
     foreach ($rows as $row)
     {
-      // if we're only returning the primary, change the third dimension from an array to a value
-      // NOTE: because of the restricted query, we can trust there is only one component per type
-      // in our output and safely make this assumption
-      if ($primary)
+        $entityEmails[$row[0]][$row[4]][] = array($row[1], $row[2], $row[3]);
+
+      // here we build the mono-dimensional emailId array, excluding dupes as we go; only useful
+      // if we're actually going to use the email helper
+      if (! is_null($emailHelperMethod) && ! in_array($row[1], $emailHelperArgs[0]))
       {
-        $entityEmails[$row[0]][$row[4]] = array($row[3], $row[1], $row[2]);
-      }
-      // if not primary, we have one more loop in our return for another array nesting
-      else {
-        if ($row[0] != $priorEntityId || $row[4] != $priorContactType) { $index = 0; }
-        $entityEmails[$row[0]][$row[4]][$index++] = array($row[3], $row[1], $row[2]);
-        $priorEntityId = $row[0];
-        $priorContactType = $row[4];
+        $emailHelperArgs[0][] = $row[1] ;
       }
     }
+
+    // if no email helper method was passed, assume that all we need are the email id's and
+    // stop right here!
+    if (is_null($emailHelperMethod))
+    {
+      return $entityEmails ;
+    }
+
+    // otherwise... we keep going and lazily load our email helper, 'cause we'll need her
+    $emailHelper = $this->getAgEmailHelper() ;
+
+    // finish appending the rest of our email helper args
+    foreach ($emailArgs as $arg)
+    {
+      $emailHelperArgs[] = $arg ;
+    }
+
+    // use the email helper to format the email results
+    $userFunc = array($emailHelper,$emailHelperMethod) ;
+    $formattedEmails = call_user_func_array($userFunc,$emailHelperArgs) ;
+
+    // we can release the email helper args, since we don't need them anymore
+    unset($emailHelperArgs) ;
+
+    // now loop through our entities and attach their emails
+    foreach ($entityEmails as $entityId => $emailTypes)
+    {
+      foreach ($emailTypes as $emailType => $emails)
+      {
+        // if we're only returning the primary, change the third dimension from an array to a value
+        // NOTE: because of the restricted query, we can trust there is only one component per type
+        // in our output and safely make this assumption
+        if ($primary)
+        {
+          // flatten the results
+          $emails = $emails[0] ;
+          $emails[0] = $formattedEmails[$emails[0]] ;
+
+          $entityEmails[$entityId][$emailType][0] = $emails ;
+        }
+        // if not primary, we have one more loop in our return for another array nesting
+        else
+        {
+          foreach ($emails as $index => $email)
+          {
+            $entityEmails[$entityId][$emailType][$index][0] = $formattedEmails[$email[0]] ;
+          }
+        }
+      }
+    }
+
     return $entityEmails ;
   }
 
-    /**
+  /**
    * Method to return entity emails for a group of entity ids, sorted from highest priority to
    * lowest priority.
    *
@@ -130,16 +194,24 @@ class agEntityEmailHelper extends agEntityContactHelper
    * be returned as an ID value or its string equivalent.
    * @param boolean $primary Boolean that determines whether or not only the primary email will
    * be returned (for that type).
+   * @param string $emailHelperMethod The email helper method that will be called to format or
+   * process the emails. This should be an agEmailHelper::EML_GET_* constant. If left NULL,
+   * only email ID's will be returned.
+   * @param array $emailArgs An array of arguments to pass forward to the email helper.
    * @return array A three dimensional array, by entityId, then indexed from highest priority
    * email to lowest, with a third dimension containing the email type as index[0], and the
    * email value as index[1].
    */
   public function getEntityEmail ($entityIds = NULL,
                                   $strType = NULL,
-                                  $primary = NULL)
+                                  $primary = NULL,
+                                  $emailHelperMethod = NULL,
+                                  $emailArgs = array())
   {
     // initial results declarations
     $entityEmails = array();
+    $emailIds = array();
+    $emailHelperArgs = array(array());
 
     // if primary is not passed, get the default
     if (is_null($primary)) { $primary = $this->defaultIsPrimary; }
@@ -159,49 +231,77 @@ class agEntityEmailHelper extends agEntityContactHelper
     // build this as custom hydration to 'double tap' the data
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
 
-    $index = 0;
-    $priorEntityId = '';
-    $priorContactType = '';
     foreach ($rows as $row)
+    {
+      $entityEmails[$row[0]][] = array($row[4], $row[1], $row[2], $row[3]);
+
+      // here we build the mono-dimensional emailId array, excluding dupes as we go; only useful
+      // if we're actually going to use the phone helper
+      if (! is_null($emailHelperMethod) && ! in_array($row[1], $emailIds))
+      {
+        $emailHelperArgs[0][] = $row[1];
+      }
+    }
+
+    // if no email helper method was passed, assume that all we need are the email id's and
+    // stop right here!
+    if (is_null($emailHelperMethod))
+    {
+      return $entityEmails;
+    }
+
+    // otherwise... we keep going and lazily load our email helper, 'cause we'll need her
+    $emailHelper = $this->getAgEmailHelper();
+
+    // finish appending the rest of our phone helper args
+    foreach ($emailArgs as $arg)
+    {
+      $emailHelperArgs[] = $arg;
+    }
+
+    // use the email helper to format the email results
+    $userFunc = array($emailHelper,$emailHelperMethod) ;
+    $formattedEmails = call_user_func_array($userFunc,$emailHelperArgs);
+
+    // we can release the email helper args, since we don't need them anymore
+    unset($emailHelperArgs) ;
+
+    // now loop through our entities and replace email value with formatted email.
+    foreach ($entityEmails as $entityId => $emails)
     {
       // if we're only returning the primary, change the second dimension from an array to a value
       // NOTE: because of the restricted query, we can trust there is only one component per type
       // in our output and safely make this assumption
-      if ($primary) {
-//        $entityEmails[$row[0]][]= array($row[2],$row[1]);
-        $entityEmails[$row[0]] = array($row[4], $row[3],$row[1], $row[2]);
+      if ($primary)
+      {
+        // flatten for just one return
+        $emails = $emails[0] ;
+        $emails[1] = $formattedEmails[$emails[1]] ;
+
+        $entityEmails[$entityId] = $emails ;
       }
       // if not primary, we have one more loop in our return for another array nesting
-      else {
-        if ($row[0] != $priorEntityId || $row[4] != $priorContactType) { $index = 0; }
-        $entityEmails[$row[0]][$index++] = array($row[4], $row[3], $row[1], $row[2]);
-        $priorEntityId = $row[0];
-        $priorContactType = $row[4];
+      else
+      {
+        foreach ($emails as $index => $email)
+        {
+          $entityEmails[$entityId][$index][1] = $formattedEmails[$email[1]] ;
+        }
       }
     }
+
     return $entityEmails;
   }
 
   /**
-   *
-   * @param <type> $emails
-   * @param <type> $throwOnError
-   * @param <type> $conn 
-   * @todo Fill in method.  Currently, empty shell.
-   */
-  public function setEmails($emails, $throwOnError = NULL, $conn = NULL)
-  {
-  }
-
-  /**
-   * Method to set entity emails by passing email components, keyed by email id.
+   * Method to set entity emails by passing emails, keyed by email id.
    *
    * @param array $entityContacts An array of entity contact information. This is similar to the
    * output of getEntityEmail if no arguments are passed.
    * <code>
    * array(
    *   $entityId => array(
-   *     array($emailContactTypeId, array($emailContactId, $email),
+   *     array($emailContactTypeId, $email),
    *     ...
    *   ), ...
    * )
@@ -233,7 +333,7 @@ class agEntityEmailHelper extends agEntityContactHelper
     // loop through our contacts and pull our unique email from the fire
     foreach ($entityContacts as $entityId => $contacts)
     {
-      foreach ($contacts as $index => $contact)
+      foreach($contacts as $index => $contact)
       {
         // find the position of the element or return false
         $pos = array_search($contact[1], $uniqContacts, TRUE);
@@ -253,6 +353,9 @@ class agEntityEmailHelper extends agEntityContactHelper
       }
     }
 
+    // whelp, if we haven't loaded it already, let's get our email helper
+    $emailHelper = $this->getAgEmailHelper();
+
     // here we check our current transaction scope and create a transaction or savepoint
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
@@ -268,7 +371,7 @@ class agEntityEmailHelper extends agEntityContactHelper
     try
     {
       // process emails, setting or returning, whichever is better with our s/getter
-      $uniqContacts = $this->setEmails($uniqContacts, $throwOnError, $conn);
+      $uniqContacts = $emailHelper->setEmails($uniqContacts, $throwOnError, $conn);
     }
     catch(Exception $e)
     {
@@ -284,18 +387,18 @@ class agEntityEmailHelper extends agEntityContactHelper
       // now loop through the contacts again and give them their real values
       foreach ($entityContacts as $entityId => $contacts)
       {
-        foreach ($contacts as $index => $contact)
+        foreach($contacts as $index => $contact)
         {
           // check to see if this index found in our 'unsettable' return from setEmails
           if (array_key_exists($contact[1], $uniqContacts[1]))
           {
-            // purge this address
+            // purge this email
             unset($entityContacts[$entityId][$index]);
           }
           else
           {
-            // otherwise, get our real addressId
-            $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
+            // otherwise, get our real emailId
+            $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[0]];
           }
         }
       }
