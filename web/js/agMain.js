@@ -21,10 +21,6 @@ $(document).ready(function(){
   });
 });
 
-function blorg() {
-  $(this).parent().load('/event/boppityboo/groupdetail/ScenA_G01');
-//  $(this).parent().load($(this).parent().attr('action'));
-}
 $(document).ready(function() {
   $('.blorg').live('change', function() {
     //$('#fgroup').load($(this).parent().attr('action'));
