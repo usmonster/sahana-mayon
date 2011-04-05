@@ -4,7 +4,6 @@ $data = $obj;//->getRaw();
 
 //this is used draw each result as a row, coming from _listform.php
 //$columns are our desired columns.. keyed by the name of the value array to echo
-//so we need
 foreach($displayColumns as $key => $value)
 {
   $display_columns[] = $key;
@@ -25,9 +24,13 @@ foreach($displayColumns as $key => $value)
 ?>
       </td>
       <?php } ?>
-<?php } ?>
+<?php }
+
+if(isset($widget)){
+?>
   <td>
 <?php
+
   //$widget->setDefault('add', $value); //$resource_allocation_status', $result['ras_id']);
   // OR ->render(array('class' => 'email')) with the name attribute inserted there.
   //$widget['add']->setAttribute('name', $value);
@@ -41,5 +44,10 @@ foreach($displayColumns as $key => $value)
   ////->render(array('name' =>  'status[' . $data['es_id'] . ']', 'selected' => $default)); //set the name of the checkbox to the id of the staff resource to be checked
 ?>
     <input type="hidden" name="event_status[][event_staff_id]" value="<?php echo $data['es_id'] ?>">
+
   </td>
+
+<?php
+}
+?>
 </tr>

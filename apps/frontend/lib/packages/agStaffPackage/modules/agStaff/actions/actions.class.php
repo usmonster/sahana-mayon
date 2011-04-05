@@ -34,6 +34,17 @@ class agStaffActions extends agActions
 
   public function executeNewlist(sfWebRequest $request)
   {
+
+    //the next few lines could be abstracted to agActions as they are request params that may be
+    //used for any list
+    if($request->getGetParameter('filter')) $this->filter = $request->getGetParameter('filter');
+    if($request->getGetParameter('sort')) $this->sort = $request->getGetParameter('sort');
+    if($request->getGetParameter('order')) $this->order = $request->getGetParameter('order');
+    $this->agPersonNameTypes = agDoctrineQuery::create()
+            ->select('nt.id, nt.person_name_type')
+            ->from('agPersonNameType nt')
+            ->execute(array(), 'key_value_pair');
+     /** @todo take into consideration app_display */
     $staffStatus = 'active';
     $staffStatusOptions = agDoctrineQuery::create()
             ->select('s.staff_status, s.staff_status')
@@ -57,37 +68,73 @@ class agStaffActions extends agActions
 
     $query = Doctrine::getTable('agStaff')
             ->createQuery('a')
-            ->select('p.*, s.*, namejoin.*, name.*, nametype.*, stfrsco.*, o.organization agency, stfrsc.staff_resource_type_id, e.id, ememail1.id, ec1.id, ect1.email_contact_type work_email, ememail2.id, ec2.id, ect2.email_contact_type home_email')
+            ->select('p.*, s.*, namejoin.*, name.*, nametype.*, stfrsco.*, o.organization, stfrsc.staff_resource_type_id, ss.staff_status, srt.staff_resource_type')
             ->from(
                 'agStaff s, s.agPerson p,
               p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
               name.agPersonNameType nametype, s.agStaffResource stfrsc,
-              stfrsc.agStaffResourceOrganization stfrsco, stfrsc.agStaffResourceType, stfrsco.agOrganization o,
-              s.agStaffStatus ss, p.agEntity e,
-              e.agEntityEmailContact ememail1, ememail1.agEmailContact ec1, ec1.agEmailContactType ect1,
-              e.agEntityEmailContact ememail2, ememail2.agEmailContact ec2, ec2.agEmailContactType ect2'
+              stfrsc.agStaffResourceOrganization stfrsco, stfrsc.agStaffResourceType srt, stfrsco.agOrganization o,
+              s.agStaffStatus ss'
             );
             if($staffStatus != 'all'){
               $query->where('ss.staff_status=?', $staffStatus);
             }
-  $query = agDoctrineQuery::create()
-            ->select('a.*, afr.*, afgt.*, fr.*')
-            ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
 
-    // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
-    if ($this->event != "") {
-      $query->where('a.event_id = ?', $this->event_id);
+    //we get our array of staff people above, now, populate it with data.
+            
+    //$this->staffArray = $staffArray;
+    $this->pager = new agArrayPager(null, 10);
+
+
+    $ag_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    foreach ($ag_staff as $key => $value) {
+      $person_array[] = $value['p_id'];
+      //$remapped_array[$ag_event_staff['es_id']] = $
     }
-    $facilityGroupArray = array();
-    $this->ag_event_facility_groups = $query->execute();
-    foreach ($this->ag_event_facility_groups as $eventFacilityGroup) {
-      $tempArray = $this->queryForTable($eventFacilityGroup->id);
-      foreach ($tempArray as $ta) {
-        array_push($facilityGroupArray, $ta);
+    $names = new agPersonNameHelper($person_array); //we need to get persons from the event staff ids that are returned here
+    $person_names = $names->getPrimaryNameByType();
+    //maybe we should set the below/above to a a static property for use through a session
+    $emails = new agEntityEmailHelper($person_array);
+    $email_array = $emails->getEntityEmailByType(null,true,true);
+    $person_emails = array();
+    foreach($email_array as $person_id => $email_type)
+    {
+      foreach($email_type as $et => $etv){
+        $person_emails[$person_id][$et] = $person_emails[$person_id][$et][0];
       }
     }
-    $this->staffArray = $staffArray;
-    $this->pager = new agArrayPager(null, 10);
+
+    $phones = new agEntityPhoneHelper($person_array);
+    $phone_array = $phones->getEntityPhoneByType(null,true,true,true);
+    $person_phones = array();
+    foreach($phone_array as $person_id => $phone_type)
+    {
+      foreach($phone_type as $pt => $ptv){
+        $person_phones[$person_id][$pt] = $person_phones[$person_id][$pt][0];
+      }
+    }
+
+
+    //$person_phones[$value['p_id']] = arraytostring($phone_array);
+    //function arraytostring is a similar function to the draw address table function in agtemplatehelper
+    
+    //$names->
+    //this is the desired format of the return array:
+    foreach ($ag_staff as $staff => $value) {
+      $staffArray[] = array(
+        'fn' => $person_names[$value['p_id']]['given'],
+        'ln' => $person_names[$value['p_id']]['family'],
+        'agency' => $value['o_organization'],
+        'staff_status' => $value['ss_staff_status'],
+        'classification' => $value['srt_staff_resource_type'],
+        'phones' => $phone_array[$value['p_id']],    // only for testing, prefer the above
+        'emails' => $email_array[$value['p_id']],
+        //'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
+        /** @todo benchmark scale */
+      );
+    }
+    //$this->ag_staff = $result_array;
+
 
     if ($request->getParameter('sort') && $request->getParameter('order')) {
       $sortColumns = array('group' => 'efg_event_facility_group',

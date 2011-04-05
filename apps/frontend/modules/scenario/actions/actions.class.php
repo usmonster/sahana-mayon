@@ -260,11 +260,9 @@ class scenarioActions extends agActions
     }
     $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray);
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario['scenario'] . ' Scenario');
-   //end p-code
-
-
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario['scenario'] . ' Scenario');
+    //end p-code
   }
 
   /**
@@ -291,9 +289,9 @@ class scenarioActions extends agActions
               ->where('a.scenario_id = ?', $this->scenario_id)
               ->execute();
     }
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario_name . ' Scenario');
-   //end p-code
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario_name . ' Scenario');
+    //end p-code
   }
 
   public function executePre(sfWebRequest $request)
@@ -301,13 +299,12 @@ class scenarioActions extends agActions
 
   }
 
-  /*   * e
-   *
-   * @param sfWebRequest $request
+  /**
    * set up the form to define staff pools, via saved search
    * this function handles all CRUD operations for the 'scenario staff pool'
+   * @param sfWebRequest $request
+   * 
    */
-
   public function executeStaffpool(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
@@ -396,7 +393,13 @@ class scenarioActions extends agActions
       }
 //SAVE
       elseif ($request->getParameter('Save')) { //otherwise, we're SAVING/UPDATING
-        $this->poolform = new agStaffPoolForm();
+        if ($request->getParameter('search_id')) {
+          $this->search_id = $request->getParameter('search_id');
+          $this->poolform = new agStaffPoolForm($this->search_id);
+        } else {
+          $this->poolform = new agStaffPoolForm();
+        }
+
         $this->poolform->scenario_id = $request->getParameter('id');
         $this->poolform->bind($request->getParameter($this->poolform->getName()), $request->getFiles($this->poolform->getName()));
 
@@ -416,9 +419,9 @@ class scenarioActions extends agActions
         //$this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
     }
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
-   //end p-code
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
+    //end p-code
   }
 
   /**
@@ -551,11 +554,9 @@ class scenarioActions extends agActions
       }
     }
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
-   //end p-code
-
-
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
+    //end p-code
   }
 
   /**
@@ -622,10 +623,9 @@ class scenarioActions extends agActions
       }
     }
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
-   //end p-code
-
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
+    //end p-code
   }
 
   /**
@@ -706,10 +706,9 @@ class scenarioActions extends agActions
       }
     }
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario_name . ' Scenario');
-   //end p-code
-
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario_name . ' Scenario');
+    //end p-code
   }
 
   /**
@@ -858,9 +857,10 @@ class scenarioActions extends agActions
             ->execute();
     $this->form = new agScenarioForm($ag_scenario);
     //p-code
- $this->getResponse()->setTitle('Sahana Agasti Edit ' . $ag_scenario . ' Scenario');
-   //end p-code
+    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $ag_scenario . ' Scenario');
+    //end p-code
   }
+
   public function executeEditgroup(sfWebRequest $request)
   {
     
