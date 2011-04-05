@@ -5,13 +5,17 @@ $choices = array('male' => 'male', 'female' => 'female');
 $filterForm->setWidgets(
     array(
       'sex' => new sfWidgetFormChoice(
-          array('multiple' => true, 'choices' => $choices)),
+          array('multiple' => true, 'choices' => $choices)
+      ),
       'nationality' => new sfWidgetFormDoctrineChoice(
-          array('multiple' => true, 'model' => 'agNationality')),
+          array('multiple' => true, 'model' => 'agNationality')
+      ),
       'ethnicity' => new sfWidgetFormDoctrineChoice(
-          array('multiple' => true, 'model' => 'agEthnicity')),
+          array('multiple' => true, 'model' => 'agEthnicity')
+      ),
       'religion' => new sfWidgetFormDoctrineChoice(
-          array('multiple' => true, 'model' => 'agReligion')),
+          array('multiple' => true, 'model' => 'agReligion')
+      ),
     )
 );
 

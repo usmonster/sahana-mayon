@@ -17,7 +17,7 @@
   information already existing in Agasti.  Please check the information
   below and confirm the duplicate:
 
-  <?php// include_partial('form', array('form' => $form)) ?>
+  <?php // include_partial('form', array('form' => $form)) ?>
 
 <p>The new client information and the possible dupe should be displayed 
   side-by-side with the corresponding buttons below them:</p>

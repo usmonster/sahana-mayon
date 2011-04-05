@@ -178,7 +178,7 @@
   </table>
 
   <br />
-
+  
   <table class="singleTable">
     <tbody>
       <tr>
@@ -530,6 +530,9 @@
     </div>
 <?php
       endforeach;
+
+
+
 
 
 
