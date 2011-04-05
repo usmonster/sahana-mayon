@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Agasti Embedded Phone Contacts Form is the container form for multiple phone contact entry
+ * Agasti Embedded Phone Contacts Form is the container
+ * form for multiple phone contact entry
  *
  * PHP Version 5.3
  *
@@ -48,10 +49,13 @@ class agEmbeddedPhoneContactsForm extends sfForm
         if ($current->getPhoneContactTypeId() == $phone_contact_type->getId()) {
           $type->getObject()->setAgPhoneContactType($phone_contact_type);
           $type = new agEmbeddedPhoneContactForm();
-          $type->setDefault('phone_to_type', preg_replace(
+          $type->setDefault(
+              'phone_to_type', preg_replace(
                   $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->match_pattern,
                   $current->getAgPhoneContact()->getAgPhoneFormat()->getAgPhoneFormatType()->replacement_pattern,
-                  $current->getAgPhoneContact()->phone_contact));
+                  $current->getAgPhoneContact()->phone_contact
+              )
+          );
         }
       }
       $type->getObject()->setPhoneContactTypeId($phone_contact_type->id);

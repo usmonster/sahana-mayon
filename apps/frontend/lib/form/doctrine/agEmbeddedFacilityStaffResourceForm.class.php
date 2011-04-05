@@ -1,7 +1,8 @@
 <?php
 
 /**
- * agEmbeddedFacilityStaffResourceForm extends agFacilityStaffResource form base class, used primarily as an embedded form for
+ * agEmbeddedFacilityStaffResourceForm extends agFacilityStaffResource
+ * form base class, used primarily as an embedded form for
  *   agStaffResourceRequiremenForm
  *
  * PHP Version 5.3
