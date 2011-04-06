@@ -42,8 +42,9 @@ class agFacilityForm extends BaseagFacilityForm
 
     $this->setWidget('id', new sfWidgetFormInputHidden());
 
-    $this->setWidget('facility_name', new sfWidgetFormInputText(array
-      (), array('class' => 'inputGray')));
+    $this->setWidget(
+        'facility_name', new sfWidgetFormInputText(array(), array('class' => 'inputGray'))
+    );
     //'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
     //));
 //    $this->agEntity = $this->getObject()->getAgEntity();
@@ -70,12 +71,13 @@ class agFacilityForm extends BaseagFacilityForm
     /**
      * Set labels on a few fields
      */
-    $this->widgetSchema->setLabels(array
-      (
-      'resource' => 'Resources',
-      'facility_name' => 'Name',
+    $this->widgetSchema->setLabels(
+        array(
+          'resource' => 'Resources',
+          'facility_name' => 'Name',
         //'facility_code' => 'Facility Code'
-    ));
+        )
+    );
 
     /**
      * Set the formatter of this form to
@@ -98,7 +100,10 @@ class agFacilityForm extends BaseagFacilityForm
       if ($id = $this->agEntity->id) {
         $phoneObject = Doctrine_query::create()
                 ->from('agPhoneContact pc')
-                ->where('pc.id IN (SELECT jn.phone_contact_id FROM agEntityPhoneContact jn WHERE jn.entity_id = ? AND phone_contact_type_id = ?)', array($id, $phoneContactType->id))
+                ->where(
+                    'pc.id IN (SELECT jn.phone_contact_id FROM agEntityPhoneContact jn WHERE jn.entity_id = ? AND phone_contact_type_id = ?)',
+                    array($id, $phoneContactType->id)
+                )
                 ->execute()->getFirst();
       }
       $phoneContactForm = new agEmbeddedAgPhoneContactForm(isset($phoneObject) ? $phoneObject : null);
@@ -122,7 +127,10 @@ class agFacilityForm extends BaseagFacilityForm
       if ($id = $this->agEntity->id) {
         $emailObject = Doctrine_query::create()
                 ->from('agEmailContact ec')
-                ->where('ec.id IN (SELECT jn.email_contact_id FROM agEntityEmailContact jn WHERE jn.entity_id = ? AND email_contact_type_id = ?)', array($id, $emailContactType->id))
+                ->where(
+                    'ec.id IN (SELECT jn.email_contact_id FROM agEntityEmailContact jn WHERE jn.entity_id = ? AND email_contact_type_id = ?)',
+                    array($id, $emailContactType->id)
+                )
                 ->execute()->getFirst();
       }
       $emailContactForm = new agEmbeddedAgEmailContactForm(isset($emailObject) ? $emailObject : null);
@@ -226,9 +234,12 @@ class agFacilityForm extends BaseagFacilityForm
     $this->entityAddress = Doctrine::getTable('agEntity')
             ->createQuery('entityAddresses')
             ->select('e.*, eac.*, act.*, a.*, as.*, aav.*, av.*, p.*, ae.*')
-            ->from('agEntity e, e.agEntityAddressContact eac, eac.agAddressContactType act,
-                eac.agAddress a, a.agAddressStandard as, a.agAddressMjAgAddressValue aav,
-                aav.agAddressValue av, av.agAddressElement ae, e.agPerson p')
+            ->from(
+                'agEntity e, e.agEntityAddressContact eac, eac.agAddressContactType act,
+                eac.agAddress a,
+                a.agAddressStandard as, a.agAddressMjAgAddressValue aav,
+                aav.agAddressValue av, av.agAddressElement ae, e.agPerson p'
+            )
             ->where('e.id = ?', $this->getObject()->getAgSite()->getAgEntity()->getId())
             ->execute()
             ->getFirst();
@@ -246,28 +257,39 @@ class agFacilityForm extends BaseagFacilityForm
     $addressFirstPass = true;
 
     foreach ($this->address_contact_types as $address_contact_type) {
-      $addressSubContainer = new sfForm(array(), array()); // Sublevel container forms beneath address to hold a complete address for each address type.
+      $addressSubContainer = new sfForm(array(), array());
+// Sublevel container forms beneath address to hold a complete address for each address type.
 //    $addressDeco = new agWidgetFormSchemaFormatterInline($addressSubContainer->getWidgetSchema());
 //    $addressSubContainer->getWidgetSchema()->addFormFormatter('row', $addressDeco);
 //    $addressSubContainer->getWidgetSchema()->setFormFormatterName('row');
 
       foreach ($addressElements as $ae) {
         foreach ($ae as $addressElement) {
-          $valueForm = new agEmbeddedAgAddressValueForm(); // Lowest level address form, actually holds the data.
-          $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]); //set the default address_element_id.
-          $valueForm->widgetSchema->setLabel('value', false); //hide the 'value' field label.
-          // Hardcoded for now, this sets the input type for state to a dropdown list, populated only by address values that
-          // have address element 4/state as their address_element value. Refactor to use agAddressFormat's field_type_id in
+          $valueForm = new agEmbeddedAgAddressValueForm();
+          //^ Lowest level address form, actually holds the data.
+          $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]);
+          //^ set the default address_element_id.
+          $valueForm->widgetSchema->setLabel('value', false);
+          // ^hide the 'value' field label.
+          // Hardcoded for now, this sets the input type for state to a
+          // dropdown list, populated only by address values that
+          // have address element 4/state as their address_element value.
+          // Refactor to use agAddressFormat's field_type_id in
           // conjunction with agFieldType.
           if (key($addressElement) == 'state') {
             $valueForm->setWidget(
                 'value',
-                new sfWidgetFormDoctrineChoice(array(
-                  'multiple' => false,
-                  'model' => 'agAddressValue',
-                  'add_empty' => true,
-                  'key_method' => 'getValue'
-                ))); //key_method sets the option value of the constructed select list to the value rather than id.
+                new sfWidgetFormDoctrineChoice(
+                    array(
+                      'multiple' => false,
+                      'model' => 'agAddressValue',
+                      'add_empty' => true,
+                      'key_method' => 'getValue'
+                    )
+                )
+            );
+            // ^ key_method sets the option value of the constructed
+            // select list to the value rather than id.
             $valueForm->widgetSchema->setLabel('value', false);
             $valueForm->widgetSchema['value']->addOption(
                 'query',
@@ -281,7 +303,8 @@ class agFacilityForm extends BaseagFacilityForm
               if ($current->address_contact_type_id == $address_contact_type->id) {
                 $addressValueElement = $current->getId();
 
-                foreach ($current->getAgAddress()->getAgAddressMjAgAddressValue() as $av) {//Get the joins from agAddress to agAddressValue
+                foreach ($current->getAgAddress()->getAgAddressMjAgAddressValue() as $av) {
+                  ////Get the joins from agAddress to agAddressValue
                   if ($av->getAgAddressValue()->getAgAddressElement()->address_element == key($addressElement)) {
                     $valueForm->setDefault('value', $av->getAgAddressValue()->value);
                     $valueForm->id_holder = $av->getAgAddressValue()->id;
@@ -290,19 +313,23 @@ class agFacilityForm extends BaseagFacilityForm
               }
             }
           }
-          $valueForm->addressType = $address_contact_type->address_contact_type; //set an addressType property for the form so the type can be used when saving.
-          $addressSubContainer->embedForm(key($addressElement), $valueForm); //Embed the address elements.
+          $valueForm->addressType = $address_contact_type->address_contact_type;
+          //set an addressType property for the form so the type can be used when saving.
+          $addressSubContainer->embedForm(key($addressElement), $valueForm);
+          //Embed the address elements.
 
           if (!$addressFirstPass) {
             //$addressSubContainer->widgetSchema->setLabel(key($addressElement), false);
           }
         }
       }
-      $addressContainer->embedForm($address_contact_type, $addressSubContainer); //Embed the addresses-by-type
+      $addressContainer->embedForm($address_contact_type, $addressSubContainer);
+      //Embed the addresses-by-type
 
       $addressFirstPass = false;
     }
-    $contactContainer->embedForm('address', $addressContainer); //Embed all the addresses into agPersonForm.
+    $contactContainer->embedForm('address', $addressContainer);
+    //Embed all the addresses into agPersonForm.
   }
 
   public function embedAgFacilityForms()
@@ -395,7 +422,8 @@ class agFacilityForm extends BaseagFacilityForm
 
           $typeId = $typeQuery->fetchOne()->id;
 
-          //This query gets the person's agEntityEmailContact object, based on person_id and email_contact_type_id (as $typeId).
+          //This query gets the person's agEntityEmailContact object,
+          //based on person_id and email_contact_type_id (as $typeId).
           $joinQuery = Doctrine::getTable('agEntityEmailContact')->createQuery('c')
                   ->select('c.id')
                   ->from('agEntityEmailContact c')
@@ -403,13 +431,15 @@ class agFacilityForm extends BaseagFacilityForm
                   ->andWhere('c.entity_id =?', $this->getObject()->getAgSite()->getAgEntity()->id);
           //Check if the agEmbeddedAgEmailContactForm has an email_contact value.
           if ($form->getObject()->email_contact <> null) {
-            // Get an agEntityEmailContact object from $joinQuery. Then create a new agEntityEmailContactForm
+            // Get an agEntityEmailContact object from $joinQuery.
+            // Then create a new agEntityEmailContactForm
             // and put the retrieved object inside it. Set its priority to $typeId
             if ($join = $joinQuery->fetchOne()) {
               $joinForm = new agEntityEmailContactForm($join);
               $joinForm->getObject()->priority = $typeId;
             }
-            // Or create a new agEntityEmailContactForm to be populated later and set its priority to $typeId.
+            // Or create a new agEntityEmailContactForm to be populated
+            //  later and set its priority to $typeId.
             else {
               $joinForm = new agEntityEmailContactForm();
               $joinForm->getObject()->priority = $typeId;
@@ -433,7 +463,8 @@ class agFacilityForm extends BaseagFacilityForm
               if ($queried = $q->fetchOne()) {
                 // Get the id of the email in the db...
                 $email_id = $queried->get('id');
-                // ...then see if the agEntityEmailContact has an email_contact_id corresponding to the
+                // ...then see if the agEntityEmailContact has an
+                // email_contact_id corresponding to the
                 // email queried for. If it is, unset the form, no update is needed...
                 if (isset($joinForm->email_contact_id) && $joinForm->email_contact_id == $email_id) {
                   unset($forms[$key]);
@@ -448,7 +479,8 @@ class agFacilityForm extends BaseagFacilityForm
                   unset($forms[$key]);
                 }
               }
-              // If the entered email isn't in the database already, make a new agEmailContact object,
+              // If the entered email isn't in the database already,
+              // make a new agEmailContact object,
               // populate it with the new email, and save it.
               // Then populate the agEntityEmailContact object's values, associating it with the
               // id of the new email, and save it. Unset the form.
@@ -471,7 +503,8 @@ class agFacilityForm extends BaseagFacilityForm
           // If the name field is blank, unset the field...
           else {
             unset($forms[$key]);
-            // ...if it was populated, delete the existing agPersonMjAgPersonName object since it is
+            // ...if it was populated, delete the existing
+            // agPersonMjAgPersonName object since it is
             // no longer needed.
             if ($join = $joinQuery->fetchOne()) {
               $join->delete();

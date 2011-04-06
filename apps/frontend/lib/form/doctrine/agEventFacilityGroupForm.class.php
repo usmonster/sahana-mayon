@@ -35,69 +35,91 @@ class agEventFacilityGroupForm extends BaseagEventFacilityGroupForm
   public function setup()
   {
 
-    $this->setWidgets(array
-      (
-      'id' => new sfWidgetFormInputHidden(),
-      'event_id' => new sfWidgetFormDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agEvent'), 'add_empty' => false)),
-      'event_facility_group' => new sfWidgetFormInputText(array
-        ('label' => 'Status')),
-      'facility_group_type_id' => new sfWidgetFormDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agFacilityGroupType'), 'add_empty' => false)),
-      'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array
-        ('model' => $this->getRelatedModelName
-            ('agFacilityGroupAllocationStatus'),
-        'add_empty' => false,
-        'method' => 'getFacilityGroupAllocationStatus',
-        'label' => 'Status')),
-      'activation_sequence' => new sfWidgetFormInputText(),
-      //facility resource list needs to minus options that are in $currentoptions
-      //'ag_facility_resource_list'          => new sfWidgetFormChoice(array
-      //  ('choices' => $availtoptions,'multiple' => true),
-      //  array('class' => 'widthAndHeight150')),
-      'ag_facility_resource_list' => new sfWidgetFormInputHidden(),
-      //  sfWidgetFormDoctrineChoice(array('multiple' => true,
-      //  'model' => 'agFacilityResource', 'expanded' => false),
-      //  array('class' => 'widthAndHeight150')), //this will be hidden
-      'ag_facility_resource_order' => new sfWidgetFormInputHidden(),
+    $this->setWidgets(
+        array(
+          'id' => new sfWidgetFormInputHidden(),
+          'event_id' => new sfWidgetFormDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agEvent'), 'add_empty' => false)
+          ),
+          'event_facility_group' => new sfWidgetFormInputText(array('label' => 'Status')),
+          'facility_group_type_id' => new sfWidgetFormDoctrineChoice(
+              array(
+                'model' => $this->getRelatedModelName('agFacilityGroupType'),
+                'add_empty' => false
+              )
+          ),
+          'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(
+              array(
+                'model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'),
+                'add_empty' => false,
+                'method' => 'getFacilityGroupAllocationStatus',
+                'label' => 'Status'
+              )
+          ),
+          'activation_sequence' => new sfWidgetFormInputText(),
+          //facility resource list needs to minus options that are in $currentoptions
+          //'ag_facility_resource_list'          => new sfWidgetFormChoice(array
+          //  ('choices' => $availtoptions,'multiple' => true),
+          //  array('class' => 'widthAndHeight150')),
+          'ag_facility_resource_list' => new sfWidgetFormInputHidden(),
+          //  sfWidgetFormDoctrineChoice(array('multiple' => true,
+          //  'model' => 'agFacilityResource', 'expanded' => false),
+          //  array('class' => 'widthAndHeight150')), //this will be hidden
+          'ag_facility_resource_order' => new sfWidgetFormInputHidden(),
         //  sfWidgetFormChoice(array('choices' => $currentoptions,
         //  'multiple' => true),array('class' => 'widthAndHeight150')) //this will be hidden
-    ));
+        )
+    );
 
 
-    $this->setValidators(array(
-      'id' => new sfValidatorChoice(array
-        ('choices' => array
-          ($this->getObject()->get('id')),
-        'empty_value' => $this->getObject()->get('id'),
-        'required' => false)),
-      'event_id' => new sfValidatorDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agEvent'))),
-      'event_facility_group' => new sfValidatorString(array
-        ('max_length' => 64)),
-      'facility_group_type_id' => new sfValidatorDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agFacilityGroupType'))),
-      'facility_group_allocation_status_id' => new sfValidatorDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'))),
-      'activation_sequence' => new sfValidatorInteger(),
+    $this->setValidators(
+        array(
+          'id' => new sfValidatorChoice(
+              array(
+                'choices' => array($this->getObject()->get('id')),
+                'empty_value' => $this->getObject()->get('id'),
+                'required' => false
+              )
+          ),
+          'event_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agEvent'))
+          ),
+          'event_facility_group' => new sfValidatorString(array('max_length' => 64)),
+          'facility_group_type_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agFacilityGroupType'))
+          ),
+          'facility_group_allocation_status_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'))
+          ),
+          'activation_sequence' => new sfValidatorInteger(),
         //'ag_facility_resource_list'
         //           => new sfValidatorDoctrineChoice(array
         //             ('multiple' => true, 'model' => 'agFacilityResource', 'required' => false)),
         //'ag_facility_resource_order'
         //          => new sfValidatorChoice(array('required' => false))
-    ));
+        )
+    );
     $this->validatorSchema->setOption('allow_extra_fields', true);
     $this->validatorSchema->setPostValidator(
-        new sfValidatorAnd(array(
-          new sfValidatorDoctrineUnique(array
-            ('model' => 'agEventFacilityGroup', 'column' => array('id'))),
-          new sfValidatorDoctrineUnique(array
-            ('model' => 'agEventFacilityGroup',
-            'column' => array('event_id', 'event_facility_group'))),
-          new sfValidatorDoctrineUnique(array
-            ('model' => 'agEventFacilityGroup',
-            'column' => array('event_facility_group'))),
-        ))
+        new sfValidatorAnd(
+            array(
+              new sfValidatorDoctrineUnique(
+                  array('model' => 'agEventFacilityGroup', 'column' => array('id'))
+              ),
+              new sfValidatorDoctrineUnique(
+                  array(
+                    'model' => 'agEventFacilityGroup',
+                    'column' => array('event_id', 'event_facility_group')
+                  )
+              ),
+              new sfValidatorDoctrineUnique(
+                  array(
+                    'model' => 'agEventFacilityGroup',
+                    'column' => array('event_facility_group')
+                  )
+              ),
+            )
+        )
     );
     $this->widgetSchema->setLabel('event_facility_group', 'Facility Group Name');
     $this->widgetSchema->setNameFormat('ag_event_facility_group[%s]');
@@ -164,8 +186,11 @@ class agEventFacilityGroupForm extends BaseagEventFacilityGroupForm
       foreach ($alloc_array as $key => $value) {
         if (in_array($value, $current)) {
           $agEventFacilityResource = Doctrine_Core::getTable('agEventFacilityResource')
-                  ->findByDql('facility_resource_id = ? AND event_facility_group_id = ?', array
-                    ($value, $this->getObject()->getId()))->getFirst();
+                  ->findByDql(
+                      'facility_resource_id = ? AND event_facility_group_id = ?',
+                      array($value, $this->getObject()->getId())
+                  )
+                  ->getFirst();
           $agEventFacilityResource->setActivationSequence($key + 1);
           //= new agEventFacilityResource($value);
           //if this already exists in the eventfacilitygroup as a resource, don't do anything
