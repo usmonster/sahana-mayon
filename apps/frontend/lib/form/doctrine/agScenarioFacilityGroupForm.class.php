@@ -35,24 +35,35 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
   public function setup()
   {
 
-    $this->setWidgets(array(
-      'id' => new sfWidgetFormInputHidden(),
-      'scenario_id' => new sfWidgetFormInputHidden(),
-      'scenario_facility_group' => new sfWidgetFormInputText(array
-        ('label' => 'Status')),
-      'facility_group_type_id' => new sfWidgetFormDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agFacilityGroupType'), 'add_empty' => false)),
-      'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'), 'add_empty' => false, 'method' => 'getFacilityGroupAllocationStatus', 'label' => 'Status')),
-      'activation_sequence' => new sfWidgetFormInputText(),
-      //facility resource list needs to minus options that are in $currentoptions
-      //'ag_facility_resource_list'          => new sfWidgetFormChoice(array
-      //  ('choices' => $availtoptions,'multiple' => true),array('class' => 'widthAndHeight150')),
-      'ag_facility_resource_list' => new sfWidgetFormInputHidden(),
-      //sfWidgetFormDoctrineChoice(array
-      //  ('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false),
-      //   array('class' => 'widthAndHeight300')), //this will be hidden
-      'ag_facility_resource_order' => new sfWidgetFormInputHidden(),
+    $this->setWidgets(
+        array(
+          'id' => new sfWidgetFormInputHidden(),
+          'scenario_id' => new sfWidgetFormInputHidden(),
+          'scenario_facility_group' => new sfWidgetFormInputText(
+              array('label' => 'Status')
+          ),
+          'facility_group_type_id' => new sfWidgetFormDoctrineChoice(
+              array(
+                'model' => $this->getRelatedModelName('agFacilityGroupType'),
+                'add_empty' => false
+              )
+          ),
+          'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(
+              array(
+                'model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'),
+                'add_empty' => false,
+                'method' => 'getFacilityGroupAllocationStatus',
+                'label' => 'Status')
+          ),
+          'activation_sequence' => new sfWidgetFormInputText(),
+          //facility resource list needs to minus options that are in $currentoptions
+          //'ag_facility_resource_list'          => new sfWidgetFormChoice(array
+          //  ('choices' => $availtoptions,'multiple' => true),array('class' => 'widthAndHeight150')),
+          'ag_facility_resource_list' => new sfWidgetFormInputHidden(),
+          //sfWidgetFormDoctrineChoice(array
+          //  ('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false),
+          //   array('class' => 'widthAndHeight300')), //this will be hidden
+          'ag_facility_resource_order' => new sfWidgetFormInputHidden(),
         ////sfWidgetFormChoice(array
         //  ('choices' => $currentoptions,'multiple' => true),
         //  array('class' => 'widthAndHeight300')) //this will be hidden
@@ -60,34 +71,52 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
     );
 
 
-    $this->setValidators(array(
-      'id' => new sfValidatorChoice(array('choices' => array
-          ($this->getObject()->get('id')),
-        'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'scenario_id' => new sfValidatorDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agScenario'))),
-      'scenario_facility_group' => new sfValidatorString(array
-        ('max_length' => 64)),
-      'facility_group_type_id' => new sfValidatorDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agFacilityGroupType'))),
-      'facility_group_allocation_status_id' => new sfValidatorDoctrineChoice(array
-        ('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'))),
-      'activation_sequence' => new sfValidatorInteger(),
+    $this->setValidators(
+        array(
+          'id' => new sfValidatorChoice(
+              array(
+                'choices' => array($this->getObject()->get('id')),
+                'empty_value' => $this->getObject()->get('id'), 'required' => false
+              )
+          ),
+          'scenario_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agScenario'))
+          ),
+          'scenario_facility_group' => new sfValidatorString(array('max_length' => 64)),
+          'facility_group_type_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agFacilityGroupType'))
+          ),
+          'facility_group_allocation_status_id' => new sfValidatorDoctrineChoice(
+              array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'))
+          ),
+          'activation_sequence' => new sfValidatorInteger(),
         //'ag_facility_resource_list'           => new sfValidatorDoctrineChoice(array
         //  ('multiple' => true, 'model' => 'agFacilityResource', 'required' => false)),
         //'ag_facility_resource_order'          => new sfValidatorChoice(array
         //  ('required' => false))
-    ));
+        )
+    );
     $this->validatorSchema->setOption('allow_extra_fields', true);
     $this->validatorSchema->setPostValidator(
-        new sfValidatorAnd(array(
-          new sfValidatorDoctrineUnique(array
-            ('model' => 'agScenarioFacilityGroup', 'column' => array('id'))),
-          new sfValidatorDoctrineUnique(array
-            ('model' => 'agScenarioFacilityGroup', 'column' => array('scenario_id', 'scenario_facility_group'))),
-          new sfValidatorDoctrineUnique(array
-            ('model' => 'agScenarioFacilityGroup', 'column' => array('scenario_facility_group'))),
-        ))
+        new sfValidatorAnd(
+            array(
+              new sfValidatorDoctrineUnique(
+                  array('model' => 'agScenarioFacilityGroup', 'column' => array('id'))
+              ),
+              new sfValidatorDoctrineUnique(
+                  array(
+                    'model' => 'agScenarioFacilityGroup',
+                    'column' => array('scenario_id', 'scenario_facility_group')
+                  )
+              ),
+              new sfValidatorDoctrineUnique(
+                  array(
+                    'model' => 'agScenarioFacilityGroup',
+                    'column' => array('scenario_facility_group')
+                  )
+              ),
+            )
+        )
     );
     $this->widgetSchema->setLabel('scenario_facility_group', 'Facility Group Name');
     $this->widgetSchema->setNameFormat('ag_scenario_facility_group[%s]');
@@ -159,9 +188,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
       foreach ($alloc_array as $key => $value) {
         if (in_array($value, $current)) {
 
-          $agScenarioFacilityResource = Doctrine_Core::getTable('agScenarioFacilityResource')
-                  ->findByDql('facility_resource_id = ? AND scenario_facility_group_id = ?', array
-                    ($value, $this->getObject()->getId()))->getFirst();
+          $agScenarioFacilityResource = Doctrine_Core::getTable('agScenarioFacilityResource')->findByDql('facility_resource_id = ? AND scenario_facility_group_id = ?', array($value, $this->getObject()->getId()))->getFirst();
           $agScenarioFacilityResource->setActivationSequence($key + 1);
           //= new agScenarioFacilityResource($value);
           //if this already exists in the scenariofacilitygroup as a resource, don't do anything
@@ -174,7 +201,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
           $agScenarioFacilityResource->activation_sequence = $key + 1;
           $agScenarioFacilityResource->facility_resource_id = $value;
           $agScenarioFacilityResource->facility_resource_allocation_status_id = 2;
-            //ready / awaiting activation / committed
+          //ready / awaiting activation / committed
         }
         $agScenarioFacilityResource->save();
       }

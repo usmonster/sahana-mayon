@@ -26,8 +26,9 @@ BaseagEventFacilityResourceActivationTimeForm
     unset($this['created_at'], $this['updated_at']);
     $this->setWidget('event_facility_resource_id', new sfWidgetFormInputHidden());
     $this->setWidget('activation_time', new sfWidgetFormInputHidden());
-    $this->setWidget('operate_on', new agWidgetFormSelectCheckbox(array
-          ('choices' => array(null)), array()));
+    $this->setWidget(
+        'operate_on', new agWidgetFormSelectCheckbox(array('choices' => array(null)), array())
+    );
     $this->getWidgetSchema()->setLabel('operate_on', false);
 
 

@@ -37,43 +37,47 @@ class agScenarioForm extends BaseagScenarioForm
 
   public function setup()
   {
-    $this->setWidgets(array(
-      'id' => new sfWidgetFormInputHidden(),
-      'scenario' => new sfWidgetFormInputText(array(), array
-        ('class' => 'inputGray setWidgetsScenario')),
-      'description' => new sfWidgetFormTextarea(array(), array
-        ('class' => 'inputGray setWidgetsDesc')),
-    ));
+    $this->setWidgets(
+        array(
+          'id' => new sfWidgetFormInputHidden(),
+          'scenario' => new sfWidgetFormInputText(
+              array(),
+              array('class' => 'inputGray setWidgetsScenario')
+          ),
+          'description' => new sfWidgetFormTextarea(
+              array(),
+              array('class' => 'inputGray setWidgetsDesc')
+          ),
+        )
+    );
 
-    $this->setValidators(array(
-      'id' => new sfValidatorChoice(array
-        ('choices' => array
-          ($this->getObject()->get('id')),
-        'empty_value' => $this->getObject()->get('id'),
-        'required' => false)),
-      'scenario' => new sfValidatorString(array
-        ('max_length' => 64)),
-      'description' => new sfValidatorString(array
-        ('max_length' => 255, 'required' => false)),
+    $this->setValidators(
+        array(
+          'id' => new sfValidatorChoice(
+              array(
+                'choices' => array($this->getObject()->get('id')),
+                'empty_value' => $this->getObject()->get('id'),
+                'required' => false)
+          ),
+          'scenario' => new sfValidatorString(array('max_length' => 64)),
+          'description' => new sfValidatorString(array('max_length' => 255, 'required' => false)),
         )
     );
 
     $this->validatorSchema->setPostValidator(
-        new sfValidatorDoctrineUnique(array
-          (
-          'model' => 'agScenario',
-          'column' => array('scenario')
-        ))
+        new sfValidatorDoctrineUnique(
+            array('model' => 'agScenario', 'column' => array('scenario'))
+        )
     );
     $this->widgetSchema->setNameFormat('ag_scenario[%s]');
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
     unset($this['created_at'],
         $this['updated_at'],
         $this['ag_event_list']);
-    $this->widgetSchema->setLabels(array
-      (
-      'scenario' => 'Name',
-      'description' => 'Description',
+    $this->widgetSchema->setLabels(
+        array(
+          'scenario' => 'Name',
+          'description' => 'Description',
         //'facility_group' => 'Facility Groups'
         )
     );

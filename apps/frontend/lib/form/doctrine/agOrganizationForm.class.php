@@ -47,26 +47,29 @@ class agOrganizationForm extends BaseagOrganizationForm
         $this['ag_branch_list']
     );
 
-    $this->setWidgets(array(
-      'id' => new sfWidgetFormInputHidden(),
-      'entity_id' => new sfWidgetFormInputHidden(),
-      'organization' => new sfWidgetFormInputText(),
-      'description' => new sfWidgetFormInputText(),
-    ));
+    $this->setWidgets(
+        array(
+          'id' => new sfWidgetFormInputHidden(),
+          'entity_id' => new sfWidgetFormInputHidden(),
+          'organization' => new sfWidgetFormInputText(),
+          'description' => new sfWidgetFormInputText(),
+        )
+    );
 
-    $this->setValidators(array
-      (
-      'id' => new sfValidatorChoice(array
-        (
-        'choices' => array($this->getObject()->get('id')),
-        'empty_value' => $this->getObject()->get('id'),
-        'required' => false)
-      ),
-      'organization' => new sfValidatorString(array
-        ('required' => true, 'max_length' => 128)),
-      'description' => new sfValidatorString(array
-        ('required' => false, 'min_length' => 1,
-        'max_length' => 255)),
+    $this->setValidators(
+        array(
+          'id' => new sfValidatorChoice(
+              array(
+                'choices' => array($this->getObject()->get('id')),
+                'empty_value' => $this->getObject()->get('id'),
+                'required' => false)
+          ),
+          'organization' => new sfValidatorString(
+              array('required' => true, 'max_length' => 128)
+          ),
+          'description' => new sfValidatorString(
+              array('required' => false, 'min_length' => 1, 'max_length' => 255)
+          ),
         )
     );
 
