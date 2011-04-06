@@ -1205,6 +1205,13 @@ tfoot.tFootInfo tr
     border-bottom: none;
 }
 
+tfoot.tFootInfo tr:hover
+{
+  background-color: transparent;
+}
+
+
+
 tfoot.tFootInfo td
 {
   text-align: right;

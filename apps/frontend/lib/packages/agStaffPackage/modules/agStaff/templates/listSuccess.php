@@ -7,7 +7,7 @@ foreach ($agPersonNameTypesResultSet as $nameType) {
 }
 $sortColumn = $sf_request->getGetParameter('sort');
 $sortOrder = $sf_request->getGetParameter('order');
-($sf_request->getGetParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
+($sf_request->getGetParameter('status')) ? $filterAppend = '?status=' . $sf_request->getGetParameter('status') : $filterAppend = '?status=active';
 ($sf_request->getGetParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getGetParameter('sort') : $sortAppend = '';
 ($sf_request->getGetParameter('order')) ? $orderAppend = '&order=' . $sf_request->getGetParameter('order') : $orderAppend = '';
 
@@ -182,13 +182,13 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
 //This block creates the navigation links for paginated staff members.
 //
 //First Page link (or inactive if we're at the first page).
-            echo(!$pager->isFirstPage() ? '<a href="' . url_for('staff/list') . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
+            echo(!$pager->isFirstPage() ? '<a href="' . url_for('staff/list') . $filterAppend . '&page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
 //Previous Page link (or inactive if we're at the first page).
-            echo(!$pager->isFirstPage() ? '<a href="' . url_for('staff/list') . '?page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
+            echo(!$pager->isFirstPage() ? '<a href="' . url_for('staff/list') . $filterAppend .'&page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
 //Next Page link (or inactive if we're at the last page).
-            echo(!$pager->isLastPage() ? '<a href="' . url_for('staff/list') . '?page=' . $pager->getNextPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
+            echo(!$pager->isLastPage() ? '<a href="' . url_for('staff/list') . $filterAppend . '&page=' . $pager->getNextPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
 //Last Page link (or inactive if we're at the last page).
-            echo(!$pager->isLastPage() ? '<a href="' . url_for('staff/list') . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
+            echo(!$pager->isLastPage() ? '<a href="' . url_for('staff/list') . $filterAppend . '&page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
   ?>
 </div>
 

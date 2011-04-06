@@ -10,11 +10,56 @@
 *
 * @author     Nils Stolpe, CUNY SPS
 * @author     Pradeep Vijayagiri, CUNY SPS
+* @author     Charles Wisniewski, CUNY SPS
 *
 * Copyright of the Sahana Software Foundation, sahanafoundation.org
 **/
 class agTemplateHelper
 {
+  /**
+   *
+   * @param array of phone information, the format should be:
+   *
+   *
+   * @return string html formatted cell of email for display in templates
+   */
+  public static function buildPhoneHtml($phoneArray)
+  {
+    foreach ($phoneArray as $type => $phone) {
+      $counts[$type] = count($phone);
+    }
+
+    // Then determine the maximum rows we'll get.
+    $maxRows = max($counts);
+    // Get the headers for the table. And start building the HTML for the tables header.
+    $headers = array_keys($phoneArray);
+    // Set the iterator and build the table rows.
+    $i = 0;
+    while ($i < $maxRows) {
+      // Begin to onstruct the table rows.
+      $rows[$i] = '<tr>' . PHP_EOL;
+      foreach ($headers as $header) {
+        // On the first iteration through, finish creating the table headers.
+        if ($i == 0) {
+          $tableHead .= '<th class="head">' . ucwords($header) . '</th>' . PHP_EOL;
+        }
+        $rows[$i] .= '<td>' . (isset($addressArray[$header][$i][0]) ? ($addressArray[$header][$i][0] . '<hr class="ruleGray" /><span class="bold">Last Updated: </span><span class="italic">'  . substr($addressArray[$header][$i][1], 0, 10) . '</span>') : '') . '</td>' . PHP_EOL;
+      }
+      $rows[$i] .= '</tr>' . PHP_EOL;
+      $i++;
+    }
+    // Close the table header row.
+    $tableHead .= '</tr>' . PHP_EOL;
+    // Spit it all out.
+    $output = $tableHead;
+    foreach ($rows as $row) {
+      $output .= $row;
+    }
+    return $output;
+  }
+
+
+
   /**
    *
    * @param array of address

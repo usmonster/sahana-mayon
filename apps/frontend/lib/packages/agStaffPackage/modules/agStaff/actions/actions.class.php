@@ -89,37 +89,40 @@ class agStaffActions extends agActions
     $ag_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
     foreach ($ag_staff as $key => $value) {
       $person_array[] = $value['p_id'];
+
+      //these two lines are only for development purposes, they should be returned by their respective template helpers
+      $person_phones[$value['p_id']] = 'phone';
+      $person_emails[$value['p_id']] = 'email';
       //$remapped_array[$ag_event_staff['es_id']] = $
     }
     $names = new agPersonNameHelper($person_array); //we need to get persons from the event staff ids that are returned here
     $person_names = $names->getPrimaryNameByType();
     //maybe we should set the below/above to a a static property for use through a session
-    $emails = new agEntityEmailHelper($person_array);
-    $email_array = $emails->getEntityEmailByType(null,true,true);
-    $person_emails = array();
-    foreach($email_array as $person_id => $email_type)
-    {
-      foreach($email_type as $et => $etv){
-        $person_emails[$person_id][$et] = $person_emails[$person_id][$et][0];
-      }
-    }
 
-    $phones = new agEntityPhoneHelper($person_array);
-    $phone_array = $phones->getEntityPhoneByType(null,true,true,true);
-    $person_phones = array();
-    foreach($phone_array as $person_id => $phone_type)
-    {
-      foreach($phone_type as $pt => $ptv){
-        $person_phones[$person_id][$pt] = $person_phones[$person_id][$pt][0];
-      }
-    }
-
+//    $emails = new agEntityEmailHelper($person_array);
+//    $email_array = $emails->getEntityEmailByType(null,true,true);
+//    $person_emails = array();
+//
+//    foreach($email_array as $person_id => $email_type)
+//    {
+//      foreach($email_type as $et => $etv){
+//        $person_emails[$person_id][$et] = $person_emails[$person_id][$et][0];
+//      }
+//    }
+//
+//    $phones = new agEntityPhoneHelper($person_array);
+//    $phone_array = $phones->getEntityPhoneByType(null,true,true,true);
+//    $person_phones = array();
+//    foreach($phone_array as $person_id => $phone_type)
+//    {
+//      foreach($phone_type as $pt => $ptv){
+//        $person_phones[$person_id][$pt] = $person_phones[$person_id][$pt][0];
+//      }
+//    }
 
     //$person_phones[$value['p_id']] = arraytostring($phone_array);
     //function arraytostring is a similar function to the draw address table function in agtemplatehelper
     
-    //$names->
-    //this is the desired format of the return array:
     foreach ($ag_staff as $staff => $value) {
       $staffArray[] = array(
         'fn' => $person_names[$value['p_id']]['given'],
@@ -127,13 +130,16 @@ class agStaffActions extends agActions
         'agency' => $value['o_organization'],
         'staff_status' => $value['ss_staff_status'],
         'classification' => $value['srt_staff_resource_type'],
-        'phones' => $phone_array[$value['p_id']],    // only for testing, prefer the above
-        'emails' => $email_array[$value['p_id']],
+        'phones' => $person_phones[$value['p_id']],    // only for testing, prefer the above
+        'emails' => $person_emails[$value['p_id']],
         //'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
         /** @todo benchmark scale */
+
+
       );
     }
-    //$this->ag_staff = $result_array;
+
+//$this->ag_staff = $result_array;
 
 
     if ($request->getParameter('sort') && $request->getParameter('order')) {

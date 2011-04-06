@@ -29,7 +29,7 @@
     foreach ($pager->getResults() as $result) {
           echo get_partial('global/row', array(
         'obj' => $result,
-        'widget' => $widget,
+        //'widget' => $widget,
          'displayColumns' => $displayColumns));
             //ideally the set of columns passed here should be something like:
             //query_field_name (with table alias... the query has to be on point)
