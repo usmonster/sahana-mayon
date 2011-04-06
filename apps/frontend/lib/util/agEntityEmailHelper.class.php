@@ -32,7 +32,7 @@ class agEntityEmailHelper extends agEntityContactHelper
   public function getAgEmailHelper()
   {
     if (! isset($this->agEmailHelper)) { $this->agEmailHelper = agEmailHelper::init(); }
-    return $this->agEmailHelper ;
+    return $this->agEmailHelper;
   }
 
   /**
@@ -115,7 +115,7 @@ class agEntityEmailHelper extends agEntityContactHelper
           FROM agEntityEmailContact s
           WHERE s.entity_id = eec.entity_id
             AND s.email_contact_type_id = eec.email_contact_type_id
-          HAVING MIN(s.priority) = eec.priority )') ;
+          HAVING MIN(s.priority) = eec.priority )');
     }
 
     // build this as custom hydration to 'double tap' the data
@@ -128,7 +128,7 @@ class agEntityEmailHelper extends agEntityContactHelper
       // if we're actually going to use the email helper
       if (! is_null($emailHelperMethod) && ! in_array($row[1], $emailHelperArgs[0]))
       {
-        $emailHelperArgs[0][] = $row[1] ;
+        $emailHelperArgs[0][] = $row[1];
       }
     }
 
@@ -136,24 +136,24 @@ class agEntityEmailHelper extends agEntityContactHelper
     // stop right here!
     if (is_null($emailHelperMethod))
     {
-      return $entityEmails ;
+      return $entityEmails;
     }
 
     // otherwise... we keep going and lazily load our email helper, 'cause we'll need her
-    $emailHelper = $this->getAgEmailHelper() ;
+    $emailHelper = $this->getAgEmailHelper();
 
     // finish appending the rest of our email helper args
     foreach ($emailArgs as $arg)
     {
-      $emailHelperArgs[] = $arg ;
+      $emailHelperArgs[] = $arg;
     }
 
     // use the email helper to format the email results
-    $userFunc = array($emailHelper,$emailHelperMethod) ;
-    $formattedEmails = call_user_func_array($userFunc,$emailHelperArgs) ;
+    $userFunc = array($emailHelper,$emailHelperMethod);
+    $formattedEmails = call_user_func_array($userFunc,$emailHelperArgs);
 
     // we can release the email helper args, since we don't need them anymore
-    unset($emailHelperArgs) ;
+    unset($emailHelperArgs);
 
     // now loop through our entities and attach their emails
     foreach ($entityEmails as $entityId => $emailTypes)
@@ -166,23 +166,23 @@ class agEntityEmailHelper extends agEntityContactHelper
         if ($primary)
         {
           // flatten the results
-          $emails = $emails[0] ;
-          $emails[0] = $formattedEmails[$emails[0]] ;
+          $emails = $emails[0];
+          $emails[0] = $formattedEmails[$emails[0]];
 
-          $entityEmails[$entityId][$emailType][0] = $emails ;
+          $entityEmails[$entityId][$emailType][0] = $emails;
         }
         // if not primary, we have one more loop in our return for another array nesting
         else
         {
           foreach ($emails as $index => $email)
           {
-            $entityEmails[$entityId][$emailType][$index][0] = $formattedEmails[$email[0]] ;
+            $entityEmails[$entityId][$emailType][$index][0] = $formattedEmails[$email[0]];
           }
         }
       }
     }
 
-    return $entityEmails ;
+    return $entityEmails;
   }
 
   /**
@@ -226,7 +226,7 @@ class agEntityEmailHelper extends agEntityContactHelper
         SELECT s.id
           FROM agEntityEmailContact s
           WHERE s.entity_id = eec.entity_id
-          HAVING MIN(s.priority) = eec.priority )') ;
+          HAVING MIN(s.priority) = eec.priority )');
     }
     // build this as custom hydration to 'double tap' the data
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
@@ -260,11 +260,11 @@ class agEntityEmailHelper extends agEntityContactHelper
     }
 
     // use the email helper to format the email results
-    $userFunc = array($emailHelper,$emailHelperMethod) ;
+    $userFunc = array($emailHelper,$emailHelperMethod);
     $formattedEmails = call_user_func_array($userFunc,$emailHelperArgs);
 
     // we can release the email helper args, since we don't need them anymore
-    unset($emailHelperArgs) ;
+    unset($emailHelperArgs);
 
     // now loop through our entities and replace email value with formatted email.
     foreach ($entityEmails as $entityId => $emails)
@@ -275,17 +275,17 @@ class agEntityEmailHelper extends agEntityContactHelper
       if ($primary)
       {
         // flatten for just one return
-        $emails = $emails[0] ;
-        $emails[1] = $formattedEmails[$emails[1]] ;
+        $emails = $emails[0];
+        $emails[1] = $formattedEmails[$emails[1]];
 
-        $entityEmails[$entityId] = $emails ;
+        $entityEmails[$entityId] = $emails;
       }
       // if not primary, we have one more loop in our return for another array nesting
       else
       {
         foreach ($emails as $index => $email)
         {
-          $entityEmails[$entityId][$index][1] = $formattedEmails[$email[1]] ;
+          $entityEmails[$entityId][$index][1] = $formattedEmails[$email[1]];
         }
       }
     }
@@ -310,7 +310,7 @@ class agEntityEmailHelper extends agEntityContactHelper
    * (eg, those stored in the database but not explicitly passed as parameters), will be retained
    * and reprioritized to the end of the list, or removed altogether.
    * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
-   * exception or be silently ignored (rendering an address 'optional'). Defaults to the class
+   * exception or be silently ignored (rendering an email 'optional'). Defaults to the class
    * property of the same name.
    * @param Doctrine_Connection $conn An optional Doctrine connection object.
    * @return array An associative array of operations performed including the number of upserted
@@ -398,7 +398,7 @@ class agEntityEmailHelper extends agEntityContactHelper
           else
           {
             // otherwise, get our real emailId
-            $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[0]];
+            $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
           }
         }
       }

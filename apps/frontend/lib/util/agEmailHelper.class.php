@@ -18,6 +18,11 @@ class agEmailHelper extends agBulkRecordHelper
   // these constants map to the email get types that are supported in other function calls
   const     EML_GET_VALUE = 'getEmailValues';
 
+  /**
+   * A quick helper method to take in an array emailIds and return an array of emails.
+   * @param array $emails A monodimensional array of email ids.
+   * @return array An associative array, keyed by email id, with a value of its corresponding email.
+   */
   public function getEmailValues($emailIds)
   {
     $q = agDoctrineQuery::create()
@@ -44,6 +49,23 @@ class agEmailHelper extends agBulkRecordHelper
     return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
+  /**
+   * Method to create a new email.
+   *
+   * @param array $emails A mono-dimensional array of arbitrary index keys and email values.
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array A two dimensional array. The first array element ([0]), returns an array of
+   * email indexes and the newly inserted emailIds. The second array element [1], returns all
+   * email indexes that could not be inserted.
+   * <code>
+   * array(
+   *  [0] => array( [$emailIndex] => [$emailId], ... )
+   *  [1] => array( $emailIndex, ... )
+   * )
+   * </code>
+   */
   protected function setNewEmails($emails, $throwOnError, $conn)
   {
     // declare our results array
@@ -106,6 +128,23 @@ class agEmailHelper extends agBulkRecordHelper
     return array($results, array_keys($emails));
   }
 
+  /**
+   * Method to set emails and return email ids, inserting new emails as necessary.
+   *
+   * @param array $emails A mono-dimensional array of arbitrary index keys and email values.
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array A two dimensional array. The first array element ([0]), returns an array of
+   * email indexes and the newly inserted emailIds. The second array element [1], returns all
+   * email indexes that could not be inserted.
+   * <code>
+   * array(
+   *  [0] => array( [$emailIndex] => [$emailId], ... )
+   *  [1] => array( $emailIndex, ... )
+   * )
+   * </code>
+   */
   protected function _setEmails( $emails, $throwOnError = NULL, Doctrine_Connection $conn = NULL)
   {
     // declare our results array
@@ -145,7 +184,7 @@ class agEmailHelper extends agBulkRecordHelper
       // add our successes to the final results set
       $results[$index] = $emailId;
 
-      // release the address from our initial input array
+      // release the email from our initial input array
       unset($emails[$index]);
 
       // release it from the successes array while we're at it
@@ -157,11 +196,21 @@ class agEmailHelper extends agBulkRecordHelper
   }
 
   /**
+   * Method to call other method for email setters to insert new emails and retrieve old emails.
    *
-   * @param <type> $emails
-   * @param <type> $throwOnError
-   * @param <type> $conn
-   * @todo Fill in method.  Currently, empty shell.
+   * @param array $emails A mono-dimensional array of arbitrary index keys and email values.
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array A two dimensional array. The first array element ([0]), returns an array of
+   * email indexes and the newly inserted emailIds. The second array element [1], returns all
+   * email indexes that could not be inserted.
+   * <code>
+   * array(
+   *  [0] => array( [$emailIndex] => [$emailId], ... )
+   *  [1] => array( $emailIndex, ... )
+   * )
+   * </code>
    */
   public function setEmails($emails, $throwOnError = NULL, $conn = NULL)
   {
