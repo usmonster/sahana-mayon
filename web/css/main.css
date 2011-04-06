@@ -169,7 +169,7 @@ h5 {
   color: #dadada;
 }
 
-.buttonSort, .buttonSortSelected {
+.buttonSort, .buttonSortSelected, .expander {
   font-size: 1em;
   margin: 0;
   padding: 0;
@@ -182,11 +182,11 @@ h5 {
   display: inline;
 }
 
-.buttonSort {
+.buttonSort, .expander {
   color: #848484;
 }
 
-.navButton:hover, .buttonText:hover, .buttonWhite:hover, .buttonSort:hover, .buttonSortSelected {
+.navButton:hover, .buttonText:hover, .buttonWhite:hover, .buttonSort:hover, .buttonSortSelected, .expander:hover {
   color: #ff8f00;
   text-shadow: 0px 0px 5px #ff8f00;
 }
@@ -1285,5 +1285,3 @@ a.signin.menu-open span {
 #modalAppend {
   display: none;
 }
-
-

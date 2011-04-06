@@ -399,12 +399,12 @@ class eventActions extends agActions
 
     $this->ag_event_staff = $result_array;
 //    foreach ($this->ag_event_staff as $eventFacilityGroup) {
-//      $tempArray = $this->queryForTable($eventFacilityGroup->id);
+//      $tempArray = $this->groupResourceQuery($eventFacilityGroup->id);
 //      foreach ($tempArray as $ta) {
 //        array_push($eventStaff, $ta);
 //      }
 //    }
-    //$this->facilityGroupArray = $facilityGroupArray;
+    //$this->facilityGroupArray = $facilityResourceArray;
     $this->pager = new agArrayPager(null, 10);
 
 
@@ -612,41 +612,61 @@ class eventActions extends agActions
       $this->missingEvent = true;
     }
     $this->setEventBasics($request);
+
+    $a = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event_id, null);
     $query = agDoctrineQuery::create()
-            ->select('a.*, afr.*, afgt.*, fr.*')
-            ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
+            ->select('efg.id')
+              ->addSelect('efg.event_facility_group')
+              ->addSelect('fgt.facility_group_type')
+              ->addSelect('fgas.id')
+              ->addSelect('fgas.facility_group_allocation_status')
+              ->addSelect('ev.event_name')
+              ->addSelect('count(efr.event_facility_group_id)')
+            ->from('agEventFacilityGroup efg')
+              ->innerJoin('efg.agEventFacilityGroupStatus efgs')
+              ->innerJoin('efg.agFacilityGroupType fgt')
+              ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
+              ->innerJoin('efg.agEvent ev')
+              ->innerJoin('efg.agEventFacilityResource efr')
+            ->where('EXISTS (
+              SELECT s.id
+                FROM agEventFacilityGroupStatus s
+                WHERE s.event_facility_group_id = efgs.event_facility_group_id
+                  AND s.time_stamp <= CURRENT_TIMESTAMP
+                HAVING MAX(s.time_stamp) = efgs.time_stamp)')
+            ->groupBy('efg.event_facility_group');
     // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
     if ($this->event != "") {
-      $query->where('a.event_id = ?', $this->event_id);
+      $query->andWhere('efg.event_id = ?', $this->event_id);
     }
     
-    $facilityGroupArray = array();
-    $this->ag_event_facility_groups = $query->execute();
-    foreach ($this->ag_event_facility_groups as $eventFacilityGroup) {
-      $tempArray = $this->queryForTable($eventFacilityGroup->id);
-      foreach ($tempArray as $ta) {
-        array_push($facilityGroupArray, $ta);
-      }
+    $facilityResourceArray = array();
+    $this->facilityGroupArray = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    foreach ($this->facilityGroupArray as $eventFacilityGroup) {
+      $facilityResourceArray[$eventFacilityGroup['efg_id']] = $this->groupResourceQuery($eventFacilityGroup['efg_id']);
+//      foreach ($tempArray as $ta) {
+//        array_push($facilityResourceArray, $ta);
+//      }
     }
-    $this->facilityGroupArray = $facilityGroupArray;
+    $this->facilityResourceArray = $facilityResourceArray;
     $this->pager = new agArrayPager(null, 10);
 
     if ($request->getParameter('sort') && $request->getParameter('order')) {
-      $sortColumns = array('group' => 'efg_event_facility_group',
-        'name' => 'f_facility_name',
-        'code' => 'f_facility_code',
-        'status' => 'ras_facility_resource_allocation_status',
-        'time' => 'efrat_activation_time',
-        'type' => 'fgt_facility_group_type',
-        'event' => 'e_event_name');
+      $sortColumns = array(
+        'group'          => 'efg_event_facility_group',
+        'type'           => 'fgt_facility_group_type',
+        'status'         => 'fgas_facility_group_allocation_status',
+        'count'          => 'efr_count',
+        'event'          => 'ev_event_name');
       $sort = $sortColumns[$request->getParameter('sort')];
       agArraySort::$sort = $sort;
-      usort($facilityGroupArray, array('agArraySort', 'arraySort'));
+      usort($this->facilityGroupArray, array('agArraySort', 'arraySort'));
       if ($request->getParameter('order') == 'DESC') {
-        $facilityGroupArray = array_reverse($facilityGroupArray);
+        $this->facilityGroupArray = array_reverse($this->facilityGroupArray);
       }
     }
-    $this->pager->setResultArray($facilityGroupArray);
+    $this->pager->setResultArray($this->facilityGroupArray);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
 
@@ -698,7 +718,6 @@ class eventActions extends agActions
         $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
           $resourceAllocation->save();
-          $b = $this->getResponse()->getOptions();
           return $this->renderText('facilityresource/' . $request->getParameter('event_facility_resource_id'));
         }
         $resourceAllocation->save();
@@ -717,7 +736,7 @@ class eventActions extends agActions
         $groupAllocation->save();
       }
     }
-    $this->results = $this->queryForTable($this->eventFacilityGroup->id);
+    $this->results = $this->groupResourceQuery($this->eventFacilityGroup->id);
 
     $statusIds = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
 
@@ -738,7 +757,8 @@ class eventActions extends agActions
   }
 
   /**
-   * Gets facility information to display in the groupdetailSuccess template.
+   * Gets facility resource information for facility resources within the facility group with the id
+   * passed to the function.
    *
    * @param int      $eventFacilityGroupId     The id of an agEventFacilityGroup.
    *                                           Passed in from executeGroupDetail.
@@ -749,13 +769,14 @@ class eventActions extends agActions
    *                                           corresponds to a returned facility.
    *
    * */
-  private function queryForTable($eventFacilityGroupId = null)
+  private function groupResourceQuery($eventFacilityGroupId = null)
   {
     $query = agDoctrineQuery::create()
             ->select('efr.id')
             ->addSelect('f.facility_name')
             ->addSelect('f.facility_code')
             ->addSelect('frt.facility_resource_type')
+            ->addSelect('frt.facility_resource_type_abbr')
             ->addSelect('ras.facility_resource_allocation_status')
             ->addSelect('f.id')
             ->addSelect('fr.id')
@@ -764,11 +785,12 @@ class eventActions extends agActions
             ->addSelect('ers.id')
             ->addSelect('es.id')
             ->addSelect('efg.event_facility_group')
+            ->addSelect('efg.id')
             ->addSelect('fgt.facility_group_type')
             ->addSelect('e.event_name')
             ->addSelect('efrat.id')
             ->addSelect('efrat.activation_time')
-            ->from('agEventFacilityResource efr')
+              ->from('agEventFacilityResource efr')
             ->innerJoin('efr.agFacilityResource fr')
             ->innerJoin('fr.agFacilityResourceStatus frs')
             ->innerJoin('fr.agFacilityResourceType frt')

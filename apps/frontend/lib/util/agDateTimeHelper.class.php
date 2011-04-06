@@ -46,7 +46,7 @@ class agDateTimeHelper
    */
   public static function parsedTime($timeInterval, $unitsOfTime)
   {
-      $dateTimeHelperInstance = new DateTimeHelper($timeInterval, $unitsOfTime);
+      $dateTimeHelperInstance = new agDateTimeHelper($timeInterval, $unitsOfTime);
 
       return $dateTimeHelperInstance->getParsedTime();
   }
@@ -100,14 +100,14 @@ class agDateTimeHelper
    */
   public function setSecondsToParsedTime($seconds)
   {
-      $this->parsedTimeArrayInstance['days'] = (int) ($seconds / DateTimeHelper::SEC_IN_DAY);
-      $hours_remaining = $seconds % DateTimeHelper::SEC_IN_DAY;
+      $this->parsedTimeArrayInstance['days'] = (int) ($seconds / agDateTimeHelper::SEC_IN_DAY);
+      $hours_remaining = $seconds % agDateTimeHelper::SEC_IN_DAY;
 
-      $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / DateTimeHelper::SEC_IN_HOUR);
-      $minutes_remaining = $hours_remaining % DateTimeHelper::SEC_IN_HOUR;
+      $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / agDateTimeHelper::SEC_IN_HOUR);
+      $minutes_remaining = $hours_remaining % agDateTimeHelper::SEC_IN_HOUR;
 
-      $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / DateTimeHelper::SEC_IN_MINUTE);
-      $seconds_remaining = $minutes_remaining % DateTimeHelper::SEC_IN_MINUTE;
+      $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / agDateTimeHelper::SEC_IN_MINUTE);
+      $seconds_remaining = $minutes_remaining % agDateTimeHelper::SEC_IN_MINUTE;
 
       $this->parsedTimeArrayInstance['seconds'] = $seconds_remaining;
   }
@@ -125,17 +125,17 @@ class agDateTimeHelper
    */
   public function setMillisecondsToParsedTime($milliseconds)
   {
-      $this->parsedTimeArrayInstance['days'] = (int) ($milliseconds / DateTimeHelper::MSEC_IN_DAY);
-      $hours_remaining = $milliseconds % DateTimeHelper::MSEC_IN_DAY;
+      $this->parsedTimeArrayInstance['days'] = (int) ($milliseconds / agDateTimeHelper::MSEC_IN_DAY);
+      $hours_remaining = $milliseconds % agDateTimeHelper::MSEC_IN_DAY;
 
-      $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / DateTimeHelper::MSEC_IN_HOUR);
-      $minutes_remaining = $hours_remaining % DateTimeHelper::MSEC_IN_HOUR;
+      $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / agDateTimeHelper::MSEC_IN_HOUR);
+      $minutes_remaining = $hours_remaining % agDateTimeHelper::MSEC_IN_HOUR;
 
-      $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / DateTimeHelper::MSEC_IN_MINUTE);
-      $seconds_remaining = $minutes_remaining % DateTimeHelper::MSEC_IN_MINUTE;
+      $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / agDateTimeHelper::MSEC_IN_MINUTE);
+      $seconds_remaining = $minutes_remaining % agDateTimeHelper::MSEC_IN_MINUTE;
 
-      $this->parsedTimeArrayInstance['seconds'] = (int) ($seconds_remaining / DateTimeHelper::MSEC_IN_SEC);
-      $milliseconds_remaining = $seconds_remaining % DateTimeHelper::MSEC_IN_SEC;
+      $this->parsedTimeArrayInstance['seconds'] = (int) ($seconds_remaining / agDateTimeHelper::MSEC_IN_SEC);
+      $milliseconds_remaining = $seconds_remaining % agDateTimeHelper::MSEC_IN_SEC;
 
       $this->parsedTimeArrayInstance['milliseconds'] = $milliseconds_remaining;
   }
