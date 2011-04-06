@@ -11,4 +11,9 @@ agPhoneFormatType:
     validation: '/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4})) *x\d+$/'
     match_pattern: '/^(\d{3})(\d{3})(\d{4})x(\d+)$/'
     replacement_pattern: '($1) $2-$3x$4'
+  unknown:
+    phone_format_type: Unknown
+    validation: '/.*$/'
+    match_pattern: '/^(.*)$/'
+    replacement_pattern: '$1'
 

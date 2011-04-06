@@ -54,7 +54,8 @@ class agEmailHelper extends agBulkRecordHelper
    *
    * @param array $emails A mono-dimensional array of arbitrary index keys and email values.
    * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
-   * exception or be silently ignored (rendering an address 'optional'.
+   * exception or be silently ignored (rendering an email 'optional'). Defaults to the class
+   * property of the same name.
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return array A two dimensional array. The first array element ([0]), returns an array of
    * email indexes and the newly inserted emailIds. The second array element [1], returns all
@@ -133,7 +134,8 @@ class agEmailHelper extends agBulkRecordHelper
    *
    * @param array $emails A mono-dimensional array of arbitrary index keys and email values.
    * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
-   * exception or be silently ignored (rendering an address 'optional'.
+   * exception or be silently ignored (rendering an email 'optional'). Defaults to the class
+   * property of the same name.
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return array A two dimensional array. The first array element ([0]), returns an array of
    * email indexes and the newly inserted emailIds. The second array element [1], returns all
@@ -196,11 +198,13 @@ class agEmailHelper extends agBulkRecordHelper
   }
 
   /**
-   * Method to call other method for email setters to insert new emails and retrieve old emails.
+   * Method to call other method for email setters to insert new emails as necessary
+   * return email ids.
    *
    * @param array $emails A mono-dimensional array of arbitrary index keys and email values.
    * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
-   * exception or be silently ignored (rendering an address 'optional'.
+   * exception or be silently ignored (rendering an email 'optional'). Defaults to the class
+   * property of the same name.
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return array A two dimensional array. The first array element ([0]), returns an array of
    * email indexes and the newly inserted emailIds. The second array element [1], returns all

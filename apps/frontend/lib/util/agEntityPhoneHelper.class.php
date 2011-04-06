@@ -13,13 +13,17 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agEntityPhoneHelper extends agBulkRecordHelper
+class agEntityPhoneHelper extends agEntityContactHelper
 {
   public    $agPhoneHelper,
             $defaultIsPrimary = FALSE,
             $defaultIsStrType = FALSE;
 
-  protected $_batchSizeModifier = 2;
+  protected $_batchSizeModifier = 2, 
+            $_contactTableMetadata = array( 'table' => 'agEntityPhoneContact',
+                                            'method' => 'getEntityPhone',
+                                            'type' => 'phone_contact_type_id',
+                                            'value' => 'phone_contact_id');
 
   /**
    * Method to lazily load the $agPhoneHelper class property (an instance of agPhoneHelper)
@@ -286,4 +290,160 @@ class agEntityPhoneHelper extends agBulkRecordHelper
     return $entityPhones;
   }
 
+  /**
+   * Method to set entity phones by passing phones, keyed by phone id.
+   *
+   * @param array $entityContacts An array of entity contact information. This is similar to the
+   * output of getEntityPhone if no arguments are passed.
+   * <code>
+   * array(
+   *   $entityId => array(
+   *     array($phoneContactTypeId, $phone, $phoneFormatId),
+   *     ...
+   *   ), ...
+   * )
+   * </code>
+   * @param boolean $keepHistory An optional boolean value to determine whether old entity contacts
+   * (eg, those stored in the database but not explicitly passed as parameters), will be retained
+   * and reprioritized to the end of the list, or removed altogether.
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an phone 'optional'). Defaults to the class
+   * property of the same name.
+   * @param Doctrine_Connection $conn An optional Doctrine connection object.
+   * @return array An associative array of operations performed including the number of upserted
+   * records, removed records, an a positional array of failed inserts.
+   */
+  public function setEntityPhone( $entityContacts,
+                                  $keepHistory = NULL,
+                                  $throwOnError = NULL,
+                                  Doctrine_Connection $conn = NULL)
+  {
+    // some explicit declarations at the top
+    $uniqContacts = array();
+    $uniqContactFormatIds = array();
+    $err = NULL;
+    $errMsg = 'This is a generic ERROR for setEntityPhone. You should never receive this ERROR.
+      If you have received this ERROR, there is an error with your ERROR handling code.';
+
+    // determine whether or not we'll explicitly throw exceptions on error
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError; }
+
+    // loop through our contacts and pull our unique phone from the fire
+    foreach ($entityContacts as $entityId => $contacts)
+    {
+      foreach($contacts as $index => $contact)
+      {
+        // find the position of the element or return false
+        $pos = array_search($contact[1], $uniqContacts, TRUE);
+
+        // need to be really strict here because we don't want any [0] positions throwing us
+        if ($pos === FALSE)
+        {
+          // add it to our unique contacts array
+          $uniqContacts[] = $contact[1];
+          $uniqContactFormatIds[] = $contact[2];
+
+          // the the most recently inserted key
+          $pos = max(array_keys($uniqContacts));
+        }
+
+        // either way we'll have to point the entities back to their phones
+        $entityContacts[$entityId][$index][1] = $pos;
+      }
+    }
+
+    foreach ($uniqContacts as $index => $contact)
+    {
+      $uniqContacts[$index] = array($contact, $uniqContactFormatIds[$index]);
+    }
+    unset($uniqContactFormatIds);
+    
+    // whelp, if we haven't loaded it already, let's get our phone helper
+    $phoneHelper = $this->getAgPhoneHelper();
+
+    // here we check our current transaction scope and create a transaction or savepoint
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__);
+    }
+    else
+    {
+      $conn->beginTransaction();
+    }
+
+    try
+    {
+      // process emails, setting or returning, whichever is better with our s/getter
+      $uniqContacts = $phoneHelper->setPhones($uniqContacts, $throwOnError, $conn);
+    }
+    catch(Exception $e)
+    {
+      // log our error
+      $errMsg = sprintf('Could not set emails %s. Rolling back!', json_encode($uniqContacts));
+
+      // hold onto this exception for later
+      $err = $e;
+    }
+
+    if (is_null($err))
+    {
+      // now loop through the contacts again and give them their real values
+      foreach ($entityContacts as $entityId => $contacts)
+      {
+        foreach($contacts as $index => $contact)
+        {
+          // check to see if this index found in our 'unsettable' return from setPhones
+          if (array_key_exists($contact[1], $uniqContacts[1]))
+          {
+            // purge this phone
+            unset($entityContacts[$entityId][$index]);
+          }
+          else
+          {
+            // otherwise, get our real phoneId
+            $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
+          }
+        }
+      }
+
+      // we're done with uniqContacts now
+      unset($uniqContacts);
+
+
+      try
+      {
+        // just submit the entity phones for setting
+        $results = $this->setEntityContactById($entityContacts, $keepHistory, $throwOnError, $conn);
+      }
+      catch(Exception $e)
+      {
+        // log our error
+        $errMsg = sprintf('Could not set entity phones %s. Rolling Back!',
+          json_encode($entityContacts));
+
+        // hold onto this exception for later
+        $err = $e;
+      }
+    }
+
+    // check to see if we had any errors along the way
+    if (! is_null($err))
+    {
+      // log our error
+      sfContext::getInstance()->getLogger()->err($errMsg);
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) { throw $err; }
+    }
+
+    // most excellent! no errors at all, so we commit... finally!
+    if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+
+    return $results;
+  }
 }
