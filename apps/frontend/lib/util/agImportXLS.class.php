@@ -29,36 +29,12 @@
  */
 class AgImportXLS
 {
-  public $importFacilitySpec = array(
-    'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
-    'facility_name' => array('type' => "string", 'length' => 64),
-    'facility_code' => array('type' => "string", 'length' => 10),
-    'facility_resource_type_abbr' => array('type' => "string", 'length' => 10),
-    'facility_resource_status' => array('type' => "string", 'length' => 40),
-    'facility_capacity' => array('type' => "integer"),
-    'facility_activation_sequence' => array('type' => "integer"),
-    'facility_allocation_status' => array('type' => "string", 'length' => 30),
-    'facility_group' => array('type' => "string", 'length' => 64),
-    'facility_group_type' => array('type' => "string", 'length' => 30),
-    'facility_group_allocation_status' => array('type' => "string", 'length' => 30),
-    'facility_group_activation_sequence' => array('type' => "integer"),
-    'work_email' => array('type' => "string", 'length' => 255),
-    'work_phone' => array('type' => "string", 'length' => 32),
-    'street_1' => array('type' => "string", 'length' => 255),
-    'street_2' => array('type' => "string", 'length' => 255),
-    'city' => array('type' => "string", 'length' => 255),
-    'state' => array('type' => "string", 'length' => 255),
-    'postal_code' => array('type' => "string", 'length' => 5),
-    'borough' => array('type' => "string", 'length' => 30),
-    'country' => array('type' => "string", 'length' => 64),
-    'longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8)
-  );
-  public $staffRequirementFieldType = array('type' => "integer");
+  public $importSpec;
+  public $staffRequirementFieldType;// = array('type' => "integer");
   // Public variables declared here
   public $events = array();
   public $numRecordsImported = 0;
-  public $tempTable = 'temp_facilityImport';
+  public $tempTable;
 
   function __construct()
   {
@@ -184,13 +160,12 @@ class AgImportXLS
    *
    * @param array $importFileHeaders An array of column headers from import file.
    */
-  private function extendsImportSpecHeaders($importFileHeaders)
+  protected function extendsImportSpecHeaders($importFileHeaders)
   {
-    foreach($importFileHeaders as $index => $column) {
-      if (preg_match('/_(min|max)$/', $column)) {
-        $this->importFacilitySpec[$column] = $this->staffRequirementFieldType;
-      }
-    }
+
+    /** @todo this function is to be overloaded by it's children classes agFacilityImportXLS and
+     *        agStaffImportXLS
+     */
   }
 
   /**
@@ -200,7 +175,7 @@ class AgImportXLS
    *
    * @param $importFileHeaders
    */
-  private function validateColumnHeaders($importFileHeaders, $sheetName)
+  protected function validateColumnHeaders($importFileHeaders, $sheetName)
   {
     // Check if import file header is null
     if (empty($importFileHeaders))
@@ -226,7 +201,7 @@ class AgImportXLS
     }
 
     // Cache the import header specification
-    $importSpecHeaders = array_keys($this->importFacilitySpec);
+    $importSpecHeaders = array_keys($this->importSpec);
 
     // The import spec will start with an ID column. Shift off of it.
     $idColumn = array_shift($importSpecHeaders);
@@ -251,7 +226,7 @@ class AgImportXLS
    *
    * @param $importDataSet
    */
-  private function saveImportTemp($importDataSet)
+  protected function saveImportTemp($importDataSet)
   {
     require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
@@ -279,7 +254,7 @@ class AgImportXLS
           $cols = "";
           $vals = "";
 
-          foreach (array_keys($this->importFacilitySpec) as $column) {
+          foreach (array_keys($this->importSpec) as $column) {
 
             // Ignore id key name because it is the auto
             if ($column != "id") {
@@ -287,7 +262,7 @@ class AgImportXLS
               $cols = $cols . $col;
 
               // Handle null values with sane defaults
-              switch ($this->importFacilitySpec[$column]["type"]) {
+              switch ($this->importSpec[$column]["type"]) {
                 case "integer":
                   if ($row[$column] == "") {
                     $val = 0;
@@ -373,7 +348,7 @@ class AgImportXLS
     // Create the table
     try {
 
-      $conn->export->createTable($this->tempTable, $this->importFacilitySpec, $options);
+      $conn->export->createTable($this->tempTable, $this->importSpec, $options);
       $this->events[] = array("type" => "OK", "message" => "Successfully created temp table.");
     } catch (Doctrine_Exception $e) {
 
@@ -413,57 +388,6 @@ class AgImportXLS
     return $foo;
   }
 
-  /**
-   * dumpFacilities()
-   *
-   * Debugging tool for quickly viewing imported facility data
-   *
-   * @param
-   * @todo eventually remove this function
-   */
-  public function dumpFacilities()
-  {
-    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
-    $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
-    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
-    $dbManager = new sfDatabaseManager($appConfig);
-    $db = $dbManager->getDatabase('doctrine');
-
-    $facRes = agDoctrineQuery::create()
-            ->select('f.facility_name, f.facility_code, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity')
-            ->addSelect('sfr.activation_sequence, fras.facility_resource_allocation_status')
-            ->addSelect('sfg.scenario_facility_group, fgt.facility_group_type, fgas.facility_group_allocation_status, sfg.activation_sequence')
-            ->addSelect('gc.longitude, gc.latitude')
-            ->from('agFacility f')
-            ->innerJoin('f.agSite s')
-            ->innerJoin('s.agEntity e')
-            ->innerJoin('f.agFacilityResource fr')
-            ->innerJoin('fr.agFacilityResourceType frt')
-            ->innerJoin('fr.agFacilityResourceStatus frs')
-            ->innerJoin('fr.agScenarioFacilityResource sfr')
-            ->innerJoin('sfr.agFacilityResourceAllocationStatus fras')
-            ->innerJoin('sfr.agScenarioFacilityGroup sfg')
-            ->innerJoin('sfg.agFacilityGroupType fgt')
-            ->innerJoin('sfg.agFacilityGroupAllocationStatus fgas')
-            ->innerJoin('e.agEntityAddressContact eac')
-            ->innerJoin('eac.agAddressContactType act ON act.address_contact_type=?', 'work')
-            ->innerJoin('eac.agAddress a')
-            ->innerJoin('a.agAddressGeo ag')
-            ->innerJoin('ag.agGeo g')
-            ->innerJoin('g.agGeoSource gs')
-            ->innerJoin('g.agGeoFeature gf')
-            ->innerJoin('gf.agGeoCoordinate gc')
-            ->where('sfg.scenario_id=?', '1')
-            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-
-    $foo = "";
-    foreach ($facRes as $row) {
-      foreach ($row as $val) {
-        print("$val,");
-      }
-      print("\n");
-    }
-  }
 
   public static function processFile(sfEvent $event)
   {
