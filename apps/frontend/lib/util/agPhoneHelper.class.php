@@ -110,7 +110,7 @@ class agPhoneHelper extends agBulkRecordHelper
     foreach($formatComponents as $fc)
     {
       // create a simple phone validation and display format array.
-      $this->_phoneFormatComponentsByCountry[$fc[0]] = array($fc[1], $fc[2], $fc[3]);
+      $this->_phoneFormatComponentsByCountry[$fc[0]] = array($fc[1], $fc[2], $fc[3], $fc[4]);
     }
   }
 
@@ -410,7 +410,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * Method to create a new phone.
    *
    * @param array $phones A multi-dimensional array of arbitrary index keys and value of an array of
-   * phone  and phone format id.
+   * phone and phone format id.
    * <code>
    * array(
    *  [$index] => array(
@@ -425,7 +425,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * property of the same name.
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return array A two dimensional array. The first array element ([0]), returns an array of
-   * phone indexes and the newly inserted emailIds. The second array element [1], returns all
+   * phone indexes and the newly inserted phoneIds. The second array element [1], returns all
    * phone indexes that could not be inserted.
    * <code>
    * array(
@@ -478,7 +478,7 @@ class agPhoneHelper extends agBulkRecordHelper
 
         foreach($phoneFormatComponents as $pfId => $pfComp)
         {
-          if (preg_match($pfComp[0], $phone[0]))
+          if (preg_match($pfComp[1], $phone[0]))
           {
             $phoneFormatId = $pfId;
           }
@@ -498,7 +498,7 @@ class agPhoneHelper extends agBulkRecordHelper
       catch (Exception $e)
       {
         // log our error
-        $errMsg = sprintf('Couldn\'t insert phone contact %s!  Rolled back changes!', $phone);
+        $errMsg = sprintf('Couldn\'t insert phone contact %s!  Rolled back changes!', $phone[0]);
 
         // log our error
         sfContext::getInstance()->getLogger()->err($errMsg);
