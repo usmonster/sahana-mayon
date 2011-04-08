@@ -64,7 +64,12 @@ class adminActions extends agActions
     if ($request->getParameter('delete')) {
       //$request->checkCSRFProtection();
 
-      $this->forward404Unless($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('deleteparam'))), sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam')));
+      $this->forward404Unless(
+          $ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(
+              array($request->getParameter('deleteparam'))
+          ),
+          sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam'))
+      );
       $ag_global_param->delete();
 
       $this->redirect('admin/globals');
@@ -87,7 +92,7 @@ class adminActions extends agActions
 
     require_once (sfConfig::get('sf_app_lib_dir') . '/install/func.inc.php');
     //OR sfProjectConfiguration::getActive()->loadHelpers(array('Install)); ^
-    
+
     if ($request->getParameter('saveconfig')) {
       $file = sfConfig::get('sf_config_dir') . '/config.yml';
       $config_array = sfYaml::load($file);
@@ -107,7 +112,7 @@ class adminActions extends agActions
       } else {
         $authMethod = '';
       }
-      
+
       $appYmlWriteResult = writeAppYml($authMethod);
       //write app.yml file
 
@@ -123,19 +128,23 @@ class adminActions extends agActions
     }
   }
 
-/**
- *
- * Display is the stub for managing display options in select lists, it is NOT STABLE
- * @param sfWebRequest $request should be passing in information that was submitted in the form created
- */
-
+  /**
+   *
+   * Display is the stub for managing display options in select lists, it is NOT STABLE
+   * @param sfWebRequest $request should be passing in information that was submitted in the form created
+   */
   public function executeDisplay(sfWebRequest $request)
   {
 
     $this->form = new sfForm();
 
     $this->form->getWidgetSchema()->setNameFormat('display[%s]');
-    $this->form->setWidget('agProfession', new sfWidgetFormDoctrineChoice(array('multiple' => true, 'expanded' => true, 'model' => 'agProfession')));
+    $this->form->setWidget(
+        'agProfession',
+        new sfWidgetFormDoctrineChoice(
+            array('multiple' => true, 'expanded' => true, 'model' => 'agProfession')
+        )
+    );
 
     //$this->form->setValidator(array(new sfValidatorDoctrineChoice(array('model' => $this->form->getModelName(), 'column' => 'app_display'))));
     //if submitted
@@ -143,14 +152,13 @@ class adminActions extends agActions
 
       //$this->form->bind($request->getParameter($this->form->getName()));
 //      if ($this->form->isValid()) {
-        foreach ($request->getParameter('display') as $process_display) {
-          //$array_of_all = get
-          $profession = new agProfession;
-          $profession->setAppDisplay(1); 
-          $profession->save();
-          //$process_display =
-          
-        }
+      foreach ($request->getParameter('display') as $process_display) {
+        //$array_of_all = get
+        $profession = new agProfession;
+        $profession->setAppDisplay(1);
+        $profession->save();
+        //$process_display =
+      }
 //      }
     }
   }
@@ -297,11 +305,10 @@ class adminActions extends agActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_account = $form->save();
-      if($request->getParameter('Continue')){
+      if ($request->getParameter('Continue')) {
         /** @todo pass the previously created username to the new template for verification */
         $this->redirect('admin/new');
-      }
-      else{
+      } else {
         $this->redirect('admin/list'); //edit?id=' . $ag_account->getId());
       }
     }
