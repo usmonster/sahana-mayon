@@ -98,4 +98,5 @@
           &nbsp;<?php echo link_to('Delete', 'agStaff/delete?id=' . $form->getObject()->getAgStaff()->getFirst()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?>
   <?php endif; ?>
   <input type="submit" value="Save" class="linkButton" />
+  <input type="submit" value="Save and Create Another" name="CreateAnother" class="linkButton" />
 </form>

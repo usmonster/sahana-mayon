@@ -656,7 +656,12 @@ class agStaffActions extends agActions
               ->fetchOne();
 
       //get id of STAFF person from the saved, extended agpersonform.
-      $this->redirect('agStaff/edit?id=' . $staff_id->getId());
+
+      // Check if the Save and Create Another button was used to submit. If it was, redirect to staff/new.
+      if($request->getParameter('CreateAnother')) {
+        $this->redirect('agStaff/new');
+      }
+      $this->redirect('agStaff/list');
     }
   }
 
