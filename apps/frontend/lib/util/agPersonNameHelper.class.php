@@ -320,4 +320,339 @@ class agPersonNameHelper extends agBulkRecordHelper
 
     return $results ;
   }
+
+  public function getNameIds($nameValues)
+  {
+    return agDoctrineQuery::create()
+      ->select('pn.person_name')
+          ->addSelect('pn.id')
+        ->from('agPersonName')
+        ->whereIn('pn.person_name', $nameValues)
+        ->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_ONE_DIM) ;
+  }
+
+  /**
+   *
+   * @param array $personNames A three-dimesional array of person names similar to the output of
+   * getNamesById
+   * <code> array( $personId =>
+   *   array( $nameTypeId =>
+   *     array($firstPriorityName, $secondPriorityName, ...),
+   *   ... ),
+   * ... )
+   * @param <type> $keepHistory
+   * @param <type> $throwOnError
+   * @param Doctrine_Connection $conn
+   */
+  public function setPersonNames( $personNames,
+                                  $keepHistory = NULL,
+                                  $throwOnError = NULL,
+                                  Doctrine_Connection $conn = NULL)
+  {
+    // explicit declarations are nice
+    $uniqNames = array() ;
+    $err = NULL ;
+
+    // pick up some defaults if not passed anything
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    // reduce our person names to just the uniques
+    foreach ($personNames as $personId => $nameTypes)
+    {
+      foreach ($nameTypes as $nameTypeId => $names)
+      {
+        foreach ($names as $priority => $name)
+        {
+          // we do this at this early stage so we're always dealing with a post-trimmed value
+          $name = trim($name) ;
+
+          // add it to our unique contacts array
+          $uniqNames[] = $name ;
+
+          // either way we'll have to point the entities back to their addresses
+          $personNames[$nameTypeId][$priority] = $name ;
+        }
+      }
+    }
+
+    // actually make these names unique
+    $uniqNames = array_unique($uniqNames) ;
+
+    // this speeds up comparisons later
+    sort($uniqNames) ;
+
+    // get existing names
+    $nameIds = $this->getNameIds($uniqNames) ;
+    
+    // let's just pull out the values so we can compare against what's left to create
+    $foundNames = array_keys($nameIds) ;
+
+    // again, sorting before diffing makes the diff faster
+    sort($foundNames) ;
+
+    // diff, then release the two component arrays -- all we care about is the diff
+    $newNames = array_diff($uniqNames, $foundNames) ;
+    unset($uniqNames) ;
+    unset($foundNames) ;
+
+    // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__) ;
+    }
+    else
+    {
+      $conn->beginTransaction() ;
+    }
+
+    try
+    {
+      // set new names / return their ids
+      $newNames = $this->setNewPersonNames($newNames, $throwOnError, $conn) ;
+    }
+    catch(Exception $e)
+    {
+      // log our error
+      $errMsg = sprintf('%s failed to execute. (%s).', 'setNewPersonNames', $e->getMessage()) ;
+
+    }
+
+
+    // recombine all names
+
+    // set names + types
+
+    if (is_null($err))
+    {
+      // yay, no problems, now we commit
+      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+    }
+    else
+    {
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) { throw $e ; }
+    }
+  }
+
+  protected function _setPersonNames ($personNames,
+                                      $keepHistory = NULL,
+                                      $throwOnError = NULL,
+                                      Doctrine_Connection $conn = NULL)
+  {
+    // s/get
+  }
+
+  /**
+   * Method to remove person name entries from a person. If $purgeOrphans is passed as TRUE, also
+   * executes an orphan name purge at the close of this method. Note: This purges ALL orphan names,
+   * not just ones associated with the $personIds passed as parameters.
+   *
+   * @param array $personIds A single-dimension array of personIds
+   * @param boolean $purgeOrphans Boolean field to determine whether or not orphan person names will
+   * be also removed as part of this operation. Note: this removes ALL orphan person names, not just
+   * ones formerly associated with the $personIds passed to this method. Defaults to the class
+   * property value.
+   * @param boolean $throwOnError Boolean to control whether or not any errors will trigger an
+   * exception throw. Defaults to the class property value.
+   * @param Doctrine_Connection $conn An optional doctrine connection object.
+   * @todo Check our isolation level and how it affects the orphan purge
+   */
+  protected function purgePersonNames($personIds,
+                                      $purgeOrphans = NULL,
+                                      $throwOnError = NULL,
+                                      Doctrine_Connection $conn = NULL)
+  {
+    // explicit declarations are good!
+    $results = 0 ;
+    $err = NULL ;
+
+    // pick up some defaults if not passed anything
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ;}
+    if (is_null($purgeOrphans)) { $purgeOrphans = $this->purgeOrphans ;}
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    // build our query object
+    $q = agDoctrineQuery::create()
+      ->delete('agPersonMjAgPersonName')
+        ->whereIn('person_id', $personIds) ;
+
+    // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__) ;
+    }
+    else
+    {
+      $conn->beginTransaction() ;
+    }
+
+    try
+    {
+      // execute our person name mapping join purge
+      $results = $q->execute() ;
+
+      // if orphan control has been enforce, we'll execute this too
+      if ($purgeOrphans)
+      {
+        $results = $results + ($this->purgeOrhpanPersonNames($throwOnError, $conn)) ;
+      }
+
+      // most excellent! no errors at all, so we commit... finally!
+      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+    }
+    catch(Exception $e)
+    {
+      $errMsg = sprintf('Failed to purge person names for persons %s. Rolled back changes!',
+        json_encode($personIds)) ;
+
+      // log our error
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      // throw an error
+      if ($throwOnError) { throw $e ; }
+    }
+
+    return $results ;
+  }
+
+  public function purgeOrhpanPersonNames( $throwOnError = NULL,
+                                          Doctrine_Connection $conn = NULL)
+  {
+    // explicit delcarations are nice
+    $results = 0 ;
+
+    // pick up our default connection / transaction objects if not passed anything
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+//    @todo Make this 'correct' implementation work somehow instead of the one below
+//    $q = agDoctrineQuery::create($conn)
+//      ->delete('agPersonName')
+//        ->where('NOT EXISTS (
+//          SELECT ppn.id
+//            FROM agPersonMjAgPersonName ppn
+//            WHERE (ppn.person_name_id = agPersonName.id))') ;
+
+    //construct our delete query
+    $q = agDoctrineQuery::create($conn)
+      ->delete('agPersonName')
+        ->where('id NOT IN (SELECT DISTINCT ppn.person_name_id FROM agPersonMjAgPersonName ppn)') ;
+
+    // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__) ;
+    }
+    else
+    {
+      $conn->beginTransaction() ;
+    }
+
+    try
+    {
+      $results = $q->execute() ;
+
+      // if that went well, we'll commit
+      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+    }
+    catch(Exception $e)
+    {
+      // log our error
+      $errMsg = sprintf('%s failed to execute. (%s).', __FUNCTION__, $e->getMessage()) ;
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) { throw $e ; } 
+    }
+
+    return $results ;
+  }
+
+  protected function reprioritizePersonNames( $newNames, $currNames )
+  {
+
+  }
+
+  /**
+   *
+   * @param <type> $newNames
+   * @param <type> $throwOnError
+   * @param Doctrine_Connection $conn
+   */
+  public function setNewPersonNames($newNames,
+                                    $throwOnError = NULL,
+                                    Doctrine_Connection $conn = NULL)
+  {
+    // explicit delcarations are nice
+    $results = array() ;
+    $err = NULL ;
+
+    // pick up our default connection / transaction objects if not passed anything
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__) ;
+    }
+    else
+    {
+      $conn->beginTransaction() ;
+    }
+
+    foreach ($newNames as $name)
+    {
+      $newRec = new agPersonName() ;
+      $newRec['person_name'] = $name ;
+
+      try
+      {
+        $newRec->save($conn) ;
+        $results[$name] = $newRec->getId() ;
+      }
+      catch(Exception $e)
+      {
+        // log our error
+        $errMsg = sprintf('Couldn\'t insert name value %s. Rolled back changes!', $name) ;
+
+        // capture our exception for a later throw and break out of this loop
+        $err = $e ;
+        break ;
+      }
+    }
+
+    if (is_null($err))
+    {
+      // yay, it all went well so let's commit!
+      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+    }
+    {
+      // log our error
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      // throw an error if directed to do so
+      if ($throwOnError) { throw $err ; }
+    }
+
+    return $results ;
+  }
 }

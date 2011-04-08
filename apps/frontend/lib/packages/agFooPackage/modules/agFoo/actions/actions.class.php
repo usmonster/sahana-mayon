@@ -136,8 +136,11 @@ $addrContact = array( '1'=>array(array(3,4), array(2,1)),
     '10'=>array(array(3,10)),
     '87'=>array(array(1,9))) ;
 //$obj = agAddressHelper::init() ;
-//$obj = agPersonNameHelper::init(4) ;
-$obj = agEntityAddressHelper::init() ;
+//$obj = new agEntityEmailHelper ;
+//$obj->setRecordIds($array) ;
+
+$obj = new agPersonNameHelper() ;
+//$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
 //$addr = $obj->getEntityAddress($array, FALSE, FALSE) ;
@@ -154,8 +157,12 @@ $obj = agEntityAddressHelper::init() ;
 //$results = $obj->updateAddressHashes($array) ;
 //$addr = $obj->getAddressComponentsById($array) ;
 //$results = $obj->setAddresses($fakeAddr, TRUE) ;
-$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, FALSE, TRUE) ;
+//$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, FALSE, TRUE) ;
 //$results = $obj->exceptionTest() ;
+//$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
+
+$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
+
 print_r($results) ;
 // <-------- CUT HERE -------->
 
