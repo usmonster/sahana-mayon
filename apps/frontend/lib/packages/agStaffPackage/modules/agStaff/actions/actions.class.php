@@ -535,7 +535,7 @@ class agStaffActions extends agActions
 
     $this->processForm($request, $this->form);
 
-    $this->setTemplate('list');
+    $this->setTemplate('edit');
   }
 
   /**
