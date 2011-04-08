@@ -673,7 +673,6 @@ class eventActions extends agActions
     }
     $this->setEventBasics($request);
 
-    $a = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event_id, null);
     $query = agDoctrineQuery::create()
             ->select('efg.id')
             ->addSelect('efg.event_facility_group')
@@ -705,9 +704,6 @@ class eventActions extends agActions
 
     foreach ($this->facilityGroupArray as $eventFacilityGroup) {
       $facilityResourceArray[$eventFacilityGroup['efg_id']] = $this->groupResourceQuery($eventFacilityGroup['efg_id']);
-//      foreach ($tempArray as $ta) {
-//        array_push($facilityResourceArray, $ta);
-//      }
     }
     $this->facilityResourceArray = $facilityResourceArray;
     $this->pager = new agArrayPager(null, 10);
@@ -733,6 +729,35 @@ class eventActions extends agActions
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Facility Groups');
     //end p-code
+  }
+
+  public function executeEventfacilityresource(sfWebRequest $request)
+  {
+    $this->facilityResourceArray = $this->groupResourceQuery($request->getParameter('eventFacResId'));
+    return $this->renderPartial('eventFacResTable', array('facilityResourceArray' => $this->facilityResourceArray));
+  }
+
+  public function executeEventfacilitygroup(sfWebRequest $request)
+  {
+    // Get the incoming params.
+    $params = $request->getPostParameters();
+
+    if(array_key_exists('groupStatus', $params) && array_key_exists('groupId', $params)) {
+      // Build an agEventFacilityGroupStatus object from incoming params, then stick it in a form.
+      $groupAllocationStatus = new agEventFacilityGroupStatus();
+      $groupAllocationStatus->event_facility_group_id = ltrim($params['groupId'], 'group_id_');
+      $groupAllocationStatus->facility_group_allocation_status_id = 
+          agDoctrineQuery::create()
+            ->select('id')
+            ->from('agFacilityGroupAllocationStatus')
+            ->where('facility_group_allocation_status = ?', $params['groupStatus'])
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      $groupAllocationStatus->time_stamp = date('Y-m-d H:i:s', time());
+      $groupAllocationStatusForm = new agTinyEventFacilityGroupStatusForm($groupAllocationStatus);
+
+      return $this->renderText($groupAllocationStatusForm->__toString());
+    }
+    $a = 6;
   }
 
   /**
@@ -788,7 +813,7 @@ class eventActions extends agActions
         $groupAllocation = new agEventFacilityGroupStatus();
         $groupAllocation->event_facility_group_id = $this->eventFacilityGroup->id;
         $groupAllocation->facility_group_allocation_status_id = $request->getParameter('group_allocation_status');
-        $groupAllocation->time_stamp = date('Y-m-d H:i:s', time()); //time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+        $groupAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_group_id')], $inactive)) {
           $groupAllocation->save();
           return $this->renderText('facilitygroups');

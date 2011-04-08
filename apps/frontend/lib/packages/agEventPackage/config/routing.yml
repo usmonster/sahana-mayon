@@ -74,3 +74,11 @@ event_groupdetail:
 event_facilityresource:
   url:     /event/:event/facilityresource/:eventFacilityResourceId
   param:   { module: event, action: facilityresource }
+
+event_fac_res_table:
+  url:    /event/eventfacilityresource/:eventFacResId
+  param:  { module: event, action: eventfacilityresource }
+
+event_facility_group:
+  url:    /event/eventfacilitygroup
+  param:  { module: event, action: eventfacilitygroup }

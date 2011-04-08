@@ -1285,3 +1285,7 @@ a.signin.menu-open span {
 #modalAppend {
   display: none;
 }
+
+.expandable {
+  display: none;
+}
