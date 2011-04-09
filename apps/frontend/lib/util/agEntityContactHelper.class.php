@@ -14,15 +14,12 @@
  */
 abstract class agEntityContactHelper extends agBulkRecordHelper
 {
-  public    $keepHistory = TRUE ;
-  
   /**
    * Helper function to execute the reprioritization of contact info.
    *
    * @param array $entityContacts The array of new entity contacts to apply.
    * @param array $currContacts The array of current contacts as found in the database
    * @return array A reprioritized $entityContacts with additions from $currContacts as appropriate.
-   * @todo Add the $keepHistory functionality 
    */
   protected function reprioritizeContacts($entityContacts, $currContacts)
   {
@@ -148,6 +145,9 @@ abstract class agEntityContactHelper extends agBulkRecordHelper
 
         // add the record to our collection
         $coll->add($newRec) ;
+
+        // recover a little resource
+        unset($entityContacts[$entityId][$index]) ;
       }
     }
 
@@ -169,11 +169,17 @@ abstract class agEntityContactHelper extends agBulkRecordHelper
 
       // execute our commit and, while we're at it, add our successes to the bin
       $coll->replace($conn) ;
+
+      // commit, being sensitive to our nesting
+      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+
+      // append to our results array
+      $results['upserted'] = $results['upserted'] + count($coll) ;
     }
     catch(Exception $e)
     {
       // log our error
-      $errMsg = sprintf('setEntityContactById failed at: %s', $e->getMessage()) ;
+      $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage()) ;
       sfContext::getInstance()->getLogger()->err($errMsg) ;
 
       // rollback
@@ -182,14 +188,8 @@ abstract class agEntityContactHelper extends agBulkRecordHelper
       // ALWAYS throw an error, it's like stepping on a crack if you don't
       if ($throwOnError) { throw $e ; }
 
-      $results['failures'][] = $entityId ;
+      $results['failures'] = array_keys($entityContacts) ;
     }
-
-    // commit, being sensitive to our nesting
-    if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
-
-    // append to our results array
-    $results['upserted'] = $results['upserted'] + count($coll) ;
 
     return $results ;
   }

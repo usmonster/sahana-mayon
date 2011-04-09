@@ -135,6 +135,12 @@ $fakeEntityAddr = array('1' => array(array(2, array(array('1'=>'peachpitters', '
 $addrContact = array( '1'=>array(array(3,4), array(2,1)),
     '10'=>array(array(3,10)),
     '87'=>array(array(1,9))) ;
+
+$newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 => Array ( 'Betty', 'Amusan' ), 3 => Array ( 'Ammonds' ), 2 => Array ( 'Amy' ) ),
+    9 => Array (),
+    8 => Array ( 3 => Array ( 'Aponte' ), 1 => Array ( 'Anna' ) ),
+    10 => Array ( 3 => Array ( 'Butch' ), 1 => Array ( 'Sundance' ) )
+) ;
 //$obj = agAddressHelper::init() ;
 //$obj = new agEntityEmailHelper ;
 //$obj->setRecordIds($array) ;
@@ -147,7 +153,7 @@ $obj = new agPersonNameHelper() ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
-//$results = $obj->getPrimaryNameByType() ;
+$results = $obj->setPersonNames($newNames, TRUE, TRUE) ;
 //$results = $obj->getPrimaryNameAsString() ;
 //$results = $obj->getNativeAddressAsString($array) ;
 //$results = $obj->getAddressStandardId() ;
@@ -161,7 +167,7 @@ $obj = new agPersonNameHelper() ;
 //$results = $obj->exceptionTest() ;
 //$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
 
-$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
+//$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
 
 print_r($results) ;
 // <-------- CUT HERE -------->

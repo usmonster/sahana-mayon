@@ -20,6 +20,7 @@ class agPersonNameHelper extends agBulkRecordHelper
 {
   const     NAME_BY_ID = 'getNameById',
             NAME_BY_TYPE = 'getNameByType',
+            NAME_BY_TYPE_ID = 'getNameByTypeId',
             NAME_BY_TYPE_AS_STRING = 'getNameByTypeAsString',
             PRIMARY_INITIALS = 'getPrimaryNameAsInitials',
             PRIMARY_AS_STRING = 'getPrimaryNameAsString',
@@ -122,7 +123,7 @@ class agPersonNameHelper extends agBulkRecordHelper
     $q = $this->_getNameComponents($personIds, TRUE) ;
 
     // execute and return our results
-    return $q->execute(array(), 'assoc_two_dim') ;
+    return $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_TWO_DIM) ;
   }
 
   /**
@@ -139,7 +140,36 @@ class agPersonNameHelper extends agBulkRecordHelper
     $q = $this->_getNameComponents($personIds, $primary) ;
 
     // execute and return our results
-    return $q->execute(array(), 'assoc_three_dim') ;
+    return $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_THREE_DIM) ;
+  }
+
+  /**
+   * Method to return person nameIds in an array keyed by the person_name_type_id.
+   *
+   * @param array $personIds A single-dimension array of person id values. Default is NULL.
+   * @param boolean $primary A boolean that controls whether or not the query constructor will
+   * build a query that only returns primary names or all names.
+   * @return array A three-dimensional associative array keyed by person id and name_type_id.
+   */
+  public function getNameByTypeId($personIds = NULL, $primary = FALSE)
+  {
+    // always good to declare results first
+    $results = array() ;
+
+    // build our components query
+    $q = $this->_getNameComponents($personIds, $primary) ;
+    $q->addSelect('pn.id') ;
+
+    // execute, keeping in mind that we have to use custom hydration because of the new components
+    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
+
+    // otherwise iterate and place our results into a positional array
+    foreach ($rows as $row)
+    {
+      $results[$row[0]][$row[1]][] = $row[3] ;
+    }
+
+    return $results ;
   }
 
   /**
@@ -326,12 +356,14 @@ class agPersonNameHelper extends agBulkRecordHelper
     return agDoctrineQuery::create()
       ->select('pn.person_name')
           ->addSelect('pn.id')
-        ->from('agPersonName')
+        ->from('agPersonName pn')
         ->whereIn('pn.person_name', $nameValues)
-        ->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_ONE_DIM) ;
+        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
   }
 
   /**
+   * Method to set person names and automatically prioritize them accordingly. This method also
+   * creates new names if names do not yet exist.
    *
    * @param array $personNames A three-dimesional array of person names similar to the output of
    * getNamesById
@@ -340,9 +372,13 @@ class agPersonNameHelper extends agBulkRecordHelper
    *     array($firstPriorityName, $secondPriorityName, ...),
    *   ... ),
    * ... )
-   * @param <type> $keepHistory
-   * @param <type> $throwOnError
-   * @param Doctrine_Connection $conn
+   * @param boolean $keepHistory Boolean to control whether or not current names will be retained
+   * or whether all names will be replaced. Defaults to class property.
+   * @param boolean $throwOnError Boolean to control whether or not failures will throw
+   * an exception. Defaults to the class property.
+   * @param Doctrine_Connection $conn An optional Doctrine Connection object.
+   * @return array An associative array with counts of the operations performed and/or personId's
+   * for which no operations could be performed.
    */
   public function setPersonNames( $personNames,
                                   $keepHistory = NULL,
@@ -350,6 +386,7 @@ class agPersonNameHelper extends agBulkRecordHelper
                                   Doctrine_Connection $conn = NULL)
   {
     // explicit declarations are nice
+    $results = array() ;
     $uniqNames = array() ;
     $err = NULL ;
 
@@ -370,7 +407,7 @@ class agPersonNameHelper extends agBulkRecordHelper
           $uniqNames[] = $name ;
 
           // either way we'll have to point the entities back to their addresses
-          $personNames[$nameTypeId][$priority] = $name ;
+          $personNames[$personId][$nameTypeId][$priority] = $name ;
         }
       }
     }
@@ -409,19 +446,49 @@ class agPersonNameHelper extends agBulkRecordHelper
     try
     {
       // set new names / return their ids
-      $newNames = $this->setNewPersonNames($newNames, $throwOnError, $conn) ;
+      $nameIds = ($nameIds + ($this->setNewPersonNames($newNames, $throwOnError, $conn))) ;
     }
     catch(Exception $e)
     {
       // log our error
-      $errMsg = sprintf('%s failed to execute. (%s).', 'setNewPersonNames', $e->getMessage()) ;
+      $errMsg = sprintf('%s failed to execute. (%s).', __FUNCTION__, $e->getMessage()) ;
 
+      // capture the error for comparison later
+      $err = $e ;
     }
 
-
-    // recombine all names
-
     // set names + types
+    if (is_null($err))
+    {
+      // release a little resource
+      unset($newNames) ;
+
+      // recombine all names and their person owners
+      foreach ($personNames as $personId => $nameTypes)
+      {
+        foreach ($nameTypes as $nameTypeId => $names)
+        {
+          foreach ($names as $priority => $name)
+          {
+            $personNames[$personId][$nameTypeId][$priority] = $nameIds[$name] ;
+          }
+        }
+      }
+
+      try
+      {
+        // connect our new names to their owners
+        $results = $this->_setPersonNames($personNames, $keepHistory, $throwOnError, $conn) ;
+      }
+      catch(Exception $e)
+      {
+        // log our error
+        $errMsg = sprintf('%s failed to execute. (%s).', '_setPersonNames', $e->getMessage()) ;
+
+        // capture the exception for later
+        $err = $e ;
+      }
+    }
 
     if (is_null($err))
     {
@@ -430,6 +497,7 @@ class agPersonNameHelper extends agBulkRecordHelper
     }
     else
     {
+      // log whichever error we received
       sfContext::getInstance()->getLogger()->err($errMsg) ;
 
       // rollback
@@ -438,14 +506,122 @@ class agPersonNameHelper extends agBulkRecordHelper
       // ALWAYS throw an error, it's like stepping on a crack if you don't
       if ($throwOnError) { throw $e ; }
     }
+
+    return $results ;
   }
 
+  /**
+   * Protected method that creates new person name entries in the many-to-many person name table.
+   *
+   * @param array $personNames A three-dimesional array of person names similar to the output of
+   * getNamesByTypeId
+   * <code> array( $personId =>
+   *   array( $nameTypeId =>
+   *     array($firstPriorityNameId, $secondPriorityNameId, ...),
+   *   ... ),
+   * ... )
+   * @param boolean $keepHistory Boolean to control whether or not current names will be retained
+   * or whether all names will be replaced. Defaults to class property.
+   * @param boolean $throwOnError Boolean to control whether or not failures will throw
+   * an exception. Defaults to the class property.
+   * @param Doctrine_Connection $conn An optional Doctrine Connection object.
+   * @return array An associative array with counts of the operations performed and/or personId's
+   * for which no operations could be performed.
+   */
   protected function _setPersonNames ($personNames,
                                       $keepHistory = NULL,
                                       $throwOnError = NULL,
                                       Doctrine_Connection $conn = NULL)
   {
-    // s/get
+    // explicit results declaration
+    $results = array('upserted'=>0, 'removed'=>0, 'failures'=>array()) ;
+    $currNames = array() ;
+
+    // get some defaults if not explicitly passed
+    if (is_null($keepHistory)) { $keepHistory = $this->keepHistory ; }
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    if ($keepHistory)
+    {
+      // if we're going to process existing names and keep them, then hold on
+      $currNames = $this->getNameByTypeId(array_keys($personNames), FALSE) ;
+    }
+
+    // execute the reprioritization helper and pass it our current addresses as found in the db
+    $personNames = $this->reprioritizePersonNames($personNames, $currNames ) ;
+
+    // define our blank collection
+    $coll = new Doctrine_Collection('agPersonMjAgPersonName') ;
+
+    // loop through our persons and build our collection
+    foreach($personNames as $personId => $nameTypes)
+    {
+      foreach($nameTypes as $nameTypeId => $names)
+      {
+        foreach($names as $index => $nameId)
+        {
+          // create a doctrine record with this info
+          $newRec = new agPersonMjAgPersonName() ;
+          $newRec['person_id'] = $personId ;
+          $newRec['person_name_id'] = $nameId ;
+          $newRec['person_name_type_id'] = $nameTypeId ;
+          $newRec['priority'] = ($index + 1) ;
+
+          // add the record to our collection
+          $coll->add($newRec) ;
+        }
+        
+        // release a few resources
+        unset($personNames[$personId][$nameTypeId]) ;
+      }
+    }
+
+   // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__) ;
+    }
+    else
+    {
+      $conn->beginTransaction() ;
+    }
+
+    try
+    {
+      // if we're not keeping our history, just blow them all out!
+      if (! $keepHistory)
+      {
+        $results['removed'] = $this->purgePersonNames(array_keys($personNames), NULL, $throwOnError,
+          $conn) ;
+      }
+
+      // execute our commit and, while we're at it, add our successes to the bin
+      $coll->replace($conn) ;
+
+      // commit, being sensitive to our nesting
+      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+
+      // append to our results array
+      $results['upserted'] = $results['upserted'] + count($coll) ;
+    }
+    catch(Exception $e)
+    {
+      // log our error
+      $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage()) ;
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) { throw $e ; }
+
+      $results['failures'] = array_keys($personNames) ;
+    }
+
+    return $results ;
   }
 
   /**
@@ -525,6 +701,14 @@ class agPersonNameHelper extends agBulkRecordHelper
     return $results ;
   }
 
+  /**
+   * Method to purge all orphaned person names in the database.
+   *
+   * @param boolean $throwOnError A boolean to control whether or not failed transactions produce
+   * an exception.
+   * @param Doctrine_Connection $conn An optional Doctrine Connection object.
+   * @return integer The count of operations performed.
+   */
   public function purgeOrhpanPersonNames( $throwOnError = NULL,
                                           Doctrine_Connection $conn = NULL)
   {
@@ -582,18 +766,96 @@ class agPersonNameHelper extends agBulkRecordHelper
     return $results ;
   }
 
+  /**
+   * Method to prioritize person names.
+   *
+   * @param array $newNames A three-dimesional array of person names similar to the output of
+   * getNamesByTypeId
+   * <code> array( $personId =>
+   *   array( $nameTypeId =>
+   *     array($firstPriorityNameId, $secondPriorityNameId, ...),
+   *   ... ),
+   * ... )
+   * @param array $currNames A three-dimesional array of person names similar to the output of
+   * getNamesByTypeId
+   * <code> array( $personId =>
+   *   array( $nameTypeId =>
+   *     array($firstPriorityNameId, $secondPriorityNameId, ...),
+   *   ... ),
+   * ... )
+   * @return array A three-dimensional array of person names similar to the output of
+   * getNamesByTypeId
+   * <code> array( $personId =>
+   *   array( $nameTypeId =>
+   *     array($firstPriorityNameId, $secondPriorityNameId, ...),
+   *   ... ),
+   * ... )
+   */
   protected function reprioritizePersonNames( $newNames, $currNames )
   {
+    // loop through and do an inner array diff
+    foreach($newNames as $personId => $nameTypes)
+    {
+      foreach($nameTypes as $nameTypeId => $names)
+      {
+        //explicit declarations are good
+        $newName = array() ;
+        $currName = array() ;
 
+        // check to see if this is brand-spankin' new person or old
+        if (array_key_exists($personId, $currNames)
+          && array_key_exists($nameTypeId, $currNames[$personId]))
+        {
+          // we'll reuse this at the end so lets grab it once
+          $currName = $currNames[$personId][$nameTypeId] ;
+
+          // here we do a little something crazy; we add ALL of the old name info to the array
+          foreach ($currName as $name)
+          {
+            $names[] = $name ;
+          }
+        }
+
+        // now that we've got allname info on our $names array, let's reshape and exclude dupes
+        // we intentionally don't use array_unique() here because types might differ and it's strict
+        foreach ($names as $name)
+        {
+          if (! in_array($name, $newName))
+          {
+            $newName[] = $name ;
+          }
+        }
+
+        // now that we're out of the contact de-dupe loop we exclude the ones that haven't changed
+        foreach($newName as $nnKey => $nnValue)
+        {
+          if (array_key_exists($nnKey, $currName) && $nnValue == $currName[$nnKey])
+          {
+            unset($newName[$nnKey]) ;
+          }
+        }
+
+        // add our results to our final results array
+        $newNames[$personId][$nameTypeId] = $newName ;
+      }
+
+      // might as well re-claim our memory here too
+      unset($currNames[$personId]) ;
+    }
+
+    return $newNames ;
   }
 
   /**
+   * Method to create new person names.
    *
-   * @param <type> $newNames
-   * @param <type> $throwOnError
-   * @param Doctrine_Connection $conn
+   * @param array $newNames A single dimension array of person name strings.
+   * @param boolean $throwOnError Boolean to control whether or not failures trigger exceptions.
+   * Defaults to class property.
+   * @param Doctrine_Connection $conn An optional doctrine connection object.
+   * @return array An associative array keyed by the name string with the nameId as a value.
    */
-  public function setNewPersonNames($newNames,
+  protected function setNewPersonNames($newNames,
                                     $throwOnError = NULL,
                                     Doctrine_Connection $conn = NULL)
   {
@@ -642,6 +904,7 @@ class agPersonNameHelper extends agBulkRecordHelper
       // yay, it all went well so let's commit!
       if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
     }
+    else
     {
       // log our error
       sfContext::getInstance()->getLogger()->err($errMsg) ;
