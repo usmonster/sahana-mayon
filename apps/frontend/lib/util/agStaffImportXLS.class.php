@@ -92,7 +92,11 @@ class AgStaffImportXLS extends AgImportXLS
     }
   }
 
+public function bulkImport(){
 
+  // bulk load elements, get ids back...
+  // 
+}
   /**
    * processFacilityImport()
    *
