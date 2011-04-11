@@ -251,7 +251,7 @@ class facilityActions extends agActions
     {
       // Grab table name from AgImportXLS class.
       $sourceTable = $import->tempTable ;
-      $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
+      $dataNorm = new agFacilityImportNormalization($scenarioId, $sourceTable, 'facility');
 
       $format="%d/%m/%Y %H:%M:%S";
 //      echo strftime($format);

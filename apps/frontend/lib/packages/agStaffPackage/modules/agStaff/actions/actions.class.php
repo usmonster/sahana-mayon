@@ -821,7 +821,7 @@ class agStaffActions extends agActions
    * @todo: define a standard import format and document it for the end user.
    * @todo: make this more robust and create meaningful error messages for failed import fiels and records.
    * */
-  public function executeImport()
+  public function executeImport2()
   {
     $staffMembers = Doctrine::getTable('agPerson')
             ->createQuery('a')
@@ -885,7 +885,7 @@ class agStaffActions extends agActions
     }
   }
 
-  public function executeNewImport(sfWebRequest $request)
+  public function executeImport(sfWebRequest $request)
   {
     //$this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
 
@@ -899,7 +899,7 @@ class agStaffActions extends agActions
     $this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready'));
     // TODO: eventually use this ^^^ to replace this vvv.
 
-    $import = new AgImportXLS();
+    $import = new AgStaffImportXLS();
 //    $returned = $import->createTempTable();
 
     $processedToTemp = $import->processImport($this->importPath);
@@ -910,7 +910,7 @@ class agStaffActions extends agActions
     if ($processedToTemp) {
       // Grab table name from AgImportXLS class.
       $sourceTable = $import->tempTable;
-      $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
+      $dataNorm = new agStaffImportNormalization($scenarioId, $sourceTable, 'staff');
 
       $format = "%d/%m/%Y %H:%M:%S";
 //      echo strftime($format);
