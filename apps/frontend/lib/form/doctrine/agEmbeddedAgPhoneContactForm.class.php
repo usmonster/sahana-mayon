@@ -36,16 +36,16 @@ class agEmbeddedAgPhoneContactForm extends agPhoneContactForm
         array(
           'id' => new sfValidatorChoice(
               array(
-                'choices' => array(
-                  $this->getObject()->get('id')),
+                'choices'     => array($this->getObject()->get('id')),
                 'empty_value' => $this->getObject()->get('id'),
-                'required' => false)
+                'required'    => false)
           ),
           'phone_contact' => new sfValidatorRegex(
               array(
-                'required' => false,
+                'trim'        => true,
+                'required'    => false,
                 'empty_value' => null,
-                'pattern' => '/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4}))( *x\d+)?$/')
+                'pattern'     => '/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4}))( *x\d+)?$/')
           ),
         )
     );

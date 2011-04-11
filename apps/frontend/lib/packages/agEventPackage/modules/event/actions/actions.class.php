@@ -742,8 +742,13 @@ class eventActions extends agActions
       $params = $request->getPostParameters();
       
       if($params['type'] == 'resourceStatus') {
+        $facilityResourceStatus = new agEventFacilityResourceStatus();
+        $FacilityResourceStatus->event_facility_resource_id = $request->getParameter('event_facility_resource_id');
+        $facilityResourceStatus->facility_resource_allocation_status_id = $request->getParameter('resource_allocation_status');
+        $facilityResourceStatus->time_stamp = date('Y-m-d H:i:s', time());
 
-      } elseIf($params['type'] == 'resourceActTime') {
+        $resourceStatusForm = agTinyEventFacilityResourceStatusForm($facilityResourceStatus);
+      } elseIf($params['type'] == 'resourceActivationTime') {
 
       }
     }
