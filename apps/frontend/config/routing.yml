@@ -110,6 +110,10 @@ prepare:
   url:   /prepare
   param: { module: home, action: prepare }
 
+respond:
+  url:   /respond
+  param: { module: home, action: respond }
+
 # Keep these two at the bottom to aid in the addition of new routes.
 default:
   url:   /:module/:action/*

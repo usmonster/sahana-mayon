@@ -40,5 +40,9 @@ class homeActions extends agActions
   {
   //$this->forward('default', 'module');
   }
+  public function executeRespond(sfWebRequest $request)
+  {
+  //$this->forward('default', 'module');
+  }
 
 }
