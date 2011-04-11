@@ -733,8 +733,21 @@ class eventActions extends agActions
 
   public function executeEventfacilityresource(sfWebRequest $request)
   {
-    $this->facilityResourceArray = $this->groupResourceQuery($request->getParameter('eventFacResId'));
-    return $this->renderPartial('eventFacResTable', array('facilityResourceArray' => $this->facilityResourceArray));
+    // Should only be get when the table is being loaded. This will return the table to be
+    // rendered in the sub-table of the fac group table. 
+    if($request->isMethod(sfRequest::GET)) {
+      $this->facilityResourceArray = $this->groupResourceQuery($request->getParameter('eventFacResId'));
+      return $this->renderPartial('eventFacResTable', array('facilityResourceArray' => $this->facilityResourceArray));
+    } elseif($request->isMethod(sfRequest::GET)) {
+      $params = $request->getPostParameters();
+      
+      if($params['type'] == 'resourceStatus') {
+
+      } elseIf($params['type'] == 'resourceActTime') {
+
+      }
+    }
+
   }
 
   public function executeEventfacilitygroup(sfWebRequest $request)
@@ -742,22 +755,21 @@ class eventActions extends agActions
     // Get the incoming params.
     $params = $request->getPostParameters();
 
-    if(array_key_exists('groupStatus', $params) && array_key_exists('groupId', $params)) {
+    if($params['type'] == 'groupStatus') {
       // Build an agEventFacilityGroupStatus object from incoming params, then stick it in a form.
       $groupAllocationStatus = new agEventFacilityGroupStatus();
-      $groupAllocationStatus->event_facility_group_id = ltrim($params['groupId'], 'group_id_');
+      $groupAllocationStatus->event_facility_group_id = ltrim($params['id'], 'group_id_');
       $groupAllocationStatus->facility_group_allocation_status_id = 
           agDoctrineQuery::create()
             ->select('id')
             ->from('agFacilityGroupAllocationStatus')
-            ->where('facility_group_allocation_status = ?', $params['groupStatus'])
+            ->where('facility_group_allocation_status = ?', $params['current'])
             ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
       $groupAllocationStatus->time_stamp = date('Y-m-d H:i:s', time());
       $groupAllocationStatusForm = new agTinyEventFacilityGroupStatusForm($groupAllocationStatus);
 
       return $this->renderText($groupAllocationStatusForm->__toString());
     }
-    $a = 6;
   }
 
   /**

@@ -50,9 +50,9 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-  $('.facilityGroupStatus').click(function() {
+  $('.textToForm').click(function() {
     var passId = '#' + $(this).attr('id');
-    $.post($(this).attr('href'), {groupStatus: $(this).html(), groupId: $(this).attr('id')}, function(data) {
+    $.post($(this).attr('href'), {type: $(this).attr('name'), current: $(this).html(), id: $(this).attr('id')}, function(data) {
       $(passId).parent().html(data);
     });
     return false;
