@@ -1,6 +1,11 @@
 <h2>Preparedness</h2>
-<p>...........Some content goes here.............</p>
-<b>Please select one of the following actions: </b>
+<p>In Agasti Mayon, preparing means creating Scenarios.  Scenarios are plans within the application
+that complement your organizations Emergency plans.</p>
+<p><b>Important:</b> Before creating your scenarios you'll want to load your staff and facilities
+  into Agasti Mayon.  If you'll be importing the facilities for each Scenario you'll want to load
+  staff and create the scenarios first.
+</p>
+<h3>Please select one of the following actions: </h3>
 <table cellspacing="20">
     <tr>
       <td><?php echo link_to('Manage<br>Staff', 'staff/index', array('class' => 'linkButton width140')) ?></td>
