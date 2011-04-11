@@ -766,7 +766,7 @@ th .tableRow {
 .fooTable li {
   float: left;
   width: 200px;
-  height: 60px;
+/*  height: 60px;*/
   margin-right: 4px;
   text-align: left;
   display: block;
