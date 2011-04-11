@@ -42,8 +42,8 @@ class agGlobalParamForm extends BaseagGlobalParamForm
           'host_id' => new sfValidatorDoctrineChoice(
               array('model' => $this->getRelatedModelName('agHost'))
           ),
-          'datapoint' => new sfValidatorString(array('max_length' => 128)),
-          'value' => new sfValidatorString(array('max_length' => 128)),
+          'datapoint' => new sfValidatorString(array('trim' => true, 'max_length' => 128)),
+          'value' => new sfValidatorString(array('trim' => true, 'max_length' => 128)),
         //'created_at' => new sfValidatorDateTime(),
         //'updated_at' => new sfValidatorDateTime(),
         )

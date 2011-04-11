@@ -31,7 +31,7 @@ class agEmbeddedAgAddressValueForm extends agAddressValueForm
                 'empty_value' => $this->getObject()->get('id'),
                 'required' => false)
           ),
-          'value' => new sfValidatorString(array('max_length' => 255, 'required' => false)),
+          'value' => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)),
           'address_element_id' => new sfValidatorDoctrineChoice(
               array('model' => $this->getRelatedModelName('agAddressElement'))
           )

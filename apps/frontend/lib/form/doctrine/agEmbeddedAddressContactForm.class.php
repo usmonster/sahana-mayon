@@ -50,8 +50,7 @@ class agEmbeddedAddressContactForm extends agEntityAddressContactForm
           'priority' => new sfValidatorInteger(),
           'created_at' => new sfValidatorDateTime(),
           'updated_at' => new sfValidatorDateTime(),
-          'address_to_type' => new sfValidatorString(
-              array('max_length' => 255)
+          'address_to_type' => new sfValidatorString(array('trim' => true, 'max_length' => 255)
           ),
         )
     );

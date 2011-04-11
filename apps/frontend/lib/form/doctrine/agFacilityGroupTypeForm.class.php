@@ -41,11 +41,9 @@ class agFacilityGroupTypeForm extends BaseagFacilityGroupTypeForm
                 'required' => false
               )
           ),
-          'facility_group_type' => new sfValidatorString(
-              array('max_length' => 30)
+          'facility_group_type' => new sfValidatorString(array('trim' => true, 'max_length' => 30)
           ),
-          'description' => new sfValidatorString(
-              array('max_length' => 255, 'required' => false)
+          'description' => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)
           ),
         //'app_display'         => new sfValidatorBoolean(array('required' => false)),
 //      'created_at'          => new sfValidatorDateTime(),

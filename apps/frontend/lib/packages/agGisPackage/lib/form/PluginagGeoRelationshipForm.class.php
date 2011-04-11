@@ -50,7 +50,7 @@ class PluginagGeoRelationshipForm extends BaseagGeoRelationshipForm
 //    $this->setValidators(array(
 //      'id'                                  => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
 //      'scenario_id'                         => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'))),
-//      'scenario_facility_group'             => new sfValidatorString(array('max_length' => 64)),
+//      'scenario_facility_group'             => new sfValidatorString(array('trim' => true, 'max_length' => 64)),
 //      'facility_group_type_id'              => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupType'))),
 //      'facility_group_allocation_status_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'))),
 //      'activation_sequence'                 => new sfValidatorInteger(),
