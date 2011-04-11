@@ -29,3 +29,32 @@ $(document).ready(function() {
     });
   })
 });
+
+$(document).ready(function() {
+  $('.expander').click(function() {
+    var expandToggle = '#expandable_' + $(this).attr('id');
+    if(expandToggle + ':empty') {
+      $(expandToggle).load($(this).attr('href'), function() {
+        $(expandToggle).slideToggle('slow');
+      });
+    } else {
+      $(expandToggle).slideToggle('slow');
+    }
+    if($(this).html() == (String.fromCharCode(9654))) {
+      $(this).html('&#9660;');
+    } else if($(this).html() == (String.fromCharCode(9660))) {
+      $(this).html('&#9654;');
+    }
+    return false;
+  });
+});
+
+$(document).ready(function() {
+  $('.textToForm').click(function() {
+    var passId = '#' + $(this).attr('id');
+    $.post($(this).attr('href'), {type: $(this).attr('name'), current: $(this).html(), id: $(this).attr('id')}, function(data) {
+      $(passId).parent().html(data);
+    });
+    return false;
+  });
+});

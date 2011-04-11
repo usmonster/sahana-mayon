@@ -84,7 +84,7 @@ class agEventFacilityGroupForm extends BaseagEventFacilityGroupForm
           'event_id' => new sfValidatorDoctrineChoice(
               array('model' => $this->getRelatedModelName('agEvent'))
           ),
-          'event_facility_group' => new sfValidatorString(array('max_length' => 64)),
+          'event_facility_group' => new sfValidatorString(array('trim' => true, 'max_length' => 64)),
           'facility_group_type_id' => new sfValidatorDoctrineChoice(
               array('model' => $this->getRelatedModelName('agFacilityGroupType'))
           ),

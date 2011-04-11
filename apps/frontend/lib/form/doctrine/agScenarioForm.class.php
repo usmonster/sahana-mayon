@@ -59,8 +59,8 @@ class agScenarioForm extends BaseagScenarioForm
                 'empty_value' => $this->getObject()->get('id'),
                 'required' => false)
           ),
-          'scenario' => new sfValidatorString(array('max_length' => 64)),
-          'description' => new sfValidatorString(array('max_length' => 255, 'required' => false)),
+          'scenario' => new sfValidatorString(array('trim' => true, 'max_length' => 64)),
+          'description' => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)),
         )
     );
 

@@ -335,6 +335,8 @@ class agEntityEmailHelper extends agEntityContactHelper
     {
       foreach($contacts as $index => $contact)
       {
+        $contact[1] = trim($contact[1]);
+        
         // find the position of the element or return false
         $pos = array_search($contact[1], $uniqContacts, TRUE);
 

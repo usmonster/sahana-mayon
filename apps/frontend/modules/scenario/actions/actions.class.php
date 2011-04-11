@@ -54,7 +54,13 @@ class scenarioActions extends agActions
     $this->setScenarioBasics($request);
     $this->ag_scenario_facility_groups = agDoctrineQuery::create()
             ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
-            ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
+            ->from(
+                'agScenarioFacilityGroup a,
+                  a.agScenarioFacilityResource afr,
+                  a.agFacilityGroupType afgt,
+                  a.agFacilityGroupAllocationStatus afgas,
+                  a.agFacilityResource fr'
+            )
             ->where('a.scenario_id = ?', $request->getParameter('id'))
             ->execute();
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario Facility Groups');
@@ -143,8 +149,14 @@ class scenarioActions extends agActions
               $existing = agDoctrineQuery::create()
                       ->select('agFSR.*')
                       ->from('agFacilityStaffResource agFSR')
-                      ->where('agFSR.staff_resource_type_id = ?', $facilityStaffResource['staff_resource_type_id'])
-                      ->andWhere('agFSR.scenario_facility_resource_id = ?', $facilityStaffResource['scenario_facility_resource_id'])
+                      ->where(
+                          'agFSR.staff_resource_type_id = ?',
+                          $facilityStaffResource['staff_resource_type_id']
+                      )
+                      ->andWhere(
+                          'agFSR.scenario_facility_resource_id = ?',
+                          $facilityStaffResource['scenario_facility_resource_id']
+                      )
                       ->fetchOne();
               if (!$existing) {
                 $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($object = null, $options = array(), $CSRFSecret = false);
@@ -285,7 +297,13 @@ class scenarioActions extends agActions
       $this->scenario_description = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getDescription();
       $this->ag_scenario_facility_groups = agDoctrineQuery::create()
               ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
-              ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, a.agFacilityResource fr')
+              ->from(
+                  'agScenarioFacilityGroup a,
+                    a.agScenarioFacilityResource afr,
+                    a.agFacilityGroupType afgt,
+                    a.agFacilityGroupAllocationStatus afgas,
+                    a.agFacilityResource fr'
+              )
               ->where('a.scenario_id = ?', $this->scenario_id)
               ->execute();
     }
@@ -318,8 +336,22 @@ class scenarioActions extends agActions
     $this->total_staff = Doctrine_Core::getTable('agStaff')->count();
     $this->total_resources = Doctrine_Core::getTable('agStaffResource')->count();
     $inputs = array(
-      'staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => true)), // 'class' => 'filter')),
-      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => true))//, 'class' => 'filter'))
+      'staff_type' => new sfWidgetFormDoctrineChoice(
+          array(
+            'model' => 'agStaffResourceType',
+            'label' => 'Staff Type',
+            'add_empty' => true)
+      ),
+      // 'class' => 'filter')),
+      'staff_org' => new sfWidgetFormDoctrineChoice(
+          array(
+            'model' => 'agOrganization',
+            'method' => 'getOrganization',
+            'label' => 'Staff Organization',
+            'add_empty' => true
+          )
+      )
+        //, 'class' => 'filter'))
     );
     //set up inputs for form
     $this->filterForm = new sfForm();

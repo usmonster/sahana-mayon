@@ -17,7 +17,8 @@
 abstract class agBulkRecordHelper
 {
   public    $strictBatchSize = FALSE,
-            $throwOnError = TRUE ;
+            $throwOnError = TRUE,
+            $purgeOrphans = FALSE;
 
   protected $recordIds = array(),
             $_batchSizeModifier = 1,

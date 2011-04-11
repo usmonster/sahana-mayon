@@ -10,9 +10,9 @@ class I18nForm extends sfForm
     ));
     
     $this->setValidators(array(
-      'first_name' => new sfValidatorString(array('required' => true)),
-      'last_name'  => new sfValidatorString(array('required' => true)),
-      'email'      => new sfValidatorEmail(array('required' => true), 
+      'first_name' => new sfValidatorString(array('trim' => true, 'required' => true)),
+      'last_name'  => new sfValidatorString(array('trim' => true, 'required' => true)),
+      'email'      => new sfValidatorEmail(array('trim' => true, 'required' => true),
                                            array('invalid' => '%value% is an invalid email address')),
     ));
     

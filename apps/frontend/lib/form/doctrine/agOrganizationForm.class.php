@@ -64,11 +64,9 @@ class agOrganizationForm extends BaseagOrganizationForm
                 'empty_value' => $this->getObject()->get('id'),
                 'required' => false)
           ),
-          'organization' => new sfValidatorString(
-              array('required' => true, 'max_length' => 128)
+          'organization' => new sfValidatorString(array('trim' => true, 'required' => true, 'max_length' => 128)
           ),
-          'description' => new sfValidatorString(
-              array('required' => false, 'min_length' => 1, 'max_length' => 255)
+          'description' => new sfValidatorString(array('trim' => true, 'required' => false, 'min_length' => 1, 'max_length' => 255)
           ),
         )
     );

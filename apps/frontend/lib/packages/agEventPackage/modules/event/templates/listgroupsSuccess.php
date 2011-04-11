@@ -21,7 +21,7 @@
 <br />
 <h3>Facility Resources<?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
 <div id="tableContainer">
-  <table class="singleTable">
+  <table class="singleTable" style="width: 700px;">
     <thead>
       <tr>
         <th class="head"></th>
@@ -67,10 +67,10 @@
         <tbody>
 <?php foreach ($pager->getResults() as $facilityGroup): ?>
           <tr>
-            <td><a href="#" class="expander">&#x25B6;</a></td>
+            <td><a href="<?php echo url_for('event/eventfacilityresource/?eventFacResId=' . $facilityGroup['efg_id']); ?>" id="<?php echo $facilityGroup['efg_id']; ?>" class="expander">&#9654;</a></td>
             <td><?php echo $facilityGroup['efg_event_facility_group'] ?></td>
             <td><?php echo $facilityGroup['fgt_facility_group_type'] ?></td>
-            <td><?php echo $facilityGroup['fgas_facility_group_allocation_status'] ?></td>
+            <td><a href="<?php echo url_for('event/eventfacilitygroup')?>" name="groupStatus" class="textToForm linkText" id="group_id_<?php echo $facilityGroup['efg_id']; ?>"><?php echo $facilityGroup['fgas_facility_group_allocation_status'] ?></a></td>
             <td><?php echo $facilityGroup['efr_count'] ?></td>
             <?php
               if (!(isset($event))) {
@@ -80,28 +80,8 @@
           </tr>
           <tr>
             <td colspan="5">
-              <table>
-                <thead>
-                  <tr>
-                    <td>Facility Name</td>
-                    <td>Resource Type</td>
-                    <td>Facility Code</td>
-                    <td>Status</td>
-                    <td>Activation Time</td>
-                  </tr>
-                </thead>
-                <tbody>
-                <?php foreach($facilityResourceArray[$facilityGroup['efg_id']] as $facRes) : ?>
-                  <tr>
-                    <td><?php echo $facRes['f_facility_name'] ?></td>
-                    <td><?php echo $facRes['frt_facility_resource_type'] ?></td>
-                    <td><?php echo $facRes['f_facility_code'] ?></td>
-                    <td><?php echo $facRes['ras_facility_resource_allocation_status'] ?></td>
-                    <td><?php echo $facRes['efrat_activation_time'] ?></td>
-                  </tr>
-                <?php endforeach; ?>
-                </tbody>
-              </table>
+              <div class="expandable" id="expandable_<?php echo $facilityGroup['efg_id']; ?>">
+              </div>
             </td>
           </tr>
 <?php endforeach; ?>

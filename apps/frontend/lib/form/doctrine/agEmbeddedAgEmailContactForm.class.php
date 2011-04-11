@@ -43,7 +43,7 @@ class agEmbeddedAgEmailContactForm extends agEmailContactForm
                 $this->getObject()->get('id'), 'required' => false)
           ),
           'email_contact' => new sfValidatorEmail(
-              array('required' => false, 'empty_value' => null)
+              array('trim' => true, 'required' => false, 'empty_value' => null)
           ),
         )
     );

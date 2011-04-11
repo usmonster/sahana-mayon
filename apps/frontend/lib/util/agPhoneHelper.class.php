@@ -31,6 +31,7 @@ class agPhoneHelper extends agBulkRecordHelper
             $_phoneValidation = array(),
             $_phoneDisplayFormat = array(),
             $_returnFormatId,
+            $_returnFormatIdsByCountry,
             $_startIndex = 0,
             $_phn_area_code = array('startIndex' => 0, 'length' => 3),
             $_phn_first_three = array('startIndex' => 3, 'length' => 3),
@@ -72,23 +73,20 @@ class agPhoneHelper extends agBulkRecordHelper
   }
 
   /**
-   * Method used to construct the base query objet used by other objects in this class.
-   * 
+   * Method used to construct the base query object used by other objects in this class.
+   *
    * @param string $country A string value of a country.
+   * @return agDoctrineQuery An extended doctrine query object.
    */
-  protected function _setPhoneFormatComponentByCountry($country)
+  protected function _getPhoneFormatTypeByCountry($country)
   {
     // construct our base query object
     $q = agDoctrineQuery::create()
       ->select('pf.id')
-            ->addSelect('pft.phone_format_type')
-            ->addSelect('pft.validation')
-            ->addSelect('pft.match_pattern')
-            ->addSelect('pft.replacement_pattern')
         ->from('agPhoneFormat pf')
             ->innerJoin('pf.agPhoneFormatType pft')
             ->innerJoin('pf.agCountry c')
-          ->where('c.country = ?', $country);
+        ->where('c.country = ?', $country);
 
     return $q;
   }
@@ -101,11 +99,13 @@ class agPhoneHelper extends agBulkRecordHelper
    * @param string $country A string value of a country. Defaults to the global country's phone
    * formats if non is provided.
    */
-  public function setPhoneFormatComponentByCountry($country = NULL)
+  public function _setPhoneFormatComponentByCountry($country = NULL)
   {
     if (is_null($country)) { $country = agGlobal::getParam($this->_globalDefaultCountry); }
-    $q = $this->_setPhoneFormatComponentByCountry($country);
-    // here we choose a custom hydration method to allow us to manipulate the results data twice
+    $q = $this->_getPhoneFormatTypeByCountry($country);
+    $this->_returnFormatIdsByCountry = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    $q = $this->_getPhoneFormatComponent($this->_returnFormatIdsByCountry);
+    // here we choose a custom hydration method to allow us to manipulate the results data
     $formatComponents = $q->execute(array(), DOCTRINE_CORE::HYDRATE_NONE);
     foreach($formatComponents as $fc)
     {
@@ -135,13 +135,10 @@ class agPhoneHelper extends agBulkRecordHelper
   {
     $this->_returnFormatId = $formatId;
     $this->_setPhoneFormatComponent();
+    $this->_setPhoneFormatComponentByCountry();
   }
 
-  /**
-   * This method queries the database for the required formatting components and loads several
-   * properties with quick, referenceable information used in formatting endeavors.
-   */
-  protected function _setPhoneFormatComponent()
+  protected function _getPhoneFormatComponent($pfid)
   {
     $q = agDoctrineQuery::create()
       ->select('pf.id')
@@ -150,7 +147,18 @@ class agPhoneHelper extends agBulkRecordHelper
           ->addSelect('pft.replacement_pattern')
         ->from('agPhoneFormat pf')
             ->innerJoin('pf.agPhoneFormatType pft')
-          ->whereIn('pf.id', $this->_returnFormatId);
+          ->whereIn('pf.id', $pfid);
+
+    return $q;
+  }
+
+  /**
+   * This method queries the database for the required formatting components and loads several
+   * properties with quick, referenceable information used in formatting endeavors.
+   */
+  protected function _setPhoneFormatComponent()
+  {
+    $q = $this->_getPhoneFormatComponent($this->_returnFormatId);
 
     // here we choose a custom hydration method to allow us to manipulate the results data twice
     $formatComponents = $q->execute(array(), DOCTRINE_CORE::HYDRATE_NONE);
@@ -385,8 +393,6 @@ class agPhoneHelper extends agBulkRecordHelper
     return $this->_phoneDisplayFormat;
   }
 
-
-
    /**
    * A quick helper method to take in an array phones and return an array of phone ids.
    * @param array $phones A monodimensional array of phones.
@@ -443,8 +449,6 @@ class agPhoneHelper extends agBulkRecordHelper
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
     if (is_null($throwOnError)) { $throwOnError = $this->throwOnError; }
 
-    // pick up the set of phone formatters by country.
-    $this->setPhoneFormatComponentByCountry();
     $phoneFormatComponents = $this->_phoneFormatComponentsByCountry;
 
     foreach ($phones as $index => $phone)
@@ -478,9 +482,10 @@ class agPhoneHelper extends agBulkRecordHelper
 
         foreach($phoneFormatComponents as $pfId => $pfComp)
         {
-          if (preg_match($pfComp[1], $phone[0]))
+          if (preg_match($pfComp[0], $phone[0]))
           {
             $phoneFormatId = $pfId;
+            break;
           }
         }
       }
@@ -553,8 +558,16 @@ class agPhoneHelper extends agBulkRecordHelper
     // declare our results array
     $results = array();
 
+    // Extract only the phone numbers into a simple array for later use to retrieve phone contact
+    // ids if a match found in db.
+    $phonesOnly = array();
+    foreach ($phones as $p)
+    {
+      $phonesOnly[] = $p[0];
+    }
+
     // return any found phones
-    $dbPhones = $this->getPhoneIds(array_unique(array_values($phones)));
+    $dbPhones = $this->getPhoneIds(array_unique(array_values($phonesOnly)));
 
     // loop through the pass-in phones and build a couple of arrays
     foreach ($phones as $phoneIndex => $phone)
@@ -634,8 +647,5 @@ class agPhoneHelper extends agBulkRecordHelper
 
     return $results;
   }
-
-
-
 
 }

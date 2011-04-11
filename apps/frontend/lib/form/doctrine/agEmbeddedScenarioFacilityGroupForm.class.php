@@ -94,7 +94,7 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
               array(
                 'model' => $this->getRelatedModelName('agScenario'))
           ),
-          'scenario_facility_group' => new sfValidatorString(array('max_length' => 64)),
+          'scenario_facility_group' => new sfValidatorString(array('trim' => true, 'max_length' => 64)),
           'facility_group_type_id' => new sfValidatorDoctrineChoice(
               array('model' => $this->getRelatedModelName('agFacilityGroupType'))
           ),

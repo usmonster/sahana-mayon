@@ -298,7 +298,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
    * <code>
    * array(
    *   $entityId => array(
-   *     array($phoneContactTypeId, $phone, $phoneFormatId),
+   *     array($phoneContactTypeId, array($phone, $phoneFormatId)),
    *     ...
    *   ), ...
    * )
@@ -320,7 +320,6 @@ class agEntityPhoneHelper extends agEntityContactHelper
   {
     // some explicit declarations at the top
     $uniqContacts = array();
-    $uniqContactFormatIds = array();
     $err = NULL;
     $errMsg = 'This is a generic ERROR for setEntityPhone. You should never receive this ERROR.
       If you have received this ERROR, there is an error with your ERROR handling code.';
@@ -333,6 +332,8 @@ class agEntityPhoneHelper extends agEntityContactHelper
     {
       foreach($contacts as $index => $contact)
       {
+        $contact[1][0] = trim($contact[1][0]);
+
         // find the position of the element or return false
         $pos = array_search($contact[1], $uniqContacts, TRUE);
 
@@ -341,7 +342,6 @@ class agEntityPhoneHelper extends agEntityContactHelper
         {
           // add it to our unique contacts array
           $uniqContacts[] = $contact[1];
-          $uniqContactFormatIds[] = $contact[2];
 
           // the the most recently inserted key
           $pos = max(array_keys($uniqContacts));
@@ -351,12 +351,6 @@ class agEntityPhoneHelper extends agEntityContactHelper
         $entityContacts[$entityId][$index][1] = $pos;
       }
     }
-
-    foreach ($uniqContacts as $index => $contact)
-    {
-      $uniqContacts[$index] = array($contact, $uniqContactFormatIds[$index]);
-    }
-    unset($uniqContactFormatIds);
     
     // whelp, if we haven't loaded it already, let's get our phone helper
     $phoneHelper = $this->getAgPhoneHelper();

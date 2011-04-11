@@ -30,9 +30,9 @@ class PluginagEmbeddedAgStaffResourceTypeForm extends PluginagStaffResourceTypeF
 
     $this->setValidators(array(
       'id'                                 => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'staff_resource_type'                => new sfValidatorString(array('max_length' => 64)),
-//      'staff_resource_type_abbr'           => new sfValidatorString(array('max_length' => 10, 'required' => false)),
-//      'description'                        => new sfValidatorString(array('max_length' => 255, 'required' => false)),
+      'staff_resource_type'                => new sfValidatorString(array('trim' => true, 'max_length' => 64)),
+//      'staff_resource_type_abbr'           => new sfValidatorString(array('trim' => true, 'max_length' => 10, 'required' => false)),
+//      'description'                        => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)),
 //      'app_display'                        => new sfValidatorBoolean(array('required' => false)),
 //      'created_at'                         => new sfValidatorDateTime(),
 //      'updated_at'                         => new sfValidatorDateTime(),

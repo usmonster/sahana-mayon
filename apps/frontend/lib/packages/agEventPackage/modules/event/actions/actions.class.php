@@ -34,9 +34,13 @@ class eventActions extends agActions
   public function executeIndex(sfWebRequest $request)
   {
     $this->scenarioForm = new sfForm();
-    $this->scenarioForm->setWidgets(array(
-      'ag_scenario_list' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agScenario'))
-    ));
+    $this->scenarioForm->setWidgets(
+        array(
+          'ag_scenario_list' => new sfWidgetFormDoctrineChoice(
+              array('multiple' => false, 'model' => 'agScenario')
+          )
+        )
+    );
 
 
     $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
@@ -67,8 +71,11 @@ class eventActions extends agActions
             ->from('agFacilityResource')
             ->where('id = ?', $this->event_facility_resource['facility_resource_id'])
             ->execute()->getFirst();
-    $this->facilityResourceActivationTimeForm = new agSingleEventFacilityResourceActivationTimeForm();//new agFacilityResourceAcvitationForm($this->event_facility_resource);
-    $this->facilityResourceActivationTimeForm->setDefault('event_facility_resource_id', $this->event_facility_resource['id']);
+    $this->facilityResourceActivationTimeForm = new agSingleEventFacilityResourceActivationTimeForm(); //new agFacilityResourceAcvitationForm($this->event_facility_resource);
+    $this->facilityResourceActivationTimeForm->setDefault(
+        'event_facility_resource_id',
+        $this->event_facility_resource['id']
+    );
   }
 
   /**
@@ -88,12 +95,19 @@ class eventActions extends agActions
     }
 
     $this->facilitygroupsForm = new sfForm();
-    $this->facilitygroupsForm->setWidgets(array(
-      'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups)),// 'add_empty' => true))// ,'onClick' => 'submit()'))
-    ));
+    $this->facilitygroupsForm->setWidgets(
+        array(
+          'facility_group_list' => new sfWidgetFormChoice(
+              array('multiple' => false,
+                'choices' => $facility_groups)
+          ),
+        // 'add_empty' => true))// ,'onClick' => 'submit()'))
+        )
+    );
 
     $this->xmlHttpRequest = $request->isXmlHttpRequest();
-    //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
+    //the facility group choices above (if selected) will pare down
+    //the returned facility resources below FOR a facility group
     if ($request->isMethod(sfRequest::POST)) {
       if ($request->getParameter('facility_group_filter')) {
         $this->facility_group = $request->getParameter('facility_group_list');
@@ -113,22 +127,31 @@ class eventActions extends agActions
             $eFacResActivation->setEventFacilityResourceId($fac_activate['event_facility_resource_id']);
             $eFacResActivation->save();
 
-            //agEventFacilityHelper::setFacilityActivationTime($eventFacilityResourceIds, $activationTime, $shiftChangeRestriction, $releaseStaff, $conn);
+            //agEventFacilityHelper::setFacilityActivationTime(
+            //  $eventFacilityResourceIds,
+            //  $activationTime,
+            //  $shiftChangeRestriction,
+            //  $releaseStaff,
+            //  $conn
+            //  );
           }
         }
       }
     }
     //$this->event_facility_resources = null;
-    if(count($facility_groups) > 1)
-    {
+    if (count($facility_groups) > 1) {
       //return only facility resources with no activation times for active facility groups
-      $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group,null,1);
+      $this->event_facility_resources =
+          agEventFacilityHelper::returnFacilityResourceActivation(
+              $this->event_id,
+              $this->facility_group,
+              null,
+              1
+      );
       $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
-    }
-    else{
+    } else {
       $this->fgroupForm = null;
     }
-
   }
 
   /**
@@ -150,9 +173,9 @@ class eventActions extends agActions
               ->getFirst()->scenario;
 
       $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
-   //p-code
-    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event['event_name'] . ' Deploy');
-  //end p-code
+      //p-code
+      $this->getResponse()->setTitle('Sahana Agasti ' . $this->event['event_name'] . ' Deploy');
+      //end p-code
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
         $this->redirect('event/active?event=' . urlencode($this->event_name));
@@ -160,8 +183,6 @@ class eventActions extends agActions
     } else {
       $this->forward404('you cannot deploy an event without a scenario.');
     }
-
-
   }
 
   /**
@@ -209,7 +230,10 @@ class eventActions extends agActions
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
       //if someone has posted, but is not creating an event from a scenario.
       $this->metaForm = new PluginagEventDefForm($eventMeta);
-      $this->metaForm->bind($request->getParameter($this->metaForm->getName()), $request->getFiles($this->metaForm->getName()));
+      $this->metaForm->bind(
+          $request->getParameter($this->metaForm->getName()),
+          $request->getFiles($this->metaForm->getName())
+      );
       if ($this->metaForm->isValid()) {
 
         $ag_event = $this->metaForm->save();
@@ -250,13 +274,13 @@ class eventActions extends agActions
     }
 
     //as a rule of thumb, actions should post to themself and then redirect
-   //p-code
-  if(isset($eventMeta->event_name)){
-    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Event Management');
-  } else{
-    $this->getResponse()->setTitle('Sahana Agasti New Event Management');
-  }
-  //end p-code
+    //p-code
+    if (isset($eventMeta->event_name)) {
+      $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Event Management');
+    } else {
+      $this->getResponse()->setTitle('Sahana Agasti New Event Management');
+    }
+    //end p-code
   }
 
   /**
@@ -297,9 +321,30 @@ class eventActions extends agActions
     }
     //set up inputs for filter form
     $inputs = array(
-      'st' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => true)), // 'class' => 'filter')),
-      'so' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => true)), //, 'class' => 'filter'))
-      'fr' => new sfWidgetFormDoctrineChoice(array('model' => 'agEventFacilityResource', 'label' => 'Facility Resource', 'add_empty' => true))
+      'st' => new sfWidgetFormDoctrineChoice(
+          array(
+            'model' => 'agStaffResourceType',
+            'label' => 'Staff Type',
+            'add_empty' => true
+          )
+      ),
+      // 'class' => 'filter')),
+      'so' => new sfWidgetFormDoctrineChoice(
+          array(
+            'model' => 'agOrganization',
+            'method' => 'getOrganization',
+            'label' => 'Staff Organization',
+            'add_empty' => true
+          )
+      ),
+      //, 'class' => 'filter'))
+      'fr' => new sfWidgetFormDoctrineChoice(
+          array(
+            'model' => 'agEventFacilityResource',
+            'label' => 'Facility Resource',
+            'add_empty' => true
+          )
+      )
     );
     /** @todo set defaults from the request */
     $this->filterForm = new sfForm(null, array(), false);
@@ -311,8 +356,24 @@ class eventActions extends agActions
 
     //begin construction of query used for listing
     $query = agDoctrineQuery::create()
-            ->select('es.id, essh.id, esh.event_facility_resource_id, efr.facility_resource_id, fr.facility_id, f.facility_name, sr.id, srt.staff_resource_type, sro.id, o.organization, s.id, s.staff_status_id, ss.staff_status, p.id, ess.staff_allocation_status_id')//, sas.staff_allocation_status') //maybe we should only get the id since it's needed for dropdown
-            ->from('agEventStaff es,
+            ->select(
+                'es.id,
+                  essh.id,
+                  esh.event_facility_resource_id,
+                  efr.facility_resource_id,
+                  fr.facility_id,
+                  f.facility_name,
+                  sr.id,
+                  srt.staff_resource_type,
+                  sro.id, o.organization,
+                  s.id, s.staff_status_id,
+                  ss.staff_status,
+                  p.id,
+                  ess.staff_allocation_status_id'
+            )//, sas.staff_allocation_status')
+            //maybe we should only get the id since it's needed for dropdown
+            ->from(
+                'agEventStaff es,
               es.agEventStaffShift essh,
               essh.agEventShift esh,
               esh.agEventFacilityResource efr,
@@ -325,7 +386,8 @@ class eventActions extends agActions
               sr.agStaff s,
               s.agStaffStatus ss,
               s.agPerson p,
-              es.agEventStaffStatus ess')
+              es.agEventStaffStatus ess'
+            )
             //ess.agStaffAllocationStatus sas')
             ->where('es.event_id = ?', $this->event_id);
 
@@ -412,10 +474,9 @@ class eventActions extends agActions
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
     //set up the widget for use in the ' list form '
-
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
-   //end p-code
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+    //end p-code
   }
 
   /**
@@ -491,9 +552,9 @@ class eventActions extends agActions
       }
     }
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
-   //end p-code
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
+    //end p-code
   }
 
   /**
@@ -553,9 +614,9 @@ class eventActions extends agActions
       //remove this staff member!
     }
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff Shift');
-   //end p-code
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff Shift');
+    //end p-code
   }
 
   /**
@@ -575,10 +636,9 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
-   //end p-code
-    
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
+    //end p-code
   }
 
   /**
@@ -589,9 +649,9 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
-   //end p-code
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+    //end p-code
   }
 
   /**
@@ -608,26 +668,25 @@ class eventActions extends agActions
 //    if($request->getParameter('event') != null && Doctrine::getTable('agEvent')->findByDql('where event_name = ?', $request->getParameter('event'))->getFirst() == false) {
 //      $this->redirect('event/listgroups');
 //    }
-    if($request->getParameter('event') == null) {
+    if ($request->getParameter('event') == null) {
       $this->missingEvent = true;
     }
     $this->setEventBasics($request);
 
-    $a = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event_id, null);
     $query = agDoctrineQuery::create()
             ->select('efg.id')
-              ->addSelect('efg.event_facility_group')
-              ->addSelect('fgt.facility_group_type')
-              ->addSelect('fgas.id')
-              ->addSelect('fgas.facility_group_allocation_status')
-              ->addSelect('ev.event_name')
-              ->addSelect('count(efr.event_facility_group_id)')
+            ->addSelect('efg.event_facility_group')
+            ->addSelect('fgt.facility_group_type')
+            ->addSelect('fgas.id')
+            ->addSelect('fgas.facility_group_allocation_status')
+            ->addSelect('ev.event_name')
+            ->addSelect('count(efr.event_facility_group_id)')
             ->from('agEventFacilityGroup efg')
-              ->innerJoin('efg.agEventFacilityGroupStatus efgs')
-              ->innerJoin('efg.agFacilityGroupType fgt')
-              ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
-              ->innerJoin('efg.agEvent ev')
-              ->innerJoin('efg.agEventFacilityResource efr')
+            ->innerJoin('efg.agEventFacilityGroupStatus efgs')
+            ->innerJoin('efg.agFacilityGroupType fgt')
+            ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
+            ->innerJoin('efg.agEvent ev')
+            ->innerJoin('efg.agEventFacilityResource efr')
             ->where('EXISTS (
               SELECT s.id
                 FROM agEventFacilityGroupStatus s
@@ -639,26 +698,23 @@ class eventActions extends agActions
     if ($this->event != "") {
       $query->andWhere('efg.event_id = ?', $this->event_id);
     }
-    
+
     $facilityResourceArray = array();
     $this->facilityGroupArray = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
     foreach ($this->facilityGroupArray as $eventFacilityGroup) {
       $facilityResourceArray[$eventFacilityGroup['efg_id']] = $this->groupResourceQuery($eventFacilityGroup['efg_id']);
-//      foreach ($tempArray as $ta) {
-//        array_push($facilityResourceArray, $ta);
-//      }
     }
     $this->facilityResourceArray = $facilityResourceArray;
     $this->pager = new agArrayPager(null, 10);
 
     if ($request->getParameter('sort') && $request->getParameter('order')) {
       $sortColumns = array(
-        'group'          => 'efg_event_facility_group',
-        'type'           => 'fgt_facility_group_type',
-        'status'         => 'fgas_facility_group_allocation_status',
-        'count'          => 'efr_count',
-        'event'          => 'ev_event_name');
+        'group' => 'efg_event_facility_group',
+        'type' => 'fgt_facility_group_type',
+        'status' => 'fgas_facility_group_allocation_status',
+        'count' => 'efr_count',
+        'event' => 'ev_event_name');
       $sort = $sortColumns[$request->getParameter('sort')];
       agArraySort::$sort = $sort;
       usort($this->facilityGroupArray, array('agArraySort', 'arraySort'));
@@ -670,9 +726,50 @@ class eventActions extends agActions
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Facility Groups');
-   //end p-code
+    //p-code
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Facility Groups');
+    //end p-code
+  }
+
+  public function executeEventfacilityresource(sfWebRequest $request)
+  {
+    // Should only be get when the table is being loaded. This will return the table to be
+    // rendered in the sub-table of the fac group table. 
+    if($request->isMethod(sfRequest::GET)) {
+      $this->facilityResourceArray = $this->groupResourceQuery($request->getParameter('eventFacResId'));
+      return $this->renderPartial('eventFacResTable', array('facilityResourceArray' => $this->facilityResourceArray));
+    } elseif($request->isMethod(sfRequest::GET)) {
+      $params = $request->getPostParameters();
+      
+      if($params['type'] == 'resourceStatus') {
+
+      } elseIf($params['type'] == 'resourceActTime') {
+
+      }
+    }
+
+  }
+
+  public function executeEventfacilitygroup(sfWebRequest $request)
+  {
+    // Get the incoming params.
+    $params = $request->getPostParameters();
+
+    if($params['type'] == 'groupStatus') {
+      // Build an agEventFacilityGroupStatus object from incoming params, then stick it in a form.
+      $groupAllocationStatus = new agEventFacilityGroupStatus();
+      $groupAllocationStatus->event_facility_group_id = ltrim($params['id'], 'group_id_');
+      $groupAllocationStatus->facility_group_allocation_status_id = 
+          agDoctrineQuery::create()
+            ->select('id')
+            ->from('agFacilityGroupAllocationStatus')
+            ->where('facility_group_allocation_status = ?', $params['current'])
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      $groupAllocationStatus->time_stamp = date('Y-m-d H:i:s', time());
+      $groupAllocationStatusForm = new agTinyEventFacilityGroupStatusForm($groupAllocationStatus);
+
+      return $this->renderText($groupAllocationStatusForm->__toString());
+    }
   }
 
   /**
@@ -728,7 +825,7 @@ class eventActions extends agActions
         $groupAllocation = new agEventFacilityGroupStatus();
         $groupAllocation->event_facility_group_id = $this->eventFacilityGroup->id;
         $groupAllocation->facility_group_allocation_status_id = $request->getParameter('group_allocation_status');
-        $groupAllocation->time_stamp = date('Y-m-d H:i:s', time()); //time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+        $groupAllocation->time_stamp = date('Y-m-d H:i:s', time());
         if (in_array($activationStatus[$request->getParameter('event_facility_group_id')], $inactive)) {
           $groupAllocation->save();
           return $this->renderText('facilitygroups');
@@ -790,7 +887,7 @@ class eventActions extends agActions
             ->addSelect('e.event_name')
             ->addSelect('efrat.id')
             ->addSelect('efrat.activation_time')
-              ->from('agEventFacilityResource efr')
+            ->from('agEventFacilityResource efr')
             ->innerJoin('efr.agFacilityResource fr')
             ->innerJoin('fr.agFacilityResourceStatus frs')
             ->innerJoin('fr.agFacilityResourceType frt')

@@ -109,11 +109,9 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
                 'empty_value' => $this->getObject()->get('id'),
                 'required' => false)
           ),
-          'shift_template' => new sfValidatorString(
-              array('max_length' => 64, 'required' => false)
+          'shift_template' => new sfValidatorString(array('trim' => true, 'max_length' => 64, 'required' => false)
           ),
-          'description' => new sfValidatorString(
-              array('max_length' => 255, 'required' => false)
+          'description' => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)
           ),
           'scenario_id' => new sfValidatorDoctrineChoice(
               array('required' => false, 'model' => $this->getRelatedModelName('agScenario'))
