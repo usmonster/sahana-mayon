@@ -780,6 +780,14 @@ class agAddressHelper extends agBulkRecordHelper
               throw new Exception($errMsg) ;
             }
           }
+          else
+          {
+            // Trim leading and trailing spaces from contact values.
+            foreach ($components as $elem => $val)
+            {
+              $addresses[$index][0][$elem] = trim($val);
+            }
+          }
 
           // release the array!
           unset($addrComponents[$index]) ;
@@ -791,6 +799,16 @@ class agAddressHelper extends agBulkRecordHelper
 
       // return the original standard
       if ($origStandard != $this->_returnStandardId) { $this->setReturnStandard($origStandard) ; }
+    }
+    else {
+      // Trim address values.
+      foreach ($addresses as $index => $components)
+      {
+        foreach ($components[0] as $elem => $val)
+        {
+          $addresses[$index][0][$elem] = trim($val);
+        }
+      }
     }
 
     // either way, we eventually pass the 'cleared' addresses to our setter

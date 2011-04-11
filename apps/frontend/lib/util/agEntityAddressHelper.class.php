@@ -343,6 +343,12 @@ class agEntityAddressHelper extends agEntityContactHelper
     {
       foreach ($contacts as $index => $contact)
       {
+        // Trim leading and trailing spaces from contact values.
+        foreach($contact[1][0] as $elem => $val)
+        {
+          $contact[1][0][$elem] = trim($val);
+        }
+
         // find the position of the element or return false
         $pos = array_search($contact[1], $uniqContacts, TRUE) ;
 
