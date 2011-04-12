@@ -982,7 +982,7 @@ class agStaffActions extends agActions
     $uploadedFile = $_FILES["import"];
 
     $uploadDir = sfConfig::get('sf_upload_dir') . '/';
-    move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"]);
+    if(!move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"])) return sfView::ERROR;
     $this->importPath = $uploadDir . $uploadedFile["name"];
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)

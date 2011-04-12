@@ -303,6 +303,9 @@ class agStaffImportNormalization extends agImportNormalization
 
     // Fetch import data.
     $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
+
+
+    // Order Import Data by most common pieces.
     $pdo = $conn->execute($query);
     $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
     $sourceRecords = $pdo->fetchAll();

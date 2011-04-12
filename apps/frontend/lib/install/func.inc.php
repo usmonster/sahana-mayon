@@ -242,14 +242,14 @@ function writeAppYml($authMethod = NULL)
   $appConfig['all']['.array']['menu_top'] =
       array(
         'homepage' => array('label' => 'Home', 'route' => '@homepage'),
-        'prepare' => array('label' => 'Prepare', 'route' => '@homepage'),
-        'respond' => array('label' => 'Respond', 'route' => '@homepage'),
+        'prepare' => array('label' => 'Prepare', 'route' => '@prepare'),
+        'respond' => array('label' => 'Respond', 'route' => '@respond'),
         'recover' => array('label' => 'Recover', 'route' => '@homepage'),
         'mitigate' => array('label' => 'Mitigate', 'route' => '@homepage'),
         'foo' => array('label' => 'Foo', 'route' => '@foo'),
         'modules' => array('label' => 'Modules', 'route' => '@homepage'),
         'admin' => array('label' => 'Administration', 'route' => '@admin'),
-        'help' => array('label' => 'Help', 'route' => '@about'));
+        'help' => array('label' => 'Help', 'route' => 'wiki'));
 
   $appConfig['all']['.array']['menu_children'] =
       array(
@@ -289,7 +289,7 @@ function writeAppYml($authMethod = NULL)
         'scenario_facilitygrouptypes' => array
           ('label' => 'Edit Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
         'scenario_active' => array
-          ('label' => '[Active Scenario]', 'route' => '@scenario', 'parent' => 'scenario'),
+          ('label' => '[Active Scenario]', 'route' => 'event', 'parent' => 'scenario'),
         'event_active_staff' => array
           ('label' => 'Staff', 'route' => '@homepage', 'parent' => 'event_active'),
         'event_active_facilities' => array
