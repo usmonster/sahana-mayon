@@ -249,7 +249,7 @@ function writeAppYml($authMethod = NULL)
         'foo' => array('label' => 'Foo', 'route' => '@foo'),
         'modules' => array('label' => 'Modules', 'route' => '@homepage'),
         'admin' => array('label' => 'Administration', 'route' => '@admin'),
-        'help' => array('label' => 'Help', 'route' => 'wiki'));
+        'help' => array('label' => 'Help', 'route' => '@wiki'));
 
   $appConfig['all']['.array']['menu_children'] =
       array(
