@@ -11,6 +11,7 @@
  *
  * @author     Clayton Kramer, CUNY SPS
  * @author     Shirley Chan, CUNY SPS
+ * @author     Charles Wisniewski, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
@@ -29,9 +30,9 @@
  */
 class AgImportXLS
 {
-  public $importSpec;
-  public $staffRequirementFieldType;// = array('type' => "integer");
   // Public variables declared here
+  public $importSpec;
+//  public $staffRequirementFieldType;// = array('type' => "integer");
   public $events = array();
   public $numRecordsImported = 0;
   public $tempTable;
@@ -56,9 +57,8 @@ class AgImportXLS
   /**
    * Method to clean column headers, removing leading and trailing spaces and replacing between-word
    * spaces with an underscore.
-   * 
-   * @param mix $value The value of the array.
-   * @param mix $key The key of the array.
+   *
+   * @param array $columnHeaders A single value array of column headers.
    */
   protected function cleanColumnHeaders($columnHeaders)
   {
@@ -70,93 +70,7 @@ class AgImportXLS
   }
 
   /**
-   * processFacilityImport()
-   *
-   * Reads contents of the Excel import file into temp table
-   *
-   * @param $importFile
-   */
-  public function processImport($importFile)
-  {
-
-    require_once(dirname(__FILE__) . '/excel_reader2.php');
-
-    // Validate the uploaded files Excel 2003 extention
-    $this->fileInfo = pathinfo($importFile);
-    if (strtolower($this->fileInfo["extension"]) <> 'xls') {
-      $this->events[] = array("type" => "ERROR", "message" => "{$this->fileInfo['basename']} is not Microsoft Excel 2003 \".xls\" workbook.");
-    } else {
-      $this->events[] = array("type" => "INFO", "message" => "Opening import file for reading.");
-      $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
-
-      // Get some info about the workbook's composition
-      $numSheets = count($xlsObj->sheets);
-      $this->events[] = array("type" => "INFO", "message" => "Number of worksheets found: $numSheets");
-
-      $numRows = $xlsObj->rowcount($sheet_index = 0);
-      $numCols = $xlsObj->colcount($sheet_index = 0);
-
-      // Create a simplified array from the worksheets
-      for ($sheet = 0; $sheet < $numSheets; $sheet++) {
-        $importRow = 0;
-        $importFileData = array();
-        
-        // Get the sheet name
-        $sheetName = $xlsObj->boundsheets[$sheet]["name"];
-        $this->events[] = array("type" => "INFO", "message" => "Parsing worksheet $sheetName");
-
-        // We don't import sheets named "Lookup"
-        if (strtolower($sheetName) <> 'lookup') {
-          // Grab column headers at the beginning of each sheet.
-          $currentSheetHeaders = array_values($xlsObj->sheets[$sheet]['cells'][1]);
-          $currentSheetHeaders = $this->cleanColumnHeaders($currentSheetHeaders);
-          
-          // Check for consistant column header in all data worksheets.  Use the column header from
-          // the first worksheet as the import column header for all data worksheets.  
-          if ($sheet == 0) {
-            // Extend import spec headers with dynamic staff resource requirement columns from xls file.
-            $this->extendsImportSpecHeaders($currentSheetHeaders);
-            $this->createTempTable();
-          }
-
-          $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
-
-          if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName)) {
-            $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
-          } else {
-            $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
-            return false;
-          }
-
-          for ($row = 2; $row <= $numRows; $row++) {
-
-            for ($col = 1; $col <= $numCols; $col++) {
-
-              $colName = str_replace(' ', '_', strtolower($xlsObj->val(1, $col, $sheet)));
-
-              $val = $xlsObj->raw($row, $col, $sheet);
-              if (!($val)) {
-                $val = $xlsObj->val($row, $col, $sheet);
-              }
-              $importFileData[$importRow][$colName] = trim($val);
-            }
-            // Increment import array row
-            $importRow++;
-          }
-
-          $this->events[] = array("type" => "INFO", "message" => "Inserting records into temp table.");
-          $this->saveImportTemp($importFileData);
-        } else {
-          $this->events[] = array("type" => "INFO", "message" => "Ignoring $sheetName worksheet");
-        }
-      }
-      $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
-      return true;
-    }
-  }
-
-  /**
-   * Method to extend import spec headers with dynamic staff requirement columns.
+   * Method to extend import spec headers with dynamic or import type specific columns.
    *
    * @param array $importFileHeaders An array of column headers from import file.
    */
@@ -169,35 +83,20 @@ class AgImportXLS
   }
 
   /**
-   * validateColumnHeaders($importFileData)
-   *
    * Validates import data for correct schema. Returns bool.
    *
    * @param $importFileHeaders
+   * @param $importSpecHeaders
+   * @param $sheetName
    */
   protected function validateColumnHeaders($importFileHeaders, $sheetName)
   {
     // Check if import file header is null
     if (empty($importFileHeaders))
     {
-      $this->events[] = array("type" => "ERROR", "message" => "Worksheet \"$sheetName\" is missing column headers.");
-      return false;
-    }
-
-    // Check min/max set columns.  These two columns must come in a set.  Cannot add one column and
-    // not the other.
-    $setHeaders = preg_grep('/_(min|max)$/i', $importFileHeaders);
-    foreach($setHeaders as $key => $column) {
-      $setHeaders[$key] = rtrim(rtrim(strtolower($column), '_min'), '_max');
-    }
-    $setHeaders = array_unique($setHeaders);
-    foreach($setHeaders as $key => $header) {
-      if ( !in_array($header.'_min', $importFileHeaders)
-           || !in_array($header.'_max', $importFileHeaders))
-      {
-        $this->events[] = array("type" => "ERROR", "message" => "Incomplete $header min/max set columns.");
-        return false;
-      }
+      $this->events[] = array("type" => "ERROR",
+                              "message" => "Worksheet \"$sheetName\" is missing column headers.");
+      return FALSE;
     }
 
     // Cache the import header specification
@@ -208,16 +107,72 @@ class AgImportXLS
     $importSpecDiff = array_diff($importSpecHeaders, $importFileHeaders);
 
     if (empty($importSpecDiff)) {
-      return true;
+      return TRUE;
     } else {
       $this->events[] = array("type" => "ERROR", "message" => "Missing required columns.");
 
       foreach ($importSpecDiff as $missing) {
         $this->events[] = array("type" => "ERROR", "message" => "Column header \"$missing\" missing.");
       }
-      return false;
+      return FALSE;
     }
+
+    /**
+     * @TODO This function is to be extended by it's children classes agFacilityImportXLS and
+     *       agStaffImportXLS
+     */
   }
+
+//  /**
+//   * validateColumnHeaders($importFileData)
+//   *
+//   * Validates import data for correct schema. Returns bool.
+//   *
+//   * @param $importFileHeaders
+//   */
+//  protected function validateColumnHeaders($importFileHeaders, $sheetName)
+//  {
+//    // Check if import file header is null
+//    if (empty($importFileHeaders))
+//    {
+//      $this->events[] = array("type" => "ERROR", "message" => "Worksheet \"$sheetName\" is missing column headers.");
+//      return false;
+//    }
+//
+//    // Check min/max set columns.  These two columns must come in a set.  Cannot add one column and
+//    // not the other.
+//    $setHeaders = preg_grep('/_(min|max)$/i', $importFileHeaders);
+//    foreach($setHeaders as $key => $column) {
+//      $setHeaders[$key] = rtrim(rtrim(strtolower($column), '_min'), '_max');
+//    }
+//    $setHeaders = array_unique($setHeaders);
+//    foreach($setHeaders as $key => $header) {
+//      if ( !in_array($header.'_min', $importFileHeaders)
+//           || !in_array($header.'_max', $importFileHeaders))
+//      {
+//        $this->events[] = array("type" => "ERROR", "message" => "Incomplete $header min/max set columns.");
+//        return false;
+//      }
+//    }
+//
+//    // Cache the import header specification
+//    $importSpecHeaders = array_keys($this->importSpec);
+//
+//    // The import spec will start with an ID column. Shift off of it.
+//    $idColumn = array_shift($importSpecHeaders);
+//    $importSpecDiff = array_diff($importSpecHeaders, $importFileHeaders);
+//
+//    if (empty($importSpecDiff)) {
+//      return true;
+//    } else {
+//      $this->events[] = array("type" => "ERROR", "message" => "Missing required columns.");
+//
+//      foreach ($importSpecDiff as $missing) {
+//        $this->events[] = array("type" => "ERROR", "message" => "Column header \"$missing\" missing.");
+//      }
+//      return false;
+//    }
+//  }
 
   /**
    * saveImportTemp()
@@ -231,8 +186,6 @@ class AgImportXLS
     require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
     $dbManager = new sfDatabaseManager($configuration);
-//    $appConfig = ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
-//    $dbManager = new sfDatabaseManager($appConfig);
     $db = $dbManager->getDatabase('doctrine');
 
     $conn = Doctrine_Manager::connection();

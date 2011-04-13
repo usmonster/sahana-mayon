@@ -11,6 +11,7 @@
  *
  * @author     Clayton Kramer, CUNY SPS
  * @author     Shirley Chan, CUNY SPS
+ * @author     Charles Wisniewski, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
@@ -29,44 +30,41 @@
  */
 class AgFacilityImportXLS extends AgImportXLS
 {
-
   function __construct()
   {
-
+    // Declare class properties.
     $this->name = "agFacilityImportXLS";
-      $this->importSpec = array(
-    'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
-    'facility_name' => array('type' => "string", 'length' => 64),
-    'facility_code' => array('type' => "string", 'length' => 10),
-    'facility_resource_type_abbr' => array('type' => "string", 'length' => 10),
-    'facility_resource_status' => array('type' => "string", 'length' => 40),
-    'facility_capacity' => array('type' => "integer"),
-    'facility_activation_sequence' => array('type' => "integer", 'unsigned' => true),
-    'facility_allocation_status' => array('type' => "string", 'length' => 30),
-    'facility_group' => array('type' => "string", 'length' => 64),
-    'facility_group_type' => array('type' => "string", 'length' => 30),
-    'facility_group_allocation_status' => array('type' => "string", 'length' => 30),
-    'facility_group_activation_sequence' => array('type' => "integer", 'unsigned' => true),
-    'work_email' => array('type' => "string", 'length' => 255),
-    'work_phone' => array('type' => "string", 'length' => 32),
-    'street_1' => array('type' => "string", 'length' => 255),
-    'street_2' => array('type' => "string", 'length' => 255),
-    'city' => array('type' => "string", 'length' => 255),
-    'state' => array('type' => "string", 'length' => 255),
-    'postal_code' => array('type' => "string", 'length' => 5),
-    'borough' => array('type' => "string", 'length' => 30),
-    'country' => array('type' => "string", 'length' => 64),
-    'longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8)
-  );
-  $this->staffRequirementFieldType = array('type' => "integer");
-  // Public variables declared here
-  $this->tempTable = 'temp_facilityImport';
+    $this->importSpec = array(
+      'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
+      'facility_name' => array('type' => "string", 'length' => 64),
+      'facility_code' => array('type' => "string", 'length' => 10),
+      'facility_resource_type_abbr' => array('type' => "string", 'length' => 10),
+      'facility_resource_status' => array('type' => "string", 'length' => 40),
+      'facility_capacity' => array('type' => "integer"),
+      'facility_activation_sequence' => array('type' => "integer", 'unsigned' => true),
+      'facility_allocation_status' => array('type' => "string", 'length' => 30),
+      'facility_group' => array('type' => "string", 'length' => 64),
+      'facility_group_type' => array('type' => "string", 'length' => 30),
+      'facility_group_allocation_status' => array('type' => "string", 'length' => 30),
+      'facility_group_activation_sequence' => array('type' => "integer", 'unsigned' => true),
+      'work_email' => array('type' => "string", 'length' => 255),
+      'work_phone' => array('type' => "string", 'length' => 32),
+      'street_1' => array('type' => "string", 'length' => 255),
+      'street_2' => array('type' => "string", 'length' => 255),
+      'city' => array('type' => "string", 'length' => 255),
+      'state' => array('type' => "string", 'length' => 255),
+      'postal_code' => array('type' => "string", 'length' => 5),
+      'borough' => array('type' => "string", 'length' => 30),
+      'country' => array('type' => "string", 'length' => 64),
+      'longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
+      'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8)
+    );
+    $this->staffRequirementFieldType = array('type' => "integer");
+    $this->tempTable = 'temp_facilityImport';
   }
 
   function __destruct()
   {
-
     $file = $this->fileInfo["dirname"] . '/' . $this->fileInfo["basename"];
     if (!@unlink($file)) {
       $this->events[] = array("type" => "ERROR", "message" => $php_errormsg);
@@ -74,93 +72,6 @@ class AgFacilityImportXLS extends AgImportXLS
       $this->events[] = array('type' => 'OK', "message" => "Deleted {$this->fileInfo['basename']} upload file.");
     }
   }
-
-
-  /**
-   * processFacilityImport()
-   *
-   * Reads contents of the Excel import file into temp table
-   *
-   * @param $importFile
-   */
-//  public function processImport($importFile)
-//  {
-//    require_once(dirname(__FILE__) . '/excel_reader2.php');
-//
-//    // Validate the uploaded files Excel 2003 extention
-//    $this->fileInfo = pathinfo($importFile);
-//    if (strtolower($this->fileInfo["extension"]) <> 'xls') {
-//      $this->events[] = array("type" => "ERROR", "message" => "{$this->fileInfo['basename']} is not Microsoft Excel 2003 \".xls\" workbook.");
-//    } else {
-//      $this->events[] = array("type" => "INFO", "message" => "Opening import file for reading.");
-//      $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
-//
-//      // Get some info about the workbook's composition
-//      $numSheets = count($xlsObj->sheets);
-//      $this->events[] = array("type" => "INFO", "message" => "Number of worksheets found: $numSheets");
-//
-//      $numRows = $xlsObj->rowcount($sheet_index = 0);
-//      $numCols = $xlsObj->colcount($sheet_index = 0);
-//
-//      // Create a simplified array from the worksheets
-//      for ($sheet = 0; $sheet < $numSheets; $sheet++) {
-//        $importRow = 0;
-//        $importFileData = array();
-//
-//        // Get the sheet name
-//        $sheetName = $xlsObj->boundsheets[$sheet]["name"];
-//        $this->events[] = array("type" => "INFO", "message" => "Parsing worksheet $sheetName");
-//
-//        // We don't import sheets named "Lookup"
-//        if (strtolower($sheetName) <> 'lookup') {
-//          // Grab column headers at the beginning of each sheet.
-//          $currentSheetHeaders = array_values($xlsObj->sheets[$sheet]['cells'][1]);
-//          $currentSheetHeaders = $this->cleanColumnHeaders($currentSheetHeaders);
-//
-//          // Check for consistant column header in all data worksheets.  Use the column header from
-//          // the first worksheet as the import column header for all data worksheets.
-//          if ($sheet == 0) {
-//            // Extend import spec headers with dynamic staff resource requirement columns from xls file.
-//            $this->extendsImportSpecHeaders($currentSheetHeaders);
-//            //this is the only difference between the parent class and itself
-//            $this->createTempTable();
-//          }
-//
-//          $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
-//
-//          if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName)) {
-//            $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
-//          } else {
-//            $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
-//            return false;
-//          }
-//
-//          for ($row = 2; $row <= $numRows; $row++) {
-//
-//            for ($col = 1; $col <= $numCols; $col++) {
-//
-//              $colName = str_replace(' ', '_', strtolower($xlsObj->val(1, $col, $sheet)));
-//
-//              $val = $xlsObj->raw($row, $col, $sheet);
-//              if (!($val)) {
-//                $val = $xlsObj->val($row, $col, $sheet);
-//              }
-//              $importFileData[$importRow][$colName] = trim($val);
-//            }
-//            // Increment import array row
-//            $importRow++;
-//          }
-//
-//          $this->events[] = array("type" => "INFO", "message" => "Inserting records into temp table.");
-//          $this->saveImportTemp($importFileData);
-//        } else {
-//          $this->events[] = array("type" => "INFO", "message" => "Ignoring $sheetName worksheet");
-//        }
-//      }
-//      $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
-//      return true;
-//    }
-//  }
 
   /**
    * Method to extend import spec headers with dynamic staff requirement columns.
@@ -175,6 +86,124 @@ class AgFacilityImportXLS extends AgImportXLS
       }
     }
 
+  }
+
+  /**
+   * Validates import data for correct schema. Returns bool.
+   *
+   * @param $importFileHeaders
+   * @param $sheetName
+   */
+  protected function validateColumnHeaders($importFileHeaders, $sheetName)
+  {
+    if (parent::validateColumnHeaders($importFileHeaders, $sheetName) === FALSE)
+    {
+      return FALSE;
+    }
+
+    // Check min/max set columns.  These two columns must come in a set.  Cannot add one column and
+    // not the other.
+    $setHeaders = preg_grep('/_(min|max)$/i', $importFileHeaders);
+    foreach($setHeaders as $key => $column) {
+      $setHeaders[$key] = rtrim(rtrim(strtolower($column), '_min'), '_max');
+    }
+    $setHeaders = array_unique($setHeaders);
+    foreach($setHeaders as $key => $header) {
+      if ( !in_array($header.'_min', $importFileHeaders)
+           || !in_array($header.'_max', $importFileHeaders))
+      {
+        $this->events[] = array("type" => "ERROR", "message" => "Incomplete $header min/max set columns.");
+        return FALSE;
+      }
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * processFacilityImport()
+   *
+   * Reads contents of the Excel import file into temp table
+   *
+   * @param $importFile
+   */
+  public function processImport($importFile)
+  {
+    require_once(dirname(__FILE__) . '/excel_reader2.php');
+
+    // Validate the uploaded files Excel 2003 extention
+    $this->fileInfo = pathinfo($importFile);
+    if (strtolower($this->fileInfo["extension"]) <> 'xls') {
+      $this->events[] = array("type" => "ERROR", "message" => "{$this->fileInfo['basename']} is not Microsoft Excel 2003 \".xls\" workbook.");
+    } else {
+      $this->events[] = array("type" => "INFO", "message" => "Opening import file for reading.");
+      $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
+
+      // Get some info about the workbook's composition
+      $numSheets = count($xlsObj->sheets);
+      $this->events[] = array("type" => "INFO", "message" => "Number of worksheets found: $numSheets");
+
+      $numRows = $xlsObj->rowcount($sheet_index = 0);
+      $numCols = $xlsObj->colcount($sheet_index = 0);
+
+      // Create a simplified array from the worksheets
+      for ($sheet = 0; $sheet < $numSheets; $sheet++) {
+        $importRow = 0;
+        $importFileData = array();
+
+        // Get the sheet name
+        $sheetName = $xlsObj->boundsheets[$sheet]["name"];
+        $this->events[] = array("type" => "INFO", "message" => "Parsing worksheet $sheetName");
+
+        // We don't import sheets named "Lookup"
+        if (strtolower($sheetName) <> 'lookup') {
+          // Grab column headers at the beginning of each sheet.
+          $currentSheetHeaders = array_values($xlsObj->sheets[$sheet]['cells'][1]);
+          $currentSheetHeaders = $this->cleanColumnHeaders($currentSheetHeaders);
+
+          // Check for consistant column header in all data worksheets.  Use the column header from
+          // the first worksheet as the import column header for all data worksheets.
+          if ($sheet == 0) {
+            // Extend import spec headers with dynamic staff resource requirement columns from xls file.
+            $this->extendsImportSpecHeaders($currentSheetHeaders);
+            //this is the only difference between the parent class and itself
+            $this->createTempTable();
+          }
+
+          $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
+
+          if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName)) {
+            $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
+          } else {
+            $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
+            return false;
+          }
+
+          for ($row = 2; $row <= $numRows; $row++) {
+
+            for ($col = 1; $col <= $numCols; $col++) {
+
+              $colName = str_replace(' ', '_', strtolower($xlsObj->val(1, $col, $sheet)));
+
+              $val = $xlsObj->raw($row, $col, $sheet);
+              if (!($val)) {
+                $val = $xlsObj->val($row, $col, $sheet);
+              }
+              $importFileData[$importRow][$colName] = trim($val);
+            }
+            // Increment import array row
+            $importRow++;
+          }
+
+          $this->events[] = array("type" => "INFO", "message" => "Inserting records into temp table.");
+          $this->saveImportTemp($importFileData);
+        } else {
+          $this->events[] = array("type" => "INFO", "message" => "Ignoring $sheetName worksheet");
+        }
+      }
+      $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
+      return true;
+    }
   }
 
   /**

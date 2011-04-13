@@ -10,6 +10,7 @@
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author     Charles Wisniewski, CUNY SPS
+ * @author     Shirley Chan, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
@@ -32,54 +33,53 @@ class AgStaffImportXLS extends AgImportXLS
   function __construct()
   {
 
+    // Declare class properties.
     $this->name = "agStaffImportXLS";
-      $this->importSpec = array(
-    'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
-    'entity_id' => array('type' => 'integer'),
-    'first_name' => array('type' => "string", 'length' => 64),
-    'middle_name' => array('type' => "string", 'length' => 64),
-    'last_name' => array('type' => "string", 'length' => 64),
-    'mobile_phone' => array('type' => "string", 'length' => 32),
-    'home_phone' => array('type' => "string", 'length' => 32),
-    'home_email' => array('type' => "string", 'length' => 255),
-    'work_phone' => array('type' => "string", 'length' => 32),
-    'work_email' => array('type' => "string", 'length' => 255),
-    'home_address_line_1' => array('type' => "string", 'length' => 255),
-    'home_address_line_2' => array('type' => "string", 'length' => 255),
-    'home_address_city' => array('type' => "string", 'length' => 255),
-    'home_address_state' => array('type' => "string", 'length' => 255),
-    'home_address_zip' => array('type' => "string", 'length' => 5),
-    //'borough' => array('type' => "string", 'length' => 30),
-    'home_address_country' => array('type' => "string", 'length' => 64),
-    'home_latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'home_longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'work_address_line_1' => array('type' => "string", 'length' => 255),
-    'work_address_line_2' => array('type' => "string", 'length' => 255),
-    'work_address_city' => array('type' => "string", 'length' => 255),
-    'work_address_state' => array('type' => "string", 'length' => 255),
-    'work_address_zip' => array('type' => "string", 'length' => 5),
-    //'borough' => array('type' => "string", 'length' => 30),
-    'work_address_country' => array('type' => "string", 'length' => 64),
-    'work_latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'work_longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-    'organization' => array('type' => "string", 'length' => 128),
-    'resource_type' => array('type' => "string", 'length' => 64),
-    'resource_status' => array('type' => "string", 'length' => 30),
-    'language_1' => array('type' => "string", 'length' => 128), //ag_person_mj_ag_language
-    'l1_speak' => array('type' => "string", 'length' => 64),    //ag_person_language_competency
-    'l1_read' => array('type' => "string", 'length' => 64),
-    'l1_write' => array('type' => "string", 'length' => 64),
-    'language_2' => array('type' => "string", 'length' => 128), //ag_person_mj_ag_language
-    'l2_speak' => array('type' => "string", 'length' => 64),    //ag_person_language_competency
-    'l2_read' => array('type' => "string", 'length' => 64),
-    'l2_write' => array('type' => "string", 'length' => 64),
-    'drivers_license_class' => array('type' => "string", 'length' => 255), //length still tbd
-    'pmd_id' => array('type' => "string", 'length' => 255), //length still tbd
-    'civil_service_title' => array('type' => "string", 'length' => 255), //length still tbd
-  );
-  //$this->staffRequirementFieldType = array('type' => "integer");
-  // Public variables declared here
-  $this->tempTable = 'temp_staffImport';
+    $this->importSpec = array(
+      'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
+      'entity_id' => array('type' => 'integer'),
+      'first_name' => array('type' => "string", 'length' => 64),
+      'middle_name' => array('type' => "string", 'length' => 64),
+      'last_name' => array('type' => "string", 'length' => 64),
+      'mobile_phone' => array('type' => "string", 'length' => 16),
+      'home_phone' => array('type' => "string", 'length' => 16),
+      'home_email' => array('type' => "string", 'length' => 255),
+      'work_phone' => array('type' => "string", 'length' => 16),
+      'work_email' => array('type' => "string", 'length' => 255),
+      'home_address_line_1' => array('type' => "string", 'length' => 255),
+      'home_address_line_2' => array('type' => "string", 'length' => 255),
+      'home_address_city' => array('type' => "string", 'length' => 255),
+      'home_address_state' => array('type' => "string", 'length' => 255),
+      'home_address_zip' => array('type' => "string", 'length' => 5),
+      //'borough' => array('type' => "string", 'length' => 30),
+      'home_address_country' => array('type' => "string", 'length' => 128),
+      'home_latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
+      'home_longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
+      'work_address_line_1' => array('type' => "string", 'length' => 255),
+      'work_address_line_2' => array('type' => "string", 'length' => 255),
+      'work_address_city' => array('type' => "string", 'length' => 255),
+      'work_address_state' => array('type' => "string", 'length' => 255),
+      'work_address_zip' => array('type' => "string", 'length' => 5),
+      //'borough' => array('type' => "string", 'length' => 30),
+      'work_address_country' => array('type' => "string", 'length' => 128),
+      'work_latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
+      'work_longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
+      'organization' => array('type' => "string", 'length' => 128),
+      'resource_type' => array('type' => "string", 'length' => 64),
+      'resource_status' => array('type' => "string", 'length' => 30),
+      'language_1' => array('type' => "string", 'length' => 128), //ag_person_mj_ag_language
+      'l1_speak' => array('type' => "string", 'length' => 64),    //ag_person_language_competency
+      'l1_read' => array('type' => "string", 'length' => 64),
+      'l1_write' => array('type' => "string", 'length' => 64),
+      'language_2' => array('type' => "string", 'length' => 128), //ag_person_mj_ag_language
+      'l2_speak' => array('type' => "string", 'length' => 64),    //ag_person_language_competency
+      'l2_read' => array('type' => "string", 'length' => 64),
+      'l2_write' => array('type' => "string", 'length' => 64),
+      'success' => array('type' => "boolean", 'default' => TRUE)
+    );
+    $this->defaultHeaderSize = sizeof($this->importSpec);
+    $this->customFieldType = array('type' => "string", 'length' => 255);
+    $this->tempTable = 'temp_staffImport';
   }
 
   function __destruct()
@@ -93,11 +93,36 @@ class AgStaffImportXLS extends AgImportXLS
     }
   }
 
-public function bulkImport(){
+  /**
+   * Method to extend import spec headers with dynamic language proficiency columns.
+   *
+   * @param array $importFileHeaders An array of column headers from import file.
+   */
+  protected function extendsImportSpecHeaders($importFileHeaders)
+  {
+    $saveFileHeaders = $this->cleanColumnHeaders($importFileHeaders);
+    $extendedHeaders = array_diff($saveFileHeaders, array_keys($this->importSpec));
+    foreach($extendedHeaders as $extHeader)
+    {
+      $this->importSpec[$extHeader] = $this->customFieldType;
+    }
+  }
 
-  // bulk load elements, get ids back...
-  // 
-}
+    /**
+   * Validates import data for correct schema. Returns bool.
+   *
+   * @param $importFileHeaders
+   * @param $sheetName
+   */
+  protected function validateColumnHeaders($importFileHeaders, $sheetName)
+  {
+    if (parent::validateColumnHeaders($importFileHeaders, $sheetName) === FALSE)
+    {
+      return FALSE;
+    }
+    return TRUE;
+  }
+  
   /**
    * processFacilityImport()
    *
@@ -143,8 +168,9 @@ public function bulkImport(){
           // the first worksheet as the import column header for all data worksheets.
           if ($sheet == 0) {
             // Extend import spec headers with dynamic staff resource requirement columns from xls file.
-//            $this->extendsImportSpecHeaders($currentSheetHeaders);
+            $this->extendsImportSpecHeaders($currentSheetHeaders);
             $this->createTempTable();
+            unset($this->importSpec['success']);
           }
 
           $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
@@ -181,21 +207,6 @@ public function bulkImport(){
       $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
       return true;
     }
-  }
-
-  /**
-   * Method to extend import spec headers with dynamic language proficiency columns.
-   *
-   * @param array $importFileHeaders An array of column headers from import file.
-   */
-  protected function extendsImportSpecHeaders($importFileHeaders)
-  {
-//    foreach($importFileHeaders as $index => $column) {
-//      if (preg_match('/_(min|max)$/', $column)) {
-//        $this->importSpec[$column] = $this->staffRequirementFieldType;
-//      }
-//    }
-
   }
 
   public static function processFile(sfEvent $event)
