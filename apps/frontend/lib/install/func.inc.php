@@ -310,13 +310,13 @@ function writeAppYml($authMethod = NULL)
           ('url' => '/staff/new', 'title' => 'Sahana Agasti Staff New'),
         'staff_import' => array
           ('url' => '/staff/import', 'title' => 'Sahana Agasti Staff Import'),
-        'faciltiy_page' => array
+        'facility_page' => array
           ('url' => '/facility/index', 'title' => 'Sahana Agasti Facilities'),
-        'faciltiy_list' => array
+        'facility_list' => array
           ('url' => '/facility/list', 'title' => 'Sahana Agasti Facility List'),
-        'faciltiy_new' => array
+        'facility_new' => array
           ('url' => '/facility/new', 'title' => 'Sahana Agasti Facility New'),
-        'faciltiy_import' => array
+        'facility_import' => array
           ('url' => '/facility/import', 'title' => 'Sahana Agasti Facility Import'),
         'organization_page' => array
           ('url' => '/organization/index', 'title' => 'Sahana Agasti Organization'),

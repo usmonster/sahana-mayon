@@ -236,7 +236,7 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
           'break_length_minutes' => 'Break Length <br> (in minutes)',
           'minutes_start_to_facility_activation' => 'Shifts Start Time <br> Before <br> Facility Activation <br> (in min)',
           'max_staff_repeat_shifts' => 'Person <br> Shift Repeats',
-          'shift_repeats' => '<em>Days Faciltiy <br> Open For</em>',
+          'shift_repeats' => '<em>Days Facility <br> Open For</em>',
           'shift_status_id' => 'Shift Status',
           'deployment_algorithm_id' => 'Deployment Algorithm',
         )

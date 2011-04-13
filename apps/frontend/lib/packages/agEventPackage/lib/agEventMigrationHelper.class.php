@@ -144,7 +144,8 @@ class agEventMigrationHelper
           ->set('facility_resource_allocation_status_id', $scenFacRes->facility_resource_allocation_status_id);
       $eventFacilityResourceStatus->save();
 
-      // Should the shifts be process as the facility resources get processed?  Another solution is to create a temp table mapping the scenario to event faciltiy resources?
+      // Should the shifts be process as the facility resources get processed?
+      // Another solution: create a temp table mapping the scenario to event facility resources?
       self::migrateShifts($scenFacRes->id, $eventFacilityResource->id);
 
       $eventFacilityResource->free(TRUE);
@@ -244,7 +245,7 @@ class agEventMigrationHelper
       agScenarioGenerator::shiftGenerator();
       /**
        * @todo
-       * 1b. Copy Faciltiy Group
+       * 1b. Copy Facility Group
        * 1c. Copy Facility Resource
        * 1d. Copy over scenario shift
        */

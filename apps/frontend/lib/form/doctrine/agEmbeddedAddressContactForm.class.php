@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entitiy Address Contact
+ * Entity Address Contact
  *
  * PHP Version 5.3
  *
