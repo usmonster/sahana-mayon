@@ -3,7 +3,7 @@
 <?php   use_javascript('jquery.ui.custom.js');
   use_stylesheet('jquery/jquery.ui.custom.css');?>
 <?php use_javascript('agModal.js'); ?>
-<h2>Staff Management <a href="<?php echo url_for('@help') . '/doku.php?id=tooltip:staff_management&do=export_xhtmlbody' ?>" class="modalTrigger"><img src="#" alt="?" height="15" width="15" title="text"/></a></h2>
+<h2>Staff Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_management&do=export_xhtmlbody' ?>" class="modalTrigger"><img src="#" alt="?" height="15" width="15" title="text"/></a></h2>
 
 <p>The Staff Management feature in Agasti 2.0 is used to manage your available staff resources while planning before an emergency response.</p>
 <b>Please select one of the following actions: </b><br />
