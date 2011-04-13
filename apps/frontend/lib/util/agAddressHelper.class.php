@@ -27,7 +27,8 @@ class agAddressHelper extends agBulkRecordHelper
   public    $lineDelimiter = "<br />",
             $enforceComplete = FALSE,
             $enforceLineNumber = FALSE,
-            $checkValuesForCompleteness = FALSE ;
+            $checkValuesForCompleteness = FALSE,
+            $agGeoHelper ;
 
   protected $_globalDefaultAddressStandard = 'default_address_standard',
             $_globalDefaultAddressGeoType = 'default_address_geo_type',
@@ -86,6 +87,16 @@ class agAddressHelper extends agBulkRecordHelper
 
     // set our default address standard and pick up the formatting components
     $this->_setDefaultReturnStandard() ;
+  }
+
+  /**
+   * Method to lazily load the $agAddressHelper class property (an instance of agAddressHelper)
+   * @return object The instantiated agAddressHelper object
+   */
+  public function getAgGeoHelper()
+  {
+    if (! isset($this->agGeoHelper)) { $this->agGeoHelper = new agGeoHelper() ; }
+    return $this->agGeoHelper ;
   }
 
   /**
@@ -851,7 +862,6 @@ class agAddressHelper extends agBulkRecordHelper
    *  [1] => array( $addressIndex, ... )
    * )
    * </code>
-   * @todo pass 'new new' addresses through to the next level of function
    */
   protected function _setAddresses( $addresses,
                                     $throwOnError = NULL,
@@ -958,7 +968,6 @@ class agAddressHelper extends agBulkRecordHelper
    *  [1] => array( $addressIndex, ... )
    * )
    * </code>
-   * @todo Fail fast
    * @todo add new geo's or attach old ones (as appropriate)
    * @todo optimize for APC to do the results caching
    */

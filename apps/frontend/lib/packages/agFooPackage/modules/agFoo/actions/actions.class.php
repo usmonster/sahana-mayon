@@ -161,7 +161,7 @@ $results = $obj->setPersonNames($newNames, TRUE, TRUE) ;
 //$results = $obj->getAddressAllowedElements() ;
 //$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
 //$results = $obj->updateAddressHashes($array) ;
-//$addr = $obj->getAddressComponentsById($array) ;
+//$addrxnentsById($array) ;
 //$results = $obj->setAddresses($fakeAddr, TRUE) ;
 //$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, FALSE, TRUE) ;
 //$results = $obj->exceptionTest() ;
