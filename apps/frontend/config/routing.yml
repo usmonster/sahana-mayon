@@ -113,7 +113,7 @@ prepare:
 respond:
   url:   /respond
   param: { module: home, action: respond }
-help:
+wiki:
   url:  /wiki
 
 # Keep these two at the bottom to aid in the addition of new routes.
