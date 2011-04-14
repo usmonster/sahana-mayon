@@ -24,7 +24,7 @@ if ($sf_user->isAuthenticated()) {
 ?><table cellspacing='20'>
     <tr>
       <td><?php echo link_to('Prepare', 'home/prepare', array('class' => 'linkButton width140', 'title' => 'Prepare')); ?></td>
-      <td><?php echo link_to('Respond', 'scenario/index', array('class' => 'linkButton width140', 'title' => 'Respond')); ?></td>
+      <td><?php echo link_to('Respond', 'home/respond', array('class' => 'linkButton width140', 'title' => 'Respond')); ?></td>
     </tr>
     <tr>
       <td><?php echo link_to('Wiki Home', public_path('wiki/doku.php'), array('class' => 'linkButton width140', 'title' => 'Wiki Home')); ?></td>

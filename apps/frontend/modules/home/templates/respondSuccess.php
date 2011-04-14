@@ -11,12 +11,12 @@
 </table>
 
 <h3>Active Events:</h3>
-<?php use_javascript('verticaltabs.pack.js');
+<?php use_javascript('verticaltabs.js');
     use_stylesheet('verticaltabs.css'); ?>
 
     <script type="text/javascript">
         $(document).ready(function(){
-            $("#textExample").verticaltabs({speed: 500,slideShow: false,activeIndex: 0});
+            $("#textExample").verticaltabs();
         });
     </script>
     <div class="verticalslider" id="textExample">
