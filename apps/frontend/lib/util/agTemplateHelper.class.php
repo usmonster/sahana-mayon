@@ -17,13 +17,18 @@
 class agTemplateHelper
 {
   /**
+   * @param boolean
    *
    * @param array of phone information, the format should be:
+   * phone type: phone number <br />
+   * phone type: phone number
    *
+   * OR phone type: phone number (if primary only flag is true
    *
    * @return string html formatted cell of email for display in templates
    */
-  public static function buildPhoneHtml($phoneArray)
+
+  public static function buildPhoneHtml($phoneArray, $primaryOnly = true)
   {
     foreach ($phoneArray as $type => $phone) {
       $counts[$type] = count($phone);

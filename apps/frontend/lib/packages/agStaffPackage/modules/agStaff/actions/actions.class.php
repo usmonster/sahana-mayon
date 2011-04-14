@@ -19,11 +19,7 @@ class agStaffActions extends agActions
 {
 
   /**
-   * executeIndex is currently used to execute the index action for the staff
-   * person module, it incorporates our join query to pull all staff information
-   * and passes a 'pager' object to the next step in execution: sfView
-   *
-   * @param $request the field name for sorting and the sorting order as pass-in parameters.
+   * executeIndex is currently used to execute the index action
    *
    */
   public function executeIndex(sfWebRequest $request)
@@ -127,17 +123,19 @@ class agStaffActions extends agActions
     //^we need to get persons from the event staff ids that are returned here
     $person_names = $names->getPrimaryNameByType();
     //maybe we should set the below/above to a a static property for use through a session
-//    $emails = new agEntityEmailHelper($person_array);
-//    $email_array = $emails->getEntityEmailByType(null,true,true);
-//    $person_emails = array();
-//
-//    foreach($email_array as $person_id => $email_type)
-//    {
-//      foreach($email_type as $et => $etv){
-//        $person_emails[$person_id][$et] = $person_emails[$person_id][$et][0];
-//      }
-//    }
-//
+
+    $emails = new agEntityEmailHelper($person_array);
+
+    $email_array = $emails->getEntityEmailByType(null,false,true, agEmailHelper::EML_GET_VALUE);
+    $person_emails = array();
+
+    foreach($email_array as $person_id => $email_type)
+    {
+      foreach($email_type as $et => $etv){
+        $person_emails[$person_id][$et] = $person_emails[$person_id][$et][0];
+      }
+    }
+
 //    $phones = new agEntityPhoneHelper($person_array);
 //    $phone_array = $phones->getEntityPhoneByType(null,true,true,true);
 //    $person_phones = array();

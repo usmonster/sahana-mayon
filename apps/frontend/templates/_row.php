@@ -20,7 +20,13 @@ foreach($displayColumns as $key => $value)
       ?>
     <td>
 <?php
-      echo $value;
+
+if($column == 'fn')
+{
+  echo '<a class="linkButton" href="' . url_for($target_module . '/show?id=' . $data['id']) . '">' . $value . '</a>';
+}else{
+  echo $value;
+}
 ?>
       </td>
       <?php } ?>
