@@ -21,9 +21,41 @@ abstract class PluginagStaff extends BaseagStaff
     //or parts of it, to be called when updating lucene index for eventstaff AND regular staff
     $doc = new Zend_Search_Lucene_Document();
     $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
-    $doc->addField(Zend_Search_Lucene_Field::UnStored('staff_status', $this->getAgStaffStatus()->staff_status, 'utf-8'));
 
     // Saving staff info after staff record is created.
+    // Make staff searchable by resource type, resource status, and organization.
+    $query = agDoctrineQuery::create()
+            ->select('s.id, sr.id, srt.staff_resource_type, srs.staff_resource_status, o.id, o.organization')
+            ->from('agStaff s')
+            ->innerJoin('s.agStaffResource sr')
+            ->innerJoin('sr.agStaffResourceType sts')
+            ->innerJoin('sr.agStaffResourceStatus srs')
+            ->innerJoin('sr.agOrganization o')
+            ->where('s.id = ?', $this->id);
+    $staffResources = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $staff_resource = NULL;
+    $staff_resource_status = NULL;
+    $staff_organization = NULL;
+    foreach ($staffResources as $stf)
+    {
+      $staff_resource .= ' ' . $stf['srt_staff_resource_type'];
+      $staff_resource_status .= ' ' . $stf['srs_staff_resource_status'];
+      $staff_organization .= ' ' . $stf['o_organization'];
+    }
+    if (isset($staff_resource))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_type', $staff_resource, 'utf-8'));
+    }
+    if (isset($staff_resource_status))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_type_status', $staff_resource_status, 'utf-8'));
+    }
+    if (isset($staff_organization))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_org', $staff_organization, 'utf-8'));
+    }
+
     // Make staff searchable by name.
     $query = agDoctrineQuery::create()
             ->select('s.id, p.id, pmn.id, pn.id, pn.person_name')
@@ -128,38 +160,6 @@ abstract class PluginagStaff extends BaseagStaff
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_lang', $staff_lang, 'utf-8'));
     }
 
-    $query = agDoctrineQuery::create()
-            ->select('s.id, sr.id, st.id, st.staff_resource_type, sro.id, o.id, o.organization, o.description')
-            ->from('agStaff s')
-            ->innerJoin('s.agStaffResource sr')
-            ->innerJoin('sr.agStaffResourceType st')
-            ->innerJoin('sr.agStaffResourceOrganization sro')
-            ->innerJoin('sro.agOrganization o')
-            ->where('s.id=?', $this->id);
-
-    $staffOrgs = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-
-    $staff_org = null;
-    $staff_type = null;
-    foreach ($staffOrgs as $stf) {
-      if ($stf['o_organization'] != null) {
-        $staff_org .= ' ' . $stf['o_organization'];
-        $org_desc = $stf['o_description'];
-        if ($org_desc != null) {
-          $staff_org .= ' ' . $org_desc;
-        }
-      }
-      if ($stf['st_staff_resource_type'] != null) {
-        $staff_type .= ' ' . $stf['st_staff_resource_type'];
-      }
-    }
-    if (isset($staff_org)) {
-      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_org', $staff_org, 'utf-8'));
-    }
-    if (isset($staff_type)) {
-      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_type', $staff_type, 'utf-8'));
-    }
-
     # Make a staff searchable by profession.
     $query = agDoctrineQuery::create()
             ->select('s.id, p.id, pmp.id, pf.id, pf.profession')
@@ -229,18 +229,18 @@ abstract class PluginagStaff extends BaseagStaff
 
         case 2:
           $query = agDoctrineQuery::create()
-                  ->select('sro.organization_id as orgId, sr.staff_resource_type_id as stfRsrcTypId, count(distinct sr.staff_id) as count')
+                  ->select('sr.organization_id as orgId, sr.staff_resource_type_id as stfRsrcTypId, count(distinct sr.staff_id) as count')
                   ->from('agStaff as s')
-                  ->innerJoin('s.agStaffResource as sr')
-                  ->innerJoin('sr.agStaffResourceOrganization as sro')
-                  ->where('1=1');
+                  ->innerJoin('s.agStaffResource as sr');
+//                  ->innerJoin('sr.agStaffResourceOrganization as sro')
+//                  ->where('1=1');
 
           /*
            * Append a where clause to query for specific organizations if an
            * array of organziation id is passed in as argument.
            */
           if (is_array($organizationIds) and count($organizationIds) > 0) {
-            $query->whereIn('sro.organization_id', $organizationIds);
+            $query->whereIn('sr.organization_id', $organizationIds);
           }
 
           /*
@@ -259,9 +259,9 @@ abstract class PluginagStaff extends BaseagStaff
           $query = agDoctrineQuery::create()
                   ->select('o.id as orgId, count(distinct sr.staff_id) as count')
                   ->from('agOrganization as o')
-                  ->leftJoin('o.agStaffResourceOrganization as sro')
-                  ->leftJoin('sro.agStaffResource as sr')
-                  ->where('1=1');
+//                  ->leftJoin('o.agStaffResourceOrganization as sro')
+                  ->leftJoin('o.agStaffResource as sr');
+//                  ->where('1=1');
 
           /*
            * Append a where clause to query for specific organizations if an
@@ -279,8 +279,8 @@ abstract class PluginagStaff extends BaseagStaff
           $query = agDoctrineQuery::create()
                   ->select('srt.id as stfRsrcTypId, count(distinct s.id) as count')
                   ->from('agStaffResourceType as srt')
-                  ->leftJoin('srt.agStaff as s')
-                  ->where('1=1');
+                  ->leftJoin('srt.agStaff as s');
+  //                ->where('1=1');
 
           /*
            * Append a where clause to query for specific staff resource type if
@@ -306,7 +306,7 @@ abstract class PluginagStaff extends BaseagStaff
         // Populates $staffCount = array( organization id => array( staff resource type id => staff count by organization and staff resource type ) ).
         case 2:
           foreach ($resultSet as $rslt) {
-            $key1 = $rslt['sro_orgId'];
+            $key1 = $rslt['sr_orgId'];
             $key2 = $rslt['sr_stfRsrcTypId'];
             $value = $rslt['sr_count'];
             $tempArray = array($key2 => $value);

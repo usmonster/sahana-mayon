@@ -1,16 +1,13 @@
 <?php
 
 /**
- * agStaff filter form.
+ * PluginagStaff form.
  *
- * @package    AGASTI_CORE
+ * @package    ##PROJECT_NAME##
  * @subpackage filter
- * @author     CUNY SPS
- * @version    SVN: $Id: sfDoctrinePluginFormFilterTemplate.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
+ * @author     ##AUTHOR_NAME##
+ * @version    SVN: $Id: sfDoctrineFormFilterPluginTemplate.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
 abstract class PluginagStaffFormFilter extends BaseagStaffFormFilter
 {
-  public function configure()
-  {
-  }
 }

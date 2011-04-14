@@ -71,3 +71,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_country
     value: United States
+  default_organization:
+    id: 15
+    agHost: localhost
+    datapoint: default_organization
+    value: volunteer
