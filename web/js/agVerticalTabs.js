@@ -1,5 +1,7 @@
 /*
- *
+ * 	Vertical Tabs 1.1- jQuery plugin
+ *	written by Kent Heberling,
+ *	Copyright (c) 2010 Kent Heberling(http://www.khwebdesign.net)
  */
 
 (function($){  

@@ -11,8 +11,8 @@
 </table>
 
 <h3>Active Events:</h3>
-<?php use_javascript('verticaltabs.js');
-    use_stylesheet('verticaltabs.css'); ?>
+<?php use_javascript('agVerticalTabs.js');
+    use_stylesheet('agVerticalTabs.css'); ?>
 
     <script type="text/javascript">
         $(document).ready(function(){
