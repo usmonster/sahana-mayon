@@ -59,4 +59,4 @@ $PROJECT_ROOT/symfony doctrine:build-filters
 sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load 
 
 #indexes the data loaded so it is searchable to the user
-sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenario agStaff agFacility agScenarioFacilityGroup
+#sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenario agStaff agFacility agScenarioFacilityGroup
