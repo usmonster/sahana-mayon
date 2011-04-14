@@ -52,10 +52,19 @@ $(document).ready(function() {
 $(document).ready(function() {
   $('.textToForm').live('click', function() {
     var passId = '#' + $(this).attr('id');
-    var submit = '<a class="buttonSmall submitTextToForm" name="' + $(this).attr('id') + '">Set</a>';
+
     $.post($(this).attr('href'), {type: $(this).attr('name'), current: $(this).html(), id: $(this).attr('id')}, function(data) {
-      $(passId).parent().html(data + submit);
+      $(passId).parent().html(data);
     });
+
+    return false;
+  });
+});
+
+$(document).ready(function() {
+  $('.submitTextToForm').live('click', function() {
+    $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'));
+//    $(this).parent().submit();
     return false;
   });
 });

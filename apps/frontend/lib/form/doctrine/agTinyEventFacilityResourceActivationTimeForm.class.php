@@ -12,7 +12,7 @@
  */
 class agTinyEventFacilityResourceActivationTimeForm extends PluginagEventFacilityResourceActivationTimeForm
 {
-  public function setup()
+  public function configure()
   {
     $this->setWidgets(array(
       'id'                         => new sfWidgetFormInputHidden(),
@@ -26,6 +26,8 @@ class agTinyEventFacilityResourceActivationTimeForm extends PluginagEventFacilit
       'activation_time'            => new sfValidatorInteger(),
     ));
 
+    $this->widgetSchema->setNameFormat('ag_event_facility_resource_activation_time[%s]');
+    
     $this->getWidgetSchema()->setLabel('activation_time', false);
 
     $custDeco = new agWidgetFormSchemaFormatterTiny($this->getWidgetSchema());

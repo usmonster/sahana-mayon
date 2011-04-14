@@ -733,17 +733,22 @@ class eventActions extends agActions
 
   public function executeEventfacilityresource(sfWebRequest $request)
   {
-    // Should only be get when the table is being loaded. This will return the table to be
+    // Load Table
+    //
+    // Should only be GET when the table is being loaded. This will return the table to be
     // rendered in the sub-table of the fac group table. 
     if($request->isMethod(sfRequest::GET)) {
       $this->facilityResourceArray = $this->groupResourceQuery($request->getParameter('eventFacResId'));
       return $this->renderPartial('eventFacResTable', array('facilityResourceArray' => $this->facilityResourceArray));
-    } elseif($request->isMethod(sfRequest::POST)) {
+    }
+    // POST handles all the rest. Loading the forms to replace the TD html, saving the forms, etc.
+    elseif($request->isMethod(sfRequest::POST)) {
       $params = $request->getPostParameters();
-      
+
+      // This case is for event-facility-resource-status form loading.
       if($params['type'] == 'resourceStatus') {
         $facilityResourceStatus = new agEventFacilityResourceStatus();
-        $facilityResourceStatus['event_facility_resource_id'] = ltrim($params['id'], 'stat_res_id_');
+        $facilityResourceStatus['event_facility_resource_id'] = ltrim($params['id'], 'res_stat_id_');
         $facilityResourceStatus['facility_resource_allocation_status_id'] =
             agDoctrineQuery::create()
               ->select('id')
@@ -753,20 +758,48 @@ class eventActions extends agActions
         $facilityResourceStatus['time_stamp'] = date('Y-m-d H:i:s', time());
 
         $resourceStatusForm = new agTinyEventFacilityResourceStatusForm($facilityResourceStatus);
-
-        return $this->renderText($resourceStatusForm->__toString());
-      } elseIf($params['type'] == 'resourceActivationTime') {
-        $eventFacilityResourceActivationTime = new agEventFacilityResourceActivationTime();
-        // Explode that id value by _. Sorta ugly, maybe fix later. 2 should always be the efrId, 4 the time.
-
-        $c = date('Y-m-d H:i:s', 1310529600);
-        $d = strtotime($params['current']);
-
+        return $this->renderPartial('setterForm', array('form' => $resourceStatusForm, 'set' => $params['type'], 'id' => $params['id'], 'efrId' => ltrim($params['id'], 'res_stat_id_')));
+      }
+      // This case is for even-facility-resource-activation-time form loading.
+      elseIf($params['type'] == 'resourceActivationTime') {
         if($params['current'] != '----') {
-          $eventFacilityResourceActivationTime['activation_time'] = strtotime($params['current']);
+          $eventFacilityResourceActivationTime = agDoctrineQuery::create()
+            ->select()
+            ->from('agEventFacilityResourceActivationTime')
+            ->where('event_facility_resource_id = ?', ltrim($params['id'], 'res_act_id_'))
+            ->fetchOne(array(), Doctrine_Core::HYDRATE_RECORD);
+        } else {
+          $eventFacilityResourceActivationTime = new agEventFacilityResourceActivationTime();
+          $eventFacilityResourceActivationTime['event_facility_resource_id'] = ltrim($params['id'], 'res_act_id_');
         }
         $eventFacilityResourceActivationTimeForm = new agTinyEventFacilityResourceActivationTimeForm($eventFacilityResourceActivationTime);
-        return $this->renderText($eventFacilityResourceActivationTimeForm->__toString());
+
+        return $this->renderPartial('setterForm', array('form' => $eventFacilityResourceActivationTimeForm, 'set' => $params['type'], 'id' => $params['id'], 'efrId' => ltrim($params['id'], 'res_act_id_')));
+      }
+      // For the incoming forms.
+      //
+      // This first condition handles ag_event_facility_resource_status objects. No update here.
+      if($request->getParameter('ag_event_facility_resource_status')) {
+        $form = new agTinyEventFacilityResourceStatusForm();
+        $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
+        if($form->isValid()) {
+          $form->save();
+        }
+      }
+      elseIf($request->getParameter('ag_event_facility_resource_activation_time')) {
+        $actTimeObj = $request->getParameter('ag_event_facility_resource_activation_time');
+        $timeconverter = new agValidatorDateTime();
+        $timeconverted = $timeconverter->convertDateArrayToUnix($params['ag_event_facility_resource_activation_time']['activation_time']);
+        $params['ag_event_facility_resource_activation_time']['activation_time'] = $timeconverted;
+
+        $form = new agTinyEventFacilityResourceActivationTimeForm();
+        $a = $form->getName();
+        $b = $request->getFiles($form->getName(), null);
+
+        $form->bind($params['ag_event_facility_resource_activation_time'], null);
+        if($form->isValid()) {
+          $form->save();
+        }
       }
     }
 

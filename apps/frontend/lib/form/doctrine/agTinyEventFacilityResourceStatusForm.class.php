@@ -32,6 +32,8 @@ class agTinyEventFacilityResourceStatusForm extends PluginagEventFacilityResourc
       'facility_resource_allocation_status_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceAllocationStatus'), 'required' => false)),
     ));
 
+    $this->widgetSchema->setNameFormat('ag_event_facility_resource_status[%s]');
+    
     $this->getWidgetSchema()->setLabel('facility_resource_allocation_status_id', false);
 
     $custDeco = new agWidgetFormSchemaFormatterTiny($this->getWidgetSchema());

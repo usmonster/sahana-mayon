@@ -626,6 +626,7 @@ class agStaffActions extends agActions
    */
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
+    $b = $form->getName();
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       //are our values bound at this point?
