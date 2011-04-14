@@ -738,18 +738,35 @@ class eventActions extends agActions
     if($request->isMethod(sfRequest::GET)) {
       $this->facilityResourceArray = $this->groupResourceQuery($request->getParameter('eventFacResId'));
       return $this->renderPartial('eventFacResTable', array('facilityResourceArray' => $this->facilityResourceArray));
-    } elseif($request->isMethod(sfRequest::GET)) {
+    } elseif($request->isMethod(sfRequest::POST)) {
       $params = $request->getPostParameters();
       
       if($params['type'] == 'resourceStatus') {
         $facilityResourceStatus = new agEventFacilityResourceStatus();
-        $FacilityResourceStatus->event_facility_resource_id = $request->getParameter('event_facility_resource_id');
-        $facilityResourceStatus->facility_resource_allocation_status_id = $request->getParameter('resource_allocation_status');
-        $facilityResourceStatus->time_stamp = date('Y-m-d H:i:s', time());
+        $facilityResourceStatus['event_facility_resource_id'] = ltrim($params['id'], 'stat_res_id_');
+        $facilityResourceStatus['facility_resource_allocation_status_id'] =
+            agDoctrineQuery::create()
+              ->select('id')
+              ->from('agFacilityResourceAllocationStatus')
+              ->where('facility_resource_allocation_status = ?', $params['current'])
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        $facilityResourceStatus['time_stamp'] = date('Y-m-d H:i:s', time());
 
-        $resourceStatusForm = agTinyEventFacilityResourceStatusForm($facilityResourceStatus);
+        $resourceStatusForm = new agTinyEventFacilityResourceStatusForm($facilityResourceStatus);
+
+        return $this->renderText($resourceStatusForm->__toString());
       } elseIf($params['type'] == 'resourceActivationTime') {
+        $eventFacilityResourceActivationTime = new agEventFacilityResourceActivationTime();
+        // Explode that id value by _. Sorta ugly, maybe fix later. 2 should always be the efrId, 4 the time.
 
+        $c = date('Y-m-d H:i:s', 1310529600);
+        $d = strtotime($params['current']);
+
+        if($params['current'] != '----') {
+          $eventFacilityResourceActivationTime['activation_time'] = strtotime($params['current']);
+        }
+        $eventFacilityResourceActivationTimeForm = new agTinyEventFacilityResourceActivationTimeForm($eventFacilityResourceActivationTime);
+        return $this->renderText($eventFacilityResourceActivationTimeForm->__toString());
       }
     }
 

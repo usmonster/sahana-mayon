@@ -50,10 +50,11 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-  $('.textToForm').click(function() {
+  $('.textToForm').live('click', function() {
     var passId = '#' + $(this).attr('id');
+    var submit = '<a class="buttonSmall submitTextToForm" name="' + $(this).attr('id') + '">Set</a>';
     $.post($(this).attr('href'), {type: $(this).attr('name'), current: $(this).html(), id: $(this).attr('id')}, function(data) {
-      $(passId).parent().html(data);
+      $(passId).parent().html(data + submit);
     });
     return false;
   });
