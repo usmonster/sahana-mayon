@@ -66,20 +66,18 @@ class agActions extends sfActions
                 ->select(
                 'p.id,
                   s.id,
-                  ss.staff_status,
-                  stfrsco.id,
                   stfrsc.staff_resource_type_id,
                   srt.staff_resource_type,
+                  srs.staff_resource_status,
                   o.organization'
             )
             ->from(
                 'agStaff s,
                   s.agPerson p,
                   s.agStaffResource stfrsc,
-                  s.agStaffStatus ss,
-                  stfrsc.agStaffResourceOrganization stfrsco,
+                  stfrsc.agStaffResourceStatus srs,
                   stfrsc.agStaffResourceType srt,
-                  stfrsco.agOrganization o'
+                  stfrsc.agOrganization o'
         )
                 ->whereIn('s.id', $staff_ids);
 
@@ -104,7 +102,7 @@ class agActions extends sfActions
         'fn' => $person_names[$value['p_id']]['given'],
         'ln' => $person_names[$value['p_id']]['family'],
         'agency' => $value['o_organization'],
-        'staff_status' => $value['ss_staff_status'],
+        'staff_status' => $value['srs_staff_resource_status'],
         'classification' => $value['srt_staff_resource_type'],
         'phones' => $person_phones[$value['p_id']], // only for testing, prefer the above
         'emails' => $person_emails[$value['p_id']],

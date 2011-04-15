@@ -110,29 +110,6 @@ class organizationActions extends sfActions
     $totalStaffCountByOrg = agStaff::getUniqueStaffCount(3, array($this->ag_organization->getId()));
     $this->totalStaffCount = $totalStaffCountByOrg[$this->ag_organization->getId()];
 
-//    // lazily load the organization helper
-//    $organizationHelper = $this->getOrganizationHelper() ;
-//
-//    // get all staff info for this organization
-//    $organizationStaffResources = $organizationHelper->getOrganizationStaffInfo($this->orgId, FALSE) ;
-//
-//    // instantiate the array that will store our final display string
-//    $this->staffResourceList = array() ;
-//
-//    // first, explicitly check that this organization even HAS staff resources
-//    if (array_key_exists($this->orgId, $organizationStaffResources))
-//    {
-//      // assuming it does, loop through them and build our string
-//      foreach ($organizationStaffResources[$this->orgId] as $staffResourceId => $staffInfo)
-//      {
-//        $staffResourceString = sprintf('%s (%d): %s', $staffInfo['name'], $staffInfo['staff_id'], $staffInfo['type']);
-//        $this->staffResourceList[$staffInfo['staff_resource_organization_id']] = $staffResourceString ;
-//      }
-//
-//      // a final sort on the values will ensure that strings (names) sort sequentially
-//      asort($this->staffResourceList) ;
-//    }
-
      //p-code
       $this->getResponse()->setTitle('Sahana Agasti Organization - ' . $this->ag_organization->getOrganization());
      //end p-code

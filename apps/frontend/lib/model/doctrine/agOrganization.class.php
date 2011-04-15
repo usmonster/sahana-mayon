@@ -44,7 +44,7 @@ class agOrganization extends BaseagOrganization
 
   /**
    * staffbyResource() is a static method to return an array of
-   * (staff resource organization id, organization id, staff id, staff resource type id).
+   * (organization id, staff id, staff resource type id, staff resource id, person id).
    *
    * @param array $organizationIds - Queries staffs for the specified organizations only.
    */
@@ -57,8 +57,7 @@ class agOrganization extends BaseagOrganization
       $query = agDoctrineQuery::create()
               ->select('o.id, sro.id, sr.id, s.id, s.person_id, sr.staff_resource_type_id')
               ->from('agOrganization as o')
-              ->leftJoin('o.agStaffResourceOrganization as sro')
-              ->leftJoin('sro.agStaffResource as sr')
+              ->leftJoin('o.agStaffResource as sr')
               ->leftJoin('sr.agStaff as s')
               ->where('1=1');
 
@@ -75,14 +74,12 @@ class agOrganization extends BaseagOrganization
 
       $orgStfByRes = array();
       foreach ($resultSet as $rslt) {
-        $stfResOrgId = $rslt['sro_id'];
         $orgId = $rslt['o_id'];
         $staffId = $rslt['s_id'];
         $personId = $rslt['s_person_id'];
         $stfResTypeId = $rslt['sr_staff_resource_type_id'];
         $stfResId = $rslt['sr_id'];
-        $orgStfByRes[] = array('staff_resource_organization_id' => $stfResOrgId,
-          'organization_id' => $orgId,
+        $orgStfByRes[] = array('organization_id' => $orgId,
           'staff_id' => $staffId,
           'staff_resource_type_id' => $stfResTypeId,
           'staff_resource_id' => $stfResId,

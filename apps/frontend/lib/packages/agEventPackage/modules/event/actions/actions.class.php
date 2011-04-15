@@ -316,7 +316,7 @@ class eventActions extends agActions
         $filters['sr.staff_resource_type_id'] = $filter;
       }
       if ($parameter == 'so') {
-        $filters['sro.organization_id'] = $filter;
+        $filters['sr.organization_id'] = $filter;
       }
     }
     //set up inputs for filter form
@@ -365,9 +365,9 @@ class eventActions extends agActions
                   f.facility_name,
                   sr.id,
                   srt.staff_resource_type,
-                  sro.id, o.organization,
-                  s.id, s.staff_status_id,
-                  ss.staff_status,
+                  o.organization,
+                  sr.staff_resource_status_id,
+                  srs.staff_resource_status,
                   p.id,
                   ess.staff_allocation_status_id'
             )//, sas.staff_allocation_status')
@@ -381,10 +381,9 @@ class eventActions extends agActions
               fr.agFacility f,
               es.agStaffResource sr,
               sr.agStaffResourceType srt,
-              sr.agStaffResourceOrganization sro,
-              sro.agOrganization o,
+              sr.agOrganization o,
+              sr.agStaffResourceStatus ss,
               sr.agStaff s,
-              s.agStaffStatus ss,
               s.agPerson p,
               es.agEventStaffStatus ess'
             )
@@ -428,6 +427,7 @@ class eventActions extends agActions
       }
     }
     $eventStaff = array();
+    $person_array = array();
     $ag_event_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
     foreach ($ag_event_staff as $key => $value) {
       $person_array[] = $value['p_id'];
@@ -446,12 +446,13 @@ class eventActions extends agActions
     $this->widget->getWidgetSchema()->setLabel('status', false);
     /** @todo set defaults for each status drop down from the web request */
     $this->form_action = 'event/staffpool?event=' . $this->event_name;
+    $result_array = array();
     foreach ($ag_event_staff as $staff => $value) {
       $result_array[] = array(
         'fn' => $person_names[$value['p_id']]['given'],
         'ln' => $person_names[$value['p_id']]['family'],
         'organization_name' => $value['o_organization'],
-        'status' => $value['ss_staff_status'],
+        'status' => $value['srs_staff_resource_status'],
         'type' => $value['srt_staff_resource_type'],
         'facility' => $value['f_facility_name'],
         'es_id' => $value['es_id'],

@@ -6,11 +6,11 @@ agStaffResourceStatus:
     is_available: 1
   inactive:
     staff_resource_status: inactive
-    is_available: 1
+    is_available: 0
   retired:
     staff_resource_status: retired
-    is_available: 1
+    is_available: 0
   other:
     staff_resource_status: other
-    is_available: 1
+    is_available: 0
 
