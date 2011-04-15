@@ -55,12 +55,12 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
         echo($sortColumn == 'home_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
-      <!-- staff status -->
+      <!-- staff resource status -->
       <th class="head" rowspan="2">
-        <div class="tableHeaderContent">Staff Status</div>
+        <div class="tableHeaderContent">Staff Resource Status</div>
         <?php
-        echo($sortColumn == 'staff_status' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_status&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_status&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-        echo($sortColumn == 'staff_status' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_status&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_status&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+        echo($sortColumn == 'staff_resource_status' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+        echo($sortColumn == 'staff_resource_status' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
     </tr>
@@ -98,17 +98,34 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
       ?>
             <td>
         <?php
+            $displayStaffResources = array();
             foreach ($staffMember->getAgStaffResource() as $staffRec) {
-              foreach ($staffRec->getAgStaffResourceOrganization() as $staffRecOrg) {
-                echo $staffRecOrg->getAgOrganization()->organization;
+              if ($staffResourceStatus == 'all' ||
+                  $staffRec->getAgStaffResourceStatus()->staff_resource_status == $staffResourceStatus)
+              {
+                $stfRes = $staffRec->getAgStaffResourceType()->staff_resource_type;
+                $stfOrg = $staffRec->getAgOrganization()->organization;
+                $stfResStat = $staffRec->getAgStaffResourceStatus()->staff_resource_status;
+                $displayStaffResources[$stfRes] = array($stfOrg, $stfResStat);
               }
+            }
+            $lineBreak = FALSE;
+            foreach($displayStaffResources as $sRes => $sr)
+            {
+              if ($lineBreak) { echo '<br />'; }
+              else { $lineBreak = TRUE; }
+              echo $sr[0];
             }
         ?>
           </td>
           <td>
         <?php
-            foreach ($staffMember->getAgStaffResourceType() as $rType) {
-              echo $rType->staff_resource_type;
+            $lineBreak = FALSE;
+            foreach($displayStaffResources as $sRes =>$sr)
+            {
+              if ($lineBreak) { echo '<br />'; }
+              else { $lineBreak = TRUE; }
+              echo $sRes;
             }
         ?>
           </td>
@@ -156,7 +173,13 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
           </td>
           <td>
             <?php
-            echo $staffMember->getAgStaffStatus()->getStaffStatus();
+              $lineBreak = FALSE;
+              foreach($displayStaffResources as $sRes =>$sr)
+              {
+                if ($lineBreak) { echo '<br />'; }
+                else { $lineBreak = TRUE; }
+                echo $sr[1];
+              }
             ?>
           </td>
         </tr>

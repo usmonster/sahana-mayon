@@ -202,27 +202,16 @@ class agStaffActions extends agActions
    */
   public function executeList(sfWebRequest $request)
   {
-//    $query = Doctrine::getTable('agStaff')
-//            ->createQuery('a')
-//            ->select('p.*, st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*,
-//              nametype.*')
-//            ->from(
-//                'agStaff st, st.agPerson p, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
-//              pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
-//              p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
-//              name.agPersonNameType nametype'
-//    );
-
-    $staffStatus = 'active';
-    $staffStatusOptions = agDoctrineQuery::create()
-            ->select('s.staff_status, s.staff_status')
-            ->from('agStaffStatus s')
+    $this->staffResourceStatus = 'active';
+    $staffResourceStatusOptions = agDoctrineQuery::create()
+            ->select('s.staff_resource_status, s.staff_resource_status')
+            ->from('agStaffResourceStatus s')
             ->execute(array(), 'key_value_pair');
     //the above query returns an array of keys matching their values.
     //ideally the above should exist in a global param, so the database is not queried all the time
-    $staffStatusOptions['all'] = 'all';
-    if ($request->getParameter('status') && in_array($request->getParameter('status'), $staffStatusOptions)) {
-      $staffStatus = $request->getParameter('status');
+    $staffResourceStatusOptions['all'] = 'all';
+    if ($request->getParameter('status') && in_array($request->getParameter('status'), $staffResourceStatusOptions)) {
+      $this->staffResourceStatus = $request->getParameter('status');
     }
     $this->statusFilterForm = new sfForm();
     $this->statusFilterForm->setWidgets(
@@ -230,7 +219,7 @@ class agStaffActions extends agActions
           'status' => new sfWidgetFormChoice(
               array(
                 'multiple' => false,
-                'choices' => $staffStatusOptions,
+                'choices' => $staffResourceStatusOptions,
                 'label' => 'Staff Status'
               ),
               array('onchange' => 'submit();')
@@ -238,7 +227,7 @@ class agStaffActions extends agActions
         //add_empty' => true))// ,'onClick' => 'submit()'))
         )
     );
-    $this->statusFilterForm->setDefault('status', $staffStatus);
+    $this->statusFilterForm->setDefault('status', $this->staffResourceStatus);
 
     $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusFilterForm->getWidgetSchema());
     $this->statusFilterForm->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
@@ -252,7 +241,6 @@ class agStaffActions extends agActions
                   namejoin.*,
                   name.*,
                   nametype.*,
-                  stfrsco.*,
                   o.organization agency,
                   stfrsc.staff_resource_type_id,
                   e.id,
@@ -270,10 +258,9 @@ class agStaffActions extends agActions
                   namejoin.agPersonName name,
                   name.agPersonNameType nametype,
                   s.agStaffResource stfrsc,
-                  stfrsc.agStaffResourceOrganization stfrsco,
+                  stfrsc.agStaffResourceStatus srs,
                   stfrsc.agStaffResourceType,
-                  stfrsco.agOrganization o,
-                  s.agStaffStatus ss,
+                  stfrsc.agOrganization o,
                   p.agEntity e,
                   e.agEntityEmailContact ememail1,
                   ememail1.agEmailContact ec1,
@@ -282,8 +269,8 @@ class agStaffActions extends agActions
                   ememail2.agEmailContact ec2,
                   ec2.agEmailContactType ect2'
     );
-    if ($staffStatus != 'all') {
-      $query->where('ss.staff_status=?', $staffStatus);
+    if ($this->staffResourceStatus != 'all') {
+      $query->where('srs.staff_resource_status=?', $this->staffResourceStatus);
     }
 
     $this->pager = new sfDoctrinePager('agStaff', 20);
