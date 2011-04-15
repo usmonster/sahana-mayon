@@ -128,7 +128,7 @@ class agShiftGeneratorForm extends sfForm
             $form->updateObject($this->values[$key]);
             $oldShiftTemplate = $form->getObject();
             if ($oldShiftTemplate->staff_resource_type_id && $oldShiftTemplate->task_id
-                && $oldShiftTemplate->facility_resource_type_id && $oldShiftTemplate->shift_template) {
+                && $oldShiftTemplate->facility_resource_type_id) {
               $form->getObject()->save();
             } else {
               $form->getObject()->delete();

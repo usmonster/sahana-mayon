@@ -14,7 +14,41 @@
  */
 class agGeoHelper extends agBulkRecordHelper
 {
+  public    $enforceGeoType = TRUE ;
 
+  public function getGeoCoordinates()
+  {
 
+  }
+
+  public function getGeo()
+  {
+
+  }
+
+  public function getGeoAddress()
+  {
+
+  }
+
+  protected function isValidGeoType()
+  {
+
+  }
+
+  public function setGeoCoordinates()
+  {
+
+  }
+  
+  public function setGeo()
+  {
+    
+  }
+
+  public function setAddressGeo()
+  {
+
+  }
 
 }

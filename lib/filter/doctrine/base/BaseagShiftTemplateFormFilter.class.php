@@ -13,8 +13,6 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
   public function setup()
   {
     $this->setWidgets(array(
-      'shift_template'                       => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'description'                          => new sfWidgetFormFilterInput(),
       'scenario_id'                          => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => true)),
       'facility_resource_type_id'            => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'), 'add_empty' => true)),
       'staff_resource_type_id'               => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => true)),
@@ -31,8 +29,6 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
     ));
 
     $this->setValidators(array(
-      'shift_template'                       => new sfValidatorPass(array('required' => false)),
-      'description'                          => new sfValidatorPass(array('required' => false)),
       'scenario_id'                          => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agScenario'), 'column' => 'id')),
       'facility_resource_type_id'            => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agFacilityResourceType'), 'column' => 'id')),
       'staff_resource_type_id'               => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agStaffResourceType'), 'column' => 'id')),
@@ -66,8 +62,6 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
   {
     return array(
       'id'                                   => 'Number',
-      'shift_template'                       => 'Text',
-      'description'                          => 'Text',
       'scenario_id'                          => 'ForeignKey',
       'facility_resource_type_id'            => 'ForeignKey',
       'staff_resource_type_id'               => 'ForeignKey',
