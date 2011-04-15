@@ -38,7 +38,7 @@ class PluginagStaffPersonForm extends agPersonForm
     $staffContainerForm = new sfForm();
     $this->embedStaffForm($staffContainerForm);
     $this->embedStaffResourceForm($staffContainerForm);
-    $this->embedStaffResourceOrganizationForm($staffContainerForm);
+    //$this->embedStaffResourceOrganizationForm($staffContainerForm);
     $this->embedForm('staff', $staffContainerForm);
   }
 
@@ -109,12 +109,6 @@ class PluginagStaffPersonForm extends agPersonForm
       //we can inject $values['staffresource'] from the above.
       $this->saveStaffResourceTypeForm($form, $values);
       unset($this->embeddedForms['staff']->embeddedForms['type']);
-    }
-    if (isset($this->embeddedForms['staff'])) {
-      $form = $this->embeddedForms['staff']->embeddedForms['organization'];
-      $values = $this->values['staff']['organization'];
-      $this->saveStaffResourceOrganizationForm($form, $values);
-      unset($this->embeddedForms['staff']->embeddedForms['organization']);
     }
     return parent::saveEmbeddedForms($con, $forms);
   }

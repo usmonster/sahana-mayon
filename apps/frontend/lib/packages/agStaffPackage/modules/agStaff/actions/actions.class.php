@@ -620,7 +620,7 @@ class agStaffActions extends agActions
       // doSave() has also been overridden in agPersonForm.class.php so that the
       // saveStaffStatusList function is not called. Calling that refreshes the relation
       // and will cause failure on an update of an existing staff.
-      $form->getObject()->clearRelated('agStaffStatus');
+      //$form->getObject()->clearRelated('agStaffStatus');
       //$form->getObject()->clearRelated('agStaff');
 
       $ag_staff = $form->save();
