@@ -1,0 +1,4 @@
+Staff Management tooltip information should go here.
+We COULD feed some information from other pages via this plugin:
+
+http://www.dokuwiki.org/plugin:embed

@@ -1,5 +1,5 @@
 <?php
-$thisUrl = url_for('staff/list');
+$thisUrl = url_for($target_module .'/list');
 $ascArrow = '&#x25B2;';
 $descArrow = '&#x25BC;';
 ?>
@@ -32,6 +32,25 @@ foreach ($pager->getResults() as $result) {
     'target_module' => $target_module
   ));
 }
+
 ?>
+
   </tbody>
 </table>
+<?php
+    $listfoot = '<div class="floatRight">';
+//
+//First Page link (or inactive if we're at the first page).
+    $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
+//Previous Page link (or inactive if we're at the first page).
+    $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
+//Next Page link (or inactive if we're at the last page).
+    $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getNextPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
+//Last Page link (or inactive if we're at the last page).
+    $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
+    $listfoot .= '</div>';
+
+    // Commented out $listheader here. It's declaration is commented above. Ask Charles.
+
+    echo $listfoot;
+    ?>

@@ -34,6 +34,26 @@ include_partial('global/list', array( 'sf_request' => $sf_request,
                                       'target_module' => $target_module
   ));
 }
+elseif($sf_request->getParameter('module') == 'facility') {
+$displayColumns = array(
+    'id' => array('title' => 'Id', 'sortable' => false),
+    'facility_name' => array('title' => 'Facility Name', 'sortable' => true),
+    'services' => array('title' => 'Services', 'sortable' => false),
+    'facility_codes' => array('title' => 'Facility Code', 'sortable' => true)
+);
+
+//pager comes in from the action
+
+include_partial('global/list', array( 'sf_request' => $sf_request,
+                                      'displayColumns' => $displayColumns,
+                                      'pager' => $pager,
+                                      'order' => $order,
+                                      'sort' => $sort,
+                                      'filter' => $filter,
+                                      'target_module' => $target_module
+  ));
+}
+
 else{
   include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results));
 }
