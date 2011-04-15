@@ -22,7 +22,7 @@ class agTinyEventFacilityResourceStatusForm extends PluginagEventFacilityResourc
                                                                                    'model'     => $this->getRelatedModelName('agFacilityResourceAllocationStatus'),
                                                                                    'add_empty' => false,
                                                                                    'method'    => 'getFacilityResourceAllocationStatus'
-                                                                                )),
+                                                                                ), array('class' => 'submitTextToForm')),
     ));
 
     $this->setValidators(array(

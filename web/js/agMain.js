@@ -35,10 +35,10 @@ $(document).ready(function() {
     var expandToggle = '#expandable_' + $(this).attr('id');
     if(expandToggle + ':empty') {
       $(expandToggle).load($(this).attr('href'), function() {
-        $(expandToggle).slideToggle('slow');
+        $(expandToggle).slideToggle();
       });
     } else {
-      $(expandToggle).slideToggle('slow');
+      $(expandToggle).slideToggle();
     }
     if($(this).html() == (String.fromCharCode(9654))) {
       $(this).html('&#9660;');
@@ -52,9 +52,12 @@ $(document).ready(function() {
 $(document).ready(function() {
   $('.textToForm').live('click', function() {
     var passId = '#' + $(this).attr('id');
-
+    var $poster = $(this);
     $.post($(this).attr('href'), {type: $(this).attr('name'), current: $(this).html(), id: $(this).attr('id')}, function(data) {
-      $(passId).parent().html(data);
+      $(passId).parent().append(data);
+      $poster.attr('id', 'poster_' + $poster.attr('id'));
+      $poster.hide();
+      
     });
 
     return false;
@@ -62,9 +65,34 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-  $('.submitTextToForm').live('click', function() {
-    $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'));
-//    $(this).parent().submit();
+  $('.submitTextToForm').live('keypress', function(evt) {
+    var charCode = evt.charCode || evt.keyCode;
+    if (charCode  == 13) { //Enter key's keycode
+      return false;
+    }
+  });
+});
+
+$(document).ready(function() {
+  $('.submitTextToForm').live('blur submit', function() {
+    var $poster = $(this);
+    // The next three lines set passText based on the input type, text or select.
+    var textIn = $('#' + $(this).attr('id') + ' option:selected').text();
+    var selectIn = $(this).val();
+    var passText = (textIn.length == 0) ? selectIn : textIn;
+
+    $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'), function(data) {
+      if(data != 'success') {
+        $poster.css('color', 'red')
+        $poster.val(data);
+      } else {
+        var idTransfer = $poster.parent().attr('id');
+        $poster.remove();
+        $('#poster_' + idTransfer).html(passText);
+        $('#poster_' + idTransfer).show();
+        $('#poster_' + idTransfer).attr('id', idTransfer);
+      }
+    });
     return false;
   });
 });
