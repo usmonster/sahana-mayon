@@ -14,7 +14,7 @@ $path = sfConfig::get('sf_relative_url_root', preg_replace
     <meta name="language" content="en" />
     <title>Sahana Agasti, Mayon 2.0</title>
     <link rel="shortcut icon" href="<?php echo url_for('images/favicon.ico'); ?>" />
-    <?php echo stylesheet_tag('main'); ?>
+    <?php echo stylesheet_tag('agMain'); ?>
     <!--[if lte IE 6]>
     <?php echo stylesheet_tag('lte_ie6_css'); ?>
     <![endif]-->
