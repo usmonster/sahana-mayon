@@ -78,7 +78,7 @@ unset($_POST);
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Sahana Agasti 2.0 Installer</title>
     <link rel="shortcut icon" href="images/favicon.ico" />
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" /> 
+    <link rel="stylesheet" type="text/css" media="screen" href="css/agMain.css" />
   </head>
   <body>
     <div id="header">
