@@ -5,8 +5,6 @@
 <?php endif; ?>
 
 <?php
-            $a = $facilityResourceArray;
-            $c = 4;
   use_javascript('jquery.ui.custom.js');
   use_javascript('agMain.js');
   use_stylesheet('jquery/jquery.ui.custom.css');
@@ -70,7 +68,7 @@
             <td><a href="<?php echo url_for('event/eventfacilityresource/?eventFacResId=' . $facilityGroup['efg_id']); ?>" id="<?php echo $facilityGroup['efg_id']; ?>" class="expander">&#9654;</a></td>
             <td><?php echo $facilityGroup['efg_event_facility_group'] ?></td>
             <td><?php echo $facilityGroup['fgt_facility_group_type'] ?></td>
-            <td><a href="<?php echo url_for('event/eventfacilitygroup')?>" name="groupStatus" class="textToForm linkText" id="group_id_<?php echo $facilityGroup['efg_id']; ?>"><?php echo $facilityGroup['fgas_facility_group_allocation_status'] ?></a></td>
+            <td class="set100"><a href="<?php echo url_for('event/eventfacilitygroup')?>" name="groupStatus" class="textToForm linkText" id="group_id_<?php echo $facilityGroup['efg_id']; ?>"><?php echo $facilityGroup['fgas_facility_group_allocation_status'] ?></a></td>
             <td><?php echo $facilityGroup['efr_count'] ?></td>
             <?php
               if (!(isset($event))) {
@@ -79,7 +77,7 @@
             ?>
           </tr>
           <tr>
-            <td colspan="5">
+            <td colspan="5" class="compact">
               <div class="expandable" id="expandable_<?php echo $facilityGroup['efg_id']; ?>">
               </div>
             </td>

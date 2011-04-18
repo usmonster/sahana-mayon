@@ -17,7 +17,7 @@ class agTinyEventFacilityResourceActivationTimeForm extends PluginagEventFacilit
     $this->setWidgets(array(
       'id'                         => new sfWidgetFormInputHidden(),
       'event_facility_resource_id' => new sfWidgetFormInputHidden(),
-      'activation_time'            => /*new sfWidgetFormDateTime(),*/new sfWidgetFormInputText(array(), array('class' => 'inputGray submitTextToForm')),
+      'activation_time'            => /*new sfWidgetFormDateTime(),*/new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(

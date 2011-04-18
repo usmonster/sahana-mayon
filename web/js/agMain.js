@@ -57,17 +57,19 @@ $(document).ready(function() {
       $(passId).parent().append(data);
       $poster.attr('id', 'poster_' + $poster.attr('id'));
       $poster.hide();
-      
+      var b ='#' + passId + ' > .submitTextToForm';
+      $(passId + ' > .submitTextToForm').focus();
     });
 
     return false;
   });
 });
 
+// Disable submitting with enter for .submitTextToForm inputs.
 $(document).ready(function() {
   $('.submitTextToForm').live('keypress', function(evt) {
     var charCode = evt.charCode || evt.keyCode;
-    if (charCode  == 13) { //Enter key's keycode
+    if (charCode  == 13) {
       return false;
     }
   });
@@ -76,19 +78,16 @@ $(document).ready(function() {
 $(document).ready(function() {
   $('.submitTextToForm').live('blur submit', function() {
     var $poster = $(this);
-    // The next three lines set passText based on the input type, text or select.
-    var textIn = $('#' + $(this).attr('id') + ' option:selected').text();
-    var selectIn = $(this).val();
-    var passText = (textIn.length == 0) ? selectIn : textIn;
 
     $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'), function(data) {
-      if(data != 'success') {
+      var returned = $.parseJSON(data);
+      if(returned.status == 'failure') {
         $poster.css('color', 'red')
-        $poster.val(data);
+        $poster.val(returned.refresh);
       } else {
         var idTransfer = $poster.parent().attr('id');
-        $poster.remove();
-        $('#poster_' + idTransfer).html(passText);
+        $poster.parent().remove();
+        $('#poster_' + idTransfer).html(returned.refresh);
         $('#poster_' + idTransfer).show();
         $('#poster_' + idTransfer).attr('id', idTransfer);
       }

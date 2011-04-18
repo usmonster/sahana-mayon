@@ -200,6 +200,7 @@ class eventActions extends agActions
 //      }
 //      //TODO step through to check and see if the second if is needed
 //    }
+    
     if ($request->getParameter('event')) {
       $this->event = agDoctrineQuery::create()
               ->select()
@@ -735,8 +736,9 @@ class eventActions extends agActions
   {
     // Load Table
     //
-    // Should only be GET when the table is being loaded. This will return the table to be
-    // rendered in the sub-table of the fac group table. 
+    // This first conditional check is for displaying the facility resource table for a specific facility group.
+    // It is rendered inside of the expandable facility group table from listgroupsSuccess.
+    // This should be the only use of a GET request.
     if($request->isMethod(sfRequest::GET)) {
       $this->facilityResourceArray = $this->groupResourceQuery($request->getParameter('eventFacResId'));
       return $this->renderPartial('eventFacResTable', array('facilityResourceArray' => $this->facilityResourceArray));
@@ -745,8 +747,10 @@ class eventActions extends agActions
     elseif($request->isMethod(sfRequest::POST)) {
       $params = $request->getPostParameters();
 
-      // This case is for event-facility-resource-status form loading.
+      // Render the Forms
       if($params['type'] == 'resourceStatus') {
+        // This case is for loading the event-facility-resource-status form to replace the link that sumbitted
+        // the request.
         $facilityResourceStatus = new agEventFacilityResourceStatus();
         $facilityResourceStatus['event_facility_resource_id'] = ltrim($params['id'], 'res_stat_id_');
         $facilityResourceStatus['facility_resource_allocation_status_id'] =
@@ -757,10 +761,16 @@ class eventActions extends agActions
               ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
         $resourceStatusForm = new agTinyEventFacilityResourceStatusForm($facilityResourceStatus);
-        return $this->renderPartial('setterForm', array('form' => $resourceStatusForm, 'set' => $params['type'], 'id' => $params['id'], 'efrId' => ltrim($params['id'], 'res_stat_id_')));
-      }
-      // This case is for even-facility-resource-activation-time form loading.
-      elseIf($params['type'] == 'resourceActivationTime') {
+        $resourceStatusForm->getWidget('facility_resource_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
+
+        return $this->renderPartial('setterForm', array('form'     => $resourceStatusForm,
+                                                        'set'      => $params['type'],
+                                                        'id'       => $params['id'],
+                                                        'url'      => 'event/eventfacilityresource?eventFacilityResourceId=' .  ltrim($params['id'], 'res_stat_id_')
+                                                  )
+                                   );
+      } elseIf($params['type'] == 'resourceActivationTime') {
+        // This case is for loading the even-facility-resource-activation-time form in place of the submittal link.
         if($params['current'] != '----') {
           $eventFacilityResourceActivationTime = agDoctrineQuery::create()
             ->select()
@@ -773,25 +783,40 @@ class eventActions extends agActions
           $eventFacilityResourceActivationTime['event_facility_resource_id'] = ltrim($params['id'], 'res_act_id_');
         }
         $eventFacilityResourceActivationTimeForm = new agTinyEventFacilityResourceActivationTimeForm($eventFacilityResourceActivationTime);
+        $eventFacilityResourceActivationTimeForm->getWidget('activation_time')->setAttribute('class', 'inputGray submitTextToForm set125');
 
-        return $this->renderPartial('setterForm', array('form' => $eventFacilityResourceActivationTimeForm, 'set' => $params['type'], 'id' => $params['id'], 'efrId' => ltrim($params['id'], 'res_act_id_')));
+        return $this->renderPartial('setterForm', array('form'     => $eventFacilityResourceActivationTimeForm,
+                                                        'set'      => $params['type'],
+                                                        'id'       => $params['id'],
+                                                        'url'      => 'event/eventfacilityresource?eventFacilityResourceId=' . ltrim($params['id'], 'res_act_id_')
+                                                  )
+                                   );
       }
-      // For the incoming forms.
-      //
-      // This first condition handles ag_event_facility_resource_status objects. No update here.
+      // Save Forms/Objects
       if($request->getParameter('ag_event_facility_resource_status')) {
+        // This first condition handles ag_event_facility_resource_status objects. No update here, only creation of new objects.
         $eventFacilityActivationStatus = new agEventFacilityResourceStatus();
         $eventFacilityActivationStatus['facility_resource_allocation_status_id'] = $params['ag_event_facility_resource_status']['facility_resource_allocation_status_id'];
         $eventFacilityActivationStatus['event_facility_resource_id'] = $params['ag_event_facility_resource_status']['event_facility_resource_id'];
         $eventFacilityActivationStatus['time_stamp'] = date('Y-m-d H:i:s', time());
         $eventFacilityActivationStatus->save();
-        return $this->renderText('success');
+        
+        $refresh = agDoctrineQuery::create()
+          ->select('facility_resource_allocation_status')
+          ->from('agFacilityResourceAllocationStatus')
+          ->where('id = ?', $params['ag_event_facility_resource_status']['facility_resource_allocation_status_id'])
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        return $this->renderText(json_encode(array('status' => 'success', 'refresh' => $refresh)));
       }
       elseIf($request->getParameter('ag_event_facility_resource_activation_time')) {
+        // This condition handes ag_event_facility_resource_activation_time objects. This is almost always
+        // an update, unless the resource has no activation time already.
         $params['ag_event_facility_resource_activation_time']['activation_time'] = strtotime($params['ag_event_facility_resource_activation_time']['activation_time']);
-        // Catch if an invalid date/time has been entered into the activation form.
+        // Catch if an invalid date/time has been entered into the activation form and return response
+        // text to be rendered inside the input if it is invalid.
         if($params['ag_event_facility_resource_activation_time']['activation_time'] == false) {
-          return $this->renderText('Invalid Date-Time');
+//          return $this->renderText('Invalid Date-Time');
+          return $this->renderText(json_encode(array('status' => 'failure', 'refresh' => 'Invalid Date-Time')));
         }
         // See if there's already and activation time set for this fac-res.
         $eventFacilityResourceActivationTime = agDoctrineQuery::create()
@@ -808,7 +833,7 @@ class eventActions extends agActions
         $eventFacilityResourceActivationTime['activation_time'] = $params['ag_event_facility_resource_activation_time']['activation_time'];
 
         $eventFacilityResourceActivationTime->save();
-        return $this->renderText('success');
+        return $this->renderText(json_encode(array('status' => 'success', 'refresh' => date('m/d/Y H:i', $params['ag_event_facility_resource_activation_time']['activation_time']))));
       }
     }
 
@@ -818,7 +843,7 @@ class eventActions extends agActions
   {
     // Get the incoming params.
     $params = $request->getPostParameters();
-
+    
     if($params['type'] == 'groupStatus') {
       // Build an agEventFacilityGroupStatus object from incoming params, then stick it in a form.
       $groupAllocationStatus = new agEventFacilityGroupStatus();
@@ -831,8 +856,31 @@ class eventActions extends agActions
             ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
       $groupAllocationStatus->time_stamp = date('Y-m-d H:i:s', time());
       $groupAllocationStatusForm = new agTinyEventFacilityGroupStatusForm($groupAllocationStatus);
+      $groupAllocationStatusForm->getWidget('facility_group_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
+      return $this->renderPartial('setterForm', array('form' => $groupAllocationStatusForm,
+                                                      'set'  => $params['type'],
+                                                      'id'   => $params['id'],
+                                                      'url'  => 'event/eventfacilitygroup'
+                                                )
+                                 );
+    }
+    // This checks for an incoming form. We'll always be saving here, not updating.
+    if($request->getParameter('ag_event_facility_group_status')) {
+      $groupAllocationStatus = new agEventFacilityGroupStatus();
+      $groupAllocationStatus['event_facility_group_id'] = $params['ag_event_facility_group_status']['event_facility_group_id'];
+      $groupAllocationStatus['event_facility_group_id'] = $params['ag_event_facility_group_status']['event_facility_group_id'];
+      $groupAllocationStatus['facility_group_allocation_status_id'] = $params['ag_event_facility_group_status']['facility_group_allocation_status_id'];
+      $groupAllocationStatus['time_stamp'] = date('Y-m-d H:i:s', time());
 
-      return $this->renderText($groupAllocationStatusForm->__toString());
+      $groupAllocationStatus->save();
+
+      $refresh = agDoctrineQuery::create()
+        ->select('facility_group_allocation_status')
+        ->from('agFacilityGroupAllocationStatus')
+        ->where('id = ?', $params['ag_event_facility_group_status']['facility_group_allocation_status_id'])
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      return $this->renderText(json_encode(array('status' => 'success', 'refresh' => $refresh)));
+//      return $this->renderText('success');
     }
   }
 
