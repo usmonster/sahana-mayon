@@ -1158,7 +1158,7 @@ background: #F1F1F1 !important;
 }
 
 .logo{
- margin-bottom:5px;
+ margin-bottom:5px; border:0px;
 }
 
 P {
