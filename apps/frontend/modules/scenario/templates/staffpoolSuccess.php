@@ -41,6 +41,34 @@ Your staff resource pool is essentially a set of searches that let you refine wh
     <!--sometimes this will fail -->
   <?php if (isset($searchquery)) { ?>
     <hr />
-  <?php include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'target_module' => $target_module)) ?>
-  <?php } ?>
+  <?php
+
+
+
+  //include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'target_module' => $target_module))
+  
+    
+  $displayColumns = array(
+  'fn'              => array('title' => 'First Name', 'sortable' => false),
+  'ln'              => array('title' => 'Last Name', 'sortable' => false),
+  'agency'          => array('title' => 'Agency', 'sortable' => true),
+  'classification'  => array('title' => 'Classification', 'sortable' => true),
+  'phones'          => array('title' => 'Phone Contact(s)', 'sortable' => true),
+  'emails'          => array('title' => 'Email Contact(s)', 'sortable' => true),
+
+  'staff_status' => array('title' => 'Status', 'sortable' => false),
+);
+
+//pager comes in from the action
+
+include_partial('global/list', array( 'sf_request' => $sf_request,
+                                      'displayColumns' => $displayColumns,
+                                      'pager' => $pager,
+                                      'order' => $order,
+                                      'sort' => $sort,
+                                      'filter' => $filter)
+    );
+
+
+ } ?>
   </div>

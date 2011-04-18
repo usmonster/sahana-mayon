@@ -621,7 +621,7 @@ class agStaffActions extends agActions
       // saveStaffStatusList function is not called. Calling that refreshes the relation
       // and will cause failure on an update of an existing staff.
       //$form->getObject()->clearRelated('agStaffStatus');
-      //$form->getObject()->clearRelated('agStaff');
+      $form->getObject()->clearRelated('agStaff');
 
       $ag_staff = $form->save();
       $refAgStaff = $ag_staff->getAgStaff();
