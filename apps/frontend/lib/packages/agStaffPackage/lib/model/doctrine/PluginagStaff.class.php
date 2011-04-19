@@ -46,7 +46,7 @@ abstract class PluginagStaff extends BaseagStaff
       $staff_resource_status .= ' ' . $stf['srs_staff_resource_status'];
       $staff_organization .= ' ' . $stf['o_organization'];
       $staff_available_bool = ($stf['srs_is_available'] == 1) ? 'TRUE' : 'FALSE';
-      $staff_combo_array[] = array($staff_resource_status, $stf['srt_staff_resource_type'], $staff_organization);
+      $staff_combo_array[] = array($stf['srs_staff_resource_status'], $stf['srt_staff_resource_type'], $stf['o_organization']);
       if ($staff_available_bool == 'TRUE')
       {
         $available_status = 'TRUE';
