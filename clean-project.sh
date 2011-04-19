@@ -34,7 +34,7 @@ rm -rf $PROJECT_ROOT/lib/filter/doctrine/ag*
 $PROJECT_ROOT/symfony cc
 
 # removes search index files to avoid pollution from previous installs
-sudo -u $WEB_USER rm -rf $PROJECT_ROOT/data/search/*
+sudo rm -rf $PROJECT_ROOT/data/search/*
 
 # resets file and directory perms (NOTE: chmod does NOT recurse in this case)
 sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/

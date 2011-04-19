@@ -68,7 +68,10 @@ class facilityActions extends agActions
     /**
     * Create pager
     **/
-    $this->pager = new sfDoctrinePager('agFacility', 5);
+    $this->target_module = 'facility';
+    $request->getParameter('limit') ?  $limit = $request->getParameter('limit') : $limit = 10;
+    //instead of 10 for the limit, we should pull from a global parameter
+    $this->pager = new sfDoctrinePager('agFacility', $limit);
 
     /**
     * Check if the client wants the results sorted, and set pager

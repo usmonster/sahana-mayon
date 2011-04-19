@@ -3,12 +3,16 @@ agGeoType:
     id: 1
     geo_type: point
     minimum_coordinate_points: 1
+    maximum_coordinate_points: 1
     description: A single point on the map
   line_string:
     id: 2
     geo_type: line string
     minimum_coordinate_points: 2
+    maximum_coordinate_points: 2
   linear_ring:
     id: 3
-    geo_type: linear ring
-    minimum_coordinate_points: 4
+    geo_type: circle
+    minimum_coordinate_points: 2
+    maximum_coordinate_points: -1
+

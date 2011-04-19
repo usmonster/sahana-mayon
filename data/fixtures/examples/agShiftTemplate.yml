@@ -1,8 +1,6 @@
 agShiftTemplate:
 # Hurricane A Staff
   hurrA_ec_spe_shft:
-    shift_template: specialist shifts
-    description: Specialist shifts in evacuation centers.
     scenario_id: 1
     agFacilityResourceType: ec
     agStaffResourceType: spe
@@ -15,8 +13,6 @@ agShiftTemplate:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
   hurrA_smn_med_nrs_shft:
-    shift_template: nurse shifts
-    description: Medical nurse shifts in special medical needs centers.
     scenario_id: 1
     agFacilityResourceType: smn
     agStaffResourceType: med_nrs
@@ -29,8 +25,6 @@ agShiftTemplate:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
   hurrA_smn_med_oth_shft:
-    shift_template: medical staff shifts
-    description: Medical staff shifts in special medical needs centers.
     scenario_id: 1
     agFacilityResourceType: smn
     agStaffResourceType: med_oth
@@ -43,8 +37,6 @@ agShiftTemplate:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
   hurrA_hs_staff_shft:
-    shift_template: hs staff shifts
-    description: Staff in hurricane shelters.
     scenario_id: 1
     agFacilityResourceType: hs
     agStaffResourceType: staff
@@ -57,8 +49,6 @@ agShiftTemplate:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
   hurrA_hs_stby_staff_shft:
-    shift_template: hs staff standby shifts
-    description: Staff in hurricane shelters.
     scenario_id: 1
     agFacilityResourceType: hs
     agStaffResourceType: staff
@@ -71,8 +61,6 @@ agShiftTemplate:
     agShiftStatus: standby
     agDeploymentAlgorithm: all_staff
   hurrA_hs_op_shft:
-    shift_template: hs operator shifts
-    description: Operator in hurricane shelters.
     scenario_id: 1
     agFacilityResourceType: hs
     agStaffResourceType: uorc
@@ -85,8 +73,6 @@ agShiftTemplate:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
   hurrA_hs_op_stby_shft:
-    shift_template: hs operator shifts
-    description: Operator in hurricane shelters.
     scenario_id: 1
     agFacilityResourceType: hs
     agStaffResourceType: uorc
@@ -99,8 +85,6 @@ agShiftTemplate:
     agShiftStatus: standby
     agDeploymentAlgorithm: all_staff
   hurrA_uorc_staff_shft:
-    shift_template: uorc shifts
-    description: UORC Staff.
     scenario_id: 1
     agFacilityResourceType: uorc
     agStaffResourceType: staff
@@ -114,8 +98,6 @@ agShiftTemplate:
     agDeploymentAlgorithm: all_staff
 # Hurricane B Staff
   hurrB_smn_staff_shft:
-    shift_template: general staff (smn) shifts
-    description: General staff shifts in special medical needs centers.
     scenario_id: 2
     agFacilityResourceType: smn
     agStaffResourceType: staff
@@ -128,8 +110,6 @@ agShiftTemplate:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
   hurrB_hs_op_shft:
-    shift_template: operator shifts
-    description: Operator shifts in hurricane shelters.
     scenario_id: 2
     agFacilityResourceType: hs
     agStaffResourceType: uorc
@@ -143,8 +123,6 @@ agShiftTemplate:
     agDeploymentAlgorithm: all_staff
 # Hurricane C Staff
   hurrC_hs_24hr_staff_shft:
-    shift_template: general hurricane staff early shifts
-    description: General staff shifts 24 hour pre-zeor hour.
     scenario_id: 3
     agFacilityResourceType: hs
     agStaffResourceType: staff
@@ -157,8 +135,6 @@ agShiftTemplate:
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
   hurrC_hs_12hr_staff_shft:
-    shift_template: general hurricane staff late shifts
-    description: General staff shifts 12 hour pre-zero hour.
     scenario_id: 3
     agFacilityResourceType: hs
     agStaffResourceType: staff
@@ -172,8 +148,6 @@ agShiftTemplate:
     agDeploymentAlgorithm: all_staff
 # Earthquake Staff
   equake_hs_stdby_staff_shft:
-    shift_template: general earthquake standby staff shifts
-    description: General standby staff shifts.
     scenario_id: 4
     agFacilityResourceType: hs
     agStaffResourceType: staff

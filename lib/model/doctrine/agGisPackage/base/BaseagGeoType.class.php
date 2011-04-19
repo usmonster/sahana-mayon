@@ -8,6 +8,7 @@
  * @property integer $id
  * @property string $geo_type
  * @property integer $minimum_coordinate_points
+ * @property integer $maximum_coordinate_points
  * @property string $description
  * @property boolean $app_display
  * @property Doctrine_Collection $agGeo
@@ -15,12 +16,14 @@
  * @method integer             getId()                        Returns the current record's "id" value
  * @method string              getGeoType()                   Returns the current record's "geo_type" value
  * @method integer             getMinimumCoordinatePoints()   Returns the current record's "minimum_coordinate_points" value
+ * @method integer             getMaximumCoordinatePoints()   Returns the current record's "maximum_coordinate_points" value
  * @method string              getDescription()               Returns the current record's "description" value
  * @method boolean             getAppDisplay()                Returns the current record's "app_display" value
  * @method Doctrine_Collection getAgGeo()                     Returns the current record's "agGeo" collection
  * @method agGeoType           setId()                        Sets the current record's "id" value
  * @method agGeoType           setGeoType()                   Sets the current record's "geo_type" value
  * @method agGeoType           setMinimumCoordinatePoints()   Sets the current record's "minimum_coordinate_points" value
+ * @method agGeoType           setMaximumCoordinatePoints()   Sets the current record's "maximum_coordinate_points" value
  * @method agGeoType           setDescription()               Sets the current record's "description" value
  * @method agGeoType           setAppDisplay()                Sets the current record's "app_display" value
  * @method agGeoType           setAgGeo()                     Sets the current record's "agGeo" collection
@@ -47,8 +50,15 @@ abstract class BaseagGeoType extends sfDoctrineRecord
              'length' => 30,
              ));
         $this->hasColumn('minimum_coordinate_points', 'integer', 1, array(
-             'default' => 1,
              'type' => 'integer',
+             'default' => 1,
+             'notnull' => true,
+             'length' => 1,
+             ));
+        $this->hasColumn('maximum_coordinate_points', 'integer', 1, array(
+             'type' => 'integer',
+             'default' => -1,
+             'notnull' => true,
              'length' => 1,
              ));
         $this->hasColumn('description', 'string', 255, array(

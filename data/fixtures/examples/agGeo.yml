@@ -2,26 +2,34 @@
 
 agGeo:
   addyid1_geo:
-    agGeoType: single_point
-    agGeoSource: shere
-  addyid3_geo:
+    geo_coordinate_hash: 4cac5845cb557eb3dc93f4c01ef8f41c
     agGeoType: single_point
     agGeoSource: shere
   addyid2_geo:
+    geo_coordinate_hash: c719c9ddac4540374e215b5e2e052890
+    agGeoType: single_point
+    agGeoSource: shere
+  addyid3_geo:
+    geo_coordinate_hash: 9ca473cf23c042b337e6434a14c0e5c9
     agGeoType: single_point
     agGeoSource: shere
   addyid5_geo:
+    geo_coordinate_hash: 1cfc8ee500c1c4e3d2a189f7c8408e25
     agGeoType: single_point
     agGeoSource: shere
   addyid6_geo:
+    geo_coordinate_hash: 26c6b3ae50022bc546f297c057441df9
     agGeoType: single_point
     agGeoSource: shere
   addyid7_geo:
+    geo_coordinate_hash: 6d90d6faa5c0a292588171bd0fe10e89
     agGeoType: single_point
     agGeoSource: shere
   addyid8_geo:
+    geo_coordinate_hash: 2c62247e962afe1bb16885eed74ff6ba
     agGeoType: single_point
     agGeoSource: shere
   addyid9_geo:
+    geo_coordinate_hash: 8d18fa97e20fb892ca52a9fe1db2f4bf
     agGeoType: single_point
     agGeoSource: shere

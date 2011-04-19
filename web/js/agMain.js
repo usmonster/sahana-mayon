@@ -35,10 +35,10 @@ $(document).ready(function() {
     var expandToggle = '#expandable_' + $(this).attr('id');
     if(expandToggle + ':empty') {
       $(expandToggle).load($(this).attr('href'), function() {
-        $(expandToggle).slideToggle('slow');
+        $(expandToggle).slideToggle();
       });
     } else {
-      $(expandToggle).slideToggle('slow');
+      $(expandToggle).slideToggle();
     }
     if($(this).html() == (String.fromCharCode(9654))) {
       $(this).html('&#9660;');
@@ -94,4 +94,5 @@ $(document).ready(function() {
     });
     return false;
   });
+
 });

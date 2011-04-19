@@ -109,6 +109,10 @@ class agPhoneHelper extends agBulkRecordHelper
     $formatComponents = $q->execute(array(), DOCTRINE_CORE::HYDRATE_NONE);
     foreach($formatComponents as $fc)
     {
+      if(count($fc) < 5){
+        $fc[4] = '';
+      }
+      // TODO fix ^ v
       // create a simple phone validation and display format array.
       $this->_phoneFormatComponentsByCountry[$fc[0]] = array($fc[1], $fc[2], $fc[3], $fc[4]);
     }

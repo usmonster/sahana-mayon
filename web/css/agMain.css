@@ -1158,7 +1158,7 @@ background: #F1F1F1 !important;
 }
 
 .logo{
- margin-bottom:5px;
+ margin-bottom:5px; border:0px;
 }
 
 P {
@@ -1288,4 +1288,31 @@ a.signin.menu-open span {
 
 .expandable {
   display: none;
+}
+
+.expandableTable {
+  margin: 0px;
+  width: 100%;
+  border-collapse: collapse;
+  
+}
+.expandableTable th {
+  background: #dadada;
+}
+.expandableTable td {
+  background: #e5f7ff;
+  height: 4em;
+}
+
+.compact {
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+.set100 {
+  width: 100px;
+}
+
+.set125 {
+  width: 110px;
 }

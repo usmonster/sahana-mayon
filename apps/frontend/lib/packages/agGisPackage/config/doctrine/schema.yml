@@ -5,6 +5,9 @@ agGeo:
       type: integer(5)
       notnull: true
       autoincrement: true
+    geo_coordinate_hash:
+      type: string(128)
+      notnull: true
     geo_type_id:
       type: integer(2)
       notnull: true
@@ -29,8 +32,13 @@ agGeoType:
       type: string(30)
       notnull: true
     minimum_coordinate_points:
-      default: 1
       type: integer(1)
+      default: 1
+      notnull: true
+    maximum_coordinate_points:
+      type: integer(1)
+      default: -1
+      notnull: true
     description:
       type: string(255)
     app_display:

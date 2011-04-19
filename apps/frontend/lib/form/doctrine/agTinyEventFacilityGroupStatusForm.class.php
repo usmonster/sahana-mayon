@@ -26,6 +26,8 @@ class agTinyEventFacilityGroupStatusForm extends PluginagEventFacilityGroupStatu
       'facility_group_allocation_status_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'))),
     ));
 
+    $this->widgetSchema->setNameFormat('ag_event_facility_group_status[%s]');
+
     $this->getWidgetSchema()->setLabel('facility_group_allocation_status_id', false);
 
     $custDeco = new agWidgetFormSchemaFormatterTiny($this->getWidgetSchema());

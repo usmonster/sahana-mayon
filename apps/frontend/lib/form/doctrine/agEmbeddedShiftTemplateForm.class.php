@@ -55,8 +55,8 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
     $this->setWidgets(
         array(
           'id' => new sfWidgetFormInputHidden(),
-          'shift_template' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-          'description' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+          //'shift_template' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
+          //'description' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
           'scenario_id' => new sfWidgetFormInputHidden(),
           'facility_resource_type_id' => new sfWidgetFormDoctrineChoice(
               array(
@@ -108,10 +108,6 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
                 'choices' => array($this->getObject()->get('id')),
                 'empty_value' => $this->getObject()->get('id'),
                 'required' => false)
-          ),
-          'shift_template' => new sfValidatorString(array('trim' => true, 'max_length' => 64, 'required' => false)
-          ),
-          'description' => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)
           ),
           'scenario_id' => new sfValidatorDoctrineChoice(
               array('required' => false, 'model' => $this->getRelatedModelName('agScenario'))
@@ -228,7 +224,7 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
     );
     $this->widgetSchema->setLabels(
         array(
-          'shift_template' => 'Name',
+          //'shift_template' => 'Name',
           'facility_resource_type_id' => 'Facility Resource',
           'staff_resource_type_id' => 'Staff Resource',
           'task_id' => 'Job',
@@ -257,6 +253,16 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
     $resDeco = new agWidgetFormSchemaFormatterShift($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('shift', $resDeco);
     $this->getWidgetSchema()->setFormFormatterName('shift');
+
+    
+    //these two were removed
+//    
+//          'shift_template' => new sfValidatorString(array('trim' => true, 'max_length' => 64, 'required' => false)
+//          ),
+//          'description' => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)
+//          ),
+
+
 
 //
   }

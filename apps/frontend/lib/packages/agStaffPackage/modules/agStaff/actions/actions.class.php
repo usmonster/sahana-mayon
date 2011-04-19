@@ -124,12 +124,14 @@ class agStaffActions extends agActions
     $person_names = $names->getPrimaryNameByType();
     //maybe we should set the below/above to a a static property for use through a session
 
+    $emailHelper = new agEntityEmailHelper();
+    $emailByType = $emailHelper->getEntityEmailByType($person_array, TRUE, TRUE, agEmailHelper::EML_GET_VALUE);
     $emails = new agEntityEmailHelper($person_array);
 
-    $email_array = $emails->getEntityEmailByType(null,false,true, agEmailHelper::EML_GET_VALUE);
-    $person_emails = array();
+//    $email_array = $emails->getEntityEmailByType(null,false,true, agEmailHelper::EML_GET_VALUE);
+//    $person_emails = array();
 
-    foreach($email_array as $person_id => $email_type)
+    foreach($emails as $person_id => $email_type)
     {
       foreach($email_type as $et => $etv){
         $person_emails[$person_id][$et] = $person_emails[$person_id][$et][0];
@@ -638,6 +640,7 @@ class agStaffActions extends agActions
    */
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
+    $b = $form->getName();
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       //are our values bound at this point?

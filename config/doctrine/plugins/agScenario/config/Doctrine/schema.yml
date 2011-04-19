@@ -315,11 +315,6 @@ agShiftTemplate:
       primary: true
       type: integer(4)
       autoincrement: true
-    shift_template:
-      type: string(64)
-      notnull: true
-    description:
-      type: string(255)
     scenario_id:
       type: integer(2)
       notnull: true
