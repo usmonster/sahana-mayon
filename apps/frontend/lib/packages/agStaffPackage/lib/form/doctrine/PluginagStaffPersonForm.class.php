@@ -57,6 +57,7 @@ class PluginagStaffPersonForm extends agPersonForm
     }
     $staffForm = new PluginagEmbeddedAgStaffForm(isset($staffObject) ? $staffObject : null);
     $staffContainerForm->embedForm('status', $staffForm);
+    $staffContainerForm->getWidgetSchema()->setLabel('status', false);
   }
 
   /**
@@ -70,22 +71,43 @@ class PluginagStaffPersonForm extends agPersonForm
               ->where('a.staff_id = ?', $staff->id)
               ->execute(); //->getFirst();
     }
-    if ($staffResourceObjects) {
+    $staffContainerContainer = new sfForm();
+    $restrictedOptions = array();
+    if (isset($staffResourceObjects)) {
+      $i = 0;
       foreach ($staffResourceObjects as $staffResourceObject) {
+
+        $resourceTypeQuery = agDoctrineQuery::create()
+              ->select('a.id, a.staff_resource_type')
+              ->from('agStaffResourceType a');
+        if(count($restrictedOptions) > 0)$resourceTypeQuery->whereNotIn('a.id', $restrictedOptions);
+        $resourceTypeOptions = $resourceTypeQuery->execute(array(), 'key_value_pair');
+
         $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm($staffResourceObject);
-        //unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
+        $staffResourceForm->setWidget('staff_resource_type_id', new sfWidgetFormChoice(array('choices' => $resourceTypeOptions )));
+
+
+//unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
         if (isset($this->staff_id)) {
           $staffResourceForm->setDefault('staff_id', $this->staff_id);
         }
-        $staffContainerForm->embedForm('type', $staffResourceForm);
+        $staffContainerContainer->embedForm($i, $staffResourceForm);
+        $i++;
+        $restrictedOptions[] = $staffResourceObject->getStaffResourceTypeId();
       }
+      $staffContainerForm->embedForm('type', $staffContainerContainer);
     } else {
       $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm();
       //unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
       if (isset($this->staff_id)) {
         $staffResourceForm->setDefault('staff_id', $this->staff_id);
       }
-      $staffContainerForm->embedForm('type', $staffResourceForm);
+      $staffContainerForm->embedForm('0', $staffResourceForm);
+      //$staffResourceForm->getWidgetSchema()->setLabel('', $value) ContainerForm->getWidgetSchema()->setLabel(
+      $staffContainerForm->getWidgetSchema()->setLabel('0', false);
+      $staffContainerForm->embedForm('type', $staffContainerContainer);
+
+      $staffContainerForm->getWidgetSchema()->setLabel('type', false);
 //handle for creation of more than just the one form.. or have it come in through jquery
     }
   }
@@ -118,12 +140,16 @@ class PluginagStaffPersonForm extends agPersonForm
       unset($this->embeddedForms['staff']->embeddedForms['status']);
     }
     if (isset($this->embeddedForms['staff'])) {
-      foreach($this->embeddedForms['staff']->embeddedForms['type'] as  $form){
+      //sort by active to the top
 
-      $values = $this->values['staff']['type'];
+      $typeForms = $this->embeddedForms['staff']->embeddedForms['type'];
+      foreach($typeForms->getEmbeddedForms() as  $formKey => $formForm){
+      //$values = $this->values['staff']['type'];
+        $values = $formForm->getObject()->getData();
+        //bind ?
       //we can inject $values['staffresource'] from the above.
-      $this->saveStaffResourceTypeForm($form, $values);
-      unset($this->embeddedForms['staff']->embeddedForms['type']);
+        $this->saveStaffResourceTypeForm($formForm, $values);
+      unset($typeForms[$formKey]);
       }
     }
     return parent::saveEmbeddedForms($con, $forms);

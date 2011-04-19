@@ -63,7 +63,8 @@ class ProjectConfiguration extends sfProjectConfiguration
     foreach ($packages as $package) {
       $this->setPluginPath($package, sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $package);
     }
-    $this->enablePlugins($packages);
+    //$this->enablePlugins($packages);
+
   }
 
   public function setup()

@@ -448,6 +448,33 @@ class agStaffActions extends agActions
   public function executeNew(sfWebRequest $request)
   {
     $this->form = new PluginagStaffPersonForm();
+
+    if($request->isMethod(sfRequest::POST)) {
+      $params = $request->getPostParameters();
+
+      // Render the Forms
+      //if($params['type'] == 'resourceStatus') {
+        // This case is for loading the event-facility-resource-status form to replace the link that sumbitted
+        // the request.
+        //$facilityResourceStatus = new agEventFacilityResourceStatus();
+        //$facilityResourceStatus['event_facility_resource_id'] = ltrim($params['id'], 'res_stat_id_');
+        //$facilityResourceStatus['facility_resource_allocation_status_id'] =
+//            agDoctrineQuery::create()
+//              ->select('id')
+//              ->from('agFacilityResourceAllocationStatus')
+//              ->where('facility_resource_allocation_status = ?', $params['current'])
+//              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+        $resourceForm = new PluginagEmbeddedAgStaffResourceForm();
+        //$resourceForm->getWidget('facility_resource_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
+
+        return $this->renderPartial('setterForm', array('form'     => $resourceForm,
+                                                        'set'      => $params['type'],
+                                                        'id'       => $params['id'],
+                                                        'url'      => 'event/eventfacilityresource?eventFacilityResourceId=' .  ltrim($params['id'], 'res_stat_id_')
+                                                  )
+                                   );
+      }
   }
 
   /**

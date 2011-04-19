@@ -50,10 +50,47 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-  $('.textToForm').click(function() {
+  $('.textToForm').live('click', function() {
     var passId = '#' + $(this).attr('id');
+    var $poster = $(this);
     $.post($(this).attr('href'), {type: $(this).attr('name'), current: $(this).html(), id: $(this).attr('id')}, function(data) {
-      $(passId).parent().html(data);
+      $(passId).parent().append(data);
+      $poster.attr('id', 'poster_' + $poster.attr('id'));
+      $poster.hide();
+      var b ='#' + passId + ' > .submitTextToForm';
+      $(passId + ' > .submitTextToForm').focus();
+    });
+
+    return false;
+  });
+});
+
+// Disable submitting with enter for .submitTextToForm inputs.
+$(document).ready(function() {
+  $('.submitTextToForm').live('keypress', function(evt) {
+    var charCode = evt.charCode || evt.keyCode;
+    if (charCode  == 13) {
+      return false;
+    }
+  });
+});
+
+$(document).ready(function() {
+  $('.submitTextToForm').live('blur submit', function() {
+    var $poster = $(this);
+
+    $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'), function(data) {
+      var returned = $.parseJSON(data);
+      if(returned.status == 'failure') {
+        $poster.css('color', 'red')
+        $poster.val(returned.refresh);
+      } else {
+        var idTransfer = $poster.parent().attr('id');
+        $poster.parent().remove();
+        $('#poster_' + idTransfer).html(returned.refresh);
+        $('#poster_' + idTransfer).show();
+        $('#poster_' + idTransfer).attr('id', idTransfer);
+      }
     });
     return false;
   });
