@@ -25,10 +25,10 @@ abstract class PluginagStaff extends BaseagStaff
     // Saving staff info after staff record is created.
     // Make staff searchable by resource type, resource status, and organization.
     $query = agDoctrineQuery::create()
-            ->select('s.id, sr.id, srt.staff_resource_type, srs.staff_resource_status, o.id, o.organization')
+            ->select('s.id, sr.id, srt.staff_resource_type, srs.staff_resource_status, srs.is_available, o.id, o.organization')
             ->from('agStaff s')
             ->innerJoin('s.agStaffResource sr')
-            ->innerJoin('sr.agStaffResourceType sts')
+            ->innerJoin('sr.agStaffResourceType srt')
             ->innerJoin('sr.agStaffResourceStatus srs')
             ->innerJoin('sr.agOrganization o')
             ->where('s.id = ?', $this->id);
@@ -37,11 +37,20 @@ abstract class PluginagStaff extends BaseagStaff
     $staff_resource = NULL;
     $staff_resource_status = NULL;
     $staff_organization = NULL;
+    $staff_pool = NULL;
+    $staff_combo_array = array();
+    $available_status = 'FALSE';
     foreach ($staffResources as $stf)
     {
       $staff_resource .= ' ' . $stf['srt_staff_resource_type'];
       $staff_resource_status .= ' ' . $stf['srs_staff_resource_status'];
       $staff_organization .= ' ' . $stf['o_organization'];
+      $staff_available_bool = ($stf['srs_is_available'] == 1) ? 'TRUE' : 'FALSE';
+      $staff_combo_array[] = array($staff_available_bool, $staff_resource_status, $staff_resource, $staff_organization);
+      if ($staff_available_bool == 'TRUE')
+      {
+        $available_status = 'TRUE';
+      }
     }
     if (isset($staff_resource))
     {
@@ -55,7 +64,18 @@ abstract class PluginagStaff extends BaseagStaff
     {
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_org', $staff_organization, 'utf-8'));
     }
-
+    if ($available_status == 'TRUE')
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_avail', 'TRUE', 'utf-8'));
+    }
+    foreach ($staff_combo_array AS $stfCmb)
+    {
+      $staff_pool .= ' ' . $stfCmb[0] . '-' . $stfCmb[1] . '-' . $stfCmb[2] . '-' . $stfCmb[3];
+    }
+    if (isset($staff_pool))
+    {
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_pool', $staff_pool, 'utf-8'));
+    }
     // Make staff searchable by name.
     $query = agDoctrineQuery::create()
             ->select('s.id, p.id, pmn.id, pn.id, pn.person_name')
