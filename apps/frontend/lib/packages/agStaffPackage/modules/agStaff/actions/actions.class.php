@@ -579,12 +579,6 @@ class agStaffActions extends agActions
 
     $ag_person = $ag_staff->getAgPerson();
 
-    foreach ($ag_staff->getAgStaffResource() as $ag_staff_resource_pre_org) {
-      foreach ($ag_staff_resource_pre_org->getAgStaffResourceOrganization() as $ag_staff_resource_org) {
-        $ag_staff_resource_org->delete();
-      }
-    }
-
     foreach ($ag_staff->getAgStaffResource() as $ag_staff_resource) {
       $ag_staff_resource->delete();
     }
