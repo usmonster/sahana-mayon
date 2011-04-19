@@ -23,6 +23,24 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
       <th class="head" colspan="<?php echo count($ag_person_name_types); ?>" class="centerText">
         Name
       </th>
+      <!-- phone_contact -->
+      <th class="head" rowspan="2">
+        <div class="tableHeaderContent">Phone Contact(s)</div>
+        <?php
+        echo($sortColumn == 'work_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+        echo($sortColumn == 'work_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+      </th>
+      <!-- email_contact -->
+      <th class="head" rowspan="2">
+        <div class="tableHeaderContent">Email Contact(s)</div>
+        <?php
+        echo($sortColumn == 'home_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+        echo($sortColumn == 'home_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+        ?>
+      </th>
+
+
       <!-- Agency -->
       <th class="head" rowspan="2">
         <div class="tableHeaderContent">Agency</div>
@@ -39,28 +57,12 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
         echo($sortColumn == 'staff_type' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_type&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_type&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
-      <!-- work_contact -->
+      <!-- staff resource status -->
       <th class="head" rowspan="2">
-        <div class="tableHeaderContent">Phone Contact(s)</div>
+        <div class="tableHeaderContent">Staff Resource Status</div>
         <?php
-        echo($sortColumn == 'work_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-        echo($sortColumn == 'work_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=work_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
-        ?>
-      </th>
-      <!-- home_contact -->
-      <th class="head" rowspan="2">
-        <div class="tableHeaderContent">Email Contact(s)</div>
-        <?php
-        echo($sortColumn == 'home_email' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-        echo($sortColumn == 'home_email' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=home_email&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
-        ?>
-      </th>
-      <!-- staff status -->
-      <th class="head" rowspan="2">
-        <div class="tableHeaderContent">Staff Status</div>
-        <?php
-        echo($sortColumn == 'staff_status' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_status&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_status&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
-        echo($sortColumn == 'staff_status' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_status&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_status&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
+        echo($sortColumn == 'staff_resource_status' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
+        echo($sortColumn == 'staff_resource_status' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
         ?>
       </th>
     </tr>
@@ -96,23 +98,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
               echo "</td>";
             }
       ?>
-            <td>
-        <?php
-            foreach ($staffMember->getAgStaffResource() as $staffRec) {
-              foreach ($staffRec->getAgStaffResourceOrganization() as $staffRecOrg) {
-                echo $staffRecOrg->getAgOrganization()->organization;
-              }
-            }
-        ?>
-          </td>
-          <td>
-        <?php
-            foreach ($staffMember->getAgStaffResourceType() as $rType) {
-              echo $rType->staff_resource_type;
-            }
-        ?>
-          </td>
-          <td>
+                        <td>
         <?php
             foreach ($ag_phone_contact_types as $agPhoneContactType) {
               $check = 0;
@@ -154,9 +140,49 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
             }
         ?>
           </td>
+
+            <td>
+        <?php
+            $displayStaffResources = array();
+            foreach ($staffMember->getAgStaffResource() as $staffRec) {
+              if ($staffResourceStatus == 'all' ||
+                  $staffRec->getAgStaffResourceStatus()->staff_resource_status == $staffResourceStatus)
+              {
+                $stfRes = $staffRec->getAgStaffResourceType()->staff_resource_type;
+                $stfOrg = $staffRec->getAgOrganization()->organization;
+                $stfResStat = $staffRec->getAgStaffResourceStatus()->staff_resource_status;
+                $displayStaffResources[$stfRes] = array($stfOrg, $stfResStat);
+              }
+            }
+            $lineBreak = FALSE;
+            foreach($displayStaffResources as $sRes => $sr)
+            {
+              if ($lineBreak) { echo '<br />'; }
+              else { $lineBreak = TRUE; }
+              echo $sr[0];
+            }
+        ?>
+          </td>
+          <td>
+        <?php
+            $lineBreak = FALSE;
+            foreach($displayStaffResources as $sRes =>$sr)
+            {
+              if ($lineBreak) { echo '<br />'; }
+              else { $lineBreak = TRUE; }
+              echo $sRes;
+            }
+        ?>
+          </td>
           <td>
             <?php
-            echo $staffMember->getAgStaffStatus()->getStaffStatus();
+              $lineBreak = FALSE;
+              foreach($displayStaffResources as $sRes =>$sr)
+              {
+                if ($lineBreak) { echo '<br />'; }
+                else { $lineBreak = TRUE; }
+                echo $sr[1];
+              }
             ?>
           </td>
         </tr>

@@ -23,7 +23,6 @@
  * @property Doctrine_Collection $agPersonNameType
  * @property Doctrine_Collection $agPersonCustomField
  * @property Doctrine_Collection $agStaff
- * @property Doctrine_Collection $agStaffStatus
  * @property Doctrine_Collection $agPersonLastImport
  * @property Doctrine_Collection $agImportType
  * @property Doctrine_Collection $agClient
@@ -58,7 +57,6 @@
  * @method Doctrine_Collection getAgPersonNameType()          Returns the current record's "agPersonNameType" collection
  * @method Doctrine_Collection getAgPersonCustomField()       Returns the current record's "agPersonCustomField" collection
  * @method Doctrine_Collection getAgStaff()                   Returns the current record's "agStaff" collection
- * @method Doctrine_Collection getAgStaffStatus()             Returns the current record's "agStaffStatus" collection
  * @method Doctrine_Collection getAgPersonLastImport()        Returns the current record's "agPersonLastImport" collection
  * @method Doctrine_Collection getAgImportType()              Returns the current record's "agImportType" collection
  * @method Doctrine_Collection getAgClient()                  Returns the current record's "agClient" collection
@@ -92,7 +90,6 @@
  * @method agPerson            setAgPersonNameType()          Sets the current record's "agPersonNameType" collection
  * @method agPerson            setAgPersonCustomField()       Sets the current record's "agPersonCustomField" collection
  * @method agPerson            setAgStaff()                   Sets the current record's "agStaff" collection
- * @method agPerson            setAgStaffStatus()             Sets the current record's "agStaffStatus" collection
  * @method agPerson            setAgPersonLastImport()        Sets the current record's "agPersonLastImport" collection
  * @method agPerson            setAgImportType()              Sets the current record's "agImportType" collection
  * @method agPerson            setAgClient()                  Sets the current record's "agClient" collection
@@ -220,11 +217,6 @@ abstract class BaseagPerson extends sfDoctrineRecord
         $this->hasMany('agStaff', array(
              'local' => 'id',
              'foreign' => 'person_id'));
-
-        $this->hasMany('agStaffStatus', array(
-             'refClass' => 'agStaff',
-             'local' => 'person_id',
-             'foreign' => 'staff_status_id'));
 
         $this->hasMany('agPersonLastImport', array(
              'local' => 'id',

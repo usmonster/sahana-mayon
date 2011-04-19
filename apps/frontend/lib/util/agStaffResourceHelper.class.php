@@ -48,14 +48,14 @@ class agStaffResourceHelper extends agBulkRecordHelper
     if ($strType)
     {
       $q->addSelect('srt.staff_resource_type_abbr')
-        ->addSelect('ss.staff_status')
+        ->addSelect('srs.staff_resource_status')
         ->innerJoin('sr.agStaffResourceType srt')
-        ->innerJoin('s.agStaffStatus ss') ;
+        ->innerJoin('sr.agStaffResourceStatus srs') ;
     }
     else
     {
       $q->addSelect('sr.staff_resource_type_id')
-        ->addSelect('s.staff_status_id') ;
+        ->addSelect('sr.staff_resource_status_id') ;
     }
 
     return $q ;

@@ -121,9 +121,11 @@ class agScenarioGenerator
 
           ->select('a.id')
             ->from('agStaffResource a')
+              ->leftJoin('a.agStaffResourceStatus asrs')
               ->leftJoin('a.agScenarioStaffResource asr WITH asr.scenario_id = ?', $scenario_id)
             ->whereIn('a.staff_id', $staff_id)
-              ->andWhere('asr.staff_resource_id IS NULL');
+              ->andWhere('asr.staff_resource_id IS NULL')
+              ->andWhere('asrs.is_available = ?', true);
                 
         $staff_resource_sql =  $staff_resource_dql->getSqlQuery();
         $staff_resources  = $staff_resource_dql->execute(array(), 'single_value_array');

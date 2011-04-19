@@ -47,7 +47,7 @@ $descArrow = '&#x25BC;';
             <td><a class=linkButton href="<?php echo url_for('organization/show?id=' . $ag_organization->getId()) ?>" title="View Organization <?php echo $ag_organization->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
             <td><?php echo $ag_organization->getOrganization() ?></td>
             <td><?php echo $ag_organization->getDescription(); ?></td>
-            <td><?php echo $staffCountByOrg[$ag_organization->getId()]; ?></td>
+            <td><?php echo $ag_organization->get('staffCount'); ?></td>
           </tr>
 <?php endforeach; ?>
         </tbody>

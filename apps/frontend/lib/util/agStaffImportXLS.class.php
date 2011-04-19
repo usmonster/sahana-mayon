@@ -108,7 +108,7 @@ class AgStaffImportXLS extends AgImportXLS
     }
   }
 
-    /**
+  /**
    * Validates import data for correct schema. Returns bool.
    *
    * @param $importFileHeaders

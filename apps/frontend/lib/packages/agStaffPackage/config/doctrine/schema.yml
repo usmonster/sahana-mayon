@@ -41,9 +41,6 @@ agStaff:
     person_id:
       type: integer(5)
       notnull: true
-    staff_status_id:
-      type: integer(2)
-      notnull: true
   actAs: [Luceneable, Timestampable]
   indexes:
     agStaff_unq:
@@ -52,9 +49,6 @@ agStaff:
   relations:
     agPerson:
       local: person_id
-      foreign: id
-    agStaffStatus:
-      local: staff_status_id
       foreign: id
     agStaffResourceType:
       class: agStaffResourceType
@@ -110,10 +104,20 @@ agStaffResource:
     staff_resource_type_id:
       type: integer(2)
       notnull: true
+    staff_resource_status_id:
+      type: integer(2)
+      notnull: true
+    organization_id:
+      type: integer(2)
+      notnull: true
   indexes:
     agStaffResource_unq:
       fields: [staff_id, staff_resource_type_id]
       type: unique
+    IX_agStaffResource_staffResourceStatusId:
+      fields: [staff_resource_status_id]
+    IX_agStaffResource_organizationId:
+      fields: [organization_id]
   relations:
     agStaff:
       local: staff_id
@@ -121,14 +125,24 @@ agStaffResource:
     agStaffResourceType:
       local: staff_resource_type_id
       foreign: id
-agStaffStatus:
+    agStaffResourceStatus:
+      class: agStaffResourceStatus
+      foreignAlias: agStaffResource
+      local: staff_resource_status_id
+      foreign: id
+    agOrganization:
+      class: agOrganization
+      foreignAlias: agStaffResource
+      local: organization_id
+      foreign: id
+agStaffResourceStatus:
   columns:
     id:
       primary: true
       type: integer(2)
       notnull: true
       autoincrement: true
-    staff_status:
+    staff_resource_status:
       type: string(30)
       notnull: true
     description:
@@ -141,36 +155,8 @@ agStaffStatus:
       type: boolean
       notnull: true
   indexes:
-    agStaffStatus_unq:
-      fields: [staff_status]
+    agStaffResourceStatus_unq:
+      fields: [staff_resource_status]
       type: unique
-  relations:
-    agPerson:
-      class: agPerson
-      refClass: agStaff
-      local: staff_status_id
-      foreign: person_id
-agStaffResourceOrganization:
-  columns:
-    id:
-      primary: true
-      type: integer(5)
-    staff_resource_id:
-      type: integer(5)
-      notnull: true
-    organization_id:
-      type: integer(2)
-      notnull: true
-  indexes:
-    UX_agStaffResourceOrganization:
-      fields: [staff_resource_id]
-      type: unique
-  relations:
-    agStaffResource:
-      local: staff_resource_id
-      foreign: id
-    agOrganization:
-      local: organization_id
-      foreign: id
 actAs:
   Timestampable: 

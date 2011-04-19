@@ -385,10 +385,10 @@ class scenarioActions extends agActions
       $this->poolform = new agStaffPoolForm(); //this is redeclared below to construct the form with an
     }
 
-    if ($request->isMethod(sfRequest::POST)) {
+    if ($request->isMethod(sfRequest::POST) || $request->getParameter('search_id')) {
       //$request->checkCSRFProtection();
 //PREVIEW
-      if ($request->getParameter('Preview')) {
+      if ($request->getParameter('Preview') || $request->getParameter('search_id')) {
 
         $postParam = $request->getPostParameter('staff_pool');
         $staff_generator = $postParam['staff_generator'];
@@ -412,6 +412,7 @@ class scenarioActions extends agActions
         foreach ($incomingFields as $key => $incomingField) {
           $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
         }
+        if($request->getParameter('search_id')) $lucene_query = $query_condition;
         $this->searchedModels = 'agStaff';
         parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {

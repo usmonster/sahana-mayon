@@ -204,27 +204,16 @@ class agStaffActions extends agActions
    */
   public function executeList(sfWebRequest $request)
   {
-//    $query = Doctrine::getTable('agStaff')
-//            ->createQuery('a')
-//            ->select('p.*, st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*,
-//              nametype.*')
-//            ->from(
-//                'agStaff st, st.agPerson p, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
-//              pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
-//              p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
-//              name.agPersonNameType nametype'
-//    );
-
-    $staffStatus = 'active';
-    $staffStatusOptions = agDoctrineQuery::create()
-            ->select('s.staff_status, s.staff_status')
-            ->from('agStaffStatus s')
+    $this->staffResourceStatus = 'active';
+    $staffResourceStatusOptions = agDoctrineQuery::create()
+            ->select('s.staff_resource_status, s.staff_resource_status')
+            ->from('agStaffResourceStatus s')
             ->execute(array(), 'key_value_pair');
     //the above query returns an array of keys matching their values.
     //ideally the above should exist in a global param, so the database is not queried all the time
-    $staffStatusOptions['all'] = 'all';
-    if ($request->getParameter('status') && in_array($request->getParameter('status'), $staffStatusOptions)) {
-      $staffStatus = $request->getParameter('status');
+    $staffResourceStatusOptions['all'] = 'all';
+    if ($request->getParameter('status') && in_array($request->getParameter('status'), $staffResourceStatusOptions)) {
+      $this->staffResourceStatus = $request->getParameter('status');
     }
     $this->statusFilterForm = new sfForm();
     $this->statusFilterForm->setWidgets(
@@ -232,7 +221,7 @@ class agStaffActions extends agActions
           'status' => new sfWidgetFormChoice(
               array(
                 'multiple' => false,
-                'choices' => $staffStatusOptions,
+                'choices' => $staffResourceStatusOptions,
                 'label' => 'Staff Status'
               ),
               array('onchange' => 'submit();')
@@ -240,7 +229,7 @@ class agStaffActions extends agActions
         //add_empty' => true))// ,'onClick' => 'submit()'))
         )
     );
-    $this->statusFilterForm->setDefault('status', $staffStatus);
+    $this->statusFilterForm->setDefault('status', $this->staffResourceStatus);
 
     $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusFilterForm->getWidgetSchema());
     $this->statusFilterForm->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
@@ -254,7 +243,6 @@ class agStaffActions extends agActions
                   namejoin.*,
                   name.*,
                   nametype.*,
-                  stfrsco.*,
                   o.organization agency,
                   stfrsc.staff_resource_type_id,
                   e.id,
@@ -272,10 +260,9 @@ class agStaffActions extends agActions
                   namejoin.agPersonName name,
                   name.agPersonNameType nametype,
                   s.agStaffResource stfrsc,
-                  stfrsc.agStaffResourceOrganization stfrsco,
+                  stfrsc.agStaffResourceStatus srs,
                   stfrsc.agStaffResourceType,
-                  stfrsco.agOrganization o,
-                  s.agStaffStatus ss,
+                  stfrsc.agOrganization o,
                   p.agEntity e,
                   e.agEntityEmailContact ememail1,
                   ememail1.agEmailContact ec1,
@@ -284,8 +271,8 @@ class agStaffActions extends agActions
                   ememail2.agEmailContact ec2,
                   ec2.agEmailContactType ect2'
     );
-    if ($staffStatus != 'all') {
-      $query->where('ss.staff_status=?', $staffStatus);
+    if ($this->staffResourceStatus != 'all') {
+      $query->where('srs.staff_resource_status=?', $this->staffResourceStatus);
     }
 
     $this->pager = new sfDoctrinePager('agStaff', 20);
@@ -463,6 +450,33 @@ class agStaffActions extends agActions
   public function executeNew(sfWebRequest $request)
   {
     $this->form = new PluginagStaffPersonForm();
+
+    if($request->isMethod(sfRequest::POST)) {
+      $params = $request->getPostParameters();
+
+      // Render the Forms
+      //if($params['type'] == 'resourceStatus') {
+        // This case is for loading the event-facility-resource-status form to replace the link that sumbitted
+        // the request.
+        //$facilityResourceStatus = new agEventFacilityResourceStatus();
+        //$facilityResourceStatus['event_facility_resource_id'] = ltrim($params['id'], 'res_stat_id_');
+        //$facilityResourceStatus['facility_resource_allocation_status_id'] =
+//            agDoctrineQuery::create()
+//              ->select('id')
+//              ->from('agFacilityResourceAllocationStatus')
+//              ->where('facility_resource_allocation_status = ?', $params['current'])
+//              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+        $resourceForm = new PluginagEmbeddedAgStaffResourceForm();
+        //$resourceForm->getWidget('facility_resource_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
+
+        return $this->renderPartial('setterForm', array('form'     => $resourceForm,
+                                                        'set'      => $params['type'],
+                                                        'id'       => $params['id'],
+                                                        'url'      => 'event/eventfacilityresource?eventFacilityResourceId=' .  ltrim($params['id'], 'res_stat_id_')
+                                                  )
+                                   );
+      }
   }
 
   /**
@@ -636,8 +650,8 @@ class agStaffActions extends agActions
       // doSave() has also been overridden in agPersonForm.class.php so that the
       // saveStaffStatusList function is not called. Calling that refreshes the relation
       // and will cause failure on an update of an existing staff.
-      $form->getObject()->clearRelated('agStaffStatus');
-      //$form->getObject()->clearRelated('agStaff');
+      //$form->getObject()->clearRelated('agStaffStatus');
+      $form->getObject()->clearRelated('agStaff');
 
       $ag_staff = $form->save();
       $refAgStaff = $ag_staff->getAgStaff();

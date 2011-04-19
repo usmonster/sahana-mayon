@@ -199,6 +199,7 @@ class agActions extends sfActions
       $resultArray = '';
     }
     $this->pager->setResultArray($resultArray);
+    $this->pager->setResultArray($staffArray);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
     /** @todo in template, display the pager links.

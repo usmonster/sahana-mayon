@@ -21,7 +21,6 @@ abstract class PluginagEventStaff extends BaseagEventStaff
     //or parts of it, to be called when updating lucene index for eventstaff AND regular staff
     $doc = new Zend_Search_Lucene_Document();
     $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
-    //$doc->addField(Zend_Search_Lucene_Field::UnStored('staff_status', $this->getAgStaffStatus()->staff_status, 'utf-8'));
     $query = agDoctrineQuery::create()
             ->select('e.id, sr.id, s.id')
              ->from('agEventStaff e')

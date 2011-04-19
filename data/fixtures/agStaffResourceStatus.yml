@@ -1,0 +1,16 @@
+# Pre-populate Staff Resource Status table
+
+agStaffResourceStatus:
+  active:
+    staff_resource_status: active
+    is_available: 1
+  inactive:
+    staff_resource_status: inactive
+    is_available: 0
+  retired:
+    staff_resource_status: retired
+    is_available: 0
+  other:
+    staff_resource_status: other
+    is_available: 0
+
