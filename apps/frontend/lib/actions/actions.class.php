@@ -66,20 +66,18 @@ class agActions extends sfActions
               ->select(
                   'p.id,
                     s.id,
-                    ss.staff_status,
-                    stfrsco.id,
                     stfrsc.staff_resource_type_id,
                     srt.staff_resource_type,
+                    srs.staff_resource_status,
                     o.organization'
               )
               ->from(
                   'agStaff s,
                     s.agPerson p,
                     s.agStaffResource stfrsc,
-                    s.agStaffStatus ss,
-                    stfrsc.agStaffResourceOrganization stfrsco,
                     stfrsc.agStaffResourceType srt,
-                    stfrsco.agOrganization o'
+                    stfrsc.agStaffResourceStatus srs,
+                    stfrsc.agOrganization o'
               )
               ->whereIn('s.id', $staff_ids);
 
@@ -119,7 +117,7 @@ class agActions extends sfActions
           'classification' => $value['srt_staff_resource_type'],
           'phones' => $person_phones[$value['p_id']], // only for testing, prefer the above
           'emails' => $person_emails[$value['p_id']],
-          'staff_status' => $value['ss_staff_status']
+          'staff_resource_status' => $value['srs_staff_resource_status']
             //'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
             /** @todo benchmark scale */
         );
@@ -182,7 +180,7 @@ class agActions extends sfActions
         $person_phones[$person_id] = $phone_vals[0][0][0];
       }
       foreach ($ag_staff as $staff => $value) {
-        $staffArray[] = array(
+        $resultArray[] = array(
           'id' => $value['s_id'],
           'fn' => $person_names[$value['p_id']]['given'],
           'ln' => $person_names[$value['p_id']]['family'],
@@ -199,7 +197,7 @@ class agActions extends sfActions
       $resultArray = '';
     }
     $this->pager->setResultArray($resultArray);
-    $this->pager->setResultArray($staffArray);
+   // $this->pager->setResultArray($staffArray);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
     /** @todo in template, display the pager links.

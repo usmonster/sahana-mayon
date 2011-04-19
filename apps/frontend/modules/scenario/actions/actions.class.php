@@ -394,6 +394,8 @@ class scenarioActions extends agActions
         $staff_generator = $postParam['staff_generator'];
         $lucene_search = $postParam['lucene_search'];
         $lucene_query = $lucene_search['query_condition'];
+#        $lucene_query = "\"Specialist ASPCA\"";
+        $lucene_query = 'staff_pool:GeneralistOther';
         $values = array('sg_values' =>
           array('search_weight' => $staff_generator['search_weight']),
           'ls_values' =>

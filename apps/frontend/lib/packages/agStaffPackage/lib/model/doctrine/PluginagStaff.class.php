@@ -42,11 +42,11 @@ abstract class PluginagStaff extends BaseagStaff
     $available_status = 'FALSE';
     foreach ($staffResources as $stf)
     {
-      $staff_resource .= ' ' . $stf['srt_staff_resource_type'];
+      $staff_resource .= ' "' . $stf['srt_staff_resource_type'] . '"';
       $staff_resource_status .= ' ' . $stf['srs_staff_resource_status'];
       $staff_organization .= ' ' . $stf['o_organization'];
       $staff_available_bool = ($stf['srs_is_available'] == 1) ? 'TRUE' : 'FALSE';
-      $staff_combo_array[] = array($staff_available_bool, $staff_resource_status, $staff_resource, $staff_organization);
+      $staff_combo_array[] = array($staff_resource_status, $stf['srt_staff_resource_type'], $staff_organization);
       if ($staff_available_bool == 'TRUE')
       {
         $available_status = 'TRUE';
@@ -68,9 +68,15 @@ abstract class PluginagStaff extends BaseagStaff
     {
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_avail', 'TRUE', 'utf-8'));
     }
+    $i = 0;
     foreach ($staff_combo_array AS $stfCmb)
     {
-      $staff_pool .= ' ' . $stfCmb[0] . '-' . $stfCmb[1] . '-' . $stfCmb[2] . '-' . $stfCmb[3];
+      $staff_pool .= ' TRUE' . $stfCmb[0] . $stfCmb[1] . $stfCmb[2];
+      $stfRscType = preg_replace('/ /', '', $stfCmb[1]);
+      $stfRscOrg = preg_replace('/ /', '', $stfCmb[2]);
+      $staff_pool .= ' ' . $stfRscType . $stfRscOrg;
+//      $staff_pool = '"' . $stfCmb[1] . ' ' . $stfCmb[2] . '"';
+//      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_pool' . $i++, $staff_pool, 'utf-8'));
     }
     if (isset($staff_pool))
     {
