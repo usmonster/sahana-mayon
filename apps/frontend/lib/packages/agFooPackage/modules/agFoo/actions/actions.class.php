@@ -135,6 +135,15 @@ $fakeEntityAddr = array('1' => array(array(2, array(array('1'=>'peachpitters', '
 $addrContact = array( '1'=>array(array(3,4), array(2,1)),
     '10'=>array(array(3,10)),
     '87'=>array(array(1,9))) ;
+$fakeGeo = array( 1 => array(array('25.32323231', '31.2323232')),
+//  2 => array(array('25.32323232', '31.2323232'), array('26.26262626', '26.26262626')),
+  3 => array(array('25.32323231', '-31.2323232')),
+  4 => array(array('12.12121211','54.54545454')),
+//  5 => array(array('monkey','bananaraffle')),
+  6 => array(array('40.75929100', '-73.98668400')),
+  8 => array(array('40.77342100', '-73.94589400')),
+  7 => array(array('25.32323231', '31.2323232')),
+  ) ;
 
 $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 => Array ( 'Betty', 'Amusan' ), 3 => Array ( 'Ammonds' ), 2 => Array ( 'Amy' ) ),
     9 => Array (),
@@ -145,7 +154,7 @@ $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 =>
 //$obj = new agEntityEmailHelper ;
 //$obj->setRecordIds($array) ;
 
-$obj = new agPersonNameHelper() ;
+$obj = new agGeoHelper() ;
 //$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
@@ -153,7 +162,7 @@ $obj = new agPersonNameHelper() ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
-$results = $obj->setPersonNames($newNames, TRUE, TRUE) ;
+//$results = $obj->setPersonNames($newNames, TRUE, TRUE) ;
 //$results = $obj->getPrimaryNameAsString() ;
 //$results = $obj->getNativeAddressAsString($array) ;
 //$results = $obj->getAddressStandardId() ;
@@ -166,8 +175,10 @@ $results = $obj->setPersonNames($newNames, TRUE, TRUE) ;
 //$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, FALSE, TRUE) ;
 //$results = $obj->exceptionTest() ;
 //$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
-
 //$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
+$obj->enforceGeoType = TRUE ;
+$results = $obj->setGeo($fakeGeo, 1, 1) ;
+
 
 print_r($results) ;
 // <-------- CUT HERE -------->

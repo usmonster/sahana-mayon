@@ -5,6 +5,9 @@ agGeo:
       type: integer(5)
       notnull: true
       autoincrement: true
+    geo_coordinate_hash:
+      type: string(128)
+      notnull: true
     geo_type_id:
       type: integer(2)
       notnull: true
