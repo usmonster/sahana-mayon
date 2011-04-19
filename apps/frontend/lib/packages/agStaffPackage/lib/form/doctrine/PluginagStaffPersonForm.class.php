@@ -102,9 +102,9 @@ class PluginagStaffPersonForm extends agPersonForm
       if (isset($this->staff_id)) {
         $staffResourceForm->setDefault('staff_id', $this->staff_id);
       }
-      $staffContainerForm->embedForm('0', $staffResourceForm);
+      $staffContainerContainer->embedForm('0', $staffResourceForm);
       //$staffResourceForm->getWidgetSchema()->setLabel('', $value) ContainerForm->getWidgetSchema()->setLabel(
-      $staffContainerForm->getWidgetSchema()->setLabel('0', false);
+      $staffContainerContainer->getWidgetSchema()->setLabel('0', false);
       $staffContainerForm->embedForm('type', $staffContainerContainer);
 
       $staffContainerForm->getWidgetSchema()->setLabel('type', false);
@@ -179,15 +179,16 @@ class PluginagStaffPersonForm extends agPersonForm
    * */
   public function saveStaffResourceTypeForm($form, $values)
   {
-
-
     //this needs to handle multiple forms 
     $form->updateObject($values);
     if ($form->getObject()->staff_id == null) {
       $form->getObject()->staff_id = $this->staff_id;
+      //if($form->getObject()->created_at !=null ..
+      $form->getObject()->created_at = $mysqldate = date('Y-m-d H:i:s', time());
+      $form->getObject()->updated_at = $mysqldate = date('Y-m-d H:i:s', time());
     }
     $form->getObject()->save();
-    $this->staff_resource_id = $form->getObject()->id;
+    //$this->staff_resource_id = $form->getObject()->id;
   }
 
   /**
