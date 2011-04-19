@@ -182,6 +182,8 @@ agAddress:
   indexes:
     agSiteAddress_addressStandardId:
       fields: [address_standard_id]
+    IX_agAddress_hash:
+      fields: [address_hash]
   relations:
     agAddressStandard:
       local: address_standard_id

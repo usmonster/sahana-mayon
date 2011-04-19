@@ -50,14 +50,14 @@ abstract class BaseagGeoType extends sfDoctrineRecord
              'length' => 30,
              ));
         $this->hasColumn('minimum_coordinate_points', 'integer', 1, array(
-             'type' => 'integer',
              'default' => 1,
+             'type' => 'integer',
              'notnull' => true,
              'length' => 1,
              ));
         $this->hasColumn('maximum_coordinate_points', 'integer', 1, array(
-             'type' => 'integer',
              'default' => -1,
+             'type' => 'integer',
              'notnull' => true,
              'length' => 1,
              ));
@@ -78,6 +78,18 @@ abstract class BaseagGeoType extends sfDoctrineRecord
               0 => 'geo_type',
              ),
              'type' => 'unique',
+             ));
+        $this->index('IX_agGeoType_minCoorPt', array(
+             'fields' => 
+             array(
+              0 => 'minimum_coordinate_points',
+             ),
+             ));
+        $this->index('IX_agGeoType_maxCoorPt', array(
+             'fields' => 
+             array(
+              0 => 'maximum_coordinate_points',
+             ),
              ));
     }
 
