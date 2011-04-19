@@ -92,10 +92,12 @@ class PluginagStaffPersonForm extends agPersonForm
           $staffResourceForm->setDefault('staff_id', $this->staff_id);
         }
         $staffContainerContainer->embedForm($i, $staffResourceForm);
+        $staffContainerContainer->getWidgetSchema()->setLabel($i, false);
         $i++;
         $restrictedOptions[] = $staffResourceObject->getStaffResourceTypeId();
       }
       $staffContainerForm->embedForm('type', $staffContainerContainer);
+      $staffContainerForm->getWidgetSchema()->setLabel('type', false);
     } else {
       $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm();
       //unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
