@@ -77,6 +77,14 @@ abstract class BaseagGeo extends sfDoctrineRecord
              'notnull' => true,
              'length' => 4,
              ));
+
+
+        $this->index('IX_agGeo_hash', array(
+             'fields' => 
+             array(
+              0 => 'geo_coordinate_hash',
+             ),
+             ));
     }
 
     public function setUp()
