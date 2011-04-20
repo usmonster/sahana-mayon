@@ -71,12 +71,15 @@ abstract class PluginagStaff extends BaseagStaff
     $i = 0;
     foreach ($staff_combo_array AS $stfCmb)
     {
-      $staff_pool .= ' TRUE' . $stfCmb[0] . $stfCmb[1] . $stfCmb[2];
-      $stfRscType = preg_replace('/ /', '', $stfCmb[1]);
-      $stfRscOrg = preg_replace('/ /', '', $stfCmb[2]);
-      $staff_pool .= ' ' . $stfRscType . $stfRscOrg;
-//      $staff_pool = '"' . $stfCmb[1] . ' ' . $stfCmb[2] . '"';
-//      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_pool' . $i++, $staff_pool, 'utf-8'));
+#      $staff_pool .= ' TRUE' . $stfCmb[0] . $stfCmb[1] . $stfCmb[2];
+      $stfRscType = preg_replace('/[\W|_]/', '', $stfCmb[1]);
+      $stfRscOrg = preg_replace('/[\W|_]/', '', $stfCmb[2]);
+      $staff_pool .= ' ' . $stfCmb[0] . $stfRscType . $stfRscOrg;
+      /**
+       * @TODO Build index for each combination:
+       * 1) staff status and resource
+       * 2) staff status and organization
+       */
     }
     if (isset($staff_pool))
     {
