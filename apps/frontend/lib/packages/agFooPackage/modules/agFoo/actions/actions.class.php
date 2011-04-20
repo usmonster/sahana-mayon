@@ -63,12 +63,12 @@ class agFooActions extends agActions
 //    print_r($output);
 
 
-    $emailHelper = new agEntityEmailHelper();
-    $emailByType = $emailHelper->getEntityEmailByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
-//    $emailAll = $emailHelper->getEntityEmail(array(1, 2, 3, 4, 5), TRUE, TRUE);
-////    unset($emailHelper);
-    echo '<br /><br />Email By Type: <br />';
-    print_r($emailByType);
+//    $emailHelper = new agEntityEmailHelper();
+//    $emailByType = $emailHelper->getEntityEmailByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
+////    $emailAll = $emailHelper->getEntityEmail(array(1, 2, 3, 4, 5), TRUE, TRUE);
+//////    unset($emailHelper);
+//    echo '<br /><br />Email By Type: <br />';
+//    print_r($emailByType);
 //    echo '<br /><br />Email All: <br />';
 //    print_r($emailAll);
 //    echo '<br /><br />';
@@ -174,6 +174,7 @@ class agFooActions extends agActions
 //    echo"Staff Resource Helper:<br />";
 //    print_r($staffResources);
 //    echo"<br /><br />";
+    $test = agStaffImportNormalization::testCollInsert();
   }
 
   public function executeList(sfWebRequest $request)

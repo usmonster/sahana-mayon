@@ -28,7 +28,7 @@
  * @todo Add debug levels feature
  * @todo Improve Doctrine MySQL PDO exception reporting
  */
-class AgImportXLS
+class AgImportXLS extends agImportHelper
 {
   // Public variables declared here
   public $importSpec;
