@@ -12,7 +12,7 @@ require_once(dirname(__FILE__).'/../../bootstrap/unit.php');
 
 $t = new lime_test(11);
 
-$v = new sfValidatorEmail(array('trim' => true));
+$v = new sfValidatorEmail();
 
 // ->clean()
 $t->diag('->clean()');
