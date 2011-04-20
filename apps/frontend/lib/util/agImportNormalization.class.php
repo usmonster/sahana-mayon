@@ -62,6 +62,7 @@ abstract class agImportNormalization extends agImportHelper
   {
     foreach ($this->importComponents as $index => $componentData)
     {
+      // Calling method to set data.
       $componentData['method']($componentData['throwOnError']);
     }
   }
