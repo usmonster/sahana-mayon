@@ -36,7 +36,7 @@ class agEmbeddedAgPersonLanguageCompetencyForm extends agPersonLanguageCompetenc
       $lists = array('agLanguageCompetency');
 
       foreach ($lists as $list) {
-        $this::$staticLists[$list] = Doctrine::getTable($list)->createQuery($list)->execute();
+        $this::$staticLists[$list] = Doctrine::getTable($list)->createQuery($list);
       }
     }
 

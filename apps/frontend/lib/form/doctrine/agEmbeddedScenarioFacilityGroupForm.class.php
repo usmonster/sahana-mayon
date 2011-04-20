@@ -82,7 +82,13 @@ class agEmbeddedScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupFor
           )
         )
     );
-    $this->widgetSchema['ag_facility_resource_list']->addOption('query', agDoctrineQuery::create()->select('a.facility_id, af.*, afrt.*')->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')->whereNotIn('a.id', array_keys($currentoptions)));
+    $this->widgetSchema['ag_facility_resource_list']->addOption(
+        'query',
+        agDoctrineQuery::create()
+          ->select('a.facility_id, af.*, afrt.*')
+          ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+          ->whereNotIn('a.id', array_keys($currentoptions))
+        );
 
     $this->setValidators(
         array(

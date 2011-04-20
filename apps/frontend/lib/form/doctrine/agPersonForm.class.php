@@ -369,8 +369,7 @@ class agPersonForm extends BaseagPersonForm
             ->createQuery('addressStates')
             ->select('a.value')
             ->from('agAddressValue a')
-            ->where('a.address_element_id = 4')
-            ->execute();
+            ->where('a.address_element_id = 4');
 
     $this->entityAddress = Doctrine::getTable('agEntity')
             ->createQuery('entityAddresses')

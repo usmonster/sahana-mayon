@@ -21,7 +21,7 @@ class agEmbeddedAgPersonMjAgLanguageForm extends agPersonMjAgLanguageForm
   public function setup()
   {
     if (!isset($this::$agLanguageList)) {
-      $this::$agLanguageList = Doctrine::getTable('agLanguage')->createQuery('a')->execute();
+      $this::$agLanguageList = Doctrine::getTable('agLanguage')->createQuery('a');
     }
 
     $this->setWidgets(

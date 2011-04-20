@@ -228,8 +228,7 @@ class agFacilityForm extends BaseagFacilityForm
     $stateList = agDoctrineQuery::create()
             ->select('a.value')
             ->from('agAddressValue a')
-            ->where('a.address_element_id = 4')
-            ->execute();  //select * from ag_address_element .. and get the element_id by the text ('state')
+            ->where('a.address_element_id = 4');  //select * from ag_address_element .. and get the element_id by the text ('state')
 
     $this->entityAddress = Doctrine::getTable('agEntity')
             ->createQuery('entityAddresses')
