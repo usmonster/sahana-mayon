@@ -1297,7 +1297,7 @@ a.signin.menu-open span {
   
 }
 .expandableTable th {
-  background: #dadada;
+  background: #A1E2FF;
 }
 .expandableTable td {
   background: #e5f7ff;
@@ -1313,6 +1313,6 @@ a.signin.menu-open span {
   width: 100px;
 }
 
-.set125 {
+.set110 {
   width: 110px;
 }

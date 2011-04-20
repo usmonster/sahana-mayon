@@ -16,7 +16,7 @@
 class scenarioActions extends agActions
 {
 
-  protected $searchedModels = array('agScenarioFacilityGroup', 'agScenario', 'agStaff');
+  protected $_searchedModels = array('agScenarioFacilityGroup', 'agScenario', 'agStaff');
   public static $scenario_id;
   public static $scenarioName;
 
@@ -414,8 +414,10 @@ class scenarioActions extends agActions
         foreach ($incomingFields as $key => $incomingField) {
           $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
         }
+
         if($request->getParameter('search_id')) $lucene_query = $query_condition;
         $this->searchedModels = 'agStaff';
+
         parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {
 
@@ -503,8 +505,28 @@ class scenarioActions extends agActions
             ->select('a.facility_id, af.*, afrt.*')
             ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
             ->execute();
+// Testing//////////////////////////////////////////////////////////////////////////////////////////
+    // Use this to do searches.
+    $this->facilityResourceTypes = agDoctrineQuery::create()
+      ->select('frt.id, frt.facility_resource_type, facility_resource_type_abbr')
+      ->from('agFacilityResourceType frt')
+        ->innerJoin('frt.agDefaultScenarioFacilityResourceType dsfrt')
+        ->where('dsfrt.scenario_id =?', $this->scenario_id)
+      ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
 
-
+    $availableFacilityResources = agDoctrineQuery::create()
+        ->select('fr.id')
+        ->from('agFacilityResource fr')
+          ->Where('NOT EXISTS (
+              SELECT s1.id
+                FROM agFacilityResource s1
+                  INNER JOIN s1.agScenarioFacilityResource s2
+                  INNER JOIN s2.agScenarioFacilityGroup s3
+              WHERE s3.scenario_id = ?
+                AND s1.id = fr.id)',
+            $this->scenario_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+// End testing//////////////////////////////////////////////////////////////////////////////////////
     if ($request->getParameter('groupid')) {
 //EDIT
       $this->group_id = $request->getParameter('groupid');

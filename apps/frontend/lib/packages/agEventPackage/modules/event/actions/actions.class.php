@@ -764,7 +764,8 @@ class eventActions extends agActions
         $resourceStatusForm = new agTinyEventFacilityResourceStatusForm($facilityResourceStatus);
         $resourceStatusForm->getWidget('facility_resource_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
 
-        return $this->renderPartial('setterForm', array('form'     => $resourceStatusForm,
+        return $this->renderPartial('global/includeForm', array(
+                                                        'form'     => $resourceStatusForm,
                                                         'set'      => $params['type'],
                                                         'id'       => $params['id'],
                                                         'url'      => 'event/eventfacilityresource?eventFacilityResourceId=' .  ltrim($params['id'], 'res_stat_id_')
@@ -784,9 +785,9 @@ class eventActions extends agActions
           $eventFacilityResourceActivationTime['event_facility_resource_id'] = ltrim($params['id'], 'res_act_id_');
         }
         $eventFacilityResourceActivationTimeForm = new agTinyEventFacilityResourceActivationTimeForm($eventFacilityResourceActivationTime);
-        $eventFacilityResourceActivationTimeForm->getWidget('activation_time')->setAttribute('class', 'inputGray submitTextToForm set125');
+        $eventFacilityResourceActivationTimeForm->getWidget('activation_time')->setAttribute('class', 'inputGray submitTextToForm set110');
 
-        return $this->renderPartial('setterForm', array('form'     => $eventFacilityResourceActivationTimeForm,
+        return $this->renderPartial('global/includeForm', array('form'     => $eventFacilityResourceActivationTimeForm,
                                                         'set'      => $params['type'],
                                                         'id'       => $params['id'],
                                                         'url'      => 'event/eventfacilityresource?eventFacilityResourceId=' . ltrim($params['id'], 'res_act_id_')
@@ -858,7 +859,7 @@ class eventActions extends agActions
       $groupAllocationStatus->time_stamp = date('Y-m-d H:i:s', time());
       $groupAllocationStatusForm = new agTinyEventFacilityGroupStatusForm($groupAllocationStatus);
       $groupAllocationStatusForm->getWidget('facility_group_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
-      return $this->renderPartial('setterForm', array('form' => $groupAllocationStatusForm,
+      return $this->renderPartial('global/includeForm', array('form' => $groupAllocationStatusForm,
                                                       'set'  => $params['type'],
                                                       'id'   => $params['id'],
                                                       'url'  => 'event/eventfacilitygroup'

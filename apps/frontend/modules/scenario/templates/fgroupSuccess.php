@@ -1,5 +1,16 @@
-<h2>Scenario Facility Groups</h2><br>
 <?php
+use_javascript('agMain.js');
+include_partial('global/checkBoxTable', array(
+  'maxColumns' => 5,
+  'contents'   => $facilityResourceTypes,
+  'id'         => 'id',
+  'idPrepend'  => 'facility_resource_type_',
+  'html'       => 'facility_resource_type_abbr',
+  'title'      => 'facility_resource_type'
+));
+?>
+<h2>Scenario Facility Groups</h2><br>
+<?php 
   if(!isset($group_id)) $group_id = 'none';
   $existingFgroups = false;
 if (count($scenarioFacilityGroups) > 0) {

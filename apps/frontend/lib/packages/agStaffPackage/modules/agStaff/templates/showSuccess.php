@@ -1,4 +1,5 @@
 <?php
+use_helper('agTemplate');
 ($sf_request->getGetParameter('filter')) ?
         $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
 ($sf_request->getGetParameter('sort')) ?
@@ -262,7 +263,7 @@
   <tbody>
     <?php
       if(isset($addressArray)) {
-        $addressTable = agTemplateHelper::buildAddressTable($addressArray->getRawValue());
+        $addressTable = buildAddressTable($addressArray->getRawValue());
         echo $addressTable;
       } else {
         echo '<tr><td class="subHead">This staff person does not have any associated address information</td></tr>';
