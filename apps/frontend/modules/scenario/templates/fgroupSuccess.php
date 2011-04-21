@@ -1,14 +1,9 @@
 <?php
-use_javascript('agMain.js');
-use_helper('agTemplate');
-include_partial('global/checkBoxTable', array(
-  'maxColumns' => 5,
-  'contents'   => $facilityResourceTypes,
-  'id'         => 'id',
-  'idPrepend'  => 'facility_resource_type_',
-  'html'       => 'facility_resource_type_abbr',
-  'title'      => 'facility_resource_type'
-));
+  use_javascript('agMain.js');
+  use_helper('agTemplate');
+
+  $contents = $sf_data->getRaw('facilityResourceTypes');
+  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type_abbr', 'checkBoxTable', 5, 'facility_resource_type_', 'facility_resource_type', true);
 ?>
 <h2>Scenario Facility Groups</h2><br>
 <?php 
@@ -46,8 +41,3 @@ move to the next step.  Click "Save and Create Another" to save this grouping an
 grouping.</p>
 <b>Note:</b> facilities not grouped will not be available for activation when the Scenario is
 deployed as an event.
-
-<?php
-  $contents = $sf_data->getRaw('facilityResourceTypes');
-  $a = buildCheckBoxTable($contents, 'id', 'facility_resource_type_abbr', null, 5, 'facility_resource_type_', 'facility_resource_type', true);
-?>

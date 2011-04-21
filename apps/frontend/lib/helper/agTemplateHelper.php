@@ -71,17 +71,71 @@ function buildAddressTable($addressArray)
 *
 * @return string
 * */
-function buildCheckBoxTable(array $contents, $id, $html, $class = NULL, $maxColumns = 5, $idPrepend = NULL, $title = NULL, $toggle = TRUE)
+function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColumns = 5, $idPrepend = null, $title = null, $toggle = true)
 {
-  $rows = count($contents);
-
-  // Construct some rows.
-  foreach($contents as $content) {
-    $row[] = '<td>\n<input type="checkbox" name="'
-               . ($idPrepend != NULL ? $idPrepend . $content[$id] : $content[$id])
-               . '" id="'  . ($idPrepend != NULL ? $idPrepend . $content[$id] : $contend[$id])
-               . '"'. ($toggle == TRUE ? ' class="checkToggle">\n' : '>\n')
-               . '<label'. ($title != NULL ? ' title="'. $content[$title] . '" ' : ' ') . '>' . $content[$html] . '</label>\n</td>';
+  // Check if this table will be making use of the checkToggle js in agMain. If it is, set up the
+  // classes and elements that will be used to implement it. Create the header, if necessary, and
+  // set it's colspan to $maxColumns.
+  if($toggle == true) {
+    $input = '<input type="checkbox" name="" id="" class="checkToggle">';
+    $header = '<tr>' . PHP_EOL .
+              '<th colspan="' . $maxColumns . '">' . PHP_EOL .
+              '<input type="checkbox" name="checkall" id="checkall" value="checkall">' . PHP_EOL .
+              '<label for="checkAll">Select All</label>' . PHP_EOL .
+              '</th>' . PHP_EOL . '</tr>';
+  } else {
+    $input = '<input type="checkbox" name="" id="">';
+    $header = '';
   }
+  // Define the label opening tag.
+  $label = '<label for="">';
+
+  // Go through $contents and populate the inputs and labels with string replacement. Create arrays
+  // of inputs and labels.
+  foreach($contents as $content) {
+    $searchInput = array('name=""', 'id=""');
+    $replaceInput = array('name="' . $idPrepend . $content[$id] . '"', 'id="' . $idPrepend . $content[$id] . '"');
+    if($title != null) {
+      $searchLabel = array('for=""', '>');
+      $replaceLabel = array('for="' . $idPrepend . $content[$id] . '"', ' title="' . $content[$title] . '">');
+    } else {
+      $searchLabel = 'for=""';
+      $replaceLabel = 'for="' . $idPrepend . $content[$id] . '"';
+    }
+    $inputs[] = str_replace($searchInput, $replaceInput, $input);
+    $labels[] = str_replace($searchLabel, $replaceLabel, $label) . $content[$html] . '</label>' . PHP_EOL;
+  }
+  // Use chunk to make the $inputs and $labels arrays into multidimensional arrays, using $maxColumns
+  // to determine the number of <td> elements that will be in each row.
+  $inputs = array_chunk($inputs, $maxColumns);
+  $labels = array_chunk($labels, $maxColumns);
+
+  // Cycle through $inputs and $labels to build <tr>s and <td>s.
+  foreach($inputs as $k1 => $inputRow) {
+    $rows[$k1] = '<tr>' . PHP_EOL;
+    foreach($inputRow as $k2 => $input) {
+      $rows[$k1] .= '<td>'  . PHP_EOL . $input  . PHP_EOL . $labels[$k1][$k2]  . PHP_EOL . '</td>' . PHP_EOL;
+    }
+    // Check if the last <tr> of the table has fewer <td>s than the others. If it does, add empty
+    // <td>s to give it the same number.
+    if(count($inputRow) < $maxColumns) {
+      $empty = $maxColumns - count($inputRow);
+      for($i = 1; $i <= $empty; $i++) {
+        $rows[$k1] .= '<td></td>' . PHP_EOL;
+      }
+    }
+    $rows[$k1] .= '</tr>' . PHP_EOL;
+  }
+
+  // Create the actual table.
+  // If $class was passed in, add a class to the table. Then attach the header (it might be empty).
+  $checkBoxTable = ($class == null ? '<table>' . PHP_EOL : '<table class="' . $class . '">' . PHP_EOL ) . $header;
+
+  // Add the rows to the table.
+  foreach($rows as $row) {
+    $checkBoxTable .= $row;
+  }
+  // close the table and return.
+  $checkBoxTable .= '</table>' . PHP_EOL;
   return $checkBoxTable;
 }

@@ -1315,6 +1315,24 @@ a.signin.menu-open span {
 
 .set110 {
   width: 110px;
+
+}
+
+.checkBoxTable {
+  border: solid 1px #dadada;
+}
+.checkBoxTable th {
+  text-align: left;
+  background: #a1e2ff;
+}
+
+.checkBoxTable th label {
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.checkBoxTable td {
+  text-align: left;
 }
 
 .tooltipTrigger {
@@ -1374,4 +1392,3 @@ a.signin.menu-open span {
    color:blue;
    background-color:greenyellow;
   }
-
