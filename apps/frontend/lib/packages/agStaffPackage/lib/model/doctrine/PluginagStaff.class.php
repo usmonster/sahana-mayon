@@ -259,8 +259,7 @@ abstract class PluginagStaff extends BaseagStaff
         case 2:
           $query = agDoctrineQuery::create()
                   ->select('sr.organization_id as orgId, sr.staff_resource_type_id as stfRsrcTypId, count(distinct sr.staff_id) as count')
-                  ->from('agStaff as s')
-                  ->innerJoin('s.agStaffResource as sr');
+                  ->from('agStaffResource as sr');
 //                  ->innerJoin('sr.agStaffResourceOrganization as sro')
 //                  ->where('1=1');
 
