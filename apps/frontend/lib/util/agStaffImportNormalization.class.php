@@ -50,14 +50,14 @@ class agStaffImportNormalization extends agImportNormalization
 
   public function setEntity($throwOnError)
   {
-    // loop our import data and
+    // loop our import data and pick up any existing entity Ids
     foreach ($this->importData as $rowId => $rowData)
     {
       $rawData = $rowData['_rawData'];
 
       if(! is_null($rawData['entity_id']))
       {
-        $rawEntities[$rawData['entity_id']] =  $rowId ;
+        $rawEntities[] = $rawData['entity_id'] ;
       }
     }
 
@@ -69,25 +69,43 @@ class agStaffImportNormalization extends agImportNormalization
       ->from('agEntity e INDEX BY e.id')
         ->innerJoin('e.agPerson p')
         ->leftJoin('p.agStaff s')
-      ->whereIn('e.id', array_keys($rawEntities)) ;
+      ->whereIn('e.id', $rawEntities) ;
     $coll = $q->execute() ;
 
-    //loop1 foreach $coll
+    // we no longer need this
+    unset($rawEntities) ;
+
+    //loop foreach $coll member
     foreach ($coll as $entityId => $entityData)
     {
-      // @todo test to see if skipping the explicit exists and going to unset() saves perf
-      if (array_key_exists($entityId, $rawEntities))
-      {
-        unset($rawEntities[$entityId]) ;
-      }
-
       // if staff id doesn't exist yet, make it so
       if (empty($entityData->agPerson[0]->agStaff[0]))
       {
-        // insert
+        $newStaff = new agStaff() ;
+        $newStaff['person_id'] = $entityData->agPerson[0]['id'] ;
+        $entityData->agPerson[0]->agStaff->add($newStaff) ;
       }
     }
 
+    // add new entities / persons / staff
+    foreach ($this->importdata['_rawData'] as $rowId => $rowData)
+    {
+      // thi should satisfy both NULL entity_ids and ones that didn't make our initial filter
+      if (! array_key_exists($rowData['entity_id'], $coll))
+      {
+        $newEntity = new agEntity() ;
+        $coll->add($newEntity) ;
+        // @todo Shirley, I'm not sure the best way to add this in such a way that we can 'getId'
+        // needs a little figuring out. getId() might work, might not. Also look into fromArray()
+        // (synchto array is BS, but fromArray isn't)
+        $entityId = '' ;
+      }
+    }
+
+    // commit / save our collection
+
+    // and finally, loop our $coll and add to our $keyData() array in the $importData bit
+    
   }
 
   public static function testCollInsert()
