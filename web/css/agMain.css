@@ -169,7 +169,7 @@ h5 {
   color: #dadada;
 }
 
-.buttonSort, .buttonSortSelected, .expander {
+.buttonSort, .buttonSortSelected, .expander, .expandAll, .collapseAll {
   font-size: 1em;
   margin: 0;
   padding: 0;
@@ -182,11 +182,11 @@ h5 {
   display: inline;
 }
 
-.buttonSort, .expander {
+.buttonSort, .expander, .expandAll, .collapseAll {
   color: #848484;
 }
 
-.navButton:hover, .buttonText:hover, .buttonWhite:hover, .buttonSort:hover, .buttonSortSelected, .expander:hover {
+.navButton:hover, .buttonText:hover, .buttonWhite:hover, .buttonSort:hover, .buttonSortSelected, .expander:hover, .expandAll:hover, .collapseAll:hover {
   color: #ff8f00;
   text-shadow: 0px 0px 5px #ff8f00;
 }

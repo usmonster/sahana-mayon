@@ -580,18 +580,23 @@ class scenarioActions extends agActions
             ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
             ->execute();
 // Testing//////////////////////////////////////////////////////////////////////////////////////////
-    // Use this to do searches.
+    // Get the facility resource types available to this scenario.
     $this->facilityResourceTypes = agDoctrineQuery::create()
             ->select('frt.id, frt.facility_resource_type, facility_resource_type_abbr')
             ->from('agFacilityResourceType frt')
             ->innerJoin('frt.agDefaultScenarioFacilityResourceType dsfrt')
             ->where('dsfrt.scenario_id =?', $this->scenario_id)
             ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
-
-    $availableFacilityResources = agDoctrineQuery::create()
+    // Get all the facility resources available to this scenario (those that aren't already in use
+    // in this scenario).
+    $this->availableFacilityResources = agDoctrineQuery::create()
             ->select('fr.id')
+              ->addSelect('f.facility_name')
+              ->addSelect('frt.facility_resource_type')
             ->from('agFacilityResource fr')
-            ->Where('NOT EXISTS (
+              ->innerJoin('fr.agFacility f')
+              ->innerJoin('fr.agFacilityResourceType frt')
+            ->where('NOT EXISTS (
               SELECT s1.id
                 FROM agFacilityResource s1
                   INNER JOIN s1.agScenarioFacilityResource s2
@@ -600,6 +605,7 @@ class scenarioActions extends agActions
                 AND s1.id = fr.id)',
                 $this->scenario_id)
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $b = $this->availableFacilityResources;
 // End testing//////////////////////////////////////////////////////////////////////////////////////
     if ($request->getParameter('groupid')) {
 //EDIT

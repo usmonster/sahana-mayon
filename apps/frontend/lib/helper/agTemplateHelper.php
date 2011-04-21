@@ -103,7 +103,7 @@ function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColu
       $replaceLabel = 'for="' . $idPrepend . $content[$id] . '"';
     }
     $inputs[] = str_replace($searchInput, $replaceInput, $input);
-    $labels[] = str_replace($searchLabel, $replaceLabel, $label) . $content[$html] . '</label>' . PHP_EOL;
+    $labels[] = str_replace($searchLabel, $replaceLabel, $label) . $content[$html] . '</label>';
   }
   // Use chunk to make the $inputs and $labels arrays into multidimensional arrays, using $maxColumns
   // to determine the number of <td> elements that will be in each row.
@@ -114,7 +114,7 @@ function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColu
   foreach($inputs as $k1 => $inputRow) {
     $rows[$k1] = '<tr>' . PHP_EOL;
     foreach($inputRow as $k2 => $input) {
-      $rows[$k1] .= '<td>'  . PHP_EOL . $input  . PHP_EOL . $labels[$k1][$k2]  . PHP_EOL . '</td>' . PHP_EOL;
+      $rows[$k1] .= '<td>'  . PHP_EOL . $input . PHP_EOL . $labels[$k1][$k2]  . PHP_EOL . '</td>' . PHP_EOL;
     }
     // Check if the last <tr> of the table has fewer <td>s than the others. If it does, add empty
     // <td>s to give it the same number.

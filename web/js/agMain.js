@@ -31,14 +31,38 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
+  $('.expandAll').live('click', function() {
+    $('.expander').each(function(){
+      if($('#expandable_' + $(this).attr('id')).children().length == 0) {
+        $(this).click();
+      }
+    });
+    return false;
+  });
+});
+
+$(document).ready(function() {
+  $('.collapseAll').live('click', function() {
+    $('.expander').each(function(){
+      if($('#expandable_' + $(this).attr('id')).children().length != 0) {
+        $(this).click();
+      }
+    });
+    return false;
+  });
+});
+
+$(document).ready(function() {
   $('.expander').click(function() {
     var expandToggle = '#expandable_' + $(this).attr('id');
-    if(expandToggle + ':empty') {
+    if($(expandToggle).children().length == 0) {
       $(expandToggle).load($(this).attr('href'), function() {
         $(expandToggle).slideToggle();
       });
     } else {
-      $(expandToggle).slideToggle();
+      $(expandToggle).slideToggle(function() {
+        $(expandToggle).empty();
+      });
     }
     if($(this).html() == (String.fromCharCode(9654))) {
       $(this).html('&#9660;');

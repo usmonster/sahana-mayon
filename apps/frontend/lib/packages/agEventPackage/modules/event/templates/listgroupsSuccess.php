@@ -22,6 +22,12 @@
   <table class="singleTable" style="width: 700px;">
     <thead>
       <tr>
+        <th class="subHead" colspan="5">
+          <a style="float: left;" href="#" class="expandAll">&#x25BC; Expand All &#x25BC;</a>
+          <a style="float: right;" href="#" class="collapseAll">&#x25B2; Collapse All &#x25B2;</a>
+        </th>
+      </tr>
+      <tr>
         <th class="head"></th>
         <th class="head">
           <div class="tableHeaderContent">Group Name</div>
@@ -83,11 +89,18 @@
             </td>
           </tr>
 <?php endforeach; ?>
-
-              </tbody>
+        </tbody>
 <?php echo javascript_include_tag('agModal.js'); ?>
-            </table>
-          </div>
+        <tfoot>
+          <tr>
+            <th class="subHead" colspan="5">
+              <a style="float: left;" href="#" class="expandAll">&#x25BC; Expand All &#x25BC;</a>
+              <a style="float: right;" href="#" class="collapseAll">&#x25B2; Collapse All &#x25B2;</a>
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
 <?php if(isset($event_id)): ?>
   <br />
   <a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="linkButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>

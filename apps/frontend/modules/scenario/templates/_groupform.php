@@ -56,11 +56,11 @@ echo url_for
   <div class="bucketHolder" >
     <ul id="available" class="bucket">
       <?php
-      foreach ($ag_facility_resources as $facility_resource) {
-        echo '<li id="' . $facility_resource->getId() . '" title="' .
-        $facility_resource->getAgFacilityResourceType() . '">' .
-        $facility_resource->getAgFacility()->getFacilityName() . ': ' .
-        ucwords($facility_resource->getAgFacilityResourceType()->facility_resource_type) .
+      foreach ($availableFacilityResources as $afr) {
+        echo '<li id="' . $afr['fr_id'] . '" title="' .
+        $afr['frt_facility_resource_type'] . '">' .
+        $afr['f_facility_name'] . ': ' .
+        ucwords($afr['frt_facility_resource_type']) .
         '</li>'; //we could set the id here to a set of ids
       }
       ?>
