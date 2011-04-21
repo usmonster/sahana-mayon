@@ -5,6 +5,21 @@
     });
   });
 </script>
+
+<script language="javascript" type="text/javascript">
+$(document).ready(function() {
+    $('.next-column').click(function(event) {
+        event.preventDefault();
+        $('.table-container').animate({scrollLeft:'+=231'}, 'slow');
+    });
+    $('.previous-column').click(function(event) {
+        event.preventDefault();
+        $('.table-container').animate({scrollLeft:'-=231'}, 'slow');
+    });
+});
+</script>
+
+
 <h2>Staff Resource Requirements</h2><br>
 <h3>
   <span>
