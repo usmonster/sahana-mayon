@@ -19,7 +19,8 @@ abstract class agImportNormalization extends agImportHelper
   public    $summary = array(),
             $batchSize;
   
-  protected $errMsg,
+  protected $newEntityCount = 0,
+            $errMsg,
             $warningMessages = array(),
             $nonprocessedRecords = array(),
             $totalProcessedRecordCount = 0,
