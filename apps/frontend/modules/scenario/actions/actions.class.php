@@ -339,6 +339,7 @@ class scenarioActions extends agActions
   public function executeStaffpool(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
+    $this->wizardHandler($request);
     $this->scenario_staff_count = Doctrine_Core::getTable('AgScenarioStaffResource')
             ->findby('scenario_id', $this->scenario_id)->count();
     $this->target_module = 'staff';
@@ -349,14 +350,14 @@ class scenarioActions extends agActions
     $this->total_staff = Doctrine_Core::getTable('agStaff')->count();
     $this->total_resources = Doctrine_Core::getTable('agStaffResource')->count();
     $inputs = array(
-      'staff_type' => new sfWidgetFormDoctrineChoice(
+      'type' => new sfWidgetFormDoctrineChoice(
           array(
             'model' => 'agStaffResourceType',
             'label' => 'Staff Type',
             'add_empty' => true)
       ),
       // 'class' => 'filter')),
-      'staff_org' => new sfWidgetFormDoctrineChoice(
+      'org' => new sfWidgetFormDoctrineChoice(
           array(
             'model' => 'agOrganization',
             'method' => 'getOrganization',
@@ -408,7 +409,7 @@ class scenarioActions extends agActions
         $lucene_search = $postParam['lucene_search'];
         $lucene_query = $lucene_search['query_condition'];
 #        $lucene_query = "\"Specialist ASPCA\"";
-        $lucene_query = 'staff_pool:GeneralistOther';
+        #$lucene_query = 'staff_pool:GeneralistOther';
         $values = array('sg_values' =>
           array('search_weight' => $staff_generator['search_weight']),
           'ls_values' =>
@@ -416,13 +417,6 @@ class scenarioActions extends agActions
             'lucene_search_type_id' => $lucene_search['lucene_search_type_id'])
         );
         $this->poolform = new agStaffPoolForm(null, $values);
-        //$this->poolform->setDefault('staff_generator[search_weight]', $staff_generator['search_weight']); //this definitely does NOT work
-        //$this->poolform->setDefault('lucene_search[lucene_search_type_id]', $lucene_search['lucene_search_type_id']);
-        //$this->poolform->getEmbeddedForm('staff_generator')->setDefault('search_weight', $staff_generator['search_weight']);
-        //$this->poolform->setDefault('lucene_search[query_name]', $lucene_search['query_name']);
-        //$this->poolform->getWidget('lucene_search[query_name]')->setDefault($lucene_search['query_name']);
-        //$this->poolform->getEmbeddedForm('lucene_search')->getWidget('query_name')->setDefault($lucene_search['query_name']);
-
         $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
         foreach ($incomingFields as $key => $incomingField) {
           $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
@@ -541,11 +535,7 @@ class scenarioActions extends agActions
     $facilityResourceTypeDefaults = null; //new agDoctrineQuery();
     //we must have an id coming in if this is an existing scenario
     if ($request->getParameter('id')) {
-      $this->staffTypeForm = new agDefaultScenarioStaffResourceTypeForm($staffResourceTypeDefaults);
-      $this->facilityTypeForm = new agDefaultScenarioFacilityResourceTypeForm($facilityResourceTypeDefaults);
-      $this->resourceForm = new sfForm();
-      $this->resourceForm->embedForm('staff_types', $this->staffTypeForm);
-      $this->resourceForm->embedForm('facility_types', $this->facilityTypeForm);
+      $this->resourceForm = new agDefaultResourceTypeForm($staffResourceTypeDefaults, $facilityResourceTypeDefaults);
 
       $this->getResponse()->setTitle('Scenario Creation Wizard - set Default Resource Types needed for ' . $this->scenarioName . ' Scenario');
     }

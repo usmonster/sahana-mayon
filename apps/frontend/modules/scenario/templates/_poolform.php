@@ -7,20 +7,21 @@
     var out = Array();
     $('.filter option:selected').each(function(index) {
       if($(this).text() != ''){
-        out.push($(this).parent().attr('id') + ":" + $(this).text());
+        var cleanText = $(this).text().replace(/[\W|_]/,'');
+        out.push($(this).parent().attr('id') + cleanText);
       }
       //ONLY IF text is NOT empty
     })
     if(out.length > 1){
-      $("#staff_pool_lucene_search_query_condition").val(out.join(' AND '));
+      $("#staff_pool_lucene_search_query_condition").val('status1' + out.join(''));
     }
     else{
       var query_c = out.pop();
       if(query_c != undefined){
-        $("#staff_pool_lucene_search_query_condition").val(query_c);
+        $("#staff_pool_lucene_search_query_condition").val('status1' + query_c);
       }
       else{
-        query_c = '%';
+        query_c = 'status1';
         $("#staff_pool_lucene_search_query_condition").val(query_c);
       }
     }
