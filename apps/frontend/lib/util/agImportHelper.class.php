@@ -34,9 +34,8 @@ abstract class agImportHelper
 
   protected function setConnection()
   {
-    // Explicit setter.
     $this->conn = Doctrine_Manager::connection();
-    // @TODO Don't use default connection.  Instead use a new connection.
+    // @TODO Don't use the default connection;  instead use a new connection.
   }
 
 }

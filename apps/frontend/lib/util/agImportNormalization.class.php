@@ -60,11 +60,51 @@ abstract class agImportNormalization extends agImportHelper
 
   protected function normalizeData()
   {
+    $err = NULL ;
+
+    // get our connection object and start an outer transaction for the batch
+    $conn = $this->getConnection() ;
+    $conn->beginTransaction() ;
+
     foreach ($this->importComponents as $index => $componentData)
     {
-      // Calling method to set data.
-      $componentData['method']($componentData['throwOnError']);
+      // start an inner transaction / savepoint per component
+      $conn->beginTransaction($componentData['componentName']) ;
+
+      try
+      {
+        // Calling method to set data.
+        $componentData['method']($componentData['throwOnError']);
+        $conn->commit($conn->beginTransaction($componentData['componentName']));
+      }
+      catch(Exception $e)
+      {
+        $errMsg = sprintf('agImportNormalization failed during method: %s.',
+          $componentData['method']);
+
+        // our rollback and error logging happen regardless of whether this is an optional component
+        sfContext::getInstance()->getLogger()->err($errMsg) ;
+        $conn->rollback($conn->beginTransaction($componentData['componentName']));
+
+        // if it's not an optional component, we do a bit more and stop execution entirely
+        if($componentData['throwOnError'])
+        {
+          $conn->rollback() ;
+          throw new Exception($e) ;
+        }
+      }
+
+      // you'll want to do your records keeping here (eg, counts or similar)
+      // be sure to use class properties to store that info so additional loops can
+      // reference it
     }
+
+    // since we encountered no throw-able errors up to this point, we can commit
+    $conn->commit() ;
+
+    // I don't recommend you return here -> anything you return might not be applicable to the
+    // specific children (eg, staff vs. facility). Rather, modify your returns property
+    // then let the caller or at worst a child method, figure out how to parse / use that property
   }
 
 

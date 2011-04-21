@@ -303,7 +303,10 @@ class agEntityAddressHelper extends agEntityContactHelper
    * <code>
    * array(
    *   $entityId => array(
-   *     array($addressContactTypeId, array(array($elementId => $value, ...), $addressStandardId)),
+   *     array($addressContactTypeId, array(array($elementId => $value, ...),
+   *      $addressStandardId,
+   *      array(array($latitude, $longitude), ...), $matchScoreId)
+   *      )),
    *     ...
    *   ), ...
    * )
@@ -420,7 +423,6 @@ class agEntityAddressHelper extends agEntityContactHelper
 
       // we're done with uniqContacts now
       unset($uniqContacts) ;
-
 
       try
       {

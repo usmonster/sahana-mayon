@@ -76,3 +76,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_organization
     value: volunteer
+  default_geo_match_score:
+    id: 16
+    agHost: localhost
+    datapoint: default_geo_match_score
+    value: unknown

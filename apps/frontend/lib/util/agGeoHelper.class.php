@@ -17,8 +17,10 @@ class agGeoHelper extends agBulkRecordHelper
   public    $enforceGeoType = TRUE ;
 
   protected $_globalDefaultAddressGeoType = 'default_address_geo_type',
+            $_globalDefaultGeoMatchScore = 'default_geo_match_score',
             $_agGeoTypeData,
-            $_addressGeoTypeId ;
+            $_addressGeoTypeId,
+            $_defaultGeoMatchScoreId ;
 
   /**
    * Minimalist helper function to return the _agGeoTypeData property and lazy-load its values
@@ -52,9 +54,19 @@ class agGeoHelper extends agBulkRecordHelper
   }
 
   /**
-   *  Small helper function to pick up the default geo-type for addresses.
+   * Small getter to lazily load and return the default address geo-type id.
+   * @return integer Address Geo-Type Id. 
    */
-  protected function _setDefaultAddressGeoType()
+  public function getAddressGeoTypeId()
+  {
+    if (! isset($this->_addressGeoTypeId)) { $this->setAddressGeoTypeId() ; }
+    return $this->_addressGeoTypeId ;
+  }
+
+  /**
+   *  Minimalist helper function to load the default geo-type for addresses.
+   */
+  protected function setAddressGeoTypeId()
   {
     $geoType = agGlobal::getParam($this->_globalDefaultAddressGeoType) ;
     $geoTypeId = agDoctrineQuery::create()
@@ -64,6 +76,29 @@ class agGeoHelper extends agBulkRecordHelper
         ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
 
     $this->_addressGeoTypeId = $geoTypeId ;
+  }
+
+  /**
+   * Small getter to lazily load and return the default geoMatchScoreId.
+   * @return integer Default geoMatchScoreId.
+   */
+  public function getDefaultGeoMatchScoreId()
+  {
+    if (! isset($this->_defaultGeoMatchScoreId)) { $this->setDefaultGeoMatchScoreId() ; }
+    return $this->_defaultGeoMatchScoreId ;
+  }
+
+  /**
+   * Minimalist function to load and set the _defaultGeoMatchScoreId class property.
+   */
+  protected function setDefaultGeoMatchScoreId()
+  {
+    $geoMatchScore = agGlobal::getParam($this->_globalDefaultGeoMatchScore) ;
+    $geoMatchScoreId = agDoctrineQuery::create()
+      ->select('gms.id')
+        ->from('agGeoMatchScore gms')
+        ->where('gms.geo_match_score = ?', $geoMatchScore)
+        ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
   }
 
   /**
@@ -424,19 +459,22 @@ class agGeoHelper extends agBulkRecordHelper
   }
 
   public function setAddressGeo($addrCoordinates,
+                                $geoSourceId,
                                 $geoTypeId = NULL,
-                                $geoSourceId = NULL,
                                 $throwOnError = NULL,
                                 Doctrine_Connection $conn = NULL)
   {
-    // array($addrId => array(array($latitude, $longitude), ...), ...)
+    // array($addrId => array(array(array($latitude, $longitude), ...), $matchScoreId), ...)
+    // set up some important buckets
+    $addrMatchScores = array() ;
     $err = NULL ;
     $results = 0 ;
-    // pick our global / class defaults
-    // geoTypeId lazy loader
-    // geoSourceId lazy loader
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
+    // pick up global defaults if not passed parameters
+    $defaultMatchScoreId = $this->getDefaultGeoMatchScoreId() ;
+    if (is_null($geoTypeId)) { $geoTypeId = $this->getAddressGeoTypeId() ; }
     if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
 
     // fire up our savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
@@ -449,14 +487,26 @@ class agGeoHelper extends agBulkRecordHelper
       $conn->beginTransaction() ;
     }
 
+    // reduce the complexity of our addrCoordinates array and separate match scores
+    foreach ($addrCoordinates as $addrId => &$coordinates)
+    {
+      if (array_key_exists(1, $coordinates))
+      {
+        $addrMatchScores[$addrId] = $coordinates[1] ;
+      }
+
+      $coordinates = $coordinates[0] ;
+    }
+
     try
     {
-      $addrGeoIds = $this->setGeo($addrCoordinates, $geoTypeId, $geoSourceId,
+      $addrCoordinates = $this->setGeo($addrCoordinates, $geoTypeId, $geoSourceId,
         $throwOnError, $conn) ;
     }
     catch(Exception $e)
     {
-
+      $err = $e ;
+      $errMsg = sprintf('Failed to execute setGeo in %s.', __FUNCTION__) ;
     }
 
 
@@ -464,43 +514,88 @@ class agGeoHelper extends agBulkRecordHelper
     {
       $q = agDoctrineQuery::create()
         ->select('ag.*')
-          ->from('agAddressGeo ag') ;
-
-      foreach ($addrGeoIds as $addressId => $geoId)
-      {
-        $q->orWhere('(ag.geo_id = ? AND ag.address_id = ?)', array($addressId, $geoId)) ;
-      }
-
+          ->from('agAddressGeo ag INDEX BY a.address_id')
+          ->whereIn('ag.address_id', array_keys($addrCoordinates));
       $coll = $q->execute() ;
 
-      // loop through the collection first, updating match score and unsetting from $addrGeoIds
-      foreach ($coll as &$agRec)
+      // loop through the collection first, updating match score and geo_id
+      foreach ($coll as $addrId => &$agRec)
       {
-        // update/set geo match score
-        //$agRec['geo_match_score_id'] = 
+        // deal with match scores first since differences in old/new geo need to be detected
+        if (array_key_exists($addrId, $addrMatchScores))
+        {
+          // if we were originally passed a match score for this geo, set it
+          $agRec['geo_match_score_id'] = $addrMatchScores[$addrId] ;
+          unset($addrMatchScores[$addrId]) ;
+        }
+        else
+        {
+          // otherwise, only set the default of geoId's are not equal (eg, new)
+          if ($agRec['geo_id'] != $addrCoordinates[$addrId])
+          {
+            $agRec['geo_match_score_id'] = $defaultMatchScoreId ;
+          }
+        }
+
+        // set our geo and release these resources from our coordinate / final arrays
+        $agRec['geo_id'] = $addrCoordinates[$addrId] ;
+        unset($addrCoordinates[$addrId]) ;
       }
 
       // loop through the remaining $addrGeoIds and make new entries
-      // @todo What should I do about geo match score??? :-p
-      foreach ($addrGeoIds as $addressId => $geoId)
+      foreach ($addrCoordinates as $addrId => $geoId)
       {
         $newRec = new agAddressGeo() ;
-        $newRec['address_id'] = $addressId ;
+        $newRec['address_id'] = $addrId ;
         $newRec['geo_id'] = $geoId ;
-        //$rec['geo_match_score_id'] =
 
+        if (array_key_exists($addrId, $addrMatchScores))
+        {
+          // if we were originally passed a match score for this geo, set it
+          $newRec['geo_match_score_id'] = $addrMatchScores[$addrId] ;
+          unset($addrMatchScores[$addrId]) ;
+        }
+        else
+        {
+          // otherwise we'll use the default match score
+          $newRec['geo_match_score_id'] = $defaultMatchScoreId ;
+        }
+        // add the new record to our collection and release the resource
         $coll->add($newRec) ;
+        unsert($addrCoordinates[$addrId]) ;
       }
 
       try
       {
-
+        $coll->save($conn) ;
+        if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
       }
       catch(Exception $e)
       {
-
+        $err = $e ;
+        $errMsg = sprintf('Failed to upsert into table agAddressGeo in function %s.', __FUNCTION__);
       }
     }
-  }
 
+    // if nothing is awry, let's count how many objects are in our collection, otherwise deal
+    // with our errors
+    if (is_null($err))
+    {
+      $results = count($coll) ;
+    }
+    else
+    {
+      // log our error
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) { throw $err ; }
+    }
+
+    // many happy returns
+    return $results ;
+  }
 }
