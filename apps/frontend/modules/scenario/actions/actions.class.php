@@ -592,6 +592,7 @@ class scenarioActions extends agActions
     $this->availableFacilityResources = agDoctrineQuery::create()
             ->select('fr.id')
               ->addSelect('f.facility_name')
+              ->addSelect('f.facility_code')
               ->addSelect('frt.facility_resource_type')
             ->from('agFacilityResource fr')
               ->innerJoin('fr.agFacility f')

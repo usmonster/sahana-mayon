@@ -54,16 +54,29 @@ echo url_for
     ?>
   </div>
   <div class="bucketHolder" >
-    <ul id="available" class="bucket">
+    <table class="bucket" id="available">
+    <?php foreach ($availableFacilityResources as $afr): ?>
+      <tr>
+        <td>
+          <?php echo $afr['f_facility_code'] ?>
+        </td>
+        <td>
+          <?php echo $afr['frt_facility_resource_type'] ?>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </table>
+    <ul id="bavailable" class="bucket">
       <?php
-      foreach ($availableFacilityResources as $afr) {
-        echo '<li id="' . $afr['fr_id'] . '" title="' .
-        $afr['frt_facility_resource_type'] . '">' .
-        $afr['f_facility_name'] . ': ' .
-        ucwords($afr['frt_facility_resource_type']) .
-        '</li>'; //we could set the id here to a set of ids
-      }
+//      foreach ($availableFacilityResources as $afr) {
+//        echo '<li id="' . $afr['fr_id'] . '" title="' .
+//        $afr['frt_facility_resource_type'] . '">' .
+//        $afr['f_facility_name'] . ': ' .
+//        ucwords($afr['frt_facility_resource_type']) .
+//        '</li>'; //we could set the id here to a set of ids
+//      }
       ?>
+
     </ul>
     <ul id="allocated" class="bucket">
       <?php
