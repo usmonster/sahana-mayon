@@ -1316,3 +1316,62 @@ a.signin.menu-open span {
 .set110 {
   width: 110px;
 }
+
+.tooltipTrigger {
+  font-size:  .65em;
+  font-weight: bold;
+  color: #394b67;
+  border-style:dotted;
+  border-width: thin;
+  text-decoration: none;
+}
+
+.titleClass {
+  height:10px;
+}
+
+#tooltipContent {
+  font-size: .75em;
+  background-color: #fdffd1;
+  border-right-style: solid;
+  border-left-style: solid;
+  border-bottom-style: solid;
+  border-top-style: solid;
+  border-right-width: 1px;
+  border-left-width: 1px;
+  border-bottom-width: 1px;
+  border-top-width: 1px;
+}
+
+#stepper {
+  display: inline;
+  float:left;
+  height: 40px;
+  width: 750px;
+  margin: auto;
+  border: solid 1px #dadada;
+  border: solid 1px #dadada;
+  -moz-border-radius-bottomleft: 15px;
+  -moz-border-radius-bottomright: 15px;
+  background-image: url('../images/wizard.ico');
+  background-repeat: no-repeat;
+  }
+  #stepper ul {
+      list-style-type: none;
+}
+  #stepper li {
+    float: left;
+    font-size: 1.5em;
+    font-weight:bold;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  #stepper ul li.current {
+   color:red;
+   background-color:greenyellow;
+  }
+  #stepper ul li.completed {
+   color:blue;
+   background-color:greenyellow;
+  }
+

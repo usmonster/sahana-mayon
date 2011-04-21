@@ -38,6 +38,21 @@ api_facility:
   requirements: 
     sf_format: (?:json)
 
+scenario_meta:
+  url:     /scenario/:id/meta
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: meta }
+
+scenario_meta_new:
+  url:     /scenario/meta
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: meta }
+
+scenario_resource_types:
+  url:     /scenario/:id/resourcetypes
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: resourcetypes }
+
 scenario_edit:
   url:     /scenario/:id/edit
   options: { model: agScenario, type: object }

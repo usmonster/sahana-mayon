@@ -19,16 +19,29 @@ class scenarioActions extends agActions
   protected $_searchedModels = array('agScenarioFacilityGroup', 'agScenario', 'agStaff');
   public static $scenario_id;
   public static $scenarioName;
-
+  public static $wizardOp;
   /**
    * sets up basic scenario information from a web request, used in most actions here
    * @param <type> $request a web request
    * 
    */
-  public function setScenarioBasics($request)
+  protected function setScenarioBasics($request)
   {
     $this->scenario_id = $request->getParameter('id');
     $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->scenario;
+  }
+
+  protected function wizardHandler(sfWebRequest $request)
+  {
+
+    $encodedWizard = $request->getCookie('wizardOp');
+    $wizardOp = json_decode($encodedWizard, true);
+    $wizardOp['scenario_id'] = $request->getParameter('id');
+    if (!isset($wizardOp['step']))
+      $wizardOp['step'] = 1;
+
+    $this->wizard = new agScenarioWizard($wizardOp);
+    $this->wizardDiv = $this->wizard->getList();
   }
 
   /**
@@ -415,7 +428,8 @@ class scenarioActions extends agActions
           $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
         }
 
-        if($request->getParameter('search_id')) $lucene_query = $query_condition;
+        if ($request->getParameter('search_id'))
+          $lucene_query = $query_condition;
         $this->searchedModels = 'agStaff';
 
         parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
@@ -483,6 +497,76 @@ class scenarioActions extends agActions
     $this->form = new agScenarioForm();
   }
 
+  public function executeMeta(sfWebRequest $request)
+  {
+    $this->wizardHandler($request);
+    if ($request->getParameter('id')) {
+      $ag_scenario = Doctrine_Core::getTable('agScenario')->find(array($request->getParameter('id')));
+      $this->form = new agScenarioForm($ag_scenario);
+      $this->metaAction = 'Edit';
+      $this->getResponse()->setTitle('Sahana Agasti Edit ' . $ag_scenario . ' Scenario');
+    } else {
+      $this->metaAction = 'Create New';
+      $this->form = new agScenarioForm();
+    }
+    if ($request->isMethod(sfRequest::POST)) {
+      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
+      if ($this->form->isValid()) {
+        $ag_scenario = $this->form->save();
+        $ag_scenario->updateLucene();
+        if ($request->hasParameter('Continue')) {
+          $this->ag_facility_resources = agDoctrineQuery::create()
+                  ->select('a.facility_id, af.*, afrt.*')
+                  ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+                  ->execute();
+          $this->groupform = new agScenarioFacilityGroupForm();
+//        $this->setTemplate('scenario/newgroup');
+          $this->redirect('scenario/fgroup?id=' . $ag_scenario->getId());
+        } else {
+          $this->redirect('scenario/meta?id=' . $ag_scenario->getId());
+        }
+      }
+    }
+  }
+
+  /**
+   * Default Resource Type definition for a scenario
+   * @param sfWebRequest $request request coming from the client
+   */
+  public function executeResourcetypes(sfWebRequest $request)
+  {
+    $this->setScenarioBasics($request);
+    $this->wizardHandler($request);
+    $staffResourceTypeDefaults = null; //new agDoctrineQuery();
+    $facilityResourceTypeDefaults = null; //new agDoctrineQuery();
+    //we must have an id coming in if this is an existing scenario
+    if ($request->getParameter('id')) {
+      $this->staffTypeForm = new agDefaultScenarioStaffResourceTypeForm($staffResourceTypeDefaults);
+      $this->facilityTypeForm = new agDefaultScenarioFacilityResourceTypeForm($facilityResourceTypeDefaults);
+      $this->resourceForm = new sfForm();
+      $this->resourceForm->embedForm('staff_types', $this->staffTypeForm);
+      $this->resourceForm->embedForm('facility_types', $this->facilityTypeForm);
+
+      $this->getResponse()->setTitle('Scenario Creation Wizard - set Default Resource Types needed for ' . $this->scenarioName . ' Scenario');
+    }
+
+    if ($request->isMethod(sfRequest::POST)) {
+      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
+      if ($this->form->isValid()) {
+        $ag_scenario = $this->form->save();
+        $ag_scenario->updateLucene();
+        if ($request->hasParameter('Continue')) {
+
+          //do some stuff
+//        $this->setTemplate('scenario/newgroup');
+          $this->redirect('scenario/fgroup?id=' . $ag_scenario->getId());
+        } else {
+          $this->redirect('scenario/meta?id=' . $ag_scenario->getId());
+        }
+      }
+    }
+  }
+
   /**
    *
    * @param sfWebRequest $request holds request data
@@ -508,24 +592,24 @@ class scenarioActions extends agActions
 // Testing//////////////////////////////////////////////////////////////////////////////////////////
     // Use this to do searches.
     $this->facilityResourceTypes = agDoctrineQuery::create()
-      ->select('frt.id, frt.facility_resource_type, facility_resource_type_abbr')
-      ->from('agFacilityResourceType frt')
-        ->innerJoin('frt.agDefaultScenarioFacilityResourceType dsfrt')
-        ->where('dsfrt.scenario_id =?', $this->scenario_id)
-      ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+            ->select('frt.id, frt.facility_resource_type, facility_resource_type_abbr')
+            ->from('agFacilityResourceType frt')
+            ->innerJoin('frt.agDefaultScenarioFacilityResourceType dsfrt')
+            ->where('dsfrt.scenario_id =?', $this->scenario_id)
+            ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
 
     $availableFacilityResources = agDoctrineQuery::create()
-        ->select('fr.id')
-        ->from('agFacilityResource fr')
-          ->Where('NOT EXISTS (
+            ->select('fr.id')
+            ->from('agFacilityResource fr')
+            ->Where('NOT EXISTS (
               SELECT s1.id
                 FROM agFacilityResource s1
                   INNER JOIN s1.agScenarioFacilityResource s2
                   INNER JOIN s2.agScenarioFacilityGroup s3
               WHERE s3.scenario_id = ?
                 AND s1.id = fr.id)',
-            $this->scenario_id)
-        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+                $this->scenario_id)
+            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 // End testing//////////////////////////////////////////////////////////////////////////////////////
     if ($request->getParameter('groupid')) {
 //EDIT

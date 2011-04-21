@@ -470,7 +470,7 @@ class agStaffActions extends agActions
         $resourceForm = new PluginagEmbeddedAgStaffResourceForm();
         //$resourceForm->getWidget('facility_resource_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
 
-        return $this->renderPartial('setterForm', array('form'     => $resourceForm,
+        return $this->renderPartial('global/includeForm', array('form'     => $resourceForm,
                                                         'set'      => $params['type'],
                                                         'id'       => $params['id'],
                                                         'url'      => 'event/eventfacilityresource?eventFacilityResourceId=' .  ltrim($params['id'], 'res_stat_id_')

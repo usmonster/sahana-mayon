@@ -12,6 +12,7 @@
       <h3>Staff Information</h3>
       <div class="infoHolder">
       <?php echo $form['staff'] ?>
+        <td class="set100"><a href="<?php echo url_for('staff/new')?>" name="groupStatus" class="textToForm linkText" id="staff_id_1<?php //echo $facilityGroup['efg_id']; ?>">add</a></td>
 
     </div>
     <div class="clearBoth"> </div>

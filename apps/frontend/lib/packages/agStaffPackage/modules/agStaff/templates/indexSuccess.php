@@ -1,7 +1,7 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
 <?php   use_javascript('jquery.ui.custom.js');
-  use_stylesheet('jquery/jquery-ui.custom2.css');?>
+  use_stylesheet('jquery/jquery.ui.custom.css');?>
 <?php use_javascript('agTooltip.js'); ?>
 <h2>Staff Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_management&do=export_xhtmlbody' ?>" class="tooltipTrigger">?</a></h2>
 
