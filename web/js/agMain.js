@@ -118,5 +118,16 @@ $(document).ready(function() {
     });
     return false;
   });
+});
 
+$(document).ready(function() {
+  $('.searchParams input[type="checkbox"]').change(function() {
+    $('.searchParams input[type="checkbox"]').each(function(){
+      if($(this).is(':checked')) {
+        $('#available .' + $(this).attr('id')).show();
+      } else {
+        $('#available .' + $(this).attr('id')).hide();
+      }
+    })
+  });
 });

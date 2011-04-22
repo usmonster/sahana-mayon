@@ -664,12 +664,9 @@ class eventActions extends agActions
    */
   public function executeListgroups(sfWebRequest $request)
   {
-    // Check to see if there is an event parameter and, if so, if the parameter is a valid event
-    // name. If it exists but is invalid, redirect to the eventless listgroups.
-    // Commented out for now, as groupDetail won't work right now w/o an event in the URL.
-//    if($request->getParameter('event') != null && Doctrine::getTable('agEvent')->findByDql('where event_name = ?', $request->getParameter('event'))->getFirst() == false) {
-//      $this->redirect('event/listgroups');
-//    }
+    if($request->getParameter('event') != null && Doctrine::getTable('agEvent')->findByDql('where event_name = ?', $request->getParameter('event'))->getFirst() == false) {
+      $this->redirect('event/listgroups');
+    }
     if ($request->getParameter('event') == null) {
       $this->missingEvent = true;
     }

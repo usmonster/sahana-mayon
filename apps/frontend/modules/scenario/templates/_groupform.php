@@ -5,16 +5,21 @@ use_javascript('tooltip.js'); ?>
 <?php use_javascript('json.serialize.js'); ?>
 <script type="text/javascript">
   $(function() {
-    $("#available li").bind("dblclick", function(){
-      return !$(this).remove().appendTo('#allocated')
+    $("#available tbody tr").bind("dblclick", function(){
+      return !$(this).remove().appendTo('#allocated tbody')
     });
-    $("#allocated li").bind("dblclick", function(){
-      return !$(this).remove().appendTo('#available')
+    $("#allocated tbody tr").bind("dblclick", function(){
+      return !$(this).remove().appendTo('#available tbody')
     });
 
-    $( "#available, #allocated" ).sortable({
-      connectWith: ".bucket"
+    $( "#available tbody, #allocated tbody" ).sortable({
+      connectWith: ".testTable tbody",
+      items: 'tr.sort'
     }).disableSelection();
+
+//    $("#available tbody, #allocated tbody").sortable({
+//        items: 'tr.sort'
+//    })
   });
 
 
@@ -54,19 +59,57 @@ echo url_for
     ?>
   </div>
   <div class="bucketHolder" >
-    <table class="bucket" id="available">
-    <?php foreach ($availableFacilityResources as $afr): ?>
-      <tr>
-        <td>
-          <?php echo $afr['f_facility_code'] ?>
-        </td>
-        <td>
-          <?php echo $afr['frt_facility_resource_type'] ?>
-        </td>
-      </tr>
-    <?php endforeach; ?>
+    <table class="testTable" id="available">
+      <tbody>
+        <tr>
+          <th>Facility Code</th>
+          <th>Resource Type</th>
+          <th>Status</th>
+          <th>Activation Sequence</th>
+        </tr>
+      <?php foreach ($availableFacilityResources as $afr): ?>
+        <tr class="sort facility_resource_type_<?php echo $afr['frt_id']; ?>">
+          <td title="<?php echo $afr['f_facility_name'];?>">
+            <?php echo $afr['f_facility_code'] ?>
+          </td>
+          <td>
+            <?php echo $afr['frt_facility_resource_type'] ?>
+          </td>
+          <td>
+            <input type="text">
+          </td>
+          <td>
+            <input type="text">
+          </td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
     </table>
-    <ul id="bavailable" class="bucket">
+    <table class="testTable" id="allocated">
+      <tbody>
+        <tr>
+          <th>Facility Code</th>
+          <th>Resource Type</th>
+          <th>Status</th>
+          <th>Activation Sequence</th>
+        </tr>
+        <tr class="sort">
+          <td>
+            11123
+          </td>
+          <td>
+            Bugs
+          </td>
+          <td>
+            <input type="text">
+          </td>
+          <td>
+            <input type="text">
+          </td>
+        </tr>      
+      </tbody>
+    </table>
+<!--    <ul id="bavailable" class="bucket">-->
       <?php
 //      foreach ($availableFacilityResources as $afr) {
 //        echo '<li id="' . $afr['fr_id'] . '" title="' .
@@ -77,24 +120,24 @@ echo url_for
 //      }
       ?>
 
-    </ul>
-    <ul id="allocated" class="bucket">
+<!--    </ul>-->
+<!--    <ul id="allocated" class="bucket">-->
       <?php
-      if ($ag_allocated_facility_resources) {
-
-        foreach ($ag_allocated_facility_resources as $facility_resource) {
-          echo '<li id="' . $facility_resource->getId() . '" title="' .
-          $facility_resource->getAgFacilityResourceType() . '">' .
-          $facility_resource->getAgFacility()->getFacilityName() . ': ' .
-          ucwords($facility_resource->getAgFacilityResourceType()->facility_resource_type) .
-          '</li>'; //we could set the id here to a set of ids
-          /**
-           * @todo [$curopt->activation_sequence] needs to still be applied to the list,
-           */
-        }
-      }
+//      if ($ag_allocated_facility_resources) {
+//
+//        foreach ($ag_allocated_facility_resources as $facility_resource) {
+//          echo '<li id="' . $facility_resource->getId() . '" title="' .
+//          $facility_resource->getAgFacilityResourceType() . '">' .
+//          $facility_resource->getAgFacility()->getFacilityName() . ': ' .
+//          ucwords($facility_resource->getAgFacilityResourceType()->facility_resource_type) .
+//          '</li>'; //we could set the id here to a set of ids
+//          /**
+//           * @todo [$curopt->activation_sequence] needs to still be applied to the list,
+//           */
+//        }
+//      }
       ?>
-    </ul>
+<!--    </ul>-->
   </div>
   <br/>
   <div class="tooltips" >

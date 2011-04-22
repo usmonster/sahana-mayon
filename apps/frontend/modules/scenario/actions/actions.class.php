@@ -590,6 +590,7 @@ class scenarioActions extends agActions
               ->addSelect('f.facility_name')
               ->addSelect('f.facility_code')
               ->addSelect('frt.facility_resource_type')
+              ->addSelect('frt.id')
             ->from('agFacilityResource fr')
               ->innerJoin('fr.agFacility f')
               ->innerJoin('fr.agFacilityResourceType frt')

@@ -69,24 +69,28 @@ function buildAddressTable($addressArray)
 *                            and the checkAll checkbox is added as a header. If true, they are. If false, they're not.
 *                            Defaults to TRUE.
 *
-* @return string
+* @param boolean $checked    Determines if the checkboxes (all of them) will be checked or not on page load.
+*                            Defaults to false.
+*
+* @return string             A table with a checkbox in each <td>.
 * */
-function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColumns = 5, $idPrepend = null, $title = null, $toggle = true)
+function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColumns = 5, $idPrepend = null, $title = null, $toggle = true, $checked = false)
 {
   // Check if this table will be making use of the checkToggle js in agMain. If it is, set up the
   // classes and elements that will be used to implement it. Create the header, if necessary, and
   // set it's colspan to $maxColumns.
   if($toggle == true) {
-    $input = '<input type="checkbox" name="" id="" class="checkToggle">';
+    $input = '<input type="checkbox" name="" id="" class="checkToggle"' . ($checked == true ? ' checked="checked"' : '') . '>';
     $header = '<tr>' . PHP_EOL .
               '<th colspan="' . $maxColumns . '">' . PHP_EOL .
-              '<input type="checkbox" name="checkall" id="checkall" value="checkall">' . PHP_EOL .
+              '<input type="checkbox" name="checkall" id="checkall" value="checkall"' . ($checked == true ? ' checked="checked"' : '') . '>' . PHP_EOL .
               '<label for="checkAll">Select All</label>' . PHP_EOL .
               '</th>' . PHP_EOL . '</tr>';
   } else {
     $input = '<input type="checkbox" name="" id="">';
-    $header = '';
+    $header = null;
   }
+
   // Define the label opening tag.
   $label = '<label for="">';
 
@@ -95,6 +99,7 @@ function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColu
   foreach($contents as $content) {
     $searchInput = array('name=""', 'id=""');
     $replaceInput = array('name="' . $idPrepend . $content[$id] . '"', 'id="' . $idPrepend . $content[$id] . '"');
+
     if($title != null) {
       $searchLabel = array('for=""', '>');
       $replaceLabel = array('for="' . $idPrepend . $content[$id] . '"', ' title="' . $content[$title] . '">');
@@ -129,7 +134,7 @@ function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColu
 
   // Create the actual table.
   // If $class was passed in, add a class to the table. Then attach the header (it might be empty).
-  $checkBoxTable = ($class == null ? '<table>' . PHP_EOL : '<table class="' . $class . '">' . PHP_EOL ) . $header;
+  $checkBoxTable = ($class == null ? '<table>' . PHP_EOL : '<table class="' . $class . '">' . PHP_EOL ) . ($header == null ? '' : $header);
 
   // Add the rows to the table.
   foreach($rows as $row) {

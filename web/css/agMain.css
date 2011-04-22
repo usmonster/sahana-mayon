@@ -1335,6 +1335,16 @@ a.signin.menu-open span {
   text-align: left;
 }
 
+
+.testTable {
+
+}
+
+.testTable td {
+  border: solid 1px #000000;
+  background: #ffffff;
+}
+
 .tooltipTrigger {
   font-size:  .65em;
   font-weight: bold;
@@ -1373,22 +1383,26 @@ a.signin.menu-open span {
   -moz-border-radius-bottomright: 15px;
   background-image: url('../images/wizard.ico');
   background-repeat: no-repeat;
-  }
-  #stepper ul {
-      list-style-type: none;
 }
-  #stepper li {
-    float: left;
-    font-size: 1.5em;
-    font-weight:bold;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  #stepper ul li.current {
-   color:red;
-   background-color:greenyellow;
-  }
-  #stepper ul li.completed {
-   color:blue;
-   background-color:greenyellow;
-  }
+
+stepper ul {
+  list-style-type: none;
+}
+
+#stepper li {
+  float: left;
+  font-size: 1.5em;
+  font-weight:bold;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#stepper ul li.current {
+ color:red;
+ background-color:greenyellow;
+}
+
+#stepper ul li.completed {
+ color:blue;
+ background-color:greenyellow;
+}

@@ -3,7 +3,7 @@
   use_helper('agTemplate');
 
   $contents = $sf_data->getRaw('facilityResourceTypes');
-  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type_abbr', 'checkBoxTable', 5, 'facility_resource_type_', 'facility_resource_type', true);
+  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type_abbr', 'checkBoxTable searchParams', 5, 'facility_resource_type_', 'facility_resource_type', true, true);
 ?>
 <h2>Scenario Facility Groups</h2><br>
 <?php 
