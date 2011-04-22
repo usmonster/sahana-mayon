@@ -975,9 +975,6 @@ class agAddressHelper extends agBulkRecordHelper
                                       $throwOnError = NULL,
                                       Doctrine_Connection $conn = NULL)
   {
-    // we'll use this like a cache and check against it with each successive execution
-    $valuesCache = array() ;
-
     // declare our results array
     $results = array() ;
 
@@ -1013,44 +1010,34 @@ class agAddressHelper extends agBulkRecordHelper
 
       foreach($components[0] as $elementId => $value)
       {
-        // if we've already picked up this address value, GREAT! just load it from our
-        // cache and keep going!
-        if (isset($valuesCache[$elementId][$value]))
-        {
-          $resultsCache[$elementId] = $valuesCache[$elementId][$value] ;
-        }
-        else
-        {
-          // since we didn't find it in cache, we'll try to grab it from the db
-          $valueId = $this->getAddressValueId($elementId, $value) ;
+        // since we didn't find it in cache, we'll try to grab it from the db
+        $valueId = $this->getAddressValueId($elementId, $value) ;
 
-          // unfortunately, if we didn't get value we've got to add it!
-          if (empty($valueId))
+        // unfortunately, if we didn't get value we've got to add it!
+        if (empty($valueId))
+        {
+
+          $addrValue = new agAddressValue();
+          $addrValue['address_element_id'] = $elementId ;
+          $addrValue['value'] = $value ;
+          try
           {
+            // save the address
+            $addrValue->save($conn) ;
+            $valueId = $addrValue->getId() ;
 
-            $addrValue = new agAddressValue();
-            $addrValue['address_element_id'] = $elementId ;
-            $addrValue['value'] = $value ;
-            try
-            {
-              // save the address
-              $addrValue->save($conn) ;
-              $valueId = $addrValue->getId() ;
-              
-              // and since that went right, add it to our results arrays
-              $valuesCache[$elementId][$value] = $valueId ;
-              $resultsCache[$elementId] = $valueId ;
-            }
-            catch(Exception $e)
-            {
-             // log our error
-              $errMsg = sprintf('Couldn\'t insert address value %s of element %s!
-                Rolled back changes!', $value, $elementId) ;
+            // and since that went right, add it to our results arrays
+            $resultsCache[$elementId] = $valueId ;
+          }
+          catch(Exception $e)
+          {
+           // log our error
+            $errMsg = sprintf('Couldn\'t insert address value %s of element %s!
+              Rolled back changes!', $value, $elementId) ;
 
-              // capture our exception for a later throw and break out of this loop
-              $err = $e ;
-              break ;
-            }
+            // capture our exception for a later throw and break out of this loop
+            $err = $e ;
+            break ;
           }
         }
       }
@@ -1155,6 +1142,9 @@ class agAddressHelper extends agBulkRecordHelper
           ->andWhere('av.value = ?', $value) ;
 
     if (! is_null($conn)) { $q->setConnection($conn) ; }
+
+    $q->useResultCache(new Doctrine_Cache_Apc())
+      ->setResultCacheLifeSpan(60 * 15) ;
 
     return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }

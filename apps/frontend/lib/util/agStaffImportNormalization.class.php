@@ -18,17 +18,11 @@ class agStaffImportNormalization extends agImportNormalization
 {
   function __construct($importTable)
   {
+    parent::__construct() ;
     // declare variables
-    $this->importTable = $importTable;
-    $this->defineStatusTypes();
+//    $this->importTable = $importTable;
+//    $this->defineStatusTypes();
 
-  }
-
-  function __destruct()
-  {
-//    //drop temp table.
-//    $this->conn->export->dropTable($this->sourceTable);
-//    $this->conn->close();
   }
 
   protected function setImportQuery()
@@ -48,7 +42,37 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => TRUE, 'method' => 'setEntityEmail', 'helperClassName' => 'agEntityEmailHelper');
   }
 
-  public function setEntity($throwOnError)
+  /**
+   * Method to set / create new entities, persons, and staff.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   */
+  protected function setEntities($throwOnError)
+  {
+    // we need to capture errors just to make sure we don't store failed ID inserts
+    try
+    {
+      $this->loadCurrentEntities();
+      $this->setNewEntities();
+    }
+    catch(Exception $e)
+    {
+      foreach ($this->importData as $rowId => &$rowData)
+      {
+        unset($rowData['primaryKeys']['entity_id']);
+        unset($rowData['primaryKeys']['person_id']);
+        unset($rowData['primaryKeys']['staff_id']);
+      }
+
+      // continue throwing our exception
+      throw $e;
+    }
+  }
+
+  /*
+   * Method to load any existing entities from the database into our object.
+   */
+  protected function loadCurrentEntities()
   {
     // loop our import data and pick up any existing entity Ids
     foreach ($this->importData as $rowId => $rowData)
@@ -57,136 +81,94 @@ class agStaffImportNormalization extends agImportNormalization
 
       if(! is_null($rawData['entity_id']))
       {
-//        $rawEntities[] = $rawData['entity_id'];
-        $rawEntities[$rawData['entity_id']] = $rowId;
+        $rawEntityIds[] = $rawData['entity_id'];
       }
     }
 
-    // build our initial collection
+    // find current entity + persons
     $q = agDoctrineQuery::create()
-    ->select('e.*')
-        ->addSelect('p.*')
-        ->addSelect('s.*')
-      ->from('agEntity e INDEXBY e.id')
-        ->innerJoin('e.agPerson p')
-        ->leftJoin('p.agStaff s')
-      ->whereIn('e.id', array_keys($rawEntities));
-    $coll = $q->execute();
-
-    //loop foreach $coll member
-    foreach ($coll as $entityId => &$entityData)
-    {
-      // if staff id doesn't exist yet, make it so
-      if (empty($entityData->agPerson[0]->agStaff[0]))
-      {
-        $newStaff = new agStaff();
-        $newStaff['person_id'] = $entityData->agPerson[0]['id'];
-        $entityData->agPerson[0]->agStaff->add($newStaff);
-      }
-      // Unset good entity from rawEntity, so that rawEntity only stores bad records with bad or no
-      // entity ids.
-      unset($rawEntities[$entityId]);
-      $this->totalProcessedRecordCount++;
-    }
-
-    // add new entities / persons / staff for records with bad or no entity ids.
-    foreach ($this->importdata['_rawData'] as $rowId => $rowData)
-    {
-      // this should satisfy both NULL entity_ids and ones that didn't make our initial filter
-      if (is_null($rowData['entity_id']) || (! array_key_exists($rowData['entity_id'], $coll)))
-      {
-        $newData = array( 'agPerson' => array( 'agStaff' => array() ) );
-        $newEntity = new agEntity();
-        $newEntity->fromArray($newData);
-        $coll->add($newEntity);
-        $newEntityId = $coll->getLast()->getId();
-        $this->newEntityCount++;
-        $this->totalProcessedRecordCount++;
-      }
-    }
-
-    // commit / save our collection
-    $coll->save();
-
-    // and finally, loop our $coll and add to our $keyData() array in the $importData bit
-
-//    // loop through importData to replace bad entityIds with good entityIds.
-//    foreach ($rawEntities AS $invalidEntityId => $rowId)
-//    {
-////      $replaceEntityId = array_shift($replaceEntityIds);
-//      $importData[$rowId]['entity_id'] = $replaceEntityIds[$invalidEntityId];
-//      // Log invalid staff's entity id.
-//      $logMsg = sprintf("Bad entity id (%s).  Generated a new entityId().", $invalidEntityId, $replaceEntityIds[$invalidEntityId]);
-//    }
-
-//        $newEntityId;
-//        if (is_null($rowdata['entity_id']))
-//        {
-//          // Capture new entity id and save to importdata
-//        }
-//        else
-//        {
-//          // Log invalid staff's entity id.
-//          $logMsg = sprintf("Bad entity id (%s).  Generated a new entityId().",
-//                                $rowData['entity_id'], $newEntityId);
-//
-//        }
-
-    // we no longer need this
-    unset($rawEntities) ;
-  }
-
-  public static function testCollInsert()
-  {
-//    $q = agDoctrineQuery::create()
-//    ->select('p.*')
-//        ->addSelect('s.*')
-//      ->from('agPerson p INDEXBY p.id')
-//        ->leftJoin('p.agStaff s')
-//      ->whereIn('p.id', array(16,17, 18)) ;
-//    $coll = $q->execute() ;
-//
-//    foreach ($coll as $personId => &$data)
-//    {
-//      if (empty($data->agStaff[0]))
-//      {
-//        $staffData = array();
-//        $staff = new agStaff();
-//        $staff->fromArray($staffData);
-////        $staff['person_id'] = $personId;
-//        $data->agStaff->add($staff) ;
-//        $pId = $data->id;
-//        $sId = $staff->id;
-//        echo "personId: $pId\nstaffId: $sId";
-//      }
-//      echo 'Yay' ;
-//    }
-//
-//    $coll->save() ;
-
-    $q = agDoctrineQuery::create()
-    ->select('e.*')
-        ->addSelect('p.*')
-        ->addSelect('s.*')
+    ->select('e.id')
+        ->addSelect('p.id')
+        ->addSelect('s.id')
       ->from('agEntity e')
         ->innerJoin('e.agPerson p')
         ->leftJoin('p.agStaff s')
-        ->leftJoin('s.agStaffResource sr')
-      ->whereIn('e.id');
-    $coll2 = $q->execute() ;
+      ->whereIn('e.id', $rawEntityIds);
+    $entities = $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_ARRAY);
 
-//    $newData = array( 'agPerson' => array( 'agStaff' => array() ) );
-    $newData = array( 'agPerson' => array( 'agStaff' => array('agStaffResource' => array('agStaffResoruceType' => array('staff_resource_type' => 'UORC'))) ) );
-    $newEntity = new agEntity();
-    $newEntity->fromArray($newData);
-    $coll2->add($newEntity);
-    $newEntityId = $coll2->getLast();
-    print_r($newEntityId->toArray());
-//    echo "\nnewEntityId: $newEntityId";
+    // we no longer need this array (used for the ->whereIN)
+    unset($rawEntityIds) ;
 
-    $coll2->save();
+    //loop foreach $entities member
+    foreach ($entities as $entityId => &$entityData)
+    {
+      // if staff id doesn't exist yet, make it so
+      if (is_null($entityData[1]))
+      {
+        $entityData[1] = $this->createNewRec('agStaff', array('person_id' => $entityData[0]));
+      }
+    }
+    
+    // update our row keys array
+    foreach ($this->importdata as $rowId => &$rowData)
+    {
+      $entityId = $rowData['_rawData']['entity_id'];
+      if (array_key_exists($entityId, $entities))
+      {
+        $rowData['primaryKeys']['entity_id'] = $entityId;
+        $rowData['primaryKeys']['person_id'] = $entities[$entityId][0];
+        $rowData['primaryKeys']['staff_id'] = $entities[$entityId][1];
+        unset($entities[$entityId]);
+      }
+    }
+  }
 
+  /*
+   * Method to set new entities from our $_rawData.
+   */
+  protected function setNewEntities()
+  {
+    // add new entities / persons / staff for records with bad or no entity ids.
+    foreach ($this->importdata as $rowId => &$rowData)
+    {
+      // initially be pessimistic about the actions we'll need to take
+      $createNew = FALSE;
+      $warnBadEntity = FALSE;
 
-    echo 'Foo' ;
+      // pick these up by reference so we can use the pointers more easily
+      $rawData =& $rowData['_rawData'];
+      $pKeys =& $rowData['primaryKeys'];
+
+      // this should satisfy both NULL entity_ids and ones that didn't make our initial filter
+      if (is_null($rawData['entity_id']))
+      {
+        $createNew = TRUE;
+      }
+      elseif (! array_key_exists($rawData['entity_id'], $pKeys['entity_id']))
+      {
+        $createNew = TRUE;
+        $warnBadEntity = TRUE;
+      }
+
+      if ($createNew)
+      {
+        $fKeys = array();
+        $pKeys['entity_id'] = $this->createNewRec('agEntity', $fKeys);
+
+        $fKeys = array('entity_id' => $pKeys['entity_id']);
+        $pKeys['person_id'] = $this->createNewRec('agPerson', $fKeys);
+
+        $fKeys = array('person_id' => $pKeys['person_id']);
+        $pKeys['staff_id'] = $this->createNewRec('agStaff', $fKeys);
+      }
+
+      // here we log warnings about bad entities that we've been passed and chose to override
+      if ($warnBadEntity)
+      {
+        $warnMsg = sprintf("Bad entity id (%s).  Generated a new entityId().",
+          $rowData['entity_id'], $newEntityId);
+        sfContext::getInstance()->getLogger()->warning($warnMsg) ;
+      }
+    }
   }
 }

@@ -120,6 +120,9 @@ class ProjectConfiguration extends sfProjectConfiguration
     // extend where appropriate
     $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CLASS, 'agDoctrineQuery');
     $manager->setAttribute(Doctrine_Core::ATTR_TABLE_CLASS, 'agDoctrineTable');
+
+    // enable the APC query cache
+    $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CACHE, new Doctrine_Cache_Apc());
   }
 
 }

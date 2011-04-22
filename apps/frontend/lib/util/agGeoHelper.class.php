@@ -404,7 +404,9 @@ class agGeoHelper extends agBulkRecordHelper
           ->addSelect('g.id')
         ->from('agGeo g')
         ->whereIn('g.geo_coordinate_hash', $gcHashes)
-        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
+      ->useResultCache(new Doctrine_Cache_Apc())
+      ->setResultCacheLifeSpan(60 * 15)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
   }
 
   /**
@@ -420,6 +422,8 @@ class agGeoHelper extends agBulkRecordHelper
         ->from('agGeoCoordinate gc')
         ->where('gc.latitude = ?', $latitude)
           ->andWhere('gc.longitude = ?', $longitude)
+      ->useResultCache(new Doctrine_Cache_Apc())
+      ->setResultCacheLifeSpan(60 * 15)
       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
   }
 

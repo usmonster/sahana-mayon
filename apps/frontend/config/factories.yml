@@ -34,9 +34,11 @@ all:
     param:
       generate_shortest_url:            true
       extra_parameters_as_query_string: true
+    cache:
+      class: sfAPCCache
+      param:
+        automatic_cleaning_factor: 0
+        lifetime: 31556926
 
   view_cache_manager:
-    class: sfViewCacheManager
-    param:
-      cache_key_use_vary_headers: true
-      cache_key_use_host_name:    true
+    class: sfAPCCache

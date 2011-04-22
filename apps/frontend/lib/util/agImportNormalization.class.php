@@ -102,10 +102,29 @@ abstract class agImportNormalization extends agImportHelper
 
     // since we encountered no throw-able errors up to this point, we can commit
     $conn->commit() ;
+  }
 
-    // I don't recommend you return here -> anything you return might not be applicable to the
-    // specific children (eg, staff vs. facility). Rather, modify your returns property
-    // then let the caller or at worst a child method, figure out how to parse / use that property
+  /**
+   * Simple method for instantiating what are effectively blank records.
+   * @param string $recordName The name of the record / model that will be created.
+   * @param array $foreignKeys An array of foreign keys that will be set with the new record.
+   * <code>array( $columnName => $columnValue, ...)</code>
+   * @return integer The newly instantiated record's ID
+   */
+  protected function createNewRec( $recordName, $foreignKeys )
+  {
+    // instantiate the new record object
+    $newRec = new $recordName();
+
+    // loop through our keys and set values
+    foreach($foreignKeys as $columnName => $columnValue)
+    {
+      $newRec[$columnName] = $columnValue;
+    }
+
+    // save and return our new id
+    $newRec->save($this->conn);
+    return $newRec->getId();
   }
 
 
