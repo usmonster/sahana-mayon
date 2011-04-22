@@ -131,7 +131,7 @@ class AgFacilityImportXLS extends AgImportXLS
   {
     require_once(dirname(__FILE__) . '/excel_reader2.php');
 
-    // Validate the uploaded files Excel 2003 extention
+    // Validate the uploaded files Excel 2003 extension
     $this->fileInfo = pathinfo($importFile);
     if (strtolower($this->fileInfo["extension"]) <> 'xls') {
       $this->events[] = array("type" => "ERROR", "message" => "{$this->fileInfo['basename']} is not Microsoft Excel 2003 \".xls\" workbook.");

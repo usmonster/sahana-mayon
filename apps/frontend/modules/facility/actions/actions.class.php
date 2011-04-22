@@ -233,19 +233,24 @@ class facilityActions extends agActions
     $this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
 
     $uploadedFile = $_FILES["import"];
-
     $uploadDir = sfConfig::get('sf_upload_dir') . '/';
+
     move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"]);
     $this->importPath = $uploadDir . $uploadedFile["name"];
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)
     $this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready'));
+    //$this->redirect('facility/import');
+    //$this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready', array('cursor' => $cursor)));
     // TODO: eventually use this ^^^ to replace this vvv.
 
     $import = new AgFacilityImportXLS();
 //    $returned = $import->createTempTable();
 
+    $this->timer = time();
     $processedToTemp = $import->processImport($this->importPath);
+    $this->timer = (time()-$this->timer);
+
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
 
@@ -254,12 +259,15 @@ class facilityActions extends agActions
     {
       // Grab table name from AgImportXLS class.
       $sourceTable = $import->tempTable ;
+
       $dataNorm = new agFacilityImportNormalization($scenarioId, $sourceTable, 'facility');
 
       $format="%d/%m/%Y %H:%M:%S";
 //      echo strftime($format);
 
+      $this->timer = time();
       $dataNorm->normalizeImport();
+      $this->timer = (time()-$this->timer);
       
       $this->summary = $dataNorm->summary;
 //      echo strftime($format);
