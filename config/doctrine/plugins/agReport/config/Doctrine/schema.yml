@@ -15,10 +15,10 @@ agReport:
       type: unique
   relations:
     agLuceneSearch:
-      class: agLuceneSearch
+      class: agSearch
       refClass: agReportGenerator
       local: report_id
-      foreign: lucene_search_id
+      foreign: search_id
 agQuerySelectField:
   columns:
     id:
@@ -46,36 +46,43 @@ agQuerySelectField:
     agReport:
       local: report_id
       foreign: id
-agLuceneSearch:
+agSearch:
   columns:
     id:
       primary: true
       type: integer(2)
       notnull: true
       autoincrement: true
-    lucene_search_type_id:
+    search_type_id:
       type: integer(2)
       notnull: true
-    query_name:
+    search_hash:
+      type: string(128)
+      notnull: true
+    search_name:
       type: string(64)
       notnull: true
-    query_condition:
+    search_condition:
       type: clob(65532)
       notnull: true
   indexes:
-    agLuceneSearch_unq:
-      fields: [query_name]
+    agSearch_unq:
+      fields: [search_name]
       type: unique
+    IX_agSearch_searchType:
+      fields: [search_type_id]
+    agSearch_unq_searchHash:
+      fields: [search_hash]
   relations:
-    agLuceneSearchType:
-      class: agLuceneSearchType
-      foreignAlias: agLuceneSearch
-      local: lucene_search_type_id
+    agSearchType:
+      class: agSearchType
+      foreignAlias: agSearch
+      local: search_type_id
       foreign: id
     agReport:
       class: agReport
       refClass: agReportGenerator
-      local: lucene_search_id
+      local: search_id
       foreign: report_id
 agReportGenerator:
   columns:
@@ -87,7 +94,7 @@ agReportGenerator:
     report_id:
       type: integer(2)
       notnull: true
-    lucene_search_id:
+    search_id:
       type: integer(2)
       notnull: true
   indexes:
@@ -98,17 +105,17 @@ agReportGenerator:
     agReport:
       local: report_id
       foreign: id
-    agLuceneSearch:
-      local: lucene_search_id
+    agSearch:
+      local: search_id
       foreign: id
-agLuceneSearchType:
+agSearchType:
   columns:
     id:
       primary: true
       type: integer(2)
       notnull: true
       autoincrement: true
-    lucene_search_type:
+    search_type:
       type: string(64)
       notnull: true
     description:

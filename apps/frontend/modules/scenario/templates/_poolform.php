@@ -13,16 +13,16 @@
       //ONLY IF text is NOT empty
     })
     if(out.length > 1){
-      $("#staff_pool_lucene_search_query_condition").val('statusTRUE' + out.join(''));
+      $("#staff_pool_search_search_condition").val('statusTRUE' + out.join(''));
     }
     else{
       var query_c = out.pop();
       if(query_c != undefined){
-        $("#staff_pool_lucene_search_query_condition").val('statusTRUE' + query_c);
+        $("#staff_pool_search_search_condition").val('statusTRUE' + query_c);
       }
       else{
         query_c = 'status1';
-        $("#staff_pool_lucene_search_query_condition").val(query_c);
+        $("#staff_pool_search_search_condition").val(query_c);
       }
     }
   }

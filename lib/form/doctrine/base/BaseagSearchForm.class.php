@@ -1,44 +1,46 @@
 <?php
 
 /**
- * agLuceneSearch form base class.
+ * agSearch form base class.
  *
- * @method agLuceneSearch getObject() Returns the current form's model object
+ * @method agSearch getObject() Returns the current form's model object
  *
  * @package    AGASTI_CORE
  * @subpackage form
  * @author     CUNY SPS
  * @version    SVN: $Id: sfDoctrineFormGeneratedTemplate.php 29553 2010-05-20 14:33:00Z Kris.Wallsmith $
  */
-abstract class BaseagLuceneSearchForm extends BaseFormDoctrine
+abstract class BaseagSearchForm extends BaseFormDoctrine
 {
   public function setup()
   {
     $this->setWidgets(array(
-      'id'                    => new sfWidgetFormInputHidden(),
-      'lucene_search_type_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agLuceneSearchType'), 'add_empty' => false)),
-      'query_name'            => new sfWidgetFormInputText(),
-      'query_condition'       => new sfWidgetFormTextarea(),
-      'created_at'            => new sfWidgetFormDateTime(),
-      'updated_at'            => new sfWidgetFormDateTime(),
-      'ag_report_list'        => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReport')),
+      'id'               => new sfWidgetFormInputHidden(),
+      'search_type_id'   => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agSearchType'), 'add_empty' => false)),
+      'search_hash'      => new sfWidgetFormInputText(),
+      'search_name'      => new sfWidgetFormInputText(),
+      'search_condition' => new sfWidgetFormTextarea(),
+      'created_at'       => new sfWidgetFormDateTime(),
+      'updated_at'       => new sfWidgetFormDateTime(),
+      'ag_report_list'   => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agReport')),
     ));
 
     $this->setValidators(array(
-      'id'                    => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'lucene_search_type_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agLuceneSearchType'))),
-      'query_name'            => new sfValidatorString(array('max_length' => 64)),
-      'query_condition'       => new sfValidatorString(),
-      'created_at'            => new sfValidatorDateTime(),
-      'updated_at'            => new sfValidatorDateTime(),
-      'ag_report_list'        => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agReport', 'required' => false)),
+      'id'               => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
+      'search_type_id'   => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agSearchType'))),
+      'search_hash'      => new sfValidatorString(array('max_length' => 128)),
+      'search_name'      => new sfValidatorString(array('max_length' => 64)),
+      'search_condition' => new sfValidatorString(),
+      'created_at'       => new sfValidatorDateTime(),
+      'updated_at'       => new sfValidatorDateTime(),
+      'ag_report_list'   => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agReport', 'required' => false)),
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorDoctrineUnique(array('model' => 'agLuceneSearch', 'column' => array('query_name')))
+      new sfValidatorDoctrineUnique(array('model' => 'agSearch', 'column' => array('search_name')))
     );
 
-    $this->widgetSchema->setNameFormat('ag_lucene_search[%s]');
+    $this->widgetSchema->setNameFormat('ag_search[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
@@ -49,7 +51,7 @@ abstract class BaseagLuceneSearchForm extends BaseFormDoctrine
 
   public function getModelName()
   {
-    return 'agLuceneSearch';
+    return 'agSearch';
   }
 
   public function updateDefaultsFromObject()

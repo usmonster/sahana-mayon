@@ -31,7 +31,7 @@ abstract class agImportNormalization extends agImportHelper
             // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
             $importComponents = array(),
 
-           //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue, success => boolean) )
+           //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue), success => boolean) 
             $importData = array();
 
   public function __construct()
@@ -70,13 +70,13 @@ abstract class agImportNormalization extends agImportHelper
     foreach ($this->importComponents as $index => $componentData)
     {
       // start an inner transaction / savepoint per component
-      $conn->beginTransaction($componentData['componentName']) ;
+      $conn->beginTransaction($componentData['component']) ;
 
       try
       {
         // Calling method to set data.
         $componentData['method']($componentData['throwOnError']);
-        $conn->commit($conn->beginTransaction($componentData['componentName']));
+        $conn->commit($conn->beginTransaction($componentData['component']));
       }
       catch(Exception $e)
       {

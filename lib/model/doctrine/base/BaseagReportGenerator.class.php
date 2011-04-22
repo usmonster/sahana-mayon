@@ -7,20 +7,20 @@
  * 
  * @property integer $id
  * @property integer $report_id
- * @property integer $lucene_search_id
+ * @property integer $search_id
  * @property agReport $agReport
- * @property agLuceneSearch $agLuceneSearch
+ * @property agSearch $agSearch
  * 
- * @method integer           getId()               Returns the current record's "id" value
- * @method integer           getReportId()         Returns the current record's "report_id" value
- * @method integer           getLuceneSearchId()   Returns the current record's "lucene_search_id" value
- * @method agReport          getAgReport()         Returns the current record's "agReport" value
- * @method agLuceneSearch    getAgLuceneSearch()   Returns the current record's "agLuceneSearch" value
- * @method agReportGenerator setId()               Sets the current record's "id" value
- * @method agReportGenerator setReportId()         Sets the current record's "report_id" value
- * @method agReportGenerator setLuceneSearchId()   Sets the current record's "lucene_search_id" value
- * @method agReportGenerator setAgReport()         Sets the current record's "agReport" value
- * @method agReportGenerator setAgLuceneSearch()   Sets the current record's "agLuceneSearch" value
+ * @method integer           getId()        Returns the current record's "id" value
+ * @method integer           getReportId()  Returns the current record's "report_id" value
+ * @method integer           getSearchId()  Returns the current record's "search_id" value
+ * @method agReport          getAgReport()  Returns the current record's "agReport" value
+ * @method agSearch          getAgSearch()  Returns the current record's "agSearch" value
+ * @method agReportGenerator setId()        Sets the current record's "id" value
+ * @method agReportGenerator setReportId()  Sets the current record's "report_id" value
+ * @method agReportGenerator setSearchId()  Sets the current record's "search_id" value
+ * @method agReportGenerator setAgReport()  Sets the current record's "agReport" value
+ * @method agReportGenerator setAgSearch()  Sets the current record's "agSearch" value
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -43,7 +43,7 @@ abstract class BaseagReportGenerator extends sfDoctrineRecord
              'notnull' => true,
              'length' => 2,
              ));
-        $this->hasColumn('lucene_search_id', 'integer', 2, array(
+        $this->hasColumn('search_id', 'integer', 2, array(
              'type' => 'integer',
              'notnull' => true,
              'length' => 2,
@@ -66,8 +66,8 @@ abstract class BaseagReportGenerator extends sfDoctrineRecord
              'local' => 'report_id',
              'foreign' => 'id'));
 
-        $this->hasOne('agLuceneSearch', array(
-             'local' => 'lucene_search_id',
+        $this->hasOne('agSearch', array(
+             'local' => 'search_id',
              'foreign' => 'id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();

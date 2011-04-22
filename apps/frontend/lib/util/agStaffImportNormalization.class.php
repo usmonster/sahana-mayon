@@ -21,7 +21,8 @@ class agStaffImportNormalization extends agImportNormalization
 
   function __construct($importTable)
   {
-    parent::__construct() ;
+    parent::__construct();
+    $this->setImportComponents();
     // declare variables
 //    $this->importTable = $importTable;
 //    $this->defineStatusTypes();
@@ -40,9 +41,9 @@ class agStaffImportNormalization extends agImportNormalization
   {
     // array( [order] => array(componentName => component name, helperClassName => Name of the helper class, throwOnError => boolean, methodName => method name) )
     // setEntity creates entity, person, and staff records.
-    $this->importComponents[] = array( 'component' => 'entity', 'throwOnError' => TRUE, 'method' => 'setEntity');
-    $this->importComponents[] = array( 'component' => 'personName', 'throwOnError' => TRUE, 'method' => 'setPersonName', 'helperClassName' => 'agPersonNameHelper');
-    $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => TRUE, 'method' => 'setEntityEmail', 'helperClassName' => 'agEntityEmailHelper');
+    $this->importComponents[] = array( 'component' => 'entity', 'throwOnError' => TRUE, 'method' => 'setEntities');
+#    $this->importComponents[] = array( 'component' => 'personName', 'throwOnError' => TRUE, 'method' => 'setPersonName', 'helperClassName' => 'agPersonNameHelper');
+#    $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => TRUE, 'method' => 'setEntityEmail', 'helperClassName' => 'agEntityEmailHelper');
   }
 
   /**
@@ -173,5 +174,21 @@ class agStaffImportNormalization extends agImportNormalization
         sfContext::getInstance()->getLogger()->warning($warnMsg) ;
       }
     }
+  }
+
+  public function testDataNorm()
+  {
+    $_rawData = array('entity_id' => '',
+                      'first_name' => '',
+                      'middle_name' => '',
+                      'last_name' => '',
+                      'mobile_phone' => '',
+                      'home_phone' => '',
+                      'home_email' => '',
+                      'work_phone' => '',
+                      'work_email' => ''
+                     );
+    $importData = array( '_rawData' => $_rawData, 'primaryKey' => array(), 'success' => 0);
+    $this->normalizeData();
   }
 }

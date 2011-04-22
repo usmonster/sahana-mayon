@@ -525,7 +525,7 @@ agScenarioStaffGenerator:
     scenario_id:
       type: integer(2)
       notnull: true
-    lucene_search_id:
+    search_id:
       type: integer(2)
       notnull: true
     search_weight:
@@ -533,14 +533,14 @@ agScenarioStaffGenerator:
       notnull: true
   indexes:
     agDeploymentSearch_unq:
-      fields: [scenario_id, lucene_search_id]
+      fields: [scenario_id, search_id]
       type: unique
   relations:
     agScenario:
       local: scenario_id
       foreign: id
-    agLuceneSearch:
-      local: lucene_search_id
+    agSearch:
+      local: search_id
       foreign: id
 actAs:
   Timestampable: 

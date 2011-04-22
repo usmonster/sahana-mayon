@@ -379,7 +379,7 @@ class scenarioActions extends agActions
       $this->poolform = new agStaffPoolForm($this->search_id);
 
       //
-      $query_condition = $this->poolform->getEmbeddedForm('lucene_search')->getObject()->query_condition;
+      $query_condition = $this->poolform->getEmbeddedForm('search')->getObject()->query_condition;
       if ($query_condition != '%') {
         $queryparts = explode(" AND ", $query_condition);
         foreach ($queryparts as $querypart) {
@@ -406,15 +406,15 @@ class scenarioActions extends agActions
 
         $postParam = $request->getPostParameter('staff_pool');
         $staff_generator = $postParam['staff_generator'];
-        $lucene_search = $postParam['lucene_search'];
-        $lucene_query = $lucene_search['query_condition'];
-#        $lucene_query = "\"Specialist ASPCA\"";
-        #$lucene_query = 'staff_pool:GeneralistOther';
+        $search = $postParam['search'];
+        $search_query = $search['query_condition'];
+#        $search_query = "\"Specialist ASPCA\"";
+        #$search_query = 'staff_pool:GeneralistOther';
         $values = array('sg_values' =>
           array('search_weight' => $staff_generator['search_weight']),
-          'ls_values' =>
-          array('query_name' => $lucene_search['query_name'],
-            'lucene_search_type_id' => $lucene_search['lucene_search_type_id'])
+          's_values' =>
+          array('search_name' => $search['search_name'],
+            'search_type_id' => $search['search_type_id'])
         );
         $this->poolform = new agStaffPoolForm(null, $values);
         $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
@@ -423,17 +423,17 @@ class scenarioActions extends agActions
         }
 
         if ($request->getParameter('search_id'))
-          $lucene_query = $query_condition;
+          $search_query = $query_condition;
         $this->searchedModels = 'agStaff';
 
-        parent::doSearch($lucene_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
+        parent::doSearch($search_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
       } elseif ($request->getParameter('Delete')) {
 
         $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
-        $luceneQuery = $ag_staff_gen->getAgLuceneSearch();
+        $searchQuery = $ag_staff_gen->getAgSearch();
 //get the related lucene search
         $ag_staff_gen->delete();
-        $luceneQuery->delete();
+        $searchQuery->delete();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
 //SAVE
@@ -452,10 +452,10 @@ class scenarioActions extends agActions
           $ag_staff_pool = $this->poolform->saveEmbeddedForms();
           $postParam = $request->getPostParameter('staff_pool');
           $staff_generator = $postParam['staff_generator'];
-          $lucene_search = $postParam['lucene_search'];
-          $lucene_query = $lucene_search['query_condition'];
+          $search = $postParam['search'];
+          $search_condition = $search['search_condition'];
 
-          $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($lucene_query, $this->scenario_id);
+          $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($search_condition, $this->scenario_id);
           $addedStaff = agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }

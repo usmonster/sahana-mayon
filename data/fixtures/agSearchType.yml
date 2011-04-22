@@ -1,0 +1,4 @@
+agSearchType:
+  doctrine_query:
+    search_type: doctrine query
+    description: Specific for doctrine type of queries.

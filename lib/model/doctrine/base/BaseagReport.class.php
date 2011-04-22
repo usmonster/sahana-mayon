@@ -63,10 +63,10 @@ abstract class BaseagReport extends sfDoctrineRecord
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('agLuceneSearch', array(
+        $this->hasMany('agSearch as agLuceneSearch', array(
              'refClass' => 'agReportGenerator',
              'local' => 'report_id',
-             'foreign' => 'lucene_search_id'));
+             'foreign' => 'search_id'));
 
         $this->hasMany('agQuerySelectField', array(
              'local' => 'id',

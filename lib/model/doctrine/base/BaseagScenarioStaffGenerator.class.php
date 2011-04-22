@@ -7,23 +7,23 @@
  * 
  * @property integer $id
  * @property integer $scenario_id
- * @property integer $lucene_search_id
+ * @property integer $search_id
  * @property integer $search_weight
  * @property agScenario $agScenario
- * @property agLuceneSearch $agLuceneSearch
+ * @property agSearch $agSearch
  * 
- * @method integer                  getId()               Returns the current record's "id" value
- * @method integer                  getScenarioId()       Returns the current record's "scenario_id" value
- * @method integer                  getLuceneSearchId()   Returns the current record's "lucene_search_id" value
- * @method integer                  getSearchWeight()     Returns the current record's "search_weight" value
- * @method agScenario               getAgScenario()       Returns the current record's "agScenario" value
- * @method agLuceneSearch           getAgLuceneSearch()   Returns the current record's "agLuceneSearch" value
- * @method agScenarioStaffGenerator setId()               Sets the current record's "id" value
- * @method agScenarioStaffGenerator setScenarioId()       Sets the current record's "scenario_id" value
- * @method agScenarioStaffGenerator setLuceneSearchId()   Sets the current record's "lucene_search_id" value
- * @method agScenarioStaffGenerator setSearchWeight()     Sets the current record's "search_weight" value
- * @method agScenarioStaffGenerator setAgScenario()       Sets the current record's "agScenario" value
- * @method agScenarioStaffGenerator setAgLuceneSearch()   Sets the current record's "agLuceneSearch" value
+ * @method integer                  getId()            Returns the current record's "id" value
+ * @method integer                  getScenarioId()    Returns the current record's "scenario_id" value
+ * @method integer                  getSearchId()      Returns the current record's "search_id" value
+ * @method integer                  getSearchWeight()  Returns the current record's "search_weight" value
+ * @method agScenario               getAgScenario()    Returns the current record's "agScenario" value
+ * @method agSearch                 getAgSearch()      Returns the current record's "agSearch" value
+ * @method agScenarioStaffGenerator setId()            Sets the current record's "id" value
+ * @method agScenarioStaffGenerator setScenarioId()    Sets the current record's "scenario_id" value
+ * @method agScenarioStaffGenerator setSearchId()      Sets the current record's "search_id" value
+ * @method agScenarioStaffGenerator setSearchWeight()  Sets the current record's "search_weight" value
+ * @method agScenarioStaffGenerator setAgScenario()    Sets the current record's "agScenario" value
+ * @method agScenarioStaffGenerator setAgSearch()      Sets the current record's "agSearch" value
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -46,7 +46,7 @@ abstract class BaseagScenarioStaffGenerator extends sfDoctrineRecord
              'notnull' => true,
              'length' => 2,
              ));
-        $this->hasColumn('lucene_search_id', 'integer', 2, array(
+        $this->hasColumn('search_id', 'integer', 2, array(
              'type' => 'integer',
              'notnull' => true,
              'length' => 2,
@@ -62,7 +62,7 @@ abstract class BaseagScenarioStaffGenerator extends sfDoctrineRecord
              'fields' => 
              array(
               0 => 'scenario_id',
-              1 => 'lucene_search_id',
+              1 => 'search_id',
              ),
              'type' => 'unique',
              ));
@@ -75,8 +75,8 @@ abstract class BaseagScenarioStaffGenerator extends sfDoctrineRecord
              'local' => 'scenario_id',
              'foreign' => 'id'));
 
-        $this->hasOne('agLuceneSearch', array(
-             'local' => 'lucene_search_id',
+        $this->hasOne('agSearch', array(
+             'local' => 'search_id',
              'foreign' => 'id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();

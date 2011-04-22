@@ -174,7 +174,8 @@ class agFooActions extends agActions
 //    echo"Staff Resource Helper:<br />";
 //    print_r($staffResources);
 //    echo"<br /><br />";
-    $test = agStaffImportNormalization::testCollInsert();
+    $normObj = new agStaffImportNormalization('temp_staffImport');
+    $test = $normObj->testDataNorm();
   }
 
   public function executeList(sfWebRequest $request)

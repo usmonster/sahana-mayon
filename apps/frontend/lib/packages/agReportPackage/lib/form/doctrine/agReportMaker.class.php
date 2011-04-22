@@ -74,22 +74,22 @@ class agReportMakerForm extends sfForm
   }
 
   /**
-   * Embeds the Lucene Form
+   * Embeds the Search Form
    * */
-  public function embedLuceneForm()
+  public function embedSearchForm()
   {
-    if (isset($this->lucene_search_id)) {
-      $luceneObject = agDoctrineQuery::create()
-              ->from('agLuceneSearch a')
-              ->where('a.id =?', $this->lucene_search_id)
+    if (isset($this->search_id)) {
+      $searchObject = agDoctrineQuery::create()
+              ->from('agSearch a')
+              ->where('a.id =?', $this->search_id)
               ->execute()->getFirst();
     }
-    $luceneForm = new agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);
+    $searchForm = new agSearchForm(isset($searchObject) ? $searchObject : null);
 
-    unset($luceneForm['created_at'], $luceneForm['updated_at']);
-    unset($luceneForm['ag_report_list']);
+    unset($searchForm['created_at'], $searchForm['updated_at']);
+    unset($searchForm['ag_report_list']);
 
-    $this->embedForm('lucene_search', $luceneForm);
+    $this->embedForm('search', $searchForm);
   }
   public function embedReportForm()
   {
@@ -99,10 +99,10 @@ class agReportMakerForm extends sfForm
               ->where('a.id =?', $this->report_id)
               ->execute()->getFirst();
     }
-    $reportForm = new agReportForm(isset($reportObject) ? $luceneObject : null);
+    $reportForm = new agReportForm(isset($reportObject) ? $searchObject : null);
 
     unset($reportForm['created_at'], $reportForm['updated_at']);
-    unset($reportForm['ag_lucene_search_list']);
+    unset($reportForm['ag_search_list']);
 
     $this->embedForm('report', $reportForm);
   }
@@ -110,13 +110,13 @@ class agReportMakerForm extends sfForm
   {
     $this->available_tables = Doctrine::getLoadedModels();
 
-    if (isset($this->lucene_search_id)) {
-      $luceneObject = agDoctrineQuery::create()
-              ->from('agLuceneSearch a')
-              ->where('a.id =?', $this->lucene_search_id)
+    if (isset($this->search_id)) {
+      $searchObject = agDoctrineQuery::create()
+              ->from('agSearch a')
+              ->where('a.id =?', $this->search_id)
               ->execute()->getFirst();
     }
-    $queryselectForm = new agQuerySelectFieldForm(isset($luceneObject) ? $luceneObject : null);
+    $queryselectForm = new agQuerySelectFieldForm(isset($searchObject) ? $searchObject : null);
 
     unset($queryselectForm['created_at'], $queryselectForm['updated_at']);
     $queryselectForm->setWidget('report_id', new sfWidgetFormInputHidden());
@@ -141,11 +141,11 @@ class agReportMakerForm extends sfForm
    */
   public function saveEmbeddedForms($con = null, $forms = null)
   {
-    if (isset($this->embeddedForms['lucene_search'])) {
-      $form = $this->embeddedForms['lucene_search'];
-      $values = $this->values['lucene_search'];
-      $this->saveLuceneForm($form, $values);
-      unset($this->embeddedForms['lucene_search']);
+    if (isset($this->embeddedForms['search'])) {
+      $form = $this->embeddedForms['search'];
+      $values = $this->values['search'];
+      $this->saveSearchForm($form, $values);
+      unset($this->embeddedForms['search']);
     }
 
     if (isset($this->embeddedForms['staff_generator'])) {
@@ -157,16 +157,16 @@ class agReportMakerForm extends sfForm
   }
 
   /**
-   * save the embedded lucene form
+   * save the embedded search form
    * @param sfForm $form a form to process
    * @param mixed $values a set of values coming from a post
    */
-  public function saveLuceneForm($form, $values)
+  public function saveSearchForm($form, $values)
   {
     $form->updateObject($values);
 
     $form->getObject()->save();
-    $this->lucene_search_id = $form->getObject()->getId();
+    $this->search_id = $form->getObject()->getId();
   }
 
   /**
@@ -178,8 +178,8 @@ class agReportMakerForm extends sfForm
   public function saveReportGenForm($form, $values)
   {
     $form->updateObject($values);
-    if ($form->getObject()->lucene_search_id == null) {
-      $form->getObject()->lucene_search_id = $this->lucene_search_id;
+    if ($form->getObject()->search_id == null) {
+      $form->getObject()->search_id = $this->search_id;
       $form->getObject()->scenario_id = $this->scenario_id;
     }
     $form->getObject()->save();
