@@ -531,27 +531,23 @@ class scenarioActions extends agActions
   {
     $this->setScenarioBasics($request);
     $this->wizardHandler($request);
-    $staffResourceTypeDefaults = null; //new agDoctrineQuery();
-    $facilityResourceTypeDefaults = null; //new agDoctrineQuery();
-    //we must have an id coming in if this is an existing scenario
-    if ($request->getParameter('id')) {
-      $this->resourceForm = new agDefaultResourceTypeForm($staffResourceTypeDefaults, $facilityResourceTypeDefaults);
+      $this->resourceForm = new agDefaultResourceTypeForm($this->scenario_id);
 
       $this->getResponse()->setTitle('Scenario Creation Wizard - set Default Resource Types needed for ' . $this->scenarioName . ' Scenario');
-    }
+
 
     if ($request->isMethod(sfRequest::POST)) {
-      $this->form->bind($request->getParameter($this->form->getName()), $request->getFiles($this->form->getName()));
-      if ($this->form->isValid()) {
-        $ag_scenario = $this->form->save();
-        $ag_scenario->updateLucene();
-        if ($request->hasParameter('Continue')) {
+              $this->resourceForm->bind($request->getParameter($this->resourceForm->getName()), $request->getFiles($this->resourceForm->getName()));
+
+        if ($this->resourceForm->isValid()) {
+          $ag_default_resources = $this->resourceForm->saveEmbeddedForms();
+          if ($request->hasParameter('Continue')) {
 
           //do some stuff
 //        $this->setTemplate('scenario/newgroup');
-          $this->redirect('scenario/fgroup?id=' . $ag_scenario->getId());
+          $this->redirect('scenario/fgroup?id=' . $scenario_id);
         } else {
-          $this->redirect('scenario/meta?id=' . $ag_scenario->getId());
+          $this->redirect('scenario/resourcetypes?id=' . $scenario_id);
         }
       }
     }

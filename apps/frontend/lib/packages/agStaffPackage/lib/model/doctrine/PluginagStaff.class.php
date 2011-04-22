@@ -46,10 +46,10 @@ abstract class PluginagStaff extends BaseagStaff
       $staff_resource_status .= ' ' . $stf['srs_staff_resource_status'];
       $staff_organization .= ' ' . $stf['o_organization'];
       $staff_available_bool = ($stf['srs_is_available'] == 1) ? 'TRUE' : 'FALSE';
-      $staff_combo_array[] = array($stf['srs_is_available'], $stf['srt_staff_resource_type'], $stf['o_organization']);
-      if ($staff_available_bool == 1)
+      $staff_combo_array[] = array($staff_available_bool, $stf['srt_staff_resource_type'], $stf['o_organization']);
+      if ($staff_available_bool == 'TRUE')
       {
-        $available_status = 1;
+        $available_status = 'TRUE';
       }
     }
     if (isset($staff_resource))
@@ -64,9 +64,9 @@ abstract class PluginagStaff extends BaseagStaff
     {
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_org', $staff_organization, 'utf-8'));
     }
-    if ($available_status == 1)
+    if ($available_status == 'TRUE')
     {
-      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_avail', 1, 'utf-8'));
+      $doc->addField(Zend_Search_Lucene_Field::unStored('staff_avail', 'TRUE', 'utf-8'));
     }
     $i = 0;
     foreach ($staff_combo_array AS $stfCmb)
