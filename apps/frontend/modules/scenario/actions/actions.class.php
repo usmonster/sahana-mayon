@@ -569,7 +569,7 @@ class scenarioActions extends agActions
             ->findByDql('scenario_id = ?', $this->scenario_id)
             ->getData();
 
-    $this->ag_allocated_facility_resources = '';  //set this default incase none exist
+    $this->allocatedFacilityResources = '';  //set this default incase none exist
 
     $this->ag_facility_resources = agDoctrineQuery::create()
             ->select('a.facility_id, af.*, afrt.*')
@@ -591,6 +591,7 @@ class scenarioActions extends agActions
               ->addSelect('f.facility_code')
               ->addSelect('frt.facility_resource_type')
               ->addSelect('frt.id')
+              ->addSelect('frt.facility_resource_type_abbr')
             ->from('agFacilityResource fr')
               ->innerJoin('fr.agFacility f')
               ->innerJoin('fr.agFacilityResourceType frt')
@@ -603,7 +604,12 @@ class scenarioActions extends agActions
                 AND s1.id = fr.id)',
                 $this->scenario_id)
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-    $b = $this->availableFacilityResources;
+
+    $this->facilityStatusForm = new sfForm();
+    $this->facilityStatusForm->setWidgets(array(
+                                           'status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceStatus', 'method' => 'getFacilityResourceStatus'), array())
+                                         ));
+
 // End testing//////////////////////////////////////////////////////////////////////////////////////
     if ($request->getParameter('groupid')) {
 //EDIT
@@ -623,11 +629,26 @@ class scenarioActions extends agActions
       foreach ($current as $curopt) {
         $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
       }
-
-      $this->ag_allocated_facility_resources = agDoctrineQuery::create()
-              ->select('a.facility_id, af.*, afrt.*')
-              ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-              ->whereIn('a.id', array_keys($currentoptions))->execute();
+      $this->allocatedFacilityResources = agDoctrineQuery::create()
+          ->select('fr.id')
+            ->addSelect('f.facility_name')
+            ->addSelect('f.facility_code')
+            ->addSelect('frt.facility_resource_type')
+            ->addSelect('frt.id')
+            ->addSelect('frt.facility_resource_type_abbr')
+          ->from('agFacilityResource fr')
+            ->innerJoin('fr.agFacility f')
+            ->innerJoin('fr.agFacilityResourceType frt')
+          ->from('agFacilityResource fr')
+            ->innerJoin('fr.agFacility f')
+            ->innerJoin('fr.agFacilityResourceType frt')
+          ->whereIn('fr.id', array_keys($currentoptions))
+          ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+// Old Query
+//      $this->allocatedFacilityResources = agDoctrineQuery::create()
+//              ->select('a.facility_id, af.*, afrt.*')
+//              ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
+//              ->whereIn('a.id', array_keys($currentoptions))->execute();
 
       $this->ag_facility_resources = agDoctrineQuery::create()
               ->select('a.facility_id, af.*, afrt.*')

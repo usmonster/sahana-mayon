@@ -64,19 +64,15 @@ echo url_for
         <tr>
           <th>Facility Code</th>
           <th>Resource Type</th>
-          <th>Status</th>
           <th>Activation Sequence</th>
         </tr>
-      <?php foreach ($availableFacilityResources as $afr): ?>
-        <tr class="sort facility_resource_type_<?php echo $afr['frt_id']; ?>">
-          <td title="<?php echo $afr['f_facility_name'];?>">
-            <?php echo $afr['f_facility_code'] ?>
+      <?php foreach ($availableFacilityResources as $availableFacilityResource): ?>
+        <tr class="sort facility_resource_type_<?php echo $availableFacilityResource['frt_id']; ?>">
+          <td title="<?php echo $availableFacilityResource['f_facility_name'];?>">
+            <?php echo $availableFacilityResource['f_facility_code'] ?>
           </td>
-          <td>
-            <?php echo $afr['frt_facility_resource_type'] ?>
-          </td>
-          <td>
-            <input type="text">
+          <td title="<?php echo $avfr['frt_facility_resource_type'] ?>">
+            <?php echo $availableFacilityResource['frt_facility_resource_type_abbr'] ?>
           </td>
           <td>
             <input type="text">
@@ -90,23 +86,23 @@ echo url_for
         <tr>
           <th>Facility Code</th>
           <th>Resource Type</th>
-          <th>Status</th>
           <th>Activation Sequence</th>
         </tr>
-        <tr class="sort">
-          <td>
-            11123
+      <?php if ($allocatedFacilityResources): ?>
+        <?php foreach ($allocatedFacilityResources as $allocatedFacilityResource): ?>
+        <tr class="sort facility_resource_type_<?php echo $allocatedFacilityResource['frt_id']; ?>">
+          <td title="<?php echo $allocatedFacilityResource['f_facility_name'];?>">
+            <?php echo $allocatedFacilityResource['f_facility_code'] ?>
           </td>
-          <td>
-            Bugs
+          <td title="<?php echo $allocatedFacilityResource['frt_facility_resource_type'] ?>">
+            <?php echo $allocatedFacilityResource['frt_facility_resource_type_abbr'] ?>
           </td>
           <td>
             <input type="text">
           </td>
-          <td>
-            <input type="text">
-          </td>
-        </tr>      
+        </tr>
+        <?php endforeach; ?>
+      <?php endif; ?>
       </tbody>
     </table>
 <!--    <ul id="bavailable" class="bucket">-->
@@ -123,9 +119,9 @@ echo url_for
 <!--    </ul>-->
 <!--    <ul id="allocated" class="bucket">-->
       <?php
-//      if ($ag_allocated_facility_resources) {
+//      if ($allocatedFacilityResources) {
 //
-//        foreach ($ag_allocated_facility_resources as $facility_resource) {
+//        foreach ($allocatedFacilityResources as $facility_resource) {
 //          echo '<li id="' . $facility_resource->getId() . '" title="' .
 //          $facility_resource->getAgFacilityResourceType() . '">' .
 //          $facility_resource->getAgFacility()->getFacilityName() . ': ' .
