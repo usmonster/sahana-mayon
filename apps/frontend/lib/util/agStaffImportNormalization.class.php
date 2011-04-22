@@ -9,13 +9,16 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
- * @author Charles Wisniewski, CUY SPS
+ * @author Chad Heuschober, CUY SPS
+ * @author Shirley Chan, CUY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
 class agStaffImportNormalization extends agImportNormalization
 {
+  protected   $scenarioId;
+
   function __construct($importTable)
   {
     parent::__construct() ;
