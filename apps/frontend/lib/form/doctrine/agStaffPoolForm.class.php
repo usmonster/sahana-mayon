@@ -111,8 +111,9 @@ class agStaffPoolForm extends sfForm
     $searchForm->getWidgetSchema()->setFormFormatterName('row');
     $searchForm->setWidget('search_condition', new sfWidgetFormInputHidden());
     $searchForm->getWidgetSchema()->setLabel('search_name', 'Name of Staff Pool');
-    $searchForm->getWidgetSchema()->setLabel('search_type_id', 'Search Type');
-
+    //$searchForm->getWidgetSchema()->setLabel('search_type_id', 'Search Type');
+    $searchForm->setWidget('search_type_id', new sfWidgetFormInputHidden());
+    $searchForm->setWidget('search_hash', new sfWidgetFormInputHidden());
 
     unset($searchForm['created_at'], $searchForm['updated_at']);
     unset($searchForm['ag_report_list']);
@@ -162,6 +163,17 @@ class agStaffPoolForm extends sfForm
    */
   public function saveSearchForm($form, $values)
   {
+
+    $preValues = $values;
+    $searchCondition = $values['search_condition'];
+    foreach($searchCondition as &$condition)
+    {
+      ksort($condition);
+    }
+    //$searchCondition = json_encode($searchCondition);
+    ksort($searchCondition);
+    $values['search_hash'] = md5($searchCondition);
+
     $form->updateObject($values);
 
     $form->getObject()->save();

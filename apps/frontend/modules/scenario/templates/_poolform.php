@@ -4,25 +4,27 @@
 <?php use_javascript('json.serialize.js'); ?>
 <script type="text/javascript">
   function queryConstruct() {
-    var out = Array();
+    var out = new Array();
     $('.filter option:selected').each(function(index) {
+      conditionObject = new Object();
       if($(this).text() != ''){
-        var cleanText = $(this).text().replace(/[\W|_]/,'');
-        out.push($(this).parent().attr('id') + cleanText);
+        conditionObject.field = $(this).parent().attr('id');
+        conditionObject.condition = $(this).text();
+        conditionObject.operation = '=';
+        out.push(conditionObject);
       }
       //ONLY IF text is NOT empty
     })
     if(out.length > 1){
-      $("#staff_pool_search_search_condition").val('statusTRUE' + out.join(''));
+      $("#staff_pool_search_search_condition").val(JSON.stringify(out));
     }
     else{
       var query_c = out.pop();
       if(query_c != undefined){
-        $("#staff_pool_search_search_condition").val('statusTRUE' + query_c);
+        $("#staff_pool_search_search_condition").val(JSON.stringify(query_c));
       }
       else{
-        query_c = 'status1';
-        $("#staff_pool_search_search_condition").val(query_c);
+        $("#staff_pool_search_search_condition").val('[]');
       }
     }
   }

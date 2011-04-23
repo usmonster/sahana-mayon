@@ -350,14 +350,14 @@ class scenarioActions extends agActions
     $this->total_staff = Doctrine_Core::getTable('agStaff')->count();
     $this->total_resources = Doctrine_Core::getTable('agStaffResource')->count();
     $inputs = array(
-      'type' => new sfWidgetFormDoctrineChoice(
+      'agStaffResourceType.staff_resource_type' => new sfWidgetFormDoctrineChoice(
           array(
             'model' => 'agStaffResourceType',
             'label' => 'Staff Type',
             'add_empty' => true)
       ),
       // 'class' => 'filter')),
-      'org' => new sfWidgetFormDoctrineChoice(
+      'agOrganization.organization' => new sfWidgetFormDoctrineChoice(
           array(
             'model' => 'agOrganization',
             'method' => 'getOrganization',
@@ -379,7 +379,8 @@ class scenarioActions extends agActions
       $this->poolform = new agStaffPoolForm($this->search_id);
 
       //
-      $query_condition = $this->poolform->getEmbeddedForm('search')->getObject()->query_condition;
+      $query_condition = $this->poolform->getEmbeddedForm('search')->getObject()->search_condition;
+      $query_array = json_decode($query_condition);
       if ($query_condition != '%') {
         $queryparts = explode(" AND ", $query_condition);
         foreach ($queryparts as $querypart) {
@@ -407,7 +408,7 @@ class scenarioActions extends agActions
         $postParam = $request->getPostParameter('staff_pool');
         $staff_generator = $postParam['staff_generator'];
         $search = $postParam['search'];
-        $search_query = $search['query_condition'];
+        $search_condition = $search['search_condition'];
 #        $search_query = "\"Specialist ASPCA\"";
         #$search_query = 'staff_pool:GeneralistOther';
         $values = array('sg_values' =>
@@ -422,16 +423,30 @@ class scenarioActions extends agActions
           $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
         }
 
-        if ($request->getParameter('search_id'))
-          $search_query = $query_condition;
-        $this->searchedModels = 'agStaff';
 
-        parent::doSearch($search_query, FALSE); //eventually we should add a for each loop here to get ALL filters coming in and constructa a good search string
+        
+
+        $q = agScenarioStaffGeneratorHelper::returnBaseStaffSearch();
+
+        $staff_ids = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+
+        //parent::doSearch($search_query, FALSE);
+        $listHelper = new agListHelper();
+        $resultArray = $listHelper->getStaffList($staff_ids);
+        $this->pager = new agArrayPager(null, 10);
+       $this->pager->setResultArray($resultArray);
+   // $this->pager->setResultArray($staffArray);
+    $this->pager->setPage($this->getRequestParameter('page', 1));
+    $this->pager->init();
+
+
+
+
       } elseif ($request->getParameter('Delete')) {
 
         $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
         $searchQuery = $ag_staff_gen->getAgSearch();
-//get the related lucene search
+//get the related lucene search`
         $ag_staff_gen->delete();
         $searchQuery->delete();
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));

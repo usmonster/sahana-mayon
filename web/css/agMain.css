@@ -1385,7 +1385,7 @@ a.signin.menu-open span {
   background-repeat: no-repeat;
 }
 
-stepper ul {
+#stepper ul {
   list-style-type: none;
 }
 
