@@ -101,17 +101,17 @@ class agSearchHelper
     try
     {
       $newRec->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
     }
     catch(Exception $e)
     {
       // log our error
       $errMsg = sprintf('%s failed to commit new record: %s',
-        __FUNCTION__, json_encode($newRec->toArray())) ;
-      sfContext::getInstance()->getLogger()->err($errMsg) ;
+        __FUNCTION__, json_encode($newRec->toArray()));
+      sfContext::getInstance()->getLogger()->err($errMsg);
 
       // rollback and re-throw
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
       throw $e;
     }
 
@@ -130,10 +130,17 @@ class agSearchHelper
       ->select('s.id')
         ->from('agSearch s')
         ->where('s.search_hash = ?', $searchHash)
-        ->useResultCache(new Doctrine_Cache_Apc())
-        ->setResultCacheLifeSpan(60 * 2) ;
+        ->useResultCache(TRUE, 3600, __FUNCTION__);
 
-    return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
+    $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    // release the cache if nothing is returned
+    if (empty($result))
+    {
+      $q->clearResultCache();
+    }
+
+    return $result;
   }
 
   /**
