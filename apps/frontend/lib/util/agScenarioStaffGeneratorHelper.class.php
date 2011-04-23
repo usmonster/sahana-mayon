@@ -150,6 +150,30 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
   }
 
   /**
+   * Method to execute a preview search by simply passing the conditions array.
+   * @param array $conditions An array of search conditions for staff preview.
+   * <code>array(
+   *   array(
+   *     'condition'=>'4',
+   *     'operator'=>'!=',
+   *     'field'=>'agStaffResourceType.staff_resource_type_id'
+   *   ), ...
+   * )</code>
+   * @return array A monodimensional array of staffIds.
+   */
+  public static function executeStaffPreview($conditions)
+  {
+    // pick up our default search type method
+    $method = self::$constructorMethods[self::$defaultSearchType];
+
+    // build a base query object and add our conditions
+    $q = self::returnBaseStaffSearch();
+    $q = self::$method($q, $conditions);
+
+    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+  }
+
+  /**
    * Method to return base staff search query object.
    * @return agDoctrineQuery An agDoctrineQuery object
    */
@@ -157,12 +181,12 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
   {
     // build our basic staff search query
     $q = agDoctrineQuery::create()
-      ->select('sr.id')
-        ->from('agStaffResource sr')
-          ->innerJoin('sr.agOrganization o')
-          ->innerJoin('sr.agStaffResourceType srt')
-          ->innerJoin('sr.agStaffResourceStatus srs')
-        ->where('srs.is_available = ?', TRUE);
+      ->select('agStaffResource.id')
+        ->from('agStaffResource')
+          ->innerJoin('agStaffResource.agOrganization')
+          ->innerJoin('agStaffResource.agStaffResourceType')
+          ->innerJoin('agStaffResource.agStaffResourceStatus')
+        ->where('agStaffResourceStatus.is_available = ?', TRUE);
 
     return $q;
   }

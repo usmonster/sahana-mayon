@@ -91,14 +91,21 @@ class agSearchHelper
   {
     $searchParams = self::getSearchParams($searchId);
     $searchType = $searchParams['st_search_type'];
+    $conditions = json_decode($searchParams['s_search_condition'],TRUE);
     $method = self::$constructorMethods[$searchType];
-    return self::$method($query, $searchParams);
+
+    return self::$method($query, $conditions);
   }
 
-  protected static function parseDoctrineQuerySimple($query, $searchParams)
+  /**
+   * Method to parse a simple doctrine query search.
+   * @param agDoctrineQuery $query An agDoctrineQuery object
+   * @param array $conditions An array of query conditions to process
+   * @return agDoctrineQuery An agDoctrineQuery object
+   */
+  protected static function parseDoctrineQuerySimple($query, $conditions)
   {
     // decode the conditions parameter and loop
-    $conditions = json_decode($searchParams['s_search_condition'],TRUE);
     foreach ($conditions as $condition)
     {
       // build the left-side of the condition as a string and add it and the actual condition to our
@@ -115,14 +122,13 @@ class agSearchHelper
    * Method to parse a lucene query and a set of search parameters, returning an amended query with
    * the search parameters added.
    * @param string $query A lucene query string.
-   * @param array $searchParams An array of search parameters
+   * @param array $conditions An array of search parameters
    * @return query A lucene query string.
    * @deprecated This is planned but currently unimplemented functionality. The data design of
    * lucene search conditions has not been completed.
    */
-  protected static function parseLuceneQuery($query, $searchParams)
+  protected static function parseLuceneQuery($query, $conditions)
   {
-    $conditions = json_decode($searchParams['s_search_condition'], TRUE);
     foreach ($conditions as $condition)
     {
       $query = $query . ' ' . $condition['condition'];
