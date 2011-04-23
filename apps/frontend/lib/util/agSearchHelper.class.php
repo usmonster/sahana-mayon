@@ -20,6 +20,26 @@ class agSearchHelper
     'lucene_query' => 'parseLuceneQuery') ;
 
   /**
+   * Simple method to hash search conditions consistently.
+   * @param array $condition An array of search conditions
+   * @return string An md5summed hash string. 
+   */
+  public static function hashSearchCondition($condition)
+  {
+    // first sort our inner elements to ensure consistent hashes
+    ksort($searchCondition);
+    foreach ($searchCondition as &$condition) {
+      ksort($condition);
+    }
+
+    // encode and hash
+    $searchCondition = json_encode($searchCondition);
+    $searchHash = md5($searchCondition);
+
+    return $searchHash;
+  }
+
+  /**
    * Method to return a searchTypeId from a search type string.
    * @param string $searchTypeStr Search type string value
    * @return integer Search type ID
