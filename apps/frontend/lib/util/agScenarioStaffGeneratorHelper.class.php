@@ -140,6 +140,22 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
   public static function executeStaffSearch($searchId)
   {
     // build our basic staff search query
+    $q = self::returnBaseStaffSearch();
+
+    // parse the query and add search conditions
+    $q = self::parseQuery($q, $searchId);
+
+    // execute and return
+    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+  }
+
+  /**
+   * Method to return base staff search query object.
+   * @return agDoctrineQuery An agDoctrineQuery object
+   */
+  public static function returnBaseStaffSearch()
+  {
+    // build our basic staff search query
     $q = agDoctrineQuery::create()
       ->select('sr.id')
         ->from('agStaffResource sr')
@@ -148,11 +164,7 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
           ->innerJoin('sr.agStaffResourceStatus srs')
         ->where('srs.is_available = ?', TRUE);
 
-    // parse the query and add search conditions
-    $q = self::parseQuery($q, $searchId);
-
-    // execute and return
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    return $q;
   }
 
   /**
