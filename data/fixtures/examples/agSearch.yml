@@ -1,19 +1,19 @@
 agSearch:
   1:
     id: 1
-    agSearchType: doctrine_query
+    agSearchType: doctrine_query_simple
     search_hash: 'd751713988987e9331980363e24189ce'
     search_name: All staff
     search_condition: '[]'
   2:
     id: 2
-    agSearchType: doctrine_query 
-    search_hash: '2b30446d89ffb15521354e432f51b189'
+    agSearchType: doctrine_query_simple
+    search_hash: '4115ed6376fb8fbdce29966025997557'
     search_name: General Volunteers
-    search_condition: '{"agStaffResourceType.staff_resource_type":{"operator":"=","condition":"General Staff"},"agOrganization.organziation":{"operator":"=","condition":"American Red Cross"}}'
+    search_condition: '[{"condition":"General Staff","field":"agStaffResourceType.staff_resource_type","operator":"="},{"condition":"American Red Cross","field":"agOrganization.organization","operator":"="}]'
   3:
     id: 3
-    agSearchType: doctrine_query
-    search_hash: '79590035977b4cf98d394a961225d4be'
+    agSearchType: doctrine_query_simple
+    search_hash: '5f2b9482cdb406de10632092e6da8acc'
     search_name: DOE
-    search_condition: '{"agOrganization.organization":{"operator":"=","condition":"DOE"}}'
+    search_condition: '[{"condition":"DOE","field":"agOrganization.organization","operator":"="}]'

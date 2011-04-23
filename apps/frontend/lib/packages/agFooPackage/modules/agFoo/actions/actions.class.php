@@ -273,13 +273,12 @@ $obj = new agGeoHelper() ;
 //$results = $obj->updateAddressHashes($array) ;
 //$addrxnentsById($array) ;
 //$results = $obj->setAddresses($fakeAddr, TRUE) ;
-$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, TRUE, TRUE) ;
+//$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, TRUE, TRUE) ;
 //$results = $obj->exceptionTest() ;
 //$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
 //$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
 $obj->enforceGeoType = TRUE ;
-$results = $obj->setGeo($fakeGeo, 1, 1) ;
-
+$results = agScenarioStaffGeneratorHelper::generateStaffPool(1) ;
 
 print_r($results) ;
 // <-------- CUT HERE -------->
