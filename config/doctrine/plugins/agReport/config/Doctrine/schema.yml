@@ -66,13 +66,11 @@ agSearch:
       type: clob(65532)
       notnull: true
   indexes:
-    agSearch_unq:
-      fields: [search_name]
-      type: unique
     IX_agSearch_searchType:
       fields: [search_type_id]
     agSearch_unq_searchHash:
       fields: [search_hash]
+      type: unique
   relations:
     agSearchType:
       class: agSearchType

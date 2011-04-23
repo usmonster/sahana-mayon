@@ -22,20 +22,15 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
    * Simple static getter to get and/or lazily load the $defaultSearchTypeId property.
    * @return integer default search type id. 
    */
-  protected static function getDefaultSearchTypeId()
+  public static function getDefaultSearchTypeId()
   {
     // if it's not set, lazy load it
     if (! isset(self::$defaultSearchTypeId))
     {
-      self::$defaultSearchTypeId = self::getSearchTypeId($defaultSearchType);
+      self::$defaultSearchTypeId = self::getSearchTypeId(self::$defaultSearchType);
     }
     // either way, return it
     return self::$defaultSearchTypeId ;
-  }
-
-  public static function setScenarioStaffSearch()
-  {
-
   }
 
   /**
@@ -142,7 +137,7 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
    * @param <type> $searchId An agSearch id value.
    * @return array A single-dimension array of staff resource ids.
    */
-  protected static function executeStaffSearch($searchId)
+  public static function executeStaffSearch($searchId)
   {
     // build our basic staff search query
     $q = agDoctrineQuery::create()

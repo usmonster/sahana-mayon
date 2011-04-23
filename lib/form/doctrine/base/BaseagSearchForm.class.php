@@ -37,7 +37,7 @@ abstract class BaseagSearchForm extends BaseFormDoctrine
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorDoctrineUnique(array('model' => 'agSearch', 'column' => array('search_name')))
+      new sfValidatorDoctrineUnique(array('model' => 'agSearch', 'column' => array('search_hash')))
     );
 
     $this->widgetSchema->setNameFormat('ag_search[%s]');

@@ -20,123 +20,6 @@ class agSearchHelper
     'lucene_query' => 'parseLuceneQuery') ;
 
   /**
-   * Method to get a search and return its search id. If a search is not found with the provided
-   * $searchCondition and $createNew is set to TRUE, a new search will be created with the provided
-   * $searchTypeStr and $searchName.
-   * @param array $searchCondition An array of search conditions (example below).
-   * <code>array(
-   *   array('condition' => $condition, 'field' => $fieldName, 'operator' => $operator),
-   *   ...
-   * )</code>
-   * @param boolean $createNew Boolean to direct getSearchId to optionally create a new search if
-   * $searchCondition is not found.
-   * @param string $searchName A unique name for this search. (Only used if $createNew is TRUE)
-   * @param integer $searchTypeId Search type integer id. (Only used if $createNew is TRUE)
-   * @param Doctrine_Connection $conn An optional Doctrine connection object.
-   * @return integer The searchId
-   */
-  protected static function getSearchId( $searchCondition,
-                                         $createNew = FALSE,
-                                         $searchName = NULL,
-                                         $searchTypeId = NULL,
-                                         Doctrine_Connection $conn = NULL)
-  {
-    // first we need to hash our search condition so we can quickly search for it, sorting is
-    // important to generating consistent hashes, so we do that too
-    ksort($searchCondition);
-    foreach($searchCondition as &$condition)
-    {
-      ksort($condition);
-    }
-    $searchCondition = json_encode($searchCondition);
-    $searchHash = md5($searchCondition);
-
-    // see if this search already exists
-    $searchId = agSearchHelper::getSearchIdByHash($searchHash);
-
-    // if it doesn't and the parameters are ripe, make a new search
-    if ($createNew && empty($searchId))
-    {
-      $searchId = agSearchHelper::setNewSearch($searchCondition, $searchHash, $searchName,
-        $searchTypeId, $conn);
-    }
-
-    return $searchId ;
-  }
-
-  /**
-   * Method to create a new search entity in agSearch. Intended to be called from getSearchId.
-   * @param string $searchCondition A json-encoded search array.
-   * @param string $searchHash An md5-summed hash of the search condition.
-   * @param string $searchName A unique name for this search.
-   * @param integer $searchTypeId Search type integer id.
-   * @param Doctrine_Connection $conn An optional Doctrine connection object.
-   * @return integer The newly inserted searchId.
-   */
-  protected static function setNewSearch( $searchCondition,
-                                          $searchHash,
-                                          $searchName,
-                                          $searchTypeId,
-                                          Doctrine_Connection $conn = NULL)
-  {
-    // set up some defaults
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__) ;
-    }
-    else
-    {
-      $conn->beginTransaction() ;
-    }
-
-    // create a new search object
-    $newRec = new agSearch();
-    $newRec['search_type_id'] = $searchTypeId;
-    $newRec['search_name'] = $searchName;
-    $newRec['search_condition'] = $searchCondition;
-    $newRec['search_hash'] = $searchHash;
-
-    try
-    {
-      $newRec->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
-    }
-    catch(Exception $e)
-    {
-      // log our error
-      $errMsg = sprintf('%s failed to commit new record: %s',
-        __FUNCTION__, json_encode($newRec->toArray())) ;
-      sfContext::getInstance()->getLogger()->err($errMsg) ;
-
-      // rollback and re-throw
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
-      throw $e;
-    }
-
-    // return our results
-    return $newRec->getId();
-  }
-
-  /**
-   * Simple method to execute a search for a searchId by its conditions hash value.
-   * @param string $searchHash A hash of the unique search conditions.
-   * @return integer An empty array (if no results were found) or the integer searchId.
-   */
-  protected static function getSearchIdByHash($searchHash)
-  {
-    $q = agDoctrineQuery::create()
-      ->select('s.id')
-        ->from('agSearch s')
-        ->where('s.search_hash = ?', $searchHash)
-        ->useResultCache(new Doctrine_Cache_Apc())
-        ->setResultCacheLifeSpan(60 * 2) ;
-
-    return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
-  }
-
-  /**
    * Method to return a searchTypeId from a search type string.
    * @param string $searchTypeStr Search type string value
    * @return integer Search type ID
@@ -147,8 +30,7 @@ class agSearchHelper
       ->select('st.id')
         ->from('agSearchType st')
         ->where('st.search_type = ?', $searchTypeStr)
-        ->useResultCache(new Doctrine_Cache_Apc())
-        ->setResultCacheLifeSpan(60 * 60) ;
+        ->useResultCache(TRUE, 3600, __FUNCTION__);
 
     return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
   }
@@ -169,8 +51,8 @@ class agSearchHelper
         ->from('agSearch s')
           ->innerJoin('s.agSearchType st')
         ->where('s.id = ?', $searchId)
-        ->useResultCache(new Doctrine_Cache_Apc())
-        ->setResultCacheLifeSpan(60 * 60);
+        ->useResultCache(TRUE, 3600, __FUNCTION__);
+
 
     // we're only getting one row back so we can reduce our return array nesting by one
     $params = $q->execute(array(), Doctrine_Core::HYDRATE_SCALAR);

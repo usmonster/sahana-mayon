@@ -72,13 +72,6 @@ abstract class BaseagSearch extends sfDoctrineRecord
              ));
 
 
-        $this->index('agSearch_unq', array(
-             'fields' => 
-             array(
-              0 => 'search_name',
-             ),
-             'type' => 'unique',
-             ));
         $this->index('IX_agSearch_searchType', array(
              'fields' => 
              array(
@@ -90,6 +83,7 @@ abstract class BaseagSearch extends sfDoctrineRecord
              array(
               0 => 'search_hash',
              ),
+             'type' => 'unique',
              ));
     }
 
