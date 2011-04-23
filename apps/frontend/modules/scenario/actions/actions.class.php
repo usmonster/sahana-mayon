@@ -423,9 +423,6 @@ class scenarioActions extends agActions
           $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
         }
 
-
-        
-
         $q = agScenarioStaffGeneratorHelper::returnBaseStaffSearch();
 
         $staff_ids = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
