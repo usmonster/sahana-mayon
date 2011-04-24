@@ -81,3 +81,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_geo_match_score
     value: unknown
+  staff_import_keep_history:
+    id: 17
+    agHost: localhost
+    datapoint: staff_import_keep_history
+    value: 0

@@ -351,6 +351,11 @@ class agPersonNameHelper extends agBulkRecordHelper
     return $results ;
   }
 
+  /**
+   * Method to return name ids from a collection of name values.
+   * @param array $nameValues A single dimension array of name values.
+   * @return array An associative array of nameIds keyed by name value
+   */
   public function getNameIds($nameValues)
   {
     return agDoctrineQuery::create()
@@ -359,6 +364,22 @@ class agPersonNameHelper extends agBulkRecordHelper
         ->from('agPersonName pn')
         ->whereIn('pn.person_name', $nameValues)
         ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
+  }
+
+  /**
+   * Method to return name type ids from name type values.
+   * @param array $nameTypes An array of person_name_types
+   * @return array An associative array of person name type ids keyed by person name type.
+   */
+  public function getNameTypeIds($nameTypes)
+  {
+    return agDoctrineQuery::create()
+      ->select('pnt.person_name_type')
+          ->addSelect('pnt.id')
+        ->from('agPersonNameType pnt')
+        ->whereIn('pnt.person_name_type', $nameTypes)
+      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
   /**

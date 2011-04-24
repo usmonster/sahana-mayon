@@ -278,7 +278,12 @@ $obj = new agGeoHelper() ;
 //$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
 //$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
 $obj->enforceGeoType = TRUE ;
-$results = agScenarioStaffGeneratorHelper::executeStaffPreview(array(array('field'=>'agStaffResource.staff_resource_type_id', 'operator'=>'!=', 'condition'=>'4')));
+
+$obj = new agStaffImportNormalization('temp_staffImport');
+$obj->testDataNorm();
+$results = 'a';
+
+//$results = agScenarioStaffGeneratorHelper::executeStaffPreview(array(array('field'=>'agStaffResource.staff_resource_type_id', 'operator'=>'!=', 'condition'=>'4')));
 //array(array('condition'=>'4', 'operator'=>'!=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
 //array(array('condition'=>'4', 'operator'=>'=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
 print_r($results) ;

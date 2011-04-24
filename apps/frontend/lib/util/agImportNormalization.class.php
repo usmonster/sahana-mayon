@@ -69,14 +69,22 @@ abstract class agImportNormalization extends agImportHelper
 
     foreach ($this->importComponents as $index => $componentData)
     {
+      // load any helper objects we might need
+      if (array_key_exists('helperClass', $componentData))
+      {
+        $this->loadHelperObject($componentData['helperClass']);
+      }
+
+      // need this as a var so we can use it in a variable call
+      $method = $componentData['method'];
+
       // start an inner transaction / savepoint per component
       $conn->beginTransaction($componentData['component']) ;
-
       try
       {
         // Calling method to set data.
-        $componentData['method']($componentData['throwOnError']);
-        $conn->commit($conn->beginTransaction($componentData['component']));
+        $this->$method($componentData['throwOnError']);
+        $conn->commit($componentData['component']);
       }
       catch(Exception $e)
       {
@@ -85,7 +93,7 @@ abstract class agImportNormalization extends agImportHelper
 
         // our rollback and error logging happen regardless of whether this is an optional component
         sfContext::getInstance()->getLogger()->err($errMsg) ;
-        $conn->rollback($conn->beginTransaction($componentData['componentName']));
+        $conn->rollback($componentData['componentName']);
 
         // if it's not an optional component, we do a bit more and stop execution entirely
         if($componentData['throwOnError'])
@@ -127,7 +135,23 @@ abstract class agImportNormalization extends agImportHelper
     return $newRec->getId();
   }
 
+  /**
+   * Method to remove zero-length-string values in importData['_rawData']
+   */
+  protected function clearZLS()
+  {
+    foreach ($this->importData as $rowId => &$rowData)
+    {
+      foreach($rowData['_rawData'] as $key => &$val)
+      {
+        $val = trim($val);
+        if ($val == '') { unset($rowData['_rawData'][$key]); }
+      }
+      unset($val);
+    }
 
+    unset($rowData);
+  }
 
 
 
