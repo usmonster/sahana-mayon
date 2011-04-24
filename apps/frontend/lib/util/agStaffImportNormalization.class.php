@@ -195,8 +195,7 @@ class agStaffImportNormalization extends agImportNormalization
     $results = array();
 
     // let's get ahold of our helper object since we're going to use him/her a lot
-    $pnh = new agPersonNameHelper();
-    //$pnh =& $this->helperObjects['agPersonNameHelper'];
+    $pnh =& $this->helperObjects['agPersonNameHelper'];
 
     // get our name types and map them back to the importNameTypes
     $nameTypes = $pnh->getNameTypeIds(array_values($importNameTypes));

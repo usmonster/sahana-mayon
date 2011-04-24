@@ -66,7 +66,7 @@ class agPersonNameHelper extends agBulkRecordHelper
       ->select('pnt.person_name_type')
           ->addSelect('pnt.id')
         ->from('agPersonNameType pnt')
-        ->execute(array(), 'key_value_pair') ;
+        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
 
     // quickly dash in and build our results array, replacing the string name type with the id
     foreach ($strNameComponents as $component)

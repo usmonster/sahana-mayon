@@ -38,4 +38,13 @@ abstract class agImportHelper
     // @TODO Don't use the default connection;  instead use a new connection.
   }
 
+  protected function dropTempTable()
+  {
+
+  }
+
+  protected function createTempTable()
+  {
+
+  }
 }

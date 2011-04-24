@@ -77,14 +77,15 @@ abstract class agImportNormalization extends agImportHelper
 
       // need this as a var so we can use it in a variable call
       $method = $componentData['method'];
+      $savepoint = __FUNCTION__ . '_'. $componentData['component'];
 
       // start an inner transaction / savepoint per component
-      $conn->beginTransaction($componentData['component']) ;
+      $conn->beginTransaction($savepoint) ;
       try
       {
         // Calling method to set data.
         $this->$method($componentData['throwOnError']);
-        $conn->commit($componentData['component']);
+        $conn->commit($savepoint);
       }
       catch(Exception $e)
       {
@@ -93,7 +94,7 @@ abstract class agImportNormalization extends agImportHelper
 
         // our rollback and error logging happen regardless of whether this is an optional component
         sfContext::getInstance()->getLogger()->err($errMsg) ;
-        $conn->rollback($componentData['componentName']);
+        $conn->rollback($savepoint);
 
         // if it's not an optional component, we do a bit more and stop execution entirely
         if($componentData['throwOnError'])
@@ -132,7 +133,10 @@ abstract class agImportNormalization extends agImportHelper
 
     // save and return our new id
     $newRec->save($this->conn);
-    return $newRec->getId();
+    // @todo Figure out why this causes a huge chain of queries; likely this forces an update
+    // of the record and it tries to populate with related records
+    
+    return $newRec['id'];
   }
 
   /**
