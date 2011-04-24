@@ -1,7 +1,13 @@
+<?php
+  $wizardOp = array('step' => 4);
+  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
+  include_partial('wizard', array('wizardDiv' => $wizardDiv));
+?>
+
 <script type="text/javascript">
   $(function(){
     $('.groupLabel').click(function(){
-      $(this).parent().find('.facgroup').slideToggle("slow");
+      $(this).parent().find('.facgroup').slideToggle("fast");
     });
   });
 </script>
@@ -10,11 +16,11 @@
 $(document).ready(function() {
     $('.next-column').click(function(event) {
         event.preventDefault();
-        $('.table-container').animate({scrollLeft:'+=231'}, 'slow');
+        $('.table-container').animate({scrollLeft:'+=231'}, 'fast');
     });
     $('.previous-column').click(function(event) {
         event.preventDefault();
-        $('.table-container').animate({scrollLeft:'-=231'}, 'slow');
+        $('.table-container').animate({scrollLeft:'-=231'}, 'fast');
     });
 });
 </script>

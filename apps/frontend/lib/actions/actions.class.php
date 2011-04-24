@@ -58,14 +58,11 @@ class agActions extends sfActions
     if ($staffCollection = $searchResult['agStaff']) {
       $this->target_module = 'staff';
       $staff_ids = $staffCollection->getKeys(); // toArray();
-      $listHelper = new agListHelper();
-      $resultArray = $listHelper->getStaffList($staff_ids);
-
+      $resultArray = agListHelper::getStaffList($staff_ids);
     } elseif ($facilityCollection = $searchResult['agFacility']) {
       $this->target_module = 'facility';
       $staff_ids = $facilityCollection->getKeys(); // toArray();
-      $listHelper = new agListHelper();
-      $resultArray = $listHelper->getStaffList($staff_ids);
+      $resultArray = agListHelper::getStaffList($staff_ids);
       
       /** @todo change the above to use a FacilityList return
        * 
