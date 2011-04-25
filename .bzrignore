@@ -10,8 +10,6 @@ web/wiki/data/cache/**
 web/wiki/data/index/**
 web/wiki/data/meta/**/*.meta
 web/wiki/data/meta/**/*.changes
-web/dqlme.php
-web/apc.php
 .DS_Store
 nbproject
 plugins/.*
