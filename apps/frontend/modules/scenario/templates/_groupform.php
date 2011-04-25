@@ -14,13 +14,25 @@ use_javascript('tooltip.js'); ?>
 
     $( "#available tbody, #allocated tbody" ).sortable({
       connectWith: ".testTable tbody",
-      items: 'tr.sort',
-      cancel: 'tr.sortHead'
+      items: 'tr.sort'
+//      cancel: 'tr.sortHead'
     }).disableSelection();
 
     $('#allocated tbody').bind('sortupdate', function () {
-      countSorts('th.count');
+      if($(this).find('tr').is(':hidden')) {
+        $(this).find('.sort').hide();
+      }
+      countSorts($(this).find('.count'));
     });
+
+//    $('.sortHead').bind('sortover', function() {
+//      $(this).find('a').click();
+//    })
+//    $('#allocated tbody').bind('sortover', function() {
+//      if($(this).find('tr').is(':hidden')) {
+//        $(this).find('a').click();
+//      }
+//    })
   });
 
 
@@ -42,18 +54,19 @@ use_javascript('tooltip.js'); ?>
 
   function countSorts(countMe) {
     $(countMe).html(function() {
-      return 'Count: ' + $(this).parent().siblings('tr.sort').length;
+      var counted = $(this).parent().siblings('tr.sort').length;
+      if(counted == 0) {
+        $(this).parents('tbody').append('<tr class="countZero"><td colspan="3">No facilities selected for this group.</td></tr>')
+      } else if (counted != 0) {
+        $(this).parent().siblings('tr.countZero').remove();
+      }
+      return 'Count: ' + counted;
     });
   };
 
   $(document).ready(function () {
-    countSorts('th.count');
+    countSorts('.count');
   })
-//  $(document).ready(function countSorts() {
-//    $('th.count').html(function() {
-//      return 'Count: ' + $(this).parent().siblings('tr.sort').length;
-//    });
-//  });
 
 </script>
 <noscript>in order to set the activation sequence of resource facilities and add them to the
@@ -97,7 +110,7 @@ echo url_for
       <?php endforeach; ?>
       </tbody>
     </table>
-    
+
     <table class="testTable" id="allocated"  cellspacing="0">
     <?php foreach($selectStatuses as $selectStatus): ?>
       <tbody id="fras_id_<?php echo $selectStatus['fras_id']; ?>">
