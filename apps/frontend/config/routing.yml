@@ -93,6 +93,11 @@ scenario_shift_templates:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: shifttemplates }
 
+scenario_new_shift_templates:
+  url:     /scenario/:id/newshifttemplates
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: newshifttemplates }
+
 scenario_shift_list:
   url:     /scenario/:id/shifts
   options: { model: agScenario, type: object }
