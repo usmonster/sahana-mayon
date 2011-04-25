@@ -1,4 +1,9 @@
-<h2>Organization Management</h2>
+<?php use_javascript('agasti.js') ?>
+<?php use_javascript('jQuery.fileinput.js') ?>
+<?php   use_javascript('jquery.ui.custom.js');
+  use_stylesheet('jquery/jquery.ui.custom.css');?>
+<?php use_javascript('agTooltip.js'); ?>
+<h2>Organization Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:organization_management&do=export_xhtmlbody' ?>" class="tooltipTrigger">?</a></h2>
 
 <p>The organization function in Agasti 2.0 is used to record information on government and 
   non-governement organizations who may be involved with or affect an emergency response.

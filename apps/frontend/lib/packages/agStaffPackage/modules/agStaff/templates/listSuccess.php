@@ -1,3 +1,6 @@
+<?php   use_javascript('jquery.ui.custom.js');
+  use_stylesheet('jquery/jquery.ui.custom.css');
+  use_javascript('agTooltip.js'); ?>
 <?php
 $agPersonNameTypesResultSet = Doctrine::getTable('agPersonNameType')
         ->createQuery('b')
@@ -51,7 +54,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
       </th>
       <!-- classification -->
       <th class="head" rowspan="2">
-        <div class="tableHeaderContent">Classification</div>
+        <div class="tableHeaderContent">Classification<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_list_classification&do=export_xhtmlbody' ?>" class="tooltipTrigger">?</a></div>
         <?php
         echo($sortColumn == 'staff_type' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_type&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_type&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
         echo($sortColumn == 'staff_type' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_type&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_type&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');
@@ -59,7 +62,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
       </th>
       <!-- staff resource status -->
       <th class="head" rowspan="2">
-        <div class="tableHeaderContent">Staff Resource Status</div>
+        <div class="tableHeaderContent">Staff Resource Status<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_list_resource_status&do=export_xhtmlbody' ?>" class="tooltipTrigger">?</a></div>
         <?php
         echo($sortColumn == 'staff_resource_status' && $sortOrder == 'ASC' ? '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=ASC" class="buttonSortSelected" title="ascending">&#x25B2;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=ASC" class="buttonSort" title="ascending">&#x25B2;</a>');
         echo($sortColumn == 'staff_resource_status' && $sortOrder == 'DESC' ? '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=DESC" class="buttonSortSelected" title="descending">&#x25BC;</a>' : '<a href="' . url_for('staff/list') . '?sort=staff_resource_status&order=DESC" class="buttonSort" title="descending">&#x25BC;</a>');

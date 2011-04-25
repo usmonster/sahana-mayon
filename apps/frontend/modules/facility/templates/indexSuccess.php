@@ -1,6 +1,9 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
-<h2>Facility Management</h2>
+<?php   use_javascript('jquery.ui.custom.js');
+  use_stylesheet('jquery/jquery.ui.custom.css');?>
+<?php use_javascript('agTooltip.js'); ?>
+<h2>Facility Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_management&do=export_xhtmlbody' ?>" class="tooltipTrigger">?</a></h2>
 <p>The Facility Management function of Agasti 2.0 is used to manage the available facility resources during emergency response preparation.
   In this module Emergency Managers have the ability to record their facility record and define its available resources.</p>
 <b>Please select one of the following actions:</b><br />
