@@ -24,22 +24,23 @@
       </tr>
     </tfoot>
     <tbody>
-      <tr>
+      <tr colspan="2">
         <td>
-          <div class="shifttemplate">
-          
-          
           <?php
-
-          echo $newshifttemplateform['shift_status_id']->renderRow();
+          echo $newshifttemplateform['shift_status_id']->renderLabel() . $newshifttemplateform['shift_status_id']->render();
           echo '<br />'; //this is only for testing
-          echo $newshifttemplateform['task_id']->renderRow();
+          echo "Job" . $newshifttemplateform['task_id']->render();
           echo '<br />'; //this is only for testing
-          echo $newshifttemplateform['deployment_algorithm_id']->renderRow();
+          echo "Deployment Algorith" . $newshifttemplateform['deployment_algorithm_id']->render();
           echo '<br />'; //this is only for testing
-          echo $newshifttemplateform['shift_repeats']->renderRow() . $newshifttemplateform['max_staff_repeat_shifts']->renderRow();
+          echo "Person Shift Repeats" . $newshifttemplateform['shift_repeats']->render() . $newshifttemplateform['max_staff_repeat_shifts']->render();
           ?>
-          </div>
+        </td>
+        <td>
+          <?php
+          echo $newshifttemplateform['minutes_start_to_facility_activation']->render();
+          echo '<br />'; //this is only for testing
+          ?>
         </td>
       </tr>
     </tbody>

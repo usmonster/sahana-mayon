@@ -8,9 +8,9 @@
     $('.filter option:selected').each(function(index) {
       conditionObject = new Object();
       if($(this).text() != ''){
-        conditionObject.field = $(this).parent().attr('id');
         conditionObject.condition = $(this).text();
-        conditionObject.operation = '=';
+        conditionObject.field = $(this).parent().attr('id');
+        conditionObject.operator = '=';
         out.push(conditionObject);
       }
       //ONLY IF text is NOT empty

@@ -57,14 +57,27 @@ class agListHelper
         $person_phones[$person_id] = $phone_vals[0][0][0];
       }
       foreach ($ag_staff as $staff => $value) {
+
+        if(array_key_exists($value['p_id'], $person_phones)){
+          $person_phone = $person_phones[$value['p_id']];
+        }
+        else{
+          $person_phone = '---';
+        }
+        if(array_key_exists($value['p_id'], $person_emails)){
+          $person_email = $person_emails[$value['p_id']];
+        }
+        else{
+          $person_email = '---';
+        }
         $resultArray[] = array(
           'id' => $value['s_id'],
           'fn' => $person_names[$value['p_id']]['given'],
           'ln' => $person_names[$value['p_id']]['family'],
           'agency' => $value['o_organization'],
           'classification' => $value['srt_staff_resource_type'],
-          'phones' => $person_phones[$value['p_id']], // only for testing, prefer the above
-          'emails' => $person_emails[$value['p_id']],
+          'phones' => $person_phone, // only for testing, prefer the above
+          'emails' => $person_email,
           'staff_resource_status' => $value['srs_staff_resource_status']
             //'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
             /** @todo benchmark scale */

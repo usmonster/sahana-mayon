@@ -426,16 +426,14 @@ class scenarioActions extends agActions
         $this->poolform = new agStaffPoolForm(null, $values);
         $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
         foreach ($incomingFields as $key => $incomingField) {
-          $this->filterForm->setDefault($key, $request->getPostParameter($key)); //inccomingField->getName ?
+          //if $key == 'agOrganization.organization'
+          $value = $request->getPostParameter($key);
+          $this->filterForm->setDefault($key, $value); //inccomingField->getName ?
         }
-
-        $q = agScenarioStaffGeneratorHelper::returnBaseStaffSearch();
-
-        $staff_ids = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
-
+        $search_condition = json_decode($search['search_condition'],true);
+        $staff_ids = agScenarioStaffGeneratorHelper::executeStaffPreview($search_condition);
 //parent::doSearch($search_query, FALSE);
-        $listHelper = new agListHelper();
-        $resultArray = $listHelper->getStaffList($staff_ids);
+        $resultArray = agListHelper::getStaffList($staff_ids);
         $this->pager = new agArrayPager(null, 10);
         $this->pager->setResultArray($resultArray);
 // $this->pager->setResultArray($staffArray);
@@ -452,9 +450,9 @@ class scenarioActions extends agActions
       }
 //SAVE
       elseif ($request->getParameter('Save')) { //otherwise, we're SAVING/UPDATING
-        if ($request->getParameter('search_id')) {
+        if ($request->getParameter('staff_gen_id')) {
           $this->search_id = $request->getParameter('search_id');
-          $this->poolform = new agStaffPoolForm($this->search_id);
+          $this->poolform = new agStaffPoolForm($this->search_id); //make spForm with staff_gen_id
         } else {
           $this->poolform = new agStaffPoolForm();
         }
@@ -469,8 +467,10 @@ class scenarioActions extends agActions
           $search = $postParam['search'];
           $search_condition = $search['search_condition'];
 
-          $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($search_condition, $this->scenario_id);
-          $addedStaff = agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
+
+          agScenarioStaffGeneratorHelper::generateStaffPool($this->scenario_id);
+          //$staff_resource_ids = agScenarioGenerator::staffPoolGenerator($search_condition, $this->scenario_id);
+          //$addedStaff = agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }
       } else {  //or, just make a new form

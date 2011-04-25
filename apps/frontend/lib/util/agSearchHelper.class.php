@@ -55,7 +55,7 @@ class agSearchHelper
    * @param Doctrine_Connection $conn An optional Doctrine connection object.
    * @return integer The searchId
    */
-  protected static function getSearchId( $searchCondition,
+  public static function getSearchId( $searchCondition,
                                          $createNew = FALSE,
                                          $searchName = NULL,
                                          $searchTypeId = NULL,
@@ -151,8 +151,8 @@ class agSearchHelper
     $q = agDoctrineQuery::create()
       ->select('s.id')
         ->from('agSearch s')
-        ->where('s.search_hash = ?', $searchHash)
-        ->useResultCache(TRUE, 3600, __FUNCTION__);
+        ->where('s.search_hash = ?', $searchHash);
+        //->useResultCache(TRUE, 3600, __FUNCTION__);
 
     $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 

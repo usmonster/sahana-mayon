@@ -32,6 +32,7 @@ class PluginagEmbeddedAgStaffResourceForm extends PluginagStaffResourceForm
       //'created_at'               => new sfValidatorDateTime(),
       //'updated_at'               => new sfValidatorDateTime(),
     ));
-  }
+    //$this->getWidgetSchema()->setFormFormatterName($name);
+    }
 
 }

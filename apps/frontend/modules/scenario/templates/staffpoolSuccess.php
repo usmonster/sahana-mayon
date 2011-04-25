@@ -44,7 +44,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
   <div id="searchresults">
 
     <!--sometimes this will fail -->
-  <?php if (isset($searchquery)) { ?>
+  <?php if (isset($pager)) { ?>
     <hr />
   <?php
 

@@ -115,6 +115,9 @@ class agStaffPoolForm extends sfForm
     $searchForm->setWidget('search_type_id', new sfWidgetFormInputHidden());
     $searchForm->setWidget('search_hash', new sfWidgetFormInputHidden());
 
+    $searchForm->setValidator('search_hash', new sfValidatorPass(array('required' => false)));
+    $searchForm->setValidator('search_type_id', new sfValidatorPass(array('required' => false)));
+
     unset($searchForm['created_at'], $searchForm['updated_at']);
     unset($searchForm['ag_report_list']);
 
@@ -144,7 +147,7 @@ class agStaffPoolForm extends sfForm
     if (isset($this->embeddedForms['search'])) {
       $form = $this->embeddedForms['search'];
       $values = $this->values['search'];
-      $this->saveSearchForm($form, $values);
+      $this->saveSearchForm($values);
       unset($this->embeddedForms['search']);
     }
 
@@ -161,23 +164,10 @@ class agStaffPoolForm extends sfForm
    * @param sfForm $form a form to process
    * @param mixed $values a set of values coming from a post
    */
-  public function saveSearchForm($form, $values)
+  public function saveSearchForm($values)
   {
-
-    $preValues = $values;
-    $searchCondition = $values['search_condition'];
-    foreach($searchCondition as &$condition)
-    {
-      ksort($condition);
-    }
-    //$searchCondition = json_encode($searchCondition);
-    ksort($searchCondition);
-    $values['search_hash'] = md5($searchCondition);
-
-    $form->updateObject($values);
-
-    $form->getObject()->save();
-    $this->search_id = $form->getObject()->getId();
+    $searchCondition = json_decode($values['search_condition'],true);
+    $this->search_id = agSearchHelper::getSearchId($searchCondition, TRUE, $values['search_name'], agScenarioStaffGeneratorHelper::getDefaultSearchTypeId());
   }
 
   /**
