@@ -125,7 +125,9 @@ class scenarioActions extends agActions
   }
 
   /**
-   *
+   * Define Staff Resource Requirements for all facility groups in a scenario facility group
+   * @todo this page/action could also handle a '1.5' workflow, where you would edit staff resource
+   *        requirements for an individual facility group, then make another facility group, etc.
    * @param sfWebRequest $request
    * generates and passes a new scenario form to the view
    */
@@ -146,7 +148,7 @@ class scenarioActions extends agActions
             ->from('agScenarioFacilityResource agSFR')
             ->where('scenario_facility_group_id = ?', $request->getParameter('id'))
             ->execute();
-    $this->staffresourceform = new agStaffResourceRequirementForm();
+    //$this->staffresourceform = new agStaffResourceRequirementForm($this->scenario_id);
 
 //this came from the _staffresources partial
 //construct our top level form, with all forms contained, and pass to the view
@@ -257,9 +259,9 @@ class scenarioActions extends agActions
                 $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
                     new agEmbeddedAgFacilityStaffResourceForm();
               }
-              $staffResourceFormDeco = new agFormFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
-              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
-              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
+//              $staffResourceFormDeco = new agFormFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
+//              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
+//              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
               $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->setDefault('scenario_facility_resource_id', $scenarioFacilityResource->getId());
               $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->setDefault('staff_resource_type_id', $srt->getId());
             }
@@ -276,9 +278,9 @@ class scenarioActions extends agActions
             $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
                 new agEmbeddedAgFacilityStaffResourceForm();
 
-            $staffResourceFormDeco = new agFormFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
-            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
-            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
+//            $staffResourceFormDeco = new agFormFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
+//            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
+//            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
             $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->setDefault('scenario_facility_resource_id', $scenarioFacilityResource->getId());
             $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->setDefault('staff_resource_type_id', $srt->getId());
           }
@@ -789,26 +791,6 @@ class scenarioActions extends agActions
   {
     $this->setScenarioBasics($request);
 
-//the shift template step, so there may need to be some manual shift template creation, i.e. i didn't say i need at least 2 nurses in a hurricane shelter
-//get all possible staff resource types
-//
-//            $undefinedShiftsQuery = agDoctrineQuery::create()
-//            ->select('f.id, f.facility_name, frt.id, frt.facility_resource_type,
-//                      sfr.id, srt.id, srt.staff_resource_type,
-//                      fsr.id, fsr.minimum_staff, fsr.maximum_staff,
-//                      st.id')
-//            ->addSelect('fr.id')
-//            ->from('agFacility f')
-//            ->innerJoin('f.agFacilityResource fr')
-//            ->innerJoin('fr.agFacilityResourceType frt')
-//            ->innerJoin('fr.agScenarioFacilityResource sfr')
-//            ->innerJoin('sfr.agScenarioFacilityGroup sfg')
-//            ->innerJoin('sfr.agFacilityStaffResource fsr')
-//            ->innerJoin('fsr.agStaffResourceType srt')
-//            ->leftJoin('frt.agShiftTemplate st ON st.facility_resource_type_id = frt.id AND st.staff_resource_type_id = srt.id')
-//            ->Where('sfg.scenario_id = ?', $scenarioId)
-//            ->andWhere('st.id IS NULL');
-//this query above, should return to us all undefined staff resources... and exclude shift templates
 
 
 

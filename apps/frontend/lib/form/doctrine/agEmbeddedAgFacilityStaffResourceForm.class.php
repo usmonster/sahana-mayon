@@ -14,9 +14,9 @@
 class agEmbeddedAgFacilityStaffResourceForm extends agFacilityStaffResourceForm
 {
 
-  public function setup()
-  {
-    $this->setWidgets(
+  public function configure(){
+
+        $this->setWidgets(
         array(
           //'id' => new sfWidgetFormInputHidden(),
           'scenario_facility_resource_id' => new sfWidgetFormInputHidden(),
@@ -50,6 +50,12 @@ class agEmbeddedAgFacilityStaffResourceForm extends agFacilityStaffResourceForm
         //'updated_at'                    => new sfValidatorDateTime(),
         )
     );
+        //form field group
+    $staffResourceFormDeco = new agFormFormatterInlineLabels2($this->getWidgetSchema());
+              $this->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
+              $this->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
+
+
   }
 
 }

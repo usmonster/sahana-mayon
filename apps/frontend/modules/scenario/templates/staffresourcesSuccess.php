@@ -22,6 +22,18 @@ $(document).ready(function() {
         event.preventDefault();
         $('.table-container').animate({scrollLeft:'-=231'}, 'fast');
     });
+
+  $(function() {
+      $(":input:text").each(function(){
+         if( $(this).val() == "")
+         {
+             $(this).addClass("empty");
+             $(this).focus(function(){
+                     $(this).removeClass("empty");
+                 })
+         }
+      });
+   });
 });
 </script>
 

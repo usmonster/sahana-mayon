@@ -1,5 +1,7 @@
 <?php
-  include_partial('wizard', array('wizard' => $wizard));
+  $wizardOp = array('step' => 1);
+  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
+  include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 <br />
 

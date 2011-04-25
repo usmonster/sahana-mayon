@@ -68,6 +68,8 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
                 'model' => $this->getRelatedModelName('agStaffResourceType'),
                 'add_empty' => false)
           ),
+
+//LEFT
           'task_id' => new sfWidgetFormDoctrineChoice(
               array('model' => $this->getRelatedModelName('agTask'), 'add_empty' => false)
           ),
@@ -88,13 +90,14 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
           'max_staff_repeat_shifts' => new sfWidgetFormInputText(
               array(), array('class' => 'inputGray width30')
           ),
+//LEFT
           'shift_status_id' => new sfWidgetFormDoctrineChoice(
               array('model' => $this->getRelatedModelName('agShiftStatus'), 'add_empty' => false)
           ),
+//LEFT
           'deployment_algorithm_id' => new sfWidgetFormDoctrineChoice(
-              array(
-                'model' => $this->getRelatedModelName('agDeploymentAlgorithm'),
-                'add_empty' => false)
+              array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'),'add_empty' => false)
+
           ),
           'created_at' => new sfWidgetFormDateTime(),
           'updated_at' => new sfWidgetFormDateTime(),
@@ -247,6 +250,7 @@ class agEmbeddedShiftTemplateForm extends agShiftTemplateForm
         'minutes_start_to_facility_activation'
     );
     $this->getWidget('shift_repeats')->setAttribute('size', '8');
+    $this->getWidget('shift_status_id')->setAttribute('class', 'shifttemplateleft');
 //      'shift_repeats'                        => new sfValidatorInteger(),
 //      'max_staff_repeat_shifts'              => new sfValidatorInteger(),
 

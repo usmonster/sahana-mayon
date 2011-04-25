@@ -1102,7 +1102,7 @@ table.adminConfigRequirements tr td{
 }
 
 .rowFormat2{
-    display: inline-block; margin-right: 4px;
+    display: inline; margin-right: 4px;
 }
 
 .rowFormat3{
@@ -1372,7 +1372,6 @@ a.signin.menu-open span {
 }
 
 #stepper {
-  display: inline;
   float:left;
   height: 40px;
   width: 750px;
@@ -1389,9 +1388,9 @@ a.signin.menu-open span {
   list-style-type: none;
 }
 
-#stepper li {
+#stepper ul li {
   float: left;
-  font-size: 1.5em;
+  font-size: 1em;
   font-weight:bold;
   padding-left: 10px;
   padding-right: 10px;
@@ -1405,4 +1404,20 @@ a.signin.menu-open span {
 #stepper ul li.completed {
  color:blue;
  background-color:greenyellow;
+}
+
+#stepper div{
+ float: right;
+}
+
+.empty{
+    border-color: #eca742;
+    border-style:solid;
+    border-width: 1px;
+}
+.shifttemplateleft{
+float: left;
+}
+.shifttemplateright{
+float: right;
 }

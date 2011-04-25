@@ -60,6 +60,7 @@ class agFacilityStaffResourceContainerForm extends sfForm
         $resourceFormDeco = new agFormFormatterInlineLeftLabel($resourceForm->getWidgetSchema());
         $resourceForm->getWidgetSchema()->addFormFormatter('resourceFormDeco', $resourceFormDeco);
         $resourceForm->getWidgetSchema()->setFormFormatterName('resourceFormDeco');
+
         foreach ($facilityResources as $staffKey => $staffResourceForm) {
           // And here are the real forms, the ones that will hold fields
           // and data rather than just other forms.

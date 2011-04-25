@@ -56,8 +56,8 @@ class agScenarioWizard
      * generates a series of list items
      */
     sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
-    $list = '<div id="stepper">' . $this->steps[$this->getStep()]['title'];
-    $list .= '<ul class="stepper">';
+    $list = '<div id="stepper"><div>' . $this->steps[$this->getStep()]['title'] . '</div>';
+    $list .= '<ul class="stepperList">';
     foreach ($this->steps as $id => $data) {
       if ($id < $this->getStep()){
         $style = 'completed';
@@ -77,7 +77,7 @@ class agScenarioWizard
       else
         $list = $list . '<li class="' . $style . '" title="' . $data['title'] . '">' . '<a href="' . $link . '">' . $id . '</a></li>';
     }
-    $list = $list . "</ul></div><br />";
+    $list = $list . "</ul></div><div style=\"clear:both;\"></div><br />";
 
     return $list;
 
