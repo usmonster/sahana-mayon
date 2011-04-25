@@ -5,7 +5,7 @@
   yet added facilities and staff to Agasti use the links below to do so.  Otherwise, continue with
   creating your scenario.</p>
 <?php
-echo '<a href="' . url_for('scenario/new') . '" class="buttonText" title="Create New Scenario"> Continue and Create a Scenario<a/><br/>';
+echo '<a href="' . url_for('scenario/meta') . '" class="buttonText" title="Create New Scenario"> Continue and Create a Scenario<a/><br/>';
 echo '<a href="' . url_for('facility/index') . '" class="buttonText" title="Go to Facilities"> Exit Scenario Creator and Edit Facilities<a/><br/>';
 echo '<a href="' . url_for('staff/index') . '" class="buttonText" title="Go to Staff"> Exit Scenario Creator and Edit Staff<a/><br/>';
 ?>

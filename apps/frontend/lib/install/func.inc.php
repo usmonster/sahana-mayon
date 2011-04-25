@@ -282,7 +282,7 @@ function writeAppYml($authMethod = NULL)
         'org_list' => array
           ('label' => 'List Organizations', 'route' => 'organization/list', 'parent' => 'org'),
         'scenario_create' => array
-          ('label' => 'Build New Scenario', 'route' => 'scenario/new', 'parent' => 'scenario'),
+          ('label' => 'Build New Scenario', 'route' => 'scenario/meta', 'parent' => 'scenario'),
         'scenario_list' => array
           ('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
         'scenario_facilitygrouptypes' => array
@@ -331,7 +331,7 @@ function writeAppYml($authMethod = NULL)
         'scenario_pre' => array
           ('url' => '/scenario/pre', 'title' => 'Sahana Agasti Scenario Pre-Creator'),
         'scenario_new' => array
-          ('url' => '/scenario/new', 'title' => 'Sahana Agasti Scenario Creator'),
+          ('url' => '/scenario/meta', 'title' => 'Sahana Agasti Scenario Creator'),
         'events_page' => array
           ('url' => '/event/index', 'title' => 'Sahana Agasti Events')
   );

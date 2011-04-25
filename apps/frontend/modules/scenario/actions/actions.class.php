@@ -790,7 +790,7 @@ class scenarioActions extends agActions
           $this->groupform = new agScenarioFacilityGroupForm($ag_scenario_facility_group);
           $this->redirect('scenario/fgroup?id=' . $this->scenario_id); //redirect the user to edit the facilitygroup
         } else {
-          $this->redirect('scenario/edit?id=' . $this->scenario_id);
+          $this->redirect('scenario/meta?id=' . $this->scenario_id);
 //save and bring back to scenario edit page? or should goto review page.
         }
       }
@@ -1309,7 +1309,7 @@ class scenarioActions extends agActions
 //        $this->setTemplate('scenario/newgroup');
         $this->redirect('scenario/fgroup?id=' . $ag_scenario->getId());
       } else {
-        $this->redirect('scenario/edit?id=' . $ag_scenario->getId());
+        $this->redirect('scenario/meta?id=' . $ag_scenario->getId());
       }
     }
   }

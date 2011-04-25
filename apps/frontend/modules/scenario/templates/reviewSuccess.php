@@ -3,7 +3,7 @@
 <h3><?php echo $scenario_description ?></h3>
 <!-- ideally the above should be 'editable text', i.e. when clicked on they convert to input fields -->
 <br /><hr />
-<a href="<?php echo url_for('scenario/edit?id=' . $scenario_id) ?>" 
+<a href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>"
    title="Modify Basic Scenario Information" class="linkButton">Scenario Name and Description</a> <br /><br />
 <a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id) ?>" 
    title="Edit Facility Groups" class="linkButton">Manage Facility Groups</a> <br /><br />
@@ -26,4 +26,4 @@
   <hr />
 
   <a href="<?php echo url_for('scenario/list') ?>" class="linkButton">List Scenarios</a>
-  <a href="<?php echo url_for('scenario/new') ?>" class="linkButton">Create Another Scenario</a>
+  <a href="<?php echo url_for('scenario/meta') ?>" class="linkButton">Create Another Scenario</a>

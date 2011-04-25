@@ -32,5 +32,5 @@
       </table>
     <br>
     <div>
-      <a class="linkButton" href="<?php echo url_for('scenario/new') ?>">New</a>
+      <a class="linkButton" href="<?php echo url_for('scenario/meta') ?>">New</a>
     </div>
