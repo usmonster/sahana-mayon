@@ -8,7 +8,7 @@
 *
 * @todo   Add more params for greater configurability.
 **/
-function buildTooltip(element, obj) {
+function buildTooltip(element, obj, title) {
   var $dialog = $(element)
   .dialog({
     dialogClass: 'tooltipDialog',
@@ -19,7 +19,8 @@ function buildTooltip(element, obj) {
       at: 'right',
       of: obj,
       offset: "20 65"
-    }
+    },
+    title: title
   });
   return $dialog;
 }
@@ -33,7 +34,7 @@ function buildTooltip(element, obj) {
 **/
 $(document).ready(function() {
   $('.tooltipTrigger').live('click', function() {
-    var $dialog = buildTooltip('<div id="tooltipContent"></div>', this);
+    var $dialog = buildTooltip('<div id="tooltipContent"></div>', this, $(this).attr('title'));
     $dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
     $(document).find('div.ui-dialog-titlebar').addClass('titleClass');
     return false;
