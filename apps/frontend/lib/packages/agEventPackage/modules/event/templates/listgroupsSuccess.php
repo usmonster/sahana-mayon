@@ -68,6 +68,14 @@
         <?php endif; ?>
           </tr>
         </thead>
+        <tfoot>
+          <tr>
+            <th class="subHead" colspan="5">
+              <a style="float: left;" href="#" class="expandAll">&#x25BC; Expand All &#x25BC;</a>
+              <a style="float: right;" href="#" class="collapseAll">&#x25B2; Collapse All &#x25B2;</a>
+            </th>
+          </tr>
+        </tfoot>
         <tbody>
 <?php foreach ($pager->getResults() as $facilityGroup): ?>
           <tr>
@@ -90,15 +98,6 @@
           </tr>
 <?php endforeach; ?>
         </tbody>
-<?php echo javascript_include_tag('agModal.js'); ?>
-        <tfoot>
-          <tr>
-            <th class="subHead" colspan="5">
-              <a style="float: left;" href="#" class="expandAll">&#x25BC; Expand All &#x25BC;</a>
-              <a style="float: right;" href="#" class="collapseAll">&#x25B2; Collapse All &#x25B2;</a>
-            </th>
-          </tr>
-        </tfoot>
       </table>
     </div>
 <?php if(isset($event_id)): ?>

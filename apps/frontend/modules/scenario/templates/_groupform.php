@@ -14,12 +14,13 @@ use_javascript('tooltip.js'); ?>
 
     $( "#available tbody, #allocated tbody" ).sortable({
       connectWith: ".testTable tbody",
-      items: 'tr.sort'
+      items: 'tr.sort',
+      cancel: 'tr.sortHead'
     }).disableSelection();
 
-//    $("#available tbody, #allocated tbody").sortable({
-//        items: 'tr.sort'
-//    })
+    $('#allocated tbody').bind('sortupdate', function () {
+      countSorts('th.count');
+    });
   });
 
 
@@ -38,6 +39,21 @@ use_javascript('tooltip.js'); ?>
       $("#ag_scenario_facility_group_ag_facility_resource_order").val(JSON.stringify(out));
     });
   }
+
+  function countSorts(countMe) {
+    $(countMe).html(function() {
+      return 'Count: ' + $(this).parent().siblings('tr.sort').length;
+    });
+  };
+
+  $(document).ready(function () {
+    countSorts('th.count');
+  })
+//  $(document).ready(function countSorts() {
+//    $('th.count').html(function() {
+//      return 'Count: ' + $(this).parent().siblings('tr.sort').length;
+//    });
+//  });
 
 </script>
 <noscript>in order to set the activation sequence of resource facilities and add them to the
@@ -59,7 +75,7 @@ echo url_for
     ?>
   </div>
   <div class="bucketHolder" >
-    <table class="testTable" id="available">
+    <table class="testTable" id="available" cellspacing="0">
       <tbody>
         <tr>
           <th>Facility Code</th>
@@ -81,15 +97,25 @@ echo url_for
       <?php endforeach; ?>
       </tbody>
     </table>
-    <table class="testTable" id="allocated">
-      <tbody>
+    
+    <table class="testTable" id="allocated"  cellspacing="0">
+    <?php foreach($selectStatuses as $selectStatus): ?>
+      <tbody id="fras_id_<?php echo $selectStatus['fras_id']; ?>">
+        <tr class="sortHead">
+          <th colspan="2">
+            <a href="#"><?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?></a>
+          </th>
+          <th class="count">
+            Count:
+          </th>
+        </tr>
         <tr>
           <th>Facility Code</th>
           <th>Resource Type</th>
           <th>Activation Sequence</th>
         </tr>
       <?php if ($allocatedFacilityResources): ?>
-        <?php foreach ($allocatedFacilityResources as $allocatedFacilityResource): ?>
+        <?php foreach ($allocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']] as $allocatedFacilityResource): ?>
         <tr class="sort facility_resource_type_<?php echo $allocatedFacilityResource['frt_id']; ?>">
           <td title="<?php echo $allocatedFacilityResource['f_facility_name'];?>">
             <?php echo $allocatedFacilityResource['f_facility_code'] ?>
@@ -104,6 +130,7 @@ echo url_for
         <?php endforeach; ?>
       <?php endif; ?>
       </tbody>
+    <?php endforeach; ?>
     </table>
 <!--    <ul id="bavailable" class="bucket">-->
       <?php

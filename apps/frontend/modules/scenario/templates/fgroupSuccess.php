@@ -46,7 +46,8 @@ the group, assign the group type, allocation status, and the order in which is s
                                        'availableFacilityResources' => $availableFacilityResources,
                                        'allocatedFacilityResources' => $allocatedFacilityResources,
                                        'scenario_id' => $scenario_id,
-                                       'existingFgroups' => $existingFgroups))
+                                       'existingFgroups' => $existingFgroups,
+                                       'selectStatuses' => $selectStatuses))
   ?>
 </div>
 <p>Click "Save" to continue editing this group.  Click "Save and Continue" to save this group and

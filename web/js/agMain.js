@@ -131,3 +131,10 @@ $(document).ready(function() {
     })
   });
 });
+
+$(document).ready(function() {
+  $('.sortHead').click(function(){
+    $(this).siblings('tr').toggle('fast');
+    return false;
+  })
+});

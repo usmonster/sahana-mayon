@@ -655,14 +655,14 @@ class scenarioActions extends agActions
 // in this scenario).
     $this->availableFacilityResources = agDoctrineQuery::create()
             ->select('fr.id')
-            ->addSelect('f.facility_name')
-            ->addSelect('f.facility_code')
-            ->addSelect('frt.facility_resource_type')
-            ->addSelect('frt.id')
-            ->addSelect('frt.facility_resource_type_abbr')
+              ->addSelect('f.facility_name')
+              ->addSelect('f.facility_code')
+              ->addSelect('frt.facility_resource_type')
+              ->addSelect('frt.id')
+              ->addSelect('frt.facility_resource_type_abbr')
             ->from('agFacilityResource fr')
-            ->innerJoin('fr.agFacility f')
-            ->innerJoin('fr.agFacilityResourceType frt')
+              ->innerJoin('fr.agFacility f')
+              ->innerJoin('fr.agFacilityResourceType frt')
             ->where('NOT EXISTS (
               SELECT s1.id
                 FROM agFacilityResource s1
@@ -678,8 +678,13 @@ class scenarioActions extends agActions
       'status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceStatus', 'method' => 'getFacilityResourceStatus'), array())
     ));
 
+    $this->selectStatuses = agDoctrineQuery::create()
+      ->select('fras.id, fras.facility_resource_allocation_status')
+      ->from('agFacilityResourceAllocationStatus fras')
+      ->where('scenario_display = true')
+      ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 // End testing//////////////////////////////////////////////////////////////////////////////////////
-    if ($request->getParameter('groupid')) {
+      if ($request->getParameter('groupid')) {
 //EDIT
       $this->group_id = $request->getParameter('groupid');
       $ag_scenario_facility_group = agDoctrineQuery::create()
@@ -697,21 +702,34 @@ class scenarioActions extends agActions
       foreach ($current as $curopt) {
         $currentoptions[$curopt->facility_resource_id] = $curopt->getAgFacilityResource()->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type; //$curopt->getAgFacility()->facility_name . " : " . $curopt->getAgFacilityResourceType()->facility_resource_type;
       }
-      $this->allocatedFacilityResources = agDoctrineQuery::create()
+      $allocatedFacilityResources = agDoctrineQuery::create()
               ->select('fr.id')
-              ->addSelect('f.facility_name')
-              ->addSelect('f.facility_code')
-              ->addSelect('frt.facility_resource_type')
-              ->addSelect('frt.id')
-              ->addSelect('frt.facility_resource_type_abbr')
+                ->addSelect('f.facility_name')
+                ->addSelect('f.facility_code')
+                ->addSelect('frt.facility_resource_type')
+                ->addSelect('frt.id')
+                ->addSelect('frt.facility_resource_type_abbr')
+                ->addSelect('sfr.id')
+                ->addSelect('fras.id')
+                ->addSelect('fras.facility_resource_allocation_status')
               ->from('agFacilityResource fr')
-              ->innerJoin('fr.agFacility f')
-              ->innerJoin('fr.agFacilityResourceType frt')
-              ->from('agFacilityResource fr')
-              ->innerJoin('fr.agFacility f')
-              ->innerJoin('fr.agFacilityResourceType frt')
+                ->innerJoin('fr.agFacility f')
+                ->innerJoin('fr.agFacilityResourceType frt')
+                ->innerJoin('fr.agScenarioFacilityResource sfr')
+                ->innerJoin('sfr.agFacilityResourceAllocationStatus fras')
               ->whereIn('fr.id', array_keys($currentoptions))
+//              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      $b = $allocatedFacilityResources;
+      $c = $this->selectStatuses;
+      //make the allocated array three dimensional, with the top key set to status.
+      foreach($this->selectStatuses as $selectStatus) {
+        foreach($allocatedFacilityResources as $afr) {
+          if($afr['fras_id'] == $selectStatus['fras_id']) {
+            $this->allocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']][] = $afr;
+          }
+        }
+      }
 // Old Query
 //      $this->allocatedFacilityResources = agDoctrineQuery::create()
 //              ->select('a.facility_id, af.*, afrt.*')
