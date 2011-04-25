@@ -150,9 +150,12 @@ abstract class agImportNormalization extends agImportHelper
       foreach($rowData['_rawData'] as $key => &$val)
       {
         $val = trim($val);
-        if ($val == '') { unset($rowData['_rawData'][$key]); }
-      }
-      unset($val);
+        if ($val == '')
+        {
+          unset($rowdata['_rawData'][$key]);
+        }
+     }
+     unset($val);
     }
 
     unset($rowData);

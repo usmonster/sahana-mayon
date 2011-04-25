@@ -212,6 +212,7 @@ class agStaffImportNormalization extends agImportNormalization
       if (array_key_exists('person_id', $rowData['primaryKeys']))
       {
         $personId = $rowData['primaryKeys']['person_id'];
+        $personNames[$personId] = array();
         foreach($importNameTypes as $nameType => $nameTypeId)
         {
           if (array_key_exists($nameType, $rowData['_rawData']))
@@ -262,12 +263,13 @@ class agStaffImportNormalization extends agImportNormalization
     {
       if (array_key_exists('entity_id', $rowData['primaryKeys']))
       {
+        // this just makes it easier to use
         $entityId = $rowData['primaryKeys']['entity_id'];
+
+        // we start with an empty array, devoid of types in case the entity has no types/values
+        $entityEmails[$entityId] = array();
         foreach($importEmailTypes as $emailType => $emailTypeId)
         {
-//          // Create an empty $entityEmails array for the entity to allow the deletions of contact
-//          // info in setEntityEmail function if zero length string is passed-in from rawdata
-//          $entityEmails[$entityId][] = array(0 => $emailTypeId, 1 => NULL);
           if (array_key_exists($emailType, $rowData['_rawData']))
           {
             $entityEmails[$entityId][] = array($emailTypeId, $rowData['_rawData'][$emailType]);
