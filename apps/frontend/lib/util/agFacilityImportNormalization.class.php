@@ -499,8 +499,10 @@ class agFacilityImportNormalization //extends agImportNormalization
                                                     $addressElementIds, $conn);
         }
 
-        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId,
-                                 $workAddressStandardId, $geoInfo, $conn);
+
+// Update script to reflect table modification with a required geo_hash field.
+//        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId,
+//                                 $workAddressStandardId, $geoInfo, $conn);
 
         // Set summary counts
         if ($isNewFacilityRecord) {
