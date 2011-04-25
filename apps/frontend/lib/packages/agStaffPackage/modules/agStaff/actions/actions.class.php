@@ -580,6 +580,8 @@ class agStaffActions extends agActions
     $ag_person = $ag_staff->getAgPerson();
 
     foreach ($ag_staff->getAgStaffResource() as $ag_staff_resource) {
+      $ag_staff_resource->getAgEventStaff()->delete();
+      $ag_staff_resource->getAgScenarioStaffResource()->delete();
       $ag_staff_resource->delete();
     }
 
