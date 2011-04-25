@@ -28,24 +28,22 @@
  * @todo Add debug levels feature
  * @todo Improve Doctrine MySQL PDO exception reporting
  */
-class AgImportXLS extends agImportHelper
+class agImportXLS extends agImportHelper
 {
   // Public variables declared here
   public $importSpec;
-//  public $staffRequirementFieldType;// = array('type' => "integer");
+
+  // ??
   public $events = array();
   public $numRecordsImported = 0;
-  public $tempTable;
 
   function __construct()
   {
-
-    $this->name = "agImportXLS";
+    parent::construct();
   }
 
   function __destruct()
   {
-
     $file = $this->fileInfo["dirname"] . '/' . $this->fileInfo["basename"];
     if (!@unlink($file)) {
       $this->events[] = array("type" => "ERROR", "message" => $php_errormsg);
@@ -76,9 +74,9 @@ class AgImportXLS extends agImportHelper
    */
   protected function extendsImportSpecHeaders($importFileHeaders)
   {
-
-    /** @todo this function is to be overloaded by it's children classes agFacilityImportXLS and
-     *        agStaffImportXLS
+    /**
+     * @todo this function is to be overloaded by it's children classes agFacilityImportXLS and
+     * agStaffImportXLS
      */
   }
 
@@ -119,60 +117,9 @@ class AgImportXLS extends agImportHelper
 
     /**
      * @TODO This function is to be extended by it's children classes agFacilityImportXLS and
-     *       agStaffImportXLS
+     * agStaffImportXLS
      */
   }
-
-//  /**
-//   * validateColumnHeaders($importFileData)
-//   *
-//   * Validates import data for correct schema. Returns bool.
-//   *
-//   * @param $importFileHeaders
-//   */
-//  protected function validateColumnHeaders($importFileHeaders, $sheetName)
-//  {
-//    // Check if import file header is null
-//    if (empty($importFileHeaders))
-//    {
-//      $this->events[] = array("type" => "ERROR", "message" => "Worksheet \"$sheetName\" is missing column headers.");
-//      return false;
-//    }
-//
-//    // Check min/max set columns.  These two columns must come in a set.  Cannot add one column and
-//    // not the other.
-//    $setHeaders = preg_grep('/_(min|max)$/i', $importFileHeaders);
-//    foreach($setHeaders as $key => $column) {
-//      $setHeaders[$key] = rtrim(rtrim(strtolower($column), '_min'), '_max');
-//    }
-//    $setHeaders = array_unique($setHeaders);
-//    foreach($setHeaders as $key => $header) {
-//      if ( !in_array($header.'_min', $importFileHeaders)
-//           || !in_array($header.'_max', $importFileHeaders))
-//      {
-//        $this->events[] = array("type" => "ERROR", "message" => "Incomplete $header min/max set columns.");
-//        return false;
-//      }
-//    }
-//
-//    // Cache the import header specification
-//    $importSpecHeaders = array_keys($this->importSpec);
-//
-//    // The import spec will start with an ID column. Shift off of it.
-//    $idColumn = array_shift($importSpecHeaders);
-//    $importSpecDiff = array_diff($importSpecHeaders, $importFileHeaders);
-//
-//    if (empty($importSpecDiff)) {
-//      return true;
-//    } else {
-//      $this->events[] = array("type" => "ERROR", "message" => "Missing required columns.");
-//
-//      foreach ($importSpecDiff as $missing) {
-//        $this->events[] = array("type" => "ERROR", "message" => "Column header \"$missing\" missing.");
-//      }
-//      return false;
-//    }
-//  }
 
   /**
    * saveImportTemp()

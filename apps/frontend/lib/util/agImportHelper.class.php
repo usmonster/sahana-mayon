@@ -16,7 +16,7 @@
  */
 abstract class agImportHelper
 {
-  protected   $importTable,
+  protected   $tempTable,
               $conn;
 
   public function __construct()

@@ -37,6 +37,7 @@ abstract class agImportNormalization extends agImportHelper
   public function __construct()
   {
     parent::__construct();
+    $this->batchSize = agGlobal::getParam('default_batch_size');
   }
 
   public function __destruct()

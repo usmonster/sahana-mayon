@@ -33,6 +33,85 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
     return self::$defaultSearchTypeId ;
   }
 
+  public static function setScenarioStaffGenerator( $scenarioId,
+                                                    $searchName,
+                                                    $searchWeight,
+                                                    $searchCondition,
+                                                    Doctrine_Connection $conn = NULL)
+  {
+    // get our default settings
+    $searchTypeId = self::getDefaultSearchTypeId();
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    $err = NULL;
+
+    // spin up a new transaction / savepoint
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__);
+    }
+    else
+    {
+      $conn->beginTransaction();
+    }
+
+    // create a new scenario staff generator object
+    $newSsg = new agScenarioStaffGenerator();
+    $newSsg['scenario_id'] = $scenarioId;
+    $newSsg['search_weight'] = $searchWeight;
+
+    // get and/or create our search id
+    try
+    {
+      $newSsg['search_id'] = self::getSearchId($searchCondition, TRUE, $searchName, $searchTypeId,
+        $conn);
+    }
+    catch(Exception $e)
+    {
+      $err = $e;
+    }
+
+    // we pull this record into a collection so we can
+    $newColl = Doctrine_Collection::create('agScenarioStaffGenerator');
+    $newColl->add($newSsg);
+
+    // get our current record (if one exists)
+    $coll = agDoctrineQuery::create()
+      ->select('ssg.*')
+        ->from('agScenarioStaffGenerator ssg')
+        ->where('ssg.scenario_id = ?', $newSsg['scenario_id'])
+          ->addWhere('ssg.scenario_id = ?', $newSsg['search_id'])
+      ->execute();
+
+    // merge the two
+    $coll = $coll->merge($newColl);
+
+    try
+    {
+      $coll->save($conn);
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+    }
+    catch(Exception $e)
+    {
+      $err = $e;
+    }
+
+    if (! is_null($err))
+    {
+      // log our error
+      $errMsg = sprintf('%s failed to create new generator record with conditions %s',
+        __FUNCTION__, json_encode($searchCondition));
+      sfContext::getInstance()->getLogger()->err($errMsg);
+
+      // rollback and re-throw
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      throw $e;
+    }
+
+    // return
+    return $newSsg->getId();
+  }
+
   /**
    * Method to generate a scenario staff pool using searches stored in the staff generator.
    * @param integer $scenarioId A scenario id
