@@ -464,7 +464,7 @@ class agEntityEmailHelper extends agEntityContactHelper
     // most excellent! no errors at all, so we commit... finally!
     if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
 
-    if
+    $results['invalidData'] = $invalidData;
     return $results;
   }
 }

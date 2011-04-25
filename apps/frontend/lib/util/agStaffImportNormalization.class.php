@@ -258,6 +258,10 @@ class agStaffImportNormalization extends agImportNormalization
     unset($val);
     unset($emailTypes);
 
+//
+//$importEmailTypes['neither_email'] = 10;  // TEMPORARY HARD CODING FOR TESTING PURPOSES ONLY.
+//
+
     // loop through our raw data and build our entity email data
     foreach ($this->importData as $rowId => $rowData)
     {
@@ -283,7 +287,9 @@ class agStaffImportNormalization extends agImportNormalization
     $keepHistory = agGlobal::getParam('staff_import_keep_history');
     $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
     $enforceStrict = 1;
-
+//
+//$throwOnError = 0; // TEMPORARY HARD CODING FOR TESTING PURPOSES ONLY.
+//
     // execute the helper and finish
     $results = $eeh->setEntityEmail($entityEmails, $keepHistory, $throwOnError, $enforceStrict, $conn);
     unset($entityEmails);
@@ -311,11 +317,11 @@ class agStaffImportNormalization extends agImportNormalization
                       'mobile_phone' => '',
                       'home_phone' => '',
                       'home_email' => '',
-                      'work_phone' => '',
-                      'neither_email' => 'blah@blah.com'
+                      'work_phone' => '' //,
+//                      'neither_email' => 'blah@blah.com'
                      );
 
-    $_rawData3 = array('entity_id' => '4',
+    $_rawData3 = array('entity_id' => '11',
                       'first_name' => '',
                       'middle_name' => '',
                       'last_name' => '',
@@ -352,7 +358,7 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKey' => array(), 'success' => 0);
     $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKey' => array(), 'success' => 0);
     $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
-//    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
+    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
 
     $this->clearZLS();
     $this->normalizeData();
