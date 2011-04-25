@@ -385,10 +385,10 @@ class scenarioActions extends agActions
       $this->poolform = new agStaffPoolForm($this->search_id);
 
 //
-      $query_condition = $this->poolform->getEmbeddedForm('search')->getObject()->search_condition;
-      $query_array = json_decode($query_condition);
-      if ($query_condition != '%') {
-        $queryparts = explode(" AND ", $query_condition);
+      $search_condition = $this->poolform->getEmbeddedForm('search')->getObject()->search_condition;
+      $query_array = json_decode($search_condition);
+      if ($search_condition != '%') {
+        $queryparts = explode(" AND ", $search_condition);
         foreach ($queryparts as $querypart) {
           $filterType = preg_split("/:/", $querypart, 2);
 //these search definitions should be stored in 'search type' table maybe?
