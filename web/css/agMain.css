@@ -1364,6 +1364,7 @@ a.signin.menu-open span {
 
 .testTable tr.sortHead th a {
   color: #ffffff;
+  text-decoration: none;
 }
 
 .tooltipTrigger {

@@ -11,8 +11,6 @@ $(document).ready(function(){
   // or it will set the check on checkAll if all the checkToggles have been checked
   // individually.
   $(".checkToggle").live('click', function(){
-    var one = $("input.checkToggle").length;
-    var two = $("input.checkToggle:checked").length
     if($("input.checkToggle").length == $("input.checkToggle:checked").length) {
       $("#checkall").attr("checked", "checked");
     } else {
@@ -64,11 +62,7 @@ $(document).ready(function() {
         $(expandToggle).empty();
       });
     }
-    if($(this).html() == (String.fromCharCode(9654))) {
-      $(this).html('&#9660;');
-    } else if($(this).html() == (String.fromCharCode(9660))) {
-      $(this).html('&#9654;');
-    }
+    $(this).html(pointerCheck($(this).html()));
     return false;
   });
 });
@@ -133,8 +127,19 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-  $('.sortHead').click(function(){
-    $(this).siblings('tr').toggle('fast');
+  $('.sortHead th a').click(function(){
+    $(this).parents('.sortHead').siblings('tr').toggle('slow');
+    $(this).html(pointerCheck($(this).html()));
     return false;
   })
 });
+
+function pointerCheck(pointer) {
+  if(pointer == (String.fromCharCode(9654))) {
+    return '&#9660;';
+  } else if(pointer == (String.fromCharCode(9660))) {
+    return '&#9654;';
+  } else {
+    return null;
+  }
+}

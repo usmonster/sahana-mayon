@@ -103,7 +103,8 @@ echo url_for
       <tbody id="fras_id_<?php echo $selectStatus['fras_id']; ?>">
         <tr class="sortHead">
           <th colspan="2">
-            <a href="#"><?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?></a>
+            <?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?>
+            <a href="#">&#9660;</a>
           </th>
           <th class="count">
             Count:
