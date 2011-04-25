@@ -18,12 +18,14 @@ abstract class agBulkRecordHelper
 {
   public    $strictBatchSize = FALSE,
             $throwOnError = TRUE,
-            $purgeOrphans = FALSE;
+            $purgeOrphans = FALSE,
+            $keepHistory = TRUE;
 
   protected $recordIds = array(),
             $_batchSizeModifier = 1,
             $_recordCount,
-            $_defaultBatchSize ;
+            $_defaultBatchSize,
+            $enforceStrict;
 
   /**
    * This is the class's constructor which loads the $_recordIds property.
@@ -35,6 +37,7 @@ abstract class agBulkRecordHelper
     // pick up our default batch size
     $batchSize = ((agGlobal::getParam('default_batch_size'))/$this->_batchSizeModifier) ;
     $this->_defaultBatchSize = abs($batchSize) ;
+    $this->enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
 
     // if passed an array of address id's, set them as a class property
     $this->setRecordIds($recordIds);

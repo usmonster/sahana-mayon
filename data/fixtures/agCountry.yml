@@ -517,3 +517,5 @@ agCountry:
     country: Zimbabwe
   other:
     country: other
+  unknown:
+    country: unknown

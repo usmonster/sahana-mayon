@@ -319,16 +319,19 @@ class agEntityEmailHelper extends agEntityContactHelper
   public function setEntityEmail( $entityContacts,
                                   $keepHistory = NULL,
                                   $throwOnError = NULL,
+                                  $enforceStrict = NULL,
                                   Doctrine_Connection $conn = NULL)
   {
     // some explicit declarations at the top
     $uniqContacts = array();
+    $invalidData = array();
     $err = NULL;
     $errMsg = 'This is a generic ERROR for setEntityEmail. You should never receive this ERROR.
       If you have received this ERROR, there is an error with your ERROR handling code.';
 
     // determine whether or not we'll explicitly throw exceptions on error
     if (is_null($throwOnError)) { $throwOnError = $this->throwOnError; }
+    if (is_null($enforceStrict)) { $enforceStrict = $this->enforceStrict; }
 
     // loop through our contacts and pull our unique email from the fire
     foreach ($entityContacts as $entityId => $contacts)
@@ -336,7 +339,27 @@ class agEntityEmailHelper extends agEntityContactHelper
       foreach($contacts as $index => $contact)
       {
         $contact[1] = trim($contact[1]);
-        
+
+        // If enforce data validation check and if data is invalid, unset from $entityContacts array
+        // from performing contact updates.  Otherwise, continue to add record to uniqContacts for
+        // further processing.
+        if ($contact[1] != '' && $enforceStrict)
+        {
+          if (!preg_match('/.+\@.+\..+/', $contact[1]))
+          {
+            if (array_key_exists($entityId, $invalidData))
+            {
+              $invalidData[$entityId][] = $contact;
+            }
+            else
+            {
+              $invalidData[] = $entityContacts[$entityId];
+            }
+            unset($entityContacts[$entityId][$index]);
+            continue;
+          }
+        }
+
         // find the position of the element or return false
         $pos = array_search($contact[1], $uniqContacts, TRUE);
 
@@ -441,6 +464,7 @@ class agEntityEmailHelper extends agEntityContactHelper
     // most excellent! no errors at all, so we commit... finally!
     if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
 
+    if
     return $results;
   }
 }

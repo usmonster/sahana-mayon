@@ -50,6 +50,22 @@ class agEmailHelper extends agBulkRecordHelper
   }
 
   /**
+   * Method to return email contact type ids from email contact type values.
+   * @param array $emailTypes An array of email_contact_types
+   * @return array An associative array of email contact type ids keyed by email contact type.
+   */
+  static public function getEmailContactTypeIds($emailTypes)
+  {
+    return agDoctrineQuery::create()
+      ->select('ect.email_contact_type')
+          ->addSelect('ect.id')
+        ->from('agEmailContactType ect')
+        ->whereIn('ect.email_contact_type', $emailTypes)
+      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
    * Method to create a new email.
    *
    * @param array $emails A mono-dimensional array of arbitrary index keys and email values.

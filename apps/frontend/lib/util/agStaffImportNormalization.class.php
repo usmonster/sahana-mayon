@@ -43,7 +43,7 @@ class agStaffImportNormalization extends agImportNormalization
     // setEntity creates entity, person, and staff records.
     $this->importComponents[] = array( 'component' => 'entity', 'throwOnError' => TRUE, 'method' => 'setEntities');
     $this->importComponents[] = array( 'component' => 'personName', 'throwOnError' => TRUE, 'method' => 'setPersonNames', 'helperClass' => 'agPersonNameHelper');
-//    $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => TRUE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
+    $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => TRUE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
   }
 
   /**
@@ -233,15 +233,71 @@ class agStaffImportNormalization extends agImportNormalization
     // @todo do your results reporting here
   }
 
+  /**
+   * Method to set entity emails during staff import.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   */
+  public function setEntityEmail($throwOnError)
+  {
+    // always start with any data maps we'll need so they're explicit
+    $importEmailTypes = array('work_email'=>'work', 'home_email'=>'personal');
+    $entityEmails = array();
+    $results = array();
+
+    // let's get ahold of our helper object since we're going to use him/her a lot
+    $eeh =& $this->helperObjects['agEntityEmailHelper'];
+
+    // get our email types and map them back to the importEmailTypes
+    $emailTypes = agEmailHelper::getEmailContactTypeIds(array_values($importEmailTypes));
+    foreach ($importEmailTypes as $key => &$val)
+    {
+      $val = $emailTypes[$val];
+    }
+    unset($val);
+    unset($emailTypes);
+
+    // loop through our raw data and build our entity email data
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      if (array_key_exists('entity_id', $rowData['primaryKeys']))
+      {
+        $entityId = $rowData['primaryKeys']['entity_id'];
+        foreach($importEmailTypes as $emailType => $emailTypeId)
+        {
+//          // Create an empty $entityEmails array for the entity to allow the deletions of contact
+//          // info in setEntityEmail function if zero length string is passed-in from rawdata
+//          $entityEmails[$entityId][] = array(0 => $emailTypeId, 1 => NULL);
+          if (array_key_exists($emailType, $rowData['_rawData']))
+          {
+            $entityEmails[$entityId][] = array($emailTypeId, $rowData['_rawData'][$emailType]);
+          }
+        }
+      }
+    }
+
+    // pick up some of our components / objects
+    $conn = $this->conn;
+    $keepHistory = agGlobal::getParam('staff_import_keep_history');
+    $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
+    $enforceStrict = 1;
+
+    // execute the helper and finish
+    $results = $eeh->setEntityEmail($entityEmails, $keepHistory, $throwOnError, $enforceStrict, $conn);
+    unset($entityEmails);
+
+    // @todo do your results reporting here
+  }
+
   public function testDataNorm()
   {
-    $_rawData1 = array('entity_id' => '',
+    $_rawData1 = array('entity_id' => '3',
                       'first_name' => 'Mork',
                       'middle_name' => '',
                       'last_name' => 'Ork',
                       'mobile_phone' => '',
                       'home_phone' => '',
-                      'home_email' => '',
+                      'home_email' => 'mork.ork@home.com',
                       'work_phone' => '',
                       'work_email' => ''
                      );
@@ -254,9 +310,10 @@ class agStaffImportNormalization extends agImportNormalization
                       'home_phone' => '',
                       'home_email' => '',
                       'work_phone' => '',
-                      'work_email' => ''
+                      'neither_email' => 'blah@blah.com'
                      );
-    $_rawData3 = array('entity_id' => '11',
+
+    $_rawData3 = array('entity_id' => '4',
                       'first_name' => '',
                       'middle_name' => '',
                       'last_name' => '',
@@ -275,13 +332,25 @@ class agStaffImportNormalization extends agImportNormalization
                       'home_phone' => '',
                       'home_email' => '',
                       'work_phone' => '',
-                      'work_email' => ''
+                      'work_email' => 'Linjawork.com'
+                     );
+
+    $_rawData5 = array('entity_id' => '2',
+                      'first_name' => 'Aimee',
+                      'middle_name' => '',
+                      'last_name' => 'Adu',
+                      'mobile_phone' => '',
+                      'home_phone' => '',
+                      'home_email' => '',
+                      'work_phone' => '',
+                      'work_email' => 'aimeeemailnow@work.com'
                      );
 
     $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKey' => array(), 'success' => 0);
     $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKey' => array(), 'success' => 0);
     $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKey' => array(), 'success' => 0);
     $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
+//    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
 
     $this->clearZLS();
     $this->normalizeData();

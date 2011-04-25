@@ -65,7 +65,7 @@ agGlobalParam:
     id: 13
     agHost: localhost
     datapoint: default_phone_format_type
-    value: USA 10 digit
+    value: unknown 
   default_country:
     id: 14
     agHost: localhost
@@ -85,4 +85,9 @@ agGlobalParam:
     id: 17
     agHost: localhost
     datapoint: staff_import_keep_history
+    value: 0
+  enforce_strict_contact_formatting:
+    id: 18
+    agHost: localhost
+    datapoint: enforce_strict_contact_formatting
     value: 0

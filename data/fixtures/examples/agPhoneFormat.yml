@@ -9,6 +9,6 @@ agPhoneFormat:
     agCountry: united_states
     agPhoneFormatType: usa_10_digits_ext
   usa_default:
-    agCountry: united_states
+    agCountry: unknown
     agPhoneFormatType: unknown
 
