@@ -8,6 +8,7 @@ agFacilityResourceAllocationStatus:
     staffed: 0
     accepting_clients: 0
     servicing_clients: 0
+    scenario_display: 1
   standby:
     facility_resource_allocation_status: standby
     description: Facility resource designated as a standby resource within its facility group.
@@ -17,6 +18,7 @@ agFacilityResourceAllocationStatus:
     staffed: 0
     accepting_clients: 0
     servicing_clients: 0
+    scenario_display: 1
   setup:
     facility_resource_allocation_status: setup
     description: Facility resource is currently undergoing setup operations and only open to staff.
@@ -26,6 +28,7 @@ agFacilityResourceAllocationStatus:
     staffed: 1
     accepting_clients: 0
     servicing_clients: 0
+    scenario_display: 1
   registration:
     facility_resource_allocation_status: registration
     description: Facility resource currently accepting clients.
@@ -35,6 +38,7 @@ agFacilityResourceAllocationStatus:
     staffed: 1
     accepting_clients: 1
     servicing_clients: 1
+    scenario_display: 1
   operating:
     facility_resource_allocation_status: operating
     description: Facility resource is servicing clients, but not accepting new clients at the moment.
@@ -44,6 +48,7 @@ agFacilityResourceAllocationStatus:
     staffed: 1
     accepting_clients: 0
     servicing_clients: 1
+    scenario_display: 0
   closing:
     facility_resource_allocation_status: closing
     description: Facility resource is shutting down and is not accepting or servicing clients.
@@ -53,6 +58,7 @@ agFacilityResourceAllocationStatus:
     staffed: 1
     accepting_clients: 0
     servicing_clients: 0
+    scenario_display: 0
   closed:
     facility_resource_allocation_status: closed
     description: Facility resource is closed and resources are released for re-assignment.
@@ -62,6 +68,7 @@ agFacilityResourceAllocationStatus:
     staffed: 0
     accepting_clients: 0
     servicing_clients: 0
+    scenario_display: 0
   unavailable:
     facility_resource_allocation_status: unavailable
     description: Facility resource is unavailable for operation.
@@ -71,3 +78,4 @@ agFacilityResourceAllocationStatus:
     staffed: 0
     accepting_clients: 0
     servicing_clients: 0
+    scenario_display: 1

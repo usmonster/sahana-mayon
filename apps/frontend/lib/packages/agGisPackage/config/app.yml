@@ -1,6 +1,0 @@
-all:
-  .array:
-    menu_children:
-      gis: { label: 'GIS', route: '@gis', parent: 'prepare' }
-    menu_grandchildren:
-      gis_placeholder: { label: '[Placeholder]', route: '@gis', parent: 'gis' }
