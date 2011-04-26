@@ -3,7 +3,16 @@
 <?php //TODO: see if this is still necessary:
 use_javascript('tooltip.js'); ?>
 <?php use_javascript('json.serialize.js'); ?>
+<?php //use_javascript('jquery.mousewheel.js'); ?>
+<?php //use_javascript('jquery.jscrollpane.js'); ?>
+<?php //use_javascript('mwheelIntent.js'); ?>
+<?php //use_stylesheet('jquery.jscrollpane.css'); ?>
 <script type="text/javascript">
+//  $(function()
+//  {
+//	$('.scroll-pane').jScrollPane();
+//  });
+  
   $(function() {
     $("#available tbody tr").bind("dblclick", function(){
       return !$(this).remove().appendTo('#allocated tbody')
@@ -12,17 +21,17 @@ use_javascript('tooltip.js'); ?>
       return !$(this).remove().appendTo('#available tbody')
     });
 
-    $( "#available tbody, #allocated tbody" ).sortable({
+    $( ".available tbody, .allocated tbody" ).sortable({
       connectWith: ".testTable tbody",
       items: 'tr.sort'
 //      cancel: 'tr.sortHead'
     }).disableSelection();
 
-    $('#allocated tbody').bind('sortupdate', function () {
+    $('.allocated tbody').bind('sortupdate', function () {
       if($(this).find('tr').is(':hidden')) {
         $(this).find('.sort').hide();
       }
-      countSorts($(this).find('.count'));
+      countSorts($('tr#' + $(this).attr('title')).find('.count'));
     });
 
 //    $('.sortHead').bind('sortover', function() {
@@ -46,19 +55,26 @@ use_javascript('tooltip.js'); ?>
 
   function serialTran() {
     var out = Array();
-    $('#allocated > li').each(function(index) {
+    $('.serialIn').each(function(index) {
       out[index] = $(this).attr('id');
       $("#ag_scenario_facility_group_ag_facility_resource_order").val(JSON.stringify(out));
     });
   }
+//  function serialTran() {
+//    var out = Array();
+//    $('#allocated > li').each(function(index) {
+//      out[index] = $(this).attr('id');
+//      $("#ag_scenario_facility_group_ag_facility_resource_order").val(JSON.stringify(out));
+//    });
+//  }
 
   function countSorts(countMe) {
     $(countMe).html(function() {
-      var counted = $(this).parent().siblings('tr.sort').length;
+      var counted = $('tbody.' + $(this).parent().attr('id')).children('tr.sort').length;
       if(counted == 0) {
-        $(this).parents('tbody').append('<tr class="countZero"><td colspan="3">No facilities selected for this group.</td></tr>')
+        $('tbody.' + $(this).parent().attr('id')).append('<tr class="countZero"><td colspan="3">No facilities selected for this group.</td></tr>')
       } else if (counted != 0) {
-        $(this).parent().siblings('tr.countZero').remove();
+        $('tbody.' + $(this).parent().attr('id')).children('tr.countZero').remove();
       }
       return 'Count: ' + counted;
     });
@@ -67,7 +83,14 @@ use_javascript('tooltip.js'); ?>
   $(document).ready(function () {
     countSorts('.count');
   })
-
+  
+  $(document).ready(function() {
+    $('.sortHead th a').click(function(){
+      $('div.' + $(this).attr('class')).slideToggle();
+      $(this).html(pointerCheck($(this).html()));
+      return false;
+    })
+  });
 </script>
 <noscript>in order to set the activation sequence of resource facilities and add them to the
   facility group, you will need javascript enabled</noscript>
@@ -88,64 +111,82 @@ echo url_for
     ?>
   </div>
   <div class="bucketHolder" >
-    <table class="testTable" id="available" cellspacing="0">
+    <div class="testTableContainer">
+    <table class="testTable available" cellspacing="0">
+      <thead>
+        <caption>Available Facility Resources</caption>
+      </thead>
       <tbody>
         <tr>
-          <th>Facility Code</th>
+          <th class="left">Facility Code</th>
           <th>Resource Type</th>
-          <th>Activation Sequence</th>
+          <th class="right">Activation Sequence</th>
         </tr>
       <?php foreach ($availableFacilityResources as $availableFacilityResource): ?>
         <tr class="sort facility_resource_type_<?php echo $availableFacilityResource['frt_id']; ?>">
-          <td title="<?php echo $availableFacilityResource['f_facility_name'];?>">
+          <td class="left" title="<?php echo $availableFacilityResource['f_facility_name'];?>">
             <?php echo $availableFacilityResource['f_facility_code'] ?>
           </td>
           <td title="<?php echo $availableFacilityResource['frt_facility_resource_type'] ?>">
             <?php echo $availableFacilityResource['frt_facility_resource_type_abbr'] ?>
           </td>
-          <td>
-            <input type="text">
+          <td class="right">
+            <input type="text" class="inputGraySmall">
           </td>
         </tr>
       <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
 
-    <table class="testTable" id="allocated"  cellspacing="0">
+<div class="testTableContainer">
+  <table class="testTableParent" cellspacing="0">
+    <thead>
+      <caption>Allocated Facility Resources</caption>
+    </thead>
     <?php foreach($selectStatuses as $selectStatus): ?>
-      <tbody id="fras_id_<?php echo $selectStatus['fras_id']; ?>">
-        <tr class="sortHead">
-          <th colspan="2">
-            <?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?>
-            <a href="#">&#9660;</a>
-          </th>
-          <th class="count">
+    <tr class="sortHead" id="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>">
+      <th colspan="2" class="left">
+        <?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?>
+            <a href="#" class="<?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?>">&#9660;</a>
+      </th>
+      <th class="count right">
             Count:
-          </th>
-        </tr>
-        <tr>
-          <th>Facility Code</th>
-          <th>Resource Type</th>
-          <th>Activation Sequence</th>
-        </tr>
-      <?php if ($allocatedFacilityResources): ?>
-        <?php foreach ($allocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']] as $allocatedFacilityResource): ?>
-        <tr class="sort facility_resource_type_<?php echo $allocatedFacilityResource['frt_id']; ?>">
-          <td title="<?php echo $allocatedFacilityResource['f_facility_name'];?>">
-            <?php echo $allocatedFacilityResource['f_facility_code'] ?>
-          </td>
-          <td title="<?php echo $allocatedFacilityResource['frt_facility_resource_type'] ?>">
-            <?php echo $allocatedFacilityResource['frt_facility_resource_type_abbr'] ?>
-          </td>
-          <td>
-            <input type="text">
-          </td>
-        </tr>
-        <?php endforeach; ?>
-      <?php endif; ?>
-      </tbody>
+      </th>
+    </tr>
+    <tr>
+      <td colspan="3" style="height: 0">
+        <div class="<?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?>">
+          <table class="testTable allocated" cellspacing="0">
+            <tbody class="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>" title="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>">
+              <tr>
+                <th class="left">Facility Code</th>
+                <th>Resource Type</th>
+                <th class="right">Activation Sequence</th>
+              </tr>
+            <?php if ($allocatedFacilityResources): ?>
+              <?php foreach ($allocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']] as $allocatedFacilityResource): ?>
+              <tr class="sort facility_resource_type_<?php echo $allocatedFacilityResource['frt_id']; ?> serialIn">
+                <td class="left" title="<?php echo $allocatedFacilityResource['f_facility_name'];?>">
+                  <?php echo $allocatedFacilityResource['f_facility_code'] ?>
+                </td>
+                <td title="<?php echo $allocatedFacilityResource['frt_facility_resource_type'] ?>">
+                  <?php echo $allocatedFacilityResource['frt_facility_resource_type_abbr'] ?>
+                </td>
+                <td class="right">
+                  <input type="text" class="inputGraySmall">
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            <?php endif; ?>
+            <tbody>
+          </table>
+        </div>
+      </td>
+    </tr>
     <?php endforeach; ?>
-    </table>
+  </table>
+</div>
 <!--    <ul id="bavailable" class="bucket">-->
       <?php
 //      foreach ($availableFacilityResources as $afr) {

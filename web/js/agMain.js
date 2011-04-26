@@ -126,14 +126,6 @@ $(document).ready(function() {
   });
 });
 
-$(document).ready(function() {
-  $('.sortHead th a').click(function(){
-    $(this).parents('.sortHead').siblings('tr').toggle('slow');
-    $(this).html(pointerCheck($(this).html()));
-    return false;
-  })
-});
-
 function pointerCheck(pointer) {
   if(pointer == (String.fromCharCode(9654))) {
     return '&#9660;';

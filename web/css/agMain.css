@@ -186,7 +186,9 @@ h5 {
   color: #848484;
 }
 
-.navButton:hover, .buttonText:hover, .buttonWhite:hover, .buttonSort:hover, .buttonSortSelected, .expander:hover, .expandAll:hover, .collapseAll:hover {
+.navButton:hover, .buttonText:hover, .buttonWhite:hover,
+.buttonSort:hover, .buttonSortSelected, .expander:hover,
+.expandAll:hover, .collapseAll:hover {
   color: #ff8f00;
   text-shadow: 0px 0px 5px #ff8f00;
 }
@@ -1335,36 +1337,91 @@ a.signin.menu-open span {
   text-align: left;
 }
 
+.testTableContainer {
+  background: #00B4CC;
+}
+.testTable, .testTableParent {
+  width: 100%;
+}
 
-.testTable {
-/*  border-radius: 10px;*/
-/*  -moz-border-radius: 10px;*/
-/*  border: solid 1px #00B4CC;*/
+.testTableParent td, .testTableParent th {
+  padding: 0px;
+  margin: 0;
+}
+.testTableParent th {
+  border-top: solid 1px #00B4CC;
+  border-bottom: solid 1px #00B4CC;
+}
+
+.testTableParent th.left {
+  border-left: solid 2px #00B4CC;
+}
+
+.testTableParent th.right {
+  border-right: solid 2px #00B4CC;
 }
 
 .testTable th {
-  background: #A1E2FF;
-  border: solid 1px #00B4CC;
+  background: #A1E2ff;
+  border-top: solid 1px #00B4CC;
+  border-bottom: solid 1px #00B4CC;
+  color: #ffffff;
 }
-
-.testTable tr {
-
+.testTable tr.countZero td {
+  border: solid #00B4CC;
+  border-width: 1px 2px;
 }
-
+.testTable th, .testTable td, .testTableParent th, .testTableParent td {
+  width: 100px;
+}
 .testTable td {
-  border: solid 1px #00B4CC;
   background: #ffffff;
 }
 
-.testTable tr.sortHead th {
+.testTable td, .testTable th {
+  border-top: solid 1px #00B4CC;
+  border-bottom: solid 1px #00B4CC;
+  margin: 0;
+  padding: 0;
+}
+
+.testTable td.left, .testTable th.left {
+  border-left: solid 2px #00B4CC;
+}
+
+.testTable td.right, .testTable th.right {
+  border-right: solid 2px #00B4CC;
+}
+
+.testTableParent tr.sortHead th, .testTable tr.sortHead th {
   background: #00DFFC;
   text-align: left;
   color: #ffffff;
 }
 
-.testTable tr.sortHead th a {
+.testTableParent tr.sortHead th a {
   color: #ffffff;
   text-decoration: none;
+  outline: none;
+}
+.testTableParent tr.sortHead th a:hover {
+  color: #98ffb9;
+  text-shadow: 0px 0px 5px #ff8f00;
+}
+
+.testTable caption, .testTableParent caption {
+  font-size: 1.2em;
+  background: #00B4CC;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 4px;
+}
+.testTableContainer {
+  display: inline-block;
+  height: 800px;
+  width: 320px;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 .tooltipTrigger {
