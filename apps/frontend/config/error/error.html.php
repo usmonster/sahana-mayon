@@ -25,9 +25,8 @@ $path = sfConfig::get('sf_relative_url_root', preg_replace
   <body>
     <div id="header">
       <div class="floatLeft">
-        <?php echo image_tag('Sahana_logo.png', array('class' => 'logo',
-          'alt' => 'Sahana Agasti: Emergency Management')) ?>
-        <!--<h1>Sahana Agasti:</h1><h2> Emergency Management </h2>-->
+        <?php //echo link_to(image_tag('Sahana_logo.png', array('class' => 'logo', 'alt' => 'Sahana Agasti: Emergency Management')),'home/index') ?>
+        <a href="<?php echo url_for('home/index'); ?>" style="text-decoration: none"><h1>Sahana Agasti:</h1><h2> Emergency Management </h2></a>
       </div>
     </div>
     <div id="wrapper">
