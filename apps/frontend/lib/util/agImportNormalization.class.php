@@ -58,7 +58,10 @@ abstract class agImportNormalization extends agImportHelper
 
   protected function updateFailedTemp()
   {
-    //@todo make this & DO NOT use _conn for it. Very bad. _conn's going to be locked up for a while
+    //@todo make this
+    //
+    // DO NOT use _conn for it. Very bad. _conn's going to be locked up for a while
+    $conn = Doctrine_Manager::connection();
   }
 
   protected function removeTempSuccesses()
@@ -80,7 +83,10 @@ abstract class agImportNormalization extends agImportHelper
     // also should do the modulus check and execute processRaw if it hits
   }
 
-  protected function importFromTemp()
+  /**
+   * Method to initiate the import query from temp
+   */
+  protected function tempToRaw($query)
   {
     // first get a count of what we need from temp
     $ctQuery = sprintf('SELECT COUNT(t.*) FROM %s AS t;', $this->tempTable);
@@ -88,10 +94,8 @@ abstract class agImportNormalization extends agImportHelper
     $this->tempCount = $ctResults::fetchColumn();
 
     // now we can legitimately execute our real search
-    $query = sprintf('SELECT t.* FROM %s AS t;', $this->tempTable);
-    $pdo = $this->executePdoQuery($query);
+    $this->executePdoQuery($query);
   }
-
 
   protected function loadRaw()
   {
@@ -167,6 +171,9 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function createNewRec( $recordName, $foreignKeys )
   {
+    // get our connection object
+    $conn = $this->getConnection();
+
     // instantiate the new record object
     $newRec = new $recordName();
 
@@ -177,7 +184,7 @@ abstract class agImportNormalization extends agImportHelper
     }
 
     // save and return our new id
-    $newRec->save($this->conn);
+    $newRec->save($conn);
     // @todo Figure out why this causes a huge chain of queries; likely this forces an update
     // of the record and it tries to populate with related records
     

@@ -16,11 +16,12 @@
  */
 abstract class agImportHelper
 {
-  protected   $tempTable,
+  protected   $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
+              $tempTable,
               $_conn,
               $_PDO;
 
-  public function __construct()
+  protected function __construct()
   {
     // Sets a new connection.
     $this->setConnection();
@@ -45,12 +46,21 @@ abstract class agImportHelper
     $this->_conn = Doctrine_Manager::connection(NULL, 'import_data_load');
   }
 
-  /*
-   * Method to ensure that PDO queries pass through the _PDO property
+  /**
+   * Method to execute a PDO query and bind it to the class parameter.
+   * @param string $query A SQL query string
+   * @param array $params An optional array of query parameters
+   * @param string $fetchMode The PDO fetch mode to be used. Defaults to class property default.
+   * @return Doctrine_Connection A PDO object after execution of the query.
    */
-  protected function executePdoQuery($query, $params = array())
+  protected function executePdoQuery($query, $params = array(), $fetchMode = NULL)
   {
+    // execute the method
     $this->_PDO = $this->_conn->execute($query, $params);
+
+    // set fetch mode
+    $this->_PDO->setFetchMode($fetchMode);
+
     return $this->_PDO ;
   }
 
