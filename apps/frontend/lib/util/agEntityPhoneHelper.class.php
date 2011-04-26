@@ -122,6 +122,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
     $index = 0;
     $priorEntityId = '';
     $priorContactType = '';
+    $phoneHelperArgs = array();
     foreach ($rows as $row)
     {
       $entityPhones[$row[0]][$row[4]][] = array($row[1], $row[2], $row[3]);
@@ -229,6 +230,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
     // build this as custom hydration to 'double tap' the data
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
 
+    $phoneHelperArgs = array();
     foreach ($rows as $row)
     {
       $entityPhones[$row[0]][]= array($row[4], $row[1], $row[2], $row[3]) ;
