@@ -99,8 +99,8 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enableModules(array('scenario', 'facility'));
     
     // registers event listeners
-    $this->dispatcher->connect('import.facility_file_ready', array('AgImportXLS', 'processFile'));
-    $this->dispatcher->connect('global_param.param_updated', array('AgGlobal', 'loadParams'));
+    $this->dispatcher->connect('import.facility_file_ready', array('agImportXLS', 'processFile'));
+    $this->dispatcher->connect('global_param.param_updated', array('agGlobal', 'loadParams'));
   }
 
   /**
