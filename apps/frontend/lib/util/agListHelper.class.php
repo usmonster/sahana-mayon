@@ -6,7 +6,11 @@
 class agListHelper
 {
   public static function getStaffList($staff_ids){
-          $query = Doctrine::getTable('agStaff')
+
+    $person_array = array();
+    $resultArray = array();
+
+    $query = Doctrine::getTable('agStaff')
               ->createQuery('a')
               //                  namejoin.*,
               //                  name.*,
@@ -29,7 +33,7 @@ class agListHelper
               )
               ->whereIn('s.id', $staff_ids);
 
-      //if we do a good full select of as many values as possible, we can order by
+      /** @todo add order by */
       $ag_staffQuery = $query->getSqlQuery();
       $ag_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       foreach ($ag_staff as $key => $value) {

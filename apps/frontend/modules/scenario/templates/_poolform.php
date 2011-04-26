@@ -72,7 +72,6 @@ if (isset($search_id)) {
 <?php
     $labels = $filterForm->getWidgetSchema()->getLabels();
     $fields = $filterForm->getWidgetSchema()->getFields();
-    $wSchema = $filterForm->getWidgetSchema();
 foreach($fields as $key => $field)
 {
   echo '<label class ="filterButton">' . $labels[$key] . '</label>';

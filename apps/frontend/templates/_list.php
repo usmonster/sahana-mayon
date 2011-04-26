@@ -2,6 +2,10 @@
 $thisUrl = url_for($target_module .'/list');
 $ascArrow = '&#x25B2;';
 $descArrow = '&#x25BC;';
+
+$orderAppend = '';
+$sortAppend = '';
+//the above two lines are in place to supress warnings until sort is corrected
 ?>
 <table class="staffTable">
 

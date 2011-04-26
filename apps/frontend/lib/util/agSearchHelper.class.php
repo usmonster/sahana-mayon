@@ -229,7 +229,7 @@ class agSearchHelper
    * @param array $conditions An array of query conditions to process
    * @return agDoctrineQuery An agDoctrineQuery object
    */
-  protected static function parseDoctrineQuerySimple($query, $conditions)
+  protected static function parseDoctrineQuerySimple($query, $conditions = null)
   {
     // decode the conditions parameter and loop
     foreach ($conditions as $condition)

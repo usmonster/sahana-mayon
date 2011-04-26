@@ -11,7 +11,7 @@
 
 <?php
 
-if($sf_request->getParameter('module') == 'agStaff') {
+if($sf_request->getParameter('module') == 'agStaff' || $sf_request->getParameter('module') == 'home' ) {
 $displayColumns = array(
   'fn'              => array('title' => 'First Name', 'sortable' => false),
   'ln'              => array('title' => 'Last Name', 'sortable' => false),

@@ -66,12 +66,18 @@ Your staff resource pool is essentially a set of searches that let you refine wh
 
 //pager comes in from the action
 
+  $order = null;
+  $sort = null;
+  $filter = null;
+  //the above three lines are in place to supress warnings until SOF is functional
 include_partial('global/list', array( 'sf_request' => $sf_request,
                                       'displayColumns' => $displayColumns,
                                       'pager' => $pager,
                                       'order' => $order,
                                       'sort' => $sort,
-                                      'filter' => $filter)
+                                      'filter' => $filter,
+                                      'target_module' => 'staff'
+  )
     );
 
 
