@@ -12,3 +12,8 @@
 
 
 
+<a href="#"><span class="info">+ Add Shift Template</span></a> <br />
+    <input type="submit" class="linkButton" value="Save, Generate Shifts and Continue" name="Continue" />
+
+
+

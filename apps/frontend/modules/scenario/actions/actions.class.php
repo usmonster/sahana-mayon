@@ -500,10 +500,6 @@ class scenarioActions extends agActions
    * sets up a new scenario form
    * @param sfWebRequest $request
    */
-  public function executeNew(sfWebRequest $request)
-  {
-    $this->form = new agScenarioForm();
-  }
 
   public function executeMeta(sfWebRequest $request)
   {
@@ -1048,31 +1044,7 @@ class scenarioActions extends agActions
     $this->pager->init();
   }
 
-  /**
-   *
-   * @param sfWebRequest $request
-   * triggers the creation of a scenario
-   */
-  public function executeCreate(sfWebRequest $request)
-  {
-    $this->forward404Unless($request->isMethod(sfRequest::POST));
 
-    $this->form = new agScenarioForm();
-
-    $this->processForm($request, $this->form);
-
-    if ($request->getParameter('facilitygroup')) {
-      $this->ag_facility_resources = agDoctrineQuery::create()
-              ->select('a.facility_id, af.*, afrt.*')
-              ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-              ->execute();
-      $this->groupform = new agScenarioFacilityGroupForm();
-      $this->groupform->getObject()->setAgScenario()->id = $
-          $this->redirect('scenario/group');
-    } else {
-      $this->setTemplate('new');
-    }
-  }
 
   /**
    * @todo what's this do?
@@ -1109,33 +1081,8 @@ class scenarioActions extends agActions
   }
 
   /**
-   *
-   * @param sfWebRequest $request
-   * creates a scenario form populated with info for the requested scenario
-   */
-  public function executeEdit(sfWebRequest $request)
-  {
-    $this->forward404Unless(
-        $ag_scenario = Doctrine_Core::getTable('agScenario')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario does not exist (%s).', $request->getParameter('id')));
-    $this->ag_scenario_facility_groups = agDoctrineQuery::create()
-            ->select('a.*')
-            ->from('agScenarioFacilityGroup a')
-            ->where('a.scenario_id = ?', $request->getParameter('id'))
-            ->execute();
-    $this->form = new agScenarioForm($ag_scenario);
-//p-code
-    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $ag_scenario . ' Scenario');
-//end p-code
-  }
-
-  public function executeEditgroup(sfWebRequest $request)
-  {
-
-  }
-
-  /**
-   * @todo what's this do?
-   * @param sfWebRequest $request
+   * Provides the edit group type form to the browser
+   * @param sfWebRequest $request is the web request
    */
   public function executeEditgrouptype(sfWebRequest $request)
   {
@@ -1147,25 +1094,8 @@ class scenarioActions extends agActions
   }
 
   /**
-   *
+   * processing the update of a facility group type
    * @param sfWebRequest $request
-   * processing the update of a scenario
-   */
-  public function executeUpdate(sfWebRequest $request)
-  {
-    $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
-    $this->forward404Unless($ag_scenario = Doctrine_Core::getTable('agScenario')->find(array($request->getParameter('id'))), sprintf('Object ag_scenario does not exist (%s).', $request->getParameter('id')));
-    $this->form = new agScenarioForm($ag_scenario);
-
-    $this->processForm($request, $this->form);
-
-    $this->setTemplate('edit');
-  }
-
-  /**
-   *
-   * @param sfWebRequest $request
-   * processing the update of a facility group
    */
   public function executeGrouptypeupdate(sfWebRequest $request)
   {
@@ -1206,9 +1136,6 @@ class scenarioActions extends agActions
     foreach ($scenarioStaffResources as $scenarioStaffResource) {
       $scenarioStaffResource->delete();
     }
-
-
-
 
     $scenarioStaffResources = $ag_scenario->getAgScenarioStaffResource();
 //get all scenario staff resources

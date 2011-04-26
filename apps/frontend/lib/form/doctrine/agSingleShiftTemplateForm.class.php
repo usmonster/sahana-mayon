@@ -180,7 +180,11 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
-    $this->setupInheritance();
+    //$this->setupInheritance();
+
+    $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel2($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
+    $this->getWidgetSchema()->setFormFormatterName('custDeco');
 
   }
 

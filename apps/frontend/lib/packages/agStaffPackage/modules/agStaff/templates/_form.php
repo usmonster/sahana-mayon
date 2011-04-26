@@ -29,14 +29,6 @@
         <?php echo $form['ag_sex_list'] ?>
       </div>
       <div class="displayInlineBlock">
-        <h4><?php echo $form['ag_marital_status_list']->renderLabel(); ?></h4>
-        <?php echo $form['ag_marital_status_list']; ?>
-      </div>
-      <div class="displayInlineBlock">
-        <h4><?php echo $form['ag_ethnicity_list']->renderLabel(); ?></h4>
-        <?php echo $form['ag_ethnicity_list']; ?>
-      </div>
-      <div class="displayInlineBlock">
         <?php echo $form['date of birth']; ?>
         <script type="text/javascript">
           $(function() {
@@ -60,22 +52,6 @@
       </div>
       <div class="clearBoth"> </div>
       <br />
-      <div class="displayInlineBlock">
-        <h4><?php echo $form['ag_nationality_list']->renderLabel(); ?></h4>
-        <?php echo $form['ag_nationality_list'] ?>
-      </div>
-      <div class="clearBoth"> </div>
-      <br />
-      <h4><?php echo $form['ag_religion_list']->renderLabel(); ?></h4>
-      <div class="clearBoth"> </div>
-      <?php echo $form['ag_religion_list'] ?>
-        <div class="clearBoth"> </div>
-        <br />
-        <h4><?php echo $form['ag_profession_list']->renderLabel(); ?></h4>
-      <?php echo $form['ag_profession_list']; ?>
-        <br />
-      </div>
-      <br />
       <h3>Contact</h3>
       <div class="infoHolder">
         <fieldset>
@@ -89,13 +65,16 @@
       </fieldset>
     </div>
     <?php echo $form['_csrf_token'] ?>
-      </div>
-      <br />
-      <h3><?php echo $form['address']->renderLabel(); ?></h3>
+    
+    <br />
+
       <div class="address infoHolder">
         <h3><?php echo $form['address']->renderLabel(); ?></h3>
+        <div class="clearBoth"> </div>
     <?php echo $form['address']; ?>
       </div>
+    </div>
+    </div>
       <br />
       &nbsp;<a href="<?php echo url_for('staff/list') ?>" class="linkButton">List</a>
   <?php if (!$form->getObject()->isNew()): ?>
