@@ -100,7 +100,7 @@ echo url_for
           <td title="<?php echo $availableFacilityResource['f_facility_name'];?>">
             <?php echo $availableFacilityResource['f_facility_code'] ?>
           </td>
-          <td title="<?php echo $avfr['frt_facility_resource_type'] ?>">
+          <td title="<?php echo $availableFacilityResource['frt_facility_resource_type'] ?>">
             <?php echo $availableFacilityResource['frt_facility_resource_type_abbr'] ?>
           </td>
           <td>
