@@ -92,6 +92,22 @@ class agPhoneHelper extends agBulkRecordHelper
   }
 
   /**
+   * Method to return phone contact type ids from phone contact type values.
+   * @param array $phoneTypes An array of phone_contact_types
+   * @return array An associative array of phone contact type ids keyed by phone contact type.
+   */
+  static public function getPhoneContactTypeIds($phoneTypes)
+  {
+    return agDoctrineQuery::create()
+      ->select('ept.phone_contact_type')
+          ->addSelect('ept.id')
+        ->from('agPhoneContactType ept')
+        ->whereIn('ept.phone_contact_type', $phoneTypes)
+      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
    * This method queries the database for the required formatting components by country and loads
    * it to a class property with quick, referencable information used in validating and formatting
    * endeavors.
@@ -109,12 +125,8 @@ class agPhoneHelper extends agBulkRecordHelper
     $formatComponents = $q->execute(array(), DOCTRINE_CORE::HYDRATE_NONE);
     foreach($formatComponents as $fc)
     {
-      if(count($fc) < 5){
-        $fc[4] = '';
-      }
-      // TODO fix ^ v
       // create a simple phone validation and display format array.
-      $this->_phoneFormatComponentsByCountry[$fc[0]] = array($fc[1], $fc[2], $fc[3], $fc[4]);
+      $this->_phoneFormatComponentsByCountry[$fc[0]] = array($fc[1], $fc[2], $fc[3]);
     }
   }
 
@@ -395,6 +407,11 @@ class agPhoneHelper extends agBulkRecordHelper
   public function getPhoneDisplayFormat()
   {
     return $this->_phoneDisplayFormat;
+  }
+
+  public function getPhoneFormatComponents()
+  {
+    return $this->_phoneFormatComponentsByCountry;
   }
 
    /**

@@ -38,6 +38,7 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'entity', 'throwOnError' => TRUE, 'method' => 'setEntities');
     $this->importComponents[] = array( 'component' => 'personName', 'throwOnError' => TRUE, 'method' => 'setPersonNames', 'helperClass' => 'agPersonNameHelper');
     $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => TRUE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
+    $this->importComponents[] = array( 'component' => 'phone', 'throwOnError' => TRUE, 'method' => 'setEntityPhone', 'helperClass' => 'agEntityPhoneHelper');
   }
 
   /**
@@ -179,9 +180,10 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * Method to set person names during staff import.
    * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    * control whether or not errors will be thrown.
    */
-  protected function setPersonNames($throwOnError)
+  protected function setPersonNames($throwOnError, Doctrine_Connection $conn)
   {
     // always start with any data maps we'll need so they're explicit
     $importNameTypes = array('first_name'=>'given', 'middle_name'=>'middle', 'last_name'=>'family');
@@ -206,6 +208,8 @@ class agStaffImportNormalization extends agImportNormalization
       if (array_key_exists('person_id', $rowData['primaryKeys']))
       {
         $personId = $rowData['primaryKeys']['person_id'];
+
+        // we start with an empty array, devoid of types in case the entity has no types/values
         $personNames[$personId] = array();
         foreach($importNameTypes as $nameType => $nameTypeId)
         {
@@ -218,7 +222,6 @@ class agStaffImportNormalization extends agImportNormalization
     }
 
     // pick up some of our components / objects
-    $conn = $this->conn;
     $keepHistory = agGlobal::getParam('staff_import_keep_history');
 
     // execute the helper and finish
@@ -231,9 +234,10 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * Method to set entity emails during staff import.
    * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    * control whether or not errors will be thrown.
    */
-  public function setEntityEmail($throwOnError)
+  public function setEntityEmail($throwOnError, Doctrine_Connection $conn)
   {
     // always start with any data maps we'll need so they're explicit
     $importEmailTypes = array('work_email'=>'work', 'home_email'=>'personal');
@@ -251,10 +255,6 @@ class agStaffImportNormalization extends agImportNormalization
     }
     unset($val);
     unset($emailTypes);
-
-//
-//$importEmailTypes['neither_email'] = 10;  // TEMPORARY HARD CODING FOR TESTING PURPOSES ONLY.
-//
 
     // loop through our raw data and build our entity email data
     foreach ($this->importData as $rowId => $rowData)
@@ -277,16 +277,68 @@ class agStaffImportNormalization extends agImportNormalization
     }
 
     // pick up some of our components / objects
-    $conn = $this->conn;
     $keepHistory = agGlobal::getParam('staff_import_keep_history');
     $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
-    $enforceStrict = 1;
-//
-//$throwOnError = 0; // TEMPORARY HARD CODING FOR TESTING PURPOSES ONLY.
-//
+
     // execute the helper and finish
     $results = $eeh->setEntityEmail($entityEmails, $keepHistory, $throwOnError, $enforceStrict, $conn);
     unset($entityEmails);
+
+    // @todo do your results reporting here
+  }
+
+  /**
+   * Method to set entity phones during staff import.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   * control whether or not errors will be thrown.
+   */
+  public function setEntityPhone($throwOnError, Doctrine_Connection $conn)
+  {
+    // always start with any data maps we'll need so they're explicit
+    $importPhoneTypes = array('work_phone'=>'work', 'home_phone'=>'home', 'mobile_phone' => 'mobile');
+    $entityPhones = array();
+    $results = array();
+
+    // let's get ahold of our helper object since we're going to use him/her a lot
+    $eph =& $this->helperObjects['agEntityPhoneHelper'];
+
+    // get our email types and map them back to the importEmailTypes
+    $phoneTypes = agPhoneHelper::getPhoneContactTypeIds(array_values($importPhoneTypes));
+    foreach ($importPhoneTypes as $key => &$val)
+    {
+      $val = $phoneTypes[$val];
+    }
+    unset($val);
+    unset($phoneTypes);
+
+    // loop through our raw data and build our entity phone data
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      if (array_key_exists('entity_id', $rowData['primaryKeys']))
+      {
+        // this just makes it easier to use
+        $entityId = $rowData['primaryKeys']['entity_id'];
+
+        // we start with an empty array, devoid of types in case the entity has no types/values
+        $entityPhones[$entityId] = array();
+        foreach($importPhoneTypes as $phoneType => $phoneTypeId)
+        {
+          if (array_key_exists($phoneType, $rowData['_rawData']))
+          {
+            $entityPhones[$entityId][] = array($phoneTypeId, array($rowData['_rawData'][$phoneType]));
+          }
+        }
+      }
+    }
+
+    // pick up some of our components / objects
+    $keepHistory = agGlobal::getParam('staff_import_keep_history');
+    $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
+
+    // execute the helper and finish
+    $results = $eph->setEntityPhone($entityPhones, $keepHistory, $throwOnError, $enforceStrict, $conn);
+    unset($entityPhones);
 
     // @todo do your results reporting here
   }
@@ -297,7 +349,7 @@ class agStaffImportNormalization extends agImportNormalization
                       'first_name' => 'Mork',
                       'middle_name' => '',
                       'last_name' => 'Ork',
-                      'mobile_phone' => '',
+                      'mobile_phone' => '123.123.1234',
                       'home_phone' => '',
                       'home_email' => 'mork.ork@home.com',
                       'work_phone' => '',
@@ -309,10 +361,9 @@ class agStaffImportNormalization extends agImportNormalization
                       'middle_name' => 'Mork',
                       'last_name' => '',
                       'mobile_phone' => '',
-                      'home_phone' => '',
+                      'home_phone' => '(222) 222-1234',
                       'home_email' => '',
-                      'work_phone' => '' //,
-//                      'neither_email' => 'blah@blah.com'
+                      'work_phone' => '(212) 234-2344 x234'
                      );
 
     $_rawData3 = array('entity_id' => '11',
@@ -322,7 +373,7 @@ class agStaffImportNormalization extends agImportNormalization
                       'mobile_phone' => '',
                       'home_phone' => '',
                       'home_email' => '',
-                      'work_phone' => '',
+                      'work_phone' => '333.3333.3333.',
                       'work_email' => ''
                      );
 
@@ -330,10 +381,10 @@ class agStaffImportNormalization extends agImportNormalization
                       'first_name' => 'Ae432',
                       'middle_name' => 'LinjaAA  ',
                       'last_name' => '   asdkfjkl;   ',
-                      'mobile_phone' => '',
+                      'mobile_phone' => '999.9999.9999',
                       'home_phone' => '',
                       'home_email' => '',
-                      'work_phone' => '',
+                      'work_phone' => '222.3333.4444 x342',
                       'work_email' => 'Linjawork.com'
                      );
 

@@ -29,7 +29,7 @@ abstract class agImportHelper
   protected function __construct($tempTable)
   {
     // Sets a new connection.
-    $this->setConnection();
+    $this->setConnections();
     
     // establishes the name of our temp table
     $this->tempTable = $tempTable;

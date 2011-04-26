@@ -318,10 +318,12 @@ class agEntityPhoneHelper extends agEntityContactHelper
   public function setEntityPhone( $entityContacts,
                                   $keepHistory = NULL,
                                   $throwOnError = NULL,
+                                  $enforceStrict = NULL,
                                   Doctrine_Connection $conn = NULL)
   {
     // some explicit declarations at the top
     $uniqContacts = array();
+    $invalidData = array();
     $err = NULL;
     $errMsg = 'This is a generic ERROR for setEntityPhone. You should never receive this ERROR.
       If you have received this ERROR, there is an error with your ERROR handling code.';
@@ -329,12 +331,54 @@ class agEntityPhoneHelper extends agEntityContactHelper
     // determine whether or not we'll explicitly throw exceptions on error
     if (is_null($throwOnError)) { $throwOnError = $this->throwOnError; }
 
+    // Lazily load our phone helper, 'cause we'll need her
+    $phoneHelper = $this->getAgPhoneHelper();
+    // Grab all phone validations from phone helper.
+    $defaultValidationsByCountry = $phoneHelper->getPhoneFormatComponents();
+    $phoneValidations = array();
+    foreach ($defaultValidationsByCountry as $id => $format)
+    {
+      $phoneValidations[] = $format[0];
+    }
+
     // loop through our contacts and pull our unique phone from the fire
     foreach ($entityContacts as $entityId => $contacts)
     {
       foreach($contacts as $index => $contact)
       {
         $contact[1][0] = trim($contact[1][0]);
+
+        $isValidPhone = FALSE;
+        // If enforce data validation check and if data is invalid, unset from $entityContacts array
+        // from performing contact updates.  Otherwise, continue to add record to uniqContacts for
+        // further processing.
+        if ($contact[1][0] != '' && $enforceStrict)
+        {
+          foreach ($phoneValidations as $index => $matchPattern)
+          {
+            if (preg_match($matchPattern, $contact[1][0]))
+            {
+              $isValidPhone = TRUE;
+              break;
+            }
+          }
+          if (!$isValidPhone)
+          {
+            $invalidData[$entityId][] = $contact;
+            if (count($entityContacts[$entityId]) == 1)
+            {
+              unset($entityContacts[$entityId]);
+            }
+            else
+            {
+              unset($entityContacts[$entityId][$index]);
+            }
+            continue;
+          }
+        }
+
+        // strip away all non-numeric values from phone with the exception of the extension marking.
+        $contact[1][0] = preg_replace('/[^0-9x]/', '', $contact[1][0]);
 
         // find the position of the element or return false
         $pos = array_search($contact[1], $uniqContacts, TRUE);
@@ -353,9 +397,6 @@ class agEntityPhoneHelper extends agEntityContactHelper
         $entityContacts[$entityId][$index][1] = $pos;
       }
     }
-    
-    // whelp, if we haven't loaded it already, let's get our phone helper
-    $phoneHelper = $this->getAgPhoneHelper();
 
     // here we check our current transaction scope and create a transaction or savepoint
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
@@ -440,6 +481,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
     // most excellent! no errors at all, so we commit... finally!
     if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
 
+    $results['invalidData'] = $invalidData;
     return $results;
   }
 }
