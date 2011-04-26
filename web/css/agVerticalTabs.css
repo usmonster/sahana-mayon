@@ -5,9 +5,9 @@
 
 /* Tabs */
 .verticalslider_tabs {float: left;width: 250px;}
-.verticalslider_tabs, .verticalslider_tabs li{margin: 0px; padding: 0px;}
+.verticalslider_tabs, .verticalslider_tabs li{margin: 0px; padding: 0px; background-color: #eeeeee; border-right:1px solid #bcbcbc}
 .verticalslider_tabs li{list-style-type: none;}
-.verticalslider_tabs a:link, .verticalslider_tabs a:visited{display: block; width: 230px; height: 29px; padding: 14px 10px 6px 10px; background-color: #eeeeee; font-weight: bold;color: #848484;  border-right: 1px solid #bcbcbc; border-top: 1px solid #bcbcbc; text-decoration: none;}
+.verticalslider_tabs a:link, .verticalslider_tabs a:visited{display: block; width: 230px; height: 29px; padding: 14px 10px 6px 10px; background-color: #eeeeee; font-weight: bold;color: #848484;  border-right: 1px solid #bcbcbc; border-bottom: 1px solid #bcbcbc; text-decoration: none;}
 .verticalslider_tabs a:hover, .verticalslider_tabs a:active{background-color: #cdffdd;}
 .verticalslider_tabs li:first-child a:link, .verticalslider_tabs li:first-child a:visited{border-top: none; height: 30px;}
 .verticalslider_tabs .activeTab a:link, .verticalslider_tabs .activeTab a:visited{background: #ffffff; border-right: 1px solid #ffffff;}
@@ -23,4 +23,4 @@
 .verticalslider_contents li{display: none;position: absolute;list-style-type: none;}
 .verticalslider_contents .activeContent{display: inline;}
 
-
+ul.verticalslider_tabs {min-height:230px}
