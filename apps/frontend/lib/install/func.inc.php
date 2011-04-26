@@ -261,9 +261,9 @@ function writeAppYml($authMethod = NULL)
         'deploy' => array
           ('label' => 'Deploy a Scenario', 'route' => 'scenario/list', 'parent' => 'respond'),
         'event_active' => array
-          ('label' => 'List Active Events', 'route' => '@respond', 'parent' => 'respond'));
+          ('label' => 'List Active Events', 'route' => '@respond', 'parent' => 'respond'),
         'event' => array
-          ('label' => 'List All Events', 'route' => 'event', 'parent' => 'respond'),
+          ('label' => 'List All Events', 'route' => 'event', 'parent' => 'respond'));
 
   $appConfig['all']['.array']['menu_grandchildren'] =
       array(
@@ -286,7 +286,7 @@ function writeAppYml($authMethod = NULL)
         'scenario_list' => array
           ('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
         'scenario_facilitygrouptypes' => array
-          ('label' => 'List Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
+          ('label' => 'List Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'));
 
   $appConfig['all']['.array']['title'] =
       array(
