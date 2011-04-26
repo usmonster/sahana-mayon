@@ -75,7 +75,7 @@ class AgStaffImportXLS extends AgImportXLS
       'l2_speak' => array('type' => "string", 'length' => 64),    //ag_person_language_competency
       'l2_read' => array('type' => "string", 'length' => 64),
       'l2_write' => array('type' => "string", 'length' => 64),
-      'success' => array('type' => "boolean", 'default' => TRUE)
+      '_import_success' => array('type' => "boolean", 'default' => TRUE)
     );
     $this->defaultHeaderSize = sizeof($this->importSpec);
     $this->customFieldType = array('type' => "string", 'length' => 255);
@@ -170,7 +170,7 @@ class AgStaffImportXLS extends AgImportXLS
             // Extend import spec headers with dynamic staff resource requirement columns from xls file.
             $this->extendsImportSpecHeaders($currentSheetHeaders);
             $this->createTempTable();
-            unset($this->importSpec['success']);
+            unset($this->importSpec['_import_success']);
           }
 
           $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");

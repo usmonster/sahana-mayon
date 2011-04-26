@@ -26,6 +26,7 @@ abstract class agImportNormalization extends agImportHelper
             $fetchPosition = 0,
             $batchSize = 0,
             $tempCount = 0,
+            $tempToRawQueryName = 'temp_to_raw',
             $helperObjects = array(),
 
             // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
@@ -59,9 +60,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function updateFailedTemp()
   {
     //@todo make this
-    //
-    // DO NOT use _conn for it. Very bad. _conn's going to be locked up for a while
-    $conn = Doctrine_Manager::connection();
+    $conn =& $this->getConnection('temp_write');
   }
 
   protected function removeTempSuccesses()
@@ -88,13 +87,15 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function tempToRaw($query)
   {
+    $conn =& $this->getConnection('temp_read');
+
     // first get a count of what we need from temp
     $ctQuery = sprintf('SELECT COUNT(t.*) FROM %s AS t;', $this->tempTable);
-    $ctResults = $this->executePdoQuery($ctQuery);
+    $ctResults = $this->executePdoQuery($conn, $ctQuery);
     $this->tempCount = $ctResults::fetchColumn();
 
     // now we can legitimately execute our real search
-    $this->executePdoQuery($query);
+    $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
   }
 
   protected function loadRaw()
@@ -113,7 +114,7 @@ abstract class agImportNormalization extends agImportHelper
     $err = NULL ;
 
     // get our connection object and start an outer transaction for the batch
-    $conn = $this->getConnection() ;
+    $conn =& $this->getConnection('normalize_write');
     $conn->beginTransaction() ;
 
     foreach ($this->importComponents as $index => $componentData)
@@ -133,7 +134,7 @@ abstract class agImportNormalization extends agImportHelper
       try
       {
         // Calling method to set data.
-        $this->$method($componentData['throwOnError']);
+        $this->$method($componentData['throwOnError'], $conn);
         $conn->commit($savepoint);
       }
       catch(Exception $e)
@@ -172,7 +173,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function createNewRec( $recordName, $foreignKeys )
   {
     // get our connection object
-    $conn =& $this->getConnection();
+    $conn =& $this->getConnection('normalize_write');
 
     // instantiate the new record object
     $newRec = new $recordName();

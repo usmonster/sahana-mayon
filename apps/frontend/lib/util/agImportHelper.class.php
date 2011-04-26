@@ -19,7 +19,7 @@ abstract class agImportHelper
   protected   $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
               $tempTable,
               $_conn,
-              $_PDO;
+              $_PDO = array();
 
   protected function __construct()
   {
@@ -31,37 +31,54 @@ abstract class agImportHelper
    * Method to get (and lazy load) a doctrine connection object
    * @return Doctrine_Connection A doctrine connection object
    */
-  protected function getConnection()
+  protected function getConnection($conn)
   {
     // Lazy load and return pdo connection.
-    if (!isset($this->_conn)) { $this->setConnection(); }
-    return $this->_conn;
+    if (!isset($this->_conn)) { $this->setConnections(); }
+    return $this->_conn[$conn];
   }
 
   /*
    * Method to set the import connection object property
    */
-  protected function setConnection()
+  protected function setConnections()
   {
-    $this->_conn = Doctrine_Manager::connection(NULL, 'import_data_load');
+    $this->_conn = array();
+    $this->_conn['temp_read'] = Doctrine_Manager::connection(NULL, 'import_temp_read');
+    $this->_conn['temp_write'] = Doctrine_Manager::connection(NULL, 'import_temp_write');
+    $this->_conn['normalize_write'] = Doctrine_Manager::connection(NULL, 'normalize_write');
   }
 
   /**
-   * Method to execute a PDO query and bind it to the class parameter.
+   * Method to execute a PDO query and optionally bind it to the class parameter.
+   * @param <type> $conn A doctrine connection object
    * @param string $query A SQL query string
    * @param array $params An optional array of query parameters
    * @param string $fetchMode The PDO fetch mode to be used. Defaults to class property default.
+   * @param <type> $pdoName An optional name for this query. If provided, it will save this object
+   * in the _PDO collection.
    * @return Doctrine_Connection A PDO object after execution of the query.
    */
-  protected function executePdoQuery($query, $params = array(), $fetchMode = NULL)
+  protected function executePdoQuery( $conn,
+                                      $query,
+                                      $params = array(),
+                                      $fetchMode = NULL,
+                                      $pdoName = NULL)
   {
     // execute the method
-    $this->_PDO = $this->_conn->execute($query, $params);
+    $pdo = $conn->execute($query, $params);
 
     // set fetch mode
-    $this->_PDO->setFetchMode($fetchMode);
+    $pdo->setFetchMode($fetchMode);
 
-    return $this->_PDO ;
+    // only save those pdo queries we have decided to name in the _PDO array
+    // set this by reference so we can expire the $pdo variable and persist the object / connection
+    if (! is_null($pdoName))
+    {
+      $this->_PDO[$pdoName] =& $pdo;
+    }
+
+    return $pdo ;
   }
 
   protected function dropTempTable()
