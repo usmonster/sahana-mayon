@@ -6,18 +6,18 @@ if (!$sf_user->isAuthenticated()) {
   echo "<h2> To begin, please login in the upper right.</h2>";
 }
 ?>
-
+<br>
 <?php
 if ($sf_user->isAuthenticated()) {
   echo "<h3> Welcome to Sahana Agasti Emergency Preparedness and Response Software</h3>";
 }
 ?>
 
-<p>Agasti 2.0 is the NYC Office of Emergency Management Coastal Storm Plan web application.
+<p>Sahana Agasti is the NYC Office of Emergency Management Coastal Storm Plan web application.
   Agasti is an emergency management application with tools to manage staff, resources, client
   information and facilities through an easy to use web interface. </p>
 
-<p>To begin, select an option from the menus above.</p>
+<p>To begin, select an option from the menus above or the icons below.</p>
 
 <?php
 if ($sf_user->isAuthenticated()) {
@@ -27,7 +27,7 @@ if ($sf_user->isAuthenticated()) {
       <td><?php echo link_to('Respond', 'home/respond', array('class' => 'linkButton width140', 'title' => 'Respond')); ?></td>
     </tr>
     <tr>
-      <td><?php echo link_to('Wiki Home', public_path('wiki/doku.php'), array('class' => 'linkButton width140', 'title' => 'Wiki Home')); ?></td>
+      <td><?php echo link_to('Wiki Home', public_path('wiki/doku.php'), array('class' => 'linkButton width140', 'title' => 'Help')); ?></td>
       <td><?php echo link_to('Administration', 'admin/index', array('class' => 'linkButton width140', 'title' => 'Administration')); ?></td>
     </tr>
   </table>
