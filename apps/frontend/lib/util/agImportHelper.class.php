@@ -17,7 +17,8 @@
 abstract class agImportHelper
 {
   protected   $tempTable,
-              $conn;
+              $_conn,
+              $_PDO;
 
   public function __construct()
   {
@@ -25,26 +26,41 @@ abstract class agImportHelper
     $this->setConnection();
   }
 
+  /**
+   * Method to get (and lazy load) a doctrine connection object
+   * @return Doctrine_Connection A doctrine connection object
+   */
   protected function getConnection()
   {
     // Lazy load and return pdo connection.
-    if (!isset($this->conn)) { $this->setConnection(); }
-    return $this->conn;
+    if (!isset($this->_conn)) { $this->setConnection(); }
+    return $this->_conn;
   }
 
+  /*
+   * Method to set the import connection object property
+   */
   protected function setConnection()
   {
-    $this->conn = Doctrine_Manager::connection();
-    // @TODO Don't use the default connection;  instead use a new connection.
+    $this->_conn = Doctrine_Manager::connection(NULL, 'import_data_load');
+  }
+
+  /*
+   * Method to ensure that PDO queries pass through the _PDO property
+   */
+  protected function executePdoQuery($query, $params = array())
+  {
+    $this->_PDO = $this->_conn->execute($query, $params);
+    return $this->_PDO ;
   }
 
   protected function dropTempTable()
   {
-
+    //@todo create this method
   }
 
   protected function createTempTable()
   {
-
+    //@todo create this method
   }
 }

@@ -29,11 +29,6 @@ class agStaffImportNormalization extends agImportNormalization
 
   }
 
-  protected function setImportQuery()
-  {
-    $this->importQuery = 'SELECT * FROM ' . $this->importTable;
-  }
-
   /**
    * @todo This data should belong in a configuration file (eg, YML)
    */

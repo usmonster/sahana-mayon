@@ -16,17 +16,17 @@
  */
 abstract class agImportNormalization extends agImportHelper
 {
-  public    $summary = array(),
-            $batchSize;
-  
-  protected $newEntityCount = 0,
-            $errMsg,
+  public    $errorMsg,
+            $summary = array(),
             $warningMessages = array(),
-            $nonprocessedRecords = array(),
-            $totalProcessedRecordCount = 0,
+            $nonprocessedRecords = array();
+  
+  protected $errorCount = 0,
+            $errorThreshold = 0,
+            $fetchPosition = 0,
+            $batchSize = 0,
+            $tempCount = 0,
             $helperObjects = array(),
-            $defaultBatchSize,
-            $tempOffset,
 
             // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
             $importComponents = array(),
@@ -38,6 +38,7 @@ abstract class agImportNormalization extends agImportHelper
   {
     parent::__construct();
     $this->batchSize = agGlobal::getParam('default_batch_size');
+    $this->errorThreshold = agGlobal::getParam('import_error_threshold');
   }
 
   public function __destruct()
@@ -55,9 +56,52 @@ abstract class agImportNormalization extends agImportHelper
     }
   }
 
-  protected function loadImportRawData()
+  protected function updateFailedTemp()
   {
+    //@todo make this & DO NOT use _conn for it. Very bad. _conn's going to be locked up for a while
+  }
 
+  protected function removeTempSuccesses()
+  {
+    //@todo make this
+  }
+
+  protected function returnFailures()
+  {
+    //@todo make this; it should potentially be auto-called?
+  }
+
+  /**
+   * Method to fetch the next raw data record from the PDO object
+   */
+  public function fetchNextTemp()
+  {
+    // make this and return TRUE if there's more to process return FALSE if not
+    // also should do the modulus check and execute processRaw if it hits
+  }
+
+  protected function importFromTemp()
+  {
+    // first get a count of what we need from temp
+    $ctQuery = sprintf('SELECT COUNT(t.*) FROM %s AS t;', $this->tempTable);
+    $ctResults = $this->executePdoQuery($ctQuery);
+    $this->tempCount = $ctResults::fetchColumn();
+
+    // now we can legitimately execute our real search
+    $query = sprintf('SELECT t.* FROM %s AS t;', $this->tempTable);
+    $pdo = $this->executePdoQuery($query);
+  }
+
+
+  protected function loadRaw()
+  {
+    // @todo make this method to take in the PDO fetch results and add it to rawData
+  }
+
+  protected function processRaw()
+  {
+    // @todo caller to clean, validate, normalize, and strip (at the beginning eg _rawData=array()
+    // _rawData
   }
 
   protected function normalizeData()

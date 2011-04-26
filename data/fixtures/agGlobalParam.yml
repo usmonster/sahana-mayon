@@ -91,3 +91,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: enforce_strict_contact_formatting
     value: 0
+  import_error_threshold:
+    id: 19
+    agHost: localhost
+    datapoint: import_error_threshhold
+    value: 20
