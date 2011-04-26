@@ -622,7 +622,7 @@ class scenarioActions extends agActions
    * this function sets up and processes the facility group form, providing all needed data to the groupform
    * template, depending on what CRUD operation the user is performing,
    */
-  public function executeFgroup(sfWebRequest $request)
+  public function   executeFgroup(sfWebRequest $request)
   {
 //if you are coming here from not within the workflow you fail and get 404
     $this->forward404Unless($this->scenario_id = $request->getParameter('id'));
@@ -659,6 +659,7 @@ class scenarioActions extends agActions
             ->from('agFacilityResource fr')
               ->innerJoin('fr.agFacility f')
               ->innerJoin('fr.agFacilityResourceType frt')
+              ->innerJoin('frt.agDefaultScenarioFacilityResourceType dsfrt')
             ->where('NOT EXISTS (
               SELECT s1.id
                 FROM agFacilityResource s1
@@ -667,6 +668,7 @@ class scenarioActions extends agActions
               WHERE s3.scenario_id = ?
                 AND s1.id = fr.id)',
                 $this->scenario_id)
+             ->andWhere('dsfrt.scenario_id = ?', $this->scenario_id)
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
     $this->facilityStatusForm = new sfForm();
