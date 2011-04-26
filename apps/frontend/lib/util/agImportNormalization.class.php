@@ -172,7 +172,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function createNewRec( $recordName, $foreignKeys )
   {
     // get our connection object
-    $conn = $this->getConnection();
+    $conn =& $this->getConnection();
 
     // instantiate the new record object
     $newRec = new $recordName();
