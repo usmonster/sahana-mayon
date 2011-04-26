@@ -1,12 +1,14 @@
 <h2>Respond</h2>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In orci turpis, tristique et ornare ac, consequat quis mi. Curabitur nisl dui, lacinia ut aliquam ut, dictum a dolor. Pellentesque non consectetur justo. Nulla hendrerit mollis dui in adipiscing. Suspendisse potenti. In sem mi, condimentum eget elementum ut, sollicitudin in quam. Nullam tortor lorem, viverra id sagittis vel, pellentesque sit amet orci. Suspendisse ultricies pulvinar ligula, id elementum sem molestie sollicitudin. Sed aliquet molestie eros, eget pretium nunc tempus vel. Phasellus metus turpis, vestibulum eu mattis sit amet, auctor in felis. Morbi tempus sapien eget ipsum dapibus vitae convallis magna ultrices. Vivamus luctus, tortor in consequat laoreet, urna libero iaculis enim, nec pulvinar augue mi eget purus. Vestibulum leo justo, auctor eget dictum sed, dictum id elit. Nunc mattis consectetur lectus quis accumsan.<br><br>
-
-    Aliquam molestie tortor vel eros pretium vel mollis nisi laoreet. Nam semper leo nec lorem commodo ultrices. Praesent dapibus sollicitudin elit pulvinar sagittis. Praesent id velit sed augue sagittis varius ut sed massa. Cras gravida euismod quam, molestie feugiat enim semper ut. Mauris condimentum blandit mattis. Suspendisse potenti. Nullam quis eleifend mauris. Vivamus bibendum erat a lectus egestas mattis. Nunc nec metus pretium tortor venenatis interdum condimentum non nibh. Maecenas non mollis orci. Donec eu feugiat libero.<br><br> </p>
+<p>From this page you can quickly navigate to Sahana Agasti's emergency response features.
+<br/>Active events may be accessed directly from this page. For access to all events, click the List
+  All Events button below.</p>
 <h3>Please select one of the following actions: </h3>
 <table cellspacing="20">
     <tr>
-        <td><?php echo link_to('Activate a<br>Scenario', 'scenario/index', array('class' => 'linkButton width140')) ?></td>
-        <td><?php echo link_to('Event<br>Management', 'event/index', array('class' => 'linkButton width140')) ?></td>
+        <td><?php echo link_to('Activate a<br>Scenario', 'scenario/list',
+            array('class' => 'linkButton width140')) ?></td>
+        <td><?php echo link_to('List All<br>Events', 'event/index',
+            array('class' => 'linkButton width140')) ?></td>
     </tr>
 </table>
 

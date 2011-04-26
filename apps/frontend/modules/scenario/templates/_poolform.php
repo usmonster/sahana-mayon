@@ -19,7 +19,7 @@
       $("#staff_pool_search_search_condition").val(JSON.stringify(out));
     }
     else{
-      var query_c = out.pop();
+      var query_c = Array(out.pop());
       if(query_c != undefined){
         $("#staff_pool_search_search_condition").val(JSON.stringify(query_c));
       }

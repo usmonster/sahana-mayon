@@ -261,10 +261,10 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
     // build our basic staff search query
     $q = agDoctrineQuery::create()
       ->select('agStaffResource.id')
-        ->from('agStaffResource')
-          ->innerJoin('agStaffResource.agOrganization')
-          ->innerJoin('agStaffResource.agStaffResourceType')
-          ->innerJoin('agStaffResource.agStaffResourceStatus')
+        ->from('agStaffResource agStaffResource')
+          ->innerJoin('agStaffResource.agOrganization agOrganization')
+          ->innerJoin('agStaffResource.agStaffResourceType agStaffResourceType')
+          ->innerJoin('agStaffResource.agStaffResourceStatus agStaffResourceStatus')
         ->where('agStaffResourceStatus.is_available = ?', TRUE);
 
     return $q;
