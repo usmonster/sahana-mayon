@@ -525,7 +525,7 @@ class scenarioActions extends agActions
                   ->execute();
           $this->groupform = new agScenarioFacilityGroupForm();
 //        $this->setTemplate('scenario/newgroup');
-          $this->redirect('scenario/fgroup?id=' . $ag_scenario->getId());
+          $this->redirect('scenario/resourcetypes?id=' . $ag_scenario->getId());
         } else {
           $this->redirect('scenario/meta?id=' . $ag_scenario->getId());
         }
