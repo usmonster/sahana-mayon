@@ -1,7 +1,7 @@
 <h2>Create New Scenario</h2> <br>
-<p>Scenarios are plans for emergency responders.  Using the Scenario Creator you'll add facilities,
-  staff, and other resources to your plan.  For now, name the Scenario and give it a brief
-  description.</p>
+<p>A Scenario represents an individual emergency response plan.  Use the Scenario creator to add
+  facilities, staff, and other resources to your plan in preparation for an event deployment.
+  <br/>For now, name the Scenario and give it a brief description.</p>
 
 <?php include_partial('form', array('form' => $form)) ?>
 
