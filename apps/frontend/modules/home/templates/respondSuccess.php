@@ -5,7 +5,7 @@
 <h3>Please select one of the following actions: </h3>
 <table cellspacing="20">
     <tr>
-        <td><?php echo link_to('Activate a<br>Scenario', 'scenario/list',
+        <td><?php echo link_to('Deploy a<br>Scenario', 'scenario/list',
             array('class' => 'linkButton width140')) ?></td>
         <td><?php echo link_to('List All<br>Events', 'event/index',
             array('class' => 'linkButton width140')) ?></td>
