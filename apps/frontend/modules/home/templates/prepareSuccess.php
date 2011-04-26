@@ -6,7 +6,7 @@ that complement your organizations Emergency plans.</p>
   Facilities can be entered manually before scenario creation or uploaded during the creation
   of each scenario.</p>
 <p>For more information about Scenario Creation click "Scenario Creator Walkthrough" below.</p>
-</p>
+
 <h3>Please select one of the following actions: </h3>
 <table cellspacing="20">
     <tr>
