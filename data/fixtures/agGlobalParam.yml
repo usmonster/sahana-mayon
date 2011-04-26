@@ -96,3 +96,28 @@ agGlobalParam:
     agHost: localhost
     datapoint: import_error_threshhold
     value: 20
+  default_shift_length:
+    id: 20
+    agHost: localhost
+    datapoint: default_shift_task_length
+    value: 720
+  default_shift_break_length:
+    id: 21
+    agHost: localhost
+    datapoint: default_shift_break_length
+    value: 720
+  default_shift_minutes_start_to_facility_activation:
+    id: 22
+    agHost: localhost
+    datapoint: default_shift_minutes_start_to_facility_activation
+    value: -4320
+  default_shift_repeats:
+    id: 23
+    agHost: localhost
+    datapoint: default_shift_repeats
+    value: 0
+  default_shift_max_staff_repeat_shifts:
+    id: 24
+    agHost: localhost
+    datapoint: default_shift_max_staff_repeat_shifts
+    value: 0

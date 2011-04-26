@@ -79,7 +79,7 @@ abstract class agImportNormalization extends agImportHelper
    */
   public function fetchNextTemp()
   {
-    // make this and return TRUE if there's more to process return FALSE if not
+    // make this and return the number remaining; if err return -1
     // also should do the modulus check and execute processRaw if it hits
   }
 

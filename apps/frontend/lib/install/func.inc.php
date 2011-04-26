@@ -258,12 +258,12 @@ function writeAppYml($authMethod = NULL)
           ('label' => 'Organizations', 'route' => '@org', 'parent' => 'prepare'),
         'scenario' => array
           ('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'prepare'),
-        'activate' => array
-          ('label' => 'Activate a Scenario', 'route' => '@scenario', 'parent' => 'respond'),
-        'event' => array
-          ('label' => 'Manage Events', 'route' => 'event', 'parent' => 'respond'),
+        'deploy' => array
+          ('label' => 'Deploy a Scenario', 'route' => 'scenario/list', 'parent' => 'respond'),
         'event_active' => array
-          ('label' => 'Manage [Active Event]', 'route' => '@homepage', 'parent' => 'respond'));
+          ('label' => 'List Active Events', 'route' => '@respond', 'parent' => 'respond'));
+        'event' => array
+          ('label' => 'List All Events', 'route' => 'event', 'parent' => 'respond'),
 
   $appConfig['all']['.array']['menu_grandchildren'] =
       array(
@@ -276,27 +276,17 @@ function writeAppYml($authMethod = NULL)
         'facility_export' => array
           ('label' => 'Export Facilities', 'route' => '@facility', 'parent' => 'facility'),
         'facility_types' => array
-          ('label' => 'Manage Facility Types', 'route' => '@facility', 'parent' => 'facility'),
+          ('label' => 'List Facility Types', 'route' => '@facility', 'parent' => 'facility'),
         'org_new' => array
           ('label' => 'Add New Organization', 'route' => 'organization/new', 'parent' => 'org'),
         'org_list' => array
           ('label' => 'List Organizations', 'route' => 'organization/list', 'parent' => 'org'),
         'scenario_create' => array
-          ('label' => 'Build New Scenario', 'route' => 'scenario/meta', 'parent' => 'scenario'),
+          ('label' => 'Create New Scenario', 'route' => 'scenario/meta', 'parent' => 'scenario'),
         'scenario_list' => array
           ('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
         'scenario_facilitygrouptypes' => array
-          ('label' => 'Edit Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
-        'scenario_active' => array
-          ('label' => '[Active Scenario]', 'route' => 'event', 'parent' => 'scenario'),
-        'event_active_staff' => array
-          ('label' => 'Staff', 'route' => '@homepage', 'parent' => 'event_active'),
-        'event_active_facilities' => array
-          ('label' => 'Facilities', 'route' => '@homepage', 'parent' => 'event_active'),
-        'event_active_clients' => array
-          ('label' => 'Clients', 'route' => '@homepage', 'parent' => 'event_active'),
-        'event_active_reporting' => array
-          ('label' => 'Reporting', 'route' => '@homepage', 'parent' => 'event_active'));
+          ('label' => 'List Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
 
   $appConfig['all']['.array']['title'] =
       array(
