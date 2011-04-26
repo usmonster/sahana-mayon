@@ -134,9 +134,10 @@ class scenarioActions extends agActions
   public function executeStaffresources(sfWebRequest $request)
   {
 //get the needed variables regardless of what action you are performing to staff resources
-
+    $formsArray = array();
     $this->setScenarioBasics($request);
     $this->wizardHandler($request);
+    //the above should not fail.
     $this->scenario = Doctrine::getTable('agScenario')
             ->findByDql('id = ?', $request->getParameter('id'))
             ->getFirst();
@@ -208,13 +209,19 @@ class scenarioActions extends agActions
     } else {
 
 // Query to get all staff resource types.
-      $this->staffResourceTypes = agDoctrineQuery::create()
-              ->select('a.id, a.staff_resource_type')
-              ->from('agStaffResourceType a')
-              ->execute();
+      $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
+      if (count($dsrt) > 1) {
+        $this->staffResourceTypes = $dsrt;
+      } else {
+        $this->staffResourceTypes =
+                agDoctrineQuery::create()
+                ->select('srt.id, srt.staff_resource_type')
+                ->from('agStaffResourceType srt')
+                ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      }
 // Set $group to the user attribute to the 'scenarioFacilityGroup' attribute that came in through the request.
       $groups = Doctrine::getTable('agScenarioFacilityGroup')
-              ->findByDql('scenario_id = ?', $request->getParameter('id'))
+              ->findByDql('scenario_id = ?', $this->scenario_id)
               ->getData();
 
       if (!is_array($groups)) {
@@ -245,24 +252,24 @@ class scenarioActions extends agActions
               $existing = agDoctrineQuery::create()
                       ->select('agFSR.*')
                       ->from('agFacilityStaffResource agFSR')
-                      ->where('agFSR.staff_resource_type_id = ?', $srt->id)
+                      ->where('agFSR.staff_resource_type_id = ?', $srt['srt_id'])
                       ->andWhere('agFSR.scenario_facility_resource_id = ?', $scenarioFacilityResource->id)
                       ->fetchOne();
 //a better way to do this would be to follow the same array structure, so we could do something like
 //$existing[$subKey][$subSubKey][$srt
 
               if ($existing) {
-                $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
+                $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
                     new agEmbeddedAgFacilityStaffResourceForm($existing);
               } else {
-                $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
+                $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
                     new agEmbeddedAgFacilityStaffResourceForm();
               }
 //              $staffResourceFormDeco = new agFormFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
 //              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
 //              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
-              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->setDefault('scenario_facility_resource_id', $scenarioFacilityResource->getId());
-              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->setDefault('staff_resource_type_id', $srt->getId());
+              $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('scenario_facility_resource_id', $scenarioFacilityResource->getId());
+              $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('staff_resource_type_id', $srt['srt_id']);
             }
           }
         }
@@ -274,14 +281,14 @@ class scenarioActions extends agActions
             $subKey = $scenarioFacilityGroup['scenario_facility_group'];
             $subSubKey = $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
 
-            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type] =
+            $formsArray[$subKey][$subSubKey][$srt['staff_resource_type']] =
                 new agEmbeddedAgFacilityStaffResourceForm();
 
 //            $staffResourceFormDeco = new agFormFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
 //            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
 //            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
-            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->setDefault('scenario_facility_resource_id', $scenarioFacilityResource->getId());
-            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->setDefault('staff_resource_type_id', $srt->getId());
+            $formsArray[$subKey][$subSubKey][$srt['staff_resource_type']]->setDefault('scenario_facility_resource_id', $scenarioFacilityResource->getId());
+            $formsArray[$subKey][$subSubKey][$srt['staff_resource_type']]->setDefault('staff_resource_type_id', $srt['srt_id']);
           }
         }
       }
@@ -390,16 +397,16 @@ class scenarioActions extends agActions
       if ($request->getParameter('Preview') || $request->getParameter('search_id')) {
 //fix this.
         $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
-        if($request->isMethod(sfRequest::POST)) {
+        if ($request->isMethod(sfRequest::POST)) {
           $postParam = $request->getPostParameter('staff_pool');
           $search = $postParam['search'];
           $search_condition = json_decode($search['search_condition'], true);
           $staff_generator = $postParam['staff_generator'];
-        $values = array('sg_values' =>
-          array('search_weight' => $staff_generator['search_weight']),
-          's_values' =>
-          array('search_name' => $search['search_name'],
-            'search_type_id' => $search['search_type_id']));
+          $values = array('sg_values' =>
+            array('search_weight' => $staff_generator['search_weight']),
+            's_values' =>
+            array('search_name' => $search['search_name'],
+              'search_type_id' => $search['search_type_id']));
 
 
 //          foreach ($incomingFields as $key => $incomingField) {
@@ -407,27 +414,23 @@ class scenarioActions extends agActions
 //            $value = $request->getPostParameter($key);
 //            $this->filterForm->setDefault($key, $value); //inccomingField->getName ?
 //        }
-        foreach ($search_condition as $querypart) {
-          $querypart['condition'];
-          $querypart['field'];
+          foreach ($search_condition as $querypart) {
+            $querypart['condition'];
+            $querypart['field'];
 //these search definitions should be stored in 'search type' table maybe?
-          if ($querypart['field'] == 'agStaffResourceType.staff_resource_type') {
-            $defaultValue = agDoctrineQuery::create()->select('id')->from('agStaffResourceType')
-                    ->where('staff_resource_type=?', $querypart['condition'])->execute(array(), 'single_value_array');
-          } else {
-            $defaultValue = agDoctrineQuery::create()->select('id')->from('agOrganization')
-                    ->where('organization=?', $querypart['condition'])->execute(array(), 'single_value_array');
+            if ($querypart['field'] == 'agStaffResourceType.staff_resource_type') {
+              $defaultValue = agDoctrineQuery::create()->select('id')->from('agStaffResourceType')
+                      ->where('staff_resource_type=?', $querypart['condition'])->execute(array(), 'single_value_array');
+            } else {
+              $defaultValue = agDoctrineQuery::create()->select('id')->from('agOrganization')
+                      ->where('organization=?', $querypart['condition'])->execute(array(), 'single_value_array');
+            }
+            $this->filterForm->setDefault($querypart['field'], $defaultValue[0]);
           }
-          $this->filterForm->setDefault($querypart['field'], $defaultValue[0]);
-        }
-
-
-          }
-        elseif($request->getParameter('search_id')) {
+        } elseif ($request->getParameter('search_id')) {
           $search_id = $request->getParameter('search_id');
-          $search_condition = json_decode($this->poolform->getEmbeddedForm('search')->getObject()->search_condition,true);
-        }
-        else{
+          $search_condition = json_decode($this->poolform->getEmbeddedForm('search')->getObject()->search_condition, true);
+        } else {
           $search_id = null;
         }
 
@@ -469,7 +472,7 @@ class scenarioActions extends agActions
       } else {
 //NEW
         $this->poolform = new agStaffPoolForm();
-      //$this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+        //$this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
     }
 //p-code
@@ -613,7 +616,7 @@ class scenarioActions extends agActions
    * this function sets up and processes the facility group form, providing all needed data to the groupform
    * template, depending on what CRUD operation the user is performing,
    */
-  public function   executeFgroup(sfWebRequest $request)
+  public function executeFgroup(sfWebRequest $request)
   {
 //if you are coming here from not within the workflow you fail and get 404
     $this->forward404Unless($this->scenario_id = $request->getParameter('id'));
@@ -648,9 +651,9 @@ class scenarioActions extends agActions
             ->addSelect('frt.id')
             ->addSelect('frt.facility_resource_type_abbr')
             ->from('agFacilityResource fr')
-              ->innerJoin('fr.agFacility f')
-              ->innerJoin('fr.agFacilityResourceType frt')
-              ->innerJoin('frt.agDefaultScenarioFacilityResourceType dsfrt')
+            ->innerJoin('fr.agFacility f')
+            ->innerJoin('fr.agFacilityResourceType frt')
+            ->innerJoin('frt.agDefaultScenarioFacilityResourceType dsfrt')
             ->where('NOT EXISTS (
               SELECT s1.id
                 FROM agFacilityResource s1
@@ -659,7 +662,7 @@ class scenarioActions extends agActions
               WHERE s3.scenario_id = ?
                 AND s1.id = fr.id)',
                 $this->scenario_id)
-             ->andWhere('dsfrt.scenario_id = ?', $this->scenario_id)
+            ->andWhere('dsfrt.scenario_id = ?', $this->scenario_id)
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
     $this->facilityStatusForm = new sfForm();
