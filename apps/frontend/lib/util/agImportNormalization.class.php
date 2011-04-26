@@ -21,11 +21,8 @@ abstract class agImportNormalization extends agImportHelper
             $warningMessages = array(),
             $nonprocessedRecords = array();
   
-  protected $errorCount = 0,
-            $errorThreshold = 0,
-            $fetchPosition = 0,
-            $batchSize = 0,
-            $tempCount = 0,
+  protected $iterData,
+            $errThreshold,
             $tempToRawQueryName = 'temp_to_raw',
             $helperObjects = array(),
 
@@ -35,11 +32,14 @@ abstract class agImportNormalization extends agImportHelper
            //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue), success => boolean) 
             $importData = array();
 
-  public function __construct()
+  /**
+   * This class's constructor.
+   * @param string $tempTable The name of the temporary import table to use
+   */
+  public function __construct($tempTable)
   {
-    parent::__construct();
-    $this->batchSize = agGlobal::getParam('default_batch_size');
-    $this->errorThreshold = agGlobal::getParam('import_error_threshold');
+    parent::__construct($tempTable);
+    $this->errThreshold = agGlobal::getParam('import_error_threshold');
   }
 
   public function __destruct()
@@ -49,6 +49,21 @@ abstract class agImportNormalization extends agImportHelper
 //    $this->conn->close();
   }
 
+  protected function resetIterData()
+  {
+    $this->iterData = array();
+    $this->iterData['errorCount'] = 0;
+    $this->iterData['fetchPosition'] = 0;
+    $this->iterData['fetchCount'] = 0;
+    $this->iterData['batchPosition'] = 0;
+    $this->iterData['batchCount'] = 0;
+    $this->iterData['batchSize'] = agGlobal::getParam('default_batch_size');
+  }
+
+  /**
+   * Method to lazily load helper objects used during data normalization
+   * @param string $helperClassName Name of the helper class to load
+   */
   protected function loadHelperObject($helperClassName)
   {
     if (! array_key_exists($helperClassName, $this->helperObjects))
@@ -57,10 +72,26 @@ abstract class agImportNormalization extends agImportHelper
     }
   }
 
-  protected function updateFailedTemp()
+  /**
+   * Method to update the temp table and mark this batch as successful or failed
+   * @param boolean $success The success value to set
+   */
+  protected function updateTempSuccess($success)
   {
-    //@todo make this
+    // grab our connection object
     $conn =& $this->getConnection('temp_write');
+
+    // create our query statement
+    $q = sprintf('UPDATE %s SET %s=? WHERE id IN(?);', $this->tempTable, $this->successColumn);
+
+    // mark this batch as failed
+    $this->executePdoQuery($conn, $query,
+      array($success, array_keys($this->importData[$_rawData])));
+  }
+
+  protected function processFailedBatch()
+  {
+    
   }
 
   protected function removeTempSuccesses()
@@ -92,7 +123,10 @@ abstract class agImportNormalization extends agImportHelper
     // first get a count of what we need from temp
     $ctQuery = sprintf('SELECT COUNT(t.*) FROM %s AS t;', $this->tempTable);
     $ctResults = $this->executePdoQuery($conn, $ctQuery);
-    $this->tempCount = $ctResults::fetchColumn();
+    $this->iterData['fetchCount'] = $ctResults::fetchColumn();
+    
+    // now caclulate the number of batches we'll need to process it all
+    $this->iterData['batchCount'] = ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize']));
 
     // now we can legitimately execute our real search
     $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
@@ -142,15 +176,13 @@ abstract class agImportNormalization extends agImportHelper
         $errMsg = sprintf('agImportNormalization failed during method: %s.',
           $componentData['method']);
 
-        // our rollback and error logging happen regardless of whether this is an optional component
-        sfContext::getInstance()->getLogger()->err($errMsg) ;
         $conn->rollback($savepoint);
 
         // if it's not an optional component, we do a bit more and stop execution entirely
         if($componentData['throwOnError'])
         {
-          $conn->rollback() ;
-          throw new Exception($e) ;
+          $err = $e;
+          break;
         }
       }
 
@@ -159,8 +191,39 @@ abstract class agImportNormalization extends agImportHelper
       // reference it
     }
 
-    // since we encountered no throw-able errors up to this point, we can commit
-    $conn->commit() ;
+    // attempt our final commit
+    // because doctrine's savepoints are broken, we must also wrap this since earlier failures
+    // may not have been detected
+    if (is_null($err))
+    {
+      try
+      {
+        $conn->commit();
+      }
+      catch(Exception $e)
+      {
+        // set our err variables
+        $err = $e;
+        $errMsg = sprintf('Failed to execute final commit for batch #%d of %d (batch_size: %d',
+          $this->iterData['batchPosition'], $this->iterData['batchCount'],
+          $this->iterData['batchSize']);
+      }
+    }
+
+    if (is_null($err))
+    {
+      // @todo do final records keeping here
+    }
+    else
+    {
+      // our rollback and error logging happen regardless of whether this is an optional component
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      $conn->rollback();
+
+      // now we execute our batch cleanup
+      $this->processFailedBatch();
+    }
   }
 
   /**

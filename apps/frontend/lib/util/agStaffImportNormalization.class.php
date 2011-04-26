@@ -17,16 +17,15 @@
  */
 class agStaffImportNormalization extends agImportNormalization
 {
-  protected   $scenarioId;
 
-  function __construct($importTable)
+  /**
+   * This class's constructor.
+   * @param string $tempTable The name of the temporary import table to use
+   */
+  function __construct($tempTable)
   {
-    parent::__construct();
+    parent::__construct($tempTable);
     $this->setImportComponents();
-    // declare variables
-//    $this->importTable = $importTable;
-//    $this->defineStatusTypes();
-
   }
 
   /**

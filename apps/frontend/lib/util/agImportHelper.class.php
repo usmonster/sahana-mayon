@@ -16,15 +16,23 @@
  */
 abstract class agImportHelper
 {
-  protected   $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
+  protected   $successColumn = '_import_success',
+              $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
               $tempTable,
               $_conn,
               $_PDO = array();
 
-  protected function __construct()
+  /**
+   * This class's constructor.
+   * @param string $tempTable The name of the temporary import table to use
+   */
+  protected function __construct($tempTable)
   {
     // Sets a new connection.
     $this->setConnection();
+    
+    // establishes the name of our temp table
+    $this->tempTable = $tempTable;
   }
 
   /**
@@ -59,16 +67,20 @@ abstract class agImportHelper
    * in the _PDO collection.
    * @return Doctrine_Connection A PDO object after execution of the query.
    */
-  protected function executePdoQuery( $conn,
+  protected function executePdoQuery( Doctrine_Connection $conn,
                                       $query,
                                       $params = array(),
                                       $fetchMode = NULL,
                                       $pdoName = NULL)
   {
-    // execute the method
-    $pdo = $conn->execute($query, $params);
+    // first prepare the sql statement
+    $qStatement = $conn->prepare($query);
 
-    // set fetch mode
+    // then execute the query
+    $pdo = $qStatement->execute($params);
+
+    // set fetch mode the the one we are passed or our default
+    if (is_null($fetchMode)) { $fetchMode = $this->defaultFetchMode; }
     $pdo->setFetchMode($fetchMode);
 
     // only save those pdo queries we have decided to name in the _PDO array
