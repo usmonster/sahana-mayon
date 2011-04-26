@@ -6,10 +6,10 @@
 
 <h2>Staff Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_management&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Management">?</a></h2>
 
-<p>The Staff Management feature in Agasti 2.0 is used to manage your available staff resources while planning before an emergency response.</p>
+<p>The Staff Management feature in Sahana Agasti is used to manage your available staff resources while planning before an emergency response.</p>
 <b>Please select one of the following actions: </b><br />
 
-<a href="<?php echo url_for('staff/new'); ?>" class="buttonText" title="Create New Staff">Create Staff</a><br/>
+<a href="<?php echo url_for('staff/new'); ?>" class="buttonText" title="Create New Staff">Add Staff</a><br/>
 
 <a href="<?php echo url_for('staff/list'); ?>" class="buttonText" title="List Existing Staff">List Staff</a><br/>
 

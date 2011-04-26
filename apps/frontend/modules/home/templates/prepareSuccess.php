@@ -1,9 +1,11 @@
-<h2>Preparedness</h2>
-<p>In Agasti Mayon, preparing means creating Scenarios.  Scenarios are plans within the application
+<h2>Prepare</h2>
+<p>In Sahana Agasti, preparing means creating Scenarios.  Scenarios are plans within the application
 that complement your organizations Emergency plans.</p>
-<p><b>Important:</b> Before creating your scenarios you'll want to load your staff and facilities
-  into Agasti Mayon.  If you'll be importing the facilities for each Scenario you'll want to load
-  staff and create the scenarios first.
+<p><b>Important:</b> Resources, like staff or facilities, must be loaded into the application
+  before creating a scenario.  Staff must be loaded before scenarios are created.
+  Facilities can be entered manually before scenario creation or uploaded during the creation
+  of each scenario.</p>
+<p>For more information about Scenario Creation click "Scenario Creator Walkthrough" below.</p>
 </p>
 <h3>Please select one of the following actions: </h3>
 <table cellspacing="20">

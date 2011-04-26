@@ -1,4 +1,6 @@
-Staff Management tooltip information should go here.
-We COULD feed some information from other pages via this plugin:
+===== Staff Management =====
 
-http://www.dokuwiki.org/plugin:embed
+Staff are used in Sahana Agasti as resources in a response.  During scenario creation the required staff will be entered for different types of facilities; and later the staff pool will be weighted by what organizations these staff are associated with.
+
+Use the links below to enter or import staff and include what type of resource they can be used as and what organizations they work with.  For more information on Staff Management click 'Help'.
+
