@@ -355,7 +355,14 @@ class agEntityEmailHelper extends agEntityContactHelper
             {
               $invalidData[] = $entityContacts[$entityId];
             }
-            unset($entityContacts[$entityId][$index]);
+            if (count($entityContacts[$entityId]) == 1)
+            {
+              unset($entityContacts[$entityId]);
+            }
+            else
+            {
+              unset($entityContacts[$entityId][$index]);
+            }
             continue;
           }
         }
