@@ -21,11 +21,14 @@ abstract class agImportHelper
   const       EVENT_WARN = 'warn';
   const       EVENT_ERR = 'err';
 
+  const       CONN_TEMP_READ = 'import_temp_read';
+  const       CONN_TEMP_WRITE = 'import_temp_write';
 
   protected   $errThreshold,
               $successColumn = '_import_success',
               $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
               $tempTable,
+              $tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8'),
               $iterData,
               $importSpec,
               $_conn,
@@ -81,9 +84,9 @@ abstract class agImportHelper
     $this->lastEvent = array();
 
     $this->events = array();
-    $this->events[EVENT_INFO] = array();
-    $this->events[EVENT_WARN] = array();
-    $this->events[EVENT_ERR] = array();
+    $this->events[self::EVENT_INFO] = array();
+    $this->events[self::EVENT_WARN] = array();
+    $this->events[self::EVENT_ERR] = array();
   }
 
   /**
@@ -103,9 +106,8 @@ abstract class agImportHelper
   protected function setConnections()
   {
     $this->_conn = array();
-    $this->_conn['temp_read'] = Doctrine_Manager::connection(NULL, 'import_temp_read');
-    $this->_conn['temp_write'] = Doctrine_Manager::connection(NULL, 'import_temp_write');
-    $this->_conn['normalize_write'] = Doctrine_Manager::connection(NULL, 'normalize_write');
+    $this->_conn[self::CONN_TEMP_READ] = Doctrine_Manager::connection(NULL, self::CONN_TEMP_READ);
+    $this->_conn[self::CONN_TEMP_WRITE] = Doctrine_Manager::connection(NULL, self::CONN_TEMP_WRITE);
   }
 
   /**
@@ -117,7 +119,7 @@ abstract class agImportHelper
   protected function logEvent($eventType, $eventMsg)
   {
     // just to make sure we only keep to our defined event types
-    if (! defined($eventType))
+    if (! defined("self::$eventType"))
     {
       throw new Exception("Undefined event constant: $eventType.");
     }
@@ -198,13 +200,61 @@ abstract class agImportHelper
     return $pdo ;
   }
 
+  /**
+   * Method to drop temporary table
+   * @todo Replace the unweildy handling of the exceptions properly check for existence
+   */
   protected function dropTempTable()
   {
-    //@todo create this method
+    // get a connection
+    $conn = $this->_conn[self::CONN_TEMP_WRITE];
+
+    // drop the table
+    try
+    {
+      $conn->export->dropTable($this->tempTable);
+
+      // log this info event
+      $eventMsg = "Dropped temporary table $this->tempTable";
+      $this->logEvent(self::EVENT_INFO, $eventMsg);
+    }
+    catch(Doctrine_Connection_Exception $e)
+    {
+      // we only want to silence 'no such table' errors
+      if ($e->getPortableCode() !== Doctrine_Core::ERR_NOSUCHTABLE)
+      {
+        throw new Doctrine_Export_Exception($e->getMessage());
+      }
+    }
   }
 
+  /**
+   * Method to create an import temp table.
+   */
   protected function createTempTable()
   {
-    //@todo create this method
+    // get a connection
+    $conn = $this->_conn[self::CONN_TEMP_WRITE];
+
+    // Drop temp if it exists
+    $this->dropTempTable();
+
+    $options = array(
+      'type' => 'MYISAM',
+      'charset' => 'utf8'
+    );
+
+    // Create the table
+    try {
+
+      $conn->export->createTable($this->tempTable, $this->importSpec, $options);
+      $this->events[] = array("type" => "OK", "message" => "Successfully created temp table.");
+    } catch (Doctrine_Exception $e) {
+
+      //todo find a more descriptive way of displaying MySQL error messages.
+      //  The Doctrine exceptions are not very helpful.
+      $this->events[] = array("type" => "ERROR", "message" => "Error creating temp table for import.");
+      $this->events[] = array("type" => "ERROR", "message" => $e->errorMessage());
+    }
   }
 }

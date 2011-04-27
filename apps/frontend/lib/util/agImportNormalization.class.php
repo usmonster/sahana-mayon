@@ -16,10 +16,8 @@
  */
 abstract class agImportNormalization extends agImportHelper
 {
-  public    $errorMsg,
-            $summary = array(),
-            $warningMessages = array();
-  
+  const     CONN_NORMALIZE_WRITE = 'import_normalize_write';
+
   protected $tempToRawQueryName = 'import_temp_to_raw',
             $helperObjects = array(),
 
@@ -79,6 +77,17 @@ abstract class agImportNormalization extends agImportHelper
     $this->importData = array();
     $this->importData['_rawData'] = array();
     $this->importData['primaryKeys'] = array();
+  }
+
+  /**
+   * Method to set connection objects. (Includes both parent connections and normalization
+   * connections.
+   */
+  protected function setConnections()
+  {
+    parent::setConnections();
+    $this->_conn[self::CONN_NORMALIZE_WRITE] = Doctrine_Manager::connection(NULL,
+      self::CONN_NORMALIZE_WRITE);
   }
 
   /**
@@ -217,7 +226,7 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function tempToRaw($query)
   {
-    $conn = $this->getConnection('temp_read');
+    $conn = $this->getConnection(self::CONN_TEMP_READ);
 
     // first get a count of what we need from temp
     $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
@@ -281,7 +290,7 @@ abstract class agImportNormalization extends agImportHelper
     $err = NULL ;
 
     // get our connection object and start an outer transaction for the batch
-    $conn = $this->getConnection('normalize_write');
+    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
     $conn->beginTransaction() ;
 
     foreach ($this->importComponents as $index => $componentData)
@@ -369,7 +378,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function createNewRec( $recordName, $foreignKeys )
   {
     // get our connection object
-    $conn = $this->getConnection('normalize_write');
+    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
 
     // instantiate the new record object
     $newRec = new $recordName();

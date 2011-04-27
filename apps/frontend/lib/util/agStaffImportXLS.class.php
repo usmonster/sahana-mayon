@@ -39,7 +39,6 @@ class agStaffImportXLS extends agImportXLS
       'first_name' => array('type' => "string", 'length' => 64),
       'middle_name' => array('type' => "string", 'length' => 64),
       'last_name' => array('type' => "string", 'length' => 64),
-      'mobile_phone' => array('type' => "string", 'length' => 16),
       'home_phone' => array('type' => "string", 'length' => 16),
       'home_email' => array('type' => "string", 'length' => 255),
       'work_phone' => array('type' => "string", 'length' => 16),
