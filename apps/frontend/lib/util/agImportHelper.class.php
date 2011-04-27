@@ -16,12 +16,23 @@
  */
 abstract class agImportHelper
 {
-  protected   $successColumn = '_import_success',
+  // used for event reporting
+  const       EVENT_INFO = 'info';
+  const       EVENT_WARN = 'warn';
+  const       EVENT_ERR = 'err';
+
+
+  protected   $errThreshold,
+              $successColumn = '_import_success',
               $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
               $tempTable,
+              $iterData,
               $importSpec,
               $_conn,
               $_PDO = array();
+
+  private     $events,
+              $lastEvent;
 
   /**
    * This class's constructor.
@@ -34,6 +45,45 @@ abstract class agImportHelper
     
     // establishes the name of our temp table
     $this->tempTable = $tempTable;
+
+    // set our error threshold
+    $this->errThreshold = intval(agGlobal::getParam('import_error_threshold'));
+
+    // reset our events and iterators
+    $this->resetIterData();
+    $this->resetEvents();
+  }
+
+  /**
+   * Method to reset ALL iter data.
+   */
+  protected function resetIterData()
+  {
+    $this->iterData = array();
+    $this->iterData['errorCount'] = 0;
+    $this->resetTempIterData();
+  }
+
+  /**
+   * Method to reset the temp iterator data
+   */
+  protected function resetTempIterData()
+  {
+    $this->iterData['tempPosition'] = 0;
+    $this->iterData['tempCount'] = 0;
+  }
+
+  /**
+   * Method to reset the events array.
+   */
+  protected function resetEvents()
+  {
+    $this->lastEvent = array();
+
+    $this->events = array();
+    $this->events[EVENT_INFO] = array();
+    $this->events[EVENT_WARN] = array();
+    $this->events[EVENT_ERR] = array();
   }
 
   /**
@@ -56,6 +106,60 @@ abstract class agImportHelper
     $this->_conn['temp_read'] = Doctrine_Manager::connection(NULL, 'import_temp_read');
     $this->_conn['temp_write'] = Doctrine_Manager::connection(NULL, 'import_temp_write');
     $this->_conn['normalize_write'] = Doctrine_Manager::connection(NULL, 'normalize_write');
+  }
+
+  /**
+   * Method to log a new import event.
+   * @param constant $eventType The event type being set. Must be one of the defined EVENT_*
+   * constants defined in agImportHelper.
+   * @param <type> $eventMsg The event message being set.
+   */
+  protected function logEvent($eventType, $eventMsg)
+  {
+    // just to make sure we only keep to our defined event types
+    if (! defined($eventType))
+    {
+      throw new Exception("Undefined event constant: $eventType.");
+    }
+
+    // add our event to the events array
+    $timestamp = microtime(TRUE);
+    $this->events[$eventType][] = array('ts' => $timestamp, 'msg' => $eventMsg);
+    $this->lastEvent = array('type' => $eventType, 'ts' => $timestamp, 'msg' => $eventMsg);
+  }
+
+  /**
+   * Method to get events property information
+   * @return array An array of import / export events
+   * <code>
+   * array(
+   *   $eventType => array(
+   *     $index => array('ts' => $timestamp, 'msg' => $eventMsg),
+   *     $index => array('ts' => $timestamp, 'msg' => $eventMsg)
+   *     ...
+   *   ),
+   *   $eventType => array(
+   *     $index => array('ts' => $timestamp, 'msg' => $eventMsg),
+   *     $index => array('ts' => $timestamp, 'msg' => $eventMsg),
+   *     ...
+   *   ),
+   *   ...
+   * )
+   * </code>
+   */
+  public function getEvents()
+  {
+    return $this->events;
+  }
+
+  /**
+   * Method to return the last event.
+   * @return array An array of datapoints concerning the last inserted event.
+   * <code> array('type' => $eventType, 'ts' => $timestamp, 'msg' => $eventMsg)</code>
+   */
+  public function getLastEvent()
+  {
+    return $this->lastEvent;
   }
 
   /**

@@ -20,9 +20,7 @@ abstract class agImportNormalization extends agImportHelper
             $summary = array(),
             $warningMessages = array();
   
-  protected $iterData,
-            $errThreshold,
-            $tempToRawQueryName = 'temp_to_raw',
+  protected $tempToRawQueryName = 'import_temp_to_raw',
             $helperObjects = array(),
 
             // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
@@ -39,12 +37,6 @@ abstract class agImportNormalization extends agImportHelper
   {
     // DO NOT REMOVE
     parent::__construct($tempTable);
-
-    // pick up some global params
-    $this->errThreshold = agGlobal::getParam('import_error_threshold');
-
-    // set up our iterator data
-    $this->resetIterData();
   }
 
   public function __destruct()
@@ -55,17 +47,28 @@ abstract class agImportNormalization extends agImportHelper
   }
 
   /**
-   * Method to reset the iterator data (used in the initial call of an import and at construction)
+   * Method to reset ALL iter data.
    */
   protected function resetIterData()
   {
-    $this->iterData = array();
-    $this->iterData['errorCount'] = 0;
+    // execute the parent's reset
+    parent::resetIterData();
+
+    // now reset this data
+    $this->resetRawIterData();
+  }
+
+  /**
+   * Method to reset the iterator data (used in the initial call of an import and at construction)
+   */
+  protected function resetRawIterData()
+  {
+    // add additional iter members
     $this->iterData['fetchPosition'] = 0;
     $this->iterData['fetchCount'] = 0;
     $this->iterData['batchPosition'] = 0;
     $this->iterData['batchCount'] = 0;
-    $this->iterData['batchSize'] = agGlobal::getParam('default_batch_size');
+    $this->iterData['batchSize'] = intval(agGlobal::getParam('default_batch_size'));
   }
 
   /**
@@ -97,7 +100,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function updateTempSuccess($success)
   {
     // grab our connection object
-    $conn =& $this->getConnection('temp_write');
+    $conn = $this->getConnection('temp_write');
 
     // create our query statement
     $q = sprintf('UPDATE %s SET %s=? WHERE id IN(?);', $this->tempTable, $this->successColumn);
@@ -114,7 +117,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function removeTempSuccesses()
   {
     // grab our connection object
-    $conn =& $this->getConnection('temp_write');
+    $conn = $this->getConnection('temp_write');
 
     // create our query statement
     $q = sprintf('DELETE FROM %s WHERE %s = 1;', $this->tempTable, $this->successColumn);
@@ -150,6 +153,12 @@ abstract class agImportNormalization extends agImportHelper
    */
   public function processBatch()
   {
+    // preempt this method with a check on our error threshold and stop if we shouldn't continue
+    if (! $this->checkErrThreshold())
+    {
+      return -1;
+    }
+
     // load up a batch into the helper
     $this->fetchNextBatch();
 
@@ -183,7 +192,7 @@ abstract class agImportNormalization extends agImportHelper
     $batchPosition =& $this->iterData['batchPosition'];
 
     // get our PDO object
-    $pdo =& $this->_PDO[$this->tempToRawQueryName];
+    $pdo = $this->_PDO[$this->tempToRawQueryName];
 
     // fetch the data up until it ends or we hit our batchsize limit
     while (($row = $pdo->fetch()) && (($fetchPosition % $batchSize) != 0))
@@ -208,10 +217,10 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function tempToRaw($query)
   {
-    $conn =& $this->getConnection('temp_read');
+    $conn = $this->getConnection('temp_read');
 
     // first get a count of what we need from temp
-    $ctQuery = sprintf('SELECT COUNT(t.*) FROM (%s) AS t;', $query);
+    $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
     $ctResults = $this->executePdoQuery($conn, $ctQuery);
     $this->iterData['fetchCount'] = $ctResults::fetchColumn();
     
@@ -241,6 +250,12 @@ abstract class agImportNormalization extends agImportHelper
     // update our temp table
     $this->updateTempSuccess($normalizeSuccess);
 
+    // if we had an error, up our error count
+    if (! $normalizeSuccess)
+    {
+      $this->iterData['errorCount'] = ($this->iterData['errorCount'] + count($this->importData));
+  }
+
     // check our error threshold to make sure we're still golden to continue
     $continue = $this->checkErrThreshold();
     return $continue;
@@ -252,8 +267,6 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function checkErrThreshold()
   {
-    $this->iterData['errorCount'] = ($this->iterData['errorCount'] + count($this->importData));
-
     // continue only if our error count is below our error threshold
     $continue = ($this->iterData['errorCount'] <= $this->errThreshold) ? TRUE : FALSE;
     return $continue;
@@ -268,7 +281,7 @@ abstract class agImportNormalization extends agImportHelper
     $err = NULL ;
 
     // get our connection object and start an outer transaction for the batch
-    $conn =& $this->getConnection('normalize_write');
+    $conn = $this->getConnection('normalize_write');
     $conn->beginTransaction() ;
 
     foreach ($this->importComponents as $index => $componentData)
@@ -356,7 +369,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function createNewRec( $recordName, $foreignKeys )
   {
     // get our connection object
-    $conn =& $this->getConnection('normalize_write');
+    $conn = $this->getConnection('normalize_write');
 
     // instantiate the new record object
     $newRec = new $recordName();
@@ -376,7 +389,25 @@ abstract class agImportNormalization extends agImportHelper
   }
 
   /**
+   * Method to remove null values from _rawData
+   */
+  protected function clearNullRawData()
+  {
+    foreach ($this->importData as $rowId => &$rowData)
+    {
+      foreach($rowData['_rawData'] as $key => $val)
+      {
+        if (is_null($val))
+        {
+          unset($rowData['_rawData'][$key]);
+        }
+      }
+    }
+  }
+
+  /**
    * Method to remove zero-length-string values in importData['_rawData']
+   * @deprecated This method is deprecated in favor of clearNullRawData
    */
   protected function clearZLS()
   {

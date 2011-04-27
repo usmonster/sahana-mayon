@@ -94,7 +94,7 @@ agGlobalParam:
   import_error_threshold:
     id: 19
     agHost: localhost
-    datapoint: import_error_threshhold
+    datapoint: import_error_threshold
     value: 20
   default_shift_length:
     id: 20
