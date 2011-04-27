@@ -39,7 +39,7 @@ class agActions extends sfActions
   public function doSearch($searchquery, $isFuzzy = TRUE, $widget = NULL)
   {
     $models = $this->getSearchedModels();
-
+    $this->target_module = 'staff';
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
     $query = LuceneSearch::find($this->searchquery);
@@ -50,34 +50,37 @@ class agActions extends sfActions
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
     $this->widget = $widget;
+    $resultArray = array();
 
     $this->pager = new agArrayPager(null, 10);
 
     $searchResult = $query->getRecords(); //agStaff should be $models
     //if($models == 'agStaff'){
-    if ($staffCollection = $searchResult['agStaff']) {
-      $this->target_module = 'staff';
-      $staff_ids = $staffCollection->getKeys(); // toArray();
-      $resultArray = agListHelper::getStaffList($staff_ids);
-    } elseif ($facilityCollection = $searchResult['agFacility']) {
-      $this->target_module = 'facility';
-      $staff_ids = $facilityCollection->getKeys(); // toArray();
-      $resultArray = agListHelper::getStaffList($staff_ids);
-      
-      /** @todo change the above to use a FacilityList return
-       * 
-       */
-    } else {
-      $resultArray = '';
+    if (count($searchResult) > 0) {
+      if ($staffCollection = $searchResult['agStaff']) {
+        $this->target_module = 'staff';
+        $staff_ids = $staffCollection->getKeys(); // toArray();
+        $resultArray = agListHelper::getStaffList($staff_ids);
+      } elseif ($facilityCollection = $searchResult['agFacility']) {
+        $this->target_module = 'facility';
+        $staff_ids = $facilityCollection->getKeys(); // toArray();
+        $resultArray = agListHelper::getStaffList($staff_ids);
+
+        /** @todo change the above to use a FacilityList return
+         * 
+         */
+      } else {
+        //$resultArray = array();
+      }
+
+
     }
+
     $this->pager->setResultArray($resultArray);
-   // $this->pager->setResultArray($staffArray);
+    // $this->pager->setResultArray($staffArray);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
-    /** @todo in template, display the pager links.
-     *
-     *
-     */
+
   }
 
   public function getSearchedModels()

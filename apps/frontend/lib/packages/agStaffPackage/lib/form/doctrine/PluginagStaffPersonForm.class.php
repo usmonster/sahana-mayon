@@ -40,8 +40,8 @@ class PluginagStaffPersonForm extends agPersonForm
     $staffContainerForm = new sfForm();
     $this->embedStaffForm($staffContainerForm);
     $this->embedStaffResourceForm($staffContainerForm);
-    //$this->embedStaffResourceOrganizationForm($staffContainerForm);
     $this->embedForm('staff', $staffContainerForm);
+
   }
 
   /**
@@ -56,6 +56,8 @@ class PluginagStaffPersonForm extends agPersonForm
               ->execute()->getFirst();
     }
     $staffForm = new PluginagEmbeddedAgStaffForm(isset($staffObject) ? $staffObject : null);
+
+
     $staffContainerForm->embedForm('status', $staffForm);
     $staffContainerForm->getWidgetSchema()->setLabel('status', false);
   }
@@ -72,6 +74,12 @@ class PluginagStaffPersonForm extends agPersonForm
               ->execute(); //->getFirst();
     }
     $staffContainerContainer = new sfForm();
+
+    $staffConDeco = new agWidgetFormSchemaFormatterSubContainer($staffContainerContainer->getWidgetSchema());
+      $staffContainerContainer->getWidgetSchema()->addFormFormatter('staffConDeco', $staffConDeco);
+      $staffContainerContainer->getWidgetSchema()->setFormFormatterName('staffConDeco');
+
+
     $restrictedOptions = array();
     if (isset($staffResourceObjects)) {
       $i = 0;
@@ -91,6 +99,10 @@ class PluginagStaffPersonForm extends agPersonForm
         if (isset($this->staff_id)) {
           $staffResourceForm->setDefault('staff_id', $this->staff_id);
         }
+          $custDeco = new agWidgetFormSchemaFormatterInline($staffResourceForm->getWidgetSchema());
+    $staffResourceForm->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
+    $staffResourceForm->getWidgetSchema()->setFormFormatterName('custDeco');
+
         $staffContainerContainer->embedForm($i, $staffResourceForm);
         $staffContainerContainer->getWidgetSchema()->setLabel($i, false);
         $i++;
@@ -107,6 +119,8 @@ class PluginagStaffPersonForm extends agPersonForm
       $staffContainerContainer->embedForm('0', $staffResourceForm);
       //$staffResourceForm->getWidgetSchema()->setLabel('', $value) ContainerForm->getWidgetSchema()->setLabel(
       $staffContainerContainer->getWidgetSchema()->setLabel('0', false);
+
+
       $staffContainerForm->embedForm('type', $staffContainerContainer);
 
       $staffContainerForm->getWidgetSchema()->setLabel('type', false);

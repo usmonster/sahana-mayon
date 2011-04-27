@@ -31,7 +31,9 @@ include_partial('global/list', array( 'sf_request' => $sf_request,
                                       'order' => $order,
                                       'sort' => $sort,
                                       'filter' => $filter,
-                                      'target_module' => $target_module
+                                      'target_module' => $target_module,
+                                      'caption' => 'Staff Search Results',
+                                      'widgets' => array()
   ));
 }
 elseif($sf_request->getParameter('module') == 'facility') {
@@ -50,7 +52,9 @@ include_partial('global/list', array( 'sf_request' => $sf_request,
                                       'order' => $order,
                                       'sort' => $sort,
                                       'filter' => $filter,
-                                      'target_module' => $target_module
+                                      'target_module' => $target_module,
+                                        'caption' => 'Staff List',
+                                      'widgets' => array($statusWidget)
   ));
 }
 

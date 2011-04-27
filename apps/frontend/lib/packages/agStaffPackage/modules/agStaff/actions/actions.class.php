@@ -27,36 +27,33 @@ class agStaffActions extends agActions
     //do some index stuff here.
   }
 
-  public function executeNewlist(sfWebRequest $request)
+  public function executeList(sfWebRequest $request)
   {
-
+    $this->status = 'active';
+    $this->sort = null;
+    $this->order =null;
     //the next few lines could be abstracted to agActions as they are request params that may be
     //used for any list
-    if ($request->getGetParameter('filter'))
-      $this->filter = $request->getGetParameter('filter');
+    if ($request->getGetParameter('status'))
+      $this->status = $request->getGetParameter('status');
     if ($request->getGetParameter('sort'))
       $this->sort = $request->getGetParameter('sort');
     if ($request->getGetParameter('order'))
       $this->order = $request->getGetParameter('order');
-    $this->agPersonNameTypes = agDoctrineQuery::create()
-            ->select('nt.id, nt.person_name_type')
-            ->from('agPersonNameType nt')
-            ->execute(array(), 'key_value_pair');
     /** @todo take into consideration app_display */
-    $staffStatus = 'active';
     $staffStatusOptions = agDoctrineQuery::create()
-            ->select('s.staff_status, s.staff_status')
-            ->from('agStaffStatus s')
+            ->select('s.staff_resource_status, s.staff_resource_status')
+            ->from('agStaffResourceStatus s')
             ->execute(array(), 'key_value_pair');
     //the above query returns an array of keys matching their values.
     //ideally the above should exist in a global param,
     //so the database is not queried all the time
     $staffStatusOptions['all'] = 'all';
     if ($request->getParameter('status') && in_array($request->getParameter('status'), $staffStatusOptions)) {
-      $staffStatus = $request->getParameter('status');
+      $this->status = $request->getParameter('status');
     }
-    $this->statusFilterForm = new sfForm();
-    $this->statusFilterForm->setWidgets(
+    $this->statusWidget = new sfForm();
+    $this->statusWidget->setWidgets(
         array(
           'status' => new sfWidgetFormChoice(
               array(
@@ -69,119 +66,15 @@ class agStaffActions extends agActions
         // 'add_empty' => true))// ,'onClick' => 'submit()'))
         )
     );
-    $this->statusFilterForm->setDefault('status', $staffStatus);
+    $this->statusWidget->setDefault('status', $this->status);
 
-    $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusFilterForm->getWidgetSchema());
-    $this->statusFilterForm->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
-    $this->statusFilterForm->getWidgetSchema()->setFormFormatterName('inline');
+    $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusWidget->getWidgetSchema());
+    $this->statusWidget->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
+    $this->statusWidget->getWidgetSchema()->setFormFormatterName('inline');
 
-    $query = Doctrine::getTable('agStaff')
-            ->createQuery('a')
-            ->select(
-                'p.*,
-                  s.*,
-                  namejoin.*,
-                  name.*,
-                  nametype.*,
-                  stfrsco.*,
-                  o.organization,
-                  stfrsc.staff_resource_type_id,
-                  ss.staff_status,
-                  srt.staff_resource_type'
-            )
-            ->from(
-                'agStaff s,
-                  s.agPerson p,
-                  p.agPersonMjAgPersonName namejoin,
-                  namejoin.agPersonName name,
-                  name.agPersonNameType nametype, s.agStaffResource stfrsc,
-                  stfrsc.agStaffResourceOrganization stfrsco,
-                  stfrsc.agStaffResourceType srt,
-                  stfrsco.agOrganization o,
-                  s.agStaffStatus ss'
-    );
-    if ($staffStatus != 'all') {
-      $query->where('ss.staff_status=?', $staffStatus);
-    }
+    $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order);
 
-    //we get our array of staff people above, now, populate it with data.
-    //$this->staffArray = $staffArray;
     $this->pager = new agArrayPager(null, 10);
-
-
-    $ag_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-    foreach ($ag_staff as $key => $value) {
-      $person_array[] = $value['p_id'];
-
-      //these two lines are only for development purposes,
-      //they should be returned by their respective template helpers
-      $person_phones[$value['p_id']] = 'phone';
-      $person_emails[$value['p_id']] = 'email';
-      //$remapped_array[$ag_event_staff['es_id']] = $
-    }
-    $names = new agPersonNameHelper($person_array);
-    //^we need to get persons from the event staff ids that are returned here
-    $person_names = $names->getPrimaryNameByType();
-    //maybe we should set the below/above to a a static property for use through a session
-
-    $emailHelper = new agEntityEmailHelper();
-    $emailByType = $emailHelper->getEntityEmailByType($person_array, TRUE, TRUE, agEmailHelper::EML_GET_VALUE);
-    $emails = new agEntityEmailHelper($person_array);
-
-//    $email_array = $emails->getEntityEmailByType(null,false,true, agEmailHelper::EML_GET_VALUE);
-//    $person_emails = array();
-
-    foreach($emails as $person_id => $email_type)
-    {
-      foreach($email_type as $et => $etv){
-        $person_emails[$person_id][$et] = $person_emails[$person_id][$et][0];
-      }
-    }
-
-//    $phones = new agEntityPhoneHelper($person_array);
-//    $phone_array = $phones->getEntityPhoneByType(null,true,true,true);
-//    $person_phones = array();
-//    foreach($phone_array as $person_id => $phone_type)
-//    {
-//      foreach($phone_type as $pt => $ptv){
-//        $person_phones[$person_id][$pt] = $person_phones[$person_id][$pt][0];
-//      }
-//    }
-    //$person_phones[$value['p_id']] = arraytostring($phone_array);
-    //function arraytostring is a similar function to the draw address table function in agtemplatehelper
-
-    foreach ($ag_staff as $staff => $value) {
-      $staffArray[] = array(
-        'fn' => $person_names[$value['p_id']]['given'],
-        'ln' => $person_names[$value['p_id']]['family'],
-        'agency' => $value['o_organization'],
-        'staff_status' => $value['ss_staff_status'],
-        'classification' => $value['srt_staff_resource_type'],
-        'phones' => $person_phones[$value['p_id']], // only for testing, prefer the above
-        'emails' => $person_emails[$value['p_id']],
-          //'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
-          /** @todo benchmark scale */
-      );
-    }
-
-//$this->ag_staff = $result_array;
-
-
-    if ($request->getParameter('sort') && $request->getParameter('order')) {
-      $sortColumns = array('group' => 'efg_event_facility_group',
-        'name' => 'f_facility_name',
-        'code' => 'f_facility_code',
-        'status' => 'ras_facility_resource_allocation_status',
-        'time' => 'efrat_activation_time',
-        'type' => 'fgt_facility_group_type',
-        'event' => 'e_event_name');
-      $sort = $sortColumns[$request->getParameter('sort')];
-      agArraySort::$sort = $sort;
-      usort($facilityGroupArray, array('agArraySort', 'arraySort'));
-      if ($request->getParameter('order') == 'DESC') {
-        $staffArray = array_reverse($staffArray);
-      }
-    }
     $this->pager->setResultArray($staffArray);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
@@ -202,7 +95,7 @@ class agStaffActions extends agActions
    * provides staff listing data to the staff list template
    * @param sfWebRequest $request
    */
-  public function executeList(sfWebRequest $request)
+  public function executeOldlist(sfWebRequest $request)
   {
     $this->staffResourceStatus = 'active';
     $staffResourceStatusOptions = agDoctrineQuery::create()
@@ -454,18 +347,6 @@ class agStaffActions extends agActions
     if($request->isMethod(sfRequest::POST)) {
       $params = $request->getPostParameters();
 
-      // Render the Forms
-      //if($params['type'] == 'resourceStatus') {
-        // This case is for loading the event-facility-resource-status form to replace the link that sumbitted
-        // the request.
-        //$facilityResourceStatus = new agEventFacilityResourceStatus();
-        //$facilityResourceStatus['event_facility_resource_id'] = ltrim($params['id'], 'res_stat_id_');
-        //$facilityResourceStatus['facility_resource_allocation_status_id'] =
-//            agDoctrineQuery::create()
-//              ->select('id')
-//              ->from('agFacilityResourceAllocationStatus')
-//              ->where('facility_resource_allocation_status = ?', $params['current'])
-//              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
         $resourceForm = new PluginagEmbeddedAgStaffResourceForm();
         //$resourceForm->getWidget('facility_resource_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
@@ -473,7 +354,7 @@ class agStaffActions extends agActions
         return $this->renderPartial('global/includeForm', array('form'     => $resourceForm,
                                                         'set'      => $params['type'],
                                                         'id'       => $params['id'],
-                                                        'url'      => 'event/eventfacilityresource?eventFacilityResourceId=' .  ltrim($params['id'], 'res_stat_id_')
+                                                        'url'      => 'staff/new'
                                                   )
                                    );
       }

@@ -5,10 +5,12 @@
  */
 class agListHelper
 {
-  public static function getStaffList($staff_ids){
-
+  public static function getStaffList($staff_ids = null, $staffStatus = 'active', $sort = null, $order = null){
+    
     $person_array = array();
     $resultArray = array();
+    $person_emails = array();
+    $person_phones = array();
 
     $query = Doctrine::getTable('agStaff')
               ->createQuery('a')
@@ -31,10 +33,22 @@ class agListHelper
                     stfrsc.agStaffResourceStatus srs,
                     stfrsc.agOrganization o'
               )
-              ->whereIn('s.id', $staff_ids);
+             ->where('1 = ?', 1); //there must be a better way to do this :)
 
-      /** @todo add order by */
-      $ag_staffQuery = $query->getSqlQuery();
+if ($staff_ids != null) {
+        $query->andWhereIn('s.id', $staff_ids);
+}
+    if ($staffStatus != 'all') {
+      $query->andWhere('srs.staff_resource_status = ?', $staffStatus);
+    }
+   if ($sort == 'agency') {
+      $sortField = 'o.organization';
+      $query->orderBy($sortField . ' ' . $order);
+    }
+    elseif($sort == 'classification') {
+      $sortField = 'srt.staff_resource_type';
+      $query->orderBy($sortField . ' ' . $order);
+    }
       $ag_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       foreach ($ag_staff as $key => $value) {
         $person_array[] = $value['p_id'];
@@ -82,7 +96,7 @@ class agListHelper
           'classification' => $value['srt_staff_resource_type'],
           'phones' => $person_phone, // only for testing, prefer the above
           'emails' => $person_email,
-          'staff_resource_status' => $value['srs_staff_resource_status']
+          'staff_status' => $value['srs_staff_resource_status']
             //'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
             /** @todo benchmark scale */
         );

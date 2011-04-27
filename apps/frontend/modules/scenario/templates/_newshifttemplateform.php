@@ -2,28 +2,13 @@
 use_stylesheets_for_form($newshifttemplateform);
 use_javascripts_for_form($newshifttemplateform);
 use_javascript('jquery.ui.custom.js');
-use_javascript('agMain.js');
+//use_javascript('agMain.js');
 use_stylesheet('jquery/jquery.ui.custom.css');
 ?>
 <style>
   #timeframe > div.demo { padding: 10px !important; }
 </style>
-<script>
-  var SLIDE = $(function() {
-    $( "#timeframe" ).slider({
-      min: 0,
-      max: 150,
-      value: 50,
-      slide: function(event, ui) {
-        $("#slider-input").val(ui.value);
-      }
-    }
-  );
 
-    $(document).ready(SLIDE);
-  });
-
-</script>
 
 
 
@@ -77,7 +62,21 @@ use_stylesheet('jquery/jquery.ui.custom.css');
             echo '<br />'; //this is only for testing
             ?>
             <div class="demo">
+<script>
+  $(function() {
+    $( "#timeframe" ).slider({
+      min: 0,
+      max: 150,
+      value: 50,
+      slide: function(event, ui) {
+        $("#slider-input").val(ui.value);
+      }
+    }
+  );
 
+
+  });
+</script>
               <div id="timeframe"></div>
               <input id="slider-input" type="text">
             </div>
