@@ -1338,7 +1338,7 @@ a.signin.menu-open span {
 }
 
 .testTableContainer {
-  background: #00B4CC;
+  background: #f7f7f7
 }
 .testTable, .testTableParent {
   width: 100%;
@@ -1393,7 +1393,7 @@ a.signin.menu-open span {
   border-right: solid 2px #00B4CC;
 }
 
-.testTableParent tr.sortHead th, .testTable tr.sortHead th {
+.testTableParent tr th, .testTable tr th, testTable tr td {
   background: #00DFFC;
   text-align: left;
   color: #ffffff;

@@ -685,6 +685,12 @@ class scenarioActions extends agActions
               ->where('a.id = ?', $request->getParameter('groupid'))
               ->fetchOne();
 
+      $agScenarioFacilityGroup = agDoctrineQuery::create()
+        ->select()
+        ->from('agScenarioFacilityGroup')
+        ->where('id = ?', $this->group_id)
+        ->fetchOne();
+
       $this->groupform = new agScenarioFacilityGroupForm($ag_scenario_facility_group);
 
       $current = $ag_scenario_facility_group->getAgScenarioFacilityResource();
@@ -709,7 +715,8 @@ class scenarioActions extends agActions
               ->innerJoin('fr.agFacilityResourceType frt')
               ->innerJoin('fr.agScenarioFacilityResource sfr')
               ->innerJoin('sfr.agFacilityResourceAllocationStatus fras')
-              ->whereIn('fr.id', array_keys($currentoptions))
+              ->where('sfr.scenario_facility_group_id = ?', $this->group_id)
+//              ->whereIn('fr.id', array_keys($currentoptions))
 //              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
               ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       $b = $allocatedFacilityResources;

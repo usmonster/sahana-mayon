@@ -21,11 +21,11 @@ use_javascript('tooltip.js'); ?>
       return !$(this).remove().appendTo('#available tbody')
     });
 
-    $( ".available tbody, .allocated tbody" ).sortable({
+    $('.available tbody, .allocated tbody' ).sortable({
       connectWith: ".testTable tbody",
       items: 'tr.sort'
 //      cancel: 'tr.sortHead'
-    }).disableSelection();
+    });//.disableSelection();
 
     $('.allocated tbody').bind('sortupdate', function () {
       if($(this).find('tr').is(':hidden')) {
@@ -34,6 +34,17 @@ use_javascript('tooltip.js'); ?>
       countSorts($('tr#' + $(this).attr('title')).find('.count'));
     });
 
+    $('.allocated tbody').bind('sortreceive', function(event, ui) {
+      if(ui.item.hasClass('serialIn') == false) {
+        ui.item.addClass('serialIn');
+      }
+    });
+
+    $('.available tbody').bind('sortreceive', function(event, ui) {
+      if(ui.item.hasClass('serialIn') == true) {
+        ui.item.removeClass('serialIn');
+      }
+    });
 //    $('.sortHead').bind('sortover', function() {
 //      $(this).find('a').click();
 //    })
@@ -54,9 +65,12 @@ use_javascript('tooltip.js'); ?>
   });
 
   function serialTran() {
-    var out = Array();
+    var out = new Object;
     $('.serialIn').each(function(index) {
-      out[index] = $(this).attr('id');
+//      out[index] = $(this).attr('id').replace('facility_resource_id_', '');
+//      out[index] = new array($(this).attr('id').replace('facility_resource_id_', ''), $(this).find('input :input'));
+      out.frId = $(this).attr('id').replace('facility_resource_id_', '');
+      out.actSeq = $(this).find('input').value();
       $("#ag_scenario_facility_group_ag_facility_resource_order").val(JSON.stringify(out));
     });
   }
@@ -111,7 +125,7 @@ echo url_for
     ?>
   </div>
   <div class="bucketHolder" >
-    <div class="testTableContainer">
+    <div class="testTableContainer ">
     <table class="testTable available" cellspacing="0">
       <thead>
         <caption>Available Facility Resources</caption>
@@ -120,10 +134,10 @@ echo url_for
         <tr>
           <th class="left">Facility Code</th>
           <th>Resource Type</th>
-          <th class="right">Activation Sequence</th>
+          <th class="right">Priority</th>
         </tr>
       <?php foreach ($availableFacilityResources as $availableFacilityResource): ?>
-        <tr class="sort facility_resource_type_<?php echo $availableFacilityResource['frt_id']; ?>">
+        <tr id="facility_resource_id_<?php echo $availableFacilityResource['fr_id']; ?>" class="sort facility_resource_type_<?php echo $availableFacilityResource['frt_id']; ?>">
           <td class="left" title="<?php echo $availableFacilityResource['f_facility_name'];?>">
             <?php echo $availableFacilityResource['f_facility_code'] ?>
           </td>
@@ -162,11 +176,11 @@ echo url_for
               <tr>
                 <th class="left">Facility Code</th>
                 <th>Resource Type</th>
-                <th class="right">Activation Sequence</th>
+                <th class="right">Priority</th>
               </tr>
             <?php if ($allocatedFacilityResources): ?>
               <?php foreach ($allocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']] as $allocatedFacilityResource): ?>
-              <tr class="sort facility_resource_type_<?php echo $allocatedFacilityResource['frt_id']; ?> serialIn">
+              <tr id="facility_resource_id_<?php echo $allocatedFacilityResource['fr_id']; ?>" class="sort serialIn facility_resource_type_<?php echo $allocatedFacilityResource['frt_id']; ?>">
                 <td class="left" title="<?php echo $allocatedFacilityResource['f_facility_name'];?>">
                   <?php echo $allocatedFacilityResource['f_facility_code'] ?>
                 </td>
