@@ -222,6 +222,7 @@ class agImportXLS extends agImportHelper
    */
   public function createTempTable()
   {
+    // @todo Is this necessary?
     // Access Symfony...we'll only need these lines if we need to go the shell_exec route. Might need IReadFilter.php in any case though.
     require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
@@ -270,6 +271,7 @@ class agImportXLS extends agImportHelper
   public function dumpImportFile($importFile)
   {
 
+    // @todo Is this *really* necessary?
     require_once(dirname(__FILE__) . '/excel_reader2.php');
 
     $xlsObj = new Spreadsheet_Excel_Reader($importFile);

@@ -19,6 +19,7 @@ abstract class agImportHelper
   protected   $successColumn = '_import_success',
               $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
               $tempTable,
+              $importSpec,
               $_conn,
               $_PDO = array();
 

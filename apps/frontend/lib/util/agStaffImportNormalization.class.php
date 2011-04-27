@@ -1,7 +1,12 @@
 <?php
 
 /**
- * Normalizing import data for Staff
+ * A Staff data import class. Standard (minimal) usage of this class would be to call
+ * <code>
+ * $this->importStaffFrom*();
+ * $this->processBatch(); // in a loop
+ * $this->concludeImport();
+ * <code>
  *
  * PHP Version 5.3
  *
@@ -17,15 +22,53 @@
  */
 class agStaffImportNormalization extends agImportNormalization
 {
-
   /**
    * This class's constructor.
    * @param string $tempTable The name of the temporary import table to use
    */
-  function __construct($tempTable)
+  public function __construct($tempTable)
   {
+    // DO NOT REMOVE
     parent::__construct($tempTable);
+
+    // set the import components array as a class property
     $this->setImportComponents();
+
+    // @todo Set the classes' import specification
+  }
+
+  /**
+   * Method to import staff from an excel file.
+   */
+  public function importStaffFromExcel()
+  {
+    // @todo call agImportHelper (parent) import excel method
+    // @todo Build temp table here --^
+
+    // start our iterator and initialize our select query
+    $this->tempToRaw($this->buildTempSelectQuery());
+  }
+
+  /**
+   * Method to dynamically build a (mostly) static tempSelectQuery
+   * @return <type>
+   */
+  protected function buildTempSelectQuery()
+  {
+    $query = sprintf(
+      'SELECT t.*
+         FROM %s AS t',
+      $this->tempTable);
+
+    return $query;
+  }
+  
+  /**
+   * Method to set the classes' import specification
+   */
+  protected function setImportSpec()
+  {
+    //@todo build an import spec
   }
 
   /**
@@ -40,6 +83,8 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => TRUE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
     $this->importComponents[] = array( 'component' => 'phone', 'throwOnError' => TRUE, 'method' => 'setEntityPhone', 'helperClass' => 'agEntityPhoneHelper');
   }
+
+
 
   /**
    * Method to set / create new entities, persons, and staff.

@@ -27,7 +27,7 @@
  * @todo Add debug levels feature
  * @todo Improve Doctrine MySQL PDO exception reporting
  */
-class AgStaffImportXLS extends AgImportXLS
+class agStaffImportXLS extends agImportXLS
 {
 
   function __construct()

@@ -18,8 +18,7 @@ abstract class agImportNormalization extends agImportHelper
 {
   public    $errorMsg,
             $summary = array(),
-            $warningMessages = array(),
-            $nonprocessedRecords = array();
+            $warningMessages = array();
   
   protected $iterData,
             $errThreshold,
@@ -29,7 +28,7 @@ abstract class agImportNormalization extends agImportHelper
             // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
             $importComponents = array(),
 
-           //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue), success => boolean) 
+           //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue)) 
             $importData = array();
 
   /**
@@ -38,8 +37,14 @@ abstract class agImportNormalization extends agImportHelper
    */
   public function __construct($tempTable)
   {
+    // DO NOT REMOVE
     parent::__construct($tempTable);
+
+    // pick up some global params
     $this->errThreshold = agGlobal::getParam('import_error_threshold');
+
+    // set up our iterator data
+    $this->resetIterData();
   }
 
   public function __destruct()
@@ -49,6 +54,9 @@ abstract class agImportNormalization extends agImportHelper
 //    $this->conn->close();
   }
 
+  /**
+   * Method to reset the iterator data (used in the initial call of an import and at construction)
+   */
   protected function resetIterData()
   {
     $this->iterData = array();
@@ -58,6 +66,16 @@ abstract class agImportNormalization extends agImportHelper
     $this->iterData['batchPosition'] = 0;
     $this->iterData['batchCount'] = 0;
     $this->iterData['batchSize'] = agGlobal::getParam('default_batch_size');
+  }
+
+  /**
+   * Method to reset the import data array
+   */
+  protected function resetImportData()
+  {
+    $this->importData = array();
+    $this->importData['_rawData'] = array();
+    $this->importData['primaryKeys'] = array();
   }
 
   /**
@@ -86,42 +104,114 @@ abstract class agImportNormalization extends agImportHelper
 
     // mark this batch as failed
     $this->executePdoQuery($conn, $query,
-      array($success, array_keys($this->importData[$_rawData])));
-  }
-
-  protected function processFailedBatch()
-  {
-    
-  }
-
-  protected function removeTempSuccesses()
-  {
-    //@todo make this
-  }
-
-  protected function returnFailures()
-  {
-    //@todo make this; it should potentially be auto-called?
+      array($success, array_keys($this->importData)));
   }
 
   /**
-   * Method to fetch the next raw data record from the PDO object
+   * Method to remove the successes from our data table so we can return just the unprocessed and
+   * failed.
    */
-  public function fetchNextTemp()
+  protected function removeTempSuccesses()
   {
-    // make this and return the number remaining; if err return -1
-    // also should do the modulus check and execute processRaw if it hits
+    // grab our connection object
+    $conn =& $this->getConnection('temp_write');
+
+    // create our query statement
+    $q = sprintf('DELETE FROM %s WHERE %s = 1;', $this->tempTable, $this->successColumn);
+
+    // remove the successes from our data table so we can return just the unprocessed and failed
+    $this->executePdoQuery($conn, $query);
+  }
+
+  public function getImportStatistics()
+  {
+    // @todo write method to return import statistics
+  }
+
+  public function concludeImport()
+  {
+    // @todo write the meta-method to clear an import and return import statistics
+  }
+
+  public function getFailedRecords()
+  {
+    //@todo write method to instantiate / return an excel file with failed records
+  }
+
+  public function clearImport()
+  {
+    // @todo write method to clear/reset import but note in documentation that it will potentially
+    // leave the class unusable
+  }
+
+  /**
+   * Method to load and process a batch of records.
+   * @return The number of records left to process
+   */
+  public function processBatch()
+  {
+    // load up a batch into the helper
+    $this->fetchNextBatch();
+
+    // clean, normalize, import, etc
+    $continue = $this->processRawBatch();
+
+    // determine what we're going to return
+    if ($continue)
+    {
+      $remaining = ($this->iterData['fetchCount'] - $this->iterData['fetchPosition']);
+    }
+    else
+    {
+      $remaining = -1;
+    }
+
+    return $remaining;
+  }
+
+  /**
+   * Method to fetch the next batch of raw data records from the PDO object
+   */
+  protected function fetchNextBatch()
+  {
+    // first, blow out the existing rawData
+    $this->resetImportData();
+
+    // these aren't required but make the code more readable
+    $batchSize = $this->iterData['batchSize'];
+    $fetchPosition =& $this->iterData['fetchPosition'];
+    $batchPosition =& $this->iterData['batchPosition'];
+
+    // get our PDO object
+    $pdo =& $this->_PDO[$this->tempToRawQueryName];
+
+    // fetch the data up until it ends or we hit our batchsize limit
+    while (($row = $pdo->fetch()) && (($fetchPosition % $batchSize) != 0))
+    {
+      // modify the record just a little
+      $rowId = $row['id'];
+      unset($row['id']);
+      unset($row[$this->successColumn]);
+
+      // add it to import data array and iterate our counter
+      $this->importData[$rowId]['_rawData'] = $row;
+      $fetchPosition++;
+    }
+
+    // iterate our batch counter too
+    $batchPosition++;
   }
 
   /**
    * Method to initiate the import query from temp
+   * @param $query A SQL query string
    */
   protected function tempToRaw($query)
   {
     $conn =& $this->getConnection('temp_read');
 
     // first get a count of what we need from temp
-    $ctQuery = sprintf('SELECT COUNT(t.*) FROM %s AS t;', $this->tempTable);
+    $ctQuery = sprintf('SELECT COUNT(t.*) FROM (%s) AS t;', $query);
     $ctResults = $this->executePdoQuery($conn, $ctQuery);
     $this->iterData['fetchCount'] = $ctResults::fetchColumn();
     
@@ -132,17 +222,47 @@ abstract class agImportNormalization extends agImportHelper
     $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
   }
 
-  protected function loadRaw()
+  /**
+   * Method to process a batch of rawdata.
+   * @return boolean Whether or not this batch has breached our error threshold and should or
+   * should not continue
+   * @todo caller to clean, validate, normalize
+   */
+  protected function processRawBatch()
   {
-    // @todo make this method to take in the PDO fetch results and add it to rawData
+    // our results
+
+    // clean our rawData to make it free of zero length strings and related
+    $this->clearZLS();
+
+    // normalize and insert our data
+    $normalizeSuccess = $this->normalizeData();
+
+    // update our temp table
+    $this->updateTempSuccess($normalizeSuccess);
+
+    // check our error threshold to make sure we're still golden to continue
+    $continue = $this->checkErrThreshold();
+    return $continue;
   }
 
-  protected function processRaw()
+
+  /**
+   * Method to check against our error threshold and update whether we should continue or not
+   */
+  protected function checkErrThreshold()
   {
-    // @todo caller to clean, validate, normalize, and strip (at the beginning eg _rawData=array()
-    // _rawData
+    $this->iterData['errorCount'] = ($this->iterData['errorCount'] + count($this->importData));
+
+    // continue only if our error count is below our error threshold
+    $continue = ($this->iterData['errorCount'] <= $this->errThreshold) ? TRUE : FALSE;
+    return $continue;
   }
 
+  /**
+   * Method to normalize and insert raw data. Returns TRUE if successful or FALSE if unsucessful.
+   * @return boolean Boolean value indicating whether the import was successful or unsucessful.
+   */
   protected function normalizeData()
   {
     $err = NULL ;
@@ -212,17 +332,17 @@ abstract class agImportNormalization extends agImportHelper
 
     if (is_null($err))
     {
-      // @todo do final records keeping here
+      // return true if successful
+      return TRUE;
     }
     else
     {
       // our rollback and error logging happen regardless of whether this is an optional component
       sfContext::getInstance()->getLogger()->err($errMsg) ;
-
       $conn->rollback();
 
-      // now we execute our batch cleanup
-      $this->processFailedBatch();
+      // return false if not
+      return FALSE;
     }
   }
 
