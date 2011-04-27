@@ -56,8 +56,8 @@ class agScenarioWizard
      * generates a series of list items
      */
     sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
-    $list = '<div id="stepper"><div>' . $this->steps[$this->getStep()]['title'] . '</div>';
-    $list .= '<ul class="stepperList">';
+    $list = '<div id="stepper"><div class="image"></div><div>' . $this->steps[$this->getStep()]['title'] . '</div>';
+    $list .= '<ul class="stepperList" style="border-bottom: 1px solid #333">';
     foreach ($this->steps as $id => $data) {
       if ($id < $this->getStep()){
         $style = 'completed';

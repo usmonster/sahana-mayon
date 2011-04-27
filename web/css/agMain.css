@@ -1452,19 +1452,22 @@ a.signin.menu-open span {
 
 #stepper {
   float:left;
-  height: 40px;
+  height: 50px;
   width: 750px;
   margin: auto;
   border: solid 1px #dadada;
   border: solid 1px #dadada;
-  -moz-border-radius-bottomleft: 15px;
-  -moz-border-radius-bottomright: 15px;
-  background-image: url('../images/wizard.ico');
+  -moz-border-radius: 5px 5px 15px 15px;
+  -webkit-border-radius: 5px 5px 15px 15px;
+  /*background-image: url('../images/wizard.ico');*/
+    width: 550px;
   background-repeat: no-repeat;
+background-color:#e9eef4
 }
 
 #stepper ul {
   list-style-type: none;
+  margin-top:0;
 }
 
 #stepper ul li {
@@ -1473,20 +1476,53 @@ a.signin.menu-open span {
   font-weight:bold;
   padding-left: 10px;
   padding-right: 10px;
+  color: #848484;
 }
 
 #stepper ul li.current {
- color:red;
- background-color:greenyellow;
+
+ background-color: #dadada;
+ border-bottom: 1px solid #333;
+ border-left: 1px solid #333;
+ border-right: 1px solid #333;
+ border-top: 1px solid #dadada;
+ color: #ff6600;
+   -moz-border-radius: 0px 0px 6px 6px;
+  -webkit-border-radius: 0px 0px 6px 6px;
 }
 
 #stepper ul li.completed {
- color:blue;
- background-color:greenyellow;
+ color:green;
+ 
 }
 
+#stepper ul li.completed a{
+ color:green;
+text-decoration: none;
+outline: none;
+}
+
+
+
 #stepper div{
- float: right;
+text-align: right;
+padding: 5px;
+ background-color: #dadada;
+ border-color: #dadada;
+ color: #666;
+ font-weight: bold;
+}
+
+
+#stepper div.image{
+float:left;
+background-image: url('../images/wizard.ico');
+background-repeat: no-repeat;
+padding: 5px;
+margin-left:5px;
+margin-top:3px;
+width:10px;
+height:10px;
 }
 
 .empty{
