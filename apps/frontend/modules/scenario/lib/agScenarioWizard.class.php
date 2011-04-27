@@ -20,13 +20,13 @@ class agScenarioWizard
   function __construct(&$WIZARD_OP)
   {
     $this->steps = array(
-      1 => array('title' => '1. Name and Describe Scenario', 'url' => 'scenario/meta'),
-      2 => array('title' => '2. Define needed Staff and Facility Types', 'url' => 'scenario/resourcetypes'),
-      3 => array('title' => '3. Create Facility Groups', 'url' => 'scenario/fgroup'),
-      4 => array('title' => '4. Staff Resource Requirements', 'url' => 'scenario/staffresources'),
-      5 => array('title' => '5. Shift Templates & Shift Definition', 'url' => 'scenario/shifttemplates'),
-      6 => array('title' => '6. Shift Review ', 'url' => 'scenario/shifts'),
-      7 => array('title' => '7. Create Staff Pools', 'url' => 'scenario/staffpool' )
+      1 => array('title' => 'Scenario Creation Wizard: Name and Describe Scenario', 'url' => 'scenario/meta'),
+      2 => array('title' => 'Scenario Creation Wizard: Define needed Staff and Facility Types', 'url' => 'scenario/resourcetypes'),
+      3 => array('title' => 'Scenario Creation Wizard: Create Facility Groups', 'url' => 'scenario/fgroup'),
+      4 => array('title' => 'Scenario Creation Wizard: Staff Resource Requirements', 'url' => 'scenario/staffresources'),
+      5 => array('title' => 'Scenario Creation Wizard: Shift Templates & Shift Definition', 'url' => 'scenario/shifttemplates'),
+      6 => array('title' => 'Scenario Creation Wizard: Shift Review ', 'url' => 'scenario/shifts'),
+      7 => array('title' => 'Scenario Creation Wizard: Create Staff Pools', 'url' => 'scenario/staffpool' )
     );
 
     $this->WIZARD_OP = &$WIZARD_OP;
@@ -57,7 +57,7 @@ class agScenarioWizard
      */
     sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
     $list = '<div id="stepper"><div class="image"></div><div>' . $this->steps[$this->getStep()]['title'] . '</div>';
-    $list .= '<ul class="stepperList" style="border-bottom: 1px solid #333">';
+    $list .= '<ul class="stepperList">';
     foreach ($this->steps as $id => $data) {
       if ($id < $this->getStep()){
         $style = 'completed';
@@ -77,7 +77,7 @@ class agScenarioWizard
       else
         $list = $list . '<li class="' . $style . '" title="' . $data['title'] . '">' . '<a href="' . $link . '">' . $id . '</a></li>';
     }
-    $list = $list . "</ul></div><div style=\"clear:both;\"></div><br />";
+    $list = $list . "<li style=\"float:right; font-size:10px; color: #fff \" class=\"altLItext\"></li></ul></div><div style=\"clear:both;\"></div><br />";
 
     return $list;
 

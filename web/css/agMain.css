@@ -1452,17 +1452,16 @@ a.signin.menu-open span {
 
 #stepper {
   float:left;
-  height: 50px;
+  height: 55px;
   width: 750px;
   margin: auto;
   border: solid 1px #dadada;
-  border: solid 1px #dadada;
-  -moz-border-radius: 5px 5px 15px 15px;
-  -webkit-border-radius: 5px 5px 15px 15px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   /*background-image: url('../images/wizard.ico');*/
     width: 550px;
   background-repeat: no-repeat;
-background-color:#e9eef4
+  background-color:#a1e2ff;
 }
 
 #stepper ul {
@@ -1470,23 +1469,31 @@ background-color:#e9eef4
   margin-top:0;
 }
 
+#stepper ul.stepperList {
+ border-bottom: 1px solid #00b4cc;
+ margin-left: -25px;
+}
+
+
+
 #stepper ul li {
   float: left;
   font-size: 1em;
   font-weight:bold;
   padding-left: 10px;
   padding-right: 10px;
+  padding-top: 2px;
   color: #848484;
 }
 
 #stepper ul li.current {
 
- background-color: #dadada;
- border-bottom: 1px solid #333;
- border-left: 1px solid #333;
- border-right: 1px solid #333;
- border-top: 1px solid #dadada;
- color: #ff6600;
+ background-color: #00dffc;
+ border-bottom: 1px solid #00b4cc;
+ border-left: 1px solid #00b4cc;
+ border-right: 1px solid #00b4cc;
+ border-top: 1px solid #00dffc;
+ color: red;
    -moz-border-radius: 0px 0px 6px 6px;
   -webkit-border-radius: 0px 0px 6px 6px;
 }
@@ -1507,12 +1514,13 @@ outline: none;
 #stepper div{
 text-align: right;
 padding: 5px;
- background-color: #dadada;
- border-color: #dadada;
- color: #666;
+ background-color: #00dffc;
+ border-color: #00b4cc;
+ color: #fff;
  font-weight: bold;
 }
 
+ 
 
 #stepper div.image{
 float:left;

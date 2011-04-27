@@ -3,6 +3,7 @@
   $sf_response->setCookie('wizardOp', json_encode($wizardOp));
   include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
+ 
 <?php
   use_javascript('agMain.js');
   use_helper('agTemplate');

@@ -135,3 +135,11 @@ function pointerCheck(pointer) {
     return null;
   }
 }
+
+$(document).ready(function() {
+    $("ul.stepperList li").live('mouseover',function(){
+        $("li.altLItext").text($(this).attr('title'))
+        }).live('mouseout',function(){
+        $("li.altLItext").text('')
+        });
+});
