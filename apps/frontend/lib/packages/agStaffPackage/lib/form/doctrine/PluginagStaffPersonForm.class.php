@@ -75,9 +75,9 @@ class PluginagStaffPersonForm extends agPersonForm
     }
     $staffContainerContainer = new sfForm();
 
-    $staffConDeco = new agWidgetFormSchemaFormatterSubContainer($staffContainerContainer->getWidgetSchema());
-      $staffContainerContainer->getWidgetSchema()->addFormFormatter('staffConDeco', $staffConDeco);
-      $staffContainerContainer->getWidgetSchema()->setFormFormatterName('staffConDeco');
+//      $staffConDeco = new agWidgetFormSchemaFormatterSubContainer($staffContainerContainer->getWidgetSchema());
+//      $staffContainerContainer->getWidgetSchema()->addFormFormatter('staffConDeco', $staffConDeco);
+//      $staffContainerContainer->getWidgetSchema()->setFormFormatterName('staffConDeco');
 
 
     $restrictedOptions = array();
@@ -99,9 +99,9 @@ class PluginagStaffPersonForm extends agPersonForm
         if (isset($this->staff_id)) {
           $staffResourceForm->setDefault('staff_id', $this->staff_id);
         }
-          $custDeco = new agWidgetFormSchemaFormatterInline($staffResourceForm->getWidgetSchema());
-    $staffResourceForm->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
-    $staffResourceForm->getWidgetSchema()->setFormFormatterName('custDeco');
+          $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($staffResourceForm->getWidgetSchema());
+          $staffResourceForm->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
+          $staffResourceForm->getWidgetSchema()->setFormFormatterName('custDeco');
 
         $staffContainerContainer->embedForm($i, $staffResourceForm);
         $staffContainerContainer->getWidgetSchema()->setLabel($i, false);
@@ -112,6 +112,9 @@ class PluginagStaffPersonForm extends agPersonForm
       $staffContainerForm->getWidgetSchema()->setLabel('type', false);
     } else {
       $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm();
+      $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($staffResourceForm->getWidgetSchema());
+      $staffResourceForm->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
+      $staffResourceForm->getWidgetSchema()->setFormFormatterName('custDeco');
       //unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
       if (isset($this->staff_id)) {
         $staffResourceForm->setDefault('staff_id', $this->staff_id);

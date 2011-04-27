@@ -12,7 +12,11 @@
       <h3>Staff Information</h3>
       <div class="infoHolder">
         <div class="displayBlock">
-  <?php echo $form['staff'] ?>
+  <?php echo $form['staff']['status'] ?>
+        </div>
+        <div class="displayInline">
+
+  <?php echo $form['staff']['type'] ?>        
         </div>
         <td class="set100">
           <a href="<?php echo url_for('staff/new')?>" name="groupStatus" class="textToForm linkText" id="staff_id_1">add</a></td>
