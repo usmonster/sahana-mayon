@@ -63,7 +63,8 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
           //sfWidgetFormDoctrineChoice(array
           //  ('multiple' => true, 'model' => 'agFacilityResource', 'expanded' => false),
           //   array('class' => 'widthAndHeight300')), //this will be hidden
-          'ag_facility_resource_order' => new sfWidgetFormInputHidden(),
+//          'ag_facility_resource_order' => new sfWidgetFormInputHidden(),
+          'values' => new sfWidgetFormInputHidden(),
         ////sfWidgetFormChoice(array
         //  ('choices' => $currentoptions,'multiple' => true),
         //  array('class' => 'widthAndHeight300')) //this will be hidden

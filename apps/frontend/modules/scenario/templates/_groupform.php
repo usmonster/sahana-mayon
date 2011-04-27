@@ -67,12 +67,11 @@ use_javascript('tooltip.js'); ?>
   function serialTran() {
     var out = new Object;
     $('.serialIn').each(function(index) {
-//      out[index] = $(this).attr('id').replace('facility_resource_id_', '');
-//      out[index] = new array($(this).attr('id').replace('facility_resource_id_', ''), $(this).find('input :input'));
-      out.frId = $(this).attr('id').replace('facility_resource_id_', '');
-      out.actSeq = $(this).find('input').value();
-      $("#ag_scenario_facility_group_ag_facility_resource_order").val(JSON.stringify(out));
+//      out[$(this).attr('id')] = ($(this).find('input')).val();
+      out[index] = {'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
+                    'actSeq' : ($(this).find('input')).val()}
     });
+    $("#ag_scenario_facility_group_values").val(JSON.stringify(out));
   }
 //  function serialTran() {
 //    var out = Array();

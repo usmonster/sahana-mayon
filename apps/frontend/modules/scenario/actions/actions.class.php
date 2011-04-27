@@ -768,7 +768,8 @@ class scenarioActions extends agActions
 
 //SAVE
       $this->groupform->bind($request->getParameter($this->groupform->getName()), $request->getFiles($this->groupform->getName()));
-
+      $a = $request->getParameter('ag_scenario_facility_group');
+      $b = json_decode($a['values'], true);
       if ($this->groupform->isValid()) {
         $ag_scenario_facility_group = $this->groupform->save();          // The Group object has been created here.
         LuceneRecord::updateLuceneRecord($ag_scenario_facility_group);
