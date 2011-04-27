@@ -23,7 +23,7 @@ foreach($displayColumns as $key => $value)
 
 if($column == 'fn')
 {
-  echo '<a class="linkButton" href="' . url_for($target_module . '/show?id=' . $data['id']) . '">' . $value . '</a>';
+  echo '<a class="linkButton" href="' . url_for($target_module . '/edit?id=' . $data['id']) . '">' . $value . '</a>';
 }else{
   echo $value;
 }
