@@ -30,26 +30,47 @@ class agStaffPoolFilterForm extends sfForm
 
   public function setup()
   {
-    //$this->widgetSchema->setNameFormat('staff_pool[%s]');
+      $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
+      if (count($dsrt) > 1) {
+        $defaultStaffResourceTypes = $dsrt;
+      } else {
+        $defaultStaffResourceTypes =
+                agDoctrineQuery::create()
+                ->select('srt.id, srt.staff_resource_type')
+                ->from('agStaffResourceType srt')
+                ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      }
+      $defaultStaffTypes = array('' => '');
+      foreach($defaultStaffResourceTypes as $dsrt){
+        $defaultStaffTypes[$dsrt['srt_id']] = $dsrt['srt_staff_resource_type'];
+      }
 
-    $this->setWidgets(array('agStaffResourceType.staff_resource_type' => new sfWidgetFormDoctrineChoice(
-          array(
-            'model' => 'agStaffResourceType',
-            'method' => 'getStaffResourceType',
-            'label' => 'Staff Type',
-
-            'add_empty' => true,
-            //'query', agDoctrineQuery::create()->select('a.id')->from('agDefaultScenarioStaffResourceType a')->where('a.scenario_id = ?', $this->scenario_id)
-          ),array('class' => 'filter'))
+    $this->setWidgets(
+        array(
+            'agStaffResourceType.staff_resource_type' =>
+          new sfWidgetFormChoice(array('choices' => $defaultStaffTypes),
+              array('label' => 'Staff Type','class' => 'filter')
+              )
       , 'agOrganization.organization' => new sfWidgetFormDoctrineChoice(
           array(
             'model' => 'agOrganization',
             'method' => 'getOrganization',
             'label' => 'Staff Organization',
             'add_empty' => true
-      ),array('class' => 'filter')
+      ),array('class' => 'filter'))));
 
-          )));
+//          )));
+
+//    $this->setWidgets(array('agStaffResourceType.staff_resource_type' => new sfWidgetFormDoctrineChoice(
+//          array(
+//            'model' => 'agStaffResourceType',
+//            'method' => 'getStaffResourceType',
+//            'label' => 'Staff Type',
+//
+//            'add_empty' => true,
+//            //'query', agDoctrineQuery::create()->select('a.id')->from('agDefaultScenarioStaffResourceType a')->where('a.scenario_id = ?', $this->scenario_id)
+//          ),array('class' => 'filter'))
+
 //set up inputs for form
 
   }

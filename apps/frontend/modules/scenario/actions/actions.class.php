@@ -865,7 +865,7 @@ class scenarioActions extends agActions
 //->andWhere('st.scenario_id = ' $this->scenario_id) //this makes a fun cartesian product
             ->distinct()  //need to be keyed by the possibly existing shift template record..
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
-    $this->newshifttemplateform = new agSingleShiftTemplateForm(); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
+    $this->newshifttemplateform = new agSingleShiftTemplateForm($this->scenario_id); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
 //for shift template workflow,
 //get current facility_staff_resource,
 //get the facility resource type ids and staff_resource_type
