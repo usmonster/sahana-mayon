@@ -700,6 +700,54 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
+   * Method to return address contact type ids from address contact type values.
+   * @param array $addressTypes An array of address_contact_types
+   * @return array An associative array of address contact type ids keyed by address contact type.
+   */
+  static public function getAddressContactTypeIds($addressTypes)
+  {
+    return agDoctrineQuery::create()
+      ->select('act.address_contact_type')
+          ->addSelect('act.id')
+        ->from('agAddressContactType act')
+        ->whereIn('act.address_contact_type', $addressTypes)
+      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
+   * Method to return address element ids from address element values.
+   * @param array $addressElements An array of address_elements
+   * @return array An associative array of address element ids keyed by address element.
+   */
+  static public function getAddressElementIds($addressElements)
+  {
+    return agDoctrineQuery::create()
+      ->select('ae.address_element')
+          ->addSelect('ae.id')
+        ->from('agAddressElement ae')
+        ->whereIn('ae.address_element', $addressElements)
+      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+  
+  /**
+   * Method to return address standard ids from address standard values.
+   * @param array $addressStandards An array of address_standards
+   * @return array An associative array of address standard ids keyed by address standard.
+   */
+  static public function getAddressStandardIds($addressStandards)
+  {
+    return agDoctrineQuery::create()
+      ->select('as.address_standard')
+          ->addSelect('as.id')
+        ->from('agAddressStandard as')
+        ->whereIn('as.address_standard', $addressStandards)
+      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
    * Method to take in address components and return address ids, inserting new addresses OR
    * address components as necessary.
    *

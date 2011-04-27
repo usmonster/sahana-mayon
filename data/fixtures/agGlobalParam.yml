@@ -90,7 +90,7 @@ agGlobalParam:
     id: 18
     agHost: localhost
     datapoint: enforce_strict_contact_formatting
-    value: 0
+    value: 1
   import_error_threshold:
     id: 19
     agHost: localhost
@@ -121,3 +121,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_shift_max_staff_repeat_shifts
     value: 0
+  staff_import_address_standard:
+    id: 25
+    agHost: localhost
+    datapoint: staff_import_address_standard
+    value: us standard

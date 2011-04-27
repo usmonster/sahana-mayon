@@ -308,6 +308,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
    * @param boolean $keepHistory An optional boolean value to determine whether old entity contacts
    * (eg, those stored in the database but not explicitly passed as parameters), will be retained
    * and reprioritized to the end of the list, or removed altogether.
+   * @param boolean $enforceStrict A boolean to determine whether or not to check for data validation.
    * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
    * exception or be silently ignored (rendering an phone 'optional'). Defaults to the class
    * property of the same name.
@@ -317,8 +318,8 @@ class agEntityPhoneHelper extends agEntityContactHelper
    */
   public function setEntityPhone( $entityContacts,
                                   $keepHistory = NULL,
-                                  $throwOnError = NULL,
                                   $enforceStrict = NULL,
+                                  $throwOnError = NULL,
                                   Doctrine_Connection $conn = NULL)
   {
     // some explicit declarations at the top
@@ -365,14 +366,22 @@ class agEntityPhoneHelper extends agEntityContactHelper
           if (!$isValidPhone)
           {
             $invalidData[$entityId][] = $contact;
-            if (count($entityContacts[$entityId]) == 1)
+
+            // if we're being strict with error throws, let's throw on a problem
+            if ($throwOnError)
             {
-              unset($entityContacts[$entityId]);
+              $errMsg = sprintf('Phone \'%s\' failed the phone formatting test.', $contact[1][0]);
+
+              // log our error
+              sfContext::getInstance()->getLogger()->err($errMsg);
+
+              // throw the exception we promised in our boolean
+              throw new Exception($errMsg);
             }
-            else
-            {
-              unset($entityContacts[$entityId][$index]);
-            }
+
+            if (count($entityContacts[$entityId]) == 1) { unset($entityContacts[$entityId]); }
+            else { unset($entityContacts[$entityId][$index]); }
+
             continue;
           }
         }

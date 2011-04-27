@@ -80,8 +80,9 @@ class agStaffImportNormalization extends agImportNormalization
     // setEntity creates entity, person, and staff records.
     $this->importComponents[] = array( 'component' => 'entity', 'throwOnError' => TRUE, 'method' => 'setEntities');
     $this->importComponents[] = array( 'component' => 'personName', 'throwOnError' => TRUE, 'method' => 'setPersonNames', 'helperClass' => 'agPersonNameHelper');
-    $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => TRUE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
-    $this->importComponents[] = array( 'component' => 'phone', 'throwOnError' => TRUE, 'method' => 'setEntityPhone', 'helperClass' => 'agEntityPhoneHelper');
+    $this->importComponents[] = array( 'component' => 'phone', 'throwOnError' => FALSE, 'method' => 'setEntityPhone', 'helperClass' => 'agEntityPhoneHelper');
+    $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => FALSE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
+    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
   }
 
 
@@ -144,7 +145,7 @@ class agStaffImportNormalization extends agImportNormalization
     $entities = $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_ARRAY);
 
     // we no longer need this array (used for the ->whereIN)
-    unset($rawEntityIds) ;
+    unset($rawEntityIds);
 
     //loop foreach $entities member
     foreach ($entities as $entityId => &$entityData)
@@ -217,7 +218,7 @@ class agStaffImportNormalization extends agImportNormalization
       {
         $warnMsg = sprintf("Bad entity id (%s).  Generated a new entity id (%s).",
           $rawData['entity_id'], $pKeys['entity_id']);
-        sfContext::getInstance()->getLogger()->warning($warnMsg) ;
+        sfContext::getInstance()->getLogger()->warning($warnMsg);
       }
     }
   }
@@ -326,7 +327,7 @@ class agStaffImportNormalization extends agImportNormalization
     $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
 
     // execute the helper and finish
-    $results = $eeh->setEntityEmail($entityEmails, $keepHistory, $throwOnError, $enforceStrict, $conn);
+    $results = $eeh->setEntityEmail($entityEmails, $keepHistory, $enforceStrict, $throwOnError, $conn);
     unset($entityEmails);
 
     // @todo do your results reporting here
@@ -382,8 +383,99 @@ class agStaffImportNormalization extends agImportNormalization
     $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
 
     // execute the helper and finish
-    $results = $eph->setEntityPhone($entityPhones, $keepHistory, $throwOnError, $enforceStrict, $conn);
+    $results = $eph->setEntityPhone($entityPhones, $keepHistory, $enforceStrict, $throwOnError, $conn);
     unset($entityPhones);
+
+    // @todo do your results reporting here
+  }
+
+  /**
+   * Method to set entity address during staff import.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   * control whether or not errors will be thrown.
+   */
+  public function setEntityAddress($throwOnError, Doctrine_Connection $conn)
+  {
+    // always start with any data maps we'll need so they're explicit
+    $importAddressTypes = array('work_address'=>'work', 'home_address'=>'home');
+    $importAddressElements = array('line_1' => 'line 1', 'line_2' => 'line 2', 'city' => 'city',
+                             'state' => 'state', 'zip' => 'zip5', 'country' => 'country');
+    $entityAddresses = array();
+    $results = array();
+
+    // let's get ahold of our helper object since we're going to use him/her a lot
+    $eah =& $this->helperObjects['agEntityAddressHelper'];
+
+    // get our address types and map them back to the importAddressTypes
+    $addressTypes = agAddressHelper::getAddressContactTypeIds(array_values($importAddressTypes));
+    foreach ($importAddressTypes as $key => &$val)
+    {
+      $val = $addressTypes[$val];
+    }
+    unset($val);
+    unset($addressTypes);
+
+    // get our address elements and map them back to the importAddressElements
+    $addressElements = agAddressHelper::getAddressElementIds(array_values($importAddressElements));
+    foreach ($importAddressElements as $key => &$val)
+    {
+      $val = $addressElements[$val];
+    }
+    unset($val);
+    unset($addressElements);
+
+    // get our address standards
+    $addressStandard = agGlobal::getParam('staff_import_address_standard');
+    $addressStandardId = agAddressHelper::getAddressStandardIds($addressStandard);
+    $addressStandardId = $addressStandardId[$addressStandard];
+
+    // loop through our raw data and build our entity address data
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      if (array_key_exists('entity_id', $rowData['primaryKeys']))
+      {
+        // this just makes it easier to use
+        $entityId = $rowData['primaryKeys']['entity_id'];
+
+        // we start with an empty array, devoid of types in case the entity has no types/values
+        $entityAddresses[$entityId] = array();
+        list($homeAddr, $workAddr) = array(array(), array());
+        foreach ($rowData['_rawData'] AS $element => $value)
+        {
+          if (preg_match('/^home_address/', $element))
+          {
+            $formElem = str_replace('home_address_', '', $element);
+            $elemId = $importAddressElements[$formElem];
+            $homeAddr[$importAddressElements[str_replace('home_address_', '', $element)]] = $value;
+          }
+          else if (preg_match('/^work_address/', $element))
+          {
+            $workAddr[$importAddressElements[str_replace('work_address_', '', $element)]] = $value;
+          }
+        }
+
+        if (count($homeAddr) > 0)
+        {
+          $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], array($homeAddr, $addressStandardId));
+        }
+        if (count($workAddr) > 0)
+        {
+          $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], array($workAddr, $addressStandardId));
+        }
+      }
+    }
+
+    // pick up some of our components / objects
+    $keepHistory = agGlobal::getParam('staff_import_keep_history');
+    $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
+
+    $addressGeo = array();
+    // @TODO Handle geo upserts along with address.
+
+    // execute the helper and finish
+    $results = $eah->setEntityAddress($entityAddresses, $addressGeo, $keepHistory,  $enforceStrict, $throwOnError, $conn);
+    unset($entityAddresses);
 
     // @todo do your results reporting here
   }
@@ -398,7 +490,17 @@ class agStaffImportNormalization extends agImportNormalization
                       'home_phone' => '',
                       'home_email' => 'mork.ork@home.com',
                       'work_phone' => '',
-                      'work_email' => ''
+                      'work_email' => '',
+                      'home_address_line_1' => '5 Silly Lane Street',
+                      'home_address_city' => 'Inwood',
+                      'home_address_state' => 'Bronze',
+                      'home_address_country' => 'United States of America',
+                      'work_address_line_1' => '5 Silly Man',
+                      'work_address_line_2' => 'In rooom 728',
+                      'work_address_city' => 'New York',
+                      'work_address_state' => 'NY',
+                      'work_address_zip' => '10013',
+                      'work_address_country' => 'United States of America'
                      );
 
     $_rawData2 = array('entity_id' => '183',
@@ -408,7 +510,12 @@ class agStaffImportNormalization extends agImportNormalization
                       'mobile_phone' => '',
                       'home_phone' => '(222) 222-1234',
                       'home_email' => '',
-                      'work_phone' => '(212) 234-2344 x234'
+                      'work_phone' => '(212) 234-2344 x234',
+                      'work_address_line_1' => '235 President Pl',
+                      'work_address_city' => 'New York',
+                      'work_address_state' => 'NY',
+                      'work_address_zip' => '11001',
+                      'work_address_country' => 'United States of America'
                      );
 
     $_rawData3 = array('entity_id' => '11',

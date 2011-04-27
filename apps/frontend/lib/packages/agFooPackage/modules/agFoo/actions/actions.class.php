@@ -19,12 +19,12 @@ class agFooActions extends agActions
 
 //    $addressHelper = new agEntityAddressHelper();
 ////    $addressHelper= agEntityAddressHelper::init();
-//    $addressByType = $addressHelper->getEntityAddressByType(array(1, 2, 3, 4, 5), FALSE, FALSE);
+//    $addressByType = $addressHelper->getEntityAddressByType(array(2, 3, 181, 182, 183, 184, 185), FALSE, FALSE, agAddressHelper::ADDR_GET_TYPE);
 ////    $addressByType = $addressHelper->getEntityAddressByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agAddressHelper::ADDR_GET_STRING);
 //    $addressAll = $addressHelper->getEntityAddress(array(1, 2, 3, 4, 5), TRUE, FALSE);
 ////    $addressAll = $addressHelper->getEntityAddress(array(1, 2, 3, 4, 5), TRUE, FALSE, agAddressHelper::ADDR_GET_STRING);
 //    $addressByComponent = $addressHelper->getEntityAddressByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agAddressHelper::ADDR_GET_TYPE);
-////    unset($addressHelper);
+//    unset($addressHelper);
 //    echo 'Address By Type: <br />';
 //    print_r($addressByType);
 //    echo '<br /><br />Address all: <br />';
