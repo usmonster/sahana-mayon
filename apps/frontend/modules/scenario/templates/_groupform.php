@@ -237,8 +237,6 @@ echo url_for
     </span>
   </div>
   <br />
-
-  <a href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>" class="linkButton">Back</a>
   <input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
   <input class="linkButton" type="submit" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran()"/>
 

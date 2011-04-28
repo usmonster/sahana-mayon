@@ -102,7 +102,6 @@ this is in here as a place holder for future development to
   ?>
   <br />
   <br />
-  <a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id) ?>" class="linkButton">Back</a> 
   <input class="linkButton" type="submit" value="Save" />
   <input class="linkButton" type="submit" value="Save and Continue" name="Continue"/>
 </form>

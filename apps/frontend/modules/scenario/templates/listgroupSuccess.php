@@ -24,4 +24,4 @@
         </tbody>
       </table>
 <hr />
-       <a href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>" class="linkButton">Back</a> <a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id) ?>" class="linkButton" title="New Facility Group">New</a>
+    <a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id) ?>" class="linkButton" title="New Facility Group">New</a>
