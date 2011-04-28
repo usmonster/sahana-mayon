@@ -16,18 +16,18 @@
 abstract class agEventHandler
 {
   // used for event reporting
-  const       EVENT_FATAL = 'fatal';
-  const       EVENT_OK = 'ok';
-  const       EVENT_ERR = 'err';
-  const       EVENT_WARN = 'warn';
-  const       EVENT_INFO = 'info';
+  const       EVENT_FATAL = 'FATAL';
+  const       EVENT_OK = 'OK';
+  const       EVENT_ERR = 'ERR';
+  const       EVENT_WARN = 'WARN';
+  const       EVENT_INFO = 'INFO';
 
   private     $events,
               $lastEvent,
               $errCount,
               $logLevelValues = array(),
               $logLevelValue,
-              $logEventLevel = EVENT_ERR;
+              $logEventLevel = self::EVENT_ERR;
 
   /**
    * This class's constructor.
@@ -81,10 +81,13 @@ abstract class agEventHandler
    */
   public function setLogEventLevel($logEventLevel)
   {
-    if (! defined("self::$logEventLevel"))
+    $const = 'self::EVENT_' . $logEventLevel;
+    if (! defined($const))
     {
-      throw new Exception("Undefined event constant: $eventType.");
+      $e = 'Undefined event constant: ' . $logEventLevel;
+      throw new Exception($e);
     }
+
     $this->logLevelValue = $this->logLevelValues[$logEventLevel];
     $this->logEventLevel = $logEventLevel;
   }
@@ -98,9 +101,11 @@ abstract class agEventHandler
   private function logEvent($eventType, $eventMsg)
   {
     // just to make sure we only keep to our defined event types
-    if (! defined("self::$eventType"))
+    $const = 'self::EVENT_' . $eventType;
+    if (! defined($const))
     {
-      throw new Exception("Undefined event constant: $eventType.");
+      $e = 'Undefined event constant: ' . $eventType;
+      throw new Exception($e);
     }
 
     // if our log level has been set high enough to capture these events, do so
@@ -164,8 +169,8 @@ abstract class agEventHandler
     $this->errCount = $this->errCount + $errCount;
 
     // dump all of our events to the symfony logger
-    sfContext::getInstance()->getLogger()->err("Import failed at: {$errMsg}");
-    sfContext::getInstance()->getLogger()->err("Dumping event log to file.");
+    $err = 'Import failed at: ' . $errMsg . PHP_EOL . 'Dumping event log to file.';
+    sfContext::getInstance()->getLogger()->err($err);
     $this->dumpEventsToFile('err');
 
     throw new Exception($errMsg);

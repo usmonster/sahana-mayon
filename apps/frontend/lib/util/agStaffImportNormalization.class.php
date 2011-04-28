@@ -133,10 +133,10 @@ class agStaffImportNormalization extends agImportNormalization
     $columnName = str_replace(' ', '_', trim(strtolower($columnName)));
 
     // many db's complain about numbers prepending column names
-    $columnName = preg_replace('/\d+/', '', $columnName);
+    $columnName = preg_replace('/^\d+/', '', $columnName);
 
     // filter out all special characters
-    $columnName = preg_filter('/\W+/', '', $columnName);
+    $columnName = preg_replace('/[\W]/', '', $columnName);
 
     // reduce any duplicate underscore pairs we may have created
     $columnName = preg_replace('/__+/', '_', $columnName);
@@ -148,7 +148,7 @@ class agStaffImportNormalization extends agImportNormalization
       $this->logErr($errMsg, 1);
       throw new Exception($errMsg);
     }
-    return $columnHeaders;
+    return $columnName;
   }
 
   /**
@@ -176,7 +176,8 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'personName', 'throwOnError' => TRUE, 'method' => 'setPersonNames', 'helperClass' => 'agPersonNameHelper');
     $this->importComponents[] = array( 'component' => 'phone', 'throwOnError' => FALSE, 'method' => 'setEntityPhone', 'helperClass' => 'agEntityPhoneHelper');
     $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => FALSE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
-    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
+#    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
+#    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setStaffResourceOrganization');
   }
 
 
@@ -572,6 +573,17 @@ class agStaffImportNormalization extends agImportNormalization
     unset($entityAddresses);
 
     // @todo do your results reporting here
+  }
+
+  /**
+   * Method to set staff's resource and organization relations during staff import.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   * control whether or not errors will be thrown.
+   */
+  public function setStaffResourceOrg($throwOnError, Doctrine_Connection $conn)
+  {
+
   }
 
   public function testDataNorm()

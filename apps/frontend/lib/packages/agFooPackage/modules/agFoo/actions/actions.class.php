@@ -255,8 +255,8 @@ $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 =>
 //$obj->setRecordIds($array) ;
 
 
-$obj = new agGeoHelper() ;
-//$obj = agEntityAddressHelper::init() ;
+//$obj = new agGeoHelper() ;
+$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
 //$addr = $obj->getEntityAddress($array, FALSE, FALSE) ;
@@ -273,15 +273,15 @@ $obj = new agGeoHelper() ;
 //$results = $obj->updateAddressHashes($array) ;
 //$addrxnentsById($array) ;
 //$results = $obj->setAddresses($fakeAddr, TRUE) ;
-//$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, TRUE, TRUE) ;
+$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, TRUE, TRUE) ;
 //$results = $obj->exceptionTest() ;
 //$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
 //$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
-$obj->enforceGeoType = TRUE ;
+//$obj->enforceGeoType = TRUE ;
 
-$obj = new agStaffImportNormalization('temp_staffImport');
-$obj->testDataNorm();
-$results = 'a';
+//$obj = new agStaffImportNormalization('temp_staffImport');
+//$obj->testDataNorm();
+//$results = 'a';
 
 //$results = agScenarioStaffGeneratorHelper::executeStaffPreview(array(array('field'=>'agStaffResource.staff_resource_type_id', 'operator'=>'!=', 'condition'=>'4')));
 //array(array('condition'=>'4', 'operator'=>'!=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
