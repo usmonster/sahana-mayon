@@ -1399,6 +1399,9 @@ a.signin.menu-open span {
   color: #ffffff;
 }
 
+tr.sortHead th {
+  background: #A1E2FF;
+}
 .testTableParent tr.sortHead th a {
   color: #ffffff;
   text-decoration: none;
@@ -1406,7 +1409,7 @@ a.signin.menu-open span {
 }
 .testTableParent tr.sortHead th a:hover {
   color: #98ffb9;
-  text-shadow: 0px 0px 5px #ff8f00;
+  text-shadow: 0px 0px 5px #98ffb9;
 }
 
 .testTable caption, .testTableParent caption {

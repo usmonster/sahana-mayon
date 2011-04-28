@@ -7,12 +7,7 @@ use_javascript('tooltip.js'); ?>
 <?php //use_javascript('jquery.jscrollpane.js'); ?>
 <?php //use_javascript('mwheelIntent.js'); ?>
 <?php //use_stylesheet('jquery.jscrollpane.css'); ?>
-<script type="text/javascript">
-//  $(function()
-//  {
-//	$('.scroll-pane').jScrollPane();
-//  });
-  
+<script type="text/javascript">  
   $(function() {
     $("#available tbody tr").bind("dblclick", function(){
       return !$(this).remove().appendTo('#allocated tbody')
@@ -23,8 +18,8 @@ use_javascript('tooltip.js'); ?>
 
     $('.available tbody, .allocated tbody' ).sortable({
       connectWith: ".testTable tbody",
-      items: 'tr.sort'
-//      cancel: 'tr.sortHead'
+      items: 'tr.sort',
+      forcePlaceholderSize: true
     });//.disableSelection();
 
     $('.allocated tbody').bind('sortupdate', function () {
@@ -45,14 +40,6 @@ use_javascript('tooltip.js'); ?>
         ui.item.removeClass('serialIn');
       }
     });
-//    $('.sortHead').bind('sortover', function() {
-//      $(this).find('a').click();
-//    })
-//    $('#allocated tbody').bind('sortover', function() {
-//      if($(this).find('tr').is(':hidden')) {
-//        $(this).find('a').click();
-//      }
-//    })
   });
 
 
@@ -67,19 +54,13 @@ use_javascript('tooltip.js'); ?>
   function serialTran() {
     var out = new Object;
     $('.serialIn').each(function(index) {
-//      out[$(this).attr('id')] = ($(this).find('input')).val();
       out[index] = {'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
-                    'actSeq' : ($(this).find('input')).val()}
+                    'actSeq' : ($(this).find('input')).val(),
+                    'actStat': ($(this).parents('tbody').attr('title'))
+      }
     });
     $("#ag_scenario_facility_group_values").val(JSON.stringify(out));
   }
-//  function serialTran() {
-//    var out = Array();
-//    $('#allocated > li').each(function(index) {
-//      out[index] = $(this).attr('id');
-//      $("#ag_scenario_facility_group_ag_facility_resource_order").val(JSON.stringify(out));
-//    });
-//  }
 
   function countSorts(countMe) {
     $(countMe).html(function() {
@@ -160,8 +141,8 @@ echo url_for
     <?php foreach($selectStatuses as $selectStatus): ?>
     <tr class="sortHead" id="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>">
       <th colspan="2" class="left">
+        <a href="#" class="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>">&#9660;</a>
         <?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?>
-            <a href="#" class="<?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?>">&#9660;</a>
       </th>
       <th class="count right">
             Count:
@@ -169,7 +150,7 @@ echo url_for
     </tr>
     <tr>
       <td colspan="3" style="height: 0">
-        <div class="<?php echo ucwords($selectStatus['fras_facility_resource_allocation_status']); ?>">
+        <div class="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>">
           <table class="testTable allocated" cellspacing="0">
             <tbody class="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>" title="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>">
               <tr>

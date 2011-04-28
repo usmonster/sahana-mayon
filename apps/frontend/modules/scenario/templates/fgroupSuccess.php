@@ -13,17 +13,11 @@
 ?>
 <h2>Scenario Facility Groups</h2><br>
 <?php 
-  if(!isset($group_id)) $group_id = 'none';
+  if(!isset($groupId)) $groupId = 'none';
   $existingFgroups = false;
-//  if (count($scenarioFacilityGroups) > 0) {
-//    $existingFgroups = true;
-//  include_partial('facilityGroupTable', array('scenarioFacilityGroups' => $scenarioFacilityGroups, 'scenarioName' => $scenarioName, 'group_id' => $group_id));
-//  } else {
-//    echo '<h3>There are no facility groups associated with the <span class="highlightedText">' . $scenarioName . '</span> scenario</h3><br />';
-//  }
 
-  if(isset($group_id)){
-    if(is_numeric($group_id)){
+  if(isset($groupId)){
+    if(is_numeric($groupId)){
       $groupAction = 'Edit';
     }
     else{
