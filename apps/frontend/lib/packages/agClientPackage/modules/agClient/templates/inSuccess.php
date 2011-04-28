@@ -19,6 +19,6 @@
 <p>Please enter client information.</p>
 
 <p>There should be 3 buttons at the bottom:</p>
-<b>Save (meaning save & stay)</b><br>
-<b>Save and Add Another</b><br>
-<b>Cancel and Exit to List</b>
+<strong>Save (meaning save & stay)</strong><br>
+<strong>Save and Add Another</strong><br>
+<strong>Cancel and Exit to List</strong>

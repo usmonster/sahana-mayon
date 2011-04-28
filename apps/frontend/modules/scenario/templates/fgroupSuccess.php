@@ -38,7 +38,7 @@
 <p>Facility Groups are actually groupings of facility resources.  To create a facility group name
 the group, assign the group type, allocation status, and the order in which is should be activated 
 (activation sequence).</p>
-<p><b>Note:</b> Facility resources should be created in the facility module.  If there are no records
+<p><strong>Note:</strong> Facility resources should be created in the facility module.  If there are no records
   below use the "Plan" menu above to reach the Facility menu and add your facilities to Agasti.</p>
 <div>
   <?php
@@ -54,5 +54,5 @@ the group, assign the group type, allocation status, and the order in which is s
 <p>Click "Save" to continue editing this group.  Click "Save and Continue" to save this group and
 move to the next step.  Click "Save and Create Another" to save this grouping and create another
 grouping.</p>
-<b>Note:</b> facilities not grouped will not be available for activation when the Scenario is
+<strong>Note:</strong> facilities not grouped will not be available for activation when the Scenario is
 deployed as an event.

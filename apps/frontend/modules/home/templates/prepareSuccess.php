@@ -1,7 +1,7 @@
 <h2>Prepare</h2>
 <p>In Sahana Agasti, preparing means creating Scenarios.  Scenarios are plans within the application
 that complement your organizations Emergency plans.</p>
-<p><b>Important:</b> Resources, like staff or facilities, must be loaded into the application
+<p><strong>Important:</strong> Resources, like staff or facilities, must be loaded into the application
   before creating a scenario.  Staff must be loaded before scenarios are created.
   Facilities can be entered manually before scenario creation or uploaded during the creation
   of each scenario.</p>

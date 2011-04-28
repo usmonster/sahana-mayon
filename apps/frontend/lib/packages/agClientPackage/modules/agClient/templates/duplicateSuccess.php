@@ -21,6 +21,6 @@
 
 <p>The new client information and the possible dupe should be displayed 
   side-by-side with the corresponding buttons below them:</p>
-<b>Keep New Client (update old record)</b><br>
-<b>Keep Found Client (discard new record)</b><br>
-<b>Keep Both (the record is not a duplicate)</b>
+<strong>Keep New Client (update old record)</strong><br>
+<strong>Keep Found Client (discard new record)</strong><br>
+<strong>Keep Both (the record is not a duplicate)</strong>

@@ -59,10 +59,10 @@ $i = 1;
     ?>
 
     <?php if (isset($summary)): ?>
-      <br /><br /><b>Total Number of Processed Records:</b> <?php echo $summary['totalProcessedRecordCount']; ?>
-      <br /><br /><b>Total New Facility Created:</b> <?php echo $summary['totalNewFacilityCount']; ?>
-      <br /><br /><b>Total New Facility Group Created:</b> <?php echo $summary['totalNewFacilityGroupCount']; ?>
-      <br /><br /><b>Total Number of Non-processed Records:</b> <?php echo count($summary['nonprocessedRecords']); ?>
+      <br /><br /><strong>Total Number of Processed Records:</strong> <?php echo $summary['totalProcessedRecordCount']; ?>
+      <br /><br /><strong>Total New Facility Created:</strong> <?php echo $summary['totalNewFacilityCount']; ?>
+      <br /><br /><strong>Total New Facility Group Created:</strong> <?php echo $summary['totalNewFacilityGroupCount']; ?>
+      <br /><br /><strong>Total Number of Non-processed Records:</strong> <?php echo count($summary['nonprocessedRecords']); ?>
 
       <br /><br />
 

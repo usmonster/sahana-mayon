@@ -6,7 +6,7 @@
 <p>In the event of an emergency response the scenario is deployed and becomes a specific 'Event' and  allows the
   emergency responder to customize the pre-created scenario without starting from scratch.  Any changes during
   an event will not affect the scenario.</p>
-<b>Please select one of the following scenario actions:</b><br />
+<strong>Please select one of the following scenario actions:</strong><br />
 <?php
 echo '<a href="' . url_for('scenario/pre') . '" class="buttonText" title="Create New Scenario">Create Scenario<a/><br/>';
 echo '<a href="' . url_for('scenario/list') . '" class="buttonText" title="List Existing Scenarios">List Scenarios</a><br/>';

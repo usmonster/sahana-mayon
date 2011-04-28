@@ -7,7 +7,7 @@
   and begin response.</p>
 
 <h3>Event Pre-Deployment</h3>
-<b>Please select a scenario to base your event on:</b><br/>
+<strong>Please select a scenario to base your event on:</strong><br/>
 
 <?php include_partial('scenarioForm', array('scenarioForm' => $scenarioForm)) ?>
 <br/>
