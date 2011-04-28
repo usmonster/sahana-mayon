@@ -245,8 +245,8 @@ abstract class agImportHelper extends agEventHandler
       {
         // Extend import spec headers with dynamic staff resource requirement columns from xls file.
         $this->addDynamicColumns($currentSheetHeaders);
-        $this->createTempTable(); // @todo LEFT OFF HERE
-        unset($this->importSpec['success']); // why is this necessary ??
+        $this->createTempTable();
+        unset($this->importSpec['success']); // why is this necessary ?? @todo Left off here
       }
 
       $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
@@ -307,8 +307,7 @@ abstract class agImportHelper extends agEventHandler
       // we only want to silence 'no such table' errors
       if ($e->getPortableCode() !== Doctrine_Core::ERR_NOSUCHTABLE)
       {
-        $this->logErr("Failed to create temp table {$this->tempTable}");
-        throw new Doctrine_Export_Exception($e->getMessage());
+        $this->logFatal("Failed to drop temp table {$this->tempTable}");
       }
     }
   }
@@ -329,13 +328,11 @@ abstract class agImportHelper extends agEventHandler
     {
       // uses the Doctrine_Export methods see Doctrine_Export api for more details
       $conn->export->createTable($this->tempTable, $this->importSpec, $this->tempTableOptions);
-      $this->logEvent(self::EVENT_INFO, "Successfully created temp table {$this->tempTable}.");
+      $this->logOk("Successfully created temp table {$this->tempTable}.");
     }
     catch (Doctrine_Exception $e)
     {
-      //  The Doctrine exceptions are not very helpful.
-      $this->logEvent(self::EVENT_ERR, "Error creating temp table ({$this->tempTable} for import.");
-      throw $e;
+      $this->logFatal("Error creating temp table ({$this->tempTable} for import.");
     }
   }
 
