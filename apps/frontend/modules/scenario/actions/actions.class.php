@@ -202,7 +202,7 @@ class scenarioActions extends agActions
 //if ($request->getParameter('Continue')) {};
 //were there any changes?
       if ($request->hasParameter('Continue')) {
-        $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
+        $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       } else {
         $this->redirect('scenario/staffresources?id=' . $request->getParameter('id'));
       }

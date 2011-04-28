@@ -119,6 +119,7 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * Method to clean a column name, removing leading and trailing spaces, special characters,
    * and replacing between-word spaces with an underscore. Will also throw if a zls is produced.
+   * Note: This method is intentionally kept in the child class to allow customization if necesary
    *
    * @param string $columnName A string value representing a column name
    * @return string A properly formatted column name.
@@ -177,7 +178,8 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'phone', 'throwOnError' => FALSE, 'method' => 'setEntityPhone', 'helperClass' => 'agEntityPhoneHelper');
     $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => FALSE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
 #    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
-#    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setStaffResourceOrganization');
+    $this->importComponents[] = array( 'component' => 'customField', 'throwOnError' => FALSE, 'method' => 'setPersonCustomField');
+#    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
   }
 
 
@@ -186,8 +188,9 @@ class agStaffImportNormalization extends agImportNormalization
    * Method to set / create new entities, persons, and staff.
    * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
    * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
-  protected function setEntities($throwOnError)
+  protected function setEntities($throwOnError, Doctrine_Connection $conn)
   {
     // we need to capture errors just to make sure we don't store failed ID inserts
     try
@@ -321,8 +324,8 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * Method to set person names during staff import.
    * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
-   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
   protected function setPersonNames($throwOnError, Doctrine_Connection $conn)
   {
@@ -375,10 +378,10 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * Method to set entity emails during staff import.
    * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
-   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
-  public function setEntityEmail($throwOnError, Doctrine_Connection $conn)
+  protected function setEntityEmail($throwOnError, Doctrine_Connection $conn)
   {
     // always start with any data maps we'll need so they're explicit
     $importEmailTypes = array('work_email'=>'work', 'home_email'=>'personal');
@@ -431,10 +434,10 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * Method to set entity phones during staff import.
    * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
-   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
-  public function setEntityPhone($throwOnError, Doctrine_Connection $conn)
+  protected function setEntityPhone($throwOnError, Doctrine_Connection $conn)
   {
     // always start with any data maps we'll need so they're explicit
     $importPhoneTypes = array('work_phone'=>'work', 'home_phone'=>'home', 'mobile_phone' => 'mobile');
@@ -487,10 +490,10 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * Method to set entity address during staff import.
    * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
-   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
-  public function setEntityAddress($throwOnError, Doctrine_Connection $conn)
+  protected function setEntityAddress($throwOnError, Doctrine_Connection $conn)
   {
     // always start with any data maps we'll need so they're explicit
     $importAddressTypes = array('work_address'=>'work', 'home_address'=>'home');
@@ -573,6 +576,27 @@ class agStaffImportNormalization extends agImportNormalization
     unset($entityAddresses);
 
     // @todo do your results reporting here
+  }
+
+  /**
+   * Method to set custom field data for persons.
+   * @param <type> $throwOnError
+   * @param Doctrine_Connection $conn
+   */
+  protected function setPersonCustomField ($throwOnError, Doctrine_Connection $conn)
+  {
+    // first loop through and grab all our personIds into a single array
+    // we intentionally let this fail if there is no person id since we should never have that case
+    $personIds = array();
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      $personIds[$rowData['primaryKeys']['person_id']] = $rowId;
+    }
+
+    // get all of our custom records in a collection
+    // @todo Stopped here because it answered my question re: need to keep dynamic column names in a
+    // separate property for re-reference here
+
   }
 
   /**
