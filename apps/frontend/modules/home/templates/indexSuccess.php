@@ -17,7 +17,7 @@ if ($sf_user->isAuthenticated()) {
   Agasti is an emergency management application with tools to manage staff, resources, client
   information and facilities through an easy to use web interface. </p>
 
-<p>To begin, select an option from the menus above or the icons below.</p>
+<h3>To begin, select an option from the menus above or the icons below.</h3>
 
 <?php
 if ($sf_user->isAuthenticated()) {

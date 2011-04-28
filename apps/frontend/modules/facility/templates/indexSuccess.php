@@ -6,7 +6,7 @@ use_stylesheet('jquery/jquery.ui.custom.css'); ?>
 <h2>Facility Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_management&do=export_xhtmlbody' ?>" class="tooltipTrigger">?</a></h2>
 <p>The Facility Management feature in Sahana Agasti is used to manage your available facility resources while planning before an emergency response.</p>
 
-  <b>Please select one of the following actions:</b><br />
+  <h3>Please select one of the following actions:</h3>
   <?php
   echo
   link_to('Add Facility', 'facility/new', array('class' => 'buttonText', 'title' => 'Create New Facility')) . '<br/>' .

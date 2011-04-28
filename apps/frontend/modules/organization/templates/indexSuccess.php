@@ -10,7 +10,7 @@ use_stylesheet('jquery/jquery.ui.custom.css'); ?>
   This data is recorded on staff records and used for staff deployment when planning
   for and responding to an emergency.</p>
 
-<b>Please select one of the following actions:</b><br />
+<h3>Please select one of the following actions:</h3>
 <?php
 echo '<a href="' . url_for('organization/new') . '" class="buttonText"title="Create New Organization">Create Organization<a/><br/>';
 echo '<a href="' . url_for('organization/list') . '" class="buttonText" title="List Existing Organization">List Organization</a><br/>';
