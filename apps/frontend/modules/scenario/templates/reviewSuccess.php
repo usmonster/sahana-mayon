@@ -5,6 +5,8 @@
 <br /><hr />
 <a href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>"
    title="Modify Basic Scenario Information" class="linkButton">Scenario Name and Description</a> <br /><br />
+<a href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>"
+   title="Edit Required Resource Types for Scenario" class="linkButton">Manage Required Resource Types</a> <br /><br />
 <a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id) ?>" 
    title="Edit Facility Groups" class="linkButton">Manage Facility Groups</a> <br /><br />
 <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>"

@@ -47,6 +47,7 @@ if (isset($search_id)) {
       <tr>
         <td colspan="2">
 <?php echo $poolform->renderHiddenFields(false) ?>
+            <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Back</a>
           <input type="submit" value="Save" class="linkButton" name="Save" onclick="queryConstruct()"/>
           <input type="submit" value="Preview" class="linkButton" name="Preview" onclick="queryConstruct()"/>
 
