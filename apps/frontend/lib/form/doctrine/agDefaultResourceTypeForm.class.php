@@ -41,7 +41,13 @@ class agDefaultResourceTypeForm extends sfForm
 
   public function embedStaffForm(){
 
-    $staffTypeForm = new agDefaultScenarioStaffResourceTypeForm($this->defaultStaffResourceTypes);
+  $staffTypeForm =  new sfForm();
+//  $staffTypeForm->
+   $staffConDeco = new agWidgetFormSchemaFormatter2($staffTypeForm->getWidgetSchema());
+   $staffTypeForm->getWidgetSchema()->addFormFormatter('staffConDeco', $staffConDeco);
+   $staffTypeForm->getWidgetSchema()->setFormFormatterName('staffConDeco');
+      
+
     unset($staffTypeForm['created_at'], $staffTypeForm['updated_at']);
     $staffTypeForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
     $staffTypeForm->setDefault('scenario_id', $this->scenario_id);
@@ -62,7 +68,12 @@ class agDefaultResourceTypeForm extends sfForm
     $this->embedForm('staff_types', $staffTypeForm);
   }
   public function embedFacilityForm(){
-    $facilityTypeForm = new agDefaultScenarioFacilityResourceTypeForm($this->defaultFacilityResourceTypes);
+   $facilityTypeForm =  new sfForm();  
+   $staffConDeco = new agWidgetFormSchemaFormatter2($facilityTypeForm->getWidgetSchema());
+   $facilityTypeForm->getWidgetSchema()->addFormFormatter('staffConDeco', $staffConDeco);
+   $facilityTypeForm->getWidgetSchema()->setFormFormatterName('staffConDeco');
+
+   // $facilityTypeForm = new agDefaultScenarioFacilityResourceTypeForm($this->defaultFacilityResourceTypes);
     unset($facilityTypeForm['created_at'], $facilityTypeForm['updated_at']);
     $facilityTypeForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
     $facilityTypeForm->setDefault('scenario_id', $this->scenario_id);

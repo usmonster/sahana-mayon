@@ -1547,3 +1547,9 @@ float: left;
 .shifttemplateright{
 float: right;
 }
+
+.checkbox_list{
+    list-style-type: none;
+    padding-left: 0px;
+    padding-right:15px;
+}
