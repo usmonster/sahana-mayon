@@ -25,16 +25,15 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * This class's constructor.
    * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  public function __construct($tempTable)
+  public function __construct($tempTable, $logEventLevel = NULL)
   {
     // DO NOT REMOVE
-    parent::__construct($tempTable);
+    parent::__construct($tempTable, $logEventLevel);
 
     // set the import components array as a class property
     $this->setImportComponents();
-
-    // @todo Set the classes' import specification
   }
 
   /**
@@ -47,6 +46,109 @@ class agStaffImportNormalization extends agImportNormalization
 
     // start our iterator and initialize our select query
     $this->tempToRaw($this->buildTempSelectQuery());
+  }
+
+  /**
+   * Method to set the dynamic field type. Does not need to be called here, will be called in parent
+   */
+  protected function setDynamicFieldType()
+  {
+    $this->dynamicFieldType = array('type' => "string", 'length' => 255);
+  }
+
+  /**
+   * Method to extend the import specification to include dynamic columns from the file headers
+   * @param array $importFileHeaders A single-dimension array of import file headers / column names
+   */
+  protected function addDynamicColumns($importFileHeaders)
+  {
+    $dynamicColumns = array_diff($importFileHeaders, array_keys($this->importSpec));
+    foreach($dynamicColumns as $column)
+    {
+      $this->importSpec[$column] = $this->dynamicFieldType;
+    }
+  }
+
+  /**
+   * Method to set the classes' import specification.
+   * Note: This intentionally excludes non-data fields (such as id, or success indicators); these
+   * are set at a later point in the process.
+   */
+  protected function setImportSpec()
+  {
+    $importSpec['entity_id'] = array('type' => 'integer');
+    $importSpec['first_name'] = array('type' => "string", 'length' => 64);
+    $importSpec['middle_name'] = array('type' => "string", 'length' => 64);
+    $importSpec['last_name'] = array('type' => "string", 'length' => 64);
+    $importSpec['home_phone'] = array('type' => "string", 'length' => 16);
+    $importSpec['home_email'] = array('type' => "string", 'length' => 255);
+    $importSpec['work_phone'] = array('type' => "string", 'length' => 16);
+    $importSpec['work_email'] = array('type' => "string", 'length' => 255);
+    $importSpec['home_address_line_1'] = array('type' => "string", 'length' => 255);
+    $importSpec['home_address_line_2'] = array('type' => "string", 'length' => 255);
+    $importSpec['home_address_city'] = array('type' => "string", 'length' => 255);
+    $importSpec['home_address_state'] = array('type' => "string", 'length' => 255);
+    $importSpec['home_address_zip'] = array('type' => "string", 'length' => 5);
+    $importSpec['home_address_country'] = array('type' => "string", 'length' => 128);
+    $importSpec['home_latitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['home_longitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['work_address_line_1'] = array('type' => "string", 'length' => 255);
+    $importSpec['work_address_line_2'] = array('type' => "string", 'length' => 255);
+    $importSpec['work_address_city'] = array('type' => "string", 'length' => 255);
+    $importSpec['work_address_state'] = array('type' => "string", 'length' => 255);
+    $importSpec['work_address_zip'] = array('type' => "string", 'length' => 5);
+    $importSpec['work_address_country'] = array('type' => "string", 'length' => 128);
+    $importSpec['work_latitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['work_longitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['organization'] = array('type' => "string", 'length' => 128);
+    $importSpec['resource_type'] = array('type' => "string", 'length' => 64);
+    $importSpec['resource_status'] = array('type' => "string", 'length' => 30);
+    $importSpec['language_1'] = array('type' => "string", 'length' => 128); //ag_person_mj_ag_language
+    $importSpec['l1_speak'] = array('type' => "string", 'length' => 64); //ag_person_language_competency
+    $importSpec['l1_read'] = array('type' => "string", 'length' => 64);
+    $importSpec['l1_write'] = array('type' => "string", 'length' => 64);
+    $importSpec['language_2'] = array('type' => "string", 'length' => 128); //ag_person_mj_ag_language
+    $importSpec['l2_speak'] = array('type' => "string", 'length' => 64); //ag_person_language_competency
+    $importSpec['l2_read'] = array('type' => "string", 'length' => 64);
+    $importSpec['l2_write'] = array('type' => "string", 'length' => 64);
+
+    // set the class property to the newly created 
+    $this->importSpec = $importSpec;
+  }
+
+  /**
+   * Method to clean a column name, removing leading and trailing spaces, special characters,
+   * and replacing between-word spaces with an underscore. Will also throw if a zls is produced.
+   *
+   * @param string $columnName A string value representing a column name
+   * @return string A properly formatted column name.
+   */
+  protected function cleanColumnName($columnName)
+  {
+    // keep this in case we need to throw an error
+    $oldColumnName = $columnName;
+
+    // trim once, for good measure, then replace spaces with underscores
+    $columnName = trim(strtolower($columnName));
+    $columnName = str_replace(' ', '_', trim(strtolower($columnName)));
+
+    // many db's complain about numbers prepending column names
+    $columnName = preg_replace('/\d+/', '', $columnName);
+
+    // filter out all special characters
+    $columnName = preg_filter('/\W+/', '', $columnName);
+
+    // reduce any duplicate underscore pairs we may have created
+    $columnName = preg_replace('/__+/', '_', $columnName);
+
+    // lastly, in case this method created an unusable empty string, we throw (eg, fatal)
+    if (strlen($columnName) == 0)
+    {
+      $errMsg = "Column name {$oldColumnName} could not be parsed.";
+      $this->logErr($errMsg, 1);
+      throw new Exception($errMsg);
+    }
+    return $columnHeaders;
   }
 
   /**
@@ -63,14 +165,6 @@ class agStaffImportNormalization extends agImportNormalization
     return $query;
   }
   
-  /**
-   * Method to set the classes' import specification
-   */
-  protected function setImportSpec()
-  {
-    //@todo build an import spec
-  }
-
   /**
    * @todo This data should belong in a configuration file (eg, YML)
    */

@@ -30,11 +30,12 @@ abstract class agImportNormalization extends agImportHelper
   /**
    * This class's constructor.
    * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  public function __construct($tempTable)
+  public function __construct($tempTable, $logEventLevel = NULL)
   {
     // DO NOT REMOVE
-    parent::__construct($tempTable);
+    parent::__construct($tempTable, $logEventLevel);
   }
 
   public function __destruct()
@@ -108,11 +109,14 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function updateTempSuccess($success)
   {
+    $this->logInfo("Updating temp with batch success data");
+
     // grab our connection object
     $conn = $this->getConnection('temp_write');
 
     // create our query statement
     $q = sprintf('UPDATE %s SET %s=? WHERE id IN(?);', $this->tempTable, $this->successColumn);
+    $this->logOk("Temp table successfully updated with batch success data");
 
     // mark this batch as failed
     $this->executePdoQuery($conn, $query,
@@ -126,7 +130,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function removeTempSuccesses()
   {
     // grab our connection object
-    $conn = $this->getConnection('temp_write');
+    $conn = $this->getConnection(self::CONN_TEMP_WRITE);
 
     // create our query statement
     $q = sprintf('DELETE FROM %s WHERE %s = 1;', $this->tempTable, $this->successColumn);
@@ -158,32 +162,38 @@ abstract class agImportNormalization extends agImportHelper
 
   /**
    * Method to load and process a batch of records.
-   * @return The number of records left to process
+   * @return The number of records left to process or -1 if a fatal error was encountered
    */
   public function processBatch()
   {
     // preempt this method with a check on our error threshold and stop if we shouldn't continue
-    if (! $this->checkErrThreshold())
+    try
+    {
+      // check it once before we start anything and once after
+      $this->checkErrThreshold();
+
+      // load up a batch into the helper
+      $this->fetchNextBatch();
+
+      // clean our rawData to make it free of zero length strings and related
+      $this->clearZLS();
+
+      // normalize and insert our data
+      $normalizeSuccess = $this->normalizeData();
+
+      // update our temp table
+      $this->updateTempSuccess($normalizeSuccess);
+
+      // probably best to check this one more time
+      $this->checkErrThreshold();
+    }
+    catch (Exception $e)
     {
       return -1;
     }
 
-    // load up a batch into the helper
-    $this->fetchNextBatch();
-
-    // clean, normalize, import, etc
-    $continue = $this->processRawBatch();
-
-    // determine what we're going to return
-    if ($continue)
-    {
-      $remaining = ($this->iterData['fetchCount'] - $this->iterData['fetchPosition']);
-    }
-    else
-    {
-      $remaining = -1;
-    }
-
+    // since everything's hunky-dory, let's count what's left and return that
+    $remaining = ($this->iterData['fetchCount'] - $this->iterData['fetchPosition']);
     return $remaining;
   }
 
@@ -199,9 +209,14 @@ abstract class agImportNormalization extends agImportHelper
     $batchSize = $this->iterData['batchSize'];
     $fetchPosition =& $this->iterData['fetchPosition'];
     $batchPosition =& $this->iterData['batchPosition'];
+    $batchStart = ($batchPosition + 1);
 
     // get our PDO object
     $pdo = $this->_PDO[$this->tempToRawQueryName];
+
+    // log this event
+    $eventMsg = "Loading batch starting at {$fetchPosition} from the temp table";
+    $this->logInfo($eventMsg);
 
     // fetch the data up until it ends or we hit our batchsize limit
     while (($row = $pdo->fetch()) && (($fetchPosition % $batchSize) != 0))
@@ -218,6 +233,9 @@ abstract class agImportNormalization extends agImportHelper
 
     // iterate our batch counter too
     $batchPosition++;
+
+    $eventMsg = "Successfully fetched batch {$batchPosition} (Records {$batchStart} to {$fetchPosition})";
+    $this->logOk($eventMsg);
   }
 
   /**
@@ -238,47 +256,7 @@ abstract class agImportNormalization extends agImportHelper
 
     // now we can legitimately execute our real search
     $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
-  }
-
-  /**
-   * Method to process a batch of rawdata.
-   * @return boolean Whether or not this batch has breached our error threshold and should or
-   * should not continue
-   * @todo caller to clean, validate, normalize
-   */
-  protected function processRawBatch()
-  {
-    // our results
-
-    // clean our rawData to make it free of zero length strings and related
-    $this->clearZLS();
-
-    // normalize and insert our data
-    $normalizeSuccess = $this->normalizeData();
-
-    // update our temp table
-    $this->updateTempSuccess($normalizeSuccess);
-
-    // if we had an error, up our error count
-    if (! $normalizeSuccess)
-    {
-      $this->iterData['errorCount'] = ($this->iterData['errorCount'] + count($this->importData));
-  }
-
-    // check our error threshold to make sure we're still golden to continue
-    $continue = $this->checkErrThreshold();
-    return $continue;
-  }
-
-
-  /**
-   * Method to check against our error threshold and update whether we should continue or not
-   */
-  protected function checkErrThreshold()
-  {
-    // continue only if our error count is below our error threshold
-    $continue = ($this->iterData['errorCount'] <= $this->errThreshold) ? TRUE : FALSE;
-    return $continue;
+    $this->logInfo("Successfully established the PDO fetch iterator.");
   }
 
   /**
@@ -288,6 +266,8 @@ abstract class agImportNormalization extends agImportHelper
   protected function normalizeData()
   {
     $err = NULL ;
+    $this->logInfo("Normalizing and inserting batch data into database.");
+
 
     // get our connection object and start an outer transaction for the batch
     $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
@@ -305,6 +285,9 @@ abstract class agImportNormalization extends agImportHelper
       $method = $componentData['method'];
       $savepoint = __FUNCTION__ . '_'. $componentData['component'];
 
+      // log an event so we can follow what portion of the insert was begun
+      $eventMsg = $this->logInfo("Calling batch processing method {$method}");
+
       // start an inner transaction / savepoint per component
       $conn->beginTransaction($savepoint) ;
       try
@@ -315,8 +298,11 @@ abstract class agImportNormalization extends agImportHelper
       }
       catch(Exception $e)
       {
-        $errMsg = sprintf('agImportNormalization failed during method: %s.',
-          $componentData['method']);
+        $errMsg = sprintf('Import batch processing for batch %s failed during method: %s.',
+          $this->iterData['batchPosition'], $componentData['method']);
+
+        // let's capture this error, regardless of whether we'll throw
+        $this->logErr($errMsg, count($this->importData));
 
         $conn->rollback($savepoint);
 
@@ -346,7 +332,7 @@ abstract class agImportNormalization extends agImportHelper
       {
         // set our err variables
         $err = $e;
-        $errMsg = sprintf('Failed to execute final commit for batch #%d of %d (batch_size: %d',
+        $errMsg = sprintf('Failed to execute final commit for batch #%d of %d (batch_size: %d)',
           $this->iterData['batchPosition'], $this->iterData['batchCount'],
           $this->iterData['batchSize']);
       }
@@ -354,13 +340,13 @@ abstract class agImportNormalization extends agImportHelper
 
     if (is_null($err))
     {
-      // return true if successful
+      $this->logOk("Successfully inserted and normalized batch data");
       return TRUE;
     }
     else
     {
       // our rollback and error logging happen regardless of whether this is an optional component
-      sfContext::getInstance()->getLogger()->err($errMsg) ;
+      $this->logErr($errMsg, count($this->importData)) ;
       $conn->rollback();
 
       // return false if not
@@ -402,6 +388,7 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function clearNullRawData()
   {
+    $this->logInfo("Removing null data from batch.");
     foreach ($this->importData as $rowId => &$rowData)
     {
       foreach($rowData['_rawData'] as $key => $val)
@@ -434,361 +421,4 @@ abstract class agImportNormalization extends agImportHelper
 
     unset($rowData);
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//  /**
-//   * Method to define status and type variables.
-//   */
-//  protected function defineStatusTypes()
-//  {
-//    // Override by child class.
-//  }
-//
-//  /**
-//   * Verify data in record for required fields and valid statuses and types
-//   *
-//   * @param array $record
-//   * @return boolean TRUE if data in record satisfies all requirements for processing.
-//   * FALSE otherwise.
-//   */
-//  protected function dataValidation(array $record)
-//  {
-//    // Check for required fields
-//    // Check for full address?
-//    // Check for geo info
-//    // Check for email
-//    // Check for phone number
-//    // Check for valid status and types.
-//
-//    return array('pass' => TRUE,
-//      'status' => 'SUCCESS',
-//      'type' => null,
-//      'message' => null);
-//  }
-//
-//  /**
-//   * Method to replace a white space with underscore.
-//   *
-//   * @param string $name A string for replacement.
-//   * @return string $name A reformatted string.
-//   */
-//  protected function stripName($name = NULL)
-//  {
-//    if (is_null($name) || !is_string($name)) {
-//      return $name;
-//    }
-//
-//    $strippedName = strtolower(str_replace(' ', '_', $name));
-//    return $strippedName;
-//  }
-//
-//  /**
-//   * Method to normalize data from temp table.
-//   */
-//  public function normalizeImport()
-//  {
-//    // Declare static variables.
-//    $facilityContactType = $this->facilityContactType;
-//
-//    // Setup db connection.
-//    $conn = Doctrine_Manager::connection();
-//
-//    // Fetch import data.
-//    $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
-//    $pdo = $conn->execute($query);
-//    $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
-//    $sourceRecords = $pdo->fetchAll();
-//
-//    // Grab the dynamical columns of staff requirements.
-//    if (count($sourceRecords) > 0) {
-//      $this->getImportStaffList(array_keys($sourceRecords[0]));
-//    }
-//
-//    //loop through records.
-//    foreach ($sourceRecords as $record) {
-//      $validEmail = 1;
-//      $validPhone = 1;
-//      $validAddress = 1;
-//      $isNewFacilityRecord = 0;
-//      $isNewFacilityGroupRecord = 0;
-//
-//      $isValidData = $this->dataValidation($record);
-//      if (!$isValidData['pass']) {
-//        switch ($isValidData['status']) {
-//          case 'ERROR':
-//            $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-//              'record' => $record);
-//            continue 2;
-//          case 'WARNING':
-//            switch ($isValidData['type']) {
-//              case 'Email':
-//                $validEmail = 0;
-//                $this->warningMessages[] = array('message' => $isValidData['message'],
-//                  'record' => $record);
-//                  break;
-//              case 'Phone':
-//                $validPhone = 0;
-//                $this->warningMessages[] = array('message' => $isValidData['message'],
-//                  'record' => $record);
-//                  break;
-//              case 'Mail Address':
-//                $validAddress = 0;
-//                $this->warningMessages[] = array('message' => $isValidData['message'],
-//                  'record' => $record);
-//                  break;
-//            }
-//              break;
-//          default:
-//            $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-//              'record' => $record);
-//            continue 2;
-//        }
-//      }
-//
-//      // Declare variables.
-//      $facility_name = $record['facility_name'];
-//      $facility_code = $record['facility_code'];
-//      $facility_resource_type_abbr = strtolower($record['facility_resource_type_abbr']);
-//      $facility_resource_status = strtolower($record['facility_resource_status']);
-//      $capacity = $record['facility_capacity'];
-//      $facility_activation_sequence = $record['facility_activation_sequence'];
-//      $facility_allocation_status = strtolower($record['facility_allocation_status']);
-//      $facility_group = $record['facility_group'];
-//      $facility_group_type = strtolower($record['facility_group_type']);
-//      $facility_group_allocation_status = strtolower($record['facility_group_allocation_status']);
-//      $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
-//      $email = $record['work_email'];
-//      $phone = $record['work_phone'];
-//      $fullAddress = $this->fullAddress;
-//      $geoInfo = array('longitude' => $record['longitude'], 'latitude' => $record['latitude']);
-//      $staffing = $this->dynamicStaffing($record);
-//
-//      $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
-//      $facility_resource_status_id = $this->facilityResourceStatuses[$facility_resource_status];
-//      $facility_group_type_id = $this->facilityGroupTypes[$facility_group_type];
-//      $facility_group_allocation_status_id = $this->facilityGroupAllocationStatuses[$facility_group_allocation_status];
-//      $facility_resource_allocation_status_id = $this->facilityResourceAllocationStatuses[$facility_allocation_status];
-//      $workEmailTypeId = $this->emailContactTypes[$facilityContactType];
-//      $workPhoneTypeId = $this->phoneContactTypes[$facilityContactType];
-//      $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
-//      $workPhoneFormatId = $this->phoneFormatTypes[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
-//      $workAddressTypeId = $this->addressContactTypes[$facilityContactType];
-//      $workAddressStandardId = $this->addressStandards;
-//      $addressElementIds = $this->addressElements;
-//
-//      try {
-//        // here we check our current transaction scope and create a transaction or savepoint based on need
-//        $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-//        if ($useSavepoint) {
-//          $conn->beginTransaction(__FUNCTION__);
-//        } else {
-//          $conn->beginTransaction();
-//        }
-//
-//        // facility
-//        // tries to find an existing record based on a unique identifier.
-//        $facility = agDoctrineQuery::create($conn)
-//                ->from('agFacility f')
-//                ->where('f.facility_code = ?', $facility_code)
-//                ->fetchOne();
-//        $facilityResource = NULL;
-//        $scenarioFacilityResource = NULL;
-//
-//        if (empty($facility)) {
-//          $facility = $this->createFacility($facility_name, $facility_code, $conn);
-//          $isNewFacilityRecord = 1;
-//        } else {
-//          $facility = $this->updateFacility($facility, $facility_name, $conn);
-//
-//          // tries to find an existing record based on a set of unique identifiers.
-//          $facilityResource = agDoctrineQuery::create($conn)
-//                  ->from('agFacilityResource fr')
-//                  ->where('fr.facility_id = ?', $facility->id)
-//                  ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
-//                  ->fetchOne();
-//        }
-//
-//        // Facility Resource
-//        if (empty($facilityResource)) {
-//          $facilityResource
-//              = $this
-//                  ->createFacilityResource(
-//                      $facility,
-//                      $facility_resource_type_id,
-//                      $facility_resource_status_id,
-//                      $capacity,
-//                      $conn
-//                  );
-//        } else {
-//          $facilityResource
-//              = $this->
-//                  updateFacilityResource(
-//                      $facilityResource,
-//                      $facility_resource_status_id,
-//                      $capacity,
-//                      $conn
-//                  );
-//
-//          $scenarioFacilityResource = agDoctrineQuery::create($conn)
-//                  ->from('agScenarioFacilityResource sfr')
-//                  ->innerJoin('sfr.agScenarioFacilityGroup sfg')
-//                  ->where('sfg.scenario_id = ?', $this->scenarioId)
-//                  ->andWhere('facility_resource_id = ?', $facilityResource->id)
-//                  ->fetchOne();
-//        }
-//
-//        // facility group
-//
-//        $scenarioFacilityGroup = agDoctrineQuery::create()
-//                ->from('agScenarioFacilityGroup')
-//                ->where('scenario_id = ?', $this->scenarioId)
-//                ->andWhere('scenario_facility_group = ?', $facility_group)
-//                ->fetchOne();
-//
-//        if (empty($scenarioFacilityGroup)) {
-//          $scenarioFacilityGroup
-//              = $this
-//                  ->createScenarioFacilityGroup(
-//                      $facility_group,
-//                      $facility_group_type_id,
-//                      $facility_group_allocation_status_id,
-//                      $facility_group_activation_sequence,
-//                      $conn
-//                  );
-//          $isNewFacilityGroupRecord = 1;
-//        } else {
-//          $scenarioFacilityGroup
-//              = $this
-//                  ->updateScenarioFacilityGroup(
-//                      $scenarioFacilityGroup,
-//                      $facility_group_type_id,
-//                      $facility_group_allocation_status_id,
-//                      $facility_group_activation_sequence,
-//                      $conn
-//                  );
-//        }
-//
-//        // facility resource
-//        if (empty($scenarioFacilityResource)) {
-//          $scenarioFacilityResource
-//              = $this
-//                  ->createScenarioFacilityResource(
-//                      $facilityResource,
-//                      $scenarioFacilityGroup,
-//                      $facility_resource_allocation_status_id,
-//                      $facility_activation_sequence,
-//                      $conn
-//                  );
-//        } else {
-//          $scenarioFacilityResource
-//              = $this
-//                  ->updateScenarioFacilityResource(
-//                      $scenarioFacilityResource,
-//                      $scenarioFacilityGroup->id,
-//                      $facility_resource_allocation_status_id,
-//                      $facility_activation_sequence,
-//                      $conn
-//                  );
-//        }
-//
-//        //facility staff resource
-//        $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing, $conn);
-//
-//        // email
-//        if ($validEmail) {
-//          $this->updateFacilityEmail($facility, $email, $workEmailTypeId, $conn);
-//        }
-//
-//        // phone
-//        if ($validPhone) {
-//          $this
-//              ->updateFacilityPhone(
-//                  $facility,
-//                  $phone,
-//                  $workPhoneTypeId,
-//                  $workPhoneFormatId,
-//                  $conn
-//              );
-//        }
-//
-//        // address
-//        if ($validAddress) {
-//          $addressId
-//              = $this
-//                  ->updateFacilityAddress(
-//                      $facility,
-//                      $fullAddress,
-//                      $workAddressTypeId,
-//                      $workAddressStandardId,
-//                      $addressElementIds,
-//                      $conn
-//                  );
-//        }
-//
-//        $this
-//            ->updateFacilityGeo(
-//                $facility,
-//                $addressId,
-//                $workAddressTypeId,
-//                $workAddressStandardId,
-//                $geoInfo,
-//                $conn
-//            );
-//
-//        // Set summary counts
-//        if ($isNewFacilityRecord) {
-//          $this->totalNewFacilityCount++;
-//        }
-//        if ($isNewFacilityGroupRecord) {
-//          $this->totalNewFacilityGroupCount++;
-//        }
-//        $this->totalProcessedRecordCount++;
-//
-//        $facilityId = $facility->id;
-//        if (!is_integer(array_search($facilityId, $this->processedFacilityIds))) {
-//          array_push($this->processedFacilityIds, $facilityId);
-//        }
-//
-//        if ($useSavepoint) {
-//          $conn->commit(__FUNCTION__);
-//        } else {
-//          $conn->commit();
-//        }
-//      } catch (Exception $e) {
-//        $this->errMsg .= '  Unable to normalize data.  Exception error message: ' . $e->getMessage();
-//        $this->nonprocessedRecords[] = array('message' => $this->errMsg, 'record' => $record);
-//        sfContext::getInstance()->getLogger()->err($errMsg);
-//
-//        // if we started with a savepoint, let's end with one, otherwise, rollback globally
-//        if ($useSavepoint) {
-//          $conn->rollback(__FUNCTION__);
-//        } else {
-//          $conn->rollback();
-//        }
-//
-//        break;
-//      }
-//    } // end foreach
-//    //drop temp table.
-//    $conn->export->dropTable($this->sourceTable);
-//    $conn->close();
-//
-//    $this->summary = array(
-//      'totalProcessedRecordCount' => $this->totalProcessedRecordCount,
-//      'nonprocessedRecords' => $this->nonprocessedRecords,
-//      'warningMessages' => $this->warningMessages
-//    );
-//  }
 }

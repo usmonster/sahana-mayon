@@ -14,47 +14,78 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
-abstract class agImportHelper
+abstract class agImportHelper extends agEventHandler
 {
-  // used for event reporting
-  const       EVENT_INFO = 'info';
-  const       EVENT_WARN = 'warn';
-  const       EVENT_ERR = 'err';
-
   const       CONN_TEMP_READ = 'import_temp_read';
   const       CONN_TEMP_WRITE = 'import_temp_write';
 
   protected   $errThreshold,
-              $successColumn = '_import_success',
-              $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
+              $_conn,
+              $fileInfo,
               $tempTable,
               $tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8'),
-              $iterData,
-              $importSpec,
-              $_conn,
-              $_PDO = array();
+              $importSpec = array(),
+              $successColumn = '_import_success',
+              $dynamicFieldType,
+              $_PDO = array(),
+              $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
+              $iterData;
 
-  private     $events,
-              $lastEvent;
+  abstract protected function setImportSpec();
+  abstract protected function setDynamicFieldType();
+  abstract protected function cleanColumnName($columnName);
+  abstract protected function addDynamicColumns($importHeaders);
 
   /**
    * This class's constructor.
    * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  protected function __construct($tempTable)
+  public function __construct($tempTable, $logEventLevel = NULL)
   {
-    // Sets a new connection.
-    $this->setConnections();
-    
-    // establishes the name of our temp table
-    $this->tempTable = $tempTable;
+    parent::__construct($logEventLevel);
 
-    // set our error threshold
+    // get our error threshold
     $this->errThreshold = intval(agGlobal::getParam('import_error_threshold'));
 
-    // reset our events and iterators
+    // sets our temp table and builds our import specification
+    $this->tempTable = $tempTable;
+    $this->processImportSpec();
+    $this->setDynamicFieldType();
+
+    // Sets a new connection.
+    $this->setConnections();
+
+    // reset our iterators
     $this->resetIterData();
-    $this->resetEvents();
+  }
+
+  /**
+   * Method to process and refine an import specification.
+   */
+  protected function processImportSpec()
+  {
+    // first get the basics from our helper (this must be set in the child classes)
+    $this->setImportSpec();
+
+    // now add some records-keeping fields we'll need across usages
+    $this->importSpec['id'] = array('type' => 'integer', 'autoincrement' => true, 'primary' => true);
+    $this->importSpec[$this->successColumn] = array('type' => "boolean", 'default' => TRUE);
+
+    // we can't trust that they got it right so we're going to clean import spec columns
+    foreach ($this->importSpec as $column => $value)
+    {
+      $cleanColumn = $this->cleanColumnName($column);
+      if ($column != $cleanColumn)
+      {
+        unset($this->importSpec[$column]);
+        $this->importSpec[$cleanColumn] = $value;
+       
+        $eventMsg = "Import spec column name {$column} was not clean and was automatically renamed
+        to {$cleanColumn}. It is recommended you correct this in your import spec declaration.";
+        $this->logWarn($eventMsg);
+      }
+    }
   }
 
   /**
@@ -63,7 +94,6 @@ abstract class agImportHelper
   protected function resetIterData()
   {
     $this->iterData = array();
-    $this->iterData['errorCount'] = 0;
     $this->resetTempIterData();
   }
 
@@ -77,19 +107,6 @@ abstract class agImportHelper
   }
 
   /**
-   * Method to reset the events array.
-   */
-  protected function resetEvents()
-  {
-    $this->lastEvent = array();
-
-    $this->events = array();
-    $this->events[self::EVENT_INFO] = array();
-    $this->events[self::EVENT_WARN] = array();
-    $this->events[self::EVENT_ERR] = array();
-  }
-
-  /**
    * Method to get (and lazy load) a doctrine connection object
    * @return Doctrine_Connection A doctrine connection object
    */
@@ -99,7 +116,7 @@ abstract class agImportHelper
     if (!isset($this->_conn)) { $this->setConnections(); }
     return $this->_conn[$conn];
   }
-
+  
   /*
    * Method to set the import connection object property
    */
@@ -111,57 +128,16 @@ abstract class agImportHelper
   }
 
   /**
-   * Method to log a new import event.
-   * @param constant $eventType The event type being set. Must be one of the defined EVENT_*
-   * constants defined in agImportHelper.
-   * @param <type> $eventMsg The event message being set.
+   * Method to check against our error threshold and update whether we should continue or not
    */
-  protected function logEvent($eventType, $eventMsg)
+  protected function checkErrThreshold()
   {
-    // just to make sure we only keep to our defined event types
-    if (! defined("self::$eventType"))
+    // continue only if our error count is below our error threshold
+    if ($this->getErrCount() > $this->errThreshold)
     {
-      throw new Exception("Undefined event constant: $eventType.");
+      $errMsg = "Import error threshold ({$this->errThreshold}) has been exceeded.";
+      $this->logFatal($errMsg);
     }
-
-    // add our event to the events array
-    $timestamp = microtime(TRUE);
-    $this->events[$eventType][] = array('ts' => $timestamp, 'msg' => $eventMsg);
-    $this->lastEvent = array('type' => $eventType, 'ts' => $timestamp, 'msg' => $eventMsg);
-  }
-
-  /**
-   * Method to get events property information
-   * @return array An array of import / export events
-   * <code>
-   * array(
-   *   $eventType => array(
-   *     $index => array('ts' => $timestamp, 'msg' => $eventMsg),
-   *     $index => array('ts' => $timestamp, 'msg' => $eventMsg)
-   *     ...
-   *   ),
-   *   $eventType => array(
-   *     $index => array('ts' => $timestamp, 'msg' => $eventMsg),
-   *     $index => array('ts' => $timestamp, 'msg' => $eventMsg),
-   *     ...
-   *   ),
-   *   ...
-   * )
-   * </code>
-   */
-  public function getEvents()
-  {
-    return $this->events;
-  }
-
-  /**
-   * Method to return the last event.
-   * @return array An array of datapoints concerning the last inserted event.
-   * <code> array('type' => $eventType, 'ts' => $timestamp, 'msg' => $eventMsg)</code>
-   */
-  public function getLastEvent()
-  {
-    return $this->lastEvent;
   }
 
   /**
@@ -201,28 +177,137 @@ abstract class agImportHelper
   }
 
   /**
+   * Method to lazily load and return the pathinfo for $importFile
+   * @param <type> $importFile
+   * @return array Returns pathinfo for importFile
+   * @todo Determine the type of importFile
+   */
+  protected function getFileInfo($importFile)
+  {
+    if (! isset($this->fileInfo))
+    {
+      $this->fileInfo = pathinfo($importFile);
+    }
+    return $this->fileInfo;
+  }
+
+  protected function processXlsImportFile($importFile)
+  {
+    // Validate the uploaded files Excel 2003 extention
+    $this->getFileInfo($importFile);
+    if (strtolower($this->fileInfo["extension"]) <> 'xls')
+    {
+      $errMsg = "{$this->fileInfo['basename']} is not a Microsoft Excel 2003 \".xls\" workbook.";
+      $this->logFatal($errMsg);
+    }
+
+    // open the import file
+    $this->logInfo("Opening the import file.");
+    $xlsObj = new spreadsheetExcelReader($importFile, FALSE);
+    $this->logInfo("Successfully opened the import file.");
+
+    // Get some info about the workbook's composition
+    $numSheets = count($xlsObj->sheets);
+    $this->logInfo("Number of worksheets found: {$numSheets}");
+
+    $numRows = $xlsObj->rowcount($sheet_index = 0);
+    $numCols = $xlsObj->colcount($sheet_index = 0);
+
+    // Create a simplified array from the worksheets
+    for ($sheet = 0; $sheet < $numSheets; $sheet++) {
+      $importRow = 0;
+      $importFileData = array();
+
+      // Get the sheet name
+      $this->logInfo("Opening worksheet {$sheetName}");
+      $sheetName = $xlsObj->boundsheets[$sheet]["name"];
+
+      // We don't import sheets named "Lookup" so we'll skip the remainder of this loop
+      if (strtolower($sheetName) == 'lookup')
+      {
+        $this->logInfo("Ignoring {$sheetName} worksheet");
+        continue;
+      }
+
+      // Grab column headers at the beginning of each sheet.
+      $currentSheetHeaders = array_values($xlsObj->sheets[$sheet]['cells'][1]);
+
+      // clean the column headers to ensure consistency
+      $this->logInfo("Cleaning worksheet headers");
+      foreach ($currentSheetHeaders as $index => &$header)
+      {
+        $header = $this->cleanColumnName($header);
+      }
+
+      // Check for consistant column header in all data worksheets.  Use the column header from
+      // the first worksheet as the import column header for all data worksheets.
+      if ($sheet == 0)
+      {
+        // Extend import spec headers with dynamic staff resource requirement columns from xls file.
+        $this->addDynamicColumns($currentSheetHeaders);
+        $this->createTempTable(); // @todo LEFT OFF HERE
+        unset($this->importSpec['success']); // why is this necessary ??
+      }
+
+      $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
+
+      if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName)) {
+        $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
+      } else {
+        $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
+        return false;
+      }
+
+      for ($row = 2; $row <= $numRows; $row++) {
+
+        for ($col = 1; $col <= $numCols; $col++) {
+
+          $colName = str_replace(' ', '_', strtolower($xlsObj->val(1, $col, $sheet)));
+
+          $val = $xlsObj->raw($row, $col, $sheet);
+          if (!($val)) {
+            $val = $xlsObj->val($row, $col, $sheet);
+          }
+          $importFileData[$importRow][$colName] = trim($val);
+        }
+        // Increment import array row
+        $importRow++;
+      }
+
+      $this->events[] = array("type" => "INFO", "message" => "Inserting records into temp table.");
+      $this->saveImportTemp($importFileData);
+    }
+
+    $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
+    return true;
+ 
+  }
+
+  /**
    * Method to drop temporary table
    * @todo Replace the unweildy handling of the exceptions properly check for existence
    */
   protected function dropTempTable()
   {
     // get a connection
-    $conn = $this->_conn[self::CONN_TEMP_WRITE];
+    $conn = $this->getConnection(self::CONN_TEMP_WRITE);
 
     // drop the table
     try
     {
+      // uses the Doctrine_Export methods see Doctrine_Export api for more details
       $conn->export->dropTable($this->tempTable);
 
       // log this info event
-      $eventMsg = "Dropped temporary table $this->tempTable";
-      $this->logEvent(self::EVENT_INFO, $eventMsg);
+      $eventMsg = "Dropped temporary table {$this->tempTable}";
+      $this->logOk($eventMsg);
     }
     catch(Doctrine_Connection_Exception $e)
     {
       // we only want to silence 'no such table' errors
       if ($e->getPortableCode() !== Doctrine_Core::ERR_NOSUCHTABLE)
       {
+        $this->logErr("Failed to create temp table {$this->tempTable}");
         throw new Doctrine_Export_Exception($e->getMessage());
       }
     }
@@ -234,27 +319,25 @@ abstract class agImportHelper
   protected function createTempTable()
   {
     // get a connection
-    $conn = $this->_conn[self::CONN_TEMP_WRITE];
+    $conn = $this->getConnection(self::CONN_TEMP_WRITE);
 
     // Drop temp if it exists
     $this->dropTempTable();
 
-    $options = array(
-      'type' => 'MYISAM',
-      'charset' => 'utf8'
-    );
-
     // Create the table
-    try {
-
-      $conn->export->createTable($this->tempTable, $this->importSpec, $options);
-      $this->events[] = array("type" => "OK", "message" => "Successfully created temp table.");
-    } catch (Doctrine_Exception $e) {
-
-      //todo find a more descriptive way of displaying MySQL error messages.
+    try
+    {
+      // uses the Doctrine_Export methods see Doctrine_Export api for more details
+      $conn->export->createTable($this->tempTable, $this->importSpec, $this->tempTableOptions);
+      $this->logEvent(self::EVENT_INFO, "Successfully created temp table {$this->tempTable}.");
+    }
+    catch (Doctrine_Exception $e)
+    {
       //  The Doctrine exceptions are not very helpful.
-      $this->events[] = array("type" => "ERROR", "message" => "Error creating temp table for import.");
-      $this->events[] = array("type" => "ERROR", "message" => $e->errorMessage());
+      $this->logEvent(self::EVENT_ERR, "Error creating temp table ({$this->tempTable} for import.");
+      throw $e;
     }
   }
+
+
 }
