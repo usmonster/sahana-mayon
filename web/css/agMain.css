@@ -1088,7 +1088,7 @@ table.adminConfigRequirements tr td{
 }
 
 .decoratorFormatContent{
-    display: inline-block; border: solid 1px #dadada; -moz-border-radius: 5px; padding: 10px 0px 10px 10px;
+    display: inline-block; border: solid 1px #dadada; -moz-border-radius: 5px; padding: 10px 0px 0px 10px;
 }
 
 .decoratorFormatContent2{
