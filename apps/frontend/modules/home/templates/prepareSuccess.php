@@ -12,8 +12,8 @@ that complement your organizations Emergency plans.</p>
 <table cellspacing="20">
     <tr>
       <td><?php echo link_to('Manage<br>Staff', 'staff/index', array('class' => 'linkButton width140')) ?></td>
-      <td><?php echo link_to('Manage<br>Facility', 'facility/index', array('class' => 'linkButton width140')) ?></td>
-      <td><?php echo link_to('Manage<br>Organization', 'organization/index', array('class' => 'linkButton width140')) ?></td>
+      <td><?php echo link_to('Manage<br>Facilities', 'facility/index', array('class' => 'linkButton width140')) ?></td>
+      <td><?php echo link_to('Manage<br>Organizations', 'organization/index', array('class' => 'linkButton width140')) ?></td>
     </tr>
 </table>
 <h4>Manage Scenarios</h4>
