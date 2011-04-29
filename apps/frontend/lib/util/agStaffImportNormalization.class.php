@@ -179,7 +179,8 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => FALSE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
 #    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
     $this->importComponents[] = array( 'component' => 'customField', 'throwOnError' => FALSE, 'method' => 'setPersonCustomField');
-#    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
+//    $this->importComponents[] = array( 'component' => 'staffResource', 'throwOnError' => TRUE, 'method' => 'setStaffResourceOrg');
+    $this->importComponents[] = array( 'component' => 'staffResource', 'throwOnError' => FALSE, 'method' => 'setStaffResourceOrg');
   }
 
 
@@ -580,47 +581,211 @@ class agStaffImportNormalization extends agImportNormalization
 
   /**
    * Method to set custom field data for persons.
-   * @param <type> $throwOnError
-   * @param Doctrine_Connection $conn
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
   protected function setPersonCustomField ($throwOnError, Doctrine_Connection $conn)
   {
+    $errMsg = NULL;
+    $importCustomFields = array('drivers_license_class' => 'Drivers License Class',
+                                'pms_id' => 'PMS ID',
+                                'civil_service_title' => 'Civil Service Title');
+
+    // @TODO Generate person custom field edges and s/getter.
+
+    $customFieldIds = agDoctrineQuery::create()
+      ->select('pcf.person_custom_field')
+          ->addSelect('pcf.id')
+        ->from('agPersonCustomField pcf')
+        ->whereIn('pcf.person_custom_field', array_values($importCustomFields))
+        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+
     // first loop through and grab all our personIds into a single array
     // we intentionally let this fail if there is no person id since we should never have that case
     $personIds = array();
+    $updatedPersonCustomField = array();
     foreach ($this->importData as $rowId => $rowData)
     {
       $personIds[$rowData['primaryKeys']['person_id']] = $rowId;
+      $updatedPersonCustomField[$rowData['primaryKeys']['person_id']] = array();
     }
 
     // get all of our custom records in a collection
-    // @todo Stopped here because it answered my question re: need to keep dynamic column names in a
-    // separate property for re-reference here
+    $coll = agDoctrineQuery::create()
+           ->select('pcv.*')
+             ->from('agPersonCustomFieldValue pcv')
+             ->whereIn('pcv.person_id', array_keys($personIds))
+           ->execute();
 
+    // Perform custom updates on person with existing custom fields.
+    foreach($coll AS $index => &$record)
+    {
+      $pId = $record['person_id'];
+      $rawData = $this->importData[$personIds[$pId]]['_rawData'];
+      $recordCustomFieldId = $record['person_custom_field_id'];
+      $customField = array_search(array_search($recordCustomFieldId, $customFieldIds),
+                                  $importCustomFields);
+
+      if (array_key_exists($customField, $rawData))
+      {
+        $record['value'] = $rawData[$customField];
+        $updatedPersonCustomField[$pId][] = $customField;
+      }
+      else
+      {
+        // Delete record if record exists in db, but none is provided in import.
+        $coll->remove($index);
+        $updatedPersonCustomField[$pId][] = $customField;
+      }
+    }
+
+    $coll->save($conn);
+    unset($coll);
+
+    // Now process person with new custom field if provided in import.
+    foreach($personIds AS $pId => $rowId)
+    {
+      if (count($updatedPersonCustomField[$pId]) < count($importCustomFields))
+      {
+        $newCustomFields = array_diff(array_keys($importCustomFields), $updatedPersonCustomField[$pId]);
+        $rawData = $this->importData[$personIds[$pId]]['_rawData'];
+        foreach ($newCustomFields AS $customField)
+        {
+          $mappedCustomField = $importCustomFields[$customField];
+          if (array_key_exists($customField, $rawData))
+          {
+            $fKeys = array();
+            $fKeys['person_id'] = $pId;
+            $fKeys['person_custom_field_id'] = $customFieldIds[$importCustomFields[$customField]];
+            $fKeys['value'] = $rawData[$customField];
+
+            $personCustomField = $this->createNewRec('agPersonCustomFieldValue', $fKeys);
+          }
+        }
+
+      }
+    }
+    unset($personIds);
+    unset($updatedPersonCustomField);
+    
   }
 
   /**
    * Method to set staff's resource and organization relations during staff import.
    * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
    * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    * control whether or not errors will be thrown.
    */
-  public function setStaffResourceOrg($throwOnError, Doctrine_Connection $conn)
+  protected function setStaffResourceOrg($throwOnError, Doctrine_Connection $conn)
   {
+    $errMsg = NULL;
+
+    // Required columns.
+    $requiredColumns = array('organization', 'resource_type', 'resource_status');
+
+    $organizationIds = agDoctrineQuery::create()
+        ->select('o.organization')
+            ->addSelect('o.id')
+          ->from('agOrganization o')
+          ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    $stfRscTypeIds = agDoctrineQuery::create()
+        ->select('srt.staff_resource_type')
+            ->addSelect('srt.id')
+          ->from('agStaffResourceType srt')
+          ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    $stfRscStatusIds = agDoctrineQuery::create()
+        ->select('srs.staff_resource_status')
+            ->addSelect('srs.id')
+          ->from('agStaffResourceStatus srs')
+          ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    // Retrieve staff ids from raw data.
+    $staffIds = array();
+    foreach ($this->importData AS $rowId => $rowData)
+    {
+      foreach($requiredColumns AS $column)
+      {
+        if(!array_key_exists($column, $rowData['_rawData']))
+        {
+          $errMsg = sprintf('Missing required column %s from record id %d.', $column, $rowId);
+          break;
+        }
+      }
+
+      if (is_null($errMsg))
+      {
+        $staffIds[$rowData['primaryKeys']['staff_id']] = $rowId;
+      }
+      else
+      {
+        // Capture error in error log.
+        $this->logErr($errMsg);
+
+        if($throwOnError)
+        {
+          throw new Exception($errMsg);
+        }
+      }
+    }
+
+    $coll = agDoctrineQuery::create()
+           ->select('sr.*')
+             ->from('agStaffResource sr')
+             ->whereIn('sr.staff_id', array_keys($staffIds))
+           ->execute();
+
+    // Perform organization updates on existing staff resource.
+    foreach($coll AS $index => &$record)
+    {
+      $stfId = $record['staff_id'];
+      $rawData = $this->importData[$staffIds[$stfId]]['_rawData'];
+      $rscTypeId = $stfRscTypeIds[$rawData['resource_type']];
+
+      if ( $record['staff_resource_type_id'] == $rscTypeId )
+      {
+        $orgId = $organizationIds[$rawData['organization']];
+        $record['organization_id'] = $orgId;
+        $stfRscStatusId = $stfRscStatusIds[$rawData['resource_status']];
+        $record['staff_resource_status_id'] = $stfRscStatusId;
+        unset($staffIds[$stfId]);
+      }
+    }
+
+    $coll->save($conn);
+    unset($coll);
+
+    // Now $staffIds are left with new staff resources.
+    foreach($staffIds AS $stfId => $rowId)
+    {
+      $rawData = $this->importData[$staffIds[$stfId]]['_rawData'];
+      $fKeys = array();
+      $fKeys['staff_id'] = $stfId;
+      $fKeys['organization_id'] = $organizationIds[$rawData['organization']];
+      $fKeys['staff_resource_type_id'] = $stfRscTypeIds[$rawData['resource_type']];
+      $fKeys['staff_resource_status_id'] = $stfRscStatusIds[$rawData['resource_status']];
+
+      $staffResource = $this->createNewRec('agStaffResource', $fKeys);
+    }
 
   }
 
   public function testDataNorm()
   {
+    $this->setLogEventLevel(self::EVENT_INFO);
     $_rawData1 = array('entity_id' => '3',
                       'first_name' => 'Mork',
-                      'middle_name' => '',
+//                      'middle_name' => '',
                       'last_name' => 'Ork',
                       'mobile_phone' => '123.123.1234',
-                      'home_phone' => '',
+//                      'home_phone' => '',
                       'home_email' => 'mork.ork@home.com',
-                      'work_phone' => '',
-                      'work_email' => '',
+//                      'work_phone' => '',
+//                      'work_email' => '',
                       'home_address_line_1' => '5 Silly Lane Street',
                       'home_address_city' => 'Inwood',
                       'home_address_state' => 'Bronze',
@@ -630,54 +795,68 @@ class agStaffImportNormalization extends agImportNormalization
                       'work_address_city' => 'New York',
                       'work_address_state' => 'NY',
                       'work_address_zip' => '10013',
-                      'work_address_country' => 'United States of America'
+                      'work_address_country' => 'United States of America',
+                      'organization' => 'GOAL',
+                      'resource_type' => 'Medical Nurse',
+                      'resource_status' => 'active',
+                      'drivers_license_class' => 'Class A',
+                      'civil_service_title' => 'Court Clerk'
                      );
 
     $_rawData2 = array('entity_id' => '183',
                       'first_name' => 'Ork',
                       'middle_name' => 'Mork',
-                      'last_name' => '',
-                      'mobile_phone' => '',
+//                      'last_name' => '',
+//                      'mobile_phone' => '',
                       'home_phone' => '(222) 222-1234',
-                      'home_email' => '',
+//                      'home_email' => '',
                       'work_phone' => '(212) 234-2344 x234',
                       'work_address_line_1' => '235 President Pl',
                       'work_address_city' => 'New York',
                       'work_address_state' => 'NY',
                       'work_address_zip' => '11001',
-                      'work_address_country' => 'United States of America'
+                      'work_address_country' => 'United States of America',
+                      'organization' => 'volunteer',
+                      'resource_type' => 'Specialist',
+                      'resource_status' => 'inactive',
+                      'civil_service_title' => 'Judge'
                      );
 
     $_rawData3 = array('entity_id' => '11',
-                      'first_name' => '',
-                      'middle_name' => '',
-                      'last_name' => '',
-                      'mobile_phone' => '',
-                      'home_phone' => '',
-                      'home_email' => '',
+//                      'first_name' => '',
+//                      'middle_name' => '',
+//                      'last_name' => '',
+//                      'mobile_phone' => '',
+//                      'home_phone' => '',
+//                      'home_email' => '',
                       'work_phone' => '333.3333.3333.',
-                      'work_email' => ''
+//                      'work_email' => '',
+                      'new custom field' => 'smiley face'
                      );
 
-    $_rawData4 = array('entity_id' => '190',
+    $_rawData4 = array('entity_id' => '4983',
                       'first_name' => 'Ae432',
                       'middle_name' => 'LinjaAA  ',
                       'last_name' => '   asdkfjkl;   ',
                       'mobile_phone' => '999.9999.9999',
-                      'home_phone' => '',
-                      'home_email' => '',
+//                      'home_phone' => '',
+//                      'home_email' => '',
                       'work_phone' => '222.3333.4444 x342',
-                      'work_email' => 'Linjawork.com'
+                      'work_email' => 'Linjawork.com',
+                      'organization' => 'CHAD',
+                      'resource_type' => 'Medical Assistant',
+                      'resource_status' => 'Bouncing',
+                      'pms_id' => 'P23423452'
                      );
 
-    $_rawData5 = array('entity_id' => '2',
+    $_rawData5 = array('entity_id' => '392',
                       'first_name' => 'Aimee',
-                      'middle_name' => '',
+//                      'middle_name' => '',
                       'last_name' => 'Adu',
-                      'mobile_phone' => '',
-                      'home_phone' => '',
-                      'home_email' => '',
-                      'work_phone' => '',
+//                      'mobile_phone' => '',
+//                      'home_phone' => '',
+//                      'home_email' => '',
+//                      'work_phone' => '',
                       'work_email' => 'aimeeemailnow@work.com'
                      );
 
@@ -687,7 +866,8 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
     $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
 
-    $this->clearZLS();
+    $this->clearNullRawData();
     $this->normalizeData();
+    print_r($this->getEvents());
   }
 }

@@ -176,7 +176,7 @@ abstract class agImportNormalization extends agImportHelper
       $this->fetchNextBatch();
 
       // clean our rawData to make it free of zero length strings and related
-      $this->clearZLS();
+      $this->clearNullRawData();
 
       // normalize and insert our data
       $normalizeSuccess = $this->normalizeData();
