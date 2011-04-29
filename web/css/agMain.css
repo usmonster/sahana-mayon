@@ -1583,8 +1583,9 @@ table.reviewTable tr:hover{background-color: #f7f7f7}
   vertical-align: top;
   display: inline-block;
   height: 100%;
-  padding: 0px;
+  padding: 8px;
   margin: 5px;
+  border:1px solid #dadada;
 }
 
 .inlineListWrapper {

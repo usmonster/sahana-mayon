@@ -4,7 +4,13 @@
   include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 <br />
+<script language="Javascript" type="text/javascript"> 
+    $(document).ready(function(){var maxHeight=0;
+        $('div.inlineListWrapper')
+        .each(function(){maxHeight = Math.max(maxHeight, $(this).height());});
+        $('div.inlineLists').height(maxHeight);})
 
+</script>
 <h2>Edit Required Resource Types for Scenario</h2> <br />
 <p>Scenarios are plans for emergency responders.  Using the Scenario Creator you'll add facilities,
   staff, and other resources to your plan.  For now, name the Scenario and give it a brief
