@@ -8,7 +8,7 @@
 and plan for staff resources to run them.</p>
 <p>Resources, such as staff and facilities, should be loaded to plan with.  Staff and facilities have different
   rules for inclusion in Agasti; and though scenarios could be created
-  <b>it is strongly recommended staff are loaded before scenarios are created</b>.</p> 
+  <strong>it is strongly recommended staff are loaded before scenarios are created</strong>.</p>
 Click the tooltip '?' icon to view the recommended workflow. <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:scenario_pre&do=export_xhtmlbody' ?>" class="tooltipTrigger">?</a>
 
 
