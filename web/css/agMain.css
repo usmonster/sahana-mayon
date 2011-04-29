@@ -1460,11 +1460,10 @@ tr.sortHead th {
 #stepper {
   margin: auto 60px;
   border: solid 1px #dadada;
-  -moz-border-radius: 20px;
-  border-radius: 20px;
-  /*background-image: url('../images/wizard.ico');*/
+  -moz-border-radius: 10px;
+  border-radius: 10px;
   background-repeat: no-repeat;
-  background-color:#f7f7f7;
+  background-color: #f7f7f7;
   padding-bottom: 15px;
 }
 
@@ -1576,20 +1575,6 @@ table.reviewTable tr td a:hover{ color: #ff8f00; font-weight:bold; text-decorati
 }
 
 table.reviewTable tr:hover{background-color: #f7f7f7}
-
-/*.inlineLists {
-  vertical-align: top;
-  display: inline-block;
-  height: 100%;
-<<<<<<< TREE
-  padding: 0px;
-  margin: 5px 10px;
-=======
-  padding: 8px;
-  margin: 5px;
-  border:1px solid #dadada;
->>>>>>> MERGE-SOURCE
-}*/
 
 .inlineLists {
   vertical-align: top;
