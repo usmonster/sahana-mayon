@@ -790,11 +790,12 @@ class scenarioActions extends agActions
           $scenarioFacRes['activation_sequence'] = ($facilityResource['actSeq'] != null ? $facilityResource['actSeq']: 100);
           $scenarioFacRes->save();
         }
-        $toDelete = agDoctrineQuery::create()
-            ->select()
-            ->from('agScenarioFacilityResource')
-            ->whereIn('facility_resource_id = ?',$preSaveFrIds)
-            ->execute();
+        if(count($preSaveFrIds > 0)) {
+          foreach($preSaveFrIds as $deletable) {
+            agScenarioFacilityHelper::deleteScenarioFacilityResource($deletable);
+//            agScenarioFacilityHelper::
+          }
+        }
 
         LuceneRecord::updateLuceneRecord($agScenarioFacilityGroup);
 
