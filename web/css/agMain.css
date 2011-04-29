@@ -1108,7 +1108,7 @@ table.adminConfigRequirements tr td{
 }
 
 .rowFormat3{
-    display: block; 
+    display: inline-block;
     font-weight: bold;
     color: #848484;
     padding-bottom:4px 0px;
@@ -1458,12 +1458,10 @@ tr.sortHead th {
 }
 
 #stepper {
-/*  float:left;*/
-/*  width: 550px;*/
-  margin: auto 20px;
+  margin: auto 60px;
   border: solid 1px #dadada;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
   /*background-image: url('../images/wizard.ico');*/
   background-repeat: no-repeat;
   background-color:#f7f7f7;
@@ -1521,10 +1519,10 @@ tr.sortHead th {
 
 
 #stepper div{
-  -moz-border-radius: 5px 5px 0px 0px;
-  border-radius: 5px 5px 0px 0px;
+  -moz-border-radius: 20px 20px 0px 0px;
+  border-radius: 20px 20px 0px 0px;
   text-align: right;
-  padding: 5px;
+  padding: 5px 20px;
   background-color: #e5f7ff;
   border-color: #00b4cc;
   color: #848484;
@@ -1579,20 +1577,30 @@ table.reviewTable tr td a:hover{ color: #ff8f00; font-weight:bold; text-decorati
 
 table.reviewTable tr:hover{background-color: #f7f7f7}
 
-.inlineLists {
+/*.inlineLists {
   vertical-align: top;
   display: inline-block;
   height: 100%;
+<<<<<<< TREE
+  padding: 0px;
+  margin: 5px 10px;
+=======
   padding: 8px;
   margin: 5px;
   border:1px solid #dadada;
-}
+>>>>>>> MERGE-SOURCE
+}*/
 
+.inlineLists {
+  vertical-align: top;
+  display: inline-block;
+  padding: 8px;
+  margin: 5px;
+  border:1px solid #dadada;
+  -moz-border-radius: 5px;
+}
 .inlineListWrapper {
   padding: 10px;
-  border: solid 1px #dadada;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
   display: inline-block;
 }
  
