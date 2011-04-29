@@ -60,7 +60,9 @@ class agDefaultResourceTypeForm extends sfForm
       'add_empty' => false,
       'label' => 'Staff Resource Types',
       'multiple' => true,
-      'expanded' => true)));
+      'expanded' => true,
+      'order_by' => array('staff_resource_type', 'asc')
+      )));
 
     $staffDefaults = agDoctrineQuery::create()
             ->select('dfrt.staff_resource_type_id')
@@ -86,7 +88,8 @@ class agDefaultResourceTypeForm extends sfForm
       'add_empty' => false,
       'label' => 'Facility Resource Types',
       'multiple' => true,
-      'expanded' => true
+      'expanded' => true,
+      'order_by' => array('facility_resource_type', 'asc')
       )));
 
       $facilityDefaults = agDoctrineQuery::create()
