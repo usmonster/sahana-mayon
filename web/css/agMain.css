@@ -1455,16 +1455,16 @@ tr.sortHead th {
 
 #stepper {
   float:left;
-  height: 55px;
   width: 750px;
   margin: auto;
   border: solid 1px #dadada;
   -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
+  border-radius: 5px;
   /*background-image: url('../images/wizard.ico');*/
-    width: 550px;
+  width: 550px;
   background-repeat: no-repeat;
   background-color:#f7f7f7;
+  padding-bottom: 5px;
 }
 
 #stepper ul {
@@ -1473,7 +1473,7 @@ tr.sortHead th {
 }
 
 #stepper ul.stepperList {
- border-bottom: 1px solid #00b4cc;
+ border-bottom: 1px solid #dadada;
  margin-left: -25px;
 }
 
@@ -1486,17 +1486,17 @@ tr.sortHead th {
   padding-left: 10px;
   padding-right: 10px;
   padding-top: 2px;
-  color: #333333;
+  color: #ff8f00;
 }
 
 #stepper ul li.current {
 
  background-color: #A1E2FF;
  border-top: 1px solid #A1E2FF;
- border-bottom: 1px solid #00b4cc;
- border-left: 1px solid #00b4cc;
- border-right: 1px solid #00b4cc;
- color: red;
+ border-bottom: 1px solid #dadada;
+ border-left: 1px solid #dadada;
+ border-right: 1px solid #dadada;
+ color: #ffffff;
    -moz-border-radius: 0px 0px 6px 6px;
   -webkit-border-radius: 0px 0px 6px 6px;
 }
@@ -1507,24 +1507,26 @@ tr.sortHead th {
 }
 
 #stepper ul li.completed a{
- color:green;
-text-decoration: none;
-outline: none;
+  color: #848484;
+  text-decoration: none;
+  outline: none;
 }
 
 #stepper ul li.altLItext{
-float:right; font-size:12px; color: #848484;padding-top:5px;
+  float:right; font-size:12px; color: #848484;padding-top:5px;
 }
 
 
 #stepper div{
-text-align: right;
-padding: 5px;
- background-color: #A1E2FF;
- border-color: #00b4cc;
- color: grey;
- font-weight: bold;
- font-size:14px;
+  -moz-border-radius: 5px 5px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
+  text-align: right;
+  padding: 5px;
+  background-color: #A1E2FF;
+  border-color: #00b4cc;
+  color: #848484;
+  font-weight: bold;
+  font-size:14px;
 }
 
  

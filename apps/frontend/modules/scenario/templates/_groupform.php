@@ -66,7 +66,7 @@ use_javascript('tooltip.js'); ?>
     $(countMe).html(function() {
       var counted = $('tbody.' + $(this).parent().attr('id')).children('tr.sort').length;
       if(counted == 0) {
-        $('tbody.' + $(this).parent().attr('id')).append('<tr class="countZero"><td colspan="3">No facilities selected for this group.</td></tr>')
+        $('tbody.' + $(this).parent().attr('id')).append('<tr class="countZero"><td colspan="3">No facilities selected for this status.</td></tr>')
       } else if (counted != 0) {
         $('tbody.' + $(this).parent().attr('id')).children('tr.countZero').remove();
       }
