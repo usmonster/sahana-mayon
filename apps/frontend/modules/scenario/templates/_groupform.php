@@ -94,17 +94,19 @@ echo url_for
       " method="post" <?php $groupform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 
   <div>
-    <?php
-    if (!$groupform->getObject()->isNew()) {
-    ?>
-      <input class="linkButton" type="submit" value="Delete" name="Delete"/>
-      <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>
-    <?php
-    }
-    echo $groupform;
-    ?>
+    <?php if (!$groupform->getObject()->isNew()): ?>
+<!--      <input class="linkButton" type="submit" value="Delete" name="Delete"/>-->
+<!--      <input class="linkButton" type="submit" value="Save" id="selecter" onclick="serialTran()"/>-->
+    <?php endif; ?>
+    <?php echo $groupform; ?>
   </div>
+  <p>Use the checkboxes below to determine which facility resource types are display in the Available list.</p>
+  <?php
+    $contents = $sf_data->getRaw('facilityResourceTypes');
+    echo buildCheckBoxTable($contents, 'id', 'facility_resource_type', 'checkBoxTable searchParams', 5, 'facility_resource_type_', 'facility_resource_type_abbr', true, true);
+  ?>
   <div class="bucketHolder" >
+    <br />
     <div class="testTableContainer ">
     <table class="testTable available" cellspacing="0">
       <thead>
@@ -168,7 +170,7 @@ echo url_for
                   <?php echo $allocatedFacilityResource['frt_facility_resource_type_abbr'] ?>
                 </td>
                 <td class="right">
-                  <input type="text" class="inputGraySmall">
+                  <input type="text" class="inputGraySmall" value="<?php echo $allocatedFacilityResource['sfr_activation_sequence']; ?>">
                 </td>
               </tr>
               <?php endforeach; ?>

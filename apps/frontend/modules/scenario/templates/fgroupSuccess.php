@@ -1,17 +1,13 @@
 <?php
+  use_javascript('agMain.js');
+  use_helper('agTemplate');
+?>
+<h2>Scenario Facility Groups</h2><br>
+<?php
   $wizardOp = array('step' => 3);
   $sf_response->setCookie('wizardOp', json_encode($wizardOp));
   include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
- 
-<?php
-  use_javascript('agMain.js');
-  use_helper('agTemplate');
-
-  $contents = $sf_data->getRaw('facilityResourceTypes');
-  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type_abbr', 'checkBoxTable searchParams', 5, 'facility_resource_type_', 'facility_resource_type', true, true);
-?>
-<h2>Scenario Facility Groups</h2><br>
 <?php 
   if(!isset($groupId)) $groupId = 'none';
   $existingFgroups = false;
@@ -42,7 +38,8 @@ the group, assign the group type, allocation status, and the order in which is s
                                        'allocatedFacilityResources' => $allocatedFacilityResources,
                                        'scenario_id' => $scenario_id,
                                        'existingFgroups' => $existingFgroups,
-                                       'selectStatuses' => $selectStatuses))
+                                       'selectStatuses' => $selectStatuses,
+                                       'facilityResourceTypes' => $facilityResourceTypes))
   ?>
 </div>
 <p>Click "Save" to continue editing this group.  Click "Save and Continue" to save this group and

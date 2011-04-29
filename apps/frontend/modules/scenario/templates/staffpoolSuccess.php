@@ -1,9 +1,9 @@
+<h2>Staff Resource Pool</h2> <br>
 <?php
 $wizardOp = array('step' => 7);
 $sf_response->setCookie('wizardOp', json_encode($wizardOp));
 include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
-<h2>Staff Resource Pool</h2> <br>
 Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
 <p> Please define staff resource pools for the <span class="highlightedText"><?php echo $scenarioName ?> </span> Scenario.</p>
 <p> Currently, there are <span class="highlightedText"><?php echo $total_staff ?></span> total staff in the system.</p>

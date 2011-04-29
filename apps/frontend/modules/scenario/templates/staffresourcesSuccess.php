@@ -1,8 +1,3 @@
-<?php
-  $wizardOp = array('step' => 4);
-  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
-  include_partial('wizard', array('wizardDiv' => $wizardDiv));
-?>
 
 <script type="text/javascript">
   $(function(){
@@ -39,6 +34,11 @@ $(document).ready(function() {
 
 
 <h2>Staff Resource Requirements</h2><br>
+<?php
+  $wizardOp = array('step' => 4);
+  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
+  include_partial('wizard', array('wizardDiv' => $wizardDiv));
+?>
 <h3>
   <span>
     Assign minimum and maximum Staff Resource Requirements to Facility Groups for the

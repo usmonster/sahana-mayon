@@ -640,6 +640,7 @@ class scenarioActions extends agActions
             ->from('agFacilityResourceType frt')
             ->innerJoin('frt.agDefaultScenarioFacilityResourceType dsfrt')
             ->where('dsfrt.scenario_id =?', $this->scenario_id)
+            ->orderBy('frt.facility_resource_type')
             ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
 // Get all the facility resources available to this scenario (those that aren't already in use
 // in this scenario).
@@ -675,6 +676,7 @@ class scenarioActions extends agActions
             ->select('fras.id, fras.facility_resource_allocation_status')
             ->from('agFacilityResourceAllocationStatus fras')
             ->where('scenario_display = true')
+            ->orderBy('fras.facility_resource_allocation_status')
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 // End testing//////////////////////////////////////////////////////////////////////////////////////
     if ($request->getParameter('groupid')) {
@@ -703,6 +705,7 @@ class scenarioActions extends agActions
               ->addSelect('frt.id')
               ->addSelect('frt.facility_resource_type_abbr')
               ->addSelect('sfr.id')
+              ->addSelect('sfr.activation_sequence')
               ->addSelect('fras.id')
               ->addSelect('fras.facility_resource_allocation_status')
               ->from('agFacilityResource fr')

@@ -1326,6 +1326,10 @@ a.signin.menu-open span {
 
 .checkBoxTable {
   border: solid 1px #dadada;
+  padding: 0px;
+}
+.checkBoxTable tr {
+  margin: 0;
 }
 .checkBoxTable th {
   text-align: left;
@@ -1458,7 +1462,7 @@ tr.sortHead th {
 }
 
 #stepper {
-  margin: auto 60px;
+/*  margin: auto 20px;*/
   border: solid 1px #dadada;
   -moz-border-radius: 10px;
   border-radius: 10px;
@@ -1491,8 +1495,8 @@ tr.sortHead th {
 
 #stepper ul li.current {
 
- background-color: #e5f7ff;
- border-top: 1px solid #e5f7ff;
+ background-color: #ffffff;
+ border-top: 1px solid #ffffff;
  border-bottom: 1px solid #dadada;
  border-left: 1px solid #dadada;
  border-right: 1px solid #dadada;
@@ -1522,7 +1526,7 @@ tr.sortHead th {
   border-radius: 10px 10px 0px 0px;
   text-align: right;
   padding: 5px 20px;
-  background-color: #e5f7ff;
+  background-color: #ffffff;
   border-color: #00b4cc;
   color: #848484;
   font-weight: bold;
