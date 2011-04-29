@@ -1464,7 +1464,7 @@ tr.sortHead th {
   border-radius: 10px;
   background-repeat: no-repeat;
   background-color: #f7f7f7;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 #stepper ul {
@@ -1518,8 +1518,8 @@ tr.sortHead th {
 
 
 #stepper div{
-  -moz-border-radius: 20px 20px 0px 0px;
-  border-radius: 20px 20px 0px 0px;
+  -moz-border-radius: 10px 10px 0px 0px;
+  border-radius: 10px 10px 0px 0px;
   text-align: right;
   padding: 5px 20px;
   background-color: #e5f7ff;

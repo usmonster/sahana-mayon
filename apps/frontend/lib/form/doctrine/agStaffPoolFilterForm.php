@@ -47,17 +47,18 @@ class agStaffPoolFilterForm extends sfForm
 
     $this->setWidgets(
         array(
-            'agStaffResourceType.staff_resource_type' =>
-          new sfWidgetFormChoice(array('choices' => $defaultStaffTypes),
-              array('label' => 'Staff Type','class' => 'filter')
-              )
-      , 'agOrganization.organization' => new sfWidgetFormDoctrineChoice(
-          array(
-            'model' => 'agOrganization',
-            'method' => 'getOrganization',
-            'label' => 'Staff Organization',
-            'add_empty' => true
-      ),array('class' => 'filter'))));
+            'agStaffResourceType.staff_resource_type' => new sfWidgetFormChoice(
+               array('choices' => $defaultStaffTypes,
+                     'label' => 'Staff Type'),
+               array('class' => 'filter')
+             ),
+            'agOrganization.organization' => new sfWidgetFormDoctrineChoice(
+               array(
+                 'model' => 'agOrganization',
+                 'method' => 'getOrganization',
+                 'label' => 'Organization',
+                 'add_empty' => true),
+               array('class' => 'filter'))));
 
 //          )));
 

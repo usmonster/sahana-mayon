@@ -1,7 +1,7 @@
 <?php
-  $wizardOp = array('step' => 2);
-  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
-  include_partial('wizard', array('wizardDiv' => $wizardDiv));
+//  $wizardOp = array('step' => 2);
+//  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
+//  include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 <br />
 <script language="Javascript" type="text/javascript"> 
@@ -17,6 +17,11 @@
 
 </script>
 <h2>Edit Required Resource Types for Scenario</h2> <br />
+<?php
+  $wizardOp = array('step' => 2);
+  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
+  include_partial('wizard', array('wizardDiv' => $wizardDiv));
+?>
 <p>Scenarios are plans for emergency responders.  Using the Scenario Creator you'll add facilities,
   staff, and other resources to your plan.  For now, name the Scenario and give it a brief
   description.</p>
