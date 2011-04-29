@@ -97,7 +97,7 @@ class agStaffImportXLS extends agImportXLS
    *
    * @param array $importFileHeaders An array of column headers from import file.
    */
-  protected function extendsImportSpecHeaders($importFileHeaders)
+  protected function extendsImportSpecHeaders(array $importFileHeaders)
   {
     $saveFileHeaders = $this->cleanColumnHeaders($importFileHeaders);
     $extendedHeaders = array_diff($saveFileHeaders, array_keys($this->importSpec));

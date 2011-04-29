@@ -30,47 +30,18 @@
  */
 class agFacilityImportXLS extends agImportXLS
 {
+
   function __construct()
   {
+    parent::__construct('temp_facilityImport');
+    //parent::__construct();
+
     // Declare class properties.
     $this->name = "agFacilityImportXLS";
-    $this->importSpec = array(
-      'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
-      'facility_name' => array('type' => "string", 'length' => 64),
-      'facility_code' => array('type' => "string", 'length' => 10),
-      'facility_resource_type_abbr' => array('type' => "string", 'length' => 10),
-      'facility_resource_status' => array('type' => "string", 'length' => 40),
-      'facility_capacity' => array('type' => "integer"),
-      'facility_activation_sequence' => array('type' => "integer", 'unsigned' => true),
-      'facility_allocation_status' => array('type' => "string", 'length' => 30),
-      'facility_group' => array('type' => "string", 'length' => 64),
-      'facility_group_type' => array('type' => "string", 'length' => 30),
-      'facility_group_allocation_status' => array('type' => "string", 'length' => 30),
-      'facility_group_activation_sequence' => array('type' => "integer", 'unsigned' => true),
-      'work_email' => array('type' => "string", 'length' => 255),
-      'work_phone' => array('type' => "string", 'length' => 32),
-      'street_1' => array('type' => "string", 'length' => 255),
-      'street_2' => array('type' => "string", 'length' => 255),
-      'city' => array('type' => "string", 'length' => 255),
-      'state' => array('type' => "string", 'length' => 255),
-      'postal_code' => array('type' => "string", 'length' => 5),
-      'borough' => array('type' => "string", 'length' => 30),
-      'country' => array('type' => "string", 'length' => 64),
-      'longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
-      'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8)
-    );
-    $this->staffRequirementFieldType = array('type' => "integer");
-    $this->tempTable = 'temp_facilityImport';
-  }
 
-  function __destruct()
-  {
-    $file = $this->fileInfo["dirname"] . '/' . $this->fileInfo["basename"];
-    if (!@unlink($file)) {
-      $this->events[] = array("type" => "ERROR", "message" => $php_errormsg);
-    } else {
-      $this->events[] = array('type' => 'OK', "message" => "Deleted {$this->fileInfo['basename']} upload file.");
-    }
+    //$this->tempTable = 'temp_facilityImport';
+
+    $this->staffRequirementFieldType = array('type' => "integer");
   }
 
   /**
@@ -78,14 +49,13 @@ class agFacilityImportXLS extends agImportXLS
    *
    * @param array $importFileHeaders An array of column headers from import file.
    */
-  protected function extendsImportSpecHeaders($importFileHeaders)
+  protected function extendsImportSpecHeaders(array $importFileHeaders)
   {
-    foreach($importFileHeaders as $index => $column) {
+    foreach ($importFileHeaders as $index => $column) {
       if (preg_match('/_(min|max)$/', $column)) {
         $this->importSpec[$column] = $this->staffRequirementFieldType;
       }
     }
-
   }
 
   /**
@@ -94,24 +64,22 @@ class agFacilityImportXLS extends agImportXLS
    * @param $importFileHeaders
    * @param $sheetName
    */
-  protected function validateColumnHeaders($importFileHeaders, $sheetName)
+  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
   {
-    if (parent::validateColumnHeaders($importFileHeaders, $sheetName) === FALSE)
-    {
+    if (parent::validateColumnHeaders($importFileHeaders, $sheetName) === FALSE) {
       return FALSE;
     }
 
     // Check min/max set columns.  These two columns must come in a set.  Cannot add one column and
     // not the other.
     $setHeaders = preg_grep('/_(min|max)$/i', $importFileHeaders);
-    foreach($setHeaders as $key => $column) {
+    foreach ($setHeaders as $key => $column) {
       $setHeaders[$key] = rtrim(rtrim(strtolower($column), '_min'), '_max');
     }
     $setHeaders = array_unique($setHeaders);
-    foreach($setHeaders as $key => $header) {
-      if ( !in_array($header.'_min', $importFileHeaders)
-           || !in_array($header.'_max', $importFileHeaders))
-      {
+    foreach ($setHeaders as $key => $header) {
+      if (!in_array($header . '_min', $importFileHeaders)
+          || !in_array($header . '_max', $importFileHeaders)) {
         $this->events[] = array("type" => "ERROR", "message" => "Incomplete $header min/max set columns.");
         return FALSE;
       }
@@ -266,7 +234,51 @@ class agFacilityImportXLS extends agImportXLS
 //
     // TODO: make this to the brunt of the work
     // ...
+  }
 
+  protected function setImportSpec()
+  {
+    $this->importSpec = array(
+      'id' => array('type' => 'integer', 'autoincrement' => true, 'primary' => true),
+      'facility_name' => array('type' => "string", 'length' => 64),
+      'facility_code' => array('type' => "string", 'length' => 10),
+      'facility_resource_type_abbr' => array('type' => "string", 'length' => 10),
+      'facility_resource_status' => array('type' => "string", 'length' => 40),
+      'facility_capacity' => array('type' => "integer"),
+      'facility_activation_sequence' => array('type' => "integer", 'unsigned' => true),
+      'facility_allocation_status' => array('type' => "string", 'length' => 30),
+      'facility_group' => array('type' => "string", 'length' => 64),
+      'facility_group_type' => array('type' => "string", 'length' => 30),
+      'facility_group_allocation_status' => array('type' => "string", 'length' => 30),
+      'facility_group_activation_sequence' => array('type' => "integer", 'unsigned' => true),
+      'work_email' => array('type' => "string", 'length' => 255),
+      'work_phone' => array('type' => "string", 'length' => 32),
+      'street_1' => array('type' => "string", 'length' => 255),
+      'street_2' => array('type' => "string", 'length' => 255),
+      'city' => array('type' => "string", 'length' => 255),
+      'state' => array('type' => "string", 'length' => 255),
+      'postal_code' => array('type' => "string", 'length' => 5),
+      'borough' => array('type' => "string", 'length' => 30),
+      'country' => array('type' => "string", 'length' => 64),
+      'longitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8),
+      'latitude' => array('type' => "decimal", 'length' => 12, 'scale' => 8)
+    );
+  }
+
+  protected function setDynamicFieldType()
+  {
+    //required, but not used?
+  }
+
+  protected function cleanColumnName($columnName)
+  {
+    //required, but not used?
+    return str_replace(' ', '_', strtolower($columnName));
+  }
+
+  protected function addDynamicColumns(array $importHeaders)
+  {
+    //TODO: determine what to put here?
   }
 
 }

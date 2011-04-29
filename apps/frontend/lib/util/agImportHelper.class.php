@@ -34,7 +34,7 @@ abstract class agImportHelper extends agEventHandler
   abstract protected function setImportSpec();
   abstract protected function setDynamicFieldType();
   abstract protected function cleanColumnName($columnName);
-  abstract protected function addDynamicColumns($importHeaders);
+  abstract protected function addDynamicColumns(array $importHeaders);
 
   /**
    * This class's constructor.

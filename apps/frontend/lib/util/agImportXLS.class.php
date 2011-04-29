@@ -30,21 +30,21 @@
  */
 abstract class agImportXLS extends agImportHelper
 {
+
   // Public variables declared here
   public $importSpec;
-
   // ??
   public $events = array();
   public $numRecordsImported = 0;
 
   function __construct()
   {
-    parent::construct();
+    parent::__construct();
   }
 
   function __destruct()
   {
-    $file = $this->fileInfo["dirname"] . '/' . $this->fileInfo["basename"];
+    $file = $this->fileInfo["dirname"] . DIRECTORY_SEPARATOR . $this->fileInfo["basename"];
     if (!@unlink($file)) {
       $this->events[] = array("type" => "ERROR", "message" => $php_errormsg);
     } else {
@@ -58,10 +58,9 @@ abstract class agImportXLS extends agImportHelper
    *
    * @param array $columnHeaders A single value array of column headers.
    */
-  protected function cleanColumnHeaders($columnHeaders)
+  protected function cleanColumnHeaders(array $columnHeaders)
   {
-    foreach ($columnHeaders as $index => $column)
-    {
+    foreach ($columnHeaders as $index => $column) {
       $columnHeaders[$index] = str_replace(' ', '_', trim(strtolower($column)));
     }
     return $columnHeaders;
@@ -72,13 +71,7 @@ abstract class agImportXLS extends agImportHelper
    *
    * @param array $importFileHeaders An array of column headers from import file.
    */
-  protected function extendsImportSpecHeaders($importFileHeaders)
-  {
-    /**
-     * @todo this function is to be overloaded by it's children classes agFacilityImportXLS and
-     * agStaffImportXLS
-     */
-  }
+  abstract protected function extendsImportSpecHeaders(array $importFileHeaders);
 
   /**
    * Validates import data for correct schema. Returns bool.
@@ -87,13 +80,12 @@ abstract class agImportXLS extends agImportHelper
    * @param $importSpecHeaders
    * @param $sheetName
    */
-  protected function validateColumnHeaders($importFileHeaders, $sheetName)
+  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
   {
     // Check if import file header is null
-    if (empty($importFileHeaders))
-    {
+    if (empty($importFileHeaders)) {
       $this->events[] = array("type" => "ERROR",
-                              "message" => "Worksheet \"$sheetName\" is missing column headers.");
+        "message" => "Worksheet \"$sheetName\" is missing column headers.");
       return FALSE;
     }
 
@@ -116,7 +108,7 @@ abstract class agImportXLS extends agImportHelper
     }
 
     /**
-     * @TODO This function is to be extended by it's children classes agFacilityImportXLS and
+     * @TODO This function is to be extended by its children classes agFacilityImportXLS and
      * agStaffImportXLS
      */
   }
@@ -126,9 +118,9 @@ abstract class agImportXLS extends agImportHelper
    *
    * Writes import array to temp table
    *
-   * @param $importDataSet
+   * @param array $importDataSet
    */
-  protected function saveImportTemp($importDataSet)
+  protected function saveImportTemp(array $importDataSet)
   {
     require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
@@ -290,7 +282,6 @@ abstract class agImportXLS extends agImportHelper
     return $foo;
   }
 
-
   public static function processFile(sfEvent $event)
   {
 // this works!!! :
@@ -299,7 +290,6 @@ abstract class agImportXLS extends agImportHelper
 //
     // TODO: make this to the brunt of the work
     // ...
-
   }
 
 }
