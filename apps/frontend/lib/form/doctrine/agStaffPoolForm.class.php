@@ -47,8 +47,8 @@ class agStaffPoolForm extends sfForm
    * */
   public function embedAgSearchForms()
   {
-    $this->embedStaffGeneratorForm();
     $this->embedSearchForm();
+    $this->embedStaffGeneratorForm();
     $this->getWidgetSchema()->setLabel('staff_generator', false);
     $this->getWidgetSchema()->setLabel('search', false);
 
@@ -87,8 +87,10 @@ class agStaffPoolForm extends sfForm
 
     if (is_array($this->sg_values)) {
       $staffGenForm->setDefault('search_weight', $this->sg_values['search_weight']);
+    } else {
+      $staffGenForm->setDefault('search_weight', 5);
     }
-
+    
     $this->embedForm('staff_generator', $staffGenForm);
   }
 
@@ -114,6 +116,7 @@ class agStaffPoolForm extends sfForm
     //$searchForm->getWidgetSchema()->setLabel('search_type_id', 'Search Type');
     $searchForm->setWidget('search_type_id', new sfWidgetFormInputHidden());
     $searchForm->setWidget('search_hash', new sfWidgetFormInputHidden());
+    $searchForm->getWidget('search_name')->setAttribute('class', 'inputGray');
 
     $searchForm->setValidator('search_hash', new sfValidatorPass(array('required' => false)));
     $searchForm->setValidator('search_type_id', new sfValidatorPass(array('required' => false)));
