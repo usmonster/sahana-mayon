@@ -25,5 +25,5 @@ class agFormFormatterInlineLeftLabel extends sfWidgetFormSchemaFormatter
     <div style=\"border: 1px solid #ccc; display: block;\">%error%%field%%help%%hidden_fields%</div></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div class=\"table-container\" style=\"width:600px; overflow:wrap; padding:15px 1px 5px 12px\">%content%</div>";
+  $decoratorFormat = "<div class=\"table-container\" style=\"width:600px; overflow:wrap; padding:8px 1px 5px 12px\">%content%</div>";
 }

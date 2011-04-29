@@ -9,37 +9,37 @@
         <th>Description</th>
     </tr>
     <tr>
-        <td><a href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>"
+        <td><a  class="buttonText" href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>"
    title="Modify Basic Scenario Information">Scenario Name and Description</a></td>
         <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum ante vitae felis aliquet eget condimentum felis sollicitudin.</td>
     </tr>
     <tr>
-        <td><a href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>"
+        <td><a  class="buttonText" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>"
    title="Edit Required Resource Types for Scenario">Manage Required Resource Types</a></td>
         <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum ante vitae felis aliquet eget condimentum felis sollicitudin.</td>
     </tr>
     <tr>
-        <td><a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id) ?>"
+        <td><a  class="buttonText" href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id) ?>"
    title="Edit Facility Groups">Manage Facility Groups</a></td>
         <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum ante vitae felis aliquet eget condimentum felis sollicitudin.</td>
     </tr>
     <tr>
-        <td><a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>"
+        <td><a  class="buttonText" href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>"
    title="Edit Staff Requirements">Staff Resource Requirements</a></td>
         <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum ante vitae felis aliquet eget condimentum felis sollicitudin.</td>
     </tr>
     <tr>
-        <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>"
+        <td><a  class="buttonText" href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>"
    title="Edit Staff Pool">Staff Pool Definitions</a></td>
         <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum ante vitae felis aliquet eget condimentum felis sollicitudin.</td>
     </tr>
     <tr>
-        <td><a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>"
+        <td><a  class="buttonText" href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>"
    title="Edit Shift Templates">Shift Templates</a></td>
         <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum ante vitae felis aliquet eget condimentum felis sollicitudin.</td>
     </tr>
     <tr>
-        <td><a href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>"
+        <td><a  class="buttonText" href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>"
    title="View Scenario Shifts">Scenario Shifts</a></td>
         <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vestibulum ante vitae felis aliquet eget condimentum felis sollicitudin.</td>
     </tr>
