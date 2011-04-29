@@ -168,7 +168,7 @@ class agFooActions extends agActions
 //    $output = $phoneHelper->setEntityPhone($entityContacts, TRUE);
 //    print_r($output);
 
-    $personIds = array(1, 2 , 3, 4, 5, 6, 7, 8, 9, 10);
+    $personIds = array(10, 11);
     $obj = new agPersonLanguageHelper($personIds);
     $results = $obj->getPersonLanguageById();
     print_r($results);
