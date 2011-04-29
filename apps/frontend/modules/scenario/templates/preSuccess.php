@@ -1,12 +1,15 @@
+<?php use_javascript('agasti.js') ?>
+<?php   use_javascript('jquery.ui.custom.js');
+  use_stylesheet('jquery/jquery.ui.custom.css');?>
+<?php use_javascript('agTooltip.js'); ?>
+
 <h2>Create New Scenario</h2>
 <p>Scenarios are plans for emergency responders.  Using the Scenario Creator you'll add facilities
 and plan for staff resources to run them.</p>
-<p>First, some resources should be loaded to plan with.  Staff and facilities have different
+<p>Resources, such as staff and facilities, should be loaded to plan with.  Staff and facilities have different
   rules for inclusion in Agasti; and though scenarios could be created
-  <b>it is strongly recommended staff are loaded before scenarios are created</b>.</p>
-  <p>Facilities can either be entered manually or importing.
-    <b>Manually entered facilities should be entered before creating a scenario.</b><br>
-    <b>Imported facilities are uploaded during or after the initial scenario creation.</b></p>
+  <b>it is strongly recommended staff are loaded before scenarios are created</b>.</p> 
+Click the tooltip '?' icon to view the recommended workflow. <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:scenario_pre&do=export_xhtmlbody' ?>" class="tooltipTrigger">?</a>
 
 
   <p>If you plan on manually entering your facilities, or staff have not been entered, use the links

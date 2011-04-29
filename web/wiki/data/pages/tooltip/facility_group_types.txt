@@ -1,0 +1,2 @@
+===== Facility Group Types =====
+In a scenario facilities are grouped for ease of use.  Groups are also sorted and labeled by types.  These Facility Group Types are customizable by the user.
