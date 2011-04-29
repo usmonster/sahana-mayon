@@ -29,7 +29,11 @@ class PluginagStaffPersonForm extends agPersonForm
   public function configure()
   {
     parent::configure();
+    $this->getValidatorSchema()->setOption('allow_extra_fields', true);
+    $this->getValidatorSchema()->setOption('filter_extra_fields', false);
+
     $this->embedAgStaffPersonForms();
+
   }
 
   /**
@@ -42,6 +46,31 @@ class PluginagStaffPersonForm extends agPersonForm
     $this->embedStaffResourceForm($staffContainerForm);
     $this->embedForm('staff', $staffContainerForm);
 
+  }
+
+  /**
+   *
+   * @param <type> $num form iterator number to add
+   */
+  public function addStaffResourceForm($num)
+  {
+    $embed_form = new PluginagEmbeddedAgStaffResourceForm();
+
+    //Embedding the new picture in the container
+    $this->getEmbeddedForm('staff')->getEmbeddedForm('type')->embedForm($num, $embed_form);
+    //Re-embedding the container
+     $this->getEmbeddedForm('staff')->embedForm('type', $this->getEmbeddedForm('staff')->getEmbeddedForm('type'));
+     $this->embedForm('staff', $this->getEmbeddedForm('staff'));
+  }
+
+  public function bind(array $taintedValues = null, array $taintedFiles = null)
+  {
+    foreach ($taintedValues['staff']['type'] as $key => $newStaff) {
+      if (!isset($this['staff']['type'][$key])) {
+        $this->addStaffResourceForm($key);
+      }
+    }
+    parent::bind($taintedValues, $taintedFiles);
   }
 
   /**
@@ -86,35 +115,34 @@ class PluginagStaffPersonForm extends agPersonForm
       foreach ($staffResourceObjects as $staffResourceObject) {
 
         $resourceTypeQuery = agDoctrineQuery::create()
-              ->select('a.id, a.staff_resource_type')
-              ->from('agStaffResourceType a');
-        if(count($restrictedOptions) > 0)$resourceTypeQuery->whereNotIn('a.id', $restrictedOptions);
+                ->select('a.id, a.staff_resource_type')
+                ->from('agStaffResourceType a');
+        if (count($restrictedOptions) > 0
+
+          )$resourceTypeQuery->whereNotIn('a.id', $restrictedOptions);
         $resourceTypeOptions = $resourceTypeQuery->execute(array(), 'key_value_pair');
 
         $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm($staffResourceObject);
-        $staffResourceForm->setWidget('staff_resource_type_id', new sfWidgetFormChoice(array('choices' => $resourceTypeOptions )));
+        $staffResourceForm->setWidget('staff_resource_type_id', new sfWidgetFormChoice(array('choices' => $resourceTypeOptions)));
 
 
 //unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
         if (isset($this->staff_id)) {
           $staffResourceForm->setDefault('staff_id', $this->staff_id);
         }
-          $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($staffResourceForm->getWidgetSchema());
-          $staffResourceForm->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
-          $staffResourceForm->getWidgetSchema()->setFormFormatterName('custDeco');
 
         $staffContainerContainer->embedForm($i, $staffResourceForm);
         $staffContainerContainer->getWidgetSchema()->setLabel($i, false);
         $i++;
         $restrictedOptions[] = $staffResourceObject->getStaffResourceTypeId();
       }
+    $staffContainerContainer->getValidatorSchema()->setOption('allow_extra_fields', true);
+    $staffContainerContainer->getValidatorSchema()->setOption('filter_extra_fields', false);
+
       $staffContainerForm->embedForm('type', $staffContainerContainer);
       $staffContainerForm->getWidgetSchema()->setLabel('type', false);
     } else {
       $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm();
-      $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($staffResourceForm->getWidgetSchema());
-      $staffResourceForm->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
-      $staffResourceForm->getWidgetSchema()->setFormFormatterName('custDeco');
       //unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
       if (isset($this->staff_id)) {
         $staffResourceForm->setDefault('staff_id', $this->staff_id);
@@ -122,29 +150,13 @@ class PluginagStaffPersonForm extends agPersonForm
       $staffContainerContainer->embedForm('0', $staffResourceForm);
       //$staffResourceForm->getWidgetSchema()->setLabel('', $value) ContainerForm->getWidgetSchema()->setLabel(
       $staffContainerContainer->getWidgetSchema()->setLabel('0', false);
-
-
+    $staffContainerContainer->getValidatorSchema()->setOption('allow_extra_fields', true);
+    $staffContainerContainer->getValidatorSchema()->setOption('filter_extra_fields', false);
       $staffContainerForm->embedForm('type', $staffContainerContainer);
 
       $staffContainerForm->getWidgetSchema()->setLabel('type', false);
 //handle for creation of more than just the one form.. or have it come in through jquery
     }
-  }
-
-  /**
-   * Embeds an instance of PluginEmbedddedAgStaffResourceOrganizationForm()
-   * */
-  public function embedStaffResourceOrganizationForm($staffContainerForm)
-  {
-    if (!$this->isNew()) {
-      $staffResOrgObject = agDoctrineQuery::create()
-              ->from('agStaffResourceOrganization a')
-              ->where('a.staff_resource_id = ?', $this->getObject()->getAgStaff()->getFirst()->getAgStaffResource()->getFirst()->id)
-              ->execute()->getFirst();
-    }
-
-    $staffResOrgForm = new PluginagEmbeddedAgStaffResourceOrganizationForm(isset($staffResOrgObject) ? $staffResOrgObject : null);
-    $staffContainerForm->embedForm('organization', $staffResOrgForm);
   }
 
   /**
@@ -162,13 +174,13 @@ class PluginagStaffPersonForm extends agPersonForm
       //sort by active to the top
 
       $typeForms = $this->embeddedForms['staff']->embeddedForms['type'];
-      foreach($typeForms->getEmbeddedForms() as  $formKey => $formForm){
-      //$values = $this->values['staff']['type'];
+      foreach ($typeForms->getEmbeddedForms() as $formKey => $formForm) {
+        //$values = $this->values['staff']['type'];
         $values = $formForm->getObject()->getData();
         //bind ?
-      //we can inject $values['staffresource'] from the above.
+        //we can inject $values['staffresource'] from the above.
         $this->saveStaffResourceTypeForm($formForm, $values);
-      unset($typeForms[$formKey]);
+        unset($typeForms[$formKey]);
       }
     }
     return parent::saveEmbeddedForms($con, $forms);

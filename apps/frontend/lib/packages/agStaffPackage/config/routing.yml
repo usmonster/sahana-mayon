@@ -16,6 +16,9 @@ staff_filter:
 staff_import:
   url:   /staff/import
   param: { module: agStaff, action: import }
+staff_addstaffresource:
+  url:   /staff/addstaffresource
+  param: { module: agStaff, action: addstaffresource }
 
 staff:
   url: /staff/:action/*

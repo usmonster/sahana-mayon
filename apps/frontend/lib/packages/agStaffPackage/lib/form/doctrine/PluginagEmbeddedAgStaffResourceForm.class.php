@@ -34,6 +34,10 @@ class PluginagEmbeddedAgStaffResourceForm extends PluginagStaffResourceForm
     ));
     //$this->getWidgetSchema()->setFormFormatterName($name);
 
+      $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->getWidgetSchema());
+      $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
+      $this->getWidgetSchema()->setFormFormatterName('custDeco');
     }
+
 
 }

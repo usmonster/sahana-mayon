@@ -83,6 +83,23 @@ $(document).ready(function() {
   });
 });
 
+$(document).ready(function() {
+  $('.includeAndAdd').live('click', function() {
+    var passId = '#' + $(this).attr('id');
+    var $poster = $(this);
+    $.post($(this).attr('href'), {type: $(this).attr('name'), current: $(this).html(), id: $(this).attr('id')}, function(data) {
+      $(passId).parent().append(data + '<br />' + $poster.parent().html());
+      $poster.attr('id', 'poster_' + $poster.attr('id'));
+      $poster.hide();
+      var b ='#' + passId + ' > .submitTextToForm';
+      $(passId + ' > .submitTextToForm').focus();
+    });
+
+    return false;
+  });
+});
+
+
 // Disable submitting with enter for .submitTextToForm inputs.
 $(document).ready(function() {
   $('.submitTextToForm').live('keypress', function(evt) {
