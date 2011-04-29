@@ -764,12 +764,12 @@ class scenarioActions extends agActions
         }
         if(isset($allocatedFacilityResources)) {
           foreach($allocatedFacilityResources as $allocatedFacilityResource) {
-            $preSaveFrIds[$allocatedFacilityResource['fr_id']] = $allocatedFacilityResource['fr_id'];
+            $preSaveFrIds[$allocatedFacilityResource['fr_id']] = $allocatedFacilityResource['sfr_id'];
           }
         }
         // Find existing scen fac resources and update them. Or make new ones and populate.
         foreach($facilityResources as $facilityResource) {
-          if(in_array($facilityResource['frId'], $preSaveFrIds)) {
+          if(in_array($facilityResource['frId'], array_keys($preSaveFrIds))) {
             $scenarioFacRes = agDoctrineQuery::create()
               ->select()
                 ->from('agScenarioFacilityResource')
@@ -792,8 +792,9 @@ class scenarioActions extends agActions
         }
         if(count($preSaveFrIds > 0)) {
           foreach($preSaveFrIds as $deletable) {
+//            deleteScenarioFacilityResource($deletable);
             agScenarioFacilityHelper::deleteScenarioFacilityResource($deletable);
-//            agScenarioFacilityHelper::
+            
           }
         }
 

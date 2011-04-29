@@ -1108,7 +1108,11 @@ table.adminConfigRequirements tr td{
 }
 
 .rowFormat3{
-    display: block; font-weight: bold; color: #848484; padding:3px 0px; margin:0em 1em .5em 0em; border-bottom:1px solid #dadada;
+    display: block; 
+    font-weight: bold;
+    color: #848484;
+    padding-bottom:4px 0px;
+    border-bottom:1px solid #dadada;
 }
 
 .rowFormat4{
@@ -1490,12 +1494,12 @@ tr.sortHead th {
 
 #stepper ul li.current {
 
- background-color: #A1E2FF;
- border-top: 1px solid #A1E2FF;
+ background-color: #e5f7ff;
+ border-top: 1px solid #e5f7ff;
  border-bottom: 1px solid #dadada;
  border-left: 1px solid #dadada;
  border-right: 1px solid #dadada;
- color: #ffffff;
+ color: #21bbff;
    -moz-border-radius: 0px 0px 6px 6px;
   -webkit-border-radius: 0px 0px 6px 6px;
 }
@@ -1521,7 +1525,7 @@ tr.sortHead th {
   border-radius: 5px 5px 0px 0px;
   text-align: right;
   padding: 5px;
-  background-color: #A1E2FF;
+  background-color: #e5f7ff;
   border-color: #00b4cc;
   color: #848484;
   font-weight: bold;
@@ -1530,14 +1534,14 @@ tr.sortHead th {
 
  
 
-#stepper div.image{
-float:left;
-background-repeat: no-repeat;
-color:#fff;
-margin-left:1px;
-font-size:14px;
-height:10px;
-font-weight: bold;
+#stepper div.stepHead {
+  float: left;
+  background-repeat: no-repeat;
+  color: #21bbff;
+  margin-left: 1px;
+  font-size: 14px;
+  height: 10px;
+  font-weight: bold;
 }
 
 .empty{
@@ -1578,7 +1582,16 @@ table.reviewTable tr:hover{background-color: #f7f7f7}
 .inlineLists {
   vertical-align: top;
   display: inline-block;
-/*  float: left;*/
   height: 100%;
+  padding: 0px;
+  margin: 5px;
+}
+
+.inlineListWrapper {
+  padding: 10px;
+  border: solid 1px #dadada;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  display: inline-block;
 }
  

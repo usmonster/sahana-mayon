@@ -21,9 +21,9 @@ class agFormatterInlineLists extends sfWidgetFormSchemaFormatter
 {
 
   protected
-  $rowFormat = "%error%%field%%help%%hidden_fields%\n",
+$rowFormat = "<div class=\"inlineLists\">%error%%field%%help%%hidden_fields%</div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "\n  %content%";
+  $decoratorFormat = "<div>\n  %content%</div>";
 
 }

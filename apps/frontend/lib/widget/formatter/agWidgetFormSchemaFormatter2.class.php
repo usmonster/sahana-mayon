@@ -20,9 +20,9 @@ class agWidgetFormSchemaFormatter2 extends sfWidgetFormSchemaFormatter
 {
 
   protected
-  $rowFormat = "<span class=\"rowFormat3\">%label%</span><div class=\"rowFormat2\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
+  $rowFormat = "<span class=\"rowFormat3\">%label%</span>%error%%field%%help%%hidden_fields%\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div class=\"facgroup decoratorFormatContent\">\n  %content%</div>";
+  $decoratorFormat = "%content%";
 
 }

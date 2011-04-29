@@ -63,7 +63,7 @@ class agScenarioFacilityHelper
     return $updates ;
   }
 
-  public function deleteScenarioFacilityResource( $scenarioFacilityResourceId, Doctrine_Connection $conn = NULL)
+  public static function deleteScenarioFacilityResource( $scenarioFacilityResourceId, Doctrine_Connection $conn = NULL)
   {
     $results = 0;
 
@@ -76,7 +76,7 @@ class agScenarioFacilityHelper
       ->delete('agFacilityStaffResource')
         ->where('scenario_facility_resource_id = ?', $scenarioFacilityResourceId);
 
-    $q1 = agDoctrineQuery::create()
+    $q3 = agDoctrineQuery::create()
       ->delete('agScenarioFacilityResource')
         ->where('id = ?', $scenarioFacilityResourceId);
 
