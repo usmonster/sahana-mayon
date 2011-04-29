@@ -1569,11 +1569,16 @@ table.reviewTable tr.head th.row1{ width:260px;
 table.reviewTable tr td{ border:1px solid #dadada; padding:10px;
 }
 
-table.reviewTable tr td:first-child{ border-right:1px solid #e5f7ff; padding:10px;
-}
 table.reviewTable tr td a{ color: #848484; font-weight:bold; text-decoration: none; font-size: 1em;
 }
 table.reviewTable tr td a:hover{ color: #ff8f00; font-weight:bold; text-decoration: none; font-size: 1em;
 }
 
 table.reviewTable tr:hover{background-color: #f7f7f7}
+
+.inlineLists {
+  vertical-align: top;
+  display: inline-block;
+/*  float: left;*/
+  height: 100%;
+}

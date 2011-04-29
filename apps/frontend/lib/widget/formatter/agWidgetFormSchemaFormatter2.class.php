@@ -9,7 +9,7 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
- * @author Nils Stolpe, CUNY SPS
+ * @author Pradeep Vijayagiri, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *

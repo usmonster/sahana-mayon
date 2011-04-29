@@ -33,6 +33,9 @@ class agDefaultResourceTypeForm extends sfForm
   public function configure()
   {
     $this->widgetSchema->setNameFormat('default_resource_types[%s]');
+    $formatter = new agFormatterInlineLists($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('defaultFormDeco', $formatter);
+    $this->getWidgetSchema()->setFormFormatterName('defaultFormDeco');
     $this->embedStaffForm();
     $this->embedFacilityForm();
 
