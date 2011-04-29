@@ -614,6 +614,10 @@ agPersonLanguageCompetency:
     language_competency_id:
       type: integer(2)
       notnull: true
+  indexes:
+    agPersonLanguageCompetency_unq:
+      fields: [person_language_id, language_format_id]
+      type: unique
   relations:
     agLanguageFormat:
       local: language_format_id

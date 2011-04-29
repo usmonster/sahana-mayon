@@ -168,14 +168,21 @@ class agFooActions extends agActions
 //    $output = $phoneHelper->setEntityPhone($entityContacts, TRUE);
 //    print_r($output);
 
+    $personIds = array(1, 2 , 3, 4, 5, 6, 7, 8, 9, 10);
+    $obj = new agPersonLanguageHelper($personIds);
+    $results = $obj->getPersonLanguageById();
+    print_r($results);
+
+
+
 //
 //    $stfResHelper = new agStaffResourceHelper();
 //    $staffResources = $stfResHelper->getStaffResourceComponents(array(1, 2, 3, 4, 5), TRUE);
 //    echo"Staff Resource Helper:<br />";
 //    print_r($staffResources);
 //    echo"<br /><br />";
-    $normObj = new agStaffImportNormalization('temp_staffImport');
-    $test = $normObj->testDataNorm();
+//    $normObj = new agStaffImportNormalization('temp_staffImport');
+//    $test = $normObj->testDataNorm();
   }
 
   public function executeList(sfWebRequest $request)
@@ -256,10 +263,12 @@ $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 =>
 
 
 //$obj = new agGeoHelper() ;
-$obj = agEntityAddressHelper::init() ;
+//$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
 //$addr = $obj->getEntityAddress($array, FALSE, FALSE) ;
+//$obj = new agPersonNameHelper();
+//$obj->setRecordIds($array) ;
 //$results = $obj->defaultNameComponents ;
 //$results = $obj->getPersonIds() ;
 //$results = $obj->getPrimaryNameById() ;
@@ -273,7 +282,7 @@ $obj = agEntityAddressHelper::init() ;
 //$results = $obj->updateAddressHashes($array) ;
 //$addrxnentsById($array) ;
 //$results = $obj->setAddresses($fakeAddr, TRUE) ;
-$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, TRUE, TRUE) ;
+//$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, TRUE, TRUE) ;
 //$results = $obj->exceptionTest() ;
 //$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
 //$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
@@ -286,7 +295,7 @@ $results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, TRUE, TRUE) ;
 //$results = agScenarioStaffGeneratorHelper::executeStaffPreview(array(array('field'=>'agStaffResource.staff_resource_type_id', 'operator'=>'!=', 'condition'=>'4')));
 //array(array('condition'=>'4', 'operator'=>'!=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
 //array(array('condition'=>'4', 'operator'=>'=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
-print_r($results) ;
+//print_r($results) ;
 // <-------- CUT HERE -------->
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
