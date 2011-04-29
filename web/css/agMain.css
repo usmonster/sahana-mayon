@@ -1454,17 +1454,16 @@ tr.sortHead th {
 }
 
 #stepper {
-  float:left;
-  width: 750px;
-  margin: auto;
+/*  float:left;*/
+/*  width: 550px;*/
+  margin: auto 20px;
   border: solid 1px #dadada;
   -moz-border-radius: 5px;
   border-radius: 5px;
   /*background-image: url('../images/wizard.ico');*/
-  width: 550px;
   background-repeat: no-repeat;
   background-color:#f7f7f7;
-  padding-bottom: 5px;
+  padding-bottom: 15px;
 }
 
 #stepper ul {
@@ -1474,7 +1473,7 @@ tr.sortHead th {
 
 #stepper ul.stepperList {
  border-bottom: 1px solid #dadada;
- margin-left: -25px;
+/* margin-left: -25px;*/
 }
 
 
@@ -1582,3 +1581,4 @@ table.reviewTable tr:hover{background-color: #f7f7f7}
 /*  float: left;*/
   height: 100%;
 }
+ 
