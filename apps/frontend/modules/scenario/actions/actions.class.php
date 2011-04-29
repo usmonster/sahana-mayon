@@ -876,6 +876,26 @@ class scenarioActions extends agActions
 //end p-code
   }
 
+
+  	public function executeAddshifttemplate($request)
+	{
+        $this->forward404unless($request->isXmlHttpRequest());
+	  $number = intval($request->getParameter("num"));
+
+        $shifttemplateForm = new agSingleShiftTemplateForm($request->getParameter('id'));
+        unset($shifttemplateForm['_csrf_token']);
+                //$resourceForm->disableLocalCSRFProtection();
+
+        //$shifttemplateForm->getWidgetSchema()->setNameFormat('ag_person[staff][type][' . $number . ']' . '[%s]');
+        //$resourceForm->getWidgetSchema()->setIdFormat('%s_');
+
+                    return $this->renderPartial('newshifttemplateform', array('shifttemplateform' => $shifttemplateForm
+                                                  )
+                                   );
+
+	}
+
+
   /**
    * @method executeScenarioshifts()
    * Generates a new scenario shift form
@@ -899,13 +919,14 @@ class scenarioActions extends agActions
 //->andWhere('st.scenario_id = ' $this->scenario_id) //this makes a fun cartesian product
             ->distinct()  //need to be keyed by the possibly existing shift template record..
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
-    $this->newshifttemplateform = new agSingleShiftTemplateForm($this->scenario_id); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
+    $this->shifttemplateforms = array(new agSingleShiftTemplateForm($this->scenario_id)); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
 //for shift template workflow,
 //get current facility_staff_resource,
 //get the facility resource type ids and staff_resource_type
 
     if ($request->isMethod(sfRequest::POST)) {
-      $this->shifttemplateform->bind($request->getParameter($this->shifttemplateform->getName()), $request->getFiles($this->shifttemplateform->getName()));
+      //foreach $this->shifttemplateforms...
+      $shifttemplateform->bind($request->getParameter($this->shifttemplateform->getName()), $request->getFiles($this->shifttemplateform->getName()));
       if ($this->shifttemplateform->isValid()) {
         $ag_shift_template = $this->shifttemplateform->saveEmbeddedForms();
         if ($request->hasParameter('Continue')) {

@@ -8,7 +8,7 @@
   Scenario:
 </h3>
 
-<?php include_partial('newshifttemplateform', array('newshifttemplateform' => $newshifttemplateform, 'scenario_id' => $scenario_id)) ?>
+<?php include_partial('shifttemplateholder', array('shifttemplateforms' => $shifttemplateforms, 'scenario_id' => $scenario_id)) ?>
 
 
 

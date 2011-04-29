@@ -41,6 +41,9 @@ use_javascript('agMain.js');
             });
             $('.removeStaffResource').click(function() {
               //if there is no id for this record(db_not_exists)
+              var passId = '#' + $(this).attr('id');
+              var $inputs = $('#myForm :input:hidden');
+              //send get/post to call delete
               $(this).parent().remove();
             });
 
