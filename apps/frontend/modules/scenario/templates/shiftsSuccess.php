@@ -4,18 +4,13 @@
 <?php
   //Defines the columns of the scenario shift display list page.
   $columns = array(
-    'id' => array('title' => 'Id', 'sortable' => false),
-    'ScenarioFacilityResource' => array('title' => 'facility resource', 'sortable' => false),
-    'staffResourceId' =>  array('title' => 'staff resource id', 'sortable' => false),
-    'taskId' =>  array('title' => 'taskId', 'sortable' => false),
-    'taskLengthMinutes' =>  array('title' => 'task length minutes', 'sortable' => false),
-    'breakLengthMinutes' =>  array('title' => 'breakLengthMinutes', 'sortable' => false),
-    'minutesStartToFacilityActivation' =>  array('title' => 'facility activation start minutes', 'sortable' => false),
-    'minimumStaff' =>  array('title' => 'minimum staff', 'sortable' => false),
-    'maximumStaff' =>  array('title' => 'maximum staff', 'sortable' => false),
-    'staffWave' =>  array('title' => 'staff wave', 'sortable' => false),
-    'shiftStatusId' =>  array('title' => 'shiftStatusId', 'sortable' => false),
-    'deploymentAlgorithmId' => array('title' => 'deployment algorithm id', 'sortable' => false)
+    'id' => array('title' => 'ID', 'sortable' => false),
+    'ScenarioFacilityResource' => array('title' => 'Facility Resource /<br/>Staff Resource Type', 'sortable' => false),
+    'taskId' =>  array('title' => 'Status / Task', 'sortable' => false),
+    'minimumStaff' =>  array('title' => 'Min / Max<br/>Staff', 'sortable' => false),
+    'taskLengthMinutes' =>  array('title' => 'Task / Break<br/>Length', 'sortable' => false),
+    'minutesStartToFacilityActivation' =>  array('title' => 'Shifts<br/>Start', 'sortable' => false),
+    'staffWave' =>  array('title' => 'Staff<br/>Wave', 'sortable' => false),
   );
 
   $thisUrl = url_for('scenario/shifts?id=' . $scenario_id);
@@ -50,17 +45,17 @@
 //#            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
 //            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] .  ' : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
 //            echo $facilityResourceDisplay;
-            echo $ag_scenario_shift->getAgScenarioFacilityResource(); ?></td>
-      <td><?php echo $ag_scenario_shift->getAgStaffResourceType()->getStaffResourceType(); ?></td>
-      <td><?php echo $ag_scenario_shift->getTaskId(); ?></td>
-      <td><?php echo $ag_scenario_shift->getTaskLengthMinutes(); ?></td>
-      <td><?php echo $ag_scenario_shift->getBreakLengthMinutes(); ?></td>
-      <td><?php echo $ag_scenario_shift->getMinutesStartToFacilityActivation(); ?></td>
-      <td><?php echo $ag_scenario_shift->getMinimumStaff(); ?></td>
-      <td><?php echo $ag_scenario_shift->getMaximumStaff(); ?></td>
-      <td><?php echo $ag_scenario_shift->getStaffWave(); ?></td>
-      <td><?php echo $ag_scenario_shift->getAgShiftStatus()->getShiftStatus(); ?></td>
-      <td><?php echo $ag_scenario_shift->getAgDeploymentAlgorithm()->getDeploymentAlgorithm(); ?></td>
+        echo $ag_scenario_shift->getAgScenarioFacilityResource(); ?><br/><?php
+        echo $ag_scenario_shift->agStaffResourceType['staff_resource_type']; ?></td>
+      <td><?php echo $ag_scenario_shift->agShiftStatus['shift_status']; ?><br/><?php
+        echo $ag_scenario_shift->agTask['task']; ?></td>
+      <td><?php echo $ag_scenario_shift['minimum_staff']; ?> / <?php
+        echo $ag_scenario_shift['maximum_staff']; ?></td>
+      <td><?php
+        echo agDateTimeHelper::minsToComponentsStr($ag_scenario_shift['task_length_minutes']); ?> / <?php
+        echo agDateTimeHelper::minsToComponentsStr($ag_scenario_shift['break_length_minutes']); ?></td>
+      <td><?php echo agDateTimeHelper::minsToComponentsStr($ag_scenario_shift['minutes_start_to_facility_activation']); ?></td>
+      <td><?php echo $ag_scenario_shift['staff_wave']; ?></td>
     </tr>
     <?php endforeach; ?>
   </tbody>

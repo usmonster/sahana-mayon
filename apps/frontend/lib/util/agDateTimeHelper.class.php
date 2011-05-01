@@ -16,16 +16,20 @@
  */
 class agDateTimeHelper
 {
-  // Conversion Constants
-  const MSEC_IN_DAY = 86400000;
-  const SEC_IN_DAY = 86400;
 
-  const MSEC_IN_HOUR = 3600000;
+  // Conversion Constants
+  const MINUTE_IN_DAY = 1440;
+
+  const SEC_IN_DAY = 86400;
   const SEC_IN_HOUR = 3600;
 
+  const MSEC_IN_DAY = 86400000;
+  const MSEC_IN_HOUR = 3600000;
   const MSEC_IN_MINUTE = 60000;
-  const SEC_IN_MINUTE = 60;
 
+  const HOUR_IN_DAY = 24;
+  const MINUTE_IN_HOUR = 60;
+  const SEC_IN_MINUTE = 60;
   const MSEC_IN_SEC = 1000;
 
   /**
@@ -174,4 +178,53 @@ class agDateTimeHelper
     $tsTimeString = date ('Y-m-d H:i:s', $timestamp) ;
     return $tsTimeString ;
   }
+
+  /**
+   * Method to return a minutes figure as an associative array of days, hours, and minutes.
+   * @param integer $minutes The number of minutes to convert
+   * @param boolean $days Whether or not to include days as part of the array
+   * @return array An associative array of time components.
+   */
+  public static function minsToComponentsArray($minutes, $days = TRUE)
+  {
+    $results = array();
+    if ($days)
+    {
+      $results['days'] = floor(($minutes / self::MINUTE_IN_DAY));
+      $results['hours'] = abs(floor((($minutes % self::MINUTE_IN_DAY) / self::MINUTE_IN_HOUR)));
+    }
+    else
+    {
+      $results['days'] = 0;
+      $results['hours'] = floor(($minutes / self::MINUTE_IN_HOUR));
+    }
+
+    $results['minutes'] = abs($minutes % self::MINUTE_IN_HOUR);
+
+    return $results;
+  }
+
+  /**
+   * Method to return a minutes figure as a string by day, hour, and minute
+   * @param integer $minutes The number of minutes
+   * @param boolean $days Whether or not to include days as part of the array
+   * @return string The results formatted as a string.
+   */
+  public static function minsToComponentsStr( $minutes,
+                                              $days = TRUE)
+  {
+    $c = self::minsToComponentsArray($minutes, $days);
+    if (array_sum($c) == 0) { return '0m' ; }
+
+    $results = '';
+    if ($days)
+    {
+      if ($c['days'] != 0) { $results = $results . $c['days'] . 'd ' ; }
+    }
+
+    if ($c['hours'] != 0) { $results = $results . $c['hours'] . 'h ' ; }
+    if ($c['minutes'] != 0) { $results = $results . $c['minutes'] . 'h' ; }
+    return $results;
+  }
+
 }

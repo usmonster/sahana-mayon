@@ -295,6 +295,24 @@ $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 =>
 //$results = agScenarioStaffGeneratorHelper::executeStaffPreview(array(array('field'=>'agStaffResource.staff_resource_type_id', 'operator'=>'!=', 'condition'=>'4')));
 //array(array('condition'=>'4', 'operator'=>'!=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
 //array(array('condition'=>'4', 'operator'=>'=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
+$coll = agDoctrineQuery::create()
+  ->select('p.*')
+      ->addSelect('s.*')
+      ->addSelect('sr.*')
+    ->from('agPerson p')
+      ->leftJoin('p.agStaff s')
+      ->leftJoin('s.agStaffResource sr')
+  ->execute();
+
+print_r(count($coll)) ;
+echo "\n";
+
+$coll[1]->agStaff[0]->agStaffResource->remove(0);
+$coll->saveNoIndex();
+
+print_r(count($coll)) ;
+
+
 //print_r($results) ;
 // <-------- CUT HERE -------->
 
