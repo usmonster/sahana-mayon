@@ -40,10 +40,12 @@
       </td>
       <td>
         <div style="display:inline-block;">
-          <?php
+          <div style="display:inline;">
+  <?php
           echo $shifttemplateform['minutes_start_to_facility_activation']->renderRow();
           ?>
           <div id="start_time_slider<?php echo $number ?>"></div>
+          </div>
           <br />
           <?php
           echo $shifttemplateform['task_length_minutes']->renderRow();
