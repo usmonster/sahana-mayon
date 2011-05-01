@@ -1,7 +1,7 @@
 <h2>Review Scenario: <span class="highlightedText"><?php echo $scenario_name ?></span></h2>
-
 <h3><?php echo $scenario_description ?></h3>
 <!-- ideally the above should be 'editable text', i.e. when clicked on they convert to input fields -->
+<br/>
 <table class="reviewTable">
     <tr class="head">
         <th class="row1">Steps</th>

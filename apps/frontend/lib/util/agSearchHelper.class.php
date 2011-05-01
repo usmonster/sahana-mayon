@@ -268,16 +268,17 @@ class agSearchHelper
     if (empty($conditions)) { return 'No Restrictions (All Records Returned)'; }
 
     // otherwise, loop and make it human readable
+    $delim = ', ';
     $results = '';
     foreach ($conditions as $cdn)
     {
       $field = ucwords(str_replace('_', ' ', preg_replace('/\w+\./', '', trim($cdn['field']))));
       $results = $results . $field . ' ' . trim($cdn['operator']) . ' ' .
-        trim($cdn['condition']) . ', ';
+        trim($cdn['condition']) . $delim;
     }
 
     // trim the last delimiter and return
-    $results = substr($results, 0, -2);
+    $results = substr($results, 0, (-1 * strlen($delim)));
     return $results;
   }
 

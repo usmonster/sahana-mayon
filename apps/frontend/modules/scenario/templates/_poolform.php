@@ -54,7 +54,7 @@ if (isset($search_id)) {
           <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton" title="New Staff Pool">New Staff Pool</a>
           <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
 <?php } ?>
-          <a href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>" class="linkButton" title="Review Scenario">Finish Scenario Wizard</a>
+          <a href="<?php echo url_for('scenario/' . $scenario_id . 'shifttemplates') ?>" class="linkButton" title="Shift Templates">Save and Continue</a>
         </td>
       </tr>
     </tfoot>

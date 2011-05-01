@@ -11,7 +11,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
 
 <?php if (count($saved_searches) > 0) {
 ?>
-  <h3>Current Saved Searches</h3>
+  <h3>Saved Searches</h3>
   <table class="staffPool">
     <thead>
       <tr class="head">
