@@ -32,15 +32,14 @@ class scenarioActions extends agActions
     $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->scenario;
   }
 
-  protected function wizardHandler(sfWebRequest $request)
+  protected function wizardHandler(sfWebRequest $request, $step = null)
   {
-
-    $encodedWizard = $request->getCookie('wizardOp');
+    $encodedWizard = $request->getCookie('wizardOp'); //we stil want to keep the cookie get/set
+                                                      //methods incase the frontend shorts something
     $wizardOp = json_decode($encodedWizard, true);
     $wizardOp['scenario_id'] = $request->getParameter('id');
-    if (!isset($wizardOp['step']))
-      $wizardOp['step'] = 1;
-
+    if (!isset($wizardOp['step'])) $wizardOp['step'] = 1;
+    if ($step != null) $wizardOp['step'] = $step;
     $this->wizard = new agScenarioWizard($wizardOp);
     $this->wizardDiv = $this->wizard->getList();
   }
@@ -136,7 +135,7 @@ class scenarioActions extends agActions
 //get the needed variables regardless of what action you are performing to staff resources
     $formsArray = array();
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request);
+    $this->wizardHandler($request, 4);
     //the above should not fail.
     $this->scenario = Doctrine::getTable('agScenario')
             ->findByDql('id = ?', $request->getParameter('id'))
@@ -292,14 +291,12 @@ class scenarioActions extends agActions
           }
         }
       }
-//this is not right, but works (we can't directly modify a property of $this in our loop above)
       $this->formsArray = $formsArray;
     }
     $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray);
 
-//p-code
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario['scenario'] . ' Scenario');
-//end p-code
+
   }
 
   /**
@@ -542,7 +539,7 @@ class scenarioActions extends agActions
   public function executeResourcetypes(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request);
+    $this->wizardHandler($request, 2) ;
     $this->resourceForm = new agDefaultResourceTypeForm($this->scenario_id);
     $this->getResponse()->setTitle('Scenario Creation Wizard - set Default Resource Types needed for ' . $this->scenarioName . ' Scenario');
     if ($request->isMethod(sfRequest::POST)) {
@@ -628,7 +625,7 @@ class scenarioActions extends agActions
     $this->forward404Unless($this->scenario_id = $request->getParameter('id'));
 //set up some things to show up on the screen for our form
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request);
+    $this->wizardHandler($request, 3) ;
     $this->scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
             ->findByDql('scenario_id = ?', $this->scenario_id)
             ->getData();
@@ -840,7 +837,7 @@ class scenarioActions extends agActions
    *
    * @param sfWebRequest $request
    */
-  public function executeShifttemplates(sfWebRequest $request)
+  public function executeOldShifttemplates(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
 
@@ -904,10 +901,10 @@ class scenarioActions extends agActions
    * Generates a new scenario shift form
    * @param sfWebRequest $request
    */
-  public function executeNewshifttemplates(sfWebRequest $request)
+  public function executeShifttemplates(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request);
+    $this->wizardHandler($request,5);
     $facility_staff_resources = agDoctrineQuery::create()
             ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
 //->from('agShiftTemplate st, agFacilityStaffResource fsr')
@@ -952,9 +949,10 @@ class scenarioActions extends agActions
 
 //CREATE  / UPDATE
 //$request->getParameter('shiftid') == '' ? $this->shiftid = 'new' : $this->shiftid = $request->getParameter('shiftid');
-
-    $this->scenario_id = $request->getParameter('id');
-    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
+//    $this->scenario_id = $request->getParameter('id');
+//    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
+    $this->setScenarioBasics($request);
+    $this->wizardHandler($request,6);
     if ($request->isMethod(sfRequest::POST)) {
 
       if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {

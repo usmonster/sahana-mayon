@@ -4,8 +4,6 @@
 ?>
 <h2>Scenario Facility Groups</h2><br>
 <?php
-  $wizardOp = array('step' => 3);
-  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
   include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 <?php 

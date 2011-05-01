@@ -35,8 +35,6 @@ $(document).ready(function() {
 
 <h2>Staff Resource Requirements</h2><br>
 <?php
-  $wizardOp = array('step' => 4);
-  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
   include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 <h3>
@@ -67,16 +65,9 @@ blank.  <strong>A facility resource must have at least one staff resource entere
       'facilityStaffResourceContainer' => $facilityStaffResourceContainer,
       'array' => $arrayBool,
       'scenario' => $scenario,
-        // 'ag_facility_resources' => $ag_facility_resources,
-        // 'ag_allocated_facility_resources' => $ag_allocated_facility_resources
-        //is this form modified?
     ));
 
-
-    //the URL below should only appear if we have filled out this sufficiently
 ?>
-
-
     <br>
     
 <p>Click "Save" to save any updates and continue editing on this page.  Click "Create Shift 
