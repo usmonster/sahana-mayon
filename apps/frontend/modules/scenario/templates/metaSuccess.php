@@ -1,8 +1,5 @@
 <h2><?php echo $metaAction ?> Scenario</h2>
 <?php
-  $wizardOp = array('step' => 1);
-  $sf_response->setCookie('wizardOp', json_encode($wizardOp));
-  //set the cookie to know our current step.
   include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 <p>Scenarios are plans for emergency responders. Using the Scenario Creation Wizard you'll add facilities,

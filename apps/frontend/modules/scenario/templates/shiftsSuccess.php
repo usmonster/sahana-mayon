@@ -1,4 +1,5 @@
-<h3>Scenario Shifts for <?php echo $scenario_name ?></h3>
+<h2>Scenario Shifts for <?php echo $scenarioName ?></h2>
+  <?php include_partial('wizard', array('wizardDiv' => $wizardDiv)); ?>
 
 <?php #include_partial('scenarioshiftform', array('scenarioshiftform' => $scenarioshiftform, 'myRandomParam' => $myRandomParam, 'outputResults' => $outputResults)) ?>
 <?php
@@ -22,7 +23,7 @@
   $descArrow = '&#x25BC;';
 
 ?>
-
+<p>Needed Shifts to be filled for this scenario are listed below.</p>
 <table class="staffTable">
   <thead>
     <tr class="head">
