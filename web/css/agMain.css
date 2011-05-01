@@ -1569,16 +1569,25 @@ table.reviewTable tr.head{ background: #e5f7ff; text-align:center; color: #84848
 }
 table.reviewTable tr.head th.row1{ width:260px;
 }
-
 table.reviewTable tr td{ border:1px solid #dadada; padding:10px;
 }
-
 table.reviewTable tr td a{ color: #848484; font-weight:bold; text-decoration: none; font-size: 1em;
 }
 table.reviewTable tr td a:hover{ color: #ff8f00; font-weight:bold; text-decoration: none; font-size: 1em;
 }
+table.reviewTable tr:hover{background-color: #f7f7f7
+}
 
-table.reviewTable tr:hover{background-color: #f7f7f7}
+table.staffPool{border: 1px solid #dadada; width:650px; border-collapse: collapse;
+}
+table.staffPool tr.head{ background-color: #e5f7ff; text-align:center; color: #848484;
+}
+table.staffPool tr td{ border:1px solid #dadada; padding:5px;
+}
+table.staffPool tr:hover{background-color: #f7f7f7
+}
+table.staffPool tr.head:hover{background-color: #e5f7ff
+}
 
 .inlineLists {
   vertical-align: top;

@@ -15,9 +15,13 @@
  */
 class agSearchHelper
 {
-  protected static $constructorMethods = array(
+  protected static  $constructorMethods = array(
     'doctrine_query_simple' => 'parseDoctrineQuerySimple',
     'lucene_query' => 'parseLuceneQuery') ;
+
+  protected static  $toStringMethods = array(
+    'doctrine_query_simple' => 'doctrineQuerySimpleToString'
+  );
 
   /**
    * Simple method to hash search conditions consistently.
@@ -196,8 +200,8 @@ class agSearchHelper
           ->addSelect('st.search_type')
         ->from('agSearch s')
           ->innerJoin('s.agSearchType st')
-        ->where('s.id = ?', $searchId)
-        ->useResultCache(TRUE, 3600, __FUNCTION__);
+        ->where('s.id = ?', $searchId);
+        //->useResultCache(TRUE, 3600, __FUNCTION__)
 
 
     // we're only getting one row back so we can reduce our return array nesting by one
@@ -224,6 +228,20 @@ class agSearchHelper
   }
 
   /**
+   * Method to return a human-readable conditions string parsed from a search id.
+   * @param integer $searchId The search being performed.
+   * @return string A human-readable set of search conditions.
+   */
+  public static function searchConditionsToString($searchId)
+  {
+    $searchParams = self::getSearchParams($searchId);
+    $searchType = $searchParams['st_search_type'];
+    $conditions = json_decode($searchParams['s_search_condition'],TRUE);
+    $method = self::$toStringMethods[$searchType];
+    return self::$method($conditions);
+  }
+
+  /**
    * Method to parse a simple doctrine query search.
    * @param agDoctrineQuery $query An agDoctrineQuery object
    * @param array $conditions An array of query conditions to process
@@ -242,6 +260,25 @@ class agSearchHelper
 
     // return the doctrine query object
     return $query;
+  }
+
+  protected static function doctrineQuerySimpleToString($conditions)
+  {
+    // if there are no conditions, return a special string indicating that
+    if (empty($conditions)) { return 'No Restrictions (All Records Returned)'; }
+
+    // otherwise, loop and make it human readable
+    $results = '';
+    foreach ($conditions as $cdn)
+    {
+      $field = ucwords(str_replace('_', ' ', preg_replace('/\w+\./', '', trim($cdn['field']))));
+      $results = $results . $field . ' ' . trim($cdn['operator']) . ' ' .
+        trim($cdn['condition']) . ', ';
+    }
+
+    // trim the last delimiter and return
+    $results = substr($results, 0, -2);
+    return $results;
   }
 
   /**

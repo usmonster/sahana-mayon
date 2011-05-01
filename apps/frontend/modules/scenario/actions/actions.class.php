@@ -356,8 +356,14 @@ class scenarioActions extends agActions
             ->findby('scenario_id', $this->scenario_id)->count();
     $this->target_module = 'staff';
 
-    $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
-            ->findby('scenario_id', $this->scenario_id);
+    $this->saved_searches = $existing = agDoctrineQuery::create()
+      ->select('ssg.*')
+          ->addSelect('s.*')
+        ->from('agScenarioStaffGenerator ssg')
+          ->innerJoin('ssg.agSearch s')
+        ->where('ssg.scenario_id = ?', $this->scenario_id)
+        ->orderBy('ssg.search_weight DESC, s.search_name ASC')
+        ->execute();
 //get all available staff
     $this->total_staff = Doctrine_Core::getTable('agStaff')->count();
     $this->total_resources = Doctrine_Core::getTable('agStaffResource')->count();

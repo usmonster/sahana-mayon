@@ -11,19 +11,20 @@ Your staff resource pool is essentially a set of searches that let you refine wh
 
 <?php if (count($saved_searches) > 0) {
 ?>
-  <h3>Existing Saved Searches</h3>
-  <table>
+  <h3>Current Saved Searches</h3>
+  <table class="staffPool">
     <thead>
-      <tr>
+      <tr class="head">
         <th>Search Name</th>
-        <th>Search Type</th>
+        <th>Search Conditions</th>
       </tr>
     </thead>
     <tbody>
     <?php foreach ($saved_searches as $saved_search): ?>
       <tr>
-        <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) . '?search_id=' . $saved_search->getId() ?> " class="linkButton"><?php echo $saved_search->getAgSearch()->search_name ?></a></td>
-        <td><?php echo $saved_search->getAgSearch()->getAgSearchType() ?></td>
+        <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) . '?search_id=' .
+          $saved_search['id'] ?> " class="linkButton"><?php echo $saved_search->agSearch['search_name'] ?></a></td>
+        <td><?php echo agSearchHelper::searchConditionsToString($saved_search->agSearch['id']); ?></td>
       </tr>
     <?php endforeach; ?>
     </tbody>
