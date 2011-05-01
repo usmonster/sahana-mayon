@@ -19,14 +19,14 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
 {
   public $scenario_id;
 
-  public function __construct($scenario_id = null)
+  public function __construct($scenario_id = null,$shiftTemplate = array())
   {
     if ($scenario_id == null) {
       throw new LogicException('you must provide a scenario_id to construct a shift template form');
     } else {
       $this->scenario_id = $scenario_id;
     }
-    parent::__construct(array(), array(), array());
+    parent::__construct($shiftTemplate, array(), array());
   }
   /**
    * configure()

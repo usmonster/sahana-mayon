@@ -10,9 +10,9 @@ use_stylesheet('jquery/jquery.ui.custom.css');
 
 
 <form action="<?php echo url_for('scenario/newshifttemplates?id=' . $scenario_id); ?>" method="post">
-<?php foreach ($shifttemplateforms as $shifttemplateform): ?>
+<?php foreach ($shifttemplateforms->getEmbeddedForms() as $key => $shifttemplateform): ?>
     <div class="infoHolder shiftTemplateCounter">
-<?php include_partial('newshifttemplateform', array('shifttemplateform' => $shifttemplateform, 'scenario_id' => $scenario_id)) ?>
+<?php include_partial('newshifttemplateform', array('shifttemplateform' => $shifttemplateform, 'scenario_id' => $scenario_id, 'number' => $key)) ?>
 
   </div>
 <?php endforeach; ?>
@@ -20,19 +20,6 @@ use_stylesheet('jquery/jquery.ui.custom.css');
 <div class="displayInline shiftTemplateCounter">
   <a href="#" name="groupStatus" class="includeAndAdd linkText" id="staff_id_1">Add Shift Template</a>
   <script>
-    function addSlider(element) {
-      var slider = $('.value-slider', element).slider({
-        orientation: "horizontal",
-        value:50,
-        min: 0,
-        max: 100,
-        step: 5,
-        slide: function( event, ui ) {
-          $("#slider-input").val(ui.value);
-        }
-      });
-
-    }
 
     function addShiftTemplate(num) {
       var r = $.ajax({
@@ -47,8 +34,18 @@ use_stylesheet('jquery/jquery.ui.custom.css');
         var passId = '#' + $(this).attr('id');
         var $poster = $(this);
         var templates = $('.shiftTemplateCounter').length
-        $(passId).parent().prepend(addShiftTemplate('templates') + '<br \>');
-        addSlider($('#timeframe'));
+        $(passId).parent().prepend(addShiftTemplate(templates) + '<br \>');
+        $("#start_time_slider" + templates).slider({
+                  orientation: "horizontal",
+        value:50,
+        min: 0,
+        max: 100,
+        step: 5,
+        slide: function( event, ui ) {
+          $("#minutes_start_to_facility_activation").val(ui.value);
+        }
+        });
+        addSlider($('#timeframe' + templates));
       });
 
       $('.removeShiftTemplate').click(function() {

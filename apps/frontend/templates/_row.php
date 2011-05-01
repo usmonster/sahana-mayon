@@ -16,7 +16,7 @@ foreach ($displayColumns as $key => $value) {
   ?>
       <td><?php
       if ($column == 'fn') {
-        echo link_to($value, $target_module . '/edit?id=' . $data['id'], array('class' => 'linkButton', 'title' => 'Create New Facility'));
+        echo link_to($value, $target_module . '/edit?id=' . $data['id'], array('class' => 'linkButton', 'title' => 'Edit'));
       } else {
         echo $value;
       }

@@ -838,9 +838,6 @@ class scenarioActions extends agActions
   {
     $this->setScenarioBasics($request);
 
-
-
-
     $facility_staff_resources = agDoctrineQuery::create()
             ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
 //->from('agShiftTemplate st, agFacilityStaffResource fsr')
@@ -885,14 +882,11 @@ class scenarioActions extends agActions
         $this->forward404unless($request->isXmlHttpRequest());
 	  $number = intval($request->getParameter("num"));
 
-        $shifttemplateForm = new agSingleShiftTemplateForm($request->getParameter('id'));
-        unset($shifttemplateForm['_csrf_token']);
-                //$resourceForm->disableLocalCSRFProtection();
-
-        //$shifttemplateForm->getWidgetSchema()->setNameFormat('ag_person[staff][type][' . $number . ']' . '[%s]');
-        //$resourceForm->getWidgetSchema()->setIdFormat('%s_');
-
-                    return $this->renderPartial('newshifttemplateform', array('shifttemplateform' => $shifttemplateForm
+        $shiftTemplateForm = new agSingleShiftTemplateForm($request->getParameter('id'));
+        $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[' . $number . '][%s]');
+        //$shiftTemplateForm->getWidgetSchema()->setIdFormat($number . '%s');
+        unset($shiftTemplateForm['_csrf_token']);
+        return $this->renderPartial('newshifttemplateform', array('shifttemplateform' => $shiftTemplateForm, 'number' => $number
                                                   )
                                    );
 
@@ -922,16 +916,16 @@ class scenarioActions extends agActions
 //->andWhere('st.scenario_id = ' $this->scenario_id) //this makes a fun cartesian product
             ->distinct()  //need to be keyed by the possibly existing shift template record..
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
-    $this->shifttemplateforms = array(new agSingleShiftTemplateForm($this->scenario_id)); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
+    $this->shifttemplateforms =  new agShiftTemplateContainerForm($this->scenario_id); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
 //for shift template workflow,
 //get current facility_staff_resource,
 //get the facility resource type ids and staff_resource_type
 
     if ($request->isMethod(sfRequest::POST)) {
       //foreach $this->shifttemplateforms...
-      $shifttemplateform->bind($request->getParameter($this->shifttemplateform->getName()), $request->getFiles($this->shifttemplateform->getName()));
-      if ($this->shifttemplateform->isValid()) {
-        $ag_shift_template = $this->shifttemplateform->saveEmbeddedForms();
+      $shifttemplateforms->bind($request->getParameter($this->shifttemplateform->getName()), $request->getFiles($this->shifttemplateform->getName()));
+      if ($this->shifttemplateforms->isValid()) {
+        $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms();
         if ($request->hasParameter('Continue')) {
           $generatedResult = agScenarioGenerator::shiftGenerator();
 //should be a try/catch here
