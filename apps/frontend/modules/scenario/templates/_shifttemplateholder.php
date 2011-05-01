@@ -18,7 +18,7 @@ use_stylesheet('jquery/jquery.ui.custom.css');
 <?php endforeach; ?>
 </form>
 <div class="displayInline shiftTemplateCounter">
-  <a href="#" name="groupStatus" class="includeAndAdd linkText" id="staff_id_1">Add Shift Template</a>
+
   <script>
 
     function addShiftTemplate(num) {
@@ -45,7 +45,6 @@ use_stylesheet('jquery/jquery.ui.custom.css');
           $("#minutes_start_to_facility_activation").val(ui.value);
         }
         });
-        addSlider($('#timeframe' + templates));
       });
 
       $('.removeShiftTemplate').click(function() {
