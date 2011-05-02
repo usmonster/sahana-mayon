@@ -1,8 +1,7 @@
-<?php use_stylesheets_for_form($form) ?>
-<?php
+<?php use_javascript('agasti.js') ?>
+<?php use_stylesheets_for_form($form);
 use_javascripts_for_form($form);
-use_javascript('jquery.ui.custom.js');
-use_javascript('agMain.js');
+//include_javascripts_for_form($form);
 ?>
 <form action="<?php echo url_for('agStaff/' . ($form->getObject()->isNew() ? 'create' : 'update') . (!$form->getObject()->isNew() ? '?id=' . $form->getObject()->getAgStaff()->getFirst()->getId() : '')) ?>" method="post" <?php $form->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 <?php if (!$form->getObject()->isNew()): ?>

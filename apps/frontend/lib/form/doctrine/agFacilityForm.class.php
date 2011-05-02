@@ -30,6 +30,7 @@ class agFacilityForm extends BaseagFacilityForm
      * depends on validator maybe?
      */
     parent::configure();
+    
     unset(
         $this['updated_at'],
         $this['created_at'],
@@ -67,15 +68,22 @@ class agFacilityForm extends BaseagFacilityForm
     $useFields = array_merge($useFields, array_diff($formFields, $useFields));
     $this->useFields($useFields);
 
+    /**
+     * Get URL For wiki
+     */
+
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $wikiUrl = url_for('@wiki');
 
     /**
      * Set labels on a few fields
      */
+
     $this->widgetSchema->setLabels(
         array(
-          'resource' => 'Resources',
+          'resources' => 'Resources <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger">?</a>',
           'facility_name' => 'Name',
-        //'facility_code' => 'Facility Code'
+          'facility_code' => 'Facility Code <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger">?</a>'
         )
     );
 
@@ -759,5 +767,18 @@ class agFacilityForm extends BaseagFacilityForm
     }
     return parent::saveEmbeddedForms($con, $forms);
   }
-
+  public function getJavaScripts()
+  {
+    $js = parent::getJavaScripts();
+    $js[] = 'jquery.ui.custom.js';
+    $js[] = 'agTooltip.js';
+    return $js;
+  }
+  public function getStyleSheets()
+  {
+    $css = parent::getStyleSheets();
+    $css[] = 'jquery/jquery.ui.custom.css';
+    return $css;
+  }
+  
 }
