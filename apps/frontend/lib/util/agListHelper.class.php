@@ -88,10 +88,23 @@ if ($staff_ids != null) {
         else{
           $person_email = '---';
         }
+        if(array_key_exists('given', $person_names[$value['p_id']])){
+          $person_first_name = $person_names[$value['p_id']]['given'];
+        }
+        else {
+          $person_first_name = '---';
+        }
+        if(array_key_exists('family', $person_names[$value['p_id']])){
+          $person_last_name = $person_names[$value['p_id']]['family'];
+        }
+        else {
+          $person_last_name = '---';
+        }
+
         $resultArray[] = array(
           'id' => $value['s_id'],
-          'fn' => $person_names[$value['p_id']]['given'],
-          'ln' => $person_names[$value['p_id']]['family'],
+          'fn' => $person_first_name,
+          'ln' => $person_last_name,
           'agency' => $value['o_organization'],
           'classification' => $value['srt_staff_resource_type'],
           'phones' => $person_phone, // only for testing, prefer the above

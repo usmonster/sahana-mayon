@@ -46,6 +46,8 @@ class agShiftTemplateContainerForm extends sfForm
     parent::bind($taintedValues, $taintedFiles);
   }
     public function configure(){
+
+      unset($this['_csrf_token']);
       $shiftTemplates = agDoctrineQuery::create()
               ->from('agShiftTemplate a')
               ->where('a.scenario_id = ?', $this->scenario_id)
@@ -82,6 +84,7 @@ class agShiftTemplateContainerForm extends sfForm
     }
     $this->getValidatorSchema()->setOption('allow_extra_fields', true);
     $this->getValidatorSchema()->setOption('filter_extra_fields', false);
+
     }
   public function saveEmbeddedForms($con = null, $forms = null)
   {

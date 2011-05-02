@@ -1,8 +1,3 @@
-<?php #if (!$shifttemplateform->getObject()->isNew()):    ?>
-<!--
-<input type="hidden" name="sf_method" value="put" />
--->
-<?php #endif;  ?>
 <table>
   <tfoot style="display:none;">
     <tr>
@@ -46,7 +41,7 @@
               echo $shifttemplateform['minutes_start_to_facility_activation']->renderRow();
               ?>
             </td>
-            <td>
+            <td width="200px">
               <div id="start_time_slider<?php echo $number ?>"></div>
             </td>
           </tr>
@@ -56,7 +51,7 @@
               echo $shifttemplateform['task_length_minutes']->renderRow();
               ?>
             </td>
-            <td>
+            <td width="200px">
               <div id="task_time_slider<?php echo $number ?>"></div>
             </td>
           </tr>
@@ -66,20 +61,24 @@
               echo $shifttemplateform['break_length_minutes']->renderRow();
             ?>
             </td>
-          <td>
+          <td width="200px">
           <div id="break_time_slider<?php echo $number ?>"></div>
             </td>
           </tr>
           </table>
+<?php
 
+$foo = $shifttemplateform['minutes_start_to_facility_activation']->getValue();
+
+?>
           <script>
             $().ready(function() {
               $("#start_time_slider<?php echo $number ?>").slider({
                 orientation: "horizontal",
-                value:50,
-                min: 0,
-                max: 100,
-                step: 5,
+                value:<?php echo intval($shifttemplateform['minutes_start_to_facility_activation']->getValue() / 60 ); ?>,
+                min: -96,
+                max: 96,
+                step: 1,
                 slide: function( event, ui ) {
                   $("#shift_template_<?php echo $number ?>_minutes_start_to_facility_activation").val(ui.value);
                 }

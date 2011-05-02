@@ -883,9 +883,9 @@ class scenarioActions extends agActions
   	public function executeAddshifttemplate($request)
 	{
         $this->forward404unless($request->isXmlHttpRequest());
-	  $number = intval($request->getParameter("num"));
-
-        $shiftTemplateForm = new agSingleShiftTemplateForm($request->getParameter('id'));
+        $number = intval($request->getParameter("num"));
+        $shiftTemplate = new agShiftTemplate();
+        $shiftTemplateForm = new agSingleShiftTemplateForm($request->getParameter('id'), $shiftTemplate);
         $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[' . $number . '][%s]');
         //$shiftTemplateForm->getWidgetSchema()->setIdFormat($number . '%s');
         unset($shiftTemplateForm['_csrf_token']);
@@ -921,10 +921,10 @@ class scenarioActions extends agActions
             ->distinct()  //need to be keyed by the possibly existing shift template record..
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
     $this->shifttemplateforms =  new agShiftTemplateContainerForm($this->scenario_id); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
-
+    unset($this->shifttemplateforms['_csrf_token']);
     if ($request->isMethod(sfRequest::POST)) {
       //foreach $this->shifttemplateforms...
-      $shifttemplateforms->bind($request->getParameter($this->shifttemplateform->getName()), $request->getFiles($this->shifttemplateform->getName()));
+      $this->shifttemplateforms->bind($request->getParameter($this->shifttemplateforms->getName()), $request->getFiles($this->shifttemplateforms->getName()));
       if ($this->shifttemplateforms->isValid()) {
         $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms();
         if ($request->hasParameter('Continue')) {

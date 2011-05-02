@@ -2,6 +2,10 @@
 $thisUrl = url_for($target_module . '/list');
 $ascArrow = '&#x25B2;';
 $descArrow = '&#x25BC;';
+($status != 'active') ? $statusAppend = '?status=' . $status : $statusAppend = '?status=active';
+($sort != null) ? $sortAppend = '&sort=' . $sort : $sortAppend = '';
+($order != null) ? $orderAppend = '&order=' . $order : $orderAppend = '';
+
 if (!(isset($caption)))
   $caption = 'List';
 //the above two lines are in place to supress warnings until sort is corrected

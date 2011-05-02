@@ -236,6 +236,27 @@ h5 {
   box-shadow: 3px 3px 3px #ccc;*/
 }
 
+.smallLinkButton {
+  display: inline-block;
+  color: #848484;
+  padding: 2px 4px;
+  border: solid 1px #dadada;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  font-size: .9em;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  background: #f1f1f1;
+
+
+/*  -moz-box-shadow: 3px 3px 3px #ccc;
+  -webkit-box-shadow: 3px 3px 3px #ccc;
+  box-shadow: 3px 3px 3px #ccc;*/
+}
+
 .submitLinkButton {
   display: inline-block;
   color: #848484;
@@ -254,11 +275,11 @@ h5 {
   position: relative;
 }
 
-.linkButton:hover, .buttonSmall:hover {
+.linkButton:hover, .buttonSmall:hover, .smallLinkButton:hover {
   background: #cdffdd;
 }
 
-.linkButton:active, .buttonSmall:active {
+.linkButton:active, .buttonSmall:active{
   background: #98ffb9;
 
 }

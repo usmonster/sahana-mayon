@@ -15,9 +15,18 @@ foreach ($displayColumns as $key => $value) {
     if (in_array($column, $display_columns)) {
   ?>
       <td><?php
-      if ($column == 'fn') {
-        echo link_to($value, $target_module . '/edit?id=' . $data['id'], array('class' => 'linkButton', 'title' => 'Edit'));
-      } else {
+      if ($column == 'id') {
+        echo link_to('Edit', $target_module . '/edit?id=' . $data['id'], array('class' => 'linkButton', 'title' => 'Edit'));
+        echo link_to('Show', $target_module . '/show?id=' . $data['id'], array('class' => 'linkButton', 'title' => 'Show'));
+      } elseif($column == 'emails') {
+        if($value != '---'){
+          echo '<a href="mailto:' . $value . '">' . $value . '</a>';
+        }
+        else{
+          echo $value;
+        }
+      }
+      else{
         echo $value;
       }
   ?></td>
