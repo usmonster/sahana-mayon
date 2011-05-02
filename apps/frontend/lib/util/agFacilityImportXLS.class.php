@@ -37,9 +37,10 @@ class agFacilityImportXLS extends agImportXLS
   {
     //TODO: uncomment this line when agImportHelper is ready:
     //parent::__construct('temp_facilityImport');
-    //TODO: remove these two lines when agImportHelper is ready:
-    $this->tempTable = 'temp_facilityImport';
+    //TODO: remove these three lines when agImportHelper is ready:
     parent::__construct();
+    $this->tempTable = 'temp_facilityImport';
+    $this->setImportSpec();
 
     // Declare class properties.
     $this->staffRequirementFieldType = array('type' => "integer");
@@ -159,7 +160,7 @@ class agFacilityImportXLS extends agImportXLS
               $colName = str_replace(' ', '_', strtolower($xlsObj->val(1, $col, $sheet)));
 
               $val = $xlsObj->raw($row, $col, $sheet);
-              if (!($val)) {
+              if (empty($val)) {
                 $val = $xlsObj->val($row, $col, $sheet);
               }
               $importFileData[$importRow][$colName] = trim($val);
