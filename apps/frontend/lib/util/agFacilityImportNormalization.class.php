@@ -181,7 +181,7 @@ class agFacilityImportNormalization //extends agImportNormalization
 
     // Check for valid phone number where it's either 10 digit or
     // 10 digit follow by an 'x' and the extension.
-    if (!empty($record['work_phone']) && !preg_match('/^\d{10}(x\d+)?$/', $record['work_phone'])) {
+    if (!empty($record['work_phone']) && !preg_match('/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4})) *(x\d+)?$/', $record['work_phone'])) {
       return array('pass' => FALSE,
                    'status' => 'WARNING',
                    'type' => 'Phone',
