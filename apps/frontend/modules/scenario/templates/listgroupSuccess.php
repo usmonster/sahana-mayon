@@ -1,3 +1,6 @@
+<?php
+  use_javascript('agMain.js');
+?>
 <h3>Facility Group Listing</h3>
 
 <table>

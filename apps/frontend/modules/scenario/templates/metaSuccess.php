@@ -1,3 +1,6 @@
+<?php
+  use_javascript('agMain.js');
+?>
 <h2><?php echo $metaAction ?> Scenario</h2>
 <?php
   include_partial('wizard', array('wizardDiv' => $wizardDiv));

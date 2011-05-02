@@ -1,3 +1,6 @@
+<?php
+  use_javascript('agMain.js');
+?>
 <h2>Staff Resource Pool</h2> <br>
 <?php
 $wizardOp = array('step' => 7);

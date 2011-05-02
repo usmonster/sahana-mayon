@@ -1,3 +1,6 @@
+<?php
+  use_javascript('agMain.js');
+?>
 <h2>Scenario Shifts for <?php echo $scenarioName ?></h2>
   <?php include_partial('wizard', array('wizardDiv' => $wizardDiv)); ?>
 

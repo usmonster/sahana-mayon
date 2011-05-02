@@ -1,4 +1,6 @@
-
+<?php
+  use_javascript('agMain.js');
+?>
 <script type="text/javascript">
   $(function(){
     $('.groupLabel').click(function(){

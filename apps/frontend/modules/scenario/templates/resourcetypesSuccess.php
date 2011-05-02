@@ -1,3 +1,6 @@
+<?php
+  use_javascript('agMain.js');
+?>
 <script language="Javascript" type="text/javascript"> 
     $(document).ready(function(){
         var maxHeight=0;
