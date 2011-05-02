@@ -38,8 +38,8 @@ use_stylesheet('jquery/jquery.ui.custom.css');
         $("#start_time_slider" + templates).slider({
                   orientation: "horizontal",
         value:50,
-        min: 0,
-        max: 100,
+        min: -750,
+        max: 750,
         step: 5,
         slide: function( event, ui ) {
           $("#minutes_start_to_facility_activation").val(ui.value);

@@ -1,4 +1,4 @@
-<?php #if (!$shifttemplateform->getObject()->isNew()):   ?>
+<?php #if (!$shifttemplateform->getObject()->isNew()):    ?>
 <!--
 <input type="hidden" name="sf_method" value="put" />
 -->
@@ -10,7 +10,7 @@
         &nbsp;<a href="<?php echo url_for('scenario/listshifttemplate') ?>" class="linkButton">Back to list</a>
         <?php #if (!$shifttemplateform->getObject()->isNew()):  ?>
         <!--
-        &nbsp;<?php #echo link_to('Delete', 'scenario/deleteshifttemp?id='.$shifttemplateform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton'))   ?>
+        &nbsp;<?php #echo link_to('Delete', 'scenario/deleteshifttemp?id='.$shifttemplateform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton'))    ?>
         -->
         <?php #endif;  ?>
         <input type="submit" class="linkButton" value="Save" />
@@ -39,56 +39,69 @@
         ?>
       </td>
       <td>
-        <div style="display:inline-block;">
-          <div style="display:inline;">
-  <?php
-          echo $shifttemplateform['minutes_start_to_facility_activation']->renderRow();
-          ?>
-          <div id="start_time_slider<?php echo $number ?>"></div>
-          </div>
-          <br />
-          <?php
-          echo $shifttemplateform['task_length_minutes']->renderRow();
-          ?>
-          <div id="task_time_slider<?php echo $number ?>"></div>
-          <br />
-          <?php
-          echo $shifttemplateform['break_length_minutes']->renderRow();
-          ?>
+        <table>
+          <tr>
+            <td>
+              <?php
+              echo $shifttemplateform['minutes_start_to_facility_activation']->renderRow();
+              ?>
+            </td>
+            <td>
+              <div id="start_time_slider<?php echo $number ?>"></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <?php
+              echo $shifttemplateform['task_length_minutes']->renderRow();
+              ?>
+            </td>
+            <td>
+              <div id="task_time_slider<?php echo $number ?>"></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <?php
+              echo $shifttemplateform['break_length_minutes']->renderRow();
+            ?>
+            </td>
+          <td>
           <div id="break_time_slider<?php echo $number ?>"></div>
-          <br />
-        </div>
-        <script>
+            </td>
+          </tr>
+          </table>
 
-          $().ready(function() {
-            $("#start_time_slider<?php echo $number ?>").slider({
-              orientation: "horizontal",
-              value:50,
-              min: 0,
-              max: 100,
-              step: 5,
-              slide: function( event, ui ) {
-                $("#shift_template_<?php echo $number ?>_minutes_start_to_facility_activation").val(ui.value);
-              }
-            });
-            $("#task_time_slider<?php echo $number ?>").slider({
-              orientation: "horizontal",
-              value:50,
-              min: 0,
-              max: 100,
-              step: 5,
-              slide: function( event, ui ) {
-                $("#shift_template_<?php echo $number ?>_task_length_minutes").val(ui.value);
-              }
-            });
-            $("#break_time_slider<?php echo $number ?>").slider({
-              orientation: "horizontal",
-              value:50,
-              min: 0,
-              max: 100,
-              step: 5,
-              slide: function( event, ui ) {
-                $("#shift_template_<?php echo $number ?>_break_length_minutes").val(ui.value);
+          <script>
+            $().ready(function() {
+              $("#start_time_slider<?php echo $number ?>").slider({
+                orientation: "horizontal",
+                value:50,
+                min: 0,
+                max: 100,
+                step: 5,
+                slide: function( event, ui ) {
+                  $("#shift_template_<?php echo $number ?>_minutes_start_to_facility_activation").val(ui.value);
+                }
+              });
+              $("#task_time_slider<?php echo $number ?>").slider({
+                orientation: "horizontal",
+                value:50,
+                min: 0,
+                max: 100,
+                step: 5,
+                slide: function( event, ui ) {
+                  $("#shift_template_<?php echo $number ?>_task_length_minutes").val(ui.value);
+                }
+              });
+              $("#break_time_slider<?php echo $number ?>").slider({
+                orientation: "horizontal",
+                value:50,
+                min: 0,
+                max: 100,
+                step: 5,
+                slide: function( event, ui ) {
+                  $("#shift_template_<?php echo $number ?>_break_length_minutes").val(ui.value);
               }
             });
 

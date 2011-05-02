@@ -135,7 +135,7 @@ class scenarioActions extends agActions
 //get the needed variables regardless of what action you are performing to staff resources
     $formsArray = array();
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request, 4);
+    $this->wizardHandler($request, 5);
     //the above should not fail.
     $this->scenario = Doctrine::getTable('agScenario')
             ->findByDql('id = ?', $request->getParameter('id'))
@@ -348,7 +348,7 @@ class scenarioActions extends agActions
   public function executeStaffpool(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request);
+    $this->wizardHandler($request,4);
     $this->scenario_staff_count = Doctrine_Core::getTable('AgScenarioStaffResource')
             ->findby('scenario_id', $this->scenario_id)->count();
     $this->target_module = 'staff';
@@ -904,7 +904,8 @@ class scenarioActions extends agActions
   public function executeShifttemplates(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request,5);
+    $this->wizardHandler($request,6);
+
     $facility_staff_resources = agDoctrineQuery::create()
             ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
 //->from('agShiftTemplate st, agFacilityStaffResource fsr')
@@ -920,9 +921,6 @@ class scenarioActions extends agActions
             ->distinct()  //need to be keyed by the possibly existing shift template record..
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
     $this->shifttemplateforms =  new agShiftTemplateContainerForm($this->scenario_id); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
-//for shift template workflow,
-//get current facility_staff_resource,
-//get the facility resource type ids and staff_resource_type
 
     if ($request->isMethod(sfRequest::POST)) {
       //foreach $this->shifttemplateforms...
@@ -938,21 +936,14 @@ class scenarioActions extends agActions
         }
       }
     }
-
-//p-code
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
-//end p-code
   }
 
   public function executeShifts(sfWebRequest $request)
   {
-
 //CREATE  / UPDATE
-//$request->getParameter('shiftid') == '' ? $this->shiftid = 'new' : $this->shiftid = $request->getParameter('shiftid');
-//    $this->scenario_id = $request->getParameter('id');
-//    $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request,6);
+    $this->wizardHandler($request,7);
     if ($request->isMethod(sfRequest::POST)) {
 
       if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
@@ -998,12 +989,10 @@ class scenarioActions extends agActions
                 ->leftJoin('sfg.agScenario AS s')
                 ->where('s.id = ?', $this->scenario_id);
 
-
         /**
          * Create pager
          */
         $this->pager = new sfDoctrinePager('agScenarioShift', 20);
-
         /**
          * Set pager's query to our final query including sort
          * parameters

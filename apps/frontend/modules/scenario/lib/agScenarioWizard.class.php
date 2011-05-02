@@ -23,10 +23,10 @@ class agScenarioWizard
       1 => array('title' => 'Name and Describe Scenario', 'url' => 'scenario/meta'),
       2 => array('title' => 'Define needed Staff and Facility Types', 'url' => 'scenario/resourcetypes'),
       3 => array('title' => 'Create Facility Groups', 'url' => 'scenario/fgroup'),
-      4 => array('title' => 'Staff Resource Requirements', 'url' => 'scenario/staffresources'),
-      5 => array('title' => 'Shift Templates & Shift Definition', 'url' => 'scenario/shifttemplates'),
-      6 => array('title' => 'Shift Review ', 'url' => 'scenario/shifts'),
-      7 => array('title' => 'Create Staff Pools', 'url' => 'scenario/staffpool' )
+      4 => array('title' => 'Create Staff Pools', 'url' => 'scenario/staffpool' ),
+      5 => array('title' => 'Staff Resource Requirements', 'url' => 'scenario/staffresources'),
+      6 => array('title' => 'Shift Templates & Shift Definition', 'url' => 'scenario/shifttemplates'),
+      7 => array('title' => 'Shift Review ', 'url' => 'scenario/shifts')
     );
 
     $this->WIZARD_OP = &$WIZARD_OP;
