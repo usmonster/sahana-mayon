@@ -63,50 +63,79 @@ class agPersonLanguageHelper extends agBulkRecordHelper
 
     return $q ;
   }
+  /**
+   * Method to return person names in an array keyed by the person_name_type_id.
+   *
+   * @param array $personIds A single-dimension array of person id values. Default is NULL.
+   * @param boolean $primary A boolean that controls whether or not the query constructor will
+   * build a query that only returns primary names or all names.
+   * @return array A three-dimensional associative array keyed by person id and name_type_id.
+   */
 
+  /**
+   * Method to retrieve person's language, format, and competency information.
+   * 
+   * @param array $personIds A single-dimension array of person id values. Default is NULL.
+   * @param boolean $primary A boolean that controls whether or not the query constructor will
+   * build a query that only returns primary names or all names.
+   * @return array A multi-dimensional associative array keyed by person id, 
+   * ordering index, and format id.
+   * <code>
+   * array( personID => 
+   *            array( index => array( [0] => langauge,
+   *                                   [1] => array( formatId => competencyId 
+   *                                                 ... )
+   *                                 )
+   *                   ... )
+   *      ...)
+   * </code>      
+   */
   public function getPersonLanguageById($personIds = NULL, $primary = TRUE)
   {
-    $result = array();
+    $results = array();
     $q = $this->_getLanguageComponents($personIds, $primary);
 
     $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
 
     foreach ($rows AS $row)
     {
-      // Check whether or not formats and competency level is defined for the person's language.
-      if (is_null($row[2]))
-      {
-        // No formats or competency level defined for language.  Thus, safe to save as empty array.
-        $results[$row[0]][] = array($row[1], array());
-      }
-      else
-      {
-        if (isset($results[$row[0]]))
-        {
-          // Person is multilingual.
-          $language = $rows[1];
-          $pLangs = $results[$row[0]];
-          $idx = array_walk($pLangs,
-                            function($langs, $index, $lang) { if ($langs[0] == $lang) { echo $index; }},
-                            $language );
+      // Check whether or not the person already has other associated language
+      // stored in $results.
+      if (isset($results[$row[0]]))
+      { // Person is multilingual.
+        $rowLang = $row[1];
+        $personLanguages = $results[$row[0]];
+        $idx = NULL;
 
-          // Check whether or not the person already has other language(s) saved in $results.  If
-          // so, append to the existing person's language array.  If not, add as new array language.
-          if (isset($idx))
+        // Search for index to insert into $result.  Appending to sub array if
+        // person already has a format defined for the language.  Otherwise,
+        // add new language and format to person.
+        foreach ($personLanguages AS $index => $pLangs)
+        {
+          if ($pLangs[0] == $rowLang)
           {
-            $comp =& $results[$row][$idx][1];
-            $comp[$row[2]] = $row[3];
+            $idx = $index;
+            break;
           }
-          else
-          {
-            $results[$row[0]][] = array($row[1], array($row[2] => $row[3]));
-          }
+        }
+
+        if (isset($idx))
+        {
+          $results[$row[0]][$idx][1][$row[2]] = $row[3];
         }
         else
         {
-          // First language encounter for person.  Save initial language to results.
-          $results[$rows[0]][] = array($row[1], array($row[2] => $row[3]));
+          $results[$row[0]][] = array($row[1], array($row[2] => $row[3]));
         }
+      }
+      else
+      {
+        // First language encounter for person.  Save initial language to
+        // results.
+        // Check whether or not formats and competency level is defined for the
+        // person's language.
+        $formatComponent = is_null($row[2]) ? array() : array($row[2] => $row[3]);
+        $results[$row[0]][] = array($row[1], $formatComponent);
       }
     }
 
