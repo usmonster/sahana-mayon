@@ -53,7 +53,9 @@ function buildAddressTable($addressArray)
 * @param string  $html       The key to the $contents array value that will be used to create the
 *                            <label> html for a checkbox.
 *
-* @param string  $class      A CSS class for the table. Optional.
+* @param string  $cssClass   A CSS class for the table. Optional.
+* 
+* @param string  $cssId      A CSS id for the table. Optional.
 *
 * @param int     $maxColumns An integer that determines the maximum number of columns for the table.
 *                            Defaults to 5.
@@ -74,7 +76,7 @@ function buildAddressTable($addressArray)
 *
 * @return string             A table with a checkbox in each <td>.
 * */
-function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColumns = 5, $idPrepend = null, $title = null, $toggle = true, $checked = false)
+function buildCheckBoxTable(array $contents, $id, $html, $cssClass = null, $cssId = null, $maxColumns = 5, $idPrepend = null, $title = null, $toggle = true, $checked = false)
 {
   // Check if this table will be making use of the checkToggle js in agMain. If it is, set up the
   // classes and elements that will be used to implement it. Create the header, if necessary, and
@@ -133,9 +135,19 @@ function buildCheckBoxTable(array $contents, $id, $html, $class = null, $maxColu
   }
 
   // Create the actual table.
-  // If $class was passed in, add a class to the table. Then attach the header (it might be empty).
-  $checkBoxTable = ($class == null ? '<table>' . PHP_EOL : '<table class="' . $class . '">' . PHP_EOL ) . ($header == null ? '' : $header);
+  // If $cssClass was passed in, add a class to the table. Then attach the header (it might be empty).
+//  $checkBoxTable = ($cssClass == null ? '<table>' . PHP_EOL : '<table class="' . $cssClass . '">' . PHP_EOL ) . ($header == null ? '' : $header);
 
+  if($cssClass == null && $cssId == null) {
+    $checkBoxTable = '<table>' . PHP_EOL;
+  } elseif ($cssClass != null && $cssId == null) {
+    $checkBoxTable = '<table class="' . $cssClass . '">' . PHP_EOL;
+  } elseif ($cssClass == null && $cssId != null) {
+    $checkBoxTable = '<table id="' . $cssId . '">' . PHP_EOL;
+  } elseif ($cssClass != null && $cssId != null) {
+    $checkBoxTable = '<table id="' . $cssId . '" class="' . $cssClass . '">' . PHP_EOL;
+  }
+  $checkBoxTable .= $header;
   // Add the rows to the table.
   foreach($rows as $row) {
     $checkBoxTable .= $row;

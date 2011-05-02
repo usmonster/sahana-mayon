@@ -1348,6 +1348,13 @@ a.signin.menu-open span {
 .checkBoxTable {
   border: solid 1px #dadada;
   padding: 0px;
+  background: #ffffff;
+/*  border-collapse: collapse;*/
+  border-radius: 5px;
+  -moz-border-radius: 10px;
+  box-shadow: 0px 0px 5px #a1e2ff;
+  -moz-box-shadow: 0px 0px 5px #a1e2ff;
+  -webkit-box-shadow: 0px 0px 5px #a1e2ff;
 }
 .checkBoxTable tr {
   margin: 0;
@@ -1355,6 +1362,10 @@ a.signin.menu-open span {
 .checkBoxTable th {
   text-align: left;
   background: #a1e2ff;
+  -moz-border-radius-topleft: 10px;
+  -moz-border-radius-topright: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .checkBoxTable th label {
@@ -1370,92 +1381,145 @@ a.signin.menu-open span {
   background: #f7f7f7
 }
 .testTable, .testTableParent {
-  width: 100%;
+/*  width: 100%;*/
+  border-collapse: collapse;
 }
 
-.testTableParent td, .testTableParent th {
+/*.testTableParent td, .testTableParent th {
   padding: 0px;
-  margin: 0;
-}
+}*/
+/*removed to fix styling. might still need
 .testTableParent th {
   border-top: solid 1px #00B4CC;
   border-bottom: solid 1px #00B4CC;
-}
+}*/
 
+/*removed to fix styling. might still need
 .testTableParent th.left {
   border-left: solid 2px #00B4CC;
-}
+}*/
 
+/*removed to fix styling. might still need
 .testTableParent th.right {
   border-right: solid 2px #00B4CC;
-}
+}*/
 
+.testTableParent td.container {
+  margin: 0;
+  padding: 0;
+  height: 0;
+}
 .testTable th {
   background: #A1E2ff;
-  border-top: solid 1px #00B4CC;
-  border-bottom: solid 1px #00B4CC;
+/*  border-top: solid 1px #00B4CC;
+  border-bottom: solid 1px #00B4CC;*/
   color: #ffffff;
 }
 .testTable tr.countZero td {
-  border: solid #00B4CC;
-  border-width: 1px 2px;
+/*  border: solid #00B4CC;
+  border-width: 1px 2px;*/
+  text-align: center;
+  color: #ff8f00;
+  font-weight: bold;
 }
 .testTable th, .testTable td, .testTableParent th, .testTableParent td {
-  width: 100px;
+  padding: 4px;/*  width: 100px;*/
 }
 .testTable td {
   background: #ffffff;
 }
 
 .testTable td, .testTable th {
-  border-top: solid 1px #00B4CC;
-  border-bottom: solid 1px #00B4CC;
-  margin: 0;
-  padding: 0;
+/*  border-top: solid 1px #00B4CC;
+  border-bottom: solid 1px #00B4CC;*/
+  border: solid 1px #dadada;
+
+/*  border-top: 1px solid #dadada;
+  border-bottom: 1px solid #dadada;*/
+/*  border-width: 1px 0px;*/
+/*  margin: 0;
+  padding: 0;*/
 }
 
 .testTable td.left, .testTable th.left {
-  border-left: solid 2px #00B4CC;
+/*  border-left: solid 2px #00B4CC;*/
+/*  border-right: 0px !important;*/
+/*  border: solid #dadada;
+  border-width: 1px 0px 1px 1px;*/
+  border-right: none;
+  width: 120px;
 }
 
 .testTable td.right, .testTable th.right {
-  border-right: solid 2px #00B4CC;
+/*  border-right: solid 2px #00B4CC;*/
+  border-left: none;
+  width: 120px;
 }
 
+.testTable td.inner, .testTable th.inner {
+  border-left: none;
+  border-right: none;
+  width: 120px;
+}
+
+.testTable td.narrow, .testTable th.narrow {
+  width: 50px !important;
+  text-align: center;
+}
 .testTableParent tr th, .testTable tr th, testTable tr td {
-  background: #00DFFC;
+  background: #dadada;
   text-align: left;
   color: #ffffff;
 }
 
 tr.sortHead th {
   background: #A1E2FF;
+  width: 145px;
 }
-.testTableParent tr.sortHead th a {
+.testTableParent tr.sortHead th a, .testTable caption a {
   color: #ffffff;
   text-decoration: none;
   outline: none;
 }
+
+.testTableParent tr.sortHead th a {
+  color: #ffffff;
+}
+
+.testTable caption a {
+  color: #ff8f00;
+  float: left;
+}
+.testTable caption a:hover {
+  text-shadow: 0px 0px 5px #ff8f00;
+}
+.testTableParent th.count {
+  text-align: right;
+}
 .testTableParent tr.sortHead th a:hover {
   color: #98ffb9;
-  text-shadow: 0px 0px 5px #98ffb9;
+  text-shadow: 0px 0px 2px #98ffb9;
 }
 
 .testTable caption, .testTableParent caption {
   font-size: 1.2em;
-  background: #00B4CC;
-  color: #ffffff;
+  background: #e5f7ff;
+  color: #848484;
   font-weight: bold;
   padding: 4px;
 }
 .testTableContainer {
   display: inline-block;
   height: 800px;
-  width: 320px;
+/*  width: 320px;*/
   overflow: scroll;
   overflow-x: hidden;
 }
 
+#revealable {
+  position: absolute;
+  display: none;
+}
 .tooltipTrigger {
   font-size:  .65em;
   font-weight: bold;
