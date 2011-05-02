@@ -31,16 +31,17 @@
 class agFacilityImportXLS extends agImportXLS
 {
 
+  public $tempTable;
+
   function __construct()
   {
-    parent::__construct('temp_facilityImport');
-    //parent::__construct();
+    //TODO: uncomment this line when agImportHelper is ready:
+    //parent::__construct('temp_facilityImport');
+    //TODO: remove these two lines when agImportHelper is ready:
+    $this->tempTable = 'temp_facilityImport';
+    parent::__construct();
 
     // Declare class properties.
-    $this->name = "agFacilityImportXLS";
-
-    //$this->tempTable = 'temp_facilityImport';
-
     $this->staffRequirementFieldType = array('type' => "integer");
   }
 
@@ -105,7 +106,11 @@ class agFacilityImportXLS extends agImportXLS
       $this->events[] = array("type" => "ERROR", "message" => "{$this->fileInfo['basename']} is not Microsoft Excel 2003 \".xls\" workbook.");
     } else {
       $this->events[] = array("type" => "INFO", "message" => "Opening import file for reading.");
+
+      $errorlevel = error_reporting();
+      error_reporting($errorlevel ^ E_NOTICE);
       $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
+      error_reporting($errorlevel);
 
       // Get some info about the workbook's composition
       $numSheets = count($xlsObj->sheets);

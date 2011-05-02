@@ -37,9 +37,24 @@ abstract class agImportXLS extends agImportHelper
   public $events = array();
   public $numRecordsImported = 0;
 
+  /**
+   * @todo remove this constructor when agImportHelper is ready
+   */
   function __construct()
   {
-    parent::__construct();
+    //parent::__construct();
+    // get our error threshold
+    $this->errThreshold = intval(agGlobal::getParam('import_error_threshold'));
+
+    // sets our temp table and builds our import specification
+    $this->setDynamicFieldType();
+
+    // Sets a new connection.
+    $this->setConnections();
+
+    // reset our iterators
+    $this->resetIterData();
+
   }
 
   function __destruct()
