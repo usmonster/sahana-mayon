@@ -5,10 +5,10 @@
 <?php use_javascript('agTooltip.js'); ?>
 
 <h2>Create New Scenario</h2>
-<p>Scenarios are plans for emergency responders.  Using the Scenario Creator you'll add facilities
+<p>Scenarios are plans for emergency response.  Using the Scenario Creator you'll add facilities
 and plan for staff resources to run them.</p>
-<p>Resources, such as staff and facilities, should be loaded to plan with.  Staff and facilities have different
-  rules for inclusion in Agasti; and though scenarios could be created
+<p>Resources, such as staff and facilities, should be loaded into Sahana Agasti to plan with.  Staff and facilities have different
+  rules for inclusion, and though scenarios could be built
   <strong>it is strongly recommended staff are loaded before scenarios are created</strong>.</p>
 Click the tooltip '?' icon to view the recommended workflow. <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:scenario_pre&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Create New Scenario">?</a>
 

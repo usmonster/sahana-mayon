@@ -1,6 +1,6 @@
 ====== Scenario Creator Walk-through ======
 
-Scenarios are plans; a response plan that could mirror or complement a municipal response plan.  Scenarios help to prepare for the deployment of staff and facility resources for the duration of an emergency response; specific emergency responses are referred to as Events.
+Scenarios are plans; response plans that mirror or complement a municipal response plan.  Scenarios help to prepare for the deployment of staff and facility resources for the duration of an emergency response, while specific emergency responses are referred to as Events.
 
 This Scenario Creator Walk-through is meant to take someone unfamiliar with Scenarios and Events and guide them through with enough reference information to create more Scenarios on their own.  It can also be used for reference later on and the pages printed (using the Printable Version link in the left side menu) for a handy guide.  The sections of each page in this walk-through will be:
 

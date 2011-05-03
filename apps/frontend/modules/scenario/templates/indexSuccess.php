@@ -6,9 +6,10 @@
 
 <h2>Scenario Management</h2>
 <p>In Sahana Agasti a Scenario is, in the simplest definition, a plan.
-  Through the Scenario Manager, Emergency Managers are able to plan the deployment of
-  staff and facility resources for an emergency response to match their existing response plans.
-  Once created, the scenario can be customized and modified as the emergency response plan evolves.</p>
+  Using Scenarios in Agasti, Emergency Managers are able to plan the deployment of
+  staff and facility resources during emergency response.  These scenarios complement
+  existing response plans.  Once created, scenarios can be customized and modified
+  as the emergency response plan evolves.</p>
 <p>In the event of an emergency response, the scenario is activated and becomes an Event.  Events
   deploy resources to the affected areas as per the scenarios they are based on.</p>
 <h3>Please select one of the following scenario actions:</h3>
