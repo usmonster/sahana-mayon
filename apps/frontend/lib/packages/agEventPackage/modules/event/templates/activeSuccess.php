@@ -42,7 +42,7 @@ if (isset($blackOutFacilities)) {
         <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
     </tr>
     <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('event/staff/event=' . urlencode($event_name)); ?>"
+        <td><a  class="buttonText" href="<?php echo url_for('event/staff?event=' . urlencode($event_name)); ?>"
    ><?php echo $event_name ?> Staff Management</a></td>
         <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
     </tr>
