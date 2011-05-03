@@ -33,22 +33,22 @@ if (isset($blackOutFacilities)) {
 <br/>
 <table class="reviewTable">
     <tr class="head">
-        <th class="row1">Steps</th>
+        <th class="row1">Actions</th>
         <th>Description</th>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('event/meta?event=' . urlencode($event_name)); ?>"
-   ><?php echo $event_name ?> and Zero Hour</a></td>
+   >Event Name and Zero Hour</a></td>
         <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('event/staff?event=' . urlencode($event_name)); ?>"
-   ><?php echo $event_name ?> Staff Management</a></td>
+   >Event Name Staff Management</a></td>
         <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('event/listgroups?event=' . urlencode($event_name)); ?>"
-   ><?php echo $event_name ?> Facility Management</a></td>
+   >Event Name Facility Management</a></td>
         <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
     </tr>
     <tr>
