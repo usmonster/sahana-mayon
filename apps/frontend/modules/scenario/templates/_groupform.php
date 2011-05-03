@@ -220,5 +220,5 @@ echo url_for
 </div>
 <?php
   $contents = $sf_data->getRaw('facilityResourceTypes');
-  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type', 'checkBoxTable searchParams', 'revealable', 2, 'facility_resource_type_', 'facility_resource_type_abbr', true, true);
+  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type', 'checkBoxTable checkBoxContainer searchParams', 'revealable', 2, 'facility_resource_type_', 'facility_resource_type_abbr', true, true);
 ?>

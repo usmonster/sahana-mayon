@@ -1489,7 +1489,7 @@ tr.sortHead th {
 }
 .testTableContainer {
   display: inline-block;
-  height: 800px;
+  height: 400px;
   overflow: scroll;
   overflow-x: hidden;
 }

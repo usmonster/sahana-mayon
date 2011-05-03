@@ -4,18 +4,32 @@
 $(document).ready(function(){
   // Checking the checkbox w/ id checkAll will check all boxes w/ class chekToggle
   // unchecking checkAll will uncheck all checkToggles.
-  $("#checkall").live('click', function () {
-    $('.checkToggle').attr('checked', this.checked);
+  $('#checkall').live('click', function () {
+    var check = this.checked;
+    $('.checkBoxContainer').find('.checkToggle').each(function() {
+      this.checked = check;
+      $(this).trigger('change');
+    });
   });
   // This unsets the check in checkAll if one of the checkToggles are unchecked.
   // or it will set the check on checkAll if all the checkToggles have been checked
   // individually.
-  $(".checkToggle").live('click', function(){
-    if($("input.checkToggle").length == $("input.checkToggle:checked").length) {
-      $("#checkall").attr("checked", "checked");
+  $('.checkToggle').live('change', function(){
+    if($('input.checkToggle').length == $('input.checkToggle:checked').length) {
+      $('#checkall').attr('checked', true);
     } else {
-      $("#checkall").removeAttr("checked");
+      $("#checkall").attr('checked', false);
     }
+  });
+});
+
+$(document).ready(function() {
+  $('.searchParams .checkToggle').live('change', function() {
+      if($(this).is(':checked')) {
+        $('.available .' + $(this).attr('id')).show();
+      } else {
+        $('.available .' + $(this).attr('id')).hide();
+      }
   });
 });
 
@@ -128,18 +142,6 @@ $(document).ready(function() {
       }
     });
     return false;
-  });
-});
-
-$(document).ready(function() {
-  $('.searchParams input[type="checkbox"]').change(function() {
-    $('.searchParams input[type="checkbox"]').each(function(){
-      if($(this).is(':checked')) {
-        $('.available .' + $(this).attr('id')).show();
-      } else {
-        $('.available .' + $(this).attr('id')).hide();
-      }
-    })
   });
 });
 
