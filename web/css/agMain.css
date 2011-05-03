@@ -1351,9 +1351,9 @@ a.signin.menu-open span {
   border: solid 1px #dadada;
   padding: 0px;
   background: #ffffff;
-/*  border-collapse: collapse;*/
-  border-radius: 5px;
-  -moz-border-radius: 10px;
+  border-collapse: collapse;
+/*  border-radius: 5px;
+  -moz-border-radius: 10px;*/
   box-shadow: 0px 0px 5px #a1e2ff;
   -moz-box-shadow: 0px 0px 5px #a1e2ff;
   -webkit-box-shadow: 0px 0px 5px #a1e2ff;
@@ -1364,10 +1364,10 @@ a.signin.menu-open span {
 .checkBoxTable th {
   text-align: left;
   background: #a1e2ff;
-  -moz-border-radius-topleft: 10px;
+/*  -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 10px;
   border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-top-right-radius: 10px;*/
 }
 
 .checkBoxTable th label {
@@ -1379,82 +1379,55 @@ a.signin.menu-open span {
   text-align: left;
 }
 
+tr.sort:hover {
+  -moz-box-shadow: 0px 0px 5px #a1e2ff;
+  -webkit-box-shadow: 0px 0px 5px #a1e2ff;
+  box-shadow: 0px 0px 5px #a1e2ff;
+  text-shadow: 0px 0px 5px #a1e2ff;
+}
 .testTableContainer {
   background: #f7f7f7
 }
 .testTable, .testTableParent {
-/*  width: 100%;*/
   border-collapse: collapse;
 }
-
-/*.testTableParent td, .testTableParent th {
-  padding: 0px;
-}*/
-/*removed to fix styling. might still need
-.testTableParent th {
-  border-top: solid 1px #00B4CC;
-  border-bottom: solid 1px #00B4CC;
-}*/
-
-/*removed to fix styling. might still need
-.testTableParent th.left {
-  border-left: solid 2px #00B4CC;
-}*/
-
-/*removed to fix styling. might still need
-.testTableParent th.right {
-  border-right: solid 2px #00B4CC;
-}*/
 
 .testTableParent td.container {
   margin: 0;
   padding: 0;
   height: 0;
 }
+
 .testTable th {
   background: #A1E2ff;
-/*  border-top: solid 1px #00B4CC;
-  border-bottom: solid 1px #00B4CC;*/
   color: #ffffff;
 }
 .testTable tr.countZero td {
-/*  border: solid #00B4CC;
-  border-width: 1px 2px;*/
   text-align: center;
   color: #ff8f00;
   font-weight: bold;
+  border-right: solid 1px #dadada;
+  border-left: solid 1px #dadada;
 }
 .testTable th, .testTable td, .testTableParent th, .testTableParent td {
-  padding: 4px;/*  width: 100px;*/
+  padding: 4px;
 }
 .testTable td {
   background: #ffffff;
 }
 
 .testTable td, .testTable th {
-/*  border-top: solid 1px #00B4CC;
-  border-bottom: solid 1px #00B4CC;*/
-  border: solid 1px #dadada;
-
-/*  border-top: 1px solid #dadada;
-  border-bottom: 1px solid #dadada;*/
-/*  border-width: 1px 0px;*/
-/*  margin: 0;
-  padding: 0;*/
+  border-top: solid 1px #dadada;
+  border-bottom: solid 1px #dadada;
 }
 
 .testTable td.left, .testTable th.left {
-/*  border-left: solid 2px #00B4CC;*/
-/*  border-right: 0px !important;*/
-/*  border: solid #dadada;
-  border-width: 1px 0px 1px 1px;*/
-  border-right: none;
+  border-left: solid 1px #dadada;
   width: 120px;
 }
 
 .testTable td.right, .testTable th.right {
-/*  border-right: solid 2px #00B4CC;*/
-  border-left: none;
+  border-right: solid 1px #dadada;
   width: 120px;
 }
 
@@ -1477,6 +1450,10 @@ a.signin.menu-open span {
 tr.sortHead th {
   background: #A1E2FF;
   width: 145px;
+}
+
+.testTable caption {
+  height: 1.5em;
 }
 .testTableParent tr.sortHead th a, .testTable caption a {
   color: #ffffff;
@@ -1513,11 +1490,12 @@ tr.sortHead th {
 .testTableContainer {
   display: inline-block;
   height: 800px;
-/*  width: 320px;*/
   overflow: scroll;
   overflow-x: hidden;
 }
-
+table.available caption {
+  width: 258px;
+}
 #revealable {
   position: absolute;
   display: none;
