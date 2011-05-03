@@ -1,6 +1,7 @@
 <?php use_javascript('agasti.js') ?>
 <?php   use_javascript('jquery.ui.custom.js');
-  use_stylesheet('jquery/jquery.ui.custom.css');?>
+  use_stylesheet('jquery/jquery.ui.custom.css');
+  use_stylesheet('jquery/mayon.jquery.ui.css');?>
 <?php use_javascript('agTooltip.js'); ?>
 
 <h2>Create New Scenario</h2>

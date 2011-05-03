@@ -66,7 +66,6 @@ if (isset($search_id)) {
       </tr>
       <tr> 
         <td>
-          <br/>
           <h3>Construct Search Conditions:</h3>
 
 <?php

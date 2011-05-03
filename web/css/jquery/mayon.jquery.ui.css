@@ -21,3 +21,8 @@
 .ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
 .ui-slider-vertical .ui-slider-range-min { bottom: 0; }
 .ui-slider-vertical .ui-slider-range-max { top: 0; }
+
+/*Tooltip*/
+.ui-dialog .ui-dialog-content {overflow: visible !important; } /*overflow: auto;*/
+.ui-dialog .ui-dialog-titlebar{ margin-bottom: 3px !important;}
+.titleClass {/*  height:10px;*/}
