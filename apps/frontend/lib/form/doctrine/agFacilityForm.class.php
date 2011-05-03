@@ -81,9 +81,9 @@ class agFacilityForm extends BaseagFacilityForm
 
     $this->widgetSchema->setLabels(
         array(
-          'resources' => 'Resources <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger">?</a>',
+          'resources' => 'Resources <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Resource">?</a>',
           'facility_name' => 'Name',
-          'facility_code' => 'Facility Code <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger">?</a>'
+          'facility_code' => 'Facility Code <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>'
         )
     );
 
@@ -777,7 +777,8 @@ class agFacilityForm extends BaseagFacilityForm
   public function getStyleSheets()
   {
     $css = parent::getStyleSheets();
-    $css[] = 'jquery/jquery.ui.custom.css';
+    $css['jquery/jquery.ui.custom.css'] = 'all';
+    $css['jquery/mayon.jquery.ui.css'] = 'all';
     return $css;
   }
   

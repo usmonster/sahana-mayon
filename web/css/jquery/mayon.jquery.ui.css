@@ -24,5 +24,5 @@
 
 /*Tooltip*/
 .ui-dialog .ui-dialog-content {overflow: visible !important; } /*overflow: auto;*/
-.ui-dialog .ui-dialog-titlebar{ margin-bottom: 3px !important;}
+.ui-dialog .ui-dialog-titlebar{ margin-bottom: 3px !important; padding: 0.1em !important;}
 .titleClass {/*  height:10px;*/}
