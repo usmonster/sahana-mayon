@@ -18,6 +18,28 @@
 class agFacility extends BaseagFacility
 {
 
+  protected $isAutoIndexed;
+
+  public function __construct($table = null, $isNewEntry = false, $isAutoIndexed = true)
+  {
+    parent::__construct($table, $isNewEntry);
+    $this->isAutoIndexed = $isAutoIndexed;
+  }
+
+  public function postSave($event)
+  {
+    if ($this->isAutoIndexed) {
+      parent::postSave($event);
+    }
+  }
+
+  public function postDelete($event)
+  {
+    if ($this->isAutoIndexed) {
+      parent::postDelete($event);
+    }
+  }
+
   /**
    * Builds an index for facility.
    *

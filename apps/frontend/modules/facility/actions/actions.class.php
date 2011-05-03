@@ -244,7 +244,7 @@ class facilityActions extends agActions
     //$this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready', array('cursor' => $cursor)));
     // TODO: eventually use this ^^^ to replace this vvv.
 
-    $import = new AgFacilityImportXLS();
+    $import = new agFacilityImportXLS();
 //    $returned = $import->createTempTable();
 
     $this->timer = time();

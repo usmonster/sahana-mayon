@@ -103,7 +103,7 @@ $i = 1;
       </table>
       <?php endif ?>
     <?php else: ?>
-      <br /><B>File not imported.</B>
+      <br /><strong>File not imported.</strong>
     <?php endif ?>
 
 
