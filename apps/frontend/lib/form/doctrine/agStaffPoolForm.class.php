@@ -126,7 +126,7 @@ class agStaffPoolForm extends sfForm
 
     if (is_array($this->s_values)) {
       $searchForm->setDefault('search_name', $this->s_values['search_name']);
-      $searchForm->setDefault('search_type_id', $this->s_values['search_type_id']);
+      //$searchForm->setDefault('search_type_id', $this->s_values['search_type_id']);
     }
     $this->embedForm('search', $searchForm);
   }

@@ -198,12 +198,11 @@ class scenarioActions extends agActions
           }
         }
       }
-//if ($request->getParameter('Continue')) {};
 //were there any changes?
       if ($request->hasParameter('Continue')) {
-        $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+        $this->redirect('scenario/shifttemplates?id=' . $this->scenario_id);
       } else {
-        $this->redirect('scenario/staffresources?id=' . $request->getParameter('id'));
+        $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
       }
     } else {
 
@@ -390,8 +389,20 @@ class scenarioActions extends agActions
           $this->filterForm->setDefault($querypart['field'], $defaultValue[0]);
         }
       }
-    } else {
-      $this->poolform = new agStaffPoolForm(); //this is redeclared below to construct the form with an
+    } elseif($request->getParameter('Preview')) {
+          $postParam = $request->getPostParameter('staff_pool');
+          $search = $postParam['search'];
+          $staff_generator = $postParam['staff_generator'];
+          $values = array('sg_values' =>
+            array('search_weight' => $staff_generator['search_weight']),
+            's_values' =>
+            array('search_name' => $search['search_name'],
+              'search_type_id' => $search['search_type_id']));
+
+      $this->poolform = new agStaffPoolForm(null,$values); //construct our pool form with POST data
+    }
+    else{
+      $this->poolform = new agStaffPoolForm();
     }
 
     if ($request->isMethod(sfRequest::POST) || $request->getParameter('search_id')) {
@@ -401,15 +412,14 @@ class scenarioActions extends agActions
 //fix this.
         $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
         if ($request->isMethod(sfRequest::POST)) {
-          $postParam = $request->getPostParameter('staff_pool');
-          $search = $postParam['search'];
+
+
+          //update the default values of our form from the web request POST data
+//          $updatedSearchForm = $this->poolform->getEmbeddedForm('search');
+//          $updatedSearchForm->setDefault('search_name',$search['search_name']);
+//          $this->poolform->embedForm('search', $updatedSearchForm);
+//          $this->poolform->getWidgetSchema()->setLabel('search', false);
           $search_condition = json_decode($search['search_condition'], true);
-          $staff_generator = $postParam['staff_generator'];
-          $values = array('sg_values' =>
-            array('search_weight' => $staff_generator['search_weight']),
-            's_values' =>
-            array('search_name' => $search['search_name'],
-              'search_type_id' => $search['search_type_id']));
 
           foreach ($search_condition as $querypart) {
             //these search definitions should be stored in 'search type' table maybe?

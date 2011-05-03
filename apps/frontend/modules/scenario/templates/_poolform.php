@@ -55,6 +55,7 @@ if (isset($search_id)) {
           <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
 <?php } ?>
           <input type="submit" value="Save and Continue" class="linkButton" name="Continue" onclick="queryConstruct()"/>
+          <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton" title="Skip and Continue">Skip and Continue</a>
         </td>
       </tr>
     </tfoot>
