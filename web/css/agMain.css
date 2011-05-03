@@ -152,7 +152,7 @@ h5 {
   display: inline-block;
   padding: .5em 10px .25em;
   font-weight: bold;
-  text-align: center;
+/*  text-align: center;*/
   text-decoration: none;
   outline: none;
   font-size: 1em;
@@ -1627,8 +1627,8 @@ table.reviewTable{border: 1px solid #dadada; width:650px; border-collapse: colla
 }
 table.reviewTable tr.head{ background-color: #e5f7ff; text-align:center; color: #848484; height:35px;
 }
-/*table.reviewTable tr.head:hover{ background-color: #e5f7ff
-}*/
+table.reviewTable tr.head:hover{ background-color: #e5f7ff
+}
 table.reviewTable tr.head th.row1{ width:260px;
 }
 table.reviewTable tr td{ border:1px solid #dadada; padding:10px;
@@ -1669,6 +1669,6 @@ table.staffPool tr:hover{background-color: #f7f7f7
  margin:5px 12px 5px 5px;
 }
 
-table.staffPool tr.head:hover, table.reviewTable tr.head:hover, table.staffTable tr.head:hover, table.singleTable tr.head:hover
+table.staffPool tr.head:hover, table.staffTable tr.head:hover, table.singleTable tr.head:hover
 { background-color: #dadada;
 }
