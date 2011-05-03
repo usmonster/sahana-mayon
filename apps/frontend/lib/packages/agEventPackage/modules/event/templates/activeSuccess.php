@@ -43,12 +43,12 @@ if (isset($blackOutFacilities)) {
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('event/staff?event=' . urlencode($event_name)); ?>"
-   >Event Name Staff Management</a></td>
+   >Event Staff Management</a></td>
         <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('event/listgroups?event=' . urlencode($event_name)); ?>"
-   >Event Name Facility Management</a></td>
+   >Event Facility Management</a></td>
         <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
     </tr>
     <tr>
