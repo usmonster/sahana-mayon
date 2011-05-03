@@ -152,69 +152,69 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
    * This is a private function that processes existing relationships
    * relevant to scenario facility groups, facility resources and their activation sequence
    */
-  protected function doSave($con = null)
-  {
-    $existing = $this->getObject()->getAgScenarioFacilityResource();
-    foreach ($existing as $rec) {
-      $current[] = $rec->facility_resource_id;
-    }
-    //$existing = $this->object->agFacilityResource->getPrimaryKeys();
-    $values = $this->getTaintedValues();
-    //all we need to save, is the allocated list: it's order included
-    //(this is proving to be clumsy while working with a listbox, jquery is prefered)
-    $alloc_array = json_decode($values['ag_facility_resource_order']);
-    unset($this['ag_facility_resource_order']);
-    unset($this['ag_facility_resource_list']);
-    parent::doSave($con);
-    if ($alloc_array) {
-      //current is what is currently in that facility group
-      //alloc_array is what the form is bringing in, so, we should do a diff.
-      if (isset($current)) {
-        $toDelete = array_diff($current, $alloc_array);
-      } else {
-        $current = array();
-        $toDelete = array_diff($current, $alloc_array);
-      }
-
-      if (count($toDelete) > 0) {
-        /** @todo clean this up, a subquery to delete on would be optimal */
-        $deleteRecs = agDoctrineQuery::create()
-                ->select('a.facility_resource_id')
-                ->from('agScenarioFacilityResource a')
-                ->whereIn('a.facility_resource_id', $toDelete)->execute();
-        foreach ($deleteRecs as $deletor) {
-          $deletor->delete();
-        }
-      }
-      foreach ($alloc_array as $key => $value) {
-        if (in_array($value, $current)) {
-
-          $agScenarioFacilityResource = Doctrine_Core::getTable('agScenarioFacilityResource')->findByDql('facility_resource_id = ? AND scenario_facility_group_id = ?', array($value, $this->getObject()->getId()))->getFirst();
-          $agScenarioFacilityResource->setActivationSequence($key + 1);
-          //= new agScenarioFacilityResource($value);
-          //if this already exists in the scenariofacilitygroup as a resource, don't do anything
-        } else {
-          //if there isn't an entry in agScenarioFacilityResource for this group/facility_resource...
-          //if this item exists, but the order is different. fail.
-          $agScenarioFacilityResource = new agScenarioFacilityResource();
-
-          $agScenarioFacilityResource->scenario_facility_group_id = $this->getObject()->getId();
-          $agScenarioFacilityResource->activation_sequence = $key + 1;
-          $agScenarioFacilityResource->facility_resource_id = $value;
-          $agScenarioFacilityResource->facility_resource_allocation_status_id = 2;
-          //ready / awaiting activation / committed
-        }
-        $agScenarioFacilityResource->save();
-      }
-    } else {
-      /**
-       * @todo there are no values, so we need to delete
-       *   if there aren't values in $values that exist in $checkArray, or if
-       *  those items have changed.. (activation order, is the only thing)
-       *  we need to update said item
-       */
-    }
-  }
+//  protected function doSave($con = null)
+//  {
+//    $existing = $this->getObject()->getAgScenarioFacilityResource();
+//    foreach ($existing as $rec) {
+//      $current[] = $rec->facility_resource_id;
+//    }
+//    //$existing = $this->object->agFacilityResource->getPrimaryKeys();
+//    $values = $this->getTaintedValues();
+//    //all we need to save, is the allocated list: it's order included
+//    //(this is proving to be clumsy while working with a listbox, jquery is prefered)
+//    $alloc_array = json_decode($values['ag_facility_resource_order']);
+//    unset($this['ag_facility_resource_order']);
+//    unset($this['ag_facility_resource_list']);
+//    parent::doSave($con);
+//    if ($alloc_array) {
+//      //current is what is currently in that facility group
+//      //alloc_array is what the form is bringing in, so, we should do a diff.
+//      if (isset($current)) {
+//        $toDelete = array_diff($current, $alloc_array);
+//      } else {
+//        $current = array();
+//        $toDelete = array_diff($current, $alloc_array);
+//      }
+//
+//      if (count($toDelete) > 0) {
+//        /** @todo clean this up, a subquery to delete on would be optimal */
+//        $deleteRecs = agDoctrineQuery::create()
+//                ->select('a.facility_resource_id')
+//                ->from('agScenarioFacilityResource a')
+//                ->whereIn('a.facility_resource_id', $toDelete)->execute();
+//        foreach ($deleteRecs as $deletor) {
+//          $deletor->delete();
+//        }
+//      }
+//      foreach ($alloc_array as $key => $value) {
+//        if (in_array($value, $current)) {
+//
+//          $agScenarioFacilityResource = Doctrine_Core::getTable('agScenarioFacilityResource')->findByDql('facility_resource_id = ? AND scenario_facility_group_id = ?', array($value, $this->getObject()->getId()))->getFirst();
+//          $agScenarioFacilityResource->setActivationSequence($key + 1);
+//          //= new agScenarioFacilityResource($value);
+//          //if this already exists in the scenariofacilitygroup as a resource, don't do anything
+//        } else {
+//          //if there isn't an entry in agScenarioFacilityResource for this group/facility_resource...
+//          //if this item exists, but the order is different. fail.
+//          $agScenarioFacilityResource = new agScenarioFacilityResource();
+//
+//          $agScenarioFacilityResource->scenario_facility_group_id = $this->getObject()->getId();
+//          $agScenarioFacilityResource->activation_sequence = $key + 1;
+//          $agScenarioFacilityResource->facility_resource_id = $value;
+//          $agScenarioFacilityResource->facility_resource_allocation_status_id = 2;
+//          //ready / awaiting activation / committed
+//        }
+//        $agScenarioFacilityResource->save();
+//      }
+//    } else {
+//      /**
+//       * @todo there are no values, so we need to delete
+//       *   if there aren't values in $values that exist in $checkArray, or if
+//       *  those items have changed.. (activation order, is the only thing)
+//       *  we need to update said item
+//       */
+//    }
+//  }
 
   /**
    *

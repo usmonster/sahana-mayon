@@ -3,9 +3,6 @@
   use_helper('agTemplate');
 ?>
 <h2>Scenario Facility Groups</h2><br>
-<?php
-  include_partial('wizard', array('wizardDiv' => $wizardDiv));
-?>
 <?php 
   if(!isset($groupId)) $groupId = 'none';
   $existingFgroups = false;
@@ -18,11 +15,12 @@
       $groupAction = 'Create a New';
     }
   }
-  $a = $ag_facility_resources;
 ?>
-
-<h3><?php echo $groupAction ?> Facility Group for the <span class="highlightedText"><?php echo $scenarioName;
+<h3><?php echo $groupAction ?> Facility Groups for the <span class="highlightedText"><?php echo $scenarioName;
 ?> </span> Scenario</h3>
+<?php
+  include_partial('wizard', array('wizardDiv' => $wizardDiv));
+?>
 <p>Facility Groups are actually groupings of facility resources.  To create a facility group name
 the group, assign the group type, allocation status, and the order in which is should be activated 
 (activation sequence).</p>
