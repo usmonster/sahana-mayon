@@ -411,16 +411,8 @@ class scenarioActions extends agActions
             array('search_name' => $search['search_name'],
               'search_type_id' => $search['search_type_id']));
 
-
-//          foreach ($incomingFields as $key => $incomingField) {
-//            //if $key == 'agOrganization.organization'
-//            $value = $request->getPostParameter($key);
-//            $this->filterForm->setDefault($key, $value); //inccomingField->getName ?
-//        }
           foreach ($search_condition as $querypart) {
-            $querypart['condition'];
-            $querypart['field'];
-//these search definitions should be stored in 'search type' table maybe?
+            //these search definitions should be stored in 'search type' table maybe?
             if ($querypart['field'] == 'agStaffResourceType.staff_resource_type') {
               $defaultValue = agDoctrineQuery::create()->select('id')->from('agStaffResourceType')
                       ->where('staff_resource_type=?', $querypart['condition'])->execute(array(), 'single_value_array');
@@ -438,7 +430,9 @@ class scenarioActions extends agActions
         }
 
         $staff_ids = agScenarioStaffGeneratorHelper::executeStaffPreview($search_condition);
+        
         $resultArray = agListHelper::getStaffList($staff_ids);
+        $this->status = 'active';
         $this->pager = new agArrayPager(null, 10);
         $this->pager->setResultArray($resultArray);
         $this->pager->setPage($this->getRequestParameter('page', 1));
@@ -453,7 +447,7 @@ class scenarioActions extends agActions
         $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
       }
 //SAVE
-      elseif ($request->getParameter('Save')) { //otherwise, we're SAVING/UPDATING
+      elseif ($request->getParameter('Save') || $request->getParameter('Continue')) { //otherwise, we're SAVING/UPDATING
         if ($request->getParameter('staff_gen_id')) {
           $this->search_id = $request->getParameter('search_id');
           $this->poolform = new agStaffPoolForm($this->search_id); //make spForm with staff_gen_id
@@ -470,7 +464,11 @@ class scenarioActions extends agActions
           agScenarioStaffGeneratorHelper::generateStaffPool($this->scenario_id);
           //$staff_resource_ids = agScenarioGenerator::staffPoolGenerator($search_condition, $this->scenario_id);
           //$addedStaff = agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
-          $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+          if($request->getParameter('Continue')){
+            $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
+          }else{
+             $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+          }
         }
       } else {
 //NEW
@@ -502,7 +500,7 @@ class scenarioActions extends agActions
    */
   public function executeMeta(sfWebRequest $request)
   {
-    $this->wizardHandler($request);
+    $this->wizardHandler($request,1);
     if ($request->getParameter('id')) {
       $ag_scenario = Doctrine_Core::getTable('agScenario')->find(array($request->getParameter('id')));
       $this->form = new agScenarioForm($ag_scenario);
@@ -815,7 +813,7 @@ class scenarioActions extends agActions
           $groups = Doctrine::getTable('agScenarioFacilityGroup')
                   ->findByDql('scenario_id = ?', $this->scenario_id)
                   ->getData();
-          $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
+          $this->redirect('scenario/staffpool?id=' . $this->scenario_id);
         } elseif ($request->hasParameter('groupid')) {
 //if this is an existing facility group we are editing.
           $agScenarioFacilityGroup = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('groupid')));

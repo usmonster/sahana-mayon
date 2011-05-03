@@ -3,8 +3,6 @@
 ?>
 <h2>Staff Resource Pool</h2> <br>
 <?php
-$wizardOp = array('step' => 7);
-$sf_response->setCookie('wizardOp', json_encode($wizardOp));
 include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
@@ -78,7 +76,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
         'pager' => $pager,
         'order' => $order,
         'sort' => $sort,
-        'filter' => $filter,
+        'status' => $status,
         'target_module' => 'staff',
         'caption' => 'Staff Pool Search',
         'widgets' => array()
