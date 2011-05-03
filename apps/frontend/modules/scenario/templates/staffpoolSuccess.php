@@ -41,7 +41,9 @@ Your staff resource pool is essentially a set of searches that let you refine wh
       //this could be more elegant.
     }
 ?>
+    <br />
     <hr />
+    <br />
     <h3>Staff Pool Definition</h3>
 <?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
 

@@ -66,7 +66,7 @@ if (isset($search_id)) {
       </tr>
       <tr> 
         <td>
-          <br>
+          <br/>
           <h3>Construct Search Conditions:</h3>
 
 <?php
@@ -78,6 +78,10 @@ foreach($fields as $key => $field)
   echo $filterForm[$key];
 }
 ?>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
         </td>
       </tr>
     </tbody>

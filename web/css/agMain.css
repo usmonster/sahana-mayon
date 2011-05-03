@@ -101,6 +101,7 @@ h4 {
 h5 {
   margin: 0;
   color: #848484;
+  text-align: left;
 }
 .logLabel, .logName {
   font-weight: bold;
@@ -897,6 +898,7 @@ th .tableRow {
 
 .filterButton {
   font-weight: bold;
+  color: #848484;
 }
 
 .filterBox {
@@ -1687,4 +1689,7 @@ table.staffPool tr.head:hover{ background-color: #e5f7ff
   padding: 10px;
   display: inline-block;
 }
- 
+
+.filter{
+ margin:5px 12px 5px 5px;
+}

@@ -3,16 +3,14 @@
 ?>
 <h3>Facility Group Listing</h3>
 
-<table>
-  <thead>
-    <tr>
+<table class="staffTable"">
+    <tr class="head">
       <th>Facility Group</th>
       <th>Facility Group Type</th>
       <th>Allocation Status</th>
       <th>Activation Sequence</th>
       <th>Facility Resource Count</th>
     </tr>
-  </thead>
   <tbody>
     <?php foreach ($ag_scenario_facility_groups as $ag_scenario_facility_group): ?>
       <tr>
