@@ -25,7 +25,7 @@ use_javascript('tooltip.js'); ?>
     $('.allocated tbody').bind('sortover', function(event, ui) {
       if(ui.helper.find('td').length < 3) {
         ui.helper.find('td.right').removeClass('right').addClass('inner');
-        ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text></td>');
+        ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
       }
     });
 
