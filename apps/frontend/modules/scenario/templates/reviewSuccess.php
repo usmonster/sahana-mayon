@@ -10,7 +10,7 @@
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>"
    title="Modify Basic Scenario Information">Scenario Name and Description</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>Name: <span class="highlightedText"><?php echo $scenario_name ?></span><br>Description: <span class="highlightedText"><?php echo $scenario_description ?></span></td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>"
