@@ -916,16 +916,9 @@ class scenarioActions extends agActions
 
     $facility_staff_resources = agDoctrineQuery::create()
             ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
-//->from('agShiftTemplate st, agFacilityStaffResource fsr')
             ->from('agFacilityStaffResource fsr')
-//joined to the facility groups in this scenario
             ->leftJoin('agScenarioFacilityResource sfr, sfr.agFacilityResource fr, sfr.agScenarioFacilityGroup sfg')
-//->innerJoin('st.scenario_id = sfg.scenario_id')
-//->leftJoin('agScenarioFacilityGroup sfg, sfg.agScenarioFacilityResource sfr, sfr.agFacilityResource fr')
-//scenario facility resource id
-//where facility staff resource .staff resource type =
             ->where('sfg.scenario_id = ?', $this->scenario_id)
-//->andWhere('st.scenario_id = ' $this->scenario_id) //this makes a fun cartesian product
             ->distinct()  //need to be keyed by the possibly existing shift template record..
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
     $this->shifttemplateforms =  new agShiftTemplateContainerForm($this->scenario_id); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
@@ -946,7 +939,10 @@ class scenarioActions extends agActions
     }
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
   }
-
+/**
+ * CRUDL for shifts (create update delete and list)
+ * @param sfWebRequest $request
+ */
   public function executeShifts(sfWebRequest $request)
   {
 //CREATE  / UPDATE

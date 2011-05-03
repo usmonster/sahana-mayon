@@ -31,13 +31,13 @@ class agStaffPoolForm extends sfForm
    *        for a preview, to set the defaults of the internal forms
    */
 
-  public function __construct($staff_gen_id = null, $values = null)
+  public function __construct($search_id = null, $values = null)
   {
     if ($values != null) {
       $this->sg_values = $values['sg_values'];
       $this->s_values = $values['s_values'];
     } else {
-      $this->staff_gen_id = $staff_gen_id;
+      $this->search_id = $search_id;
     }
     parent::__construct(array(), array(), array());
   }
@@ -62,12 +62,12 @@ class agStaffPoolForm extends sfForm
    * */
   public function embedStaffGeneratorForm()
   {
-    if (isset($this->staff_gen_id)) {
+    if (isset($this->search_id)) {
       $staffGenObject = agDoctrineQuery::create()
               ->from('agScenarioStaffGenerator a')
-              ->where('a.id = ?', $this->staff_gen_id)
+              ->where('a.search_id = ?', $this->search_id) //and scenario id?
               ->execute()->getFirst();
-      $this->search_id = $staffGenObject->search_id;
+      $this->staff_gen_id = $staffGenObject->id;
     }
     $staffGenForm = new agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
 
@@ -87,7 +87,7 @@ class agStaffPoolForm extends sfForm
 
     if (is_array($this->sg_values)) {
       $staffGenForm->setDefault('search_weight', $this->sg_values['search_weight']);
-    } else {
+    } elseif(!$this->staff_gen_id) {
       $staffGenForm->setDefault('search_weight', 5);
     }
     

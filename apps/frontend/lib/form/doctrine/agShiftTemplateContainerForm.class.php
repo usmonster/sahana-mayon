@@ -1,7 +1,7 @@
 <?php
 
 /**
- * agStaffPerson form extends agPersonForm to include staff information
+ * agShiftContainerForm extends sfForm to include an array of singleshifttemplateform
  *
  * @method agStaff getObject() Returns the current form's model object
  *
