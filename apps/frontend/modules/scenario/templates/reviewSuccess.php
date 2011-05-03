@@ -1,4 +1,11 @@
 <h2>Review Scenario: <span class="highlightedText"><?php echo $scenario_name ?></span></h2>
+<?php if(isset($wizardDiv)){
+
+  use_javascript('agMain.js');
+  include_partial('wizard', array('wizardDiv' => $wizardDiv));
+
+}
+?>
 <h3><?php echo $scenario_description ?></h3>
 <!-- ideally the above should be 'editable text', i.e. when clicked on they convert to input fields -->
 <br/>

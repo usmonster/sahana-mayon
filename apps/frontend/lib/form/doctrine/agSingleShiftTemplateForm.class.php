@@ -97,7 +97,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'id' => new sfWidgetFormInputHidden(),
           //'shift_template' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
           //'description' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-          'scenario_id' => new sfWidgetFormInputHidden,
+          'scenario_id' => new sfWidgetFormInputHidden(),
 
           
           'facility_resource_type_id' =>

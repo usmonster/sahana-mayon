@@ -1,25 +1,9 @@
 <?php
   use_javascript('agMain.js');
 ?>
-<script type="text/javascript">
-  $(function(){
-    $('.groupLabel').click(function(){
-      $(this).parent().find('.facgroup').slideToggle("fast");
-    });
-  });
-</script>
+
 
 <script language="javascript" type="text/javascript">
-$(document).ready(function() {
-    $('.next-column').click(function(event) {
-        event.preventDefault();
-        $('.table-container').animate({scrollLeft:'+=231'}, 'fast');
-    });
-    $('.previous-column').click(function(event) {
-        event.preventDefault();
-        $('.table-container').animate({scrollLeft:'-=231'}, 'fast');
-    });
-
   $(function() {
       $(":input:text").each(function(){
          if( $(this).val() == "")
@@ -31,7 +15,6 @@ $(document).ready(function() {
          }
       });
    });
-});
 </script>
 
 

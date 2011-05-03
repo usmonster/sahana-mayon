@@ -135,7 +135,7 @@ class scenarioActions extends agActions
 //get the needed variables regardless of what action you are performing to staff resources
     $formsArray = array();
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request, 5);
+    $this->wizardHandler($request, 4);
     //the above should not fail.
     $this->scenario = Doctrine::getTable('agScenario')
             ->findByDql('id = ?', $request->getParameter('id'))
@@ -200,7 +200,7 @@ class scenarioActions extends agActions
       }
 //were there any changes?
       if ($request->hasParameter('Continue')) {
-        $this->redirect('scenario/shifttemplates?id=' . $this->scenario_id);
+        $this->redirect('scenario/staffpool?id=' . $this->scenario_id);
       } else {
         $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
       }
@@ -314,6 +314,13 @@ class scenarioActions extends agActions
   public function executeReview(sfWebRequest $request)
   {
     if ($this->scenario_id = $request->getParameter('id')) {
+    if($request->getCookie('wizardOp'))
+    {
+        $this->setScenarioBasics($request);
+        $this->wizardHandler($request,8);
+      
+    }
+
       $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
       $this->scenario_description = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getDescription();
       $this->ag_scenario_facility_groups = agDoctrineQuery::create()
@@ -329,7 +336,7 @@ class scenarioActions extends agActions
               ->execute();
     }
 //p-code
-    $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario_name . ' Scenario');
+    $this->getResponse()->setTitle('Sahana Agasti Review ' . $this->scenario_name . ' Scenario');
 //end p-code
   }
 
@@ -347,7 +354,7 @@ class scenarioActions extends agActions
   public function executeStaffpool(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request,4);
+    $this->wizardHandler($request,5);
     $this->scenario_staff_count = Doctrine_Core::getTable('AgScenarioStaffResource')
             ->findby('scenario_id', $this->scenario_id)->count();
     $this->target_module = 'staff';
@@ -832,7 +839,7 @@ class scenarioActions extends agActions
           $groups = Doctrine::getTable('agScenarioFacilityGroup')
                   ->findByDql('scenario_id = ?', $this->scenario_id)
                   ->getData();
-          $this->redirect('scenario/staffpool?id=' . $this->scenario_id);
+          $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
         } elseif ($request->hasParameter('groupid')) {
 //if this is an existing facility group we are editing.
           $agScenarioFacilityGroup = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('groupid')));
@@ -995,12 +1002,12 @@ class scenarioActions extends agActions
       } else {
 //LIST
         $query = agDoctrineQuery::create()
-                ->select('ss.*, s.id, s.scenario, sfg.id, sfg.scenario_facility_group, sfr.id')
+                ->select('ss.*, sfg.id, sfg.scenario_facility_group, sfr.id')
                 ->from('agScenarioShift as ss')
                 ->leftJoin('ss.agScenarioFacilityResource AS sfr')
                 ->leftJoin('sfr.agScenarioFacilityGroup AS sfg')
-                ->leftJoin('sfg.agScenario AS s')
-                ->where('s.id = ?', $this->scenario_id);
+                //->leftJoin('sfg.agScenario AS s')
+                ->where('sfg.scenario_id = ?', $this->scenario_id);
 
         /**
          * Create pager

@@ -1,6 +1,10 @@
 <?php
   use_javascript('agMain.js');
-?>
+  $wizardOp['step'] = 7;
+  $encodedWizard = json_encode($wizardOp);
+  $sf_response->setCookie('wizardOp', $encodedWizard);
+
+  ?>
 <h2>Scenario Shifts for <?php echo $scenarioName ?></h2>
   <?php include_partial('wizard', array('wizardDiv' => $wizardDiv)); ?>
 
@@ -68,7 +72,7 @@
 <br>
 <div>
   <a href="<?php echo url_for('scenario/shifts?id=' .$scenario_id) .'/new'?>" class="linkButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
-  <a href="<?php echo url_for('scenario/staffpool?id=' .$scenario_id ) ?>" class="linkButton" title="Define Staff Pools">Save and Define Staff Pools</a>
+  <a href="<?php echo url_for('scenario/review?id=' .$scenario_id ) ?>" class="linkButton" title="Finish Wizard">Finish Wizard and Review Scenario</a>
 
 </div>
 
