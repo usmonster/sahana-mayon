@@ -4,7 +4,10 @@
   use_stylesheet('jquery/jquery.ui.custom.css');
   use_stylesheet('jquery/mayon.jquery.ui.css');
   use_javascript('agTooltip.js'); ?>
-<h2><?php echo $metaAction ?> Scenario</h2>
+<h2><?php echo $metaAction ?> Scenario<?php
+if(isset($scenarioName)) echo ': <span class="highlightedText">' . $scenarioName . "</span>"; ?>
+</h2>
+
 <?php
   include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>

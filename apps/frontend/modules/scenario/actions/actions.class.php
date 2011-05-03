@@ -505,17 +505,18 @@ class scenarioActions extends agActions
   }
 
   /**
-   * sets up a new scenario form
+   * sets up a new scenario meta information form
    * @param sfWebRequest $request
    */
   public function executeMeta(sfWebRequest $request)
   {
     $this->wizardHandler($request,1);
     if ($request->getParameter('id')) {
-      $ag_scenario = Doctrine_Core::getTable('agScenario')->find(array($request->getParameter('id')));
+      $this->setScenarioBasics($request);
+      $ag_scenario = Doctrine_Core::getTable('agScenario')->find(array($this->scenario_id));
       $this->form = new agScenarioForm($ag_scenario);
       $this->metaAction = 'Edit';
-      $this->getResponse()->setTitle('Sahana Agasti Edit ' . $ag_scenario . ' Scenario');
+      $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
     } else {
       $this->metaAction = 'Create New';
       $this->form = new agScenarioForm();
@@ -924,7 +925,7 @@ class scenarioActions extends agActions
     unset($this->shifttemplateforms['_csrf_token']);
     if ($request->isMethod(sfRequest::POST)) {
       //foreach $this->shifttemplateforms...
-      $this->shifttemplateforms->bind($request->getParameter($this->shifttemplateforms->getName()), $request->getFiles($this->shifttemplateforms->getName()));
+      $this->shifttemplateforms->bind($request->getParameter('shift_template'), $request->getFiles($this->shifttemplateforms->getName()));
       if ($this->shifttemplateforms->isValid()) {
         $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms();
         if ($request->hasParameter('Continue')) {

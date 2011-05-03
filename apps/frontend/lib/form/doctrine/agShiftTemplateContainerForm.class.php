@@ -27,9 +27,9 @@ class agShiftTemplateContainerForm extends sfForm
 
   public function addShiftTemplateForm($num)
   {
+    
     $embed_form = new agSingleShiftTemplateForm($this->scenario_id);
     //$embed_form->getWidgetSchema()->setNameFormat('[' . $num . '][%s]');
-    //Embedding the new picture in the container
     $this->embedForm($num, $embed_form);
     //Re-embedding the container
     
@@ -46,7 +46,7 @@ class agShiftTemplateContainerForm extends sfForm
     parent::bind($taintedValues, $taintedFiles);
   }
     public function configure(){
-
+      $this->getWidgetSchema()->setNameFormat('shift_template[%s]');
       unset($this['_csrf_token']);
       $shiftTemplates = agDoctrineQuery::create()
               ->from('agShiftTemplate a')
@@ -98,9 +98,10 @@ class agShiftTemplateContainerForm extends sfForm
         if ($form instanceof agSingleShiftTemplateForm) {
           if ($form->isNew()) {
             $form->updateObject($this->values[$key]);
+            $form->getObject()->scenario_id = $this->scenario_id;
             $newShiftTemplate = $form->getObject();
             if ($newShiftTemplate->staff_resource_type_id && $newShiftTemplate->task_id
-                && $newShiftTemplate->facility_resource_type_id && $newShiftTemplate->shift_template) {
+                && $newShiftTemplate->facility_resource_type_id) {
               $newShiftTemplate->save();
               //$this->getObject()->getAgShiftTemplate()->add($newShiftTemplate);
               unset($forms[$key]);
@@ -112,9 +113,10 @@ class agShiftTemplateContainerForm extends sfForm
             $oldShiftTemplate = $form->getObject();
             if ($oldShiftTemplate->staff_resource_type_id && $oldShiftTemplate->task_id
                 && $oldShiftTemplate->facility_resource_type_id) {
+              $form->getObject()->scenario_id = $this->scenario_id;
               $form->getObject()->save();
             } else {
-              $form->getObject()->delete();
+              //$form->getObject()->delete(); don't delete this way :\
             }
             unset($forms[$key]);
           }

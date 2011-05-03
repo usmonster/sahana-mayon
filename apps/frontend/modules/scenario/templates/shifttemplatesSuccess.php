@@ -14,7 +14,7 @@
   </span>
   Scenario:
 </h3>
-
+<form action="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id); ?>" method="post" name="shift_template">
 <?php include_partial('shifttemplateholder', array('shifttemplateforms' => $shifttemplateforms, 'scenario_id' => $scenario_id)) ?>
 <div id ="newshifttemplates">
 <span class="smallLinkButton addShiftTemplate" id="adder">+ Add Shift Template</span> <hr />
@@ -60,3 +60,6 @@
 
   </script>
 </div>
+    <input type="submit" class="linkButton" value="Save, Generate Shifts and Continue" name="Continue" />
+
+</form>

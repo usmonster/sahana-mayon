@@ -97,7 +97,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'id' => new sfWidgetFormInputHidden(),
           //'shift_template' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
           //'description' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-          'scenario_id' => new sfWidgetFormInputHidden(),
+          'scenario_id' => new sfWidgetFormInputHidden,
 
           
           'facility_resource_type_id' =>
@@ -232,7 +232,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'updated_at' => new sfValidatorDateTime(),
         )
     );
-
+    $this->setDefault('scenario_id', $this->scenario_id);
     $this->widgetSchema->setNameFormat('ag_shift_template[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
