@@ -17,7 +17,7 @@ use_javascript('tooltip.js'); ?>
 //    });
 
     $('.available tbody, .allocated tbody' ).sortable({
-      connectWith: ".testTable tbody",
+      connectWith: ".sortTable tbody",
       items: 'tr.sort',
       forcePlaceholderSize: true
     });/*.disableSelection();*/
@@ -26,6 +26,7 @@ use_javascript('tooltip.js'); ?>
       if(ui.helper.find('td').length < 3) {
         ui.helper.find('td.right').removeClass('right').addClass('inner');
         ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
+        ui.helper.css('width', '305px');
       }
     });
 
@@ -33,6 +34,7 @@ use_javascript('tooltip.js'); ?>
       if(ui.helper.find('td').length == 3) {
         ui.helper.find('td.right').remove();
         ui.helper.find('td.inner').removeClass('inner').addClass('right');
+        ui.helper.css('width', '257px');
       }
     });
     $('.allocated tbody').bind('sortupdate', function () {
@@ -129,14 +131,16 @@ use_javascript('tooltip.js'); ?>
 echo url_for
     ('scenario/fgroup?id=' . $scenario_id) . (!$groupform->getObject()->isNew() ? '?groupid=' . $groupform->getObject()->getId() : '') ?>
       " method="post" <?php $groupform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
-    <div>
+    <div class="headerWrap">
       <?php echo $groupform; ?>
     </div>
-    <br />
-    <div class="testTableContainer ">
-      <table class="testTable available" cellspacing="0">
+    <div class="selectionFilter">
+      <a href="#" id="revealer" title="Available Resource Type Filter">&#9654;</a><div>Available Resource Type Filter</div>
+    </div>
+    <div class="sortTableContainer ">
+      <table class="sortTable available" cellspacing="0">
         <thead>
-          <caption><a href="#" id="revealer" title="Facility Resource Type Filter">&#9654;</a>Available Facility Resources</caption>
+          <caption>Available Facility Resources</caption>
         </thead>
         <tbody>
           <tr>
@@ -156,9 +160,8 @@ echo url_for
         </tbody>
       </table>
     </div>
-
-    <div class="testTableContainer">
-      <table class="testTableParent" cellspacing="0">
+    <div class="sortTableContainer">
+      <table class="sortTableParent" cellspacing="0">
         <thead>
           <caption>Allocated Facility Resources</caption>
         </thead>
@@ -173,7 +176,7 @@ echo url_for
         <tr>
           <td colspan="3" class="container">
             <div class="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>">
-              <table class="testTable allocated" cellspacing="0">
+              <table class="sortTable allocated" cellspacing="0">
                 <tbody class="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>" title="<?php echo $selectStatus['fras_facility_resource_allocation_status']; ?>">
                   <tr>
                     <th class="left">Facility Code</th>
@@ -207,12 +210,14 @@ echo url_for
     <br />
     <input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
     <input class="linkButton" type="submit" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran()"/>
-  <?php if ($existingFgroups == true): ?>
-    <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Continue</a>
-  <?php endif; ?>
   </form>
 </div>
-<br/>
+<br />
+<br />
+<?php if ($allocatedFacilityResources == true): ?>
+  <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Skip & Continue</a>
+<?php endif; ?>
+  <a href="<?php echo url_for('scenario/list'); ?>" class="linkButton">Back to Scenario List</a>
 <div class="tooltips" >
   <span id="allocated_tip">
 <?php echo "urltowiki/allocated_tooltip"; ?>

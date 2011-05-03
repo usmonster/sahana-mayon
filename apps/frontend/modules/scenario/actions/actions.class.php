@@ -644,7 +644,6 @@ class scenarioActions extends agActions
             ->select('a.facility_id, af.*, afrt.*')
             ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
             ->execute();
-// Testing//////////////////////////////////////////////////////////////////////////////////////////
 // Get the facility resource types available to this scenario.
     $this->facilityResourceTypes = agDoctrineQuery::create()
             ->select('frt.id, frt.facility_resource_type, facility_resource_type_abbr')
@@ -689,7 +688,7 @@ class scenarioActions extends agActions
             ->where('scenario_display = true')
             ->orderBy('fras.facility_resource_allocation_status')
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-// End testing//////////////////////////////////////////////////////////////////////////////////////
+
     if ($request->getParameter('groupid')) {
 //EDIT
       $this->groupId = $request->getParameter('groupid');

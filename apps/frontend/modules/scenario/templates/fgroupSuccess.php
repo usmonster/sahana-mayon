@@ -35,7 +35,6 @@ the group, assign the group type, allocation status, and the order in which is s
                                        'availableFacilityResources' => $availableFacilityResources,
                                        'allocatedFacilityResources' => $allocatedFacilityResources,
                                        'scenario_id' => $scenario_id,
-                                       'existingFgroups' => $existingFgroups,
                                        'selectStatuses' => $selectStatuses,
                                        'facilityResourceTypes' => $facilityResourceTypes))
   ?>

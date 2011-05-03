@@ -170,6 +170,9 @@ h5 {
   color: #dadada;
 }
 
+.expander {
+  float: left;
+}
 .buttonSort, .buttonSortSelected, .expander, .expandAll, .collapseAll {
   font-size: 1em;
   margin: 0;
@@ -1123,7 +1126,9 @@ table.adminConfigRequirements tr td{
 }
 
 .rowFormat{
-    display: inline-block; margin-right: 4px; text-align: center;
+  display: inline-block;
+  margin-right: 4px;
+  text-align: center;
 }
 
 .rowFormat2{
@@ -1153,6 +1158,15 @@ table.adminConfigRequirements tr td{
    color: #848484; font-weight: bold; display: inline-block; margin: 4px;
 }
 
+.headerWrap {
+/*  margin: auto;*/
+/*  position: relative;*/
+  text-align: center;
+  border: solid 1px #dadada;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  padding: 4px;
+}
 .margin4Px{
   margin: 4px;
 }
@@ -1379,69 +1393,74 @@ a.signin.menu-open span {
   text-align: left;
 }
 
+tr.sort {
+  background: #ffffff;
+}
 tr.sort:hover {
   -moz-box-shadow: 0px 0px 5px #a1e2ff;
   -webkit-box-shadow: 0px 0px 5px #a1e2ff;
   box-shadow: 0px 0px 5px #a1e2ff;
-  text-shadow: 0px 0px 5px #a1e2ff;
+/*  text-shadow: 0px 0px 5px #a1e2ff;*/
+  background: #F6FCFF;
 }
-.testTableContainer {
+.sortTableContainer {
   background: #f7f7f7
 }
-.testTable, .testTableParent {
+.sortTable, .sortTableParent {
   border-collapse: collapse;
 }
 
-.testTableParent td.container {
+.sortTableParent td.container {
   margin: 0;
   padding: 0;
   height: 0;
 }
 
-.testTable th {
+.sortTable th {
   background: #A1E2ff;
   color: #ffffff;
 }
-.testTable tr.countZero td {
+.sortTable tr.countZero td {
   text-align: center;
   color: #ff8f00;
   font-weight: bold;
   border-right: solid 1px #dadada;
   border-left: solid 1px #dadada;
-}
-.testTable th, .testTable td, .testTableParent th, .testTableParent td {
-  padding: 4px;
-}
-.testTable td {
   background: #ffffff;
 }
+.sortTable th, .sortTable td, .sortTableParent th, .sortTableParent td {
+  padding: 4px;
+}
+/*.sortTable td {
+  background: #ffffff;
+}*/
 
-.testTable td, .testTable th {
+.sortTable td, .sortTable th {
   border-top: solid 1px #dadada;
   border-bottom: solid 1px #dadada;
 }
 
-.testTable td.left, .testTable th.left {
+.sortTable td.left, .sortTable th.left {
   border-left: solid 1px #dadada;
   width: 120px;
 }
 
-.testTable td.right, .testTable th.right {
+.sortTable td.right, .sortTable th.right {
   border-right: solid 1px #dadada;
   width: 120px;
 }
 
-.testTable td.inner, .testTable th.inner {
+.sortTable td.inner, .sortTable th.inner {
   border-left: none;
   border-right: none;
   width: 120px;
 }
 
-.testTable td.narrow, .testTable th.narrow {
+.sortTable td.narrow, .sortTable th.narrow {
   width: 50px !important;
   text-align: center;
 }
-.testTableParent tr th, .testTable tr th, testTable tr td {
+.sortTableParent tr th, .sortTable tr th, sortTable tr td {
   background: #dadada;
   text-align: left;
   color: #ffffff;
@@ -1452,42 +1471,47 @@ tr.sortHead th {
   width: 145px;
 }
 
-.testTable caption {
+.sortTable caption {
   height: 1.5em;
 }
-.testTableParent tr.sortHead th a, .testTable caption a {
+.sortTableParent tr.sortHead th a, .sortTable caption a {
   color: #ffffff;
   text-decoration: none;
   outline: none;
+  float: left;
 }
 
-.testTableParent tr.sortHead th a {
-  color: #ffffff;
-}
-
-.testTable caption a {
+.sortTable caption a {
   color: #ff8f00;
   float: left;
 }
-.testTable caption a:hover {
+.sortTable caption a:hover {
   text-shadow: 0px 0px 5px #ff8f00;
 }
-.testTableParent th.count {
+.sortTableParent th.count {
   text-align: right;
 }
-.testTableParent tr.sortHead th a:hover {
+.sortTableParent tr.sortHead th a:hover {
   color: #98ffb9;
   text-shadow: 0px 0px 2px #98ffb9;
 }
 
-.testTable caption, .testTableParent caption {
+/*tr.sortHead {
+  border: solid #dadada;
+  border-width: 0px 1px;
+}*/
+.sortTable caption, .sortTableParent caption {
+  border: solid #dadada;
+  border-width: 0px 1px;
   font-size: 1.2em;
   background: #e5f7ff;
   color: #848484;
   font-weight: bold;
   padding: 4px;
 }
-.testTableContainer {
+.sortTableContainer {
+  border: solid #dadada;
+  border-width: 1px 0px;
   display: inline-block;
   height: 400px;
   overflow: scroll;
@@ -1499,6 +1523,29 @@ table.available caption {
 #revealable {
   position: absolute;
   display: none;
+}
+.selectionFilter {
+  padding: 0px;
+  margin: 10px 0px;
+  font-weight: bold;
+  color: #848484;
+/*  height: 1.5em;*/
+/*  display: inline-block;*/
+
+/*  vertical-align: bottom;*/
+}
+.selectionFilter a {
+  display: inline-block;
+  color: #ff8f00;
+  text-decoration: none;
+  outline: none;
+  height: 20px;
+  width: 20px;
+  float: left;
+}
+
+.selectionFilter a:hover {
+  text-shadow: 0px 0px 5px #ff8f00;
 }
 .tooltipTrigger {
   font-size:  .65em;

@@ -55,7 +55,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
                 'method' => 'getFacilityGroupAllocationStatus',
                 'label' => 'Status')
           ),
-          'activation_sequence' => new sfWidgetFormInputText(),
+          'activation_sequence' => new sfWidgetFormInputText(array('label' => 'Priority'), array('class' => 'inputGraySmall')),
           //facility resource list needs to minus options that are in $currentoptions
           //'ag_facility_resource_list'          => new sfWidgetFormChoice(array
           //  ('choices' => $availtoptions,'multiple' => true),array('class' => 'widthAndHeight150')),
@@ -130,7 +130,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
     $this->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupDeco);
     $this->getWidgetSchema()->setFormFormatterName('groupFormDeco');
     $this->getWidget('scenario_facility_group')->setAttribute('class', 'inputGray');
-    $this->getWidget('activation_sequence')->setAttribute('class', 'inputGray');
+    $this->getWidget('activation_sequence')->setAttribute('class', 'inputGraySmall');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
 
