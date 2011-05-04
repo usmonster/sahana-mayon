@@ -1,37 +1,37 @@
 agFacilityResourceType:
-  pod:
-    facility_resource_type: point of distribution
-    facility_resource_type_abbr: POD
-    description: Area designated to be used as a distribution center.
-  uorc:
-    facility_resource_type: unified operations resource
-    facility_resource_type_abbr: UORC
-    description: Unified Operations Resource Center
+  admin:
+    facility_resource_type: Administrative Center
+    facility_resource_type_abbr: admin
+    description: Area designated to be used as an administration center.
   ec:
-    facility_resource_type: evacuation center
+    facility_resource_type: Evacuation Center
     facility_resource_type_abbr: EC
     description: Staff assembly for task allocation.
   hs:
-    facility_resource_type: hurricane shelter
+    facility_resource_type: Hurricane Shelter
     facility_resource_type_abbr: HS
     description: Hurricane shelter for clients.
-  smn:
-    facility_resource_type: special medical need center
-    facility_resource_type_abbr: SMN
-    description: Area designated to be used as a medical center.
   pet:
-    facility_resource_type: pet center
+    facility_resource_type: Pet Center
     facility_resource_type_abbr: pet
     description: Area designated to be used as pet center.
-  whs:
-    facility_resource_type: warehouse
-    facility_resource_type_abbr: whs
-    description: Area designated to be used as storage for food, medical supplies, blankets, cot, and others.
+  pod:
+    facility_resource_type: Point of Distribution
+    facility_resource_type_abbr: POD
+    description: Area designated to be used as a distribution center.
   shelter:
-    facility_resource_type: shelter
+    facility_resource_type: Shelter
     facility_resource_type_abbr: shl
     description: Area designated to house clients.
-  admin:
-    facility_resource_type: administrator center
-    facility_resource_type_abbr: admin
-    description: Area designated to be used as an administration center.
+  smn:
+    facility_resource_type: Special Medical Need Center
+    facility_resource_type_abbr: SMN
+    description: Area designated to be used as a medical center.
+  uorc:
+    facility_resource_type: Unified Operations Resource
+    facility_resource_type_abbr: UORC
+    description: Unified Operations Resource Center
+  whs:
+    facility_resource_type: Warehouse
+    facility_resource_type_abbr: whs
+    description: Area designated to be used as storage for food, medical supplies, blankets, cot, and others.
