@@ -4,7 +4,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-family: helvetica, arial, verdana;
+  font-family: helvetica, arial, verdana, sans-serif;
   font-size: 10pt;
   background: #f1f1f1;
   color: #333;
@@ -238,6 +238,10 @@ h5 {
 /*  -moz-box-shadow: 3px 3px 3px #ccc;
   -webkit-box-shadow: 3px 3px 3px #ccc;
   box-shadow: 3px 3px 3px #ccc;*/
+}
+input.linkButton {
+  font-family: helvetica, arial, verdana, sans-serif;
+  padding: 0;
 }
 
 .smallLinkButton {
