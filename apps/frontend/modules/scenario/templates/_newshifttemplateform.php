@@ -15,13 +15,13 @@
   </tfoot>
   <tbody>
     <tr>
-      <td colspan="2">
+      <td colspan="2" style="background-color: #E5F7FF;">
         <?php
         echo $shifttemplateform['staff_resource_type_id']->renderRow() . $shifttemplateform['facility_resource_type_id']->renderRow();
         ?>
       </td>
     </tr>
-    <tr colspan="2" style="background-color: wheat;">
+    <tr colspan="2" style="background-color: #F7F7F7;">
       <td style="text-align:right;">
         <?php
         echo $shifttemplateform['shift_status_id']->renderRow();
@@ -66,11 +66,6 @@
             </td>
           </tr>
           </table>
-<?php
-
-$foo = $shifttemplateform['minutes_start_to_facility_activation']->getValue();
-
-?>
           <script>
             $().ready(function() {
               $("#start_time_slider<?php echo $number ?>").slider({
