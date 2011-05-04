@@ -20,7 +20,7 @@ class agFormFormatterInlineLabels2 extends sfWidgetFormSchemaFormatter
 {
 
   protected
-  $rowFormat = "<div style=\"margin: 4px; display: inline;\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
+  $rowFormat = "<div style=\"margin: 2px; display: inline;\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
   $decoratorFormat = "<div class=\"rowFormat2\">\n  %content%</div>";

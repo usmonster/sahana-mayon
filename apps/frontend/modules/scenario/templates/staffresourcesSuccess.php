@@ -25,6 +25,9 @@
       $(":input[id$='minimum_staff']").Watermark("Min");
       $(":input[id$='maximum_staff']").Watermark("Max");
 
+      //adding forward slash after minimum_staff  input box
+      $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
+      
     });
 </script>
 
