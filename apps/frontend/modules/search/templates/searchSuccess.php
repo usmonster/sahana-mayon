@@ -2,7 +2,7 @@
 //actions.class.php global list actions
 
 //template
-(isset($filter)) ? $filter = $filter : $filter = '';
+(isset($status)) ? $status = $status : $status = 'active';
 (isset($sort)) ? $sort = $sort : $sort = '';
 (isset($order)) ? $order = $order : $order = '';
 ?>
@@ -30,7 +30,7 @@ include_partial('global/list', array( 'sf_request' => $sf_request,
                                       'pager' => $pager,
                                       'order' => $order,
                                       'sort' => $sort,
-                                      'filter' => $filter,
+                                      'status' => $status,
                                       'target_module' => $target_module,
                                       'caption' => 'Staff Search Results',
                                       'widgets' => array()
