@@ -1,15 +1,20 @@
 <?php
   use_javascript('agMain.js');
+  use_javascript('jquery.ui.custom.js');
+  use_stylesheet('jquery/jquery.ui.custom.css');
+  use_stylesheet('jquery/mayon.jquery.ui.css');
+  use_javascript('agTooltip.js');
 ?>
-<h2>Staff Resource Pool: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2> <br />
+<h2>Staff Resource Pool: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2>
 <?php
 include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
-<p>Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.</p>
+<p>The staff is built from a set of searches.  Creating from searches allows you to create custom
+deployment of staff based on the scale of the plan and response.</p>
 
 <?php if (count($saved_searches) > 0) {
 ?><div class="infoHolder" style="width:750px;">
-  <h3>Saved Searches</h3>
+  <h3>Saved Searches<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_pool_searches&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Pool Searches">?</a></h3>
   <table class="blueTable">
     <thead>
       <tr class="head">

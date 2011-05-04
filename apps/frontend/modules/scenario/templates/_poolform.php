@@ -39,7 +39,7 @@ if (isset($search_id)) {
 }
 ?>
 <div class="infoHolder" style="width:750px;">
- <h3>Staff Pool Definition</h3>
+ <h3>Staff Pool Definition<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_pool&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Pool Definition">?</a></h3>
 <form action="<?php echo $action ?>" method="post">
 
   <table>
