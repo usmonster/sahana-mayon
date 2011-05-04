@@ -26,16 +26,18 @@ class agAccountForm extends sfGuardUserAdminForm
     //$form = new sfGuardUserAdminForm(new sfGuardUser());
     //$mj = $this->object->getAgAccountMjSfGuardUser();
     //unset($mjform['ag_person_id']);
-    unset($this['created_at'], $this['updated_at']);//, $this['ag_person_id']);
+    unset($this['created_at'], $this['updated_at']); //, $this['ag_person_id']);
     //
-        unset(
-      $this['first_name'],
-      $this['last_name'],
-      $this['algorithm'],
-      $this['groups_list'],
-      $this['permissions_list'],
-      $this['is_active']
+    unset(
+        $this['first_name'],
+        $this['last_name'],
+        $this['algorithm'],
+        $this['groups_list'],
+        $this['permissions_list'],
+        $this['is_active']
     );
+    //we should set the validator of the password widget to
+    //agValidatorPassword::
     //$mjform->setDefault('account_id',$theId);
     //$form->getObject()->id = $mj->object->sf_guard_user_id;
     //$mjform->setDefault('sf_guard_user_id',$theId);
@@ -58,6 +60,7 @@ class agAccountForm extends sfGuardUserAdminForm
 //
 //
 //  }
+
   public function saveEmbeddedForms($con = null, $forms = null)
   {
     $forms = $this->embeddedForms;

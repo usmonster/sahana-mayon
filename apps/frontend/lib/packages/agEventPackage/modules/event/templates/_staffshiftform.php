@@ -6,7 +6,7 @@
     $('.filter option:selected').each(function(index) {
       out[index] = $(this).parent().attr('id') + ":" + $(this).text();
     })
-    $("#query_condition").val(out.join(' AND '));
+    $("#search_condition").val(out.join(' AND '));
   }
 
 </script>

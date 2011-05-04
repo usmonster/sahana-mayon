@@ -1,4 +1,5 @@
 <?php
+use_helper('agTemplate');
 ($sf_request->getGetParameter('filter')) ?
         $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
 ($sf_request->getGetParameter('sort')) ?
@@ -261,8 +262,12 @@
   </thead>
   <tbody>
     <?php
-      $addressTable = agTemplateHelper::buildAddressTable($addressArray->getRawValue());
-      echo $addressTable;
+      if(isset($addressArray)) {
+        $addressTable = buildAddressTable($addressArray->getRawValue());
+        echo $addressTable;
+      } else {
+        echo '<tr><td class="subHead">This staff person does not have any associated address information</td></tr>';
+      }
     ?>
   </tbody>
   </table>
@@ -274,6 +279,9 @@
       <caption>Administrative</caption>
     </thead>
     <tbody>
+            <?php 
+            foreach ($agStaff->getAgStaffResource() as $staffRec) {
+            ?>
       <tr>
         <th class="headLeft">Staff ID:</th>
         <td>
@@ -283,43 +291,45 @@
             }
           ?>
         </td>
-        <th class="headMid">Staff Status:</th>
-        <td>
-          <?php
-            echo ucwords($staff->getAgStaffStatus()->staff_status);
-          ?>
-        </td>
       </tr>
       <tr>
         <th class="headLeft">Staff Affiliation:</th>
-        <td colspan="3">
+        <td colspan="4">
           <?php
-            foreach ($agStaff->getAgStaffResource() as $staffRec) {
-              foreach ($staffRec->getAgStaffResourceOrganization() as $staffRecOrg){
-                echo $staffRecOrg->getAgOrganization()->organization;
-              }
-            }
+           echo $staffRec->getAgOrganization()->organization;
           ?>
         </td>
       </tr>
       <tr>
         <th class="headLeft">Staff Type:</th>
-        <td colspan="3">
+        <td colspan="4">
           <?php
-            foreach ($agStaff->getAgStaffResourceType() as $rType) {
-              echo $rType->staff_resource_type;
-            }
+                echo $staffRec->getAgStaffResourceType()->staff_resource_type;
           ?>
         </td>
       </tr>
       <tr>
+<th class="headMid">Staff Status:</th>
+        <td colspan="4">
+          <?php
+                echo $staffRec->getAgStaffResourceStatus()->staff_resource_status;
+          //echo ucwords($staff->getAgStaffResource->getAgStaffResourcesStatus());
+          ?>
+        </td>
+      </tr>
+         <?php
+             }
+           ?>
+      <tr>
         <th class="headLeft">Created:</th>
-        <td colspan="3"><?php echo $agStaff->getCreatedAt() ?></td>
+        <td colspan="4"><?php echo $agStaff->getCreatedAt() ?></td>
       </tr>
       <tr>
         <th class="headLeft">Updated:</th>
-        <td colspan="3"><?php echo $agStaff->getUpdatedAt() ?></td>
+        <td colspan="4"><?php echo $agStaff->getUpdatedAt() ?></td>
       </tr>
+
+
     </tbody>
   </table>
   <br/>

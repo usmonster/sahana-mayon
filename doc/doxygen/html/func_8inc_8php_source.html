@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>Sahana Agasti: web/func.inc.php Source File</title>
+<title>Sahana Agasti: apps/frontend/lib/install/func.inc.php Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/search.js"></script>
@@ -57,7 +57,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 <div class="header">
   <div class="headertitle">
-<h1>web/func.inc.php</h1>  </div>
+<h1>apps/frontend/lib/install/func.inc.php</h1>  </div>
 </div>
 <div class="contents">
 <div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
@@ -238,14 +238,98 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00209"></a>00209 
 <a name="l00210"></a>00210   }
 <a name="l00211"></a>00211 
-<a name="l00212"></a>00212   function sfClearCache($app, $env)
-<a name="l00213"></a>00213   {
-<a name="l00214"></a>00214       $cacheDir = sfConfig::get(<span class="stringliteral">&#39;sf_cache_dir&#39;</span>) . <span class="charliteral">&#39;/&#39;</span> . $app . <span class="charliteral">&#39;/&#39;</span> . $env . <span class="charliteral">&#39;/&#39;</span>;
-<a name="l00219"></a>00219       $cache = <span class="keyword">new</span> sfFileCache(array(<span class="stringliteral">&#39;cache_dir&#39;</span> =&gt; $cacheDir));
-<a name="l00220"></a>00220       $cache-&gt;clean();
-<a name="l00221"></a>00221   }
-<a name="l00222"></a>00222 
-<a name="l00223"></a>00223 ?&gt;
+<a name="l00217"></a>00217   function writeAppYml($authMethod = NULL){
+<a name="l00218"></a>00218     $appYmlFile = sfConfig::get(<span class="stringliteral">&#39;sf_app_config_dir&#39;</span>) . <span class="stringliteral">&#39;/app.yml&#39;</span>;
+<a name="l00219"></a>00219     $appConfig = sfYaml::load($appYmlFile);
+<a name="l00220"></a>00220     <span class="keywordflow">if</span>($authMethod == NULL){
+<a name="l00221"></a>00221     $appConfig[<span class="stringliteral">&#39;all&#39;</span>][<span class="stringliteral">&#39;sf_guard_plugin&#39;</span>] =
+<a name="l00222"></a>00222         array(<span class="stringliteral">&#39;check_password_callable&#39;</span>
+<a name="l00223"></a>00223           =&gt; array(<span class="stringliteral">&#39;agSudoAuth&#39;</span>, <span class="stringliteral">&#39;authenticate&#39;</span>));
+<a name="l00224"></a>00224     $appConfig[<span class="stringliteral">&#39;all&#39;</span>][<span class="stringliteral">&#39;sf_guard_plugin_signin_form&#39;</span>] = <span class="stringliteral">&#39;agSudoSigninForm&#39;</span>;
+<a name="l00225"></a>00225     }
+<a name="l00226"></a>00226     <span class="keywordflow">else</span>{
+<a name="l00227"></a>00227       $appConfig[<span class="stringliteral">&#39;all&#39;</span>] = <span class="stringliteral">&#39;&#39;</span>;
+<a name="l00228"></a>00228     }
+<a name="l00229"></a>00229     $appConfig[<span class="stringliteral">&#39;all&#39;</span>][<span class="stringliteral">&#39;.array&#39;</span>][<span class="stringliteral">&#39;menu_top&#39;</span>] =
+<a name="l00230"></a>00230         array(
+<a name="l00231"></a>00231           <span class="stringliteral">&#39;homepage&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Home&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>),
+<a name="l00232"></a>00232           <span class="stringliteral">&#39;prepare&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Prepare&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>),
+<a name="l00233"></a>00233           <span class="stringliteral">&#39;respond&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Respond&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>),
+<a name="l00234"></a>00234           <span class="stringliteral">&#39;recover&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Recover&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>),
+<a name="l00235"></a>00235           <span class="stringliteral">&#39;mitigate&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Mitigate&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>),
+<a name="l00236"></a>00236           <span class="stringliteral">&#39;foo&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Foo&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@foo&#39;</span>),
+<a name="l00237"></a>00237           <span class="stringliteral">&#39;modules&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Modules&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>),
+<a name="l00238"></a>00238           <span class="stringliteral">&#39;admin&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Administration&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@admin&#39;</span>),
+<a name="l00239"></a>00239           <span class="stringliteral">&#39;help&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Help&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@about&#39;</span>));
+<a name="l00240"></a>00240 
+<a name="l00241"></a>00241     $appConfig[<span class="stringliteral">&#39;all&#39;</span>][<span class="stringliteral">&#39;.array&#39;</span>][<span class="stringliteral">&#39;menu_children&#39;</span>] =
+<a name="l00242"></a>00242         array(
+<a name="l00243"></a>00243           <span class="stringliteral">&#39;facility&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Facilities&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@facility&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;prepare&#39;</span>),
+<a name="l00244"></a>00244           <span class="stringliteral">&#39;org&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Organizations&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@org&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;prepare&#39;</span>),
+<a name="l00245"></a>00245           <span class="stringliteral">&#39;scenario&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Scenarios&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@scenario&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;prepare&#39;</span>),
+<a name="l00246"></a>00246           <span class="stringliteral">&#39;activate&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Activate a Scenario&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@scenario&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;respond&#39;</span>),
+<a name="l00247"></a>00247           <span class="stringliteral">&#39;event&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Manage Events&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;event&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;respond&#39;</span>),
+<a name="l00248"></a>00248           <span class="stringliteral">&#39;event_active&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Manage [Active Event]&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;respond&#39;</span>));
+<a name="l00249"></a>00249 
+<a name="l00250"></a>00250     $appConfig[<span class="stringliteral">&#39;all&#39;</span>][<span class="stringliteral">&#39;.array&#39;</span>][<span class="stringliteral">&#39;menu_grandchildren&#39;</span>] =
+<a name="l00251"></a>00251         array(
+<a name="l00252"></a>00252           <span class="stringliteral">&#39;facility_new&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Add New Facility&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;facility/new&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;facility&#39;</span>),
+<a name="l00253"></a>00253           <span class="stringliteral">&#39;facility_list&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;List Facilities&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;facility/list&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;facility&#39;</span>),
+<a name="l00254"></a>00254           <span class="stringliteral">&#39;facility_import&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Import Facilities&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@facility&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;facility&#39;</span>),
+<a name="l00255"></a>00255           <span class="stringliteral">&#39;facility_export&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Export Facilities&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@facility&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;facility&#39;</span>),
+<a name="l00256"></a>00256           <span class="stringliteral">&#39;facility_types&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Manage Facility Types&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@facility&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;facility&#39;</span>),
+<a name="l00257"></a>00257           <span class="stringliteral">&#39;org_new&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Add New Organization&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;organization/new&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;org&#39;</span>),
+<a name="l00258"></a>00258           <span class="stringliteral">&#39;org_list&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;List Organizations&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;organization/list&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;org&#39;</span>),
+<a name="l00259"></a>00259           <span class="stringliteral">&#39;scenario_create&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Build New Scenario&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;scenario/new&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;scenario&#39;</span>),
+<a name="l00260"></a>00260           <span class="stringliteral">&#39;scenario_list&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;List Scenarios&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;scenario/list&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;scenario&#39;</span>),
+<a name="l00261"></a>00261           <span class="stringliteral">&#39;scenario_facilitygrouptypes&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Edit Facility Group Types&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;scenario/grouptype&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;scenario&#39;</span>),
+<a name="l00262"></a>00262           <span class="stringliteral">&#39;scenario_active&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;[Active Scenario]&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@scenario&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;scenario&#39;</span>),
+<a name="l00263"></a>00263           <span class="stringliteral">&#39;event_active_staff&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Staff&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;event_active&#39;</span>),
+<a name="l00264"></a>00264           <span class="stringliteral">&#39;event_active_facilities&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Facilities&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;event_active&#39;</span>),
+<a name="l00265"></a>00265           <span class="stringliteral">&#39;event_active_clients&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Clients&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;event_active&#39;</span>),
+<a name="l00266"></a>00266           <span class="stringliteral">&#39;event_active_reporting&#39;</span> =&gt; array(<span class="stringliteral">&#39;label&#39;</span> =&gt; <span class="stringliteral">&#39;Reporting&#39;</span>, <span class="stringliteral">&#39;route&#39;</span> =&gt; <span class="stringliteral">&#39;@homepage&#39;</span>, <span class="stringliteral">&#39;parent&#39;</span> =&gt; <span class="stringliteral">&#39;event_active&#39;</span>));
+<a name="l00267"></a>00267 
+<a name="l00268"></a>00268     $appConfig[<span class="stringliteral">&#39;all&#39;</span>][<span class="stringliteral">&#39;.array&#39;</span>][<span class="stringliteral">&#39;title&#39;</span>] =
+<a name="l00269"></a>00269         array(
+<a name="l00270"></a>00270             <span class="stringliteral">&#39;homepage&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="charliteral">&#39;/&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Home&#39;</span>),
+<a name="l00271"></a>00271             <span class="stringliteral">&#39;staff_page&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/staff/index&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Staff&#39;</span>),
+<a name="l00272"></a>00272             <span class="stringliteral">&#39;staff_list&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/staff/list&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Staff List&#39;</span>),
+<a name="l00273"></a>00273             <span class="stringliteral">&#39;staff_new&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/staff/new&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Staff New&#39;</span>),
+<a name="l00274"></a>00274             <span class="stringliteral">&#39;staff_import&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/staff/import&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Staff Import&#39;</span>),
+<a name="l00275"></a>00275             <span class="stringliteral">&#39;faciltiy_page&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/facility/index&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Facilities&#39;</span>),
+<a name="l00276"></a>00276             <span class="stringliteral">&#39;faciltiy_list&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/facility/list&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Facility List&#39;</span>),
+<a name="l00277"></a>00277             <span class="stringliteral">&#39;faciltiy_new&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/facility/new&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Facility New&#39;</span>),
+<a name="l00278"></a>00278             <span class="stringliteral">&#39;faciltiy_import&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/facility/import&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Facility Import&#39;</span>),
+<a name="l00279"></a>00279             <span class="stringliteral">&#39;organization_page&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/organization/index&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Organization&#39;</span>),
+<a name="l00280"></a>00280             <span class="stringliteral">&#39;organization_list&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/organization/list&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Organization List&#39;</span>),
+<a name="l00281"></a>00281             <span class="stringliteral">&#39;organization_new&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/organization/new&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Organization New&#39;</span>),
+<a name="l00282"></a>00282             <span class="stringliteral">&#39;scenario_page&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/scenario/index&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Scenario&#39;</span>),
+<a name="l00283"></a>00283             <span class="stringliteral">&#39;scenario_list&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/scenario/list&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Scenario List&#39;</span>),
+<a name="l00284"></a>00284             <span class="stringliteral">&#39;scenario_pre&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/scenario/pre&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Scenario Pre-Creator&#39;</span>),
+<a name="l00285"></a>00285             <span class="stringliteral">&#39;scenario_new&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/scenario/new&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Scenario Creator&#39;</span>),
+<a name="l00286"></a>00286             <span class="stringliteral">&#39;events_page&#39;</span> =&gt; array(<span class="stringliteral">&#39;url&#39;</span> =&gt; <span class="stringliteral">&#39;/event/index&#39;</span>, <span class="stringliteral">&#39;title&#39;</span> =&gt; <span class="stringliteral">&#39;Sahana Agasti Events&#39;</span>)
+<a name="l00287"></a>00287         );
+<a name="l00288"></a>00288 
+<a name="l00289"></a>00289 
+<a name="l00290"></a>00290 <span class="comment">// updates app.yml</span>
+<a name="l00291"></a>00291     <span class="keywordflow">try</span> {
+<a name="l00292"></a>00292       file_put_contents($appYmlFile, sfYaml::dump($appConfig, 4));
+<a name="l00293"></a>00293       <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00294"></a>00294     } <span class="keywordflow">catch</span> (Exception $e) {
+<a name="l00295"></a>00295       <span class="comment">//echo &#39;There was an error writing the app.yml file: &#39;, $e-&gt;getMessage();</span>
+<a name="l00296"></a>00296       <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00297"></a>00297     }
+<a name="l00298"></a>00298   }
+<a name="l00299"></a>00299 
+<a name="l00300"></a>00300 
+<a name="l00301"></a>00301   function sfClearCache($app, $env)
+<a name="l00302"></a>00302   {
+<a name="l00303"></a>00303       $cacheDir = sfConfig::get(<span class="stringliteral">&#39;sf_cache_dir&#39;</span>) . <span class="charliteral">&#39;/&#39;</span> . $app . <span class="charliteral">&#39;/&#39;</span> . $env . <span class="charliteral">&#39;/&#39;</span>;
+<a name="l00308"></a>00308       $cache = <span class="keyword">new</span> sfFileCache(array(<span class="stringliteral">&#39;cache_dir&#39;</span> =&gt; $cacheDir));
+<a name="l00309"></a>00309       $cache-&gt;clean();
+<a name="l00310"></a>00310   }
+<a name="l00311"></a>00311 
+<a name="l00312"></a>00312 ?&gt;
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->

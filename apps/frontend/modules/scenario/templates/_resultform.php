@@ -8,7 +8,7 @@
     $('.filter option:selected').each(function(index) {
       out[index] = $(this).parent().attr('id') + ":" + $(this).text();
     })
-    $("#staff_pool_lucene_search_query_condition").val(out.join(' AND '));
+    $("#staff_pool_search_search_condition").val(out.join(' AND '));
   }
 
 </script>
@@ -28,7 +28,7 @@ if (isset($search_id)) {
       <tr>
         <td colspan="2">
 <?php echo $poolform->renderHiddenFields(false) ?>
-          <input type="submit" value="Save" class="saveLinkButton" name="Save" onclick="queryConstruct()"/>
+          <input type="submit" value="Save" class="linkButton" name="Save" onclick="queryConstruct()"/>
           <input type="submit" value="Preview" class="linkButton" name="Preview" onclick="queryConstruct()"/>
           <input type="submit" value="New" name="New" class="linkButton"/>
 <?php if (isset($search_id)) { ?>

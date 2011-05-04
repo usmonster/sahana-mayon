@@ -1,21 +1,29 @@
-<?php use_javascript('agasti.js') ?>
-<?php use_javascript('jQuery.fileinput.js') ?>
-<h2>Staff Management <!-- <img src="#" alt="?" height="15" width="15" title="text"/> --></h2>
-<p>The Staff Management feature in Agasti 2.0 is used to manage your available staff resources while planning before an emergency response.</p>
-<b>Please select one of the following actions: </b><br />
+<?php use_javascript('agasti.js');
+  use_javascript('jQuery.fileinput.js');
+  use_javascript('jquery.ui.custom.js');
+  use_stylesheet('jquery/jquery.ui.custom.css');
+  use_stylesheet('jquery/mayon.jquery.ui.css');
+  use_javascript('agTooltip.js'); ?>
 
-<a href="<?php echo url_for('staff/new'); ?>" class="buttonText" title="Create New Staff">Create Staff</a><br/>
+<h2>Staff Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_management&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Management">?</a></h2>
+
+<p>The Staff Management feature in Sahana Agasti is used to manage your available staff resources while planning before an emergency response.</p>
+<h3>Please select one of the following actions:</h3>
+
+<a href="<?php echo url_for('staff/new'); ?>" class="buttonText" title="Create New Staff">Add Staff</a><br/>
 
 <a href="<?php echo url_for('staff/list'); ?>" class="buttonText" title="List Existing Staff">List Staff</a><br/>
 
 <span style="display: inline-block; margin: 0px; padding: 0px" >
-  <a href="<?php echo url_for('facility/import') ?>" class="buttonText" title="Import Staff" id="import">Import Staff</a>
+  <?php echo link_to('Import Staff', 'staff/import', array('class' => 'buttonText', 'title' => 'Import Staff', 'id' => 'import')); ?>
   <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('staff/import') ?>" method="post" enctype="multipart/form-data">
     <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
-      <input style="display: inline-block; color: #848484" class="inputGray" id="show" />
+      <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
       <a class="linkButton" style="display: inline-block; padding: 3px">Browse</a>
     </div>
     <input type="file" name="import" id="fileUpload" />
+
+
     <input type="submit" name="submit" value="Submit" class="submitLinkButton" />
   </form>
 </span>

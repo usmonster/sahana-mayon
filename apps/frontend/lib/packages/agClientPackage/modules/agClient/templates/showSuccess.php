@@ -56,7 +56,8 @@
     <th class="headMid">Age:</th>
     <td>
       <?php
-      #This will need to be adjusted, don't think it's accurate for all dates, but wanted to get something in here.
+      //This will need to be adjusted, don't think it's accurate for all
+      //dates, but wanted to get something in here.
       if ($agPerson->getAgPersonDateOfBirth()->getDateOfBirth() == !null) {
         echo floor(
             (time() - strtotime($agPerson->getAgPersonDateOfBirth()->getDateOfBirth()))
@@ -177,7 +178,7 @@
   </table>
 
   <br />
-
+  
   <table class="singleTable">
     <tbody>
       <tr>
@@ -353,57 +354,57 @@
 
     <table class="singleTable">
       <thead>
-        <caption>Administrative</caption>
-      </thead>
-      <tbody>
-        <tr>
-          <th class="headLeft">Staff ID:</th>
-          <td>
-            <?php
-              foreach($agPerson->getAgStaff() as $staff) {
-                echo $staff->id;
-              }
-            ?>
-          </td>
-          <th class="headMid">Staff Status:</th>
-          <td>
-            <?php
-              foreach($agPerson->getAgStaff() as $staff) {
-                echo ucwords($staff->getAgStaffStatus()->staff_status);
-              }
-            ?>
-          </td>
-        </tr>
-        <tr>
-          <th class="headLeft">Staff Type:</th>
-          <td colspan="3">
-            <?php
-              foreach ($agPerson->getAgStaff() as $staff) {
-                foreach ($staff->getAgStaffResourceType() as $rType) {
-                  echo $rType->staff_resource_type;
-                }
-              }
-            ?>
-          </td>
-        </tr>
-        <tr>
-          <th class="headLeft">Created:</th>
-          <td colspan="3"><?php echo $agPerson->getCreatedAt() ?></td>
-        </tr>
-        <tr>
-          <th class="headLeft">Updated:</th>
-          <td colspan="3"><?php echo $agPerson->getUpdatedAt() ?></td>
-        </tr>
-      </tbody>
-    </table>
-    <br/>
-    <?php
+      <caption>Administrative</caption>
+    </thead>
+    <tbody>
+      <tr>
+        <th class="headLeft">Staff ID:</th>
+        <td>
+      <?php
+      foreach ($agPerson->getAgStaff() as $staff) {
+        echo $staff->id;
+      }
+      ?>
+    </td>
+    <th class="headMid">Staff Status:</th>
+    <td>
+      <?php
+      foreach ($agPerson->getAgStaff() as $staff) {
+        echo ucwords($staff->getAgStaffStatus()->staff_status);
+      }
+      ?>
+    </td>
+  </tr>
+  <tr>
+    <th class="headLeft">Staff Type:</th>
+    <td colspan="3">
+      <?php
+      foreach ($agPerson->getAgStaff() as $staff) {
+        foreach ($staff->getAgStaffResourceType() as $rType) {
+          echo $rType->staff_resource_type;
+        }
+      }
+      ?>
+    </td>
+  </tr>
+  <tr>
+    <th class="headLeft">Created:</th>
+    <td colspan="3"><?php echo $agPerson->getCreatedAt() ?></td>
+  </tr>
+  <tr>
+    <th class="headLeft">Updated:</th>
+    <td colspan="3"><?php echo $agPerson->getUpdatedAt() ?></td>
+  </tr>
+</tbody>
+</table>
+<br/>
+<?php
       $customCheck =
-        Doctrine::getTable('agPersonCustomFieldValue')
-        ->findByDql(
-            'person_id = ?', $agPerson->id
-        )
-        ->getFirst();
+              Doctrine::getTable('agPersonCustomFieldValue')
+              ->findByDql(
+                  'person_id = ?', $agPerson->id
+              )
+              ->getFirst();
       if ($customCheck instanceof agPersonCustomFieldValue) {
         echo '<table class="singleTable">' . PHP_EOL;
         echo '<thead>' . PHP_EOL;
@@ -412,31 +413,40 @@
         echo '<tbody>' . PHP_EOL;
         foreach ($agPerson->getAgPersonCustomFieldValue() as $cFieldVal) {
           if ($cFieldVal->getAgPersonCustomField()->person_custom_field == $cFieldVal->getAgPersonCustomField()->getAgCustomFieldType()->custom_field_type) {
-            echo '<tr>' . PHP_EOL;;
-            echo '<th class="headLeft">' . $cFieldVal->getAgPersonCustomField()->person_custom_field . ':</th>' . PHP_EOL;;
-            echo '<td>' . $cFieldVal->value . '</td>' . PHP_EOL;;
-            echo '</tr>' . PHP_EOL;;
+            echo '<tr>' . PHP_EOL;
+            ;
+            echo '<th class="headLeft">' . $cFieldVal->getAgPersonCustomField()->person_custom_field . ':</th>' . PHP_EOL;
+            ;
+            echo '<td>' . $cFieldVal->value . '</td>' . PHP_EOL;
+            ;
+            echo '</tr>' . PHP_EOL;
+            ;
           } else {
-            echo '<tr>' . PHP_EOL;;
-            echo '<th class="headLeft">' . $cFieldVal->getAgPersonCustomField()->getAgCustomFieldType()->custom_field_type . "&ndash;" . $cFieldVal->getAgPersonCustomField()->person_custom_field . ':</th>' . PHP_EOL;;
-            echo '<td>' . $cFieldVal->value . '</td>' . PHP_EOL;;
-            echo '</tr>' . PHP_EOL;;
+            echo '<tr>' . PHP_EOL;
+            ;
+            echo '<th class="headLeft">' . $cFieldVal->getAgPersonCustomField()->getAgCustomFieldType()->custom_field_type . "&ndash;" . $cFieldVal->getAgPersonCustomField()->person_custom_field . ':</th>' . PHP_EOL;
+            ;
+            echo '<td>' . $cFieldVal->value . '</td>' . PHP_EOL;
+            ;
+            echo '</tr>' . PHP_EOL;
+            ;
           }
         }
         echo '</tbody>' . PHP_EOL;
         echo '</table>' . PHP_EOL;
         echo '<br />' . PHP_EOL;
       }
-    ?>
-    <div class="floatLeft">
-      <a href="<?php echo url_for('staff/edit?id=' . $agPerson->getId()) ?>"
-         class="linkButton">Edit</a>
+?>
+      <div class="floatLeft">
+        <a href="<?php echo url_for('staff/edit?id=' . $agPerson->getId()) ?>"
+           class="linkButton">Edit</a>
      <?php
       echo link_to(
           'Delete',
           'staff/delete?id=' . $agPerson->getId(),
           array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')
-      ); ?>
+      );
+     ?>
      <?php
       echo (isset($query)) ?
           '<a href="' . url_for('staff/search') . '/page/' . $pager->getFirstPage() .
@@ -446,57 +456,69 @@
  </div>
  <div class="floatRight">
   <?php
-      if (isset($query)) { //check to see if $query exists. True if page has been requested from search results. Links will then have $query appended.
-        //If this isn't the FIRST page, echo a link to the FIRST page. Else, create an <a> with no href.
+      if (isset($query)) {
+        //check to see if $query exists. True if page has been requested
+        //from search results. Links will then have $query appended.
+        //If this isn't the FIRST page, echo a link to the FIRST page.
+        //Else, create an <a> with no href.
         echo(
         !$pager->isFirstPage() ? '<a href="' . url_for('staff/show') .
             '/page/' . $pager->getFirstPage() . '?query=' . $query .
             '" class="buttonText" title="First Staff Member">&lt;&lt;</a>' :
             '<a class="buttonTextOff">&lt;&lt;</a>'
         );
-        //If this isn't the FIRST page, echo a link to the PREVIOUS page. Else, create an <a> with no href.
+        //If this isn't the FIRST page, echo a link to the PREVIOUS page.
+        // Else, create an <a> with no href.
         echo(
         !$pager->isFirstPage() ? '<a href="' . url_for('staff/show') .
             '/page/' . $pager->getPreviousPage() . '?query=' . $query .
             '" class="buttonText" title="Previous Staff Member">&lt;</a>' :
             '<a class="buttonTextOff">&lt;</a>'
         );
-        //if this isn't the LAST page, echo a link to the NEXT page. Else, create an <a> with no href.
+        //if this isn't the LAST page, echo a link to the NEXT page.
+        //Else, create an <a> with no href.
         echo(
         !$pager->isLastPage() ? '<a href="' . url_for('staff/show') .
             '/page/' . $pager->getNextPage() . '?query=' . $query .
             '" class="buttonText" title="Next Staff Member">&gt;</a>' :
             '<a class="buttonTextOff">&gt;</a>'
         );
-        //if this isn't the LAST page, echo a link to the LAST page. Else, create an <a> with no href.
+        //if this isn't the LAST page, echo a link to the LAST page.
+        //Else, create an <a> with no href.
         echo(
         !$pager->isLastPage() ? '<a href="' . url_for('staff/show') .
             '/page/' . $pager->getLastPage() . '?query=' . $query .
             '" class="buttonText" title="Last Staff Member">&gt;&gt;</a>' :
             '<a class="buttonTextOff">&gt;&gt;</a>'
         );
-      } else { //Normal display, accesses all staff members if page has been requested from indexSuccess
-        //if this isn't the FIRST page, echo a link to the FIRST page. Else, create an <a> with no href.
+      } else {
+        //Normal display, accesses all staff members if page has
+        //been requested from indexSuccess
+        //if this isn't the FIRST page, echo a link to the FIRST
+        //page. Else, create an <a> with no href.
         echo(
         !$pager->isFirstPage() ? '<a href="' . url_for('staff/show') .
             '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend .
             '" class="buttonText" title="First Staff Member">&lt;&lt;</a>' :
             '<a class="buttonTextOff">&lt;&lt;</a>');
-        //if this isn't the FIRST page, echo a link to the PREVIOUS page. Else, create an <a> with no href.
+        //if this isn't the FIRST page, echo a link to the PREVIOUS
+        //page. Else, create an <a> with no href.
         echo(
         !$pager->isFirstPage() ? '<a href="' . url_for('staff/show') .
             '?page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend .
             '" class="buttonText" title="Previous Staff Member">&lt;</a>' :
             '<a class="buttonTextOff">&lt;</a>'
         );
-        //if this isn't the LAST page, echo a link to the NEXT page. Else, create an <a> with no href.
+        //if this isn't the LAST page, echo a link to the NEXT page.
+        //Else, create an <a> with no href.
         echo(
         !$pager->isLastPage() ? '<a href="' . url_for('staff/show') .
             '?page=' . $pager->getNextPage() . $sortAppend . $orderAppend .
             '" class="buttonText" title="Next Staff Member">&gt;</a>' :
             '<a class="buttonTextOff">&gt;</a>'
         );
-        //if this isn't the LAST page, echo a link to the LAST page. Else, create an <a> with no href.
+        //if this isn't the LAST page, echo a link to the LAST page.
+        //Else, create an <a> with no href.
         echo(
         !$pager->isLastPage() ? '<a href="' . url_for('staff/show') .
             '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend .
@@ -508,6 +530,11 @@
     </div>
 <?php
       endforeach;
+
+
+
+
+
 
 
 

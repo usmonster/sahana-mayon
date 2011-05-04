@@ -8,10 +8,13 @@ $i = 1;
 ?>
 
 <h2>Facility Import Status</h2>
+
+<?php include_partial('infobar', array('form' => $form)); ?>
+
 <p>Records imported into temporary table: <?php echo $numRecordsImported ?><br/>
 
     <?php if (count($events) > 0): ?>
-    <hr>
+    <hr class="ruleGray" />
     <table>
         <tr><th>&nbsp;</th><th>Step</th><th>Type</th><th>Message</th></tr>
     <?php foreach ($events as $event): ?>
@@ -42,13 +45,24 @@ $i = 1;
 
     <?php endif; ?>
 
-    <hr>
+    <hr class="ruleGray" />
+
+    <?php #if (isset($errMsg)) echo $errMsg; ?>
+    <?php
+      if (isset($errMsg))
+      {
+        echo '<br />app: ' . $errMsg['app'];
+        echo '<br />env: ' . $errMsg['env'];
+        echo '<br />debug: ' . $errMsg['debug'];
+        echo '<br />no_script_name: ' . $errMsg['no_script_name'];
+      }
+    ?>
 
     <?php if (isset($summary)): ?>
-      <br /><br /><b>Total Number of Processed Records:</b> <?php echo $summary['totalProcessedRecordCount']; ?>
-      <br /><br /><b>Total New Facility Created:</b> <?php echo $summary['totalNewFacilityCount']; ?>
-      <br /><br /><b>Total New Facility Group Created:</b> <?php echo $summary['totalNewFacilityGroupCount']; ?>
-      <br /><br /><b>Total Number of Non-processed Records:</b> <?php echo count($summary['nonprocessedRecords']); ?>
+      <br /><br /><strong>Total Number of Processed Records:</strong> <?php echo $summary['totalProcessedRecordCount']; ?>
+      <br /><br /><strong>Total New Facility Created:</strong> <?php echo $summary['totalNewFacilityCount']; ?>
+      <br /><br /><strong>Total New Facility Group Created:</strong> <?php echo $summary['totalNewFacilityGroupCount']; ?>
+      <br /><br /><strong>Total Number of Non-processed Records:</strong> <?php echo count($summary['nonprocessedRecords']); ?>
 
       <br /><br />
 
@@ -64,7 +78,6 @@ $i = 1;
             <td>Facility Name: <?php echo $failedRecord['record']['facility_name']; ?>
               <br />Facility Code: <?php echo $failedRecord['record']['facility_code']; ?>
               <br />Facility Resource Type Abbr: <?php echo $failedRecord['record']['facility_resource_type_abbr']; ?>
-              <br />Facility Resource Code: <?php echo $failedRecord['record']['facility_resource_code']; ?></td>
           </tr>
           <?php endforeach ?>
         </table>
@@ -82,15 +95,15 @@ $i = 1;
           <td><?php echo $i++; ?></td>
           <td><?php echo $warning['message']; ?></td>
           <td>Facility Name: <?php echo $warning['record']['facility_name']; ?>
-            <br />Facility Code: <?php echo $failedRecord['record']['facility_code']; ?>
-            <br />Facility Resource Type Abbr: <?php echo $failedRecord['record']['facility_resource_type_abbr']; ?>
-            <br />Facility Resource Code: <?php echo $warning['record']['facility_resource_code']; ?></td>
+            <br />Facility Code: <?php echo $warning['record']['facility_code']; ?>
+            <br />Facility Resource Type Abbr: <?php echo $warning['record']['facility_resource_type_abbr']; ?>
         </tr>
         <?php endforeach ?>
+
       </table>
       <?php endif ?>
     <?php else: ?>
-      <br /><B>File not imported.</B>
+      <br /><strong>File not imported.</strong>
     <?php endif ?>
 
 

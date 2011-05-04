@@ -34,11 +34,11 @@ rm -rf $PROJECT_ROOT/lib/filter/doctrine/ag*
 $PROJECT_ROOT/symfony cc
 
 # removes search index files to avoid pollution from previous installs
-sudo -u $WEB_USER rm -rf $PROJECT_ROOT/data/search/*
+sudo rm -rf $PROJECT_ROOT/data/search/*
 
 # resets file and directory perms (NOTE: chmod does NOT recurse in this case)
-sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/indexes/ \$PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
-chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/indexes/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
+sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
+chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
 #considered harmful?:
 #sudo $PROJECT_ROOT/symfony project:permissions
 
@@ -58,3 +58,5 @@ $PROJECT_ROOT/symfony doctrine:build-filters
 # loads sample data and fixtures from the yml files in the data directory
 sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load 
 
+#indexes the data loaded so it is searchable to the user
+sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenario agStaff agFacility agScenarioFacilityGroup

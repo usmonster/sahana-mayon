@@ -24,7 +24,7 @@ class adminActions extends agActions
 
   }
 
-  /**
+  /** Pacman is the basic shell for package management, it is currently NOT STABLE
    *
    * @param sfWebRequest $request is what the user is asking of the server
    */
@@ -46,6 +46,10 @@ class adminActions extends agActions
     }
   }
 
+  /** Globals is the portal for management of global parameters. used throughout the application
+   *
+   * @param sfWebRequest $request is what the user is asking of the server
+   */
   public function executeGlobals(sfWebRequest $request)
   {
     if ($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('param')))) {
@@ -60,7 +64,12 @@ class adminActions extends agActions
     if ($request->getParameter('delete')) {
       //$request->checkCSRFProtection();
 
-      $this->forward404Unless($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('deleteparam'))), sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam')));
+      $this->forward404Unless(
+          $ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(
+              array($request->getParameter('deleteparam'))
+          ),
+          sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam'))
+      );
       $ag_global_param->delete();
 
       $this->redirect('admin/globals');
@@ -74,14 +83,16 @@ class adminActions extends agActions
     }
   }
 
+  /** Config gives the administrator a place to see and configure system settings
+   *
+   * @param sfWebRequest $request is what the user is asking of the server
+   */
   public function executeConfig(sfWebRequest $request)
   {
-    /**
-     * @param sfWebRequest $request is what the user is asking of the server
-     */
-    require_once (dirname(__FILE__) . '../apps/frontend/lib/install/func.inc.php');
+
+    require_once (sfConfig::get('sf_app_lib_dir') . '/install/func.inc.php');
     //OR sfProjectConfiguration::getActive()->loadHelpers(array('Install)); ^
-    
+
     if ($request->getParameter('saveconfig')) {
       $file = sfConfig::get('sf_config_dir') . '/config.yml';
       $config_array = sfYaml::load($file);
@@ -101,84 +112,39 @@ class adminActions extends agActions
       } else {
         $authMethod = '';
       }
-      
+
       $appYmlWriteResult = writeAppYml($authMethod);
-      $file = sfConfig::get('sf_app_config_dir') . '/app.yml';
-      $appConfig = sfYaml::load($file);
-
-      $appConfig['all']['.array']['menu_top'] =
-          array(
-            'homepage' => array('label' => 'Home', 'route' => '@homepage'),
-            'prepare' => array('label' => 'Prepare', 'route' => '@homepage'),
-            'respond' => array('label' => 'Respond', 'route' => '@homepage'),
-            'recover' => array('label' => 'Recover', 'route' => '@homepage'),
-            'mitigate' => array('label' => 'Mitigate', 'route' => '@homepage'),
-            'foo' => array('label' => 'Foo', 'route' => '@foo'),
-            'modules' => array('label' => 'Modules', 'route' => '@homepage'),
-            'admin' => array('label' => 'Administration', 'route' => '@admin'),
-            'help' => array('label' => 'Help', 'route' => '@about'));
-
-      $appConfig['all']['.array']['menu_children'] =
-          array(
-            'facility' => array('label' => 'Facilities', 'route' => '@facility', 'parent' => 'prepare'),
-            'org' => array('label' => 'Organizations', 'route' => '@org', 'parent' => 'prepare'),
-            'scenario' => array('label' => 'Scenarios', 'route' => '@scenario', 'parent' => 'prepare'),
-            'activate' => array('label' => 'Activate a Scenario', 'route' => '@scenario', 'parent' => 'respond'),
-            'event' => array('label' => 'Manage Events', 'route' => '@homepage', 'parent' => 'respond'),
-            'event_active' => array('label' => 'Manage [Active Event]', 'route' => '@homepage', 'parent' => 'respond'));
-
-      $appConfig['all']['.array']['menu_grandchildren'] =
-          array(
-            'facility_new' => array('label' => 'Add New Facility', 'route' => 'facility/new', 'parent' => 'facility'),
-            'facility_list' => array('label' => 'List Facilities', 'route' => 'facility/list', 'parent' => 'facility'),
-            'facility_import' => array('label' => 'Import Facilities', 'route' => '@facility', 'parent' => 'facility'),
-            'facility_export' => array('label' => 'Export Facilities', 'route' => '@facility', 'parent' => 'facility'),
-            'facility_types' => array('label' => 'Manage Facility Types', 'route' => '@facility', 'parent' => 'facility'),
-            'org_new' => array('label' => 'Add New Organization', 'route' => 'organization/new', 'parent' => 'org'),
-            'org_list' => array('label' => 'List Organizations', 'route' => 'organization/list', 'parent' => 'org'),
-            'scenario_create' => array('label' => 'Build New Scenario', 'route' => '@staff_create', 'parent' => 'scenario'),
-            'scenario_list' => array('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
-            'scenario_facilitygrouptypes' => array('label' => 'Edit Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'),
-            'scenario_active' => array('label' => '[Active Scenario]', 'route' => '@scenario', 'parent' => 'scenario'),
-            'event_active_staff' => array('label' => 'Staff', 'route' => '@homepage', 'parent' => 'event_active'),
-            'event_active_facilities' => array('label' => 'Facilities', 'route' => '@homepage', 'parent' => 'event_active'),
-            'event_active_clients' => array('label' => 'Clients', 'route' => '@homepage', 'parent' => 'event_active'),
-            'event_active_reporting' => array('label' => 'Reporting', 'route' => '@homepage', 'parent' => 'event_active'));
-      // update config.yml
-      try {
-        file_put_contents($file, sfYaml::dump($appConfig, 4));
-      } catch (Exception $e) {
-        echo "hey, something went wrong:" . $e->getMessage();
-        return false;
-      }
+      //write app.yml file
 
       $caches = array('all', 'dev', 'prod');
 
+      // clear the cache after changing the app.yml file
       foreach ($caches as $cachedir) {
         $cacheDir = sfConfig::get('sf_cache_dir') . '/frontend/' . $cachedir . '/';
         $cache = new sfFileCache(array('cache_dir' => $cacheDir));
-
         $cache->clean();
       }
-
-
-      //check to see if auth_method is bypass, if so, modify app.yml accordingly... AFTER agSaveSetup
-//        if(!agSaveSetup($config_array)) return 'fail';
-      //agSaveSetup($config_array);
+      $this->result = $appYmlWriteResult;
     }
   }
 
+  /**
+   *
+   * Display is the stub for managing display options in select lists, it is NOT STABLE
+   * @param sfWebRequest $request should be passing in information that was submitted in the form created
+   */
   public function executeDisplay(sfWebRequest $request)
   {
-    /**
-     *
-     * @param sfWebRequest $request should be passing in information that was submitted in the form created
-     * $this->processForm($request, $this->form);
-     */
+
     $this->form = new sfForm();
 
     $this->form->getWidgetSchema()->setNameFormat('display[%s]');
-    $this->form->setWidget('agProfession', new sfWidgetFormDoctrineChoice(array('multiple' => true, 'expanded' => true, 'model' => 'agProfession')));
+    $this->form->setWidget(
+        'agProfession',
+        new sfWidgetFormDoctrineChoice(
+            array('multiple' => true, 'expanded' => true, 'model' => 'agProfession')
+        )
+    );
 
     //$this->form->setValidator(array(new sfValidatorDoctrineChoice(array('model' => $this->form->getModelName(), 'column' => 'app_display'))));
     //if submitted
@@ -186,14 +152,13 @@ class adminActions extends agActions
 
       //$this->form->bind($request->getParameter($this->form->getName()));
 //      if ($this->form->isValid()) {
-        foreach ($request->getParameter('display') as $process_display) {
-          //$array_of_all = get
-          $profession = new agProfession;
-          $profession->setAppDisplay(1); 
-          $profession->save();
-          //$process_display =
-          
-        }
+      foreach ($request->getParameter('display') as $process_display) {
+        //$array_of_all = get
+        $profession = new agProfession;
+        $profession->setAppDisplay(1);
+        $profession->save();
+        //$process_display =
+      }
 //      }
     }
   }
@@ -266,8 +231,8 @@ class adminActions extends agActions
   }
 
   /**
-   *
-   * @todo add description of function above and details below
+   * provides the editSuccess template with an agAccountForm bound to the requested user id
+   * @todo collapse this functionality all into executeUser or executeAccount function
    * @param $request (add description)
    */
   public function executeCreate(sfWebRequest $request)
@@ -300,7 +265,7 @@ class adminActions extends agActions
   public function executeUpdate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
-    $this->forward404Unless($ag_account = Doctrine::getTable('sfGuardUser')->find(array($request->getParameter('id'))), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
+    $this->forward404Unless($ag_account = Doctrine::getTable('sfGuardUser')->find(array($request->getParameter('id'))), sprintf('Object sf_guard_user does not exist (%s).', $request->getParameter('id')));
     $this->form = new agAccountForm($ag_account);
 
     $this->processForm($request, $this->form);
@@ -340,8 +305,12 @@ class adminActions extends agActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_account = $form->save();
-
-      $this->redirect('admin/edit?id=' . $ag_account->getId());
+      if ($request->getParameter('Continue')) {
+        /** @todo pass the previously created username to the new template for verification */
+        $this->redirect('admin/new');
+      } else {
+        $this->redirect('admin/list'); //edit?id=' . $ag_account->getId());
+      }
     }
   }
 

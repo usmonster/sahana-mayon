@@ -1,7 +1,7 @@
 all:
   .array:
     menu_children:
-      foo_list: { label: 'List Foos', route: '@foo_list', parent: 'foo' }
+      foo_list: { label: 'List Foos', route: '@foo_list', parent: 'modules' }
     menu_grandchildren:
       foo_show1: { label: 'Show Foo 1', route: 'foo/show?id=1', parent: 'foo_list' }
       foo_show2: { label: 'Show Foo 2', route: 'foo/show?id=2', parent: 'foo_list' }

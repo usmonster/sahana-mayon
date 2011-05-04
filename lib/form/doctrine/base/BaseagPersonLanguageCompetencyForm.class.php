@@ -32,6 +32,10 @@ abstract class BaseagPersonLanguageCompetencyForm extends BaseFormDoctrine
       'updated_at'             => new sfValidatorDateTime(),
     ));
 
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorDoctrineUnique(array('model' => 'agPersonLanguageCompetency', 'column' => array('person_language_id', 'language_format_id')))
+    );
+
     $this->widgetSchema->setNameFormat('ag_person_language_competency[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);

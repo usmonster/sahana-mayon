@@ -1,0 +1,7 @@
+agSearchType:
+  doctrine_query_simple:
+    search_type: doctrine_query_simple
+    description: A simple doctrine query defined by a two-dimensional array of table names, operators, and conditions.
+  lucene_query:
+    search_type: lucene_query
+    description: A lucene search string.

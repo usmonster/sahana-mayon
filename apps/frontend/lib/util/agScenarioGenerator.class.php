@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * Shift generator for scenario
+ *
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @author Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ *
+ */
+
 class agScenarioGenerator
 {
 
@@ -106,9 +121,11 @@ class agScenarioGenerator
 
           ->select('a.id')
             ->from('agStaffResource a')
+              ->leftJoin('a.agStaffResourceStatus asrs')
               ->leftJoin('a.agScenarioStaffResource asr WITH asr.scenario_id = ?', $scenario_id)
             ->whereIn('a.staff_id', $staff_id)
-              ->andWhere('asr.staff_resource_id IS NULL');
+              ->andWhere('asr.staff_resource_id IS NULL')
+              ->andWhere('asrs.is_available = ?', true);
                 
         $staff_resource_sql =  $staff_resource_dql->getSqlQuery();
         $staff_resources  = $staff_resource_dql->execute(array(), 'single_value_array');

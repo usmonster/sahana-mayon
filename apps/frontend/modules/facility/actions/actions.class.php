@@ -31,9 +31,7 @@ class facilityActions extends agActions
 
   /**
   * executeIndex()
-  *
-  * Placeholder for the index action. Only the template is
-  * needed, so this method is empty.
+  * provides the user with a scenario drop down for facility import and the facility landing page
   *
   * @param $request sfWebRequest object for current page request
   **/
@@ -70,7 +68,10 @@ class facilityActions extends agActions
     /**
     * Create pager
     **/
-    $this->pager = new sfDoctrinePager('agFacility', 5);
+    $this->target_module = 'facility';
+    $request->getParameter('limit') ?  $limit = $request->getParameter('limit') : $limit = 10;
+    //instead of 10 for the limit, we should pull from a global parameter
+    $this->pager = new sfDoctrinePager('agFacility', $limit);
 
     /**
     * Check if the client wants the results sorted, and set pager
@@ -232,19 +233,24 @@ class facilityActions extends agActions
     $this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
 
     $uploadedFile = $_FILES["import"];
-
     $uploadDir = sfConfig::get('sf_upload_dir') . '/';
+
     move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"]);
     $this->importPath = $uploadDir . $uploadedFile["name"];
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)
     $this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready'));
+    //$this->redirect('facility/import');
+    //$this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready', array('cursor' => $cursor)));
     // TODO: eventually use this ^^^ to replace this vvv.
 
-    $import = new AgImportXLS();
+    $import = new agFacilityImportXLS();
 //    $returned = $import->createTempTable();
 
+    $this->timer = time();
     $processedToTemp = $import->processImport($this->importPath);
+    $this->timer = (time()-$this->timer);
+
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
 
@@ -253,24 +259,31 @@ class facilityActions extends agActions
     {
       // Grab table name from AgImportXLS class.
       $sourceTable = $import->tempTable ;
-      $dataNorm = new agImportNormalization($scenarioId, $sourceTable, 'facility');
+
+      $dataNorm = new agFacilityImportNormalization($scenarioId, $sourceTable, 'facility');
 
       $format="%d/%m/%Y %H:%M:%S";
-//    echo strftime($format);
+//      echo strftime($format);
 
+      $this->timer = time();
       $dataNorm->normalizeImport();
+      $this->timer = (time()-$this->timer);
+      
       $this->summary = $dataNorm->summary;
+//      echo strftime($format);
     }
 
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams
 
-      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-      $dispatcher = sfContext::getInstance()->getEventDispatcher();
-      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher 
-      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
+      $agLuceneIndex = new agLuceneIndex('agFacility');
+      $indexResult = $agLuceneIndex->indexAll();
 
-//    echo strftime($format);
+//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+//      $dispatcher = sfContext::getInstance()->getEventDispatcher();
+//      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
+//      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
+
   }
 
   /**
@@ -308,7 +321,6 @@ class facilityActions extends agActions
     $request->checkCSRFProtection();
 
     $this->forward404Unless($ag_facility = Doctrine_Core::getTable('agFacility')->find(array($request->getParameter('id'))), sprintf('Object ag_facility does not exist (%s).', $request->getParameter('id')));
-
     /**
     * Locate the associated agEntity record through the associated
     * agSite record. Call the agEntity object's delete() method,
@@ -324,7 +336,9 @@ class facilityActions extends agActions
     if ($agEntity = $ag_facility->getAgSite()->getAgEntity()) {
         if($agF = $ag_facility->getAgFacilityResource()){
           foreach($agF as $agFR){
-            if(!($agFR->getAgScenarioFacilityResource()) && !($agFR->getAgEventFacilityResource())){
+            $agSFR = $agFR->getAgScenarioFacilityResource()->getData();
+            $agEFR = $agFR->getAgEventFacilityResource()->getData();
+            if(empty($agSFR) && empty($agEFR) ){
               $agEntity->delete();
               $this->redirect('facility/list');
              }

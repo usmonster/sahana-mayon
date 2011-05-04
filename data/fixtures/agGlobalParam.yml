@@ -61,9 +61,68 @@ agGlobalParam:
     agHost: localhost
     datapoint: lucene_delimiter
     value: ' '
-
   default_phone_format_type:
     id: 13
     agHost: localhost
     datapoint: default_phone_format_type
-    value: USA 10 digit
+    value: unknown 
+  default_country:
+    id: 14
+    agHost: localhost
+    datapoint: default_country
+    value: United States
+  default_organization:
+    id: 15
+    agHost: localhost
+    datapoint: default_organization
+    value: volunteer
+  default_geo_match_score:
+    id: 16
+    agHost: localhost
+    datapoint: default_geo_match_score
+    value: unknown
+  staff_import_keep_history:
+    id: 17
+    agHost: localhost
+    datapoint: staff_import_keep_history
+    value: 0
+  enforce_strict_contact_formatting:
+    id: 18
+    agHost: localhost
+    datapoint: enforce_strict_contact_formatting
+    value: 1
+  import_error_threshold:
+    id: 19
+    agHost: localhost
+    datapoint: import_error_threshold
+    value: 20
+  default_shift_length:
+    id: 20
+    agHost: localhost
+    datapoint: default_shift_task_length
+    value: 720
+  default_shift_break_length:
+    id: 21
+    agHost: localhost
+    datapoint: default_shift_break_length
+    value: 720
+  default_shift_minutes_start_to_facility_activation:
+    id: 22
+    agHost: localhost
+    datapoint: default_shift_minutes_start_to_facility_activation
+    value: -4320
+  default_shift_repeats:
+    id: 23
+    agHost: localhost
+    datapoint: default_shift_repeats
+    value: 0
+  default_shift_max_staff_repeat_shifts:
+    id: 24
+    agHost: localhost
+    datapoint: default_shift_max_staff_repeat_shifts
+    value: 0
+  staff_import_address_standard:
+    id: 25
+    agHost: localhost
+    datapoint: staff_import_address_standard
+    value: us standard

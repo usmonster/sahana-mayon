@@ -40,5 +40,22 @@ class homeActions extends agActions
   {
   //$this->forward('default', 'module');
   }
+  public function executeRespond(sfWebRequest $request)
+  {
+  //$this->forward('default', 'module');
+  $this->ag_events = agDoctrineQuery::create()
+ ->select('e.id, e.event_name, e.zero_hour, est.event_status_type')
+ ->addSelect('es.id, est.id')
+ ->from('agEvent e')
+ ->innerJoin('e.agEventStatus es')
+ ->innerJoin('es.agEventStatusType est')
+ ->where('est.active = ?', TRUE)
+ ->andWhere('EXISTS (SELECT ses.id
+                        FROM agEventStatus ses
+                        WHERE ses.event_id = es.event_id
+                        HAVING MAX(ses.time_stamp) = es.time_stamp)')
+->execute();
+//print_r($this->ag_events);     
+  }
 
 }

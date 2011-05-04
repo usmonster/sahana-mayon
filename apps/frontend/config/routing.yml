@@ -30,6 +30,29 @@ facility_import:
   url:  /facility/import
   param: { module: facility, action: import }
 
+api_facility:
+  url:     /facility/facilities.:sf_format
+  param:   { module: facility, action: list } 
+  class:   sfDoctrineRoute
+  options: { model: agFacility, type: object }
+  requirements: 
+    sf_format: (?:json)
+
+scenario_meta:
+  url:     /scenario/:id/meta
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: meta }
+
+scenario_meta_new:
+  url:     /scenario/meta
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: meta }
+
+scenario_resource_types:
+  url:     /scenario/:id/resourcetypes
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: resourcetypes }
+
 scenario_edit:
   url:     /scenario/:id/edit
   options: { model: agScenario, type: object }
@@ -55,13 +78,13 @@ scenario_search:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action search }
 
-scenario_fgroup:
-  url:     /scenario/:id/fgroup
-  options: { model: agScenario, type: object }
-  param:   { module: scenario, action: fgroup }
-
 scenario_fgroup_edit:
   url:     /scenario/:id/fgroup/:groupid
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: fgroup }
+  
+scenario_fgroup:
+  url:     /scenario/:id/fgroup
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: fgroup }
 
@@ -69,6 +92,16 @@ scenario_shift_templates:
   url:     /scenario/:id/shifttemplates
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: shifttemplates }
+
+scenario_new_shift_templates:
+  url:     /scenario/:id/newshifttemplates
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: newshifttemplates }
+
+scenario_add_shift_template:
+  url:     /scenario/:id/addshifttemplate
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: addshifttemplate }
 
 scenario_shift_list:
   url:     /scenario/:id/shifts
@@ -101,6 +134,12 @@ sf_guard_signout:
 prepare:
   url:   /prepare
   param: { module: home, action: prepare }
+
+respond:
+  url:   /respond
+  param: { module: home, action: respond }
+wiki:
+  url:  /wiki
 
 # Keep these two at the bottom to aid in the addition of new routes.
 default:

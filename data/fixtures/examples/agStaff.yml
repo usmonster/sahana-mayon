@@ -4,40 +4,31 @@ agStaff:
   1: 
     id: 1
     agPerson: 1
-    agStaffStatus: active
   2:
     id: 2
     agPerson: 2
-    agStaffStatus: inactive
   3:
     id: 3
     agPerson: 3
-    agStaffStatus: retired
   4:
     id: 4
     agPerson: 4
-    agStaffStatus: active
   5:
     id: 5
     agPerson: 5
-    agStaffStatus: inactive
   6:
     id: 6
     agPerson: 6
-    agStaffStatus: active
   7:
     id: 7
     agPerson: 7
-    agStaffStatus: active
   8:
     id: 8
     agPerson: 8
-    agStaffStatus: active
   9:
     id: 9
     agPerson: 9
-    agStaffStatus: active
   10:
     id: 10
     agPerson: 10
-    agStaffStatus: other
+

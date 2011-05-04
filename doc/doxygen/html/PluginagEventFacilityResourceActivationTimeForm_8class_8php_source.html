@@ -64,23 +64,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00002"></a>00002 
 <a name="l00011"></a><a class="code" href="classPluginagEventFacilityResourceActivationTimeForm.html">00011</a> <span class="keyword">abstract</span> <span class="keyword">class </span><a class="code" href="classPluginagEventFacilityResourceActivationTimeForm.html">PluginagEventFacilityResourceActivationTimeForm</a> <span class="keyword">extends</span> BaseagEventFacilityResourceActivationTimeForm
 <a name="l00012"></a>00012 {
-<a name="l00013"></a>00013 
-<a name="l00014"></a>00014   <span class="keyword">public</span> function setup()
-<a name="l00015"></a>00015   {
-<a name="l00016"></a>00016     parent::setup();
-<a name="l00017"></a>00017     unset($this[<span class="stringliteral">&#39;created_at&#39;</span>], $this[<span class="stringliteral">&#39;updated_at&#39;</span>]);
-<a name="l00018"></a>00018     $this-&gt;setWidget(<span class="stringliteral">&#39;event_facility_resource_id&#39;</span>, <span class="keyword">new</span> sfWidgetFormInputHidden());
-<a name="l00019"></a>00019     $this-&gt;setWidget(<span class="stringliteral">&#39;activation_time&#39;</span>, <span class="keyword">new</span> sfWidgetFormInputHidden());
-<a name="l00020"></a>00020     $this-&gt;setWidget(<span class="stringliteral">&#39;operate_on&#39;</span>, <span class="keyword">new</span> <a class="code" href="classagWidgetFormSelectCheckbox.html">agWidgetFormSelectCheckbox</a>(array(<span class="stringliteral">&#39;choices&#39;</span> =&gt; array(null)), array()));
-<a name="l00021"></a>00021     $this-&gt;getWidgetSchema()-&gt;setLabel(<span class="stringliteral">&#39;operate_on&#39;</span>, <span class="keyword">false</span>);
-<a name="l00022"></a>00022 
-<a name="l00023"></a>00023 
-<a name="l00024"></a>00024     $fgroupDec = <span class="keyword">new</span> <a class="code" href="classagWidgetFormSchemaFormatterNoList.html">agWidgetFormSchemaFormatterNoList</a>($this-&gt;getWidgetSchema());
-<a name="l00025"></a>00025     $this-&gt;getWidgetSchema()-&gt;addFormFormatter(<span class="stringliteral">&#39;row&#39;</span>, $fgroupDec);
-<a name="l00026"></a>00026     $this-&gt;getWidgetSchema()-&gt;setFormFormatterName(<span class="stringliteral">&#39;row&#39;</span>);
-<a name="l00027"></a>00027   }
-<a name="l00028"></a>00028 
-<a name="l00029"></a>00029 }
+<a name="l00013"></a>00013 }
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->

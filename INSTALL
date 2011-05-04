@@ -1,9 +1,9 @@
-SAHANA AGASTI 2.0 MAYON
+SAHANA AGASTI 2.0 MAYON 
 Emergency Management Software
 
 INSTALLATION INSTRUCTIONS
 
-Updated: 2011-02-24
+Updated: 2011-03-31
 
 *** IMPORTANT NOTE: ***
 
@@ -51,9 +51,9 @@ Apache
 1. To set permissions to allow the web server appropriate access to the required
    directories, execute the following commands from the project root:
 
-  $ sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/indexes/ \
-      data/search/ data/sql/ web/wiki/conf/ web/wiki/data/
-  $ chmod -cR g+wr config/ apps/*/config/ data/indexes/ data/search/ data/sql/ \
+  $ sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/search/ \
+      data/sql/ web/wiki/conf/ web/wiki/data/
+  $ chmod -cR g+wr config/ apps/*/config/ data/search/ data/sql/ \
       web/wiki/conf/ web/wiki/data/
   $ ./symfony project:permissions
 

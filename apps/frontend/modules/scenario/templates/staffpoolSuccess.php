@@ -1,46 +1,86 @@
-<h2>Staff Resource Pool</h2> <br>
-Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
-<p> Please define staff resource pools for the <span class="highlightedText"><?php echo $scenarioName ?> </span> Scenario.</p>
-<p> Currently, there are <span class="highlightedText"><?php echo $total_staff ?></span> total staff in the system.</p>
-<p> In the current scenario you have <span class="highlightedText"><?php echo $scenario_staff_count ?></span> Staff Members set as available for</p>
+<?php
+  use_javascript('agMain.js');
+?>
+<h2>Staff Resource Pool: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2> <br />
+<?php
+include_partial('wizard', array('wizardDiv' => $wizardDiv));
+?>
+<p>Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.</p>
 
 <?php if (count($saved_searches) > 0) {
- ?>
-  <h3>Existing Saved Searches</h3>
-  <table>
+?><div class="infoHolder" style="width:750px;">
+  <h3>Saved Searches</h3>
+  <table class="blueTable">
     <thead>
-      <tr>  
+      <tr class="head">
         <th>Search Name</th>
-        <th>Search Type</th>
+        <th>Search Conditions</th>
+      </tr>
+      <tr>
+        <th style="float:right;">
+          <span class="highlightedText"><?php echo $total_staff ?></span> total staff in system, <span class="highlightedText"><?php echo $scenario_staff_count ?></span> Staff Members in pool
+        <th>
       </tr>
     </thead>
     <tbody>
-<?php foreach ($saved_searches as $saved_search): ?>
-    <tr>
-      <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) . '?search_id=' . $saved_search->getId() ?> " class="linkButton"><?php echo $saved_search->getAgLuceneSearch()->query_name ?></a></td>
-      <td><?php echo $saved_search->getAgLuceneSearch()->getAgLuceneSearchType() ?></td>
-    </tr>
-<?php endforeach; ?>
-  </tbody>
-</table>
+    <?php foreach ($saved_searches as $saved_search): ?>
+      <tr>
+        <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) . '?search_id=' .
+          $saved_search['id'] ?> " class="linkButton"><?php echo $saved_search->agSearch['search_name'] ?></a></td>
+        <td><?php echo agSearchHelper::searchConditionsToString($saved_search->agSearch['id']); ?></td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
 <?php } ?>
 <?php
-  if (!isset($search_id)) {
-    $search_id = NULL;
-  } else {
-    $search_id = $search_id;
-    //this could be more elegant.
-  }
+    if (!isset($search_id)) {
+      $search_id = NULL;
+    } else {
+      $search_id = $search_id;
+      //this could be more elegant.
+    }
 ?>
-  <hr />
-  <h3>Staff Pool Definition</h3>
-<?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm,'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
+    <br />
 
-  <div id="searchresults">
+<?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
 
-    <!--sometimes this will fail -->
-  <?php if (isset($searchquery)) { ?>
-    <hr />
-  <?php include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'target_module' => $target_module)) ?>
-  <?php } ?>
-  </div>
+    <div id="searchresults" class="infoHolder">
+
+      <!--sometimes this will fail -->
+  <?php if (isset($pager)) {
+ ?>
+
+  <?php
+      //include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'target_module' => $target_module))
+      $displayColumns = array(
+        'id' => array('title' => '', 'sortable' => false),
+        'fn' => array('title' => 'First Name', 'sortable' => false),
+        'ln' => array('title' => 'Last Name', 'sortable' => false),
+        'agency' => array('title' => 'Agency', 'sortable' => true),
+        'classification' => array('title' => 'Classification', 'sortable' => true),
+        'phones' => array('title' => 'Phone Contact(s)', 'sortable' => true),
+        'emails' => array('title' => 'Email Contact(s)', 'sortable' => true),
+        'staff_status' => array('title' => 'Status', 'sortable' => false),
+      );
+
+//pager comes in from the action
+
+      $order = null;
+      $sort = null;
+      $filter = null;
+      //the above three lines are in place to supress warnings until SOF is functional
+      include_partial('global/list', array('sf_request' => $sf_request,
+        'displayColumns' => $displayColumns,
+        'pager' => $pager,
+        'order' => $order,
+        'sort' => $sort,
+        'status' => $status,
+        'target_module' => 'staff',
+        'caption' => 'Search Results',
+        'widgets' => array()
+          )
+      );
+    } ?>
+</div>

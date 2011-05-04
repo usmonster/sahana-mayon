@@ -1,0 +1,7 @@
+===== Resources =====
+When loading staff and facilities into Sahana Agasti, the user specifies the available roles and services that these people and places could offer.  These roles and services are known as Resources in Agasti.
+
+
+
+
+

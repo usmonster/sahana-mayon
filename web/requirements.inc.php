@@ -45,8 +45,8 @@ function check_php_version()
 
 function check_php_memory_limit()
 {
-  $required = 128 * 1024 * 1024;
-  $recommended = 256 * 1024 * 1024;
+  $required = 256 * 1024 * 1024;
+  $recommended = 512 * 1024 * 1024;
 
   $current = ini_get('memory_limit');
 

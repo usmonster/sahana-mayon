@@ -61,67 +61,68 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
-<a name="l00015"></a><a class="code" href="classagEntityContactHelper.html">00015</a> <span class="keyword">abstract</span> <span class="keyword">class </span><a class="code" href="classagEntityContactHelper.html" title="Extends the bulk record helper to provide contact-specific features.">agEntityContactHelper</a> <span class="keyword">extends</span> <a class="code" href="classagBulkRecordHelper.html">agBulkRecordHelper</a>
+<a name="l00015"></a><a class="code" href="classagEntityContactHelper.html">00015</a> <span class="keyword">abstract</span> <span class="keyword">class </span><a class="code" href="classagEntityContactHelper.html" title="Extends the bulk record helper to provide contact-specific features.">agEntityContactHelper</a> <span class="keyword">extends</span> <a class="code" href="classagBulkRecordHelper.html" title="Abstract class to provide bulk-address manipulation methods.">agBulkRecordHelper</a>
 <a name="l00016"></a>00016 {
-<a name="l00024"></a><a class="code" href="classagEntityContactHelper.html#a47ffd39804414f75134940858bdb724a">00024</a>   <span class="keyword">protected</span> function <a class="code" href="classagEntityContactHelper.html#a47ffd39804414f75134940858bdb724a" title="Helper function to execute the reprioritization of contact info.">reprioritizeContacts</a>($entityContacts, $currContacts)
-<a name="l00025"></a>00025   {
-<a name="l00026"></a>00026     <span class="comment">// first we need do just do a little cleanup on $currContacts to strip date/times</span>
-<a name="l00027"></a>00027     <span class="keywordflow">foreach</span> ($currContacts as $entityId =&gt; $currContact)
-<a name="l00028"></a>00028     {
-<a name="l00029"></a>00029       <span class="keywordflow">foreach</span> ($currContact as $index =&gt; $oldContact)
-<a name="l00030"></a>00030       {
-<a name="l00031"></a>00031         $currContacts[$entityId][$index] = array($oldContact[0], $oldContact[1]) ;
-<a name="l00032"></a>00032       }
-<a name="l00033"></a>00033     }
-<a name="l00034"></a>00034 
-<a name="l00035"></a>00035     <span class="comment">// now we loop through and do an inner array diff</span>
-<a name="l00036"></a>00036     <span class="keywordflow">foreach</span>($entityContacts as $entityId =&gt; $contacts)
-<a name="l00037"></a>00037     {
-<a name="l00038"></a>00038       <span class="comment">//explicit declarations are good</span>
-<a name="l00039"></a>00039       $newContacts = array() ;
-<a name="l00040"></a>00040       $currContact = array() ;
-<a name="l00041"></a>00041 
-<a name="l00042"></a>00042       <span class="comment">// check to see if this is brand-spankin&#39; new entity or old</span>
-<a name="l00043"></a>00043       <span class="keywordflow">if</span> (array_key_exists($entityId, $currContacts))
-<a name="l00044"></a>00044       {
-<a name="l00045"></a>00045         <span class="comment">// we&#39;ll reuse this at the end so lets grab it once</span>
-<a name="l00046"></a>00046         $currContact = $currContacts[$entityId] ;
-<a name="l00047"></a>00047 
-<a name="l00048"></a>00048         <span class="comment">// here we do a little something crazy; we add ALL of the old contact info to the array</span>
-<a name="l00049"></a>00049         <span class="keywordflow">foreach</span> ($currContact as $oldContact)
-<a name="l00050"></a>00050         {
-<a name="l00051"></a>00051           $contacts[] = $oldContact ;
-<a name="l00052"></a>00052         }
-<a name="l00053"></a>00053       }
-<a name="l00054"></a>00054 
-<a name="l00055"></a>00055       <span class="comment">// now that we&#39;ve got all contact info on our $contacts array, let&#39;s reshape our array and exclude dupes</span>
-<a name="l00056"></a>00056       <span class="keywordflow">foreach</span> ($contacts as $contact)
-<a name="l00057"></a>00057       {
-<a name="l00058"></a>00058         <span class="keywordflow">if</span> (! in_array($contact, $newContacts))
-<a name="l00059"></a>00059         {
-<a name="l00060"></a>00060           $newContacts[] = $contact ;
-<a name="l00061"></a>00061         }
-<a name="l00062"></a>00062       }
-<a name="l00063"></a>00063 
-<a name="l00064"></a>00064       <span class="comment">// now that we&#39;re out of the contact de-dupe loop we exclude the ones that haven&#39;t changed</span>
-<a name="l00065"></a>00065       <span class="keywordflow">foreach</span>($newContacts as $ncKey =&gt; $ncValue)
-<a name="l00066"></a>00066       {
-<a name="l00067"></a>00067         <span class="keywordflow">if</span> (array_key_exists($ncKey, $currContact) &amp;&amp; $ncValue == $currContact[$ncKey])
-<a name="l00068"></a>00068         {
-<a name="l00069"></a>00069           unset($newContacts[$ncKey]) ;
-<a name="l00070"></a>00070         }
-<a name="l00071"></a>00071       }
-<a name="l00072"></a>00072 
-<a name="l00073"></a>00073       <span class="comment">// add our results to our final results array</span>
-<a name="l00074"></a>00074       $entityContacts[$entityId] = $newContacts ;
-<a name="l00075"></a>00075 
-<a name="l00076"></a>00076       <span class="comment">// might as well re-claim our memory here too</span>
-<a name="l00077"></a>00077       unset($currContacts[$entityId]) ;
-<a name="l00078"></a>00078     }
-<a name="l00079"></a>00079 
-<a name="l00080"></a>00080     <span class="keywordflow">return</span> $entityContacts ;
-<a name="l00081"></a>00081   }
-<a name="l00082"></a>00082 }
+<a name="l00025"></a><a class="code" href="classagEntityContactHelper.html#a47ffd39804414f75134940858bdb724a">00025</a>   <span class="keyword">protected</span> function <a class="code" href="classagEntityContactHelper.html#a47ffd39804414f75134940858bdb724a" title="Helper function to execute the reprioritization of contact info.">reprioritizeContacts</a>($entityContacts, $currContacts)
+<a name="l00026"></a>00026   {
+<a name="l00027"></a>00027     <span class="comment">// first we need do just do a little cleanup on $currContacts to strip date/times</span>
+<a name="l00028"></a>00028     <span class="keywordflow">foreach</span> ($currContacts as $entityId =&gt; $currContact)
+<a name="l00029"></a>00029     {
+<a name="l00030"></a>00030       <span class="keywordflow">foreach</span> ($currContact as $index =&gt; $oldContact)
+<a name="l00031"></a>00031       {
+<a name="l00032"></a>00032         $currContacts[$entityId][$index] = array($oldContact[0], $oldContact[1]) ;
+<a name="l00033"></a>00033       }
+<a name="l00034"></a>00034     }
+<a name="l00035"></a>00035 
+<a name="l00036"></a>00036     <span class="comment">// now we loop through and do an inner array diff</span>
+<a name="l00037"></a>00037     <span class="keywordflow">foreach</span>($entityContacts as $entityId =&gt; $contacts)
+<a name="l00038"></a>00038     {
+<a name="l00039"></a>00039       <span class="comment">//explicit declarations are good</span>
+<a name="l00040"></a>00040       $newContacts = array() ;
+<a name="l00041"></a>00041       $currContact = array() ;
+<a name="l00042"></a>00042 
+<a name="l00043"></a>00043       <span class="comment">// check to see if this is brand-spankin&#39; new entity or old</span>
+<a name="l00044"></a>00044       <span class="keywordflow">if</span> (array_key_exists($entityId, $currContacts))
+<a name="l00045"></a>00045       {
+<a name="l00046"></a>00046         <span class="comment">// we&#39;ll reuse this at the end so lets grab it once</span>
+<a name="l00047"></a>00047         $currContact = $currContacts[$entityId] ;
+<a name="l00048"></a>00048 
+<a name="l00049"></a>00049         <span class="comment">// here we do a little something crazy; we add ALL of the old contact info to the array</span>
+<a name="l00050"></a>00050         <span class="keywordflow">foreach</span> ($currContact as $oldContact)
+<a name="l00051"></a>00051         {
+<a name="l00052"></a>00052           $contacts[] = $oldContact ;
+<a name="l00053"></a>00053         }
+<a name="l00054"></a>00054       }
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056       <span class="comment">// now that we&#39;ve got all contact info on our $contacts array, let&#39;s reshape our array and exclude dupes</span>
+<a name="l00057"></a>00057       <span class="comment">// we intentionally don&#39;t use array_unique() here because types might differ and it is strict</span>
+<a name="l00058"></a>00058       <span class="keywordflow">foreach</span> ($contacts as $contact)
+<a name="l00059"></a>00059       {
+<a name="l00060"></a>00060         <span class="keywordflow">if</span> (! in_array($contact, $newContacts))
+<a name="l00061"></a>00061         {
+<a name="l00062"></a>00062           $newContacts[] = $contact ;
+<a name="l00063"></a>00063         }
+<a name="l00064"></a>00064       }
+<a name="l00065"></a>00065 
+<a name="l00066"></a>00066       <span class="comment">// now that we&#39;re out of the contact de-dupe loop we exclude the ones that haven&#39;t changed</span>
+<a name="l00067"></a>00067       <span class="keywordflow">foreach</span>($newContacts as $ncKey =&gt; $ncValue)
+<a name="l00068"></a>00068       {
+<a name="l00069"></a>00069         <span class="keywordflow">if</span> (array_key_exists($ncKey, $currContact) &amp;&amp; $ncValue == $currContact[$ncKey])
+<a name="l00070"></a>00070         {
+<a name="l00071"></a>00071           unset($newContacts[$ncKey]) ;
+<a name="l00072"></a>00072         }
+<a name="l00073"></a>00073       }
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075       <span class="comment">// add our results to our final results array</span>
+<a name="l00076"></a>00076       $entityContacts[$entityId] = $newContacts ;
+<a name="l00077"></a>00077 
+<a name="l00078"></a>00078       <span class="comment">// might as well re-claim our memory here too</span>
+<a name="l00079"></a>00079       unset($currContacts[$entityId]) ;
+<a name="l00080"></a>00080     }
+<a name="l00081"></a>00081 
+<a name="l00082"></a>00082     <span class="keywordflow">return</span> $entityContacts ;
+<a name="l00083"></a>00083   }
+<a name="l00084"></a>00084 }
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->

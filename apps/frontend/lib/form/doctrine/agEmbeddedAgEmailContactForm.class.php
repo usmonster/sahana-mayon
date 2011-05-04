@@ -26,16 +26,27 @@ class agEmbeddedAgEmailContactForm extends agEmailContactForm
   {
     parent::setup();
 
-    $this->setWidgets(array(
-      'id' => new sfWidgetFormInputHidden(),
-      'email_contact' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-    ));
+    $this->setWidgets(
+        array(
+          'id' => new sfWidgetFormInputHidden(),
+          'email_contact' => new sfWidgetFormInputText(
+              array(), array('class' => 'inputGray')
+          ),
+        )
+    );
 
-    $this->setValidators(array(
-      'id' => new sfValidatorChoice(array('choices' =>
-        array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'email_contact' => new sfValidatorEmail(array('required' => false, 'empty_value' => null)),
-    ));
+    $this->setValidators(
+        array(
+          'id' => new sfValidatorChoice(
+              array('choices' =>
+                array($this->getObject()->get('id')), 'empty_value' =>
+                $this->getObject()->get('id'), 'required' => false)
+          ),
+          'email_contact' => new sfValidatorEmail(
+              array('trim' => true, 'required' => false, 'empty_value' => null)
+          ),
+        )
+    );
   }
 
 }

@@ -76,11 +76,15 @@ class agEventShiftHelper
    * staff can be released
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return integer The number of rows affected
+   * @todo This *must* be broken just from other issues found in it
    */
   public static function releaseShiftStaff($eventShiftIds, Doctrine_Connection $conn = NULL )
   {
     // set results default
     $results = 0 ;
+
+    // set our default connection if one isn't passed and wrap it all in a transaction
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
 
     $query = agDoctrineQuery::create($conn)
       ->delete('agEventStaffShift ess')
@@ -90,8 +94,6 @@ class agEventShiftHelper
               WHERE essi.event_staff_shift_id = ess.id)')
           ->andWhereIn('ess.event_shift_id', $eventShiftIds) ;
 
-    // set our default connection if one isn't passed and wrap it all in a transaction
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
     $conn->beginTransaction() ;
     try
     {

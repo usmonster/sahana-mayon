@@ -1,0 +1,6 @@
+===== Facility Code =====
+
+The Facility Code is a unique identifier, created by your organization, for the facilities available to use in a response.
+
+**Facility Codes are unique to each physical location or building to be loaded in Agasti.**
+

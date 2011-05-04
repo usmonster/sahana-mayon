@@ -70,9 +70,9 @@ abstract class BaseFormDoctrine extends sfFormDoctrine
    * @param $con the Doctrine connection
    * @param $forms the embedded forms of the object.
    *
-   * @todo The check at the bottom of this function to update the Lucene Index should be moved. Right now it's
-   * ensuring that all values are indexed, without it, a person created with one or more new names that aren't
-   * in the database won't have those names indexed.
+   * @todo The check at the bottom of this function to update the Lucene Index should be moved.
+   * Right now it's ensuring that all values are indexed, without it, a person created with one or
+   * more new names that aren't in the database won't have those names indexed.
    * Probably can be fixed by overriding saveEmbeddedForms in agPersonForm.
    */
   public function saveEmbeddedForms($con = null, $forms = null)

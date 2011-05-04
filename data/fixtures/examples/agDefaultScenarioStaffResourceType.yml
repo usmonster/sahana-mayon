@@ -1,0 +1,25 @@
+agDefaultScenarioStaffResourceType:
+  type_01:
+    scenario_id: 1
+    staff_resource_type_id: 1
+  type_02:
+    scenario_id: 1
+    staff_resource_type_id: 2
+  type_03:
+    scenario_id: 1
+    staff_resource_type_id: 3
+  type_04:
+    scenario_id: 1
+    staff_resource_type_id: 4
+  type_05:
+    scenario_id: 1
+    staff_resource_type_id: 5
+  type_06:
+    scenario_id: 1
+    staff_resource_type_id: 6
+  type_07:
+    scenario_id: 1
+    staff_resource_type_id: 7
+  type_08:
+    scenario_id: 1
+    staff_resource_type_id: 8

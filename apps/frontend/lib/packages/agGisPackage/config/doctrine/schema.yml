@@ -5,12 +5,18 @@ agGeo:
       type: integer(5)
       notnull: true
       autoincrement: true
+    geo_coordinate_hash:
+      type: string(128)
+      notnull: true
     geo_type_id:
       type: integer(2)
       notnull: true
     geo_source_id:
       type: integer(4)
       notnull: true
+  indexes:
+    IX_agGeo_hash:
+      fields: [geo_coordinate_hash]
   relations:
     agGeoType:
       local: geo_type_id
@@ -31,6 +37,11 @@ agGeoType:
     minimum_coordinate_points:
       default: 1
       type: integer(1)
+      notnull: true
+    maximum_coordinate_points:
+      default: -1
+      type: integer(1)
+      notnull: true
     description:
       type: string(255)
     app_display:
@@ -41,6 +52,10 @@ agGeoType:
     agGeoType_unq:
       fields: [geo_type]
       type: unique
+    IX_agGeoType_minCoorPt:
+      fields: [minimum_coordinate_points]
+    IX_agGeoType_maxCoorPt:
+      fields: [maximum_coordinate_points]
 agGeoCoordinate:
   columns:
     id:

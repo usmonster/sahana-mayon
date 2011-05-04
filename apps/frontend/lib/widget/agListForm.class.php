@@ -173,8 +173,6 @@ class agListForm
     $ascArrow = '&#x25B2;';
     $descArrow = '&#x25BC;';
 
-    //$listheader = '<h3>' . $title . '</h3>';
-
 
     $listbody = '<table class="staffTable">';
     $listbody .= '<caption>Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
@@ -218,7 +216,7 @@ class agListForm
 
         //$listbody .= ucwords($n->getAgFacilityResourceType()->getFacilityResourceType());
         //$listbody .= ( count($result->getAgFacilityResource()) ? ' (' . count($result->getAgFacilityResource()) . ')' : '(None)');
-        $listbody .=  ( $comma++ > 0 ? ', <br />' : '') . $n->getFacilityResourceCode();
+        $listbody .=  ( $comma++ > 0 ? ', <br />' : '') . $n->getAgFacility()->getFacilityCode();
 
       }
 
@@ -249,7 +247,8 @@ class agListForm
     $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
     $listfoot .= '</div>';
 
-    $nice_list = $listheader . $listbody . $listfoot;
+    // Commented out $listheader here. It's declaration is commented above. Ask Charles.
+    $nice_list = $listbody . $listfoot;
 
     return $nice_list;
   }

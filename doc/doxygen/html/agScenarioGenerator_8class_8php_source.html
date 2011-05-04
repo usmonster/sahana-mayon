@@ -62,147 +62,147 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 &lt;?php
 <a name="l00002"></a>00002 
-<a name="l00003"></a><a class="code" href="classagScenarioGenerator.html">00003</a> <span class="keyword">class </span><a class="code" href="classagScenarioGenerator.html">agScenarioGenerator</a>
-<a name="l00004"></a>00004 {
-<a name="l00005"></a>00005 
-<a name="l00011"></a><a class="code" href="classagScenarioGenerator.html#a4b1edfe20431775f4a3757d306117657">00011</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagScenarioGenerator.html#a4b1edfe20431775f4a3757d306117657" title="shiftGenerator() Auto-generate shifts from ag_shift_template table to ag_scenario_shift table...">shiftGenerator</a>()
-<a name="l00012"></a>00012   {
-<a name="l00013"></a>00013     <span class="keywordflow">try</span> {
-<a name="l00014"></a>00014       <span class="comment">// Query for the information to populate scenario shift.</span>
-<a name="l00015"></a>00015       $scenarioShifts = agDoctrineQuery::create()
-<a name="l00016"></a>00016               -&gt;select(<span class="stringliteral">&#39;st.*, fsr.*&#39;</span>)
-<a name="l00017"></a>00017               -&gt;from(<span class="stringliteral">&#39;agShiftTemplate st&#39;</span>)
-<a name="l00018"></a>00018               -&gt;innerJoin(<span class="stringliteral">&#39;st.agFacilityResourceType fst&#39;</span>)
-<a name="l00019"></a>00019               -&gt;innerJoin(<span class="stringliteral">&#39;fst.agFacilityResource fr&#39;</span>)
-<a name="l00020"></a>00020               -&gt;innerJoin(<span class="stringliteral">&#39;fr.agScenarioFacilityResource sfr1&#39;</span>)
-<a name="l00021"></a>00021               -&gt;innerJoin(<span class="stringliteral">&#39;sfr1.agScenarioFacilityGroup sfg&#39;</span>)
-<a name="l00022"></a>00022               -&gt;innerJoin(<span class="stringliteral">&#39;st.agStaffResourceType srt&#39;</span>)
-<a name="l00023"></a>00023               -&gt;innerJoin(<span class="stringliteral">&#39;srt.agFacilityStaffResource fsr&#39;</span>)
-<a name="l00024"></a>00024               -&gt;innerJoin(<span class="stringliteral">&#39;fsr.agScenarioFacilityResource sfr2&#39;</span>)
-<a name="l00025"></a>00025               -&gt;where(<span class="stringliteral">&#39;sfr1.id = sfr2.id&#39;</span>)
-<a name="l00026"></a>00026               -&gt;andWhere(<span class="stringliteral">&#39;st.scenario_id = sfg.scenario_id&#39;</span>)
-<a name="l00027"></a>00027               -&gt;execute(array(), Doctrine::HYDRATE_SCALAR);
-<a name="l00028"></a>00028 
-<a name="l00029"></a>00029       <span class="comment">// Delete all scenario shift records prior to generating scenario shifts</span>
-<a name="l00030"></a>00030       <span class="comment">// from shift template tables.</span>
-<a name="l00031"></a>00031       $deleteQuery = agDoctrineQuery::create()
-<a name="l00032"></a>00032               -&gt;delete()
-<a name="l00033"></a>00033               -&gt;from(<span class="stringliteral">&#39;agScenarioShift&#39;</span>)
-<a name="l00034"></a>00034               -&gt;execute();
-<a name="l00035"></a>00035 
-<a name="l00036"></a>00036       <span class="keywordflow">foreach</span> ($scenarioShifts as $row) {
-<a name="l00037"></a>00037         $shift_counter = 1;
-<a name="l00038"></a>00038         $staff_wave = 1;
-<a name="l00039"></a>00039         $reset_break_length = $row[<span class="stringliteral">&#39;st_break_length_minutes&#39;</span>];
-<a name="l00040"></a>00040         $reset_minutes_start_to_facility_activation = $row[<span class="stringliteral">&#39;st_minutes_start_to_facility_activation&#39;</span>];
-<a name="l00041"></a>00041 
-<a name="l00042"></a>00042         <span class="keywordflow">while</span> ($shift_counter &lt;= $row[<span class="stringliteral">&#39;st_shift_repeats&#39;</span>] + 1) {
-<a name="l00043"></a>00043           <span class="comment">// A staff should only be working at one shift and rest while the</span>
-<a name="l00044"></a>00044           <span class="comment">// next following shift starts.  He/she should only be assigned to</span>
-<a name="l00045"></a>00045           <span class="comment">// every other shifts if a staff should work multiple shifts.  Thus,</span>
-<a name="l00046"></a>00046           <span class="comment">// the staff wave is multipled by two.</span>
-<a name="l00047"></a>00047           $staff_shift_repeat = $row[<span class="stringliteral">&#39;st_max_staff_repeat_shifts&#39;</span>] * 2;
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049           <span class="keywordflow">if</span> (($shift_counter != 1) &amp;&amp; (($shift_counter % $staff_shift_repeat) == 1)) {
-<a name="l00050"></a>00050             $staff_wave += 2;
-<a name="l00051"></a>00051           }
-<a name="l00052"></a>00052 
-<a name="l00053"></a>00053           <span class="comment">// Release staffs as they finish their last shift.</span>
-<a name="l00054"></a>00054           <span class="keywordflow">if</span> ((($shift_counter % $staff_shift_repeat) == 0) ||
-<a name="l00055"></a>00055               (($shift_counter % $staff_shift_repeat) == ($staff_shift_repeat - 1)) ||
-<a name="l00056"></a>00056               ($shift_counter == ($row[<span class="stringliteral">&#39;st_shift_repeats&#39;</span>] + 1)) ||
-<a name="l00057"></a>00057               ($shift_counter == $row[<span class="stringliteral">&#39;st_shift_repeats&#39;</span>])) {
-<a name="l00058"></a>00058             $reset_break_length = 0;
-<a name="l00059"></a>00059           } <span class="keywordflow">else</span> {
-<a name="l00060"></a>00060             $reset_break_length = $row[<span class="stringliteral">&#39;st_break_length_minutes&#39;</span>];
-<a name="l00061"></a>00061           }
-<a name="l00062"></a>00062 
-<a name="l00063"></a>00063           $reset_minutes_start_to_facility_activation = ($shift_counter == 1 ) ? $row[<span class="stringliteral">&#39;st_minutes_start_to_facility_activation&#39;</span>] : $reset_minutes_start_to_facility_activation + $row[<span class="stringliteral">&#39;st_task_length_minutes&#39;</span>];
-<a name="l00064"></a>00064 
-<a name="l00065"></a>00065           $scenarioShift = <span class="keyword">new</span> agScenarioShift();
-<a name="l00066"></a>00066           $scenarioShift-&gt;set(<span class="stringliteral">&#39;scenario_facility_resource_id&#39;</span>, $row[<span class="stringliteral">&#39;fsr_scenario_facility_resource_id&#39;</span>])
-<a name="l00067"></a>00067               -&gt;set(<span class="stringliteral">&#39;staff_resource_type_id&#39;</span>, $row[<span class="stringliteral">&#39;st_staff_resource_type_id&#39;</span>])
-<a name="l00068"></a>00068               -&gt;set(<span class="stringliteral">&#39;task_id&#39;</span>, $row[<span class="stringliteral">&#39;st_task_id&#39;</span>])
-<a name="l00069"></a>00069               -&gt;set(<span class="stringliteral">&#39;task_length_minutes&#39;</span>, $row[<span class="stringliteral">&#39;st_task_length_minutes&#39;</span>])
-<a name="l00070"></a>00070               -&gt;set(<span class="stringliteral">&#39;break_length_minutes&#39;</span>, $reset_break_length)
-<a name="l00071"></a>00071               -&gt;set(<span class="stringliteral">&#39;minutes_start_to_facility_activation&#39;</span>, $reset_minutes_start_to_facility_activation)
-<a name="l00072"></a>00072               -&gt;set(<span class="stringliteral">&#39;minimum_staff&#39;</span>, $row[<span class="stringliteral">&#39;fsr_minimum_staff&#39;</span>])
-<a name="l00073"></a>00073               -&gt;set(<span class="stringliteral">&#39;maximum_staff&#39;</span>, $row[<span class="stringliteral">&#39;fsr_maximum_staff&#39;</span>])
-<a name="l00074"></a>00074               -&gt;set(<span class="stringliteral">&#39;staff_wave&#39;</span>, $shift_counter &amp; 1 ? $staff_wave : $staff_wave + 1)
-<a name="l00075"></a>00075               -&gt;set(<span class="stringliteral">&#39;shift_status_id&#39;</span>, $row[<span class="stringliteral">&#39;st_shift_status_id&#39;</span>])
-<a name="l00076"></a>00076               -&gt;set(<span class="stringliteral">&#39;deployment_algorithm_id&#39;</span>, $row[<span class="stringliteral">&#39;st_deployment_algorithm_id&#39;</span>])
-<a name="l00077"></a>00077               -&gt;set(<span class="stringliteral">&#39;originator_id&#39;</span>, $row[<span class="stringliteral">&#39;st_id&#39;</span>]);
-<a name="l00078"></a>00078           $scenarioShift-&gt;save();
-<a name="l00079"></a>00079           $shift_counter++;
-<a name="l00080"></a>00080         }
-<a name="l00081"></a>00081       }
-<a name="l00082"></a>00082       <span class="keywordflow">return</span> 1;
-<a name="l00083"></a>00083     } <span class="keywordflow">catch</span> (\Doctrine\ORM\ORMException $e) {
-<a name="l00084"></a>00084       print_r($e);
-<a name="l00085"></a>00085       <span class="keywordflow">return</span> 0;
-<a name="l00086"></a>00086     }
-<a name="l00087"></a>00087   }
-<a name="l00088"></a>00088 
-<a name="l00094"></a><a class="code" href="classagScenarioGenerator.html#aedf38a810e3df80a82a8e03753f577d4">00094</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagScenarioGenerator.html#aedf38a810e3df80a82a8e03753f577d4" title="staffPoolGenerator() Auto-generate staff pool using lucene search defined in agScenarioStaffGenerator...">staffPoolGenerator</a>($lucene_query, $scenario_id)
-<a name="l00095"></a>00095   {
-<a name="l00096"></a>00096     <span class="keywordflow">try</span> {
-<a name="l00097"></a>00097       $staff_resources = array();
-<a name="l00098"></a>00098       $staff_id = array();
-<a name="l00099"></a>00099       $scenarioAction = <span class="keyword">new</span> <a class="code" href="classagActions.html" title="extends sfActions for common functionality">agActions</a>(sfContext::getInstance(), <span class="stringliteral">&#39;scenario&#39;</span>, <span class="stringliteral">&#39;staffpool&#39;</span>);  <span class="comment">//this may be excessive as we are creating an entirely new object</span>
-<a name="l00100"></a>00100       $scenarioAction-&gt;doSearch($lucene_query, FALSE);
-<a name="l00101"></a>00101       <span class="keywordflow">foreach</span> ($scenarioAction-&gt;hits as $hit) {
-<a name="l00102"></a>00102         $staff_id[] = $scenarioAction-&gt;results[$hit-&gt;model][$hit-&gt;pk][<span class="stringliteral">&#39;id&#39;</span>];
-<a name="l00103"></a>00103       }
-<a name="l00104"></a>00104       <span class="keywordflow">if</span> (count($staff_id) &gt; 0) {
-<a name="l00105"></a>00105         $staff_resource_dql = agDoctrineQuery::create()
-<a name="l00106"></a>00106 
-<a name="l00107"></a>00107           -&gt;select(<span class="stringliteral">&#39;a.id&#39;</span>)
-<a name="l00108"></a>00108             -&gt;from(<span class="stringliteral">&#39;agStaffResource a&#39;</span>)
-<a name="l00109"></a>00109               -&gt;leftJoin(<span class="stringliteral">&#39;a.agScenarioStaffResource asr WITH asr.scenario_id = ?&#39;</span>, $scenario_id)
-<a name="l00110"></a>00110             -&gt;whereIn(<span class="stringliteral">&#39;a.staff_id&#39;</span>, $staff_id)
-<a name="l00111"></a>00111               -&gt;andWhere(<span class="stringliteral">&#39;asr.staff_resource_id IS NULL&#39;</span>);
-<a name="l00112"></a>00112                 
-<a name="l00113"></a>00113         $staff_resource_sql =  $staff_resource_dql-&gt;getSqlQuery();
-<a name="l00114"></a>00114         $staff_resources  = $staff_resource_dql-&gt;execute(array(), <span class="stringliteral">&#39;single_value_array&#39;</span>);
-<a name="l00115"></a>00115 
-<a name="l00116"></a>00116       }
-<a name="l00117"></a>00117 
-<a name="l00118"></a>00118       <span class="keywordflow">return</span> $staff_resources;
-<a name="l00119"></a>00119     } <span class="keywordflow">catch</span> (\Doctrine\ORM\ORMException $e) {
-<a name="l00120"></a>00120       print_r($e);
-<a name="l00121"></a>00121       <span class="keywordflow">return</span> 0;
-<a name="l00122"></a>00122     }
-<a name="l00123"></a>00123   }
-<a name="l00124"></a>00124 
-<a name="l00131"></a><a class="code" href="classagScenarioGenerator.html#ac70a8b9c1365504782cb12589af8cc62">00131</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagScenarioGenerator.html#ac70a8b9c1365504782cb12589af8cc62" title="saveStaffPool() Save staff resource pool to db.">saveStaffPool</a>($staff_resources, $scenario_id, $search_weight)
-<a name="l00132"></a>00132   {
-<a name="l00133"></a>00133     <span class="keywordflow">try</span> {
-<a name="l00134"></a>00134       <span class="keywordflow">foreach</span> ($staff_resources as $staff_resource) {
-<a name="l00135"></a>00135         <span class="comment">// TODO check to see if staff_resources exist(update), or we are making new</span>
-<a name="l00136"></a>00136         <span class="comment">//this is a first pass, we should do a bulk check to update/insert as needed</span>
-<a name="l00137"></a>00137         $scenario_staff_resource = agDoctrineQuery::create()
-<a name="l00138"></a>00138                 -&gt;select(<span class="stringliteral">&#39;asr.id&#39;</span>)
-<a name="l00139"></a>00139                 -&gt;from(<span class="stringliteral">&#39;agScenarioStaffResource asr&#39;</span>)
-<a name="l00140"></a>00140                 -&gt;where(<span class="stringliteral">&#39;asr.staff_resource_id = ?&#39;</span>, $staff_resource)
-<a name="l00141"></a>00141                 -&gt;execute();
-<a name="l00142"></a>00142         <span class="keywordflow">if</span> (count($scenario_staff_resource) &lt; 1) {
-<a name="l00143"></a>00143           $scenario_staff_resource = <span class="keyword">new</span> agScenarioStaffResource();
-<a name="l00144"></a>00144           $scenario_staff_resource-&gt;set(<span class="stringliteral">&#39;staff_resource_id&#39;</span>, $staff_resource)
-<a name="l00145"></a>00145               -&gt;set(<span class="stringliteral">&#39;scenario_id&#39;</span>, $scenario_id)
-<a name="l00146"></a>00146               -&gt;set(<span class="stringliteral">&#39;deployment_weight&#39;</span>, $search_weight);
-<a name="l00147"></a>00147         }
-<a name="l00148"></a>00148         $scenario_staff_resource-&gt;save();
-<a name="l00149"></a>00149       }
-<a name="l00150"></a>00150       <span class="keywordflow">return</span> 1;
-<a name="l00151"></a>00151     } <span class="keywordflow">catch</span> (\Doctrine\ORM\ORMException $e) {
-<a name="l00152"></a>00152       print_r($e);
-<a name="l00153"></a>00153       <span class="keywordflow">return</span> 0;
-<a name="l00154"></a>00154     }
-<a name="l00155"></a>00155   }
-<a name="l00156"></a>00156 
-<a name="l00157"></a>00157 }
-<a name="l00158"></a>00158 
-<a name="l00159"></a>00159 ?&gt;
+<a name="l00018"></a><a class="code" href="classagScenarioGenerator.html">00018</a> <span class="keyword">class </span><a class="code" href="classagScenarioGenerator.html" title="Shift generator for scenario.">agScenarioGenerator</a>
+<a name="l00019"></a>00019 {
+<a name="l00020"></a>00020 
+<a name="l00026"></a><a class="code" href="classagScenarioGenerator.html#a4b1edfe20431775f4a3757d306117657">00026</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagScenarioGenerator.html#a4b1edfe20431775f4a3757d306117657" title="shiftGenerator() Auto-generate shifts from ag_shift_template table to ag_scenario_shift table...">shiftGenerator</a>()
+<a name="l00027"></a>00027   {
+<a name="l00028"></a>00028     <span class="keywordflow">try</span> {
+<a name="l00029"></a>00029       <span class="comment">// Query for the information to populate scenario shift.</span>
+<a name="l00030"></a>00030       $scenarioShifts = agDoctrineQuery::create()
+<a name="l00031"></a>00031               -&gt;select(<span class="stringliteral">&#39;st.*, fsr.*&#39;</span>)
+<a name="l00032"></a>00032               -&gt;from(<span class="stringliteral">&#39;agShiftTemplate st&#39;</span>)
+<a name="l00033"></a>00033               -&gt;innerJoin(<span class="stringliteral">&#39;st.agFacilityResourceType fst&#39;</span>)
+<a name="l00034"></a>00034               -&gt;innerJoin(<span class="stringliteral">&#39;fst.agFacilityResource fr&#39;</span>)
+<a name="l00035"></a>00035               -&gt;innerJoin(<span class="stringliteral">&#39;fr.agScenarioFacilityResource sfr1&#39;</span>)
+<a name="l00036"></a>00036               -&gt;innerJoin(<span class="stringliteral">&#39;sfr1.agScenarioFacilityGroup sfg&#39;</span>)
+<a name="l00037"></a>00037               -&gt;innerJoin(<span class="stringliteral">&#39;st.agStaffResourceType srt&#39;</span>)
+<a name="l00038"></a>00038               -&gt;innerJoin(<span class="stringliteral">&#39;srt.agFacilityStaffResource fsr&#39;</span>)
+<a name="l00039"></a>00039               -&gt;innerJoin(<span class="stringliteral">&#39;fsr.agScenarioFacilityResource sfr2&#39;</span>)
+<a name="l00040"></a>00040               -&gt;where(<span class="stringliteral">&#39;sfr1.id = sfr2.id&#39;</span>)
+<a name="l00041"></a>00041               -&gt;andWhere(<span class="stringliteral">&#39;st.scenario_id = sfg.scenario_id&#39;</span>)
+<a name="l00042"></a>00042               -&gt;execute(array(), Doctrine::HYDRATE_SCALAR);
+<a name="l00043"></a>00043 
+<a name="l00044"></a>00044       <span class="comment">// Delete all scenario shift records prior to generating scenario shifts</span>
+<a name="l00045"></a>00045       <span class="comment">// from shift template tables.</span>
+<a name="l00046"></a>00046       $deleteQuery = agDoctrineQuery::create()
+<a name="l00047"></a>00047               -&gt;delete()
+<a name="l00048"></a>00048               -&gt;from(<span class="stringliteral">&#39;agScenarioShift&#39;</span>)
+<a name="l00049"></a>00049               -&gt;execute();
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051       <span class="keywordflow">foreach</span> ($scenarioShifts as $row) {
+<a name="l00052"></a>00052         $shift_counter = 1;
+<a name="l00053"></a>00053         $staff_wave = 1;
+<a name="l00054"></a>00054         $reset_break_length = $row[<span class="stringliteral">&#39;st_break_length_minutes&#39;</span>];
+<a name="l00055"></a>00055         $reset_minutes_start_to_facility_activation = $row[<span class="stringliteral">&#39;st_minutes_start_to_facility_activation&#39;</span>];
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057         <span class="keywordflow">while</span> ($shift_counter &lt;= $row[<span class="stringliteral">&#39;st_shift_repeats&#39;</span>] + 1) {
+<a name="l00058"></a>00058           <span class="comment">// A staff should only be working at one shift and rest while the</span>
+<a name="l00059"></a>00059           <span class="comment">// next following shift starts.  He/she should only be assigned to</span>
+<a name="l00060"></a>00060           <span class="comment">// every other shifts if a staff should work multiple shifts.  Thus,</span>
+<a name="l00061"></a>00061           <span class="comment">// the staff wave is multipled by two.</span>
+<a name="l00062"></a>00062           $staff_shift_repeat = $row[<span class="stringliteral">&#39;st_max_staff_repeat_shifts&#39;</span>] * 2;
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064           <span class="keywordflow">if</span> (($shift_counter != 1) &amp;&amp; (($shift_counter % $staff_shift_repeat) == 1)) {
+<a name="l00065"></a>00065             $staff_wave += 2;
+<a name="l00066"></a>00066           }
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068           <span class="comment">// Release staffs as they finish their last shift.</span>
+<a name="l00069"></a>00069           <span class="keywordflow">if</span> ((($shift_counter % $staff_shift_repeat) == 0) ||
+<a name="l00070"></a>00070               (($shift_counter % $staff_shift_repeat) == ($staff_shift_repeat - 1)) ||
+<a name="l00071"></a>00071               ($shift_counter == ($row[<span class="stringliteral">&#39;st_shift_repeats&#39;</span>] + 1)) ||
+<a name="l00072"></a>00072               ($shift_counter == $row[<span class="stringliteral">&#39;st_shift_repeats&#39;</span>])) {
+<a name="l00073"></a>00073             $reset_break_length = 0;
+<a name="l00074"></a>00074           } <span class="keywordflow">else</span> {
+<a name="l00075"></a>00075             $reset_break_length = $row[<span class="stringliteral">&#39;st_break_length_minutes&#39;</span>];
+<a name="l00076"></a>00076           }
+<a name="l00077"></a>00077 
+<a name="l00078"></a>00078           $reset_minutes_start_to_facility_activation = ($shift_counter == 1 ) ? $row[<span class="stringliteral">&#39;st_minutes_start_to_facility_activation&#39;</span>] : $reset_minutes_start_to_facility_activation + $row[<span class="stringliteral">&#39;st_task_length_minutes&#39;</span>];
+<a name="l00079"></a>00079 
+<a name="l00080"></a>00080           $scenarioShift = <span class="keyword">new</span> agScenarioShift();
+<a name="l00081"></a>00081           $scenarioShift-&gt;set(<span class="stringliteral">&#39;scenario_facility_resource_id&#39;</span>, $row[<span class="stringliteral">&#39;fsr_scenario_facility_resource_id&#39;</span>])
+<a name="l00082"></a>00082               -&gt;set(<span class="stringliteral">&#39;staff_resource_type_id&#39;</span>, $row[<span class="stringliteral">&#39;st_staff_resource_type_id&#39;</span>])
+<a name="l00083"></a>00083               -&gt;set(<span class="stringliteral">&#39;task_id&#39;</span>, $row[<span class="stringliteral">&#39;st_task_id&#39;</span>])
+<a name="l00084"></a>00084               -&gt;set(<span class="stringliteral">&#39;task_length_minutes&#39;</span>, $row[<span class="stringliteral">&#39;st_task_length_minutes&#39;</span>])
+<a name="l00085"></a>00085               -&gt;set(<span class="stringliteral">&#39;break_length_minutes&#39;</span>, $reset_break_length)
+<a name="l00086"></a>00086               -&gt;set(<span class="stringliteral">&#39;minutes_start_to_facility_activation&#39;</span>, $reset_minutes_start_to_facility_activation)
+<a name="l00087"></a>00087               -&gt;set(<span class="stringliteral">&#39;minimum_staff&#39;</span>, $row[<span class="stringliteral">&#39;fsr_minimum_staff&#39;</span>])
+<a name="l00088"></a>00088               -&gt;set(<span class="stringliteral">&#39;maximum_staff&#39;</span>, $row[<span class="stringliteral">&#39;fsr_maximum_staff&#39;</span>])
+<a name="l00089"></a>00089               -&gt;set(<span class="stringliteral">&#39;staff_wave&#39;</span>, $shift_counter &amp; 1 ? $staff_wave : $staff_wave + 1)
+<a name="l00090"></a>00090               -&gt;set(<span class="stringliteral">&#39;shift_status_id&#39;</span>, $row[<span class="stringliteral">&#39;st_shift_status_id&#39;</span>])
+<a name="l00091"></a>00091               -&gt;set(<span class="stringliteral">&#39;deployment_algorithm_id&#39;</span>, $row[<span class="stringliteral">&#39;st_deployment_algorithm_id&#39;</span>])
+<a name="l00092"></a>00092               -&gt;set(<span class="stringliteral">&#39;originator_id&#39;</span>, $row[<span class="stringliteral">&#39;st_id&#39;</span>]);
+<a name="l00093"></a>00093           $scenarioShift-&gt;save();
+<a name="l00094"></a>00094           $shift_counter++;
+<a name="l00095"></a>00095         }
+<a name="l00096"></a>00096       }
+<a name="l00097"></a>00097       <span class="keywordflow">return</span> 1;
+<a name="l00098"></a>00098     } <span class="keywordflow">catch</span> (\Doctrine\ORM\ORMException $e) {
+<a name="l00099"></a>00099       print_r($e);
+<a name="l00100"></a>00100       <span class="keywordflow">return</span> 0;
+<a name="l00101"></a>00101     }
+<a name="l00102"></a>00102   }
+<a name="l00103"></a>00103 
+<a name="l00109"></a><a class="code" href="classagScenarioGenerator.html#aedf38a810e3df80a82a8e03753f577d4">00109</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagScenarioGenerator.html#aedf38a810e3df80a82a8e03753f577d4" title="staffPoolGenerator() Auto-generate staff pool using lucene search defined in agScenarioStaffGenerator...">staffPoolGenerator</a>($lucene_query, $scenario_id)
+<a name="l00110"></a>00110   {
+<a name="l00111"></a>00111     <span class="keywordflow">try</span> {
+<a name="l00112"></a>00112       $staff_resources = array();
+<a name="l00113"></a>00113       $staff_id = array();
+<a name="l00114"></a>00114       $scenarioAction = <span class="keyword">new</span> <a class="code" href="classagActions.html" title="extends sfActions for common functionality">agActions</a>(sfContext::getInstance(), <span class="stringliteral">&#39;scenario&#39;</span>, <span class="stringliteral">&#39;staffpool&#39;</span>);  <span class="comment">//this may be excessive as we are creating an entirely new object</span>
+<a name="l00115"></a>00115       $scenarioAction-&gt;doSearch($lucene_query, FALSE);
+<a name="l00116"></a>00116       <span class="keywordflow">foreach</span> ($scenarioAction-&gt;hits as $hit) {
+<a name="l00117"></a>00117         $staff_id[] = $scenarioAction-&gt;results[$hit-&gt;model][$hit-&gt;pk][<span class="stringliteral">&#39;id&#39;</span>];
+<a name="l00118"></a>00118       }
+<a name="l00119"></a>00119       <span class="keywordflow">if</span> (count($staff_id) &gt; 0) {
+<a name="l00120"></a>00120         $staff_resource_dql = agDoctrineQuery::create()
+<a name="l00121"></a>00121 
+<a name="l00122"></a>00122           -&gt;select(<span class="stringliteral">&#39;a.id&#39;</span>)
+<a name="l00123"></a>00123             -&gt;from(<span class="stringliteral">&#39;agStaffResource a&#39;</span>)
+<a name="l00124"></a>00124               -&gt;leftJoin(<span class="stringliteral">&#39;a.agScenarioStaffResource asr WITH asr.scenario_id = ?&#39;</span>, $scenario_id)
+<a name="l00125"></a>00125             -&gt;whereIn(<span class="stringliteral">&#39;a.staff_id&#39;</span>, $staff_id)
+<a name="l00126"></a>00126               -&gt;andWhere(<span class="stringliteral">&#39;asr.staff_resource_id IS NULL&#39;</span>);
+<a name="l00127"></a>00127                 
+<a name="l00128"></a>00128         $staff_resource_sql =  $staff_resource_dql-&gt;getSqlQuery();
+<a name="l00129"></a>00129         $staff_resources  = $staff_resource_dql-&gt;execute(array(), <span class="stringliteral">&#39;single_value_array&#39;</span>);
+<a name="l00130"></a>00130 
+<a name="l00131"></a>00131       }
+<a name="l00132"></a>00132 
+<a name="l00133"></a>00133       <span class="keywordflow">return</span> $staff_resources;
+<a name="l00134"></a>00134     } <span class="keywordflow">catch</span> (\Doctrine\ORM\ORMException $e) {
+<a name="l00135"></a>00135       print_r($e);
+<a name="l00136"></a>00136       <span class="keywordflow">return</span> 0;
+<a name="l00137"></a>00137     }
+<a name="l00138"></a>00138   }
+<a name="l00139"></a>00139 
+<a name="l00146"></a><a class="code" href="classagScenarioGenerator.html#ac70a8b9c1365504782cb12589af8cc62">00146</a>   <span class="keyword">public</span> <span class="keyword">static</span> function <a class="code" href="classagScenarioGenerator.html#ac70a8b9c1365504782cb12589af8cc62" title="saveStaffPool() Save staff resource pool to db.">saveStaffPool</a>($staff_resources, $scenario_id, $search_weight)
+<a name="l00147"></a>00147   {
+<a name="l00148"></a>00148     <span class="keywordflow">try</span> {
+<a name="l00149"></a>00149       <span class="keywordflow">foreach</span> ($staff_resources as $staff_resource) {
+<a name="l00150"></a>00150         <span class="comment">// TODO check to see if staff_resources exist(update), or we are making new</span>
+<a name="l00151"></a>00151         <span class="comment">//this is a first pass, we should do a bulk check to update/insert as needed</span>
+<a name="l00152"></a>00152         $scenario_staff_resource = agDoctrineQuery::create()
+<a name="l00153"></a>00153                 -&gt;select(<span class="stringliteral">&#39;asr.id&#39;</span>)
+<a name="l00154"></a>00154                 -&gt;from(<span class="stringliteral">&#39;agScenarioStaffResource asr&#39;</span>)
+<a name="l00155"></a>00155                 -&gt;where(<span class="stringliteral">&#39;asr.staff_resource_id = ?&#39;</span>, $staff_resource)
+<a name="l00156"></a>00156                 -&gt;execute();
+<a name="l00157"></a>00157         <span class="keywordflow">if</span> (count($scenario_staff_resource) &lt; 1) {
+<a name="l00158"></a>00158           $scenario_staff_resource = <span class="keyword">new</span> agScenarioStaffResource();
+<a name="l00159"></a>00159           $scenario_staff_resource-&gt;set(<span class="stringliteral">&#39;staff_resource_id&#39;</span>, $staff_resource)
+<a name="l00160"></a>00160               -&gt;set(<span class="stringliteral">&#39;scenario_id&#39;</span>, $scenario_id)
+<a name="l00161"></a>00161               -&gt;set(<span class="stringliteral">&#39;deployment_weight&#39;</span>, $search_weight);
+<a name="l00162"></a>00162         }
+<a name="l00163"></a>00163         $scenario_staff_resource-&gt;save();
+<a name="l00164"></a>00164       }
+<a name="l00165"></a>00165       <span class="keywordflow">return</span> 1;
+<a name="l00166"></a>00166     } <span class="keywordflow">catch</span> (\Doctrine\ORM\ORMException $e) {
+<a name="l00167"></a>00167       print_r($e);
+<a name="l00168"></a>00168       <span class="keywordflow">return</span> 0;
+<a name="l00169"></a>00169     }
+<a name="l00170"></a>00170   }
+<a name="l00171"></a>00171 
+<a name="l00172"></a>00172 }
+<a name="l00173"></a>00173 
+<a name="l00174"></a>00174 ?&gt;
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->

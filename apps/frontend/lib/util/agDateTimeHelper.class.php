@@ -16,16 +16,20 @@
  */
 class agDateTimeHelper
 {
-  // Conversion Constants
-  const MSEC_IN_DAY = 86400000;
-  const SEC_IN_DAY = 86400;
 
-  const MSEC_IN_HOUR = 3600000;
+  // Conversion Constants
+  const MINUTE_IN_DAY = 1440;
+
+  const SEC_IN_DAY = 86400;
   const SEC_IN_HOUR = 3600;
 
+  const MSEC_IN_DAY = 86400000;
+  const MSEC_IN_HOUR = 3600000;
   const MSEC_IN_MINUTE = 60000;
-  const SEC_IN_MINUTE = 60;
 
+  const HOUR_IN_DAY = 24;
+  const MINUTE_IN_HOUR = 60;
+  const SEC_IN_MINUTE = 60;
   const MSEC_IN_SEC = 1000;
 
   /**
@@ -46,7 +50,7 @@ class agDateTimeHelper
    */
   public static function parsedTime($timeInterval, $unitsOfTime)
   {
-      $dateTimeHelperInstance = new DateTimeHelper($timeInterval, $unitsOfTime);
+      $dateTimeHelperInstance = new agDateTimeHelper($timeInterval, $unitsOfTime);
 
       return $dateTimeHelperInstance->getParsedTime();
   }
@@ -100,14 +104,14 @@ class agDateTimeHelper
    */
   public function setSecondsToParsedTime($seconds)
   {
-      $this->parsedTimeArrayInstance['days'] = (int) ($seconds / DateTimeHelper::SEC_IN_DAY);
-      $hours_remaining = $seconds % DateTimeHelper::SEC_IN_DAY;
+      $this->parsedTimeArrayInstance['days'] = (int) ($seconds / agDateTimeHelper::SEC_IN_DAY);
+      $hours_remaining = $seconds % agDateTimeHelper::SEC_IN_DAY;
 
-      $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / DateTimeHelper::SEC_IN_HOUR);
-      $minutes_remaining = $hours_remaining % DateTimeHelper::SEC_IN_HOUR;
+      $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / agDateTimeHelper::SEC_IN_HOUR);
+      $minutes_remaining = $hours_remaining % agDateTimeHelper::SEC_IN_HOUR;
 
-      $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / DateTimeHelper::SEC_IN_MINUTE);
-      $seconds_remaining = $minutes_remaining % DateTimeHelper::SEC_IN_MINUTE;
+      $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / agDateTimeHelper::SEC_IN_MINUTE);
+      $seconds_remaining = $minutes_remaining % agDateTimeHelper::SEC_IN_MINUTE;
 
       $this->parsedTimeArrayInstance['seconds'] = $seconds_remaining;
   }
@@ -125,17 +129,17 @@ class agDateTimeHelper
    */
   public function setMillisecondsToParsedTime($milliseconds)
   {
-      $this->parsedTimeArrayInstance['days'] = (int) ($milliseconds / DateTimeHelper::MSEC_IN_DAY);
-      $hours_remaining = $milliseconds % DateTimeHelper::MSEC_IN_DAY;
+      $this->parsedTimeArrayInstance['days'] = (int) ($milliseconds / agDateTimeHelper::MSEC_IN_DAY);
+      $hours_remaining = $milliseconds % agDateTimeHelper::MSEC_IN_DAY;
 
-      $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / DateTimeHelper::MSEC_IN_HOUR);
-      $minutes_remaining = $hours_remaining % DateTimeHelper::MSEC_IN_HOUR;
+      $this->parsedTimeArrayInstance['hours'] = (int) ($hours_remaining / agDateTimeHelper::MSEC_IN_HOUR);
+      $minutes_remaining = $hours_remaining % agDateTimeHelper::MSEC_IN_HOUR;
 
-      $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / DateTimeHelper::MSEC_IN_MINUTE);
-      $seconds_remaining = $minutes_remaining % DateTimeHelper::MSEC_IN_MINUTE;
+      $this->parsedTimeArrayInstance['minutes'] = (int) ($minutes_remaining / agDateTimeHelper::MSEC_IN_MINUTE);
+      $seconds_remaining = $minutes_remaining % agDateTimeHelper::MSEC_IN_MINUTE;
 
-      $this->parsedTimeArrayInstance['seconds'] = (int) ($seconds_remaining / DateTimeHelper::MSEC_IN_SEC);
-      $milliseconds_remaining = $seconds_remaining % DateTimeHelper::MSEC_IN_SEC;
+      $this->parsedTimeArrayInstance['seconds'] = (int) ($seconds_remaining / agDateTimeHelper::MSEC_IN_SEC);
+      $milliseconds_remaining = $seconds_remaining % agDateTimeHelper::MSEC_IN_SEC;
 
       $this->parsedTimeArrayInstance['milliseconds'] = $milliseconds_remaining;
   }
@@ -174,4 +178,53 @@ class agDateTimeHelper
     $tsTimeString = date ('Y-m-d H:i:s', $timestamp) ;
     return $tsTimeString ;
   }
+
+  /**
+   * Method to return a minutes figure as an associative array of days, hours, and minutes.
+   * @param integer $minutes The number of minutes to convert
+   * @param boolean $days Whether or not to include days as part of the array
+   * @return array An associative array of time components.
+   */
+  public static function minsToComponentsArray($minutes, $days = TRUE)
+  {
+    $results = array();
+    if ($days)
+    {
+      $results['days'] = floor(($minutes / self::MINUTE_IN_DAY));
+      $results['hours'] = abs(floor((($minutes % self::MINUTE_IN_DAY) / self::MINUTE_IN_HOUR)));
+    }
+    else
+    {
+      $results['days'] = 0;
+      $results['hours'] = floor(($minutes / self::MINUTE_IN_HOUR));
+    }
+
+    $results['minutes'] = abs($minutes % self::MINUTE_IN_HOUR);
+
+    return $results;
+  }
+
+  /**
+   * Method to return a minutes figure as a string by day, hour, and minute
+   * @param integer $minutes The number of minutes
+   * @param boolean $days Whether or not to include days as part of the array
+   * @return string The results formatted as a string.
+   */
+  public static function minsToComponentsStr( $minutes,
+                                              $days = TRUE)
+  {
+    $c = self::minsToComponentsArray($minutes, $days);
+    if (array_sum($c) == 0) { return '0m' ; }
+
+    $results = '';
+    if ($days)
+    {
+      if ($c['days'] != 0) { $results = $results . $c['days'] . 'd ' ; }
+    }
+
+    if ($c['hours'] != 0) { $results = $results . $c['hours'] . 'h ' ; }
+    if ($c['minutes'] != 0) { $results = $results . $c['minutes'] . 'h' ; }
+    return $results;
+  }
+
 }

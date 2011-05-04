@@ -65,16 +65,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00018"></a><a class="code" href="classagStaffHelper.html">00018</a> <span class="keyword">class </span><a class="code" href="classagStaffHelper.html" title="Provides bulk-staff manipulation methods.">agStaffHelper</a>
 <a name="l00019"></a>00019 {
 <a name="l00020"></a>00020 
-<a name="l00021"></a>00021   <span class="keyword">public</span> <span class="keyword">static</span> function getStaffResourceTypes()
+<a name="l00021"></a>00021   <span class="keyword">public</span> <span class="keyword">static</span> function getStaffResourceTypes($returnAbbr = FALSE)
 <a name="l00022"></a>00022   {
-<a name="l00023"></a>00023     $staffResourceTypes = agDoctrineQuery::create()
-<a name="l00024"></a>00024             -&gt;select(<span class="stringliteral">&#39;id, staff_resource_type&#39;</span>)
-<a name="l00025"></a>00025             -&gt;from(<span class="stringliteral">&#39;agStaffResourceType&#39;</span>)
-<a name="l00026"></a>00026             -&gt;execute(array(), <span class="stringliteral">&#39;key_value_pair&#39;</span>);
-<a name="l00027"></a>00027     <span class="keywordflow">return</span> $staffResourceTypes;
-<a name="l00028"></a>00028   }
-<a name="l00029"></a>00029 
-<a name="l00030"></a>00030 }
+<a name="l00023"></a>00023     $typeField = <span class="stringliteral">&#39;staff_resource_type&#39;</span>;
+<a name="l00024"></a>00024 
+<a name="l00025"></a>00025     <span class="keywordflow">if</span> ($returnAbbr) { $typeField = <span class="stringliteral">&#39;staff_resource_type_abbr&#39;</span>; }
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027     $staffResourceTypes = agDoctrineQuery::create()
+<a name="l00028"></a>00028             -&gt;select(<span class="stringliteral">&#39;id, &#39;</span> . $typeField)
+<a name="l00029"></a>00029             -&gt;from(<span class="stringliteral">&#39;agStaffResourceType&#39;</span>)
+<a name="l00030"></a>00030             -&gt;execute(array(), <span class="stringliteral">&#39;key_value_pair&#39;</span>);
+<a name="l00031"></a>00031     <span class="keywordflow">return</span> $staffResourceTypes;
+<a name="l00032"></a>00032   }
+<a name="l00033"></a>00033 
+<a name="l00034"></a>00034 }
 </pre></div></div>
 </div>
 <!--- window showing the filter options -->

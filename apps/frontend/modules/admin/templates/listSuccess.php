@@ -7,6 +7,7 @@
       <th>Email</th>
       <th>Created at</th>
       <th>Updated at</th>
+      <th>Last Login</th>
     </tr>
   </thead>
   <tbody>
@@ -16,6 +17,7 @@
       <td><?php echo $ag_account->getEmailAddress() ?></td>
       <td><?php echo $ag_account->getCreatedAt() ?></td>
       <td><?php echo $ag_account->getUpdatedAt() ?></td>
+      <td><?php echo $ag_account->getLastLogin() ?></td>
     </tr>
     <?php endforeach; ?>
   </tbody>

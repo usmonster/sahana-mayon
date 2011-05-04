@@ -23,7 +23,7 @@ foreach ($tabula->getRelations() as $relation) {
   $relationsLevel1[] = $relation->getClass();
 }
 echo $bar;
-echo "<hr>";
+echo '<hr class="ruleGray" />';
 $desired_fields =
     Array(
       'agPersonNameType', 'agPersonSex', 'agPersonMjAgNationality', 'agPersonEthnicity',

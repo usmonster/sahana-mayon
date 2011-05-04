@@ -3,7 +3,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-class agSingleEventFacilityResourceActivationTimeForm extends BaseagEventFacilityResourceActivationTimeForm
+class agSingleEventFacilityResourceActivationTimeForm extends
+BaseagEventFacilityResourceActivationTimeForm
 {
   public function configure()
   {

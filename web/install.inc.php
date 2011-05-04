@@ -343,7 +343,7 @@ class agInstall
       '</div><br /> NOTE: to continue with Agasti setup you must first create the "Super User"
         account by editing the config file.  In .../config please edit the config.yml file with the
         Super User username and password.  After you have done so, click finish and you will be 
-        redirected to log in with the Super User username and password and thenthen create your
+        redirected to log in with the Super User username and password and then create your
         first user.';
     } else {
       return '<span class="fail">There was an error with your installation:</span><br /><div class="info">' . $this->INSTALL_RESULT . '</div>';
@@ -527,7 +527,18 @@ class agInstall
 //    } catch (Exception $e) {
 //      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
 //    }
+     try {
+        $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+        $databaseManager = new sfDatabaseManager($configuration);
+//        $connection = Doctrine_Manager::connection()->connect();
+        sfContext::createInstance($configuration)->dispatch();
 
+       $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup'));
+       $luceneIndex->indexAll();
+       $installed = 'Success!';
+      } catch (Exception $e) {
+        $installed[] = 'Could not index Data! : ' . "\n" . $e->getMessage();
+      }
     if(is_array($installed)){
       return implode('<br>', $installed);
     }
@@ -541,7 +552,7 @@ class agInstall
   {
     if (isset($_REQUEST['back'][$this->getStep()]))
       $this->DoBack();
-
+//STEP ONE
     if ($this->getStep() == 1) {
       if (!isset($_REQUEST['next'][0]) && !isset($_REQUEST['back'][2])) {
         $this->setConfig('agree', isset($_REQUEST['agree']));
@@ -556,7 +567,7 @@ class agInstall
     $foo = $this->getStep();
     $zoo = $_REQUEST['next'][$this->getStep()];
     $poo = $_REQUEST['problem'];
-
+//STEP TWO
     if ($this->getStep() == 2 && isset($_REQUEST['next'][$this->getStep()]) && !isset($_REQUEST['problem'])) {
       $this->dbParams($db_params);
       $this->DoNext();

@@ -19,13 +19,17 @@ class agGlobalParam extends BaseagGlobalParam
   public function postDelete($event)
   {
     parent::postDelete($event);
-    sfContext::getInstance()->getEventDispatcher()->notify(new sfEvent($this, 'global_param.param_updated'));
+    sfContext::getInstance()->getEventDispatcher()->notify
+        (new sfEvent($this, 'global_param.param_updated')
+    );
   }
 
   public function postSave($event)
   {
     parent::postSave($event);
-    sfContext::getInstance()->getEventDispatcher()->notify(new sfEvent($this, 'global_param.param_updated'));
+    sfContext::getInstance()->getEventDispatcher()->notify
+        (new sfEvent($this, 'global_param.param_updated')
+    );
   }
 
 }

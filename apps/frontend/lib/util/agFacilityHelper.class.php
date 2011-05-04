@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This class is used to provide facility's basic information.
+ * Provides basic facility information.
  *
  * PHP Version 5.3
  *
@@ -32,7 +32,7 @@ class agFacilityHelper
   {
     try {
       $facilityQuery = agDoctrineQuery::create()
-                      ->select('f.id, f.facility_name, frt.facility_resource_type_abbr, fr.facility_resource_code, frs.facility_resource_status, fr.capacity')
+                      ->select('f.id, f.facility_name, frt.facility_resource_type_abbr, frs.facility_resource_status, fr.capacity, f.facility_code')
                       ->addSelect('e.id, s.id')
                       ->from('agFacility f')
                       ->innerJoin('f.agSite s')

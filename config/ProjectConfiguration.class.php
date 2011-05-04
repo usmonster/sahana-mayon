@@ -63,7 +63,8 @@ class ProjectConfiguration extends sfProjectConfiguration
     foreach ($packages as $package) {
       $this->setPluginPath($package, sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $package);
     }
-    $this->enablePlugins($packages);
+    //$this->enablePlugins($packages);
+
   }
 
   public function setup()
@@ -98,8 +99,8 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enableModules(array('scenario', 'facility'));
     
     // registers event listeners
-    $this->dispatcher->connect('import.facility_file_ready', array('AgImportXLS', 'processFile'));
-    $this->dispatcher->connect('global_param.param_updated', array('AgGlobal', 'loadParams'));
+    $this->dispatcher->connect('import.facility_file_ready', array('agImportXLS', 'processFile'));
+    $this->dispatcher->connect('global_param.param_updated', array('agGlobal', 'loadParams'));
   }
 
   /**
@@ -119,6 +120,10 @@ class ProjectConfiguration extends sfProjectConfiguration
     // extend where appropriate
     $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CLASS, 'agDoctrineQuery');
     $manager->setAttribute(Doctrine_Core::ATTR_TABLE_CLASS, 'agDoctrineTable');
+
+    // enable the APC cache
+    $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CACHE, new Doctrine_Cache_Apc());
+    $manager->setAttribute(Doctrine_Core::ATTR_RESULT_CACHE, new Doctrine_Cache_Apc());
   }
 
 }

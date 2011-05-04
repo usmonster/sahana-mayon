@@ -91,5 +91,5 @@
   <?php if (!$form->getObject()->isNew()): ?>
     &nbsp;<?php echo link_to('Delete', 'client/delete?id='.$form->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?>
   <?php endif; ?>
-  <input type="submit" value="Save" class="saveLinkButton" />
+  <input type="submit" value="Save" class="linkButton" />
 </form>

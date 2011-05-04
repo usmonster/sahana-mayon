@@ -19,11 +19,7 @@ class agStaffActions extends agActions
 {
 
   /**
-   * executeIndex is currently used to execute the index action for the staff
-   * person module, it incorporates our join query to pull all staff information
-   * and passes a 'pager' object to the next step in execution: sfView
-   *
-   * @param $request the field name for sorting and the sorting order as pass-in parameters.
+   * executeIndex is currently used to execute the index action
    *
    */
   public function executeIndex(sfWebRequest $request)
@@ -31,35 +27,146 @@ class agStaffActions extends agActions
     //do some index stuff here.
   }
 
-  /**
-   * @todo detail this function
-   * @param sfWebRequest $request
-   */
   public function executeList(sfWebRequest $request)
   {
-//    $query = Doctrine::getTable('agStaff')
-//            ->createQuery('a')
-//            ->select('p.*, st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*,
-//              nametype.*')
-//            ->from(
-//                'agStaff st, st.agPerson p, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
-//              pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
-//              p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
-//              name.agPersonNameType nametype'
-//    );
+    $this->status = 'active';
+    $this->sort = null;
+    $this->order =null;
+    //the next few lines could be abstracted to agActions as they are request params that may be
+    //used for any list
+    if ($request->getGetParameter('status'))
+      $this->status = $request->getGetParameter('status');
+    if ($request->getGetParameter('sort'))
+      $this->sort = $request->getGetParameter('sort');
+    if ($request->getGetParameter('order'))
+      $this->order = $request->getGetParameter('order');
+    /** @todo take into consideration app_display */
+    $staffStatusOptions = agDoctrineQuery::create()
+            ->select('s.staff_resource_status, s.staff_resource_status')
+            ->from('agStaffResourceStatus s')
+            ->execute(array(), 'key_value_pair');
+    //the above query returns an array of keys matching their values.
+    //ideally the above should exist in a global param,
+    //so the database is not queried all the time
+    $staffStatusOptions['all'] = 'all';
+    if ($request->getParameter('status') && in_array($request->getParameter('status'), $staffStatusOptions)) {
+      $this->status = $request->getParameter('status');
+    }
+    $this->statusWidget = new sfForm();
+    $this->statusWidget->setWidgets(
+        array(
+          'status' => new sfWidgetFormChoice(
+              array(
+                'multiple' => false,
+                'choices' => $staffStatusOptions,
+                'label' => 'Staff Status'
+              ),
+              array('onchange' => 'submit();')
+          ),
+        // 'add_empty' => true))// ,'onClick' => 'submit()'))
+        )
+    );
+    $this->statusWidget->setDefault('status', $this->status);
+
+    $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusWidget->getWidgetSchema());
+    $this->statusWidget->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
+    $this->statusWidget->getWidgetSchema()->setFormFormatterName('inline');
+
+    $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order);
+
+    $this->pager = new agArrayPager(null, 10);
+    $this->pager->setResultArray($staffArray);
+    $this->pager->setPage($this->getRequestParameter('page', 1));
+    $this->pager->init();
+
+
+    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
+            ->createQuery('c')
+            ->execute();
+    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
+            ->createQuery('d')
+            ->execute();
+    //p-code
+    //$this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' ');
+    //end p-code
+  }
+
+  /**
+   * provides staff listing data to the staff list template
+   * @param sfWebRequest $request
+   */
+  public function executeOldlist(sfWebRequest $request)
+  {
+    $this->staffResourceStatus = 'active';
+    $staffResourceStatusOptions = agDoctrineQuery::create()
+            ->select('s.staff_resource_status, s.staff_resource_status')
+            ->from('agStaffResourceStatus s')
+            ->execute(array(), 'key_value_pair');
+    //the above query returns an array of keys matching their values.
+    //ideally the above should exist in a global param, so the database is not queried all the time
+    $staffResourceStatusOptions['all'] = 'all';
+    if ($request->getParameter('status') && in_array($request->getParameter('status'), $staffResourceStatusOptions)) {
+      $this->staffResourceStatus = $request->getParameter('status');
+    }
+    $this->statusFilterForm = new sfForm();
+    $this->statusFilterForm->setWidgets(
+        array(
+          'status' => new sfWidgetFormChoice(
+              array(
+                'multiple' => false,
+                'choices' => $staffResourceStatusOptions,
+                'label' => 'Staff Status'
+              ),
+              array('onchange' => 'submit();')
+          ),
+        //add_empty' => true))// ,'onClick' => 'submit()'))
+        )
+    );
+    $this->statusFilterForm->setDefault('status', $this->staffResourceStatus);
+
+    $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusFilterForm->getWidgetSchema());
+    $this->statusFilterForm->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
+    $this->statusFilterForm->getWidgetSchema()->setFormFormatterName('inline');
+
     $query = Doctrine::getTable('agStaff')
             ->createQuery('a')
-            ->select('p.*, s.*, namejoin.*, name.*, nametype.*, stfrsco.*, o.organization agency, stfrsc.staff_resource_type_id, e.id, ememail1.id, ec1.id, ect1.email_contact_type work_email, ememail2.id, ec2.id, ect2.email_contact_type home_email')
-            ->from(
-                'agStaff s, s.agPerson p,
-              p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
-              name.agPersonNameType nametype, s.agStaffResource stfrsc,
-              stfrsc.agStaffResourceOrganization stfrsco, stfrsc.agStaffResourceType, stfrsco.agOrganization o,
-              s.agStaffStatus ss, p.agEntity e,
-              e.agEntityEmailContact ememail1, ememail1.agEmailContact ec1, ec1.agEmailContactType ect1,
-              e.agEntityEmailContact ememail2, ememail2.agEmailContact ec2, ec2.agEmailContactType ect2'
+            ->select(
+                'p.*,
+                  s.*,
+                  namejoin.*,
+                  name.*,
+                  nametype.*,
+                  o.organization agency,
+                  stfrsc.staff_resource_type_id,
+                  e.id,
+                  ememail1.id,
+                  ec1.id,
+                  ect1.email_contact_type work_email,
+                  ememail2.id,
+                  ec2.id,
+                  ect2.email_contact_type home_email'
             )
-            ->where('ss.staff_status=?', 'active');
+            ->from(
+                'agStaff s,
+                  s.agPerson p,
+                  p.agPersonMjAgPersonName namejoin,
+                  namejoin.agPersonName name,
+                  name.agPersonNameType nametype,
+                  s.agStaffResource stfrsc,
+                  stfrsc.agStaffResourceStatus srs,
+                  stfrsc.agStaffResourceType,
+                  stfrsc.agOrganization o,
+                  p.agEntity e,
+                  e.agEntityEmailContact ememail1,
+                  ememail1.agEmailContact ec1,
+                  ec1.agEmailContactType ect1,
+                  e.agEntityEmailContact ememail2,
+                  ememail2.agEmailContact ec2,
+                  ec2.agEmailContactType ect2'
+    );
+    if ($this->staffResourceStatus != 'all') {
+      $query->where('srs.staff_resource_status=?', $this->staffResourceStatus);
+    }
 
     $this->pager = new sfDoctrinePager('agStaff', 20);
     /**
@@ -70,12 +177,13 @@ class agStaffActions extends agActions
         $nameId = substr($request->getParameter('sort'), 12);
         $sortOrder = $request->getParameter('order', 'DESC');
         $this->pager->setQuery(
-            $query->orderBy('namejoin.person_name_type_id = ' . $nameId .
-                ' ' . $sortOrder . ', person_name ' . $sortOrder));
+            $query->orderBy(
+                'namejoin.person_name_type_id = ' . $nameId . ' ' . $sortOrder . ',
+                  person_name ' . $sortOrder
+            )
+        );
       } else {
-        $this->pager->setQuery(
-            $query->orderBy($request->getParameter('sort', 'person_name') .
-                ' ' . $request->getParameter('order', 'DESC')));
+        $this->pager->setQuery($query->orderBy($request->getParameter('sort', 'person_name') . ' ' . $request->getParameter('order', 'DESC')));
       }
     } else {
       $this->pager->setQuery($query);
@@ -117,12 +225,31 @@ class agStaffActions extends agActions
     $query = Doctrine::getTable('agStaff')
             ->createQuery('a')
             ->select(
-                'p.*, st.*, ps.*, s.*, pn.*, n.*, e.*, lang.*, religion.*, namejoin.*, name.*, nametype.*'
+                'p.*,
+                  st.*,
+                  ps.*,
+                  s.*,
+                  pn.*,
+                  n.*,
+                  e.*,
+                  lang.*,
+                  religion.*,
+                  namejoin.*,
+                  name.*,
+                  nametype.*'
             )
             ->from(
-                'agStaff st, st.agPerson p, p.agPersonSex ps, ps.agSex s, p.agPersonMjAgNationality pn,
-                  pn.agNationality n, p.agEthnicity e, p.agLanguage lang, p.agReligion religion,
-                  p.agPersonMjAgPersonName namejoin, namejoin.agPersonName name,
+                'agStaff st, 
+                  st.agPerson p,
+                  p.agPersonSex ps,
+                  ps.agSex s,
+                  p.agPersonMjAgNationality pn,
+                  pn.agNationality n,
+                  p.agEthnicity e,
+                  p.agLanguage lang,
+                  p.agReligion religion,
+                  p.agPersonMjAgPersonName namejoin,
+                  namejoin.agPersonName name,
                   name.agPersonNameType nametype'
     );
 
@@ -157,13 +284,9 @@ class agStaffActions extends agActions
         if (substr($request->getParameter('sort'), 0, 11) == 'person_name') {
           $nameId = substr($request->getParameter('sort'), 12);
           $sortOrder = $request->getParameter('order', 'DESC');
-          $this->pager->setQuery(
-              $query->orderBy('namejoin.person_name_type_id = ' . $nameId .
-                  ' ' . $sortOrder . ', person_name ' . $sortOrder));
+          $this->pager->setQuery($query->orderBy('namejoin.person_name_type_id = ' . $nameId . ' ' . $sortOrder . ', person_name ' . $sortOrder));
         } else {
-          $this->pager->setQuery(
-              $query->orderBy($request->getParameter('sort', 'person_name') .
-                  ' ' . $request->getParameter('order', 'DESC')));
+          $this->pager->setQuery($query->orderBy($request->getParameter('sort', 'person_name') . ' ' . $request->getParameter('order', 'DESC')));
         }
         //$this->sortAppend = $sortOrder;
       } else {
@@ -191,14 +314,25 @@ class agStaffActions extends agActions
             ->execute();
     $this->agStaff = $this->pager->getResults()->getFirst();
     $agPerson = $this->agStaff->getAgPerson();
-    $this->addressArray = $agPerson->getEntityAddressByType(true, null, agAddressHelper::ADDR_GET_NATIVE_STRING);
+    $this->addressArray = $agPerson->getEntityAddressByType(
+            true, null, agAddressHelper::ADDR_GET_NATIVE_STRING
+    );
 
     //p-code
-  $names_title = new agPersonNameHelper($agPerson->getId());
-  $person_names_title = $names_title->getPrimaryNameByType();
-  $this->getResponse()->setTitle('Sahana Agasti Staff - ' . $person_names_title[$agPerson->getId()]['given'] ." ". $person_names_title[$agPerson->getId()]['family']);
+    $names_title = new agPersonNameHelper($agPerson->getId());
+    $person_names_title = $names_title->getPrimaryNameByType();
+    $this->getResponse()
+        ->setTitle(
+            'Sahana Agasti Staff - ' . (
+            isset($person_names_title[$agPerson->getId()]['given']) ?
+                $person_names_title[$agPerson->getId()]['given'] : ''
+            )
+            . ' ' . (
+            isset($person_names_title[$agPerson->getId()]['family']) ?
+                $person_names_title[$agPerson->getId()]['family'] : ''
+            )
+    );
     //end p-code
-
   }
 
   /**
@@ -208,8 +342,29 @@ class agStaffActions extends agActions
    * */
   public function executeNew(sfWebRequest $request)
   {
-    $this->form = new PluginagStaffPersonForm();
+        $this->form = new PluginagStaffPersonForm();
+
+
   }
+
+	public function executeAddstaffresource($request)
+	{
+        $this->forward404unless($request->isXmlHttpRequest());
+	  $number = intval($request->getParameter("num"));
+
+        $resourceForm = new PluginagEmbeddedAgStaffResourceForm();
+        unset($resourceForm['_csrf_token']);
+                //$resourceForm->disableLocalCSRFProtection();
+        
+        $resourceForm->getWidgetSchema()->setNameFormat('ag_person[staff][type][' . $number . ']' . '[%s]');
+        //$resourceForm->getWidgetSchema()->setIdFormat('%s_');
+
+                    return $this->renderPartial('staffForm', array('form'     => $resourceForm
+                                                  )
+                                   );
+
+	}
+
 
   /**
    * Saves the new agPerson from data entered into the form generated by executeNew
@@ -250,7 +405,8 @@ class agStaffActions extends agActions
   {
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
+        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id'))
+    );
 
     $ag_person = $ag_staff->getAgPerson();
     $this->form = new PluginagStaffPersonForm($ag_person);
@@ -258,7 +414,6 @@ class agStaffActions extends agActions
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti Staff Edit');
     //end p-code
-  
   }
 
   /**
@@ -269,10 +424,12 @@ class agStaffActions extends agActions
   public function executeUpdate(sfWebRequest $request)
   {
     $this->forward404Unless(
-        $request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
+        $request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT)
+    );
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
+        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id'))
+    );
 
     $ag_person = $ag_staff->getAgPerson();
     $this->form = new PluginagStaffPersonForm($ag_person);
@@ -304,17 +461,14 @@ class agStaffActions extends agActions
 
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id')));
+        sprintf('Object ag_staff does not exist (%s).', $request->getParameter('id'))
+    );
 
     $ag_person = $ag_staff->getAgPerson();
 
-    foreach ($ag_staff->getAgStaffResource() as $ag_staff_resource_pre_org) {
-      foreach ($ag_staff_resource_pre_org->getAgStaffResourceOrganization() as $ag_staff_resource_org) {
-        $ag_staff_resource_org->delete();
-      }
-    }
-
     foreach ($ag_staff->getAgStaffResource() as $ag_staff_resource) {
+      $ag_staff_resource->getAgEventStaff()->delete();
+      $ag_staff_resource->getAgScenarioStaffResource()->delete();
       $ag_staff_resource->delete();
     }
 
@@ -335,7 +489,8 @@ class agStaffActions extends agActions
     $ag_person->getAgEntity()->getAgEntityEmailContact()->delete();
     $ag_person->getAgPersonMjAgLanguage()->delete();
     $ag_person->getAgPersonMjAgPersonName()->delete();
-    //$ag_person->getAgPersonMjAgPhoneContact()->delete(); This and email below are disabled until we update the deletes to go through entity.
+    //$ag_person->getAgPersonMjAgPhoneContact()->delete();
+    //^This and email below are disabled until we update the deletes to go through entity.
     $ag_person->getAgPersonMjAgProfession()->delete();
     $ag_person->getAgPersonResidentialStatus()->delete();
     $ag_person->getAgPersonSex()->delete();
@@ -368,6 +523,8 @@ class agStaffActions extends agActions
    */
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
+    $b = $form->getName();
+    //if count of staff form data is greater than count in this person's form, assume an add
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       //are our values bound at this point?
@@ -377,8 +534,8 @@ class agStaffActions extends agActions
       // doSave() has also been overridden in agPersonForm.class.php so that the
       // saveStaffStatusList function is not called. Calling that refreshes the relation
       // and will cause failure on an update of an existing staff.
-      $form->getObject()->clearRelated('agStaffStatus');
-      //$form->getObject()->clearRelated('agStaff');
+      //$form->getObject()->clearRelated('agStaffStatus');
+      $form->getObject()->clearRelated('agStaff');
 
       $ag_staff = $form->save();
       $refAgStaff = $ag_staff->getAgStaff();
@@ -398,7 +555,12 @@ class agStaffActions extends agActions
               ->fetchOne();
 
       //get id of STAFF person from the saved, extended agpersonform.
-      $this->redirect('agStaff/edit?id=' . $staff_id->getId());
+
+      // Check if the Save and Create Another button was used to submit. If it was, redirect to staff/new.
+      if($request->getParameter('CreateAnother')) {
+        $this->redirect('agStaff/new');
+      }
+      $this->redirect('agStaff/list');
     }
   }
 
@@ -448,9 +610,7 @@ class agStaffActions extends agActions
 
       foreach ($nameTypes as $nameType) {
         $headings[] = ucwords($nameType->person_name_type) . ' Name';
-        $j = Doctrine::getTable(
-                'AgPersonMjAgPersonName')->findByDql('person_id = ? AND person_name_type_id = ?',
-                array($staffMember->id, $nameType->id))->getFirst();
+        $j = Doctrine::getTable('AgPersonMjAgPersonName')->findByDql('person_id = ? AND person_name_type_id = ?', array($staffMember->id, $nameType->id))->getFirst();
         $content[ucwords($nameType->person_name_type) . ' Name']
             = ($j ? $j->getAgPersonName()->person_name : '');
       }
@@ -491,8 +651,8 @@ class agStaffActions extends agActions
                     array($staffMember->entity_id, $phoneType->id)
                 )->getFirst();
         $content[ucwords($phoneType->phone_contact_type) . ' Phone'] =
-            ($j ?
-                preg_replace(
+            (
+            $j ? preg_replace(
                         $j
                         ->getAgPhoneContact()
                         ->getAgPhoneFormat()
@@ -650,7 +810,7 @@ class agStaffActions extends agActions
    * @todo: define a standard import format and document it for the end user.
    * @todo: make this more robust and create meaningful error messages for failed import fiels and records.
    * */
-  public function executeImport()
+  public function executeImport2()
   {
     $staffMembers = Doctrine::getTable('agPerson')
             ->createQuery('a')
@@ -713,4 +873,53 @@ class agStaffActions extends agActions
       $this->message = $returned;
     }
   }
+
+  public function executeImport(sfWebRequest $request)
+  {
+    //$this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
+
+    $uploadedFile = $_FILES["import"];
+
+    $uploadDir = sfConfig::get('sf_upload_dir') . '/';
+    if(!move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"])) return sfView::ERROR;
+    $this->importPath = $uploadDir . $uploadedFile["name"];
+
+    // fires event so listener will process the file (see ProjectConfiguration.class.php)
+    $this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready'));
+    // TODO: eventually use this ^^^ to replace this vvv.
+
+    $import = new AgStaffImportXLS();
+//    $returned = $import->createTempTable();
+
+    $processedToTemp = $import->processImport($this->importPath);
+    $this->numRecordsImported = $import->numRecordsImported;
+    $this->events = $import->events;
+
+    // Normalize imported temp data only if import is successful.
+    if ($processedToTemp) {
+      // Grab table name from AgImportXLS class.
+      $sourceTable = $import->tempTable;
+      $dataNorm = new agStaffImportNormalization($scenarioId, $sourceTable, 'staff');
+
+      $format = "%d/%m/%Y %H:%M:%S";
+//      echo strftime($format);
+
+      $dataNorm->normalizeImport();
+
+      $this->summary = $dataNorm->summary;
+//      echo strftime($format);
+    }
+
+
+    //this below block is a bit hard coded and experimental, it should be changed to use gparams
+
+    $agLuceneIndex = new agLuceneIndex('agFacility');
+    $indexResult = $agLuceneIndex->indexAll();
+
+//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+//      $dispatcher = sfContext::getInstance()->getEventDispatcher();
+//      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
+//      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
+  }
+
 }

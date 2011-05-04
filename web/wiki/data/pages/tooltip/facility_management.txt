@@ -1,0 +1,6 @@
+===== Facility Management =====
+
+Facilities are one of the resource types managed by Sahana Agasti's scenarios and events.  Facilities are sites; specific physical locations.  These locations contain "resources": specific things the facility could be used for during an activation.
+
+==== Example ====
+An example of a facility is a local school.  The resources available at that school are a tornado shelter and a medical inoculation site.

@@ -7,5 +7,5 @@ all:
       staff_list: { label: 'List Staff', route: '@staff_list', parent: 'staff' }
       staff_import: { label: 'Import Staff', route: '@staff', parent: 'staff' }
       staff_export: { label: 'Export Staff', route: '@staff', parent: 'staff' }
-      staff_types: { label: 'Manage Staff Types', route: '@staff', parent: 'staff' }
-      staff_merge: { label: 'Merge Duplicates', route: '@staff', parent: 'staff' }
+      staff_types: { label: 'List Staff Types', route: '@staff', parent: 'staff' }
+      staff_merge: { label: 'Report Duplicates', route: '@staff', parent: 'staff' }

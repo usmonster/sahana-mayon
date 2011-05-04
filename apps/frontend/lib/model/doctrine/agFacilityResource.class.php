@@ -1,10 +1,7 @@
 <?php
 
 /**
- * agFacilityResource
- *
- * extends the base FacilityResource class for added
- * functionality
+ * agFacilityResource extends the base FacilityResource class
  *
  * PHP Version 5.3
  *
@@ -20,23 +17,22 @@
 class agFacilityResource extends BaseagFacilityResource
 {
 
-    /**
-     * Builds an index for facility resource
-     *
-     * The Lucene Facility Index allows for a facility to be searched by:
-     * id, Facility Code, and extends to:
-     * Facility Name, Facility Resource Type, Facility e-mail,
-     * and Facility Phone, which are indexed in the agFacility class
-     *
-     * @return Zend_Search_Lucene_Document $doc
-     *
-     */
-    public function updateLucene() {
-        $doc = new Zend_Search_Lucene_Document();
-        $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
-  
-        $doc->addField(Zend_Search_Lucene_Field::unStored('facility_code', $this->facility_resource_code, 'utf-8'));
-    }
+  /**
+   * Builds an index for facility resource
+   *
+   * The Lucene Facility Index allows for a facility to be searched by:
+   * id, Facility Code, and extends to:
+   * Facility Name, Facility Resource Type, Facility e-mail,
+   * and Facility Phone, which are indexed in the agFacility class
+   *
+   * @return Zend_Search_Lucene_Document $doc
+   *
+   */
+  public function updateLucene()
+  {
+    $doc = new Zend_Search_Lucene_Document();
+    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
+  }
 
   /**
    *
@@ -53,11 +49,10 @@ class agFacilityResource extends BaseagFacilityResource
    */
   public function setTableDefinition()
   {
-    parent::setTableDefinition() ;
+    parent::setTableDefinition();
 
     $this->addListener(new agFacilityResourceListener());
   }
-
 
   /**
    * delete()
@@ -87,28 +82,25 @@ class agFacilityResource extends BaseagFacilityResource
    */
   static public function facilityResourceInfo($facilityResourceIds = null)
   {
-    try
-    {
+    try {
 //      $rawQuery = new Doctrine_RawSql();
 //      $rawQuery->select('{sub.id},{sub.person_id},{sub.person_name_type_id},{sub.priority},{sub.person_name_id}, {pn.person_name}, {pnt.person_name_type}')
       $query = Doctrine_Core::getTable('agFacilityResource')
-        ->createQuery('fr')
-        ->select('fr.*, f.*, frt.*, frs.*')
-        ->innerJoin('fr.agFacility AS f')
-        ->innerJoin('fr.agFacilityResourceType AS frt')
-        ->innerJoin('fr.agFacilityResourceStatus AS frs')
-        ->where('1=1');
+              ->createQuery('fr')
+              ->select('fr.*, f.*, frt.*, frs.*')
+              ->innerJoin('fr.agFacility AS f')
+              ->innerJoin('fr.agFacilityResourceType AS frt')
+              ->innerJoin('fr.agFacilityResourceStatus AS frs')
+              ->where('1=1');
 
-      if (is_array($facilityResourceIds) and count($facilityResourceIds) > 0)
-      {
+      if (is_array($facilityResourceIds) and count($facilityResourceIds) > 0) {
         $query->whereIn('fr.id', $facilityResourceIds);
       }
 
       $resultSet = $query->execute();
 
       $facilityResourceSet = array();
-      foreach ($resultSet as $rslt)
-      {
+      foreach ($resultSet as $rslt) {
         $facility_resource_id = $rslt->getId();
         $facility_id = $rslt->getFacilityId();
         $facility_name = $rslt->getAgFacility()->getFacilityName();
@@ -118,21 +110,21 @@ class agFacilityResource extends BaseagFacilityResource
         $facility_resource_status_id = $rslt->getFacilityResourceStatusId();
         $facility_resource_status = $rslt->getAgFacilityResourceStatus()->getFacilityResourceStatus();
 
-       $facilityResourceSet[$facility_resource_id] = array( 'facility_id' => $facility_id,
-                                                        'facility_name' => $facility_name,
-                                                        'facility_code' => $facility_code,
-                                                        'facility_resource_type_id' => $facility_resource_type_id,
-                                                        'facility_resource_type' => $facility_resource_type,
-                                                        'facility_resource_status_id' => $facility_resource_status_id,
-                                                        'facility_resource_status' => $facility_resource_status
-                                                      );
+        $facilityResourceSet[$facility_resource_id] = array('facility_id' => $facility_id,
+          'facility_name' => $facility_name,
+          'facility_code' => $facility_code,
+          'facility_resource_type_id' => $facility_resource_type_id,
+          'facility_resource_type' => $facility_resource_type,
+          'facility_resource_status_id' => $facility_resource_status_id,
+          'facility_resource_status' => $facility_resource_status
+        );
       }
 
 //      print_r($personNameArray);
       return $facilityResourceSet;
-    }catch (\Doctrine\ORM\ORMException $e) {
+    } catch (\Doctrine\ORM\ORMException $e) {
       return NULL;
     }
-
   }
+
 }

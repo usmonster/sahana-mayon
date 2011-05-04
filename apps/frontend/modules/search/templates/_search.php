@@ -14,6 +14,13 @@
     foreach ($hits as $hit) {
 
 
+
+
+
+
+
+
+
       echo get_partial('search/result', array(
         'obj' => $results[$hit->model][$hit->pk],
         'pk' => $hit,

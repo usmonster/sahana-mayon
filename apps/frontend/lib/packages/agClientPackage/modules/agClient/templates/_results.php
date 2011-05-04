@@ -3,30 +3,31 @@ $ag_person_name_types = Doctrine::getTable('agPersonNameType')
         ->createQuery('b')
         ->execute();
 /**
- * what we want to do here is add a check to see if we want to create a new query
- * with our filter(if the data has not been updated) or somehow just filter the
- * $pager / doctrine_collection object
- *
+ * what we want to do here is add a check to see if we want to create a new
+ * query with our filter(if the data has not been updated) or somehow just
+ * filter the $pager / doctrine_collection object
  */
 ?>
 <table class="staffTable">
   <h3>Search Results:
     <?php
-    // Output the current staff members being shown, as well total number in the list.
+    // Output the current staff members being shown, as well total number
+    // in the list.
     if (!$pager->count() == 0) {
       echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count();
     } else {
       echo " search query returned no results";
     }
     /**
-     * These blocks are for the list sorting, highlight an item if it is the
-     * sorted field, indicate in which direction the sort goes
+     * These blocks are for the list sorting, highlight an item if it is
+     * the sorted field, indicate in which direction the sort goes
      * params we need to come in:
      *   column being sorted.
      *   column direction.
      *
-     * for column highlighting, if there is a large set of columns that might
-     * be highlighted, we can use the output buffer to pre-highlight those terms:
+     * for column highlighting, if there is a large set of columns that
+     * might be highlighted, we can use the output buffer to
+     * pre-highlight those terms:
      *  ob_start('column_highlight'); something like that.
      */
     $sortColumn = $sf_request->getGetParameter('sort');

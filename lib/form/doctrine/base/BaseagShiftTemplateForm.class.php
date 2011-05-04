@@ -16,8 +16,6 @@ abstract class BaseagShiftTemplateForm extends BaseFormDoctrine
   {
     $this->setWidgets(array(
       'id'                                   => new sfWidgetFormInputHidden(),
-      'shift_template'                       => new sfWidgetFormInputText(),
-      'description'                          => new sfWidgetFormInputText(),
       'scenario_id'                          => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => false)),
       'facility_resource_type_id'            => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'), 'add_empty' => false)),
       'staff_resource_type_id'               => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => false)),
@@ -35,8 +33,6 @@ abstract class BaseagShiftTemplateForm extends BaseFormDoctrine
 
     $this->setValidators(array(
       'id'                                   => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'shift_template'                       => new sfValidatorString(array('max_length' => 64)),
-      'description'                          => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'scenario_id'                          => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'))),
       'facility_resource_type_id'            => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'))),
       'staff_resource_type_id'               => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'))),

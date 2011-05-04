@@ -1,7 +1,21 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+
+/**
+ *
+ * agValidatorDateTime validates an integer. It also converts the input value to minutes
+ * assuming that the user inputs a number of day(s)
+ *
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @package    agasti
+ * @subpackage validator
+ * @author     Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
 class agValidatorDateTime extends sfValidatorDateTime{
 
@@ -103,7 +117,7 @@ class agValidatorDateTime extends sfValidatorDateTime{
     $format = $this->getOption('with_time') ? $this->getOption('datetime_output') : $this->getOption('date_output');
 
     //return isset($date) ? $date->format($format) : date($format, $cleanTime);
-    return $value;  //we shoul
+    return $value; 
   }
 }
 ?>

@@ -10,22 +10,34 @@
 *
 * @author     Nils Stolpe, CUNY SPS
 * @author     Pradeep Vijayagiri, CUNY SPS
+* @author     Charles Wisniewski, CUNY SPS
 *
 * Copyright of the Sahana Software Foundation, sahanafoundation.org
 **/
 class agTemplateHelper
 {
-  public static function buildAddressTable($addressArray)
+  /**
+   * @param boolean
+   *
+   * @param array of phone information, the format should be:
+   * phone type: phone number <br />
+   * phone type: phone number
+   *
+   * OR phone type: phone number (if primary only flag is true
+   *
+   * @return string html formatted cell of email for display in templates
+   */
+
+  public static function buildPhoneHtml($phoneArray, $primaryOnly = true)
   {
-    foreach ($addressArray as $type => $address) {
-      $counts[$type] = count($address);
+    foreach ($phoneArray as $type => $phone) {
+      $counts[$type] = count($phone);
     }
 
     // Then determine the maximum rows we'll get.
     $maxRows = max($counts);
     // Get the headers for the table. And start building the HTML for the tables header.
-    $headers = array_keys($addressArray);
-    $tableHead = '<tr>' . PHP_EOL;
+    $headers = array_keys($phoneArray);
     // Set the iterator and build the table rows.
     $i = 0;
     while ($i < $maxRows) {
@@ -50,7 +62,7 @@ class agTemplateHelper
     }
     return $output;
   }
-  //start p-code
+
   public static function include_customTitle()
   {
     $title = sfContext::getInstance()->getResponse()->getTitle();
@@ -63,7 +75,7 @@ class agTemplateHelper
     }
     echo content_tag('title', $title)."\n";
   }
-    //end p-code
+
 }
 
 ?>

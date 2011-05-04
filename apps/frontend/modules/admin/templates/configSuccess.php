@@ -31,9 +31,9 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
  
   ?>
   
-<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure adminConfigLegend">
+<form action="<?php echo url_for('admin/config') ?>" method="post" class="configure adminConfig">
     <fieldset>
-      <legend><img src="<?php echo url_for('images/database.png') ?>" class="textBottom" alt="database icon" />Database Configuration:</legend>
+      <legend><?php echo image_tag('database.png', array('class' => 'textBottom', 'alt' => 'database icon')) ?>Database Configuration:</legend>
       <p>
         <?php ?>
       </p>
@@ -83,7 +83,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
       <li class="textRight">
         <input type="hidden" name="_enter_check" value="1" />
         <input type="hidden" name="_sql_check" value="<?php echo $install_flag; ?>" />
-        <input type="submit" name="saveconfig" value="save config" class="saveLinkButton" onclick="submit.disabled=true;" />
+        <input type="submit" name="saveconfig" value="save config" class="linkButton" onclick="submit.disabled=true;" />
         <?php
 //if the right information was passed
 //process and install, with the schema file(s) needed.
@@ -116,7 +116,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
         // this will be useful$result->setHint($req['error']);
       }
 
-      $current = '<tr><td>&nbsp;</td><td><strong>' . $req['name'] . '</strong></td>' . '<td>' . $req['current'] . '</td>';
+      $current = '<tr><td>&nbsp;</td><td><span class="boldText">' . $req['name'] . '</span></td>' . '<td>' . $req['current'] . '</td>';
       $required = $req['required'] ? $req['required'] : '&nbsp;';
       $recommend = $req['recommended'] ? $req['recommended'] : '&nbsp;';
       $res = $req['result'] ? '&nbsp;' : 'fail';

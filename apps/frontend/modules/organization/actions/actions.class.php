@@ -51,20 +51,12 @@ class organizationActions extends sfActions
    */
   public function executeList(sfWebRequest $request)
   {
-    // Store organizations and their staff counts in an array where
-    // $this->staffCountByOrg = array( organization id => staff count by organization ).
-//    $this->organizations = agOrganization::organizationInArray();
-//    $organizations = $this->organizations;
-//    $this->staffCountByOrg = array();
-//    foreach($organizations as $orgId => $orgName)
-//    {
-//      $this->staffCountByOrg[$orgId] = agStaff::staffCount(false, null, true, $orgId);
-//    }
-    $this->staffCountByOrg = agStaff::getUniqueStaffCount(3);
-
+    // Query organizations and their staff counts.
     $query = agDoctrineQuery::create()
-    ->select('o.*')
-    ->from('agOrganization as o');
+    ->select('o.*, count(distinct sr.staff_id) AS staffCount')
+    ->from('agOrganization as o')
+    ->leftJoin('o.agStaffResource sr')
+    ->groupBy('o.organization');
 
      /**
      * Create pager
@@ -117,29 +109,6 @@ class organizationActions extends sfActions
     // Get the organization's total unique staff count.
     $totalStaffCountByOrg = agStaff::getUniqueStaffCount(3, array($this->ag_organization->getId()));
     $this->totalStaffCount = $totalStaffCountByOrg[$this->ag_organization->getId()];
-
-    // lazily load the organization helper
-    $organizationHelper = $this->getOrganizationHelper() ;
-
-    // get all staff info for this organization
-    $organizationStaffResources = $organizationHelper->getOrganizationStaffInfo($this->orgId, FALSE) ;
-
-    // instantiate the array that will store our final display string
-    $this->staffResourceList = array() ;
-
-    // first, explicitly check that this organization even HAS staff resources
-    if (array_key_exists($this->orgId, $organizationStaffResources))
-    {
-      // assuming it does, loop through them and build our string
-      foreach ($organizationStaffResources[$this->orgId] as $staffResourceId => $staffInfo)
-      {
-        $staffResourceString = sprintf('%s (%d): %s', $staffInfo['name'], $staffInfo['staff_id'], $staffInfo['type']);
-        $this->staffResourceList[$staffInfo['staff_resource_organization_id']] = $staffResourceString ;
-      }
-
-      // a final sort on the values will ensure that strings (names) sort sequentially
-      asort($this->staffResourceList) ;
-    }
 
      //p-code
       $this->getResponse()->setTitle('Sahana Agasti Organization - ' . $this->ag_organization->getOrganization());
@@ -222,10 +191,15 @@ class organizationActions extends sfActions
 
     $this->forward404Unless($ag_organization = Doctrine_Core::getTable('agOrganization')->find(array($request->getParameter('id'))), sprintf('Object ag_organization does not exist (%s).', $request->getParameter('id')));
 
-    // Delete associating staff resource.
-    $ag_organization->getAgStaffResourceOrganization()->delete();
-
-    $ag_organization->delete();
+    // Reassign associating staff resource to default organization.
+    $orgHelper = new agOrganizationHelper();
+    $defaultOrganizationId = $orgHelper->getDefaultOrganizationId();
+    
+    $query = agDoctrineQuery::create()
+             ->update('agStaffResource')
+             ->set('organization_id', $defaultOrganizationId)
+             ->where('organization_id = ?', $ag_organization->id);
+    $updateCount = $query->execute();
 
     if ($agEntity = $ag_organization->getAgEntity()) {
       $agEntity->delete();

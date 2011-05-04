@@ -1,8 +1,22 @@
 <?php
+
+/**
+ * A set of functions used by the administration configuration section
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @author     Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ *
+ */
+
 require_once (dirname(__FILE__) . '/../../../../../lib/vendor/symfony/lib/yaml/sfYaml.php');
 require_once (sfConfig::get('sf_config_dir') . '/ProjectConfiguration.class.php');
 require_once (sfConfig::get('sf_web_dir') . '/requirements.inc.php');
-require_once (sfConfig::get('sf_web_dir') . '/func.inc.php');
+require_once (sfConfig::get('sf_app_lib_dir') . '/install/func.inc.php');
 $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
 
 class agConfig
