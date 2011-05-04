@@ -31,7 +31,7 @@ if (isset($blackOutFacilities)) {
 
 
 <br/>
-<table class="reviewTable">
+<table class="blueTable">
     <tr class="head">
         <th class="row1">Actions</th>
         <th>Description</th>

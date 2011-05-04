@@ -239,7 +239,7 @@ h5 {
   -webkit-box-shadow: 3px 3px 3px #ccc;
   box-shadow: 3px 3px 3px #ccc;*/
 }
-input.linkButton, a.linkButton {
+input.linkButton, a.linkButton{
   font-family: helvetica, arial, verdana, sans-serif;
   padding: 0.32em 0.6em;
   margin: 0.12em;
@@ -1675,21 +1675,21 @@ float: right;
     padding-right:15px;
 }
 
-table.reviewTable{border: 1px solid #dadada; width:650px; border-collapse: collapse;
+table.blueTable{border: 1px solid #dadada; width:650px; border-collapse: collapse;
 }
-table.reviewTable tr.head{ background-color: #e5f7ff; text-align:center; color: #848484; height:35px;
+table.blueTable tr.head{ background-color: #e5f7ff; text-align:center; color: #848484; height:35px;
 }
-table.reviewTable tr.head:hover{ background-color: #e5f7ff
+table.blueTable tr.head:hover{ background-color: #e5f7ff
 }
-table.reviewTable tr.head th.row1{ width:260px;
+table.blueTable tr.head th.row1{ width:260px;
 }
-table.reviewTable tr td{ border:1px solid #dadada; padding:10px;
+table.blueTable tr td{ border:1px solid #dadada; padding:10px;
 }
-table.reviewTable tr td a{ color: #848484; font-weight:bold; text-decoration: none; font-size: 1em;
+table.blueTable tr td a{ color: #848484; font-weight:bold; text-decoration: none; font-size: 1em;
 }
-table.reviewTable tr td a:hover{ color: #ff8f00; font-weight:bold; text-decoration: none; font-size: 1em;
+table.blueTable tr td a:hover{ color: #ff8f00; font-weight:bold; text-decoration: none; font-size: 1em;
 }
-table.reviewTable tr:hover{background-color: #f7f7f7
+table.blueTable tr:hover{background-color: #f7f7f7
 }
 
 

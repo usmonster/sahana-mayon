@@ -9,7 +9,7 @@
 <h3><?php echo $scenario_description ?></h3>
 <!-- ideally the above should be 'editable text', i.e. when clicked on they convert to input fields -->
 <br/>
-<table class="reviewTable">
+<table class="blueTable">
     <tr class="head">
         <th class="row1">Steps</th>
         <th>Description</th>
