@@ -76,9 +76,13 @@ $(function(){
       $(this).html('<span class="inputGraySmall">' + $(this).valueOf()+'</span>');
       });//this  has been disabled to not break anything while it's still in pro'
 
+   //$('.groupLabel').click(function(){ //this needs to be only the children of ..currently it's ALL
+   //   $(this).parent().find('.facgroup').slideToggle("slow");
+   // });
 
-    $('.groupLabel').click(function(){ //this needs to be only the children of ..currently it's ALL
-      $(this).parent().find('.facgroup').slideToggle("slow");
+    $('.toggleGroup').click(function(){ 
+      $(this).nextAll('div:eq(1)').slideToggle("slow");
+      $(this).text($(this).text() =='[-]'? '[+]' :'[-]');
     });
 });
 
