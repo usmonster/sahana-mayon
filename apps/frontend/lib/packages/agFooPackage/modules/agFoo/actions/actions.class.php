@@ -170,10 +170,19 @@ class agFooActions extends agActions
 
     $personIds = array(10, 11);
     $obj = new agPersonLanguageHelper($personIds);
-    $results = $obj->getPersonLanguageById();
-    print_r($results);
+//    $results = $obj->getPersonLanguageById();
+//    print_r($results);
 
+    $personLanguages = array(2 => array(1 => array('    German   ', array())),
+                             3 => array(1 => array('Arabic', array('read' => '  fluent  ', 'write' => 'intermediate', 'speak' => 'fluent')),
+                                        2 => array('English', array('read' => 'basic', 'write' => 'intermediate', 'speak' => 'fluent')),
+                                        3 => array('Abkhaz', array('read' => 'basic', 'write' => 'intermediate', 'speak' => 'fluent')) ),
+                             4 => array(),
+                             11 => array(1 => array('Armenian')),
+                             12 => array(1 => array('Akan', array('speak' => 'superior')))
+                            );
 
+    $obj->setPersonlanguages($personLanguages, TRUE, TRUE, FALSE);
 
 //
 //    $stfResHelper = new agStaffResourceHelper();

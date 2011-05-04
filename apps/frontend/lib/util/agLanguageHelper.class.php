@@ -54,7 +54,7 @@ class agLanguageHelper extends agBulkRecordHelper
       ->select('lf.language_format')
           ->addSelect('lf.id')
         ->from('agLanguageFormat lf')
-        ->whereIn('ect.email_contact_type', $languageFormats)
+        ->whereIn('lf.language_format', $languageFormats)
       ->useResultCache(TRUE, 3600, __FUNCTION__)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
@@ -64,13 +64,13 @@ class agLanguageHelper extends agBulkRecordHelper
    * @param array $language_competency An array of language_competency
    * @return array An associative array of language competency ids keyed by language competency.
    */
-  public function getLanguageCompetencyIds($languageCompetencys)
+  public function getLanguageCompetencyIds($languageCompetencies)
   {
     return agDoctrineQuery::create()
-      ->select('lc.languagen_competency')
+      ->select('lc.language_competency')
           ->addSelect('lc.id')
         ->from('agLanguageCompetency lc')
-        ->whereIn('lc.langauge_competency', $languageCompetencys)
+        ->whereIn('lc.language_competency', $languageCompetencies)
       ->useResultCache(TRUE, 3600, __FUNCTION__)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
@@ -89,63 +89,63 @@ class agLanguageHelper extends agBulkRecordHelper
                                      Doctrine_Connection $conn = NULL)
   {
     // explicit delcarations are nice
-    $results = array() ;
-    $err = NULL ;
+    $results = array();
+    $err = NULL;
 
     // pick up our default connection / transaction objects if not passed anything
-    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError; }
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
     // here we check our current transaction scope and create a transaction or savepoint
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
     if ($useSavepoint)
     {
-      $conn->beginTransaction(__FUNCTION__) ;
+      $conn->beginTransaction(__FUNCTION__);
     }
     else
     {
-      $conn->beginTransaction() ;
+      $conn->beginTransaction();
     }
 
     foreach ($newLanguages as $language)
     {
-      $newRec = new agLanguage() ;
-      $newRec['language'] = $language ;
+      $newRec = new agLanguage();
+      $newRec['language'] = $language;
 
       try
       {
-        $newRec->save($conn) ;
-        $results[$language] = $newRec->getId() ;
+        $newRec->save($conn);
+        $results[$language] = $newRec->getId();
       }
       catch(Exception $e)
       {
         // log our error
-        $errMsg = sprintf('Couldn\'t insert language value %s. Rolled back changes!', $language) ;
+        $errMsg = sprintf('Couldn\'t insert language value %s. Rolled back changes!', $language);
 
         // capture our exception for a later throw and break out of this loop
-        $err = $e ;
-        break ;
+        $err = $e;
+        break;
       }
     }
 
     if (is_null($err))
     {
       // yay, it all went well so let's commit!
-      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
     }
     else
     {
       // log our error
-      sfContext::getInstance()->getLogger()->err($errMsg) ;
+      sfContext::getInstance()->getLogger()->err($errMsg);
 
       // rollback
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
 
       // throw an error if directed to do so
-      if ($throwOnError) { throw $err ; }
+      if ($throwOnError) { throw $err; }
     }
 
-    return $results ;
+    return $results;
   }
 
   /**
@@ -162,63 +162,63 @@ class agLanguageHelper extends agBulkRecordHelper
                                            Doctrine_Connection $conn = NULL)
   {
     // explicit delcarations are nice
-    $results = array() ;
-    $err = NULL ;
+    $results = array();
+    $err = NULL;
 
     // pick up our default connection / transaction objects if not passed anything
-    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError; }
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
     // here we check our current transaction scope and create a transaction or savepoint
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
     if ($useSavepoint)
     {
-      $conn->beginTransaction(__FUNCTION__) ;
+      $conn->beginTransaction(__FUNCTION__);
     }
     else
     {
-      $conn->beginTransaction() ;
+      $conn->beginTransaction();
     }
 
     foreach ($newFormats as $format)
     {
-      $newRec = new agLanguageFormat() ;
-      $newRec['language_format'] = $format ;
+      $newRec = new agLanguageFormat();
+      $newRec['language_format'] = $format;
 
       try
       {
-        $newRec->save($conn) ;
-        $results[$format] = $newRec->getId() ;
+        $newRec->save($conn);
+        $results[$format] = $newRec->getId();
       }
       catch(Exception $e)
       {
         // log our error
-        $errMsg = sprintf('Couldn\'t insert language format value %s. Rolled back changes!', $format) ;
+        $errMsg = sprintf('Couldn\'t insert language format value %s. Rolled back changes!', $format);
 
         // capture our exception for a later throw and break out of this loop
-        $err = $e ;
-        break ;
+        $err = $e;
+        break;
       }
     }
 
     if (is_null($err))
     {
       // yay, it all went well so let's commit!
-      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
     }
     else
     {
       // log our error
-      sfContext::getInstance()->getLogger()->err($errMsg) ;
+      sfContext::getInstance()->getLogger()->err($errMsg);
 
       // rollback
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
 
       // throw an error if directed to do so
-      if ($throwOnError) { throw $err ; }
+      if ($throwOnError) { throw $err; }
     }
 
-    return $results ;
+    return $results;
   }
 
   /**
@@ -236,63 +236,63 @@ class agLanguageHelper extends agBulkRecordHelper
                                                 Doctrine_Connection $conn = NULL)
   {
     // explicit delcarations are nice
-    $results = array() ;
-    $err = NULL ;
+    $results = array();
+    $err = NULL;
 
     // pick up our default connection / transaction objects if not passed anything
-    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError; }
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
     // here we check our current transaction scope and create a transaction or savepoint
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
     if ($useSavepoint)
     {
-      $conn->beginTransaction(__FUNCTION__) ;
+      $conn->beginTransaction(__FUNCTION__);
     }
     else
     {
-      $conn->beginTransaction() ;
+      $conn->beginTransaction();
     }
 
     foreach ($newCompetencies as $competency)
     {
-      $newRec = new agLanguageCompetency() ;
-      $newRec['language_competency'] = $competency ;
+      $newRec = new agLanguageCompetency();
+      $newRec['language_competency'] = $competency;
 
       try
       {
         $newRec->save($conn) ;
-        $results[$competency] = $newRec->getId() ;
+        $results[$competency] = $newRec->getId();
       }
       catch(Exception $e)
       {
         // log our error
-        $errMsg = sprintf('Couldn\'t insert language competency value %s. Rolled back changes!', $competency) ;
+        $errMsg = sprintf('Couldn\'t insert language competency value %s. Rolled back changes!', $competency);
 
         // capture our exception for a later throw and break out of this loop
-        $err = $e ;
-        break ;
+        $err = $e;
+        break;
       }
     }
 
     if (is_null($err))
     {
       // yay, it all went well so let's commit!
-      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
     }
     else
     {
       // log our error
-      sfContext::getInstance()->getLogger()->err($errMsg) ;
+      sfContext::getInstance()->getLogger()->err($errMsg);
 
       // rollback
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
 
       // throw an error if directed to do so
-      if ($throwOnError) { throw $err ; }
+      if ($throwOnError) { throw $err; }
     }
 
-    return $results ;
+    return $results;
   }
 
 }

@@ -25,7 +25,8 @@ abstract class agBulkRecordHelper
             $_batchSizeModifier = 1,
             $_recordCount,
             $_defaultBatchSize,
-            $enforceStrict;
+            $enforceStrict,
+            $createEdgeTableValues;
 
   /**
    * This is the class's constructor which loads the $_recordIds property.
@@ -38,6 +39,7 @@ abstract class agBulkRecordHelper
     $batchSize = ((agGlobal::getParam('default_batch_size'))/$this->_batchSizeModifier) ;
     $this->_defaultBatchSize = abs($batchSize) ;
     $this->enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
+    $this->createEdgeTableValues = agGlobal::getParam('create_edge_table_values');
 
     // if passed an array of address id's, set them as a class property
     $this->setRecordIds($recordIds);
