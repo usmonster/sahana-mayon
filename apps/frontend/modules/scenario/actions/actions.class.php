@@ -139,7 +139,7 @@ class scenarioActions extends agActions
     $this->wizardHandler($request, 4);
     //the above should not fail.
     $this->scenario = Doctrine::getTable('agScenario')
-            ->findByDql('id = ?', $request->getParameter('id'))
+            ->findByDql('id = ?', $this->scenario_id)
             ->getFirst();
     $this->ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
             ->find(array($request->getParameter('id')));
@@ -209,7 +209,7 @@ class scenarioActions extends agActions
 
 // Query to get all staff resource types.
       $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
-      if (count($dsrt) > 1) {
+      if (count($dsrt) > 0) {
         $this->staffResourceTypes = $dsrt;
       } else {
         $this->staffResourceTypes =

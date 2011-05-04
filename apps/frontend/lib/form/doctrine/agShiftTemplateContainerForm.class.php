@@ -53,7 +53,7 @@ class agShiftTemplateContainerForm extends sfForm
               ->where('a.scenario_id = ?', $this->scenario_id)
               ->execute(); //->getFirst();
 
-    if (isset($shiftTemplates)) {
+    if (count($shiftTemplates) > 0) {
       $i = 0;
       foreach ($shiftTemplates as $shiftTemplate) {
 
@@ -61,11 +61,8 @@ class agShiftTemplateContainerForm extends sfForm
         $shiftTemplateForm = new agSingleShiftTemplateForm($this->scenario_id, $shiftTemplate);
         $shiftTemplateForm->setDefault('facility_resource_type_id', $shiftTemplate->getFacilityResourceTypeId());// ->facility_resource_type_id);
         $shiftTemplateForm->setDefault('staff_resource_type_id', $shiftTemplate->getStaffResourceTypeId());
-        //since we overload these widgets on construct with scenario default
-//        $shiftTemplateForm->getWidgetSchema()->setIdFormat('shift_template_' . $i . '_%s');
         $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[' . $i . '][%s]');
 
-//unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
         $this->embedForm($i, $shiftTemplateForm);
         $this->getWidgetSchema()->setLabel($i, false);
         $i++;
@@ -73,11 +70,10 @@ class agShiftTemplateContainerForm extends sfForm
 
     } else {
       $shiftTemplateForm = new agSingleShiftTemplateForm($this->scenario_id);
-      //unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);
-      $shiftTemplateForm->getWidgetSchema()->setNameFormat('[0][%s]');
-      $shiftTemplateForm->getWidgetSchema()->setIdFormat('0%s');
+      $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[0][%s]');
+
+
       $this->embedForm('0', $shiftTemplateForm);
-      //$staffResourceForm->getWidgetSchema()->setLabel('', $value) ContainerForm->getWidgetSchema()->setLabel(
       $this->getWidgetSchema()->setLabel('0', false);
 
 //handle for creation of more than just the one form.. or have it come in through jquery
