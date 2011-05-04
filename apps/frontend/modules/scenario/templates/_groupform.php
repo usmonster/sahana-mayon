@@ -123,9 +123,6 @@ use_javascript('tooltip.js'); ?>
 <noscript>in order to set the activation sequence of resource facilities and add them to the
   facility group, you will need javascript enabled</noscript>
 
-
-
-<p>Use the checkboxes below to determine which facility resource types are display in the Available list.</p>
 <div class="bucketHolder" >
   <form name="faciliy_group_form" id="facility_group_form" action="<?php
 echo url_for
@@ -217,7 +214,7 @@ echo url_for
 <?php if ($allocatedFacilityResources == true): ?>
   <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Skip & Continue</a>
 <?php endif; ?>
-  <a href="<?php echo url_for('scenario/list'); ?>" class="linkButton">Back to Scenario List</a>
+  <a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id); ?>" class="linkButton">Back to Facility Group List</a>
 <div class="tooltips" >
   <span id="allocated_tip">
 <?php echo "urltowiki/allocated_tooltip"; ?>

@@ -27,6 +27,13 @@ the group, assign the group type, allocation status, and the order in which is s
 <p><strong>Note:</strong> Facility resources should be created in the facility module.  If there are no records
   below use the "Plan" menu above to reach the Facility menu and add your facilities to Agasti.</p>
 <div>
+<?php if ($groupSelector != null): ?>
+<br />
+<!--<p>Use the list below to select existing facility groups for editing.</p>-->
+<form action="<?php echo url_for('scenario/fgroup?id=' . $scenario_id); ?>" method="post">
+  <?php echo $groupSelector; ?>
+</form>
+<?php endif; ?>
   <?php
     include_partial('groupform', array('facilityStatusForm' => $facilityStatusForm ,
                                        'groupform' => $groupform,

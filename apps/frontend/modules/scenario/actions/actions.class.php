@@ -696,16 +696,27 @@ class scenarioActions extends agActions
             ->where('scenario_display = true')
             ->orderBy('fras.facility_resource_allocation_status')
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-    $this->facilityGroups = agDoctrineQuery::create()
+// For facility group selection.
+    $facilityGroupChoices = agDoctrineQuery::create()
         ->select('sfg.id, sfg.scenario_facility_group')
         ->from('agScenarioFacilityGroup sfg')
         ->where('sfg.scenario_id = ?', $this->scenario_id)
-        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-//    if(empty($this->facilityGroups)) {
-//      $groupSelector = false;
-//    } else {
-//      $groupSelector = new sfWidgetFormChoice
-//    }
+        ->orderBy('sfg.scenario_facility_group')
+        ->execute(array(), 'key_value_pair');
+    if(empty($facilityGroupChoices)) {
+      $this->groupSelector = false;
+    } else {
+      $this->groupSelector = new sfForm();
+      $this->groupSelector->setWidget('Change Facility Group:', new sfWidgetFormChoice(
+        array('choices' => ($request->getParameter('groupid') ? $facilityGroupChoices : array(0 => null) + $facilityGroupChoices)),
+        array('class' => 'inputGray')
+      ));
+      if($request->getParameter('groupid')) {
+        $this->groupSelector->getWidget('Change Facility Group:')->setDefault($request->getParameter('groupid'));
+      }
+
+    }
+
     if ($request->getParameter('groupid')) {
 //EDIT
       $this->groupId = $request->getParameter('groupid');
