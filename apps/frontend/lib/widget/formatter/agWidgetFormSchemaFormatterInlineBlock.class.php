@@ -21,7 +21,7 @@ class agWidgetFormSchemaFormatterInlineBlock extends sfWidgetFormSchemaFormatter
 
   protected
   //$rowFormat = "<div class=\"rowFormat2\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
-  $rowFormat = "<span class=\"rowFormat3\">%label%</span><div class=\"rowFormat2\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
+  $rowFormat = "<span class=\"rowFormat3\">%label% (&nbsp;&nbsp;&nbsp;)<span style=\"float:right; color: #21bbff\">Status:  &nbsp;&nbsp;&nbsp;&nbsp;</span></span><div class=\"rowFormat2\"><span>%error%%field%%help%%hidden_fields%</span></div>\n",
   $errorRowFormat = "<span>\n%errors%<span>\n",
   $helpFormat = '<br />%help%',
   $decoratorFormat = "<div class=\"facgroup decoratorFormatContent\">\n  %content%</div>";

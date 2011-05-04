@@ -907,6 +907,7 @@ th .tableRow {
   margin-top: 15px;
   color: #ff8f00;
   font-weight: bold;
+  margin-left:15px
 }
 
 .filterButton {
@@ -1135,6 +1136,10 @@ table.adminConfigRequirements tr td{
    margin: 4px 0px; padding: 0px;
 }
 
+.facgroup{
+  margin-left:15px;
+}
+
 .rowFormat{
   display: inline-block;
   margin-right: 4px;
@@ -1146,11 +1151,12 @@ table.adminConfigRequirements tr td{
 }
 
 .rowFormat3{
-    display: inline-block;
+    display: block;
     font-weight: bold;
     color: #848484;
-    padding-bottom:4px 0px;
+    padding-bottom:2dpx;
     border-bottom:1px solid #dadada;
+    margin-right:10px;
 }
 
 .rowFormat4{
