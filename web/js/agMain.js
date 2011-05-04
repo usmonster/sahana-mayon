@@ -15,7 +15,7 @@ $(document).ready(function(){
   // or it will set the check on checkAll if all the checkToggles have been checked
   // individually.
   $('.checkToggle').live('change', function(){
-    if($('input.checkToggle').length == $('input.checkToggle:checked').length) {
+    if($('.checkToggle').length == $('.checkToggle:checked').length) {
       $('#checkall').attr('checked', true);
     } else {
       $("#checkall").attr('checked', false);

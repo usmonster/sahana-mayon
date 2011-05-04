@@ -78,13 +78,13 @@ scenario_search:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action search }
 
-scenario_fgroup:
-  url:     /scenario/:id/fgroup
-  options: { model: agScenario, type: object }
-  param:   { module: scenario, action: fgroup }
-
 scenario_fgroup_edit:
   url:     /scenario/:id/fgroup/:groupid
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: fgroup }
+  
+scenario_fgroup:
+  url:     /scenario/:id/fgroup
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: fgroup }
 

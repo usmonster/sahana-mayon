@@ -65,6 +65,7 @@ class scenarioActions extends agActions
   public function executeListgroup(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
+    $this->wizardHandler($request, 3);
     $this->ag_scenario_facility_groups = agDoctrineQuery::create()
             ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
             ->from(
@@ -590,6 +591,7 @@ class scenarioActions extends agActions
         else {
           $facilityDefaults->remove($index);
         }
+
       }
 
 
@@ -620,12 +622,23 @@ class scenarioActions extends agActions
 
       if ($request->hasParameter('Continue')) {
 
-//do some stuff
-//        $this->setTemplate('scenario/newgroup');
-        $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
+        // count our facility groups and redirect to new fgroup or list appropriately
+        $fgroupCt = agDoctrineQuery::create()
+          ->select('count(sfg.id) AS sfg')
+            ->from('agScenarioFacilityGroup sfg')
+            ->where('sfg.scenario_id = ?', $this->scenario_id)
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+        if ($fgroupCt < 1 || empty($fgroupCt)) {
+          $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
+        } else {
+          $this->redirect('scenario/listgroup?id=' . $this->scenario_id);
+        }
+
       } else {
         $this->redirect('scenario/resourcetypes?id=' . $this->scenario_id);
       }
+
     }
   }
 
@@ -641,7 +654,7 @@ class scenarioActions extends agActions
     $this->forward404Unless($this->scenario_id = $request->getParameter('id'));
 //set up some things to show up on the screen for our form
     $this->setScenarioBasics($request);
-    $this->wizardHandler($request, 3) ;
+    $this->wizardHandler($request, 3);
     $this->scenarioFacilityGroups = Doctrine::getTable('agScenarioFacilityGroup')
             ->findByDql('scenario_id = ?', $this->scenario_id)
             ->getData();

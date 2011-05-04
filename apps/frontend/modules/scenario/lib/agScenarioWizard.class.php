@@ -22,7 +22,7 @@ class agScenarioWizard
     $this->steps = array(
       1 => array('title' => 'Name and Describe Scenario', 'url' => 'scenario/meta'),
       2 => array('title' => 'Select Staff and Facility Types', 'url' => 'scenario/resourcetypes'),
-      3 => array('title' => 'Create Facility Groups', 'url' => 'scenario/fgroup'),
+      3 => array('title' => 'Create Facility Groups', 'url' => 'scenario/listgroup'),
       4 => array('title' => 'Set Staff Resource Requirements', 'url' => 'scenario/staffresources'),
       5 => array('title' => 'Define Staff Pool', 'url' => 'scenario/staffpool' ),
       6 => array('title' => 'Create Shift Templates', 'url' => 'scenario/shifttemplates'),

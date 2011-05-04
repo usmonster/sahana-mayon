@@ -304,6 +304,19 @@ input.linkButton {
   text-shadow: 0px 0px 1px #ff8f00;
 }
 
+.formSmall {
+  border: solid 1px #dadada;
+  display: inline-block;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  padding: 5px;
+  margin: auto;
+}
+
+.formSmall label {
+  font-weight: bold;
+  color: #848484;
+}
 .buttonWhite {
   display: inline-block;
   padding: .25em .5em;

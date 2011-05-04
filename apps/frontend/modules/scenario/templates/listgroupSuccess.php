@@ -1,9 +1,9 @@
 <?php
   use_javascript('agMain.js');
 ?>
-<h3>Facility Group Listing</h3>
-
-<table class="staffTable"">
+<h2>Facility Group List</h2>
+<?php include_partial('wizard', array('wizardDiv' => $wizardDiv)); ?>
+<table class="staffTable">
     <tr class="head">
       <th>Facility Group</th>
       <th>Facility Group Type</th>
@@ -14,7 +14,7 @@
   <tbody>
     <?php foreach ($ag_scenario_facility_groups as $ag_scenario_facility_group): ?>
       <tr>
-        <td><a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id) . '?groupid=' . $ag_scenario_facility_group->id ?>" class="linkButton">
+        <td><a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id . '&groupid=' . $ag_scenario_facility_group->id ); ?>" class="linkButton">
           <?php echo $ag_scenario_facility_group->getScenarioFacilityGroup() ?></a></td>
       <td><?php echo $ag_scenario_facility_group->getAgFacilityGroupType() ?></td>
       <td><?php echo $ag_scenario_facility_group->getAgFacilityGroupAllocationStatus() ?></td>
@@ -24,5 +24,6 @@
     <?php endforeach; ?>
         </tbody>
       </table>
-<hr class="ruleGray" />
-    <a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id) ?>" class="linkButton" title="New Facility Group">New</a>
+<hr />
+ <a href="<?php echo url_for('scenario/fgroup?id=' . $scenario_id) ?>" class="linkButton" title="Add New Facility Group">Add New Facility Group</a>
+ <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton" title="Continue">Continue</a>
