@@ -60,7 +60,7 @@
 </form>
 
 <br />
-  <hr />
+  <hr class="ruleGray" />
 
   <a href="<?php echo url_for('scenario/list') ?>" class="linkButton">List Scenarios</a>
   <a href="<?php echo url_for('scenario/meta') ?>" class="linkButton">Create Another Scenario</a>

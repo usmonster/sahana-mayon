@@ -17,7 +17,7 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
 
 <?php if ($ag_events) {
 ?>
-<hr />
+<hr class="ruleGray"/>
   <h3>Existing Events</h3>
 
   <table>

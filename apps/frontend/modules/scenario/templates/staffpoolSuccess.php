@@ -40,7 +40,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
     }
 ?>
     <br />
-    <hr />
+    <hr class="ruleGray" />
     <br />
     <h3>Staff Pool Definition</h3>
 <?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
@@ -50,7 +50,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
       <!--sometimes this will fail -->
   <?php if (isset($pager)) {
  ?>
-      <hr />
+      <hr class="ruleGray" />
   <?php
       //include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'target_module' => $target_module))
 

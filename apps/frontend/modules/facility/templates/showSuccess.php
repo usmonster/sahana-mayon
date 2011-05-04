@@ -223,7 +223,7 @@
     </tbody>
     </table>
 
-    <hr />
+    <hr class="ruleGray" />
 <?php echo link_to('Edit', 'facility/edit?id=' . $ag_facility->getId(), array('class' => 'linkButton')); ?>
       &nbsp;
 <?php echo link_to('List', 'facility/list', array('class' => 'linkButton')); ?>

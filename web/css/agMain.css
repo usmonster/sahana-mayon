@@ -234,11 +234,8 @@ h5 {
   text-decoration: none;
   outline: none;
   background: #f1f1f1;
-
-/*  -moz-box-shadow: 3px 3px 3px #ccc;
-  -webkit-box-shadow: 3px 3px 3px #ccc;
-  box-shadow: 3px 3px 3px #ccc;*/
 }
+
 input.linkButton {
   font-family: helvetica, arial, verdana, sans-serif;
   padding: 0.32em 0.6em;
@@ -259,11 +256,6 @@ input.linkButton {
   text-decoration: none;
   outline: none;
   background: #f1f1f1;
-
-
-/*  -moz-box-shadow: 3px 3px 3px #ccc;
-  -webkit-box-shadow: 3px 3px 3px #ccc;
-  box-shadow: 3px 3px 3px #ccc;*/
 }
 
 .submitLinkButton {

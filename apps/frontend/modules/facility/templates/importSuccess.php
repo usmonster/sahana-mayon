@@ -14,7 +14,7 @@ $i = 1;
 <p>Records imported into temporary table: <?php echo $numRecordsImported ?><br/>
 
     <?php if (count($events) > 0): ?>
-    <hr>
+    <hr class="ruleGray" />
     <table>
         <tr><th>&nbsp;</th><th>Step</th><th>Type</th><th>Message</th></tr>
     <?php foreach ($events as $event): ?>
@@ -45,7 +45,7 @@ $i = 1;
 
     <?php endif; ?>
 
-    <hr>
+    <hr class="ruleGray" />
 
     <?php #if (isset($errMsg)) echo $errMsg; ?>
     <?php

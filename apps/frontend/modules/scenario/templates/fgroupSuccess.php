@@ -30,7 +30,7 @@ the group, assign the group type, allocation status, and the order in which is s
 <?php if ($groupSelector != null): ?>
 <br />
 <!--<p>Use the list below to select existing facility groups for editing.</p>-->
-<form action="<?php echo url_for('scenario/fgroup?id=' . $scenario_id); ?>" method="post">
+<form class="smallForm" action="<?php echo url_for('scenario/fgroup?id=' . $scenario_id); ?>" method="post">
   <?php echo $groupSelector; ?>
 </form>
 <?php endif; ?>
