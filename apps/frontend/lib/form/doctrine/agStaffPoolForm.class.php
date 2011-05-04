@@ -112,7 +112,7 @@ class agStaffPoolForm extends sfForm
     $searchForm->getWidgetSchema()->addFormFormatter('row', $searchDeco);
     $searchForm->getWidgetSchema()->setFormFormatterName('row');
     $searchForm->setWidget('search_condition', new sfWidgetFormInputHidden());
-    $searchForm->getWidgetSchema()->setLabel('search_name', 'Name of Staff Pool');
+    $searchForm->getWidgetSchema()->setLabel('search_name', 'Name');
     //$searchForm->getWidgetSchema()->setLabel('search_type_id', 'Search Type');
     $searchForm->setWidget('search_type_id', new sfWidgetFormInputHidden());
     $searchForm->setWidget('search_hash', new sfWidgetFormInputHidden());

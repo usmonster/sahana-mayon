@@ -1,23 +1,25 @@
 <?php
   use_javascript('agMain.js');
 ?>
-<h2>Staff Resource Pool</h2> <br>
+<h2>Staff Resource Pool: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2> <br />
 <?php
 include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
-Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.
-<p> Please define staff resource pools for the <span class="highlightedText"><?php echo $scenarioName ?> </span> Scenario.</p>
-<p> Currently, there are <span class="highlightedText"><?php echo $total_staff ?></span> total staff in the system.</p>
-<p> In the current scenario you have <span class="highlightedText"><?php echo $scenario_staff_count ?></span> Staff Members set as available for</p>
+<p>Your staff resource pool is essentially a set of searches that let you refine who is available to deploy.</p>
 
 <?php if (count($saved_searches) > 0) {
-?>
+?><div class="infoHolder" style="width:750px;">
   <h3>Saved Searches</h3>
   <table class="blueTable">
     <thead>
       <tr class="head">
         <th>Search Name</th>
         <th>Search Conditions</th>
+      </tr>
+      <tr>
+        <th style="float:right;">
+          <span class="highlightedText"><?php echo $total_staff ?></span> total staff in system, <span class="highlightedText"><?php echo $scenario_staff_count ?></span> Staff Members in pool
+        <th>
       </tr>
     </thead>
     <tbody>
@@ -30,6 +32,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
     <?php endforeach; ?>
     </tbody>
   </table>
+</div>
 <?php } ?>
 <?php
     if (!isset($search_id)) {
@@ -40,22 +43,19 @@ Your staff resource pool is essentially a set of searches that let you refine wh
     }
 ?>
     <br />
-    <hr class="ruleGray" />
-    <br />
-    <h3>Staff Pool Definition</h3>
+
 <?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
 
-    <div id="searchresults">
+    <div id="searchresults" class="infoHolder">
 
       <!--sometimes this will fail -->
   <?php if (isset($pager)) {
  ?>
-      <hr class="ruleGray" />
+
   <?php
       //include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'target_module' => $target_module))
-
-
       $displayColumns = array(
+        'id' => array('title' => '', 'sortable' => false),
         'fn' => array('title' => 'First Name', 'sortable' => false),
         'ln' => array('title' => 'Last Name', 'sortable' => false),
         'agency' => array('title' => 'Agency', 'sortable' => true),
@@ -78,7 +78,7 @@ Your staff resource pool is essentially a set of searches that let you refine wh
         'sort' => $sort,
         'status' => $status,
         'target_module' => 'staff',
-        'caption' => 'Staff Pool Search',
+        'caption' => 'Search Results',
         'widgets' => array()
           )
       );

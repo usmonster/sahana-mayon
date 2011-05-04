@@ -38,8 +38,8 @@ if (isset($search_id)) {
   $action .= '?search_id=' . $search_id;
 }
 ?>
-
-
+<div class="infoHolder" style="width:750px;">
+ <h3>Staff Pool Definition</h3>
 <form action="<?php echo $action ?>" method="post">
 
   <table>
@@ -55,7 +55,7 @@ if (isset($search_id)) {
           <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
 <?php } ?>
           <input type="submit" value="Save and Continue" class="linkButton" name="Continue" onclick="queryConstruct()"/>
-          <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton" title="Skip and Continue">Skip and Continue</a>
+          <a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton" title="Skip and Continue">Skip and Continue</a>
         </td>
       </tr>
     </tfoot>
@@ -67,7 +67,8 @@ if (isset($search_id)) {
       </tr>
       <tr> 
         <td>
-          <h3>Construct Search Conditions:</h3>
+          <div class="infoHolder">
+          <h4 class="head">Search Conditions:</h4>
 
 <?php
     $labels = $filterForm->getWidgetSchema()->getLabels();
@@ -78,16 +79,13 @@ foreach($fields as $key => $field)
   echo $filterForm[$key];
 }
 ?>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
+          </div>
         </td>
       </tr>
     </tbody>
   </table>
 </form>
-
+</div>
 
 
 
