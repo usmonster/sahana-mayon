@@ -1,4 +1,4 @@
-/*@import url('menu.css');*/
+i/*@import url('menu.css');*/
 
 /**** Layout ****/﻿
 html, body {
@@ -239,9 +239,10 @@ h5 {
   -webkit-box-shadow: 3px 3px 3px #ccc;
   box-shadow: 3px 3px 3px #ccc;*/
 }
-input.linkButton {
+input.linkButton, a.linkButton {
   font-family: helvetica, arial, verdana, sans-serif;
-  padding: 0;
+  padding: 0.32em 0.6em;
+  margin: 0.12em;
 }
 
 .smallLinkButton {
@@ -1723,3 +1724,14 @@ table.staffPool tr:hover{background-color: #f7f7f7
 table.staffPool tr.head:hover, table.staffTable tr.head:hover, table.singleTable tr.head:hover
 { background-color: #dadada;
 }
+
+/*important
+input.linkButton{
+  font-family: helvetica, arial, verdana;
+  font-size: 10pt;
+}
+
+a.linkButton{
+   padding:5.5px;
+    height:18px;
+}*/
