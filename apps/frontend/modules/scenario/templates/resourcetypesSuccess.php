@@ -17,7 +17,7 @@ use_javascript('agTooltip.js');
   })
 
 </script>
-<h2>Select Resource Types: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2> <br />
+<h2>Select Resource Types: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2>
 <?php
 include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
