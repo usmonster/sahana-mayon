@@ -2,7 +2,7 @@
 
 /**
  * Provides person language helper functions and inherits several methods and properties from the
- * bulk record helper.
+ * language helper.
  *
  * PHP Version 5.3
  *
@@ -122,7 +122,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    * @param array $compareTo A simple array to compare against.
    * @return array $diffArray Returns a simple array of the diff.
    */
-  private function diffArrays(&$compareFrom, &$keyArray)
+  private function diffArrays($compareFrom, $keyArray)
   {
     // Sort array to speed up comparisons.
     array_walk($compareFrom, function(&$language) { $language = strtolower($language); });
@@ -201,6 +201,12 @@ class agPersonLanguageHelper extends agLanguageHelper
             $uniqCompetencies[] = $competency;
           }
         }
+        else
+        {
+          // Add empty array so we can eliminate the step of checking later on when processing
+          // person languages.
+          $langComps[1] = array();
+        }
       }
     }
     // Unset all variables used in foreach loops that are no longer needed to release memory and
@@ -237,16 +243,16 @@ class agPersonLanguageHelper extends agLanguageHelper
     // Create new edge values if $createNewEdgeValues is TRUE
     if ($createEdgeTableValues)
     {
-      // here we check our current transaction scope and create a transaction or savepoint
-      $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-      if ($useSavepoint)
-      {
-        $conn->beginTransaction(__FUNCTION__);
-      }
-      else
-      {
-        $conn->beginTransaction();
-      }
+//      // here we check our current transaction scope and create a transaction or savepoint
+//      $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+//      if ($useSavepoint)
+//      {
+//        $conn->beginTransaction(__FUNCTION__);
+//      }
+//      else
+//      {
+//        $conn->beginTransaction();
+//      }
 
       try
       {
@@ -270,7 +276,7 @@ class agPersonLanguageHelper extends agLanguageHelper
       $errMsg = NULL;
       if (count($newLanguages) > 0)
       {
-        $errMsg = sprintf('Invalid languauges (%s)', implode(', ', $newLanguages));
+        $errMsg = sprintf('Invalid languages (%s)', implode(', ', $newLanguages));
 
         // log whichever error we received
         sfContext::getInstance()->getLogger()->err($errMsg);
@@ -292,32 +298,29 @@ class agPersonLanguageHelper extends agLanguageHelper
           if (array_key_exists($lowerLanguage, $languageIds))
           {
             $personLanguages[$personId][$priority][0] = $languageIds[$lowerLanguage];
-            if (isset($langComps[1]))
+            foreach ($langComps[1] AS $format => $competency)
             {
-              foreach ($langComps[1] AS $format => $competency)
+              $lowerFormat = strtolower($format);
+              $lowerCompetency = strtolower($competency);
+              if (array_key_exists($lowerFormat, $formatIds)
+                  && array_key_exists($lowerCompetency, $competencyIds))
               {
-                $lowerFormat = strtolower($format);
-                $lowerCompetency = strtolower($competency);
-                if (array_key_exists($lowerFormat, $formatIds)
-                    && array_key_exists($lowerCompetency, $competencyIds))
+                $personLanguages[$personId][$priority][1][$formatIds[$lowerFormat]] = $competencyIds[$lowerCompetency];
+              }
+              else
+              {
+                // Capture invalid format/competency records.
+                if (isset($invalidLanguages[$personId]))
                 {
-                  $personLanguages[$personId][$priority][1][$formatIds[$lowerFormat]] = $competencyIds[$lowerCompetency];
+                  $invalidLanguages[$personId][$priority][1][$formatIds[$format]] = $competencyIds[$competency];
                 }
                 else
                 {
-                  // Capture invalid format/competency records.
-                  if (isset($invalidLanguages[$personId]))
-                  {
-                    $invalidLanguages[$personId][$priority][1][$formatIds[$format]] = $competencyIds[$competency];
-                  }
-                  else
-                  {
-                    $invalidLanguages[$personId][$priority] = array($langComp[1], array($format => $competency));
-                  }
+                  $invalidLanguages[$personId][$priority] = array($langComp[1], array($format => $competency));
                 }
-                unset($personLanguages[$personId][$priority][1][$format]);
-              } // end of language format/competency loop
-            }
+              }
+              unset($personLanguages[$personId][$priority][1][$format]);
+            } // end of language format/competency loop
           }
           else
           {
@@ -334,7 +337,7 @@ class agPersonLanguageHelper extends agLanguageHelper
       unset($personId, $languageComponents, $priority, $langComps, $format, $competency);
       unset($lowerLanguage, $lowerFormat, $lowerCompetency);
 
-      // At this point $personLanguages only consist of valid languages components.
+      // At this point $personLanguages only consist of valid languages and language components.
 
       try
       {
@@ -416,7 +419,7 @@ class agPersonLanguageHelper extends agLanguageHelper
     // execute the reprioritization helper and pass it our current addresses as found in the db
     $personLanguages = $this->reprioritizePersonLanguages($personLanguages, $currLanguages);
 
-    // Unset $currLanguaes
+    // Unset $currLanguages
     unset($currlanguages);
 
     // Build a simpler $personLanguages array for a more efficient use of searches later on.
@@ -444,7 +447,7 @@ class agPersonLanguageHelper extends agLanguageHelper
         ->whereIn('mpl.person_id', array_keys($personLanguages));
     $personLanguageCollection = $q->execute() ;
 
-    // Update and delete collection records based off of the $newLanguage setting.
+    // Update and delete collection records based off of the $personLanguages setting.
     foreach($personLanguageCollection AS $collId => $pLang)
     {
       $collPId = $pLang['person_id'];
@@ -454,13 +457,12 @@ class agPersonLanguageHelper extends agLanguageHelper
       {
         $personLanguagePriority = $simplifiedNewLanguages[$collPId][$collLId];
 
-        // Check if priority needs update.
-        if ($pLang['priority'] != $simplifiedNewLanguages[$collPId][$collLId])
-        {
-          $personLanguageCollection[$collId]['priority'] = $personLanguagePriority;
-        }
-        // Add to $updateLanguageComponent and unset it from $personNewLanguage;
+        // Update priority in person-language joining table.
+        $personLanguageCollection[$collId]['priority'] = $personLanguagePriority;
+
+        // Add to $updateLanguageComponent and unset it from $personLanguages
         $updateLanguageComponents[$collId] = $personLanguages[$collPId][$personLanguagePriority][1];
+
         if (count($personLanguages[$collPId]) == 1)
         {
           unset($personLanguages[$collPId]);
@@ -477,7 +479,7 @@ class agPersonLanguageHelper extends agLanguageHelper
         $results['removed']++;
       }
 
-      // Unset all updated or delete records from $simplifiedNewLanguage, leaving only the new 
+      // Unset all updated or deleted records from $simplifiedNewLanguage, leaving only the new
       // person language records.
       unset($simplifiedNewLanguages[$collPId][$collLId]);
     }
@@ -519,10 +521,11 @@ class agPersonLanguageHelper extends agLanguageHelper
 
       $results['failures'] = array_keys($personLanguages);
     }
+    unset($personLanguageCollection);
 
     // Now all updates and deletes are done on the manay-to-many person language table at this
     // point.  Note: Collection->remove is cascaded to their children tables.  Only thing left to
-    // do to the person language joining table is to add new person language records.
+    // do to on the person language joining table is to add new person language records.
 
    // here we check our current transaction scope and create a transaction or savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
@@ -552,21 +555,18 @@ class agPersonLanguageHelper extends agLanguageHelper
           // Since we're creating new person language records, might as well create their
           // cooresponding formatting and competency records.
 
-          if (isset($personLanguages[$personId][$priority][1]))
-          {
-            $languageComponents = $personLanguages[$personId][$priority][1];
+          $languageComponents = $personLanguages[$personId][$priority][1];
 
-            if (count($languageComponents) > 0)
+          if (count($languageComponents) > 0)
+          {
+            foreach ($languageComponents AS $formatId => $competencyId)
             {
-              foreach ($languageComponents AS $formatId => $competencyId)
-              {
-                // Create new person's language component records.
-                $personLanguageCompetency = new agPersonLanguageCompetency();
-                $personLanguageCompetency['person_language_id'] = $personLanguageId;
-                $personLanguageCompetency['language_format_id'] = $formatId;
-                $personLanguageCompetency['language_competency_id'] = $competencyId;
-                $personLanguageCompetency->save($conn);
-              }
+              // Create new person's language component records.
+              $personLanguageCompetency = new agPersonLanguageCompetency();
+              $personLanguageCompetency['person_language_id'] = $personLanguageId;
+              $personLanguageCompetency['language_format_id'] = $formatId;
+              $personLanguageCompetency['language_competency_id'] = $competencyId;
+              $personLanguageCompetency->save($conn);
             }
           }
 
@@ -581,6 +581,14 @@ class agPersonLanguageHelper extends agLanguageHelper
           }
         }
       }
+
+      // Unset array to release memory.
+      unset($personLanguage, $personLanguageCompetency);
+      unset($personId, $component, $languageId, $priority, $languageComponents, $formatId, $competencyId);
+      unset($simplifiedNewLanguages);
+
+      // commit, being sensitive to our nesting
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
     }
     catch(Exception $e)
     {
@@ -597,10 +605,6 @@ class agPersonLanguageHelper extends agLanguageHelper
       $results['failures'] = array_keys($personLanguages);
     }
 
-
-    // Unset array to release memory.
-    unset($simplifiedNewLanguages);
-
     // At this point, $personNewLanguage only consists of update records.  All new person language
     // and deleted records are processed from above.
 
@@ -613,13 +617,14 @@ class agPersonLanguageHelper extends agLanguageHelper
       if (count($langComponents) == 0)
       {
         $deletePersonLanguageIds[] = $personLanguageId;
+        unset($updateLanguageComponents[$personLanguageId]);
       }
-      unset($updateLanguageComponents[$personLanguageId]);
     }
 
     unset($personLanguageId, $langComponents);
 
     $this->deletePersonLanguageCompetencies($deletePersonLanguageIds, $throwOnError, $conn);
+    unset($deletePersonLanguageIds);
 
     // Next, update and delete individual person's language component table.
 
@@ -632,19 +637,20 @@ class agPersonLanguageHelper extends agLanguageHelper
     foreach($personLanguageComponentColl AS $collId => $components)
     {
       $collPersonLanguageId = $components['person_language_id'];
-      $collFormatId = $components['langauge_format_id'];
-      if (array_key_exists($collFormatId, $updateLanguageComponents[$collPersonLanguageId]))
+      $collFormatId = $components['language_format_id'];
+      if (isset($updateLanguageComponents[$collPersonLanguageId])
+          && array_key_exists($collFormatId, $updateLanguageComponents[$collPersonLanguageId]))
       {
-        $personCompetencyId = $updateLanguageComponents[$components['person_language_id']];
-        if ($components['language_competency_id'] != $personCompetencyId)
-        {
-          $personLanguageComponentColl[$collId]['language_competency_id'] = $personCompetencyId;
-        }
-        else
-        {
-          $personLanguageComponentColl->remove($collId);
-        }
+        $personCompetencyId = $updateLanguageComponents[$collPersonLanguageId][$collFormatId];
+        $personLanguageComponentColl[$collId]['language_competency_id'] = $personCompetencyId;
+      }
+      else
+      {
+        $personLanguageComponentColl->remove($collId);
+      }
 
+      if (isset($updateLanguageComponents[$collPersonLanguageId]))
+      {
         if (count($updateLanguageComponents[$collPersonLanguageId]) == 1)
         {
           unset($updateLanguageComponents[$collPersonLanguageId]);
@@ -717,6 +723,8 @@ class agPersonLanguageHelper extends agLanguageHelper
           $personLanguageCompetency->save($conn);
         }
       }
+      // commit, being sensitive to our nesting
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
     }
     catch(Exception $e)
     {

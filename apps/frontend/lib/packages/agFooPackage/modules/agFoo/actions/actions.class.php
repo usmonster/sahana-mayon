@@ -173,16 +173,30 @@ class agFooActions extends agActions
 //    $results = $obj->getPersonLanguageById();
 //    print_r($results);
 
-    $personLanguages = array(2 => array(1 => array('    German   ', array())),
-                             3 => array(1 => array('Arabic', array('read' => '  fluent  ', 'write' => 'intermediate', 'speak' => 'fluent')),
-                                        2 => array('English', array('read' => 'basic', 'write' => 'intermediate', 'speak' => 'fluent')),
-                                        3 => array('Abkhaz', array('read' => 'basic', 'write' => 'intermediate', 'speak' => 'fluent')) ),
-                             4 => array(),
-                             11 => array(1 => array('Armenian')),
-                             12 => array(1 => array('Akan', array('speak' => 'superior')))
+//    $personLanguages = array(2 => array(1 => array('    German   ', array())),
+//                             3 => array(1 => array('Arabic', array('read' => '  fluent  ', 'write' => 'intermediate', 'speak' => 'fluent')),
+//                                        2 => array('English', array('read' => 'basic', 'write' => 'intermediate', 'speak' => 'fluent')),
+//                                        3 => array('Abkhaz', array('read' => 'basic', 'write' => 'intermediate', 'speak' => 'fluent')) ),
+//                             4 => array(),
+//                             11 => array(1 => array('Armenian')),
+//                             12 => array(1 => array('Akan', array('speak' => 'superior'))),
+//                             13 => array(1 => array('Danish') ),
+//                             14 => array(1 => array('Chinese', array('read' => 'superior', 'write' => 'superior', 'speak' => 'superior')),
+//                                         2 => array('English', array('read' => 'fluent', 'speak' => 'fluent'))),
+//                             15 => array(1 => array('Italian', array('read' => 'fluent', 'write' => 'fluent', 'speak' => 'fluent'))),
+//                             1 => array(1 => array('Dutch', array('read' => 'fluent', 'write' => 'intermediate', 'speak' => 'superior')),
+//                                        2 => array('Vietnamese', array('read' => 'superior', 'speak' => 'fluent')),
+//                                        3 => array('Latin') ),
+//                             5 => array(1 => array('English')),
+//                             8 => array(1 => array('Gaelic', array('read' => 'intermediate', 'write' => 'intermediate')))
+//                            );
+    $personLanguages = array(14 => array(1 => array('Chinese', array('read' => 'superior', 'write' => 'superior', 'speak' => 'superior')),
+                                         2 => array('lkjaseir', array('read' => 'fluent', 'speak' => 'fluent')) ),
+                             15 => array(1 => array('Italian', array('read' => 'fluent', 'write' => 'fluent', 'speak' => 'intermediate')))
                             );
 
-    $obj->setPersonlanguages($personLanguages, TRUE, TRUE, FALSE);
+    $results = $obj->setPersonlanguages($personLanguages, TRUE, TRUE, TRUE);
+    print_r($results);
 
 //
 //    $stfResHelper = new agStaffResourceHelper();
