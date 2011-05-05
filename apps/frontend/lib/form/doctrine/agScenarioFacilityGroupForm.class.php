@@ -97,6 +97,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
         //  ('required' => false))
         )
     );
+    
     $this->validatorSchema->setOption('allow_extra_fields', true);
     $this->validatorSchema->setPostValidator(
         new sfValidatorAnd(
@@ -119,12 +120,11 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
             )
         )
     );
+   $this->getValidator('scenario_facility_group')->setMessage('invalid', 'A Facility Group with this name already exists.');
+   $this->getValidatorSchema()->getPostValidator()->setMessage('invalid', 'A Facility Group with this name already exists.');
+
     $this->widgetSchema->setLabel('scenario_facility_group', 'Facility Group Name');
     $this->widgetSchema->setNameFormat('ag_scenario_facility_group[%s]');
-
-    $custDeco = new agWidgetFormSchemaFormatterShift($this->getWidgetSchema());
-    $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
-    $this->getWidgetSchema()->setFormFormatterName('custDeco');
 
     $groupDeco = new agWidgetFormSchemaFormatterInlineBigTopLabel($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupDeco);

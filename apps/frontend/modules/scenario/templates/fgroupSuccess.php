@@ -30,9 +30,9 @@ the group, assign the group type, allocation status, and the order in which is s
 <?php if ($groupSelector != null): ?>
 <br />
 <!--<p>Use the list below to select existing facility groups for editing.</p>-->
-<form class="formSmall" action="<?php echo url_for('scenario/fgroup?id=' . $scenario_id); ?>" method="post">
+<form class="formSmall" id="groupSelector" action="<?php echo url_for('scenario/fgroup?id=' . $scenario_id); ?>" method="post">
   <?php echo $groupSelector; ?>
-  <input type="button" class="linkButton" value="Change" name="Change Group" />
+  <input type="button" class="linkButton" value="Change" name="Change Group" onclick="reloadGroup(this)" />
 </form>
 <br />
 <?php endif; ?>
@@ -43,7 +43,7 @@ the group, assign the group type, allocation status, and the order in which is s
                                        'allocatedFacilityResources' => $allocatedFacilityResources,
                                        'scenario_id' => $scenario_id,
                                        'selectStatuses' => $selectStatuses,
-                                       'facilityResourceTypes' => $facilityResourceTypes))
+                                       'facilityResourceTypes' => $facilityResourceTypes));
   ?>
 </div>
 <p>Click "Save" to continue editing this group.  Click "Save and Continue" to save this group and
@@ -51,3 +51,7 @@ move to the next step.  Click "Save and Create Another" to save this grouping an
 grouping.</p>
 <strong>Note:</strong> facilities not grouped will not be available for activation when the Scenario is
 deployed as an event.
+<?php
+  $contents = $sf_data->getRaw('facilityResourceTypes');
+  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type', 'checkBoxTable checkBoxContainer searchParams', 'revealable', 2, 'facility_resource_type_', 'facility_resource_type_abbr', true, true);
+?>

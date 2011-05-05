@@ -1,140 +1,142 @@
 <?php use_stylesheets_for_form($groupform) ?>
 <?php use_javascript('jquery.ui.custom.js'); ?>
 <?php //TODO: see if this is still necessary:
-use_javascript('tooltip.js'); ?>
+use_javascript('tooltip.js');
+use_javascript('agScenarioFacilityGroup.js');
+?>
 <?php use_javascript('json.serialize.js'); ?>
 <?php //use_javascript('jquery.mousewheel.js'); ?>
 <?php //use_javascript('jquery.jscrollpane.js'); ?>
 <?php //use_javascript('mwheelIntent.js'); ?>
 <?php //use_stylesheet('jquery.jscrollpane.css'); ?>
 <script type="text/javascript">  
-  $(function() {
-//    $("#available tbody tr").bind("dblclick", function(){
-//      return !$(this).remove().appendTo('#allocated tbody')
+//  $(function() {
+//    $('.available tbody, .allocated tbody' ).sortable({
+//      connectWith: ".sortTable tbody",
+//      items: 'tr.sort',
+//      forcePlaceholderSize: true
+//    });/*.disableSelection();*/
+//
+//    $('.allocated tbody').bind('sortover', function(event, ui) {
+//      if(ui.helper.find('td').length < 3) {
+//        ui.helper.find('td.right').removeClass('right').addClass('inner');
+//        ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
+//        ui.helper.css('width', '305px');
+//      }
 //    });
-//    $("#allocated tbody tr").bind("dblclick", function(){
-//      return !$(this).remove().appendTo('#available tbody')
+//
+//    $('.available tbody').bind('sortover', function(event, ui) {
+//      if(ui.helper.find('td').length == 3) {
+//        ui.helper.find('td.right').remove();
+//        ui.helper.find('td.inner').removeClass('inner').addClass('right');
+//        ui.helper.css('width', '257px');
+//      }
 //    });
-
-    $('.available tbody, .allocated tbody' ).sortable({
-      connectWith: ".sortTable tbody",
-      items: 'tr.sort',
-      forcePlaceholderSize: true
-    });/*.disableSelection();*/
-
-    $('.allocated tbody').bind('sortover', function(event, ui) {
-      if(ui.helper.find('td').length < 3) {
-        ui.helper.find('td.right').removeClass('right').addClass('inner');
-        ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
-        ui.helper.css('width', '305px');
-      }
-    });
-
-    $('.available tbody').bind('sortover', function(event, ui) {
-      if(ui.helper.find('td').length == 3) {
-        ui.helper.find('td.right').remove();
-        ui.helper.find('td.inner').removeClass('inner').addClass('right');
-        ui.helper.css('width', '257px');
-      }
-    });
-    $('.allocated tbody').bind('sortupdate', function () {
-      if($(this).find('tr').is(':hidden')) {
-        $(this).find('.sort').hide();
-      }
-      countSorts($('tr#' + $(this).attr('title')).find('.count'));
-    });
-
-    $('.allocated tbody').bind('sortreceive', function(event, ui) {
-      if(ui.item.hasClass('serialIn') == false) {
-        ui.item.addClass('serialIn');
-      }
-    });
-
-    $('.available tbody').bind('sortreceive', function(event, ui) {
-      if(ui.item.hasClass('serialIn') == true) {
-        ui.item.removeClass('serialIn');
-      }
-    });
-  });
-
-
-  $('#available > li').tooltip();
-  $('#allocated > li').tooltip({
-    bodyHandler: function() {
-      return $('#allocated_tip').text();
-    },
-    showURL: false
-  });
-
-  function serialTran() {
-    var out = new Object;
-    $('.serialIn').each(function(index) {
-      out[index] = {'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
-                    'actSeq' : ($(this).find('input')).val(),
-                    'actStat': ($(this).parents('tbody').attr('title'))
-      }
-    });
-    $("#ag_scenario_facility_group_values").val(JSON.stringify(out));
-  }
-
-  function countSorts(countMe) {
-    $(countMe).html(function() {
-      var counted = $('tbody.' + $(this).parent().attr('id')).children('tr.sort').length;
-      if(counted == 0) {
-        $('tbody.' + $(this).parent().attr('id')).append('<tr class="countZero"><td colspan="3">No facilities selected for this status.</td></tr>')
-      } else if (counted != 0) {
-        $('tbody.' + $(this).parent().attr('id')).children('tr.countZero').remove();
-      }
-      return 'Count: ' + counted;
-    });
-  };
-
-  $(document).ready(function () {
-    countSorts('.count');
-  })
-  
-  $(document).ready(function() {
-    $('.sortHead th a').click(function(){
-      $('div.' + $(this).attr('class')).slideToggle();
-      var pointer = pointerCheck($(this).html());
-      if(pointer == '&#9654;') {
-        $(this).attr('title', 'Expand')
-      } else if (pointer == '&#9660;') {
-        $(this).attr('title', 'Collapse')
-      }
-      $(this).html(pointer);
-      return false;
-    })
-  });
-
-  $(document).ready(function() {
-    $('#revealer').click(function() {
-      var pos = $(this).offset();
-      var height = $(this).height();
-  
-      $("#revealable").css( { "left": pos.left + "px", "top":(pos.top + height) + "px" } );
-  
-      $("#revealable").fadeToggle();
-      $(this).html(pointerCheck($(this).html()));
-      return false;
-    });
-  });
+//    $('.allocated tbody').bind('sortupdate', function () {
+//      if($(this).find('tr').is(':hidden')) {
+//        $(this).find('.sort').hide();
+//      }
+//      countSorts($('tr#' + $(this).attr('title')).find('.count'));
+//    });
+//
+//    $('.allocated tbody').bind('sortreceive', function(event, ui) {
+//      if(ui.item.hasClass('serialIn') == false) {
+//        ui.item.addClass('serialIn');
+//      }
+//    });
+//
+//    $('.available tbody').bind('sortreceive', function(event, ui) {
+//      if(ui.item.hasClass('serialIn') == true) {
+//        ui.item.removeClass('serialIn');
+//      }
+//    });
+//  });
+//
+//
+//  $('#available > li').tooltip();
+//  $('#allocated > li').tooltip({
+//    bodyHandler: function() {
+//      return $('#allocated_tip').text();
+//    },
+//    showURL: false
+//  });
+//
+//  function serialTran() {
+//    var out = new Object;
+//    $('.serialIn').each(function(index) {
+//      out[index] = {'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
+//                    'actSeq' : ($(this).find('input')).val(),
+//                    'actStat': ($(this).parents('tbody').attr('title'))
+//      }
+//    });
+//    $("#ag_scenario_facility_group_values").val(JSON.stringify(out));
+//  }
+//
+//  function countSorts(countMe) {
+//    $(countMe).html(function() {
+//      var counted = $('tbody.' + $(this).parent().attr('id')).children('tr.sort').length;
+//      if(counted == 0) {
+//        $('tbody.' + $(this).parent().attr('id')).append('<tr class="countZero"><td colspan="3">No facilities selected for this status.</td></tr>')
+//      } else if (counted != 0) {
+//        $('tbody.' + $(this).parent().attr('id')).children('tr.countZero').remove();
+//      }
+//      return 'Count: ' + counted;
+//    });
+//  };
+//
+//  $(document).ready(function () {
+//    countSorts('.count');
+//  })
+//
+//  $(document).ready(function() {
+//    $('.sortHead th a').click(function(){
+//      $('div.' + $(this).attr('class')).slideToggle();
+//      var pointer = pointerCheck($(this).html());
+//      if(pointer == '&#9654;') {
+//        $(this).attr('title', 'Expand')
+//      } else if (pointer == '&#9660;') {
+//        $(this).attr('title', 'Collapse')
+//      }
+//      $(this).html(pointer);
+//      return false;
+//    })
+//  });
+//
+//  $(document).ready(function() {
+//    $('#revealer').click(function() {
+//      var pos = $(this).offset();
+//      var height = $(this).height();
+//
+//      $("#revealable").css( { "left": pos.left + "px", "top":(pos.top + height) + "px" } );
+//
+//      $("#revealable").fadeToggle();
+//      $(this).html(pointerCheck($(this).html()));
+//      return false;
+//    });
+//  });
+//
+//  function reloadGroup (selector) {
+//    $.post($(selector).parent().attr('action'), { change: true, groupid: $(selector).siblings('select').val(), groupname: $(selector).siblings('select').find(':selected').text() } ,function(data) {
+//      var $response = $(data);
+//      var $goop = $response.filter('.bucketHolder');
+//      $('.bucketHolder').replaceWith($response.filter('.bucketHolder'));
+//    });
+//  }
 </script>
 <noscript>in order to set the activation sequence of resource facilities and add them to the
   facility group, you will need javascript enabled</noscript>
 
-<div class="bucketHolder" >
+<div id="bucketHolder" class="bucketHolder" >
   <form name="faciliy_group_form" id="facility_group_form" action="<?php
 echo url_for
-    ('scenario/fgroup?id=' . $scenario_id) . (!$groupform->getObject()->isNew() ? '?groupid=' . $groupform->getObject()->getId() : '') ?>
-      " method="post" <?php $groupform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
+    ('scenario/fgroup?id=' . $scenario_id) . (!$groupform->getObject()->isNew() ? '?groupid=' . $groupform->getObject()->getId() : '') ?>" method="post" <?php $groupform->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
     <div class="headerWrap">
       <?php echo $groupform; ?>
     </div>
     <div class="selectionFilter">
-      <a href="#" id="revealer" title="Available Resource Type Filter">&#9654;</a><div>Available Resource Type Filter</div>
+      <a href="#" id="revealer" title="Available Resource Type Filter" onclick="return reveal(this)">&#9654;</a><div>Available Resource Type Filter</div>
     </div>
-    <div class="sortTableContainer ">
+    <div class="sortTableContainer">
       <table class="sortTable available" cellspacing="0">
         <thead>
           <caption>Available Facility Resources</caption>
@@ -205,8 +207,9 @@ echo url_for
     </div>
     <br />
     <br />
-    <input class="linkButton" type="submit" value="Save and Create Another" name="Another" onclick="serialTran()"/>
-    <input class="linkButton" type="submit" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran()"/>
+<!--    <a href="#" class="linkButton" onclick="serialTran(this)">goo</a>-->
+    <input class="linkButton" type="button" value="Save and Create Another" name="Another" onclick="serialTran(this)"/>
+    <input class="linkButton" type="button" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran(this)"/>
   </form>
 </div>
 <br />
@@ -221,6 +224,6 @@ echo url_for
   </span>
 </div>
 <?php
-  $contents = $sf_data->getRaw('facilityResourceTypes');
-  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type', 'checkBoxTable checkBoxContainer searchParams', 'revealable', 2, 'facility_resource_type_', 'facility_resource_type_abbr', true, true);
+//  $contents = $sf_data->getRaw('facilityResourceTypes');
+//  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type', 'checkBoxTable checkBoxContainer searchParams', 'revealable', 2, 'facility_resource_type_', 'facility_resource_type_abbr', true, true);
 ?>

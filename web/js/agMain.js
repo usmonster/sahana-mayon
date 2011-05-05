@@ -16,9 +16,9 @@ $(document).ready(function(){
   // individually.
   $('.checkToggle').live('change', function(){
     if($('.checkToggle').length == $('.checkToggle:checked').length) {
-      $('#checkall').attr('checked', true);
+      $('#checkall').attr('checked', 'checked');
     } else {
-      $("#checkall").attr('checked', false);
+      $("#checkall").removeAttr('checked');
     }
   });
 });
@@ -89,7 +89,6 @@ $(document).ready(function() {
       $(passId).parent().append(data);
       $poster.attr('id', 'poster_' + $poster.attr('id'));
       $poster.hide();
-      var b ='#' + passId + ' > .submitTextToForm';
       $(passId + ' > .submitTextToForm').focus();
     });
 
@@ -105,7 +104,6 @@ $(document).ready(function() {
       $(passId).parent().append(data + '<br />' + $poster.parent().html());
       $poster.attr('id', 'poster_' + $poster.attr('id'));
       $poster.hide();
-      var b ='#' + passId + ' > .submitTextToForm';
       $(passId + ' > .submitTextToForm').focus();
     });
 

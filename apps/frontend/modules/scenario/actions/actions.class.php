@@ -655,10 +655,7 @@ class scenarioActions extends agActions
             ->getData();
 
     $this->allocatedFacilityResources = '';  //set this default incase none exist
-//    $this->ag_facility_resources = agDoctrineQuery::create()
-//            ->select('a.facility_id, af.*, afrt.*')
-//            ->from('agFacilityResource a, a.agFacility af, a.agFacilityResourceType afrt')
-//            ->execute();
+
 // Get the facility resource types available to this scenario.
     $this->facilityResourceTypes = agDoctrineQuery::create()
             ->select('frt.id, frt.facility_resource_type, facility_resource_type_abbr')
@@ -705,73 +702,38 @@ class scenarioActions extends agActions
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 // For facility group selection.
     $facilityGroupChoices = agDoctrineQuery::create()
-            ->select('sfg.id, sfg.scenario_facility_group')
-            ->from('agScenarioFacilityGroup sfg')
-            ->where('sfg.scenario_id = ?', $this->scenario_id)
-            ->orderBy('sfg.scenario_facility_group')
-            ->execute(array(), 'key_value_pair');
-    if (empty($facilityGroupChoices)) {
+        ->select('sfg.id, sfg.scenario_facility_group')
+        ->from('agScenarioFacilityGroup sfg')
+        ->where('sfg.scenario_id = ?', $this->scenario_id)
+        ->orderBy('sfg.scenario_facility_group')
+        ->execute(array(), 'key_value_pair');
+    if(empty($facilityGroupChoices)) {
       $this->groupSelector = false;
     } else {
       $this->groupSelector = new sfForm();
       $this->groupSelector->setWidget('Change Facility Group:', new sfWidgetFormChoice(
-              array('choices' => ($request->getParameter('groupid') ? $facilityGroupChoices : array(0 => null) + $facilityGroupChoices)),
-              array('class' => 'inputGray')
+        array('choices' => ($request->getParameter('groupid') ? $facilityGroupChoices : array(0 => null) + $facilityGroupChoices)),
+        array('class' => 'inputGray')
       ));
-      if ($request->getParameter('groupid')) {
+      if($request->getParameter('groupid')) {
         $this->groupSelector->getWidget('Change Facility Group:')->setDefault($request->getParameter('groupid'));
       }
+
     }
 
     if ($request->getParameter('groupid')) {
 //EDIT
       $this->groupId = $request->getParameter('groupid');
-      $ag_scenario_facility_group = agDoctrineQuery::create()
-              ->select('a.*, afr.*, afgt.*, afrt.*, afgas.*, fr.*, af.*, s.*')
-              ->from('agScenarioFacilityGroup a, a.agScenarioFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityGroupAllocationStatus afgas, afr.agFacilityResource fr, fr.agFacility af, a.agScenario s, fr.agFacilityResourceType afrt')
-              ->where('a.id = ?', $request->getParameter('groupid'))
-              ->fetchOne();
 
       $agScenarioFacilityGroup = agDoctrineQuery::create()
-              ->select()
-              ->from('agScenarioFacilityGroup')
-              ->where('id = ?', $this->groupId)
-              ->fetchOne();
+        ->select()
+        ->from('agScenarioFacilityGroup')
+        ->where('id = ?', $this->groupId)
+        ->fetchOne();
 
-      $this->groupform = new agScenarioFacilityGroupForm($ag_scenario_facility_group);
-
-//index these by the activation sequence
-      $allocatedFacilityResources = agDoctrineQuery::create()
-              ->select('fr.id')
-              ->addSelect('f.facility_name')
-              ->addSelect('f.facility_code')
-              ->addSelect('frt.facility_resource_type')
-              ->addSelect('frt.id')
-              ->addSelect('frt.facility_resource_type_abbr')
-              ->addSelect('sfr.id')
-              ->addSelect('sfr.activation_sequence')
-              ->addSelect('fras.id')
-              ->addSelect('fras.facility_resource_allocation_status')
-              ->from('agFacilityResource fr')
-              ->innerJoin('fr.agFacility f')
-              ->innerJoin('fr.agFacilityResourceType frt')
-              ->innerJoin('fr.agScenarioFacilityResource sfr')
-              ->innerJoin('sfr.agFacilityResourceAllocationStatus fras')
-              ->where('sfr.scenario_facility_group_id = ?', $this->groupId)
-              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-
-      //make the allocated array three dimensional, with the top key set to status.
-      foreach ($this->selectStatuses as $selectStatus) {
-        foreach ($allocatedFacilityResources as $afr) {
-          if ($afr['fras_id'] == $selectStatus['fras_id']) {
-            $this->allocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']][] = $afr;
-          }
-        }
-        // Create an empty array under the $selectStatus key so there's no missing index warning on render.
-        if (!isset($this->allocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']])) {
-          $this->allocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']] = array();
-        }
-      }
+      $this->groupform = new agScenarioFacilityGroupForm($agScenarioFacilityGroup);
+      $allocatedFacilityResources = $this->getAllocatedFacilityResources($this->groupId);
+      $this->allocatedFacilityResources = $this->parseAllocatedFacilityResources($this->selectStatuses, $allocatedFacilityResources);
     } else {
 //NEW
       $this->groupform = new agScenarioFacilityGroupForm();
@@ -798,78 +760,145 @@ class scenarioActions extends agActions
 //
 //        $this->redirect('scenario/fgroup?id=' . $request->getParameter('id'));
 //      }
+
 //SAVE
-      $this->groupform->bind($request->getParameter($this->groupform->getName()), $request->getFiles($this->groupform->getName()));
-      $params = $request->getParameter('ag_scenario_facility_group');
-      $facilityResources = json_decode($params['values'], true);
+      if($request->hasParameter('Another') || $request->hasParameter('AssignAll')) {
+        $this->groupform->bind($request->getParameter($this->groupform->getName()), $request->getFiles($this->groupform->getName()));
+        $params = $request->getParameter('ag_scenario_facility_group');
+        $facilityResources = json_decode($params['values'], true);
 
-      if ($this->groupform->isValid()) {
-        $agScenarioFacilityGroup = $this->groupform->save();          // The Group object has been created here.
-        foreach ($facilityResources as $facilityResource) {
-          $incomingFrIds[] = $facilityResource['frId'];
-        }
-        if (isset($allocatedFacilityResources)) {
-          foreach ($allocatedFacilityResources as $allocatedFacilityResource) {
-            $preSaveFrIds[$allocatedFacilityResource['fr_id']] = $allocatedFacilityResource['sfr_id'];
+        if ($this->groupform->isValid()) {
+          unset($this->groupform['ag_facility_resource_list']);
+          $agScenarioFacilityGroup = $this->groupform->save();          // The Group object has been created here.
+          foreach($facilityResources as $facilityResource) {
+            $incomingFrIds[] = $facilityResource['frId'];
           }
-        }
-        // Find existing scen fac resources and update them. Or make new ones and populate.
-        foreach ($facilityResources as $facilityResource) {
-          if (in_array($facilityResource['frId'], array_keys($preSaveFrIds))) {
-            $scenarioFacRes = agDoctrineQuery::create()
-                    ->select()
-                    ->from('agScenarioFacilityResource')
-                    ->where('facility_resource_id = ?', $facilityResource['frId'])
-                    ->fetchOne();
-            // Knock off the fac res id. Those that are left will be used for a delete query.
-            unset($preSaveFrIds[$facilityResource['frId']]);
+          $preSaveFrIds = array();
+          if(isset($allocatedFacilityResources)) {
+            foreach($allocatedFacilityResources as $allocatedFacilityResource) {
+              $preSaveFrIds[$allocatedFacilityResource['fr_id']] = $allocatedFacilityResource['sfr_id'];
+            }
+          }
+          // Find existing scen fac resources and update them. Or make new ones and populate.
+          foreach($facilityResources as $facilityResource) {
+            if(in_array($facilityResource['frId'], array_keys($preSaveFrIds))) {
+              $scenarioFacRes = agDoctrineQuery::create()
+                ->select()
+                  ->from('agScenarioFacilityResource')
+                  ->where('facility_resource_id = ?', $facilityResource['frId'])
+                  ->fetchOne();
+              // Knock off the fac res id. Those that are left will be used for a delete query.
+              unset($preSaveFrIds[$facilityResource['frId']]);
+            } else {
+              $scenarioFacRes = new agScenarioFacilityResource();
+              $scenarioFacRes['facility_resource_id'] = $facilityResource['frId'];
+            }
+            $scenarioFacRes['scenario_facility_group_id'] = $agScenarioFacilityGroup['id'];
+            $scenarioFacRes['facility_resource_allocation_status_id'] = agDoctrineQuery::create()
+                                                                         ->select('id')
+                                                                         ->from('agFacilityResourceAllocationStatus')
+                                                                         ->where('facility_resource_allocation_status = ?',$facilityResource['actStat'])
+                                                                         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+            $scenarioFacRes['activation_sequence'] = ($facilityResource['actSeq'] != null ? $facilityResource['actSeq']: 100);
+            $scenarioFacRes->save();
+          }
+          if(count($preSaveFrIds > 0)) {
+            foreach($preSaveFrIds as $deletable) {
+              agScenarioFacilityHelper::deleteScenarioFacilityResource($deletable);
+            }
+          }
+
+          LuceneRecord::updateLuceneRecord($agScenarioFacilityGroup);
+
+          if ($request->hasParameter('Continue')) {
+
+            $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
+          } elseif ($request->hasParameter('Another')) {
+            $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
+          } elseif ($request->hasParameter('AssignAll')) {
+            $groups = Doctrine::getTable('agScenarioFacilityGroup')
+                    ->findByDql('scenario_id = ?', $this->scenario_id)
+                    ->getData();
+            $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
+          } elseif ($request->hasParameter('groupid')) {
+  //if this is an existing facility group we are editing.
+            $agScenarioFacilityGroup = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('groupid')));
+            $this->groupform = new agScenarioFacilityGroupForm($agScenarioFacilityGroup);
+            $this->redirect('scenario/fgroup?id=' . $this->scenario_id); //redirect the user to edit the facilitygroup
           } else {
-            $scenarioFacRes = new agScenarioFacilityResource();
-            $scenarioFacRes['facility_resource_id'] = $facilityResource['frId'];
+            $this->redirect('scenario/meta?id=' . $this->scenario_id);
+  //save and bring back to scenario edit page? or should goto review page.
           }
-          $scenarioFacRes['scenario_facility_group_id'] = $agScenarioFacilityGroup['id'];
-          $scenarioFacRes['facility_resource_allocation_status_id'] = agDoctrineQuery::create()
-                  ->select('id')
-                  ->from('agFacilityResourceAllocationStatus')
-                  ->where('facility_resource_allocation_status = ?', $facilityResource['actStat'])
-                  ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-          $scenarioFacRes['activation_sequence'] = ($facilityResource['actSeq'] != null ? $facilityResource['actSeq'] : 100);
-          $scenarioFacRes->save();
-        }
-        if (count($preSaveFrIds > 0)) {
-          foreach ($preSaveFrIds as $deletable) {
-//            deleteScenarioFacilityResource($deletable);
-            agScenarioFacilityHelper::deleteScenarioFacilityResource($deletable);
-          }
-        }
-
-        LuceneRecord::updateLuceneRecord($agScenarioFacilityGroup);
-
-        if ($request->hasParameter('Continue')) {
-
-          $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
-        } elseif ($request->hasParameter('Another')) {
-          $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
-        } elseif ($request->hasParameter('AssignAll')) {
-          $groups = Doctrine::getTable('agScenarioFacilityGroup')
-                  ->findByDql('scenario_id = ?', $this->scenario_id)
-                  ->getData();
-          $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
-        } elseif ($request->hasParameter('groupid')) {
-//if this is an existing facility group we are editing.
-          $agScenarioFacilityGroup = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('groupid')));
-          $this->groupform = new agScenarioFacilityGroupForm($agScenarioFacilityGroup);
-          $this->redirect('scenario/fgroup?id=' . $this->scenario_id); //redirect the user to edit the facilitygroup
         } else {
-          $this->redirect('scenario/meta?id=' . $this->scenario_id);
-//save and bring back to scenario edit page? or should goto review page.
+          return $this->renderPartial('groupform');
+//          return $this->renderText('You suck');
         }
       }
+// END SAVE
+// LOAD NEW GROUP
+      if($request->hasParameter('change')) {
+        return $this->renderPartial('groupform', array('facilityStatusForm' => $this->facilityStatusForm ,
+                                       'groupform' => $this->groupform,
+                                       'availableFacilityResources' => $this->availableFacilityResources,
+                                       'allocatedFacilityResources' => $this->parseAllocatedFacilityResources($this->selectStatuses,
+                                                                         $this->getAllocatedFacilityResources($this->groupId)
+                                                                       ),
+                                       'scenario_id' => $this->scenario_id,
+                                       'selectStatuses' => $this->selectStatuses,
+                                       'facilityResourceTypes' => $this->facilityResourceTypes));
+      }
     }
-
+// END LOAD NEW GROUP
 //p-code
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
 //end p-code
+  }
+
+  private function getAllocatedFacilityResources($groupId)
+  {
+    $allocatedFacilityResources = agDoctrineQuery::create()
+            ->select('fr.id')
+            ->addSelect('f.facility_name')
+            ->addSelect('f.facility_code')
+            ->addSelect('frt.facility_resource_type')
+            ->addSelect('frt.id')
+            ->addSelect('frt.facility_resource_type_abbr')
+            ->addSelect('sfr.id')
+            ->addSelect('sfr.activation_sequence')
+            ->addSelect('fras.id')
+            ->addSelect('fras.facility_resource_allocation_status')
+            ->from('agFacilityResource fr')
+            ->innerJoin('fr.agFacility f')
+            ->innerJoin('fr.agFacilityResourceType frt')
+            ->innerJoin('fr.agScenarioFacilityResource sfr')
+            ->innerJoin('sfr.agFacilityResourceAllocationStatus fras')
+            ->where('sfr.scenario_facility_group_id = ?', $groupId)
+            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    return $allocatedFacilityResources;
+  }
+
+ /**
+ * make the allocated array three dimensional, with the top key set to status.
+ *
+ * @param <type> $selectStatuses
+ * @param <type> $allocatedFacilityResources
+ * @return array
+ **/
+  private function parseAllocatedFacilityResources($selectStatuses, $allocatedFacilityResources)
+  {
+    
+    foreach ($selectStatuses as $selectStatus) {
+      foreach ($allocatedFacilityResources as $afr) {
+        if ($afr['fras_id'] == $selectStatus['fras_id']) {
+          $parsedAllocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']][] = $afr;
+        }
+      }
+      // Create an empty array under the $selectStatus key so there's no missing index warning on render.
+      if(!isset($parsedAllocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']])) {
+        $parsedAllocatedFacilityResources[$selectStatus['fras_facility_resource_allocation_status']] = array();
+      }
+    }
+    return $parsedAllocatedFacilityResources;
   }
 
   /**
