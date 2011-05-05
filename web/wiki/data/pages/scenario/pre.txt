@@ -12,7 +12,8 @@ Because a scenario is used to plan staff and facility resource deployment it's i
 
 The three links on this page each perform a separate action:
 
-{{:scenario:pre.png?900}}
+{{:scenario:screenshot_033.png?500}}
+
 
 Click **"Continue and Create a Scenario"** if you have already uploaded or entered your staff and facilities.
 
