@@ -10,6 +10,8 @@ web/wiki/data/cache/**
 web/wiki/data/index/**
 web/wiki/data/meta/**/*.meta
 web/wiki/data/meta/**/*.changes
+web/wiki/data/locks/**
+web/wiki/data/tmp/**
 .DS_Store
 nbproject
 plugins/.*
