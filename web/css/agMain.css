@@ -256,6 +256,7 @@ input.linkButton {
   text-decoration: none;
   outline: none;
   background: #f1f1f1;
+  cursor: pointer;
 }
 
 .submitLinkButton {
@@ -1726,6 +1727,10 @@ table.blueTable tr:hover{background-color: #f7f7f7
 
 table.staffPool tr.head:hover, table.staffTable tr.head:hover, table.singleTable tr.head:hover
 { background-color: #dadada;
+}
+
+.infoText{
+  font-size: 0.75em;
 }
 
 /*important

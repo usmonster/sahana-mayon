@@ -72,7 +72,13 @@ class agStaffActions extends agActions
     $this->statusWidget->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
     $this->statusWidget->getWidgetSchema()->setFormFormatterName('inline');
 
-    $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order);
+//    if(apc_exists('staffArray')){
+//      $staffArray = apc_fetch('staffArray');
+//    }
+//    else{
+      $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order);
+//      apc_store('staffArray', $staffArray);
+//    }  this will not work currently on update, there needs to be a hook/callback
 
     $this->pager = new agArrayPager(null, 10);
     $this->pager->setResultArray($staffArray);

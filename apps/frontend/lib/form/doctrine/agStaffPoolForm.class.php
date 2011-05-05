@@ -77,7 +77,7 @@ class agStaffPoolForm extends sfForm
 
     $staffGenForm->setWidget('search_id', new sfWidgetFormInputHidden());
     $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
-    $staffGenForm->setWidget('search_weight', new sfWidgetFormChoice(array('choices' => range(0, 10))));
+    $staffGenForm->setWidget('search_weight', new sfWidgetFormInputText());//'Choice(array('choices' => range(0, 10))));
 
     $staffGenForm->setValidator('search_id', new sfValidatorPass(array('required' => false)));
 //    $staffGenForm->setValidator('search_weight', new sfValidatorPass(array('required' => false)));
@@ -88,9 +88,20 @@ class agStaffPoolForm extends sfForm
     if (is_array($this->sg_values)) {
       $staffGenForm->setDefault('search_weight', $this->sg_values['search_weight']);
     } elseif(!$this->staff_gen_id) {
-      $staffGenForm->setDefault('search_weight', 5);
+      $staffGenForm->setDefault('search_weight', 50);
     }
     
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $wikiUrl = url_for('@wiki');
+
+    /**
+     * Set labels on a few fields
+     */
+
+    $staffGenForm->getWidgetSchema()->setLabel(
+        'search_weight',
+        'Search Weight <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Resource">?</a>');
+
     $this->embedForm('staff_generator', $staffGenForm);
   }
 

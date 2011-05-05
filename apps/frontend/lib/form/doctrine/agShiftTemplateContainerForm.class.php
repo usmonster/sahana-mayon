@@ -71,8 +71,7 @@ class agShiftTemplateContainerForm extends sfForm
     } else {
       $shiftTemplateForm = new agSingleShiftTemplateForm($this->scenario_id);
       $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[0][%s]');
-      $foo = agGlobal::getParam('default_shift_length');
-      $shiftTemplateForm->setDefault('task_length_minutes', agGlobal::getParam('default_shift_length'));
+      $shiftTemplateForm->setDefault('task_length_minutes', agGlobal::getParam('default_shift_task_length'));
       $shiftTemplateForm->setDefault('break_length_minutes', agGlobal::getParam('default_shift_break_length'));
       $shiftTemplateForm->setDefault('minutes_start_to_facility_activation', agGlobal::getParam('default_shift_minutes_start_to_facility_activation'));
       $shiftTemplateForm->setDefault('shift_repeats',agGlobal::getParam('default_shift_repeats'));

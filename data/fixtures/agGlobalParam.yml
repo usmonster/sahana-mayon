@@ -96,7 +96,7 @@ agGlobalParam:
     agHost: localhost
     datapoint: import_error_threshold
     value: 20
-  default_shift_length:
+  default_shift_task_length:
     id: 20
     agHost: localhost
     datapoint: default_shift_task_length

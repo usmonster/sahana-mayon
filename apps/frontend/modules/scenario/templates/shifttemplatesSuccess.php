@@ -11,7 +11,7 @@
 <form action="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id); ?>" method="post" name="shift_template">
 <?php include_partial('shifttemplateholder', array('shifttemplateforms' => $shifttemplateforms, 'scenario_id' => $scenario_id)) ?>
 <div id ="newshifttemplates">
-<span class="smallLinkButton addShiftTemplate" id="adder">+ Add Shift Template</span> <hr class="inputGray" />
+<span class="smallLinkButton addShiftTemplate" id="adder">+ Add Shift Template</span>
 
   <script>
 
@@ -29,17 +29,6 @@
         var $poster = $(this);
         var templates = $('.shiftTemplateCounter').length
         $(passId).parent().prepend(addShiftTemplate(templates) + '<br \>');
-        $("#shift_template_" + templates + "_staff_resource_type_id").focus();
-        $("#start_time_slider" + templates).slider({
-                  orientation: "horizontal",
-        value:50,
-        min: -750,
-        max: 750,
-        step: 5,
-        slide: function( event, ui ) {
-          $("#shift_template_" + templates + "_minutes_start_to_facility_activation").val(ui.value);
-        }
-        });
       });
 
       $('.removeShiftTemplate').click(function() {
