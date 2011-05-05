@@ -565,7 +565,7 @@ class agFacilityImportNormalization //extends agImportNormalization
       $site = new agSite();
       $site->set('entity_id', $entity->id);
       $site->save($conn);
-      $facility = new agFacility();
+      $facility = new agFacility(null, false, false);
       $facility->set('site_id', $site->id)
           ->set('facility_name', $facilityName)
           ->set('facility_code', $facilityCode);

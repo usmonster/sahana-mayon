@@ -26,20 +26,6 @@ class agFacility extends BaseagFacility
     $this->isAutoIndexed = $isAutoIndexed;
   }
 
-  public function postSave($event)
-  {
-    if ($this->isAutoIndexed) {
-      parent::postSave($event);
-    }
-  }
-
-  public function postDelete($event)
-  {
-    if ($this->isAutoIndexed) {
-      parent::postDelete($event);
-    }
-  }
-
   /**
    * Builds an index for facility.
    *
@@ -52,6 +38,9 @@ class agFacility extends BaseagFacility
    */
   public function updateLucene()
   {
+    if (!$this->isAutoIndexed) {
+      return null;
+    }
     $doc = new Zend_Search_Lucene_Document();
     $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
     $doc->addField(Zend_Search_Lucene_Field::unStored('facility', $this->facility_name, 'utf-8'));
