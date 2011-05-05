@@ -20,6 +20,7 @@
           <?php
           echo $shifttemplateform['staff_resource_type_id']->renderRow() . $shifttemplateform['facility_resource_type_id']->renderRow();
           ?>
+          <span class="smallLinkButton addShiftTemplate floatRight removeShiftTemplate" id="">- Delete Shift Template</span>
         </td>
       </tr>
       <tr colspan="2" style="background-color: #F7F7F7;">
@@ -282,8 +283,17 @@
                  var passId = '#' + $(this).attr('id');
                  var $inputs = $('#myForm :input:hidden');
                  //send get/post to call delete
-                 $(this).parent().remove();
+                 $(this).parent().parent().parent().parent().parent().remove();
                });
+    function removeShiftTemplate(num) {
+      var r = $.ajax({
+        type: 'GET',
+        url: '<?php echo url_for('scenario/addshifttemplate?id=' . $scenario_id) . '?num=' ?>' + num,
+        async: false
+      }).responseText;
+      return r;
+    }
+
 
              });
 
