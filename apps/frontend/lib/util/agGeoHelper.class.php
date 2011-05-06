@@ -207,7 +207,7 @@ class agGeoHelper extends agBulkRecordHelper
       }
       
       // calculate our coordinate hashes
-      $gcHashes[$index] = md5(json_encode($gc)) ;
+      $gcHashes[$index] = agBulkRecordHelper::getRecordComponentsHash($gc);
     }
 
     // grab any existing ids from the db
@@ -451,7 +451,7 @@ class agGeoHelper extends agBulkRecordHelper
 
     foreach ($groupedData as $geoId => $data)
     {
-      $hash = md5(json_encode($data)) ;
+      $hash = agBulkRecordHelper::getRecordComponentsHash($data);
       $q = agDoctrineQuery::create()
         ->update('agGeo')
           ->set('geo_coordinate_hash', "'".$hash."'")

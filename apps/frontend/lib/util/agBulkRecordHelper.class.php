@@ -137,4 +137,20 @@ abstract class agBulkRecordHelper
    // if that didn't pan-out, wrap it in an array and pass it through.
    return array($var) ;
  }
+
+   /**
+   * Method to take a record component array and return a json encoded, md5sum'ed record component hash.
+   * @param array $recordComponentsArray An associative array of record components keyed by
+   * elementId with the string value.
+   * @return string(128) A 128-bit md5sum string.
+   */
+  public static function getRecordComponentsHash(array $recordComponentsArray)
+  {
+    // first off, we don't trust the sorting of the components so we do our own
+    ksort($recordComponentsArray) ;
+
+    // we json encode the return to
+    return md5(json_encode($recordComponentsArray)) ;
+  }
+
 }

@@ -12,7 +12,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agAddressHelper extends agBulkRecordHelper
+class agAddressHelper extends agEntityContactHelper
 {
   // these constants map to the address get types that are supported in other function calls
   const     ADDR_GET_TYPEID = 'getAddressComponentsById',
@@ -643,7 +643,7 @@ class agAddressHelper extends agBulkRecordHelper
     foreach ($addressComponents as $addressId => $components)
     {
       // calculate the component hash
-      $addrHash = $this->hashAddress($components) ;
+      $addrHash = agBulkRecordHelper::getRecordComponentsHash($components) ;
 
       // update the address hash value of this addressId by array access
       $addressCollection[$addressId]['address_hash'] = $addrHash ;
@@ -666,21 +666,6 @@ class agAddressHelper extends agBulkRecordHelper
       sfContext::getInstance()->getLogger()->err($message) ;
       throw new sfException($message, $e) ;
     }
-  }
-
-  /**
-   * Method to take an address component array and return a json encoded, md5sum'ed address hash.
-   * @param array $addressComponentArray An associative array of address components keyed by
-   * elementId with the string value.
-   * @return string(128) A 128-bit md5sum string.
-   */
-  protected function hashAddress($addressComponentArray)
-  {
-    // first off, we don't trust the sorting of the address components so we do our own
-    ksort($addressComponentArray) ;
-
-    // we json encode the return to
-    return md5(json_encode($addressComponentArray)) ;
   }
 
   /**
@@ -927,7 +912,7 @@ class agAddressHelper extends agBulkRecordHelper
     // loop through the addresses, hash the components, and build the hash-keyed search array
     foreach($addresses as $index => $addressComponents)
     {
-      $hash = $this->hashAddress($addressComponents[0]) ;
+      $hash = agBulkRecordHelper::getRecordComponentsHash($addressComponents[0]) ;
       $addrHashes[$index] = $hash ;
     }
 
