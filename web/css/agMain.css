@@ -1412,6 +1412,12 @@ a.signin.menu-open span {
 
 tr.sort {
   background: #ffffff;
+  height: 3em;
+  cursor: move;
+}
+
+tr.sort td {
+  height: 3em;
 }
 tr.sort:hover {
   -moz-box-shadow: 0px 0px 5px #a1e2ff;
@@ -1749,7 +1755,7 @@ a.linkButton{
   -moz-box-shadow: 0px 0px 2px #ff0000;
   -webkit-box-shadow: 0px 0px 2px #ff0000;
   box-shadow: 0px 0px 2px #ff0000;
-  border: #ff0000;
+  border-color: #ff0000;
 }
 
 .redHighLight:hover {
