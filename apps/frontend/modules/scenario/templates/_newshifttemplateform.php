@@ -1,16 +1,14 @@
-<div class="infoHolder shiftTemplateCounter" style="width: 750px;">
+<div class="infoHolder shiftTemplateCounter" 
+     style="width: 750px;"
+     id="container<?php echo $number ?>">
+<?php
+$isNewShiftTemplate = $shifttemplateform->getObject()->isNew();
+echo $shifttemplateform['id']->render() ?>
   <table style="width:750px;">
-    <tfoot style="display:none;">
+    <tfoot style="display: none;">
       <tr>
         <td colspan="2">
-          &nbsp;<a href="<?php echo url_for('scenario/listshifttemplate') ?>" class="linkButton">Back to List</a>
-          <?php #if (!$shifttemplateform->getObject()->isNew()):  ?>
-          <!--
-          &nbsp;<?php #echo link_to('Delete', 'scenario/deleteshifttemp?id='.$shifttemplateform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton'))              ?>
-          -->
-          <?php #endif;  ?>
           <input type="submit" class="linkButton" value="Save" />
-
         </td>
       </tr>
     </tfoot>
@@ -19,8 +17,11 @@
         <td colspan="2" style="background-color: #E5F7FF;">
           <?php
           echo $shifttemplateform['staff_resource_type_id']->renderRow() . $shifttemplateform['facility_resource_type_id']->renderRow();
-          ?>
-          <span class="smallLinkButton addShiftTemplate floatRight removeShiftTemplate" id="">- Delete Shift Template</span>
+           ?>
+          <span class="smallLinkButton floatRight"
+                id="removeShiftTemplate<?php echo $number ?>">
+            - Delete Shift Template
+          </span>
         </td>
       </tr>
       <tr colspan="2" style="background-color: #F7F7F7;">
@@ -278,22 +279,36 @@
                //labelOptions are already defined above
                addLabels(btComponent, labelOptions);
 
-               $('.removeShiftTemplate').click(function() {
+               $('#removeShiftTemplate<?php echo $number ?>').click(function() {
                  //if there is no id for this record(db_not_exists)
                  var passId = '#' + $(this).attr('id');
                  var $inputs = $('#myForm :input:hidden');
                  //send get/post to call delete
-                 $(this).parent().parent().parent().parent().parent().remove();
+                 $('#container<?php echo $number ?>').remove();
+                 
+<?php if(!$isNewShiftTemplate): ?>
+  $('#adder').prepend('<h2 class="overlay">' + removeShiftTemplate(
+                 <?php echo $shifttemplateform['id']->getValue()?>) + '</h2>');
+  $('.overlay').fadeIn(1200, function() {
+    $('.overlay').fadeOut(1200, function() {
+      $('.overlay').remove();
+    });
+  });
+
+<?php endif; ?>
+
+
                });
-    function removeShiftTemplate(num) {
+    function removeShiftTemplate(stId) {
       var r = $.ajax({
-        type: 'GET',
-        url: '<?php echo url_for('scenario/addshifttemplate?id=' . $scenario_id) . '?num=' ?>' + num,
-        async: false
+        type: 'DELETE',
+        url: '<?php
+              echo url_for('scenario/deleteshifttemplate') .
+              '?stId=' ?>' + stId,
+        async: false //the above could and should be refactored for re-usability
       }).responseText;
       return r;
     }
-
 
              });
 

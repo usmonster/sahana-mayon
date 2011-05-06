@@ -947,10 +947,42 @@ class scenarioActions extends agActions
 //end p-code
   }
 
-  public function executeAddshifttemplate($request)
+
+    /**
+   * deleteShiftTemplate AJAX called method
+   * @param sfWebRequest $request
+   * @return response success or failure string to ouput in feedback flasher.
+   */
+  public function executeDeleteshifttemplate(sfWebRequest $request)
   {
     $this->forward404unless($request->isXmlHttpRequest());
-    $number = intval($request->getParameter("num"));
+    
+    $shiftTemplateId = $request->getParameter('stId');
+    $shiftTemplate = Doctrine_Core::getTable('agShiftTemplate')
+                ->findByDql('id = ?', $shiftTemplateId)
+                ->getFirst();
+
+    $scenShifts = Doctrine_Core::getTable('agScenarioShift')
+        ->findByDql('originator_id = ?', $shiftTemplateId);
+
+    $scenShifts->delete();
+
+    $result = $shiftTemplate->delete();
+
+    //we assume here that if no error was thrown the shift template and associated shifts
+    //have been deleted
+    return $this->renderText('Shift Template Deleted');
+  }
+
+   /**
+   * addShiftTemplate AJAX called method to add a shift template
+   * @param sfWebRequest $request
+   * @return response render partial to show up a new form in the container form
+   */
+  public function executeAddshifttemplate(sfWebRequest $request)
+  {
+    $this->forward404unless($request->isXmlHttpRequest());
+    $number = intval($request->getParameter('num'));
     $shiftTemplate = new agShiftTemplate();
     $shiftTemplateForm = new agSingleShiftTemplateForm($request->getParameter('id'), $shiftTemplate);
     $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[' . $number . '][%s]');
@@ -965,6 +997,8 @@ class scenarioActions extends agActions
         )
     );
   }
+
+
 
   /**
    * @method executeScenarioshifts()
