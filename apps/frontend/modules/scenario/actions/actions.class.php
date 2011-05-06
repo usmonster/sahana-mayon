@@ -826,10 +826,15 @@ class scenarioActions extends agActions
             return $this->renderText($return);
 //            $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
           } elseif ($request->hasParameter('AssignAll')) {
-            $groups = Doctrine::getTable('agScenarioFacilityGroup')
-                    ->findByDql('scenario_id = ?', $this->scenario_id)
-                    ->getData();
-            $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
+//            $groups = Doctrine::getTable('agScenarioFacilityGroup')
+//                    ->findByDql('scenario_id = ?', $this->scenario_id)
+//                    ->getData();
+            $return = json_encode(array(
+              'response' => url_for('scenario/staffresources?id=' . $this->scenario_id),
+              'redirect' => true)
+            );
+            return $this->renderText($return);
+//            $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
           } elseif ($request->hasParameter('groupid')) {
   //if this is an existing facility group we are editing.
             $agScenarioFacilityGroup = Doctrine_Core::getTable('agScenarioFacilityGroup')->find(array($request->getParameter('groupid')));
