@@ -475,6 +475,24 @@ class agPersonLanguageHelper extends agLanguageHelper
     // Unset variables to release memories.
     unset($collId, $pLang, $collPId, $collLId, $personLanguagePriority);
 
+//    $coll = new Doctrine_Collection('agPersonMjAgLanguage');
+//
+//    foreach($personLanguages AS $personId => $pLangs)
+//    {
+//      foreach($pLangs AS $index => $langComps)
+//      {
+//        $languageId = $langComps[0];
+//        $newRec = new agPersonMjAgLanguage();
+//        $newRec['person_id'] = $personId;
+//        $newRec['language_id'] = $languageId;
+//        $newRec['priority'] = $index;
+//
+//        $coll->add($newRec);
+//        unset($simplifiedNewLanguages[$personId][$languageId]);
+//      }
+//    }
+//    unset($personId, $pLangs, $index, $langComps, $languageId, $newRec);
+
    // here we check our current transaction scope and create a transaction or savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
     if ($useSavepoint)
@@ -488,7 +506,8 @@ class agPersonLanguageHelper extends agLanguageHelper
 
     try
     {
-      $personLanguageCollection->save($conn);
+      $personLanguageCollection->replace($conn);
+//      $coll->replace($conn);
 
       // commit, being sensitive to our nesting
       if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
