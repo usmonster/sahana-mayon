@@ -243,17 +243,6 @@ class agPersonLanguageHelper extends agLanguageHelper
     // Create new edge values if $createNewEdgeValues is TRUE
     if ($createEdgeTableValues)
     {
-//      // here we check our current transaction scope and create a transaction or savepoint
-//      $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-//      if ($useSavepoint)
-//      {
-//        $conn->beginTransaction(__FUNCTION__);
-//      }
-//      else
-//      {
-//        $conn->beginTransaction();
-//      }
-
       try
       {
         // set new languagess / return their ids
@@ -316,7 +305,7 @@ class agPersonLanguageHelper extends agLanguageHelper
                 }
                 else
                 {
-                  $invalidLanguages[$personId][$priority] = array($langComp[1], array($format => $competency));
+                  $invalidLanguages[$personId][$priority] = array($langComps[1], array($format => $competency));
                 }
               }
               unset($personLanguages[$personId][$priority][1][$format]);

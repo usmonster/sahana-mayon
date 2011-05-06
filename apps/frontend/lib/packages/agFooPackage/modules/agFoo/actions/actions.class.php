@@ -190,8 +190,8 @@ class agFooActions extends agActions
 //                             5 => array(1 => array('English')),
 //                             8 => array(1 => array('Gaelic', array('read' => 'intermediate', 'write' => 'intermediate')))
 //                            );
-    $personLanguages = array(14 => array(1 => array('Chinese', array('read' => 'superior', 'write' => 'superior', 'speak' => 'superior')),
-                                         2 => array('lkjaseir', array('read' => 'fluent', 'speak' => 'fluent')) ),
+    $personLanguages = array(14 => array(1 => array('Roman', array('read' => 'superior', 'write' => 'superior', 'speak' => 'superior')),
+                                         2 => array('lkjaseir', array('blah' => 'fluent', 'speak' => 'fluent')) ),
                              15 => array(1 => array('Italian', array('read' => 'fluent', 'write' => 'fluent', 'speak' => 'intermediate')))
                             );
 
