@@ -20,12 +20,13 @@ class agLuceneIndex
 
   private static $indexModels;
 
-  function __construct($indexModels)
+  function __construct(array $indexModels)
   {
     self::$indexModels = $indexModels;
   }
+
 /**
- *
+ * @todo remove $models param since it's unused? of make the function+class static? ask Charles. -UA
  * @param array $models the model(s) to be reindexed
  * @param boolean $reset by default is 0, meaning the entire index is rewritten.
  * @return results of the reindexing command, keyed by the model name

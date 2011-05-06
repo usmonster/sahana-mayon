@@ -45,7 +45,7 @@ class agPhoneHelper extends agBulkRecordHelper
    *
    * @param array $phoneIds A single dimension array of phone id values.
    */
-  public function __construct($phoneIds = NULL)
+  public function __construct(array $phoneIds = NULL)
   {
     // if passed an array of phone id's, set them as a class property
     parent::__construct($phoneIds);
@@ -96,7 +96,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @param array $phoneTypes An array of phone_contact_types
    * @return array An associative array of phone contact type ids keyed by phone contact type.
    */
-  static public function getPhoneContactTypeIds($phoneTypes)
+  static public function getPhoneContactTypeIds(array $phoneTypes)
   {
     return agDoctrineQuery::create()
       ->select('ept.phone_contact_type')
@@ -194,7 +194,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @param array $phoneIds A single-dimension array of phone id's.
    * @return agDoctrineQuery An extended doctrine query object.
    */
-  protected function _getPhone($phoneIds)
+  protected function _getPhone(array $phoneIds)
   {
     // if no (null) ID's are passed, get the phoneId's from the class property
     $phoneIds = $this->getRecordIds($phoneIds);
@@ -223,7 +223,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array An associative array,
    * array( phone_id => array(phone, match_pattern, replacement_pattern)).
    */
-  public function getPhone( $phoneIds = NULL)
+  public function getPhone(array $phoneIds = NULL)
   {
     // return our base query object
     $q = $this->_getPhone($phoneIds);
@@ -240,7 +240,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array keyed by phone_id with the formatted
    * phone as the value.
    */
-  public function getFormattedPhone( $phoneIds = NULL )
+  public function getFormattedPhone(array $phoneIds = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -275,7 +275,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array, where
    * array( phoneId => A phone segment)
    */
-  protected function _getPhoneComponent($phones = NULL, $keepAsDefault, $startIndex = NULL, $length = NULL )
+  protected function _getPhoneComponent(array $phones = NULL, $keepAsDefault, $startIndex = NULL, $length = NULL )
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -304,7 +304,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array, where
    * array( phoneId => A phone segment)
    */
-  public function getPhoneComponent( $phoneIds = NULL, $strSubsetType = NULL)
+  public function getPhoneComponent(array $phoneIds = NULL, array $strSubsetType = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -360,7 +360,7 @@ class agPhoneHelper extends agBulkRecordHelper
    *                          'phone'     => body of phone number,
    *                          'extension  => extension of phone number ))
    */
-  public function getPhoneComponentSegments( $phoneIds = NULL )
+  public function getPhoneComponentSegments(array $phoneIds = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -422,13 +422,13 @@ class agPhoneHelper extends agBulkRecordHelper
    * @TODO May also need to return phone format info.
    *
    */
-  public function getPhoneIds($phones)
+  public function getPhoneIds(array $phones)
   {
     $q = agDoctrineQuery::create()
       ->select('e.phone_contact')
           ->addSelect('e.id')
         ->from('agPhoneContact e')
-        ->whereIn('e.phone_contact',$phones);
+        ->whereIn('e.phone_contact', $phones);
 
     return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
@@ -461,7 +461,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * )
    * </code>
    */
-  protected function setNewPhones($phones, $throwOnError, $conn)
+  protected function setNewPhones(array $phones, $throwOnError, $conn)
   {
     // declare our results array
     $results = array();
@@ -574,7 +574,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * )
    * </code>
    */
-  protected function _setPhones( $phones, $throwOnError = NULL, Doctrine_Connection $conn = NULL)
+  protected function _setPhones(array $phones, $throwOnError = NULL, Doctrine_Connection $conn = NULL)
   {
     // declare our results array
     $results = array();
@@ -661,7 +661,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * )
    * </code>
    */
-  public function setPhones($phones, $throwOnError = NULL, $conn = NULL)
+  public function setPhones(array $phones, $throwOnError = NULL, $conn = NULL)
   {
     // either way, we eventually pass the 'cleared' phones to our setter
     $results = $this->_setPhones($phones, $throwOnError, $conn);

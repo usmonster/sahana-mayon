@@ -63,7 +63,7 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
     $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->defaultPhoneFormatTypes));
     $this->staffResourceTypes = array_change_key_case(array_flip(agStaffHelper::getStaffResourceTypes(TRUE)), CASE_LOWER);
     $this->mapStaffColumn();
-    $addressHelper = new agAddressHelper();
+    $addressHelper = new agAddressHelper(array());
     $this->addressStandards = $addressHelper->getAddressStandardId();
     $this->addressElements = array_flip($addressHelper->getAddressAllowedElements());
     $this->geoType = 'point';
@@ -853,7 +853,7 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
         $doUpdate = TRUE;
       }
 
-      if ($facilityResource->activation_sequence != $facilityGroupActivationSequence) {
+      if ($scenarioFacilityGroup->activation_sequence != $facilityGroupActivationSequence) {
         $updateQuery->set('activation_sequence', '?', $facilityGroupActivationSequence);
         $doUpdate = TRUE;
       }
@@ -972,7 +972,7 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
         $doUpdate = TRUE;
       }
 
-      if ($scenarioFacilityResource->facility_resource_allocation_status_id != $scenarioFacilityResourceAllocationStatusId) {
+      if ($scenarioFacilityResource->facility_resource_allocation_status_id != $facilityResourceAllocationStatusId) {
         $updateQuery->set('facility_resource_allocation_status_id', $facilityResourceAllocationStatusId);
         $doUpdate = TRUE;
       }
@@ -1817,11 +1817,11 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
 
     // Compares existing facility address with imported address.
     if (!empty($facilityAddress)) {
-      $facilityAddressElements = $this->getAssociateAddressElementValues($facilityAddress->address_id, $addressElementIds);
+      $facilityAddressElements = $this->getAssociateAddressElementValues($addressId, $addressElementIds);
 
       // if the addresses are different in any way
       if (
-          agBulkRecordHelper::getRecordComponentsHash($facilityAddressElements) !=
+          $facilityAddress->getAgAddress()->address_hash !=
           agBulkRecordHelper::getRecordComponentsHash($importedAddress)
       ) {
         // removes mappings between the different elements

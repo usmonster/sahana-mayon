@@ -231,6 +231,7 @@ class facilityActions extends agActions
   public function executeImport(sfWebRequest $request)
   {
     $this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
+    $this->form = new agImportForm();
 
     $uploadedFile = $_FILES["import"];
     $uploadDir = sfConfig::get('sf_upload_dir') . '/';
@@ -276,7 +277,7 @@ class facilityActions extends agActions
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams
 
-      $agLuceneIndex = new agLuceneIndex('agFacility');
+      $agLuceneIndex = new agLuceneIndex(array('agFacility'));
       $indexResult = $agLuceneIndex->indexAll();
 
 //      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory

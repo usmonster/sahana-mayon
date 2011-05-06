@@ -22,7 +22,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    *
    * @param array $personIds A single-dimension array of person id values.
    */
-  public function __construct($personIds = NULL)
+  public function __construct(array $personIds = NULL)
   {
     // set our person ids if passed any at construction
     parent::__construct($personIds) ;
@@ -36,7 +36,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    * build a query that only returns primary language or all languages.
    * @return Doctrine_Query An instantiated doctrine query object.
    */
-  protected function _getLanguageComponents($personIds = NULL, $primary = TRUE)
+  protected function _getLanguageComponents(array $personIds = NULL, $primary = TRUE)
   {
     $personIds = $this->getRecordIds($personIds) ;
 
@@ -81,7 +81,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    *      ...)
    * </code>      
    */
-  public function getPersonLanguageById($personIds = NULL, $primary = TRUE)
+  public function getPersonLanguageById(array $personIds = NULL, $primary = TRUE)
   {
     $results = array();
     $q = $this->_getLanguageComponents($personIds, $primary);
@@ -122,7 +122,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    * @param array $compareTo A simple array to compare against.
    * @return array $diffArray Returns a simple array of the diff.
    */
-  private function diffArrays($compareFrom, $keyArray)
+  private function diffArrays(array $compareFrom, array $keyArray)
   {
     // Sort array to speed up comparisons.
     array_walk($compareFrom, function(&$language) { $language = strtolower($language); });
@@ -159,7 +159,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    * @return array An associative array with counts of the operations performed and/or personId's
    * for which no operations could be performed.
    */
-  public function setPersonLanguages( $personLanguages,
+  public function setPersonLanguages(array $personLanguages,
                                       $keepHistory = NULL,
                                       $throwOnError = NULL,
                                       $createEdgeTableValues = NULL,
@@ -385,7 +385,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    * @return array An associative array with counts of the operations performed and/or personId's
    * for which no operations could be performed.
    */
-  protected function _setPersonLanguage ($personLanguages,
+  protected function _setPersonLanguage (array $personLanguages,
                                          $keepHistory = NULL,
                                          $throwOnError = NULL,
                                          Doctrine_Connection $conn = NULL)
@@ -772,7 +772,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    *      ...)
    * </code>
    */
-  protected function reprioritizePersonLanguages( $newLanguages, $currLanguages )
+  protected function reprioritizePersonLanguages(array $newLanguages, array $currLanguages)
   {
     $simplifiedNewLanguages = array();
 
@@ -826,7 +826,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    * exception throw. Defaults to the class property value.
    * @param Doctrine_Connection $conn An optional doctrine connection object.
    */
-  protected function deletePersonLanguageCompetencies($personIds,
+  protected function deletePersonLanguageCompetencies(array $personIds,
                                                       $throwOnError = NULL,
                                                       Doctrine_Connection $conn = NULL)
   {

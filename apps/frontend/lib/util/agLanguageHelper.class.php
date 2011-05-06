@@ -21,7 +21,7 @@ class agLanguageHelper extends agBulkRecordHelper
    *
    * @param array $personIds A single-dimension array of person id values.
    */
-  public function __construct($personIds = NULL)
+  public function __construct(array $personIds = NULL)
   {
     // set our person ids if passed any at construction
     parent::__construct($personIds) ;
@@ -32,7 +32,7 @@ class agLanguageHelper extends agBulkRecordHelper
    * @param array $languages A monodimensional array of languages.
    * @return array An associative array, keyed by language, with a value of language_id.
    */
-  public function getLanguageIds($languages)
+  public function getLanguageIds(array $languages)
   {
     return agDoctrineQuery::create()
       ->select('l.language')
@@ -48,7 +48,7 @@ class agLanguageHelper extends agBulkRecordHelper
    * @param array $languageFormats An array of language_format
    * @return array An associative array of language format ids keyed by language format.
    */
-  public function getLanguageFormatIds($languageFormats)
+  public function getLanguageFormatIds(array $languageFormats)
   {
     return agDoctrineQuery::create()
       ->select('lf.language_format')
@@ -61,10 +61,10 @@ class agLanguageHelper extends agBulkRecordHelper
 
   /**
    * Method to return language competency ids from language competency values.
-   * @param array $language_competency An array of language_competency
+   * @param array $languageCompetencies An array of language_competency
    * @return array An associative array of language competency ids keyed by language competency.
    */
-  public function getLanguageCompetencyIds($languageCompetencies)
+  public function getLanguageCompetencyIds(array $languageCompetencies)
   {
     return agDoctrineQuery::create()
       ->select('lc.language_competency')
@@ -84,7 +84,7 @@ class agLanguageHelper extends agBulkRecordHelper
    * @param Doctrine_Connection $conn An optional doctrine connection object.
    * @return array An associative array keyed by the language string with the languageId as a value.
    */
-  protected function setNewLanguages($newLanguages,
+  protected function setNewLanguages(array $newLanguages,
                                      $throwOnError = NULL,
                                      Doctrine_Connection $conn = NULL)
   {
@@ -157,7 +157,7 @@ class agLanguageHelper extends agBulkRecordHelper
    * @param Doctrine_Connection $conn An optional doctrine connection object.
    * @return array An associative array keyed by the language format string with the languageFormatId as a value.
    */
-  protected function setNewLanguageFormats($newFormats,
+  protected function setNewLanguageFormats(array $newFormats,
                                            $throwOnError = NULL,
                                            Doctrine_Connection $conn = NULL)
   {
@@ -231,7 +231,7 @@ class agLanguageHelper extends agBulkRecordHelper
    * @return array An associative array keyed by the language competency string with the
    * languageCompetencyId as a value.
    */
-  protected function setNewLanguageCompetencies($newCompetencies,
+  protected function setNewLanguageCompetencies(array $newCompetencies,
                                                 $throwOnError = NULL,
                                                 Doctrine_Connection $conn = NULL)
   {

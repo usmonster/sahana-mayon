@@ -112,6 +112,7 @@ class agFacilityImportXLS extends agImportXLS
     } else {
       $this->events[] = array("type" => "INFO", "message" => "Opening import file for reading.");
 
+      error_reporting($errorlevel ^ E_NOTICE ^ E_DEPRECATED);
       $xlsObj = new Spreadsheet_Excel_Reader($importFile, false);
 
       // Get some info about the workbook's composition

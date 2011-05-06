@@ -919,7 +919,7 @@ class agStaffActions extends agActions
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams
 
-    $agLuceneIndex = new agLuceneIndex('agFacility');
+    $agLuceneIndex = new agLuceneIndex(array('agFacility'));
     $indexResult = $agLuceneIndex->indexAll();
 
 //      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
