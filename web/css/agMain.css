@@ -1743,3 +1743,19 @@ a.linkButton{
    padding:5.5px;
     height:18px;
 }*/
+
+.redHighLight {
+  background: #FFC6C6;
+  -moz-box-shadow: 0px 0px 2px #ff0000;
+  -webkit-box-shadow: 0px 0px 2px #ff0000;
+  box-shadow: 0px 0px 2px #ff0000;
+  border: #ff0000;
+}
+
+.redHighLight:hover {
+  background: #ffebeb !important;
+}
+
+.redHighLight:focus {
+  background: #ffebeb !important;
+}

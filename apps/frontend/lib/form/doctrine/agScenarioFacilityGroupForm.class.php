@@ -120,8 +120,8 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
             )
         )
     );
-   $this->getValidator('scenario_facility_group')->setMessage('invalid', 'A Facility Group with this name already exists.');
-   $this->getValidatorSchema()->getPostValidator()->setMessage('invalid', 'A Facility Group with this name already exists.');
+   $this->getValidator('scenario_facility_group')->setMessage('required', 'You must enter a name for this Facility Group.');
+   $this->getValidatorSchema()->getPostValidator()->setMessage('invalid', 'A Facility Group with the same name already exists.');
 
     $this->widgetSchema->setLabel('scenario_facility_group', 'Facility Group Name');
     $this->widgetSchema->setNameFormat('ag_scenario_facility_group[%s]');

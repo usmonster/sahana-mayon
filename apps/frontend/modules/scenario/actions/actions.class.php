@@ -763,6 +763,7 @@ class scenarioActions extends agActions
 
 //SAVE
       if($request->hasParameter('Another') || $request->hasParameter('AssignAll')) {
+//      if($request->hasParameter('saveJSON')) {
         $this->groupform->bind($request->getParameter($this->groupform->getName()), $request->getFiles($this->groupform->getName()));
         $params = $request->getParameter('ag_scenario_facility_group');
         $facilityResources = json_decode($params['values'], true);
@@ -811,10 +812,19 @@ class scenarioActions extends agActions
           LuceneRecord::updateLuceneRecord($agScenarioFacilityGroup);
 
           if ($request->hasParameter('Continue')) {
-
-            $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
+            $return = json_encode(array(
+              'response' => url_for('scenario/staffresources?id=' . $this->scenario_id),
+              'redirect' => true)
+            );
+            return $this->renderText($return);
+//            $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
           } elseif ($request->hasParameter('Another')) {
-            $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
+            $return = json_encode(array(
+              'response' => url_for('scenario/fgroup?id=' . $this->scenario_id),
+              'redirect' => true)
+            );
+            return $this->renderText($return);
+//            $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
           } elseif ($request->hasParameter('AssignAll')) {
             $groups = Doctrine::getTable('agScenarioFacilityGroup')
                     ->findByDql('scenario_id = ?', $this->scenario_id)
@@ -830,8 +840,16 @@ class scenarioActions extends agActions
   //save and bring back to scenario edit page? or should goto review page.
           }
         } else {
-          return $this->renderPartial('groupform');
-//          return $this->renderText('You suck');
+          if($this->groupform->hasErrors()) {
+            $errors = $this->groupform->getErrorSchema()->getErrors();
+//            $errors = $this->groupform->getErrorSchema();
+//            $b = $errors->getMessage();
+            foreach($errors as $error) {
+              $message .= $error->getMessage() . PHP_EOL;
+            }
+          }
+          $return = json_encode(array('response' => $message . 'Please see the field highlighted in red below.', 'redirect' => false));
+          return $this->renderText($return);
         }
       }
 // END SAVE
