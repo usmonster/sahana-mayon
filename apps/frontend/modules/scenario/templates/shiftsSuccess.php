@@ -13,7 +13,7 @@
   //Defines the columns of the scenario shift display list page.
   $columns = array(
     'id' => array('title' => 'ID', 'sortable' => false),
-    'ScenarioFacilityResource' => array('title' => 'Facility Resource /<br/>Staff Resource Type', 'sortable' => false),
+    'ScenarioFacilityResource' => array('title' => 'Staff Resource Type /<br/>Facility Resource ', 'sortable' => false),
     'taskId' =>  array('title' => 'Status / Task', 'sortable' => false),
     'minimumStaff' =>  array('title' => 'Min / Max<br/>Staff', 'sortable' => false),
     'taskLengthMinutes' =>  array('title' => 'Task / Break<br/>Length', 'sortable' => false),
@@ -48,13 +48,13 @@
     <?php foreach ($pager->getResults() as $ag_scenario_shift): ?>
     <tr>
       <td><a class=linkButton href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) . '/' . $ag_scenario_shift->getId() ?>" title="View Scenario Shift <?php echo $ag_scenario_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
-      <td><?php
+      <td class="left"><?php
 //            $facilityResourceId = $scenarioShifts[$ag_scenario_shift->getId()]['facility_resource_id'];
 //#            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
 //            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] .  ' : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
 //            echo $facilityResourceDisplay;
-        echo $ag_scenario_shift->getAgScenarioFacilityResource(); ?><br/><?php
-        echo $ag_scenario_shift->agStaffResourceType['staff_resource_type']; ?></td>
+        echo $ag_scenario_shift->agStaffResourceType['staff_resource_type']; ?><br/><?php
+        echo $ag_scenario_shift->getAgScenarioFacilityResource(); ?></td>
       <td><?php echo $ag_scenario_shift->agShiftStatus['shift_status']; ?><br/><?php
         echo $ag_scenario_shift->agTask['task']; ?></td>
       <td><?php echo $ag_scenario_shift['minimum_staff']; ?> / <?php

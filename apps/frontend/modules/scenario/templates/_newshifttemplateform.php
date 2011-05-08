@@ -15,25 +15,25 @@ echo $shifttemplateform['id']->render() ?>
     <tbody>
       <tr>
         <td colspan="2" style="background-color: #E5F7FF;">
-          <?php
-          echo $shifttemplateform['staff_resource_type_id']->renderRow() . $shifttemplateform['facility_resource_type_id']->renderRow();
-           ?>
+          <?php echo $shifttemplateform['staff_resource_type_id']->renderRow() ?>
           <span class="smallLinkButton floatRight"
                 id="removeShiftTemplate<?php echo $number ?>">
             - Delete Shift Template
           </span>
+          <br/>
+          <?php echo $shifttemplateform['facility_resource_type_id']->renderRow(); ?>
         </td>
       </tr>
       <tr colspan="2" style="background-color: #F7F7F7;">
         <td style="text-align:left;">
           <?php
-          echo $shifttemplateform['shift_status_id']->renderRow();
-          echo '<br />';
-          echo $shifttemplateform['task_id']->renderRow();
-          echo '<br />';
           echo $shifttemplateform['shift_repeats']->renderRow();
           echo '<br />';
           echo $shifttemplateform['max_staff_repeat_shifts']->renderRow();
+          echo '<br />';
+          echo $shifttemplateform['shift_status_id']->renderRow();
+          echo '<br />';
+          echo $shifttemplateform['task_id']->renderRow();
           echo '<br />';
           echo $shifttemplateform['deployment_algorithm_id']->renderRow();
           ?>
@@ -41,11 +41,9 @@ echo $shifttemplateform['id']->render() ?>
         <td>
           <table style="padding-right:50px;">
             <tr>
+              <td></td>
               <td>
-                &nbsp;
-              </td>
-              <td>
-                <span class="infoText">Hours : Minutes</span>
+                <span class="infoText" style="padding-left: 6px">Hours : Minutes</span>
               </td>
               <td style="text-align: center;">
                 <span class="infoText">Facility Activation</span>
@@ -65,15 +63,13 @@ echo $shifttemplateform['id']->render() ?>
                       $shifttemplateform['minutes_start_to_facility_activation']->getValue();
                   $start_hours = intval($start_time / 60);
                   $start_minutes = $start_time - ($start_hours * 60);
-                  if ((strlen((string) $start_hours)) == 1)
-                    $start_hours = '0' . $start_hours;
-                  if ((strlen((string) $start_minutes)) == 1)
-                    $start_minutes = '0' . $start_minutes;
+                  $start_hours = sprintf('%02d', $start_hours);
+                  $start_minutes = sprintf('%02d', $start_minutes);
                   ?>
                   <input type="text" id="st_<?php echo $number; ?>_start_time_hours"
                          name="st[<?php echo $number ?>][start_time_hours]"
                          value="<?php echo $start_hours ?>"
-                         class="inputGray" style="width:20px;">
+                         class="inputGray" style="width:30px; text-align: right;">
                   :
                   <input type="text" id="st_<?php echo $number; ?>_start_time_minutes"
                          name="st[<?php echo $number ?>][start_time_minutes]"
@@ -86,9 +82,16 @@ echo $shifttemplateform['id']->render() ?>
               </td>
             </tr>
             <tr>
+              <td></td>
+              <td>
+                <span class="infoText" style="padding-left: 6px">Hours : Minutes</span>
+              </td>
+              <td></td>
+            </tr>
+            <tr>
               <td>
                 <span class="rowFormatLabel2">
-                  Shifts Length:
+                  Task Length:
                 </span>
               </td>
 
@@ -100,15 +103,13 @@ echo $shifttemplateform['id']->render() ?>
                              $shifttemplateform['task_length_minutes']->getValue();
                          $task_hours = intval($task_time / 60);
                          $task_minutes = $task_time - ($task_hours * 60);
-                         if ((strlen((string) $task_hours)) == 1)
-                           $task_hours = '0' . $task_hours;
-                         if ((strlen((string) $task_minutes)) == 1)
-                           $task_minutes = '0' . $task_minutes;
+                         $task_hours = sprintf('%02d', $task_hours);
+                         $task_minutes = sprintf('%02d', $task_minutes);
                   ?>
                          <input type="text" id="st_<?php echo $number; ?>_task_time_hours"
                                 name="st[<?php echo $number ?>][task_time_hours]"
                                 value="<?php echo $task_hours ?>"
-                                class="inputGray" style="width:20px;">
+                                class="inputGray" style="width:30px;text-align: right;">
                          :
                          <input type="text" id="st_<?php echo $number; ?>_task_time_minutes"
                                 name="st[<?php echo $number ?>][task_time_minutes]"
@@ -123,7 +124,7 @@ echo $shifttemplateform['id']->render() ?>
                    <tr>
                      <td>
                        <span class="rowFormatLabel2">
-                         Breaks Length:
+                         Break Length:
                        </span>
                      </td>
 
@@ -135,15 +136,13 @@ echo $shifttemplateform['id']->render() ?>
                              $shifttemplateform['break_length_minutes']->getValue();
                          $break_hours = intval($break_time / 60);
                          $break_minutes = $break_time - ($break_hours * 60);
-                         if ((strlen((string) $break_hours)) == 1)
-                           $start_hours = '0' . $break_hours;
-                         if ((strlen((string) $break_minutes)) == 1)
-                           $break_minutes = '0' . $break_minutes;
+                         $break_hours = sprintf('%02d', $break_hours);
+                         $break_minutes = sprintf('%02d', $break_minutes);
                   ?>
                          <input type="text" id="st_<?php echo $number; ?>_break_time_hours"
                                 name="st[<?php echo $number ?>][break_time_hours]"
                                 value="<?php echo $break_hours ?>"
-                                class="inputGray" style="width:20px;">
+                                class="inputGray" style="width:30px;text-align: right;">
                          :
                          <input type="text" id="st_<?php echo $number; ?>_break_time_minutes"
                                 name="st[<?php echo $number ?>][break_time_minutes]"
@@ -179,12 +178,14 @@ echo $shifttemplateform['id']->render() ?>
                            echo $start_time;
                          }
                   ?>,
-                        min: -4320,
-                        max: 4320,
+                        min: -7200,
+                        max: 7200,
                         step: 60,
                         slide: function( event, ui ) {
                           var hours = Math.floor(ui.value / 60);
                           var minutes = ui.value - (hours * 60);
+                          hours = hours.toString();
+                          minutes = minutes.toString();
                           if(hours.length == 1) hours = '0' + hours;
                           if(minutes.length == 1) minutes = '0' + minutes;
                           $("#st_<?php echo $number ?>_start_time_hours").val(hours);
@@ -196,18 +197,18 @@ echo $shifttemplateform['id']->render() ?>
                       var labelOptions = [];
                       labelOptions[0]=
                         {
-                        value: '-4320',
-                        text: '-3days'
+                        value: '-7200',
+                        text: '-5days'
                       };
                       labelOptions[1]=
                         {
                         value: '0',
-                        text: '0day'
+                        text: '0'
                       };
                       labelOptions[2] =
                         {
-                        value: '4320',
-                        text: '3days'
+                        value: '7200',
+                        text: '+5dasys'
                       };
                       addLabels(stComponent, labelOptions);
 
@@ -226,6 +227,8 @@ echo $shifttemplateform['id']->render() ?>
                         slide: function( event, ui ) {
                           var hours = Math.floor(ui.value / 60);
                           var minutes = ui.value - (hours * 60);
+                          hours = hours.toString();
+                          minutes = minutes.toString();
                           if(hours.length == 1) hours = '0' + hours;
                           if(minutes.length == 1) minutes = '0' + minutes;
                           $("#st_<?php echo $number ?>_task_time_hours").val(hours);
@@ -239,17 +242,17 @@ echo $shifttemplateform['id']->render() ?>
                       labelOptions[0]=
                         {
                         value: '0',
-                        text: '0hours'
+                        text: '0hrs'
                       };
                       labelOptions[1]=
                         {
                         value: '360',
-                        text: '6hours'
+                        text: '6hrs'
                       };
                       labelOptions[2] =
                         {
                         value: '720',
-                        text: '12hours'
+                        text: '12hrs'
                       };
 
                       addLabels(ttComponent, labelOptions);
@@ -269,6 +272,8 @@ echo $shifttemplateform['id']->render() ?>
                         slide: function( event, ui ) {
                           var hours = Math.floor(ui.value / 60);
                           var minutes = ui.value - (hours * 60);
+                          hours = hours.toString();
+                          minutes = minutes.toString();
                           if(hours.length == 1) hours = '0' + hours;
                           if(minutes.length == 1) minutes = '0' + minutes;
                           $("#st_<?php echo $number ?>_break_time_hours").val(hours);

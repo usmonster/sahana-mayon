@@ -323,17 +323,89 @@ class scenarioActions extends agActions
 
       $this->scenario_name = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getScenario();
       $this->scenario_description = Doctrine_Core::getTable('agScenario')->find($this->scenario_id)->getDescription();
-      $this->ag_scenario_facility_groups = agDoctrineQuery::create()
-              ->select('a.*, afr.*, afgt.*, afgas.*, fr.*')
-              ->from(
-                  'agScenarioFacilityGroup a,
-                    a.agScenarioFacilityResource afr,
-                    a.agFacilityGroupType afgt,
-                    a.agFacilityGroupAllocationStatus afgas,
-                    a.agFacilityResource fr'
-              )
-              ->where('a.scenario_id = ?', $this->scenario_id)
-              ->execute();
+
+      // default resource types
+      $this->staffResourceTypeCt = agDoctrineQuery::create()
+          ->select('COUNT(dssrt.id)')
+            ->from('agDefaultScenarioStaffResourceType dssrt')
+            ->where('dssrt.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->staffResourceTypeCt)) { $this->staffResourceTypeCt = 0 ; }
+
+      $this->facilityResourceTypeCt = agDoctrineQuery::create()
+          ->select('COUNT(dsfrt.id)')
+            ->from('agDefaultScenarioFacilityResourceType dsfrt')
+            ->where('dsfrt.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->facilityResourceTypeCt)) { $this->facilityResourceTypeCt = 0 ; }
+
+      // Facility groups
+      $this->facilityGroups = agDoctrineQuery::create()
+          ->select('COUNT(sfg.id)')
+            ->from('agScenarioFacilityGroup sfg')
+            ->where('sfg.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->facilityGroups)) { $this->facilityGroups = 0 ; }
+
+      $this->facilities = agDoctrineQuery::create()
+          ->select('COUNT(sfr.id)')
+            ->from('agScenarioFacilityResource sfr')
+            ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+            ->where('sfg.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->facilities)) { $this->facilities = 0 ; }
+
+      // resource requirements
+      $this->completedResourceReqs = agDoctrineQuery::create()
+          ->select('COUNT(fsr.id)')
+            ->from('agFacilityStaffResource fsr')
+              ->innerJoin('fsr.agScenarioFacilityResource sfr')
+              ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+            ->where('sfg.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->completedResourceReqs)) { $this->completedResourceReqs = 0 ; }
+
+      // staff searches
+      $this->staffSearches = agDoctrineQuery::create()
+          ->select('COUNT(ssg.id)')
+            ->from('agScenarioStaffGenerator ssg')
+            ->where('ssg.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->staffSearches)) { $this->staffSearches = 0 ; }
+      // @todo make a method on search helper to return counts and report that here as well
+
+      // shift templates
+      $this->shiftTemplates = agDoctrineQuery::create()
+          ->select('COUNT(st.id)')
+            ->from('agShiftTemplate st')
+            ->where('st.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->shiftTemplates)) { $this->shiftTemplates = 0 ; }
+
+      // shifts
+      $shiftsData = agDoctrineQuery::create()
+        ->select('COUNT(ss.id) AS ctShifts')
+            ->addSelect('MIN(ss.minutes_start_to_facility_activation) AS minStart')
+            ->addSelect('MAX((ss.minutes_start_to_facility_activation + ss.task_length_minutes
+              + ss.break_length_minutes)) AS maxEnd')
+          ->from('agScenarioShift ss')
+            ->innerJoin('ss.agScenarioFacilityResource sfr')
+            ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+          ->where('sfg.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SCALAR) ;
+
+      if (array_key_exists(0, $shiftsData))
+      {
+        $this->shifts = $shiftsData[0]['ss_ctShifts'];
+        $this->operationTime = agDateTimeHelper::minsToComponentsStr(($shiftsData[0]['ss_maxEnd']
+          - $shiftsData[0]['ss_minStart']), TRUE);
+      }
+      else
+      {
+        $this->shifts = 0;
+        $this->operationTime = 0;
+      }
+
     }
 //p-code
     $this->getResponse()->setTitle('Sahana Agasti Review ' . $this->scenario_name . ' Scenario');

@@ -22,32 +22,48 @@
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>"
    title="Edit Required Resource Types for Scenario">Manage Required Resource Types</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>Selected Staff Resource Types: <span class="highlightedText"><?php echo $staffResourceTypeCt ?></span>
+          <br>
+          Selected Facility Resource Types: <span class="highlightedText"><?php echo $facilityResourceTypeCt ?></span>
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id) ?>"
    title="Edit Facility Groups">Manage Facility Groups</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>Selected Facility Groups: <span class="highlightedText"><?php echo $facilityGroups ?></span>
+          <br>
+          Selected Facility Resources: <span class="highlightedText"><?php echo $facilities ?></span>
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>"
    title="Edit Staff Requirements">Staff Resource Requirements</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>Completed Resource Requirement Definitions: <span class="highlightedText">
+          <?php echo $completedResourceReqs ?></span> of <span class="highlightedText">
+          <?php echo ($staffResourceTypeCt * $facilities) ?></span>
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>"
    title="Edit Staff Pool">Staff Pool Definitions</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>This scenario has <span class="highlightedText">
+          <?php echo $staffSearches ?></span> defined staff searches
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>"
    title="Edit Shift Templates">Shift Templates</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>A total of <span class="highlightedText">
+          <?php echo $shiftTemplates ?></span> shift templates have been defined for this scenario
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>"
    title="View Scenario Shifts">Scenario Shifts</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>A total of <span class="highlightedText">
+          <?php echo $shifts ?></span> shifts have been generated covering
+          <span class="highlightedText"><?php echo $operationTime ?></span> of operation
+        </td>
     </tr>
 </table>
 
