@@ -692,6 +692,14 @@ th .tableRow {
   text-align: center;
 }
 
+table.staffTable td.left {
+  text-align:left;
+}
+
+table.staffTable td.right {
+  text-align:right;
+}
+
 .staffNameTable {
   text-align: center
 }

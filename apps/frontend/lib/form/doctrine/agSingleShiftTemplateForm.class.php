@@ -92,7 +92,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'id' => new sfWidgetFormInputHidden(),
           //'shift_template' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
           //'description' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-          'scenario_id' => new sfWidgetFormInputHidden(),
+          'scenario_id' => new sfWidgetFormInputHidden,
 
           'facility_resource_type_id' =>
           new sfWidgetFormChoice(array('choices' => $defaultFacilityTypes),
@@ -131,10 +131,10 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'minutes_start_to_facility_activation' => new sfWidgetFormInputHidden(),
 
           'shift_repeats' => new sfWidgetFormInputText(
-              array('label' => 'Days Facility Open For'), array('class' => 'inputGray width30')
+              array('label' => 'Days in Operation'), array('class' => 'inputGray width30')
           ),
           'max_staff_repeat_shifts' => new sfWidgetFormInputText(
-              array('label' => 'Person Shift Repeats'), array('class' => 'inputGray width30')
+              array('label' => 'Consecutive Staff Shifts'), array('class' => 'inputGray width30')
           ),
 
           'shift_status_id' =>         new sfWidgetFormDoctrineChoice(
@@ -148,7 +148,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           ,
           'deployment_algorithm_id' =>         new sfWidgetFormDoctrineChoice(
             array(
-              'label' => 'Deployment Algorithm',
+              'label' => 'Deployment Method',
               'model' => $this->getRelatedModelName('agDeploymentAlgorithm'),
               'add_empty' => false,
               'method' => 'getDeploymentAlgorithm',
@@ -168,7 +168,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
 //        'minutes_start_to_facility_activation'
 //    );
     $this->getWidget('shift_repeats')->setAttribute('size', '8');
-    $this->getWidget('shift_status_id')->setAttribute('class', 'shifttemplateleft');
+    $this->getWidget('shift_status_id');
 
     $this->setValidators(
         array(

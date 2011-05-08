@@ -187,19 +187,33 @@ class agDateTimeHelper
    */
   public static function minsToComponentsArray($minutes, $days = TRUE)
   {
+    // determine whether this is a positive or negative number
     $results = array();
+    $results['negative'] = ($minutes < 0) ? TRUE : FALSE;
+
     if ($days)
     {
-      $results['days'] = floor(($minutes / self::MINUTE_IN_DAY));
+      // calculate our days
+      $results['days'] = abs(floor(($minutes / self::MINUTE_IN_DAY)));
       $results['hours'] = abs(floor((($minutes % self::MINUTE_IN_DAY) / self::MINUTE_IN_HOUR)));
+      if ($results['negative'] && $results['hours'] > 0)
+      {
+        $results['days'] = ($results['days'] - 1);
+      }
     }
     else
     {
+      // set days to 0
       $results['days'] = 0;
-      $results['hours'] = floor(($minutes / self::MINUTE_IN_HOUR));
+      $results['hours'] = abs(floor(($minutes / self::MINUTE_IN_HOUR)));
     }
 
+    // calculate minutes and adjust for a negative number
     $results['minutes'] = abs($minutes % self::MINUTE_IN_HOUR);
+      if ($results['negative'] && $results['minutes'] > 0)
+      {
+        $results['hours'] = ($results['hours'] - 1);
+      }
 
     return $results;
   }
@@ -217,13 +231,14 @@ class agDateTimeHelper
     if (array_sum($c) == 0) { return '0m' ; }
 
     $results = '';
+    if ($c['negative']) { $results = '-';}
     if ($days)
     {
       if ($c['days'] != 0) { $results = $results . $c['days'] . 'd ' ; }
     }
 
     if ($c['hours'] != 0) { $results = $results . $c['hours'] . 'h ' ; }
-    if ($c['minutes'] != 0) { $results = $results . $c['minutes'] . 'h' ; }
+    if ($c['minutes'] != 0) { $results = $results . $c['minutes'] . 'm' ; }
     return $results;
   }
 
