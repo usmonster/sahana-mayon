@@ -62,7 +62,7 @@ abstract class agBulkRecordHelper
    *
    * @param array $recordIds A single-dimension array of record id's.
    */
-  public function setRecordIds(array $recordIds)
+  public function setRecordIds(array $recordIds = NULL)
   {
     // as long as $recordIds exists, set the class property
     if (isset($recordIds))
