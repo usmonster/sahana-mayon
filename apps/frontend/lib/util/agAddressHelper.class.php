@@ -12,7 +12,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agAddressHelper extends agEntityContactHelper
+class agAddressHelper extends agBulkRecordHelper
 {
   // these constants map to the address get types that are supported in other function calls
   const     ADDR_GET_TYPEID = 'getAddressComponentsById',
@@ -80,7 +80,7 @@ class agAddressHelper extends agEntityContactHelper
    *
    * @param array $addressIds A single dimension array of address id values.
    */
-  public function __construct(array $addressIds = NULL)
+  public function __construct($addressIds = NULL)
   {
     // if passed an array of address id's, set them as a class property
     parent::__construct($addressIds);
@@ -256,7 +256,7 @@ class agAddressHelper extends agEntityContactHelper
    * @param array $addressIds A single-dimension array of address  id's.
    * @return agDoctrineQuery An extended doctrine query object.
    */
-  protected function _getAddressComponents(array $addressIds)
+  protected function _getAddressComponents($addressIds)
   {
     // if no (null) ID's are passed, get the addressId's from the class property
     $addressIds = $this->getRecordIds($addressIds) ;
@@ -282,7 +282,7 @@ class agAddressHelper extends agEntityContactHelper
    * @return array A two dimensional array keyed by address_id, then by address_element_id, and
    * containing the address value.
    */
-  public function getAddressComponentsById(array $addressIds = NULL)
+  public function getAddressComponentsById($addressIds = NULL)
   {
     // return our base query object
     $q = $this->_getAddressComponents($addressIds) ;
@@ -298,7 +298,7 @@ class agAddressHelper extends agEntityContactHelper
    * @return array A two-dimensional associative array, keyed by address id, that has key/value
    * pairs representing latitude and longitude.
    */
-  public function getAddressCoordinates(array $addressIds = NULL)
+  public function getAddressCoordinates($addressIds = NULL)
   {
     // always a good idea to set this at the top
     $results = array() ;
@@ -348,7 +348,7 @@ class agAddressHelper extends agEntityContactHelper
    * @return array A two-dimensional associative array, keyed by address_id and the string
    * representation of the address component.
    */
-  public function getAddressComponentsByName(array $addressIds = NULL, $getGeoCoordinates = TRUE)
+  public function getAddressComponentsByName($addressIds = NULL, $getGeoCoordinates = TRUE)
   {
     $results = array() ;
 
@@ -398,7 +398,7 @@ class agAddressHelper extends agEntityContactHelper
    * Defaults to the class parameter $checkValuesForCompleteness.
    * @return boolean Is it a complete address? True or False. 
    */
-  public function isCompleteAddress(array $addressComponentArray, $checkValues = NULL)
+  public function isCompleteAddress($addressComponentArray, $checkValues = NULL)
   {
     // get our class-default checkValues value
     if (is_null($checkValues)) { $checkValues = $this->checkValuesForCompleteness ; }
@@ -436,7 +436,7 @@ class agAddressHelper extends agEntityContactHelper
    * classes' $addressIds property is used.
    * @return array A mono-dimesional array of address_ids.
    */
-  public function getIncompleteAddresses(array $addressIds = NULL)
+  public function getIncompleteAddresses($addressIds = NULL)
   {
     $results = array() ;
     $addresses = $this->getAddressComponentsById($addressIds) ;
@@ -464,7 +464,7 @@ class agAddressHelper extends agEntityContactHelper
    *
    * @todo This could *perhaps* be turned into some sort of super-efficient walk method
    */
-  public function getAddressComponentsByLine(array $addressIds = NULL, $enforceComplete = NULL)
+  public function getAddressComponentsByLine($addressIds = NULL, $enforceComplete = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array() ;
@@ -527,7 +527,7 @@ class agAddressHelper extends agEntityContactHelper
    * @return array A mono-dimensional associative array keyed by address_id with the combined
    * address string as a value.
    */
-  public function getAddressAsString(array $addressIds = NULL,
+  public function getAddressAsString( $addressIds = NULL,
                                       $enforceComplete = NULL,
                                       $enforceLineNumber = NULL)
   {
@@ -617,7 +617,7 @@ class agAddressHelper extends agEntityContactHelper
    * @deprecated This should not normally be necessary as address hashes should be generated
    * at address creation.
    */
-  public function updateAddressHashes(array $addressIds = NULL, $conn = NULL)
+  public function updateAddressHashes($addressIds = NULL, $conn = NULL)
   {
     // what is our transaction called?
     $savepoint = 'updateAddrHash' ;
@@ -643,7 +643,7 @@ class agAddressHelper extends agEntityContactHelper
     foreach ($addressComponents as $addressId => $components)
     {
       // calculate the component hash
-      $addrHash = agBulkRecordHelper::getRecordComponentsHash($components) ;
+      $addrHash = $this->hashAddress($components) ;
 
       // update the address hash value of this addressId by array access
       $addressCollection[$addressId]['address_hash'] = $addrHash ;
@@ -669,11 +669,26 @@ class agAddressHelper extends agEntityContactHelper
   }
 
   /**
+   * Method to take an address component array and return a json encoded, md5sum'ed address hash.
+   * @param array $addressComponentArray An associative array of address components keyed by
+   * elementId with the string value.
+   * @return string(128) A 128-bit md5sum string.
+   */
+  protected function hashAddress($addressComponentArray)
+  {
+    // first off, we don't trust the sorting of the address components so we do our own
+    ksort($addressComponentArray) ;
+
+    // we json encode the return to
+    return md5(json_encode($addressComponentArray)) ;
+  }
+
+  /**
    * A quick helper method to take in an array address hashes and return an array of address ids.
    * @param array $addressHashes A monodimensional array of md5sum, json_encoded address hashes.
    * @return array An associative array, keyed by address hash, with a value of address_id.
    */
-  public function getAddressIdsByHash(array $addressHashes)
+  public function getAddressIdsByHash($addressHashes)
   {
     $q = agDoctrineQuery::create()
       ->select('a.address_hash')
@@ -689,7 +704,7 @@ class agAddressHelper extends agEntityContactHelper
    * @param array $addressTypes An array of address_contact_types
    * @return array An associative array of address contact type ids keyed by address contact type.
    */
-  static public function getAddressContactTypeIds(array $addressTypes)
+  static public function getAddressContactTypeIds($addressTypes)
   {
     return agDoctrineQuery::create()
       ->select('act.address_contact_type')
@@ -705,7 +720,7 @@ class agAddressHelper extends agEntityContactHelper
    * @param array $addressElements An array of address_elements
    * @return array An associative array of address element ids keyed by address element.
    */
-  static public function getAddressElementIds(array $addressElements)
+  static public function getAddressElementIds($addressElements)
   {
     return agDoctrineQuery::create()
       ->select('ae.address_element')
@@ -721,7 +736,7 @@ class agAddressHelper extends agEntityContactHelper
    * @param array $addressStandards An array of address_standards
    * @return array An associative array of address standard ids keyed by address standard.
    */
-  static public function getAddressStandardIds(array $addressStandards)
+  static public function getAddressStandardIds($addressStandards)
   {
     return agDoctrineQuery::create()
       ->select('as.address_standard')
@@ -768,7 +783,7 @@ class agAddressHelper extends agEntityContactHelper
    * </code>
    * @todo Pass the addressGeo array through
    */
-  public function setAddresses(array $addresses,
+  public function setAddresses( $addresses,
                                 $addressGeo = array(),
                                 $enforceComplete = NULL,
                                 $throwOnError = NULL,
@@ -896,7 +911,7 @@ class agAddressHelper extends agEntityContactHelper
    * )
    * </code>
    */
-  protected function _setAddresses(array $addresses,
+  protected function _setAddresses( $addresses,
                                     $throwOnError = NULL,
                                     Doctrine_Connection $conn = NULL)
   {
@@ -912,7 +927,7 @@ class agAddressHelper extends agEntityContactHelper
     // loop through the addresses, hash the components, and build the hash-keyed search array
     foreach($addresses as $index => $addressComponents)
     {
-      $hash = agBulkRecordHelper::getRecordComponentsHash($addressComponents[0]) ;
+      $hash = $this->hashAddress($addressComponents[0]) ;
       $addrHashes[$index] = $hash ;
     }
 
@@ -1004,7 +1019,7 @@ class agAddressHelper extends agEntityContactHelper
    * @todo add new geo's or attach old ones (as appropriate)
    * @todo optimize for APC to do the results caching
    */
-  protected function setNewAddresses(array $addresses,
+  protected function setNewAddresses( $addresses,
                                       $throwOnError = NULL,
                                       Doctrine_Connection $conn = NULL)
   {

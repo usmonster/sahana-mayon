@@ -33,7 +33,7 @@ abstract class agBulkRecordHelper
    *
    * @param array $_recordIds A single dimension array of address id values.
    */
-  public function __construct(array $recordIds = NULL)
+  public function __construct($recordIds = NULL)
   {
     // pick up our default batch size
     $batchSize = ((agGlobal::getParam('default_batch_size'))/$this->_batchSizeModifier) ;
@@ -50,7 +50,7 @@ abstract class agBulkRecordHelper
    * @param array $recordIds A single dimension array of record ids.
    * @return object A new instance of this class.
    */
-  public static function init(array $recordIds = NULL)
+  public static function init($recordIds = NULL)
   {
     $childClass = get_called_class() ;
     $class = new $childClass($recordIds) ;
@@ -62,7 +62,7 @@ abstract class agBulkRecordHelper
    *
    * @param array $recordIds A single-dimension array of record id's.
    */
-  public function setRecordIds(array $recordIds)
+  public function setRecordIds($recordIds)
   {
     // as long as $recordIds exists, set the class property
     if (isset($recordIds))
@@ -86,7 +86,7 @@ abstract class agBulkRecordHelper
    * @param array $recordIds A single-dimension array of record id's.
    * @return array $recordIds A single-dimension array of record id's.
    */
-  public function getRecordIds(array $recordIds = NULL)
+  public function getRecordIds($recordIds = NULL)
   {
     if (is_null($recordIds))
     {
@@ -137,20 +137,4 @@ abstract class agBulkRecordHelper
    // if that didn't pan-out, wrap it in an array and pass it through.
    return array($var) ;
  }
-
-   /**
-   * Method to take a record component array and return a json encoded, md5sum'ed record component hash.
-   * @param array $recordComponentsArray An associative array of record components keyed by
-   * elementId with the string value.
-   * @return string(128) A 128-bit md5sum string.
-   */
-  public static function getRecordComponentsHash(array $recordComponentsArray)
-  {
-    // first off, we don't trust the sorting of the components so we do our own
-    ksort($recordComponentsArray) ;
-
-    // we json encode the return to
-    return md5(json_encode($recordComponentsArray)) ;
-  }
-
 }
