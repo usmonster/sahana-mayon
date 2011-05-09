@@ -17,19 +17,15 @@ It's time to get started in creating your first Staff record.  Keep this walk-th
 
 To get started, use the menu to navigate to the Staff Management page.
 
-{{ :manual:user:staff:staff_select1.png?800 }}
+{{:manual:user:staff:nav_to_staff.png?700}}
 
+Next, select the link to create a staff record, "Add Staff".
 
-
-Next, select the link to create a staff record, "Create Staff".
-
-
-{{ :manual:user:staff:staff_create_highlight.png?800 }}
-
+{{:manual:user:staff:add_staff_hover.png?700}}
 
 
 [[manual:user:staff:new|{{ :manual:user:next.png|}}]] 
-After you've clicked the "Create Staff" link, click next in this tutorial.
+After you've clicked the "Add Staff" link, click next in this tutorial.
 
 
 ===== Jump to Another Step =====

@@ -1,4 +1,3 @@
-1296596672	127.0.0.1	C	manual:user:next.png	admin		
 1296597093	127.0.0.1	E	manual:user:next.png	admin		
 1296597103	127.0.0.1	E	manual:user:previous.png	admin		
 1296597336	127.0.0.1	E	manual:user:previous.png	admin		
@@ -19,3 +18,16 @@
 1297184573	::1	C	manual:user:staff:staff_import_fileselect.png	admin		
 1304083280	127.0.0.1	C	tooltip:scenario_pre_flowchart.jpg	admin		
 1304627030	127.0.0.1	C	scenario:screenshot_033.png	admin		
+1304953651	127.0.0.1	C	manual:user:staff:nav_to_staff.png	admin		
+1304953759	127.0.0.1	C	manual:user:staff:add_staff_hover.png	admin		
+1304955693	127.0.0.1	C	manual:user:staff:staff_status_dropdown.png	admin		
+1304955796	127.0.0.1	C	manual:user:staff:edit_show_staff_list.png	admin		
+1304956021	127.0.0.1	C	manual:user:staff:search_box.png	admin		
+1304957885	127.0.0.1	C	manual:user:staff:click_prepare.png	admin		
+1304957905	127.0.0.1	C	manual:user:staff:edit_staff_resource.png	admin		
+1304958083	127.0.0.1	C	manual:user:staff:delete_icon.png	admin		
+1304958160	127.0.0.1	C	manual:user:staff:add_staff_resource.png	admin		
+1304958712	127.0.0.1	C	manual:user:staff:staff_import_highlighted.png	admin		
+1304958743	127.0.0.1	C	manual:user:staff:browse_button.png	admin		
+1304958792	127.0.0.1	C	manual:user:staff:submit_button.png	admin		
+1304959117	127.0.0.1	C	manual:user:staff:staff_import_and_export_template.xls	admin		

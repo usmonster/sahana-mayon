@@ -2,16 +2,31 @@
 
 
 ===== Editing Staff Records =====
-
+Though staff resources can be updated through import, minor updates to records and contact information can be done on individual staff records through the application.  Here you can update the languages known, contact information, and skills available through resources.
 ===== Reference Information =====
 
-
+By now you know that a Staff Resource is the combination of a staff's record in Sahana Agasti and the Resource that they could be deployed as during a response.  To ensure an accurate staff pool the information on available staff should be maintained as closely as possible.
 ===== Walk-Through =====
+For ease of reference, the different sections and possible updates are outlined in the breakdowns below:
 
+==== Staff Resource Updates ====
+{{:manual:user:staff:edit_staff_resource.png?700}}
+
+=== Deleting Resources ===
+To delete a resource record from an existing staff record click the orange icon {{:manual:user:staff:delete_icon.png|}} on the right of the associated record. 
+
+=== Adding Resources ===
+To add a resource type to an existing staff record click the {{:manual:user:staff:add_staff_resource.png|}} link just below the existing resources.
+
+==== Primary Information Updates ====
+<<<Place holder for updates>>>
+
+==== Action Buttons ====
+<<<Place holder for refactor>>>
 
 ===== FAQ =====
 
-
+  * **If a staff record has multiple resource types will that staff member be deployed more than once?** - No.  Sahana Agasti is designed to deploy a staff person only once; allowing you to record all the potential roles of an individual without worrying about them being counted more than onces.
 ====== Continue ======
 
 [[manual:user:staff:import|{{ :manual:user:next.png|}}]] 

@@ -15,3 +15,11 @@ Sahana 2.0 is free of cost. Sahana is written and distributed under the GPL Gene
 Established in 1996, the New York City Office of Emergency Management (OEM) plans and prepares for emergencies, educates the public about preparedness, coordinates emergency response and recovery, and collects and disseminates emergency information.
 
 To accomplish this mission, OEM maintains a disciplined unit of emergency management personnel, including responders, planners, watch commanders, and administrative and support staff, to identify and respond to various hazards. 
+
+====== Help Sections ======
+  * [[manual:administrator|Administrator Manual]]
+  * [[manual:user|User Manual]]
+    * [[manual:user:staff| Staff Management]]
+    * [[manual:user:facilities| Facility Management]]
+    * [[manual:user:organizations| Organization Management]]
+    * [[manual:user:scenario| Scenario Management]]

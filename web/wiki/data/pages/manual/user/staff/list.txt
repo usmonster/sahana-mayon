@@ -2,15 +2,19 @@
 
 
 ===== List Staff =====
-
+The Mayon Staff list makes it easy for administrators to update or locate individual staff or a group of staff records.  The list is sortable by status and searchable through the menu.
 ===== Reference Information =====
+==== Things To Know ====
 
+  * Even if a staff record has more than one resource they are only listed once.
+  * {{ :manual:user:staff:staff_status_dropdown.png|}} The list defaults to show staff in "active" status.  To view all records adjust the dropdown in the upper right corner. 
 
 ===== Walk-Through =====
 
+  - {{ :manual:user:staff:search_box.png|}}To find a specific record, search by Name, Resource Type, Organization, City (or Borough), or email address.
+  - {{ :manual:user:staff:edit_show_staff_list.png|}}From the Staff List you can either Edit or View a staff record.  Each record has two buttons on the left column: Edit and View.
 
-===== FAQ =====
-
+Next you'll be editing an existing record in Agasti Mayon.  Click the "Edit" button on a record and click the next button below.
 
 ====== Continue ======
 
