@@ -96,6 +96,9 @@ echo url_for
     <input class="linkButton" type="button" value="Save and Create Another" name="Another" onclick="serialTran(this)"/>
 <!--    <input class="linkButton" type="submit" value="Save and Assign Staff Requirements" name="AssignAll"/>-->
     <input class="linkButton" type="button" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran(this)"/>
+    <?php if (!$groupform->getObject()->isNew()): ?>
+      <input class="deleteButton" type="submit" value="Delete" name="Delete"/>
+    <?php endif; ?>
   </form>
 </div>
 <br />

@@ -220,11 +220,10 @@ h5 {
 
 
 /**** Links ****/
-.linkButton {
+.linkButton, .deleteButton {
   display: inline-block;
-  color: #848484;
   padding: 5px 10px;
-  border: solid 1px #dadada;
+  border: solid 1px;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
@@ -233,10 +232,25 @@ h5 {
   text-align: center;
   text-decoration: none;
   outline: none;
+}
+
+.linkButton {
+  background: #f1f1f1;
+  color: #848484;
+  border-color: #dadada;
+}
+
+.deleteButton {
+  border-color: #ff0000;
+  color: #848484;
   background: #f1f1f1;
 }
 
-input.linkButton {
+.deleteButton:hover {
+  background: #ffc6c6;
+}
+
+input.linkButton, input.deleteButton {
   font-family: helvetica, arial, verdana, sans-serif;
   padding: 0.32em 0.6em;
   margin: 0.12em;
@@ -548,18 +562,17 @@ span.green{
   padding: 0;
 }**/
 
-input[type="button"], button[type="submit"], form input[type="submit"] {
+/*input[type="button"], button[type="submit"], form input[type="submit"] {
   border: 1px solid #dadada;
   font-weight: bold;
-/*  font-family: helvetica, arial, verdana;*/
   outline: none;
-  text-decoration: none;
+  text-decoration: none;*/
+/*  font-family: helvetica, arial, verdana;*/
 /*  padding: 0;*/
-
 /*  -moz-box-shadow: 3px 3px 3px #ccc;
   -webkit-box-shadow: 3px 3px 3px #ccc;
   box-shadow: 3px 3px 3px #ccc;*/
-}
+/*}*/
 .ruleGray {
   color: #bcbcbc;
   background-color: #bcbcbc;
@@ -1421,7 +1434,7 @@ a.signin.menu-open span {
 tr.sort {
   background: #ffffff;
   height: 3em;
-  cursor: move;
+  cursor: pointer;
 }
 
 tr.sort td {

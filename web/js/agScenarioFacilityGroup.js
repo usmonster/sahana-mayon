@@ -11,6 +11,22 @@ function buildSortList() {
       forcePlaceholderSize: true
     });
 
+    $('.allocated tbody').bind('beforestop', function(event, ui) {
+      if(ui.helper.find('td').length < 3) {
+        ui.helper.find('td.right').removeClass('right').addClass('inner');
+        ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
+        ui.helper.css('width', '305px');
+      }
+    });
+
+    $('.available tbody').bind('beforestop', function(event, ui) {
+      if(ui.helper.find('td').length == 3) {
+        ui.helper.find('td.right').remove();
+        ui.helper.find('td.inner').removeClass('inner').addClass('right');
+        ui.helper.css('width', '257px');
+      }
+    });
+
     $('.allocated tbody').bind('sortover', function(event, ui) {
       if(ui.helper.find('td').length < 3) {
         ui.helper.find('td.right').removeClass('right').addClass('inner');
@@ -85,7 +101,11 @@ function buildSortList() {
   }
 
   function highLight(id, highLightClass) {
-    $(id).addClass(highLightClass).attr('onkeypress', 'removeHighLight(this, "' + highLightClass + '")');
+    $(id).addClass(highLightClass).attr('onfocus', 'emptyHighLight(this)').attr('onkeypress', 'removeHighLight(this, \'' + highLightClass + '\')');
+  }
+
+  function emptyHighLight(element) {
+    $(element).val('');
   }
 
   function removeHighLight(element, highLightClass) {
