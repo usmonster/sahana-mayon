@@ -100,7 +100,7 @@ class agStaffPoolForm extends sfForm
 
     $staffGenForm->getWidgetSchema()->setLabel(
         'search_weight',
-        'Search Weight <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Resource">?</a>');
+        'Search Weight <a href="' . $wikiUrl .  '/doku.php?id=tooltip:search_weight&do=export_xhtmlbody" class="tooltipTrigger" title="Search Weight">?</a>');
 
     $this->embedForm('staff_generator', $staffGenForm);
   }
