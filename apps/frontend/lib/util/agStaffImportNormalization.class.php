@@ -60,7 +60,7 @@ class agStaffImportNormalization extends agImportNormalization
    * Method to extend the import specification to include dynamic columns from the file headers
    * @param array $importFileHeaders A single-dimension array of import file headers / column names
    */
-  protected function addDynamicColumns($importFileHeaders)
+  protected function addDynamicColumns(array $importFileHeaders)
   {
     $dynamicColumns = array_diff($importFileHeaders, array_keys($this->importSpec));
     foreach($dynamicColumns as $column)
