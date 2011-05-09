@@ -168,10 +168,11 @@ class agFooActions extends agActions
 //    $output = $phoneHelper->setEntityPhone($entityContacts, TRUE);
 //    print_r($output);
 
-    $personIds = array(10, 11);
+    $personIds = array(13, 14, 15, 16);
     $obj = new agPersonLanguageHelper($personIds);
 //    $results = $obj->getPersonLanguageById();
-//    print_r($results);
+    $results = $obj->getPersonLanguage($personIds, FALSE);
+    print_r($results);
 
 //    $personLanguages = array(2 => array(1 => array('    German   ', array())),
 //                             3 => array(1 => array('Arabic', array('read' => '  fluent  ', 'write' => 'intermediate', 'speak' => 'fluent')),
@@ -190,13 +191,13 @@ class agFooActions extends agActions
 //                             5 => array(1 => array('English')),
 //                             8 => array(1 => array('Gaelic', array('read' => 'intermediate', 'write' => 'intermediate')))
 //                            );
-    $personLanguages = array(14 => array(1 => array('Roman', array('read' => 'superior', 'write' => 'superior', 'speak' => 'superior')),
-                                         2 => array('lkjaseir', array('blah' => 'fluent', 'speak' => 'fluent')) ),
-                             15 => array(1 => array('Italian', array('read' => 'fluent', 'write' => 'fluent', 'speak' => 'intermediate')))
-                            );
-
-    $results = $obj->setPersonlanguages($personLanguages, TRUE, TRUE, TRUE);
-    print_r($results);
+//    $personLanguages = array(14 => array(1 => array('Roman', array('read' => 'superior', 'write' => 'superior', 'speak' => 'superior')),
+//                                         2 => array('lkjaseir', array('blah' => 'fluent', 'speak' => 'fluent')) ),
+//                             15 => array(1 => array('Italian', array('read' => 'fluent', 'write' => 'fluent', 'speak' => 'intermediate')))
+//                            );
+//
+//    $results = $obj->setPersonlanguages($personLanguages, FALSE, TRUE, FALSE);
+//    print_r($results);
 
 //
 //    $stfResHelper = new agStaffResourceHelper();

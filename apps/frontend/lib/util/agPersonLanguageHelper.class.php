@@ -64,21 +64,21 @@ class agPersonLanguageHelper extends agLanguageHelper
   }
   
   /**
-   * Method to retrieve person's language, format, and competency information.
+   * Method to retrieve person's language, format, and competency information by ids.
    * 
    * @param array $personIds A single-dimension array of person id values. Default is NULL.
    * @param boolean $primary A boolean that controls whether or not the query constructor will
    * build a query that only returns primary names or all names.
    * @return array A multi-dimensional associative array keyed by person id, 
-   * ordering index, and format id.
+   * ordering index, and format id and valued by competency Id.
    * <code>
    * array( personID => 
-   *            array( index => array( [0] => langauge,
-   *                                   [1] => array( formatId => competencyId 
-   *                                                 ... )
-   *                                 )
+   *            array( priority => array( [0] => langaugeId,
+   *                                      [1] => array( formatId => competencyId
+   *                                                    ... )
+   *                                    )
    *                   ... )
-   *      ...)
+   *        ...)
    * </code>      
    */
   public function getPersonLanguageById(array $personIds = NULL, $primary = TRUE)
@@ -115,6 +115,63 @@ class agPersonLanguageHelper extends agLanguageHelper
     return $results;
   }
 
+  /**
+   * Method to retrieve person's language, format, and competency information.
+   *
+   * @param array $personIds A single-dimension array of person id values. Default is NULL.
+   * @param boolean $primary A boolean that controls whether or not the query constructor will
+   * build a query that only returns primary names or all names.
+   * @return array A multi-dimensional associative array keyed by person id,
+   * ordering index, and format and valued by competency.
+   * <code>
+   * array( personID =>
+   *            array( index => array( [0] => langauge,
+   *                                   [1] => array( format => competency
+   *                                                 ... )
+   *                                 )
+   *                   ... )
+   *      ...)
+   * </code>
+   */
+  public function getPersonLanguage(array $personIds = NULL, $primary = TRUE)
+  {
+    $results = array();
+    $q = $this->_getLanguageComponents($personIds, $primary);
+    $q->addSelect('l.language')
+      ->addSelect('lf.language_format')
+      ->addSelect('lc.language_competency')
+      ->innerJoin('pml.agLanguage l')
+      ->leftJoin('plc.agLanguageFormat lf')
+      ->leftJoin('plc.agLanguageCompetency lc');
+
+    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
+
+    foreach ($rows AS $row)
+    {
+      $personId = $row[0];
+      $idx = $row[1];
+      $language = $row[5];
+      $format = $row[6];
+      $competency = $row[7];
+      if (is_null($format))
+      {
+        $results[$personId][$idx] = array($language, array());
+      }
+      else
+      {
+        if (isset($results[$personId][$idx]))
+        {
+          $results[$personId][$idx][1][$format] = $competency;
+        }
+        else
+        {
+          $results[$personId][$idx] = array($language, array($format => $competency));
+        }
+      }
+    }
+
+    return $results;
+  }
   /**
    * Method to return the diff of the two arrays.
    *
@@ -160,10 +217,10 @@ class agPersonLanguageHelper extends agLanguageHelper
    * for which no operations could be performed.
    */
   public function setPersonLanguages(array $personLanguages,
-                                      $keepHistory = NULL,
-                                      $throwOnError = NULL,
-                                      $createEdgeTableValues = NULL,
-                                      Doctrine_Connection $conn = NULL)
+                                     $keepHistory = NULL,
+                                     $throwOnError = NULL,
+                                     $createEdgeTableValues = NULL,
+                                     Doctrine_Connection $conn = NULL)
   {
     // explicit declarations are nice
     $results = array();
@@ -405,11 +462,11 @@ class agPersonLanguageHelper extends agLanguageHelper
       $currLanguages = $this->getPersonLanguageById(array_keys($personLanguages), FALSE);
     }
 
-    // execute the reprioritization helper and pass it our current addresses as found in the db
+    // execute the reprioritization helper and pass it our current languages as found in the db
     $personLanguages = $this->reprioritizePersonLanguages($personLanguages, $currLanguages);
 
     // Unset $currLanguages
-    unset($currlanguages);
+    unset($currLanguages);
 
     // Build a simpler $personLanguages array for a more efficient use of searches later on.
     $simplifiedNewLanguages = array();
@@ -428,6 +485,7 @@ class agPersonLanguageHelper extends agLanguageHelper
     // the personIds we're affecting. Note: INDEXBY is very important if we intend to access this
     // collection via array access as we do later.
 
+    $deletePersonLanguageIds = array();
     $updateLanguageComponents = array();
 
     $q = agDoctrineQuery::create($conn)
@@ -436,62 +494,49 @@ class agPersonLanguageHelper extends agLanguageHelper
         ->whereIn('mpl.person_id', array_keys($personLanguages));
     $personLanguageCollection = $q->execute() ;
 
-    // Update and delete collection records based off of the $personLanguages setting.
+    // Determine records whether to be updated and/or deleted.
     foreach($personLanguageCollection AS $collId => $pLang)
     {
       $collPId = $pLang['person_id'];
       $collLId = $pLang['language_id'];
 
-      if (array_key_exists($collLId, $simplifiedNewLanguages[$collPId]))
+      if (isset($simplifiedNewLanguages[$collPId])
+          && array_key_exists($collLId, $simplifiedNewLanguages[$collPId]))
       {
         $personLanguagePriority = $simplifiedNewLanguages[$collPId][$collLId];
 
-        // Update priority in person-language joining table.
-        $personLanguageCollection[$collId]['priority'] = $personLanguagePriority;
-
-        // Add to $updateLanguageComponent and unset it from $personLanguages
-        $updateLanguageComponents[$collId] = $personLanguages[$collPId][$personLanguagePriority][1];
-
-        if (count($personLanguages[$collPId]) == 1)
+        if ($personLanguageCollection[$collId]['priority'] == $personLanguagePriority)
         {
-          unset($personLanguages[$collPId]);
+          // No update to person language record necessary.  Should still add to 
+          // $updateLanguageComponent to determine if child needs update later on.  Unset it from
+          // $simplifiedNewLanguage.
+          $updateLanguageComponents[$collId] = $personLanguages[$collPId][$personLanguagePriority][1];
+          unset($simplifiedNewLanguages[$collPId][$collLId]);
         }
         else
         {
-          unset($personLanguages[$collPId][$personLanguagePriority]);
+          // Easier to completely remove record than to perform update and possibly run into
+          // priority constraint violation issues.
+          $deletePersonLanguageIds[] = $collId;
         }
       }
       else
       {
         // Remove from collection.
-        $personLanguageCollection->remove($collId);
+        $deletePersonLanguageIds[] = $collId;
         $results['removed']++;
       }
-
-      // Unset all updated or deleted records from $simplifiedNewLanguage, leaving only the new
-      // person language records.
-      unset($simplifiedNewLanguages[$collPId][$collLId]);
     }
     // Unset variables to release memories.
-    unset($collId, $pLang, $collPId, $collLId, $personLanguagePriority);
+    unset($collId, $pLang, $collPId, $collLId, $personLanguagePriority, $personLanguageCollection);
 
-//    $coll = new Doctrine_Collection('agPersonMjAgLanguage');
-//
-//    foreach($personLanguages AS $personId => $pLangs)
-//    {
-//      foreach($pLangs AS $index => $langComps)
-//      {
-//        $languageId = $langComps[0];
-//        $newRec = new agPersonMjAgLanguage();
-//        $newRec['person_id'] = $personId;
-//        $newRec['language_id'] = $languageId;
-//        $newRec['priority'] = $index;
-//
-//        $coll->add($newRec);
-//        unset($simplifiedNewLanguages[$personId][$languageId]);
-//      }
-//    }
-//    unset($personId, $pLangs, $index, $langComps, $languageId, $newRec);
+    // Remove all delete records, leaving only records for new inserts and updates.
+    $this->deletePersonLanguages($deletePersonLanguageIds, $throwOnError, $conn);
+    unset($deletePersonLanguageIds);
+
+    // Now all deletes are done on the manay-to-many person language table and it's cooresponding 
+    // person language competency child table at this point.  Only thing left to do on the person
+    // language joining table is to add new person language records.
 
    // here we check our current transaction scope and create a transaction or savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
@@ -506,48 +551,8 @@ class agPersonLanguageHelper extends agLanguageHelper
 
     try
     {
-      $personLanguageCollection->replace($conn);
-//      $coll->replace($conn);
-
-      // commit, being sensitive to our nesting
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
-
-      // append to our results array
-      $results['upserted'] = $results['upserted'] + count($personLanguageCollection);
-    }
-    catch(Exception $e)
-    {
-      // log our error
-      $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage());
-      sfContext::getInstance()->getLogger()->err($errMsg);
-
-      // rollback
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
-
-      // ALWAYS throw an error, it's like stepping on a crack if you don't
-      if ($throwOnError) { throw $e; }
-
-      $results['failures'] = array_keys($personLanguages);
-    }
-    unset($personLanguageCollection);
-
-    // Now all updates and deletes are done on the manay-to-many person language table at this
-    // point.  Note: Collection->remove is cascaded to their children tables.  Only thing left to
-    // do to on the person language joining table is to add new person language records.
-
-   // here we check our current transaction scope and create a transaction or savepoint
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
-      $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
-      $conn->beginTransaction();
-    }
-
-    try
-    {
+      // Add new records and records with updated priority values in the person language
+      // many-to-many table.
       foreach ($simplifiedNewLanguages AS $personId => $component)
       {
         foreach ($component AS $languageId => $priority)
@@ -561,7 +566,7 @@ class agPersonLanguageHelper extends agLanguageHelper
           $personLanguageId = $personLanguage->id;
 
           // Since we're creating new person language records, might as well create their
-          // cooresponding formatting and competency records.
+          // cooresponding format and competency records.
 
           $languageComponents = $personLanguages[$personId][$priority][1];
 
@@ -588,6 +593,7 @@ class agPersonLanguageHelper extends agLanguageHelper
             unset($personLanguages[$personId][$priority]);
           }
         }
+        $results['upserted']++;
       }
 
       // Unset array to release memory.
@@ -613,35 +619,18 @@ class agPersonLanguageHelper extends agLanguageHelper
       $results['failures'] = array_keys($personLanguages);
     }
 
-    // At this point, $personNewLanguage only consists of update records.  All new person language
-    // and deleted records are processed from above.
+    // At this point, we still have to update, delete, and add new person language records.
 
-    // First perform a delete process on person's language components as a set by
-    // person_mj_language_id if the person language does not have formatting and competency level
-    // defined.
-    $deletePersonLanguageIds = array();
-    foreach($updateLanguageComponents AS $personLanguageId => $langComponents)
-    {
-      if (count($langComponents) == 0)
-      {
-        $deletePersonLanguageIds[] = $personLanguageId;
-        unset($updateLanguageComponents[$personLanguageId]);
-      }
-    }
-
-    unset($personLanguageId, $langComponents);
-
-    $this->deletePersonLanguageCompetencies($deletePersonLanguageIds, $throwOnError, $conn);
-    unset($deletePersonLanguageIds);
-
-    // Next, update and delete individual person's language component table.
-
+    // Query for all existing person language competency records.
     $q = agDoctrineQuery::create($conn)
       ->select('plc.*')
         ->from('agPersonLanguageCompetency plc INDEXBY plc.id')
         ->whereIn('plc.person_language_id', array_keys($updateLanguageComponents));
     $personLanguageComponentColl = $q->execute() ;
 
+    $isUpdated = 0;
+
+    // Update/delete person language competency records.
     foreach($personLanguageComponentColl AS $collId => $components)
     {
       $collPersonLanguageId = $components['person_language_id'];
@@ -650,14 +639,17 @@ class agPersonLanguageHelper extends agLanguageHelper
           && array_key_exists($collFormatId, $updateLanguageComponents[$collPersonLanguageId]))
       {
         $personCompetencyId = $updateLanguageComponents[$collPersonLanguageId][$collFormatId];
-        $personLanguageComponentColl[$collId]['language_competency_id'] = $personCompetencyId;
+        if ($personLanguageComponentColl[$collId]['language_competency_id'] != $personCompetencyId)
+        {
+          $personLanguageComponentColl[$collId]['language_competency_id'] = $personCompetencyId;
+        }
       }
       else
       {
         $personLanguageComponentColl->remove($collId);
       }
 
-      if (isset($updateLanguageComponents[$collPersonLanguageId]))
+      if (isset($updateLanguageComponents[$collPersonLanguageId][$collFormatId]))
       {
         if (count($updateLanguageComponents[$collPersonLanguageId]) == 1)
         {
@@ -668,10 +660,15 @@ class agPersonLanguageHelper extends agLanguageHelper
           unset($updateLanguageComponents[$collPersonLanguageId][$collFormatId]);
         }
       }
+      $isUpdated = 1;
+    }
+    if ($isUpdated)
+    {
+      $results['upserted']++;
     }
     unset($collId, $components, $collPersonLanguageId, $collFormatId, $personCompetencyId);
 
-   // here we check our current transaction scope and create a transaction or savepoint
+    // here we check our current transaction scope and create a transaction or savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
     if ($useSavepoint)
     {
@@ -704,9 +701,9 @@ class agPersonLanguageHelper extends agLanguageHelper
       $results['failures'] = array_keys($personLanguages);
     }
 
-    // Last final step is to add new person's language component to table.
+    // Last final step is to add new person language competency records.
 
-   // here we check our current transaction scope and create a transaction or savepoint
+    // here we check our current transaction scope and create a transaction or savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
     if ($useSavepoint)
     {
@@ -750,7 +747,7 @@ class agPersonLanguageHelper extends agLanguageHelper
     }
 
     unset($updateLanguageComponents, $personLanguageId, $pLangs, $formatId, $competencyId);
-    
+
     return $results ;
   }
 
@@ -845,7 +842,7 @@ class agPersonLanguageHelper extends agLanguageHelper
    * exception throw. Defaults to the class property value.
    * @param Doctrine_Connection $conn An optional doctrine connection object.
    */
-  protected function deletePersonLanguageCompetencies(array $personIds,
+  protected function deletePersonLanguageCompetencies(array $personLanguageIds,
                                                       $throwOnError = NULL,
                                                       Doctrine_Connection $conn = NULL)
   {
@@ -860,7 +857,7 @@ class agPersonLanguageHelper extends agLanguageHelper
     // build our query object
     $q = agDoctrineQuery::create($conn)
                  ->delete('agPersonLanguageCompetency')
-                 ->whereIn('person_language_id', $personIds);
+                 ->whereIn('person_language_id', $personLanguageIds);
 
     // here we check our current transaction scope and create a transaction or savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
@@ -885,7 +882,74 @@ class agPersonLanguageHelper extends agLanguageHelper
     {
       // log our error
       $errMsg = sprintf('Failed to purge person language competency for persons %s. Rolled back changes!',
-        json_encode($personIds)) ;
+        json_encode($personLanguageIds)) ;
+      sfContext::getInstance()->getLogger()->err($errMsg);
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) { throw $e; }
+
+      $results['failures'] = array_keys($personLanguages);
+    }
+
+    return $results;
+  }
+
+  /**
+   * Method to remove person language entries from a person.
+   *
+   * @param array $personIds A single-dimension array of personIds
+   * @param boolean $throwOnError Boolean to control whether or not any errors will trigger an
+   * exception throw. Defaults to the class property value.
+   * @param Doctrine_Connection $conn An optional doctrine connection object.
+   */
+  protected function deletePersonLanguages(array $personLanguageIds,
+                                                 $throwOnError = NULL,
+                                                 Doctrine_Connection $conn = NULL)
+  {
+    // explicit declarations are good!
+    $results = 0;
+    $err = NULL;
+
+    // pick up some defaults if not passed anything
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError; }
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
+
+    // Delete from child table.
+    $this->deletePersonLanguageCompetencies($personLanguageIds, $throwOnError, $conn);
+
+
+    // build our query object
+    $q = agDoctrineQuery::create($conn)
+                 ->delete('agPersonMjAgLanguage')
+                 ->whereIn('id', $personLanguageIds);
+
+    // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__);
+    }
+    else
+    {
+      $conn->beginTransaction();
+    }
+
+    try
+    {
+      // execute our person language competency mapping join purge
+      $results = $q->execute();
+
+      // most excellent! no errors at all, so we commit... finally!
+      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit(); }
+    }
+    catch(Exception $e)
+    {
+      // log our error
+      $errMsg = sprintf('Failed to purge person\'s languages for persons %s. Rolled back changes!',
+        json_encode($personLanguageIds)) ;
       sfContext::getInstance()->getLogger()->err($errMsg);
 
       // rollback
