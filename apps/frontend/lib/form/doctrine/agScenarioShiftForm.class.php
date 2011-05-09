@@ -40,9 +40,9 @@ class agScenarioShiftForm extends BaseagScenarioShiftForm
         ('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => false)),
       'task_id' => new sfWidgetFormDoctrineChoice(array
         ('model' => $this->getRelatedModelName('agTask'), 'add_empty' => false)),
-      'task_length_minutes' => new sfWidgetFormInputText(),
-      'break_length_minutes' => new sfWidgetFormInputText(),
-      'minutes_start_to_facility_activation' => new sfWidgetFormInputText(),
+      'task_length_minutes' => new sfWidgetFormInputHidden(),
+      'break_length_minutes' => new sfWidgetFormInputHidden(),
+      'minutes_start_to_facility_activation' => new sfWidgetFormInputHidden(),
       'minimum_staff' => new sfWidgetFormInputText(),
       'maximum_staff' => new sfWidgetFormInputText(),
       'staff_wave' => new sfWidgetFormInputText(),
@@ -79,7 +79,7 @@ class agScenarioShiftForm extends BaseagScenarioShiftForm
 
     $this->widgetSchema->setNameFormat('ag_scenario_shift[%s]');
 
-    $custDeco = new agWidgetFormSchemaFormatterShift($this->getWidgetSchema());
+    $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel2($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
     $this->getWidgetSchema()->setFormFormatterName('custDeco');
 

@@ -220,7 +220,7 @@ echo $shifttemplateform['id']->render() ?>
                          } else {
                            echo $task_time;
                          }
-                  ?>,
+                        ?>,
                         min: 0,
                         max: 720,
                         step: 30,
@@ -265,7 +265,7 @@ echo $shifttemplateform['id']->render() ?>
                          } else {
                            echo $break_time;
                          }
-                  ?>,
+                        ?>,
                         min: 0,
                         max: 720,
                         step: 30,
@@ -291,29 +291,29 @@ echo $shifttemplateform['id']->render() ?>
                  //send get/post to call delete
                  $('#container<?php echo $number ?>').remove();
                  
-<?php if(!$isNewShiftTemplate): ?>
-  $('#adder').prepend('<h2 class="overlay">' + removeShiftTemplate(
-                 <?php echo $shifttemplateform['id']->getValue()?>) + '</h2>');
-  $('.overlay').fadeIn(1200, function() {
-    $('.overlay').fadeOut(1200, function() {
-      $('.overlay').remove();
-    });
-  });
+                  <?php if(!$isNewShiftTemplate): ?>
+                    $('#newshifttemplates').prepend('<h2 class="overlay">' + removeShiftTemplate(
+                                   <?php echo $shifttemplateform['id']->getValue()?>) + '</h2>');
+                    $('.overlay').fadeIn(1200, function() {
+                      $('.overlay').fadeOut(1200, function() {
+                        $('.overlay').remove();
+                      });
+                    });
 
-<?php endif; ?>
+                  <?php endif; ?>
 
 
                });
-    function removeShiftTemplate(stId) {
-      var r = $.ajax({
-        type: 'DELETE',
-        url: '<?php
-              echo url_for('scenario/deleteshifttemplate') .
-              '?stId=' ?>' + stId,
-        async: false //the above could and should be refactored for re-usability
-      }).responseText;
-      return r;
-    }
+              function removeShiftTemplate(stId) {
+                var r = $.ajax({
+                  type: 'DELETE',
+                  url: '<?php
+                        echo url_for('scenario/deleteshifttemplate') .
+                        '?stId=' ?>' + stId,
+                  async: false //the above could and should be refactored for re-usability
+                }).responseText;
+                return r;
+              }
 
              });
 

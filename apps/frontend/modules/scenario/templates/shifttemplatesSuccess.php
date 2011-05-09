@@ -28,7 +28,7 @@
         var passId = '#' + $(this).attr('id');
         var $poster = $(this);
         var templates = $('.shiftTemplateCounter').length
-        $(passId).parent().prepend(addShiftTemplate(templates) + '<br \>');
+        $(passId).parent().prepend(addShiftTemplate(templates));
       });
 
     });

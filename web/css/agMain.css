@@ -949,8 +949,8 @@ table.staffTable td.right {
   color: #ff8f00;
   position: absolute;
   bottom: 30%;
-  left: 0;
-  right: 0;
+/*  left: 0;
+  right: 0;*/
   display: none;
 }
 
