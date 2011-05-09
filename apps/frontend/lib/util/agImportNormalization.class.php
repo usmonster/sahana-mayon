@@ -411,7 +411,8 @@ abstract class agImportNormalization extends agImportHelper
     {
       foreach($rowData['_rawData'] as $key => &$val)
       {
-        if (empty(trim($val)))
+        $trimmedVal = trim($val);
+        if (empty($trimmedVal))
         {
           unset($rowData['_rawData'][$key]);
         }

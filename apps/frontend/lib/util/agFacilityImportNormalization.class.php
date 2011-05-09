@@ -63,7 +63,7 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
     $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->defaultPhoneFormatTypes));
     $this->staffResourceTypes = array_change_key_case(array_flip(agStaffHelper::getStaffResourceTypes(TRUE)), CASE_LOWER);
     $this->mapStaffColumn();
-    $addressHelper = new agAddressHelper(array());
+    $addressHelper = new agAddressHelper();
     $this->addressStandards = $addressHelper->getAddressStandardId();
     $this->addressElements = array_flip($addressHelper->getAddressAllowedElements());
     $this->geoType = 'point';
@@ -1798,14 +1798,13 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
                                            $workAddressStandardId, $addressElementIds, $conn = NULL)
   {
     $entityId = $facility->getAgSite()->entity_id;
-    $facilityAddress = $this->getEntityContactObject('address', $entityId, $workAddressTypeId);
     $isImportAddressEmpty = $this->isEmptyStringArray($importedAddress);
-    $addressId = $facilityAddress->address_id;
+    $facilityAddress = $this->getEntityContactObject('address', $entityId, $workAddressTypeId);
 
     // Remove existing facility work address if import address is null.
     if ((!empty($facilityAddress)) && $isImportAddressEmpty) {
       $this->deleteEntityAddressMapping($facilityAddress->id, $conn);
-      return $addressId = NULL;
+      return NULL;
     }
 
     // Create new facility address with import address where facility does not have an address and
@@ -1817,6 +1816,7 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
 
     // Compares existing facility address with imported address.
     if (!empty($facilityAddress)) {
+      $addressId = $facilityAddress->address_id;
       $facilityAddressElements = $this->getAssociateAddressElementValues($addressId, $addressElementIds);
 
       // if the addresses are different in any way

@@ -20,7 +20,7 @@ class agGeoHelper extends agBulkRecordHelper
             $_globalDefaultGeoMatchScore = 'default_geo_match_score',
             $_agGeoTypeData,
             $_addressGeoTypeId,
-            $_defaultGeoMatchScoreId ;
+            $_defaultGeoMatchScoreId;
 
   /**
    * Minimalist helper function to return the _agGeoTypeData property and lazy-load its values
@@ -207,7 +207,7 @@ class agGeoHelper extends agBulkRecordHelper
       }
       
       // calculate our coordinate hashes
-      $gcHashes[$index] = agBulkRecordHelper::getRecordComponentsHash($gc);
+      $gcHashes[$index] = agBulkRecordHelper::getRecordComponentsHash($gc, TRUE);
     }
 
     // grab any existing ids from the db
@@ -451,7 +451,7 @@ class agGeoHelper extends agBulkRecordHelper
 
     foreach ($groupedData as $geoId => $data)
     {
-      $hash = agBulkRecordHelper::getRecordComponentsHash($data);
+      $hash = agBulkRecordHelper::getRecordComponentsHash($data, TRUE);
       $q = agDoctrineQuery::create()
         ->update('agGeo')
           ->set('geo_coordinate_hash', "'".$hash."'")

@@ -38,7 +38,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    *
    * @param array $personIds A single-dimension array of person id values.
    */
-  public function __construct($personIds = NULL)
+  public function __construct(array $personIds = NULL)
   {
     // set our person ids if passed any at construction
     parent::__construct($personIds) ;
@@ -50,7 +50,7 @@ class agPersonNameHelper extends agBulkRecordHelper
   /**
    * Helper method to retrieve and set the defaultNameComponents class property.
    */
-  public function setDefaultNameComponents($strNameComponents = NULL)
+  public function setDefaultNameComponents(array $strNameComponents = NULL)
   {
     // always good to define this first
     $results = array() ;
@@ -85,7 +85,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * build a query that only returns primary names or all names.
    * @return Doctrine_Query An instantiated doctrine query object.
    */
-  protected function _getNameComponents($personIds = NULL, $primary = TRUE)
+  protected function _getNameComponents(array $personIds = NULL, $primary = TRUE)
   {
     $personIds = $this->getRecordIds($personIds) ;
     
@@ -117,7 +117,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @param array $personIds A single-dimension array of person id values. Default is NULL.
    * @return array A two-dimensional associative array keyed by person id and name_type_id.
    */
-  public function getPrimaryNameById($personIds = NULL)
+  public function getPrimaryNameById(array $personIds = NULL)
   {
     // build our components query
     $q = $this->_getNameComponents($personIds, TRUE) ;
@@ -134,7 +134,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * build a query that only returns primary names or all names.
    * @return array A three-dimensional associative array keyed by person id and name_type_id.
    */
-  public function getNameById($personIds = NULL, $primary = FALSE)
+  public function getNameById(array $personIds = NULL, $primary = FALSE)
   {
     // build our components query
     $q = $this->_getNameComponents($personIds, $primary) ;
@@ -151,7 +151,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * build a query that only returns primary names or all names.
    * @return array A three-dimensional associative array keyed by person id and name_type_id.
    */
-  public function getNameByTypeId($personIds = NULL, $primary = FALSE)
+  public function getNameByTypeId(array $personIds = NULL, $primary = FALSE)
   {
     // always good to declare results first
     $results = array() ;
@@ -181,7 +181,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * build a query that only returns primary names or all names.
    * @return array A three-dimensional associative array keyed by person id and person_name_type.
    */
-  public function getNameByType($personIds = NULL, $primary = FALSE)
+  public function getNameByType(array $personIds = NULL, $primary = FALSE)
   {
     // always good to declare results first
     $results = array() ;
@@ -210,7 +210,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @param array $personIds A single-dimension array of person id values. Default is NULL.
    * @return array A two-dimensional associative array keyed by person id and person_name_type.
    */
-  public function getPrimaryNameByType($personIds = NULL)
+  public function getPrimaryNameByType(array $personIds = NULL)
   {
     // Get our names by type
     $personNames = $this->getNameByType($personIds, TRUE) ;
@@ -254,7 +254,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @return array A single-dimensional associative array keyed by person id with a value as name
    * string.
    */
-  public function getPrimaryNameAsString($personIds = NULL, $invertLast = NULL, $delimiters = NULL)
+  public function getPrimaryNameAsString(array $personIds = NULL, $invertLast = NULL, array $delimiters = NULL)
   {
     // define our results set
     $results = array() ;
@@ -324,7 +324,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @return array A single-dimensional associative array keyed by person id with a value as name
    * string.
    */
-  public function getPrimaryNameAsInitials($personIds = NULL)
+  public function getPrimaryNameAsInitials(array $personIds = NULL)
   {
     // define a specific set of delimiters used just for initials
     $initialDelimeters = array('invert' => '', 'component' => '', 'initial' => '');
@@ -356,7 +356,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @param array $nameValues A single dimension array of name values.
    * @return array An associative array of nameIds keyed by name value
    */
-  public function getNameIds($nameValues)
+  public function getNameIds(array $nameValues)
   {
     return agDoctrineQuery::create()
       ->select('pn.person_name')
@@ -371,7 +371,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @param array $nameTypes An array of person_name_types
    * @return array An associative array of person name type ids keyed by person name type.
    */
-  public function getNameTypeIds($nameTypes)
+  public function getNameTypeIds(array $nameTypes)
   {
     return agDoctrineQuery::create()
       ->select('pnt.person_name_type')
@@ -401,7 +401,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @return array An associative array with counts of the operations performed and/or personId's
    * for which no operations could be performed.
    */
-  public function setPersonNames( $personNames,
+  public function setPersonNames(array $personNames,
                                   $keepHistory = NULL,
                                   $throwOnError = NULL,
                                   Doctrine_Connection $conn = NULL)
@@ -549,7 +549,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @return array An associative array with counts of the operations performed and/or personId's
    * for which no operations could be performed.
    */
-  protected function _setPersonNames ($personNames,
+  protected function _setPersonNames (array $personNames,
                                       $keepHistory = NULL,
                                       $throwOnError = NULL,
                                       Doctrine_Connection $conn = NULL)
@@ -660,7 +660,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @param Doctrine_Connection $conn An optional doctrine connection object.
    * @todo Check our isolation level and how it affects the orphan purge
    */
-  protected function purgePersonNames($personIds,
+  protected function purgePersonNames(array $personIds,
                                       $purgeOrphans = NULL,
                                       $throwOnError = NULL,
                                       Doctrine_Connection $conn = NULL)
@@ -812,7 +812,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    *   ... ),
    * ... )
    */
-  protected function reprioritizePersonNames( $newNames, $currNames )
+  protected function reprioritizePersonNames(array $newNames, array $currNames)
   {
     // loop through and do an inner array diff
     foreach($newNames as $personId => $nameTypes)
@@ -876,7 +876,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @param Doctrine_Connection $conn An optional doctrine connection object.
    * @return array An associative array keyed by the name string with the nameId as a value.
    */
-  protected function setNewPersonNames($newNames,
+  protected function setNewPersonNames(array $newNames,
                                     $throwOnError = NULL,
                                     Doctrine_Connection $conn = NULL)
   {
