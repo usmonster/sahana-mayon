@@ -210,6 +210,8 @@ class agPersonLanguageHelper extends agLanguageHelper
    * </code>
    * @param boolean $keepHistory Boolean to control whether or not current languages will be retained
    * or whether all languages will be replaced. Defaults to class property.
+   * @param boolean $createEdgeTableValues Boolean to control whether or not new languages are allowed
+   * and should be inserted to agLanguage table.
    * @param boolean $throwOnError Boolean to control whether or not failures will throw
    * an exception. Defaults to the class property.
    * @param Doctrine_Connection $conn An optional Doctrine Connection object.
@@ -218,8 +220,8 @@ class agPersonLanguageHelper extends agLanguageHelper
    */
   public function setPersonLanguages(array $personLanguages,
                                      $keepHistory = NULL,
-                                     $throwOnError = NULL,
                                      $createEdgeTableValues = NULL,
+                                     $throwOnError = NULL,
                                      Doctrine_Connection $conn = NULL)
   {
     // explicit declarations are nice

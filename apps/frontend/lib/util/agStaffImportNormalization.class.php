@@ -179,8 +179,8 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => FALSE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
 #    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
     $this->importComponents[] = array( 'component' => 'customField', 'throwOnError' => FALSE, 'method' => 'setPersonCustomField');
-//    $this->importComponents[] = array( 'component' => 'staffResource', 'throwOnError' => TRUE, 'method' => 'setStaffResourceOrg');
-    $this->importComponents[] = array( 'component' => 'staffResource', 'throwOnError' => FALSE, 'method' => 'setStaffResourceOrg');
+    $this->importComponents[] = array( 'component' => 'staffResource', 'throwOnError' => TRUE, 'method' => 'setStaffResourceOrg');
+    $this->importComponents[] = array( 'component' => 'personLanguage', 'throwOnError' => FALSE, 'method' => 'setPersonLanguage');
   }
 
 
@@ -774,18 +774,81 @@ class agStaffImportNormalization extends agImportNormalization
 
   }
 
+  /**
+   * Method to set person language during staff import.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function setPersonLanguage($throwOnError, Doctrine_Connection $conn)
+  {
+    // always start with any data maps we'll need so they're explicit
+    $importLanguageComponents = array( 'language_1' => array( 'l1_speak' => 'speak', 
+                                                              'l1_read' => 'read', 
+                                                              'l1_write' => 'write'),
+                                       'language_2' => array( 'l2_speak' => 'speak', 
+                                                              'l2_read' => 'read', 
+                                                              'l2_write' => 'write'),
+                                       'language_3' => array( 'l3_speak' => 'speak', 
+                                                              'l3_read' => 'read', 
+                                                              'l3_write' => 'write')
+                                     );
+
+    $personLanguages = array();
+    $results = array();
+
+    // loop through our raw data and build our person language data
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      if (array_key_exists('person_id', $rowData['primaryKeys']))
+      {
+        // this just makes it easier to use
+        $personId = $rowData['primaryKeys']['person_id'];
+
+        // Always initialize $languageComponents as an empty array.  Assign an empty array to
+        // $personLanguages only if no language was specified from import.
+        $languageComponents = array();
+        foreach($importLanguageComponents as $importLanguage => $langComponents)
+        {
+          if (array_key_exists($importLanguage, $rowData['_rawData']))
+          {
+            // Always initialize $formatCompetencies as an emtpy array. Assign an emtpy array to
+            // $languageComponents only if no format/competency details is specified for the
+            // language from import.
+            $formatCompetencies = array();
+            foreach ($langComponents as $importFormat => $dbFormat)
+            {
+              if (array_key_exists($importFormat, $rowData['_rawData']))
+              {
+                $formatCompetencies[$dbFormat] = $rowData['_rawData'][$importFormat];
+              }
+            }
+            $languageComponents[] = array($rowData['_rawData'][$importLanguage], $formatCompetencies);
+          }
+        }
+        $personLanguages[$personId] = $languageComponents;
+      }
+    }
+
+    // pick up some of our components / objects
+    $keepHistory = agGlobal::getParam('staff_import_keep_history');
+    $createEdgeTableValues = agGlobal::getParam('create_edge_table_values');;
+
+    // execute the helper and finish
+    $results = $plh->setPersonLanguage($personLanguages, $keepHistory, $createEdgeTableValues, $throwOnError, $conn);
+    unset($personLanguages);
+
+    // @todo do your results reporting here
+  }
+
   public function testDataNorm()
   {
     $this->setLogEventLevel(self::EVENT_INFO);
     $_rawData1 = array('entity_id' => '3',
                       'first_name' => 'Mork',
-//                      'middle_name' => '',
                       'last_name' => 'Ork',
                       'mobile_phone' => '123.123.1234',
-//                      'home_phone' => '',
                       'home_email' => 'mork.ork@home.com',
-//                      'work_phone' => '',
-//                      'work_email' => '',
                       'home_address_line_1' => '5 Silly Lane Street',
                       'home_address_city' => 'Inwood',
                       'home_address_state' => 'Bronze',
@@ -799,6 +862,12 @@ class agStaffImportNormalization extends agImportNormalization
                       'organization' => 'GOAL',
                       'resource_type' => 'Medical Nurse',
                       'resource_status' => 'active',
+                      'language_1' => 'English',
+                      'l1_speak' => 'fluent',
+                      'l1_read' => 'fluent',
+                      'l1_write' => 'fluent',
+                      'language_2' => 'Spanish',
+                      'l2_speak' => 'intermediate',
                       'drivers_license_class' => 'Class A',
                       'civil_service_title' => 'Court Clerk'
                      );
@@ -806,10 +875,7 @@ class agStaffImportNormalization extends agImportNormalization
     $_rawData2 = array('entity_id' => '183',
                       'first_name' => 'Ork',
                       'middle_name' => 'Mork',
-//                      'last_name' => '',
-//                      'mobile_phone' => '',
                       'home_phone' => '(222) 222-1234',
-//                      'home_email' => '',
                       'work_phone' => '(212) 234-2344 x234',
                       'work_address_line_1' => '235 President Pl',
                       'work_address_city' => 'New York',
@@ -819,18 +885,13 @@ class agStaffImportNormalization extends agImportNormalization
                       'organization' => 'volunteer',
                       'resource_type' => 'Specialist',
                       'resource_status' => 'inactive',
+                      'language_2' => 'Latin',
+                      'l1_read' => 'superior',
                       'civil_service_title' => 'Judge'
                      );
 
     $_rawData3 = array('entity_id' => '11',
-//                      'first_name' => '',
-//                      'middle_name' => '',
-//                      'last_name' => '',
-//                      'mobile_phone' => '',
-//                      'home_phone' => '',
-//                      'home_email' => '',
                       'work_phone' => '333.3333.3333.',
-//                      'work_email' => '',
                       'new custom field' => 'smiley face'
                      );
 
@@ -839,8 +900,6 @@ class agStaffImportNormalization extends agImportNormalization
                       'middle_name' => 'LinjaAA  ',
                       'last_name' => '   asdkfjkl;   ',
                       'mobile_phone' => '999.9999.9999',
-//                      'home_phone' => '',
-//                      'home_email' => '',
                       'work_phone' => '222.3333.4444 x342',
                       'work_email' => 'Linjawork.com',
                       'organization' => 'CHAD',
@@ -851,20 +910,15 @@ class agStaffImportNormalization extends agImportNormalization
 
     $_rawData5 = array('entity_id' => '392',
                       'first_name' => 'Aimee',
-//                      'middle_name' => '',
                       'last_name' => 'Adu',
-//                      'mobile_phone' => '',
-//                      'home_phone' => '',
-//                      'home_email' => '',
-//                      'work_phone' => '',
                       'work_email' => 'aimeeemailnow@work.com'
                      );
 
     $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKey' => array(), 'success' => 0);
     $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKey' => array(), 'success' => 0);
     $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKey' => array(), 'success' => 0);
-    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
-    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
+//    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
+//    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
 
     $this->clearNullRawData();
     $this->normalizeData();

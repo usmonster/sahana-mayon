@@ -168,11 +168,11 @@ class agFooActions extends agActions
 //    $output = $phoneHelper->setEntityPhone($entityContacts, TRUE);
 //    print_r($output);
 
-    $personIds = array(13, 14, 15, 16);
-    $obj = new agPersonLanguageHelper($personIds);
+//    $personIds = array(13, 14, 15, 16);
+//    $obj = new agPersonLanguageHelper($personIds);
 //    $results = $obj->getPersonLanguageById();
-    $results = $obj->getPersonLanguage($personIds, FALSE);
-    print_r($results);
+//    $results = $obj->getPersonLanguage($personIds, FALSE);
+//    print_r($results);
 
 //    $personLanguages = array(2 => array(1 => array('    German   ', array())),
 //                             3 => array(1 => array('Arabic', array('read' => '  fluent  ', 'write' => 'intermediate', 'speak' => 'fluent')),
@@ -196,7 +196,7 @@ class agFooActions extends agActions
 //                             15 => array(1 => array('Italian', array('read' => 'fluent', 'write' => 'fluent', 'speak' => 'intermediate')))
 //                            );
 //
-//    $results = $obj->setPersonlanguages($personLanguages, FALSE, TRUE, FALSE);
+//    $results = $obj->setPersonlanguages($personLanguages, FALSE, FALSE, TRUE);
 //    print_r($results);
 
 //
@@ -205,8 +205,8 @@ class agFooActions extends agActions
 //    echo"Staff Resource Helper:<br />";
 //    print_r($staffResources);
 //    echo"<br /><br />";
-//    $normObj = new agStaffImportNormalization('temp_staffImport');
-//    $test = $normObj->testDataNorm();
+    $normObj = new agStaffImportNormalization('temp_staffImport');
+    $test = $normObj->testDataNorm();
   }
 
   public function executeList(sfWebRequest $request)
