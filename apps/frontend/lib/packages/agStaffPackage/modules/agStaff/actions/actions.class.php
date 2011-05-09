@@ -27,6 +27,24 @@ class agStaffActions extends agActions
     //do some index stuff here.
   }
 
+
+  public function executeStafftypes(sfWebRequest $request) {
+        $this->staffTypeForm = new PluginagStaffTypeForm();
+
+        if ($request->isMethod(sfRequest::POST)) { // @todo find and mimic similar functions
+            $this->staffTypeForm->bind($request->getParameter($this->staffTypeForm->getName()), $request->getFiles($this->staffTypeForm->getName()));
+            if ($this->staffTypeForm->isValid()) {
+                $this->staffTypeForm->save();
+            }
+        }
+    }
+
+
+
+
+
+
+
   public function executeList(sfWebRequest $request)
   {
     $this->status = 'active';
