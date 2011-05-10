@@ -1,35 +1,4 @@
-<?php use_stylesheets_for_form($poolform) ?>
-<?php //use_javascript('tooltip');    ?>
-<?php use_javascript('jquery.ui.custom.js'); ?>
 <?php use_javascript('json.serialize.js'); ?>
-<script type="text/javascript">
-  function queryConstruct() {
-    var out = new Array();
-    $('.filter option:selected').each(function(index) {
-      conditionObject = new Object();
-      if($(this).text() != ''){
-        conditionObject.condition = $(this).text();
-        conditionObject.field = $(this).parent().attr('id');
-        conditionObject.operator = '=';
-        out.push(conditionObject);
-      }
-      //ONLY IF text is NOT empty
-    })
-    if(out.length == 1){
-      $("#staff_pool_search_search_condition").val(JSON.stringify(out));
-    }
-    else if(out.length ==0){
-      $("#staff_pool_search_search_condition").val('[ ]');
-    }  
-    else{
-      var query_c = Array(out.pop());
-      if(query_c != undefined){
-        $("#staff_pool_search_search_condition").val(JSON.stringify(query_c));
-      }
-    }
-  }
-
-</script>
 
 <?php
 $action = url_for('scenario/staffpool?id=' . $scenario_id);

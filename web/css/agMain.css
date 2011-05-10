@@ -194,7 +194,7 @@ h5 {
 .buttonSort:hover, .buttonSortSelected, .expander:hover,
 .expandAll:hover, .collapseAll:hover {
   color: #ff8f00;
-  text-shadow: 0px 0px 5px #ff8f00;
+  text-shadow: 0px 0px 1px #ff8f00;
 }
 
 .navButton:active, .buttonText:active, .buttonWhite:active, .buttonSort:active, .buttonSortSelected:active {

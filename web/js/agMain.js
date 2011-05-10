@@ -522,3 +522,59 @@ function serialTran(poster) {
     }
   });
 }
+
+/**
+* This function is used in scenario/staffpool to construct and save the staff pool query.
+**/
+function queryConstruct() {
+  var out = new Array();
+  $('.filter option:selected').each(function(index) {
+    conditionObject = new Object();
+    if($(this).text() != ''){
+      conditionObject.condition = $(this).text();
+      conditionObject.field = $(this).parent().attr('id');
+      conditionObject.operator = '=';
+      out.push(conditionObject);
+    }
+    //ONLY IF text is NOT empty
+  })
+  if(out.length == 1){
+    $("#staff_pool_search_search_condition").val(JSON.stringify(out));
+  }
+  else if(out.length ==0){
+    $("#staff_pool_search_search_condition").val('[ ]');
+  }
+  else{
+    var query_c = Array(out.pop());
+    if(query_c != undefined){
+      $("#staff_pool_search_search_condition").val(JSON.stringify(query_c));
+    }
+  }
+}
+
+// Watermark stuff for scenario/staffresources
+    $(function() {
+        $(".facgroup :input:text").each(function(){
+            if( $(this).val() == "")
+            {
+                $(this).addClass("empty");
+                $(this).focus(function(){
+                    $(this).removeClass("empty");
+                });
+                $(this).focusout(function(){
+                    if( $(this).val() == "")
+                    {
+                        $(this).addClass("empty");
+                    }
+                })
+            }
+        });
+
+      $(":input[id$='minimum_staff']").Watermark("Min");
+      $(":input[id$='maximum_staff']").Watermark("Max");
+
+      //adding forward slash after minimum_staff  input box
+      $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
+
+    });
+// End watermark stuff

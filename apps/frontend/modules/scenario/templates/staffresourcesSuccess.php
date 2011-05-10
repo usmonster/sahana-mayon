@@ -1,36 +1,7 @@
 <?php
-  use_javascript('agMain.js');
+//  use_javascript('agMain.js');
   use_javascript('jquery.watermarkinput.js');
 ?>
-
-
-<script language="javascript" type="text/javascript">
-    $(function() {
-        $(":input:text").each(function(){
-            if( $(this).val() == "")
-            {
-                $(this).addClass("empty");
-                $(this).focus(function(){
-                    $(this).removeClass("empty");
-                });
-                $(this).focusout(function(){
-                    if( $(this).val() == "")
-                    {
-                        $(this).addClass("empty");
-                    }
-                })
-            }
-        });
-
-      $(":input[id$='minimum_staff']").Watermark("Min");
-      $(":input[id$='maximum_staff']").Watermark("Max");
-
-      //adding forward slash after minimum_staff  input box
-      $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
-      
-    });
-</script>
-
 
 <h2>Staff Resource Requirements</h2><br>
 

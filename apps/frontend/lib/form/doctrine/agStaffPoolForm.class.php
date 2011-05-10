@@ -77,7 +77,7 @@ class agStaffPoolForm extends sfForm
 
     $staffGenForm->setWidget('search_id', new sfWidgetFormInputHidden());
     $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
-    $staffGenForm->setWidget('search_weight', new sfWidgetFormInputText());//'Choice(array('choices' => range(0, 10))));
+    $staffGenForm->setWidget('search_weight', new sfWidgetFormInputText(array(),array('class' => 'inputGray')));//'Choice(array('choices' => range(0, 10))));
 
     $staffGenForm->setValidator('search_id', new sfValidatorPass(array('required' => false)));
 //    $staffGenForm->setValidator('search_weight', new sfValidatorPass(array('required' => false)));
