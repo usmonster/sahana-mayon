@@ -185,7 +185,8 @@ $().ready(function() {
     var passId = '#' + $(this).attr('id');
     var $poster = $(this);
     var templates = $('.shiftTemplateCounter').length;
-    $(passId).parent().prepend(addShiftTemplate(templates));
+    $(passId).parent().prepend(addShiftTemplate(templates, $(this).attr('href')));
+    return false;
   });
 
 
@@ -193,7 +194,7 @@ $().ready(function() {
     //if there is no id for this record(db_not_exists)
     var passId = '#' + $(this).attr('id');
     //send get/post to call delete
-    $('#container' + $(this).attr('id')).remove();
+    $('#container ' + $(this).attr('id')).remove();
                  
     // if(!$isNewShiftTemplate):
     $('#newshifttemplates').prepend('<h2 class="overlay">'

@@ -16,7 +16,7 @@ echo $shifttemplateform['id']->render() ?>
       <tr>
         <td colspan="2" style="background-color: #E5F7FF;">
           <?php echo $shifttemplateform['staff_resource_type_id']->renderRow() ?>
-          <span class="smallLinkButton floatRight"
+          <span class="smallLinkButton floatRight removeShiftTemplate"
                 id="removeShiftTemplate<?php echo $number ?>">
             - Delete Shift Template
           </span>
