@@ -107,7 +107,7 @@ class agGeoHelper extends agBulkRecordHelper
    * @param array $geoCoordinates An array of geo coordinates
    * @return boolean Boolean indicating whether or not the geo feature is valid.
    */
-  public function isValidGeoFeature($geoTypeId, $geoCoordinates)
+  public function isValidGeoFeature($geoTypeId, array $geoCoordinates)
   {
    
     // grab our coordinate counts and our requirements
@@ -123,7 +123,7 @@ class agGeoHelper extends agBulkRecordHelper
     return TRUE ;
   }
 
-  public function setGeo( $geoCoordinates,
+  public function setGeo( array $geoCoordinates,
                           $geoTypeId,
                           $geoSourceId,
                           $throwOnError = NULL,
@@ -170,7 +170,7 @@ class agGeoHelper extends agBulkRecordHelper
 
   }
   
-  protected function _setGeo( $geoCoordinates,
+  protected function _setGeo( array $geoCoordinates,
                               $geoTypeId,
                               $geoSourceId,
                               $throwOnError = NULL,
@@ -266,7 +266,7 @@ class agGeoHelper extends agBulkRecordHelper
     return $geoIds ;
   }
 
-  public function setNewGeo($geoCoordinates,
+  public function setNewGeo(array $geoCoordinates,
                             $geoTypeId,
                             $geoSourceId,
                             $throwOnError = NULL,
@@ -462,7 +462,7 @@ class agGeoHelper extends agBulkRecordHelper
     return $results ;
   }
 
-  public function setAddressGeo($addrCoordinates,
+  public function setAddressGeo(array $addrCoordinates,
                                 $geoSourceId,
                                 $geoTypeId = NULL,
                                 $throwOnError = NULL,
@@ -514,11 +514,11 @@ class agGeoHelper extends agBulkRecordHelper
     }
 
 
-    if (! is_null($err))
+    if (is_null($err))
     {
       $q = agDoctrineQuery::create()
         ->select('ag.*')
-          ->from('agAddressGeo ag INDEX BY a.address_id')
+          ->from('agAddressGeo ag INDEXBY ag.address_id')
           ->whereIn('ag.address_id', array_keys($addrCoordinates));
       $coll = $q->execute() ;
 
