@@ -1,7 +1,7 @@
 <?php
 
 use_javascript('jquery.ui.custom.js');
-//use_javascript('agMain.js');
+use_javascript('agMain.js');
 use_stylesheet('jquery/jquery.ui.custom.css');
 use_stylesheet('jquery/mayon.jquery.ui.css');
 ?>

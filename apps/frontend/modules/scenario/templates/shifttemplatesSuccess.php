@@ -13,27 +13,6 @@
 <div id ="newshifttemplates">
 <span class="smallLinkButton addShiftTemplate" id="adder">+ Add Shift Template</span>
 
-  <script>
-
-    function addShiftTemplate(num) {
-      var r = $.ajax({
-        type: 'GET',
-        url: '<?php echo url_for('scenario/addshifttemplate?id=' . $scenario_id) . '?num=' ?>' + num,
-        async: false
-      }).responseText;
-      return r;
-    }
-    $().ready(function() {
-      $('.addShiftTemplate').click(function() {
-        var passId = '#' + $(this).attr('id');
-        var $poster = $(this);
-        var templates = $('.shiftTemplateCounter').length
-        $(passId).parent().prepend(addShiftTemplate(templates));
-      });
-
-    });
-
-  </script>
 </div>
     <input type="submit" class="linkButton" value="Save, Generate Shifts and Continue" name="Continue" />
 
