@@ -194,7 +194,7 @@ $().ready(function() {
     //if there is no id for this record(db_not_exists)
     var passId = '#' + $(this).attr('id');
     //send get/post to call delete
-    $('#container ' + $(this).attr('id')).remove();
+    $('#container' + $(this).attr('id').replace('removeShiftTemplate', '')).remove();
                  
     // if(!$isNewShiftTemplate):
     $('#newshifttemplates').prepend('<h2 class="overlay">'
