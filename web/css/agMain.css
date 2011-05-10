@@ -241,13 +241,15 @@ h5 {
 }
 
 .deleteButton {
-  border-color: #ff0000;
+  border-color: #dadada;
   color: #848484;
   background: #f1f1f1;
 }
 
 .deleteButton:hover {
   background: #ffc6c6;
+  color: #ff0000;
+  border-color: #ff8585;
 }
 
 input.linkButton, input.deleteButton {
