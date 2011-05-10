@@ -641,7 +641,40 @@ class agStaffImportNormalization extends agImportNormalization
       }
     }
 
-    $coll->save($conn);
+   // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__);
+    }
+    else
+    {
+      $conn->beginTransaction();
+    }
+
+    try
+    {
+      $coll->save($conn);
+
+      // commit, being sensitive to our nesting
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+    }
+    catch(Exception $e)
+    {
+      // log our error
+      $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage());
+      $this->logErr($errMsg);
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if($throwOnError)
+      {
+        throw new Exception($errMsg);
+      }
+    }
+
     unset($coll);
 
     // Now process person with new custom field if provided in import.
@@ -744,6 +777,64 @@ class agStaffImportNormalization extends agImportNormalization
     {
       $stfId = $record['staff_id'];
       $rawData = $this->importData[$staffIds[$stfId]]['_rawData'];
+
+      // Check if import resource type is valid.
+      if (!array_key_exists($rawData['resource_type'], $stfRscTypeIds))
+      {
+        $errMsg = sprintf('Invalid resource type %s from record id %d.',
+                             $rawData['resource_type'], $staffIds[$stfId]);
+
+        // Capture error in error log.
+        $this->logErr($errMsg);
+
+        if($throwOnError)
+        {
+          throw new Exception($errMsg);
+        }
+        else
+        {
+          continue;
+        }
+      }
+
+      // Check if import organization is valid.
+      if (!array_key_exists($rawData['organization'], $organizationIds))
+      {
+        $errMsg = sprintf('Invalid organization %s from record id %d.',
+                             $rawData['resource_type'], $staffIds[$stfId]);
+
+        // Capture error in error log.
+        $this->logErr($errMsg);
+
+        if($throwOnError)
+        {
+          throw new Exception($errMsg);
+        }
+        else
+        {
+          continue;
+        }
+      }
+
+      // Check if import staff resource status is valid.
+      if (!array_key_exists($rawData['resource_status'], $organizationIds))
+      {
+        $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
+                             $rawData['resource_status'], $staffIds[$stfId]);
+
+        // Capture error in error log.
+        $this->logErr($errMsg);
+
+        if($throwOnError)
+        {
+          throw new Exception($errMsg);
+        }
+        else
+        {
+          continue;
+        }
+      }
+
       $rscTypeId = $stfRscTypeIds[$rawData['resource_type']];
 
       if ( $record['staff_resource_type_id'] == $rscTypeId )
@@ -756,13 +847,104 @@ class agStaffImportNormalization extends agImportNormalization
       }
     }
 
-    $coll->save($conn);
+   // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__);
+    }
+    else
+    {
+      $conn->beginTransaction();
+    }
+
+    try
+    {
+      $coll->save($conn);
+      
+      // commit, being sensitive to our nesting
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+    }
+    catch(Exception $e)
+    {
+      // log our error
+      $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage());
+      $this->logErr($errMsg);
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if($throwOnError)
+      {
+        throw new Exception($errMsg);
+      }
+    }
+
     unset($coll);
 
     // Now $staffIds are left with new staff resources.
     foreach($staffIds AS $stfId => $rowId)
     {
       $rawData = $this->importData[$staffIds[$stfId]]['_rawData'];
+
+            // Check if import resource type is valid.
+      if (!array_key_exists($rawData['resource_type'], $stfRscTypeIds))
+      {
+        $errMsg = sprintf('Invalid resource type %s from record id %d.',
+                             $rawData['resource_type'], $staffIds[$stfId]);
+
+        // Capture error in error log.
+        $this->logErr($errMsg);
+
+        if($throwOnError)
+        {
+          throw new Exception($errMsg);
+        }
+        else
+        {
+          continue;
+        }
+      }
+
+      // Check if import organization is valid.
+      if (!array_key_exists($rawData['organization'], $organizationIds))
+      {
+        $errMsg = sprintf('Invalid organization %s from record id %d.',
+                             $rawData['resource_type'], $staffIds[$stfId]);
+
+        // Capture error in error log.
+        $this->logErr($errMsg);
+
+        if($throwOnError)
+        {
+          throw new Exception($errMsg);
+        }
+        else
+        {
+          continue;
+        }
+      }
+
+      // Check if import staff resource status is valid.
+      if (!array_key_exists($rawData['resource_status'], $organizationIds))
+      {
+        $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
+                             $rawData['resource_status'], $staffIds[$stfId]);
+
+        // Capture error in error log.
+        $this->logErr($errMsg);
+
+        if($throwOnError)
+        {
+          throw new Exception($errMsg);
+        }
+        else
+        {
+          continue;
+        }
+      }
+
       $fKeys = array();
       $fKeys['staff_id'] = $stfId;
       $fKeys['organization_id'] = $organizationIds[$rawData['organization']];
@@ -914,10 +1096,10 @@ class agStaffImportNormalization extends agImportNormalization
                       'work_email' => 'aimeeemailnow@work.com'
                      );
 
-    $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKey' => array(), 'success' => 0);
-    $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKey' => array(), 'success' => 0);
-    $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKey' => array(), 'success' => 0);
-//    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
+//    $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKey' => array(), 'success' => 0);
+//    $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKey' => array(), 'success' => 0);
+//    $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKey' => array(), 'success' => 0);
+    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
 //    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
 
     $this->clearNullRawData();

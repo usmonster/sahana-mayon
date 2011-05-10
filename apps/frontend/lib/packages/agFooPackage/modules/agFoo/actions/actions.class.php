@@ -276,6 +276,11 @@ $fakeGeo = array( 1 => array(array('25.32323231', '31.2323232')),
   7 => array(array('25.32323231', '31.2323232')),
   ) ;
 
+// array($addrId => array(array(array($latitude, $longitude), ...), $matchScoreId), ...)
+$fakeAddrGeo = array( 1 => array(array(array('25.32323231', '31.2323232')), 2),
+  5 => array(array(array('25.323233', '31.2333')), 1)
+  ) ;
+
 $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 => Array ( 'Betty', 'Amusan' ), 3 => Array ( 'Ammonds' ), 2 => Array ( 'Amy' ) ),
     9 => Array (),
     8 => Array ( 3 => Array ( 'Aponte' ), 1 => Array ( 'Anna' ) ),
@@ -286,7 +291,7 @@ $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 =>
 //$obj->setRecordIds($array) ;
 
 
-//$obj = new agGeoHelper() ;
+$obj = new agGeoHelper() ;
 //$obj = agEntityAddressHelper::init() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
@@ -310,7 +315,7 @@ $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 =>
 //$results = $obj->exceptionTest() ;
 //$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
 //$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
-//$obj->enforceGeoType = TRUE ;
+$obj->enforceGeoType = TRUE ;
 
 //$obj = new agStaffImportNormalization('temp_staffImport');
 //$obj->testDataNorm();
@@ -319,22 +324,9 @@ $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 =>
 //$results = agScenarioStaffGeneratorHelper::executeStaffPreview(array(array('field'=>'agStaffResource.staff_resource_type_id', 'operator'=>'!=', 'condition'=>'4')));
 //array(array('condition'=>'4', 'operator'=>'!=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
 //array(array('condition'=>'4', 'operator'=>'=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
-$coll = agDoctrineQuery::create()
-  ->select('p.*')
-      ->addSelect('s.*')
-      ->addSelect('sr.*')
-    ->from('agPerson p')
-      ->leftJoin('p.agStaff s')
-      ->leftJoin('s.agStaffResource sr')
-  ->execute();
 
-print_r(count($coll)) ;
-echo "\n";
-
-$coll[1]->agStaff[0]->agStaffResource->remove(0);
-$coll->saveNoIndex();
-
-print_r(count($coll)) ;
+$results = $obj->setAddressGeo($fakeAddrGeo, 2);
+print_r($results) ;
 
 
 //print_r($results) ;
