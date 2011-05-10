@@ -284,7 +284,6 @@ class facilityActions extends agActions
 //      $dispatcher = sfContext::getInstance()->getEventDispatcher();
 //      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
 //      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
-
   }
 
   /**
