@@ -1,5 +1,4 @@
 <?php
-  use_javascript('agMain.js');
   use_helper('agTemplate');
 ?>
 <h2>Scenario Facility Groups</h2><br>

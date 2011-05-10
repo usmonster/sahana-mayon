@@ -12,9 +12,9 @@ default:
     language:     en
     #robots:       index, follow
 
-  stylesheets:    [agMain.css, agMenu.css]
+  stylesheets:    [agMain.css, agMenu.css, jquery/jquery.ui.custom.css, jquery/mayon.jquery.ui.css]
 
-  javascripts:    [jquery.js]
+  javascripts:    [jquery.js, jquery.ui.custom.js, agMain.js]
 
   #JQuery Search Box JS
   #javascripts:    [jquery.js, jquery.tipsy.js]

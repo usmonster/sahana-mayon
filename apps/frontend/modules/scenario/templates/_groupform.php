@@ -1,14 +1,4 @@
-<?php use_stylesheets_for_form($groupform) ?>
-<?php use_javascript('jquery.ui.custom.js'); ?>
-<?php //TODO: see if this is still necessary:
-use_javascript('tooltip.js');
-use_javascript('agScenarioFacilityGroup.js');
-?>
 <?php use_javascript('json.serialize.js'); ?>
-<?php //use_javascript('jquery.mousewheel.js'); ?>
-<?php //use_javascript('jquery.jscrollpane.js'); ?>
-<?php //use_javascript('mwheelIntent.js'); ?>
-<?php //use_stylesheet('jquery.jscrollpane.css'); ?>
 <noscript>in order to set the activation sequence of resource facilities and add them to the
   facility group, you will need javascript enabled</noscript>
 
@@ -94,16 +84,12 @@ echo url_for
     <br />
     <br />
     <input class="linkButton" type="button" value="Save and Create Another" name="Another" onclick="serialTran(this)"/>
-<!--    <input class="linkButton" type="submit" value="Save and Assign Staff Requirements" name="AssignAll"/>-->
     <input class="linkButton" type="button" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran(this)"/>
     <?php
       if (!$groupform->getObject()->isNew()) {
         echo link_to('Delete', 'scenario/facilityGroupDelete?groupId=' . $groupform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton'));
       }
     ?>
-    <?php if (!$groupform->getObject()->isNew()): ?>
-      <input class="deleteButton" type="submit" value="Delete" name="Delete"/>
-    <?php endif; ?>
   </form>
 </div>
 <br />
@@ -117,7 +103,3 @@ echo url_for
 <?php echo "urltowiki/allocated_tooltip"; ?>
   </span>
 </div>
-<?php
-//  $contents = $sf_data->getRaw('facilityResourceTypes');
-//  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type', 'checkBoxTable checkBoxContainer searchParams', 'revealable', 2, 'facility_resource_type_', 'facility_resource_type_abbr', true, true);
-?>

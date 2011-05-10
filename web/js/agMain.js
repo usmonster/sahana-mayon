@@ -1,7 +1,26 @@
+// This main document ready function determines which other functions will be needed by the current
+// page. Determined by the presence of relevant DOM elements.
+$(document).ready(function() {
+  // Used in scenario/resourcetypes
+  var containerElement = $('.inlineListWrapper');
+  if(containerElement.length > 0) {
+    containerElement.each(function() {equalizeHeight($(this))});
+  }
+
+  // Used in scenario/fgroup
+  var bucketHolder = $('.bucketHolder');
+  if(bucketHolder.length > 0) {
+    buildSortList();
+    countSorts('.count');
+    sortSlide();
+  }
+});
+
 /**
  * This function is used to check or uncheck a series of checkboxes.
  **/
-$(document).ready(function(){
+
+//$(document).ready(function(){
   // Checking the checkbox w/ id checkAll will check all boxes w/ class chekToggle
   // unchecking checkAll will uncheck all checkToggles.
   $('#checkall').live('click', function () {
@@ -21,7 +40,7 @@ $(document).ready(function(){
       $("#checkall").removeAttr('checked');
     }
   });
-});
+//});
 
 $(document).ready(function() {
   $('.searchParams .checkToggle').live('change', function() {
@@ -31,15 +50,6 @@ $(document).ready(function() {
       $('.available .' + $(this).attr('id')).hide();
     }
   });
-});
-
-$(document).ready(function() {
-  $('.blorg').live('change', function() {
-    //$('#fgroup').load($(this).parent().attr('action'));
-    $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input') ,function(data) {
-      $('#fgroup').html(data);
-    });
-  })
 });
 
 $(document).ready(function() {
@@ -174,12 +184,12 @@ $().ready(function() {
   $('.addShiftTemplate').click(function() {
     var passId = '#' + $(this).attr('id');
     var $poster = $(this);
-    var templates = $('.shiftTemplateCounter').length
+    var templates = $('.shiftTemplateCounter').length;
     $(passId).parent().prepend(addShiftTemplate(templates));
   });
 
 
-  $('.removeShiftTemplate').click(function() {
+  $('.removeShiftTemplate').live('click', function() {
     //if there is no id for this record(db_not_exists)
     var passId = '#' + $(this).attr('id');
     //send get/post to call delete
@@ -196,13 +206,8 @@ $().ready(function() {
         $('.overlay').remove();
       });
     });
-
-
-
-  });
-               
-
-
+   });
+ });
 
 
   //deleteUrl =
@@ -305,10 +310,215 @@ $().ready(function() {
   
 
 
-    //these functions rely on variables coming from the 
-    //addSlider($formNumber,'break_time',$storedBreak,'break_length_minutes',ttOptions,30);
-    //task time label/slider options are equivalent to break time label/slider options
-    //addSlider($formNumber,'break_time',$storedTask,'task_length_minutes',ttOptions,30);                    
-    //addSlider(formNumber,'start_time',$storedStart,'minutes_start_to_facility_activation',stOptions,30);
+//    //these functions rely on variables coming from the
+//    addSlider($formNumber,'break_time',$storedBreak,'break_length_minutes',ttOptions,30);
+//    //task time label/slider options are equivalent to break time label/slider options
+//    addSlider($formNumber,'break_time',$storedTask,'task_length_minutes',ttOptions,30);
+//    addSlider(formNumber,'start_time',$storedStart,'minutes_start_to_facility_activation',stOptions,30);
 
   });
+
+function equalizeHeight(containerElement) {
+  var maxHeight = 0;
+
+  containerElement.children('div.inlineLists').each(function(){
+    maxHeight = Math.max(maxHeight, $(this).height());
+  });
+
+  containerElement.children('div.inlineLists').height(maxHeight);
+}
+
+/**
+* buildTooltip creates a jQuery UI modal dialog window to contain the tooltip information.
+*
+* @param  element  A DOM element, most likely a div, that will display content inside the
+*                  modal window.
+* @param  title    The title for the modal window.
+* @return $dialog  A configured modal dialog.
+*
+* @todo   Add more params for greater configurability.
+**/
+function buildTooltip(element, obj, title) {
+  var $dialog = $(element)
+  .dialog({
+    dialogClass: 'tooltipDialog',
+    autoOpen: false,
+    resizable: false,
+    position: {
+      my: 'left',
+      at: 'right',
+      of: obj,
+      offset: "20 65"
+    },
+    title: title
+  });
+  return $dialog;
+}
+
+/**
+* This unnamed function catches the click of an element with .tooltipTrigger class. It calls
+* buildModal and then loads and opens the modal dialog.
+*
+* @return false  Return false is used here to prevent the clicked link from returning and sending
+*                the user forward in the browser.
+**/
+$(document).ready(function() {
+  $('.tooltipTrigger').live('click', function() {
+    var $dialog = buildTooltip('<div id="tooltipContent"></div>', this, $(this).attr('title'));
+    $dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
+    $(document).find('div.ui-dialog-titlebar').addClass('titleClass');
+    return false;
+  });
+});
+
+function buildSortList() {
+  $('.available tbody, .allocated tbody' ).sortable({
+    connectWith: ".sortTable tbody",
+    items: 'tr.sort',
+    forcePlaceholderSize: true
+  });
+
+  $('.allocated tbody').bind('beforestop', function(event, ui) {
+    if(ui.helper.find('td').length < 3) {
+      ui.helper.find('td.right').removeClass('right').addClass('inner');
+      ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
+      ui.helper.css('width', '305px');
+    }
+  });
+
+  $('.available tbody').bind('beforestop', function(event, ui) {
+    if(ui.helper.find('td').length == 3) {
+      ui.helper.find('td.right').remove();
+      ui.helper.find('td.inner').removeClass('inner').addClass('right');
+      ui.helper.css('width', '257px');
+    }
+  });
+
+  $('.allocated tbody').bind('sortover', function(event, ui) {
+    if(ui.helper.find('td').length < 3) {
+      ui.helper.find('td.right').removeClass('right').addClass('inner');
+      ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
+      ui.helper.css('width', '305px');
+    }
+  });
+
+  $('.available tbody').bind('sortover', function(event, ui) {
+    if(ui.helper.find('td').length == 3) {
+      ui.helper.find('td.right').remove();
+      ui.helper.find('td.inner').removeClass('inner').addClass('right');
+      ui.helper.css('width', '257px');
+    }
+  });
+  $('.allocated tbody').bind('sortupdate', function () {
+    if($(this).find('tr').is(':hidden')) {
+      $(this).find('.sort').hide();
+    }
+    countSorts($('tr#' + $(this).attr('title')).find('.count'));
+  });
+
+  $('.allocated tbody').bind('sortreceive', function(event, ui) {
+    if(ui.item.hasClass('serialIn') == false) {
+      ui.item.addClass('serialIn');
+    }
+  });
+
+  $('.available tbody').bind('sortreceive', function(event, ui) {
+    if(ui.item.hasClass('serialIn') == true) {
+      ui.item.removeClass('serialIn');
+    }
+  });
+}
+
+function countSorts(countMe) {
+  $(countMe).html(function() {
+    var counted = $('tbody.' + $(this).parent().attr('id')).children('tr.sort').length;
+    if(counted == 0) {
+      $('tbody.' + $(this).parent().attr('id')).append('<tr class="countZero"><td colspan="3">No facilities selected for this status.</td></tr>')
+    } else if (counted != 0) {
+      $('tbody.' + $(this).parent().attr('id')).children('tr.countZero').remove();
+    }
+    return 'Count: ' + counted;
+  });
+}
+
+/**
+* These 3 functions are for error reporting/highlighting in the browser.
+**/
+function highLight(id, highLightClass) {
+  $(id).addClass(highLightClass).attr('onfocus', 'emptyHighLight(this)').attr('onkeypress', 'removeHighLight(this, \'' + highLightClass + '\')');
+}
+
+function emptyHighLight(element) {
+  $(element).val('');
+}
+
+function removeHighLight(element, highLightClass) {
+  $(element).removeClass(highLightClass);
+}
+////
+
+function sortSlide() {
+  $('.sortHead th a').live('click', function(){
+    $('div.' + $(this).attr('class')).slideToggle();
+    var pointer = pointerCheck($(this).html());
+    if(pointer == '&#9654;') {
+      $(this).attr('title', 'Expand')
+    } else if (pointer == '&#9660;') {
+      $(this).attr('title', 'Collapse')
+    }
+    $(this).html(pointer);
+    return false;
+  })
+}
+
+function reveal (revealer) {
+    var pos = $(revealer).offset();
+    var height = $(revealer).height();
+
+    $("#revealable").css( { "left": pos.left + "px", "top":(pos.top + height) + "px" } );
+
+    $("#revealable").fadeToggle();
+    $(revealer).html(pointerCheck($(revealer).html()));
+    return false;
+}
+
+function reloadGroup (reloader) {
+  $.post(
+    $(reloader).parent().attr('action'),
+    { change: true, groupid: $(reloader).siblings('select').val(), groupname: $(reloader).siblings('select').find(':selected').text() },
+    function(data) {
+      var $response = $(data);
+      $('.bucketHolder').replaceWith($response.filter('.bucketHolder'));
+      buildSortList();
+      countSorts('.count');
+    }
+  );
+}
+
+function serialTran(poster) {
+  var values = new Object;
+  $('.serialIn').each(function(index) {
+    values[index] = {'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
+                  'actSeq' : ($(this).find('input')).val(),
+                  'actStat': ($(this).parents('tbody').attr('title'))
+    }
+  });
+  $("#ag_scenario_facility_group_values").val(JSON.stringify(values));
+
+  $('#' + $(poster).parent().attr('id') + ' :input[type="button"]').each(function() {
+    if($(this).attr('name') != $(poster).attr('name')) {
+      $(this).addClass('exclude');
+    }
+  });
+
+  $.post($(poster).parent().attr('action'), $('#' + $(poster).parent().attr('id') + ' :input:not(.exclude)'), function(data) {
+    $('.exclude').removeClass('exclude');
+    var response = $.parseJSON(data);
+    if(response.redirect == true) {
+      window.location.href = response.response;
+    } else {
+      highLight('#ag_scenario_facility_group_scenario_facility_group', 'redHighLight');
+      alert(response.response);
+    }
+  });
+}

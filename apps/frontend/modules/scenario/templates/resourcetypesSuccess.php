@@ -5,18 +5,7 @@ use_stylesheet('jquery/jquery.ui.custom.css');
 use_stylesheet('jquery/mayon.jquery.ui.css');
 use_javascript('agTooltip.js');
 ?>
-<script language="Javascript" type="text/javascript"> 
-  $(document).ready(function(){
-    var maxHeight=0;
 
-    $('div.inlineLists').each(function(){
-      maxHeight = Math.max(maxHeight, $(this).height());
-    });
-
-    $('div.inlineLists').height(maxHeight);
-  })
-
-</script>
 <h2>Select Resource Types: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2>
 <?php
 include_partial('wizard', array('wizardDiv' => $wizardDiv));

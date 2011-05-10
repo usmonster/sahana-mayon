@@ -1,8 +1,5 @@
 <?php use_javascript('jquery.ui.custom.js'); ?>
-
 <form action="<?php echo url_for('scenario/resourcetypes' . '?id=' .$scenario_id) ?>" method="post">
-<?php //echo $resourceForm->renderHiddenFields(false) ?>
-
   <div class="inlineListWrapper">
     <?php echo $resourceForm ?>
   </div>
