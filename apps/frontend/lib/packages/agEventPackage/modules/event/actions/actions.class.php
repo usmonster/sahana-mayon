@@ -239,12 +239,14 @@ class eventActions extends agActions
 
         $ag_event = $this->metaForm->save();
 
-        $eventStatusObject = agDoctrineQuery::create()
-                ->from('agEventStatus a')
-                ->where('a.id =?', $ag_event->getId())
-                ->execute()->getFirst();
-
-        $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
+        // @todo Hardcoding (below) is bad, but this is worse
+//        $eventStatusObject = agDoctrineQuery::create()
+//                ->from('agEventStatus a')
+//                ->where('a.id =?', $ag_event->getId())
+//                ->execute()->getFirst();
+//
+//        $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
+        $ag_event_status = new agEventStatus();
         $ag_event_status->setEventStatusTypeId(3);
         $ag_event_status->setEventId($ag_event->getId());
         $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
