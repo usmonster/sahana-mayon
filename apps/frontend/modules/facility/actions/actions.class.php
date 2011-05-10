@@ -394,8 +394,9 @@ class facilityActions extends agActions
   * Instantiates agFacilityExporter() and calls its functions to export all facilities
   * in the system. After the exporter returns, the instance is unset to free up memory,
   * then the browser directs to the exported xls.
+   *
   **/
-  public function executeFacilityExport()
+  public function executeExport(sfWebRequest $request)
   {
     $facilityExporter = new agFacilityExporter();
     $exportResponse = $facilityExporter->export();
@@ -409,6 +410,8 @@ class facilityActions extends agActions
     $this->getResponse()->setContent($exportFile);
     $this->getResponse()->send();
     unlink($exportResponse['filePath']);
+
+    $this->redirect('facility/index');
   }
 
   /**
