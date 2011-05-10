@@ -78,6 +78,11 @@ scenario_search:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action search }
 
+scenario_fgroup_delete:
+  url:     /scenario/facilityGroupDelete/:groupId
+  options: { model: agScenario, typeL object }
+  param:   { module: scenario, action: facilityGroupDelete }
+  
 scenario_fgroup_edit:
   url:     /scenario/:id/fgroup/:groupid
   options: { model: agScenario, type: object }

@@ -249,7 +249,8 @@ h5 {
 .deleteButton:hover {
   background: #ffc6c6;
   color: #ff0000;
-  border-color: #ff8585;
+  border-color: #ff0000;
+  cursor: pointer;
 }
 
 input.linkButton, input.deleteButton {
@@ -294,7 +295,10 @@ input.linkButton, input.deleteButton {
 }
 
 .linkButton:hover, .buttonSmall:hover, .smallLinkButton:hover {
+  color: #009931;
   background: #cdffdd;
+  border-color: #009931;
+  cursor: pointer;
 }
 
 .linkButton:active, .buttonSmall:active{

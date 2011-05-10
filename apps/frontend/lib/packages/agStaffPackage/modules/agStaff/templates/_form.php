@@ -115,7 +115,7 @@ use_javascripts_for_form($form);
   <br />
   &nbsp;<a href="<?php echo url_for('staff/list') ?>" class="linkButton">List</a>
 <?php if (!$form->getObject()->isNew()): ?>
-      &nbsp;<?php echo link_to('Delete', 'agStaff/delete?id=' . $form->getObject()->getAgStaff()->getFirst()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?>
+      &nbsp;<?php echo link_to('Delete', 'agStaff/delete?id=' . $form->getObject()->getAgStaff()->getFirst()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')) ?>
 <?php endif; ?>
   <input type="submit" value="Save" class="linkButton" />
   <input type="submit" value="Save and Create Another" name="CreateAnother" class="linkButton" />

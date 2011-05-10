@@ -944,36 +944,32 @@ class scenarioActions extends agActions
 
   public function executeFacilityGroupDelete(sfWebRequest $request)
   {
-//      if ($request->getParameter('Delete')) {
+    $agScenarioFacilityGroup = Doctrine_Core::getTable('agScenarioFacilityGroup')
+                                 ->find(array($request->getParameter('groupId')));
+    $scenarioId = $agScenarioFacilityGroup['scenario_id'];
+    $scenarioFacilityResources = $agScenarioFacilityGroup->getAgScenarioFacilityResource();
 
-        $agScenarioFacilityGroup = Doctrine_Core::getTable('agScenarioFacilityGroup')
-                                     ->find(array($request->getParameter('groupid')));
+    // Get all facility resources associated with the facility group
+    foreach ($scenarioFacilityResources as $scenarioFacilityResource) {
+      // Get all shifts associated with each facility resource associated with the facility group
+      $scenarioShifts = $scenarioFacilityResource->getAgScenarioShift();
+      foreach ($scenarioShifts as $scenarioShift) {
+        $scenarioShifts->delete();
+      }
 
-        $scenarioFacilityResources = $agScenarioFacilityGroup->getAgScenarioFacilityResource();
+      $facilityStaffResources = $scenarioFacilityResource->getAgFacilityStaffResource();
+      foreach($facilityStaffResources  as $facilityStaffResource) {
+        $facilityStaffResource->delete();
+      }
+     $scenarioFacilityResource->delete();
+    }
 
-        // Get all facility resources associated with the facility group
-        foreach ($scenarioFacilityResources as $scenarioFacilityResource) {
-          // Get all shifts associated with each facility resource associated with the facility group
-          $scenarioShifts = $scenarioFacilityResource->getAgScenarioShift();
-          foreach ($scenarioShifts as $scenarioShift) {
-            $scenarioShifts->delete();
-          }
-
-          $facilityStaffResources = $scenarioFacilityResource->getAgFacilityStaffResource();
-          foreach($facilityStaffResources  as $facilityStaffResource) {
-            $facilityStaffResource->delete();
-          }
-         $scenarioFacilityResource->delete();
-        }
-
-        $scenarioFacilityDistributions = $agScenarioFacilityGroup->getAgScenarioFacilityDistribution();
-        foreach($scenarioFacilityDistributions as $scenarioFacilityDistribution) {
-          $scenarioFacilityDistribution->delete();
-        }
-        $agScenarioFacilityGroup->delete();
-
-        $this->redirect('scenario/fgroup?id=' . $request->getParameter('id'));
-//      }
+    $scenarioFacilityDistributions = $agScenarioFacilityGroup->getAgScenarioFacilityDistribution();
+    foreach($scenarioFacilityDistributions as $scenarioFacilityDistribution) {
+      $scenarioFacilityDistribution->delete();
+    }
+    $agScenarioFacilityGroup->delete();
+    $this->redirect('scenario/listgroup?id=' . $scenarioId);
   }
   private function getAllocatedFacilityResources($groupId)
   {
