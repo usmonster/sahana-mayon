@@ -22,8 +22,7 @@ class agActions extends sfActions
   {
     parent::__construct($context, $moduleName, $actionName);
     if (empty($this->_searchedModels)) {
-      // this is the original line below: $this->getModuleName(),
-      // what exists now is a hack
+      // TODO define models used in each module for use in next line.
       $this->_searchedModels = array('agStaff');
     }
   }
@@ -42,9 +41,12 @@ class agActions extends sfActions
     $this->target_module = 'staff';
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
+    
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     $query = LuceneSearch::find($this->searchquery);
     if ($isFuzzy == TRUE) {
       $query->fuzzy();
+
     }
     $query->in($models);
     $this->results = $query->getRecords();

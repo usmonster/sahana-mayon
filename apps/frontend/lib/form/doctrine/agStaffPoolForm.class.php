@@ -67,7 +67,7 @@ class agStaffPoolForm extends sfForm
               ->from('agScenarioStaffGenerator a')
               ->where('a.search_id = ?', $this->search_id) //and scenario id?
               ->execute()->getFirst();
-      $this->staff_gen_id = $staffGenObject->id;
+      //if($this->staff_gen_id = $staffGenObject->getId();
     }
     $staffGenForm = new agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
 

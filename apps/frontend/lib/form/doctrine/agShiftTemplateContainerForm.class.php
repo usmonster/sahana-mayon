@@ -110,11 +110,12 @@ class agShiftTemplateContainerForm extends sfForm
             }
           } else {
             $form->updateObject($this->values[$key]);
+            $form->getObject()->scenario_id = $this->scenario_id;
             $oldShiftTemplate = $form->getObject();
             if ($oldShiftTemplate->staff_resource_type_id && $oldShiftTemplate->task_id
                 && $oldShiftTemplate->facility_resource_type_id) {
-              $form->getObject()->scenario_id = $this->scenario_id;
-              $form->getObject()->save();
+
+              $oldShiftTemplate->save();
             } else {
               //$form->getObject()->delete(); don't delete this way :\
             }
