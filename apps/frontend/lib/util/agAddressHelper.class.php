@@ -12,7 +12,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agAddressHelper extends agEntityContactHelper
+class agAddressHelper extends agBulkRecordHelper
 {
   // these constants map to the address get types that are supported in other function calls
   const     ADDR_GET_TYPEID = 'getAddressComponentsById',

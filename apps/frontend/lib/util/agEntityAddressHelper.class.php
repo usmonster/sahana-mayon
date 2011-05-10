@@ -13,7 +13,7 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class agEntityAddressHelper extends agAddressHelper
+class agEntityAddressHelper extends agEntityContactHelper
 {
   public    $agAddressHelper,
             $defaultIsPrimary = FALSE,
