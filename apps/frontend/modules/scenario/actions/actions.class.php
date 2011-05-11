@@ -1030,7 +1030,7 @@ class scenarioActions extends agActions
                                    agGlobal::getParam('default_shift_max_staff_repeat_shifts'));
     //$shiftTemplateForm->getWidgetSchema()->setIdFormat($number . '%s');
     unset($shiftTemplateForm['_csrf_token']);
-    return $this->renderPartial('newshifttemplateform',
+    return $this->renderPartial('shifttemplateform',
                                 array('shifttemplateform' => $shiftTemplateForm, 'number' => $number
         )
     );

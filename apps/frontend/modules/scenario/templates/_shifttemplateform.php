@@ -3,8 +3,11 @@
      id="container<?php echo $number ?>">
        <?php
        if (!$shifttemplateform->getObject()->isNew()) {
-         $number = $shifttemplateform['id']->render();
+         $number = $shifttemplateform['id']->getValue();
+       } else{
+         $number = $number;
        }
+       
        echo $shifttemplateform['id']->render();
        ?>
 
@@ -62,7 +65,6 @@
               <td>
                 <span style="display:inline;">
                   <?php
-                  echo $shifttemplateform['minutes_start_to_facility_activation']->render();
                   $start_time =
                       $shifttemplateform['minutes_start_to_facility_activation']->getValue();
                   $start_hours = intval($start_time / 60);
@@ -82,7 +84,8 @@
                 </span>
               </td>
               <td>
-                <div id="start_time_slider<?php echo $number ?>"></div>
+                <?php echo $shifttemplateform['minutes_start_to_facility_activation']->render(); ?>
+                <div id="start_time<?php echo $number ?>" class="timeslider"></div>
               </td>
             </tr>
             <tr>
@@ -102,7 +105,7 @@
               <td>
                 <span style="display:inline;">
                   <?php
-                  echo $shifttemplateform['task_length_minutes']->render();
+
                   $task_time =
                       $shifttemplateform['task_length_minutes']->getValue();
                   $task_hours = intval($task_time / 60);
@@ -122,7 +125,8 @@
                 </span>
               </td>
               <td width="200px">
-                <div id="task_time_slider<?php echo $number ?>"></div>
+                <?php echo $shifttemplateform['task_length_minutes']->render(); ?>
+                <div id="task_time<?php echo $number ?>" class="timeslider"></div>
               </td>
             </tr>
             <tr>
@@ -135,7 +139,7 @@
               <td>
                 <span style="display:inline;">
                   <?php
-                  echo $shifttemplateform['break_length_minutes']->render();
+
                   $break_time =
                       $shifttemplateform['break_length_minutes']->getValue();
                   $break_hours = intval($break_time / 60);
@@ -156,7 +160,8 @@
                 </span>
               </td>
               <td width="200px">
-                <div id="break_time_slider<?php echo $number ?>"></div>
+                <?php echo $shifttemplateform['break_length_minutes']->render(); ?>
+                <div id="break_time<?php echo $number ?>" class="timeslider"></div>
               </td>
             </tr>
           </table>

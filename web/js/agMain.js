@@ -4,7 +4,9 @@ $(document).ready(function() {
   // Used in scenario/resourcetypes
   var containerElement = $('.inlineListWrapper');
   if(containerElement.length > 0) {
-    containerElement.each(function() {equalizeHeight($(this))});
+    containerElement.each(function() {
+      equalizeHeight($(this))
+    });
   }
 
   // Used in scenario/fgroup
@@ -18,40 +20,99 @@ $(document).ready(function() {
   // Used in scenario/staffresources
   var toggleGroup = $('.toggleGroup');
   if(toggleGroup.length > 0) {
-      $('.toggleGroup').click(function(){ 
+    $('.toggleGroup').click(function(){ 
       $(this).nextAll('div:eq(1)').slideToggle("slow");
       $(this).text($(this).text() =='[-]'? '[+]' :'[-]');
-      
-      
-// Watermark stuff for scenario/staffresources
-    $(function() {
-        $(".facgroup :input:text").each(function(){
-            if( $(this).val() == "")
-            {
-                $(this).addClass("empty");
-                $(this).focus(function(){
-                    $(this).removeClass("empty");
-                });
-                $(this).focusout(function(){
-                    if( $(this).val() == "")
-                    {
-                        $(this).addClass("empty");
-                    }
-                })
-            }
+    });
+    $(".facgroup :input:text").each(function(){
+      if( $(this).val() == "")
+      {
+        $(this).addClass("empty");
+        $(this).focus(function(){
+          $(this).removeClass("empty");
         });
-
-      $(":input[id$='minimum_staff']").Watermark("Min");
-      $(":input[id$='maximum_staff']").Watermark("Max");
-
-      //adding forward slash after minimum_staff  input box
-      $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
-
+        $(this).focusout(function(){
+          if( $(this).val() == "")
+          {
+            $(this).addClass("empty");
+          }
+        })
+      }
     });
-// End watermark stuff
+    // Watermark stuff for scenario/staffresources
+    $(":input[id$='minimum_staff']").Watermark("Min");
+    $(":input[id$='maximum_staff']").Watermark("Max");
+
+    //adding forward slash after minimum_staff  input box
+    $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
+  // End watermark stuff
+  }
+  
+  var shiftTemplateCounter = $('.shiftTemplateCounter');
+  if(shiftTemplateCounter.length > 0) {
+   // $('.shiftTemplateCounter').live('load', function() {
+      var stLabels = []; //start time
+      stLabels[0]=
+      {
+        value: '-7200',
+        text: '-5days'
+      };
+      stLabels[1]=
+      {
+        value: '0',
+        text: '0'
+      };
+      stLabels[2] =
+      {
+        value: '7200',
+        text: '+5days'
+      };
+      var ttLabels = []; //task time
+      ttLabels[0]=
+      {
+        value: '0',
+        text: '0hrs'
+      };
+      ttLabels[1]=
+      {
+        value: '360',
+        text: '6hrs'
+      };
+      ttLabels[2] =
+      {
+        value: '720',
+        text: '12hrs'
+      };
+
+      $(".timeslider").each(function(){
       
+        var elementId = $(this).attr('id');
+        var elementNumberIndex = elementId.search('[0-9]');
+        var elementNumber = elementId.substr(elementNumberIndex);
+        var elementName = elementId.substr(0,elementNumberIndex);
+        //var storedElement = $(this).prev(':input:hidden');
+        var storedField = $(this).prev().attr('id');
+        var storedValue = $(this).prev().val();
       
-    });
+        if(elementName == 'start_time'){
+          addSlider($(this), elementNumber, elementName, storedValue, storedField, stLabels, 60);  
+        }
+        else{
+          addSlider($(this), elementNumber, elementName, storedValue, storedField, ttLabels, 30);  
+        }
+      
+      });
+    //});  
+  
+
+
+  //    //these functions rely on variables coming from the
+  //    addSlider($formNumber,'break_time',$storedBreak,'break_length_minutes',ttOptions,30);
+  ////    //task time label/slider options are equivalent to break time label/slider options
+  //    addSlider($formNumber,'break_time',$storedTask,'task_length_minutes',ttOptions,30);
+  //    addSlider(formNumber,'start_time',$storedStart,'minutes_start_to_facility_activation',stOptions,30);
+
+    
   }
   
 });
@@ -61,25 +122,25 @@ $(document).ready(function() {
  **/
 
 //$(document).ready(function(){
-  // Checking the checkbox w/ id checkAll will check all boxes w/ class chekToggle
-  // unchecking checkAll will uncheck all checkToggles.
-  $('#checkall').live('click', function () {
-    var check = this.checked;
-    $('.checkBoxContainer').find('.checkToggle').each(function() {
-      this.checked = check;
-      $(this).trigger('change');
-    });
+// Checking the checkbox w/ id checkAll will check all boxes w/ class chekToggle
+// unchecking checkAll will uncheck all checkToggles.
+$('#checkall').live('click', function () {
+  var check = this.checked;
+  $('.checkBoxContainer').find('.checkToggle').each(function() {
+    this.checked = check;
+    $(this).trigger('change');
   });
-  // This unsets the check in checkAll if one of the checkToggles are unchecked.
-  // or it will set the check on checkAll if all the checkToggles have been checked
-  // individually.
-  $('.checkToggle').live('change', function(){
-    if($('.checkToggle').length == $('.checkToggle:checked').length) {
-      $('#checkall').attr('checked', 'checked');
-    } else {
-      $("#checkall").removeAttr('checked');
-    }
-  });
+});
+// This unsets the check in checkAll if one of the checkToggles are unchecked.
+// or it will set the check on checkAll if all the checkToggles have been checked
+// individually.
+$('.checkToggle').live('change', function(){
+  if($('.checkToggle').length == $('.checkToggle:checked').length) {
+    $('#checkall').attr('checked', 'checked');
+  } else {
+    $("#checkall").removeAttr('checked');
+  }
+});
 //});
 
 $(document).ready(function() {
@@ -239,126 +300,81 @@ $().ready(function() {
     // if(!$isNewShiftTemplate):
     $('#newshifttemplates').prepend('<h2 class="overlay">'
       + removeShiftTemplate(
-    $(this).attr('id'), $(this).attr('href'))
-    // $shifttemplateform['id']->getValue()
+        $(this).attr('id'), $(this).attr('href'))
+      // $shifttemplateform['id']->getValue()
       + '</h2>');
     $('.overlay').fadeIn(1200, function() {
       $('.overlay').fadeOut(1200, function() {
         $('.overlay').remove();
       });
     });
-   });
- });
+  });
+});
 
 
-  //deleteUrl =
-  //echo url_for('scenario/deleteshifttemplate') .
-  function removeShiftTemplate(stId, deleteUrl) {
-    var r = $.ajax({
-      type: 'DELETE',
-      url: deleteUrl + '?stId=' + stId,
-      async: false //the above could and should be refactored for re-usability
-    }).responseText;
-    return r;
-  }
+//deleteUrl =
+//echo url_for('scenario/deleteshifttemplate') .
+function removeShiftTemplate(stId, deleteUrl) {
+  var r = $.ajax({
+    type: 'DELETE',
+    url: deleteUrl + '?stId=' + stId,
+    async: false //the above could and should be refactored for re-usability
+  }).responseText;
+  return r;
+}
 
-  //addUrl = 
-  //echo url_for('scenario/addshifttemplate?id=' . $scenario_id)
-  function addShiftTemplate(formId, addUrl) {
-    var r = $.ajax({
-      type: 'GET',
-      url: addUrl + '?num=' + formId,
-      async: false
-    }).responseText;
-    return r;
-  }
+//addUrl = 
+//echo url_for('scenario/addshifttemplate?id=' . $scenario_id)
+function addShiftTemplate(formId, addUrl) {
+  var r = $.ajax({
+    type: 'GET',
+    url: addUrl + '?num=' + formId,
+    async: false
+  }).responseText;
+  return r;
+}
 
-  function addLabels(element, labels){
-    var scale = element.append('<ol class="ui-slider-scale ui-helper-reset" role="presentation"></ol>').find('.ui-slider-scale:eq(0)');
-    jQuery(labels).each(function(i){
-      scale.append('<li style="left:'+ leftVal(i, this.length) +'"><span class="ui-slider-label">'+ this.text +'</span><span class="ui-slider-tic ui-widget-content"></span></li>');
-    });
+function addLabels(element, labels){
+  var scale = element.append('<ol class="ui-slider-scale ui-helper-reset" role="presentation"></ol>').find('.ui-slider-scale:eq(0)');
+  jQuery(labels).each(function(i){
+    scale.append('<li style="left:'+ leftVal(i, this.length) +'"><span class="ui-slider-label">'+ this.text +'</span><span class="ui-slider-tic ui-widget-content"></span></li>');
+  });
 
-  }
-  function leftVal(i){
-    return (i/(2) * 100).toFixed(2)  +'%';
-  }
+}
+function leftVal(i){
+  return (i/(2) * 100).toFixed(2)  +'%';
+}
 
-  function addSlider(formNumber,
+function addSlider(
+  sliderObject,
+  formNumber,
   formRootName,
   stored_time,
   stored_field,
   sliderOptions,
   stepVal
-) {
-    sComponent = $("#" + formRootName +"_slider" + formNumber).slider({
-      orientation: "horizontal",
-      value: stored_time,
-      min: sliderOptions[0].value, //the first
-      max: sliderOptions[sliderOptions.length-1].value,
-      step: stepVal,
-      slide: function( event, ui ) {
-        var hours = Math.floor(ui.value / 60);
-        var minutes = ui.value - (hours * 60);
-        hours = hours.toString();
-        minutes = minutes.toString();
-        if(hours.length == 1) hours = '0' + hours;
-        if(minutes.length == 1) minutes = '0' + minutes;
-        $("#st_" + formNumber + "_start_time_hours").val(hours);
-        $("#st_" + formNumber + "_start_time_minutes").val(minutes);
-        $("#st_" + formNumber + "_" + stored_field).val(ui.value);
-      }
-    });
-    addLabels(sComponent,sliderOptions);
-  }
-                   
-
-  $().ready(function() {
-
-    var stLabels = []; //start time
-    stLabels[0]=
-      {
-      value: '-7200',
-      text: '-5days'
-    };
-    stLabels[1]=
-      {
-      value: '0',
-      text: '0'
-    };
-    stLabels[2] =
-      {
-      value: '7200',
-      text: '+5days'
-    };
-    var ttLabels = []; //task time
-    ttLabels[0]=
-      {
-      value: '0',
-      text: '0hrs'
-    };
-    ttLabels[1]=
-      {
-      value: '360',
-      text: '6hrs'
-    };
-    ttLabels[2] =
-      {
-      value: '720',
-      text: '12hrs'
-    };
-  
-  
-
-
-//    //these functions rely on variables coming from the
-//    addSlider($formNumber,'break_time',$storedBreak,'break_length_minutes',ttOptions,30);
-//    //task time label/slider options are equivalent to break time label/slider options
-//    addSlider($formNumber,'break_time',$storedTask,'task_length_minutes',ttOptions,30);
-//    addSlider(formNumber,'start_time',$storedStart,'minutes_start_to_facility_activation',stOptions,30);
-
+  ) {
+  sComponent = sliderObject.slider({
+    orientation: "horizontal",
+    value: stored_time,
+    min: sliderOptions[0].value, //the first
+    max: sliderOptions[sliderOptions.length-1].value,
+    step: stepVal,
+    slide: function( event, ui ) {
+      var hours = Math.floor(ui.value / 60);
+      var minutes = ui.value - (hours * 60);
+      hours = hours.toString();
+      minutes = minutes.toString();
+      if(hours.length == 1) hours = '0' + hours;
+      if(minutes.length == 1) minutes = '0' + minutes;
+      $("#st_" + formNumber + "_" + formRootName + "_hours").val(hours);
+      $("#st_" + formNumber + "_" + formRootName + "_minutes").val(minutes);
+      $(stored_field).val(ui.value);
+    }
   });
-
+  addLabels(sComponent,sliderOptions);
+}
+                   
 function equalizeHeight(containerElement) {
   var maxHeight = 0;
 
@@ -406,7 +422,9 @@ function buildTooltip(element, obj, title) {
 $(document).ready(function() {
   $('.tooltipTrigger').live('click', function() {
     var $dialog = buildTooltip('<div id="tooltipContent"></div>', this, $(this).attr('title'));
-    $dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
+    $dialog.load($(this).attr('href'), function() {
+      $dialog.dialog('open')
+    });
     $(document).find('div.ui-dialog-titlebar').addClass('titleClass');
     return false;
   });
@@ -513,35 +531,43 @@ function sortSlide() {
 }
 
 function reveal (revealer) {
-    var pos = $(revealer).offset();
-    var height = $(revealer).height();
+  var pos = $(revealer).offset();
+  var height = $(revealer).height();
 
-    $("#revealable").css( { "left": pos.left + "px", "top":(pos.top + height) + "px" } );
+  $("#revealable").css( {
+    "left": pos.left + "px", 
+    "top":(pos.top + height) + "px"
+  } );
 
-    $("#revealable").fadeToggle();
-    $(revealer).html(pointerCheck($(revealer).html()));
-    return false;
+  $("#revealable").fadeToggle();
+  $(revealer).html(pointerCheck($(revealer).html()));
+  return false;
 }
 
 function reloadGroup (reloader) {
   $.post(
     $(reloader).parent().attr('action'),
-    { change: true, groupid: $(reloader).siblings('select').val(), groupname: $(reloader).siblings('select').find(':selected').text() },
+    {
+      change: true, 
+      groupid: $(reloader).siblings('select').val(), 
+      groupname: $(reloader).siblings('select').find(':selected').text()
+    },
     function(data) {
       var $response = $(data);
       $('.bucketHolder').replaceWith($response.filter('.bucketHolder'));
       buildSortList();
       countSorts('.count');
     }
-  );
+    );
 }
 
 function serialTran(poster) {
   var values = new Object;
   $('.serialIn').each(function(index) {
-    values[index] = {'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
-                  'actSeq' : ($(this).find('input')).val(),
-                  'actStat': ($(this).parents('tbody').attr('title'))
+    values[index] = {
+      'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
+      'actSeq' : ($(this).find('input')).val(),
+      'actStat': ($(this).parents('tbody').attr('title'))
     }
   });
   $("#ag_scenario_facility_group_values").val(JSON.stringify(values));
@@ -577,7 +603,7 @@ function queryConstruct() {
       conditionObject.operator = '=';
       out.push(conditionObject);
     }
-    //ONLY IF text is NOT empty
+  //ONLY IF text is NOT empty
   })
   if(out.length == 1){
     $("#staff_pool_search_search_condition").val(JSON.stringify(out));
