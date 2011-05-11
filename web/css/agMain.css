@@ -1678,13 +1678,7 @@ table.available caption {
 }
 
 #stepper ul li.completed {
-<<<<<<< TREE
  color: #ff8f00;
- 
-=======
-  color:green;
-
->>>>>>> MERGE-SOURCE
 }
 
 #stepper ul li.completed a{
@@ -1809,12 +1803,8 @@ a.linkButton{
 
 .redHighLight:focus {
   background: #ffebeb !important;
-<<<<<<< TREE
-}
-
-=======
 }
 
 .toggleGroup {
   cursor: pointer;
-}>>>>>>> MERGE-SOURCE
+}

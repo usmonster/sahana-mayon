@@ -18,6 +18,7 @@ class agEventShiftForm extends PluginagEventShiftForm
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
     $this->getWidgetSchema()->setFormFormatterName('custDeco');
 
+    // Get all widgets and apply the inputGray CSS class to them.
     foreach($this->getWidgetSchema()->getFields() as $widget) {
       $widget->setAttribute('class', 'inputGray');
     }
