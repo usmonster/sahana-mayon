@@ -15,7 +15,7 @@
  */
 class agEntityEmailHelper extends agEntityContactHelper
 {
-  public    $agEmailHelpder,
+  public    $agEmailHelper,
             $defaultIsPrimary = FALSE,
             $defaultIsStrType = FALSE;
 

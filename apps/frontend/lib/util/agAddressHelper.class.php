@@ -746,7 +746,18 @@ class agAddressHelper extends agBulkRecordHelper
    * array(
    *    [$index] => array(
    *      [0] => array( [$elementId] => $valueString, ...),
-   *      [1] => $addressStanardId
+   *      [1] => $addressStandardId
+   *    ),
+   *    ...
+   * )
+   * </code>
+   * @param array $addressGeo An array of address geo elements.
+   * NOTE: Must use the same $index ID's as the $addresses array.
+   * <code>
+   * array(
+   *    [$index] => array(
+   *      [0] => array( [0]=> array($latitude, $longitude), [1] => ...),
+   *      [1] => $matchScoreId
    *    ),
    *    ...
    * )
@@ -768,15 +779,28 @@ class agAddressHelper extends agBulkRecordHelper
    * </code>
    * @todo Pass the addressGeo array through
    */
-  public function setAddresses(array $addresses,
-                                $addressGeo = array(),
+  public function setAddresses( array $addresses,
+                                array $addressIndexGeo = array(),
+                                $geoSourceId = NULL,
                                 $enforceComplete = NULL,
                                 $throwOnError = NULL,
                                 Doctrine_Connection $conn = NULL)
   {
+    $addressIdGeo = array();
+    $err = NULL;
+    $results = array(array(), array());
+
     // get some defaults if not explicitly passed
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
     if (is_null($enforceComplete)) { $enforceComplete = $this->enforceComplete ; }
     if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
+
+    // fail out if not provided a geoSourceId but expected to process geo
+    if (! empty($addressIndexGeo) && is_null($geoSourceId))
+    {
+      $errMsg = "Geo coordinates provided, missing geoSourceId.";
+      throw new Exception($errMsg);
+    }
 
     // set up the incompletes (non-processed) array
     $incompleteAddresses = array() ;
@@ -855,12 +879,80 @@ class agAddressHelper extends agBulkRecordHelper
       }
     }
 
-    // either way, we eventually pass the 'cleared' addresses to our setter
-    $results = $this->_setAddresses($addresses, $throwOnError, $conn) ;
+    // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__) ;
+    }
+    else
+    {
+      $conn->beginTransaction() ;
+    }
 
-    // CALLERS OF THE GEOCODE WOULD LIVE HERE AND USE $results
-    // @todo wrap $results & geocode in try/catch to keep them synced together
+    try
+    {
+      // either way, we eventually pass the 'cleared' addresses to our setter
+      $results = $this->_setAddresses($addresses, $throwOnError, $conn) ;
+    }
+    catch(Exception $e)
+    {
+     // log our error
+      $errMsg = sprintf('Failed to execute _setAddresses!  %s', $e->getMessage());
 
+      // capture our exception for a later throw and break out of this loop
+      $err = $e ;
+    }
+
+    if (is_null($err))
+    {
+      // CALLERS OF THE GEOCODE WOULD LIVE HERE AND USE $results
+      // @todo wrap $results & geocode in try/catch to keep them synced together
+
+      // Resetting an address geo array with address id as index.
+      foreach ($results[0] as $index => $addrId)
+      {
+        if (array_key_exists($index, $addressIndexGeo))
+        {
+          $addressIdGeo[$addrId] = $addressIndexGeo[$index];
+          unset($addressIndexGeo[$index]);
+        }
+      }
+
+      //Lazy load agGeoHelper.
+      $geoHelper = $this->getAgGeoHelper();
+      try
+      {
+        $geoHelper->setAddressGeo($addressIdGeo, $geoSourceId, NULL, $throwOnError, $conn);
+        // most excellent! no errors at all, so we commit... finally!
+        if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+      }
+      catch(Exception $e)
+      {
+       // log our error
+        $errMsg = sprintf('Failed to execute setAddressGeo!  %s', $e->getMessage());
+
+        // capture our exception for a later throw and break out of this loop
+        $err = $e ;
+      }
+    }
+
+    if (!is_null($err))
+    {
+      // log our error
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      // capture failed address index in results.
+      $results[1] = $results[1] + array_keys($results[0]) ;
+      $results[0] = array();
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) { throw $err ; }
+    }
+    
     // append our incompletes to the other failed addresses
     $results[1] = $results[1] + $incompleteAddresses ;
 
@@ -1176,10 +1268,20 @@ class agAddressHelper extends agBulkRecordHelper
 
     if (! is_null($conn)) { $q->setConnection($conn) ; }
 
-    $q->useResultCache(new Doctrine_Cache_Apc())
-      ->setResultCacheLifeSpan(60 * 15) ;
+    // set up our initial cache
+    $q->useResultCache(TRUE, (60*15));
+    
+    // execute
+    $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-    return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    // clear the cache if we had no result
+    if (empty($result) || is_null($result))
+    {
+      $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+      $cacheDriver->delete($q->getResultCacheHash());
+    }
+
+    return $result;
   }
 
   /**

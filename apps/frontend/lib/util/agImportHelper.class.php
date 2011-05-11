@@ -23,7 +23,7 @@ abstract class agImportHelper extends agEventHandler
               $_conn,
               $fileInfo,
               $tempTable,
-              $tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8'),
+              $tempTableOptions = array(),
               $importSpec = array(),
               $successColumn = '_import_success',
               $dynamicFieldType,
@@ -81,8 +81,9 @@ abstract class agImportHelper extends agEventHandler
         unset($this->importSpec[$column]);
         $this->importSpec[$cleanColumn] = $value;
        
-        $eventMsg = "Import spec column name {$column} was not clean and was automatically renamed
-        to {$cleanColumn}. It is recommended you correct this in your import spec declaration.";
+        $eventMsg = 'Import spec column name {' . $column . '} was not clean and was ' .
+        'automatically renamed to {' . $cleanColumn . '}. It is recommended you correct this in' .
+        'your import spec declaration.';
         $this->logWarn($eventMsg);
       }
     }
@@ -246,7 +247,8 @@ abstract class agImportHelper extends agEventHandler
         // Extend import spec headers with dynamic staff resource requirement columns from xls file.
         $this->addDynamicColumns($currentSheetHeaders);
         $this->createTempTable();
-        unset($this->importSpec['success']); // why is this necessary ?? @todo Left off here
+        // @todo Remove this line if truly unnecessary
+        // unset($this->importSpec['success']);
       }
 
       $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");

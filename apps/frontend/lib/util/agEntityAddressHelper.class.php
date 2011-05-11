@@ -289,9 +289,11 @@ class agEntityAddressHelper extends agEntityContactHelper
    * <code>
    * array(
    *   $entityId => array(
-   *     array($addressContactTypeId, array(array($elementId => $value, ...),
-   *      $addressStandardId,
-   *      array(array($latitude, $longitude), ...), $matchScoreId)
+   *     array($addressContactTypeId,
+   *            array(array($elementId => $value, ...),
+   *                  $addressStandardId,
+   *                  array(array( array($latitude, $longitude), ...),
+   *                        $matchScoreId)
    *      )),
    *     ...
    *   ), ...
@@ -311,16 +313,17 @@ class agEntityAddressHelper extends agEntityContactHelper
    * records, removed records, an a positional array of failed inserts.
    * @todo Hook up the addressGeo bits
    */
-  public function setEntityAddress(array $entityContacts,
-                                    $addressGeo = array(),
+  public function setEntityAddress( array $entityContacts,
+                                    $geoSourceId = NULL,
                                     $keepHistory = NULL,
                                     $enforceComplete = NULL,
                                     $throwOnError = NULL,
                                     Doctrine_Connection $conn = NULL)
   {
     // some explicit declarations at the top
-    $uniqContacts = array();
-    $err = NULL;
+    $uniqContacts = array() ;
+    $addressGeos = array();
+    $err = NULL ;
     $errMsg = 'This is a generic ERROR for setEntityAddress. You should never receive this ERROR.
       If you have received this ERROR, there is an error with your ERROR handling code.';
 
@@ -349,6 +352,13 @@ class agEntityAddressHelper extends agEntityContactHelper
           $pos = max(array_keys($uniqContacts));
         }
 
+        // Set geo array to have the same index id as address unique array.
+        if (isset($entityContacts[$entityId][$index][1][2]) &&
+          !empty($entityContacts[$entityId][$index][1][2]))
+        {
+          $addressGeos[$pos] = $entityContacts[$entityId][$index][1][2];
+        }
+
         // either way we'll have to point the entities back to their addresses
         $entityContacts[$entityId][$index][1] = $pos;
       }
@@ -370,9 +380,11 @@ class agEntityAddressHelper extends agEntityContactHelper
 
     try {
       // process addresses, setting or returning, whichever is better with our s/getter
-      $uniqContacts = $addressHelper->setAddresses($uniqContacts, $addressGeo,
-              $enforceComplete, $throwOnError, $conn);
-    } catch (Exception $e) {
+      $uniqContacts = $addressHelper->setAddresses($uniqContacts, $addressGeos, $geoSourceId,
+        $enforceComplete, $throwOnError, $conn) ;
+    }
+    catch(Exception $e)
+    {
       // log our error
       $errMsg = sprintf('Could not set addresses %s. Rolling back!', json_encode($uniqContacts));
 
@@ -401,7 +413,11 @@ class agEntityAddressHelper extends agEntityContactHelper
       try {
         // just submit the entity addresses for setting
         $results = $this->setEntityContactById($entityContacts, $keepHistory, $throwOnError, $conn);
-      } catch (Exception $e) {
+        // most excellent! no errors at all, so we commit... finally!
+        if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+      }
+      catch(Exception $e)
+      {
         // log our error
         $errMsg = sprintf('Could not set entity addresses %s. Rolling Back!',
                 json_encode($entityContacts));
@@ -429,14 +445,7 @@ class agEntityAddressHelper extends agEntityContactHelper
       }
     }
 
-    // most excellent! no errors at all, so we commit... finally!
-    if ($useSavepoint) {
-      $conn->commit(__FUNCTION__);
-    } else {
-      $conn->commit();
-    }
-
-    return $results;
+    return $results ;
   }
 
 }

@@ -131,3 +131,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: create_edge_table_values
     value: 0
+  staff_import_geo_source:
+    id: 27
+    agHost: localhost
+    datapoint: staff_import_geo_source
+    value: import

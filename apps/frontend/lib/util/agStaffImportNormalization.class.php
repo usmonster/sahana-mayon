@@ -34,6 +34,7 @@ class agStaffImportNormalization extends agImportNormalization
 
     // set the import components array as a class property
     $this->setImportComponents();
+    $this->tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8');
   }
 
   /**
@@ -568,12 +569,17 @@ class agStaffImportNormalization extends agImportNormalization
     // pick up some of our components / objects
     $keepHistory = agGlobal::getParam('staff_import_keep_history');
     $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
+    $geoSourceId = agDoctrineQuery::create()
+      ->select('gs.id')
+        ->from('agGeoSource gs')
+        ->where('gs.geo_source = ?', agGlobal::getParam('staff_import_geo_source'))
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     $addressGeo = array();
     // @TODO Handle geo upserts along with address.
 
     // execute the helper and finish
-    $results = $eah->setEntityAddress($entityAddresses, $addressGeo, $keepHistory,  $enforceStrict, $throwOnError, $conn);
+    $results = $eah->setEntityAddress($entityAddresses, $geoSourceId, $keepHistory,  $enforceStrict, $throwOnError, $conn);
     unset($entityAddresses);
 
     // @todo do your results reporting here

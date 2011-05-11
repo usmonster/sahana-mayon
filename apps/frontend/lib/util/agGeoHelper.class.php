@@ -123,6 +123,25 @@ class agGeoHelper extends agBulkRecordHelper
     return TRUE ;
   }
 
+  /**
+   * A method uniquely reduce the $geoCoordinate array before passing it to _setGeo
+   * @param array $geoCoordinates An array of geo information keyed by an index
+   * <code>
+   * array([$index] =>
+   *   array(
+   *     array(
+   *       array($latitude, $longitude),
+   *       ...),
+   *     $matchScoreId)
+   *   ...)
+   * </code>
+   * @param integer $geoTypeId An integer value of the geoTypeId
+   * @param integer $geoSourceId An integer value describing the geoSource
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array An array of geoIds keyed by the same $index passed in the $geoCoordinates param.
+   */
   public function setGeo( array $geoCoordinates,
                           $geoTypeId,
                           $geoSourceId,
@@ -170,6 +189,26 @@ class agGeoHelper extends agBulkRecordHelper
 
   }
   
+  /**
+   * A method set and/or retrieve geoIds based on their coordinate values or the hash thereof.
+   *
+   * @param array $geoCoordinates An array of geo information keyed by an index
+   * <code>
+   * array([$index] =>
+   *   array(
+   *     array(
+   *       array($latitude, $longitude),
+   *       ...),
+   *     $matchScoreId)
+   *   ...)
+   * </code>
+   * @param integer $geoTypeId An integer value of the geoTypeId
+   * @param integer $geoSourceId An integer value describing the geoSource
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array An array of geoIds keyed by the same $index passed in the $geoCoordinates param.
+   */
   protected function _setGeo( array $geoCoordinates,
                               $geoTypeId,
                               $geoSourceId,
@@ -266,6 +305,26 @@ class agGeoHelper extends agBulkRecordHelper
     return $geoIds ;
   }
 
+  /**
+   * A method to set new geoIds based on a set of geo coordinate data.
+   *
+   * @param array $geoCoordinates An array of geo information keyed by an index
+   * <code>
+   * array([$index] =>
+   *   array(
+   *     array(
+   *       array($latitude, $longitude),
+   *       ...),
+   *     $matchScoreId)
+   *   ...)
+   * </code>
+   * @param integer $geoTypeId An integer value of the geoTypeId
+   * @param integer $geoSourceId An integer value describing the geoSource
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array An array of geoIds keyed by the same $index passed in the $geoCoordinates param.
+   */
   public function setNewGeo(array $geoCoordinates,
                             $geoTypeId,
                             $geoSourceId,
@@ -462,6 +521,26 @@ class agGeoHelper extends agBulkRecordHelper
     return $results ;
   }
 
+  /**
+   * A method to set address geo many-to-many table based on the set of address id and geo id.
+   *
+   * @param array $addrCoordinates An array of geo information keyed by addressId
+   * <code>
+   * array([$addressId] =>
+   *   array(
+   *     array(
+   *       array($latitude, $longitude),
+   *       ...),
+   *     $matchScoreId)
+   *   ...)
+   * </code>
+   * @param integer $geoSourceId An integer value describing the geoSource
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @param Doctrine_Connection $conn
+   * @return integer The number of collection of the size of the collection.
+   */
   public function setAddressGeo(array $addrCoordinates,
                                 $geoSourceId,
                                 $geoTypeId = NULL,
@@ -566,7 +645,7 @@ class agGeoHelper extends agBulkRecordHelper
         }
         // add the new record to our collection and release the resource
         $coll->add($newRec) ;
-        unsert($addrCoordinates[$addrId]) ;
+        unset($addrCoordinates[$addrId]) ;
       }
 
       try

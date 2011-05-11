@@ -260,9 +260,29 @@ $fakeAddr = array(array(array('1'=>'    monkeybanana3   ', '2'=>'raffle1', '3'=>
 //                                     array(1, array(array('1'=>'    nickel    ','2'=>'bronze','3'=>'silver','4'=>'gold','5'=>'platinum','7'=>'    metals   ', '8'=>'    blah blah blah blah blah blah blah                          '), 1)),
 //                                     array(3, array(array('1'=>'monkeybanana4', '2'=>'raffles', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1))),
 //                          3 => array(array(1,array(array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1)))) ;
-$fakeEntityAddr = array('1' => array(array(1, array(array('1'=>'    nickel    ','2'=>'bronze','3'=>'silver','4'=>'gold','5'=>'platinum','7'=>'    metals   ', '8'=>'    blah blah blah blah blah blah blah                          '), 1)),
-                                     array(3, array(array('1'=>'monkeybanana4', '2'=>'raffles', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1))),
-                          3 => array(array(1,array(array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1)))) ;
+$fakeEntityAddrGeo = array('1' => array(
+                            array( 1,
+                              array(
+                                array('1'=>'    nickelback    ','2'=>'bronze','3'=>'silver','4'=>'gold','5'=>'platinum','7'=>'    metals   ', '8'=>'    blah blah blah blah blah blah blah                          '),
+                                1,
+                                array(array(array('25.32323731', '31.2327232')), 2)
+                            )),
+                            array(3,
+                              array(
+                                array('1'=>'nickelback', '2'=>'raffles1', '3'=>'Nueva Yorke Cidade', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'),
+                                1,
+                                array(array(array('25.32363231', '-31.2326232')), 1)
+                            ))
+                        ),
+                        3 => array(
+                          array( 1,
+                            array(
+                              array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'),
+                              1,
+                              array(array(array('40.75929100', '-73.98668400')), 2)
+                            ))
+                        )
+  ) ;
 $addrContact = array( '1'=>array(array(3,4), array(2,1)),
     '10'=>array(array(3,10)),
     '87'=>array(array(1,9))) ;
@@ -291,8 +311,8 @@ $newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 =>
 //$obj->setRecordIds($array) ;
 
 
-$obj = new agGeoHelper() ;
-//$obj = agEntityAddressHelper::init() ;
+//$obj = new agGeoHelper() ;
+$obj = new agEntityAddressHelper() ;
 //$obj->setAgAddressHelper() ;
 //$obj->agAddressHelper->lineDelimiter = '<br />' ;
 //$addr = $obj->getEntityAddress($array, FALSE, FALSE) ;
@@ -325,11 +345,9 @@ $obj->enforceGeoType = TRUE ;
 //array(array('condition'=>'4', 'operator'=>'!=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
 //array(array('condition'=>'4', 'operator'=>'=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
 
-$results = $obj->setAddressGeo($fakeAddrGeo, 2);
+$results = $obj->setEntityAddress($fakeEntityAddrGeo, 1, TRUE, FALSE, TRUE);
+
 print_r($results) ;
-
-
-//print_r($results) ;
 // <-------- CUT HERE -------->
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
