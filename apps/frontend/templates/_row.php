@@ -20,7 +20,7 @@ foreach ($displayColumns as $key => $value) {
         echo link_to('Show', $target_module . '/show?id=' . $data['id'], array('class' => 'linkButton', 'title' => 'Show'));
       } elseif($column == 'emails') {
         if($value != '---'){
-          echo '<a href="mailto:' . $value . '">' . $value . '</a>';
+          echo '<a class="linkText" href="mailto:' . $value . '">' . $value . '</a>';
         }
         else{
           echo $value;
