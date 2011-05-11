@@ -1,9 +1,13 @@
 <div class="infoHolder shiftTemplateCounter" 
      style="width: 750px;"
      id="container<?php echo $number ?>">
-<?php
-$isNewShiftTemplate = $shifttemplateform->getObject()->isNew();
-echo $shifttemplateform['id']->render() ?>
+       <?php
+       if (!$shifttemplateform->getObject()->isNew()) {
+         $number = $shifttemplateform['id']->render();
+       }
+       echo $shifttemplateform['id']->render();
+       ?>
+
   <table style="width:750px;">
     <tfoot style="display: none;">
       <tr>
@@ -16,9 +20,9 @@ echo $shifttemplateform['id']->render() ?>
       <tr>
         <td colspan="2" style="background-color: #E5F7FF;">
           <?php echo $shifttemplateform['staff_resource_type_id']->renderRow() ?>
-          <span class="smallLinkButton floatRight removeShiftTemplate"
-                id="removeShiftTemplate<?php echo $number ?>">
-            - Delete Shift Template
+          <a href="<?php echo url_for('scenario/deleteshifttemplate') ?>" 
+             class="smallLinkButton floatRight removeShiftTemplate" id="<?php echo $number ?>">
+            - Delete Shift Template</a>
           </span>
           <br/>
           <?php echo $shifttemplateform['facility_resource_type_id']->renderRow(); ?>
@@ -98,64 +102,64 @@ echo $shifttemplateform['id']->render() ?>
               <td>
                 <span style="display:inline;">
                   <?php
-                         echo $shifttemplateform['task_length_minutes']->render();
-                         $task_time =
-                             $shifttemplateform['task_length_minutes']->getValue();
-                         $task_hours = intval($task_time / 60);
-                         $task_minutes = $task_time - ($task_hours * 60);
-                         $task_hours = sprintf('%02d', $task_hours);
-                         $task_minutes = sprintf('%02d', $task_minutes);
+                  echo $shifttemplateform['task_length_minutes']->render();
+                  $task_time =
+                      $shifttemplateform['task_length_minutes']->getValue();
+                  $task_hours = intval($task_time / 60);
+                  $task_minutes = $task_time - ($task_hours * 60);
+                  $task_hours = sprintf('%02d', $task_hours);
+                  $task_minutes = sprintf('%02d', $task_minutes);
                   ?>
-                         <input type="text" id="st_<?php echo $number; ?>_task_time_hours"
-                                name="st[<?php echo $number ?>][task_time_hours]"
-                                value="<?php echo $task_hours ?>"
-                                class="inputGray" style="width:30px;text-align: right;">
-                         :
-                         <input type="text" id="st_<?php echo $number; ?>_task_time_minutes"
-                                name="st[<?php echo $number ?>][task_time_minutes]"
-                                value="<?php echo $task_minutes ?>"
-                                class="inputGray" style="width:20px;">
-                       </span>
-                     </td>
-                     <td width="200px">
-                       <div id="task_time_slider<?php echo $number ?>"></div>
-                     </td>
-                   </tr>
-                   <tr>
-                     <td>
-                       <span class="rowFormatLabel2">
-                         Break Length:
-                       </span>
-                     </td>
+                  <input type="text" id="st_<?php echo $number; ?>_task_time_hours"
+                         name="st[<?php echo $number ?>][task_time_hours]"
+                         value="<?php echo $task_hours ?>"
+                         class="inputGray" style="width:30px;text-align: right;">
+                  :
+                  <input type="text" id="st_<?php echo $number; ?>_task_time_minutes"
+                         name="st[<?php echo $number ?>][task_time_minutes]"
+                         value="<?php echo $task_minutes ?>"
+                         class="inputGray" style="width:20px;">
+                </span>
+              </td>
+              <td width="200px">
+                <div id="task_time_slider<?php echo $number ?>"></div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="rowFormatLabel2">
+                  Break Length:
+                </span>
+              </td>
 
-                     <td>
-                       <span style="display:inline;">
+              <td>
+                <span style="display:inline;">
                   <?php
-                         echo $shifttemplateform['break_length_minutes']->render();
-                         $break_time =
-                             $shifttemplateform['break_length_minutes']->getValue();
-                         $break_hours = intval($break_time / 60);
-                         $break_minutes = $break_time - ($break_hours * 60);
-                         $break_hours = sprintf('%02d', $break_hours);
-                         $break_minutes = sprintf('%02d', $break_minutes);
+                  echo $shifttemplateform['break_length_minutes']->render();
+                  $break_time =
+                      $shifttemplateform['break_length_minutes']->getValue();
+                  $break_hours = intval($break_time / 60);
+                  $break_minutes = $break_time - ($break_hours * 60);
+                  $break_hours = sprintf('%02d', $break_hours);
+                  $break_minutes = sprintf('%02d', $break_minutes);
                   ?>
-                         <input type="text" id="st_<?php echo $number; ?>_break_time_hours"
-                                name="st[<?php echo $number ?>][break_time_hours]"
-                                value="<?php echo $break_hours ?>"
-                                class="inputGray" style="width:30px;text-align: right;">
-                         :
-                         <input type="text" id="st_<?php echo $number; ?>_break_time_minutes"
-                                name="st[<?php echo $number ?>][break_time_minutes]"
-                                value="<?php echo $break_minutes ?>"
-                                class="inputGray" style="width:20px;">
+                  <input type="text" id="st_<?php echo $number; ?>_break_time_hours"
+                         name="st[<?php echo $number ?>][break_time_hours]"
+                         value="<?php echo $break_hours ?>"
+                         class="inputGray" style="width:30px;text-align: right;">
+                  :
+                  <input type="text" id="st_<?php echo $number; ?>_break_time_minutes"
+                         name="st[<?php echo $number ?>][break_time_minutes]"
+                         value="<?php echo $break_minutes ?>"
+                         class="inputGray" style="width:20px;">
 
-                       </span>
-                     </td>
-                     <td width="200px">
-                       <div id="break_time_slider<?php echo $number ?>"></div>
-                     </td>
-                   </tr>
-                 </table>
+                </span>
+              </td>
+              <td width="200px">
+                <div id="break_time_slider<?php echo $number ?>"></div>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </tbody>

@@ -92,7 +92,8 @@ class ProjectConfiguration extends sfProjectConfiguration
           'agEventPackage',
           'agReportPackage',
           'agPetPackage',
-          'agEventPackage')
+          'agEventPackage',
+          'agMessagePackage')
     );
 
     // enables indexing by getting symfony to see lucene.yml for each module in the array

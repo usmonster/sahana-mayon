@@ -14,6 +14,16 @@ $(document).ready(function() {
     countSorts('.count');
     sortSlide();
   }
+
+  // Used in scenario/staffresources
+  var toggleGroup = $('.toggleGroup');
+  if(toggleGroup.length > 0) {
+      $('.toggleGroup').click(function(){ 
+      $(this).nextAll('div:eq(1)').slideToggle("slow");
+      $(this).text($(this).text() =='[-]'? '[+]' :'[-]');
+    });
+  }
+  
 });
 
 /**
@@ -199,7 +209,7 @@ $().ready(function() {
     // if(!$isNewShiftTemplate):
     $('#newshifttemplates').prepend('<h2 class="overlay">'
       + removeShiftTemplate(
-    $(this).attr('id'))
+    $(this).attr('id'), $(this).attr('href'))
     // $shifttemplateform['id']->getValue()
       + '</h2>');
     $('.overlay').fadeIn(1200, function() {

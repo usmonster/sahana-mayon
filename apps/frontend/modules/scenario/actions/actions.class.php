@@ -136,7 +136,6 @@ class scenarioActions extends agActions
    */
   public function executeStaffresources(sfWebRequest $request)
   {
-//get the needed variables regardless of what action you are performing to staff resources
     $formsArray = array();
     $this->setScenarioBasics($request);
     $this->wizardHandler($request, 4);
@@ -158,9 +157,8 @@ class scenarioActions extends agActions
 //create / process form
 
     if ($request->isMethod(sfRequest::POST)) {
-//      $facilityGroups = $request->getPostParameters();
       $facilityGroups = $request->getParameter('staff_resource');
-      unset($facilityGroups['_csrf_token']);/** @todo ??? unsetting csrf token, this should be fixed. */
+      unset($facilityGroups['_csrf_token']);/** @todo unsetting csrf token should be fixed. */
 //continuing workflow?
       if ($this->ag_scenario_facility_group) {
         foreach ($facilityGroups as $facilityGroup) {
@@ -191,7 +189,7 @@ class scenarioActions extends agActions
               if ($facilityStaffResourceForm->isValid() && isset($facilityStaffResource['minimum_staff']) && isset($facilityStaffResource['maximum_staff'])) {
                 /**
                  * @todo clean up for possible dirty data
-                 *  This will not work cleanly, if someone hasn't entered a minimum AND maximum and the record exists it
+                 *  This will not work cleanly, if someone hasn't entered a min & max & record exists it
                  *  will be deleted
                  */
                 $savedResources[] = $facilityStaffResourceForm->save();
@@ -221,28 +219,19 @@ class scenarioActions extends agActions
             ->from('agStaffResourceType srt')
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       }
-// Set $group to the user attribute to the 'scenarioFacilityGroup' attribute that came in through the request.
       $groups = Doctrine::getTable('agScenarioFacilityGroup')
           ->findByDql('scenario_id = ?', $this->scenario_id)
           ->getData();
 
-      if (!is_array($groups)) {
-        $this->array = false;
-        $this->scenarioFacilityGroup = $groups;
-        $this->scenarioFacilityResources = $this->scenarioFacilityGroup->getAgScenarioFacilityResource();
-        $this->staffresourceform = new agScenarioFacilityResourceForm();
-      } else {
         foreach ($groups as $scenarioFacilityGroup) {
           $facilitygroups[] = $scenarioFacilityGroup;
         }
         $this->array = true;
         $this->scenarioFacilityGroup = $facilitygroups;
-//$this->scenarioFacilityResources = $this->scenarioFacilityGroup->getAgScenarioFacilityResource();
-//$this->staffresourceform = new agScenarioFacilityResourceForm();
-      }
+//      }
 
-      if ($this->array == true) {
-        $this->arrayBool = true;
+
+
 
 
         foreach ($this->scenarioFacilityGroup as $group) {
@@ -258,8 +247,7 @@ class scenarioActions extends agActions
                   ->andWhere('agFSR.scenario_facility_resource_id = ?',
                              $scenarioFacilityResource->id)
                   ->fetchOne();
-//a better way to do this would be to follow the same array structure, so we could do something like
-//$existing[$subKey][$subSubKey][$srt
+
 
               if ($existing) {
                 $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
@@ -268,9 +256,6 @@ class scenarioActions extends agActions
                 $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
                     new agEmbeddedAgFacilityStaffResourceForm();
               }
-//              $staffResourceFormDeco = new agFormFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
-//              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
-//              $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
               $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('scenario_facility_resource_id',
                                                                                             $scenarioFacilityResource->getId());
               $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('staff_resource_type_id',
@@ -278,27 +263,8 @@ class scenarioActions extends agActions
             }
           }
         }
-      } else {
-//single group or an array? at this point should always be an array... or not matter
-        $this->arrayBool = false;
-        foreach ($this->scenarioFacilityGroup->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
-          foreach ($this->staffResourceTypes as $srt) {
-            $subKey = $scenarioFacilityGroup['scenario_facility_group'];
-            $subSubKey = $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name . ': ' . ucwords($scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type);
+      
 
-            $formsArray[$subKey][$subSubKey][$srt['staff_resource_type']] =
-                new agEmbeddedAgFacilityStaffResourceForm();
-
-//            $staffResourceFormDeco = new agFormFormatterInlineLabels($formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema());
-//            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
-//            $formsArray[$subKey][$subSubKey][$srt->staff_resource_type]->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
-            $formsArray[$subKey][$subSubKey][$srt['staff_resource_type']]->setDefault('scenario_facility_resource_id',
-                                                                                      $scenarioFacilityResource->getId());
-            $formsArray[$subKey][$subSubKey][$srt['staff_resource_type']]->setDefault('staff_resource_type_id',
-                                                                                      $srt['srt_id']);
-          }
-        }
-      }
       $this->formsArray = $formsArray;
     }
     $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray);
