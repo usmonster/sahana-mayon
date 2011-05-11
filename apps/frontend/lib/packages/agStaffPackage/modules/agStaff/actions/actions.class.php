@@ -110,116 +110,6 @@ class agStaffActions extends agActions
   }
 
   /**
-   * provides staff listing data to the staff list template
-   * @param sfWebRequest $request
-   */
-  public function executeOldlist(sfWebRequest $request)
-  {
-    $this->staffResourceStatus = 'active';
-    $staffResourceStatusOptions = agDoctrineQuery::create()
-            ->select('s.staff_resource_status, s.staff_resource_status')
-            ->from('agStaffResourceStatus s')
-            ->execute(array(), 'key_value_pair');
-    //the above query returns an array of keys matching their values.
-    //ideally the above should exist in a global param, so the database is not queried all the time
-    $staffResourceStatusOptions['all'] = 'all';
-    if ($request->getParameter('status') && in_array($request->getParameter('status'), $staffResourceStatusOptions)) {
-      $this->staffResourceStatus = $request->getParameter('status');
-    }
-    $this->statusFilterForm = new sfForm();
-    $this->statusFilterForm->setWidgets(
-        array(
-          'status' => new sfWidgetFormChoice(
-              array(
-                'multiple' => false,
-                'choices' => $staffResourceStatusOptions,
-                'label' => 'Staff Status'
-              ),
-              array('onchange' => 'submit();')
-          ),
-        //add_empty' => true))// ,'onClick' => 'submit()'))
-        )
-    );
-    $this->statusFilterForm->setDefault('status', $this->staffResourceStatus);
-
-    $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusFilterForm->getWidgetSchema());
-    $this->statusFilterForm->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
-    $this->statusFilterForm->getWidgetSchema()->setFormFormatterName('inline');
-
-    $query = Doctrine::getTable('agStaff')
-            ->createQuery('a')
-            ->select(
-                'p.*,
-                  s.*,
-                  namejoin.*,
-                  name.*,
-                  nametype.*,
-                  o.organization agency,
-                  stfrsc.staff_resource_type_id,
-                  e.id,
-                  ememail1.id,
-                  ec1.id,
-                  ect1.email_contact_type work_email,
-                  ememail2.id,
-                  ec2.id,
-                  ect2.email_contact_type home_email'
-            )
-            ->from(
-                'agStaff s,
-                  s.agPerson p,
-                  p.agPersonMjAgPersonName namejoin,
-                  namejoin.agPersonName name,
-                  name.agPersonNameType nametype,
-                  s.agStaffResource stfrsc,
-                  stfrsc.agStaffResourceStatus srs,
-                  stfrsc.agStaffResourceType,
-                  stfrsc.agOrganization o,
-                  p.agEntity e,
-                  e.agEntityEmailContact ememail1,
-                  ememail1.agEmailContact ec1,
-                  ec1.agEmailContactType ect1,
-                  e.agEntityEmailContact ememail2,
-                  ememail2.agEmailContact ec2,
-                  ec2.agEmailContactType ect2'
-    );
-    if ($this->staffResourceStatus != 'all') {
-      $query->where('srs.staff_resource_status=?', $this->staffResourceStatus);
-    }
-
-    $this->pager = new sfDoctrinePager('agStaff', 20);
-    /**
-     * @todo include exception handling for a bad sort param
-     */
-    if ($request->getParameter('sort')) {
-      if (substr($request->getParameter('sort'), 0, 11) == 'person_name') {
-        $nameId = substr($request->getParameter('sort'), 12);
-        $sortOrder = $request->getParameter('order', 'DESC');
-        $this->pager->setQuery(
-            $query->orderBy(
-                'namejoin.person_name_type_id = ' . $nameId . ' ' . $sortOrder . ',
-                  person_name ' . $sortOrder
-            )
-        );
-      } else {
-        $this->pager->setQuery($query->orderBy($request->getParameter('sort', 'person_name') . ' ' . $request->getParameter('order', 'DESC')));
-      }
-    } else {
-      $this->pager->setQuery($query);
-    }
-
-    //$sqloutput = $query->getSqlQuery();
-    $this->pager->setPage($request->getParameter('page', 1));
-    $this->pager->init();
-    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
-            ->createQuery('c')
-            ->execute();
-    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
-            ->createQuery('d')
-            ->execute();
-    //ideally this should only happen once
-  }
-
-  /**
    * executeShow displays an individual agPerson/staff-member entry. It uses an sfDoctrinePager
    * to navigate
    *
@@ -393,12 +283,6 @@ class agStaffActions extends agActions
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
     $this->form = new PluginagStaffPersonForm();
-//    $ent = new agEntity();
-//    $ent->save();
-//    $this->form->getObject()->setAgEntity($ent);
-//    $this->processForm($request, $this->form);
-//
-//    $this->setTemplate('new');
     $ent = new agEntity();
     $ent->save();
 
@@ -503,23 +387,14 @@ class agStaffActions extends agActions
     $ag_person->getAgEntity()->getAgEntityEmailContact()->delete();
     $ag_person->getAgPersonMjAgLanguage()->delete();
     $ag_person->getAgPersonMjAgPersonName()->delete();
-    //$ag_person->getAgPersonMjAgPhoneContact()->delete();
-    //^This and email below are disabled until we update the deletes to go through entity.
     $ag_person->getAgPersonMjAgProfession()->delete();
     $ag_person->getAgPersonResidentialStatus()->delete();
     $ag_person->getAgPersonSex()->delete();
     //$ag_person->getAgScenarioStaff()->delete();
-    //$ag_person->getAgPersonMjAgEmailContact()->delete();
     $ag_person->getAgPersonMjAgReligion()->delete();
     //$ag_person->getAgPersonMjAgSiteContact()->delete();
     foreach ($ag_person->getAgEntity()->getAgEntityAddressContact() as $contact) {
-//      foreach($contact->getAgAddress()->getAgAddressMjAgAddressValue() as $addressJoin)
-//      {
-//        $addressJoin->delete();
-//      }
-      //$address = $contact->getAgAddress();
       $contact->delete();
-      //$address->delete();
     }
     $ent = $ag_person->getAgEntity();
     $ag_person->delete();
@@ -817,80 +692,8 @@ class agStaffActions extends agActions
     unlink($filePath);
   }
 
-  /**
-   * Imports staff records from a properly formatted XLS file.
-   *
-   * @todo: define a standard import format and document it for the end user.
-   * @todo: make this more robust and create meaningful error messages for failed import fiels and records.
-   * */
-  public function executeImport2()
-  {
-    $staffMembers = Doctrine::getTable('agPerson')
-            ->createQuery('a')
-            ->execute();
-    $nameTypes = Doctrine::getTable('agPersonNameType')
-            ->createQuery('a')
-            ->execute();
-    $phoneTypes = Doctrine::getTable('agPhoneContactType')
-            ->createQuery('a')
-            ->execute();
-    $emailTypes = Doctrine::getTable('agEmailContactType')
-            ->createQuery('a')
-            ->execute();
-    $addressTypes = Doctrine::getTable('agAddressContactType')
-            ->createQuery('a')
-            ->execute();
-    $languageFormats = Doctrine::getTable('agLanguageFormat')
-            ->createQuery('a')
-            ->execute();
-    // Right now this is not as robust as possible, only XLS files will be handled. Functionality can be added later for CSV and a few other formats
-    // that are supported by PHPExcel. PHPExcel_IOFactory::createReaderForFile is not the issue, it will set the right reader for whatever filetype is imported,
-    // it's just set in the if statement below.
-    // Set some properties to the imported file's path and file.
-    $this->importFile = $_FILES['import']['name'];
-    $this->importPath = sfConfig::get('sf_upload_dir') . '/' . $this->importFile;
-    $filePath = pathinfo($this->importFile);
-    //require_once sfConfig::get('sf_app_dir') . '/lib/util/agStaffImportXls.class.php';
-    require_once sfConfig::get('sf_app_lib_dir') . '/util/agStaffImport.class.php';
-
-    $passPath = $_FILES['import']['tmp_name'];
-    $extension = strtolower($filePath['extension']);
-
-
-    if ($extension <> 'xls' && $extension <> 'csv') {
-      $this->uploadHeading = 'Import Failure';
-      $this->uploadMessage = $this->importFile . ' is not an XLS file and could not be read. No data was imported to Agasti.';
-    } else {
-//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\');"');
-      $importObj = new agStaffImport(); //new agStaffImportXls();
-      $importObj->fileName = $_FILES['import']['name'];
-      $importObj->rowSetIterator = 0;
-      $importObj->stop = false;
-      $xlsPath = /* 'xlsfile:///' . */ $passPath;
-      $returned = $importObj->processStaffImport($xlsPath);
-//      $returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::processStaffImport(\'' . htmlspecialchars($passPath) . '\', \'' . htmlspecialchars($tyr) . '\');"');
-//      $toImport = unserialize($toImport);
-      //$returned = unserialize($returned);
-      while ($importObj->stop <> true) {
-        $returned = $importObj->processStaffImport($xlsPath);
-      }
-//      while ($returned['Current Iteration' ] < $returned['Max Iteration']) {
-//        $this->message = $returned;
-//        //$this->redirect('staff/import');
-//        //$returned = shell_exec('php -r "include (\'../apps/frontend/lib/util/agStaffImport.class.php\'); echo staffImport::buildAndSave(\'' . addslashes(serialize($returned['Staff'])) . '\', \'' . ($returned['Current Iteration'] + 1) . '\');"');
-//        $returned = $importObj->saveImportedStaff($returned['Staff'],$returned['Current Iteration'] + 1);
-//
-////        $returned = staffImport::buildAndSave(serialize($returned['Staff']),$returned['Current Iteration'] + 1);
-////        $returned = unserialize($returned);
-//      }
-      $this->message = $returned;
-    }
-  }
-
   public function executeImport(sfWebRequest $request)
   {
-    //$this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
-
     $uploadedFile = $_FILES["import"];
 
     $uploadDir = sfConfig::get('sf_upload_dir') . '/';
@@ -915,25 +718,21 @@ class agStaffActions extends agActions
       $sourceTable = $import->tempTable;
       $dataNorm = new agStaffImportNormalization($scenarioId, $sourceTable, 'staff');
 
-      $format = "%d/%m/%Y %H:%M:%S";
-//      echo strftime($format);
-
       $dataNorm->normalizeImport();
 
       $this->summary = $dataNorm->summary;
-//      echo strftime($format);
     }
 
 
     //this below block is a bit hard coded and experimental, it should be changed to use gparams
 
-    $agLuceneIndex = new agLuceneIndex(array('agFacility'));
+    $agLuceneIndex = new agLuceneIndex(array('agStaff'));
     $indexResult = $agLuceneIndex->indexAll();
 
 //      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
 //      $dispatcher = sfContext::getInstance()->getEventDispatcher();
 //      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
-//      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
+//      $task->run(array('model' => 'agStaff'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
   }
 
 }

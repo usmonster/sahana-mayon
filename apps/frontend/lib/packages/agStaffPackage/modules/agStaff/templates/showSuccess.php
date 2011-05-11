@@ -146,7 +146,6 @@ use_helper('agTemplate');
     foreach ($ag_phone_contact_types as $agPhoneContactType) {
       echo "<td>";
       $check = 0;
-      //$phoneContacts = $agStaff->getAgPerson()->getAgPersonMjAgPhoneContact();
       $phoneContacts = $agStaff->getAgPerson()->getAgEntity()->getAgEntityPhoneContact();
       foreach ($phoneContacts as $phoneContact) {
         if ($phoneContact->getPhoneContactTypeId() == $agPhoneContactType->getId()) {
