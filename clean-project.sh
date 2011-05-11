@@ -36,9 +36,11 @@ $PROJECT_ROOT/symfony cc
 # removes search index files to avoid pollution from previous installs
 sudo rm -rf $PROJECT_ROOT/data/search/*
 
-# resets file and directory perms (NOTE: chmod does NOT recurse in this case)
+# resets file and directory perms
 sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
-chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
+sudo chmod -cR g+wr $PROJECT_ROOT/data/search/ $PROJECT_ROOT/web/wiki/data/
+# NOTE: chmod should NOT recurse for these, for security's sake:
+chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/
 #considered harmful?:
 #sudo $PROJECT_ROOT/symfony project:permissions
 
@@ -60,3 +62,4 @@ sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load
 
 #indexes the data loaded so it is searchable to the user
 sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenario agStaff agFacility agScenarioFacilityGroup
+
