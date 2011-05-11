@@ -398,7 +398,7 @@ function buildTooltip(element, obj, title) {
 
 /**
 * This unnamed function catches the click of an element with .tooltipTrigger class. It calls
-* buildModal and then loads and opens the modal dialog.
+* buildTooltip and then loads and opens the modal dialog.
 *
 * @return false  Return false is used here to prevent the clicked link from returning and sending
 *                the user forward in the browser.
@@ -591,4 +591,44 @@ function queryConstruct() {
       $("#staff_pool_search_search_condition").val(JSON.stringify(query_c));
     }
   }
+}
+
+
+/**
+* buildModal creates a jQuery UI modal dialog window.
+*
+* @param  element  A DOM element, most likely a div, that will display content inside the
+*                  modal window.
+* @param  title    The title for the modal window.
+* @return $dialog  A configured modal dialog.
+*
+* @todo   Add more params for greater configurability.
+**/
+function buildModal(element, title) {
+  var $dialog = $(element)
+  .dialog({
+    title: title,
+    autoOpen: false,
+    resizable: false,
+    width: 'auto',
+    height: 'auto',
+    draggable: false,
+    modal: true
+  });
+  return $dialog;
+}
+
+/**
+* This unnamed function catches the click of an element with .modalTrigger class. It calls
+* buildModal and then loads and opens the modal dialog.
+*
+* @return false  Return false is used here to prevent the clicked link from returning and sending
+*                the user forward in the browser.
+**/
+function triggerModal(element) {
+//  $('.modalTrigger').live('click', function() {
+    var $dialog = buildModal('<div id="modalContent"></div>', $(element).attr('title'));
+    $dialog.load($(element).attr('href'), function() {$dialog.dialog('open')});
+    return false;
+//  });
 }
