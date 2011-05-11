@@ -1,4 +1,4 @@
-i/*@import url('menu.css');*/
+/*@import url('menu.css');*/
 
 /**** Layout ****/﻿
 html, body {
@@ -837,6 +837,17 @@ table.staffTable td.right {
   display: block;
 }
 
+
+.staffTable li {
+ float: none !important;
+  margin-right: 18px;
+ 
+}
+
+.marginBot10px{
+    margin-bottom: 10px;
+}
+
 .address ul {
   margin: 0;
   padding: 0;
@@ -851,7 +862,7 @@ table.staffTable td.right {
   -webkit-border-radius: 10px;
   border-radius: 10px;
   padding: 10px;
-  margin-top: 10px;
+  margin: 10px;
 }
 
 .adminConfig {
@@ -1649,7 +1660,7 @@ table.available caption {
   padding-left: 10px;
   padding-right: 10px;
   padding-top: 2px;
-  color: #ff8f00;
+  color: #848484;
 }
 
 #stepper ul li.current {
@@ -1665,12 +1676,17 @@ table.available caption {
 }
 
 #stepper ul li.completed {
+<<<<<<< TREE
+ color: #ff8f00;
+ 
+=======
   color:green;
 
+>>>>>>> MERGE-SOURCE
 }
 
 #stepper ul li.completed a{
-  color: #848484;
+  color: #ff8f00;
   text-decoration: none;
   outline: none;
 }
@@ -1791,8 +1807,12 @@ a.linkButton{
 
 .redHighLight:focus {
   background: #ffebeb !important;
+<<<<<<< TREE
+}
+
+=======
 }
 
 .toggleGroup {
   cursor: pointer;
-}
+}>>>>>>> MERGE-SOURCE

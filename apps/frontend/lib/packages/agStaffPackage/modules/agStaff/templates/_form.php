@@ -7,7 +7,7 @@ use_javascripts_for_form($form);
 <?php if (!$form->getObject()->isNew()): ?>
     <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
-    <div class="fooTable" class="displayInlineBlock">
+    <div class="displayInlineBlock fooTable marginBot10px">
       <br />
       <h3>Staff Information</h3>
       <div class="infoHolder">
@@ -105,7 +105,7 @@ use_javascripts_for_form($form);
 
       <br />
 
-      <div class="address infoHolder">
+      <div class="address infoHolder staffTable">
         <h3><?php echo $form['address']->renderLabel(); ?></h3>
         <div class="clearBoth"> </div>
 <?php echo $form['address']; ?>
