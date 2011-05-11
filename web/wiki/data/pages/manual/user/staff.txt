@@ -12,9 +12,10 @@ More general information can be found below.
 
 The functionality of the Staff Management module is broken into a few parts:
   * Entering staff records
+    * Manually
+    * Via Import
   * Editing staff records
   * Deleting records
-  * Importing
   * Exporting
 
 In general the staff module is used to maintain staff records and prepare for the deployment of staff during an activation.  While staff information could be uploaded or entered in response to an event, if the records are available prior to an emergency response it will greatly increase the effectiveness if the initial response.
@@ -27,11 +28,11 @@ A "Staff Resource" is a person combined with a skill set that is potentially ava
 
 ===== Entering Staff =====
 
-Staff can be entered into Agasti in two ways: manually and via import.  Below are brief instructions for using both; however a walk-through is available for [[manual:user:staff:new|manual entry]] and [[manual:user:staff:import|import]].
+Staff can be entered into Agasti in two ways: manually and via import.  Below are brief instructions for using both.  A walk-through is available for [[manual:user:staff:new|manual entry]] and [[manual:user:staff:import|import]].
 
 ==== Manual ====
 To manually enter staff, beginning from the Staff Management page:
-  - Click "Create Staff"
+  - Click "Add Staff"
   - Select the staff's status
     * **Active** staff are available for deployment
     * **Inactive** staff are not available for deployment

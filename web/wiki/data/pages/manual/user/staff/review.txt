@@ -1,20 +1,19 @@
 ====== Staff Management Walk-Through ======
 
+In this walk-through we've reviewed how to enter staff, edit existing records, mass-import staff, and export records from Agasti.  These staff records will be used later for planning and potential deployment should an activation occur.
 
-===== Staff Management Review =====
-
-===== Reference Information =====
-
-
-===== Walk-Through =====
-
-
-===== FAQ =====
-
+===== Key Concepts =====
+  * **Staff Resource** - Staff Resources are used when creating staff deployment rules in a Scenario. If you plan to use a portion of your available staff records (instead of all staff), or if you want to deploy some staff with a higher priority than others, to add a staff's resource type and/or the organization they are associated with.
+  * **Staff Pool** - The staff pool is the available staff selected to be part of a scenario.  The pool can be restricted by the needed staff resources and specific organizations so that only the needed staff are called for an activation.
+  * **Scenario** - Scenarios are response plans in Sahana Agasti that mirror on-paper municiple response deployment plans.
+  * **Event** - Events are active instances where scenarios are converted to real-time responses.
 
 ====== Continue ======
 
-[[manual:user:staff:export|{{:manual:user:previous.png?135 }}]]
+Using the manual and import methods of adding staff, continue expanding the potential staff pool in Sahana Agasti.  When the staff pool is built, continue on to [[manual:user:facilities|Facility Management]].
+
+[[manual:user:facilities|{{ :manual:user:fac_jump.png?150|Facility Management Walk Through}}]]
+[[manual:user:staff:export|{{:manual:user:previous.png?135|Exporting Staff }}]]
 
 ===== Jump to Another Step =====
 

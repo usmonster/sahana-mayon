@@ -3,7 +3,7 @@
 
 ===== Creating New Staff =====
 
-Staff records in Agasti the represent potential workforce for your emergency response and there are two ways to add new records: manual and [[manual:user:staff:import]].  This page will walk you through creating a new staff resource manually and, later on in this walk-through, you'll be instructed on importing a staff records file.
+Staff records in Agasti represent the potential workforce for your emergency response and there are two ways to add new records: manual and [[manual:user:staff:import]].  This page will walk you through creating a new staff resource manually and, later on in this walk-through, you'll be instructed on how to import a staff records file should you desire to do so.
 
 ===== Reference Information =====
 

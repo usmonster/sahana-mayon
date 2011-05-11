@@ -1,13 +1,73 @@
 ====== Facility Management Walk-Through ======
 
 ===== Importing Facilities =====
+Facility Import can be a helpful time saver when your response plan has many facilities or if you are planning to have multiple scenarios, some of which use the same facility resources.  Facilities are imported in association with the scenarios they are used in.  See the Reference Information section below for a better understanding of when to import facilities.
 
 ===== Reference Information =====
+==== Things to Know ====
+  * The Facility Import template includes all the information on a facility resource, it's capacity, its activation sequence in a given scenario, and contact information. {{:manual:user:facilities:facility_import_and_export_template.xls|Facility Import Template}}
+  * **Imported facilities are directly related to specific scenarios.** When importing a facility you're required to select the scenario that import sheet relates to.
+  * Facilities can be imported as part of scenario creation, or the scenarios can be created and facilities imported later.
+  * Each row in import is for a Facility Resource.  If a facility has more than one resource each resource will be a new line in the import spreadsheet.
+==== Facility Import Column Headers ====
+It it **very important** that facility records be entered properly into the import template.  Below are the column headers for the facility import spreadsheet.  Required fields are **in bold**.
+  * Facility Name - Name of the facility.  Displayed as a title for the user.
+  * Facility Code - Unique code for the physical location of the facility.  **Must be unique.**  Used by Sahana Agasti to reference unique facilities.
+  * Facility Resource Type Abbr - Abbreviation for the facility resource being entered in this row.  Current Facility Resources are:
+    * Evacuation Center: EC
+    * Hurricane Shelter: HS
+    * Special Medical Needs Shelter: SMN
+    * Point of Distribution: POD
+    * Unified Operations Resource Center: UORC
+  * Facility Resource Status - Current status of that facility resource.  Available or Unavailable.
+  * Facility Capacity - Capacity of sheltering or medical services open to the public.  For non-public resources, such as distribution or control centers, enter 0.
+  * Facility Activation Sequence - Numerical activation sequence of that facility within its group.  Number 1 to 10.
+  * Facility Allocation Status - Status of the facility resource upon activation of the scenario.  Setup, Standby, or Unavailable.
+  * Facility Group - Name of the facility group this facility resource is associated with in the scenario.
+  * Facility Group Type - Type of facility group this facility is in.  Solar System, UORC, Shelters, Point of Distribution Centers.
+  * Facility Group Allocation Status - Status of the facility group upon activation of this scenario.  Available, Stand-by, Unavailable
+  * Facility Group Activation Sequence - Sequence the facility groups should be activated in.
+  * Work Email - Email of the facility
+  * Work Phone - Phone of the facility
+  * Street 1 - Line one of the facility address
+  * Street 2 - Line two of the facility address
+  * City - City of the facility address
+  * State - State of the facility address
+  * Postal Code - Postal Code of the facility
+  * Borough - Borough the facility is in
+  * Country - Country the facility is in
+  * Longitude - Longitude of the facility's geo coordinates
+  * Latitude - Latitude of the facility's geo coordinates
+  * Staff Minimum and Maximums - Facility staff requirements are included in the import as 2 columns per staff type; one minimum and one maximum.  The columns are titled with the "staff type short name"_min and "staff type short name"_max.  The current Coastal Storm Plan column headers are:
+    * ec_opr_min - Evacuation Center Operator minimum
+    * ec_opr_max - Evacuation Center Operator maximum
+    * hs_opr_min - Hurricane Shelter Operator minimum
+    * hs_opr_max - Hurricane Shelter Operator maximum
+    * spec_min - Specialist minimum
+    * spec_max - Specialist maximum
+    * uorc_min - UORC Staff minimum
+    * uorc_max - UORC Staff maximum
+    * med_nrs_min - Medical Nurse minimum
+    * med_nrs_max - Medical Nurse maximum
+    * med_oth_min - Medical Other minimum
+    * med_oth_max - Medical Other maximum
+    * staff_min - Staff minimum
+    * staff_max - Staff maximum
+    * opr_min - Operator minimum
+    * opr_max - Operator maximum
 
+==== Facility Import Dos and Donts ====
+A facility import quick guide with dos and donts is available for download: {{:manual:user:facilities:facility_import_quick_guide.pdf|Facility Import Quick Guide}}
 ===== Walk-Through =====
+This walk through is for facility imports after the scenario has been created.  **If you are importing facilities as part of scenario creation, or you have not yet created a scenario, see the [[manual:user:scenario:walkthrough|Scenario Creator Walk-through]].**
 
+  - Download the {{:manual:user:facilities:facility_import_and_export_template.xls|Facility Import Template}}, remove the example information, and enter information for your scenarios' facilities.
+  - Beginning on the Facility Management page click "Import Facilities" {{:manual:user:facilities:import_fac.png?400|Click "Import Facilities"}}
+  - Click {{:manual:user:facilities:browse_button.png|Browse}} and select the file to upload from your computer
+  - Select the Scenario for this import from the drop down {{:manual:user:facilities:select_scenario.png?150|Select the Scenario}}
+  - Click {{:manual:user:facilities:submit_button.png|Submit}}
 ===== FAQ =====
-
+  * **How do I import facilities for multiple scenarios?**  Each scenario will have a separate spreadsheet and facility import.  Be sure that if a facility is repeated between spreadsheets it has the same Facility Code.
 ====== Continue ======
 
 [[manual:user:facilities:export|{{ :manual:user:next.png|}}]] 

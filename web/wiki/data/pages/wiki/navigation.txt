@@ -13,7 +13,6 @@
     * [[manual:User:Staff|Staff Mgmt]]
     * [[manual:User:Facilities|Facilities]]
     * [[manual:User:Organizations|Organizations]]
-    * [[manual:user:Geo|Geo Coding]]
     * [[manual:User:Scenario|Scenarios]]
       * [[manual:user:scenario:walkthrough|Scenario Walk-Through]]
     * [[manual:User:Event|Event Deployment]]

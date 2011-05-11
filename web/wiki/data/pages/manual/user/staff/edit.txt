@@ -5,7 +5,8 @@
 Though staff resources can be updated through import, minor updates to records and contact information can be done on individual staff records through the application.  Here you can update the languages known, contact information, and skills available through resources.
 ===== Reference Information =====
 
-By now you know that a Staff Resource is the combination of a staff's record in Sahana Agasti and the Resource that they could be deployed as during a response.  To ensure an accurate staff pool the information on available staff should be maintained as closely as possible.
+==== Things To Know ====
+  * By now you know that a Staff Resource is the combination of a staff's record in Sahana Agasti and the Resource that they could be deployed as during a response.  To ensure an accurate staff pool (used in scenario) the information on available staff should be maintained as closely as possible.
 ===== Walk-Through =====
 For ease of reference, the different sections and possible updates are outlined in the breakdowns below:
 

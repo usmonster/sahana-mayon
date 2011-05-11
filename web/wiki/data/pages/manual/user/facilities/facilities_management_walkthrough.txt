@@ -1,6 +1,7 @@
 ====== Facility Management Walk-Through ======
 
 ===== Introduction =====
+The Facility Management functionality in Sahana Agasti is designed to track available sites and resources for sheltering and response in the event of an emergency. Intended to supplement response plans where sites are pre-designated, facilities have specific roles as well as contact information for on-site response.  While the interface is designed to be intuitive, some users will find additional information helpful.  This walk through will help guide a user through the steps of entering facility information, listing and editing that information, importing facility spreadsheets, and exporting that information for other use.
 
 To help organize the information each page of the walk-through will contain the following sections:
 
@@ -8,8 +9,18 @@ To help organize the information each page of the walk-through will contain the 
   * **Reference Information** - Details that may not be intuitive for some users or will be good reference information when building later scenarios.
   * **Walk-Through** - A step by step detail of fields on the page and what to do next.
   * **FAQ** - Frequently Asked Questions about that step and its repercussions later on.
-
 ====== Getting Started ======
+In the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-through]] you added staff to Sahana Agasti and assigned them resources to make them available for deployment.  In the Facility Management Walk-through you will create Facilities and assign Facility Resources to them as locations where staff can be assigned during an activation.
+
+To get started, use the menu to navigate to the Facility Management page.  Hover over "Prepare" and, in the menu that expands, click "Facility".
+
+From the Home page you can also click "Prepare" and, on the Prepare Hub, click "Manage Facilities"
+{{:manual:user:facilities:fac_from_menu.png?700}}
+
+The Facility Management page will look like this:
+{{:manual:user:facilities:fac_mgmt.png?700}}
+
+Once you navigate to the Facility Management page click Next to continue to the next step: Creating a Facility.
 [[manual:user:facilities:create|{{ :manual:user:next.png|Create}}]] 
 
 

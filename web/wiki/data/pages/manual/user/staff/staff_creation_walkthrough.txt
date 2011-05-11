@@ -15,7 +15,9 @@ To help organize the information each page of the walk-through will contain the 
 
 It's time to get started in creating your first Staff record.  Keep this walk-through open while you progress through staff management and remember that you can always come back and edit the staff information later on if their information changes.
 
-To get started, use the menu to navigate to the Staff Management page.
+To get started, use the menu to navigate to the Staff Management page.  Hover over "Prepare" in the menu and then click "Staff".  
+
+You can also click the "Prepare" button on the Home page and then click the "Manage Staff" button.
 
 {{:manual:user:staff:nav_to_staff.png?700}}
 

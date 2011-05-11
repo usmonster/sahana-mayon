@@ -2,12 +2,14 @@
 
 
 ===== Import Staff =====
-While staff can be entered manually in Sahana Agasti large staff lists are better entered via import.  
+While staff can be entered manually in Sahana Agasti large staff lists are more easily entered via import.  
 
 
 ===== Reference Information =====
-
-  * It's **very important** that staff records be properly loaded into the import template (available at step 1 below).  The following are the column headers for the import template (Required fields in **Bold**):
+==== Things to Know ====
+  * If you are updating existing records in Sahana Agasti, use the [[manual:user:staff:export|Staff Export]] feature to create a spreadsheet of existing records.  Sahana Agasti will match the "entity ID" of the updated record to the existing one to prevent duplication.
+==== Import Spreadsheet Columns ====
+It's **very important** that staff records be properly loaded into the import template (available at step 1 below).  The following are the column headers for the import template (Required fields in **Bold**):
     * Entity ID - assigned in Sahana Agasti.  **There is no Entity ID for new records.**
     * **First Name** - the staff members first name
     * Middle Name - the staff members middle name
@@ -59,8 +61,8 @@ While staff can be entered manually in Sahana Agasti large staff lists are bette
   * **Can I upload staff without any Resource Types?** Yes; though without resources associated the staff will not be available for deployment.
 ====== Continue ======
 
-[[manual:user:staff:review|{{ :manual:user:next.png|}}]] 
-[[manual:user:staff:import|{{:manual:user:previous.png?135 }}]]
+[[manual:user:staff:export|{{ :manual:user:next.png|}}]] 
+[[manual:user:staff:edit|{{:manual:user:previous.png?135 }}]]
 
 ===== Jump to Another Step =====
 

@@ -18,8 +18,8 @@ Exporting staff records can be useful for many applications such as reporting on
   * **Can I customize the fields available for export?** - Agasti currently supports a bulk export of all staff without custom fields.  To create a staff export with custom fields remove the undesired information from the spreadsheet produced by the export.
 ====== Continue ======
 
-[[manual:user:staff:import|{{ :manual:user:next.png|}}]] 
-[[manual:user:staff:review|{{:manual:user:previous.png?135 }}]]
+[[manual:user:staff:review|{{ :manual:user:next.png|}}]] 
+[[manual:user:staff:import|{{:manual:user:previous.png?135 }}]]
 
 ===== Jump to Another Step =====
 

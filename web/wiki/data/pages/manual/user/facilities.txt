@@ -1,6 +1,6 @@
 ====== Facility Management ======
 
-The facility management module of Agasti is designed to track available site and resources for sheltering and response in the event of an emergency response.  Intended to supplement response plans where sites are pre-designated, facilities have specific roles as well as contact information for on-site response.
+The facility management module of Agasti is designed to track available sites and resources for sheltering and response in the event of an emergency.  Intended to supplement response plans where sites are pre-designated, facilities have specific roles as well as contact information for on-site response.
 
 Below is a quick guide to Facilities Management functionality; however, more detailed information is available via the [[manual:user:facilities:facilities_management_walkthrough|Facilities Management Walk-Through]].
 
@@ -8,9 +8,10 @@ Below is a quick guide to Facilities Management functionality; however, more det
 The functionality of Facilities Management is broken down into several parts:
 
   * Entering Facilities
+    * Manual
+    * Import
   * Editing Facility records
   * Deleting records
-  * Importing Facilities
   * Exporting Facilities
 
 The Facilities Management module is used largely for the maintaining of facility information for an emergency response.  While facility information could be uploaded at the time of response, the effectiveness of the response is greatly increased if the information is available prior to response.
@@ -23,26 +24,68 @@ A "Facility Resource" is the combination of a physical site and the function tha
 
 When a new facility is created the type of resources available and the capacity of those resources will be entered.
 
-==== Editing Facility Resources ====
-
+**A facility can only have one of any Resource Type available.**
 
 ===== Creating Facilities =====
 
-Facility records can be created two ways in Agasti: manual entry and import.
+Facility records can be created two ways in Agasti; manual entry and import.  Below are basic instructions for Adding Facilities, more details are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].
+
+==== Manual Entry ====
+To manually enter Facilities, begin on the Facility Management Page:
+  - Click "Add Facility"
+  - Enter the name and facility code for the facility.
+    - Facility names **should** be unique for easy reference.
+    - Facility codes **must** be unique as they are the internal reference in Sahana Agasti
+  - Select any Facility Resource types, the default opening statuses, and the capacity of that resource
+  - Enter the contact information for the point of contact at the resource
+  - Select "Save"
+
+==== Facility Import ====
+Imported facilities are entered as part of Scenario creation.  **A scenario must be created before the related facility records and resources can be uploaded.**
+
+**Note:** These steps assume the scenarios you are uploading to have been created or that these are updates to those facilities.  If you are creating the scenarios while uploading see the Scenario Creator Walk-Through.
+
+To import facilities, begin on the Facility Management Page:
+  - Click "Import Facilities"
+  - In the expanded menu, click "Browse" to select the file to be uploaded.
+  - Select the Scenario these facilities relate to
+  - Click Submit
+  - On the confirmation screen verify the import was successful.
+
+
+
 ===== Editing Facilities =====
 
+To ensure proper staffing and response, facility records, including contact information and status, should be kept as accurate at possible.  Below are basic instructions for Editing Facilities, more details are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].
 
+To edit a facility record begin on the Facility Management page:
+  - Click "List Staff"
+  - Locate the facility record in the staff list
+  - Click the Facility ID Number on the left side to view the facility record
+  - On the view page click the "Edit" button at the bottom
+  - Update the record
+  - Click "Save" at the bottom
+
+**Note:** Facilities can also be updated via import.  The combination of a Facility Code and the assigned resources at that facility identify the facility record for import.
 ===== Exporting Facilities =====
+Below are brief instructions for exporting facilities; however, more details are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].
 
+Beginning on the Facility Management page:
+  - Click "Export Facilities"
+  - The xls spreadsheet will download automatically begin.  Depending on your browser it may:
+    - Save to your "Download" folder
+    - Prompt you to select a location to save the file on your computer
 ===== Deleting Facility Records =====
+Facilities can only be disabled when there are no resources being used in a scenario using it's Resources.  If a facility is being used in a scenario and is no longer available either remove the resources from any scenarios and delete or disable it.
 
+Below are brief instructions for deleting facilities; however, more details are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].
 
-Listed below are the help topics for the facility management module of Sahana Agasti 2.0, Mayon
+Beginning on the Facility Management page:
+  - Click the "List Facility" page
+  - Click the ID number of the facility to be deleted to view the facility record
+  - Click the "Edit" button at the bottom of the page
+  - Click the "Delete" button at the bottom
 
-Please select one of the following facility administration actions:
-
-  * [[..Create|Create Facility]]
-  * List Facilities
-  * Import Facilities
-  * Export Facilities
-  * Search
+**If you receive a warning that the facility is in use in a scenario**:
+  * if the facility is temporarily unavailable select the "Disable" button next to the delete button.
+  * if the facility is to be completely removed from the system remove it from any scenarios it is associated with.  The facility can then be deleted.

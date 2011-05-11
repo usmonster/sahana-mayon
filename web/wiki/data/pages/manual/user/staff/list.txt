@@ -7,7 +7,7 @@ The Mayon Staff list makes it easy for administrators to update or locate indivi
 ==== Things To Know ====
 
   * Even if a staff record has more than one resource they are only listed once.
-  * {{ :manual:user:staff:staff_status_dropdown.png|}} The list defaults to show staff in "active" status.  To view all records adjust the dropdown in the upper right corner. 
+  * {{ :manual:user:staff:staff_status_dropdown.png|}}The list defaults to show staff in "active" status.  To view all records adjust the dropdown in the upper right corner. 
 
 ===== Walk-Through =====
 
