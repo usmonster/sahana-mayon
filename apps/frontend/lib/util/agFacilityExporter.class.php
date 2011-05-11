@@ -249,7 +249,7 @@ class agFacilityExporter {
 
     $row = 2;
     foreach ($facilityExportRecords as $rKey => $facilityExportRecord) {
-      if($rKey <> 0 && (($rKey) % 4 == 0)) {
+      if($rKey <> 0 && (($rKey) % 64000 == 0)) {
         // check if the row limit has been reached (up this to 64,000 later)
         // if we get in here, set the cell sizes on the sheet that was just finished.
         // Then make a new sheet, set it to active, build its headers, and reset
