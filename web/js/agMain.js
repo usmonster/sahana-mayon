@@ -21,6 +21,36 @@ $(document).ready(function() {
       $('.toggleGroup').click(function(){ 
       $(this).nextAll('div:eq(1)').slideToggle("slow");
       $(this).text($(this).text() =='[-]'? '[+]' :'[-]');
+      
+      
+// Watermark stuff for scenario/staffresources
+    $(function() {
+        $(".facgroup :input:text").each(function(){
+            if( $(this).val() == "")
+            {
+                $(this).addClass("empty");
+                $(this).focus(function(){
+                    $(this).removeClass("empty");
+                });
+                $(this).focusout(function(){
+                    if( $(this).val() == "")
+                    {
+                        $(this).addClass("empty");
+                    }
+                })
+            }
+        });
+
+      $(":input[id$='minimum_staff']").Watermark("Min");
+      $(":input[id$='maximum_staff']").Watermark("Max");
+
+      //adding forward slash after minimum_staff  input box
+      $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
+
+    });
+// End watermark stuff
+      
+      
     });
   }
   
@@ -562,30 +592,3 @@ function queryConstruct() {
     }
   }
 }
-
-// Watermark stuff for scenario/staffresources
-    $(function() {
-        $(".facgroup :input:text").each(function(){
-            if( $(this).val() == "")
-            {
-                $(this).addClass("empty");
-                $(this).focus(function(){
-                    $(this).removeClass("empty");
-                });
-                $(this).focusout(function(){
-                    if( $(this).val() == "")
-                    {
-                        $(this).addClass("empty");
-                    }
-                })
-            }
-        });
-
-      $(":input[id$='minimum_staff']").Watermark("Min");
-      $(":input[id$='maximum_staff']").Watermark("Max");
-
-      //adding forward slash after minimum_staff  input box
-      $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
-
-    });
-// End watermark stuff

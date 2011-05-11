@@ -145,16 +145,11 @@ class scenarioActions extends agActions
         ->getFirst();
     $this->ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
         ->find(array($request->getParameter('id')));
-    $this->scenarioFacilityGroups = $this->scenario->getAgScenarioFacilityGroup();
     $this->ag_staff_resources = agDoctrineQuery::create()
         ->select('agSFR.*')
         ->from('agScenarioFacilityResource agSFR')
         ->where('scenario_facility_group_id = ?', $request->getParameter('id'))
         ->execute();
-    //$this->staffresourceform = new agStaffResourceRequirementForm($this->scenario_id);
-//this came from the _staffresources partial
-//construct our top level form, with all forms contained, and pass to the view
-//create / process form
 
     if ($request->isMethod(sfRequest::POST)) {
       $facilityGroups = $request->getParameter('staff_resource');
@@ -165,7 +160,6 @@ class scenarioActions extends agActions
           foreach ($facilityGroup as $facility) {
 //are we editing or updating?
             foreach ($facility as $facilityStaffResource) {
-// The '$CSRFSecret = false' argument is used to prevent the missing CSRF token from invalidating the form.
               $existing = agDoctrineQuery::create()
                   ->select('agFSR.*')
                   ->from('agFacilityStaffResource agFSR')
@@ -184,14 +178,11 @@ class scenarioActions extends agActions
                 $facilityStaffResourceForm = new agEmbeddedAgFacilityStaffResourceForm($existing, $options = array(), $CSRFSecret = false);
               }
               $facilityStaffResourceForm->bind($facilityStaffResource, null);
-//$facilityStaffResourceForm->updateObjectEmbeddedForms();
-//$facilityStaffResourceForm->updateObject($facilityStaffResourceForm->getTaintedValues()); //this fails
-              if ($facilityStaffResourceForm->isValid() && isset($facilityStaffResource['minimum_staff']) && isset($facilityStaffResource['maximum_staff'])) {
                 /**
                  * @todo clean up for possible dirty data
-                 *  This will not work cleanly, if someone hasn't entered a min & max & record exists it
-                 *  will be deleted
+                 * 
                  */
+              if ($facilityStaffResourceForm->isValid() && isset($facilityStaffResource['minimum_staff']) && isset($facilityStaffResource['maximum_staff'])) {
                 $savedResources[] = $facilityStaffResourceForm->save();
               } else {
                 $facilityStaffResourceForm->getObject()->delete();
@@ -207,7 +198,6 @@ class scenarioActions extends agActions
         $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
       }
     } else {
-
 // Query to get all staff resource types.
       $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
       if (count($dsrt) > 0) {
@@ -226,7 +216,6 @@ class scenarioActions extends agActions
         foreach ($groups as $scenarioFacilityGroup) {
           $facilitygroups[] = $scenarioFacilityGroup;
         }
-        $this->array = true;
         $this->scenarioFacilityGroup = $facilitygroups;
 
         foreach ($this->scenarioFacilityGroup as $group) {
