@@ -1,6 +1,5 @@
 <h3>Event Shifts for <?php echo $event_name ?></h3>
 
-<?php #include_partial('scenarioshiftform', array('scenarioshiftform' => $scenarioshiftform, 'myRandomParam' => $myRandomParam, 'outputResults' => $outputResults)) ?>
 <?php
   //Defines the columns of the scenario shift display list page.
   $columns = array(
@@ -59,8 +58,6 @@
 
 <div class="rightFloat" >
   <?php
-
-//
 //First Page link (or inactive if we're at the first page).
     echo(!$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
 //Previous Page link (or inactive if we're at the first page).

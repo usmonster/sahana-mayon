@@ -28,7 +28,3 @@
 
 <a href="<?php echo url_for('event/active?event=' . $event_name); ?>" class="linkButton" title="Back to Event Dashboard">Back to Event Dashboard</a><br/>
 
-<?php
-//and a return to dashboard button.
-?>
-

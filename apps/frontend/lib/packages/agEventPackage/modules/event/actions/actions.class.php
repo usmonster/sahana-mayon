@@ -220,11 +220,13 @@ class eventActions extends agActions
   public function executeMeta(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    if ($this->event_id != "") { //if someone is coming here from an edit context
+    //if someone is coming here from an edit context...
+    if ($this->event_id != "") { 
       $eventMeta = Doctrine::getTable('agEvent')
               ->findByDql('id = ?', $this->event_id)
               ->getFirst();
     } else {
+      // ...if not.
       $eventMeta = null;
     }
 
@@ -383,7 +385,7 @@ class eventActions extends agActions
               es.agStaffResource sr,
               sr.agStaffResourceType srt,
               sr.agOrganization o,
-              sr.agStaffResourceStatus ss,
+              sr.agStaffResourceStatus srs,
               sr.agStaff s,
               s.agPerson p,
               es.agEventStaffStatus ess'
@@ -557,15 +559,6 @@ class eventActions extends agActions
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
     //end p-code
-  }
-
-  /**
-   * @todo todo
-   * @param sfWebRequest $request
-   */
-  public function executeDashboard(sfWebRequest $request)
-  {
-    
   }
 
   /**
@@ -977,6 +970,7 @@ class eventActions extends agActions
       $ag_event_status->setEventId($this->event_id);
       $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
       $ag_event_status->save();
+      $this->redirect('event');
     }
     $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
     $this->resForm = new sfForm();

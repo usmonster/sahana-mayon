@@ -18,7 +18,7 @@ class PluginagEventDefForm extends PluginagEventForm
         $this['ag_affected_area_list'],
         $this['ag_scenario_list']
     );
-    $this->setWidget('event_name', new sfWidgetFormInputText(array(),array('style'=>'width:250px')));
+    $this->setWidget('event_name', new sfWidgetFormInputText(array(),array('class' => 'set250 inputGray')));
     $this->setWidget('zero_hour',new sfWidgetFormDateTime());
     $this->setValidator('zero_hour', new agValidatorDateTime());
   }

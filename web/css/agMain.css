@@ -1413,9 +1413,11 @@ a.signin.menu-open span {
 
 .set110 {
   width: 110px;
-
 }
 
+.set250 {
+  width: 250px;
+}
 .checkBoxTable {
   border: solid 1px #dadada;
   padding: 0px;
