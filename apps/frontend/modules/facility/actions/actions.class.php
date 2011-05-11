@@ -268,7 +268,7 @@ class facilityActions extends agActions
 
       $this->timer = time();
       $dataNorm->normalizeImport();
-      $this->timer = (time()-$this->timer);
+      //$this->timer = (time()-$this->timer);
       
       $this->summary = $dataNorm->summary;
 //      echo strftime($format);
@@ -279,6 +279,7 @@ class facilityActions extends agActions
 
       $agLuceneIndex = new agLuceneIndex(array('agFacility'));
       $indexResult = $agLuceneIndex->indexAll();
+      $this->timer = (time()-$this->timer);
 
 //      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
 //      $dispatcher = sfContext::getInstance()->getEventDispatcher();
