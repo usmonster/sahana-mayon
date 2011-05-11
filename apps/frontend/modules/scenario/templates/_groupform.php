@@ -95,9 +95,9 @@ echo url_for
 <br />
 <br />
 <?php if ($allocatedFacilityResources == true): ?>
-  <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="continueButton">Skip & Continue</a>
+  <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="generalButton">Skip & Continue</a>
 <?php endif; ?>
-  <a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id); ?>" class="continueButton">Back to Facility Group List</a>
+  <a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id); ?>" class="generalButton">Back to Facility Group List</a>
 <div class="tooltips" >
   <span id="allocated_tip">
 <?php echo "urltowiki/allocated_tooltip"; ?>

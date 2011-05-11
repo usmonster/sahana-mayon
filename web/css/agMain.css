@@ -220,7 +220,7 @@ h5 {
 
 
 /**** Links ****/
-.linkButton, .deleteButton {
+.continueButton, .deleteButton, .generalButton {
   display: inline-block;
   padding: 5px 10px;
   border: solid 1px;
@@ -232,18 +232,9 @@ h5 {
   text-align: center;
   text-decoration: none;
   outline: none;
-}
-
-.linkButton {
   background: #f1f1f1;
   color: #848484;
   border-color: #dadada;
-}
-
-.deleteButton {
-  border-color: #dadada;
-  color: #848484;
-  background: #f1f1f1;
 }
 
 .deleteButton:hover {
@@ -253,7 +244,14 @@ h5 {
   cursor: pointer;
 }
 
-input.linkButton, input.deleteButton {
+.generalButton:hover {
+  background: #e5f7ff;
+  color: #22ABE8;
+  border-color: #00b1ff;
+  cursor: pointer;
+}
+
+input.continueButton, input.deleteButton {
   font-family: helvetica, arial, verdana, sans-serif;
   padding: 0.32em 0.6em;
   margin: 0.12em;
@@ -294,16 +292,15 @@ input.linkButton, input.deleteButton {
   position: relative;
 }
 
-.linkButton:hover, .buttonSmall:hover, .smallLinkButton:hover {
+.continueButton:hover, .buttonSmall:hover, .smallLinkButton:hover {
   color: #009931;
   background: #cdffdd;
   border-color: #009931;
   cursor: pointer;
 }
 
-.linkButton:active, .buttonSmall:active{
+.continueButton:active, .buttonSmall:active{
   background: #98ffb9;
-
 }
 
 .editButton {
@@ -1779,12 +1776,12 @@ table.staffPool tr.head:hover, table.staffTable tr.head:hover, table.singleTable
 }
 
 /*important
-input.linkButton{
+input.continueButton{
   font-family: helvetica, arial, verdana;
   font-size: 10pt;
 }
 
-a.linkButton{
+a.continueButton{
    padding:5.5px;
     height:18px;
 }*/

@@ -31,7 +31,7 @@ the group, assign the group type, allocation status, and the order in which is s
 <!--<p>Use the list below to select existing facility groups for editing.</p>-->
 <form class="formSmall" id="groupSelector" action="<?php echo url_for('scenario/fgroup?id=' . $scenario_id); ?>" method="post">
   <?php echo $groupSelector; ?>
-  <input type="button" class="continueButton" value="Change" name="Change Group" onclick="reloadGroup(this)" />
+  <input type="button" class="generalButton" value="Change" name="Change Group" onclick="reloadGroup(this)" />
 </form>
 <br />
 <?php endif; ?>
