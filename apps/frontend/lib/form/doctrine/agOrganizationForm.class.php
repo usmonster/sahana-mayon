@@ -55,7 +55,7 @@ class agOrganizationForm extends BaseagOrganizationForm
             array(),
             array('class' => 'inputGray setWidgetsScenario')
           ),
-          'description' => new sfWidgetFormInputText(
+          'description' => new sfWidgetFormTextArea(
             array(),
             array('class' => 'inputGray setWidgetsDesc')
           ),
