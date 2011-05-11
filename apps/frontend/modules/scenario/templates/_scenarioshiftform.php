@@ -22,7 +22,7 @@
             &nbsp;<?php
             echo link_to('Delete', 'scenario/deletescenarioshift?id=' .
                 $scenarioshiftform->getObject()->getId(),
-                array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?>
+                array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')) ?>
 <?php endif; ?>
           <input type="submit" value="Save" class="linkButton" />
         </td>

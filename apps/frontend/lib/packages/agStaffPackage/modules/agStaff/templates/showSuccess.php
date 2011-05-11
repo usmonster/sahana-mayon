@@ -378,7 +378,7 @@ use_helper('agTemplate');
    echo link_to(
         'Delete',
         'agStaff/delete?id=' . $staff_id,
-        array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')
+        array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')
     ); ?>
    <?php
     echo (isset($query)) ?

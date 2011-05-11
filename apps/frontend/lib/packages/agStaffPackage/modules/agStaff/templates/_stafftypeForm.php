@@ -13,7 +13,7 @@ echo url_for('staff/stafftypes') ?>" method="post">
             &nbsp;<?php
             echo link_to('Delete', 'staff/stafftype?id=' .
                 $staffTypeForm->getObject()->getId(),
-                array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?>
+                array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')) ?>
 <?php endif; ?>
             <input type="submit" value="Save" />
           </td>

@@ -435,7 +435,7 @@
       echo link_to(
           'Delete',
           'staff/delete?id=' . $agPerson->getId(),
-          array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')
+          array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')
       ); ?>
      <?php
       echo (isset($query)) ?

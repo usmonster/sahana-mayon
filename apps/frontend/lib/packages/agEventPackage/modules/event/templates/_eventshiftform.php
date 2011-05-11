@@ -21,7 +21,7 @@
           <?php if (!$eventshiftform->getObject()->isNew()): ?>
             &nbsp;<?php
             echo link_to('Delete', 'event/shifts?event=' . urlencode($event_name) . $append,
-                array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton', 'name' => 'Delete')) ?>
+                array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton', 'name' => 'Delete')) ?>
 <?php endif; ?>
           <input type="submit" value="Save" class="linkButton" />
         </td>

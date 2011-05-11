@@ -12,7 +12,7 @@
           <?php echo $form->renderHiddenFields(false) ?>
           &nbsp;<a href="<?php echo url_for('organization/list') ?>" class="linkButton">Back to List</a>
           <?php if (!$form->getObject()->isNew()): ?>
-            &nbsp;<?php echo link_to ('Delete', 'organization/delete?id='.$form->getObject()->getId(), array('class' => 'linkButton', 'method' => 'delete', 'confirm' => 'Are you sure?')) ?>
+            &nbsp;<?php echo link_to ('Delete', 'organization/delete?id='.$form->getObject()->getId(), array('class' => 'deleteButton', 'method' => 'delete', 'confirm' => 'Are you sure?')) ?>
           <?php endif; ?>
           <input type="submit" value="Save and Continue" name="Continue" class="linkButton"/>
         </td>

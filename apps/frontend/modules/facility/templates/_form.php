@@ -19,7 +19,7 @@ if ($events != "") {
         <td colspan="2">
           &nbsp;<a href="<?php echo url_for('facility/list') ?>" class="linkButton">Back to List</a>
 <?php if (!$form->getObject()->isNew()): ?>
-<?php echo link_to('Delete', 'facility/delete?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'linkButton')) ?> 
+<?php echo link_to('Delete', 'facility/delete?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'deleteButton')) ?>
 <?php echo link_to('Disable', 'facility/disable?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'linkButton')) ?>
 <?php endif; ?>
           <input type="submit" value="Save" class="linkButton" style="margin-left: 0px" <?php //

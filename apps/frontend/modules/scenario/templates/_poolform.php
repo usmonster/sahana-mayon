@@ -20,7 +20,7 @@ if (isset($search_id)) {
 
             <?php if (isset($search_id)) { ?>
               <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton" title="New Staff Pool">New Staff Pool</a>
-              <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
+              <input type="submit" value="Delete" name="Delete" class="deleteButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
             <?php } ?>
             <input type="submit" value="Save and Continue" class="linkButton" name="Continue" onclick="queryConstruct()"/>
             <a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton" title="Skip and Continue">Skip and Continue</a>
