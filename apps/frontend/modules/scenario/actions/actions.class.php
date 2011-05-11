@@ -228,11 +228,6 @@ class scenarioActions extends agActions
         }
         $this->array = true;
         $this->scenarioFacilityGroup = $facilitygroups;
-//      }
-
-
-
-
 
         foreach ($this->scenarioFacilityGroup as $group) {
           foreach ($group->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
@@ -248,7 +243,6 @@ class scenarioActions extends agActions
                              $scenarioFacilityResource->id)
                   ->fetchOne();
 
-
               if ($existing) {
                 $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
                     new agEmbeddedAgFacilityStaffResourceForm($existing);
@@ -263,7 +257,6 @@ class scenarioActions extends agActions
             }
           }
         }
-      
 
       $this->formsArray = $formsArray;
     }
