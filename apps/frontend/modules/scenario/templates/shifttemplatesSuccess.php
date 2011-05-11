@@ -13,6 +13,6 @@
 <div id ="newshifttemplates">
 <a href="<?php echo url_for('scenario/addshifttemplate?id=' . $scenario_id); ?>" class="smallLinkButton addShiftTemplate" id="adder">+ Add Shift Template</a>
 </div>
-    <input type="submit" class="linkButton" value="Save, Generate Shifts and Continue" name="Continue" />
+    <input type="submit" class="continueButton" value="Save, Generate Shifts and Continue" name="Continue" />
 
 </form>

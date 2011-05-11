@@ -44,7 +44,7 @@ $path = sfConfig::get('sf_relative_url_root', preg_replace
         <br/>
         <br/>
         <?php echo link_to('Back', htmlspecialchars($_SERVER['HTTP_REFERER'])); ?>
-        <?php echo link_to('Return to homepage.', 'home/index', array('class' => 'linkButton')); ?>
+        <?php echo link_to('Return to homepage.', 'home/index', array('class' => 'continueButton')); ?>
         </div>
       </div>
     <?php include_partial('global/Footer'); ?>

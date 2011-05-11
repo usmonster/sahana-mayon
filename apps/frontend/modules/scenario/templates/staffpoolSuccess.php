@@ -30,7 +30,7 @@ deployment of staff based on the scale of the plan and response.</p>
     <?php foreach ($saved_searches as $saved_search): ?>
       <tr>
         <td><a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) . '?search_id=' .
-          $saved_search['search_id'] ?> " class="linkButton"><?php echo $saved_search->agSearch['search_name'] ?></a></td>
+          $saved_search['search_id'] ?> " class="continueButton"><?php echo $saved_search->agSearch['search_name'] ?></a></td>
         <td><?php echo agSearchHelper::searchConditionsToString($saved_search->agSearch['id']); ?></td>
       </tr>
     <?php endforeach; ?>

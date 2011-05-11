@@ -439,7 +439,7 @@
 ?>
       <div class="floatLeft">
         <a href="<?php echo url_for('staff/edit?id=' . $agPerson->getId()) ?>"
-           class="linkButton">Edit</a>
+           class="continueButton">Edit</a>
      <?php
       echo link_to(
           'Delete',
@@ -450,8 +450,8 @@
      <?php
       echo (isset($query)) ?
           '<a href="' . url_for('staff/search') . '/page/' . $pager->getFirstPage() .
-          '?query=' . $query . '" class="linkButton">List</a>' :
-          '<a href="' . url_for('staff/list') . '" class="linkButton">List</a>';
+          '?query=' . $query . '" class="continueButton">List</a>' :
+          '<a href="' . url_for('staff/list') . '" class="continueButton">List</a>';
      ?>
  </div>
  <div class="floatRight">

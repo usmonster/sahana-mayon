@@ -13,7 +13,7 @@ echo '<a href="' . url_for('gis/geocode') . '" class="buttonText" title="Update 
 echo '<a href="' . url_for('gis/distance') . '" class="buttonText" title="Calculate Distances">Generated Calculated Distances Between Two Sets of Data</a><br/>';
 echo '<a href="' . url_for('gis/config') . '" class="buttonText" title="GIS">GIS Settings</a><br/>';
 echo '<a href="' . public_path('wiki/doku.php?id=manual:user:gis') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
-//echo link_to('Excel', 'staff/excelDownload', array('class' => 'linkButton'))
+//echo link_to('Excel', 'staff/excelDownload', array('class' => 'continueButton'))
 // @todo gisquery link is only for testing.  Please remove after testing.
 
 // For testing gis query functions only.

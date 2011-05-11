@@ -17,7 +17,7 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          <input type="submit" value="Apply Activation Time" class="linkButton"/>
+          <input type="submit" value="Apply Activation Time" class="continueButton"/>
         </td>
       </tr>
     </tfoot>

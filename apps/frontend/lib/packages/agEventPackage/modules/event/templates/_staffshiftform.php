@@ -24,7 +24,7 @@ foreach($fields as $key => $field)
   echo $filterForm[$key];
 }
 ?>
-<input type="submit" name="Search" id="Search" value="Search" onclick="queryConstruct()" class="linkButton<?php echo ($xmlHttpRequest != false ? ' modalSubmit' : '');?>">
+<input type="submit" name="Search" id="Search" value="Search" onclick="queryConstruct()" class="continueButton<?php echo ($xmlHttpRequest != false ? ' modalSubmit' : '');?>">
 
 </form>
 

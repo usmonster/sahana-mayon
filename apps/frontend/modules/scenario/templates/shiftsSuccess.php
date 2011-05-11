@@ -47,7 +47,7 @@
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
     <?php foreach ($pager->getResults() as $ag_scenario_shift): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) . '/' . $ag_scenario_shift->getId() ?>" title="View Scenario Shift <?php echo $ag_scenario_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+      <td><a class=continueButton href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) . '/' . $ag_scenario_shift->getId() ?>" title="View Scenario Shift <?php echo $ag_scenario_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
       <td class="left"><?php
 //            $facilityResourceId = $scenarioShifts[$ag_scenario_shift->getId()]['facility_resource_id'];
 //#            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
@@ -71,8 +71,8 @@
 
 <br>
 <div>
-  <a href="<?php echo url_for('scenario/shifts?id=' .$scenario_id) .'/new'?>" class="linkButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
-  <a href="<?php echo url_for('scenario/review?id=' .$scenario_id ) ?>" class="linkButton" title="Finish Wizard">Finish Wizard and Review Scenario</a>
+  <a href="<?php echo url_for('scenario/shifts?id=' .$scenario_id) .'/new'?>" class="continueButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
+  <a href="<?php echo url_for('scenario/review?id=' .$scenario_id ) ?>" class="continueButton" title="Finish Wizard">Finish Wizard and Review Scenario</a>
 
 </div>
 

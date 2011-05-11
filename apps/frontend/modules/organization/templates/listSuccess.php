@@ -44,7 +44,7 @@ $descArrow = '&#x25BC;';
 <?php $recordRowNumber = $pager->getFirstIndice(); ?>
 <?php foreach ($pager->getResults() as $ag_organization): ?>
           <tr>
-            <td><a class=linkButton href="<?php echo url_for('organization/show?id=' . $ag_organization->getId()) ?>" title="View Organization <?php echo $ag_organization->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+            <td><a class=continueButton href="<?php echo url_for('organization/show?id=' . $ag_organization->getId()) ?>" title="View Organization <?php echo $ag_organization->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
             <td><?php echo $ag_organization->getOrganization() ?></td>
             <td><?php echo $ag_organization->getDescription(); ?></td>
             <td><?php echo $ag_organization->get('staffCount'); ?></td>
@@ -54,7 +54,7 @@ $descArrow = '&#x25BC;';
       </table>
       <br>
       <div>
-        <a href="<?php echo url_for('organization/new') ?>" class="linkButton" title="Create New Organization">Create New</a>
+        <a href="<?php echo url_for('organization/new') ?>" class="continueButton" title="Create New Organization">Create New</a>
       </div>
 
       <div class="rightFloat">

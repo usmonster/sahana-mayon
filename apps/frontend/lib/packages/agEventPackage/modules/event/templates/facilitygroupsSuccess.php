@@ -8,7 +8,7 @@
   <br />
   <span>Please click below to change the status of a facility group.</span>
   <div class="rightFloat" >
-    <a href="<?php echo url_for('event/listgroups?event=' . urlencode($event_name)); ?>" class="linkButton" title="Facilities and Resources">Manage Facility Groups</a><br/>
+    <a href="<?php echo url_for('event/listgroups?event=' . urlencode($event_name)); ?>" class="continueButton" title="Facilities and Resources">Manage Facility Groups</a><br/>
   </div>
   <?php endif; ?>
 </div>

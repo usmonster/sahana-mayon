@@ -6,7 +6,7 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          <input type="submit" value="Continue" class="linkButton"/>
+          <input type="submit" value="Continue" class="continueButton"/>
         </td>
       </tr>
     </tfoot>

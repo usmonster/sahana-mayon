@@ -83,8 +83,8 @@ echo url_for
     </div>
     <br />
     <br />
-    <input class="linkButton" type="button" value="Save and Create Another" name="Another" onclick="serialTran(this)"/>
-    <input class="linkButton" type="button" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran(this)"/>
+    <input class="continueButton" type="button" value="Save and Create Another" name="Another" onclick="serialTran(this)"/>
+    <input class="continueButton" type="button" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran(this)"/>
     <?php
       if (!$groupform->getObject()->isNew()) {
         echo link_to('Delete', 'scenario/facilityGroupDelete?groupId=' . $groupform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton'));
@@ -95,9 +95,9 @@ echo url_for
 <br />
 <br />
 <?php if ($allocatedFacilityResources == true): ?>
-  <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton">Skip & Continue</a>
+  <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="continueButton">Skip & Continue</a>
 <?php endif; ?>
-  <a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id); ?>" class="linkButton">Back to Facility Group List</a>
+  <a href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id); ?>" class="continueButton">Back to Facility Group List</a>
 <div class="tooltips" >
   <span id="allocated_tip">
 <?php echo "urltowiki/allocated_tooltip"; ?>

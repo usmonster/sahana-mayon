@@ -6,9 +6,9 @@
 <table cellspacing="20">
     <tr>
         <td><?php echo link_to('Deploy a<br>Scenario', 'scenario/list',
-            array('class' => 'linkButton width140')) ?></td>
+            array('class' => 'continueButton width140')) ?></td>
         <td><?php echo link_to('List All<br>Events', 'event/index',
-            array('class' => 'linkButton width140')) ?></td>
+            array('class' => 'continueButton width140')) ?></td>
     </tr>
 </table>
 
@@ -31,10 +31,10 @@
         <?php foreach ($ag_events as $ag_event): ?>
                 <li>
                     <p>
-                        <a href="<?php echo url_for('event/meta?event=' . urlencode($ag_event->getEventName())) ?>" class="linkButton">Change Event Metadata</a><br><br>
-                        <a href="<?php echo url_for('event/staff?event=' . urlencode($ag_event->getEventName())) ?>" class="linkButton">Staff Management</a><br><br>
-                        <a href="<?php echo url_for('event/listgroups?event=' . urlencode($ag_event->getEventName())) ?>" class="linkButton">Manage Facility Groups</a><br><br>
-                        <a href="<?php echo url_for('event/resolution?event=' . urlencode($ag_event->getEventName())) ?>" class="linkButton">Resolve <?php echo $ag_event->getEventName() ?></a><br><br>
+                        <a href="<?php echo url_for('event/meta?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton">Change Event Metadata</a><br><br>
+                        <a href="<?php echo url_for('event/staff?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton">Staff Management</a><br><br>
+                        <a href="<?php echo url_for('event/listgroups?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton">Manage Facility Groups</a><br><br>
+                        <a href="<?php echo url_for('event/resolution?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton">Resolve <?php echo $ag_event->getEventName() ?></a><br><br>
                     </p>
                 </li>
         <?php endforeach; ?>

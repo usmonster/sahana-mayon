@@ -3,7 +3,7 @@
 <p> Here you can tweak the staff resource pools you have defined in the planning phase. </p>
 
 <form action="<?php echo url_for($form_action) ?>" method="get" name="filter">
-<input type="submit" value="Filter By:" class="linkButton">
+<input type="submit" value="Filter By:" class="continueButton">
     <?php echo $filterForm ?> <!-- onChange: filter. -->
 </form>
 <br />

@@ -19,7 +19,7 @@ else{
     <tfoot>
       <tr>
         <td colspan="2">
-          <input type="submit" value="Continue with Pre-Deployment" class="linkButton"<?php echo $confirmScript ?>>
+          <input type="submit" value="Continue with Pre-Deployment" class="continueButton"<?php echo $confirmScript ?>>
           <input type="hidden" value="<?php echo $scenario_id ?>" name="scenario_id">
         </td>
       </tr>

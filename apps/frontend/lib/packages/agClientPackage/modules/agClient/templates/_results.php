@@ -147,7 +147,7 @@ $ag_person_name_types = Doctrine::getTable('agPersonNameType')
                       <a href="
            <?php echo url_for('staff/show') . '/page/' . $i . '?query=' . $query; ?>"
                   title="View Staff Member <?php echo $staffMember->getId(); ?>"
-                  class="linkButton"><?php echo $i++; ?></a>
+                  class="continueButton"><?php echo $i++; ?></a>
              </td>
       <?php
                   foreach ($ag_person_name_types as $agPersonNameType) {
@@ -211,7 +211,7 @@ $ag_person_name_types = Doctrine::getTable('agPersonNameType')
                     </table>
                     <br />
                     <div class="floatLeft">
-                      <a href="<?php echo url_for('staff/new') ?>" class="linkButton"
+                      <a href="<?php echo url_for('staff/new') ?>" class="continueButton"
                          title="Create New Staff Member">Create New</a>
                     </div>
                     <div class="floatRight">

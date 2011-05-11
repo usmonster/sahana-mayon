@@ -9,7 +9,7 @@
     <tfoot style="display: none;">
       <tr>
         <td colspan="2">
-          <input type="submit" class="linkButton" value="Save" />
+          <input type="submit" class="continueButton" value="Save" />
         </td>
       </tr>
     </tfoot>

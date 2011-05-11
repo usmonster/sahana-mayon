@@ -4,6 +4,6 @@
   ?>
   <br />
   <br />
-  <input class="linkButton" type="submit" value="Save" />
-  <input class="linkButton" type="submit" value="Save and Continue" name="Continue"/>
+  <input class="continueButton" type="submit" value="Save" />
+  <input class="continueButton" type="submit" value="Save and Continue" name="Continue"/>
 </form>

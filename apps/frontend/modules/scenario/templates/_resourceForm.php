@@ -5,6 +5,6 @@
   </div>
   <br />
   <br />
-  <input type="submit" value="Save" class="linkButton" name="Save"/>
-  <input type="submit" value="Save and Continue" name="Continue" class="linkButton"/>
+  <input type="submit" value="Save" class="continueButton" name="Save"/>
+  <input type="submit" value="Save and Continue" name="Continue" class="continueButton"/>
 </form>

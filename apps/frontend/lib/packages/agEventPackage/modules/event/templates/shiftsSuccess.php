@@ -38,7 +38,7 @@
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
     <?php foreach ($pager->getResults() as $ag_event_shift): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) . '/' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+      <td><a class=continueButton href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) . '/' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
       <td><?php echo $ag_event_shift->getAgEventFacilityResource()->getAgEventFacilityGroup()->getEventFacilityGroup() ?></td>
       <td><?php echo $ag_event_shift->getAgEventFacilityResource()->getAgFacilityResource();//->getAgEventFacilityResource(); ?></td>
       <td><?php echo $ag_event_shift->getAgStaffResourceType()->getStaffResourceType(); ?></td>
@@ -52,7 +52,7 @@
 
 <br>
 <div>
-  <a href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) ?>/new" class="linkButton" title="Create New Scenario Shift">Create New Event Shift</a>
+  <a href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) ?>/new" class="continueButton" title="Create New Scenario Shift">Create New Event Shift</a>
 
 </div>
 

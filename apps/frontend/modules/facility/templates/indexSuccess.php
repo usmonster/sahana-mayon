@@ -27,7 +27,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');?>
     <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('facility/import') ?>" method="post" enctype="multipart/form-data">
       <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
         <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
-        <a class="linkButton" style="display: inline-block; padding: 3px">Browse</a>
+        <a class="continueButton" style="display: inline-block; padding: 3px">Browse</a>
       </div>
       <input type="file" name="import" id="fileUpload" />
       <?php

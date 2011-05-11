@@ -75,7 +75,7 @@ Delete all scenario shifts relating to <?php echo $scenarioName; ?> scenario.
         <tfoot>
           <tr>
             <td colspan="2">
-              &nbsp;<a href="<?php echo url_for('scenario/scenarioshiftgroup') ?>" class="linkButton">Back to List</a>
+              &nbsp;<a href="<?php echo url_for('scenario/scenarioshiftgroup') ?>" class="continueButton">Back to List</a>
               &nbsp;<?php echo link_to('Delete All', 'scenario/deletescenarioshiftgroup?scenId=' . $scenarioId, array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')) ?>
             </td>
           </tr>

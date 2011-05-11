@@ -16,8 +16,8 @@ foreach ($displayColumns as $key => $value) {
   ?>
       <td><?php
       if ($column == 'id') {
-        echo link_to('Edit', $target_module . '/edit?id=' . $data['id'], array('class' => 'linkButton', 'title' => 'Edit'));
-        echo link_to('Show', $target_module . '/show?id=' . $data['id'], array('class' => 'linkButton', 'title' => 'Show'));
+        echo link_to('Edit', $target_module . '/edit?id=' . $data['id'], array('class' => 'continueButton', 'title' => 'Edit'));
+        echo link_to('Show', $target_module . '/show?id=' . $data['id'], array('class' => 'continueButton', 'title' => 'Show'));
       } elseif($column == 'emails') {
         if($value != '---'){
           echo '<a class="linkText" href="mailto:' . $value . '">' . $value . '</a>';

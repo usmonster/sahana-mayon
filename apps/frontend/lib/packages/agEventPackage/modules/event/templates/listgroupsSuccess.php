@@ -1,6 +1,6 @@
 <?php if(isset($missingEvent)) : ?>
 <h3>You need a selected and active event to use this page. Please return to the Event Dashboard using the link below, or browse to the appropriate page through the navigation menu.</h3>
-<a href="<?php echo url_for('event/index'); ?>" class="linkButton">Event Dashboard</a>
+<a href="<?php echo url_for('event/index'); ?>" class="continueButton">Event Dashboard</a>
 <?php return; ?>
 <?php endif; ?>
 
@@ -102,7 +102,7 @@
     </div>
 <?php if(isset($event_id)): ?>
   <br />
-  <a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="linkButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
+  <a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="continueButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
 <?php endif; ?>
           <div class="floatRight">
   <?php

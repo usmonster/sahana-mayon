@@ -20,7 +20,7 @@
   <tbody>
     <?php foreach ($ag_scenario_facility_groups as $ag_scenario_facility_group): ?>
       <tr>
-        <td><a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id . '&groupid=' . $ag_scenario_facility_group->id ); ?>" class="linkButton">
+        <td><a href="<?php echo url_for('scenario/fgroup?id=' . $ag_scenario_facility_group->scenario_id . '&groupid=' . $ag_scenario_facility_group->id ); ?>" class="continueButton">
           <?php echo $ag_scenario_facility_group->getScenarioFacilityGroup() ?></a></td>
       <td><?php echo $ag_scenario_facility_group->getAgFacilityGroupType() ?></td>
       <td><?php echo $ag_scenario_facility_group->getAgFacilityGroupAllocationStatus() ?></td>
@@ -33,5 +33,5 @@
 <hr />
 
 
- <a href="<?php echo url_for('scenario/fgroup?id=' . $scenario_id) ?>" class="linkButton" title="Add New Facility Group">Add New Facility Group</a>
- <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="linkButton" title="Continue">Continue</a>
+ <a href="<?php echo url_for('scenario/fgroup?id=' . $scenario_id) ?>" class="continueButton" title="Add New Facility Group">Add New Facility Group</a>
+ <a href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>" class="continueButton" title="Continue">Continue</a>

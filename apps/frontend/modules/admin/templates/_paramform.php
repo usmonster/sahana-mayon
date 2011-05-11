@@ -12,7 +12,7 @@
               <input type="submit" value="Delete" name="delete" class="deleteButton"/>
               <input type="hidden" value="<?php echo $paramform->getObject()->getId() ?>" name="deleteparam">
           <?php endif; ?>
-          <input type="submit" value="Save" name="update" class="linkButton"/>
+          <input type="submit" value="Save" name="update" class="continueButton"/>
         </td>
       </tr>
     </tfoot>

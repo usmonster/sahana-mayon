@@ -22,5 +22,5 @@ echo $form;
 the items that you select above will have their app_display(visibility) set to 1, i.e. they will show up
 <br />
 
-<input type="submit" value="Make Changes" class="linkButton" />
+<input type="submit" value="Make Changes" class="continueButton" />
 </form>

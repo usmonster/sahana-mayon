@@ -19,7 +19,7 @@
       <td><?php echo $ag_event->getCreatedAt() ?></td>
       <td><?php echo $ag_event->getUpdatedAt() ?></td>
       <td><?php echo $ag_event->getAgEventStatus()->getFirst()->getAgEventStatusType() ?></td>
-      <td><a href="<?php echo url_for('report/list') ?>" class="linkButton">reports</a></td>
+      <td><a href="<?php echo url_for('report/list') ?>" class="continueButton">reports</a></td>
     </tr>
     <?php endforeach; ?>
   </tbody>

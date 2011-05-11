@@ -28,13 +28,13 @@ if (isset($search_id)) {
       <tr>
         <td colspan="2">
 <?php echo $poolform->renderHiddenFields(false) ?>
-          <input type="submit" value="Save" class="linkButton" name="Save" onclick="queryConstruct()"/>
-          <input type="submit" value="Preview" class="linkButton" name="Preview" onclick="queryConstruct()"/>
-          <input type="submit" value="New" name="New" class="linkButton"/>
+          <input type="submit" value="Save" class="continueButton" name="Save" onclick="queryConstruct()"/>
+          <input type="submit" value="Preview" class="continueButton" name="Preview" onclick="queryConstruct()"/>
+          <input type="submit" value="New" name="New" class="continueButton"/>
 <?php if (isset($search_id)) { ?>
           <input type="submit" value="Delete" name="Delete" class="deleteButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
 <?php } ?>
-          <a href="<?php echo url_for('scenario/' . $scenario_id . 'shifttemplates') ?>" class="linkButton" title="Shift Templates">Save and Continue</a>
+          <a href="<?php echo url_for('scenario/' . $scenario_id . 'shifttemplates') ?>" class="continueButton" title="Shift Templates">Save and Continue</a>
         </td>
       </tr>
     </tfoot>

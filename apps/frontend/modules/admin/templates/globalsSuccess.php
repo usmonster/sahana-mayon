@@ -13,7 +13,7 @@ Here you can set up global parameters (variables) that can be used throughout th
   <tbody>
     <?php foreach ($ag_global_params as $ag_global_param): ?>
     <tr>
-      <td><a href="<?php echo url_for('admin/globals?param='.$ag_global_param->getId()) ?>" class="linkButton"><?php echo $ag_global_param->getDatapoint() ?></a></td>
+      <td><a href="<?php echo url_for('admin/globals?param='.$ag_global_param->getId()) ?>" class="continueButton"><?php echo $ag_global_param->getDatapoint() ?></a></td>
       <td><?php echo $ag_global_param->getValue() ?></td>
     </tr>
     <?php endforeach; ?>

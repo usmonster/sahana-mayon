@@ -15,15 +15,15 @@ if (isset($search_id)) {
         <tr>
           <td colspan="2">
             <?php echo $poolform->renderHiddenFields(false) ?>
-            <input type="submit" value="Save" class="linkButton" name="Save" onclick="queryConstruct()"/>
-            <input type="submit" value="Preview" class="linkButton" name="Preview" onclick="queryConstruct()"/>
+            <input type="submit" value="Save" class="continueButton" name="Save" onclick="queryConstruct()"/>
+            <input type="submit" value="Preview" class="continueButton" name="Preview" onclick="queryConstruct()"/>
 
             <?php if (isset($search_id)) { ?>
-              <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="linkButton" title="New Staff Pool">New Staff Pool</a>
+              <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="continueButton" title="New Staff Pool">New Staff Pool</a>
               <input type="submit" value="Delete" name="Delete" class="deleteButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
             <?php } ?>
-            <input type="submit" value="Save and Continue" class="linkButton" name="Continue" onclick="queryConstruct()"/>
-            <a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="linkButton" title="Skip and Continue">Skip and Continue</a>
+            <input type="submit" value="Save and Continue" class="continueButton" name="Continue" onclick="queryConstruct()"/>
+            <a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="continueButton" title="Skip and Continue">Skip and Continue</a>
           </td>
         </tr>
       </tfoot>

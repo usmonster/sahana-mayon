@@ -23,15 +23,15 @@ if (isset($checkResults)) {
 <br />
 <form action="<?php echo url_for('event/deploy?event=' . urlencode($event_name)) ?>" method="post">
 
-<a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id); ?>" class="linkButton" title="Modify Scenario Staff Pool">Modify Scenario Staff Pool</a>
+<a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id); ?>" class="continueButton" title="Modify Scenario Staff Pool">Modify Scenario Staff Pool</a>
 
-<a href="#" class="linkButton" title="Generate Shifts">Generate Shifts</a>
+<a href="#" class="continueButton" title="Generate Shifts">Generate Shifts</a>
 
 <?php
 //We should have some warnings here in case you're missing something.
 ?>
-<a href="#" class="linkButton" title="Save">Save</a>
+<a href="#" class="continueButton" title="Save">Save</a>
 
-<input type="submit" value="Save and Deploy" class="linkButton"/>
+<input type="submit" value="Save and Deploy" class="continueButton"/>
 
 </form>

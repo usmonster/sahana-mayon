@@ -99,7 +99,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
     <?php foreach ($pager->getResults() as $staffMember): ?>
             <tr>
               <td>
-                <a href="<?php echo url_for('staff/show') . '?page=' . $i . $sortAppend . $orderAppend; ?>" title="View Staff Member <?php echo $staffMember->getId(); ?>" class="linkButton"><?php echo $i++; ?></a>
+                <a href="<?php echo url_for('staff/show') . '?page=' . $i . $sortAppend . $orderAppend; ?>" title="View Staff Member <?php echo $staffMember->getId(); ?>" class="continueButton"><?php echo $i++; ?></a>
               </td>
       <?php
             $names = $staffMember->getAgPersonMjAgPersonName();
@@ -155,7 +155,7 @@ $ag_person_name_types = $agPersonNameTypesResultSet;
               </table>
               <br />
               <div class="floatLeft">
-                <a href="<?php echo url_for('staff/new') ?>" class="linkButton" title="Create New Staff Member">Create New</a>
+                <a href="<?php echo url_for('staff/new') ?>" class="continueButton" title="Create New Staff Member">Create New</a>
               </div>
               <div class="floatRight">
   <?php

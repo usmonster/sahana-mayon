@@ -18,7 +18,7 @@
   <tbody>
     <?php foreach ($ag_scenarios as $ag_scenario): ?>
       <tr>
-        <td><a href="<?php echo url_for('scenario/review?id=' . $ag_scenario->getId()) ?>" class="linkButton">
+        <td><a href="<?php echo url_for('scenario/review?id=' . $ag_scenario->getId()) ?>" class="continueButton">
           <?php echo $ag_scenario->getId() ?></a></td>
         <td class="left"><?php echo $ag_scenario->getScenario() ?></td>
         <td class="left"><?php echo $ag_scenario->getDescription() ?></td>
@@ -27,7 +27,7 @@
           <form action="<?php echo url_for('event/meta')?>" method="post" name="scenario">
             <input type="hidden" value="<?php echo $ag_scenario->getId() ?>"
                    id ="ag_scenario_list" name="ag_scenario_list" />
-            <input type="submit" value="Deploy as Event" class="linkButton" />
+            <input type="submit" value="Deploy as Event" class="continueButton" />
           </form>
         </td>
     </tr>
@@ -36,5 +36,5 @@
       </table>
     <br>
     <div>
-      <a class="linkButton" href="<?php echo url_for('scenario/meta') ?>">New</a>
+      <a class="continueButton" href="<?php echo url_for('scenario/meta') ?>">New</a>
     </div>

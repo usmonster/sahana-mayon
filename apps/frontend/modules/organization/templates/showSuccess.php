@@ -58,6 +58,6 @@
 
     <br>
 
-  <a href="<?php echo url_for('organization/edit?id=' . $ag_organization->getId()) ?>" class="linkButton" >Edit</a>
+  <a href="<?php echo url_for('organization/edit?id=' . $ag_organization->getId()) ?>" class="continueButton" >Edit</a>
   &nbsp;
-  <a href="<?php echo url_for('organization/list') ?>" class="linkButton" >List</a>
+  <a href="<?php echo url_for('organization/list') ?>" class="continueButton" >List</a>
