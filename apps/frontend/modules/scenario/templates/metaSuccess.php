@@ -1,6 +1,3 @@
-<?php
-//  use_javascript('agTooltip.js'); 
-?>
 <h2><?php echo $metaAction ?> Scenario<?php
 if(isset($scenarioName)) echo ': <span class="highlightedText">' . $scenarioName . "</span>"; ?>
 </h2>

@@ -1,9 +1,10 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
-<?php use_javascript('jquery.ui.custom.js');
+<?php
+use_javascript('jquery.ui.custom.js');
 use_stylesheet('jquery/jquery.ui.custom.css');
-use_stylesheet('jquery/mayon.jquery.ui.css');?>
-<?php use_javascript('agTooltip.js'); ?>
+use_stylesheet('jquery/mayon.jquery.ui.css');
+?>
 <h2>Organization Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:organization_management&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Organization Management">?</a></h2>
 
 <p>The Organization Management function in Sahana Agasti is used to record information on government and

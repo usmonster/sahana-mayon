@@ -3,7 +3,6 @@
   use_javascript('jquery.ui.custom.js');
   use_stylesheet('jquery/jquery.ui.custom.css');
   use_stylesheet('jquery/mayon.jquery.ui.css');
-  use_javascript('agTooltip.js');
 ?>
 <h2>Facility Groups: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2>
 <?php include_partial('wizard', array('wizardDiv' => $wizardDiv)); ?>

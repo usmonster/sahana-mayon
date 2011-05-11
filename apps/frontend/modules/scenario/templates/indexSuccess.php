@@ -1,8 +1,9 @@
 <?php use_javascript('agasti.js') ?>
-<?php   use_javascript('jquery.ui.custom.js');
-  use_stylesheet('jquery/jquery.ui.custom.css');
-  use_stylesheet('jquery/mayon.jquery.ui.css');?>
-<?php use_javascript('agTooltip.js'); ?>
+<?php
+use_javascript('jquery.ui.custom.js');
+use_stylesheet('jquery/jquery.ui.custom.css');
+use_stylesheet('jquery/mayon.jquery.ui.css');
+?>
 
 <h2>Scenario Management</h2>
 <p>In Sahana Agasti a Scenario is, in the simplest definition, a plan.

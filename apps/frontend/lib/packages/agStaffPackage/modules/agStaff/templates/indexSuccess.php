@@ -1,9 +1,10 @@
-<?php use_javascript('agasti.js');
-  use_javascript('jQuery.fileinput.js');
-  use_javascript('jquery.ui.custom.js');
-  use_stylesheet('jquery/jquery.ui.custom.css');
-  use_stylesheet('jquery/mayon.jquery.ui.css');
-  use_javascript('agTooltip.js'); ?>
+<?php
+use_javascript('agasti.js');
+use_javascript('jQuery.fileinput.js');
+use_javascript('jquery.ui.custom.js');
+use_stylesheet('jquery/jquery.ui.custom.css');
+use_stylesheet('jquery/mayon.jquery.ui.css');
+?>
 
 <h2>Staff Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_management&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Management">?</a></h2>
 
@@ -15,7 +16,7 @@
 <a href="<?php echo url_for('staff/list'); ?>" class="buttonText" title="List Existing Staff">List Staff</a><br/>
 
 <span style="display: inline-block; margin: 0px; padding: 0px" >
-  <?php echo link_to('Import Staff', 'staff/import', array('class' => 'buttonText', 'title' => 'Import Staff', 'id' => 'import')); ?>
+<?php echo link_to('Import Staff', 'staff/import', array('class' => 'buttonText', 'title' => 'Import Staff', 'id' => 'import')); ?>
   <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('staff/import') ?>" method="post" enctype="multipart/form-data">
     <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
       <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />

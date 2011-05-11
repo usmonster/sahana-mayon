@@ -20,7 +20,9 @@ class agPerson extends BaseagPerson
 
   public $luceneSearchFields = array('id' => 'keyword');
   protected $helperClasses = array('agPersonNameHelper' => 'id',
-    'agEntityAddressHelper' => 'entity_id');
+                                    'agEntityAddressHelper' => 'entity_id',
+                                    'agEntityPhoneHelper' => 'entity_id',
+                                    'agEntityEmailHelper' => 'entity_id');
   private $_helperObjects = array(),
   $_helperMethods;
 
@@ -61,7 +63,7 @@ class agPerson extends BaseagPerson
         $id = $this->$classId;
 
         // set up our args
-        array_unshift($arguments, $id);
+        array_unshift($arguments, array($id));
 
         // execute and return
         $results = call_user_func_array(array($helperObject, $method), $arguments);
@@ -127,15 +129,12 @@ class agPerson extends BaseagPerson
 //    foreach ($names as $key => $name) {
 //      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
 //    }
-
 //    $sex = $this->getSex();
 //    $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
-
 //    $nationalities = $this->getNationality();
 //    foreach ($nationalities as $nationality) {
 //      $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
 //    }
-
 //    $ethnicity = $this->getEthnicity();
 //    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
 

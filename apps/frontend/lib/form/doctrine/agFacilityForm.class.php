@@ -771,7 +771,6 @@ class agFacilityForm extends BaseagFacilityForm
   {
     $js = parent::getJavaScripts();
     $js[] = 'jquery.ui.custom.js';
-    $js[] = 'agTooltip.js';
     return $js;
   }
   public function getStyleSheets()
