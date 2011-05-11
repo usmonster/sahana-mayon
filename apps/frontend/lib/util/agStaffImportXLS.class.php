@@ -108,13 +108,18 @@ class agStaffImportXLS extends agImportXLS
     }
   }
 
+  protected function setImportSpec(){}
+  protected function setDynamicFieldType(){}
+  protected function cleanColumnName($columnName){}
+  protected function addDynamicColumns(array $importHeaders){}
+
   /**
    * Validates import data for correct schema. Returns bool.
    *
    * @param $importFileHeaders
    * @param $sheetName
    */
-  protected function validateColumnHeaders($importFileHeaders, $sheetName)
+  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
   {
     if (parent::validateColumnHeaders($importFileHeaders, $sheetName) === FALSE)
     {

@@ -81,6 +81,7 @@ class agStaffImportNormalization extends agImportNormalization
     $importSpec['first_name'] = array('type' => "string", 'length' => 64);
     $importSpec['middle_name'] = array('type' => "string", 'length' => 64);
     $importSpec['last_name'] = array('type' => "string", 'length' => 64);
+    $importSpec['mobile_phone'] = array('type' => "string", 'length' => 16);
     $importSpec['home_phone'] = array('type' => "string", 'length' => 16);
     $importSpec['home_email'] = array('type' => "string", 'length' => 255);
     $importSpec['work_phone'] = array('type' => "string", 'length' => 16);
@@ -1102,10 +1103,10 @@ class agStaffImportNormalization extends agImportNormalization
                       'work_email' => 'aimeeemailnow@work.com'
                      );
 
-//    $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKey' => array(), 'success' => 0);
-//    $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKey' => array(), 'success' => 0);
+    $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKey' => array(), 'success' => 0);
+    $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKey' => array(), 'success' => 0);
 //    $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKey' => array(), 'success' => 0);
-    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
+//    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
 //    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
 
     $this->clearNullRawData();
