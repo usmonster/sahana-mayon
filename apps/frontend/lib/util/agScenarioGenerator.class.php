@@ -54,7 +54,17 @@ class agScenarioGenerator
         $reset_break_length = $row['st_break_length_minutes'];
         $reset_minutes_start_to_facility_activation = $row['st_minutes_start_to_facility_activation'];
 
-        while ($shift_counter <= $row['st_shift_repeats'] + 1) {
+        // calculate the true number of repeats
+        if ($row['st_task_length_minutes'] > 0)
+        {
+          $shiftRepeats = ceil(($row['st_days_in_operation'] * ((24*60) / $row['st_task_length_minutes'])))-1;
+        }
+        else
+        {
+          $shiftRepeats = 0;
+        }
+
+        while ($shift_counter <= $shiftRepeats) {
           // A staff should only be working at one shift and rest while the
           // next following shift starts.  He/she should only be assigned to
           // every other shifts if a staff should work multiple shifts.  Thus,

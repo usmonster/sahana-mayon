@@ -35,6 +35,7 @@ class agStaffImportNormalization extends agImportNormalization
     // set the import components array as a class property
     $this->setImportComponents();
     $this->tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8');
+    $this->importHeaderStrictValidation = TRUE;
   }
 
   /**
@@ -67,6 +68,7 @@ class agStaffImportNormalization extends agImportNormalization
     foreach($dynamicColumns as $column)
     {
       $this->importSpec[$column] = $this->dynamicFieldType;
+      $this->logInfo('Adding dynamic column {' . $column . '} to the import specification.');
     }
   }
 

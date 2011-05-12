@@ -45,6 +45,15 @@ abstract class agEventHandler
     // reset any events (or initialize the handlers)
     $this->resetEvents();
   }
+
+  /**
+   * This classes' destructor.
+   */
+  public function __destruct()
+  {
+    // an empty destructor called in logFatal()
+  }
+
   /**
    * Method to reset the events array.
    */
@@ -173,6 +182,7 @@ abstract class agEventHandler
     sfContext::getInstance()->getLogger()->err($err);
     $this->dumpEventsToFile('err');
 
+    self::__destruct();
     throw new Exception($errMsg);
   }
 

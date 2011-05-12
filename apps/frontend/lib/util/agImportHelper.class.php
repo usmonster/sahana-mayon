@@ -26,6 +26,8 @@ abstract class agImportHelper extends agEventHandler
               $tempTableOptions = array(),
               $importSpec = array(),
               $successColumn = '_import_success',
+              $idColumn = 'id',
+              $excelImportBatchSize = 1000,
               $dynamicFieldType,
               $importHeaderStrictValidation = FALSE,
               $_PDO = array(),
@@ -62,6 +64,26 @@ abstract class agImportHelper extends agEventHandler
   }
 
   /**
+   * This classes' destructor.
+   */
+  public function __destruct()
+  {
+    // remove the temporary file
+    $file = $this->fileInfo["dirname"] . DIRECTORY_SEPARATOR . $this->fileInfo["basename"];
+    if (!@unlink($file))
+    {
+      $this->logErr('Failed to delete the {' . $this->fileInfo['basename'] . '} import file.');
+    }
+    else
+    {
+      $this->logOk('Successfully deleted the {' . $this->fileInfo['basename'] . '} import file.');
+    }
+
+    // drop the temporary table
+    $this->dropTempTable();
+  }
+
+  /**
    * Method to process and refine an import specification.
    */
   protected function processImportSpec()
@@ -70,7 +92,8 @@ abstract class agImportHelper extends agEventHandler
     $this->setImportSpec();
 
     // now add some records-keeping fields we'll need across usages
-    $this->importSpec['id'] = array('type' => 'integer', 'autoincrement' => true, 'primary' => true);
+    $this->importSpec[$this->idColumn] = array('type' => 'integer', 'autoincrement' => true,
+      'primary' => true);
     $this->importSpec[$this->successColumn] = array('type' => "boolean", 'default' => TRUE);
 
     // we can't trust that they got it right so we're going to clean import spec columns
@@ -214,12 +237,8 @@ abstract class agImportHelper extends agEventHandler
     $numSheets = count($xlsObj->sheets);
     $this->logInfo('Number of worksheets found: {' . $numSheets . '}');
 
-    $numRows = $xlsObj->rowcount($sheet_index = 0);
-    $numCols = $xlsObj->colcount($sheet_index = 0);
-
     // Create a simplified array from the worksheets
     for ($sheet = 0; $sheet < $numSheets; $sheet++) {
-      $importRow = 0;
       $importFileData = array();
 
       // Get the sheet name
@@ -234,7 +253,8 @@ abstract class agImportHelper extends agEventHandler
       }
 
       // Grab column headers at the beginning of each sheet.
-      $currentSheetHeaders = array_values($xlsObj->sheets[$sheet]['cells'][1]);
+      // @todo WARN: Check to see if this assumption is correct (that they are keyed by column id)
+      $currentSheetHeaders = $xlsObj->sheets[$sheet]['cells'][1];
 
       // clean the column headers to ensure consistency
       $this->logInfo('Cleaning worksheet headers');
@@ -247,46 +267,94 @@ abstract class agImportHelper extends agEventHandler
       // the first worksheet as the import column header for all data worksheets.
       if ($sheet == 0)
       {
+        // count our total rows and columns
+        $numRows = $xlsObj->rowcount($sheet);
+        $numCols = $xlsObj->colcount($sheet);
+
         // Extend import spec headers with dynamic staff resource requirement columns from xls file.
         $this->addDynamicColumns($currentSheetHeaders);
         $this->logInfo('Creating temporary import table {' . $this->tempTable . '}');
         $this->createTempTable();
-
-        // @todo Remove this line if truly unnecessary
-        // unset($this->importSpec['success']);
       }
 
-      $this->logInfo('Validating column headers of import file.');
-      if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName)) {
-        $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
-      } else {
-        $this->events[] = array("type" => "ERROR", "message" => "Unable to import file due to validation error.");
-        return false;
+      $this->logInfo('Validating column headers for sheet {' . $sheetName .'}.');
+      if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName))
+      {
+        $this->logInfo('Valid column headers found!');
+      }
+      else
+      {
+        if ($this->importHeaderStrictValidation)
+        {
+          $errMsg = 'Unable to import file due to failed validation of import headers. (Strict ' .
+            'header validation is currently enforced!)';
+          $this->logFatal($errMsg);
+        }
+        else
+        {
+          $errMsg = 'Import sheet {' . $sheetName . '} failed column header validation. Skipping ' .
+            'import of this sheet. (Strict header validation is not currently enforced!)' ;
+          $this->logErr($errMsg);
+          continue;
+        }
       }
 
-      for ($row = 2; $row <= $numRows; $row++) {
+      // Declare our initial batch start and end (which will be changes throughout the loop)
+      $batchStart = 1;
+      $batchEnd = $this->excelImportBatchSize;
 
-        for ($col = 1; $col <= $numCols; $col++) {
+      // start witht the second row and continue to the end
+      for ($row = 2; $row <= $numRows; $row++)
+      {
+        // helpful little declarations
+        $importRow = array();
 
-          $colName = str_replace(' ', '_', strtolower($xlsObj->val(1, $col, $sheet)));
-
+        // then loop the columns
+        for ($col = 1; $col <= $numCols; $col++)
+        {
+          // try to grab the raw value
           $val = $xlsObj->raw($row, $col, $sheet);
-          if (!($val)) {
+          if (!($val))
+          {
+            // failing that, grab its formatted value
             $val = $xlsObj->val($row, $col, $sheet);
           }
-          $importFileData[$importRow][$colName] = trim($val);
+
+          // add the data, either way, to our importRow variable using the column name we picked up
+          // off the first sheet
+          $importRow[$currentSheetHeaders[$col]] = trim($val);
         }
-        // Increment import array row
-        $importRow++;
+
+        // check for empty rows early to prevent
+        if (empty($importRow))
+        {
+          $this->logWarn('Empty row found at sheet {' . $sheet . '} row {' . $row . '}. Skipping.');
+        }
+        else
+        {
+          $importFileData[$row] = $importRow;
+        }
+
+        if (($row == $batchEnd))
+        {
+          $this->saveImportTemp($importFileData);
+
+          $batchStart = $row + 1;
+          $batchEnd = $row + $this->excelImportBatchSize ;
+          if ($batchEnd > $numRows) { $batchEnd = $numRows ; }
+        }
       }
 
-      $this->events[] = array("type" => "INFO", "message" => "Inserting records into temp table.");
+      // load the data into the temporary table
+      $this->logInfo('Successfully loaded data from file, now inserting into temp table {' .
+        $this->tempTable . '}');
+      
       $this->saveImportTemp($importFileData);
     }
 
-    $this->events[] = array("type" => "OK", "message" => "Done inserting temp records.");
-    return true;
- 
+    // Log our success and return T/F based on whether or not any non-fatal errors occurred
+    $this->logOk('Completed insertion of data from the import file to the temporary table.');
+    return ($this->getErrCount() == 0) ? TRUE : FALSE ;
   }
 
   /**
@@ -359,26 +427,33 @@ abstract class agImportHelper extends agEventHandler
     // Check if import file header is empty
     if (empty($importFileHeaders))
     {
+      $errMsg = 'Worksheet {' . $sheetName . '} is missing column headers.';
       $this->logErr($errMsg);
-      $this->events[] = array("type" => "ERROR",
-        "message" => "Worksheet \"$sheetName\" is missing column headers.");
       return FALSE;
     }
 
     // Cache the import header specification
     $importSpecHeaders = array_keys($this->importSpec);
 
-    // The import spec will start with an ID column. Shift off of it.
-    $idColumn = array_shift($importSpecHeaders);
+    // Remove auto-generated headers
+    unset($importSpecHeaders[$this->idColumn]);
+    unset($importSpecHeaders[$this->successColumn]);
+
+    // process a diff of the file headers and spec headers
     $importSpecDiff = array_diff($importSpecHeaders, $importFileHeaders);
 
-    if (empty($importSpecDiff)) {
+    // return true / false and return info as appropriate
+    if (empty($importSpecDiff))
+    {
       return TRUE;
-    } else {
-      $this->events[] = array("type" => "ERROR", "message" => "Missing required columns.");
-
-      foreach ($importSpecDiff as $missing) {
-        $this->events[] = array("type" => "ERROR", "message" => "Column header \"$missing\" missing.");
+    }
+    else
+    {
+      $this->logErr('Error processing sheet headers: Missing required columns.');
+      
+      foreach ($importSpecDiff as $missing)
+      {
+        $this->logWarn('Column header {' . $missing . '} is missing.');
       }
       return FALSE;
     }
