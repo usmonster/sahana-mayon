@@ -95,7 +95,7 @@ unset($_POST);
       </div>
     </div>
     <div id="footer">
-      <img src="images/nyc_logo.png" alt="NYC Office of Emergency Management Logo" />
+      <img src="images/logo.png" alt="NYC Office of Emergency Management Logo" />
     </div>
   </body>
 </html>
