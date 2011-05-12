@@ -66,7 +66,6 @@
               <td>
                 <span style="display:inline;">
                   <?php
-                  echo $scenarioshiftform['minutes_start_to_facility_activation']->render();
                   $start_time =
                       $scenarioshiftform['minutes_start_to_facility_activation']->getValue();
                   $start_hours = intval($start_time / 60);
@@ -88,6 +87,7 @@
                 </span>
               </td>
               <td>
+                <?php echo $scenarioshiftform['minutes_start_to_facility_activation']->render(); ?>
                 <div id="start_time_slider"></div>
               </td>
             </tr>
@@ -101,7 +101,7 @@
               <td>
                 <span style="display:inline;">
                   <?php
-                  echo $scenarioshiftform['task_length_minutes']->render();
+
                   $task_time =
                       $scenarioshiftform['task_length_minutes']->getValue();
                   $task_hours = intval($task_time / 60);
@@ -123,6 +123,7 @@
                 </span>
               </td>
               <td width="200px">
+                <?php echo $scenarioshiftform['task_length_minutes']->render();?>
                 <div id="task_time_slider"></div>
               </td>
             </tr>
@@ -136,7 +137,6 @@
               <td>
                 <span style="display:inline;">
                   <?php
-                  echo $scenarioshiftform['break_length_minutes']->render();
                   $break_time =
                       $scenarioshiftform['break_length_minutes']->getValue();
                   $break_hours = intval($break_time / 60);
@@ -159,167 +159,12 @@
                 </span>
               </td>
               <td width="200px">
+                  <?php echo $scenarioshiftform['break_length_minutes']->render();?>
                 <div id="break_time_slider"></div>
               </td>
             </tr>
           </table>
-          <script>
-            function addLabels(element, labels){
-              var scale = element.append('<ol class="ui-slider-scale ui-helper-reset" role="presentation"></ol>').find('.ui-slider-scale:eq(0)');
-              jQuery(labels).each(function(i){
-                scale.append('<li style="left:'+ leftVal(i, this.length) +'"><span class="ui-slider-label">'+ this.text +'</span><span class="ui-slider-tic ui-widget-content"></span></li>');
-              });
 
-            }
-            function leftVal(i){
-              return (i/(2) * 100).toFixed(2)  +'%';
-            }
-
-            $().ready(function() {
-              stComponent = $("#start_time_slider").slider({
-                orientation: "horizontal",
-                value:<?php
-                  if ($start_time == '') {
-                    echo '0';
-                  } else {
-                    echo $start_time;
-                  }
-                  ?>,
-                 min: -4320,
-                 max: 4320,
-                 step: 60,
-                 slide: function( event, ui ) {
-                   var hours = Math.floor(ui.value / 60);
-                   var minutes = ui.value - (hours * 60);
-                   if(hours.length == 1) hours = '0' + hours;
-                   if(minutes.length == 1) minutes = '0' + minutes;
-                   $("#st__start_time_hours").val(hours);
-                   $("#st__start_time_minutes").val(minutes);
-                   $("#st__minutes_start_to_facility_activation").val(ui.value);
-                 }
-               });
-
-               var labelOptions = [];
-               labelOptions[0]=
-                 {
-                 value: '-4320',
-                 text: '-3days'
-               };
-               labelOptions[1]=
-                 {
-                 value: '0',
-                 text: '0day'
-               };
-               labelOptions[2] =
-                 {
-                 value: '4320',
-                 text: '3days'
-               };
-               addLabels(stComponent, labelOptions);
-
-               ttComponent = $("#task_time_slider").slider({
-                 orientation: "horizontal",
-                 value:<?php
-                  if ($task_time == '') {
-                    echo '0';
-                  } else {
-                    echo $task_time;
-                  }
-                  ?>,
-                       min: 0,
-                       max: 720,
-                       step: 30,
-                       slide: function( event, ui ) {
-                         var hours = Math.floor(ui.value / 60);
-                         var minutes = ui.value - (hours * 60);
-                         if(hours.length == 1) hours = '0' + hours;
-                         if(minutes.length == 1) minutes = '0' + minutes;
-                         $("#st__task_time_hours").val(hours);
-                         $("#st__task_time_minutes").val(minutes);
-                         $("#st__task_length_minutes").val(ui.value);
-
-                       }
-                     });
-
-                     var labelOptions = [];
-                     labelOptions[0]=
-                       {
-                       value: '0',
-                       text: '0hours'
-                     };
-                     labelOptions[1]=
-                       {
-                       value: '360',
-                       text: '6hours'
-                     };
-                     labelOptions[2] =
-                       {
-                       value: '720',
-                       text: '12hours'
-                     };
-
-                     addLabels(ttComponent, labelOptions);
-
-                     btComponent = $("#break_time_slider").slider({
-                       orientation: "horizontal",
-                       value:<?php
-                  if ($break_time == '') {
-                    echo '0';
-                  } else {
-                    echo $break_time;
-                  }
-                  ?>,
-                       min: 0,
-                       max: 720,
-                       step: 30,
-                       slide: function( event, ui ) {
-                         var hours = Math.floor(ui.value / 60);
-                         var minutes = ui.value - (hours * 60);
-                         if(hours.length == 1) hours = '0' + hours;
-                         if(minutes.length == 1) minutes = '0' + minutes;
-                         $("#st__break_time_hours").val(hours);
-                         $("#st__break_time_minutes").val(minutes);
-                         $("#st__break_length_minutes").val(ui.value);
-                       }
-                     });
-                     //labelOptions are already defined above
-                     addLabels(btComponent, labelOptions);
-
-                     $('#removescenarioshift').click(function() {
-                       //if there is no id for this record(db_not_exists)
-                       var passId = '#' + $(this).attr('id');
-                       var $inputs = $('#myForm :input:hidden');
-                       //send get/post to call delete
-                       $('#container').remove();
-                 
-<?php if (!$isNewscenarioshift): ?>
-                   $('#newscenarioshifts').prepend('<h2 class="overlay">' + removescenarioshift(
-  <?php echo $scenarioshiftform['id']->getValue() ?>) + '</h2>');
-                                    $('.overlay').fadeIn(1200, function() {
-                                      $('.overlay').fadeOut(1200, function() {
-                                        $('.overlay').remove();
-                                      });
-                                    });
-
-<?php endif; ?>
-
-
-               });
-               function removescenarioshift(stId) {
-                 var r = $.ajax({
-                   type: 'DELETE',
-                   url: '<?php
-echo url_for('scenario/deletescenarioshift') .
- '?stId='
-?>' + stId,
-                         async: false //the above could and should be refactored for re-usability
-                       }).responseText;
-                       return r;
-                     }
-
-                   });
-
-          </script>
         </td>
       </tr>
     </tbody>

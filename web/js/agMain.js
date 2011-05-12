@@ -51,37 +51,39 @@ $(document).ready(function() {
   var shiftTemplateCounter = $('.shiftTemplateCounter');
   if(shiftTemplateCounter.length > 0) {
 
-   // $('.shiftTemplateCounter').live('load', function() {
-      var stLabels = []; //start time
+      var stLabels = []; //task time
       stLabels[0]=
       {
-        value: '-7200',
+        value: -7200,
         text: '-5days'
       };
       stLabels[1]=
       {
-        value: '0',
+        value: 0,
         text: '0'
       };
       stLabels[2] =
       {
-        value: '7200',
+        value: 7200,
         text: '+5days'
       };
+
+
+
       var ttLabels = []; //task time
       ttLabels[0]=
       {
-        value: '0',
+        value: 0,
         text: '0hrs'
       };
       ttLabels[1]=
       {
-        value: '360',
+        value: 360,
         text: '6hrs'
       };
       ttLabels[2] =
       {
-        value: '720',
+        value: 720,
         text: '12hrs'
       };
 
