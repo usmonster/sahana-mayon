@@ -26,7 +26,6 @@
           <a href="<?php echo url_for('scenario/deleteshifttemplate') ?>" 
              class="smallLinkButton floatRight removeShiftTemplate" id="<?php echo $number ?>">
             - Delete Shift Template</a>
-          </span>
           <br/>
           <?php echo $shifttemplateform['facility_resource_type_id']->renderRow(); ?>
         </td>

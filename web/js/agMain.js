@@ -50,6 +50,7 @@ $(document).ready(function() {
   
   var shiftTemplateCounter = $('.shiftTemplateCounter');
   if(shiftTemplateCounter.length > 0) {
+
    // $('.shiftTemplateCounter').live('load', function() {
       var stLabels = []; //start time
       stLabels[0]=
@@ -83,6 +84,61 @@ $(document).ready(function() {
         value: '720',
         text: '12hrs'
       };
+
+
+  $('.addShiftTemplate').click(function() {
+    var passId = '#' + $(this).attr('id');
+    var $poster = $(this);
+    var templates = $('.shiftTemplateCounter').length;
+    $(passId).parent().prepend(addShiftTemplate(templates, $(this).attr('href')));
+      var STContainers = $(".shiftTemplateCounter");
+      
+      var newSTContainer = STContainers[STContainers.length -1];
+      $(newSTContainer).find(".timeslider").each(function(){
+      
+        var elementId = $(this).attr('id');
+        var elementNumberIndex = elementId.search('[0-9]');
+        var elementNumber = elementId.substr(elementNumberIndex);
+        var elementName = elementId.substr(0,elementNumberIndex);
+        //var storedElement = $(this).prev(':input:hidden');
+        var storedField = $(this).prev().attr('id');
+        var storedValue = $(this).prev().val();
+      
+        if(elementName == 'start_time'){
+          addSlider($(this), elementNumber, elementName, storedValue, storedField, stLabels, 60);  
+        }
+        else{
+          addSlider($(this), elementNumber, elementName, storedValue, storedField, ttLabels, 30);  
+        }
+      
+      });
+
+
+return false;
+  });
+
+
+  $('.removeShiftTemplate').live('click', function() {
+    //if there is no id for this record(db_not_exists)
+    var passId = '#' + $(this).attr('id');
+    //send get/post to call delete
+    $('#container' + $(this).attr('id').replace('removeShiftTemplate', '')).remove();
+                 
+    // if(!$isNewShiftTemplate):
+    $('#newshifttemplates').prepend('<h2 class="overlay">'
+      + removeShiftTemplate(
+        $(this).attr('id'), $(this).attr('href'))
+      // $shifttemplateform['id']->getValue()
+      + '</h2>');
+    $('.overlay').fadeIn(1200, function() {
+      $('.overlay').fadeOut(1200, function() {
+        $('.overlay').remove();
+      });
+    });
+  });
+
+
+
 
       $(".timeslider").each(function(){
       
@@ -279,38 +335,6 @@ $(document).ready(function() {
     $("li.altLItext").text('')
   });
 });
-
-
-$().ready(function() {
-  $('.addShiftTemplate').click(function() {
-    var passId = '#' + $(this).attr('id');
-    var $poster = $(this);
-    var templates = $('.shiftTemplateCounter').length;
-    $(passId).parent().prepend(addShiftTemplate(templates, $(this).attr('href')));
-    return false;
-  });
-
-
-  $('.removeShiftTemplate').live('click', function() {
-    //if there is no id for this record(db_not_exists)
-    var passId = '#' + $(this).attr('id');
-    //send get/post to call delete
-    $('#container' + $(this).attr('id').replace('removeShiftTemplate', '')).remove();
-                 
-    // if(!$isNewShiftTemplate):
-    $('#newshifttemplates').prepend('<h2 class="overlay">'
-      + removeShiftTemplate(
-        $(this).attr('id'), $(this).attr('href'))
-      // $shifttemplateform['id']->getValue()
-      + '</h2>');
-    $('.overlay').fadeIn(1200, function() {
-      $('.overlay').fadeOut(1200, function() {
-        $('.overlay').remove();
-      });
-    });
-  });
-});
-
 
 //deleteUrl =
 //echo url_for('scenario/deleteshifttemplate') .
