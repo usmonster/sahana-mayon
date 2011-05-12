@@ -354,12 +354,12 @@ abstract class agImportHelper extends agEventHandler
    * @param string $sheetName The name of the sheet being validated.
    * @return boolean A boolean indicating un/successful validation of column headers.
    */
-  abstract protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
+  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
   {
     // Check if import file header is empty
     if (empty($importFileHeaders))
     {
-      $this->logErr($errMsg)
+      $this->logErr($errMsg);
       $this->events[] = array("type" => "ERROR",
         "message" => "Worksheet \"$sheetName\" is missing column headers.");
       return FALSE;
