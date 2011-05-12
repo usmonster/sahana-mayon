@@ -32,6 +32,10 @@ abstract class BaseagGeoForm extends BaseFormDoctrine
       'updated_at'          => new sfValidatorDateTime(),
     ));
 
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorDoctrineUnique(array('model' => 'agGeo', 'column' => array('geo_coordinate_hash')))
+    );
+
     $this->widgetSchema->setNameFormat('ag_geo[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);

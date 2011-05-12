@@ -336,7 +336,7 @@ agShiftTemplate:
     minutes_start_to_facility_activation:
       type: integer(5)
       notnull: true
-    shift_repeats:
+    days_in_operation:
       type: integer(2)
       notnull: true
     max_staff_repeat_shifts:

@@ -458,14 +458,30 @@ class agGeoHelper extends agBulkRecordHelper
    */
   public function getGeoIdsByHash($gcHashes)
   {
-    return agDoctrineQuery::create()
-      ->select('g.geo_coordinate_hash')
-          ->addSelect('g.id')
+    $results = array();
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+
+    $q = agDoctrineQuery::create()
+      ->select('g.id')
         ->from('agGeo g')
-        ->whereIn('g.geo_coordinate_hash', $gcHashes)
-      ->useResultCache(new Doctrine_Cache_Apc())
-      ->setResultCacheLifeSpan(60 * 15)
-      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
+      ->useResultCache(TRUE, 1800);
+
+    foreach ($gcHashes as $hash)
+    {
+      $q->where('g.geo_coordinate_hash = ?', $hash);
+      $gId = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      if (empty($gId) || is_null($gId))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results[$hash] = $gId;
+      }
+    }
+ 
+    return $results;
   }
 
   /**
@@ -476,14 +492,22 @@ class agGeoHelper extends agBulkRecordHelper
    */
   public function getGeoCoordinateId($latitude, $longitude)
   {
-    return agDoctrineQuery::create()
+    $q = agDoctrineQuery::create()
       ->select('gc.id')
         ->from('agGeoCoordinate gc')
         ->where('gc.latitude = ?', $latitude)
           ->andWhere('gc.longitude = ?', $longitude)
-      ->useResultCache(new Doctrine_Cache_Apc())
-      ->setResultCacheLifeSpan(60 * 15)
-      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
+      ->useResultCache(TRUE, 1800);
+    
+    $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    if (empty($result) || is_null($result))
+    {
+      $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+      $cacheDriver->delete($q->getResultCacheHash());
+    }
+
+    return $result;
   }
 
   /**

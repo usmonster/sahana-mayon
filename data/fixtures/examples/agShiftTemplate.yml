@@ -8,7 +8,7 @@ agShiftTemplate:
     task_length_minutes: 720
     break_length_minutes: 720
     minutes_start_to_facility_activation: -4320
-    shift_repeats: 6
+    days_in_operation: 6
     max_staff_repeat_shifts: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -20,7 +20,7 @@ agShiftTemplate:
     task_length_minutes: 360
     break_length_minutes: 180
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 3
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -32,7 +32,7 @@ agShiftTemplate:
     task_length_minutes: 360
     break_length_minutes: 180
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 3
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -44,7 +44,7 @@ agShiftTemplate:
     task_length_minutes: 360
     break_length_minutes: 180
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 3
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -56,7 +56,7 @@ agShiftTemplate:
     task_length_minutes: 360
     break_length_minutes: 180
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 3
     agShiftStatus: standby
     agDeploymentAlgorithm: all_staff
@@ -68,7 +68,7 @@ agShiftTemplate:
     task_length_minutes: 360
     break_length_minutes: 180
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 3
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -80,7 +80,7 @@ agShiftTemplate:
     task_length_minutes: 360
     break_length_minutes: 180
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 3
     agShiftStatus: standby
     agDeploymentAlgorithm: all_staff
@@ -92,7 +92,7 @@ agShiftTemplate:
     task_length_minutes: 360
     break_length_minutes: 180
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 3
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -105,7 +105,7 @@ agShiftTemplate:
     task_length_minutes: 360
     break_length_minutes: 180
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 3
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -117,7 +117,7 @@ agShiftTemplate:
     task_length_minutes: 720
     break_length_minutes: 720
     minutes_start_to_facility_activation: -720
-    shift_repeats: 4
+    days_in_operation: 4
     max_staff_repeat_shifts: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -130,7 +130,7 @@ agShiftTemplate:
     task_length_minutes: 720
     break_length_minutes: 720
     minutes_start_to_facility_activation: -3600
-    shift_repeats: 9
+    days_in_operation: 9
     max_staff_repeat_shifts: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -142,7 +142,7 @@ agShiftTemplate:
     task_length_minutes: 720
     break_length_minutes: 720
     minutes_start_to_facility_activation: -720
-    shift_repeats: 7
+    days_in_operation: 7
     max_staff_repeat_shifts: 2
     agShiftStatus: active
     agDeploymentAlgorithm: all_staff
@@ -155,7 +155,7 @@ agShiftTemplate:
     task_length_minutes: 720
     break_length_minutes: 720
     minutes_start_to_facility_activation: -3600
-    shift_repeats: 9
+    days_in_operation: 9
     max_staff_repeat_shifts: 2
     agShiftStatus: standby
     agDeploymentAlgorithm: all_staff

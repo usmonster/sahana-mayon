@@ -696,7 +696,7 @@ class agAddressHelper extends agBulkRecordHelper
           ->addSelect('act.id')
         ->from('agAddressContactType act')
         ->whereIn('act.address_contact_type', $addressTypes)
-      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->useResultCache(TRUE, 3600)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
@@ -712,7 +712,7 @@ class agAddressHelper extends agBulkRecordHelper
           ->addSelect('ae.id')
         ->from('agAddressElement ae')
         ->whereIn('ae.address_element', $addressElements)
-      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->useResultCache(TRUE, 3600)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
   
@@ -728,7 +728,7 @@ class agAddressHelper extends agBulkRecordHelper
           ->addSelect('as.id')
         ->from('agAddressStandard as')
         ->whereIn('as.address_standard', $addressStandards)
-      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->useResultCache(TRUE, 3600)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
@@ -1269,7 +1269,7 @@ class agAddressHelper extends agBulkRecordHelper
     if (! is_null($conn)) { $q->setConnection($conn) ; }
 
     // set up our initial cache
-    $q->useResultCache(TRUE, (60*15));
+    $q->useResultCache(TRUE, 1800);
     
     // execute
     $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);

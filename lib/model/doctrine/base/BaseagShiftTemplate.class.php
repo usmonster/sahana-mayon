@@ -13,7 +13,7 @@
  * @property integer $task_length_minutes
  * @property integer $break_length_minutes
  * @property integer $minutes_start_to_facility_activation
- * @property integer $shift_repeats
+ * @property integer $days_in_operation
  * @property integer $max_staff_repeat_shifts
  * @property integer $shift_status_id
  * @property integer $deployment_algorithm_id
@@ -34,7 +34,7 @@
  * @method integer                getTaskLengthMinutes()                    Returns the current record's "task_length_minutes" value
  * @method integer                getBreakLengthMinutes()                   Returns the current record's "break_length_minutes" value
  * @method integer                getMinutesStartToFacilityActivation()     Returns the current record's "minutes_start_to_facility_activation" value
- * @method integer                getShiftRepeats()                         Returns the current record's "shift_repeats" value
+ * @method integer                getDaysInOperation()                      Returns the current record's "days_in_operation" value
  * @method integer                getMaxStaffRepeatShifts()                 Returns the current record's "max_staff_repeat_shifts" value
  * @method integer                getShiftStatusId()                        Returns the current record's "shift_status_id" value
  * @method integer                getDeploymentAlgorithmId()                Returns the current record's "deployment_algorithm_id" value
@@ -54,7 +54,7 @@
  * @method agShiftTemplate        setTaskLengthMinutes()                    Sets the current record's "task_length_minutes" value
  * @method agShiftTemplate        setBreakLengthMinutes()                   Sets the current record's "break_length_minutes" value
  * @method agShiftTemplate        setMinutesStartToFacilityActivation()     Sets the current record's "minutes_start_to_facility_activation" value
- * @method agShiftTemplate        setShiftRepeats()                         Sets the current record's "shift_repeats" value
+ * @method agShiftTemplate        setDaysInOperation()                      Sets the current record's "days_in_operation" value
  * @method agShiftTemplate        setMaxStaffRepeatShifts()                 Sets the current record's "max_staff_repeat_shifts" value
  * @method agShiftTemplate        setShiftStatusId()                        Sets the current record's "shift_status_id" value
  * @method agShiftTemplate        setDeploymentAlgorithmId()                Sets the current record's "deployment_algorithm_id" value
@@ -118,7 +118,7 @@ abstract class BaseagShiftTemplate extends sfDoctrineRecord
              'notnull' => true,
              'length' => 5,
              ));
-        $this->hasColumn('shift_repeats', 'integer', 2, array(
+        $this->hasColumn('days_in_operation', 'integer', 2, array(
              'type' => 'integer',
              'notnull' => true,
              'length' => 2,
