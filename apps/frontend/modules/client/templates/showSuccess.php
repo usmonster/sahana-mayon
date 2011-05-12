@@ -440,8 +440,8 @@
      <?php
       echo (isset($query)) ?
           '<a href="' . url_for('staff/search') . '/page/' . $pager->getFirstPage() .
-          '?query=' . $query . '" class="continueButton">List</a>' :
-          '<a href="' . url_for('staff/list') . '" class="continueButton">List</a>';
+          '?query=' . $query . '" class="generalButton">List</a>' :
+          '<a href="' . url_for('staff/list') . '" class="generalButton">List</a>';
      ?>
  </div>
  <div class="floatRight">

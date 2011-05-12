@@ -6,9 +6,9 @@
 <table cellspacing="20">
     <tr>
         <td><?php echo link_to('Deploy a<br>Scenario', 'scenario/list',
-            array('class' => 'continueButton width140')) ?></td>
+            array('class' => 'generalButton width140')) ?></td>
         <td><?php echo link_to('List All<br>Events', 'event/index',
-            array('class' => 'continueButton width140')) ?></td>
+            array('class' => 'generalButton width140')) ?></td>
     </tr>
 </table>
 

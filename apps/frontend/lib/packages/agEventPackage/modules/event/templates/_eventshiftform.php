@@ -17,7 +17,7 @@
               <tr>
                 <td colspan="2">
           <?php echo $eventshiftform->renderHiddenFields(false) ?>
-          &nbsp;<a href="<?php echo url_for('event/shifts') ?>" class="continueButton">Back to List</a>
+          &nbsp;<a href="<?php echo url_for('event/shifts') ?>" class="generalButton">Back to List</a>
           <?php if (!$eventshiftform->getObject()->isNew()): ?>
             &nbsp;<?php
             echo link_to('Delete', 'event/shifts?event=' . urlencode($event_name) . $append,

@@ -16,7 +16,7 @@ if (isset($search_id)) {
           <td colspan="2">
             <?php echo $poolform->renderHiddenFields(false) ?>
             <input type="submit" value="Save" class="continueButton" name="Save" onclick="queryConstruct()"/>
-            <input type="submit" value="Preview" class="continueButton" name="Preview" onclick="queryConstruct()"/>
+            <input type="submit" value="Preview" class="generalButton" name="Preview" onclick="queryConstruct()"/>
 
             <?php if (isset($search_id)) { ?>
               <a href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>" class="continueButton" title="New Staff Pool">New Staff Pool</a>

@@ -17,10 +17,10 @@ if ($events != "") {
     <tfoot>
       <tr>
         <td colspan="2">
-          &nbsp;<a href="<?php echo url_for('facility/list') ?>" class="continueButton">Back to List</a>
+          &nbsp;<a href="<?php echo url_for('facility/list') ?>" class="generalButton">Back to List</a>
 <?php if (!$form->getObject()->isNew()): ?>
 <?php echo link_to('Delete', 'facility/delete?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'deleteButton')) ?>
-<?php echo link_to('Disable', 'facility/disable?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'continueButton')) ?>
+        <?php echo link_to('Disable', 'facility/disable?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'continueButton')) ?>
 <?php endif; ?>
           <input type="submit" value="Save" class="continueButton" style="margin-left: 0px" <?php //
           //TODO we should have the confirmation script above actually work and pipe to the save method here.

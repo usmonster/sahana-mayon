@@ -29,7 +29,7 @@ if (isset($search_id)) {
         <td colspan="2">
 <?php echo $poolform->renderHiddenFields(false) ?>
           <input type="submit" value="Save" class="continueButton" name="Save" onclick="queryConstruct()"/>
-          <input type="submit" value="Preview" class="continueButton" name="Preview" onclick="queryConstruct()"/>
+          <input type="submit" value="Preview" class="generalButton" name="Preview" onclick="queryConstruct()"/>
           <input type="submit" value="New" name="New" class="continueButton"/>
 <?php if (isset($search_id)) { ?>
           <input type="submit" value="Delete" name="Delete" class="deleteButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
