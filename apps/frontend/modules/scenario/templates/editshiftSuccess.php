@@ -1,12 +1,3 @@
-<?php
-use_javascript('agMain.js');
-use_javascript('jquery.ui.custom.js');
-//use_javascript('agMain.js');
-use_stylesheet('jquery/jquery.ui.custom.css');
-use_stylesheet('jquery/mayon.jquery.ui.css');
-?>
-
-
 <?php (!$scenarioshiftform->isNew()) ? $action = 'Edit' : $action = 'Create New'; ?>
 <h3><?php echo $action; ?> Scenario Shift</h3>
 

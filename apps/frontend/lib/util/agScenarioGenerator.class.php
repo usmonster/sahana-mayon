@@ -78,8 +78,8 @@ class agScenarioGenerator
           // Release staffs as they finish their last shift.
           if ((($shift_counter % $staff_shift_repeat) == 0) ||
               (($shift_counter % $staff_shift_repeat) == ($staff_shift_repeat - 1)) ||
-              ($shift_counter == ($row['st_shift_repeats'] + 1)) ||
-              ($shift_counter == $row['st_shift_repeats'])) {
+              ($shift_counter == ($row['st_days_in_operation'] + 1)) ||
+              ($shift_counter == $row['st_days_in_operation'])) {
             $reset_break_length = 0;
           } else {
             $reset_break_length = $row['st_break_length_minutes'];

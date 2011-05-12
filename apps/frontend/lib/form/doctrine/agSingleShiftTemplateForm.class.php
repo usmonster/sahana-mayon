@@ -130,7 +130,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'break_length_minutes' => new sfWidgetFormInputHidden(),
           'minutes_start_to_facility_activation' => new sfWidgetFormInputHidden(),
 
-          'shift_repeats' => new sfWidgetFormInputText(
+          'days_in_operation' => new sfWidgetFormInputText(
               array('label' => 'Days in Operation'), array('class' => 'inputGray width30')
           ),
           'max_staff_repeat_shifts' => new sfWidgetFormInputText(
@@ -167,7 +167,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
 //        sfWidgetFormSchema::AFTER,
 //        'minutes_start_to_facility_activation'
 //    );
-    $this->getWidget('shift_repeats')->setAttribute('size', '8');
+    $this->getWidget('days_in_operation')->setAttribute('size', '8');
     $this->getWidget('shift_status_id');
 
     $this->setValidators(
@@ -205,7 +205,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'minutes_start_to_facility_activation' => new sfValidatorInteger(
               array('required' => false)
           ),
-          'shift_repeats' => new sfValidatorInteger(array('required' => false)),
+          'days_in_operation' => new sfValidatorInteger(array('required' => false)),
           'max_staff_repeat_shifts' => new sfValidatorInteger(
               array('required' => false)
           ),

@@ -33,7 +33,7 @@
       <tr colspan="2" style="background-color: #F7F7F7;">
         <td style="text-align:left;">
           <?php
-          echo $shifttemplateform['shift_repeats']->renderRow();
+          echo $shifttemplateform['days_in_operation']->renderRow();
           echo '<br />';
           echo $shifttemplateform['max_staff_repeat_shifts']->renderRow();
           echo '<br />';

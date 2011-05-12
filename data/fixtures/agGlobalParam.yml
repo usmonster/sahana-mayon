@@ -111,10 +111,10 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_shift_minutes_start_to_facility_activation
     value: -4320
-  default_shift_repeats:
+  default_days_in_operation:
     id: 23
     agHost: localhost
-    datapoint: default_shift_repeats
+    datapoint: default_days_in_operation
     value: 0
   default_shift_max_staff_repeat_shifts:
     id: 24
