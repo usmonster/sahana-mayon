@@ -26,6 +26,7 @@
  *  array elements to $this->events
  * @todo Add debug levels feature
  * @todo Improve Doctrine MySQL PDO exception reporting
+ * @deprecated
  */
 class agStaffImportXLS extends agImportXLS
 {

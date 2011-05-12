@@ -155,6 +155,21 @@ class agStaffImportNormalization extends agImportNormalization
   }
 
   /**
+   * This method is an extension of the parent validate column headers method allowing
+   * domain-specific header validation.
+   * @param array $importFileHeaders An array of import file headers.
+   * @param string $sheetName The name of the sheet being validated.
+   * @return boolean A boolean indicating un/successful validation of column headers.
+   */
+  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
+  {
+    // DO NOT REMOVE THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING
+    $validated = parent::validateColumnHeaders($importFileHeaders, $sheetName);
+
+    return $validated;
+  }
+
+  /**
    * Method to dynamically build a (mostly) static tempSelectQuery
    * @return <type>
    */

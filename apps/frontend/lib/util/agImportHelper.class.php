@@ -27,6 +27,7 @@ abstract class agImportHelper extends agEventHandler
               $importSpec = array(),
               $successColumn = '_import_success',
               $dynamicFieldType,
+              $importHeaderStrictValidation = FALSE,
               $_PDO = array(),
               $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
               $iterData;
@@ -136,7 +137,7 @@ abstract class agImportHelper extends agEventHandler
     // continue only if our error count is below our error threshold
     if ($this->getErrCount() > $this->errThreshold)
     {
-      $errMsg = "Import error threshold ({$this->errThreshold}) has been exceeded.";
+      $errMsg = 'Import error threshold ({' . $this->errThreshold . '}) has been exceeded.';
       $this->logFatal($errMsg);
     }
   }
@@ -179,7 +180,8 @@ abstract class agImportHelper extends agEventHandler
 
   /**
    * Method to lazily load and return the pathinfo for $importFile
-   * @param <type> $importFile
+   *
+   * @param string $importFile The path for the import file.
    * @return array Returns pathinfo for importFile
    * @todo Determine the type of importFile
    */
@@ -196,20 +198,21 @@ abstract class agImportHelper extends agEventHandler
   {
     // Validate the uploaded files Excel 2003 extention
     $this->getFileInfo($importFile);
-    if (strtolower($this->fileInfo["extension"]) <> 'xls')
+    if (strtolower($this->fileInfo['extension']) <> 'xls')
     {
-      $errMsg = "{$this->fileInfo['basename']} is not a Microsoft Excel 2003 \".xls\" workbook.";
+      $errMsg = '{' . $this->fileInfo['basename'] .
+        '} is not a Microsoft Excel 2003 ".xls" workbook.';
       $this->logFatal($errMsg);
     }
 
     // open the import file
-    $this->logInfo("Opening the import file.");
+    $this->logInfo('Opening the import file.');
     $xlsObj = new spreadsheetExcelReader($importFile, FALSE);
-    $this->logInfo("Successfully opened the import file.");
+    $this->logInfo('Successfully opened the import file.');
 
     // Get some info about the workbook's composition
     $numSheets = count($xlsObj->sheets);
-    $this->logInfo("Number of worksheets found: {$numSheets}");
+    $this->logInfo('Number of worksheets found: {' . $numSheets . '}');
 
     $numRows = $xlsObj->rowcount($sheet_index = 0);
     $numCols = $xlsObj->colcount($sheet_index = 0);
@@ -220,13 +223,13 @@ abstract class agImportHelper extends agEventHandler
       $importFileData = array();
 
       // Get the sheet name
-      $this->logInfo("Opening worksheet {$sheetName}");
-      $sheetName = $xlsObj->boundsheets[$sheet]["name"];
+      $this->logInfo('Opening worksheet {' . $sheetName . '}');
+      $sheetName = $xlsObj->boundsheets[$sheet]['name'];
 
       // We don't import sheets named "Lookup" so we'll skip the remainder of this loop
       if (strtolower($sheetName) == 'lookup')
       {
-        $this->logInfo("Ignoring {$sheetName} worksheet");
+        $this->logInfo('Ignoring {' . $sheetName . '} worksheet');
         continue;
       }
 
@@ -234,7 +237,7 @@ abstract class agImportHelper extends agEventHandler
       $currentSheetHeaders = array_values($xlsObj->sheets[$sheet]['cells'][1]);
 
       // clean the column headers to ensure consistency
-      $this->logInfo("Cleaning worksheet headers");
+      $this->logInfo('Cleaning worksheet headers');
       foreach ($currentSheetHeaders as $index => &$header)
       {
         $header = $this->cleanColumnName($header);
@@ -246,13 +249,14 @@ abstract class agImportHelper extends agEventHandler
       {
         // Extend import spec headers with dynamic staff resource requirement columns from xls file.
         $this->addDynamicColumns($currentSheetHeaders);
+        $this->logInfo('Creating temporary import table {' . $this->tempTable . '}');
         $this->createTempTable();
+
         // @todo Remove this line if truly unnecessary
         // unset($this->importSpec['success']);
       }
 
-      $this->events[] = array("type" => "INFO", "message" => "Validating column headers of import file.");
-
+      $this->logInfo('Validating column headers of import file.');
       if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName)) {
         $this->events[] = array("type" => "OK", "message" => "Valid column headers found.");
       } else {
@@ -301,7 +305,7 @@ abstract class agImportHelper extends agEventHandler
       $conn->export->dropTable($this->tempTable);
 
       // log this info event
-      $eventMsg = "Dropped temporary table {$this->tempTable}";
+      $eventMsg = 'Dropped temporary table {' . $this->tempTable . '}';
       $this->logOk($eventMsg);
     }
     catch(Doctrine_Connection_Exception $e)
@@ -309,7 +313,11 @@ abstract class agImportHelper extends agEventHandler
       // we only want to silence 'no such table' errors
       if ($e->getPortableCode() !== Doctrine_Core::ERR_NOSUCHTABLE)
       {
-        $this->logFatal("Failed to drop temp table {$this->tempTable}");
+        $this->logFatal('Failed to drop temp table {' . $this->tempTable . '}');
+      }
+      else
+      {
+        $this->logInfo('Temp table {' . $this->tempTable . '} does not exist. Skipping drop.');
       }
     }
   }
@@ -330,13 +338,50 @@ abstract class agImportHelper extends agEventHandler
     {
       // uses the Doctrine_Export methods see Doctrine_Export api for more details
       $conn->export->createTable($this->tempTable, $this->importSpec, $this->tempTableOptions);
-      $this->logOk("Successfully created temp table {$this->tempTable}.");
+      $this->logOk('Successfully created temp table {' . $this->tempTable .'}.');
     }
     catch (Doctrine_Exception $e)
     {
-      $this->logFatal("Error creating temp table ({$this->tempTable} for import.");
+      $this->logFatal('Error creating temp table ({' . $this->tempTable . '} for import.');
     }
   }
 
+  /**
+   * This method provides simple validation of import file column headers. It is intended to be
+   * extended by its child classes which may provide more advanced validation.
+   * 
+   * @param array $importFileHeaders An array of import file headers.
+   * @param string $sheetName The name of the sheet being validated.
+   * @return boolean A boolean indicating un/successful validation of column headers.
+   */
+  abstract protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
+  {
+    // Check if import file header is empty
+    if (empty($importFileHeaders))
+    {
+      $this->logErr($errMsg)
+      $this->events[] = array("type" => "ERROR",
+        "message" => "Worksheet \"$sheetName\" is missing column headers.");
+      return FALSE;
+    }
+
+    // Cache the import header specification
+    $importSpecHeaders = array_keys($this->importSpec);
+
+    // The import spec will start with an ID column. Shift off of it.
+    $idColumn = array_shift($importSpecHeaders);
+    $importSpecDiff = array_diff($importSpecHeaders, $importFileHeaders);
+
+    if (empty($importSpecDiff)) {
+      return TRUE;
+    } else {
+      $this->events[] = array("type" => "ERROR", "message" => "Missing required columns.");
+
+      foreach ($importSpecDiff as $missing) {
+        $this->events[] = array("type" => "ERROR", "message" => "Column header \"$missing\" missing.");
+      }
+      return FALSE;
+    }
+  }
 
 }
