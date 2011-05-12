@@ -20,8 +20,8 @@ staff_addstaffresource:
   url:   /staff/addstaffresource
   param: { module: agStaff, action: addstaffresource }
 staff_type:
-  url: /staff/stafftype
-  param: { module: agStaff, action: stafftype }
+  url: /staff/stafftypes
+  param: { module: agStaff, action: stafftypes }
 
 staff:
   url: /staff/:action/*

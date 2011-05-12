@@ -29,15 +29,32 @@ class agStaffActions extends agActions
 
   public function executeStafftypes(sfWebRequest $request)
   {
+    $this->ag_staff_types = Doctrine_Core::getTable('agStaffResourceType')
+        ->createQuery('a')
+        ->execute();
+
     $this->staffTypeForm = new PluginagStaffTypeForm();
 
-    if ($request->isMethod(sfRequest::POST)) { // @todo find and mimic similar functions
+    if ($request->isMethod(sfRequest::POST)) { 
       $this->staffTypeForm->bind($request->getParameter($this->staffTypeForm->getName()), $request->getFiles($this->staffTypeForm->getName()));
       if ($this->staffTypeForm->isValid()) {
         $this->staffTypeForm->save();
       }
     }
   }
+
+//  /**
+//   *
+//   * @param sfWebRequest $request
+//   * generates and passes a new scenario form to the view
+//   */
+//  public function executeGrouptype(sfWebRequest $request)
+//  {
+//    $this->ag_facility_group_types = Doctrine_Core::getTable('agFacilityGroupType')
+//        ->createQuery('a')
+//        ->execute();
+//    $this->grouptypeform = new agFacilityGroupTypeForm();
+//  }
 
   public function executeList(sfWebRequest $request)
   {
