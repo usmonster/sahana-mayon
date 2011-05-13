@@ -131,6 +131,18 @@ h5 {
   margin: .25em 20px;
 }
 
+.footer_logo{
+/*   position:absolute;
+   right:140px;*/
+float:right;
+    background-image: url('../images/agasti_logo.png');
+    background-repeat: no-repeat;
+    width:105px;
+    height:60px;
+    display: inline-block;
+    margin: .25em 20px .25em 0px;
+}
+
 /**** Navigation ****/
 #navigation {
   margin-bottom: 20px;
