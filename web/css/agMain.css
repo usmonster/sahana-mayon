@@ -262,10 +262,13 @@ float:right;
 }
 
 .deleteButton:hover {
-  background: #ffc6c6;
+  background: #ffdada;
   color: #ff0000;
   border-color: #ff0000;
   cursor: pointer;
+}
+.deleteButton:active {
+  background: #ffc6c6;
 }
 
 .generalButton:hover {
@@ -273,6 +276,10 @@ float:right;
   color: #1072F1;
   border-color: #1072F1;
   cursor: pointer;
+}
+
+.generalButton:active {
+  background: #cdf0ff;
 }
 
 input.continueButton, input.deleteButton {
