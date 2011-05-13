@@ -15,41 +15,15 @@ use_javascripts_for_form($form);
 
 <?php foreach($form['staff']['type'] as $staff_type_form): ?>
         <div class="displayInline staffCounter">
-            <span class="ui-icon ui-icon-circle-minus removeStaffResource floatRight"></span>
+          <?php $formId = $staff_type_form->offsetGet('id')->getValue(); ?>
+            <a href="<?php echo url_for('staff/deletestaffresource'); ?>" class="ui-icon ui-icon-circle-minus removeStaffResource floatRight" <?php echo ($formId != null ? 'id="staff_resource_' . $staff_type_form->offsetGet('id')->getValue() . '"' : '' ); ?>></a>
+            <?php $g = 7; ?>
     <?php echo $staff_type_form; ?>
 
         </div>
     <?php endforeach; ?>
-      <div class="displayInline staffCounter">
-        <a href="#" name="groupStatus" class="includeAndAdd linkText" id="staff_id_1">Add Staff Information</a>
-        <script>
-          function addStaffResource(num) {
-            var r = $.ajax({
-              type: 'GET',
-              url: '<?php echo url_for('staff/addstaffresource') . '?num=' ?>' + num,
-              async: false
-            }).responseText;
-            return r;
-          }
-          $().ready(function() {
-            $('.linkText').click(function() {
-              var passId = '#' + $(this).attr('id');
-              var $poster = $(this);
-              var resources = $('.staffCounter').length
-              $(passId).parent().prepend(addStaffResource(resources) + '<br \>');
-            });
-            $('.removeStaffResource').click(function() {
-              //if there is no id for this record(db_not_exists)
-              var passId = '#' + $(this).attr('id');
-              var $inputs = $('#myForm :input:hidden');
-              //send get/post to call delete
-              $(this).parent().remove();
-            });
-
-          });
-
-        </script>
-
+      <div class="displayInline">
+        <a href="<?php echo url_for('staff/addstaffresource'); ?>" name="groupStatus" class="linkText addStaffResource" id="staff_id_1">Add Staff Information</a>
       </div>
     </div>
     <div class="clearBoth"> </div>
@@ -68,17 +42,17 @@ use_javascripts_for_form($form);
       <div class="displayInlineBlock">
 <?php echo $form['date of birth']; ?>
         <script type="text/javascript">
-          $(function() {
-            $("#dob").datepicker({
-              changeMonth: true,
-              changeYear: true,
-              defaultDate: new Date($("#dob").val()),
-              duration: 'fast',
-              minDate: -110*365,
-              maxDate: 0,
-              yearRange: 'c-110:c'
-            });
-          });
+//          $(function() {
+//            $("#dob").datepicker({
+//              changeMonth: true,
+//              changeYear: true,
+//              defaultDate: new Date($("#dob").val()),
+//              duration: 'fast',
+//              minDate: -110*365,
+//              maxDate: 0,
+//              yearRange: 'c-110:c'
+//            });
+//          });
         </script>
       </div>
       <br />

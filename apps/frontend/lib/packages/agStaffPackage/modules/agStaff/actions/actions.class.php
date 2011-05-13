@@ -282,9 +282,19 @@ class agStaffActions extends agActions
     $resourceForm->getWidgetSchema()->setNameFormat('ag_person[staff][type][' . $number . ']' . '[%s]');
     //$resourceForm->getWidgetSchema()->setIdFormat('%s_');
 
-    return $this->renderPartial('staffForm', array('form' => $resourceForm
-        )
+    return $this->renderPartial('staffForm', array('form' => $resourceForm)
     );
+  }
+
+  public function executeDeletestaffresource($request)
+  {
+    $this->forward404unless($request->isXmlHttpRequest());
+    if($request->hasParameter('staffResourceId')) {
+      $staffResource = agDoctrineQuery::create()
+        ->delete('agStaffResource sr')
+        ->where('id = ?', $request->getParameter('staffResourceId'))
+        ->execute();
+    }
   }
 
   /**

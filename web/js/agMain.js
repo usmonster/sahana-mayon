@@ -172,7 +172,24 @@ return false;
 
     
   }
-  
+
+  // Staff resource type function initialization. Used on the staff creation page.
+  var staffResourceAdder = $('.addStaffResource');
+  if(staffResourceAdder.length > 0) {
+    $('.addStaffResource').click(function() {
+      addStaffResource($(this));
+      return false;
+    });
+  }
+
+  var staffResourceRemover = $('.removeStaffResource');
+  if(staffResourceRemover.length > 0) {
+    $('.removeStaffResource').click(function() {
+      removeStaffResource($(this));
+      return false;
+    })
+  }
+  ///////////////////////////////////////////////////////
 });
 
 /**
@@ -540,7 +557,7 @@ function emptyHighLight(element) {
 function removeHighLight(element, highLightClass) {
   $(element).removeClass(highLightClass);
 }
-////
+/**************************************************************************************************/
 
 function sortSlide() {
   $('.sortHead th a').live('click', function(){
@@ -671,16 +688,49 @@ function buildModal(element, title) {
 }
 
 /**
-* This unnamed function catches the click of an element with .modalTrigger class. It calls
-* buildModal and then loads and opens the modal dialog.
+* triggerModal is called from the click event of an element (used to be called on those elements
+* with the modalTrigger class. It calls buildModal and then loads and opens the modal dialog.
 *
 * @return false  Return false is used here to prevent the clicked link from returning and sending
 *                the user forward in the browser.
 **/
 function triggerModal(element) {
-//  $('.modalTrigger').live('click', function() {
     var $dialog = buildModal('<div id="modalContent"></div>', $(element).attr('title'));
     $dialog.load($(element).attr('href'), function() {$dialog.dialog('open')});
     return false;
-//  });
+}
+
+/**
+* This function is used to render a new staff resource type form on the staff creation page.
+**/
+function addStaffResource(element) {
+  $.ajax({
+    type: 'GET',
+    url: $(element).attr('href') + '?num=' + $('.staffCounter').length,
+    async:false,
+    complete: function(data) {
+     $(element).parent().prepend(data.responseText + '<br \>'); 
+    }
+  });
+}
+
+function removeStaffResource(element) {
+  // Only hit the server and delete from the database if an id (set to the db object's id) has been
+  // assigned to [element]. The id attribute is also removed from [element], in case it ends up being
+  // the only staff resource form on the page and gets reset in the next conditional.
+  if($(element).attr('id') != undefined) {
+    $.post($(element).attr('href'), {staffResourceId: $(element).attr('id').replace('staff_resource_', '')});
+    $(element).removeAttr('id');
+  }
+
+  // Reset the select options in the form to the first option, if this was the last staff resource
+  // form on the page.
+  if($('.staffCounter').length < 2) {
+    $(element).parent().find('select').each(function() {
+      var p = $(this).val();
+      $(this)[0].selectedIndex = 0;
+    });
+  } else {
+    $(element).parent().remove();
+  }
 }

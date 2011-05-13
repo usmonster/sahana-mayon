@@ -19,6 +19,9 @@ staff_import:
 staff_addstaffresource:
   url:   /staff/addstaffresource
   param: { module: agStaff, action: addstaffresource }
+staff_deletestaffresource:
+  url:   /staff/deletestaffresource
+  param: { module: agStaff, action: deletestaffresource }
 staff_type:
   url: /staff/stafftypes
   param: { module: agStaff, action: stafftypes }
