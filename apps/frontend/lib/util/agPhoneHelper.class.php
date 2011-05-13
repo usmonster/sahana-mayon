@@ -45,7 +45,7 @@ class agPhoneHelper extends agBulkRecordHelper
    *
    * @param array $phoneIds A single dimension array of phone id values.
    */
-  public function __construct(array $phoneIds = NULL)
+  public function __construct(array $phoneIds = array())
   {
     // if passed an array of phone id's, set them as a class property
     parent::__construct($phoneIds);
@@ -223,10 +223,12 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array An associative array,
    * array( phone_id => array(phone, match_pattern, replacement_pattern)).
    */
-  public function getPhone(array $phoneIds = NULL)
+  public function getPhone(array $phoneIds = array())
   {
     // return our base query object
+    // Ternary 
     $q = $this->_getPhone($phoneIds);
+//    $q = $this->_getPhone(($phoneIds == null ? array() : $phoneIds));
 
     $results = $q->execute(array(), 'key_value_array');
     return $results;
@@ -240,7 +242,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array keyed by phone_id with the formatted
    * phone as the value.
    */
-  public function getFormattedPhone(array $phoneIds = NULL)
+  public function getFormattedPhone(array $phoneIds = array())
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -304,7 +306,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array, where
    * array( phoneId => A phone segment)
    */
-  public function getPhoneComponent(array $phoneIds = NULL, array $strSubsetType = NULL)
+  public function getPhoneComponent(array $phoneIds = array(), array $strSubsetType = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -360,7 +362,7 @@ class agPhoneHelper extends agBulkRecordHelper
    *                          'phone'     => body of phone number,
    *                          'extension  => extension of phone number ))
    */
-  public function getPhoneComponentSegments(array $phoneIds = NULL)
+  public function getPhoneComponentSegments(array $phoneIds = array())
   {
     // always a good idea to explicitly declare this
     $results = array();

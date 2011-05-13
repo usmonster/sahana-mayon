@@ -34,7 +34,7 @@ abstract class agBulkRecordHelper
    *
    * @param array $_recordIds A single dimension array of address id values.
    */
-  public function __construct(array $recordIds = NULL)
+  public function __construct(array $recordIds = array())
   {
     // pick up our default batch size
     $batchSize = ((agGlobal::getParam('default_batch_size')) / $this->_batchSizeModifier);
@@ -51,7 +51,7 @@ abstract class agBulkRecordHelper
    * @param array $recordIds A single dimension array of record ids.
    * @return object A new instance of this class.
    */
-  public static function init(array $recordIds = NULL)
+  public static function init(array $recordIds = array())
   {
     $childClass = get_called_class();
     $class = new $childClass($recordIds);
@@ -63,7 +63,7 @@ abstract class agBulkRecordHelper
    *
    * @param array $recordIds A single-dimension array of record id's.
    */
-  public function setRecordIds(array $recordIds = NULL)
+  public function setRecordIds(array $recordIds = array())
   {
     // as long as $recordIds exists, set the class property
     if (isset($recordIds)) {
@@ -85,7 +85,7 @@ abstract class agBulkRecordHelper
    * @param array $recordIds A single-dimension array of record id's.
    * @return array $recordIds A single-dimension array of record id's.
    */
-  public function getRecordIds(array $recordIds = NULL)
+  public function getRecordIds(array $recordIds = array())
   {
     if (is_null($recordIds)) {
       return $this->recordIds;

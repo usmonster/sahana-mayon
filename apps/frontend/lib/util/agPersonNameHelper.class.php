@@ -85,7 +85,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * build a query that only returns primary names or all names.
    * @return Doctrine_Query An instantiated doctrine query object.
    */
-  protected function _getNameComponents(array $personIds = NULL, $primary = TRUE)
+  protected function _getNameComponents(array $personIds = array(), $primary = TRUE)
   {
     $personIds = $this->getRecordIds($personIds) ;
     
@@ -181,7 +181,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * build a query that only returns primary names or all names.
    * @return array A three-dimensional associative array keyed by person id and person_name_type.
    */
-  public function getNameByType(array $personIds = NULL, $primary = FALSE)
+  public function getNameByType(array $personIds = array(), $primary = FALSE)
   {
     // always good to declare results first
     $results = array() ;
@@ -210,7 +210,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @param array $personIds A single-dimension array of person id values. Default is NULL.
    * @return array A two-dimensional associative array keyed by person id and person_name_type.
    */
-  public function getPrimaryNameByType(array $personIds = NULL)
+  public function getPrimaryNameByType(array $personIds = array())
   {
     // Get our names by type
     $personNames = $this->getNameByType($personIds, TRUE) ;
@@ -254,7 +254,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @return array A single-dimensional associative array keyed by person id with a value as name
    * string.
    */
-  public function getPrimaryNameAsString(array $personIds = NULL, $invertLast = NULL, array $delimiters = NULL)
+  public function getPrimaryNameAsString(array $personIds = array(), $invertLast = NULL, array $delimiters = array())
   {
     // define our results set
     $results = array() ;
@@ -324,7 +324,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @return array A single-dimensional associative array keyed by person id with a value as name
    * string.
    */
-  public function getPrimaryNameAsInitials(array $personIds = NULL)
+  public function getPrimaryNameAsInitials(array $personIds = array())
   {
     // define a specific set of delimiters used just for initials
     $initialDelimeters = array('invert' => '', 'component' => '', 'initial' => '');
