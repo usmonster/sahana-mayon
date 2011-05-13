@@ -131,7 +131,7 @@ h5 {
   margin: .25em 20px;
 }
 
-.footer_logo{
+.footer_logo1{
 /*   position:absolute;
    right:140px;*/
 float:right;
@@ -139,6 +139,18 @@ float:right;
     background-repeat: no-repeat;
     width:105px;
     height:60px;
+    display: inline-block;
+    margin: .25em 20px .25em 0px;
+}
+
+.footer_logo2{
+/*   position:absolute;
+   right:140px;*/
+float:right;
+    background-image: url('../images/logo.png');
+    background-repeat: no-repeat;
+    width:111px;
+    height:54px;
     display: inline-block;
     margin: .25em 20px .25em 0px;
 }
