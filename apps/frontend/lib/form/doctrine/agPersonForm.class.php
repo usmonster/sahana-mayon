@@ -825,7 +825,16 @@ class agPersonForm extends BaseagPersonForm
       if (!($r = $q->fetchOne())) {
         $entAdd = $entJoin->getAgAddress();
         $entJoin->delete();
-        $entAdd->delete();
+
+        // Check to see if this address is used by any other entities.
+        // Only delete the address if that is the case.
+        $addressContactArray = $entAdd->getAgEntityAddressContact()->getData();
+        if (empty($addressContactArray)) {
+          // Might want to add further checks to see if this is that last address to use this
+          // agAddressGeo and, if so, delete that too.
+          $entAdd->getAgAddressGeo()->delete();
+          $entAdd->delete();
+        }
       }
     }
   }

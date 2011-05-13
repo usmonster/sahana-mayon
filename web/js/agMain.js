@@ -190,6 +190,11 @@ return false;
     })
   }
   ///////////////////////////////////////////////////////
+
+  var dateOfBirth = $('#dob');
+  if(dateOfBirth.length > 0) {
+    createDatePicker();
+  }
 });
 
 /**
@@ -733,4 +738,17 @@ function removeStaffResource(element) {
   } else {
     $(element).parent().remove();
   }
+}
+
+
+function createDatePicker() {
+  $("#dob").datepicker({
+    changeMonth: true,
+    changeYear: true,
+    defaultDate: new Date($("#dob").val()),
+    duration: 'fast',
+    minDate: -110*365,
+    maxDate: 0,
+    yearRange: 'c-110:c'
+  });
 }
