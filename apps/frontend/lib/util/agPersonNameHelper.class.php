@@ -213,6 +213,13 @@ class agPersonNameHelper extends agBulkRecordHelper
   public function getPrimaryNameByType(array $personIds = array())
   {
     // Get our names by type
+    // Not sure how legit this next conditional is, but after fixing the helpers array defaults,
+    // no names were showing on staff list, because no array was passed into this function.
+    // The check will set $personIds to $this->recordIds if $personIds is empty and $this has that
+    // property. --Nils
+    if(empty($personIds) && $this->recordIds) {
+      $personIds = $this->recordIds;
+    }
     $personNames = $this->getNameByType($personIds, TRUE) ;
 
     // loop our nested array and pick up the name array as a single value
