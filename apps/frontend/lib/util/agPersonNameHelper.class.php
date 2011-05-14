@@ -85,10 +85,12 @@ class agPersonNameHelper extends agBulkRecordHelper
    * build a query that only returns primary names or all names.
    * @return Doctrine_Query An instantiated doctrine query object.
    */
-  protected function _getNameComponents(array $personIds = array(), $primary = TRUE)
+  protected function _getNameComponents(array $personIds = NULL, $primary = TRUE)
   {
     $personIds = $this->getRecordIds($personIds) ;
-    
+
+    //TODO: if empty, skip all this overhead and just return some default query
+
     $q = agDoctrineQuery::create()
       ->select('pmpn.person_id')
           ->addSelect('pmpn.person_name_type_id')
@@ -181,7 +183,7 @@ class agPersonNameHelper extends agBulkRecordHelper
    * build a query that only returns primary names or all names.
    * @return array A three-dimensional associative array keyed by person id and person_name_type.
    */
-  public function getNameByType(array $personIds = array(), $primary = FALSE)
+  public function getNameByType(array $personIds = NULL, $primary = FALSE)
   {
     // always good to declare results first
     $results = array() ;
@@ -210,15 +212,18 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @param array $personIds A single-dimension array of person id values. Default is NULL.
    * @return array A two-dimensional associative array keyed by person id and person_name_type.
    */
-  public function getPrimaryNameByType(array $personIds = array())
+  public function getPrimaryNameByType(array $personIds = NULL)
   {
-    // Not sure how legit this next conditional is, but after fixing the helpers array defaults,
-    // no names were showing on staff list, because nothing was passed into this function.
-    // The check will set $personIds to $this->recordIds if $personIds is empty and $this has the
-    // recordIds property. --Nils
-    if(empty($personIds) && $this->recordIds) {
+
+    // sets $personIds to $this->recordIds if $personIds is NULL or not specified
+    if(!isset($personIds)) {
       $personIds = $this->recordIds;
     }
+
+    if(empty($personIds)) {
+      return array();
+    }
+
     // Get our names by type
     $personNames = $this->getNameByType($personIds, TRUE) ;
 
@@ -231,10 +236,10 @@ class agPersonNameHelper extends agBulkRecordHelper
       }
     }
 
-    return $personNames ;
+    return $personNames;
   }
 
-  public function getNameByTypeAsString ($personIds = NULL)
+  public function getNameByTypeAsString (array $personIds = NULL)
   {
     $personNames = $this->getNameByType($personIds) ;
     
@@ -261,10 +266,12 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @return array A single-dimensional associative array keyed by person id with a value as name
    * string.
    */
-  public function getPrimaryNameAsString(array $personIds = array(), $invertLast = NULL, array $delimiters = array())
+  public function getPrimaryNameAsString(array $personIds = NULL, $invertLast = NULL, array $delimiters = NULL)
   {
     // define our results set
     $results = array() ;
+    
+    $personIds = $this->getRecordIds($personIds);
 
     // pick up our class defaults
     if (is_null($invertLast)) { $invertLast = $this->invertLastComponent ; }
@@ -331,8 +338,10 @@ class agPersonNameHelper extends agBulkRecordHelper
    * @return array A single-dimensional associative array keyed by person id with a value as name
    * string.
    */
-  public function getPrimaryNameAsInitials(array $personIds = array())
+  public function getPrimaryNameAsInitials(array $personIds = NULL)
   {
+    $personIds = $this->getRecordIds($personIds);
+    
     // define a specific set of delimiters used just for initials
     $initialDelimeters = array('invert' => '', 'component' => '', 'initial' => '');
 

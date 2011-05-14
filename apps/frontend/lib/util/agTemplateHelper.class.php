@@ -1,21 +1,23 @@
 <?php
+
 /**
-* agTemplateHelper class
-*
-* PHP Version 5.3
-*
-* LICENSE: This source file is subject to LGPLv2.1 license
-* that is available through the world-wide-web at the following URI:
-* http://www.gnu.org/licenses/lgpl-2.1.html
-*
-* @author     Nils Stolpe, CUNY SPS
-* @author     Pradeep Vijayagiri, CUNY SPS
-* @author     Charles Wisniewski, CUNY SPS
-*
-* Copyright of the Sahana Software Foundation, sahanafoundation.org
-**/
+ * agTemplateHelper class
+ *
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @author     Nils Stolpe, CUNY SPS
+ * @author     Pradeep Vijayagiri, CUNY SPS
+ * @author     Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ * */
 class agTemplateHelper
 {
+
   /**
    * @param boolean
    *
@@ -27,7 +29,6 @@ class agTemplateHelper
    *
    * @return string html formatted cell of email for display in templates
    */
-
   public static function buildPhoneHtml($phoneArray, $primaryOnly = true)
   {
     foreach ($phoneArray as $type => $phone) {
@@ -48,7 +49,7 @@ class agTemplateHelper
         if ($i == 0) {
           $tableHead .= '<th class="head">' . ucwords($header) . '</th>' . PHP_EOL;
         }
-        $rows[$i] .= '<td>' . (isset($addressArray[$header][$i][0]) ? ($addressArray[$header][$i][0] . '<hr class="ruleGray" /><span class="bold">Last Updated: </span><span class="italic">'  . substr($addressArray[$header][$i][1], 0, 10) . '</span>') : '') . '</td>' . PHP_EOL;
+        $rows[$i] .= '<td>' . (isset($addressArray[$header][$i][0]) ? ($addressArray[$header][$i][0] . '<hr class="ruleGray" /><span class="bold">Last Updated: </span><span class="italic">' . substr($addressArray[$header][$i][1], 0, 10) . '</span>') : '') . '</td>' . PHP_EOL;
       }
       $rows[$i] .= '</tr>' . PHP_EOL;
       $i++;
@@ -67,13 +68,14 @@ class agTemplateHelper
   {
     $title = sfContext::getInstance()->getResponse()->getTitle();
     $titleinfo = sfConfig::get('app_title');
-    $uri= str_replace("/frontend_dev.php/", "/", $_SERVER['REQUEST_URI']);
-    foreach ($titleinfo as $titlename){
-      if($titlename['url'] == $uri){
-       $title = $titlename['title'];
-         }
+    $uri = str_replace('/frontend_dev.php/', '/', $_SERVER['REQUEST_URI']);
+    foreach ($titleinfo as $titlename) {
+      if ($titlename['url'] == $uri) {
+        $title = $titlename['title'];
+        break;
+      }
     }
-    echo content_tag('title', $title)."\n";
+    echo content_tag('title', $title) . "\n";
   }
 
 }

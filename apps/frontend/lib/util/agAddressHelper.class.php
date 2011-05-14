@@ -202,7 +202,7 @@ class agAddressHelper extends agBulkRecordHelper
    * @param array $arguments The arguments to be passed to the address return method.
    * @return array The results of the $returnMethod.
    */
-  protected function _getNativeAddress($returnMethod, $arguments)
+  protected function _getNativeAddress($returnMethod, array $arguments)
   {
     // always nice to have results, don'cha think?
     $results = array() ;
@@ -212,7 +212,7 @@ class agAddressHelper extends agBulkRecordHelper
 
     // pick up our all of our address ids
     $addressIds = array_shift($arguments) ;
-    $addressIds = $this->getRecordIds($addressIds) ;
+    $addressIds = $this->getRecordIds($addressIds);
 
     // seems a little insane but we do this so our foreach can always replace [0]
     array_unshift($arguments, array()) ;

@@ -45,7 +45,7 @@ class agPhoneHelper extends agBulkRecordHelper
    *
    * @param array $phoneIds A single dimension array of phone id values.
    */
-  public function __construct(array $phoneIds = array())
+  public function __construct(array $phoneIds = NULL)
   {
     // if passed an array of phone id's, set them as a class property
     parent::__construct($phoneIds);
@@ -194,7 +194,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @param array $phoneIds A single-dimension array of phone id's.
    * @return agDoctrineQuery An extended doctrine query object.
    */
-  protected function _getPhone(array $phoneIds)
+  protected function _getPhone(array $phoneIds = NULL)
   {
     // if no (null) ID's are passed, get the phoneId's from the class property
     $phoneIds = $this->getRecordIds($phoneIds);
@@ -223,10 +223,11 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array An associative array,
    * array( phone_id => array(phone, match_pattern, replacement_pattern)).
    */
-  public function getPhone(array $phoneIds = array())
+  public function getPhone(array $phoneIds = NULL)
   {
+    $phoneIds = $this->getRecordIds($phoneIds);
+
     // return our base query object
-    // Ternary 
     $q = $this->_getPhone($phoneIds);
 //    $q = $this->_getPhone(($phoneIds == null ? array() : $phoneIds));
 
@@ -242,7 +243,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array keyed by phone_id with the formatted
    * phone as the value.
    */
-  public function getFormattedPhone(array $phoneIds = array())
+  public function getFormattedPhone(array $phoneIds = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -306,7 +307,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array, where
    * array( phoneId => A phone segment)
    */
-  public function getPhoneComponent(array $phoneIds = array(), array $strSubsetType = NULL)
+  public function getPhoneComponent(array $phoneIds = NULL, array $strSubsetType = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -362,7 +363,7 @@ class agPhoneHelper extends agBulkRecordHelper
    *                          'phone'     => body of phone number,
    *                          'extension  => extension of phone number ))
    */
-  public function getPhoneComponentSegments(array $phoneIds = array())
+  public function getPhoneComponentSegments(array $phoneIds = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array();
