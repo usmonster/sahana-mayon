@@ -9,8 +9,8 @@ echo url_for
     <div class="headerWrap">
       <?php echo $groupform; ?>
     </div>
+    <p class="highlightedText">Drag and Drop facilities to add to the group</p>
     <div class="selectionFilter">
-      <h3>Drag and Drop facilities to add to the group</h3>
       <a href="#" id="revealer" title="Available Resource Type Filter" onclick="return reveal(this)">&#9654;</a><div>Available Resource Type Filter</div>
     </div>
     <div class="sortTableContainer">
@@ -86,7 +86,7 @@ echo url_for
     <br />
     <input class="continueButton" type="button" value="Save and Create Another" name="Another" onclick="serialTran(this)"/>
     <input class="continueButton" type="button" value="Save and Continue" name="AssignAll" onclick="serialTran(this)"/>
-       <p>Click "Save and Continue" to save this group and move to the next step.
+       <p style="width: 670px">Click "Save and Continue" to save this group and move to the next step.
   Click "Save and Create Another" to save this grouping and create another grouping.</p>
      <?php
       if (!$groupform->getObject()->isNew()) {

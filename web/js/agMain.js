@@ -1,5 +1,7 @@
 // This main document ready function determines which other functions will be needed by the current
 // page. Determined by the presence of relevant DOM elements.
+
+// Start Initializer
 $(document).ready(function() {
   // Used in scenario/resourcetypes
   var containerElement = $('.inlineListWrapper');
@@ -193,7 +195,19 @@ return false;
   if(dateOfBirth.length > 0) {
     createDatePicker();
   }
+
+  var checkAllInit = $('#checkAll');
+  if(checkAllInit.length > 0) {
+    checkAll();
+  }
+
+  var checkToggleInit = $('.checkToggle');
+  if(checkToggleInit.length > 0) {
+    checkToggle();
+  }
 });
+// End Initializer
+
 
 /**
  * This function is used to check or uncheck a series of checkboxes.
@@ -202,23 +216,30 @@ return false;
 //$(document).ready(function(){
 // Checking the checkbox w/ id checkAll will check all boxes w/ class chekToggle
 // unchecking checkAll will uncheck all checkToggles.
-$('#checkall').live('click', function () {
-  var check = this.checked;
-  $('.checkBoxContainer').find('.checkToggle').each(function() {
-    this.checked = check;
-    $(this).trigger('change');
+
+function checkAll() {
+  $('#checkAll').live('click', function () {
+    var check = this.checked;
+    $('.checkBoxContainer').find('.checkToggle').each(function() {
+      this.checked = check;
+      $(this).trigger('change');
+    });
   });
-});
+}
 // This unsets the check in checkAll if one of the checkToggles are unchecked.
 // or it will set the check on checkAll if all the checkToggles have been checked
 // individually.
-$('.checkToggle').live('change', function(){
-  if($('.checkToggle').length == $('.checkToggle:checked').length) {
-    $('#checkall').attr('checked', 'checked');
-  } else {
-    $("#checkall").removeAttr('checked');
-  }
-});
+function checkToggle() {
+  $('.checkToggle').live('change', function(){
+    var a = $('.checkToggle').length;
+    var b = $('.checkToggle:checked').length;
+    if($('.checkToggle').length == $('.checkToggle:checked').length) {
+      $('#checkAll').attr('checked', 'checked');
+    } else {
+      $("#checkAll").removeAttr('checked');
+    }
+  });
+}
 //});
 
 $(document).ready(function() {

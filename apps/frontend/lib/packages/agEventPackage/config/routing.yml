@@ -82,3 +82,7 @@ event_fac_res_table:
 event_facility_group:
   url:    /event/eventfacilitygroup
   param:  { module: event, action: eventfacilitygroup }
+
+event_messaging:
+  url:    /event/:event/messaging
+  param:  { module: event, action: messaging }

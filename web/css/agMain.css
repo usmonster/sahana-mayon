@@ -1509,7 +1509,7 @@ tr.sort:hover {
 
 .sortTable th {
   background: #A1E2ff;
-  color: #ffffff;
+  color: #848484 !important;
 }
 .sortTable tr.countZero td {
   text-align: center;
@@ -1552,13 +1552,13 @@ tr.sort:hover {
   text-align: center;
 }
 .sortTableParent tr th, .sortTable tr th, sortTable tr td {
-  background: #dadada;
+  background: #efefef;
   text-align: left;
   color: #ffffff;
 }
 
 tr.sortHead th {
-  background: #A1E2FF;
+  background: #dadada;
   width: 145px;
 }
 

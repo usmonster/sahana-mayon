@@ -910,4 +910,8 @@ class eventActions extends agActions
     //end p-code
   }
 
+  public function executeMessaging(sfWebRequest $request)
+  {
+    $this->setEventBasics($request);
+  }
 }
