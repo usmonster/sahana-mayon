@@ -45,7 +45,8 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
           'facility_group_type_id' => new sfWidgetFormDoctrineChoice(
               array(
                 'model' => $this->getRelatedModelName('agFacilityGroupType'),
-                'add_empty' => false
+                'add_empty' => false,
+                'label' => 'Facility Group Type'
               )
           ),
           'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(
