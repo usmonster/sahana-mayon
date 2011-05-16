@@ -705,4 +705,20 @@ class agGeoHelper extends agBulkRecordHelper
     // many happy returns
     return $results ;
   }
+
+  /**
+   * Method to return geo match score ids from geo match score values.
+   * @param array $geoMatchScores An array of geo_match_scores
+   * @return array An associative array of geo match score ids keyed by geo match score.
+   */
+  static public function getGeoMatchScoreIds(array $geoMatchScores)
+  {
+    return agDoctrineQuery::create()
+      ->select('gms.geo_match_score')
+          ->addSelect('gms.id')
+        ->from('agGeoMatchScore gms')
+        ->whereIn('gms.geo_match_score', $geoMatchScores)
+      ->useResultCache(TRUE, 3600)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
 }

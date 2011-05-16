@@ -196,10 +196,10 @@ class agStaffImportNormalization extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'personName', 'throwOnError' => TRUE, 'method' => 'setPersonNames', 'helperClass' => 'agPersonNameHelper');
     $this->importComponents[] = array( 'component' => 'phone', 'throwOnError' => FALSE, 'method' => 'setEntityPhone', 'helperClass' => 'agEntityPhoneHelper');
     $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => FALSE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
-#    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
+    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
     $this->importComponents[] = array( 'component' => 'customField', 'throwOnError' => FALSE, 'method' => 'setPersonCustomField');
     $this->importComponents[] = array( 'component' => 'staffResource', 'throwOnError' => TRUE, 'method' => 'setStaffResourceOrg');
-    $this->importComponents[] = array( 'component' => 'personLanguage', 'throwOnError' => FALSE, 'method' => 'setPersonLanguage');
+    $this->importComponents[] = array( 'component' => 'personLanguage', 'throwOnError' => FALSE, 'method' => 'setPersonLanguage', 'helperClass' => 'agPersonLanguageHelper');
   }
 
 
@@ -313,7 +313,7 @@ class agStaffImportNormalization extends agImportNormalization
       {
         $createNew = TRUE;
       }
-      elseif ($rawData['entity_id'] != $pKeys['entity_id'])
+      elseif (!array_key_exists('entity_id', $pKeys) || $rawData['entity_id'] != $pKeys['entity_id'])
       {
         $createNew = TRUE;
         $warnBadEntity = TRUE;
@@ -521,6 +521,7 @@ class agStaffImportNormalization extends agImportNormalization
                              'state' => 'state', 'zip' => 'zip5', 'country' => 'country');
     $entityAddresses = array();
     $results = array();
+    $errMsg = NULL;
 
     // let's get ahold of our helper object since we're going to use him/her a lot
     $eah =& $this->helperObjects['agEntityAddressHelper'];
@@ -543,10 +544,13 @@ class agStaffImportNormalization extends agImportNormalization
     unset($val);
     unset($addressElements);
 
-    // get our address standards
+    // get our address standards and geo match scores
     $addressStandard = agGlobal::getParam('staff_import_address_standard');
-    $addressStandardId = agAddressHelper::getAddressStandardIds($addressStandard);
+    $addressStandardId = agAddressHelper::getAddressStandardIds(array($addressStandard));
     $addressStandardId = $addressStandardId[$addressStandard];
+    $geoMatchScore = agGlobal::getParam('default_geo_match_score');
+    $geoMatchScoreId = agGeoHelper::getGeoMatchScoreIds(array($geoMatchScore));
+    $geoMatchScoreId = $geoMatchScoreId[$geoMatchScore];
 
     // loop through our raw data and build our entity address data
     foreach ($this->importData as $rowId => $rowData)
@@ -573,13 +577,54 @@ class agStaffImportNormalization extends agImportNormalization
           }
         }
 
-        if (count($homeAddr) > 0)
+        if ( count($homeAddr) > 0 && array_key_exists('home_latitude', $rowData['_rawData']) &&
+               array_key_exists('home_longitude', $rowData['_rawData']) )
         {
-          $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], array($homeAddr, $addressStandardId));
+          $homeAddrComp = array($homeAddr, $addressStandardId);
+          $homeAddrComp[] = array( array( array($rowData['_rawData']['home_latitude'],
+                                                $rowData['_rawData']['home_longitude'])),
+                                          $geoMatchScoreId);
+          $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
         }
-        if (count($workAddr) > 0)
+        else
         {
-          $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], array($workAddr, $addressStandardId));
+          // log our error
+          $errMsg = sprintf('Missing home address/geo information from record id  %d', $rowId);
+
+          if($throwOnError)
+          {
+            $this->logErr($errMsg);
+            throw new Exception($errMsg);
+          }
+          else
+          {
+            $this->logWarning($errMsg);
+          }
+        }
+
+        if ( count($workAddr) > 0 && array_key_exists('work_latitude', $rowData['_rawData']) &&
+               array_key_exists('work_longitude', $rowData['_rawData']) )
+        {
+          $workAddrComp = array($workAddr, $addressStandardId);
+          $workAddrComp[] = array( array( array($rowData['_rawData']['work_latitude'],
+                                                $rowData['_rawData']['work_longitude'])),
+                                          $geoMatchScoreId);
+          $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
+        }
+        else
+        {
+          // log our error
+          $errMsg = sprintf('Missing work address/geo information from record id  %d', $rowId);
+
+          if($throwOnError)
+          {
+            $this->logErr($errMsg);
+            throw new Exception($errMsg);
+          }
+          else
+          {
+            $this->logWarning($errMsg);
+          }
         }
       }
     }
@@ -776,7 +821,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       if (is_null($errMsg))
       {
-        $staffIds[$rowData['primaryKeys']['staff_id']] = $rowId;
+        $staffIds[$rowData['primaryKeys']['staff_id']][$rowData['_rawData']['resource_type']] = $rowId;
       }
       else
       {
@@ -800,74 +845,55 @@ class agStaffImportNormalization extends agImportNormalization
     foreach($coll AS $index => &$record)
     {
       $stfId = $record['staff_id'];
-      $rawData = $this->importData[$staffIds[$stfId]]['_rawData'];
+      $stfRscType = array_search($record['staff_resource_type_id'], $stfRscTypeIds);
 
-      // Check if import resource type is valid.
-      if (!array_key_exists($rawData['resource_type'], $stfRscTypeIds))
+      if (isset($staffIds[$stfId][$stfRscType]))
       {
-        $errMsg = sprintf('Invalid resource type %s from record id %d.',
-                             $rawData['resource_type'], $staffIds[$stfId]);
+        $rawData = $this->importData[$staffIds[$stfId][$stfRscType]]['_rawData'];
 
-        // Capture error in error log.
-        $this->logErr($errMsg);
-
-        if($throwOnError)
+        // Check if import organization is valid.
+        if (!array_key_exists($rawData['organization'], $organizationIds))
         {
-          throw new Exception($errMsg);
+          $errMsg = sprintf('Invalid organization %s from record id %d.',
+                               $rawData['resource_type'], $staffIds[$stfId]);
+
+          // Capture error in error log.
+          $this->logErr($errMsg);
+
+          if($throwOnError)
+          {
+            throw new Exception($errMsg);
+          }
+          else
+          {
+            continue;
+          }
         }
-        else
+
+        // Check if import staff resource status is valid.
+        if (!array_key_exists($rawData['resource_status'], $stfRscStatusIds))
         {
-          continue;
+          $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
+                               $rawData['resource_status'], $staffIds[$stfId]);
+
+          // Capture error in error log.
+          $this->logErr($errMsg);
+
+          if($throwOnError)
+          {
+            throw new Exception($errMsg);
+          }
+          else
+          {
+            continue;
+          }
         }
-      }
 
-      // Check if import organization is valid.
-      if (!array_key_exists($rawData['organization'], $organizationIds))
-      {
-        $errMsg = sprintf('Invalid organization %s from record id %d.',
-                             $rawData['resource_type'], $staffIds[$stfId]);
-
-        // Capture error in error log.
-        $this->logErr($errMsg);
-
-        if($throwOnError)
-        {
-          throw new Exception($errMsg);
-        }
-        else
-        {
-          continue;
-        }
-      }
-
-      // Check if import staff resource status is valid.
-      if (!array_key_exists($rawData['resource_status'], $organizationIds))
-      {
-        $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
-                             $rawData['resource_status'], $staffIds[$stfId]);
-
-        // Capture error in error log.
-        $this->logErr($errMsg);
-
-        if($throwOnError)
-        {
-          throw new Exception($errMsg);
-        }
-        else
-        {
-          continue;
-        }
-      }
-
-      $rscTypeId = $stfRscTypeIds[$rawData['resource_type']];
-
-      if ( $record['staff_resource_type_id'] == $rscTypeId )
-      {
         $orgId = $organizationIds[$rawData['organization']];
         $record['organization_id'] = $orgId;
         $stfRscStatusId = $stfRscStatusIds[$rawData['resource_status']];
         $record['staff_resource_status_id'] = $stfRscStatusId;
-        unset($staffIds[$stfId]);
+        unset($staffIds[$stfId][$stfRscType]);
       }
     }
 
@@ -908,74 +934,77 @@ class agStaffImportNormalization extends agImportNormalization
     unset($coll);
 
     // Now $staffIds are left with new staff resources.
-    foreach($staffIds AS $stfId => $rowId)
+    foreach($staffIds AS $stfId => $stfResources)
     {
-      $rawData = $this->importData[$staffIds[$stfId]]['_rawData'];
-
-            // Check if import resource type is valid.
-      if (!array_key_exists($rawData['resource_type'], $stfRscTypeIds))
+      foreach ($stfResources AS $stfRsc => $rowId)
       {
-        $errMsg = sprintf('Invalid resource type %s from record id %d.',
-                             $rawData['resource_type'], $staffIds[$stfId]);
+        $rawData = $this->importData[$rowId]['_rawData'];
 
-        // Capture error in error log.
-        $this->logErr($errMsg);
+        // Check if import resource type is valid.
+        if (!array_key_exists($rawData['resource_type'], $stfRscTypeIds))
+        {
+          $errMsg = sprintf('Invalid resource type %s from record id %d.',
+                               $rawData['resource_type'], $staffIds[$stfId]);
 
-        if($throwOnError)
-        {
-          throw new Exception($errMsg);
+          // Capture error in error log.
+          $this->logErr($errMsg);
+
+          if($throwOnError)
+          {
+            throw new Exception($errMsg);
+          }
+          else
+          {
+            continue;
+          }
         }
-        else
+
+        // Check if import organization is valid.
+        if (!array_key_exists($rawData['organization'], $organizationIds))
         {
-          continue;
+          $errMsg = sprintf('Invalid organization %s from record id %d.',
+                               $rawData['resource_type'], $staffIds[$stfId]);
+
+          // Capture error in error log.
+          $this->logErr($errMsg);
+
+          if($throwOnError)
+          {
+            throw new Exception($errMsg);
+          }
+          else
+          {
+            continue;
+          }
         }
+
+        // Check if import staff resource status is valid.
+        if (!array_key_exists($rawData['resource_status'], $stfRscStatusIds))
+        {
+          $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
+                               $rawData['resource_status'], $staffIds[$stfId]);
+
+          // Capture error in error log.
+          $this->logErr($errMsg);
+
+          if($throwOnError)
+          {
+            throw new Exception($errMsg);
+          }
+          else
+          {
+            continue;
+          }
+        }
+
+        $fKeys = array();
+        $fKeys['staff_id'] = $stfId;
+        $fKeys['organization_id'] = $organizationIds[$rawData['organization']];
+        $fKeys['staff_resource_type_id'] = $stfRscTypeIds[$rawData['resource_type']];
+        $fKeys['staff_resource_status_id'] = $stfRscStatusIds[$rawData['resource_status']];
+
+        $staffResource = $this->createNewRec('agStaffResource', $fKeys);
       }
-
-      // Check if import organization is valid.
-      if (!array_key_exists($rawData['organization'], $organizationIds))
-      {
-        $errMsg = sprintf('Invalid organization %s from record id %d.',
-                             $rawData['resource_type'], $staffIds[$stfId]);
-
-        // Capture error in error log.
-        $this->logErr($errMsg);
-
-        if($throwOnError)
-        {
-          throw new Exception($errMsg);
-        }
-        else
-        {
-          continue;
-        }
-      }
-
-      // Check if import staff resource status is valid.
-      if (!array_key_exists($rawData['resource_status'], $organizationIds))
-      {
-        $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
-                             $rawData['resource_status'], $staffIds[$stfId]);
-
-        // Capture error in error log.
-        $this->logErr($errMsg);
-
-        if($throwOnError)
-        {
-          throw new Exception($errMsg);
-        }
-        else
-        {
-          continue;
-        }
-      }
-
-      $fKeys = array();
-      $fKeys['staff_id'] = $stfId;
-      $fKeys['organization_id'] = $organizationIds[$rawData['organization']];
-      $fKeys['staff_resource_type_id'] = $stfRscTypeIds[$rawData['resource_type']];
-      $fKeys['staff_resource_status_id'] = $stfRscStatusIds[$rawData['resource_status']];
-
-      $staffResource = $this->createNewRec('agStaffResource', $fKeys);
     }
 
   }
@@ -1002,6 +1031,10 @@ class agStaffImportNormalization extends agImportNormalization
 
     $personLanguages = array();
     $results = array();
+
+    // let's get ahold of our helper object since we're going to use him/her a lot
+    $plh =& $this->helperObjects['agPersonLanguageHelper'];
+
 
     // loop through our raw data and build our person language data
     foreach ($this->importData as $rowId => $rowData)
@@ -1041,7 +1074,7 @@ class agStaffImportNormalization extends agImportNormalization
     $createEdgeTableValues = agGlobal::getParam('create_edge_table_values');;
 
     // execute the helper and finish
-    $results = $plh->setPersonLanguage($personLanguages, $keepHistory, $createEdgeTableValues, $throwOnError, $conn);
+    $results = $plh->setPersonLanguages($personLanguages, $keepHistory, $createEdgeTableValues, $throwOnError, $conn);
     unset($personLanguages);
 
     // @todo do your results reporting here
@@ -1059,14 +1092,19 @@ class agStaffImportNormalization extends agImportNormalization
                       'home_address_city' => 'Inwood',
                       'home_address_state' => 'Bronze',
                       'home_address_country' => 'United States of America',
+                      'home_address_zip' => '10563',
+                      'home_latitude' => '12.3213',
+                      'home_longitude' => '12.2314',
                       'work_address_line_1' => '5 Silly Man',
                       'work_address_line_2' => 'In rooom 728',
                       'work_address_city' => 'New York',
                       'work_address_state' => 'NY',
                       'work_address_zip' => '10013',
                       'work_address_country' => 'United States of America',
+                      'work_latitude' => '1.23123',
+                      'work_longitude' => '0.932384',
                       'organization' => 'GOAL',
-                      'resource_type' => 'Medical Nurse',
+                      'resource_type' => 'EC Operator',
                       'resource_status' => 'active',
                       'language_1' => 'English',
                       'l1_speak' => 'fluent',
@@ -1088,8 +1126,10 @@ class agStaffImportNormalization extends agImportNormalization
                       'work_address_state' => 'NY',
                       'work_address_zip' => '11001',
                       'work_address_country' => 'United States of America',
-                      'organization' => 'volunteer',
-                      'resource_type' => 'Specialist',
+                      'work_latitude' => '1.123123',
+                      'work_longitude' => '2.389347',
+                      'organization' => 'GOAL',
+                      'resource_type' => 'Operator',
                       'resource_status' => 'inactive',
                       'language_2' => 'Latin',
                       'l1_read' => 'superior',
@@ -1120,11 +1160,11 @@ class agStaffImportNormalization extends agImportNormalization
                       'work_email' => 'aimeeemailnow@work.com'
                      );
 
-    $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKey' => array(), 'success' => 0);
-    $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKey' => array(), 'success' => 0);
-//    $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKey' => array(), 'success' => 0);
-//    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKey' => array(), 'success' => 0);
-//    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKey' => array(), 'success' => 0);
+    $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKeys' => array(), 'success' => 0);
+    $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKeys' => array(), 'success' => 0);
+//    $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKeys' => array(), 'success' => 0);
+//    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKeys' => array(), 'success' => 0);
+//    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKeys' => array(), 'success' => 0);
 
     $this->clearNullRawData();
     $this->normalizeData();
