@@ -913,5 +913,6 @@ class eventActions extends agActions
   public function executeMessaging(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+    $this->eventName = urlencode($request->getParameter('event'));
   }
 }

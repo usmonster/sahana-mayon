@@ -1,4 +1,4 @@
-<h2><span class="highlightedText"><?php echo $event_name ?></span> Management</h2>
+<h2>Event Management: <span class="highlightedText"><?php echo $event_name ?></span></h2>
 <?php
 //You should probably add a confirmation that the event was deployed here when it's first created.
 ?>
@@ -32,36 +32,57 @@ if (isset($blackOutFacilities)) {
 
 <br/>
 <table class="blueTable">
-    <tr class="head">
-        <th class="row1">Actions</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('event/meta?event=' . urlencode($event_name)); ?>"
-   >Event Name and Zero Hour</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
-    </tr>
-    <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('event/staff?event=' . urlencode($event_name)); ?>"
-   >Event Staff Management</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
-    </tr>
-    <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('event/listgroups?event=' . urlencode($event_name)); ?>"
-   >Event Facility Management</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
-    </tr>
-    <tr>
-        <td><a  class="buttonText" href="#"
-   >Client Information</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
-    </tr>
-    <tr>
-        <td><a  class="buttonText" href="#"
-   >Reporting</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
-    </tr>
-
+  <tr class="head">
+    <th class="row1">Actions</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>
+      <a class="buttonText" href="<?php echo url_for('event/meta?event=' . urlencode($event_name)); ?>">Event Name and Zero Hour</a>
+    </td>
+    <td>
+      <div style="font-style:oblique">No statistical data is currently available.</div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a class="buttonText" href="<?php echo url_for('event/staff?event=' . urlencode($event_name)); ?>">Event Staff Management</a></td>
+    <td>
+      <div style="font-style:oblique">No statistical data is currently available.</div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a class="buttonText" href="<?php echo url_for('event/messaging?event=' . urlencode($event_name)); ?>">Event Staff Messaging</a>
+    </td>
+    <td>
+      <div style="font-style:oblique">No statistical data is currently available.</div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a class="buttonText" href="<?php echo url_for('event/listgroups?event=' . urlencode($event_name)); ?>">Event Facility Management</a>
+    </td>
+    <td>
+      <div style="font-style:oblique">No statistical data is currently available.</div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a class="buttonText" href="#">Client Information</a>
+    </td>
+    <td>
+      <div style="font-style:oblique">No statistical data is currently available.</div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a class="buttonText" href="#">Reporting</a>
+    </td>
+    <td>
+      <div style="font-style:oblique">No statistical data is currently available.</div>
+    </td>
+  </tr>
 </table>
 <br />
 <br />
