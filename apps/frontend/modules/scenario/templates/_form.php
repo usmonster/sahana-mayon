@@ -1,6 +1,3 @@
-<?php use_stylesheets_for_form($form) ?>
-<?php use_javascript('jquery.ui.custom.js'); ?>
-
 <form action="<?php echo url_for('scenario/meta' . (!$form->getObject()->isNew() ? '?id='.$form->getObject()->getId() : '')) ?>" method="post">
   <table>
     <tfoot>

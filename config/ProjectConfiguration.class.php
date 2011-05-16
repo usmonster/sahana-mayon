@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Project form base class.
  *
@@ -14,12 +15,27 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-
 require_once dirname(__FILE__) . '/../lib/vendor/symfony/lib/autoload/sfCoreAutoload.class.php';
 sfCoreAutoload::register();
 
 class ProjectConfiguration extends sfProjectConfiguration
 {
+
+  static protected $zendLoaded = false;
+
+  static public function registerZend()
+  {
+    if (self::$zendLoaded) {
+      return;
+    }
+
+    set_include_path(sfConfig::get('sf_plugins_dir') . '/ajDoctrineLuceneablePlugin/data/vendor' . 
+        PATH_SEPARATOR . get_include_path());
+    require_once sfConfig::get('sf_plugins_dir') .
+        '/ajDoctrineLuceneablePlugin/data/vendor/Zend/Loader/Autoloader.php';
+    Zend_Loader_Autoloader::getInstance();
+    self::$zendLoaded = true;
+  }
 
   public function enablePackages($packages)
   {
@@ -61,10 +77,10 @@ class ProjectConfiguration extends sfProjectConfiguration
       }
     }
     foreach ($packages as $package) {
-      $this->setPluginPath($package, sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $package);
+      $this->setPluginPath($package,
+                           sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $package);
     }
     //$this->enablePlugins($packages);
-
   }
 
   public function setup()
@@ -98,7 +114,10 @@ class ProjectConfiguration extends sfProjectConfiguration
 
     // enables indexing by getting symfony to see lucene.yml for each module in the array
     $this->enableModules(array('scenario', 'facility'));
-    
+
+    //register zend
+    $this->registerZend();
+
     // registers event listeners
     $this->dispatcher->connect('import.facility_file_ready', array('agImportXLS', 'processFile'));
     $this->dispatcher->connect('global_param.param_updated', array('agGlobal', 'loadParams'));
@@ -116,7 +135,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $manager->registerHydrator('assoc_three_dim', 'AssociativeThreeDimHydrator');
     $manager->registerHydrator('assoc_two_dim', 'AssociativeTwoDimHydrator');
     $manager->registerHydrator('assoc_one_dim', 'AssociativeOneDimHydrator');
-    $manager->registerHydrator('single_value_array', 'SingleValueArrayHydrator') ;
+    $manager->registerHydrator('single_value_array', 'SingleValueArrayHydrator');
 
     // extend where appropriate
     $manager->setAttribute(Doctrine_Core::ATTR_QUERY_CLASS, 'agDoctrineQuery');

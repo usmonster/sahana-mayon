@@ -1,7 +1,3 @@
-<?php
-  use_javascript('agMain.js');
-
-?>
 <h2>Shift Templates: <span class="highlightedText"><?php echo $scenarioName ?></span></h2>
 <?php
   include_partial('wizard', array('wizardDiv' => $wizardDiv));

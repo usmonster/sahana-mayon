@@ -3,7 +3,7 @@
 
 <?php $append = '?shiftid=' . ($scenarioshiftform->getObject()->isNew() ? 'new' : $scenarioshiftform->getObject()->getId()) ?>
 
-<form name="scenario_shift_form" id="scenario_shift_form" action="
+<form name="shift_template" id="shift_template" action="
 
 
 <?php echo url_for('scenario/shifts?id=' . $scenario_id) . $append ?>" method="post">

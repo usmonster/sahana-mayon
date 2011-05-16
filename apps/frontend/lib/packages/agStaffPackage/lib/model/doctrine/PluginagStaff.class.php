@@ -16,7 +16,8 @@ abstract class PluginagStaff extends BaseagStaff
 
   public function updateLucene()
   {
-
+    
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     //Charles Wisniewski @ 00:11 03/08/2011: perhaps this should be abstracted to a 'staff helper'
     //or parts of it, to be called when updating lucene index for eventstaff AND regular staff
     $doc = new Zend_Search_Lucene_Document();

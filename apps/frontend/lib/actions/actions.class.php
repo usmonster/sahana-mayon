@@ -41,8 +41,8 @@ class agActions extends sfActions
     $this->target_module = 'staff';
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
-    
-    //Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
+
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());    
     $query = LuceneSearch::find($this->searchquery);
     if ($isFuzzy == TRUE) {
       $query->fuzzy();

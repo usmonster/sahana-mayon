@@ -1051,7 +1051,7 @@ class scenarioActions extends agActions
 
       //SAVE
         unset($this->scenarioshiftform['_csrf_token']);
-        $this->scenarioshiftform->bind($request->getParameter($this->scenarioshiftform->getName()),
+        $this->scenarioshiftform->bind($request->getParameter('shift_template'),
                                                               $request->getFiles($this->scenarioshiftform->getName()));
 //$formvalues = $request->getParameter($this->scenarioshiftform->getName());
         if ($this->scenarioshiftform->isValid()) { //form is not passing validation because the bind is failing?
@@ -1059,9 +1059,9 @@ class scenarioActions extends agActions
           $this->generateUrl('scenario_shifts',
                              array('module' => 'scenario',
             'action' => 'shifts', 'id' => $this->scenario_id, 'shiftid' => $ag_scenario_shift->getId()));
-//       $this->redirect('scenario/shifts?id=' . $this->scenario_id . '&shiftid=' . $ag_scenario_shift->getId());
+       $this->redirect('scenario/shifts?id=' . $this->scenario_id . '&shiftid=' . $ag_scenario_shift->getId());
         }
-        $this->redirect('scenario/shifts?id=' . $this->scenario_id); //need to pass in scenario id
+        //$this->redirect('scenario/shifts?id=' . $this->scenario_id); //need to pass in scenario id
       } elseif ($request->getParameter('Delete')) {
 
         //DELETE

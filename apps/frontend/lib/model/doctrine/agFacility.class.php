@@ -41,6 +41,8 @@ class agFacility extends BaseagFacility
     if (!$this->isAutoIndexed) {
       return null;
     }
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(
+        new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     $doc = new Zend_Search_Lucene_Document();
     $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
     $doc->addField(Zend_Search_Lucene_Field::unStored('facility', $this->facility_name, 'utf-8'));

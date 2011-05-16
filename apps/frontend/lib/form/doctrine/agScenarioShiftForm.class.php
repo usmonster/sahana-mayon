@@ -30,6 +30,17 @@ class agScenarioShiftForm extends BaseagScenarioShiftForm
     parent::__construct($scenarioShift, array(), array());
   }  
   
+  public function bind(array $taintedValues = null, array $taintedFiles = null)
+  {
+    foreach ($taintedValues as $key => $scenarioShift) {
+      if (!isset($this[$key])) {
+          
+        parent::bind($scenarioShift, $taintedFiles);
+        //$this->addShiftTemplateForm($key);
+      }
+    }
+
+  }
   
   public function configure()
   {
@@ -129,7 +140,7 @@ class agScenarioShiftForm extends BaseagScenarioShiftForm
 
     
     //change the name format of this form so the sliders are applied nicely
-    $this->widgetSchema->setNameFormat('shift_template_0[%s]');
+    $this->widgetSchema->setNameFormat('shift_template[0][%s]');
 
     $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel2($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);

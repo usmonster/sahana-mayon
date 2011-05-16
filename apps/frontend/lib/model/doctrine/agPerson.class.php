@@ -120,6 +120,7 @@ class agPerson extends BaseagPerson
 
   public function updateLucene()
   {
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     $doc = new Zend_Search_Lucene_Document();
     //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
     $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));

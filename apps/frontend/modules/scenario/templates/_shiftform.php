@@ -170,4 +170,4 @@
     </tbody>
   </table>
 </div>
-<input type="submit" value="Save" name="Save"/>
+<input type="submit"  class="continueButton" value="Save" name="Save"/>

@@ -68,8 +68,6 @@ $(document).ready(function() {
         text: '+5days'
       };
 
-
-
       var ttLabels = []; //task time
       ttLabels[0]=
       {
