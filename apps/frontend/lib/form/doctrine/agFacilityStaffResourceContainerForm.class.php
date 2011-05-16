@@ -80,6 +80,7 @@ class agFacilityStaffResourceContainerForm extends sfForm
 
           $resourceForm->embedForm($staffKey, $staffResourceForm);
         }
+        
         $groupForm->embedForm($resourceKey, $resourceForm);
       }
       $this->embedForm($groupKey, $groupForm);

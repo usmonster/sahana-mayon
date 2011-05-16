@@ -98,7 +98,7 @@ class eventActions extends agActions
 
       $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
       //p-code
-      $this->getResponse()->setTitle('Sahana Agasti ' . $this->event['event_name'] . ' Deploy');
+      $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Deploy');
       //end p-code
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
@@ -171,7 +171,7 @@ class eventActions extends agActions
                 ->execute()->getFirst();
 
         $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
-        $ag_event_status->setEventStatusTypeId(3);
+        $ag_event_status->setEventStatusTypeId(3); //global param for
         $ag_event_status->setEventId($ag_event->getId());
         $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
         $ag_event_status->save();
@@ -188,24 +188,23 @@ class eventActions extends agActions
         $this->blackOutFacilities = agEventFacilityHelper::returnActivationBlacklistFacilities($ag_event->getId(), $ag_event->getZeroHour());
         $this->redirect('event/active?event=' . urlencode($ag_event->getEventName()));
       }
-    } else {
+    } elseif ($request->getParameter('ag_scenario_list')) {
       //get scenario information passed from previous form
       //we should save the scenario that this event is based on
-      if ($request->getParameter('ag_scenario_list')) {
+
         $this->scenario_id = $request->getParameter('ag_scenario_list');
         $this->scenarioName = Doctrine::getTable('agScenario')
                 ->findByDql('id = ?', $this->scenario_id)
                 ->getFirst()->scenario;
-      }
+      
       $this->metaForm = new PluginagEventDefForm($eventMeta);
     }
 
-    //as a rule of thumb, actions should post to themself and then redirect
     //p-code
     if (isset($eventMeta->event_name)) {
       $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Event Management');
     } else {
-      $this->getResponse()->setTitle('Sahana Agasti New Event Management');
+      $this->getResponse()->setTitle('Sahana Agasti: New Event');
     }
     //end p-code
   }
