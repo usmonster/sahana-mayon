@@ -1072,6 +1072,9 @@ class scenarioActions extends agActions
         }
         //$this->redirect('scenario/shifts?id=' . $this->scenario_id); //need to pass in scenario id
       } elseif ($request->getParameter('Delete')) {
+        $ag_scenario_shift = $this->scenarioshiftform->getObject();
+        $ag_scenario_shift->delete();
+        $this->redirect('scenario/shifts?id=' . $this->scenario_id);
 
         //DELETE
       }

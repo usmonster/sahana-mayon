@@ -171,3 +171,4 @@
   </table>
 </div>
 <input type="submit"  class="continueButton" value="Save" name="Save"/>
+<input type="submit"  class="continueButton" value="Delete" name="Delete"/>
