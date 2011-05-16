@@ -27,19 +27,18 @@ class agEventHandler
   const       EVENT_INFO = 'INFO';        // Informational
   const       EVENT_DEBUG = 'DEBUG';      // Debug-level messages
 
-  const       EVENT_EMERG_LEVEL = 0;    // System is unusable
-  const       EVENT_ALERT_LEVEL = 1;    // Immediate action required
-  const       EVENT_CRIT_LEVEL = 2;     // Critical conditions
-  const       EVENT_ERR_LEVEL = 3;      // Error conditions
-  const       EVENT_WARNING_LEVEL = 4;  // Warning conditions
-  const       EVENT_NOTICE_LEVEL = 5;   // Normal but significant (aka, OK)
-  const       EVENT_INFO_LEVEL = 6;     // Informational
-  const       EVENT_DEBUG_LEVEL = 7;    // Debug-level messages
+  const       EVENT_EMERG_LEVEL = 1;      // System is unusable
+  const       EVENT_ALERT_LEVEL = 2;      // Immediate action required
+  const       EVENT_CRIT_LEVEL = 4;       // Critical conditions
+  const       EVENT_ERR_LEVEL = 8;        // Error conditions
+  const       EVENT_WARNING_LEVEL = 16;   // Warning conditions
+  const       EVENT_NOTICE_LEVEL = 32;    // Normal but significant (aka, OK)
+  const       EVENT_INFO_LEVEL = 64;      // Informational
+  const       EVENT_DEBUG_LEVEL = 128;    // Debug-level messages
 
   private     $events,
               $lastEvent,
               $errCount,
-              $logLevelValues = array(),
               $logLevelValue,
               $logEventLevel = self::EVENT_ERR;
 
