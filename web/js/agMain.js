@@ -436,7 +436,7 @@ function addSlider(
       if(minutes.length == 1) minutes = '0' + minutes;
       $("#st_" + formNumber + "_" + formRootName + "_hours").val(hours);
       $("#st_" + formNumber + "_" + formRootName + "_minutes").val(minutes);
-      $(stored_field).val(ui.value);
+      $('#' + stored_field).val(ui.value);
     }
   });
   addLabels(sComponent,sliderOptions);
