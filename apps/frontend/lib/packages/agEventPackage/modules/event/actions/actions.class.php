@@ -886,6 +886,7 @@ class eventActions extends agActions
       $this->searchedModels = array('agEventStaff');  //we want the search model to be agEventStaff
       //note, this does not provide ability to add event
       parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
+      $a = 3;
     } elseif ($request->getParameter('Add')) {
       $staffPotentials = $request->getPostParameter('resultform'); //('staff_list'); //ideally get only the widgets whose corresponding checkbox
       foreach ($staffPotentials as $key => $staffAdd) {
@@ -913,5 +914,10 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
     $this->eventName = urlencode($request->getParameter('event'));
+  }
+
+  public function executeDeploystaff(sfWebRequest $request)
+  {
+    $this->setEventBasics($request);
   }
 }

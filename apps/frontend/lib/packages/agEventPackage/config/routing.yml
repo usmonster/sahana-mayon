@@ -86,3 +86,7 @@ event_facility_group:
 event_messaging:
   url:    /event/:event/messaging
   param:  { module: event, action: messaging }
+
+event_deploystaff:
+  url:    /event/:event/deploystaff
+  param:  { module: event, action: deploystaff }
