@@ -99,7 +99,7 @@ class agEventHandler
       throw new Exception($e);
     }
 
-    $this->logLevelValue = constant('EVENT_' . $logEventLevel . '_LEVEL');
+    $this->logLevelValue = constant('self::EVENT_' . $logEventLevel . '_LEVEL');
     $this->logEventLevel = $logEventLevel;
   }
 
@@ -120,7 +120,7 @@ class agEventHandler
     }
 
     // if our log level has been set high enough to capture these events, do so
-    if ($this->logLevelValue >= constant('EVENT_' . $eventType . '_LEVEL'))
+    if ($this->logLevelValue >= constant('self::EVENT_' . $eventType . '_LEVEL'))
     {
       $timestamp = microtime(TRUE);
       $this->events[$eventType][] = array('ts' => $timestamp, 'msg' => $eventMsg);

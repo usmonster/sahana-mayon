@@ -24,6 +24,7 @@ abstract class agImportHelper extends agEventHandler
               $tempTable,
               $tempTableOptions = array(),
               $importSpec = array(),
+              $requiredImportColumns = array(),
               $successColumn = '_import_success',
               $idColumn = 'id',
               $excelImportBatchSize = 2500,
@@ -91,9 +92,10 @@ abstract class agImportHelper extends agEventHandler
     $this->setImportSpec();
 
     // now add some records-keeping fields we'll need across usages
-    $this->importSpec[$this->idColumn] = array('type' => 'integer', 'autoincrement' => true,
-      'primary' => true);
-    $this->importSpec[$this->successColumn] = array('type' => "boolean", 'default' => TRUE);
+    $this->requiredImportColumns[$this->idColumn] = array('type' => 'integer',
+      'autoincrement' => true, 'primary' => true);
+    $this->requiredImportColumns[$this->successColumn] = array('type' => "boolean",
+      'default' => TRUE);
 
     // we can't trust that they got it right so we're going to clean import spec columns
     foreach ($this->importSpec as $column => $value)
@@ -148,6 +150,8 @@ abstract class agImportHelper extends agEventHandler
   {
     $this->_conn = array();
     $this->_conn[self::CONN_TEMP_READ] = Doctrine_Manager::connection(NULL, self::CONN_TEMP_READ);
+    
+
     $this->_conn[self::CONN_TEMP_WRITE] = Doctrine_Manager::connection(NULL, self::CONN_TEMP_WRITE);
   }
 
@@ -258,6 +262,17 @@ abstract class agImportHelper extends agEventHandler
 
         // Extend import spec headers with dynamic staff resource requirement columns from xls file.
         $this->addDynamicColumns($currentSheetHeaders);
+        
+        // Might seem weird, but we do this to ensure that column orders are consistent in import
+        // spec AND the sheet headers (used later for positional arguments)
+        $importSpec = array();
+        foreach ($currentSheetHeaders as $index => $header)
+        {
+          $importSpec[$header] = $this->importSpec[$header];
+        }
+        $this->importSpec = $importSpec;
+
+        // create the temp table
         $this->logDebug('Creating temporary import table {' . $this->tempTable . '}');
         $this->createTempTable();
       }
@@ -324,11 +339,10 @@ abstract class agImportHelper extends agEventHandler
 
             // add the data, either way, to our importRow variable using the column name we picked up
             // off the first sheet
-            $importRow[$currentSheetHeaders[$col]] = $val;
+            $importRow[] = $val;
           }
 
           // check for empty rows early to prevent
-          // @todo check for nulls too
           if (! $notNull)
           {
             $this->logWarning('Empty row found at sheet {' . $sheet . '} row {' . $row . '}. Skipping.');
@@ -364,21 +378,17 @@ abstract class agImportHelper extends agEventHandler
   /**
    * Method to prepare the import/temp query
    * @return Doctrine_Connection_Statement A prepared query statement.
+   * @todo Make this capable of using positionals instead
    */
   private function prepareImportTemp()
   {
-    // pick up the import spec and remove our two accounting columns
-    $importSpec = $this->importSpec;
-    unset($importSpec[$this->successColumn]);
-    unset($importSpec[$this->idColumn]);
-
     // loop through the import spec and build our columns / values blocks
     $cols = '';
     $vals = '';
-    foreach($importSpec as $column => $spec)
+    foreach($this->importSpec as $column => $spec)
     {
       $cols = $cols . '`' . $column . '`, ';
-      $vals = $vals . ':' . $column . ', ';
+      $vals = $vals . '?, ';
     }
 
     // this removews a trailing comma from the last statement
@@ -432,7 +442,7 @@ abstract class agImportHelper extends agEventHandler
       catch(Exception $e)
       {
         // in the event of an insert error, don't continue
-        $errMsg = 'Failed to insert to temp table with data {' . implode($row) . '}. ' . "\n" .
+        $errMsg = 'Failed to insert to temp table with data {' . implode(',', $row) . '}. ' . "\n" .
           $e->getMessage();
         $this->logErr($errMsg);
         $err = TRUE;
@@ -469,7 +479,7 @@ abstract class agImportHelper extends agEventHandler
 
   /**
    * Method to drop temporary table
-   * @todo Replace the unweildy handling of the exceptions properly check for existence
+   * @todo Replace the unwieldy handling of the exceptions properly check for existence
    */
   protected function dropTempTable()
   {
@@ -511,11 +521,14 @@ abstract class agImportHelper extends agEventHandler
     // Drop temp if it exists
     $this->dropTempTable();
 
+    // add our required columns
+    $importSpec = $this->importSpec + $this->requiredImportColumns;
+
     // Create the table
     try
     {
       // uses the Doctrine_Export methods see Doctrine_Export api for more details
-      $conn->export->createTable($this->tempTable, $this->importSpec, $this->tempTableOptions);
+      $conn->export->createTable($this->tempTable, $importSpec, $this->tempTableOptions);
       $this->logNotice('Successfully created temp table {' . $this->tempTable .'}.');
     }
     catch (Doctrine_Exception $e)
@@ -541,13 +554,6 @@ abstract class agImportHelper extends agEventHandler
       $this->logErr($errMsg);
       return FALSE;
     }
-
-    // Cache the import header specification
-    $importSpecHeaders = $this->importSpec;
-
-    // Remove auto-generated headers
-    unset($importSpecHeaders[$this->idColumn]);
-    unset($importSpecHeaders[$this->successColumn]);
 
     // just grab the headers
     $importSpecHeaders = array_keys($importSpecHeaders);
