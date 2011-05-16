@@ -8,12 +8,15 @@
 <?php
 include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
-<p>The staff is built from a set of searches.  Creating from searches allows you to create custom
+<h4>Create searches to build the staff pool for the <span class="highlightedText"><?php echo $scenarioName;
+?> </span> scenario.</h4>
+<p>The staff pool is built from a set of searches.  Creating from searches allows you to create custom
 deployment of staff based on the scale of the plan and response.</p>
 
 <?php if (count($saved_searches) > 0) {
 ?><div class="infoHolder" style="width:750px;">
   <h3>Saved Searches<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_pool_searches&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Pool Searches">?</a></h3>
+      <p class="highlightedText">Searches displayed in deployment order.</p>
   <table class="blueTable">
     <thead>
       <tr class="head">
