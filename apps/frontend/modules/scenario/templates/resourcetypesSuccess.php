@@ -9,9 +9,9 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 <?php
 include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
-<p>Select the Staff and Facility Resources to be used in the <span class="highlightedText"><?php echo $scenarioName;
-?> </span> scenario. <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:resource_definition&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="What is a Resource?">?</a>
-<br>Click 'Save and Continue' when you are ready to move forward.</p>
-
+<h4>Select the Staff and Facility Resources to be used in the <span class="highlightedText"><?php echo $scenarioName;
+?> </span> scenario. <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:resource_definition&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="What is a Resource?">?</a></h4>
 
 <?php include_partial('resourceForm', array('resourceForm' => $resourceForm, 'scenario_id' => $scenario_id)) ?>
+
+<p> Click "Save and Continue" to move to the next step.</p>

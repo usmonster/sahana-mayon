@@ -10,6 +10,7 @@ echo url_for
       <?php echo $groupform; ?>
     </div>
     <div class="selectionFilter">
+      <h3>Drag and Drop facilities to add to the group</h3>
       <a href="#" id="revealer" title="Available Resource Type Filter" onclick="return reveal(this)">&#9654;</a><div>Available Resource Type Filter</div>
     </div>
     <div class="sortTableContainer">
@@ -84,8 +85,10 @@ echo url_for
     <br />
     <br />
     <input class="continueButton" type="button" value="Save and Create Another" name="Another" onclick="serialTran(this)"/>
-    <input class="continueButton" type="button" value="Save and Assign Staff Requirements" name="AssignAll" onclick="serialTran(this)"/>
-    <?php
+    <input class="continueButton" type="button" value="Save and Continue" name="AssignAll" onclick="serialTran(this)"/>
+       <p>Click "Save and Continue" to save this group and move to the next step.
+  Click "Save and Create Another" to save this grouping and create another grouping.</p>
+     <?php
       if (!$groupform->getObject()->isNew()) {
         echo link_to('Delete', 'scenario/facilityGroupDelete?groupId=' . $groupform->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton'));
       }
