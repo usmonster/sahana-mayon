@@ -117,16 +117,13 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
       'borough' => $record['borough'],
       'country' => $record['country']);
 
-//    if (!$this->isEmptyStringArray($this->fullAddress)) {
-      if (empty($record['street_1']) || empty($record['city']) ||
-          empty($record['state']) || empty($record['postal_code'])) {
-        return array('pass' => FALSE,
-          'status' => 'ERROR',
-  //        'status' => 'WARNING',
-          'type' => 'Mail Address',
-          'message' => 'Invalid street 1/city/state/postal_code address.');
-      }
-//    }
+    if (empty($record['street_1']) || empty($record['city']) ||
+        empty($record['state']) || empty($record['postal_code'])) {
+      return array('pass' => FALSE,
+        'status' => 'ERROR',
+        'type' => 'Mail Address',
+        'message' => 'Invalid street 1/city/state/postal_code address.');
+    }
 
     if (empty($record['longitude']) or empty($record['latitude'])) {
       return array('pass' => FALSE,
@@ -1889,49 +1886,9 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
 
   /* Geo */
 
-  protected function createGeo($conn = NULL)
-  {
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $geo = new agGeo();
-      $geo->set('geo_type_id', $this->geoTypeId)
-          ->set('geo_source_id', $this->geoSourceId);
-      $geo->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t create geo! Rolled back changes!');
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $geo->id;
-  }
-
   protected function updateFacilityGeo($facility, $addressId, $addressTypeId, $addressStandardId,
                                        $geoInfo, $conn = NULL)
   {
-
     // Create an address container to assign geo info for facility with no address given in import.
     if (empty($addressId)) {
       $entityId = $facility->getAgSite()->entity_id;
@@ -1947,89 +1904,6 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
     $count = $geoHelper->setAddressGeo($addrCoord, $this->geoSourceId);
     
     return ($count == 1) ? TRUE : FALSE;
-
-//    $agAddressGeo = agDoctrineQuery::create()
-//            ->from('agAddressGeo ag')
-//            ->innerJoin('ag.agGeo g')
-//            ->where('g.geo_source_id = ?', $this->geoSourceId)
-//            ->andWhere('g.geo_type_id = ?', $this->geoTypeId)
-//            ->andWhere('ag.address_id = ?', $addressId)
-//            ->fetchOne();
-//
-//    // here we check our current transaction scope and create a transaction
-//    // or savepoint based on need
-//    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-//    if ($useSavepoint) {
-//      $conn->beginTransaction(__FUNCTION__);
-//    } else {
-//      $conn->beginTransaction();
-//    }
-//
-//    try {
-//      if (empty($agAddressGeo)) {
-//        $geoId = $this->createGeo($conn);
-//        $addressGeo = new agAddressGeo();
-//        $addressGeo->set('address_id', $addressId)
-//            ->set('geo_id', $geoId)
-//            ->set('geo_match_score_id', $this->geoMatchScoreId);
-//        $addressGeo->save($conn);
-//      } else {
-//        $geoId = $agAddressGeo->geo_id;
-//      }
-//
-//      $agAddressCoordinate = agDoctrineQuery::create()
-//              ->select('gc.longitude, gc.latitude')
-//              ->from('agGeoCoordinate gc')
-//              ->innerJoin('gc.agGeoFeature gf')
-//              ->where('gf.geo_id = ?', $geoId)
-//              ->fetchOne();
-//
-//      if (empty($agAddressCoordinate)) {
-//        $geoCoordinate = new agGeoCoordinate();
-//        $geoCoordinate->set('longitude', $geoInfo['longitude'])
-//            ->set('latitude', $geoInfo['latitude']);
-//        $geoCoordinate->save($conn);
-//        $geoFeature = new agGeoFeature();
-//        $geoFeature->set('geo_id', $geoId)
-//            ->set('geo_coordinate_id', $geoCoordinate->id)
-//            ->set('geo_coordinate_order', 1);
-//        $geoFeature->save($conn);
-//      } else {
-//        if ($agAddressCoordinate->longitude != $geoInfo['longitude']) {
-//          $agAddressCoordinate->set('longitude', $geoInfo['longitude']);
-//          $saveUpdate = TRUE;
-//        } elseif ($agAddressCoordinate->latitude != $geoInfo['latitude']) {
-//          $agAddressCoordinate->set('latitude', $geoInfo['latitude']);
-//          $saveUpdate = TRUE;
-//        } else {
-//          $saveUpdate = FALSE;
-//        }
-//
-//        if ($saveUpdate) {
-//          $agAddressCoordinate->save($conn);
-//        }
-//      }
-//
-//      if ($useSavepoint) {
-//        $conn->commit(__FUNCTION__);
-//      } else {
-//        $conn->commit();
-//      }
-//    } catch (Exception $e) {
-//      // ALWAYS log rollbacks with as much useful information as possible
-//      $this->errMsg = sprintf('Couldn\'t update geo! Rolled back changes!');
-//
-//      // if we started with a savepoint, let's end with one,
-//      // otherwise, rollback globally
-//      if ($useSavepoint) {
-//        $conn->rollback(__FUNCTION__);
-//      } else {
-//        $conn->rollback();
-//      }
-//
-//      throw $e; // always remember to throw an exception after rollback
-//    }
-//    return TRUE;
   }
 
   /* ENTITY */
