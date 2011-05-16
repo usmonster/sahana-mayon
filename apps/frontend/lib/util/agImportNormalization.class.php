@@ -40,9 +40,7 @@ abstract class agImportNormalization extends agImportHelper
 
   public function __destruct()
   {
-//    //drop temp table.
-//    $this->conn->export->dropTable($this->sourceTable);
-//    $this->conn->close();
+    parent::__destruct();
   }
 
   /**
@@ -109,14 +107,14 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function updateTempSuccess($success)
   {
-    $this->logInfo("Updating temp with batch success data");
+    $this->logDebug("Updating temp with batch success data");
 
     // grab our connection object
     $conn = $this->getConnection('temp_write');
 
     // create our query statement
     $q = sprintf('UPDATE %s SET %s=? WHERE id IN(?);', $this->tempTable, $this->successColumn);
-    $this->logOk("Temp table successfully updated with batch success data");
+    $this->logNotice("Temp table successfully updated with batch success data");
 
     // mark this batch as failed
     $this->executePdoQuery($conn, $query,
@@ -216,7 +214,7 @@ abstract class agImportNormalization extends agImportHelper
 
     // log this event
     $eventMsg = "Loading batch starting at {$fetchPosition} from the temp table";
-    $this->logInfo($eventMsg);
+    $this->logDebug($eventMsg);
 
     // fetch the data up until it ends or we hit our batchsize limit
     while (($row = $pdo->fetch()) && (($fetchPosition % $batchSize) != 0))
@@ -235,7 +233,7 @@ abstract class agImportNormalization extends agImportHelper
     $batchPosition++;
 
     $eventMsg = "Successfully fetched batch {$batchPosition} (Records {$batchStart} to {$fetchPosition})";
-    $this->logOk($eventMsg);
+    $this->logInfo($eventMsg);
   }
 
   /**
@@ -256,7 +254,7 @@ abstract class agImportNormalization extends agImportHelper
 
     // now we can legitimately execute our real search
     $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
-    $this->logInfo("Successfully established the PDO fetch iterator.");
+    $this->logDebug("Successfully established the PDO fetch iterator.");
   }
 
   /**
@@ -266,7 +264,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function normalizeData()
   {
     $err = NULL ;
-    $this->logInfo("Normalizing and inserting batch data into database.");
+    $this->logDebug("Normalizing and inserting batch data into database.");
 
 
     // get our connection object and start an outer transaction for the batch
@@ -286,7 +284,7 @@ abstract class agImportNormalization extends agImportHelper
       $savepoint = __FUNCTION__ . '_'. $componentData['component'];
 
       // log an event so we can follow what portion of the insert was begun
-      $eventMsg = $this->logInfo("Calling batch processing method {$method}");
+      $eventMsg = $this->logDebug("Calling batch processing method {$method}");
 
       // start an inner transaction / savepoint per component
       $conn->beginTransaction($savepoint) ;
@@ -340,7 +338,7 @@ abstract class agImportNormalization extends agImportHelper
 
     if (is_null($err))
     {
-      $this->logOk("Successfully inserted and normalized batch data");
+      $this->logNotice("Successfully inserted and normalized batch data");
       return TRUE;
     }
     else

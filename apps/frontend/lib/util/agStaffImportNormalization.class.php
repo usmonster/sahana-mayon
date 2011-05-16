@@ -150,7 +150,7 @@ class agStaffImportNormalization extends agImportNormalization
     if (strlen($columnName) == 0)
     {
       $errMsg = "Column name {$oldColumnName} could not be parsed.";
-      $this->logErr($errMsg, 1);
+      $this->logCrit($errMsg, 1);
       throw new Exception($errMsg);
     }
     return $columnName;
@@ -336,7 +336,7 @@ class agStaffImportNormalization extends agImportNormalization
       {
         $warnMsg = sprintf("Bad entity id (%s).  Generated a new entity id (%s).",
           $rawData['entity_id'], $pKeys['entity_id']);
-        sfContext::getInstance()->getLogger()->warning($warnMsg);
+        $this->logWarning($warnMsg);
       }
     }
   }
@@ -1049,7 +1049,7 @@ class agStaffImportNormalization extends agImportNormalization
 
   public function testDataNorm()
   {
-    $this->setLogEventLevel(self::EVENT_INFO);
+    $this->setLogEventLevel(self::EVENT_DEBUG);
     $_rawData1 = array('entity_id' => '3',
                       'first_name' => 'Mork',
                       'last_name' => 'Ork',

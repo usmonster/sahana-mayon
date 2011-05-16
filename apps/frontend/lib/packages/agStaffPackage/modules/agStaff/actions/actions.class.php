@@ -732,34 +732,35 @@ class agStaffActions extends agActions
     $this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready'));
     // TODO: eventually use this ^^^ to replace this vvv.
 
-    $import = new AgStaffImportXLS();
-//    $returned = $import->createTempTable();
-
-    $processedToTemp = $import->processImport($this->importPath);
-    $this->numRecordsImported = $import->numRecordsImported;
-    $this->events = $import->events;
-
-    // Normalize imported temp data only if import is successful.
-    if ($processedToTemp) {
-      // Grab table name from AgImportXLS class.
-      $sourceTable = $import->tempTable;
-      $dataNorm = new agStaffImportNormalization($scenarioId, $sourceTable, 'staff');
-
-      $dataNorm->normalizeImport();
-
-      $this->summary = $dataNorm->summary;
-    }
-
-
-    //this below block is a bit hard coded and experimental, it should be changed to use gparams
-
-    $agLuceneIndex = new agLuceneIndex(array('agStaff'));
-    $indexResult = $agLuceneIndex->indexAll();
-
-//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-//      $dispatcher = sfContext::getInstance()->getEventDispatcher();
-//      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
-//      $task->run(array('model' => 'agStaff'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
+    $import = new agStaffImportNormalization('tempStaffImport', agEventHandler::EVENT_INFO);
+    $import->processXlsImportFile($this->importPath);
+////    $returned = $import->createTempTable();
+//
+//    $processedToTemp = $import->processImport($this->importPath);
+//    $this->numRecordsImported = $import->numRecordsImported;
+//    $this->events = $import->events;
+//
+//    // Normalize imported temp data only if import is successful.
+//    if ($processedToTemp) {
+//      // Grab table name from AgImportXLS class.
+//      $sourceTable = $import->tempTable;
+//      $dataNorm = new agStaffImportNormalization($scenarioId, $sourceTable, 'staff');
+//
+//      $dataNorm->normalizeImport();
+//
+//      $this->summary = $dataNorm->summary;
+//    }
+//
+//
+//    //this below block is a bit hard coded and experimental, it should be changed to use gparams
+//
+//    $agLuceneIndex = new agLuceneIndex(array('agStaff'));
+//    $indexResult = $agLuceneIndex->indexAll();
+//
+////      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
+////      $dispatcher = sfContext::getInstance()->getEventDispatcher();
+////      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
+////      $task->run(array('model' => 'agStaff'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
   }
 
 }

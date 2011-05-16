@@ -1,6 +1,8 @@
 <?php
 /**
- * Abstract class to provide event and log handling methods
+ * Abstract class to provide event and log handling methods. These log levels follow the same
+ * paradigm as the PEAR log levels. See http://www.indelible.org/php/Log/guide.html#log-levels for
+ * more information.
  *
  * PHP Version 5.3
  *
@@ -13,14 +15,26 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
-abstract class agEventHandler
+class agEventHandler
 {
   // used for event reporting
-  const       EVENT_FATAL = 'FATAL';
-  const       EVENT_OK = 'OK';
-  const       EVENT_ERR = 'ERR';
-  const       EVENT_WARN = 'WARN';
-  const       EVENT_INFO = 'INFO';
+  const       EVENT_EMERG = 'EMERG';      // System is unusable
+  const       EVENT_ALERT = 'ALERT';      // Immediate action required
+  const       EVENT_CRIT = 'CRIT';        // Critical conditions
+  const       EVENT_ERR = 'ERR';          // Error conditions
+  const       EVENT_WARNING = 'WARNING';  // Warning conditions
+  const       EVENT_NOTICE = 'NOTICE';    // Normal but significant (aka, OK)
+  const       EVENT_INFO = 'INFO';        // Informational
+  const       EVENT_DEBUG = 'DEBUG';      // Debug-level messages
+
+  const       EVENT_EMERG_LEVEL = 0;    // System is unusable
+  const       EVENT_ALERT_LEVEL = 1;    // Immediate action required
+  const       EVENT_CRIT_LEVEL = 2;     // Critical conditions
+  const       EVENT_ERR_LEVEL = 3;      // Error conditions
+  const       EVENT_WARNING_LEVEL = 4;  // Warning conditions
+  const       EVENT_NOTICE_LEVEL = 5;   // Normal but significant (aka, OK)
+  const       EVENT_INFO_LEVEL = 6;     // Informational
+  const       EVENT_DEBUG_LEVEL = 7;    // Debug-level messages
 
   private     $events,
               $lastEvent,
@@ -29,6 +43,8 @@ abstract class agEventHandler
               $logLevelValue,
               $logEventLevel = self::EVENT_ERR;
 
+  protected   $errThreshold = 100;
+
   /**
    * This class's constructor.
    * @param string $tempTable The name of the temporary import table to use
@@ -36,9 +52,6 @@ abstract class agEventHandler
    */
   public function __construct($logEventLevel = NULL)
   {
-    // set our default log levels
-    $this->setLogLevelValues();
-
     // check to see if a log level was passed at construction and, if so, set it
     if (! is_null($logEventLevel)) { $this->setLogEventLevel($logEventLevel); }
 
@@ -62,26 +75,16 @@ abstract class agEventHandler
     $this->lastEvent = array();
 
     $this->events = array();
-    $this->events[self::EVENT_FATAL] = array();
+    $this->events[self::EVENT_EMERG] = array();
+    $this->events[self::EVENT_ALERT] = array();
+    $this->events[self::EVENT_CRIT] = array();
     $this->events[self::EVENT_ERR] = array();
-    $this->events[self::EVENT_WARN] = array();
-    $this->events[self::EVENT_OK] = array();
+    $this->events[self::EVENT_WARNING] = array();
+    $this->events[self::EVENT_NOTICE] = array();
     $this->events[self::EVENT_INFO] = array();
+    $this->events[self::EVENT_DEBUG] = array();
 
     $this->errCount = 0;
-  }
-
-  /**
-   * Method to map log levels to a numeric hierarchy and store as a class property.
-   */
-  private function setLogLevelValues()
-  {
-    $this->logLevelValues = array();
-    $this->logLevelValues[self::EVENT_FATAL] = 0;
-    $this->logLevelValues[self::EVENT_ERR] = 1;
-    $this->logLevelValues[self::EVENT_WARN] = 2;
-    $this->logLevelValues[self::EVENT_OK] = 3;
-    $this->logLevelValues[self::EVENT_INFO] = 4;
   }
 
   /**
@@ -97,7 +100,7 @@ abstract class agEventHandler
       throw new Exception($e);
     }
 
-    $this->logLevelValue = $this->logLevelValues[$logEventLevel];
+    $this->logLevelValue = constant('EVENT_' . $logEventLevel . '_LEVEL');
     $this->logEventLevel = $logEventLevel;
   }
 
@@ -118,7 +121,7 @@ abstract class agEventHandler
     }
 
     // if our log level has been set high enough to capture these events, do so
-    if ($this->logLevelValue >= $this->logLevelValues[$eventType])
+    if ($this->logLevelValue >= constant('EVENT_' . $eventType . '_LEVEL'))
     {
       $timestamp = microtime(TRUE);
       $this->events[$eventType][] = array('ts' => $timestamp, 'msg' => $eventMsg);
@@ -127,63 +130,117 @@ abstract class agEventHandler
   }
 
   /**
-   * Method to log an event of type Info
+   * Method to log an event of type debug
    * @param $string $eventMsg An event message
    */
-  protected function logInfo($eventMsg)
+  public function logDebug($eventMsg)
   {
-    $this->logEvent(self::EVENT_OK, $eventMsg);
+    $this->logEvent(self::EVENT_DEBUG, $eventMsg);
+    sfContext::getInstance()->getLogger()->debug($eventMsg);
   }
 
   /**
-   * Method to log an event of type OK
+   * Method to log an event of type Info
    * @param $string $eventMsg An event message
    */
-  protected function logOk($eventMsg)
+  public function logInfo($eventMsg)
   {
-    $this->logEvent(self::EVENT_OK, $eventMsg);
+    $this->logEvent(self::EVENT_INFO, $eventMsg);
+    sfContext::getInstance()->getLogger()->info($eventMsg);
+  }
+
+  /**
+   * Method to log an event of type notice
+   * @param $string $eventMsg An event message
+   */
+  protected function logNotice($eventMsg)
+  {
+    $this->logEvent(self::EVENT_NOTICE, $eventMsg);
+    sfContext::getInstance()->getLogger()->notice($eventMsg);
   }
 
   /**
    * Method to log an event of type WARN and log the results to file
    * @param $string $eventMsg An event message
    */
-  protected function logWarn($eventMsg)
+  protected function logWarning($eventMsg)
   {
-    $this->logEvent(self::EVENT_WARN, $eventMsg);
+    $this->logEvent(self::EVENT_WARNING, $eventMsg);
     sfContext::getInstance()->getLogger()->warning($eventMsg);
   }
 
   /**
    * Method to explicitly log an error message and up our error counter.
-   * @param string $errMsg An error message
+   * @param string $eventMsg An error message
    * @param integer $errCount The number of failures encountered
    */
-  protected function logErr($errMsg, $errCount = 1)
+  protected function logErr($eventMsg, $errCount = 1)
   {
-    $this->logEvent(self::EVENT_ERR, $errMsg);
+    $this->logEvent(self::EVENT_ERR, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    sfContext::getInstance()->getLogger()->err($errMsg);
+    sfContext::getInstance()->getLogger()->err($eventMsg);
 
     $this->checkErrThreshold();
   }
 
   /**
-   * Method to explicitly log a fatal error message and throw an exception.
-   * @param string $errMsg A fatal error message
+   * Method to explicitly log a critical message and up our error counter.
+   * @param string $eventMsg A critical message
+   * @param integer $errCount The number of failures encountered
    */
-  protected function logFatal($errMsg, $errCount = 1)
+  public function logCrit($eventMsg, $errCount = 1)
   {
-    $this->logEvent(self::EVENT_FATAL, $errMsg);
+    $this->logEvent(self::EVENT_CRIT, $eventMsg);
+    $this->errCount = $this->errCount + $errCount;
+    sfContext::getInstance()->getLogger()->crit($eventMsg);
+
+    $this->checkErrThreshold();
+  }
+
+  /**
+   * Method to explicitly log an alert message and up our error counter.
+   * @param string $eventMsg An alert message
+   * @param integer $errCount The number of failures encountered
+   */
+  public function logAlert($eventMsg, $errCount = 1)
+  {
+    $this->logEvent(self::EVENT_ALERT, $eventMsg);
+    $this->errCount = $this->errCount + $errCount;
+    sfContext::getInstance()->getLogger()->alert($eventMsg);
+
+    $this->checkErrThreshold();
+  }
+
+  /**
+   * Method to explicitly log an emerg message and throw an exception.
+   * @param string $eventMsg An emerg message
+   * @param integer $errCount The number of failures encountered
+   */
+  public function logEmerg($eventMsg, $errCount = 1)
+  {
+    $this->logEvent(self::EVENT_EMERG, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
 
     // dump all of our events to the symfony logger
-    $err = 'Import failed at: ' . $errMsg . PHP_EOL . 'Dumping event log to file.';
-    sfContext::getInstance()->getLogger()->err($err);
+    $err = 'Import failed at: ' . $eventMsg . PHP_EOL . 'Dumping event log to file.';
+    sfContext::getInstance()->getLogger()->emerg($err);
     $this->dumpEventsToFile('err');
 
     self::__destruct();
-    throw new Exception($errMsg);
+    throw new Exception($eventMsg);
+  }
+
+  /**
+   * Method to check against our error threshold and update whether we should continue or not
+   */
+  private function checkErrThreshold()
+  {
+    // continue only if our error count is below our error threshold
+    if (0 < $this->errThreshold && $this->errThreshold < $this->getErrCount())
+    {
+      $errMsg = 'Import error threshold ({' . $this->errThreshold . '}) has been exceeded.';
+      $this->logEmerg($errMsg);
+    }
   }
 
   /**
