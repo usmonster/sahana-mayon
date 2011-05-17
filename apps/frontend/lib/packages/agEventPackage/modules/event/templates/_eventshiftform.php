@@ -30,5 +30,5 @@
   </table>
 </form>
 
-<?php echo javascript_include_tag('agShiftModal.js'); ?>
+<?php //echo javascript_include_tag('agShiftModal.js'); ?>
           <?php// echo url_for('scenario/staffpool')?event=' . urlencode($facility['e_event_name']) . '&group=' . urlencode($facility['efg_event_facility_group'])) ?>

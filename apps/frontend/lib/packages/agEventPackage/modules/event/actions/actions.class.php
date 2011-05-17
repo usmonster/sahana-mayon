@@ -485,12 +485,11 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
 
-    $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
-        ->findAll();
+    $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')->findAll();
 
     //get the possible filters from our request eg. &fr=1&type=generalist&org=volunteer
     $filters = array();
-    foreach ($request->getParameterHolder() as $parameter => $filter) { //('filter')
+    foreach ($request->getParameterHolder() as $parameter => $filter) {
       if ($parameter == 'fr') {
         $filters['essh.event_facility_resource_id'] = $filter;
       }
@@ -1163,7 +1162,14 @@ class eventActions extends agActions
       $this->searchedModels = array('agEventStaff');  //we want the search model to be agEventStaff
       //note, this does not provide ability to add event
       parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
-      $a = 3;
+      return $this->renderPartial('search/resultform', array(
+                                                         'hits' => $this->hits,
+                                                         'searchquery' => $this->searchquery,
+                                                         'results' => $this->results,
+                                                         'widget' => $this->widget,
+                                                         'shift_id' => $this->shift_id,
+                                                         'event_id' => $this->event_id
+                                                       ));
     } elseif ($request->getParameter('Add')) {
       $staffPotentials = $request->getPostParameter('resultform'); //('staff_list'); //ideally get only the widgets whose corresponding checkbox
       foreach ($staffPotentials as $key => $staffAdd) {

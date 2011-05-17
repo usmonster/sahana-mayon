@@ -1,4 +1,4 @@
 <div class="staffCounter displayInline">
 <?php echo $form; ?>
-  <span class="ui-icon ui-icon-circle-minus removeStaffResource floatRight"></span>
+  <a class="ui-icon ui-icon-circle-minus removeStaffResource floatRight" href="#"></a>
 </div>

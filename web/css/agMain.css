@@ -346,6 +346,7 @@ input.continueButton, input.deleteButton {
   outline: none;
   color: #848484;
   font-weight: bold;
+  display: block;
 }
 
 .linkText:hover {
@@ -1639,12 +1640,13 @@ table.available caption {
   text-shadow: 0px 0px 5px #ff8f00;
 }
 .tooltipTrigger {
-  font-size:  .65em;
+  font-size:  .8em;
   font-weight: bold;
-  color: #394b67;
-  border-style:dotted;
-  border-width: thin;
+  color: #ff8f00;
   text-decoration: none;
+}
+.tooltipTrigger:hover {
+  text-shadow: 0px 0px 1px #ff8f00;
 }
 
 

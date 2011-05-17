@@ -184,7 +184,7 @@ return false;
 
   var staffResourceRemover = $('.removeStaffResource');
   if(staffResourceRemover.length > 0) {
-    $('.removeStaffResource').click(function() {
+    $('.removeStaffResource').live('click', function() {
       removeStaffResource($(this));
       return false;
     })
@@ -733,7 +733,7 @@ function addStaffResource(element) {
     url: $(element).attr('href') + '?num=' + $('.staffCounter').length,
     async:false,
     complete: function(data) {
-     $(element).parent().prepend(data.responseText + '<br \>'); 
+     $(element).parent().prepend(data.responseText); 
     }
   });
 }
@@ -791,7 +791,12 @@ $(document).ready(function() {
       data: $('#' + $(this).parent().attr('id') + ' :input'),
       success:
         function (data) {
-          showFeedBack(data, $(this), processReturn);
+          if($('#modalReloadable').length) {
+            $('#modalReloadable').replaceWith(data);
+          } else {
+            $('#modalContent').append(data);
+//          showFeedBack(data, $(this), processReturn);
+          }
         }
     });
     return false;
