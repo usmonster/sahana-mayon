@@ -260,7 +260,7 @@ class agScenarioStaffGeneratorHelper extends agSearchHelper
   {
     // build our basic staff search query
     $q = agDoctrineQuery::create()
-      ->select('agStaffResource.id')
+        ->select('agStaffResource.staff_id')
         ->from('agStaffResource agStaffResource')
           ->innerJoin('agStaffResource.agOrganization agOrganization')
           ->innerJoin('agStaffResource.agStaffResourceType agStaffResourceType')

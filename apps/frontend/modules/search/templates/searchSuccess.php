@@ -51,21 +51,15 @@ include_partial('global/list', array( 'sf_request' => $sf_request,
                                       'pager' => $pager,
                                       'order' => $order,
                                       'sort' => $sort,
-                                      'filter' => $filter,
+                                      'status' => $status,
                                       'target_module' => $target_module,
-                                        'caption' => 'Staff List',
-                                      'widgets' => array($statusWidget)
+                                      'caption' => 'Facility Search Results',
+                                      'widgets' => array()
   ));
 }
 
 else{
   include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results));
 }
-//      echo get_partial('search/result', array(
-//        'obj' => $results[$hit->model][$hit->pk],
-//        'pk' => $hit,
-//        'target_module' => $target_module)
-//      );
-
 
 ?>

@@ -672,17 +672,17 @@ function queryConstruct() {
     }
   //ONLY IF text is NOT empty
   })
-  if(out.length == 1){
-    $("#staff_pool_search_search_condition").val(JSON.stringify(out));
-  }
-  else if(out.length ==0){
-    $("#staff_pool_search_search_condition").val('[ ]');
-  }
-  else{
+  if (out.length == 1) {
     var query_c = Array(out.pop());
     if(query_c != undefined){
       $("#staff_pool_search_search_condition").val(JSON.stringify(query_c));
     }
+  }
+  else if(out.length == 0) {
+    $("#staff_pool_search_search_condition").val('[ ]');
+  }
+  else if(out.length > 0) {
+    $("#staff_pool_search_search_condition").val(JSON.stringify(out));
   }
 }
 

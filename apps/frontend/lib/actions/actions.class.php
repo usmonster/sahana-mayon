@@ -22,8 +22,14 @@ class agActions extends sfActions
   {
     parent::__construct($context, $moduleName, $actionName);
     if (empty($this->_searchedModels)) {
-      // TODO define models used in each module for use in next line.
-      $this->_searchedModels = array('agStaff');
+      if ($moduleName == 'facility') {
+        $this->_searchedModels = array('agFacility');
+      }
+      else
+      {
+        // TODO define models used in each module for use in next line.
+        $this->_searchedModels = array('agStaff');
+      }
     }
   }
 
@@ -65,8 +71,8 @@ class agActions extends sfActions
         $resultArray = agListHelper::getStaffList($staff_ids);
       } elseif ($facilityCollection = $searchResult['agFacility']) {
         $this->target_module = 'facility';
-        $staff_ids = $facilityCollection->getKeys(); // toArray();
-        $resultArray = agListHelper::getStaffList($staff_ids);
+        $facility_ids = $facilityCollection->getKeys(); // toArray();
+        $resultArray = agListHelper::getFacilityList($facility_ids);
 
         /** @todo change the above to use a FacilityList return
          * 
