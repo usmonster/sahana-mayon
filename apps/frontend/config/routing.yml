@@ -30,6 +30,10 @@ facility_import:
   url:  /facility/import
   param: { module: facility, action: import }
 
+facility_poll:
+  url:  /facility/poll
+  param: { module: facility, action: poll }
+
 api_facility:
   url:     /facility/facilities.:sf_format
   param:   { module: facility, action: list } 

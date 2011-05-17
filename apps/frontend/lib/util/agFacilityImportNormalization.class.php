@@ -492,7 +492,7 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
                   $workAddressStandardId,
                   $addressElementIds, $conn);
           $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId,
-                                 $workAddressStandardId, $geoInfo, $conn);
+              $workAddressStandardId, $geoInfo, $conn);
         }
 
 
@@ -545,6 +545,11 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
       'totalNewFacilityGroupCount' => $this->totalNewFacilityGroupCount,
       'nonprocessedRecords' => $this->nonprocessedRecords,
       'warningMessages' => $this->warningMessages);
+
+    // sets import state as done
+    // TODO: fire an event instead
+    agImportHelper::setImportState('facility', agImportHelper::IMPORT_FINISHED,
+        array(count($this->processedFacilityIds), $this->totalProcessedRecordCount));
   }
 
   /* Facility */
@@ -1898,11 +1903,11 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
     // Form array to process geo record.
     $latitude = $geoInfo['latitude'];
     $longitude = $geoInfo['longitude'];
-    $addrCoord = array($addressId=>array(array(array($latitude, $longitude)), $this->geoMatchScoreId));
+    $addrCoord = array($addressId => array(array(array($latitude, $longitude)), $this->geoMatchScoreId));
 
     $geoHelper = new AgGeoHelper();
     $count = $geoHelper->setAddressGeo($addrCoord, $this->geoSourceId);
-    
+
     return ($count == 1) ? TRUE : FALSE;
   }
 
