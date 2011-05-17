@@ -85,7 +85,9 @@ abstract class agImportNormalization extends agImportHelper
   protected function setConnections()
   {
     parent::setConnections();
-    $this->_conn[self::CONN_NORMALIZE_WRITE] = Doctrine_Manager::connection(NULL,
+
+    $adapter = Doctrine_Manager::connection()->getDbh();
+    $this->_conn[self::CONN_NORMALIZE_WRITE] = Doctrine_Manager::connection($adapter,
       self::CONN_NORMALIZE_WRITE);
   }
 

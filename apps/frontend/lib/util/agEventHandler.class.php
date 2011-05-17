@@ -122,6 +122,8 @@ class agEventHandler
     // if our log level has been set high enough to capture these events, do so
     if ($this->logLevelValue >= constant('self::EVENT_' . $eventType . '_LEVEL'))
     {
+      $logger = strtolower($eventType);
+      sfContext::getInstance()->getLogger()->$logger($eventMsg);
       $timestamp = microtime(TRUE);
       $this->events[$eventType][] = array('ts' => $timestamp, 'msg' => $eventMsg);
       $this->lastEvent = array('type' => $eventType, 'ts' => $timestamp, 'msg' => $eventMsg);
@@ -135,7 +137,6 @@ class agEventHandler
   public function logDebug($eventMsg)
   {
     $this->logEvent(self::EVENT_DEBUG, $eventMsg);
-    sfContext::getInstance()->getLogger()->debug($eventMsg);
   }
 
   /**
@@ -145,7 +146,6 @@ class agEventHandler
   public function logInfo($eventMsg)
   {
     $this->logEvent(self::EVENT_INFO, $eventMsg);
-    sfContext::getInstance()->getLogger()->info($eventMsg);
   }
 
   /**
@@ -155,7 +155,6 @@ class agEventHandler
   protected function logNotice($eventMsg)
   {
     $this->logEvent(self::EVENT_NOTICE, $eventMsg);
-    sfContext::getInstance()->getLogger()->notice($eventMsg);
   }
 
   /**
@@ -165,7 +164,6 @@ class agEventHandler
   protected function logWarning($eventMsg)
   {
     $this->logEvent(self::EVENT_WARNING, $eventMsg);
-    sfContext::getInstance()->getLogger()->warning($eventMsg);
   }
 
   /**
@@ -177,8 +175,6 @@ class agEventHandler
   {
     $this->logEvent(self::EVENT_ERR, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    sfContext::getInstance()->getLogger()->err($eventMsg);
-
     $this->checkErrThreshold();
   }
 
@@ -191,8 +187,6 @@ class agEventHandler
   {
     $this->logEvent(self::EVENT_CRIT, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    sfContext::getInstance()->getLogger()->crit($eventMsg);
-
     $this->checkErrThreshold();
   }
 
@@ -205,8 +199,6 @@ class agEventHandler
   {
     $this->logEvent(self::EVENT_ALERT, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    sfContext::getInstance()->getLogger()->alert($eventMsg);
-
     $this->checkErrThreshold();
   }
 
@@ -217,13 +209,14 @@ class agEventHandler
    */
   public function logEmerg($eventMsg, $errCount = 1)
   {
-    $this->logEvent(self::EVENT_EMERG, $eventMsg);
+    $emergMsg = 'Application encountered an emergency at: ' . $eventMsg . PHP_EOL .
+      'Dumping entire event log to file.';
+
+    $this->logEvent(self::EVENT_EMERG, $emergMsg);
     $this->errCount = $this->errCount + $errCount;
 
     // dump all of our events to the symfony logger
-    $err = 'Import failed at: ' . $eventMsg . PHP_EOL . 'Dumping event log to file.';
-    sfContext::getInstance()->getLogger()->emerg($err);
-    $this->dumpEventsToFile('err');
+    $this->dumpEventsToFile('emerg');
 
     self::__destruct();
     throw new Exception($eventMsg);
@@ -251,10 +244,10 @@ class agEventHandler
     // iterate through our events log
     foreach($this->events as $level => $events)
     {
-      $eventLog = "Dumping import events of type {$level}:\n";
-      foreach ($this->events as $index => $event)
+      $eventLog = 'Dumping import events of type {' . $level . "}:\n";
+      foreach ($events as $index => $event)
       {
-        $event = sprintf("%s (%s): %s\n", $level, $event['ts'], $event['msg']);
+        $event = sprintf("\t%s (%s): %s\n", $level, $event['ts'], $event['msg']);
         $eventLog = $eventLog . $event;
       }
       sfContext::getInstance()->getLogger()->$logType($eventLog);

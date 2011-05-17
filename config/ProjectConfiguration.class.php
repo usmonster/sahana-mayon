@@ -129,6 +129,10 @@ class ProjectConfiguration extends sfProjectConfiguration
    */
   public function configureDoctrine(Doctrine_Manager $manager)
   {
+    // set up proper null handling
+    $masterConn = $manager->setAttribute(Doctrine_Core::ATTR_ORACLE_NULLS,
+      Doctrine_Core::NULL_NATURAL);
+
     // register hydrators
     $manager->registerHydrator('key_value_pair', 'KeyValuePairHydrator');
     $manager->registerHydrator('key_value_array', 'KeyValueArrayHydrator');
