@@ -53,10 +53,10 @@
 //#            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] . ' (' . $facilityResourceInfo[$facilityResourceId]['facility_code'] . ') : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
 //            $facilityResourceDisplay = $facilityResourceInfo[$facilityResourceId]['facility_name'] .  ' : ' . $facilityResourceInfo[$facilityResourceId]['facility_resource_type'];
 //            echo $facilityResourceDisplay;
-        echo $ag_scenario_shift->agStaffResourceType['staff_resource_type']; ?><br/><?php
-        echo $ag_scenario_shift->getAgScenarioFacilityResource(); ?></td>
-      <td><?php echo $ag_scenario_shift->agShiftStatus['shift_status']; ?><br/><?php
-        echo $ag_scenario_shift->agTask['task']; ?></td>
+        echo $ag_scenario_shift->agStaffResourceType['staff_resource_type'] . ' / '. '<br/>'
+        . $ag_scenario_shift->getAgScenarioFacilityResource(); ?></td>
+      <td><?php echo $ag_scenario_shift->agShiftStatus['shift_status'] . ' / '. '<br/>'
+        . $ag_scenario_shift->agTask['task']; ?></td>
       <td><?php echo $ag_scenario_shift['minimum_staff']; ?> / <?php
         echo $ag_scenario_shift['maximum_staff']; ?></td>
       <td><?php

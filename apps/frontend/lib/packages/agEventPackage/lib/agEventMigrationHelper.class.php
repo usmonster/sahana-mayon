@@ -220,15 +220,13 @@ class agEventMigrationHelper
           ->set('deployment_weight', $scenStfPool->deployment_weight);
       $eventStaff->save();
 
-      $unAvailableStaffStatus = agDoctrineQuery::create()
-          ->select('a.id')
-          ->from('agStaffAllocationStatus a')
-          ->where('a.staff_allocation_status = ?',agGlobal::getParam('default_event_staff_status'));
-
+      $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
+      
       $eventStaffStatus = new agEventStaffStatus();
       $eventStaffStatus->set('event_staff_id', $eventStaff->id)
           ->set('time_stamp', date('Y-m-d H:i:s', time()))
-          ->set('staff_allocation_status_id', $unAvailableStaffStatus);
+          ->set('staff_allocation_status_id', $unAllocatedStaffStatus);
+      $eventStaffStatus->save();
       $eventStaffStatus->free(TRUE);
 
       $eventStaff->free(TRUE);

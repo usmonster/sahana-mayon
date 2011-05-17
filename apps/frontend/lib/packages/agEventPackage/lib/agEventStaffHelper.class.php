@@ -38,6 +38,17 @@ class agEventStaffHelper
     $this->setAddressIds($eventStaffIds);
   }
 
+  
+  public static function returnDefaultEventStaffStatus()
+  {
+          $unAvailableStaffStatus = agDoctrineQuery::create()
+          ->select('a.id')
+          ->from('agStaffAllocationStatus a')
+          ->where('a.staff_allocation_status = ?',agGlobal::getParam('default_event_staff_status'))
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+          return $unAvailableStaffStatus;
+  }
+  
   /**
    * Static method used to instantiate the agAddress class.
    * @param array $addressIds A single dimension array of address ids.

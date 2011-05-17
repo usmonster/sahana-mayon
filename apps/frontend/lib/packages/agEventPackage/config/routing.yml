@@ -90,3 +90,7 @@ event_messaging:
 event_deploystaff:
   url:    /event/:event/deploystaff
   param:  { module: event, action: deploystaff }
+
+event_exportcontacts:
+  url:    /event/:event/exportcontacts
+  param:  { module: event, action: exportcontacts }

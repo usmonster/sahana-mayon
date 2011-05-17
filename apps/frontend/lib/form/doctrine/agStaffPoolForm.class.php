@@ -181,7 +181,11 @@ class agStaffPoolForm extends sfForm
   public function saveSearchForm($values)
   {
     $searchCondition = json_decode($values['search_condition'],true);
-    $this->search_id = agSearchHelper::getSearchId($searchCondition, TRUE, $values['search_name'], agScenarioStaffGeneratorHelper::getDefaultSearchTypeId());
+    $this->search_id = agSearchHelper::getSearchId(
+        $searchCondition,
+        TRUE,
+        $values['search_name'],
+        agScenarioStaffGeneratorHelper::getDefaultSearchTypeId());
   }
 
   /**
