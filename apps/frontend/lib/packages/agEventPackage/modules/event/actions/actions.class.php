@@ -171,7 +171,7 @@ class eventActions extends agActions
                 ->execute()->getFirst();
 
         $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
-        $ag_event_status->setEventStatusTypeId(3); //global param for
+        $ag_event_status->setEventStatusTypeId(agGlobal::getParam('default_event_status_type'));
         $ag_event_status->setEventId($ag_event->getId());
         $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
         $ag_event_status->save();

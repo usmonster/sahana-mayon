@@ -136,3 +136,13 @@ agGlobalParam:
     agHost: localhost
     datapoint: staff_import_geo_source
     value: import
+  default_event_status_type:
+    id: 28
+    agHost: localhost
+    datapoint: default_event_status_type
+    value: Pre-Deployment
+  default_event_staff_status:
+    id: 29
+    agHost: localhost
+    datapoint: default_event_staff_status
+    value: unavailable
