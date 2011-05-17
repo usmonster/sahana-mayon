@@ -1,0 +1,12 @@
+===== Facility Import =====
+
+To import facilities, click the "Import Facilities" link.
+**Facilities are uploaded as part of a scenario.** The related scenario **must** be created before facilities are imported.
+
+==== To Import Facilities ====
+  - Download the [[manual:user:facilities&#facility_import|Facility Specification Sheet]]
+  - Enter information on your facilities.  If you want help, see the Facility Walk-Through's [[manual:user:facilities:import|Facility Import Step]]
+  - Click "Facility Import"
+  - Click "Browse" and enter the location of the import file on your computer
+  - Select the Scenario to upload to
+  - Click "Upload"

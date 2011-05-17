@@ -43,6 +43,8 @@ To manually enter Facilities, begin on the Facility Management Page:
 ==== Facility Import ====
 Imported facilities are entered as part of Scenario creation.  **A scenario must be created before the related facility records and resources can be uploaded.**
 
+{{:manual:user:facilities:facility_import_and_export_template.xls|Facility Import Template}}
+
 **Note:** These steps assume the scenarios you are uploading to have been created or that these are updates to those facilities.  If you are creating the scenarios while uploading see the Scenario Creator Walk-Through.
 
 To import facilities, begin on the Facility Management Page:
