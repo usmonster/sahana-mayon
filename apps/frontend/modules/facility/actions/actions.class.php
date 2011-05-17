@@ -220,13 +220,9 @@ class facilityActions extends agActions
 
   public function executePoll(sfWebRequest $request)
   {
-    $this->getResponse()->setHttpHeader('Content-Type','application/json; charset=utf-8');
-    if (true || $request->isXmlHttpRequest()) {
-      return $this->renderText(json_encode(agImportHelper::getImportState()));
-      //return $this->renderPartial('global/ajax', array('data' => agImportHelper::getImportState()));
-    } else {
-      return sfView::NONE;
-    }
+    $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
+    return $this->renderText(json_encode(agImportHelper::getImportState()));
+    //return $this->renderPartial('global/ajax', array('data' => agImportHelper::getImportState()));
   }
 
   /**
@@ -242,7 +238,9 @@ class facilityActions extends agActions
     $uploadedFile = $_FILES["import"];
     $uploadDir = sfConfig::get('sf_upload_dir') . '/';
 
-    move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"]);
+    if (!move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"])) {
+      return sfView::ERROR;
+    }
     $this->importPath = $uploadDir . $uploadedFile["name"];
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)

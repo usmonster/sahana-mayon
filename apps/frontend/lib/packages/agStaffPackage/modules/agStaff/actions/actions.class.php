@@ -30,12 +30,12 @@ class agStaffActions extends agActions
   public function executeStafftypes(sfWebRequest $request)
   {
     $this->ag_staff_types = Doctrine_Core::getTable('agStaffResourceType')
-        ->createQuery('a')
-        ->execute();
+            ->createQuery('a')
+            ->execute();
 
     $this->staffTypeForm = new PluginagStaffTypeForm();
 
-    if ($request->isMethod(sfRequest::POST)) { 
+    if ($request->isMethod(sfRequest::POST)) {
       $this->staffTypeForm->bind($request->getParameter($this->staffTypeForm->getName()), $request->getFiles($this->staffTypeForm->getName()));
       if ($this->staffTypeForm->isValid()) {
         $this->staffTypeForm->save();
@@ -289,11 +289,11 @@ class agStaffActions extends agActions
   public function executeDeletestaffresource($request)
   {
     $this->forward404unless($request->isXmlHttpRequest());
-    if($request->hasParameter('staffResourceId')) {
+    if ($request->hasParameter('staffResourceId')) {
       $staffResource = agDoctrineQuery::create()
-        ->delete('agStaffResource sr')
-        ->where('id = ?', $request->getParameter('staffResourceId'))
-        ->execute();
+              ->delete('agStaffResource sr')
+              ->where('id = ?', $request->getParameter('staffResourceId'))
+              ->execute();
     }
   }
 
@@ -724,12 +724,13 @@ class agStaffActions extends agActions
     $uploadedFile = $_FILES["import"];
 
     $uploadDir = sfConfig::get('sf_upload_dir') . '/';
-    if (!move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"]))
+    if (!move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"])) {
       return sfView::ERROR;
+    }
     $this->importPath = $uploadDir . $uploadedFile["name"];
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)
-    $this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready'));
+    $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
     // TODO: eventually use this ^^^ to replace this vvv.
 
     $import = new agStaffImportNormalization('tempStaffImport', agEventHandler::EVENT_INFO);

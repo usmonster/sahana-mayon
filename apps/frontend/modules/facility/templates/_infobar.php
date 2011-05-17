@@ -1,7 +1,7 @@
 <div id="infobar" style="border:2px solid blue;">
   Completed in <?php echo $timer; ?> seconds.
   <script type="text/javascript">
-    //TODO: make a partial/action that serves only JSON data directly
+    //TODO: use jQuery, put script in agMain.js
 
     var xmlHttp = new XMLHttpRequest();
     var async = false;
