@@ -346,7 +346,6 @@ input.continueButton, input.deleteButton {
   outline: none;
   color: #848484;
   font-weight: bold;
-  display: block;
 }
 
 .linkText:hover {

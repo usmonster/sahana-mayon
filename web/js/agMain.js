@@ -733,7 +733,8 @@ function addStaffResource(element) {
     url: $(element).attr('href') + '?num=' + $('.staffCounter').length,
     async:false,
     complete: function(data) {
-     $(element).parent().prepend(data.responseText); 
+//     $(element).parent().append(data.responseText);
+      $(element).parent().find('.staffCounter').filter(':last').after(data.responseText);
     }
   });
 }

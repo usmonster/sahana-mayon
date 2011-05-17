@@ -9,18 +9,17 @@ use_javascripts_for_form($form);
     <div class="displayInlineBlock fooTable marginBot10px">
       <br />
       <h3>Staff Information</h3>
-      <div class="infoHolder">
+      <div class="infoHolder" id="staffResourceTypeHolder">
 <?php echo $form['staff']['status'] ?>
-
 <?php foreach($form['staff']['type'] as $staff_type_form): ?>
         <div class="displayInline staffCounter">
           <?php $formId = $staff_type_form->offsetGet('id')->getValue(); ?>
             <a href="<?php echo url_for('staff/deletestaffresource'); ?>" class="ui-icon ui-icon-circle-minus removeStaffResource floatRight" <?php echo ($formId != null ? 'id="staff_resource_' . $staff_type_form->offsetGet('id')->getValue() . '"' : '' ); ?>></a>
     <?php echo $staff_type_form; ?>
-
         </div>
     <?php endforeach; ?>
-      <a href="<?php echo url_for('staff/addstaffresource'); ?>" name="groupStatus" class="linkText addStaffResource" id="staff_id_1">Add Staff Resource</a>
+      <br />
+      <a href="<?php echo url_for('staff/addstaffresource'); ?>" name="groupStatus" class="generalButton addStaffResource" id="staff_id_1">Add Staff Resource</a>
     </div>
     <div class="clearBoth"> </div>
 
@@ -69,7 +68,7 @@ use_javascripts_for_form($form);
       <br />
 
       <div class="address infoHolder staffTable">
-        <h3><?php echo $form['address']->renderLabel(); ?></h3>
+        <h3><?php echo $form['address']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:contact_address&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Address">?</a></h3>
         <div class="clearBoth"> </div>
 <?php echo $form['address']; ?>
       </div>
