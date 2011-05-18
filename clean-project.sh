@@ -36,9 +36,12 @@ $PROJECT_ROOT/symfony cc
 # removes search index files to avoid pollution from previous installs
 sudo rm -rf $PROJECT_ROOT/data/search/*
 
+# removes any leftover uploaded files
+sudo rm -rf $PROJECT_ROOT/data/uploads/*
+
 # resets file and directory perms
-sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
-sudo chmod -cR g+wr $PROJECT_ROOT/data/search/ $PROJECT_ROOT/web/wiki/data/
+sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/data/uploads/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
+sudo chmod -cR g+wr $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/uploads/ $PROJECT_ROOT/web/wiki/data/
 # NOTE: chmod should NOT recurse for these, for security's sake:
 chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/
 #considered harmful?:

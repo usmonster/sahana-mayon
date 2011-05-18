@@ -18,7 +18,7 @@
 class facilityActions extends agActions
 {
 
-  protected $searchedModels = array('agFacility');
+  protected $_searchedModels = array('agFacility');
 
   public function executeSearch(sfWebRequest $request)
   {
@@ -235,13 +235,13 @@ class facilityActions extends agActions
     $this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));
     $this->form = new agImportForm();
 
-    $uploadedFile = $_FILES["import"];
-    $uploadDir = sfConfig::get('sf_upload_dir') . '/';
+    $uploadedFile = $_FILES['import'];
+    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
 
-    if (!move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"])) {
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
       return sfView::ERROR;
     }
-    $this->importPath = $uploadDir . $uploadedFile["name"];
+    $this->importPath = $importPath;
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)
     $this->dispatcher->notify(
@@ -257,6 +257,9 @@ class facilityActions extends agActions
     $this->timer = time();
     $processedToTemp = $import->processImport($this->importPath);
     $this->timer = (time() - $this->timer);
+
+    // removes the file from the server
+    unlink($this->importPath);
 
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;

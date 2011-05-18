@@ -29,7 +29,7 @@ class ProjectConfiguration extends sfProjectConfiguration
       return;
     }
 
-    set_include_path(sfConfig::get('sf_plugins_dir') . '/ajDoctrineLuceneablePlugin/data/vendor' . 
+    set_include_path(sfConfig::get('sf_plugins_dir') . '/ajDoctrineLuceneablePlugin/data/vendor' .
         PATH_SEPARATOR . get_include_path());
     require_once sfConfig::get('sf_plugins_dir') .
         '/ajDoctrineLuceneablePlugin/data/vendor/Zend/Loader/Autoloader.php';
@@ -78,13 +78,16 @@ class ProjectConfiguration extends sfProjectConfiguration
     }
     foreach ($packages as $package) {
       $this->setPluginPath($package,
-                           sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $package);
+          sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . $package);
     }
     //$this->enablePlugins($packages);
   }
 
   public function setup()
   {
+    // redefines the upload directory to be in a secure (i.e. web-inaccessible) location
+    sfConfig::set('sf_upload_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'uploads');
+
     //$this->appendEnabledModules();
     // plugins are considered 'core' elements, akin to apps/frontend/modules, they should not be
     // disabled
@@ -131,7 +134,7 @@ class ProjectConfiguration extends sfProjectConfiguration
   {
     // set up proper null handling
     $masterConn = $manager->setAttribute(Doctrine_Core::ATTR_ORACLE_NULLS,
-      Doctrine_Core::NULL_NATURAL);
+            Doctrine_Core::NULL_NATURAL);
 
     // register hydrators
     $manager->registerHydrator('key_value_pair', 'KeyValuePairHydrator');

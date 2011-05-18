@@ -3,7 +3,7 @@ Emergency Management Software
 
 INFORMATION FOR DEVELOPERS
 
-Updated: 2010-12-02
+Updated: 2011-05-17
 
 GETTING STARTED
 ===============
@@ -28,6 +28,7 @@ The following software is required for running Sahana Agasti:
 * Apache HTTP Server 2.2.14 or later (most current 2.2 preferred)
 * MySQL 5.1.41 or later (most current 5.1 preferred)
 * PHP 5.2.12 or later (most current 5.3 strongly recommended)
+* APC (The Alternative PHP Cache) 3.1.8 or later
 
 Hardware
 --------

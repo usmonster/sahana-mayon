@@ -721,13 +721,13 @@ class agStaffActions extends agActions
 
   public function executeImport(sfWebRequest $request)
   {
-    $uploadedFile = $_FILES["import"];
+    $uploadedFile = $_FILES['import'];
 
-    $uploadDir = sfConfig::get('sf_upload_dir') . '/';
-    if (!move_uploaded_file($uploadedFile["tmp_name"], $uploadDir . $uploadedFile["name"])) {
+    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
       return sfView::ERROR;
     }
-    $this->importPath = $uploadDir . $uploadedFile["name"];
+    $this->importPath = $importPath;
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)
     $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
@@ -735,6 +735,9 @@ class agStaffActions extends agActions
 
     $import = new agStaffImportNormalization('tempStaffImport', agEventHandler::EVENT_INFO);
     $import->processXlsImportFile($this->importPath);
+
+    // removes the file from the server
+    unlink($this->importPath);
 ////    $returned = $import->createTempTable();
 //
 //    $processedToTemp = $import->processImport($this->importPath);

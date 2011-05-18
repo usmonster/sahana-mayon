@@ -22,14 +22,7 @@ class agActions extends sfActions
   {
     parent::__construct($context, $moduleName, $actionName);
     if (empty($this->_searchedModels)) {
-      if ($moduleName == 'facility') {
-        $this->_searchedModels = array('agFacility');
-      }
-      else
-      {
-        // TODO define models used in each module for use in next line.
-        $this->_searchedModels = array('agStaff');
-      }
+      $this->_searchedModels = array('agStaff', 'agFacility');
     }
   }
 
@@ -48,11 +41,10 @@ class agActions extends sfActions
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
 
-    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());    
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     $query = LuceneSearch::find($this->searchquery);
     if ($isFuzzy == TRUE) {
       $query->fuzzy();
-
     }
     $query->in($models);
     $this->results = $query->getRecords();
@@ -80,15 +72,12 @@ class agActions extends sfActions
       } else {
         //$resultArray = array();
       }
-
-
     }
 
     $this->pager->setResultArray($resultArray);
     // $this->pager->setResultArray($staffArray);
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
-
   }
 
   public function getSearchedModels()

@@ -27,7 +27,7 @@ The following software is required to run Sahana Agasti Mayon:
 * Apache HTTP Server 2.2.14 or later (most current 2.2 preferred)
 * MySQL 5.1.41 or later (most current 5.1 preferred)
 * PHP 5.2.12 or later (most current 5.3 strongly recommended)
-* APC 3.1.8 or later
+* APC (The Alternative PHP Cache) 3.1.8 or later
 
 Hardware
 --------
@@ -53,8 +53,8 @@ Apache
    directories, execute the following commands from the project root:
 
   $ sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/search/ \
-      data/sql/ web/wiki/conf/ web/wiki/data/
-  $ chmod -cR g+wr config/ apps/*/config/ data/search/ data/sql/ \
+      data/sql/ data/uploads/ web/wiki/conf/ web/wiki/data/
+  $ chmod -cR g+wr config/ apps/*/config/ data/search/ data/sql/ data/uploads/ \
       web/wiki/conf/ web/wiki/data/
   $ ./symfony project:permissions
 
