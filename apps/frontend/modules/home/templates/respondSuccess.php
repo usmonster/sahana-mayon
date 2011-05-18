@@ -16,11 +16,11 @@
 <?php use_javascript('agVerticalTabs.js');
     use_stylesheet('agVerticalTabs.css'); ?>
 
-    <script type="text/javascript">
+<!--    <script type="text/javascript">
         $(document).ready(function(){
             $("#textExample").verticaltabs();
         });
-    </script>
+    </script>-->
     <div class="verticalslider" id="textExample">
         <ul class="verticalslider_tabs">
         <?php foreach ($ag_events as $ag_event): ?>

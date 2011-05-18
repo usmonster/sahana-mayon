@@ -882,3 +882,8 @@ function appendContent($submitter, data) {
     $('#modalAppend').slideDown(1000);
   });
 }
+
+//used in Respond landing page
+$(document).ready(function(){
+            $("#textExample").verticaltabs();
+        });
