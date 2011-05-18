@@ -3,7 +3,12 @@
 <?php
   $exportUrl = url_for('event/exportcontacts?event=' . urlencode($sf_data->getRaw('event_name'))) ;
   echo link_to('Export Staff Contact List', $exportUrl, array('class' => 'generalButton')); 
-?>
+  //on click of this button, set the div content to 'exporting data, please wait'
+if(isset($exportComplete)){
+  echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';
+}
+  ?>
+<span class="infoText" style="padding-left: 10px;">status of export here</span>
 <br />
 <br />
 <a href="#" class="generalButton">Import Staff Responses</a>

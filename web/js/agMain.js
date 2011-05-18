@@ -421,6 +421,12 @@ function addSlider(
   sliderOptions,
   stepVal
   ) {
+    var sComponent;
+    var hourTextBox = $("#st_" + formNumber + "_" + formRootName + "_hours");
+    var minuteTextBox =  $("#st_" + formNumber + "_" + formRootName + "_minutes");
+    var storedInput = $('#' + stored_field);
+    
+    
   sComponent = sliderObject.slider({
     orientation: "horizontal",
     value: stored_time,
@@ -434,11 +440,28 @@ function addSlider(
       minutes = minutes.toString();
       if(hours.length == 1) hours = '0' + hours;
       if(minutes.length == 1) minutes = '0' + minutes;
-      $("#st_" + formNumber + "_" + formRootName + "_hours").val(hours);
-      $("#st_" + formNumber + "_" + formRootName + "_minutes").val(minutes);
-      $('#' + stored_field).val(ui.value);
+      hourTextBox.val(hours);
+      minuteTextBox.val(minutes);
+      storedInput.val(ui.value);
     }
   });
+    
+    hourTextBox.bind('blur', {sliderObj: sliderObject}, function(e) {
+      var sliderObject = e.data.sliderObj
+      var setValue = Math.abs($(this).val()) * 60 + Math.abs(minuteTextBox.val());
+      sliderObject.slider("value", setValue);
+      storedInput.val(setValue);
+      
+    });
+    
+    minuteTextBox.bind('blur', {sliderObj: sliderObject}, function(e) {
+      var sliderObject = e.data.sliderObj
+      var setValue = Math.abs(hourTextBox.val()) * 60 + Math.abs($(this).val());
+      sliderObject.slider("value", setValue);//handleIndex, thisIndex);
+      storedInput.val(setValue);
+      
+    });
+
   addLabels(sComponent,sliderOptions);
 }
                    

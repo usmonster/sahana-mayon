@@ -227,24 +227,26 @@ class eventActions extends agActions
     $this->setEventBasics($request);
 
     $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
+
     $eventStaff = agDoctrineQuery::create()
-        ->select('es.staff_resource_id, ess.id, sr.id, s.id, p.id')
+        ->select('es.id, ess.id, sr.id, s.id, p.entity_id')
         ->from('agEventStaff es')
         ->addFrom('es.agEventStaffStatus ess')
         ->addFrom('es.agStaffResource sr')
         ->addFrom('sr.agStaff s')
         ->addFrom('s.agPerson p')
-        ->where('es.event_id =?', $this->event_id)
-        ->andWhere('ess.staff_allocation_status_id = ?', $unAllocatedStaffStatus)
+        ->where('ess.staff_allocation_status_id = ?', $unAllocatedStaffStatus)
+        ->andWhere('es.event_id = ?', $this->event_id)
         ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
     //get all event staff that are still marked as unavailable
+    foreach ($eventStaff as $staffRecord) {
+      $eventStaffEntities[$staffRecord['es_id']] = $staffRecord['p_entity_id'];
+    }
 
-    $eventStaffEntites = array_values($inputarray);
-
-    $staffMemebers = agDoctrineQuery::create()
+    $staffMembers = agDoctrineQuery::create()
         ->from('agPerson a')
-        ->whereIn('a.entity_id', $eventStaffEntities);
-
+        ->whereIn('a.entity_id', $eventStaffEntities)
+        ->execute();
 
     $nameTypes = Doctrine::getTable('agPersonNameType')
         ->createQuery('a')
@@ -264,13 +266,17 @@ class eventActions extends agActions
     $row = 2;
     foreach ($staffMembers as $staffMember) {
       $headings = array('ID');
-      $content = array('ID' => $staffMember->event_staff_id);
+      $eventStaffIds = array_keys($eventStaffEntities, $staffMember->entity_id);
+      $eventStaffId = $eventStaffIds[0];
+      //the staffMembers array should be keyed on staff member.  Also, for speed we should directly
+      //access as much of this as possible, or use helpers.
+      $content[$row] = array('ID' => $eventStaffId);
 
       foreach ($nameTypes as $nameType) {
         $headings[] = ucwords($nameType->person_name_type) . ' Name';
         $j = Doctrine::getTable('AgPersonMjAgPersonName')->findByDql('person_id = ? AND person_name_type_id = ?',
                                                                      array($staffMember->id, $nameType->id))->getFirst();
-        $content[ucwords($nameType->person_name_type) . ' Name']
+        $content[$row][ucwords($nameType->person_name_type) . ' Name']
             = ($j ? $j->getAgPersonName()->person_name : '');
       }
       $h = array('Sex', 'Date of Birth', 'Profession', 'Nationality',
@@ -301,7 +307,7 @@ class eventActions extends agActions
         }
         $values[$head] = ucwords($results);
       }
-      $content = array_merge($content, $values);
+      $content[$row] = array_merge($content[$row], $values);
       foreach ($phoneTypes as $phoneType) {
         $headings[] = ucwords($phoneType->phone_contact_type) . ' Phone';
         $j = Doctrine::getTable('AgEntityPhoneContact')
@@ -309,7 +315,7 @@ class eventActions extends agActions
                     'entity_id = ? AND phone_contact_type_id = ?',
                     array($staffMember->entity_id, $phoneType->id)
                 )->getFirst();
-        $content[ucwords($phoneType->phone_contact_type) . ' Phone'] =
+        $content[$row][ucwords($phoneType->phone_contact_type) . ' Phone'] =
             (
             $j ? preg_replace(
                     $j
@@ -334,7 +340,7 @@ class eventActions extends agActions
                 array($staffMember->entity_id, $emailType->id)
             )
             ->getFirst();
-        $content[ucwords($emailType->email_contact_type) . ' Email'] =
+        $content[$row][ucwords($emailType->email_contact_type) . ' Email'] =
             ($j ? $j->getAgEmailContact()->email_contact : '');
       }
 
@@ -372,7 +378,7 @@ class eventActions extends agActions
         } else {
           $tempContainer[ucwords($addressType->address_contact_type) . ' Address'] = null;
         }
-        $content[ucwords($addressType->address_contact_type) . ' Address'] =
+        $content[$row][ucwords($addressType->address_contact_type) . ' Address'] =
             implode("\n", $tempContainer);
       }
       $headings[] = 'Language';
@@ -407,21 +413,13 @@ class eventActions extends agActions
           }
           $i++;
         }
-        $content['Language'] = $languages;
-        $content[ucwords($languageFormat->language_format)] = $competencies;
+        $content[$row]['Language'] = $languages;
+        $content[$row][ucwords($languageFormat->language_format)] = $competencies;
       }
 
-      $content['Created'] = $staffMember->created_at;
-      $content['Updated'] = $staffMember->updated_at;
+      $content[$row]['Created'] = $staffMember->created_at;
+      $content[$row]['Updated'] = $staffMember->updated_at;
       array_push($headings, 'Created', 'Updated');
-      foreach ($headings as $hKey => $heading) {
-        $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, 1)->setValue($heading);
-        foreach ($content as $eKey => $entry) {
-          if ($eKey == $heading) {
-            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $row)->setValue($entry);
-          }
-        }
-      }
       $row++;
     }
 
@@ -437,6 +435,18 @@ class eventActions extends agActions
     // Set default font
     $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Times');
     $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
+    foreach ($headings as $hKey => $heading) {
+      $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, 1)->setValue($heading);
+      foreach ($content as $rowKey => $rowValue) {
+
+        foreach ($rowValue as $eKey => $entry) {
+          if ($eKey == $heading) {
+            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $rowKey)->setValue($entry);
+          }
+        }
+      }
+    }
+
 
     //This should be assigning an auto-width to each column that will fit the largest data in it. For some reason, it's not working.
     $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
@@ -475,6 +485,9 @@ class eventActions extends agActions
     $this->getResponse()->send();
     $objWriter->save('php://output');
     unlink($filePath);
+    
+    $this->exportComplete = sizeof($content);
+    $this->redirect('event/messaging?event=' . urlencode($this->event_name)); //need to pass in event id
   }
 
   /**
