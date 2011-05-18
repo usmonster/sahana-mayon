@@ -1,16 +1,28 @@
+<?php use_stylesheets_for_form($scenarioForm) ?>
+<?php use_javascripts_for_form($scenarioForm) ?>
+
 <h2>Respond</h2>
 <p>From this page you can quickly navigate to Sahana Agasti's emergency response features.
 <br/>Active events may be accessed directly from this page. For access to all events, click the List
   All Events button below.</p>
-<h3>Please select one of the following actions: </h3>
-<table cellspacing="20">
-    <tr>
-        <td><?php echo link_to('Deploy a<br>Scenario', 'scenario/list',
-            array('class' => 'generalButton width140')) ?></td>
-        <td><?php echo link_to('List All<br>Events', 'event/index',
-            array('class' => 'generalButton width140')) ?></td>
-    </tr>
-</table>
+<h3>Please select a scenario to base your event on: </h3>
+<br/>
+
+<form action="<?php echo url_for('event/meta') ?> " method="post" name="scenario">
+  <table>
+    <tfoot>
+      <tr>
+        <td colspan="2">
+          <input type="submit" value="Go to Pre-Deployment" class="continueButton" />
+        </td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <?php echo $scenarioForm ?>
+    </tbody>
+  </table>
+</form>
+<br/> <br/> 
 
 <h3>Active Events:</h3>
 <?php use_javascript('agVerticalTabs.js');
@@ -40,5 +52,9 @@
         <?php endforeach; ?>
             </ul>
         </div>
+<br><br>
+ <?php echo link_to('List All Events', 'event/index',
+            array('class' => 'generalButton')) ?>
+
 <br><br><br><br>
 

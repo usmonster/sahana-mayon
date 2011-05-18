@@ -55,7 +55,26 @@ class homeActions extends agActions
                         WHERE ses.event_id = es.event_id
                         HAVING MAX(ses.time_stamp) = es.time_stamp)')
 ->execute();
-//print_r($this->ag_events);     
+//print_r($this->ag_events);
+
+
+  $this->scenarioForm = new sfForm();
+    $this->scenarioForm->setWidgets(
+        array(
+          'ag_scenario_list' => new sfWidgetFormDoctrineChoice(
+              array('multiple' => false, 'model' => 'agScenario')
+          )
+        )
+    );
+
+
+    $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
+    $this->ag_events = agDoctrineQuery::create()
+        ->select('a.*')
+        ->from('agEvent a')
+        ->execute();
+
+
   }
 
 }
