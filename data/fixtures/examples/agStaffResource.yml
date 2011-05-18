@@ -24,7 +24,7 @@ agStaffResource:
     agStaff: 3
     agStaffResourceType: spe
     agStaffResourceStatus: retired
-    agOrganization: global
+    agOrganization: oem
   alan_staff:
     id: 5
     agStaff: 3

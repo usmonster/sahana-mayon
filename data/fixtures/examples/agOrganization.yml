@@ -5,21 +5,6 @@ agOrganization:
   acs:
     agEntity: 107
     organization: ACS
-  aspca:
-    agEntity: 108
-    organization: ASPCA
-  bowry:
-    agEntity: 109
-    organization: Bowery Residents Committee
-  ccrb:
-    agEntity: 110
-    organization: CCRB
-  cre:
-    agEntity: 111
-    organization: Community Resource Exchange
-  comptroller:
-    agEntity: 112
-    organization: Comptroller
   dcas:
     agEntity: 113
     organization: DCAS
@@ -35,6 +20,76 @@ agOrganization:
   dhs:
     agEntity: 117
     organization: DHS
+  doe:
+    agEntity: 124
+    organization: DOE
+  dof:
+    agEntity: 125
+    organization: DOF
+  dohmh:
+    agEntity: 126
+    organization: DOHMH
+  doitt:
+    agEntity: 128
+    organization: DOITT
+  dop:
+    agEntity: 129
+    organization: DOP
+  dot:
+    agEntity: 130
+    organization: DOT
+  hpd:
+    agEntity: 136
+    organization: HPD
+  hra:
+    agEntity: 137
+    organization: HRA
+  law:
+    agEntity: 139
+    organization: Law
+  mayor:
+    agEntity: 28
+    organization: Mayor's Office
+  nycha:
+    agEntity: 140
+    organization: NYCHA
+  oem:
+    agEntity: 141
+    organization: OEM
+  sca:
+    agEntity: 147
+    organization: SCA
+  volunteer:
+    agEntity: 21
+    organization: volunteer
+
+  aah:
+    agEntity: 22
+    organization: Action Against Hunger
+  arc:
+    agEntity: 23
+    organization: American Red Cross
+  aspca:
+    agEntity: 108
+    organization: ASPCA
+  baps:
+    agEntity: 24
+    organization: BAPS Care International
+  bowry:
+    agEntity: 109
+    organization: Bowery Residents Committee
+  care:
+    agEntity: 25
+    organization: CARE
+  ccrb:
+    agEntity: 110
+    organization: CCRB
+  cre:
+    agEntity: 111
+    organization: Community Resource Exchange
+  comptroller:
+    agEntity: 112
+    organization: Comptroller
   dakc:
     agEntity: 118
     organization: District Attorney Kings County 
@@ -53,30 +108,15 @@ agOrganization:
   doc:
     agEntity: 123
     organization: DOC
-  doe:
-    agEntity: 124
-    organization: DOE
-  dof:
-    agEntity: 125
-    organization: DOF
-  dohmh:
-    agEntity: 126
-    organization: DOHMH
   doi:
     agEntity: 127
     organization: DOI
-  doitt:
-    agEntity: 128
-    organization: DOITT
-  dop:
-    agEntity: 129
-    organization: DOP
-  dot:
-    agEntity: 130
-    organization: DOT
   dpr:
     agEntity: 131
     organization: DPR
+  dri:
+    agEntity: 26
+    organization: Direct Relief International
   dycd:
     agEntity: 132
     organization: DYCD
@@ -89,24 +129,28 @@ agOrganization:
   fisa:
     agEntity: 135
     organization: FISA
-  hpd:
-    agEntity: 136
-    organization: HPD
-  icl:
-    agEntity: 137
-    organization: Institute for Community Living
+  goal:
+    agEntity: 27
+    organization: GOAL
+
+  hfhi:
+    agEntity: 29
+    organization: Habitat for Humanity Internal
+  ifrcarc:
+    agEntity: 30
+    organization: Internal Federation Red Cross and Red Crescent
+  irw:
+    agEntity: 31
+    organization: Islamic Relieve Worldwide
   lpc:
     agEntity: 138
     organization: Landmarks Preservation Commission
-  law:
-    agEntity: 139
-    organization: Law
-  nycha:
-    agEntity: 140
-    organization: NYCHA
-  oem:
-    agEntity: 141
-    organization: OEM
+  nfg:
+    agEntity: 32
+    organization: Network for Good
+  oi:
+    agEntity: 33
+    organization: Oxfam Internal
   olr:
     agEntity: 142
     organization: OLR
@@ -119,78 +163,36 @@ agOrganization:
   parks:
     agEntity: 145
     organization: Parks
-  sbs:
-    agEntity: 146
-    organization: SBS
-  sca:
-    agEntity: 147
-    organization: SCA
-  sccdc:
-    agEntity: 148
-    organization: Social Concern Community Development
-  tlc:
-    agEntity: 149
-    organization: TLC
-  up:
-    agEntity: 150
-    organization: Urban Pathways
-  win:
-    agEntity: 151
-    organization: Women In Need
-  volunteer:
-    agEntity: 21
-    organization: volunteer
-  aah:
-    agEntity: 22
-    organization: Action Against Hunger
-  arc:
-    agEntity: 23
-    organization: American Red Cross
-  baps:
-    agEntity: 24
-    organization: BAPS Care International
-  care:
-    agEntity: 25
-    organization: CARE
-  dri:
-    agEntity: 26
-    organization: Direct Relief International
-  goal:
-    agEntity: 27
-    organization: GOAL
-  global:
-    agEntity: 28
-    organization: Global Giving
-  hfhi:
-    agEntity: 29
-    organization: Habitat for Humanity Internal
-  ifrcarc:
-    agEntity: 30
-    organization: Internal Federation Red Cross and Red Crescent
-  irw:
-    agEntity: 31
-    organization: Islamic Relieve Worldwide
-  nfg:
-    agEntity: 32
-    organization: Network for Good
-  oi:
-    agEntity: 33
-    organization: Oxfam Internal
   ppi:
     agEntity: 34
     organization: People to People International
+  sbs:
+    agEntity: 146
+    organization: SBS
+  sccdc:
+    agEntity: 148
+    organization: Social Concern Community Development
   stc:
     agEntity: 35
     organization: Save the Children
+  tlc:
+    agEntity: 149
+    organization: TLC
   unicef:
     agEntity: 36
     organization: UNICEF
+  up:
+    agEntity: 150
+    organization: Urban Pathways
   uw:
     agEntity: 37
     organization: United Way
   wfp:
     agEntity: 38
     organization: World Food Programme
+  win:
+    agEntity: 151
+    organization: Women In Need
   wv:
     agEntity: 39
     organization: World Vision
