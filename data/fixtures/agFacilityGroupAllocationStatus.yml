@@ -1,30 +1,30 @@
 agFacilityGroupAllocationStatus:
   available:
-    facility_group_allocation_status: available
+    facility_group_allocation_status: Available
     allocatable: 1
     standby: 0
     active: 0
     description: Facility group is waiting for activation.
   standby:
-    facility_group_allocation_status: standby
+    facility_group_allocation_status: Standby
     allocatable: 0
     standby: 1
     active: 0
     description: Facility group is available as a standby.
   active:
-    facility_group_allocation_status: active
+    facility_group_allocation_status: Active
     allocatable: 0
     standby: 0
     active: 1
     description: Facility group is actively in use.
   closed:
-    facility_group_allocation_status: closed
+    facility_group_allocation_status: Closed
     allocatable: 1
     standby: 0
     active: 0
     description: Facility group is closed and no longer active.
   unavailable:
-    facility_group_allocation_status: unavailable
+    facility_group_allocation_status: Unavailable
     allocatable: 0
     standby: 0
     active: 0
