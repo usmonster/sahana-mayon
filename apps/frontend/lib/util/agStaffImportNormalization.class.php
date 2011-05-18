@@ -48,7 +48,7 @@ class agStaffImportNormalization extends agImportNormalization
   public function importStaffFromExcel($importFile)
   {
     // process the excel file and create a temporary table
-    //$this->processXlsImportFile($importFile);
+    $this->processXlsImportFile($importFile);
 
     // start our iterator and initialize our select query
     $this->tempToRaw($this->buildTempSelectQuery());

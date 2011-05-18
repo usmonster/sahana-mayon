@@ -80,7 +80,7 @@ abstract class agImportHelper extends agEventHandler
     }
 
     // drop the temporary table
-    //$this->dropTempTable();
+    $this->dropTempTable();
   }
 
   /**
