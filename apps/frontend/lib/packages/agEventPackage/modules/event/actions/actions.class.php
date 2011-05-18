@@ -24,6 +24,40 @@ class eventActions extends agActions
   protected $searchedModels = array('agEventStaff');
 
   /**
+   * Import Replies is used in event messaging to receive input from a messaging vendor 
+   * in the form of a spreadsheet with responses of Yes or No to messages
+   * @param sfWebRequest $request
+   * @return results
+   */
+  
+  public function executeImportreplies(sfWebRequest $request)
+  {
+     $uploadedFile = $_FILES['import'];
+
+    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+      //return sfView::ERROR;
+    }
+    $this->importPath = $importPath;
+
+    // fires event so listener will process the file (see ProjectConfiguration.class.php)
+    $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
+    // TODO: eventually use this ^^^ to replace this vvv.
+
+    //$import = new agStaffImportNormalization(NULL, agEventHandler::EVENT_DEBUG);
+    //$import->importStaffFromExcel($this->importPath);
+    //$import->processBatch();
+    //$import->processBatch();
+
+    // removes the file from the server
+    //unlink($this->importPath);
+    
+    $this->renderPartial('global/Header');
+
+    unset($import);
+  }
+  
+  /**
    * Displays the index page for the event module.
    *
    * Users will see a list of existing events and be given the option to create
@@ -762,7 +796,38 @@ class eventActions extends agActions
   public function executeActive(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+    $availableStaffStatus = agEventStaffHelper::returnAvailableEventStaffStatus();
 
+    $eventAvailableStaff = agDoctrineQuery::create()
+        ->select('es.id, COUNT(es.id), ess.id, sr.id')
+        ->from('agEventStaff es')
+        ->addFrom('es.agEventStaffStatus ess')
+        ->where('ess.staff_allocation_status_id = ?', $availableStaffStatus)
+        ->andWhere('es.event_id = ?', $this->event_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $this->eventAvailableStaff = $eventAvaibleStaff->es_count;
+    
+    $this->eventStaffPool = agDoctrineQuery::create()
+          ->select('COUNT(es.id)')
+          ->from('agEventStaff es')
+          ->where('es.event_id = ?', $this->event_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->eventStaffPool)) {
+        $this->eventStaffPool = 0;
+      }
+      
+      $this->event_description = agDoctrineQuery::create()
+          ->select('ed.description, e.id')
+          ->from('agEvent e')
+          ->addFrom('e.agEventDescription ed')
+          ->where('e.id = ?', $this->event_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      if (empty($this->event_description)) {
+        $this->event_description = 0;
+      }          
+
+      
+      
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
     //end p-code

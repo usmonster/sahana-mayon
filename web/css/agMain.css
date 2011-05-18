@@ -1643,6 +1643,7 @@ table.available caption {
   font-weight: bold;
   color: #ff8f00;
   text-decoration: none;
+  vertical-align:text-top;
 }
 .tooltipTrigger:hover {
   text-shadow: 0px 0px 1px #ff8f00;

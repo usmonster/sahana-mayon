@@ -146,3 +146,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_event_staff_status
     value: unavailable
+  event_staff_available_status:
+    id: 30
+    agHost: localhost
+    datapoint: event_staff_available_status
+    value: available

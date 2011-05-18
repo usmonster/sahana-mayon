@@ -94,3 +94,7 @@ event_deploystaff:
 event_exportcontacts:
   url:    /event/:event/exportcontacts
   param:  { module: event, action: exportcontacts }
+
+event_importreplies:
+  url:    /event/:event/importreplies
+  param:  { module: event, action: importreplies }

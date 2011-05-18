@@ -39,6 +39,27 @@ class agEventStaffHelper
   }
 
   
+/**
+ * method to retrieve the available status for event staff
+ * @return string from the global parameter table
+ */    
+  public static function returnAvailableEventStaffStatus()
+  {
+          $availableStaffStatus = agDoctrineQuery::create()
+          ->select('a.id')
+          ->from('agStaffAllocationStatus a')
+          ->where('a.staff_allocation_status = ?',agGlobal::getParam('event_staff_available_status'))
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+          return $availableStaffStatus;
+  }
+  
+  
+  
+  
+/**
+ * method to retrieve the default event staff status for new staff
+ * @return string from the global parameter table
+ */  
   public static function returnDefaultEventStaffStatus()
   {
           $unAvailableStaffStatus = agDoctrineQuery::create()

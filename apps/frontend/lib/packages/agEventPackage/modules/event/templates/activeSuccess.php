@@ -41,15 +41,16 @@ if (isset($blackOutFacilities)) {
     <td>
       <a class="buttonText" href="<?php echo url_for('event/meta?event=' . $urlEncodedEventName); ?>">Event Name and Zero Hour</a>
     </td>
-    <td>
-      <div style="font-style:oblique">No statistical data is currently available.</div>
+    <td>Name: <span class="highlightedText"><?php echo $event_name ?></span>
+      <br />Description: <span class="highlightedText"><?php echo $event_description ?></span>
     </td>
   </tr>
   <tr>
     <td>
-      <a class="buttonText" href="<?php echo url_for('event/staff?event=' . $urlEncodedEventName); ?>">Event Staff Management</a></td>
+      <a class="buttonText" href="<?php echo url_for('event/staff?event=' . $urlEncodedEventName); ?>">Event Staff Management</a>
+    </td>
     <td>
-      <div style="font-style:oblique">No statistical data is currently available.</div>
+      Total Staff: <span class="highlightedText"><?php echo $eventStaffPool ?></span>
     </td>
   </tr>
   <tr>
@@ -57,7 +58,8 @@ if (isset($blackOutFacilities)) {
       <a class="buttonText" href="<?php echo url_for('event/messaging?event=' . $urlEncodedEventName); ?>">Event Staff Messaging</a>
     </td>
     <td>
-      <div style="font-style:oblique">No statistical data is currently available.</div>
+      Total Staff: <span class="highlightedText"><?php echo $eventStaffPool ?></span><br /> 
+      Confirmed Staff: <span class="highlightedText"><?php echo $eventAvailableStaff ?></span>
     </td>
   </tr>
   <tr>
