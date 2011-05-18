@@ -399,7 +399,10 @@ $addressIds = agDoctrineQuery::create()
       $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['fieldType'] = $af->getAgFieldType()->getFieldType();
     }
     $addressContainer = new sfForm(array(), array());
-    $addressContainer->widgetSchema->setFormFormatterName('list');
+//    $addressContainer->widgetSchema->setFormFormatterName('list');
+    $addressContainerFormatter = new agWidgetAddressLevelOne($addressContainer->getWidgetSchema());
+    $addressContainer->getWidgetSchema()->addFormFormatter('addConDeco', $addressContainerFormatter);
+    $addressContainer->getWidgetSchema()->setFormFormatterName('addConDeco');
 
     $stateList = Doctrine::getTable('agAddressValue')
             ->createQuery('addressStates')
@@ -421,10 +424,18 @@ $addressIds = agDoctrineQuery::create()
 
     foreach ($this->address_contact_types as $address_contact_type) {
       $addressSubContainer = new sfForm(array(), array());
+      $addressSubContainerFormatter = new agWidgetAddressLevelTwo($addressSubContainer->getWidgetSchema());
+      $addressSubContainer->getWidgetSchema()->addFormFormatter('addConDeco', $addressSubContainerFormatter);
+      $addressSubContainer->getWidgetSchema()->setFormFormatterName('addConDeco');
+//      $addressSubContainer->widgetSchema->setFormFormatterName('list');
       // Sublevel container forms beneath address to hold a complete address for each address type.
       foreach ($addressElements as $ae) {
         foreach ($ae as $addressElement) {
           $valueForm = new agEmbeddedAgAddressValueForm();
+          $valueFormFormatter = new agFormatterAddressLevelThree($valueForm->getWidgetSchema());
+          $valueForm->getWidgetSchema()->addFormFormatter('addConDeco', $valueFormFormatter);
+          $valueForm->getWidgetSchema()->setFormFormatterName('addConDeco');
+//          $valueForm->widgetSchema->setFormFormatterName('list');
           // Lowest level address form, actually holds the data.
           $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]['id']);
           //set the default address_element_id.
@@ -445,8 +456,7 @@ $addressIds = agDoctrineQuery::create()
                     array('class' => 'inputGray')
                 )
             );
-            //key_method sets the option value of the constructed
-            //select list to the value rather than id.
+
             $valueForm->widgetSchema->setLabel('value', false);
             $valueForm->widgetSchema['value']->addOption(
                 'query',

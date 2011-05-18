@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Form formatter for top label
+ * Form formatter for labels
  *
  * PHP Version 5.3
  *
@@ -16,12 +16,12 @@
  * This file is modifed from the symfony package.
  * (c) Fabien Potencier <fabien.potencier@symfony-project.com>
  */
-class agWidgetFormSchemaFormatterInlineTopLabel extends sfWidgetFormSchemaFormatter
+class agFormatterAddressLevelThree extends sfWidgetFormSchemaFormatter
 {
 
   protected
-  $rowFormat = "<div class=\"rowFormat\"><h4>%label%</h4><div>%error%%field%%help%%hidden_fields%</div></div>\n",
-  $errorRowFormat = "<span>\n%errors%<span>\n",
-  $helpFormat = '<br />%help%',
-  $decoratorFormat = "<div class=\"inlinetoplabel\">%content%</div>";
+    $rowFormat       = "%error%%label%\n  %field%%help%\n%hidden_fields%",
+    $errorRowFormat  = "%errors%\n",
+    $helpFormat      = '<br />%help%',
+    $decoratorFormat = "%content%";
 }

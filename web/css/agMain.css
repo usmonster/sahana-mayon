@@ -269,17 +269,21 @@ float:right;
 }
 .deleteButton:active {
   background: #ffc6c6;
+  color: #ff0000;
+  border-color: #ff0000;
 }
 
 .generalButton:hover {
-  background: #e5f7ff;
-  color: #1072F1;
-  border-color: #1072F1;
+  background: #ffe4c1;
+  color: #ff8f00;
+  border-color: #ff8f00;
   cursor: pointer;
 }
 
 .generalButton:active {
-  background: #cdf0ff;
+  background: #ffd8a5;
+  color: #ff8f00;
+  border-color: #ff8f00;
 }
 
 input.continueButton, input.deleteButton {
@@ -325,13 +329,15 @@ input.continueButton, input.deleteButton {
 
 .continueButton:hover, .buttonSmall:hover, .smallLinkButton:hover {
   color: #009931;
-  background: #cdffdd;
   border-color: #009931;
+  background: #cdffdd;
   cursor: pointer;
 }
 
 .continueButton:active, .buttonSmall:active{
   background: #98ffb9;
+  color: #009931;
+  border-color: #009931;
 }
 
 .editButton {
@@ -882,7 +888,7 @@ table.staffTable td.right {
 }
 .address ul li {
   list-style-type: none;
-  display: inline-block;
+/*  display: inline-block;*/
 }
 .infoHolder {
   border: solid 1px #dadada;

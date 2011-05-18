@@ -6,7 +6,7 @@ use_javascripts_for_form($form);
 <?php if (!$form->getObject()->isNew()): ?>
     <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
-    <div class="displayInlineBlock fooTable marginBot10px">
+    <div class="displayInlineBlock marginBot10px">
       <br />
       <h3>Staff Information</h3>
       <div class="infoHolder" id="staffResourceTypeHolder">
@@ -68,17 +68,17 @@ use_javascripts_for_form($form);
 
       <br />
 
-      <div class="address infoHolder staffTable">
+      <div class="infoHolder">
         <h3><?php echo $form['address']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:contact_address&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Address">?</a></h3>
         <div class="clearBoth"> </div>
 <?php echo $form['address']; ?>
       </div>
   </div>
   <br />
-  &nbsp;<a href="<?php echo url_for('staff/list') ?>" class="generalButton">List</a>
-<?php if (!$form->getObject()->isNew()): ?>
-      &nbsp;<?php echo link_to('Delete', 'agStaff/delete?id=' . $form->getObject()->getAgStaff()->getFirst()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')) ?>
-<?php endif; ?>
   <input type="submit" value="Save" class="continueButton" />
   <input type="submit" value="Save and Create Another" name="CreateAnother" class="continueButton" />
+  <a href="<?php echo url_for('staff/list') ?>" class="generalButton">Back to Staff List</a>
+  <?php if (!$form->getObject()->isNew()): ?>
+    <?php echo link_to('Delete', 'agStaff/delete?id=' . $form->getObject()->getAgStaff()->getFirst()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton', 'title' => 'Delete this Staff Person')) ?>
+  <?php endif; ?>
 </form>
