@@ -1,0 +1,5 @@
+===== Organization =====
+
+In Sahana Agasti, Organizations are used to group staff resources for scenario planning and, later, deployment.
+
+Organizations can be municipal departments or non-government organizations that are made available during a response. During scenario creation groups of staff resources can be prioritized by organization affiliation in the staff pool.
