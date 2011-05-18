@@ -35,7 +35,7 @@ agAddressFormat:
     inline_sequence: 2
     pre_delimiter: ''
     post_delimiter: ' '
-    agFieldType: sfWidgetFormInput
+    agFieldType: sfWidgetFormDoctrineChoice 
     is_required: 1
   us_standard_zip5:
     agAddressStandard: us_standard

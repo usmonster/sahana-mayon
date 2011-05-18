@@ -375,6 +375,12 @@ class agPersonForm extends BaseagPersonForm
             ->from('agAddressFormat af, af.agAddressElement ae')
             ->execute();
 
+$addressIds = agDoctrineQuery::create()
+                ->select('address_id')
+                ->from('agEntityAddressContact')
+                ->where('entity_id = ?', $this->getObject()->getEntityId())
+                ->execute(array(), 'single_value_array');
+
     // This loop makes a 3d array of line sequence values (as the first level key),
     // inline sequence values (as the second level key), address element values
     // (as the third level string key), and address element ids (as the third level value).
@@ -384,11 +390,15 @@ class agPersonForm extends BaseagPersonForm
      * refactored to create a new array from values in the agAddressFormat table for each
      * address_standard_id in that table.
      * */
-    foreach ($this->address_formats as $af) {
-      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element] = $af->getAgAddressElement()->id;
-    }
+//    foreach ($this->address_formats as $af) {
+//      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element] = $af->getAgAddressElement()->id;
+//    }
 
-    $addressContainer = new sfForm(array(), array()); // Container form.
+    foreach ($this->address_formats as $af) {
+      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['id'] = $af->getAgAddressElement()->id;
+      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['fieldType'] = $af->getAgFieldType()->getFieldType();
+    }
+    $addressContainer = new sfForm(array(), array());
     $addressContainer->widgetSchema->setFormFormatterName('list');
 
     $stateList = Doctrine::getTable('agAddressValue')
@@ -416,16 +426,13 @@ class agPersonForm extends BaseagPersonForm
         foreach ($ae as $addressElement) {
           $valueForm = new agEmbeddedAgAddressValueForm();
           // Lowest level address form, actually holds the data.
-          $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]);
+          $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]['id']);
           //set the default address_element_id.
           $valueForm->widgetSchema->setLabel('value', false);
           //hide the 'value' field label.
-          // Hardcoded for now, this sets the input type for state to a dropdown list,
-          // populated only by address values that
-          // have address element 4/state as their address_element value.
-          // Refactor to use agAddressFormat's field_type_id in
-          // conjunction with agFieldType.
-          if (key($addressElement) == 'state') {
+          // This sets the widget for the agEmbeddedAddressValueForm. Generally, it will be a text
+          // widget, but in the case of things like state, a select box is preferred.
+          if ($addressElement[key($addressElement)]['fieldType'] == 'sfWidgetFormDoctrineChoice') {
             $valueForm->setWidget(
                 'value',
                 new sfWidgetFormDoctrineChoice(
@@ -453,7 +460,8 @@ class agPersonForm extends BaseagPersonForm
               if ($current->address_contact_type_id == $address_contact_type->id) {
                 $addressValueElement = $current->getId();
 
-                foreach ($current->getAgAddress()->getAgAddressMjAgAddressValue() as $av) {//Get the joins from agAddress to agAddressValue
+                //Get the joins from agAddress to agAddressValue
+                foreach ($current->getAgAddress()->getAgAddressMjAgAddressValue() as $av) {
                   if ($av->getAgAddressValue()->getAgAddressElement()->address_element == key($addressElement)) {
                     $valueForm->setDefault('value', $av->getAgAddressValue()->value);
                     $valueForm->id_holder = $av->getAgAddressValue()->id;

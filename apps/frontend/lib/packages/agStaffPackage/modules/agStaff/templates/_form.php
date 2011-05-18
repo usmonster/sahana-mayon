@@ -28,6 +28,7 @@ use_javascripts_for_form($form);
 <?php echo $form['id'] ?>
       <h4>
         <?php echo $form['name']->renderLabel(); ?>
+        <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:name&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Sex">?</a>
       </h4>
       <div class="clearBoth"> </div>
       <?php echo $form['name'] ?>
@@ -35,7 +36,7 @@ use_javascripts_for_form($form);
       <div class="displayInlineBlock">
         <h4>
           <?php echo $form['ag_sex_list']->renderLabel(); ?>
-           <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:sex&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Sex">?</a>
+          <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:sex&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Sex">?</a>
         </h4>
         <?php echo $form['ag_sex_list'] ?>
       </div>
