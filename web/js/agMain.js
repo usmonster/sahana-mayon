@@ -446,7 +446,7 @@ function addSlider(
     }
   });
     
-    hourTextBox.bind('blur', {sliderObj: sliderObject}, function(e) {
+    hourTextBox.bind('blur change keyup', {sliderObj: sliderObject}, function(e) {
       var sliderObject = e.data.sliderObj
       var setValue = Math.abs($(this).val()) * 60 + Math.abs(minuteTextBox.val());
       sliderObject.slider("value", setValue);
@@ -454,7 +454,7 @@ function addSlider(
       
     });
     
-    minuteTextBox.bind('blur', {sliderObj: sliderObject}, function(e) {
+    minuteTextBox.bind('blur change keyup', {sliderObj: sliderObject}, function(e) {
       var sliderObject = e.data.sliderObj
       var setValue = Math.abs(hourTextBox.val()) * 60 + Math.abs($(this).val());
       sliderObject.slider("value", setValue);//handleIndex, thisIndex);

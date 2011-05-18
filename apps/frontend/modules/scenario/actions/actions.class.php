@@ -1070,6 +1070,9 @@ class scenarioActions extends agActions
             'action' => 'shifts', 'id' => $this->scenario_id, 'shiftid' => $ag_scenario_shift->getId()));
        $this->redirect('scenario/shifts?id=' . $this->scenario_id . '&shiftid=' . $ag_scenario_shift->getId());
         }
+        else{
+          throw new Doctrine_Exception('Invalid data caught, please go back and try again.');
+        }
         //$this->redirect('scenario/shifts?id=' . $this->scenario_id); //need to pass in scenario id
       } elseif ($request->getParameter('Delete')) {
         $ag_scenario_shift = $this->scenarioshiftform->getObject();
