@@ -733,11 +733,16 @@ class agStaffActions extends agActions
     $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
     // TODO: eventually use this ^^^ to replace this vvv.
 
-    $import = new agStaffImportNormalization('tempStaffImport', agEventHandler::EVENT_INFO);
-    $import->processXlsImportFile($this->importPath);
+    $import = new agStaffImportNormalization(NULL, agEventHandler::EVENT_DEBUG);
+    $import->importStaffFromExcel($this->importPath);
+    $import->processBatch();
+    $import->processBatch();
 
     // removes the file from the server
     unlink($this->importPath);
+
+    unset($import);
+
 ////    $returned = $import->createTempTable();
 //
 //    $processedToTemp = $import->processImport($this->importPath);

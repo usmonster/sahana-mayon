@@ -27,8 +27,10 @@ class agStaffImportNormalization extends agImportNormalization
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  public function __construct($tempTable, $logEventLevel = NULL)
+  public function __construct($tempTable = NULL, $logEventLevel = NULL)
   {
+    if (is_null($tempTable)) { $tempTable = 'temp_staff_import'; }
+
     // DO NOT REMOVE
     parent::__construct($tempTable, $logEventLevel);
 
@@ -36,15 +38,17 @@ class agStaffImportNormalization extends agImportNormalization
     $this->setImportComponents();
     $this->tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8');
     $this->importHeaderStrictValidation = TRUE;
+
+    $this->errThreshold = 100;
   }
 
   /**
    * Method to import staff from an excel file.
    */
-  public function importStaffFromExcel()
+  public function importStaffFromExcel($importFile)
   {
-    // @todo call agImportHelper (parent) import excel method
-    // @todo Build temp table here --^
+    // process the excel file and create a temporary table
+    //$this->processXlsImportFile($importFile);
 
     // start our iterator and initialize our select query
     $this->tempToRaw($this->buildTempSelectQuery());
@@ -265,17 +269,22 @@ class agStaffImportNormalization extends agImportNormalization
     // we no longer need this array (used for the ->whereIN)
     unset($rawEntityIds);
 
+    $this->logDebug('{' . count($entities) . '} person entities found in the dataabse.');
+
     //loop foreach $entities member
     foreach ($entities as $entityId => &$entityData)
     {
       // if staff id doesn't exist yet, make it so
       if (is_null($entityData[1]))
       {
+        $this->logDebug('Person ID {' . $entityData[0] . '} exists but is not staff. ' .
+          'Creating staff record.');
         $entityData[1] = $this->createNewRec('agStaff', array('person_id' => $entityData[0]));
       }
     }
     
     // update our row keys array
+    $this->logDebug('Updating primary keys for found entities.');
     foreach ($this->importData as $rowId => &$rowData)
     {
       if (array_key_exists('entity_id', $rowData['_rawData']))
@@ -321,12 +330,16 @@ class agStaffImportNormalization extends agImportNormalization
 
       if ($createNew)
       {
+
+        $this->logDebug('Creating new entity for import rowId {' . $rowId . '}.');
         $fKeys = array();
         $pKeys['entity_id'] = $this->createNewRec('agEntity', $fKeys);
 
+        $this->logDebug('Creating new person for import Entity ID {' . $pKeys['entity_id'] . '}.');
         $fKeys = array('entity_id' => $pKeys['entity_id']);
         $pKeys['person_id'] = $this->createNewRec('agPerson', $fKeys);
 
+        $this->logDebug('Creating new staff for import Person ID {' . $pKeys['person_id'] . '}.');
         $fKeys = array('person_id' => $pKeys['person_id']);
         $pKeys['staff_id'] = $this->createNewRec('agStaff', $fKeys);
       }

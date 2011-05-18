@@ -42,7 +42,7 @@ class agEventHandler
               $logLevelValue,
               $logEventLevel = self::EVENT_ERR;
 
-  protected   $errThreshold = 100;
+  protected   $errThreshold = 1000;
 
   /**
    * This class's constructor.
@@ -225,7 +225,7 @@ class agEventHandler
   /**
    * Method to check against our error threshold and update whether we should continue or not
    */
-  private function checkErrThreshold()
+  public function checkErrThreshold()
   {
     // continue only if our error count is below our error threshold
     if (0 < $this->errThreshold && $this->errThreshold < $this->getErrCount())

@@ -374,12 +374,34 @@ class agPersonNameHelper extends agBulkRecordHelper
    */
   public function getNameIds(array $nameValues)
   {
-    return agDoctrineQuery::create()
-      ->select('pn.person_name')
-          ->addSelect('pn.id')
+    // @todo make this return each name one by one using the cache
+    // ONLY return the ID, not the value because of casing (for comparison)
+
+    $q = agDoctrineQuery::create()
+      ->select('pn.id')
         ->from('agPersonName pn')
-        ->whereIn('pn.person_name', $nameValues)
-        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
+      ->useResultCache(TRUE, 1800);
+
+    $results = array();
+    foreach ($nameValues as $name)
+    {
+      $q->where('pn.person_name = ?',$name);
+
+      $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      // clear the cache if we had no result
+      if (empty($result) || is_null($result))
+      {
+        $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results[$name] = $result;
+      }
+    }
+
+    return $results;
   }
 
   /**
@@ -438,7 +460,7 @@ class agPersonNameHelper extends agBulkRecordHelper
         foreach ($names as $priority => $name)
         {
           // we do this at this early stage so we're always dealing with a post-trimmed value
-          $name = trim($name) ;
+          $name = trim($name);
 
           // add it to our unique contacts array
           $uniqNames[] = $name ;

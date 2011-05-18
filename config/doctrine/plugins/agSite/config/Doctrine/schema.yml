@@ -207,6 +207,8 @@ agAddressValue:
     value:
       type: string(255)
       notnull: true
+  options:
+    collate: utf8_bin
   indexes:
     agAddressValue_addressElementId:
       fields: [address_element_id]

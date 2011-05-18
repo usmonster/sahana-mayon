@@ -61,9 +61,9 @@ abstract class agImportNormalization extends agImportHelper
   protected function resetRawIterData()
   {
     // add additional iter members
-    $this->iterData['fetchPosition'] = 0;
+    $this->iterData['fetchPosition'] = 1;
     $this->iterData['fetchCount'] = 0;
-    $this->iterData['batchPosition'] = 0;
+    $this->iterData['batchPosition'] = 1;
     $this->iterData['batchCount'] = 0;
     $this->iterData['batchSize'] = intval(agGlobal::getParam('default_batch_size'));
   }
@@ -73,9 +73,8 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function resetImportData()
   {
+    $this->logDebug('Removing existing pre-normalization import data.');
     $this->importData = array();
-    $this->importData['_rawData'] = array();
-    $this->importData['primaryKeys'] = array();
   }
 
   /**
@@ -147,6 +146,7 @@ abstract class agImportNormalization extends agImportHelper
   public function concludeImport()
   {
     // @todo write the meta-method to clear an import and return import statistics
+    echo "Import is Done";
   }
 
   public function getFailedRecords()
@@ -209,7 +209,8 @@ abstract class agImportNormalization extends agImportHelper
     $batchSize = $this->iterData['batchSize'];
     $fetchPosition =& $this->iterData['fetchPosition'];
     $batchPosition =& $this->iterData['batchPosition'];
-    $batchStart = ($batchPosition + 1);
+    $batchStart = $fetchPosition;
+    $batchEnd = ($fetchPosition + $batchSize -1);
 
     // get our PDO object
     $pdo = $this->_PDO[$this->tempToRawQueryName];
@@ -219,7 +220,7 @@ abstract class agImportNormalization extends agImportHelper
     $this->logDebug($eventMsg);
 
     // fetch the data up until it ends or we hit our batchsize limit
-    while (($row = $pdo->fetch()) && (($fetchPosition % $batchSize) != 0))
+    while (($row = $pdo->fetch()) && ($fetchPosition <= $batchEnd))
     {
       // modify the record just a little
       $rowId = $row['id'];
@@ -227,6 +228,7 @@ abstract class agImportNormalization extends agImportHelper
       unset($row[$this->successColumn]);
 
       // add it to import data array and iterate our counter
+      $this->logDebug('Fetching row {' . $rowId . '} from temp table into import data.');
       $this->importData[$rowId]['_rawData'] = $row;
       $fetchPosition++;
     }
@@ -247,16 +249,21 @@ abstract class agImportNormalization extends agImportHelper
     $conn = $this->getConnection(self::CONN_TEMP_READ);
 
     // first get a count of what we need from temp
+    $this->logDebug('Fetching the total number of records and establishing batch size.');
     $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
     $ctResults = $this->executePdoQuery($conn, $ctQuery);
-    $this->iterData['fetchCount'] = $ctResults::fetchColumn();
+    $this->iterData['fetchCount'] = $ctResults->fetchColumn();
     
     // now caclulate the number of batches we'll need to process it all
-    $this->iterData['batchCount'] = ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize']));
+    $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
+    $this->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
+      'into {' . $this->iterData['batchCount'] . '} batches of {' . $this->iterData['batchSize'] .
+      '} records per batch.');
 
     // now we can legitimately execute our real search
+    $this->logDebug('Starting initial fetch from temp.');
     $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
-    $this->logDebug("Successfully established the PDO fetch iterator.");
+    $this->logInfo("Successfully established the PDO fetch iterator.");
   }
 
   /**

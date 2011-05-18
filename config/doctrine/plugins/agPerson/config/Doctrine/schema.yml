@@ -493,6 +493,8 @@ agPersonName:
       unique: true
       type: string(64)
       notnull: true
+  options:
+    collate: utf8_bin
   relations:
     agPerson:
       class: agPerson

@@ -676,12 +676,30 @@ class agAddressHelper extends agBulkRecordHelper
   public function getAddressIdsByHash(array $addressHashes)
   {
     $q = agDoctrineQuery::create()
-      ->select('a.address_hash')
-          ->addSelect('a.id')
+      ->select('a.id')
         ->from('agAddress a')
-        ->whereIn('a.address_hash',$addressHashes) ;
+      ->useResultCache(TRUE, 1800);
+    
+    $results = array();
+    foreach ($addressHashes as $hash)
+    {
+      $q->where('a.address_hash = ?',$hash);
 
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
+      $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      // clear the cache if we had no result
+      if (empty($result) || is_null($result))
+      {
+        $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results[$hash] = $result;
+      }
+    }
+
+    return $results;
   }
 
   /**
