@@ -3,6 +3,15 @@
 
 // Start Initializer
 $(document).ready(function() {
+
+  //Used in Respond Landing page for Verticaltabs
+    var verticalTab = $('#textExample');
+    if(verticalTab.length > 0)
+    {
+        $("#textExample").verticaltabs();
+    }
+
+    
   // Used in scenario/resourcetypes
   var containerElement = $('.inlineListWrapper');
   if(containerElement.length > 0) {
@@ -882,8 +891,3 @@ function appendContent($submitter, data) {
     $('#modalAppend').slideDown(1000);
   });
 }
-
-//used in Respond landing page
-$(document).ready(function(){
-            $("#textExample").verticaltabs();
-        });
