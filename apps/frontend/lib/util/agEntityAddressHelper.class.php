@@ -333,11 +333,19 @@ class agEntityAddressHelper extends agEntityContactHelper
     }
 
     // loop through our contacts and pull our unique addresses from the fire
-    foreach ($entityContacts as $entityId => $contacts) {
-      foreach ($contacts as $index => $contact) {
+    foreach ($entityContacts as $entityId => &$contacts)
+    {
+      foreach ($contacts as $index => $contact)
+      {
         // Trim leading and trailing spaces from contact values.
-        foreach ($contact[1][0] as $elem => $val) {
+        foreach ($contact[1][0] as $elem => $val)
+        {
           $contact[1][0][$elem] = trim($val);
+        }
+
+        if (array_key_exists(2, $contact[1]))
+        {
+          $geo = array_pop($contact[1]);
         }
 
         // find the position of the element or return false
@@ -352,17 +360,17 @@ class agEntityAddressHelper extends agEntityContactHelper
           $pos = max(array_keys($uniqContacts));
         }
 
-        // Set geo array to have the same index id as address unique array.
-        if (isset($entityContacts[$entityId][$index][1][2]) &&
-          !empty($entityContacts[$entityId][$index][1][2]))
+        // Set geo array to have the same index id as address unique array
+        if (!empty($geo))
         {
-          $addressGeos[$pos] = $entityContacts[$entityId][$index][1][2];
+          $addressGeos[$pos] = $geo;
         }
 
         // either way we'll have to point the entities back to their addresses
-        $entityContacts[$entityId][$index][1] = $pos;
+        $contacts[$index][1] = $pos;
       }
     }
+    unset($contacts);
 
     // whelp, if we haven't loaded it already, let's get our address helper
     $addressHelper = $this->getAgAddressHelper();

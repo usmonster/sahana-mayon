@@ -343,7 +343,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
     }
 
     // loop through our contacts and pull our unique phone from the fire
-    foreach ($entityContacts as $entityId => $contacts)
+    foreach ($entityContacts as $entityId => &$contacts)
     {
       foreach($contacts as $index => $contact)
       {
@@ -355,7 +355,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
         // further processing.
         if ($contact[1][0] != '' && $enforceStrict)
         {
-          foreach ($phoneValidations as $index => $matchPattern)
+          foreach ($phoneValidations as $pvIdx => $matchPattern)
           {
             if (preg_match($matchPattern, $contact[1][0]))
             {
@@ -379,9 +379,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
               throw new Exception($errMsg);
             }
 
-            if (count($entityContacts[$entityId]) == 1) { unset($entityContacts[$entityId]); }
-            else { unset($entityContacts[$entityId][$index]); }
-
+            unset($contacts[$index]);
             continue;
           }
         }
@@ -403,9 +401,10 @@ class agEntityPhoneHelper extends agEntityContactHelper
         }
 
         // either way we'll have to point the entities back to their phones
-        $entityContacts[$entityId][$index][1] = $pos;
+        $contacts[$index][1] = $pos;
       }
     }
+    unset($contacts);
 
     // here we check our current transaction scope and create a transaction or savepoint
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
@@ -436,7 +435,7 @@ class agEntityPhoneHelper extends agEntityContactHelper
     if (is_null($err))
     {
       // now loop through the contacts again and give them their real values
-      foreach ($entityContacts as $entityId => $contacts)
+      foreach ($entityContacts as $entityId => &$contacts)
       {
         foreach($contacts as $index => $contact)
         {
@@ -444,15 +443,16 @@ class agEntityPhoneHelper extends agEntityContactHelper
           if (array_key_exists($contact[1], $uniqContacts[1]))
           {
             // purge this phone
-            unset($entityContacts[$entityId][$index]);
+            unset($contacts[$index]);
           }
           else
           {
             // otherwise, get our real phoneId
-            $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
+            $contacts[$index][1] = $uniqContacts[0][$contact[1]];
           }
         }
       }
+      unset($contacts);
 
       // we're done with uniqContacts now
       unset($uniqContacts);

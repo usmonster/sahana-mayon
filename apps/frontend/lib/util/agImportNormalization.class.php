@@ -111,15 +111,21 @@ abstract class agImportNormalization extends agImportHelper
     $this->logDebug("Updating temp with batch success data");
 
     // grab our connection object
-    $conn = $this->getConnection('temp_write');
+    $conn = $this->getConnection(self::CONN_TEMP_WRITE);
 
     // create our query statement
-    $q = sprintf('UPDATE %s SET %s=? WHERE id IN(?);', $this->tempTable, $this->successColumn);
-    $this->logNotice("Temp table successfully updated with batch success data");
+    $q = 'UPDATE ' . $this->tempTable .
+      ' SET ' . $this->successColumn . '=?' .
+      ' WHERE ' . $this->idColumn .
+      ' IN(' . implode(',', array_fill(0, count($this->importData), '?')) . ');';
 
-    // mark this batch as failed
-    $this->executePdoQuery($conn, $query,
-      array($success, array_keys($this->importData)));
+    // create our parameter array
+    $qParam = array_merge(array($success), array_keys($this->importData));
+
+    // mark this batch accordingly
+    $this->executePdoQuery($conn, $q, $qParam);
+
+    $this->logNotice("Temp table successfully updated with batch success data");
   }
 
   /**

@@ -804,8 +804,10 @@ class agAddressHelper extends agBulkRecordHelper
                                 $throwOnError = NULL,
                                 Doctrine_Connection $conn = NULL)
   {
+    $uniqAddr = array();
     $addressIdGeo = array();
     $err = NULL;
+    $uniqResults = array(array(), array());
     $results = array(array(), array());
 
     // get some defaults if not explicitly passed
@@ -866,14 +868,6 @@ class agAddressHelper extends agBulkRecordHelper
               throw new Exception($errMsg) ;
             }
           }
-          else
-          {
-            // Trim leading and trailing spaces from contact values.
-            foreach ($components as $elem => $val)
-            {
-              $addresses[$index][0][$elem] = trim($val);
-            }
-          }
 
           // release the array!
           unset($addrComponents[$index]) ;
@@ -886,16 +880,28 @@ class agAddressHelper extends agBulkRecordHelper
       // return the original standard
       if ($origStandard != $this->_returnStandardId) { $this->setReturnStandard($origStandard) ; }
     }
-    else {
+
+    foreach ($addresses as $index => &$components)
+    {
       // Trim address values.
-      foreach ($addresses as $index => $components)
+      foreach ($components[0] as $elem => $val)
       {
-        foreach ($components[0] as $elem => $val)
-        {
-          $addresses[$index][0][$elem] = trim($val);
-        }
+        $components[0][$elem] = trim($val);
       }
+
+      // see if the addresses components already exist in our uniq array
+      $pos = array_search($components, $uniqAddr);
+      if ($pos === FALSE)
+      {
+        // if not, add them and get the newly added index
+        $uniqAddr[] = $components;
+        $pos = max(array_keys($uniqAddr));
+      }
+
+      // replace the components array with the new index
+      $components = $pos;
     }
+    unset($components);
 
     // here we check our current transaction scope and create a transaction or savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
@@ -911,7 +917,7 @@ class agAddressHelper extends agBulkRecordHelper
     try
     {
       // either way, we eventually pass the 'cleared' addresses to our setter
-      $results = $this->_setAddresses($addresses, $throwOnError, $conn) ;
+      $uniqResults = $this->_setAddresses($uniqAddr, $throwOnError, $conn) ;
     }
     catch(Exception $e)
     {
@@ -922,11 +928,28 @@ class agAddressHelper extends agBulkRecordHelper
       $err = $e ;
     }
 
+    // release some resources
+    unset($uniqAddr);
+
+    // now de-unique the addresses and re-attach the original index
+    foreach ($addresses as $index => $value)
+    {
+      if (array_key_exists($value, $uniqResults[0]))
+      {
+        $results[0][$index] = $uniqResults[0][$value];
+        unset($addresses[$index]);
+      }
+      elseif (in_array($value, $uniqResults))
+      {
+        $results[1][] = $index;
+        unset($addresses[$index]);
+      }
+    }
+    unset($addresses);
+    unset($uniqResults);
+
     if (is_null($err))
     {
-      // CALLERS OF THE GEOCODE WOULD LIVE HERE AND USE $results
-      // @todo wrap $results & geocode in try/catch to keep them synced together
-
       // Resetting an address geo array with address id as index.
       foreach ($results[0] as $index => $addrId)
       {
@@ -1237,12 +1260,24 @@ class agAddressHelper extends agBulkRecordHelper
         }
       }
 
+      if (is_null($err))
+      {
+        try
+        {
+          // most excellent! no errors at all, so we commit... finally!
+          if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+        }
+        catch(Exception $e)
+        {
+          $errMsg = 'Failed to commit new address identified by hash ' . $components[2] .
+            ' to database.';
+          $err = $e;
+        }
+      }
+
       // if there's been an error, at any point, we rollback any transactions for this address
       if (is_null($err))
       {
-        // most excellent! no errors at all, so we commit... finally!
-       if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
-
         // commit our results to our final results array
         $results[$index] = $addrId ;
 

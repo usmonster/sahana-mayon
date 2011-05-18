@@ -177,7 +177,7 @@ class agStaffImportNormalization extends agImportNormalization
 
   /**
    * Method to dynamically build a (mostly) static tempSelectQuery
-   * @return <type>
+   * @return string Returns a string query
    */
   protected function buildTempSelectQuery()
   {
