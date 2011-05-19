@@ -787,8 +787,8 @@ class eventActions extends agActions
         ->addFrom('es.agEventStaffStatus ess')
         ->where('ess.staff_allocation_status_id = ?', $availableStaffStatus)
         ->andWhere('es.event_id = ?', $this->event_id)
-        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-    $this->eventAvailableStaff = $eventAvaibleStaff->es_count;
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    $this->eventAvailableStaff = $eventAvailableStaff['es_COUNT'];
     
     $this->eventStaffPool = agDoctrineQuery::create()
           ->select('COUNT(es.id)')
