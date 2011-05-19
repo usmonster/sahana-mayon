@@ -380,6 +380,7 @@ abstract class agImportNormalization extends agImportHelper
     $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
 
     // instantiate the new record object
+    //TODO: fix this so indexing doesn't happen
     $newRec = new $recordName();
 
     // loop through our keys and set values

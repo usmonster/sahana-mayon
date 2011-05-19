@@ -260,6 +260,13 @@ class agStaffActions extends agActions
     //end p-code
   }
 
+  public function executePoll(sfWebRequest $request)
+  {
+    $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
+    return $this->renderText(json_encode(array()/*agImportHelper::getImportState()*/));
+    //return $this->renderPartial('global/ajax', array('data' => agImportHelper::getImportState()));
+  }
+
   /**
    * Creates a blank agPerson form to create and save a new agPerson/staff-member
    *

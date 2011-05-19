@@ -221,7 +221,7 @@ class facilityActions extends agActions
   public function executePoll(sfWebRequest $request)
   {
     $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
-    return $this->renderText(json_encode(agImportHelper::getImportState()));
+    return $this->renderText(json_encode(array()/*agImportHelper::getImportState()*/));
     //return $this->renderPartial('global/ajax', array('data' => agImportHelper::getImportState()));
   }
 
@@ -288,6 +288,8 @@ class facilityActions extends agActions
     $agLuceneIndex = new agLuceneIndex(array('agFacility'));
     $indexResult = $agLuceneIndex->indexAll();
     $this->timer = (time() - $this->timer);
+
+    $this->renderPartial('global/Header');
 
 //      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
 //      $dispatcher = sfContext::getInstance()->getEventDispatcher();

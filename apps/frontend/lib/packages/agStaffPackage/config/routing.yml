@@ -25,6 +25,9 @@ staff_deletestaffresource:
 staff_type:
   url: /staff/stafftypes
   param: { module: agStaff, action: stafftypes }
+staff_poll:
+  url:  /staff/poll
+  param: { module: agStaff, action: poll }
 
 staff:
   url: /staff/:action/*

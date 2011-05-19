@@ -15,7 +15,7 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
-class agFacilityImportNormalization //TODO: extends agImportNormalization
+class agFacilityImportNormalization //extends agImportNormalization
 {
 
   public $summary = array();
@@ -548,8 +548,8 @@ class agFacilityImportNormalization //TODO: extends agImportNormalization
 
     // sets import state as done
     // TODO: fire an event instead
-    agImportHelper::setImportState('facility', agImportHelper::IMPORT_FINISHED,
-        array(count($this->processedFacilityIds), $this->totalProcessedRecordCount));
+//    agImportHelper::setImportState('facility', agImportHelper::IMPORT_FINISHED,
+//        array(count($this->processedFacilityIds), $this->totalProcessedRecordCount));
   }
 
   /* Facility */
