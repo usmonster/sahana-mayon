@@ -36,7 +36,7 @@ class eventActions extends agActions
 
     $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
     if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-      //return sfView::ERROR;
+      return sfView::ERROR;
     }
     $this->importPath = $importPath;
 
@@ -44,7 +44,11 @@ class eventActions extends agActions
     $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
     // TODO: eventually use this ^^^ to replace this vvv.
 
-    //$import = new agStaffImportNormalization(NULL, agEventHandler::EVENT_DEBUG);
+    //2 = inactive
+    //1 = available
+    //no response = no change.
+    // TODO: make this class
+    //$import = new agMessageReponseHandler(NULL, agEventHandler::EVENT_DEBUG);
     //$import->importStaffFromExcel($this->importPath);
     //$import->processBatch();
     //$import->processBatch();
@@ -52,8 +56,6 @@ class eventActions extends agActions
     // removes the file from the server
     //unlink($this->importPath);
     
-    $this->renderPartial('global/Header');
-
     unset($import);
   }
   
@@ -264,7 +266,7 @@ class eventActions extends agActions
     $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
 
     $eventStaffs = agDoctrineQuery::create()
-        ->select('es.id, ess.id, sr.id, s.id, p.id, p.entity_id')
+        ->select('es.id, p.id, p.entity_id')
         ->from('agEventStaff es')
         ->addFrom('es.agEventStaffStatus ess')
         ->addFrom('es.agStaffResource sr')
@@ -339,42 +341,6 @@ class eventActions extends agActions
       'BB PIN LABEL 1',
       'BB PIN 1'
     );
-//    $columnHeaders = array(
-//      1  => 'UNIQUE ID',
-//      2  => 'LAST NAME',
-//      3  => 'FIRST NAME',
-//      4  => 'MIDDLE INITIAL',
-//      5  => 'PIN Code',
-//      6  => 'GROUP ID',
-//      7  => 'GROUP DESCRIPTION',
-//      8  => 'ADDRESS 1',
-//      9  => 'ADDRESS 2',
-//      10 => 'CITY',
-//      11 => 'STATE/PROVINCE',
-//      12 => 'ZIP/POSTAL CODE',
-//      13 => 'COUNTRY',
-//      14 => 'TIME ZONE',
-//      15 => 'CUSTOM LABEL',
-//      16 => 'CUSTOM VALUE',
-//      17 => 'PHONE LABEL 1',
-//      18 => 'PHONE COUNTRY CODE 1',
-//      19 => 'PHONE 1',
-//      20 => 'PHONE EXTENSION 1',
-//      21 => 'CASCADE 1',
-//      22 => 'PHONE LABEL 2',
-//      23 => 'PHONE COUNTRY CODE 2',
-//      24 => 'PHONE 2',
-//      25 => 'PHONE EXTENSION 2',
-//      26 => 'CASCADE 2',
-//      27 => 'EMAIL LABEL 1',
-//      28 => 'EMAIL 1',
-//      29 => 'EMAIL LABEL 2',
-//      30 => 'EMAIL 2',
-//      31 => 'SMS LABEL 1',
-//      32 => 'SMS 1',
-//      33 => 'BB PIN LABEL 1',
-//      34 => 'BB PIN 1'
-//    );
 
     // Mapping column headers.
     $nameMapping = array(

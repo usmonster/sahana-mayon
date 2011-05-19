@@ -55,7 +55,12 @@ class agActions extends sfActions
     $this->pager = new agArrayPager(null, 10);
 
     $searchResult = $query->getRecords(); //agStaff should be $models
+    
+    // TODO
+    //a) we can return the results hydrated as scalar
+    // (only get the PK's[person,entity,staff,facility,etc])
     //if($models == 'agStaff'){
+
     if (count($searchResult) > 0) {
       if (isset($searchResult['agStaff'])) {
         $this->target_module = 'staff';

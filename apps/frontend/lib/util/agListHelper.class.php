@@ -8,6 +8,7 @@ class agListHelper
   public static function getStaffList($staff_ids = null, $staffStatus = 'active', 
                                        $sort = null, $order = null)
   {
+    //TODO set limit and offset, default to null
     
     $person_array = array();
     $entity_array = array();
