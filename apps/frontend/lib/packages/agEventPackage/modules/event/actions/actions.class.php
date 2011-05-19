@@ -259,6 +259,7 @@ class eventActions extends agActions
   public function executeExportcontacts(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+    $this->info = array();
 
     $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
 
@@ -277,7 +278,6 @@ class eventActions extends agActions
     $entity_array = array();
     //get all event staff that are still marked as unavailable
     foreach ($eventStaffs as $staffRecord) {
-//      $eventStaffEntities[$staffRecord['es_id']] = $staffRecord['p_entity_id'];
       $person_array[$staffRecord['es_id']] = $staffRecord['p_id'];
       $entity_array[$staffRecord['es_id']] = $staffRecord['p_entity_id'];
     }
@@ -292,155 +292,307 @@ class eventActions extends agActions
     $person_addresses = $addressHelper->getEntityAddress($entity_array, TRUE, TRUE, agAddressHelper::ADDR_GET_TYPE);
     unset($addressHelper);
 
+    $defaultPhoneCountryCodeUSA = agGlobal::getParam('default_phone_country_code_usa');
     $phoneHelper = new agEntityPhoneHelper();
-    $person_phones = $phoneHelper->getEntityPhone($entity_array, TRUE, FALSE, agPhoneHelper::PHN_GET_COMPONENT_SEGMENTS);
+    $person_phones = $phoneHelper->getEntityPhone($entity_array, TRUE, FALSE, agPhoneHelper::PHN_GET_COMPONENT);
     unset($phoneHelpers);
 
     $emailHelper = new agEntityEmailHelper();
     $person_emails = $emailHelper->getEntityEmail($entity_array, TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
     unset($emailHelper);
 
-    $addressHeaders = array(
-      'ADDRESS 1' => 'line 1',
-      'ADDRESS 2' => 'line 2',
-      'CITY' => 'city',
-      'STATE/PROVINCE' => 'state',
-      'ZIP/POSTAL CODE' => 'zip5',
-      'COUNTRY' => 'country'
+    // The order of the column header in the array coinsides with the ordinal of the column
+    // placement of the export file.
+    $columnHeaders = array(
+      'UNIQUE ID',
+      'LAST NAME',
+      'FIRST NAME',
+      'MIDDLE INITIAL',
+      'PIN Code',
+      'GROUP ID',
+      'GROUP DESCRIPTION',
+      'ADDRESS 1',
+      'ADDRESS 2',
+      'CITY',
+      'STATE/PROVINCE',
+      'ZIP/POSTAL CODE',
+      'COUNTRY',
+      'TIME ZONE',
+      'CUSTOM LABEL',
+      'CUSTOM VALUE',
+      'PHONE LABEL 1',
+      'PHONE COUNTRY CODE 1',
+      'PHONE 1',
+      'PHONE EXTENSION 1',
+      'CASCADE 1',
+      'PHONE LABEL 2',
+      'PHONE COUNTRY CODE 2',
+      'PHONE 2',
+      'PHONE EXTENSION 2',
+      'CASCADE 2',
+      'EMAIL LABEL 1',
+      'EMAIL 1',
+      'EMAIL LABEL 2',
+      'EMAIL 2',
+      'SMS LABEL 1',
+      'SMS 1',
+      'BB PIN LABEL 1',
+      'BB PIN 1'
+    );
+//    $columnHeaders = array(
+//      1  => 'UNIQUE ID',
+//      2  => 'LAST NAME',
+//      3  => 'FIRST NAME',
+//      4  => 'MIDDLE INITIAL',
+//      5  => 'PIN Code',
+//      6  => 'GROUP ID',
+//      7  => 'GROUP DESCRIPTION',
+//      8  => 'ADDRESS 1',
+//      9  => 'ADDRESS 2',
+//      10 => 'CITY',
+//      11 => 'STATE/PROVINCE',
+//      12 => 'ZIP/POSTAL CODE',
+//      13 => 'COUNTRY',
+//      14 => 'TIME ZONE',
+//      15 => 'CUSTOM LABEL',
+//      16 => 'CUSTOM VALUE',
+//      17 => 'PHONE LABEL 1',
+//      18 => 'PHONE COUNTRY CODE 1',
+//      19 => 'PHONE 1',
+//      20 => 'PHONE EXTENSION 1',
+//      21 => 'CASCADE 1',
+//      22 => 'PHONE LABEL 2',
+//      23 => 'PHONE COUNTRY CODE 2',
+//      24 => 'PHONE 2',
+//      25 => 'PHONE EXTENSION 2',
+//      26 => 'CASCADE 2',
+//      27 => 'EMAIL LABEL 1',
+//      28 => 'EMAIL 1',
+//      29 => 'EMAIL LABEL 2',
+//      30 => 'EMAIL 2',
+//      31 => 'SMS LABEL 1',
+//      32 => 'SMS 1',
+//      33 => 'BB PIN LABEL 1',
+//      34 => 'BB PIN 1'
+//    );
+
+    // Mapping column headers.
+    $nameMapping = array(
+      'family' => 'LAST NAME',
+      'given' => 'FIRST NAME',
+      'middle' => 'MIDDLE INITIAL'
     );
 
-    $phoneHeaders = array(
-      'PHONE LABEL' => 'contact type',
-      'PHONE COUNTRY CODE' => 'area code',
-      'PHONE' => 'phone',
-      'PHONE EXTENTION' => 'extension'
+    $addressMapping = array(
+      'line 1' => 'ADDRESS 1',
+      'line 2' => 'ADDRESS 2',
+      'city' => 'CITY',
+      'state' => 'STATE/PROVINCE',
+      'zip5' => 'ZIP/POSTAL CODE',
+      'country' => 'COUNTRY'
     );
 
-    $emailHeaders = array('EMAIL LABEL', 'EMAIL');
+    $phoneMapping = array(
+      'contact type' => 'PHONE LABEL',
+      'country code' => 'PHONE COUNTRY CODE',
+      'phone' => 'PHONE',
+      'extension' => 'PHONE EXTENSION'
+    );
 
-    $row = 2;
-    $content = array();
+    $emailMapping = array(
+      'contact type' => 'EMAIL LABEL',
+      'email' => 'EMAIL'
+    );
+
+    // Here, we're only specifying the ones we care for in this export.  Add to the array as needed.
+    $characterLimit = array(
+      'FIRST NAME' => 30,
+      'LAST NAME' => 30,
+      'MIDDLE INITIAL' => 1,
+      'ADDRESS 1' => 60,
+      'ADDRESS 2' => 60,
+      'CITY' => 30,
+      'STATE/PROVINCE' => 80,
+      'ZIP/POSTAL CODE' =>10,
+      'COUNTRY' => 128,
+      'PHONE LABEL' => 20,
+      'PHONE COUNTRY CODE' => 5,
+      'PHONE' => 14,
+      'PHONE EXTENSION' => 8,
+      'EMAIL LABEL' => 20,
+      'EMAIL' => 60
+    );
+
+    // Create first row of content with column header.
+    $row = 1;
+    $content[$row++] = array_combine($columnHeaders, $columnHeaders);
+    $NUMBER_OF_CONTACT_TYPE = 2;
     foreach ($eventStaffs AS $staff)
     {
-      $lastName = (isset($person_names[$staff['p_id']]['family'])) ? $person_names[$staff['p_id']]['family'] : NULL;
-      $firstName = (isset($person_names[$staff['p_id']]['given'])) ? $person_names[$staff['p_id']]['given'] : NULL;
-      $middleInitial = (isset($person_names[$staff['p_id']]['middle'])) ? substr($person_names[$staff['p_id']]['given'], 0, 1) : NULL;
+      $logMsg = array();
+      // Initialize content with NULL value.  Later, we'll populate the columns with real data only
+      // if data is provided.
+      foreach ($columnHeaders AS $idx => $header)
+      {
+        $staffData[$header] = NULL;
+      }
 
-      // Build person's address by component.  Assign NULL if no value saved for the component.
-      $address = array();
+      $staffData['UNIQUE ID'] = $staff['es_id'];
+
+      // Assign person's name.
+      foreach ($nameMapping AS $nameLabel => $hdrName)
+      {
+        if (isset($person_names[$staff['p_id']][$nameLabel]))
+        {
+          $charLimit = $characterLimit[$nameMapping[$nameLabel]];
+          $personName = substr($person_names[$staff['p_id']][$nameLabel], 0, $charLimit);
+          $staffData[$hdrName] = $personName;
+          if (strlen($personName) > $charLimit)
+          {
+            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s', $hdrName,
+                                                                   $charLimit, $personName);
+          }
+        }
+      }
+
+      // Assign person's address by component.
       if (isset($person_addresses[$staff['p_entity_id']]))
       {
         $addressComponents = $person_addresses[$staff['p_entity_id']][1];
         foreach($addressComponents AS $element => $value)
         {
-          $address[$element] = $value;
+          if (array_key_exists($element, $addressMapping))
+          {
+            $charLimit = $characterLimit[$addressMapping[$element]];
+            $address = substr($value, 0, $charLimit);
+            $staffData[$addressMapping[$element]] = $address;
+            if (strLen($value) > $charLimit)
+            {
+              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+                                              $addressMapping[$element], $charLimit, $address);
+            }
+          }
         }
       }
-      $emptyAddressComponent = array_diff($addressHeaders, array_keys($address));
-      foreach ($emptyAddressComponent AS $k => $val)
-      {
-        $address[$val] = NULL;
-      }
-      unset($addressComponents, $element, $value, $emptyAddressComponents, $k, $val);
 
-      $phones = array();
-      $NUMBER_OF_CONTACT_TYPE = 2;
-      // Build person's phone by component.  Assign NULL if no value saved for the component.
+      // Build person's phone by component.
       $cnt = 0;
       if (isset($person_phones[$staff['p_entity_id']]))
       {
         foreach ($person_phones[$staff['p_entity_id']] AS $priority => $contact)
         {
-          $phones['PHONE LABEL ' . ++$cnt] = $contact[0];
-          $phones['PHONE COUNTRY CODE ' . $cnt] = $contact[1][$phoneHeaders['PHONE COUNTRY CODE']];
-          $phones['PHONE ' . $cnt] = $contact[1][$phoneHeaders['PHONE']];
-          if (is_numeric($contact[1][$phoneHeaders['PHONE EXTENTION']]))
+          // Keep track of how many contacts we are required to provide.
+          $cnt++;
+
+          // Build phone column headers with a counter appending to the end of each component of
+          // the phone column headers.
+          foreach ($phoneMapping AS $phoneLabel => $hdrPhone)
           {
-            $phones['PHONE EXTENTION ' . $cnt] = $contact[1][$phoneHeaders['PHONE EXTENTION']];
+            $newPhoneHeader[$phoneLabel] = $hdrPhone . ' ' . $cnt;
+          }
+
+          // Currently, we are using a default value since there is no table in the db storing
+          // phone country code.
+          // @TODO Update code to collect phone country code once the db is implemented to handle
+          // country code for phone.
+          $staffData[$newPhoneHeader['country code']] = $defaultPhoneCountryCodeUSA;
+
+          $charLimit = $characterLimit[$phoneMapping['contact type']];
+          $phoneType = substr($contact[0], 0, $charLimit);
+          $staffData[$newPhoneHeader['contact type']] = $phoneType;
+          if (strLen($contact[0]) > $charLimit)
+          {
+            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+                                         $newPhoneHeader['country code'], $charLimit, $contact[0]);
+          }
+
+          // Check for extension.  The 'x' in the phone value indicates an extension number
+          // following.
+          $fullPhone = $contact[1];
+          $extIdxPos = stripos($fullPhone, 'x');
+          if ($extIdxPos === FALSE)
+          {
+            // Phone is assumed to have no extension so just process phone as is.
+            $charLimit = $characterLimit[$phoneMapping['phone']];
+            $staffData[$newPhoneHeader['phone']] = substr($fullPhone, 0, $charLimit);
+            if (strLen($fullPhone) > $charLimit)
+            {
+              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+                                              $newPhoneHeader['phone'], $charLimit, $fullPhone);
+            }
           }
           else
           {
-            $phones['PHONE EXTENTION ' . $cnt] = NULL;
+            // Grab just the phone number plus areacode.
+            $charLimit = $characterLimit[$phoneMapping['phone']];
+            $phone = substr($fullPhone, 0, $extIdxPos);
+            $staffData[$newPhoneHeader['phone']] = substr($phone, 0, $charLimit);
+            if (strLen($phone) > $charLimit)
+            {
+              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+                                              $newPhoneHeader['phone'], $charLimit, $phone);
+            }
+
+            // Grab only the extension number.
+            $extension = substr($fullPhone, $extIdxPos+1);
+            $charLimit = $characterLimit[$phoneMapping['extension']];
+            $staffData[$newPhoneHeader['extension']] = substr($extension, 0, $charLimit);
+            if (strLen($extension) > $charLimit)
+            {
+              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+                                              $newPhoneHeader['extension'], $charLimit, $extension);
+            }
           }
 
           // Once we reached the number of contacts required, we don't need to capture the rest.
           if ($cnt == $NUMBER_OF_CONTACT_TYPE)
-          {
-            break;
-          }
-        }
-      }
-      unset($priority, $contact);
-
-      // Assign NULL if person has less than $NUMBER_OF_CONTACT_TYPE phone numbers.
-      while ($cnt < $NUMBER_OF_CONTACT_TYPE)
-      {
-        $cnt++;
-        foreach ($phoneHeaders AS $hdr => $mapping)
-        {
-          $phones[$hdr . ' ' . $cnt] = NULL;
+          { break; }
         }
       }
 
-      $emails = array();
-      // Build person's email.  Assign NULL if no value saved for the component.
+      // Build person's email.
       $cnt = 0;
       if (isset($person_emails[$staff['p_entity_id']]))
       {
         foreach ($person_emails[$staff['p_entity_id']] AS $priority => $contact)
         {
-          $emails['EMAIL LABEL ' . ++$cnt] = $contact[0];
-          $emails['EMAIL ' . $cnt] = $contact[1];
+          // Keep track of how many contacts we are required to provide.
+          $cnt++;
+
+          // Build email column headers with a counter appending to the end of each component of
+          // the email column headers.
+          foreach ($emailMapping AS $emailLabel => $hdrEmail)
+          {
+            $newEmailHeader[$emailLabel] = $hdrEmail . ' ' . $cnt;
+          }
+
+          $charLimit = $characterLimit[$emailMapping['contact type']];
+          $staffData[$newEmailHeader['contact type']] = substr($contact[0], 0, $charLimit);
+          if (strLen($contact[0]) > $charLimit)
+          {
+            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+                                          $newEmailHeader['contact type'], $charLimit, $contact[0]);
+          }
+
+          $charLimit = $characterLimit[$emailMapping['email']];
+          $staffData[$newEmailHeader['email']] = substr($contact[1], 0, $charLimit);
+          if (strLen($contact[1]) > $charLimit)
+          {
+            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+                                          $newEmailHeader['email'], $charLimit, $contact[1]);
+          }
 
           // Once we reached the number of contacts required, we don't need to capture the rest.
           if ($cnt == $NUMBER_OF_CONTACT_TYPE)
-          {
-            break;
-          }
-        }
-      }
-      unset($priority, $contact);
-
-      // Assign NULL if person has less than $NUMBER_OF_CONTACT_TYPE email numbers.
-      while ($cnt < $NUMBER_OF_CONTACT_TYPE)
-      {
-        $cnt++;
-        foreach ($emailHeaders AS $idx => $hdr)
-        {
-          $emails[$hdr . ' ' . $cnt] = NULL;
+          { break; }
         }
       }
 
-      // Here's the pay off for all the pre-work done above, assigning to the $content array for
-      // later export.
-      $content[$row++] = array(
-        'ID' => $staff['es_id'],
-        'LAST NAME' => $lastName,
-        'FIRST NAME' => $firstName,
-        'MIDDLE INITIAL' => $middleInitial,
-        'ADDRESS 1' => $address[$addressHeaders['ADDRESS 1']],
-        'ADDRESS 2' => $address[$addressHeaders['ADDRESS 2']],
-        'CITY' => $address[$addressHeaders['CITY']],
-        'STATE/PROVINCE' => $address[$addressHeaders['STATE/PROVINCE']],
-        'ZIP/POSTAL CODE' => $address[$addressHeaders['ZIP/POSTAL CODE']],
-        'COUNTRY' => $address[$addressHeaders['COUNTRY']],
-        'PHONE LABEL 1' => $phones['PHONE LABEL 1'],
-        'PHONE COUNTRY CODE 1' => $phones['PHONE COUNTRY CODE 1'],
-        'PHONE 1' => $phones['PHONE 1'],
-        'PHONE EXTENTION 1' => $phones['PHONE EXTENTION 1'],
-        'PHONE LABEL 2' => $phones['PHONE LABEL 2'],
-        'PHONE COUNTRY CODE 2' => $phones['PHONE COUNTRY CODE 2'],
-        'PHONE 2' => $phones['PHONE 2'],
-        'PHONE EXTENTION 2' => $phones['PHONE EXTENTION 2'],
-        'EMAIL LABEL 1' => $emails['EMAIL LABEL 1'],
-        'EMAIL 1' => $emails['EMAIL 1'],
-        'EMAIL LABEL 2' => $emails['EMAIL LABEL 2'],
-        'EMAIL 2' => $emails['EMAIL 2']
-      );
+      $info[] = array('rowId' => $row, 'warning' => $logMsg);
+      $content[$row++] = $staffData;
     }
+    unset($eventStaffs, $staff);
     unset($person_name, $person_addresses, $person_phones, $person_emails);
-
-    $headings = (isset($content[2])) ? array_keys($content[2]) : array();
 
     require_once 'PHPExcel/Cell/AdvancedValueBinder.php';
     PHPExcel_Cell::setValueBinder(new PHPExcel_Cell_AdvancedValueBinder());
@@ -454,12 +606,9 @@ class eventActions extends agActions
     // Set default font
     $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Times');
     $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
-    foreach ($headings as $hKey => $heading) {
-      $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, 1)->setValue($heading);
-    }
     foreach ($content AS $rowKey => $rowValue)
     {
-      foreach ($headings AS $hKey => $heading)
+      foreach ($columnHeaders AS $hKey => $heading)
       {
         $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $rowKey)->setValue($rowValue[$heading]);
       }

@@ -151,3 +151,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: event_staff_available_status
     value: available
+  default_phone_country_code_usa:
+    id: 31
+    agHost: localhost
+    datapoint: default_phone_country_code_usa
+    value: 1
