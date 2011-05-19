@@ -271,7 +271,7 @@ class facilityActions extends agActions
 
       $dataNorm = new agFacilityImportNormalization($scenarioId, $sourceTable, 'facility');
 
-      $format = "%d/%m/%Y %H:%M:%S";
+//      $format = "%d/%m/%Y %H:%M:%S";
 //      echo strftime($format);
 
       $this->timer = time();
@@ -282,19 +282,9 @@ class facilityActions extends agActions
 //      echo strftime($format);
     }
 
-
-    //this below block is a bit hard coded and experimental, it should be changed to use gparams
-
-    $agLuceneIndex = new agLuceneIndex(array('agFacility'));
-    $indexResult = $agLuceneIndex->indexAll();
+    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
     $this->timer = (time() - $this->timer);
 
-    $this->renderPartial('global/Header');
-
-//      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-//      $dispatcher = sfContext::getInstance()->getEventDispatcher();
-//      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
-//      $task->run(array('model' => 'agFacility'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
   }
 
   /**

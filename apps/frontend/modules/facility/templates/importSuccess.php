@@ -11,7 +11,7 @@ $i = 1;
 
 <?php include_partial('facility/infobar', array('form' => $form, 'timer' => $timer)); ?>
 
-<p>Records imported into temporary table: <?php echo $numRecordsImported ?><br/>
+<p>Records imported into temporary table: <?php echo $numRecordsImported; ?><br/>
 
     <?php if (count($events) > 0): ?>
     <hr class="ruleGray" />

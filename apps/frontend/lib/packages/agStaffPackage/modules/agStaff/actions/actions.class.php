@@ -744,7 +744,11 @@ class agStaffActions extends agActions
     $import->importStaffFromExcel($this->importPath);
     $import->processBatch();
     $import->processBatch();
-    print_r($import->getEvents());
+
+    $this->numRecordsImported = $import->numRecordsImported;
+    //print_r($import->getEvents());
+    $this->events = $import->getEvents();
+    $this->numRecordsImported = $import->numRecordsImported;
 
     // removes the file from the server
     unlink($this->importPath);

@@ -57,12 +57,14 @@ class agActions extends sfActions
     $searchResult = $query->getRecords(); //agStaff should be $models
     //if($models == 'agStaff'){
     if (count($searchResult) > 0) {
-      if ($staffCollection = $searchResult['agStaff']) {
+      if (isset($searchResult['agStaff'])) {
         $this->target_module = 'staff';
+        $staffCollection = $searchResult['agStaff'];
         $staff_ids = $staffCollection->getKeys(); // toArray();
         $resultArray = agListHelper::getStaffList($staff_ids);
-      } elseif ($facilityCollection = $searchResult['agFacility']) {
+      } elseif (isset($searchResult['agFacility'])) {
         $this->target_module = 'facility';
+        $facilityCollection = $searchResult['agFacility'];
         $facility_ids = $facilityCollection->getKeys(); // toArray();
         $resultArray = agListHelper::getFacilityList($facility_ids);
 
