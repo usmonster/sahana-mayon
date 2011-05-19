@@ -156,3 +156,18 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_phone_country_code_usa
     value: 1
+  default_facility_address_types:
+    id: 32
+    agHost: localhost
+    datapoint: default_facility_address_types
+    value: ["work"]
+  default_facility_email_types:
+    id: 33
+    agHost: localhost
+    datapoint: default_facility_email_types
+    value: ["work","other"]
+  default_facility_phone_types:
+    id: 34
+    agHost: localhost
+    datapoint: default_facility_phone_types
+    value: ["work","other"]

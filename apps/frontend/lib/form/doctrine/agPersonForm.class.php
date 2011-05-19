@@ -257,12 +257,12 @@ class agPersonForm extends BaseagPersonForm
   public function embedNameForm()
   {
     $defaults = json_decode(
-                                      agDoctrineQuery::create()
-                                        ->select('value')
-                                        ->from('agGlobalParam')
-                                        ->where('datapoint = \'default_name_components\'')
-                                        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
-                                      true
+                            agDoctrineQuery::create()
+                              ->select('value')
+                              ->from('agGlobalParam')
+                              ->where('datapoint = \'default_name_components\'')
+                              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
+                            true
                           );
     // Make the default name types just retrieve from agGlobalParam into an array. Keys are the order,
     // values are the values.
@@ -375,7 +375,7 @@ class agPersonForm extends BaseagPersonForm
             ->from('agAddressFormat af, af.agAddressElement ae')
             ->execute();
 
-$addressIds = agDoctrineQuery::create()
+    $addressIds = agDoctrineQuery::create()
                 ->select('address_id')
                 ->from('agEntityAddressContact')
                 ->where('entity_id = ?', $this->getObject()->getEntityId())
@@ -400,7 +400,7 @@ $addressIds = agDoctrineQuery::create()
     }
     $addressContainer = new sfForm(array(), array());
 //    $addressContainer->widgetSchema->setFormFormatterName('list');
-    $addressContainerFormatter = new agWidgetAddressLevelOne($addressContainer->getWidgetSchema());
+    $addressContainerFormatter = new agFormatterAddressLevelOne($addressContainer->getWidgetSchema());
     $addressContainer->getWidgetSchema()->addFormFormatter('addConDeco', $addressContainerFormatter);
     $addressContainer->getWidgetSchema()->setFormFormatterName('addConDeco');
 
@@ -424,17 +424,16 @@ $addressIds = agDoctrineQuery::create()
 
     foreach ($this->address_contact_types as $address_contact_type) {
       $addressSubContainer = new sfForm(array(), array());
-      $addressSubContainerFormatter = new agWidgetAddressLevelTwo($addressSubContainer->getWidgetSchema());
-      $addressSubContainer->getWidgetSchema()->addFormFormatter('addConDeco', $addressSubContainerFormatter);
-      $addressSubContainer->getWidgetSchema()->setFormFormatterName('addConDeco');
-//      $addressSubContainer->widgetSchema->setFormFormatterName('list');
+      $addressSubContainerFormatter = new agFormatterAddressLevelTwo($addressSubContainer->getWidgetSchema());
+      $addressSubContainer->getWidgetSchema()->addFormFormatter('subFormatter', $addressSubContainerFormatter);
+      $addressSubContainer->getWidgetSchema()->setFormFormatterName('subFormatter');
       // Sublevel container forms beneath address to hold a complete address for each address type.
       foreach ($addressElements as $ae) {
         foreach ($ae as $addressElement) {
           $valueForm = new agEmbeddedAgAddressValueForm();
           $valueFormFormatter = new agFormatterAddressLevelThree($valueForm->getWidgetSchema());
-          $valueForm->getWidgetSchema()->addFormFormatter('addConDeco', $valueFormFormatter);
-          $valueForm->getWidgetSchema()->setFormFormatterName('addConDeco');
+          $valueForm->getWidgetSchema()->addFormFormatter('valFormatter', $valueFormFormatter);
+          $valueForm->getWidgetSchema()->setFormFormatterName('valFormatter');
 //          $valueForm->widgetSchema->setFormFormatterName('list');
           // Lowest level address form, actually holds the data.
           $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]['id']);

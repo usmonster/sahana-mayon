@@ -39,15 +39,21 @@ class agFacilityForm extends BaseagFacilityForm
 //      $this['facility_name'],
 //      $this['facility_code']
     );
+     /**
+     * Get URL For wiki
+     */
 
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $this->wikiUrl = url_for('@wiki');
 
     $this->setWidget('id', new sfWidgetFormInputHidden());
 
     $this->setWidget(
         'facility_name', new sfWidgetFormInputText(array(), array('class' => 'inputGray'))
     );
-    //'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-    //));
+    $this->setWidget(
+        'facility_code', new sfWidgetFormInputText(array(), array('class' => 'inputGray'))
+    );
 //    $this->agEntity = $this->getObject()->getAgEntity();
     $this->agEntity = $this->getObject()->getAgSite()->getAgEntity();
 
@@ -69,21 +75,14 @@ class agFacilityForm extends BaseagFacilityForm
     $this->useFields($useFields);
 
     /**
-     * Get URL For wiki
-     */
-
-    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
-    $wikiUrl = url_for('@wiki');
-
-    /**
      * Set labels on a few fields
      */
 
     $this->widgetSchema->setLabels(
         array(
-          'resources' => 'Resources <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Resource">?</a>',
-          'facility_name' => 'Name',
-          'facility_code' => 'Facility Code <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>'
+          'resources' => 'Resources <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Resource">?</a>',
+          'facility_name' => 'Name <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_name&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>',
+          'facility_code' => 'Facility Code <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>'
         )
     );
 
@@ -98,7 +97,21 @@ class agFacilityForm extends BaseagFacilityForm
 
   public function embedPhoneForm($contactContainer)
   {
-    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
+    $defaults = json_decode(
+                            agDoctrineQuery::create()
+                              ->select('value')
+                              ->from('agGlobalParam')
+                              ->where('datapoint = \'default_facility_phone_types\'')
+                              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
+                            true
+                          );
+    $this->ag_phone_contact_types = agDoctrineQuery::create()
+                                      ->select()
+                                      ->from('agPhoneContactType')
+                                      ->whereIn('phone_contact_type', $defaults)
+                                      ->execute();
+
+//    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
 
     $phoneContainer = new sfForm(array(), array());
     $phoneDeco = new agWidgetFormSchemaFormatterRow($phoneContainer->getWidgetSchema());
@@ -119,12 +132,25 @@ class agFacilityForm extends BaseagFacilityForm
       $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
     }
 
-    $contactContainer->embedForm('phone', $phoneContainer);
+    $contactContainer->embedForm('Phone <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>', $phoneContainer);
   }
 
   public function embedEmailForm($contactContainer)
   {
-    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
+    $defaults = json_decode(
+                            agDoctrineQuery::create()
+                              ->select('value')
+                              ->from('agGlobalParam')
+                              ->where('datapoint = \'default_facility_email_types\'')
+                              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
+                            true
+                          );
+    $this->ag_email_contact_types = agDoctrineQuery::create()
+                                      ->select()
+                                      ->from('agEmailContactType')
+                                      ->whereIn('email_contact_type', $defaults)
+                                      ->execute();
+//    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
 
     $emailContainer = new sfForm();
     $emailDeco = new agWidgetFormSchemaFormatterRow($emailContainer->getWidgetSchema());
@@ -145,7 +171,7 @@ class agFacilityForm extends BaseagFacilityForm
       $emailContactForm->widgetSchema->setLabel('email_contact', false);
       $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
     }
-    $contactContainer->embedForm('email', $emailContainer);
+    $contactContainer->embedForm('Email <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_email&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>', $emailContainer);
   }
 
   public function embedResourcesForm($resourceContainer)
@@ -166,13 +192,22 @@ class agFacilityForm extends BaseagFacilityForm
        * for every existing facility resource, create an
        * agEmbeddedFacilityResourceForm and embed it into $facilityResourceContainer
        */
+      $i = 1;
       foreach ($this->agFacilityResources as $facilityResource) {
         $facilityResourceForm = new agEmbeddedFacilityResourceForm($facilityResource);
-
-
         $facilityResourceId = $facilityResource->getId();
+        if($i > 1) {
+          $facilityResourceForm->getWidget('facility_resource_type_id')->setLabel(false);
+          $facilityResourceForm->getWidget('facility_resource_status_id')->setLabel(false);
+          $facilityResourceForm->getWidget('capacity')->setLabel(false);
+        } else {
+          $facilityResourceForm->getWidget('facility_resource_type_id')->setLabel('Resource Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>');
+          $facilityResourceForm->getWidget('facility_resource_status_id')->setLabel('Resource Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource_status&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>');
+          $facilityResourceForm->getWidget('capacity')->setLabel('Capacity <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_capacity&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>');
+        }
         $facilityResourceContainer->embedForm($facilityResourceId, $facilityResourceForm);
         $facilityResourceContainer->widgetSchema->setLabel($facilityResourceId, false);
+        $i++;
       }
     }
 
@@ -183,9 +218,14 @@ class agFacilityForm extends BaseagFacilityForm
      *   */
     for ($iNewForm = 0; $iNewForm < max(3 - count($this->agFacilityResources), 1); $iNewForm++) {
       $facilityResourceForm = new agEmbeddedFacilityResourceForm();
-
+      if($i > 1) {
+        $facilityResourceForm->getWidget('facility_resource_type_id')->setLabel(false);
+        $facilityResourceForm->getWidget('facility_resource_status_id')->setLabel(false);
+        $facilityResourceForm->getWidget('capacity')->setLabel(false);
+      }
       $facilityResourceContainer->embedForm('new' . $iNewForm, $facilityResourceForm);
       $facilityResourceContainer->widgetSchema->setLabel('new' . $iNewForm, false);
+      $i++;
     }
 
     /**
@@ -201,11 +241,19 @@ class agFacilityForm extends BaseagFacilityForm
      *
      * This block sets up the embedded agEmbeddedAgAddressContactForms.
      * */
-    $this->address_contact_types = Doctrine::getTable('agAddressContactType')
-            ->createQuery('a')
-            ->select('a.*')
-            ->from('agAddressContactType a')
-            ->where('address_contact_type = ?', 'work')
+    $defaults = json_decode(
+                            agDoctrineQuery::create()
+                              ->select('value')
+                              ->from('agGlobalParam')
+                              ->where('datapoint = \'default_facility_address_types\'')
+                              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
+                            true
+                          );
+
+    $this->address_contact_types = agDoctrineQuery::create()
+            ->select()
+            ->from('agAddressContactType')
+            ->wherein('address_contact_type', $defaults)
             ->execute();
     $this->address_formats = Doctrine::getTable('agAddressFormat')
             ->createQuery('addressFormat')
@@ -223,20 +271,15 @@ class agFacilityForm extends BaseagFacilityForm
      * address_standard_id in that table.
      * */
     foreach ($this->address_formats as $af) {
-      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element] = $af->getAgAddressElement()->id;
+      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['id'] = $af->getAgAddressElement()->id;
+      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['fieldType'] = $af->getAgFieldType()->getFieldType();
     }
 
     $addressContainer = new sfForm(array(), array()); // Container form.
     #$addressContainer->widgetSchema->setFormFormatterName('list');
-
-    $addressDeco = new agWidgetFormSchemaFormatterRow($addressContainer->getWidgetSchema());
-    $addressContainer->getWidgetSchema()->addFormFormatter('row', $addressDeco);
-    $addressContainer->getWidgetSchema()->setFormFormatterName('row');
-
-    $stateList = agDoctrineQuery::create()
-            ->select('a.value')
-            ->from('agAddressValue a')
-            ->where('a.address_element_id = 4');  //select * from ag_address_element .. and get the element_id by the text ('state')
+    $addressContainerFormatter = new agFormatterAddressLevelOne($addressContainer->getWidgetSchema());
+    $addressContainer->getWidgetSchema()->addFormFormatter('addConDeco', $addressContainerFormatter);
+    $addressContainer->getWidgetSchema()->setFormFormatterName('addConDeco');
 
     $this->entityAddress = Doctrine::getTable('agEntity')
             ->createQuery('entityAddresses')
@@ -266,13 +309,16 @@ class agFacilityForm extends BaseagFacilityForm
     foreach ($this->address_contact_types as $address_contact_type) {
       $addressSubContainer = new sfForm(array(), array());
 // Sublevel container forms beneath address to hold a complete address for each address type.
-//    $addressDeco = new agWidgetFormSchemaFormatterInline($addressSubContainer->getWidgetSchema());
-//    $addressSubContainer->getWidgetSchema()->addFormFormatter('row', $addressDeco);
-//    $addressSubContainer->getWidgetSchema()->setFormFormatterName('row');
+      $addressSubContainerFormatter = new agFormatterAddressLevelTwo($addressSubContainer->getWidgetSchema());
+      $addressSubContainer->getWidgetSchema()->addFormFormatter('subFormatter', $addressSubContainerFormatter);
+      $addressSubContainer->getWidgetSchema()->setFormFormatterName('subFormatter');
 
       foreach ($addressElements as $ae) {
         foreach ($ae as $addressElement) {
           $valueForm = new agEmbeddedAgAddressValueForm();
+          $valueFormFormatter = new agFormatterAddressLevelThree($valueForm->getWidgetSchema());
+          $valueForm->getWidgetSchema()->addFormFormatter('valFormatter', $valueFormFormatter);
+          $valueForm->getWidgetSchema()->setFormFormatterName('valFormatter');
           //^ Lowest level address form, actually holds the data.
           $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]);
           //^ set the default address_element_id.
@@ -283,7 +329,8 @@ class agFacilityForm extends BaseagFacilityForm
           // have address element 4/state as their address_element value.
           // Refactor to use agAddressFormat's field_type_id in
           // conjunction with agFieldType.
-          if (key($addressElement) == 'state') {
+          if ($addressElement[key($addressElement)]['fieldType'] == 'sfWidgetFormDoctrineChoice') {
+
             $valueForm->setWidget(
                 'value',
                 new sfWidgetFormDoctrineChoice(
@@ -292,16 +339,17 @@ class agFacilityForm extends BaseagFacilityForm
                       'model' => 'agAddressValue',
                       'add_empty' => true,
                       'key_method' => 'getValue'
-                    )
+                    ),
+                    array('class' => 'inputGray')
                 )
             );
-            // ^ key_method sets the option value of the constructed
-            // select list to the value rather than id.
+            $list = agDoctrineQuery::create()
+               ->select('a.value')
+               ->from('agAddressValue a')
+               ->where('a.address_element_id = ?', $addressElement[key($addressElement)]['id']);
+            
             $valueForm->widgetSchema->setLabel('value', false);
-            $valueForm->widgetSchema['value']->addOption(
-                'query',
-                $stateList
-            );
+            $valueForm->widgetSchema['value']->addOption('query', $list);
           }
 
           if (isset($this->entityAddress) && $this->entityAddress) {
@@ -335,7 +383,7 @@ class agFacilityForm extends BaseagFacilityForm
 
       $addressFirstPass = false;
     }
-    $contactContainer->embedForm('address', $addressContainer);
+    $contactContainer->embedForm('Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>', $addressContainer);
     //Embed all the addresses into agPersonForm.
   }
 
@@ -349,10 +397,10 @@ class agFacilityForm extends BaseagFacilityForm
     $resourceContainer->getWidgetSchema()->setLabel('resource', false);
     $this->embedForm('resources', $resourceContainer);
 //
-    $this->embedAddressForm($contactContainer);
-    $this->embedEmailForm($contactContainer);
-    $this->embedPhoneForm($contactContainer);
-    $this->embedForm('contact', $contactContainer);
+    $this->embedAddressForm($this);
+    $this->embedEmailForm($this);
+    $this->embedPhoneForm($this);
+//    $this->embedForm('contact', $contactContainer);
   }
 
   /*
