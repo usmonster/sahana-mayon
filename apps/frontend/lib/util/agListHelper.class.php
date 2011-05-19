@@ -39,10 +39,10 @@ class agListHelper
     if ($staffStatus != 'all') {
       $query->andWhere('srs.staff_resource_status = ?', $staffStatus);
     }
-    if ($sort == 'agency') {
+    if ($sort == 'organization') {
       $sortField = 'o.organization';
     }
-    elseif($sort == 'classification') {
+    elseif($sort == 'Resource') {
       $sortField = 'srt.staff_resource_type';
     }
     else {
@@ -122,8 +122,8 @@ class agListHelper
         'id' => $value['s_id'],
         'fn' => $person_first_name,
         'ln' => $person_last_name,
-        'agency' => $value['o_organization'],
-        'classification' => $value['srt_staff_resource_type'],
+        'organization' => $value['o_organization'],
+        'resource' => $value['srt_staff_resource_type'],
         'phones' => $person_phone, // only for testing, prefer the above
         'emails' => $person_email,
         'staff_status' => $value['srs_staff_resource_status']
