@@ -171,3 +171,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_facility_phone_types
     value: ["work","other"]
+  default_list_page_size:
+    id: 35
+    agHost: localhost
+    datapoint: default_list_page_size
+    value: 20

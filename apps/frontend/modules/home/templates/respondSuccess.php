@@ -43,10 +43,24 @@
         <?php foreach ($ag_events as $ag_event): ?>
                 <li>
                     <p>
-                        <a href="<?php echo url_for('event/meta?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton">Change Event Metadata</a><br><br>
-                        <a href="<?php echo url_for('event/staff?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton">Staff Management</a><br><br>
-                        <a href="<?php echo url_for('event/listgroups?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton">Manage Facility Groups</a><br><br>
-                        <a href="<?php echo url_for('event/resolution?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton">Resolve <?php echo $ag_event->getEventName() ?></a><br><br>
+                        <a href="<?php
+                        echo url_for('event/meta?event=' . urlencode($ag_event->getEventName()))
+                            ?>" class="generalButton">Event Name and Description</a><br><br>
+                        <a href="<?php
+                        echo url_for('event/staff?event=' . urlencode($ag_event->getEventName()))
+                            ?>" class="generalButton">Staff Management</a><br><br>
+                        <a href="<?php
+                        echo url_for('event/listgroups?event=' . urlencode($ag_event->getEventName()))
+                            ?>" class="generalButton">Manage Facility Groups</a><br><br>
+                        <a href="<?php
+                        echo url_for('event/messaging?event=' . urlencode($ag_event->getEventName()))
+                            ?>" class="generalButton">Message Management</a><br><br>
+                        <a href="<?php
+                        echo url_for('event/resolution?event=' . urlencode($ag_event->getEventName()))
+                            ?>" class="generalButton">Resolve
+                         <?php echo $ag_event->getEventName()
+                             //TODO replace these with link_tos
+                             ?></a><br><br>
                     </p>
                 </li>
         <?php endforeach; ?>
