@@ -262,8 +262,8 @@ class eventActions extends agActions
 
     $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
 
-    $eventStaff = agDoctrineQuery::create()
-        ->select('es.id, ess.id, sr.id, s.id, p.entity_id')
+    $eventStaffs = agDoctrineQuery::create()
+        ->select('es.id, ess.id, sr.id, s.id, p.id, p.entity_id')
         ->from('agEventStaff es')
         ->addFrom('es.agEventStaffStatus ess')
         ->addFrom('es.agStaffResource sr')
@@ -272,190 +272,175 @@ class eventActions extends agActions
         ->where('ess.staff_allocation_status_id = ?', $unAllocatedStaffStatus)
         ->andWhere('es.event_id = ?', $this->event_id)
         ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $person_array = array();
+    $entity_array = array();
     //get all event staff that are still marked as unavailable
-    foreach ($eventStaff as $staffRecord) {
-      $eventStaffEntities[$staffRecord['es_id']] = $staffRecord['p_entity_id'];
+    foreach ($eventStaffs as $staffRecord) {
+//      $eventStaffEntities[$staffRecord['es_id']] = $staffRecord['p_entity_id'];
+      $person_array[$staffRecord['es_id']] = $staffRecord['p_id'];
+      $entity_array[$staffRecord['es_id']] = $staffRecord['p_entity_id'];
     }
 
-    $staffMembers = agDoctrineQuery::create()
-        ->from('agPerson a')
-        ->whereIn('a.entity_id', $eventStaffEntities)
-        ->execute();
+    // Grab person's primary name by type.
+    $nameHelper = new agPersonNameHelper($person_array);
+    $person_names = $nameHelper->getPrimaryNameByType();
+    unset($nameHelper);
 
-    $nameTypes = Doctrine::getTable('agPersonNameType')
-        ->createQuery('a')
-        ->execute();
-    $phoneTypes = Doctrine::getTable('agPhoneContactType')
-        ->createQuery('a')
-        ->execute();
-    $emailTypes = Doctrine::getTable('agEmailContactType')
-        ->createQuery('a')
-        ->execute();
-    $addressTypes = Doctrine::getTable('agAddressContactType')
-        ->createQuery('a')
-        ->execute();
-    $languageFormats = Doctrine::getTable('agLanguageFormat')
-        ->createQuery('a')
-        ->execute();
+    // Grab person's primary information by their entity ids.
+    $addressHelper = new agEntityAddressHelper();
+    $person_addresses = $addressHelper->getEntityAddress($entity_array, TRUE, TRUE, agAddressHelper::ADDR_GET_TYPE);
+    unset($addressHelper);
+
+    $phoneHelper = new agEntityPhoneHelper();
+    $person_phones = $phoneHelper->getEntityPhone($entity_array, TRUE, FALSE, agPhoneHelper::PHN_GET_COMPONENT_SEGMENTS);
+    unset($phoneHelpers);
+
+    $emailHelper = new agEntityEmailHelper();
+    $person_emails = $emailHelper->getEntityEmail($entity_array, TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
+    unset($emailHelper);
+
+    $addressHeaders = array(
+      'ADDRESS 1' => 'line 1',
+      'ADDRESS 2' => 'line 2',
+      'CITY' => 'city',
+      'STATE/PROVINCE' => 'state',
+      'ZIP/POSTAL CODE' => 'zip5',
+      'COUNTRY' => 'country'
+    );
+
+    $phoneHeaders = array(
+      'PHONE LABEL' => 'contact type',
+      'PHONE COUNTRY CODE' => 'area code',
+      'PHONE' => 'phone',
+      'PHONE EXTENTION' => 'extension'
+    );
+
+    $emailHeaders = array('EMAIL LABEL', 'EMAIL');
+
     $row = 2;
-    foreach ($staffMembers as $staffMember) {
-      $headings = array('ID');
-      $eventStaffIds = array_keys($eventStaffEntities, $staffMember->entity_id);
-      $eventStaffId = $eventStaffIds[0];
-      //the staffMembers array should be keyed on staff member.  Also, for speed we should directly
-      //access as much of this as possible, or use helpers.
-      $content[$row] = array('ID' => $eventStaffId);
+    $content = array();
+    foreach ($eventStaffs AS $staff)
+    {
+      $lastName = (isset($person_names[$staff['p_id']]['family'])) ? $person_names[$staff['p_id']]['family'] : NULL;
+      $firstName = (isset($person_names[$staff['p_id']]['given'])) ? $person_names[$staff['p_id']]['given'] : NULL;
+      $middleInitial = (isset($person_names[$staff['p_id']]['middle'])) ? substr($person_names[$staff['p_id']]['given'], 0, 1) : NULL;
 
-      foreach ($nameTypes as $nameType) {
-        $headings[] = ucwords($nameType->person_name_type) . ' Name';
-        $j = Doctrine::getTable('AgPersonMjAgPersonName')->findByDql('person_id = ? AND person_name_type_id = ?',
-                                                                     array($staffMember->id, $nameType->id))->getFirst();
-        $content[$row][ucwords($nameType->person_name_type) . ' Name']
-            = ($j ? $j->getAgPersonName()->person_name : '');
-      }
-      $h = array('Sex', 'Date of Birth', 'Profession', 'Nationality',
-        'Ethnicity', 'Religion', 'Marital Status');
-      $headings = array_merge($headings, $h);
-      foreach ($h as $head) {
-        //if($head == 'Date of Birth') $head = 'Person Date Of Birth';
-        $table = ($head == 'Date of Birth') ?
-            'agPersonDateOfBirth' : 'ag' . str_replace(' ', '', $head);
-        //$table = 'ag' . str_replace(' ', '', $head);
-        $fetcher = 'get' . ucwords($table);
-        $column = sfInflector::underscore(str_replace(' ', '', ucwords($head)));
-        $objects = $staffMember->$fetcher();
-        $i = 1;
-        $c = count($objects);
-        $results = null;
-        if ($objects instanceof Doctrine_Collection) {
-          foreach ($objects as $object) {
-            if ($i <> $c) {
-              $results = $results . $object->$column . "\n";
-            } else {
-              $results = $results . $object->$column;
-            }
-            $i++;
-          }
-        } else {
-          $results = $results . $objects->$column;
+      // Build person's address by component.  Assign NULL if no value saved for the component.
+      $address = array();
+      if (isset($person_addresses[$staff['p_entity_id']]))
+      {
+        $addressComponents = $person_addresses[$staff['p_entity_id']][1];
+        foreach($addressComponents AS $element => $value)
+        {
+          $address[$element] = $value;
         }
-        $values[$head] = ucwords($results);
       }
-      $content[$row] = array_merge($content[$row], $values);
-      foreach ($phoneTypes as $phoneType) {
-        $headings[] = ucwords($phoneType->phone_contact_type) . ' Phone';
-        $j = Doctrine::getTable('AgEntityPhoneContact')
-                ->findByDql(
-                    'entity_id = ? AND phone_contact_type_id = ?',
-                    array($staffMember->entity_id, $phoneType->id)
-                )->getFirst();
-        $content[$row][ucwords($phoneType->phone_contact_type) . ' Phone'] =
-            (
-            $j ? preg_replace(
-                    $j
-                        ->getAgPhoneContact()
-                        ->getAgPhoneFormat()
-                        ->getAgPhoneFormatType()->match_pattern,
-                    $j
-                        ->getAgPhoneContact()
-                        ->getAgPhoneFormat()
-                        ->getAgPhoneFormatType()->replacement_pattern,
-                    $j
-                        ->getAgPhoneContact()->phone_contact) :
-                ''
-            );
+      $emptyAddressComponent = array_diff($addressHeaders, array_keys($address));
+      foreach ($emptyAddressComponent AS $k => $val)
+      {
+        $address[$val] = NULL;
       }
+      unset($addressComponents, $element, $value, $emptyAddressComponents, $k, $val);
 
-      foreach ($emailTypes as $emailType) {
-        $headings[] = ucwords($emailType->email_contact_type) . ' Email';
-        $j = Doctrine::getTable('AgEntityEmailContact')
-            ->findByDql(
-                'entity_id = ? AND email_contact_type_id = ?',
-                array($staffMember->entity_id, $emailType->id)
-            )
-            ->getFirst();
-        $content[$row][ucwords($emailType->email_contact_type) . ' Email'] =
-            ($j ? $j->getAgEmailContact()->email_contact : '');
-      }
-
-      foreach ($addressTypes as $addressType) {
-        $headings[] = ucwords($addressType->address_contact_type) . ' Address';
-        $j = Doctrine::getTable('AgEntityAddressContact')
-            ->findByDql(
-                'entity_id = ? AND address_contact_type_id = ?',
-                array($staffMember->entity_id, $addressType->id)
-            )
-            ->getFirst();
-        $tempContainer = array();
-        if ($j) {
-          foreach ($j->getAgAddress()->getAgAddressStandard()->getAgAddressFormat()
-          as $addressFormat) {
-            foreach ($j->getAgAddress()->getAgAddressMjAgAddressValue() as $mj) {
-              if ($addressFormat->getAgAddressElement()->id ==
-                  $mj->getAgAddressValue()->address_element_id) {
-                $i = 1;
-                $c = count($j);
-                if (isset($tempContainer['Line ' . $addressFormat->line_sequence])) {
-                  $tempContainer['Line ' . $addressFormat->line_sequence] =
-                      $tempContainer['Line ' . $addressFormat->line_sequence] .
-                      $addressFormat->pre_delimiter . $mj->getAgAddressValue()->value .
-                      $addressFormat->post_delimiter;
-                } else {
-                  $tempContainer['Line ' . $addressFormat->line_sequence] =
-                      $addressFormat->pre_delimiter .
-                      $mj->getAgAddressValue()->value .
-                      $addressFormat->post_delimiter;
-                }
-              }
-            }
+      $phones = array();
+      $NUMBER_OF_CONTACT_TYPE = 2;
+      // Build person's phone by component.  Assign NULL if no value saved for the component.
+      $cnt = 0;
+      if (isset($person_phones[$staff['p_entity_id']]))
+      {
+        foreach ($person_phones[$staff['p_entity_id']] AS $priority => $contact)
+        {
+          $phones['PHONE LABEL ' . ++$cnt] = $contact[0];
+          $phones['PHONE COUNTRY CODE ' . $cnt] = $contact[1][$phoneHeaders['PHONE COUNTRY CODE']];
+          $phones['PHONE ' . $cnt] = $contact[1][$phoneHeaders['PHONE']];
+          if (is_numeric($contact[1][$phoneHeaders['PHONE EXTENTION']]))
+          {
+            $phones['PHONE EXTENTION ' . $cnt] = $contact[1][$phoneHeaders['PHONE EXTENTION']];
           }
-        } else {
-          $tempContainer[ucwords($addressType->address_contact_type) . ' Address'] = null;
+          else
+          {
+            $phones['PHONE EXTENTION ' . $cnt] = NULL;
+          }
+
+          // Once we reached the number of contacts required, we don't need to capture the rest.
+          if ($cnt == $NUMBER_OF_CONTACT_TYPE)
+          {
+            break;
+          }
         }
-        $content[$row][ucwords($addressType->address_contact_type) . ' Address'] =
-            implode("\n", $tempContainer);
       }
-      $headings[] = 'Language';
+      unset($priority, $contact);
 
-      foreach ($languageFormats as $languageFormat) {
-        $headings[] = ucwords($languageFormat->language_format);
-        $competencies = null;
-        $languages = null;
-        $c = count($staffMember->getAgPersonMjAgLanguage());
-        $i = 1;
-        foreach ($staffMember->getAgPersonMjAgLanguage() as $languageJoin) {
-          $compQuery = Doctrine::getTable('agPersonLanguageCompetency')->createQuery('a')
-              ->select('a.*')
-              ->from('agPersonLanguageCompetency a')
-              ->where('a.person_language_id = ?', $languageJoin->id)
-              ->andWhere('a.language_format_id = ?', $languageFormat->id);
-          if ($i <> $c) {
-            $languages = $languages . $languageJoin->getAgLanguage()->language . "\n";
-          } else {
-            $languages = $languages . $languageJoin->getAgLanguage()->language;
-          }
-          if ($compEx = $compQuery->fetchOne()) {
-            if ($i <> $c) {
-              $competencies =
-                  $competencies . $compEx->getAgLanguageCompetency()->language_competency . "\n";
-            } else {
-              $competencies =
-                  $competencies . $compEx->getAgLanguageCompetency()->language_competency;
-            }
-          } else {
-            $competencies = $competencies . "\n";
-          }
-          $i++;
+      // Assign NULL if person has less than $NUMBER_OF_CONTACT_TYPE phone numbers.
+      while ($cnt < $NUMBER_OF_CONTACT_TYPE)
+      {
+        $cnt++;
+        foreach ($phoneHeaders AS $hdr => $mapping)
+        {
+          $phones[$hdr . ' ' . $cnt] = NULL;
         }
-        $content[$row]['Language'] = $languages;
-        $content[$row][ucwords($languageFormat->language_format)] = $competencies;
       }
 
-      $content[$row]['Created'] = $staffMember->created_at;
-      $content[$row]['Updated'] = $staffMember->updated_at;
-      array_push($headings, 'Created', 'Updated');
-      $row++;
+      $emails = array();
+      // Build person's email.  Assign NULL if no value saved for the component.
+      $cnt = 0;
+      if (isset($person_emails[$staff['p_entity_id']]))
+      {
+        foreach ($person_emails[$staff['p_entity_id']] AS $priority => $contact)
+        {
+          $emails['EMAIL LABEL ' . ++$cnt] = $contact[0];
+          $emails['EMAIL ' . $cnt] = $contact[1];
+
+          // Once we reached the number of contacts required, we don't need to capture the rest.
+          if ($cnt == $NUMBER_OF_CONTACT_TYPE)
+          {
+            break;
+          }
+        }
+      }
+      unset($priority, $contact);
+
+      // Assign NULL if person has less than $NUMBER_OF_CONTACT_TYPE email numbers.
+      while ($cnt < $NUMBER_OF_CONTACT_TYPE)
+      {
+        $cnt++;
+        foreach ($emailHeaders AS $idx => $hdr)
+        {
+          $emails[$hdr . ' ' . $cnt] = NULL;
+        }
+      }
+
+      // Here's the pay off for all the pre-work done above, assigning to the $content array for
+      // later export.
+      $content[$row++] = array(
+        'ID' => $staff['es_id'],
+        'LAST NAME' => $lastName,
+        'FIRST NAME' => $firstName,
+        'MIDDLE INITIAL' => $middleInitial,
+        'ADDRESS 1' => $address[$addressHeaders['ADDRESS 1']],
+        'ADDRESS 2' => $address[$addressHeaders['ADDRESS 2']],
+        'CITY' => $address[$addressHeaders['CITY']],
+        'STATE/PROVINCE' => $address[$addressHeaders['STATE/PROVINCE']],
+        'ZIP/POSTAL CODE' => $address[$addressHeaders['ZIP/POSTAL CODE']],
+        'COUNTRY' => $address[$addressHeaders['COUNTRY']],
+        'PHONE LABEL 1' => $phones['PHONE LABEL 1'],
+        'PHONE COUNTRY CODE 1' => $phones['PHONE COUNTRY CODE 1'],
+        'PHONE 1' => $phones['PHONE 1'],
+        'PHONE EXTENTION 1' => $phones['PHONE EXTENTION 1'],
+        'PHONE LABEL 2' => $phones['PHONE LABEL 2'],
+        'PHONE COUNTRY CODE 2' => $phones['PHONE COUNTRY CODE 2'],
+        'PHONE 2' => $phones['PHONE 2'],
+        'PHONE EXTENTION 2' => $phones['PHONE EXTENTION 2'],
+        'EMAIL LABEL 1' => $emails['EMAIL LABEL 1'],
+        'EMAIL 1' => $emails['EMAIL 1'],
+        'EMAIL LABEL 2' => $emails['EMAIL LABEL 2'],
+        'EMAIL 2' => $emails['EMAIL 2']
+      );
     }
+    unset($person_name, $person_addresses, $person_phones, $person_emails);
+
+    $headings = (isset($content[2])) ? array_keys($content[2]) : array();
 
     require_once 'PHPExcel/Cell/AdvancedValueBinder.php';
     PHPExcel_Cell::setValueBinder(new PHPExcel_Cell_AdvancedValueBinder());
@@ -471,16 +456,14 @@ class eventActions extends agActions
     $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
     foreach ($headings as $hKey => $heading) {
       $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, 1)->setValue($heading);
-      foreach ($content as $rowKey => $rowValue) {
-
-        foreach ($rowValue as $eKey => $entry) {
-          if ($eKey == $heading) {
-            $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $rowKey)->setValue($entry);
-          }
-        }
+    }
+    foreach ($content AS $rowKey => $rowValue)
+    {
+      foreach ($headings AS $hKey => $heading)
+      {
+        $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $rowKey)->setValue($rowValue[$heading]);
       }
     }
-
 
     //This should be assigning an auto-width to each column that will fit the largest data in it. For some reason, it's not working.
     $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
