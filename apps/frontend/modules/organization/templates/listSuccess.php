@@ -2,8 +2,8 @@
 //Defines the columns of the organization display list page.
 $columns = array(
   'id' => array('title' => 'Id', 'sortable' => false),
-  'organization' => array('title' => 'Organization', 'sortable' => true),
-  'description' => array('title' => 'Description', 'sortable' => true)
+  'organization' => array('title' => 'Organization <a href="' . url_for('@wiki') . '/doku.php?id=tooltip:organization_name&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a>', 'sortable' => true),
+  'description' => array('title' => 'Description <a href="' . url_for('@wiki') . '/doku.php?id=tooltip:organization_description&do=export_xhtmlbody" class="tooltipTrigger" title="Description">?</a>', 'sortable' => true)
 );
 
 $thisUrl = url_for('organization/list');
@@ -37,7 +37,7 @@ $descArrow = '&#x25BC;';
         } ?>
         </th>
 <?php endforeach; ?>
-        <th>Staff Count</th>
+        <th>Staff Count <a href="'<?php url_for('@wiki'); ?>'/doku.php?id=tooltip:organization_staff_count&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Count">?</a></th>
       </tr>
     </thead>
     <tbody>

@@ -79,13 +79,15 @@ class agOrganizationForm extends BaseagOrganizationForm
           ),
         )
     );
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $wikiUrl = url_for('@wiki');
 
     $this->validatorSchema->setOption('allow_extra_fields', true);
     $this->widgetSchema->setNameFormat('ag_organization[%s]');
     $this->widgetSchema->setLabels(
              array(
-               'organization' => 'Organization',
-               'description'  => 'Description',
+               'organization' => 'Organization <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_name&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>',
+               'description'  => 'Description <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_description&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>',
              )
            );
 

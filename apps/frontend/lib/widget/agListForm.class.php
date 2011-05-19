@@ -175,7 +175,7 @@ class agListForm
 
 
     $listbody = '<table class="staffTable">';
-    $listbody .= '<caption>Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
+    $listbody .= '<caption>List Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
     $listbody .= '<thead>
     <tr class="head">';
     foreach ($columns as $column => $columnCaption) {
