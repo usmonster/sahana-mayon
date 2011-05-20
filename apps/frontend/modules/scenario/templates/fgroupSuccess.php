@@ -34,7 +34,10 @@ deployed as an event.
 <br />
 <!--<p>Use the list below to select existing facility groups for editing.</p>-->
 <form class="formSmall" id="groupSelector" action="<?php echo url_for('scenario/fgroup?id=' . $scenario_id); ?>" method="post">
-  <?php echo $groupSelector; ?>
+  <?php
+    $groupSelector->getWidget('Change Facility Group:')->setLabel('Change Facility Group: <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:change_facility_group&do=export_xhtmlbody" class="tooltipTrigger" title="Change Facility Group">?</a>');
+    echo $groupSelector;
+  ?>
   <input type="button" class="generalButton" value="Change" name="Change Group" onclick="reloadGroup(this)" />
 </form>
 <br />

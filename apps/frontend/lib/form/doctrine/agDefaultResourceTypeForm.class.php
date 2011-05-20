@@ -17,7 +17,6 @@
  * */
 class agDefaultResourceTypeForm extends sfForm
 {
-
   protected $scenario_id;
 
   public function __construct($scenario_id)
@@ -36,6 +35,8 @@ class agDefaultResourceTypeForm extends sfForm
     $formatter = new agFormatterInlineLists($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('defaultFormDeco', $formatter);
     $this->getWidgetSchema()->setFormFormatterName('defaultFormDeco');
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $this->wikiUrl = url_for('@wiki');
     $this->embedStaffForm();
     $this->embedFacilityForm();
 
@@ -58,12 +59,11 @@ class agDefaultResourceTypeForm extends sfForm
       'model' => 'agStaffResourceType',
       'method' => 'getStaffResourceType',
       'add_empty' => false,
-      'label' => 'Staff Resource Types',
+      'label' => 'Staff Resource Types <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>',
       'multiple' => true,
       'expanded' => true,
       'order_by' => array('staff_resource_type', 'asc')
       )));
-
     $staffDefaults = agDoctrineQuery::create()
             ->select('dfrt.staff_resource_type_id')
             ->from('agDefaultScenarioStaffResourceType dfrt')
@@ -86,7 +86,7 @@ class agDefaultResourceTypeForm extends sfForm
       'model' => 'agFacilityResourceType',
       'method' => 'getFacilityResourceType',
       'add_empty' => false,
-      'label' => 'Facility Resource Types',
+      'label' => 'Facility Resource Types <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>',
       'multiple' => true,
       'expanded' => true,
       'order_by' => array('facility_resource_type', 'asc')

@@ -598,49 +598,55 @@ class scenarioActions extends agActions
           $facilityDefaults->remove($index);
         }
       }
-
-
-
 //inserts
-      foreach ($facilityParams['facility_resource_type_id'] as $key => $value) {
-        $newRec = new agDefaultScenarioFacilityResourceType();
+      if(isset($facilityParams['facility_resource_type_id'])) {
+        foreach ($facilityParams['facility_resource_type_id'] as $key => $value) {
+          $newRec = new agDefaultScenarioFacilityResourceType();
 
-        $newRec['scenario_id'] = $this->scenario_id;
-        $newRec['facility_resource_type_id'] = $value;
+          $newRec['scenario_id'] = $this->scenario_id;
+          $newRec['facility_resource_type_id'] = $value;
 
-        $facilityDefaults->add($newRec);
-        unset($facilityParams[$key]);
+          $facilityDefaults->add($newRec);
+          unset($facilityParams[$key]);
+        }
       }
-      foreach ($staffParams['staff_resource_type_id'] as $key => $value) {
-        $newRec = new agDefaultScenarioStaffResourceType();
+      if(isset($staffParams['staff_resource_type_id'])) {
+        foreach ($staffParams['staff_resource_type_id'] as $key => $value) {
+          $newRec = new agDefaultScenarioStaffResourceType();
 
-        $newRec['scenario_id'] = $this->scenario_id;
-        $newRec['staff_resource_type_id'] = $value;
+          $newRec['scenario_id'] = $this->scenario_id;
+          $newRec['staff_resource_type_id'] = $value;
 
-        $staffDefaults->add($newRec);
-        unset($staffParams[$key]);
+          $staffDefaults->add($newRec);
+          unset($staffParams[$key]);
+        }
       }
       //$conn = Doctrine_Manager::connection();
+
       $staffDefaults->save();
       $facilityDefaults->save();
       //$conn->commit();
-
-      if ($request->hasParameter('Continue')) {
-
-        // count our facility groups and redirect to new fgroup or list appropriately
-        $fgroupCt = agDoctrineQuery::create()
-            ->select('count(sfg.id) AS sfg')
-            ->from('agScenarioFacilityGroup sfg')
-            ->where('sfg.scenario_id = ?', $this->scenario_id)
-            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-
-        if ($fgroupCt < 1 || empty($fgroupCt)) {
-          $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
-        } else {
-          $this->redirect('scenario/listgroup?id=' . $this->scenario_id);
-        }
+      if(!isset($staffParams['staff_resource_type_id']) || !isset($facilityParams['facility_resource_type_id'])) {
+        $this->noDefaults = true;
+        $this->resourceForm = new agDefaultResourceTypeForm($this->scenario_id);
       } else {
-        $this->redirect('scenario/resourcetypes?id=' . $this->scenario_id);
+        if ($request->hasParameter('Continue')) {
+
+          // count our facility groups and redirect to new fgroup or list appropriately
+          $fgroupCt = agDoctrineQuery::create()
+              ->select('count(sfg.id) AS sfg')
+              ->from('agScenarioFacilityGroup sfg')
+              ->where('sfg.scenario_id = ?', $this->scenario_id)
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+          if ($fgroupCt < 1 || empty($fgroupCt)) {
+            $this->redirect('scenario/fgroup?id=' . $this->scenario_id);
+          } else {
+            $this->redirect('scenario/listgroup?id=' . $this->scenario_id);
+          }
+        } else {
+          $this->redirect('scenario/resourcetypes?id=' . $this->scenario_id);
+        }
       }
     }
   }

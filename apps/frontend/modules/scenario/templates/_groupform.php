@@ -11,7 +11,7 @@ echo url_for
     </div>
     <p class="highlightedText">Drag and Drop facilities to add to the group</p>
     <div class="selectionFilter">
-      <a href="#" id="revealer" title="Available Resource Type Filter" onclick="return reveal(this)">&#9654;</a><div>Available Resource Type Filter</div>
+      <div><a href="#" id="revealer" title="Available Resource Type Filter" onclick="return reveal(this)">&#9654;</a>Available Resource Type Filter <a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:resource_type_filter&do=export_xhtmlbody" class="tooltipTrigger" title="Resource Type Filter">?</a></div>
     </div>
     <div class="sortTableContainer">
       <table class="sortTable available" cellspacing="0">

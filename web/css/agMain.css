@@ -1638,7 +1638,7 @@ table.available caption {
   outline: none;
   height: 20px;
   width: 20px;
-  float: left;
+/*  float: left;*/
 }
 
 .selectionFilter a:hover {

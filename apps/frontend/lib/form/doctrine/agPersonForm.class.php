@@ -256,37 +256,29 @@ class agPersonForm extends BaseagPersonForm
    * */
   public function embedNameForm()
   {
-    $defaults = json_decode(
-                            agDoctrineQuery::create()
-                              ->select('value')
-                              ->from('agGlobalParam')
-                              ->where('datapoint = \'default_name_components\'')
-                              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
-                            true
-                          );
-    // Make the default name types just retrieve from agGlobalParam into an array. Keys are the order,
-    // values are the values.
-    foreach($defaults as $default) {
-      $defaultNameComponents[$default[2]] = $default[0];
+    $nameHelper = new agPersonNameHelper();
+    $defaultNameComponents = $nameHelper->defaultNameComponents;
+    unset($nameHelper);
+    
+    foreach($defaultNameComponents as $dnc) {
+      $nameTypeIds[] = $dnc[0];
     }
     // Get the name types we need, as determined by the defaults.
     $nameTypesPreSort = agDoctrineQuery::create()
                    ->select('id')
                    ->addSelect('person_name_type')
                    ->from('agPersonNameType')
-                   ->whereIn('person_name_type', $defaultNameComponents)
+                   ->whereIn('id', $nameTypeIds)
                    ->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
-    // Make the name types array by matching between $defaultNameComponents and $nameTypesPreSort,
-    // using the key of default to determine order.
+
     foreach($defaultNameComponents as $key => $defaultNameComponent) {
       foreach($nameTypesPreSort as $nameTypePreSort) {
-        if($nameTypePreSort['person_name_type'] == $defaultNameComponent) {
+        if($nameTypePreSort['id'] == $defaultNameComponent[0]) {
           $nameTypes[$key]['person_name_type'] = $nameTypePreSort['person_name_type'];
           $nameTypes[$key]['id'] = $nameTypePreSort['id'];
         }
       }
     }
-    $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')->createQuery('a')->execute();
     $nameContainer = new sfForm();
     $nameConDeco = new agWidgetFormSchemaFormatterSubContainer($nameContainer->getWidgetSchema());
     $nameContainer->getWidgetSchema()->addFormFormatter('nameConDeco', $nameConDeco);
