@@ -13,11 +13,11 @@
 
 <table class="staffTable">
     <tr class="head">
-      <th>Facility Group</th>
-      <th>Facility Group Type</th>
-      <th>Allocation Status</th>
-      <th>Activation Sequence</th>
-      <th>Facility Resource Count</th>
+      <th>Facility Group <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_group&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Facility Group">?</a></th>
+      <th>Facility Group Type <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_group_type&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Facility Group Type">?</a></th>
+      <th>Allocation Status <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:allocation_status&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Allocation Status">?</a></th>
+      <th>Deployment Priority <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:deployment_priority&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Deployment Priority">?</a></th>
+      <th>Facility Resource Count <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_resource_count&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Facility Resource Count">?</a></th>
     </tr>
   <tbody>
     <?php foreach ($ag_scenario_facility_groups as $ag_scenario_facility_group): ?>
@@ -32,7 +32,7 @@
     <?php endforeach; ?>
         </tbody>
       </table>
-<hr />
+<hr class="ruleGray" />
 
 
  <a href="<?php echo url_for('scenario/fgroup?id=' . $scenario_id) ?>" class="continueButton" title="Add New Facility Group">Add New Facility Group</a>

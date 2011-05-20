@@ -30,6 +30,8 @@ class agStaffPoolFilterForm extends sfForm
 
   public function setup()
   {
+      sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+      $this->wikiUrl = url_for('@wiki');
       $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
       if (count($dsrt) > 1) {
         $defaultStaffResourceTypes = $dsrt;
@@ -49,14 +51,14 @@ class agStaffPoolFilterForm extends sfForm
         array(
             'agStaffResourceType.staff_resource_type' => new sfWidgetFormChoice(
                array('choices' => $defaultStaffTypes,
-                     'label' => 'Staff Type'),
+                     'label' => 'Staff Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_typee&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource Type">?</a>'),
                array('class' => 'filter')
              ),
             'agOrganization.organization' => new sfWidgetFormDoctrineChoice(
                array(
                  'model' => 'agOrganization',
                  'method' => 'getOrganization',
-                 'label' => 'Organization',
+                 'label' => 'Organization <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a>',
                  'add_empty' => true),
                array('class' => 'filter'))));
 

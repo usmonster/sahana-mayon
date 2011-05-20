@@ -671,9 +671,9 @@ span.green{
   outline: none;
 }*/
 
-input[type="button"]:active, button[type="submit"]:active, form input[type="submit"]:active {
+/*input[type="button"]:active, button[type="submit"]:active, form input[type="submit"]:active {
   background: #98ffb9;
-}
+}*/
 
 input[type="button"]:-moz-focus-inner, form input[type="submit"]:-moz-focus-inner {
   border: none;
