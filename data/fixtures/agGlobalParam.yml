@@ -145,7 +145,7 @@ agGlobalParam:
     id: 29
     agHost: localhost
     datapoint: default_event_staff_status
-    value: unavailable
+    value: unknown
   event_staff_available_status:
     id: 30
     agHost: localhost
@@ -176,3 +176,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_list_page_size
     value: 20
+  event_staff_unavailable_status:
+    id: 36
+    agHost: localhost
+    datapoint: event_staff_unavailable_status
+    value: unavailable

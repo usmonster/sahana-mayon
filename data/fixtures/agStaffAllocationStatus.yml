@@ -41,3 +41,10 @@ agStaffAllocationStatus:
     committed: 0
     standby: 0
     active: 0
+  unknown:
+    id: 7
+    staff_allocation_status: Unknown
+    allocatable: 1
+    committed: 0
+    standby: 1
+    active: 0
