@@ -1,0 +1,3 @@
+===== Export Staff =====
+
+To export staff click the **Export Staff** button.  Depending on your browser a download will start automatically, or you may be prompted to choose where to save the file.

@@ -1,0 +1,4 @@
+===== Staff Import =====
+To begin importing staff, click the **Import Staff** button.  A box will expand to enter the address of the file to import.  To select the file on your computer, click "Browse".  After the file is selected, click "Submit".
+
+For more details about importing staff, and to download the staff import template, see the [[manual:user:staff:import|Staff Import Walk-through]].
