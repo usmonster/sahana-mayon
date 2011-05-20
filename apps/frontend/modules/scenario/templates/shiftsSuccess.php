@@ -5,7 +5,7 @@
   $sf_response->setCookie('wizardOp', $encodedWizard);
 
   ?>
-<h2>Scenario Shifts for <?php echo $scenarioName ?></h2>
+<h2>Scenario Shifts for <span class="highlightedText"><?php echo $scenario_name ?></span></h2>
   <?php include_partial('wizard', array('wizardDiv' => $wizardDiv)); ?>
 
 <?php #include_partial('scenarioshiftform', array('scenarioshiftform' => $scenarioshiftform, 'myRandomParam' => $myRandomParam, 'outputResults' => $outputResults)) ?>

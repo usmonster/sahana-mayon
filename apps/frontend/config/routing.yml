@@ -150,6 +150,10 @@ respond:
 wiki:
   url:  /wiki
 
+eventpoll:
+  url:  /eventpoll
+  param: { module: global, action: eventpoll}
+
 # Keep these two at the bottom to aid in the addition of new routes.
 default:
   url:   /:module/:action/*

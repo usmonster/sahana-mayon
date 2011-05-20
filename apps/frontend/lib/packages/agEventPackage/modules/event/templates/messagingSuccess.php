@@ -18,6 +18,10 @@ if(isset($exportComplete)){
 }
   ?>
 <span class="infoText" style="padding-left: 10px;">status of export here</span>
+<a href="<?php echo url_for('eventpoll') ?>"><span class="infoText" style="padding-left: 10px;">"refresh status</span></a>
+<span id="eventWatcher" style="padding-left: 10px;">status of export here</span>
+
+
 <br />
 <br />
 <span style="display: inline-block; margin: 0px; padding: 0px" >

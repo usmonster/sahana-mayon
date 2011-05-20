@@ -742,6 +742,8 @@ class agStaffActions extends agActions
 
     $import = new agStaffImportNormalization(NULL, agEventHandler::EVENT_INFO);
     $import->importStaffFromExcel($this->importPath);
+    
+    
     $import->processBatch();
     $import->processBatch();
 

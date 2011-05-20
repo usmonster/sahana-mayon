@@ -122,6 +122,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->registerZend();
 
     // registers event listeners
+    $this->dispatcher->connect('import.staff_responses', array('agMessageResponseHandler', 'consumeResponses'));
     $this->dispatcher->connect('import.facility_file_ready', array('agImportXLS', 'processFile'));
     $this->dispatcher->connect('import.do_reindex', array('agLuceneIndex', 'indexAll'));
     $this->dispatcher->connect('global_param.param_updated', array('agGlobal', 'loadParams'));

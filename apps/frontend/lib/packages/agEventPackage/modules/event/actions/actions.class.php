@@ -38,25 +38,11 @@ class eventActions extends agActions
     if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
       return sfView::ERROR;
     }
-    $this->importPath = $importPath;
-
+ 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)
-    $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
-    // TODO: eventually use this ^^^ to replace this vvv.
+    $this->dispatcher->notify(new sfEvent($this,'import.staff_responses',
+        array('importPath' => $importPath)));
 
-    //2 = inactive
-    //1 = available
-    //no response = no change.
-    // TODO: make this class
-    //$import = new agMessageReponseHandler(NULL, agEventHandler::EVENT_DEBUG);
-    //$import->importStaffFromExcel($this->importPath);
-    //$import->processBatch();
-    //$import->processBatch();
-
-    // removes the file from the server
-    //unlink($this->importPath);
-    
-    unset($import);
   }
   
   /**

@@ -34,6 +34,18 @@ class agActions extends sfActions
     //$this->setTemplate('global/search');
   }
 
+  
+  public function executeEventpoll(sfWebRequest $request)
+  {
+
+    $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
+    return $this->renderText(json_encode($this->getContext()->get('job_statuses')));
+
+  }
+  
+  
+  
+
   public function doSearch($searchquery, $isFuzzy = TRUE, $widget = NULL)
   {
     $models = $this->getSearchedModels();
