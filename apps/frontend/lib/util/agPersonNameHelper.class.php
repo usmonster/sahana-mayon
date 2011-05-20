@@ -410,13 +410,20 @@ class agPersonNameHelper extends agBulkRecordHelper
    */
   public function getNameTypeIds(array $nameTypes)
   {
-    return agDoctrineQuery::create()
-      ->select('pnt.person_name_type')
-          ->addSelect('pnt.id')
+    $q = agDoctrineQuery::create()
+      ->select('pnt.id')
         ->from('agPersonNameType pnt')
-        ->whereIn('pnt.person_name_type', $nameTypes)
-      ->useResultCache(TRUE, 3600, __FUNCTION__)
-      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+        ->useResultCache(TRUE, 3600, __FUNCTION__);
+    
+    $results = array();
+    foreach ($nameTypes as $nameType)
+    {
+      $typeId = $q->where('pnt.person_name_type', $nameType)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      
+      if (!empty($typeId)) { $results[$nameType] = $typeId; }
+    }
+    return $results;
   }
 
   /**

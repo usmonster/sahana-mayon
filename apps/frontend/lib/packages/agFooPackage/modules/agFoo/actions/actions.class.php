@@ -17,148 +17,6 @@ class agFooActions extends agActions
             ->createQuery('a')
             ->execute();
 
-//    $emailHelper = new agEntityEmailHelper();
-//    $emailByType = $emailHelper->getEntityEmailByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
-//    $emailAll = $emailHelper->getEntityEmail(array(1, 2, 3, 4, 5), TRUE, TRUE);
-//    unset($emailHelper);
-//    echo '<br /><br />Email By Type: <br />';
-//    print_r($emailByType);
-//    echo '<br /><br />Email All: <br />';
-//    print_r($emailAll);
-//    echo '<br /><br />';
-//
-//     $entityContacts = array(87 => array( array( 1, '    emailHelper1@localhost.com    '),
-//                                          array( 3, '    email2@spssample.com   '),
-//                                          array( 1, 'email1@spssample.com')
-//                                        ),
-//                            88 => array( array( 1, 'emailHelper2@localhost.com') ),
-//                            89 => array( array( 1, 'email3@spssample.com') )
-//                           );
-//    $output = $emailHelper->setEntityEmail($entityContacts, FALSE);
-//    print_r($output);
-
-
-
-//    $phoneHelper = new agEntityPhoneHelper();
-//    $phoneByType = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5, 87), TRUE, FALSE, agPhoneHelper::PHN_GET_FORMATTED);
-//    $phoneAll = $phoneHelper->getEntityPhone(array(1, 2, 3, 4, 5, 87), TRUE, FALSE, agPhoneHelper::PHN_GET_FORMATTED);
-//    $phoneAll = $phoneHelper->getEntityPhone(array(1, 2, 3, 4, 5, 87), FALSE, FALSE);
-//    $phoneAreaCode = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5, 87), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_AREA_CODE));
-//    $phoneFirstThree = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5, 87), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_FIRST_THREE));
-//    $phoneLastFour = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5, 87), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_LAST_FOUR));
-//    $phoneExtension = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5, 87), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_EXTENSION));
-//    $phoneDefault = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5, 87), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_DEFAULT));
-//    $phoneByComponents = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5, 87), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT_SEGMENTS);
-////    unset($phoneHelper);
-//    echo '<br /><br />Phone By Type: <br />';
-//    print_r($phoneByType);
-//    echo '<br /><br />Phone All: <br />';
-//    print_r($phoneAll);
-//    echo '<br /><br />';
-//    echo '<br /><br />Phone Area Code: <br />';
-//    print_r($phoneAreaCode);
-//    echo '<br /><br />Phone First Three: <br />';
-//    print_r($phoneFirstThree);
-//    echo '<br /><br />Phone Last Four: <br />';
-//    print_r($phoneLastFour);
-//    echo '<br /><br />Phone Extension: <br />';
-//    print_r($phoneExtension);
-//    echo '<br /><br />Phone Default: <br />';
-//    print_r($phoneDefault);
-//    echo '<br /><br />Phone By Component: <br />';
-//    print_r($phoneByComponents);
-//
-//    $entityContacts = array( 87 => array( array( 1, array('1234567890', 2)),
-//                                          array( 1, array('1234567890x123', 1)),
-//                                          array( 1, array('55555'))
-//                                        ),
-//                             88 => array( array( 1, array('3762923490x333', 1) ) ),
-//                             89 => array( array( 1, array('3456789012', 1 ) ) )
-//                           );
-//    $output = $phoneHelper->setEntityPhone($entityContacts, FALSE);
-//    print_r($output);
-//    echo "<br /><br />";
-//
-//    $entityContacts = array( 90 => array( array( 2, array('2222222222', 1)),
-//                                          array( 1, array('8888888888x88', 2)),
-//                                          array( 3, array('3333333333', 1))
-//                                        ),
-//                             91 => array( array( 4, array('1111111111x11111') ) ),
-//                             92 => array( array( 2, array('788x45t' ) ) ),
-//                             93 => array(array( 2, array('9999999999x99999') ) )
-//                           );
-//    $entityContacts = array( 95 => array( array( 4, array('3223456778x111') ) ) );
-//    $entityContacts = array( 90 => array( array( 1, array('1212121212x12', 2)),
-//                                          array( 1, array('8888888888x88', 2))
-//                                        )
-//                           );
-//    $output = $phoneHelper->setEntityPhone($entityContacts, TRUE);
-//    print_r($output);
-//    echo "<br /><br />";
-//
-//    $entityContacts = array( 101 => array( array( 4, array('3434343434x34'))),
-//                             102 => array( array( 3, array('23456')),
-//                                           array( 3, array('2222222222')) ),
-//                              88 => array( array( 4, array('55555')))
-//                           );
-//    $output = $phoneHelper->setEntityPhone($entityContacts, FALSE);
-//    print_r($output);
-//    echo "<br /><br />";
-//    $entityContacts = array( 103 => array( array( 4, array('4445556666x777')),
-//                                           array( 3, array('6667777888')),
-//                                           array( 2, array('23456')),
-//                                           array( 3, array( '1122334455', 1)),
-//                                           array( 2, array('445566778899323', 2))
-//                                         )
-//                           );
-////    $entityContacts = array( 104 => array( array( 3, array('73762'))));
-//    $output = $phoneHelper->setEntityPhone($entityContacts, FALSE);
-//    print_r($output);
-//    echo "<br /><br />";
-//    $entityContacts = array( 103 => array( array( 2, array('   445566778899323   ')),
-//                                           array( 1, array('    8888889999   ', 1))
-//                                         )
-//                           );
-//    $output = $phoneHelper->setEntityPhone($entityContacts, TRUE);
-//    print_r($output);
-
-//    $personIds = array(13, 14, 15, 16);
-//    $obj = new agPersonLanguageHelper($personIds);
-//    $results = $obj->getPersonLanguageById();
-//    $results = $obj->getPersonLanguage($personIds, FALSE);
-//    print_r($results);
-
-//    $personLanguages = array(2 => array(1 => array('    German   ', array())),
-//                             3 => array(1 => array('Arabic', array('read' => '  fluent  ', 'write' => 'intermediate', 'speak' => 'fluent')),
-//                                        2 => array('English', array('read' => 'basic', 'write' => 'intermediate', 'speak' => 'fluent')),
-//                                        3 => array('Abkhaz', array('read' => 'basic', 'write' => 'intermediate', 'speak' => 'fluent')) ),
-//                             4 => array(),
-//                             11 => array(1 => array('Armenian')),
-//                             12 => array(1 => array('Akan', array('speak' => 'superior'))),
-//                             13 => array(1 => array('Danish') ),
-//                             14 => array(1 => array('Chinese', array('read' => 'superior', 'write' => 'superior', 'speak' => 'superior')),
-//                                         2 => array('English', array('read' => 'fluent', 'speak' => 'fluent'))),
-//                             15 => array(1 => array('Italian', array('read' => 'fluent', 'write' => 'fluent', 'speak' => 'fluent'))),
-//                             1 => array(1 => array('Dutch', array('read' => 'fluent', 'write' => 'intermediate', 'speak' => 'superior')),
-//                                        2 => array('Vietnamese', array('read' => 'superior', 'speak' => 'fluent')),
-//                                        3 => array('Latin') ),
-//                             5 => array(1 => array('English')),
-//                             8 => array(1 => array('Gaelic', array('read' => 'intermediate', 'write' => 'intermediate')))
-//                            );
-//    $personLanguages = array(14 => array(1 => array('Roman', array('read' => 'superior', 'write' => 'superior', 'speak' => 'superior')),
-//                                         2 => array('lkjaseir', array('blah' => 'fluent', 'speak' => 'fluent')) ),
-//                             15 => array(1 => array('Italian', array('read' => 'fluent', 'write' => 'fluent', 'speak' => 'intermediate')))
-//                            );
-//
-//    $results = $obj->setPersonlanguages($personLanguages, FALSE, FALSE, TRUE);
-//    print_r($results);
-
-//
-//    $stfResHelper = new agStaffResourceHelper();
-//    $staffResources = $stfResHelper->getStaffResourceComponents(array(1, 2, 3, 4, 5), TRUE);
-//    echo"Staff Resource Helper:<br />";
-//    print_r($staffResources);
-//    echo"<br /><br />";
     $normObj = new agStaffImportNormalization('temp_staffImport');
     $test = $normObj->testDataNorm();
   }
@@ -207,101 +65,71 @@ class agFooActions extends agActions
   public function executeShow(sfWebRequest $request)
   {
 // <-------- CUT HERE -------->
-$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
-$fakeAddr = array(array(array('1'=>'    monkeybanana3   ', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1),
-    array(array('1'=>'peachpitters', '5'=>'10035'), 1)) ;
-//$fakeEntityAddr = array('1' => array(array(2, array(array('1'=>'peachpitters', '5'=>'10035'), 1)),
-//                                     array(1, array(array('1'=>'    nickel    ','2'=>'bronze','3'=>'silver','4'=>'gold','5'=>'platinum','7'=>'    metals   ', '8'=>'    blah blah blah blah blah blah blah                          '), 1)),
-//                                     array(3, array(array('1'=>'monkeybanana4', '2'=>'raffles', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1))),
-//                          3 => array(array(1,array(array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1)))) ;
-$fakeEntityAddrGeo = array('1' => array(
-                            array( 1,
-                              array(
-                                array('1'=>'    nickelback    ','2'=>'bronze','3'=>'silver','4'=>'gold','5'=>'platinum','7'=>'    metals   ', '8'=>'    blah blah blah blah blah blah blah                          '),
-                                1,
-                                array(array(array('25.32323731', '31.2327232')), 2)
-                            )),
-                            array(3,
-                              array(
-                                array('1'=>'nickelback', '2'=>'raffles1', '3'=>'Nueva Yorke Cidade', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'),
-                                1,
-                                array(array(array('25.32363231', '-31.2326232')), 1)
-                            ))
-                        ),
-                        3 => array(
-                          array( 1,
-                            array(
-                              array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'),
-                              1,
-                              array(array(array('40.75929100', '-73.98668400')), 2)
-                            ))
-                        )
-  ) ;
-$addrContact = array( '1'=>array(array(3,4), array(2,1)),
-    '10'=>array(array(3,10)),
-    '87'=>array(array(1,9))) ;
-$fakeGeo = array( 1 => array(array('25.32323231', '31.2323232')),
-//  2 => array(array('25.32323232', '31.2323232'), array('26.26262626', '26.26262626')),
-  3 => array(array('25.32323231', '-31.2323232')),
-  4 => array(array('12.12121211','54.54545454')),
-//  5 => array(array('monkey','bananaraffle')),
-  6 => array(array('40.75929100', '-73.98668400')),
-  8 => array(array('40.77342100', '-73.94589400')),
-  7 => array(array('25.32323231', '31.2323232')),
-  ) ;
 
-// array($addrId => array(array(array($latitude, $longitude), ...), $matchScoreId), ...)
-$fakeAddrGeo = array( 1 => array(array(array('25.32323231', '31.2323232')), 2),
-  5 => array(array(array('25.323233', '31.2333')), 1)
-  ) ;
+    $headers = array();
 
-$newNames = array(4 => Array ( 1 => Array ( 'Dummy'), 5 => Array ( 'Ali' ), 4 => Array ( 'Betty', 'Amusan' ), 3 => Array ( 'Ammonds' ), 2 => Array ( 'Amy' ) ),
-    9 => Array (),
-    8 => Array ( 3 => Array ( 'Aponte' ), 1 => Array ( 'Anna' ) ),
-    10 => Array ( 3 => Array ( 'Butch' ), 1 => Array ( 'Sundance' ) )
-) ;
-//$obj = agAddressHelper::init() ;
-//$obj = new agEntityEmailHelper ;
-//$obj->setRecordIds($array) ;
+    $q = agDoctrineQuery::create()
+      ->select('s.id')
+          ->addSelect('p.id')
+          ->addSelect('e.id')
+          ->addSelect('pn1.person_name AS name1')
+          ->addSelect('pn3.person_name AS name3')
+        ->from('agStaff AS s')
+          ->innerJoin('s.agPerson AS p')
+          ->innerJoin('p.agEntity AS e');
 
+    $headers['s_id'] = array('s.id', 'Staff ID');
+    $headers['p_id'] = array('p.id', 'Person ID');
+    $headers['e_id'] = array('e.id', 'Entity ID');
 
-//$obj = new agGeoHelper() ;
-$obj = new agEntityAddressHelper() ;
-//$obj->setAgAddressHelper() ;
-//$obj->agAddressHelper->lineDelimiter = '<br />' ;
-//$addr = $obj->getEntityAddress($array, FALSE, FALSE) ;
-//$obj = new agPersonNameHelper();
-//$obj->setRecordIds($array) ;
-//$results = $obj->defaultNameComponents ;
-//$results = $obj->getPersonIds() ;
-//$results = $obj->getPrimaryNameById() ;
-//$results = $obj->setPersonNames($newNames, TRUE, TRUE) ;
-//$results = $obj->getPrimaryNameAsString() ;
-//$results = $obj->getNativeAddressAsString($array) ;
-//$results = $obj->getAddressStandardId() ;
-//$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
-//$results = $obj->getAddressAllowedElements() ;
-//$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
-//$results = $obj->updateAddressHashes($array) ;
-//$addrxnentsById($array) ;
-//$results = $obj->setAddresses($fakeAddr, TRUE) ;
-//$results = $obj->setEntityAddress($fakeEntityAddr, array(), TRUE, TRUE, TRUE) ;
-//$results = $obj->exceptionTest() ;
-//$results = $obj->getEntityEmail(NULL, TRUE, FALSE) ;
-//$results = $obj->purgePersonNames(array(3), TRUE, TRUE) ;
-$obj->enforceGeoType = TRUE ;
+    // do this to get the ID types ordered property
+    $nameHelper = new agPersonNameHelper();
+    $nameComponents = $nameHelper->defaultNameComponents;
+    unset($nameHelper);
 
-//$obj = new agStaffImportNormalization('temp_staffImport');
-//$obj->testDataNorm();
-//$results = 'a';
+    // do this to get the string types, again ordered properly
+    $nameTypes = json_decode(agGlobal::getParam('default_name_components'));
 
-//$results = agScenarioStaffGeneratorHelper::executeStaffPreview(array(array('field'=>'agStaffResource.staff_resource_type_id', 'operator'=>'!=', 'condition'=>'4')));
-//array(array('condition'=>'4', 'operator'=>'!=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
-//array(array('condition'=>'4', 'operator'=>'=', 'field'=>'agStaffResourceType.staff_resource_type_id')));
+    // loop through each of the name types
+    foreach ($nameComponents as $ncIdx => $nc)
+    {
+      // grab our type id
+      $ncId = $nc[0];
 
-$results = $obj->setEntityAddress($fakeEntityAddrGeo, 1, TRUE, FALSE, TRUE);
+      // build the clause strings
+      $column = 'pn' . $ncId . '.person_name';
+      $select = $column . ' AS name' . $ncId;
+      $pmpnJoin = 'p.agPersonMjAgPersonName AS pmpn' . $ncId . ' WITH pmpn' . $ncId .
+        '.person_name_type_id = ?';
+      $pnJoin = 'pmpn' . $ncId . '.agPersonName AS pn' . $ncId;
 
-print_r($results) ;
+      $where = '(' .
+        '(EXISTS (' .
+          'SELECT sub.id ' .
+            'FROM agPersonMjAgPersonName AS sub ' .
+            'WHERE sub.person_name_type_id = ? ' .
+              'AND sub.person_id = pmpn' . $ncId . '.person_id ' .
+            'GROUP BY sub.id ' .
+            'HAVING MIN(sub.priority) = pmpn' . $ncId . '.priority' .
+          ')) ' .
+        'OR (pmpn' . $ncId . '.id IS NULL)' .
+        ')';
+
+      // add the clauses to the query
+      $q->addSelect($select)
+        ->leftJoin($pmpnJoin, $ncId)
+        ->leftJoin($pnJoin)
+        ->where($where, $ncId);
+
+      // add header information
+      $header = 'pn' . $ncId . '_name' . $ncId;
+      $headers[$header] = array($column, $nameTypes[$ncIdx][0]);
+    }
+
+    
+
+    $results = $q->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    print_r($results) ;
 // <-------- CUT HERE -------->
 
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));

@@ -50,7 +50,7 @@ agGlobalParam:
     id: 10
     agHost: localhost
     datapoint: default_name_components
-    value: '<?php echo json_encode(array(array('given',FALSE,1), array('middle',TRUE,2), array('family',FALSE,3))); ?>'
+    value: '<?php echo json_encode(array(array('given',FALSE), array('middle',TRUE), array('family',FALSE))); ?>'
   default_batch_size:
     id: 11
     agHost: localhost
@@ -160,17 +160,17 @@ agGlobalParam:
     id: 32
     agHost: localhost
     datapoint: default_facility_address_types
-    value: ["work"]
+    value: '<?php echo json_encode(array("work")); ?>'
   default_facility_email_types:
     id: 33
     agHost: localhost
     datapoint: default_facility_email_types
-    value: ["work","other"]
+    value: '<?php echo json_encode(array("work", "other")); ?>'
   default_facility_phone_types:
     id: 34
     agHost: localhost
     datapoint: default_facility_phone_types
-    value: ["work","other"]
+    value: '<?php echo json_encode(array("work", "other")); ?>'
   default_list_page_size:
     id: 35
     agHost: localhost
