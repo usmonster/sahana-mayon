@@ -66,69 +66,6 @@ class agFooActions extends agActions
   {
 // <-------- CUT HERE -------->
 
-    $headers = array();
-
-    $q = agDoctrineQuery::create()
-      ->select('s.id')
-          ->addSelect('p.id')
-          ->addSelect('e.id')
-          ->addSelect('pn1.person_name AS name1')
-          ->addSelect('pn3.person_name AS name3')
-        ->from('agStaff AS s')
-          ->innerJoin('s.agPerson AS p')
-          ->innerJoin('p.agEntity AS e');
-
-    $headers['s_id'] = array('s.id', 'Staff ID');
-    $headers['p_id'] = array('p.id', 'Person ID');
-    $headers['e_id'] = array('e.id', 'Entity ID');
-
-    // do this to get the ID types ordered property
-    $nameHelper = new agPersonNameHelper();
-    $nameComponents = $nameHelper->defaultNameComponents;
-    unset($nameHelper);
-
-    // do this to get the string types, again ordered properly
-    $nameTypes = json_decode(agGlobal::getParam('default_name_components'));
-
-    // loop through each of the name types
-    foreach ($nameComponents as $ncIdx => $nc)
-    {
-      // grab our type id
-      $ncId = $nc[0];
-
-      // build the clause strings
-      $column = 'pn' . $ncId . '.person_name';
-      $select = $column . ' AS name' . $ncId;
-      $pmpnJoin = 'p.agPersonMjAgPersonName AS pmpn' . $ncId . ' WITH pmpn' . $ncId .
-        '.person_name_type_id = ?';
-      $pnJoin = 'pmpn' . $ncId . '.agPersonName AS pn' . $ncId;
-
-      $where = '(' .
-        '(EXISTS (' .
-          'SELECT sub.id ' .
-            'FROM agPersonMjAgPersonName AS sub ' .
-            'WHERE sub.person_name_type_id = ? ' .
-              'AND sub.person_id = pmpn' . $ncId . '.person_id ' .
-            'GROUP BY sub.id ' .
-            'HAVING MIN(sub.priority) = pmpn' . $ncId . '.priority' .
-          ')) ' .
-        'OR (pmpn' . $ncId . '.id IS NULL)' .
-        ')';
-
-      // add the clauses to the query
-      $q->addSelect($select)
-        ->leftJoin($pmpnJoin, $ncId)
-        ->leftJoin($pnJoin)
-        ->where($where, $ncId);
-
-      // add header information
-      $header = 'pn' . $ncId . '_name' . $ncId;
-      $headers[$header] = array($column, $nameTypes[$ncIdx][0]);
-    }
-
-    
-
-    $results = $q->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
     print_r($results) ;
 // <-------- CUT HERE -------->
 
