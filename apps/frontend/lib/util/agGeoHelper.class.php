@@ -466,12 +466,12 @@ class agGeoHelper extends agBulkRecordHelper
         ->from('agGeo g')
       ->useResultCache(TRUE, 1800);
 
-    foreach ($gcHashes as $hash)
+    foreach ($gcHashes as $index => $hash)
     {
       $q->where('g.geo_coordinate_hash = ?', $hash);
       $gId = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-      if (empty($gId) || is_null($gId))
+      if (empty($gId))
       {
         $cacheDriver->delete($q->getResultCacheHash());
       }
@@ -479,6 +479,7 @@ class agGeoHelper extends agBulkRecordHelper
       {
         $results[$hash] = $gId;
       }
+      unset($gcHashes[$index]);
     }
  
     return $results;
@@ -500,7 +501,7 @@ class agGeoHelper extends agBulkRecordHelper
       ->useResultCache(TRUE, 1800);
     
     $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-
+    
     if (empty($result) || is_null($result))
     {
       $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);

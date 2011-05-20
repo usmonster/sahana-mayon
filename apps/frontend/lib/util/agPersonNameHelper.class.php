@@ -374,31 +374,30 @@ class agPersonNameHelper extends agBulkRecordHelper
    */
   public function getNameIds(array $nameValues)
   {
-    // @todo make this return each name one by one using the cache
     // ONLY return the ID, not the value because of casing (for comparison)
-
     $q = agDoctrineQuery::create()
       ->select('pn.id')
         ->from('agPersonName pn')
       ->useResultCache(TRUE, 1800);
 
     $results = array();
-    foreach ($nameValues as $name)
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+    foreach ($nameValues as $index => $name)
     {
       $q->where('pn.person_name = ?',$name);
 
       $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
       // clear the cache if we had no result
-      if (empty($result) || is_null($result))
+      if (empty($result))
       {
-        $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
         $cacheDriver->delete($q->getResultCacheHash());
       }
       else
       {
         $results[$name] = $result;
       }
+      unset($nameValues[$index]);
     }
 
     return $results;

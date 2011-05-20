@@ -681,22 +681,23 @@ class agAddressHelper extends agBulkRecordHelper
       ->useResultCache(TRUE, 1800);
     
     $results = array();
-    foreach ($addressHashes as $hash)
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+    foreach ($addressHashes as $index => $hash)
     {
       $q->where('a.address_hash = ?',$hash);
 
       $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
       // clear the cache if we had no result
-      if (empty($result) || is_null($result))
+      if (empty($result))
       {
-        $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
         $cacheDriver->delete($q->getResultCacheHash());
       }
       else
       {
         $results[$hash] = $result;
       }
+      unset($addressHashes[$index]);
     }
 
     return $results;
@@ -1328,7 +1329,7 @@ class agAddressHelper extends agBulkRecordHelper
     $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     // clear the cache if we had no result
-    if (empty($result) || is_null($result))
+    if (empty($result))
     {
       $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
       $cacheDriver->delete($q->getResultCacheHash());

@@ -427,13 +427,33 @@ class agPhoneHelper extends agBulkRecordHelper
    */
   public function getPhoneIds(array $phones)
   {
+    // ONLY return the ID, not the value because of casing (for comparison)
     $q = agDoctrineQuery::create()
-      ->select('e.phone_contact')
-          ->addSelect('e.id')
-        ->from('agPhoneContact e')
-        ->whereIn('e.phone_contact', $phones);
+      ->select('pc.id')
+        ->from('agPhoneContact')
+      ->useResultCache(TRUE, 1800);
 
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $results = array();
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+    foreach ($phones as $index => $phone)
+    {
+      $q->where('pc.phone_contact = ?',$phone);
+
+      $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      // clear the cache if we had no result
+      if (empty($result))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results[$phone] = $result;
+      }
+      unset($phones[$index]);
+    }
+
+    return $results;
   }
 
   /**
@@ -585,11 +605,13 @@ class agPhoneHelper extends agBulkRecordHelper
     // Extract only the phone numbers into a simple array for later use to retrieve phone contact
     // ids if a match found in db.
     $phonesOnly = array();
-    foreach ($phones as $p)
+    foreach ($phones as &$p)
     {
+      $p[0] = strtolower($trim($p[0]));
       $phonesOnly[] = $p[0];
     }
-
+    unset($p);
+    
     // return any found phones
     $dbPhones = $this->getPhoneIds(array_unique(array_values($phonesOnly)));
 
