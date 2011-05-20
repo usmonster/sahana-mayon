@@ -21,7 +21,6 @@
  */
 class agMessageResponseHandler extends agImportNormalization
 {
-  
   public $agEventAvailableStaffStatus;
   public $agEventUnAvailableStaffStatus;
   /**
@@ -31,7 +30,7 @@ class agMessageResponseHandler extends agImportNormalization
    */
   public function __construct($tempTable = NULL, $logEventLevel = NULL)
   {
-    if (is_null($tempTable)) { $tempTable = 'temp_staff_import'; }
+    if (is_null($tempTable)) { $tempTable = 'temp_message_import'; }
 
     // DO NOT REMOVE
     parent::__construct($tempTable, $logEventLevel);
@@ -185,20 +184,95 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function setEventStaffStatus($throwOnError, Doctrine_Connection $conn)
   {
-    
     // always start with any data maps we'll need so they're explicit
     $responses = array();
-    
+
     // loop through our raw data and build our person language data
+    $this->logInfo('Looping throw the message reponses and retrieving the most recent.');
     foreach ($this->importData as $rowId => $rowData)
     {
       $rd = $rowData['_rawData'];
       if (array_key_exists('resonse', $rd)) {
-        $responses[$rd['unique_id']] = $rd['response'];
+        $rVals = array(self::mapResponse($rd['response']), strtotime($rd['time_stamp']));
+        $responses[$rd['unique_id']] = $rVals;
       }
     }
-    
-    // @todo foreach $responses doctrine goodness
-    
+
+    // this step is necessary to avoid index constraints
+    $coll = agDoctrineQuery::create()
+      ->select('ess.*')
+        ->from('agEventStaffStatus ess')
+        ->whereIn(array_keys($responses))
+          ->andWhere('EXISTS (SELECT s.id ' .
+              'FROM agEventStaffStatus AS s ' .
+              'WHERE s.event_staff_id = ess.event_staff_id ' .
+              'HAVING MAX(s.time_stamp) = ess.time_stamp)')
+        ->execute();
+
+    // loop through all of our event staff and insert for those who already have a status
+    foreach ($coll as $collId => &$rec)
+    {
+      // grab that particular response record
+      $rVals = $responses[$rec['event_staff_id']];
+
+      // @todo Check the timestamp output... this might need to be strtotime'd
+      if ($rec['time_stamp'] == $rVals[1])
+      {
+        // if the timestamps were the same, update the response
+        $eventMsg = 'Updating existing response for event staff id {' . $rec['event_staff_id'] .
+          '}.';
+        $this->logDebug($eventMsg);
+        $rec['staff_allocation_status_id'] = $rVals[0];
+      }
+      else if ($rec['time_stamp'] < $rVals[1])
+      {
+        $eventMsg = 'Creating new status record for event staff id {' . $rec['event_staff_id'] .
+          '}.';
+        $this->logDebug($eventMsg);
+
+        // if the db timestamp is older than the import one, make a new record and add it
+        $nRec = new agEventStaffStatus();
+        $nRec['event_staff_id'] = $rec['event_staff_id'];
+        $nRec['time_stamp'] = $rVals[1];
+        $nRec['staff_allocation_status_id'] = $rVals[0];
+        $coll->add($nRec);
+      }
+      else
+      {
+        $eventMsg = 'Import timestamp {' . $rVals[1] . '} is older than the current timestamp in' .
+          'the database {' . $rec['time_stamp'] . '}. Skipping insertion of older timestamp.';
+        $this->logWarn($eventMsg);
+      }
+
+      // either way, we can be safely done this response
+      unset($responses[$rec['event_staff_id']]);
+    }
+
+    // as a safety measure, always unset a referenced array value as soon as the loop is over
+    unset($rec);
+   
+    // If we still have members in $responses, they were not event staff as of this execution
+    // NOTE: Theoretically, an event staff person could have an an event staff record but no
+    // event staff status record (the source for the collection), however, operationally, this
+    // case should not occur since all newly generated staff pool members are given a default
+    // status.
+
+    // Either way, we should warn the user that these records will not be updated
+    $eventMsg = 'Event staff with IDs {' . implode(',', array_keys($responses)) . '} are no ' .
+      'longer valid members of this event. Skipping response updates.';
+    $this->logWarn($eventMsg);
+
+    // here's the big to-do; let's save!
+    $coll->save();
+  }
+
+  /**
+   * Method to map a message response to a database-understood status type.
+   * @param string $response
+   */
+  protected static function mapResponse( $response )
+  {
+    //@todo make this do something
+    return $response;
   }
 }

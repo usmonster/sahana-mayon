@@ -65,7 +65,19 @@ class agFooActions extends agActions
   public function executeShow(sfWebRequest $request)
   {
 // <-------- CUT HERE -------->
+    // this step is necessary to avoid index constraints
+    $responses = array(1,2,3,4,5,6,7,8,9,10);
+    $coll = agDoctrineQuery::create()
+      ->select('ess.*')
+        ->from('agEventStaffStatus ess INDEXBY ess.event_staff_id')
+        ->whereIn(array_keys($responses))
+          ->andWhere('EXISTS (SELECT s.id ' .
+              'FROM agEventStaffStatus AS s ' .
+              'WHERE s.event_staff_id = ess.event_staff_id ' .
+              'HAVING MAX(s.time_stamp) = ess.time_stamp)')
+        ->execute();
 
+    $results = $coll->toArray();
     print_r($results) ;
 // <-------- CUT HERE -------->
 
