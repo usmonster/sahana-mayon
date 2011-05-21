@@ -115,6 +115,50 @@ abstract class agImportHelper extends agEventHandler
   }
 
   /**
+   *
+   * @param sfEvent $event
+   * @todo document this
+   */
+  public static function processImportEvent(sfEvent $event)
+  {
+    $action = & $event->getSubject();
+    $context = & $action->getContext();
+    $importer = & $action->importer;
+
+    $totalBatchCount = $importer->iterData['batchCount'];
+    $batchesLeft = $totalBatchCount;
+    $totalRecordCount = $importer->iterData['tempCount'];
+    $recordsLeft = $totalRecordCount;
+
+    $statusId = 'import_' . $action->moduleName . '_' . $action->actionName;
+    $status = $context->get($statusId);
+    if (!isset($status) || 0 == $status[0]) {
+      $startTime = time();
+      $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+    } else {
+      //TODO: decide what to do in this case
+      $this->logAlert('Import in progress, or starting new import after failed attempt?');
+      return; //, right?
+    }
+
+    while ($batchesLeft > 0 && !isset($context->get('abort_' . $statusId))) {
+      $batchResult = $importer->processBatch();
+      // if the last batch did nothing
+      if ($batchResult == $recordsLeft) {
+        //TODO: decide what to do in this case
+        $this->logErr('No progress since last batch!');
+        //break; //, right?
+      } else {
+        $recordsLeft = $batchResult;
+      }
+
+      $batchesLeft = $importer->iterData['batchCount'] - $importer->iterData['batchPosition'] - 1;
+      //$context->set($statusId, array($recordsLeft, $totalRecordCount));
+      $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+    }
+  }
+
+  /**
    * Method to reset ALL iter data.
    */
   protected function resetIterData()

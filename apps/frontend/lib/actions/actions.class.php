@@ -34,17 +34,21 @@ class agActions extends sfActions
     //$this->setTemplate('global/search');
   }
 
-  
+  public function executeStatus(sfWebRequest $request)
+  {
+    $statuses = $request->getRequestFormat()/* $this->getContext()->get('job_statuses') */;
+    if ('json' == $request->getRequestFormat()) {
+      $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
+      $statuses = json_encode($statuses);
+    }
+    return $this->renderText($statuses);
+  }
+
   public function executeEventpoll(sfWebRequest $request)
   {
-
     $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
     return $this->renderText(json_encode($this->getContext()->get('job_statuses')));
-
   }
-  
-  
-  
 
   public function doSearch($searchquery, $isFuzzy = TRUE, $widget = NULL)
   {
@@ -67,7 +71,6 @@ class agActions extends sfActions
     $this->pager = new agArrayPager(null, 10);
 
     $searchResult = $query->getRecords(); //agStaff should be $models
-    
     // TODO
     //a) we can return the results hydrated as scalar
     // (only get the PK's[person,entity,staff,facility,etc])
@@ -84,10 +87,7 @@ class agActions extends sfActions
         $facilityCollection = $searchResult['agFacility'];
         $facility_ids = $facilityCollection->getKeys(); // toArray();
         $resultArray = agListHelper::getFacilityList($facility_ids);
-
-        /** @todo change the above to use a FacilityList return
-         * 
-         */
+        // @todo change the above to use a FacilityList return
       } else {
         //$resultArray = array();
       }

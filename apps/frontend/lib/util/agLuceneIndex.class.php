@@ -20,6 +20,7 @@ class agLuceneIndex
 
   /**
    * @param boolean $reset by default is 0, meaning the entire index is rewritten.
+   * @todo maybe refactor to do all this stuff by reference? -UA
    */
   public static function indexAll(sfEvent $event = null, $reset = 0)
   {

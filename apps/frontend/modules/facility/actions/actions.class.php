@@ -221,8 +221,7 @@ class facilityActions extends agActions
   public function executePoll(sfWebRequest $request)
   {
     $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
-    return $this->renderText(json_encode(array()/*agImportHelper::getImportState()*/));
-    //return $this->renderPartial('global/ajax', array('data' => agImportHelper::getImportState()));
+    return $this->renderText(json_encode($this->getContext()->get('job_statuses')));
   }
 
   /**

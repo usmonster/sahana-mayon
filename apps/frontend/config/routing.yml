@@ -150,6 +150,17 @@ respond:
 wiki:
   url:  /wiki
 
+#TODO: make this work! -UA
+status:
+  url:  /status.:sf_format
+#  class:   sfDoctrineRoute
+  class:   sfRequestRoute
+  param: { module: global, action: status, sf_format: html }
+#  options: { model: agEntity, type: object }
+  requirements:
+    sf_method: [get]
+    sf_format: (?:html|json)
+
 eventpoll:
   url:  /eventpoll
   param: { module: global, action: eventpoll}
