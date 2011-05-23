@@ -59,7 +59,7 @@ class agDefaultResourceTypeForm extends sfForm
       'model' => 'agStaffResourceType',
       'method' => 'getStaffResourceType',
       'add_empty' => false,
-      'label' => 'Staff Resource Types <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>',
+      'label' => 'Staff Resource Types <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource Type">?</a>',
       'multiple' => true,
       'expanded' => true,
       'order_by' => array('staff_resource_type', 'asc')
@@ -86,7 +86,7 @@ class agDefaultResourceTypeForm extends sfForm
       'model' => 'agFacilityResourceType',
       'method' => 'getFacilityResourceType',
       'add_empty' => false,
-      'label' => 'Facility Resource Types <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>',
+      'label' => 'Facility Resource Types <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Resource Type">?</a>',
       'multiple' => true,
       'expanded' => true,
       'order_by' => array('facility_resource_type', 'asc')

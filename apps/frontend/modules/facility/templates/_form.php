@@ -14,6 +14,14 @@ if ($events != "") {
     <input type="hidden" name="sf_method" value="put" />
   <?php endif; ?>
   <?php echo $form ?>
+  <?php
+//    foreach($form->getEmbeddedForms() as $eForm) {
+//      echo $eForm;
+//          $b = new sfForm($defaults, $options, $CSRFSecret);
+//      $c = $b->g
+//    }
+
+  ?>
   <a href="<?php echo url_for('facility/list') ?>" class="generalButton">Back to List</a>
   <?php if (!$form->getObject()->isNew()): ?>
     <?php echo link_to('Delete', 'facility/delete?id=' . $form->getObject()->getId(), array('method' => 'delete', 'confirm' => $confirm, 'class' => 'deleteButton')) ?>

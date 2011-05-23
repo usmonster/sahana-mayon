@@ -18,7 +18,6 @@
  */
 class agFormatterAddressLevelTwo extends sfWidgetFormSchemaFormatter
 {
-
   protected
     $rowFormat       = "<li style=\"padding: .5em 0;\"><h4 style=\"display: inline-block; width: 60px; text-align: left;\">%error%%label%:</h4>\n  <div class=\"level2\" style=\"display: inline-block\">%field%%help%\n%hidden_fields%</div></li>\n",
     $errorRowFormat  = "<li>\n%errors%</li>\n",

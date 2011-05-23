@@ -132,7 +132,8 @@ class agFacilityForm extends BaseagFacilityForm
       $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
     }
 
-    $contactContainer->embedForm('Phone <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Phone">?</a>', $phoneContainer);
+    $contactContainer->embedForm('Phone', $phoneContainer);
+    $contactContainer->widgetSchema['Phone']->setLabel('Phone <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Phone">?</a>');
   }
 
   public function embedEmailForm($contactContainer)
@@ -171,7 +172,8 @@ class agFacilityForm extends BaseagFacilityForm
       $emailContactForm->widgetSchema->setLabel('email_contact', false);
       $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
     }
-    $contactContainer->embedForm('Email <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_email&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Email">?</a>', $emailContainer);
+    $contactContainer->embedForm('Email', $emailContainer);
+    $contactContainer->widgetSchema['Email']->setLabel('Email <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_email&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Email">?</a>');
   }
 
   public function embedResourcesForm($resourceContainer)
@@ -383,7 +385,8 @@ class agFacilityForm extends BaseagFacilityForm
 
       $addressFirstPass = false;
     }
-    $contactContainer->embedForm('Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Address">?</a>', $addressContainer);
+    $contactContainer->embedForm('Address', $addressContainer);
+    $contactContainer->widgetSchema['Address']->setLabel('Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Address">?</a>');
     //Embed all the addresses into agPersonForm.
   }
 

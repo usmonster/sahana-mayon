@@ -3,7 +3,7 @@
 <br
   <table class="singleTable">
   <thead>
-  <h3>Organization <a href="'<?php url_for('@wiki'); ?>'/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a></h3>
+  <h3>Organization <a href="<?php url_for('@wiki'); ?>/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a></h3>
 </thead>
 <tbody>
   <tr>
@@ -25,7 +25,7 @@
 
 <table class="singleTable">
   <thead>
-  <h3>Staff Count <a href="'<?php url_for('@wiki'); ?>'/doku.php?id=tooltip:organization_staff_count&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Count">?</a></h3>
+  <h3>Staff Count <a href="<?php url_for('@wiki'); ?>/doku.php?id=tooltip:organization_staff_count&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Count">?</a></h3>
 </thead>
 <tbody>
   <?php foreach ($staffResourceTypes as $stfResTypeId => $stfResType): ?>
