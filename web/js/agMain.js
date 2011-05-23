@@ -465,7 +465,8 @@ $(document).ready(function() {
     
     hourTextBox.bind('blur change keyup', {sliderObj: sliderObject}, function(e) {
       var sliderObject = e.data.sliderObj
-      var setValue = Math.abs($(this).val()) * 60 + Math.abs(minuteTextBox.val());
+      var sliderValue = Math.abs($(this).val()) * 60 + Math.abs(minuteTextBox.val());
+      var setValue = $(this).val() > 0 ? sliderValue : -1*sliderValue;
       sliderObject.slider("value", setValue);
       storedInput.val(setValue);
       
