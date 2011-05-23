@@ -31,8 +31,8 @@ class PluginagEmbeddedAgStaffResourceForm extends PluginagStaffResourceForm
     $this->wikiUrl = url_for('@wiki');
 
     $this->getWidget('staff_resource_type_id')->setLabel('Staff Resource Type ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource">?</a>');
-    $this->getWidget('staff_resource_status_id')->setLabel('Staff Resource Status ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:staff_resource_status&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource">?</a>');
-    $this->getWidget('organization_id')->setLabel('Organization ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource">?</a>');
+    $this->getWidget('staff_resource_status_id')->setLabel('Staff Resource Status ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:staff_resource_status&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource Status">?</a>');
+    $this->getWidget('organization_id')->setLabel('Organization ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a>');
     $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
     $this->getWidgetSchema()->setFormFormatterName('custDeco');

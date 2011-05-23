@@ -28,7 +28,7 @@ use_javascripts_for_form($form);
 <?php echo $form['id'] ?>
       <h4>
         <?php echo $form['name']->renderLabel(); ?>
-        <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:name&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Sex">?</a>
+        <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:name&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Name">?</a>
       </h4>
       <div class="clearBoth"> </div>
       <?php echo $form['name'] ?>
