@@ -125,13 +125,22 @@ class agPersonForm extends BaseagPersonForm
   {
     $this->embedDateOfBirthForm();
     $this->embedLanguageForm();
-    $this->embedNameForm();
+//    $this->embedNameForm();
     $this->embedContactForms();
-//    $this->embedEmailForm();
-//    $this->embedPhoneForm();
     $this->embedAddressForm();
+    $this->embedPrimaryForm();
   }
 
+  public function embedPrimaryForm()
+  {
+    $primaryContainer = new sfForm();
+    $primaryContainerFormatter = new agFormatterPrimaryLevelOne($primaryContainer->getWidgetSchema());
+    $primaryContainer->getWidgetSchema()->addFormFormatter('primaryContainerFormatter', $primaryContainerFormatter);
+    $primaryContainer->getWidgetSchema()->setFormFormatterName('primaryContainerFormatter');
+    $this->embedNameForm($primaryContainer);
+//    $this->embedPhoneForm($primaryContainer);
+    $this->embedForm('Primary', $primaryContainer);
+  }
   public function embedContactForms()
   {
     $contactContainer = new sfForm();
@@ -265,7 +274,7 @@ class agPersonForm extends BaseagPersonForm
    * populated with the agPersonName that corresponds to the current agPerson and
    * agPersonNameType (if it exists).
    * */
-  public function embedNameForm()
+  public function embedNameForm($primaryContainer)
   {
     $nameHelper = new agPersonNameHelper();
     $defaultNameComponents = $nameHelper->defaultNameComponents;
@@ -291,7 +300,7 @@ class agPersonForm extends BaseagPersonForm
       }
     }
     $nameContainer = new sfForm();
-    $nameConDeco = new agWidgetFormSchemaFormatterSubContainer($nameContainer->getWidgetSchema());
+    $nameConDeco = new agFormatterNameLevelOne($nameContainer->getWidgetSchema());
     $nameContainer->getWidgetSchema()->addFormFormatter('nameConDeco', $nameConDeco);
     $nameContainer->getWidgetSchema()->setFormFormatterName('nameConDeco');
     foreach ($nameTypes as $nameType) {
@@ -305,7 +314,8 @@ class agPersonForm extends BaseagPersonForm
       $nameForm->widgetSchema->setLabel('person_name', ucwords($nameType['person_name_type']));
       $nameContainer->embedForm($nameType['person_name_type'], $nameForm);
     }
-    $this->embedForm('name', $nameContainer);
+    $primaryContainer->embedForm('Name', $nameContainer);
+    $primaryContainer->widgetSchema['Name']->setLabel('Name <a href="' . $this->wikiUrl . '/doku.php?id=tooltip:name&do=export_xhtmlbody" class="tooltipTrigger" title="Name">?</a>');
   }
 
   /**
