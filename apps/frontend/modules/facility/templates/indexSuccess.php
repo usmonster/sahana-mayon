@@ -23,7 +23,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');?>
           'id' => 'import'
         )
     );
-    ?><a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_import&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Importing Facilities">?</a><br/><br/>
+    ?><a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_import&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Importing Facilities"> ?</a><br/><br/>
     <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('facility/import') ?>" method="post" enctype="multipart/form-data">
       <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
         <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
@@ -53,7 +53,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');?>
             'title' => 'Export Facilities'
           )
       );
-  ?><a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_export&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Exporting Facilities">?</a>
+  ?><a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_export&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Exporting Facilities"> ?</a>
       <br /><br/>
   <?php
       echo link_to(

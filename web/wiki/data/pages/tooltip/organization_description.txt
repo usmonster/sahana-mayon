@@ -1,0 +1,3 @@
+===== Describing Organzations =====
+
+Organization descriptions are used for reference in the organization module.  Briefly describe the organization.

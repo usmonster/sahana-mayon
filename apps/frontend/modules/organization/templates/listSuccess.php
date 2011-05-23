@@ -14,8 +14,7 @@ $thisUrl = url_for('organization/list');
 $ascArrow = '&#x25B2;';
 $descArrow = '&#x25BC;';
 ?>
-<p>Below are the current organizations in Agasti.  To search for a specific organization use the
-  search box above.</p>
+<p>Below are the current organizations in Sahana Agasti. Click the ID number to view or edit the organization.</p>
 <table class="staffTable">
     <caption>Organizations
     <?php
