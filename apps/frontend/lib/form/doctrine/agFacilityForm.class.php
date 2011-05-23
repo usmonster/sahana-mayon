@@ -320,7 +320,7 @@ class agFacilityForm extends BaseagFacilityForm
           $valueForm->getWidgetSchema()->addFormFormatter('valFormatter', $valueFormFormatter);
           $valueForm->getWidgetSchema()->setFormFormatterName('valFormatter');
           //^ Lowest level address form, actually holds the data.
-          $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]);
+          $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]['id']);
           //^ set the default address_element_id.
           $valueForm->widgetSchema->setLabel('value', false);
           // ^hide the 'value' field label.
@@ -383,7 +383,7 @@ class agFacilityForm extends BaseagFacilityForm
 
       $addressFirstPass = false;
     }
-    $contactContainer->embedForm('Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>', $addressContainer);
+    $contactContainer->embedForm(/*'Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>'*/'Address', $addressContainer);
     //Embed all the addresses into agPersonForm.
   }
 
