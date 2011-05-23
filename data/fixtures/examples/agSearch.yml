@@ -8,9 +8,9 @@ agSearch:
   2:
     id: 2
     agSearchType: doctrine_query_simple
-    search_hash: '4115ed6376fb8fbdce29966025997557'
+    search_hash: '85f80c31e09dad472956622e11c02cd3'
     search_name: General Volunteers
-    search_condition: '[{"condition":"General Staff","field":"agStaffResourceType.staff_resource_type","operator":"="},{"condition":"American Red Cross","field":"agOrganization.organization","operator":"="}]'
+    search_condition: '[{"condition":"Generalist","field":"agStaffResourceType.staff_resource_type","operator":"="},{"condition":"American Red Cross","field":"agOrganization.organization","operator":"="}]'
   3:
     id: 3
     agSearchType: doctrine_query_simple
