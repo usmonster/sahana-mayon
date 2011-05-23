@@ -252,7 +252,7 @@ class agMessageResponseHandler extends agImportNormalization
     unset($rec);
    
     // If we still have members in $responses, they were not event staff as of this execution
-    // NOTE: Theoretically, an event staff person could have an an event staff record but no
+    // NOTE: Theoretically, an event staff person could have an event staff record but no
     // event staff status record (the source for the collection), however, operationally, this
     // case should not occur since all newly generated staff pool members are given a default
     // status.

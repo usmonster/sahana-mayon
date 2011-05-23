@@ -458,7 +458,7 @@ class scenarioActions extends agActions
 
       $search_id = null;
 
-      $staff_ids = agScenarioStaffGeneratorHelper::executeStaffPreview($search_condition);
+      $staff_ids = agStaffGeneratorHelper::executeStaffPreview($search_condition);
 
       $resultArray = agListHelper::getStaffList($staff_ids);
       $this->status = 'active';
@@ -491,9 +491,7 @@ class scenarioActions extends agActions
       if ($this->poolform->isValid()) {
         $ag_staff_pool = $this->poolform->saveEmbeddedForms();
 
-        agScenarioStaffGeneratorHelper::generateStaffPool($this->scenario_id);
-        //$staff_resource_ids = agScenarioGenerator::staffPoolGenerator($search_condition, $this->scenario_id);
-        //$addedStaff = agScenarioGenerator::saveStaffPool($staff_resource_ids, $this->scenario_id, $staff_generator['search_weight']);
+        agStaffGeneratorHelper::generateStaffPool($this->scenario_id);
         if ($request->getParameter('Continue')) {
           $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
         } else {
@@ -1030,7 +1028,7 @@ class scenarioActions extends agActions
       if ($this->shifttemplateforms->isValid()) {
         $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms();
         if ($request->hasParameter('Continue')) {
-          $generatedResult = agScenarioGenerator::shiftGenerator();
+          $generatedResult = agShiftGeneratorHelper::shiftGenerator();
           //if this is a long process should be a try/catch here
           $this->redirect('scenario/shifts?id=' . $request->getParameter('id'));
         } else {

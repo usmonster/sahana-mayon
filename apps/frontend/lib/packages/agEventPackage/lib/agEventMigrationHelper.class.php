@@ -257,7 +257,7 @@ class agEventMigrationHelper
        * 0b. Clean-out event related tables prior to migrating any scenario related tables.
        * 1a. Regenerate scenario shift
        */
-      agScenarioGenerator::shiftGenerator();
+      $test = agShiftGeneratorHelper::shiftGenerator();
       /**
        * @todo
        * 1b. Copy Facility Group
@@ -277,19 +277,8 @@ class agEventMigrationHelper
        * @todo Wrap in an event helper class.
        */
       //regenerate staff pool with new search conditions
-      agScenarioStaffGeneratorHelper::generateStaffPool($scenario_id);
+      agStaffGeneratorHelper::generateStaffPool($scenario_id);
 
-//     this is the old staffpool generator/saver
-//      $search_queries = agDoctrineQuery::create()
-//              ->select('ssg.id, ssg.scenario_id, ssg.search_weight, s.search_condition, s.id')
-//              ->from('agScenarioStaffGenerator ssg')
-//              ->innerJoin('ssg.agSearch s')
-//              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-//      foreach ($search_queries as $search_query) {
-//        $staff_resource_ids = agScenarioGenerator::staffPoolGenerator($search_query['s_search_condition'], $search_query['ssg_scenario_id']);
-//        
-//        agScenarioGenerator::saveStaffPool($staff_resource_ids, $scenario_id, $search_query['ssg_search_weight']);
-//      }
       // 4. Copy over staff pool
       self::migrateStaffPool($scenario_id, $event_id);
       // 5. Populate agEventStaffShift (assigning event staffs to shifts).

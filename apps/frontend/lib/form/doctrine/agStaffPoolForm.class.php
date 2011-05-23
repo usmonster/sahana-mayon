@@ -186,7 +186,7 @@ class agStaffPoolForm extends sfForm
         $searchCondition,
         TRUE,
         $values['search_name'],
-        agScenarioStaffGeneratorHelper::getDefaultSearchTypeId());
+        agStaffGeneratorHelper::getDefaultSearchTypeId());
   }
 
   /**

@@ -15,7 +15,7 @@
  *
  */
 
-class agScenarioGenerator
+class agShiftGeneratorHelper
 {
 
   /**

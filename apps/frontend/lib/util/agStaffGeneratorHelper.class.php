@@ -13,7 +13,7 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
-class agScenarioStaffGeneratorHelper extends agSearchHelper
+class agStaffGeneratorHelper extends agSearchHelper
 {
   protected static  $defaultSearchType = 'doctrine_query_simple',
                     $defaultSearchTypeId ;
