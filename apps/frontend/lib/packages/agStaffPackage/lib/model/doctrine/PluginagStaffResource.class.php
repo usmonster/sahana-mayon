@@ -162,8 +162,63 @@ abstract class PluginagStaffResource extends BaseagStaffResource
       $header = 'pn' . $ncId . '_name' . $ncId;
       $headers[$header] = array($column, $nameTypes[$ncIdx][0]);
     }
-
     return array($headers, $q);
   }
 
+  /**
+   * Method to set all active staff in the system to a disabled status
+   * @param Doctrine_Connection $conn An optional doctrine connection object.
+   * @return integer Returns the number of updates performed.
+   */
+  public static function disableAllStaff(Doctrine_Connection $conn = NULL)
+  {
+    $results = 0;
+
+    // get our disabled status
+    $disabledStatus = agGlobal::getParam('staff_disabled_status');
+    $disabledStatusId = agDoctrineQuery::create()
+      ->select('srs.id')
+        ->from('agStaffResourceStatus srs')
+        ->where('srs.staff_resource_status = ?', $disabledStatus)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    // build our update query
+    $q = agDoctrineQuery::create()
+      ->update('agStaffResource')
+        ->set('staff_resource_status_id', '?', $disabledStatusId)
+        ->where('staff_resource_status_id <> ?', $disabledStatusId);
+
+    // here we check our current transaction scope and create a transaction or savepoint
+    if (is_null($conn))
+    {
+      $conn = Doctrine_Manager::connection();
+    }
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__);
+    }
+    else
+    {
+      $conn->beginTransaction();
+    }
+
+    try
+    {
+      // attempt to execute our query and commit
+      $results = $q->execute();
+      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+    }
+    catch(Exception $e)
+    {
+      // log our error message
+      $errMsg = 'Failed to reset staff statuses to ' . $disabledStatus . '. Rolling back.';
+      sfContext::getInstance()->getLogger()->err($errMsg);
+
+      // roll back and rethrow
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      throw $e;
+    }
+    return $results;
+  }
 }
