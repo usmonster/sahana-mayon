@@ -5,13 +5,13 @@ Organizations can be municipal departments or non-government organizations whose
 
 Below are general how-tos and quick reference information.  For full details on Organization Management see the [[manual:user:organizations:walkthrough|Managing Organizations Walk Through]].
 
-====== Organization Management Functions ======
+===== Organization Management Functions =====
 The functions of Organization Management are:
   * Entering Organization name and details
   * Editing Organizations
   * Views statistics on staff affiliated with an organization
 
-====== Entering Organizations ======
+===== Entering Organizations =====
 Organizations records can be manually entered into Sahana Agasti via the Organization Management module.
 
 Beginning from the Organization Management home page:
@@ -19,7 +19,7 @@ Beginning from the Organization Management home page:
   - Enter the Organization name and Description
   - Click "Save and Continue"
 
-====== Editing or Deleting Organizations ======
+===== Editing or Deleting Organizations =====
 Organization records are manually updated in Sahana Agasti via the Organization Management module.
 
 Beginning from the Organization Management home page:

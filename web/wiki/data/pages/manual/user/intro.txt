@@ -1,1 +1,3 @@
-====== Introduction To Sahana 2.0 (Agasti Mayon) ======
+====== Introduction To Sahana Agasti ======
+
+<<This is a placeholder for an introduction.>>
