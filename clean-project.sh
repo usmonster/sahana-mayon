@@ -33,6 +33,13 @@ rm -rf $PROJECT_ROOT/lib/filter/doctrine/ag*
 # clears the cache
 $PROJECT_ROOT/symfony cc
 
+# purges the logs
+#$PROJECT_ROOT/symfony log:clear
+# instead:
+
+# rotates the logs
+$PROJECT_ROOT/symfony log:rotate --period=1 --history=8
+
 # removes search index files to avoid pollution from previous installs
 sudo rm -rf $PROJECT_ROOT/data/search/*
 

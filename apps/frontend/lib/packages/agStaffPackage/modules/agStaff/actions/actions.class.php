@@ -739,6 +739,12 @@ class agStaffActions extends agActions
     unlink($filePath);
   }
 
+  public function executeCancelImport(sfWebRequest $request) {
+    $statusId = 'import_' . $this->moduleName . '_' . $this->actionName;
+    $this->getContext()->set('abort_' . $statusId, TRUE);
+    return sfView::NONE;
+  }
+
   public function executeImport(sfWebRequest $request)
   {
     $uploadedFile = $_FILES['import'];

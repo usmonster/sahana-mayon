@@ -150,13 +150,16 @@ respond:
 wiki:
   url:  /wiki
 
-#TODO: make this work! -UA
 status:
   url:  /status.:sf_format
-#  class:   sfDoctrineRoute
-  class:   sfRequestRoute
-  param: { module: global, action: status, sf_format: html }
-#  options: { model: agEntity, type: object }
+  param: { module: admin, action: status, sf_format: html }
+  requirements:
+    sf_method: [get]
+    sf_format: (?:html|json)
+
+status_module:
+  url:  /:module/status.:sf_format
+  param: { action: status, sf_format: html }
   requirements:
     sf_method: [get]
     sf_format: (?:html|json)

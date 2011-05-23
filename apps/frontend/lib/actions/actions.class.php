@@ -36,11 +36,15 @@ class agActions extends sfActions
 
   public function executeStatus(sfWebRequest $request)
   {
-    $statuses = $request->getRequestFormat()/* $this->getContext()->get('job_statuses') */;
-    if ('json' == $request->getRequestFormat()) {
+    $statusId = implode('_', array($this->moduleName, $this->actionName));
+    $statuses = $this->getContext()->get( 'job_statuses');
+    $format = $request->getRequestFormat();
+    if ('json' == $format) {
       $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
       $statuses = json_encode($statuses);
     }
+    //TODO: else, use partial instead of returning?
+    
     return $this->renderText($statuses);
   }
 

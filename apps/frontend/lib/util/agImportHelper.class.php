@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract class to provide import helper methods
  *
@@ -16,27 +17,30 @@
  */
 abstract class agImportHelper extends agEventHandler
 {
-  const       CONN_TEMP_READ = 'import_temp_read';
-  const       CONN_TEMP_WRITE = 'import_temp_write';
+  const CONN_TEMP_READ = 'import_temp_read';
+  const CONN_TEMP_WRITE = 'import_temp_write';
 
-  protected   $_conn,
-              $fileInfo,
-              $tempTable,
-              $tempTableOptions = array(),
-              $importSpec = array(),
-              $requiredImportColumns = array(),
-              $successColumn = '_import_success',
-              $idColumn = 'id',
-              $excelImportBatchSize = 2500,
-              $dynamicFieldType,
-              $importHeaderStrictValidation = FALSE,
-              $_PDO = array(),
-              $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
-              $iterData;
+  protected $_conn,
+  $fileInfo,
+  $tempTable,
+  $tempTableOptions = array(),
+  $importSpec = array(),
+  $requiredImportColumns = array(),
+  $successColumn = '_import_success',
+  $idColumn = 'id',
+  $excelImportBatchSize = 2500,
+  $dynamicFieldType,
+  $importHeaderStrictValidation = FALSE,
+  $_PDO = array(),
+  $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
+  $iterData;
 
   abstract protected function setImportSpec();
+
   abstract protected function setDynamicFieldType();
+
   abstract protected function cleanColumnName($columnName);
+
   abstract protected function addDynamicColumns(array $importHeaders);
 
   /**
@@ -70,12 +74,9 @@ abstract class agImportHelper extends agEventHandler
   {
     // remove the temporary file
     $file = $this->fileInfo["dirname"] . DIRECTORY_SEPARATOR . $this->fileInfo["basename"];
-    if (!@unlink($file))
-    {
+    if (!@unlink($file)) {
       $this->logAlert('Failed to delete the {' . $this->fileInfo['basename'] . '} import file.');
-    }
-    else
-    {
+    } else {
       $this->logInfo('Successfully deleted the {' . $this->fileInfo['basename'] . '} import file.');
     }
 
@@ -98,17 +99,15 @@ abstract class agImportHelper extends agEventHandler
       'default' => TRUE);
 
     // we can't trust that they got it right so we're going to clean import spec columns
-    foreach ($this->importSpec as $column => $value)
-    {
+    foreach ($this->importSpec as $column => $value) {
       $cleanColumn = $this->cleanColumnName($column);
-      if ($column != $cleanColumn)
-      {
+      if ($column != $cleanColumn) {
         unset($this->importSpec[$column]);
         $this->importSpec[$cleanColumn] = $value;
-       
+
         $eventMsg = 'Import spec column name {' . $column . '} was not clean and was ' .
-        'automatically renamed to {' . $cleanColumn . '}. It is recommended you correct this in' .
-        'your import spec declaration.';
+            'automatically renamed to {' . $cleanColumn . '}. It is recommended you correct this in' .
+            'your import spec declaration.';
         $this->logWarning($eventMsg);
       }
     }
@@ -130,7 +129,7 @@ abstract class agImportHelper extends agEventHandler
     $totalRecordCount = $importer->iterData['tempCount'];
     $recordsLeft = $totalRecordCount;
 
-    $statusId = 'import_' . $action->moduleName . '_' . $action->actionName;
+    $statusId = implode('_', array('import', $action->moduleName, $action->actionName));
     $status = $context->get($statusId);
     if (!isset($status) || 0 == $status[0]) {
       $startTime = time();
@@ -141,7 +140,11 @@ abstract class agImportHelper extends agEventHandler
       return; //, right?
     }
 
-    while ($batchesLeft > 0 && !isset($context->get('abort_' . $statusId))) {
+    while ($batchesLeft > 0) {
+      if ($context->get('abort_' . $statusId)) {
+        //$context->get('abort_' . $statusId);
+        break;
+      }
       $batchResult = $importer->processBatch();
       // if the last batch did nothing
       if ($batchResult == $recordsLeft) {
@@ -183,17 +186,20 @@ abstract class agImportHelper extends agEventHandler
   protected function getConnection($conn)
   {
     // Lazy load and return pdo connection.
-    if (!isset($this->_conn)) { $this->setConnections(); }
+    if (!isset($this->_conn)) {
+      $this->setConnections();
+    }
     return $this->_conn[$conn];
   }
-  
+
   /*
    * Method to set the import connection object property
    */
+
   protected function setConnections()
   {
     $this->_conn = array();
-    
+
     $adapter = Doctrine_Manager::connection()->getDbh();
     $this->_conn[self::CONN_TEMP_READ] = Doctrine_Manager::connection($adapter, self::CONN_TEMP_READ);
     $this->_conn[self::CONN_TEMP_WRITE] = Doctrine_Manager::connection($adapter, self::CONN_TEMP_WRITE);
@@ -209,11 +215,8 @@ abstract class agImportHelper extends agEventHandler
    * in the _PDO collection.
    * @return Doctrine_Connection A PDO object after execution of the query.
    */
-  protected function executePdoQuery( Doctrine_Connection $conn,
-                                      $query,
-                                      $params = array(),
-                                      $fetchMode = NULL,
-                                      $pdoName = NULL)
+  protected function executePdoQuery(Doctrine_Connection $conn, $query, $params = array(),
+                                     $fetchMode = NULL, $pdoName = NULL)
   {
     // first prepare the sql statement
     $docStmt = $conn->prepare($query);
@@ -223,17 +226,18 @@ abstract class agImportHelper extends agEventHandler
     $pdoStmt->execute($params);
 
     // set fetch mode the the one we are passed or our default
-    if (is_null($fetchMode)) { $fetchMode = $this->defaultFetchMode; }
+    if (is_null($fetchMode)) {
+      $fetchMode = $this->defaultFetchMode;
+    }
     $pdoStmt->setFetchMode($fetchMode);
 
     // only save those pdo queries we have decided to name in the _PDO array
     // set this by reference so we can expire the $pdo variable and persist the object / connection
-    if (! is_null($pdoName))
-    {
-      $this->_PDO[$pdoName] =& $pdoStmt;
+    if (!is_null($pdoName)) {
+      $this->_PDO[$pdoName] = & $pdoStmt;
     }
 
-    return $pdoStmt ;
+    return $pdoStmt;
   }
 
   /**
@@ -245,8 +249,7 @@ abstract class agImportHelper extends agEventHandler
    */
   protected function getFileInfo($importFile)
   {
-    if (! isset($this->fileInfo))
-    {
+    if (!isset($this->fileInfo)) {
       $this->fileInfo = pathinfo($importFile);
     }
     return $this->fileInfo;
@@ -260,13 +263,11 @@ abstract class agImportHelper extends agEventHandler
 //    require_once(sfConfig::get('sf_app_lib_dir') . '/util/excel_reader2.php');
 //    // restores original PHP error level
 //    error_reporting($errorlevel);
-
     // Validates the uploaded files Excel 2003 extention
     $this->getFileInfo($importFile);
-    if (strtolower($this->fileInfo['extension']) <> 'xls')
-    {
+    if (strtolower($this->fileInfo['extension']) <> 'xls') {
       $errMsg = '{' . $this->fileInfo['basename'] .
-        '} is not a Microsoft Excel 2003 ".xls" workbook.';
+          '} is not a Microsoft Excel 2003 ".xls" workbook.';
       $this->logEmerg($errMsg);
     }
 
@@ -288,15 +289,13 @@ abstract class agImportHelper extends agEventHandler
     $this->logInfo('Number of worksheets found: {' . $numSheets . '}');
 
     // Create a simplified array from the worksheets
-    for ($sheet = 0; $sheet < $numSheets; $sheet++)
-    {
+    for ($sheet = 0; $sheet < $numSheets; $sheet++) {
       // Get the sheet name
       $this->logInfo('Opening worksheet {' . $sheet . '}');
       $sheetName = $xlsObj->boundsheets[$sheet]['name'];
 
       // We don't import sheets named "Lookup" so we'll skip the remainder of this loop
-      if (strtolower($sheetName) == 'lookup')
-      {
+      if (strtolower($sheetName) == 'lookup') {
         $this->logInfo('Ignoring {' . $sheetName . '} worksheet');
         continue;
       }
@@ -306,8 +305,7 @@ abstract class agImportHelper extends agEventHandler
 
       // clean the column headers to ensure consistency
       $this->logInfo('Cleaning worksheet headers');
-      foreach ($currentSheetHeaders as $index => &$header)
-      {
+      foreach ($currentSheetHeaders as $index => &$header) {
         $header = $this->cleanColumnName($header);
       }
       unset($header);
@@ -317,19 +315,17 @@ abstract class agImportHelper extends agEventHandler
 
       // Check for consistant column header in all data worksheets.  Use the column header from
       // the first worksheet as the import column header for all data worksheets.
-      if ($sheet == 0)
-      {
+      if ($sheet == 0) {
         // count our columns (only needed once since first sheet is treated as template)
         $numCols = $xlsObj->colcount($sheet);
 
         // Extend import spec headers with dynamic staff resource requirement columns from xls file.
         $this->addDynamicColumns($currentSheetHeaders);
-        
+
         // Might seem weird, but we do this to ensure that column orders are consistent in import
         // spec AND the sheet headers (makes some things faster)
         $importSpec = array();
-        foreach ($currentSheetHeaders as $header)
-        {
+        foreach ($currentSheetHeaders as $header) {
           $importSpec[$header] = $this->importSpec[$header];
         }
         $this->importSpec = $importSpec;
@@ -341,23 +337,17 @@ abstract class agImportHelper extends agEventHandler
         $this->createTempTable();
       }
 
-      $this->logInfo('Validating column headers for sheet {' . $sheetName .'}.');
-      if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName))
-      {
+      $this->logInfo('Validating column headers for sheet {' . $sheetName . '}.');
+      if ($this->validateColumnHeaders($currentSheetHeaders, $sheetName)) {
         $this->logInfo('Valid column headers found!');
-      }
-      else
-      {
-        if ($this->importHeaderStrictValidation)
-        {
+      } else {
+        if ($this->importHeaderStrictValidation) {
           $errMsg = 'Unable to import file due to failed validation of import headers. (Strict ' .
-            'header validation is currently enforced!)';
+              'header validation is currently enforced!)';
           $this->logEmerg($errMsg);
-        }
-        else
-        {
+        } else {
           $errMsg = 'Import sheet {' . $sheetName . '} failed column header validation. Skipping ' .
-            'import of this sheet. (Strict header validation is not currently enforced!)' ;
+              'import of this sheet. (Strict header validation is not currently enforced!)';
           $this->logErr($errMsg);
           continue;
         }
@@ -370,18 +360,18 @@ abstract class agImportHelper extends agEventHandler
       $batches = intval(ceil(($numRows / $this->excelImportBatchSize)));
       $batchStart = 2;
       $batchEnd = $this->excelImportBatchSize;
-      if ($batchEnd > $numRows) { $batchEnd = $numRows ; }
+      if ($batchEnd > $numRows) {
+        $batchEnd = $numRows;
+      }
 
       // start by looping our batches
-      for ($batch = 1; $batch <= $batches; $batch++)
-      {
+      for ($batch = 1; $batch <= $batches; $batch++) {
         $this->logInfo('Processing batch {' . $batch . '} of {' . $batches . '}.');
         // each batch clears the import data array
         $importFileData = array();
 
         // begin adding rows and continue to the end for this batch
-        for ($row = $batchStart; $row <= $batchEnd; $row++)
-        {
+        for ($row = $batchStart; $row <= $batchEnd; $row++) {
           $this->logDebug('Reading row {' . $row . '} into import data array.');
 
           // used to tell if the row is empty
@@ -391,32 +381,25 @@ abstract class agImportHelper extends agEventHandler
           $importRow = array();
 
           // then loop the columns
-          for ($col = 1; $col <= $numCols; $col++)
-          {
+          for ($col = 1; $col <= $numCols; $col++) {
             // try to grab the raw value
             $val = $xlsObj->raw($row, $col, $sheet);
-            if (!($val))
-            {
+            if (!($val)) {
               // failing that, grab its formatted value
               $val = $xlsObj->val($row, $col, $sheet);
             }
 
             // clean the data a little, null out long values and zero length strings
             $val = trim($val);
-            if ($val == '' || is_null($val))
-            {
+            if ($val == '' || is_null($val)) {
               $val = NULL;
-            }
-            elseif (strlen(strval($val)) > $this->importSpec[$currentSheetHeaders[$col]]['length'])
-            {
+            } elseif (strlen(strval($val)) > $this->importSpec[$currentSheetHeaders[$col]]['length']) {
               $eventMsg = 'Value in sheet {' . $sheet . '} row {' . $row . '} column {' .
-                $currentSheetHeaders[$col] . '} is too long and was set to NULL.';
+                  $currentSheetHeaders[$col] . '} is too long and was set to NULL.';
               $this->logWarning($eventMsg);
               $val = NULL;
-            }
-            else
-            {
-              $notNull = TRUE ;
+            } else {
+              $notNull = TRUE;
             }
 
             // add the data, either way, to our importRow variable using the column name we picked up
@@ -425,36 +408,35 @@ abstract class agImportHelper extends agEventHandler
           }
 
           // check for empty rows early to prevent
-          if (! $notNull)
-          {
+          if (!$notNull) {
             $this->logWarning('Empty row found at sheet {' . $sheet . '} row {' . $row . '}. Skipping.');
-          }
-          else
-          {
+          } else {
             $importFileData[$row] = $importRow;
           }
         }
 
         // process this batch
         $this->logInfo('Successfully loaded batch {' . $batch . '} from file, now inserting into ' .
-          'temp table {' . $this->tempTable . '}');
+            'temp table {' . $this->tempTable . '}');
 
         $inserted = $this->saveImportTempIter($importFileData, $query);
         $this->iterData['tempCount'] += $inserted;
 
         // up our batch counters
         $batchStart = $batchEnd + 1;
-        $batchEnd = $batchStart + $this->excelImportBatchSize ;
-        if ($batchEnd > $numRows) { $batchEnd = $numRows ; }
+        $batchEnd = $batchStart + $this->excelImportBatchSize;
+        if ($batchEnd > $numRows) {
+          $batchEnd = $numRows;
+        }
       }
     }
 
     // Log our success and return T/F based on whether or not any non-fatal errors occurred
     $okMsg = 'Completed insertion of ' . $this->iterData['tempCount'] . ' rows from the import ' .
-      'file to the temporary table.';
+        'file to the temporary table.';
     $this->logNotice($okMsg);
 
-    return ($this->getErrCount() == 0) ? TRUE : FALSE ;
+    return ($this->getErrCount() == 0) ? TRUE : FALSE;
   }
 
   /**
@@ -467,8 +449,7 @@ abstract class agImportHelper extends agEventHandler
     // loop through the import spec and build our columns / values blocks
     $cols = '';
     $vals = '';
-    foreach($this->importSpec as $column => $spec)
-    {
+    foreach ($this->importSpec as $column => $spec) {
       $cols = $cols . '`' . $column . '`, ';
       $vals = $vals . ':' . $column . ', ';
     }
@@ -499,8 +480,7 @@ abstract class agImportHelper extends agEventHandler
                                       Doctrine_Connection_Statement $insertQuery)
   {
     // first check to see if it's even worth running
-    if (empty($importDataSet))
-    {
+    if (empty($importDataSet)) {
       $this->logWarning('Cannot save empty dataset to temp table.');
       return 0;
     }
@@ -514,18 +494,14 @@ abstract class agImportHelper extends agEventHandler
     $inserted = 0;
 
     // loop through the import data set and execute the prepared pdo query for each
-    foreach ($importDataSet as $row)
-    {
-      try
-      {
+    foreach ($importDataSet as $row) {
+      try {
         $insertQuery->execute($row);
         $inserted++;
-      }
-      catch(Exception $e)
-      {
+      } catch (Exception $e) {
         // in the event of an insert error, don't continue
         $errMsg = 'Failed to insert to temp table with data (' . implode(',', $row) . '). ' .
-          "\n\n" . $e->getMessage();
+            "\n\n" . $e->getMessage();
         $this->logErr($errMsg, count($importDataSet));
         $err = TRUE;
         break;
@@ -533,14 +509,10 @@ abstract class agImportHelper extends agEventHandler
     }
 
     // if no problems occurred so far, try to commit
-    if (!$err)
-    {
-      try
-      {
+    if (!$err) {
+      try {
         $conn->commit();
-      }
-      catch(Exception $e)
-      {
+      } catch (Exception $e) {
         $errMsg = 'Committing temporary table import failed.' . "\n" . $e->getMessage();
         $this->logCrit($errMsg);
         $err = TRUE;
@@ -552,8 +524,7 @@ abstract class agImportHelper extends agEventHandler
     }
 
     // in the event that we had any failures, rollback and return the zero change count
-    if ($err)
-    {
+    if ($err) {
       $conn->rollback();
       return 0;
     }
@@ -569,24 +540,18 @@ abstract class agImportHelper extends agEventHandler
     $conn = $this->getConnection(self::CONN_TEMP_WRITE);
 
     // drop the table
-    try
-    {
+    try {
       // uses the Doctrine_Export methods see Doctrine_Export api for more details
       $conn->export->dropTable($this->tempTable);
 
       // log this info event
       $eventMsg = 'Dropped temporary table {' . $this->tempTable . '}';
       $this->logNotice($eventMsg);
-    }
-    catch(Doctrine_Connection_Exception $e)
-    {
+    } catch (Doctrine_Connection_Exception $e) {
       // we only want to silence 'no such table' errors
-      if ($e->getPortableCode() !== Doctrine_Core::ERR_NOSUCHTABLE)
-      {
+      if ($e->getPortableCode() !== Doctrine_Core::ERR_NOSUCHTABLE) {
         $this->logEmerg('Failed to drop temp table {' . $this->tempTable . '}');
-      }
-      else
-      {
+      } else {
         $this->logInfo('Temp table {' . $this->tempTable . '} does not exist. Skipping drop.');
       }
     }
@@ -607,14 +572,11 @@ abstract class agImportHelper extends agEventHandler
     $importSpec = $this->importSpec + $this->requiredImportColumns;
 
     // Create the table
-    try
-    {
+    try {
       // uses the Doctrine_Export methods see Doctrine_Export api for more details
       $conn->export->createTable($this->tempTable, $importSpec, $this->tempTableOptions);
-      $this->logNotice('Successfully created temp table {' . $this->tempTable .'}.');
-    }
-    catch (Doctrine_Exception $e)
-    {
+      $this->logNotice('Successfully created temp table {' . $this->tempTable . '}.');
+    } catch (Doctrine_Exception $e) {
       $this->logEmerg('Error creating temp table ({' . $this->tempTable . '} for import.');
     }
   }
@@ -630,8 +592,7 @@ abstract class agImportHelper extends agEventHandler
   private function validateColumnHeaders(array $importFileHeaders, $sheetName)
   {
     // Check if import file header is empty
-    if (empty($importFileHeaders))
-    {
+    if (empty($importFileHeaders)) {
       $errMsg = 'Worksheet {' . $sheetName . '} is missing column headers.';
       $this->logErr($errMsg);
       return FALSE;
@@ -644,16 +605,12 @@ abstract class agImportHelper extends agEventHandler
     $importSpecDiff = array_diff($importSpecHeaders, $importFileHeaders);
 
     // return true / false and return info as appropriate
-    if (empty($importSpecDiff))
-    {
+    if (empty($importSpecDiff)) {
       return TRUE;
-    }
-    else
-    {
+    } else {
       $this->logErr('Error processing sheet headers: Missing required columns.');
-      
-      foreach ($importSpecDiff as $missing)
-      {
+
+      foreach ($importSpecDiff as $missing) {
         $this->logWarning('Column header {' . $missing . '} is missing.');
       }
       return FALSE;
