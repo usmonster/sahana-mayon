@@ -81,7 +81,7 @@ class agFacilityForm extends BaseagFacilityForm
     $this->widgetSchema->setLabels(
         array(
           'resources' => 'Resources <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Resource">?</a>',
-          'facility_name' => 'Name <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_name&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>',
+          'facility_name' => 'Name <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_name&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Name">?</a>',
           'facility_code' => 'Facility Code <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>'
         )
     );
@@ -383,7 +383,7 @@ class agFacilityForm extends BaseagFacilityForm
 
       $addressFirstPass = false;
     }
-    $contactContainer->embedForm(/*'Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>'*/'Address', $addressContainer);
+    $contactContainer->embedForm('Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>', $addressContainer);
     //Embed all the addresses into agPersonForm.
   }
 
