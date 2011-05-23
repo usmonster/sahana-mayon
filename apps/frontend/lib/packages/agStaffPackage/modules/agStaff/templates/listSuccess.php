@@ -17,8 +17,8 @@ $resourceTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_resource&do=ex
 
 $displayColumns = array(
   'id' => array('title' => '', 'sortable' => false),
-  'fn' => array('title' => 'First Name', 'sortable' => false),
-  'ln' => array('title' => 'Last Name', 'sortable' => false),
+  'fn' => array('title' => 'First Name', 'sortable' => true),
+  'ln' => array('title' => 'Last Name', 'sortable' => true),
   'organization' => array('title' => 'Organization', 'sortable' => true, 'tooltip' => $orgTooltip),
   'resource' => array('title' => 'Resource', 'sortable' => true, 'tooltip' => $resourceTooltip),
   'phones' => array('title' => 'Phone', 'sortable' => false),
@@ -32,6 +32,7 @@ include_partial('global/list', array('sf_request' => $sf_request,
   'displayColumns' => $displayColumns,
   'pager' => $pager,
   'order' => $order,
+  'limit' => $limit,
   'sort' => $sort,
   'status' => $status,
   'target_module' => 'staff',
@@ -39,5 +40,4 @@ include_partial('global/list', array('sf_request' => $sf_request,
   'widgets' => array($statusWidget)
 ));
 
-//echo agListForm::eventstafflist($sf_request,'Event Staff Listing', $columns, $pager, $widget);
 ?>

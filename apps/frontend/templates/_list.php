@@ -5,6 +5,7 @@ $descArrow = '&#x25BC;';
 ($status != 'active') ? $statusAppend = '?status=' . $status : $statusAppend = '?status=active';
 ($sort != null) ? $sortAppend = '&sort=' . $sort : $sortAppend = '';
 ($order != null) ? $orderAppend = '&order=' . $order : $orderAppend = '';
+($limit != null) ? $limitAppend = '&limit=' . $limit : $limitAppend = '';
 
 if (!(isset($caption)))
   $caption = 'List';

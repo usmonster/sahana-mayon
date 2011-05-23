@@ -54,52 +54,53 @@ abstract class PluginagStaffResource extends BaseagStaffResource
 
     // build our basic query (that doesn't need fancy stuff)
     $q = agDoctrineQuery::create()
-      ->select('sr.id')
-          ->addSelect('s.id')
-          ->addSelect('p.id')
-          ->addSelect('e.id')
-          ->addSelect('srt.staff_resource_type')
-          ->addSelect('srt.staff_resource_type_abbr')
-          ->addSelect('srs.staff_resource_status')
-          ->addSelect('srs.is_available')
-          ->addSelect('ect.email_contact_type')
-          ->addSelect('ec.email_contact')
-          ->addSelect('pct.phone_contact_type')
-          ->addSelect('pc.phone_contact')
+        ->select('sr.id')
+        ->addSelect('s.id')
+        ->addSelect('p.id')
+        ->addSelect('e.id')
+        ->addSelect('srt.staff_resource_type')
+        ->addSelect('srt.staff_resource_type_abbr')
+        ->addSelect('srs.staff_resource_status')
+        ->addSelect('srs.is_available')
+        ->addSelect('ect.email_contact_type')
+        ->addSelect('o.organization')
+        ->addSelect('ec.email_contact')
+        ->addSelect('pct.phone_contact_type')
+        ->addSelect('pc.phone_contact')
         ->from('agStaffResource AS sr')
-          ->innerJoin('sr.agStaff AS s')
-          ->innerJoin('s.agPerson AS p')
-          ->innerJoin('p.agEntity AS e')
-          ->innerJoin('sr.agStaffResourceType AS srt')
-          ->innerJoin('sr.agOrganization AS o')
-          ->innerJoin('sr.agStaffResourceStatus AS srs')
-          ->leftJoin('e.agEntityEmailContact AS eec')
-          ->leftJoin('eec.agEmailContactType AS ect')
-          ->leftJoin('eec.agEmailContact AS ec')
-          ->leftJoin('e.agEntityPhoneContact AS epc')
-          ->leftJoin('epc.agPhoneContactType AS pct')
-          ->leftJoin('epc.agPhoneContact AS pc');
+        ->innerJoin('sr.agStaff AS s')
+        ->innerJoin('s.agPerson AS p')
+        ->innerJoin('p.agEntity AS e')
+        ->innerJoin('sr.agStaffResourceType AS srt')
+        ->innerJoin('sr.agOrganization AS o')
+        ->innerJoin('sr.agStaffResourceStatus AS srs')
+        ->leftJoin('e.agEntityEmailContact AS eec')
+        ->leftJoin('eec.agEmailContactType AS ect')
+        ->leftJoin('eec.agEmailContact AS ec')
+        ->leftJoin('e.agEntityPhoneContact AS epc')
+        ->leftJoin('epc.agPhoneContactType AS pct')
+        ->leftJoin('epc.agPhoneContact AS pc');
 
     $emailWhere = '(' .
-      '(EXISTS (' .
+        '(EXISTS (' .
         'SELECT subE.id ' .
-          'FROM agEntityEmailContact AS subE ' .
-          'WHERE subE.entity_id = eec.entity_id ' .
-          'HAVING MIN(subE.priority) = eec.priority' .
+        'FROM agEntityEmailContact AS subE ' .
+        'WHERE subE.entity_id = eec.entity_id ' .
+        'HAVING MIN(subE.priority) = eec.priority' .
         ')) ' .
-      'OR (eec.id IS NULL)' .
-      ')';
+        'OR (eec.id IS NULL)' .
+        ')';
     $q->where($emailWhere);
 
     $phoneWhere = '(' .
-      '(EXISTS (' .
+        '(EXISTS (' .
         'SELECT subP.id ' .
-          'FROM agEntityPhoneContact AS subP ' .
-          'WHERE subP.entity_id = epc.entity_id ' .
-          'HAVING MIN(subP.priority) = epc.priority' .
+        'FROM agEntityPhoneContact AS subP ' .
+        'WHERE subP.entity_id = epc.entity_id ' .
+        'HAVING MIN(subP.priority) = epc.priority' .
         ')) ' .
-      'OR (epc.id IS NULL)' .
-      ')';
+        'OR (epc.id IS NULL)' .
+        ')';
     $q->andWhere($phoneWhere);
 
     // map the headers
@@ -129,8 +130,7 @@ abstract class PluginagStaffResource extends BaseagStaffResource
     $nameTypes = json_decode(agGlobal::getParam('default_name_components'));
 
     // loop through each of the name types
-    foreach ($nameComponents as $ncIdx => $nc)
-    {
+    foreach ($nameComponents as $ncIdx => $nc) {
       // grab our type id
       $ncId = $nc[0];
 
@@ -138,29 +138,30 @@ abstract class PluginagStaffResource extends BaseagStaffResource
       $column = 'pn' . $ncId . '.person_name';
       $select = $column . ' AS name' . $ncId;
       $pmpnJoin = 'p.agPersonMjAgPersonName AS pmpn' . $ncId . ' WITH pmpn' . $ncId .
-        '.person_name_type_id = ?';
+          '.person_name_type_id = ?';
       $pnJoin = 'pmpn' . $ncId . '.agPersonName AS pn' . $ncId;
 
       $where = '(' .
-        '(EXISTS (' .
+          '(EXISTS (' .
           'SELECT sub' . $ncId . '.id ' .
-            'FROM agPersonMjAgPersonName AS sub' . $ncId . ' ' .
-            'WHERE sub' . $ncId . '.person_name_type_id = ? ' .
-              'AND sub' . $ncId . '.person_id = pmpn' . $ncId . '.person_id ' .
-            'HAVING MIN(sub' . $ncId . '.priority) = pmpn' . $ncId . '.priority' .
+          'FROM agPersonMjAgPersonName AS sub' . $ncId . ' ' .
+          'WHERE sub' . $ncId . '.person_name_type_id = ? ' .
+          'AND sub' . $ncId . '.person_id = pmpn' . $ncId . '.person_id ' .
+          'HAVING MIN(sub' . $ncId . '.priority) = pmpn' . $ncId . '.priority' .
           ')) ' .
-        'OR (pmpn' . $ncId . '.id IS NULL)' .
-        ')';
+          'OR (pmpn' . $ncId . '.id IS NULL)' .
+          ')';
 
       // add the clauses to the query
       $q->addSelect($select)
-        ->leftJoin($pmpnJoin, $ncId)
-        ->leftJoin($pnJoin)
-        ->andWhere($where, $ncId);
+          ->leftJoin($pmpnJoin, $ncId)
+          ->leftJoin($pnJoin)
+          ->andWhere($where, $ncId);
 
       // add header information
       $header = 'pn' . $ncId . '_name' . $ncId;
-      $headers[$header] = array($column, $nameTypes[$ncIdx][0]);
+      $headers[$nameTypes[$ncIdx][0]] = array($column, $header);
+      //05.23.2011 changed the order of the name array holder to use for sorting
     }
     return array($headers, $q);
   }
@@ -177,48 +178,62 @@ abstract class PluginagStaffResource extends BaseagStaffResource
     // get our disabled status
     $disabledStatus = agGlobal::getParam('staff_disabled_status');
     $disabledStatusId = agDoctrineQuery::create()
-      ->select('srs.id')
+        ->select('srs.id')
         ->from('agStaffResourceStatus srs')
         ->where('srs.staff_resource_status = ?', $disabledStatus)
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     // build our update query
     $q = agDoctrineQuery::create()
-      ->update('agStaffResource')
+        ->update('agStaffResource')
         ->set('staff_resource_status_id', '?', $disabledStatusId)
         ->where('staff_resource_status_id <> ?', $disabledStatusId);
 
     // here we check our current transaction scope and create a transaction or savepoint
-    if (is_null($conn))
-    {
+    if (is_null($conn)) {
       $conn = Doctrine_Manager::connection();
     }
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint)
-    {
+    if ($useSavepoint) {
       $conn->beginTransaction(__FUNCTION__);
-    }
-    else
-    {
+    } else {
       $conn->beginTransaction();
     }
 
-    try
-    {
+    try {
       // attempt to execute our query and commit
       $results = $q->execute();
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
-    }
-    catch(Exception $e)
-    {
+      if ($useSavepoint) {
+        $conn->commit(__FUNCTION__);
+      } else {
+        $conn->commit();
+      }
+    } catch (Exception $e) {
       // log our error message
       $errMsg = 'Failed to reset staff statuses to ' . $disabledStatus . '. Rolling back.';
       sfContext::getInstance()->getLogger()->err($errMsg);
 
       // roll back and rethrow
-      if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+      if ($useSavepoint) {
+        $conn->rollback(__FUNCTION__);
+      } else {
+        $conn->rollback();
+      }
       throw $e;
     }
     return $results;
   }
+
+  static public function returnStaffResourceCount()
+  {
+    /**
+     * Returns an integer of the total staff count.
+     */
+    $staffCount = agDoctrineQuery::create()
+        ->select('count(*) as count')
+        ->from('agStaffResource as s')
+        ->execute(array(), Doctrine::HYDRATE_SINGLE_SCALAR);
+    return $staffCount;
+  }
+
 }
