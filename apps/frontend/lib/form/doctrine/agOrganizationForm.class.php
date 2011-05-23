@@ -86,8 +86,8 @@ class agOrganizationForm extends BaseagOrganizationForm
     $this->widgetSchema->setNameFormat('ag_organization[%s]');
     $this->widgetSchema->setLabels(
              array(
-               'organization' => 'Organization <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_name&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>',
-               'description'  => 'Description <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_description&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>',
+               'organization' => 'Organization <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_name&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a>',
+               'description'  => 'Description <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_description&do=export_xhtmlbody" class="tooltipTrigger" title="Organization Description">?</a>',
              )
            );
 

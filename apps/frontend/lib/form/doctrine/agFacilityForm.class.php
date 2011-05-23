@@ -132,7 +132,7 @@ class agFacilityForm extends BaseagFacilityForm
       $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
     }
 
-    $contactContainer->embedForm('Phone <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>', $phoneContainer);
+    $contactContainer->embedForm('Phone <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Phone">?</a>', $phoneContainer);
   }
 
   public function embedEmailForm($contactContainer)
@@ -171,7 +171,7 @@ class agFacilityForm extends BaseagFacilityForm
       $emailContactForm->widgetSchema->setLabel('email_contact', false);
       $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
     }
-    $contactContainer->embedForm('Email <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_email&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>', $emailContainer);
+    $contactContainer->embedForm('Email <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_email&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Email">?</a>', $emailContainer);
   }
 
   public function embedResourcesForm($resourceContainer)
@@ -383,7 +383,7 @@ class agFacilityForm extends BaseagFacilityForm
 
       $addressFirstPass = false;
     }
-    $contactContainer->embedForm('Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>', $addressContainer);
+    $contactContainer->embedForm('Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Address">?</a>', $addressContainer);
     //Embed all the addresses into agPersonForm.
   }
 

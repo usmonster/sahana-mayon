@@ -6,7 +6,7 @@ if (2 == 2) {
   $columns = array(
     'id' => array('title' => 'Id', 'sortable' => false),
     'facility_name' => array('title' => 'Facility Name <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:facility_name&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>', 'sortable' => true),
-    'Resources' => array('title' => 'Resources <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:facility_resources&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>', 'sortable' => false),
+    'Resources' => array('title' => 'Resources <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Resources">?</a>', 'sortable' => false),
     'facility_codes' => array('title' => 'Facility Code <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>', 'sortable' => true)
   );
 
