@@ -15,7 +15,18 @@ staff_filter:
   param: { module: agStaff, action: filter }
 staff_import:
   url:   /staff/import
+  #class: sfRequestRoute
   param: { module: agStaff, action: import }
+  #TODO: check on this
+  requirements:
+    sf_method: [post]
+staff_import_cancel:
+  url:   /staff/import
+  #class: sfRequestRoute
+  param: { module: agStaff, action: cancelimport }
+  #TODO: check on this
+  requirements:
+    sf_method: [delete]
 staff_addstaffresource:
   url:   /staff/addstaffresource
   param: { module: agStaff, action: addstaffresource }

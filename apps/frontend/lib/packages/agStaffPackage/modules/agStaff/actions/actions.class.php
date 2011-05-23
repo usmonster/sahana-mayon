@@ -739,14 +739,16 @@ class agStaffActions extends agActions
     unlink($filePath);
   }
 
-  public function executeCancelImport(sfWebRequest $request) {
-    $statusId = 'import_' . $this->moduleName . '_' . $this->actionName;
-    $this->getContext()->set('abort_' . $statusId, TRUE);
+  public function executeCancelimport(sfWebRequest $request)
+  {
+    $abortFlagId = implode('_', array('abort', $this->moduleName, 'import'));
+    $this->getContext()->set($abortFlagId, TRUE);
     return sfView::NONE;
   }
 
   public function executeImport(sfWebRequest $request)
   {
+    $this->timer = time();
     $uploadedFile = $_FILES['import'];
 
     $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
@@ -763,19 +765,19 @@ class agStaffActions extends agActions
     $this->importer->importStaffFromExcel($this->importPath);
 
     //TODO: test this one
-    //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
-    $this->importer->processBatch();
-    $this->importer->processBatch();
+    $this->dispatcher->notify(new sfEvent($this, 'import.start'));
+//    $this->importer->processBatch();
+//    $this->importer->processBatch();
 
-    $this->numRecordsImported = $this->importer->numRecordsImported;
     //print_r($this->importer->getEvents());
     $this->events = $this->importer->getEvents();
-    $this->numRecordsImported = $this->importer->numRecordsImported;
+    //$this->numRecordsImported = $this->importer->numRecordsImported;
 
     // removes the file from the server
     unlink($this->importPath);
 
     unset($this->importer);
+    $this->timer = (time() - $this->timer);
 
 ////    $returned = $import->createTempTable();
 //

@@ -36,8 +36,10 @@ class agActions extends sfActions
 
   public function executeStatus(sfWebRequest $request)
   {
-    $statusId = implode('_', array($this->moduleName, $this->actionName));
-    $statuses = $this->getContext()->get( 'job_statuses');
+    //TODO: module_ACTION_status instead? -UA
+    $statusId = implode('_', array($this->moduleName, 'status'));
+    $context = $this->getContext();
+    $statuses = $context->has($statusId) ? $this->getContext()->get($statusId) : array();
     $format = $request->getRequestFormat();
     if ('json' == $format) {
       $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
