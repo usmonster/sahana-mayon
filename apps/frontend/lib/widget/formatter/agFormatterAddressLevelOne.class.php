@@ -20,7 +20,7 @@ class agFormatterAddressLevelOne extends sfWidgetFormSchemaFormatter
 {
 
   protected
-    $rowFormat       = "<div style=\"display: inline-block; margin: .5em; padding: .5em; text-align: center; border: solid 1px #dadada; -moz-border-radius: 10px;\"><h4>\n  %error%%label%</h4>\n  <div class=\"here\">%field%%help%\n%hidden_fields%</div>\n</div>\n",
+    $rowFormat       = "<div style=\"display: inline-block; margin: .5em; padding: .5em; text-align: center; border: solid 1px #dadada; -moz-border-radius: 10px; vertical-align: top;\"><h4>\n  %error%%label%</h4>\n  <div class=\"here\">%field%%help%\n%hidden_fields%</div>\n</div>\n",
     $errorRowFormat  = "<li>\n%errors%</li>\n",
     $helpFormat      = '<br />%help%',
     $decoratorFormat = "<div class=\"holder\">\n%content%</div>";

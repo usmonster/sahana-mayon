@@ -7,24 +7,27 @@ use_javascripts_for_form($form);
     <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
     <div class="displayInlineBlock marginBot10px">
-      <br />
-      <h3>Staff Information</h3>
+      
       <div class="infoHolder" id="staffResourceTypeHolder">
-<?php echo $form['staff']['status'] ?>
-<?php foreach($form['staff']['type'] as $staff_type_form): ?>
+        <h3>Staff Information</h3>
+        <hr class="ruleGray" />
+        <?php echo $form['staff']['status'] ?>
+      <?php foreach($form['staff']['type'] as $staff_type_form): ?>
         <div class="displayInline staffCounter">
-          <?php $formId = $staff_type_form->offsetGet('id')->getValue(); ?>
-            <a href="<?php echo url_for('staff/deletestaffresource'); ?>" class="ui-icon ui-icon-circle-minus removeStaffResource floatRight" <?php echo ($formId != null ? 'id="staff_resource_' . $staff_type_form->offsetGet('id')->getValue() . '"' : '' ); ?>></a>
-    <?php echo $staff_type_form; ?>
+        <?php $formId = $staff_type_form->offsetGet('id')->getValue(); ?>
+          <a href="<?php echo url_for('staff/deletestaffresource'); ?>" class="ui-icon ui-icon-circle-minus removeStaffResource floatRight" <?php echo ($formId != null ? 'id="staff_resource_' . $staff_type_form->offsetGet('id')->getValue() . '"' : '' ); ?>></a>
+        <?php echo $staff_type_form; ?>
         </div>
-    <?php endforeach; ?>
+      <?php endforeach; ?>
       <br />
       <a href="<?php echo url_for('staff/addstaffresource'); ?>" name="groupStatus" class="generalButton addStaffResource" id="staff_id_1">Add Staff Resource</a>
     </div>
     <div class="clearBoth"> </div>
 
-    <h3>Primary Information</h3>
+    
     <div class="infoHolder">
+      <h3>Primary Information</h3>
+      <hr class="ruleGray" />
 <?php echo $form['id'] ?>
       <h4>
         <?php echo $form['name']->renderLabel(); ?>
@@ -52,24 +55,15 @@ use_javascripts_for_form($form);
       <div class="clearBoth"> </div>
       <br />
     </div>
-      <h3>Contact</h3>
       <div class="infoHolder">
-        <fieldset>
-          <h3><?php echo $form['email']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:contact_email&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Email">?</a></h3>
-          <div class="clearBoth"> </div>
-<?php echo $form['email'] ?>
-          <div class="clearBoth"> </div>
-          <h3><?php echo $form['phone']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:contact_phone&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Phone">?</a></h3>
-          <div class="clearBoth"> </div>
-<?php echo $form['phone'] ?>
-        </fieldset>
+        <h3>Contact</h3>
+        <hr class="ruleGray" />
+        <?php echo $form['Contact'] ?>
       </div>
 <?php echo $form['_csrf_token'] ?>
-
-      <br />
-
       <div class="infoHolder">
         <h3><?php echo $form['address']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:contact_address&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Address">?</a></h3>
+        <hr class="ruleGray" />
         <div class="clearBoth"> </div>
 <?php echo $form['address']; ?>
       </div>

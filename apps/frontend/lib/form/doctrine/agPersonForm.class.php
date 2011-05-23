@@ -126,11 +126,22 @@ class agPersonForm extends BaseagPersonForm
     $this->embedDateOfBirthForm();
     $this->embedLanguageForm();
     $this->embedNameForm();
-    $this->embedEmailForm();
-    $this->embedPhoneForm();
+    $this->embedContactForms();
+//    $this->embedEmailForm();
+//    $this->embedPhoneForm();
     $this->embedAddressForm();
   }
 
+  public function embedContactForms()
+  {
+    $contactContainer = new sfForm();
+    $contactContainerFormatter = new agFormatterAddressLevelOne($contactContainer->getWidgetSchema());
+    $contactContainer->getWidgetSchema()->addFormFormatter('contactContainerFormatter', $contactContainerFormatter);
+    $contactContainer->getWidgetSchema()->setFormFormatterName('contactContainerFormatter');
+    $this->embedEmailForm($contactContainer);
+    $this->embedPhoneForm($contactContainer);
+    $this->embedForm('Contact', $contactContainer);
+  }
   /**
    * This function sets up the date of birth form.
    *
@@ -305,12 +316,14 @@ class agPersonForm extends BaseagPersonForm
    * @todo     make a new formatter for these forms to use and set it up, so we
    *           don't need to set label to false.
    * */
-  public function embedEmailForm()
+  public function embedEmailForm($contactContainer)
   {
     $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
 
     $emailContainer = new sfForm();
-    $emailContainer->widgetSchema->setFormFormatterName('list');
+    $emailContainerFormatter = new agFormatterAddressLevelTwo($emailContainer->getWidgetSchema());
+    $emailContainer->getWidgetSchema()->addFormFormatter('emailContainerFormatter', $emailContainerFormatter);
+    $emailContainer->getWidgetSchema()->setFormFormatterName('emailContainerFormatter');
     foreach ($this->ag_email_contact_types as $emailContactType) {
       if ($id = $this->getObject()->entity_id) {
         $emailObject = Doctrine_query::create()
@@ -319,10 +332,15 @@ class agPersonForm extends BaseagPersonForm
                 ->execute()->getFirst();
       }
       $emailContactForm = new agEmbeddedAgEmailContactForm(isset($emailObject) ? $emailObject : null);
+      $emailContactFormatter = new agFormatterAddressLevelThree($emailContactForm->getWidgetSchema());
+      $emailContactForm->getWidgetSchema()->addFormFormatter('emailContactFormatter', $emailContactFormatter);
+      $emailContactForm->getWidgetSchema()->setFormFormatterName('emailContactFormatter');
       $emailContactForm->widgetSchema->setLabel('email_contact', false);
+      
       $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
     }
-    $this->embedForm('email', $emailContainer);
+    $contactContainer->embedForm('email', $emailContainer);
+    $contactContainer->widgetSchema['email']->setLabel('Email <a href="' . $this->wikiUrl . '/doku.php?id=tooltip:contact_email&do=export_xhtmlbody" class="tooltipTrigger" title="Email">?</a>');
   }
 
   /**
@@ -332,12 +350,14 @@ class agPersonForm extends BaseagPersonForm
    *
    * @todo refactor this function similarly to embedNameForm() and embedEmailForm().
    * */
-  public function embedPhoneForm()
+  public function embedPhoneForm($contactContainer)
   {
     $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
 
     $phoneContainer = new sfForm(array(), array());
-    $phoneContainer->widgetSchema->setFormFormatterName('list');
+    $phoneContainerFormatter = new agFormatterAddressLevelTwo($phoneContainer->getWidgetSchema());
+    $phoneContainer->getWidgetSchema()->addFormFormatter('phoneContainerFormatter', $phoneContainerFormatter);
+    $phoneContainer->getWidgetSchema()->setFormFormatterName('phoneContainerFormatter');
     foreach ($this->ag_phone_contact_types as $phoneContactType) {
       if ($id = $this->getObject()->entity_id) {
         $phoneObject = Doctrine_query::create()
@@ -346,11 +366,16 @@ class agPersonForm extends BaseagPersonForm
                 ->execute()->getFirst();
       }
       $phoneContactForm = new agEmbeddedAgPhoneContactForm(isset($phoneObject) ? $phoneObject : null);
+      $phoneContactFormatter = new agFormatterAddressLevelThree($phoneContactForm->getWidgetSchema());
+      $phoneContactForm->getWidgetSchema()->addFormFormatter('phoneContactFormatter', $phoneContactFormatter);
+      $phoneContactForm->getWidgetSchema()->setFormFormatterName('phoneContactFormatter');
       $phoneContactForm->widgetSchema->setLabel('phone_contact', false);
+
       $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
     }
 
-    $this->embedForm('phone', $phoneContainer);
+    $contactContainer->embedForm('phone', $phoneContainer);
+    $contactContainer->widgetSchema['phone']->setLabel('Phone <a href="' . $this->wikiUrl . '/doku.php?id=tooltip:contact_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Phone">?</a>');
   }
 
   /**

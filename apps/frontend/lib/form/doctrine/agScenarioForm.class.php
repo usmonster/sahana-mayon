@@ -37,6 +37,8 @@ class agScenarioForm extends BaseagScenarioForm
 
   public function setup()
   {
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $wikiUrl = url_for('@wiki');
     $this->setWidgets(
         array(
           'id' => new sfWidgetFormInputHidden(),
@@ -76,8 +78,8 @@ class agScenarioForm extends BaseagScenarioForm
         $this['ag_event_list']);
     $this->widgetSchema->setLabels(
         array(
-          'scenario' => 'Name',
-          'description' => 'Description',
+          'scenario' => 'Name <a href="<?php' . $wikiUrl . '/doku.php?id=tooltip:scenario_name&do=export_xhtmlbody" class="tooltipTrigger" title="Scenario Name">?</a>',
+          'description' => 'Description <a href="<?php' . $wikiUrl . '/doku.php?id=tooltip:scenario_description&do=export_xhtmlbody" class="tooltipTrigger" title="Scenario Description">?</a>',
         //'facility_group' => 'Facility Groups'
         )
     );

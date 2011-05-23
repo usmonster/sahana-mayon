@@ -58,7 +58,7 @@
             <tr>
               <td>
                 <span class="rowFormatLabel2">
-                  Shifts Start:
+                  Shifts Start:<a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:shift_start&do=export_xhtmlbody" class="tooltipTrigger" title="Shifts Start">?</a>
                 </span>
               </td>
               <td>
@@ -97,7 +97,7 @@
             <tr>
               <td>
                 <span class="rowFormatLabel2">
-                  Task Length:
+                  Task Length:<a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:task_length&do=export_xhtmlbody" class="tooltipTrigger" title="Task Length">?</a>
                 </span>
               </td>
 
@@ -131,7 +131,7 @@
             <tr>
               <td>
                 <span class="rowFormatLabel2">
-                  Break Length:
+                  Break Length:<a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:break_length&do=export_xhtmlbody" class="tooltipTrigger" title="Break Lenghth">?</a>
                 </span>
               </td>
 
