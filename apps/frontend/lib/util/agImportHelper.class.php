@@ -21,19 +21,20 @@ abstract class agImportHelper extends agEventHandler
   const CONN_TEMP_WRITE = 'import_temp_write';
 
   protected $_conn,
-  $fileInfo,
-  $tempTable,
-  $tempTableOptions = array(),
-  $importSpec = array(),
-  $requiredImportColumns = array(),
-  $successColumn = '_import_success',
-  $idColumn = 'id',
-  $excelImportBatchSize = 2500,
-  $dynamicFieldType,
-  $importHeaderStrictValidation = FALSE,
-  $_PDO = array(),
-  $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
-  $iterData;
+            $fileInfo,
+            $tempTable,
+            $tempTableOptions = array(),
+            $tempToRawQueryName = 'import_temp_to_raw',
+            $importSpec = array(),
+            $requiredImportColumns = array(),
+            $successColumn = '_import_success',
+            $idColumn = 'id',
+            $excelImportBatchSize = 2500,
+            $dynamicFieldType,
+            $importHeaderStrictValidation = FALSE,
+            $_PDO = array(),
+            $defaultFetchMode = Doctrine_Core::FETCH_ASSOC,
+            $iterData;
 
   abstract protected function setImportSpec();
 
@@ -42,6 +43,12 @@ abstract class agImportHelper extends agEventHandler
   abstract protected function cleanColumnName($columnName);
 
   abstract protected function addDynamicColumns(array $importHeaders);
+
+  /**
+   * Method to dynamically build a (mostly) static tempSelectQuery
+   * @return string Returns a string query
+   */
+  abstract protected function buildTempSelectQuery();
 
   /**
    * This class's constructor.
@@ -114,6 +121,32 @@ abstract class agImportHelper extends agEventHandler
   }
 
   /**
+   * Method to initiate the import query from temp
+   * @param $query A SQL query string
+   */
+  protected function tempToRaw($query)
+  {
+    $conn = $this->getConnection(self::CONN_TEMP_READ);
+
+    // first get a count of what we need from temp
+    $this->logDebug('Fetching the total number of records and establishing batch size.');
+    $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
+    $ctResults = $this->executePdoQuery($conn, $ctQuery);
+    $this->iterData['fetchCount'] = $ctResults->fetchColumn();
+
+    // now caclulate the number of batches we'll need to process it all
+    $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
+    $this->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
+      'into {' . $this->iterData['batchCount'] . '} batches of {' . $this->iterData['batchSize'] .
+      '} records per batch.');
+
+    // now we can legitimately execute our real search
+    $this->logDebug('Starting initial fetch from temp.');
+    $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
+    $this->logInfo("Successfully established the PDO fetch iterator.");
+  }
+
+  /**
    *
    * @param sfEvent $event
    * @todo document this
@@ -124,6 +157,8 @@ abstract class agImportHelper extends agEventHandler
     $action = $event->getSubject();
     $context = $action->getContext();
     $importer = $action->importer;
+
+    $importer->processXlsImportFile($action->importPath);
 
     // initializes the job progress information
     $totalBatchCount = $importer->iterData['batchCount'];
@@ -140,9 +175,8 @@ abstract class agImportHelper extends agEventHandler
       $startTime = time();
       $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
     } else {
-      //TODO: decide what to do in this case
       $this->logAlert('Import already in progress, or starting new import after failed attempt?');
-      return; //, right?
+      return;
     }
 
     $abortFlagId = implode('_', array('abort', $statusId));
@@ -155,8 +189,8 @@ abstract class agImportHelper extends agEventHandler
       // if the last batch did nothing
       if ($batchResult == $recordsLeft) {
         //TODO: decide what to do in this case
-        $this->logErr('No progress since last batch!');
-        break; //, right?
+        $this->logEmerg('No progress since last batch! Stopping import.');
+        //break; // exception is already thrown by logEmerg ^
       } else {
         $recordsLeft = $batchResult;
       }
@@ -442,7 +476,10 @@ abstract class agImportHelper extends agEventHandler
         'file to the temporary table.';
     $this->logNotice($okMsg);
 
-    return ($this->getErrCount() == 0) ? TRUE : FALSE;
+    // start our iterator and initialize our select query
+    $this->tempToRaw($this->buildTempSelectQuery());
+
+    return ($this->getErrCount() == 0);
   }
 
   /**

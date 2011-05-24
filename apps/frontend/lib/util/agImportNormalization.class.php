@@ -18,8 +18,7 @@ abstract class agImportNormalization extends agImportHelper
 {
   const     CONN_NORMALIZE_WRITE = 'import_normalize_write';
 
-  protected $tempToRawQueryName = 'import_temp_to_raw',
-            $helperObjects = array(),
+  protected $helperObjects = array(),
 
             // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
             $importComponents = array(),
@@ -168,7 +167,7 @@ abstract class agImportNormalization extends agImportHelper
 
   /**
    * Method to load and process a batch of records.
-   * @return The number of records left to process or -1 if a fatal error was encountered
+   * @return int The number of records left to process or -1 if a fatal error was encountered
    */
   public function processBatch()
   {
@@ -244,32 +243,6 @@ abstract class agImportNormalization extends agImportHelper
 
     $eventMsg = "Successfully fetched batch {$batchPosition} (Records {$batchStart} to {$fetchPosition})";
     $this->logInfo($eventMsg);
-  }
-
-  /**
-   * Method to initiate the import query from temp
-   * @param $query A SQL query string
-   */
-  protected function tempToRaw($query)
-  {
-    $conn = $this->getConnection(self::CONN_TEMP_READ);
-
-    // first get a count of what we need from temp
-    $this->logDebug('Fetching the total number of records and establishing batch size.');
-    $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
-    $ctResults = $this->executePdoQuery($conn, $ctQuery);
-    $this->iterData['fetchCount'] = $ctResults->fetchColumn();
-    
-    // now caclulate the number of batches we'll need to process it all
-    $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
-    $this->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
-      'into {' . $this->iterData['batchCount'] . '} batches of {' . $this->iterData['batchSize'] .
-      '} records per batch.');
-
-    // now we can legitimately execute our real search
-    $this->logDebug('Starting initial fetch from temp.');
-    $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
-    $this->logInfo("Successfully established the PDO fetch iterator.");
   }
 
   /**

@@ -30,14 +30,14 @@ class agStaffActions extends agActions
   public function executeStafftypes(sfWebRequest $request)
   {
     $this->ag_staff_types = Doctrine_Core::getTable('agStaffResourceType')
-        ->createQuery('a')
-        ->execute();
+            ->createQuery('a')
+            ->execute();
 
     $this->staffTypeForm = new PluginagStaffTypeForm();
 
     if ($request->isMethod(sfRequest::POST)) {
       $this->staffTypeForm->bind($request->getParameter($this->staffTypeForm->getName()),
-                                                        $request->getFiles($this->staffTypeForm->getName()));
+          $request->getFiles($this->staffTypeForm->getName()));
       if ($this->staffTypeForm->isValid()) {
         $this->staffTypeForm->save();
       }
@@ -63,7 +63,7 @@ class agStaffActions extends agActions
     $this->sort = null;
     $this->order = null;
     $this->limit = null;
-    
+
     //the next few lines could be abstracted to agActions as they are request params that may be
     //used for any list
     if ($request->getGetParameter('status'))
@@ -77,15 +77,15 @@ class agStaffActions extends agActions
 
     /** @todo take into consideration app_display */
     $staffStatusOptions = agDoctrineQuery::create()
-        ->select('s.staff_resource_status, s.staff_resource_status')
-        ->from('agStaffResourceStatus s')
-        ->execute(array(), 'key_value_pair');
+            ->select('s.staff_resource_status, s.staff_resource_status')
+            ->from('agStaffResourceStatus s')
+            ->execute(array(), 'key_value_pair');
     //the above query returns an array of keys matching their values.
     //ideally the above should exist in a global param,
     //so the database is not queried all the time
     $staffStatusOptions['all'] = 'all';
     if ($request->getParameter('status') && in_array($request->getParameter('status'),
-                                                                            $staffStatusOptions)) {
+            $staffStatusOptions)) {
       $this->status = $request->getParameter('status');
     }
     $this->statusWidget = new sfForm();
@@ -112,23 +112,23 @@ class agStaffActions extends agActions
 //      $staffArray = apc_fetch('staffArray');
 //    }
 //    else{
-    $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order,$this->limit);
+    $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order, $this->limit);
 //      apc_store('staffArray', $staffArray);
 //    }  this will not work currently on update, there needs to be a hook/callback
 
     $this->pager = new agArrayPager(null, 10);
     $this->pager->setResultArray($staffArray);
-    
+
     $this->pager->setPage($this->getRequestParameter('page', 1));
     $this->pager->init();
 
 
     $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
-        ->createQuery('c')
-        ->execute();
+            ->createQuery('c')
+            ->execute();
     $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
-        ->createQuery('d')
-        ->execute();
+            ->createQuery('d')
+            ->execute();
     //p-code
     //$this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' ');
     //end p-code
@@ -156,9 +156,9 @@ class agStaffActions extends agActions
   public function executeShow(sfWebRequest $request)
   {
     $query = Doctrine::getTable('agStaff')
-        ->createQuery('a')
-        ->select(
-            'p.*,
+            ->createQuery('a')
+            ->select(
+                'p.*,
                   st.*,
                   ps.*,
                   s.*,
@@ -170,9 +170,9 @@ class agStaffActions extends agActions
                   namejoin.*,
                   name.*,
                   nametype.*'
-        )
-        ->from(
-            'agStaff st, 
+            )
+            ->from(
+                'agStaff st,
                   st.agPerson p,
                   p.agPersonSex ps,
                   ps.agSex s,
@@ -202,10 +202,10 @@ class agStaffActions extends agActions
 
       if (count($lqIds) > 0) {
         $q = Doctrine::getTable('agStaff')
-            ->createQuery('a')
-            ->select('s.*')
-            ->from('agStaff s')
-            ->where('s.id IN (' . implode(',', $lqIds) . ')');
+                ->createQuery('a')
+                ->select('s.*')
+                ->from('agStaff s')
+                ->where('s.id IN (' . implode(',', $lqIds) . ')');
         $this->pager->setQuery($q);
         $this->pager->setPage($request->getParameter('page', 1));
         $this->pager->init();
@@ -220,7 +220,7 @@ class agStaffActions extends agActions
           $this->pager->setQuery($query->orderBy('namejoin.person_name_type_id = ' . $nameId . ' ' . $sortOrder . ', person_name ' . $sortOrder));
         } else {
           $this->pager->setQuery($query->orderBy($request->getParameter('sort', 'person_name') . ' ' . $request->getParameter('order',
-                                                                                                                              'DESC')));
+                      'DESC')));
         }
         //$this->sortAppend = $sortOrder;
       } else {
@@ -232,20 +232,20 @@ class agStaffActions extends agActions
     }
 
     $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')
-        ->createQuery('b')
-        ->execute();
+            ->createQuery('b')
+            ->execute();
     $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
-        ->createQuery('c')
-        ->execute();
+            ->createQuery('c')
+            ->execute();
     $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
-        ->createQuery('d')
-        ->execute();
+            ->createQuery('d')
+            ->execute();
     $this->ag_language_formats = Doctrine::getTable('agLanguageFormat')
-        ->createQuery('e')
-        ->execute();
+            ->createQuery('e')
+            ->execute();
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
-        ->createQuery('f')
-        ->execute();
+            ->createQuery('f')
+            ->execute();
     $this->agStaff = $this->pager->getResults()->getFirst();
     $agPerson = $this->agStaff->getAgPerson();
     $this->addressArray = $agPerson->getEntityAddressByType(
@@ -307,9 +307,9 @@ class agStaffActions extends agActions
     $this->forward404unless($request->isXmlHttpRequest());
     if ($request->hasParameter('staffResourceId')) {
       $staffResource = agDoctrineQuery::create()
-          ->delete('agStaffResource sr')
-          ->where('id = ?', $request->getParameter('staffResourceId'))
-          ->execute();
+              ->delete('agStaffResource sr')
+              ->where('id = ?', $request->getParameter('staffResourceId'))
+              ->execute();
     }
   }
 
@@ -346,8 +346,8 @@ class agStaffActions extends agActions
   {
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-                                                                               sprintf('Object ag_staff does not exist (%s).',
-                                                                                       $request->getParameter('id'))
+        sprintf('Object ag_staff does not exist (%s).',
+            $request->getParameter('id'))
     );
 
     $ag_person = $ag_staff->getAgPerson();
@@ -370,8 +370,8 @@ class agStaffActions extends agActions
     );
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-                                                                               sprintf('Object ag_staff does not exist (%s).',
-                                                                                       $request->getParameter('id'))
+        sprintf('Object ag_staff does not exist (%s).',
+            $request->getParameter('id'))
     );
 
     $ag_person = $ag_staff->getAgPerson();
@@ -404,8 +404,8 @@ class agStaffActions extends agActions
 
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-                                                                               sprintf('Object ag_staff does not exist (%s).',
-                                                                                       $request->getParameter('id'))
+        sprintf('Object ag_staff does not exist (%s).',
+            $request->getParameter('id'))
     );
 
     $ag_person = $ag_staff->getAgPerson();
@@ -475,19 +475,19 @@ class agStaffActions extends agActions
       $ag_staff = $form->save();
       $refAgStaff = $ag_staff->getAgStaff();
       $staffObj = agDoctrineQuery::create()
-          ->from('agStaff s')
-          ->where('s.person_id=?', $ag_staff->id)
-          ->fetchOne();
+              ->from('agStaff s')
+              ->where('s.person_id=?', $ag_staff->id)
+              ->fetchOne();
       LuceneRecord::updateLuceneRecord($staffObj);
 
       //$staff_id = $ag_staff->getAgStaff()->getFirst()->getId();
 //not an object? first it's a collection, now not an object if i just get one
 
       $staff_id = Doctrine::getTable('agStaff')->createQuery('a')
-          ->select('a.id')
-          ->from('agStaff a')
-          ->where('a.person_id = ?', $ag_staff->id)
-          ->fetchOne();
+              ->select('a.id')
+              ->from('agStaff a')
+              ->where('a.person_id = ?', $ag_staff->id)
+              ->fetchOne();
 
       //get id of STAFF person from the saved, extended agpersonform.
       // Check if the Save and Create Another button was used to submit. If it was, redirect to staff/new.
@@ -507,23 +507,23 @@ class agStaffActions extends agActions
   public function executeExport()
   {
     $staffMembers = Doctrine::getTable('agPerson')
-        ->createQuery('a')
-        ->execute();
+            ->createQuery('a')
+            ->execute();
     $nameTypes = Doctrine::getTable('agPersonNameType')
-        ->createQuery('a')
-        ->execute();
+            ->createQuery('a')
+            ->execute();
     $phoneTypes = Doctrine::getTable('agPhoneContactType')
-        ->createQuery('a')
-        ->execute();
+            ->createQuery('a')
+            ->execute();
     $emailTypes = Doctrine::getTable('agEmailContactType')
-        ->createQuery('a')
-        ->execute();
+            ->createQuery('a')
+            ->execute();
     $addressTypes = Doctrine::getTable('agAddressContactType')
-        ->createQuery('a')
-        ->execute();
+            ->createQuery('a')
+            ->execute();
     $languageFormats = Doctrine::getTable('agLanguageFormat')
-        ->createQuery('a')
-        ->execute();
+            ->createQuery('a')
+            ->execute();
     require_once 'PHPExcel/Cell/AdvancedValueBinder.php';
     PHPExcel_Cell::setValueBinder(new PHPExcel_Cell_AdvancedValueBinder());
     $objPHPExcel = new sfPhpExcel();
@@ -545,7 +545,7 @@ class agStaffActions extends agActions
       foreach ($nameTypes as $nameType) {
         $headings[] = ucwords($nameType->person_name_type) . ' Name';
         $j = Doctrine::getTable('AgPersonMjAgPersonName')->findByDql('person_id = ? AND person_name_type_id = ?',
-                                                                     array($staffMember->id, $nameType->id))->getFirst();
+                array($staffMember->id, $nameType->id))->getFirst();
         $content[ucwords($nameType->person_name_type) . ' Name']
             = ($j ? $j->getAgPersonName()->person_name : '');
       }
@@ -588,15 +588,15 @@ class agStaffActions extends agActions
         $content[ucwords($phoneType->phone_contact_type) . ' Phone'] =
             (
             $j ? preg_replace(
-                    $j
+                        $j
                         ->getAgPhoneContact()
                         ->getAgPhoneFormat()
                         ->getAgPhoneFormatType()->match_pattern,
-                    $j
+                        $j
                         ->getAgPhoneContact()
                         ->getAgPhoneFormat()
                         ->getAgPhoneFormatType()->replacement_pattern,
-                    $j
+                        $j
                         ->getAgPhoneContact()->phone_contact) :
                 ''
             );
@@ -605,11 +605,11 @@ class agStaffActions extends agActions
       foreach ($emailTypes as $emailType) {
         $headings[] = ucwords($emailType->email_contact_type) . ' Email';
         $j = Doctrine::getTable('AgEntityEmailContact')
-            ->findByDql(
-                'entity_id = ? AND email_contact_type_id = ?',
-                array($staffMember->entity_id, $emailType->id)
-            )
-            ->getFirst();
+                ->findByDql(
+                    'entity_id = ? AND email_contact_type_id = ?',
+                    array($staffMember->entity_id, $emailType->id)
+                )
+                ->getFirst();
         $content[ucwords($emailType->email_contact_type) . ' Email'] =
             ($j ? $j->getAgEmailContact()->email_contact : '');
       }
@@ -617,11 +617,11 @@ class agStaffActions extends agActions
       foreach ($addressTypes as $addressType) {
         $headings[] = ucwords($addressType->address_contact_type) . ' Address';
         $j = Doctrine::getTable('AgEntityAddressContact')
-            ->findByDql(
-                'entity_id = ? AND address_contact_type_id = ?',
-                array($staffMember->entity_id, $addressType->id)
-            )
-            ->getFirst();
+                ->findByDql(
+                    'entity_id = ? AND address_contact_type_id = ?',
+                    array($staffMember->entity_id, $addressType->id)
+                )
+                ->getFirst();
         $tempContainer = array();
         if ($j) {
           foreach ($j->getAgAddress()->getAgAddressStandard()->getAgAddressFormat()
@@ -661,10 +661,10 @@ class agStaffActions extends agActions
         $i = 1;
         foreach ($staffMember->getAgPersonMjAgLanguage() as $languageJoin) {
           $compQuery = Doctrine::getTable('agPersonLanguageCompetency')->createQuery('a')
-              ->select('a.*')
-              ->from('agPersonLanguageCompetency a')
-              ->where('a.person_language_id = ?', $languageJoin->id)
-              ->andWhere('a.language_format_id = ?', $languageFormat->id);
+                  ->select('a.*')
+                  ->from('agPersonLanguageCompetency a')
+                  ->where('a.person_language_id = ?', $languageJoin->id)
+                  ->andWhere('a.language_format_id = ?', $languageFormat->id);
           if ($i <> $c) {
             $languages = $languages . $languageJoin->getAgLanguage()->language . "\n";
           } else {
@@ -751,7 +751,8 @@ class agStaffActions extends agActions
     $this->timer = time();
     $uploadedFile = $_FILES['import'];
 
-    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $this->moduleName .
+        DIRECTORY_SEPARATOR . $uploadedFile['name'];
     if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
       return sfView::ERROR;
     }
@@ -762,19 +763,14 @@ class agStaffActions extends agActions
     // TODO: eventually use this ^^^ to replace this vvv.
 
     $this->importer = new agStaffImportNormalization(NULL, agEventHandler::EVENT_INFO);
-    $this->importer->importStaffFromExcel($this->importPath);
 
     //TODO: test this one
     $this->dispatcher->notify(new sfEvent($this, 'import.start'));
 //    $this->importer->processBatch();
 //    $this->importer->processBatch();
-
     //print_r($this->importer->getEvents());
     $this->events = $this->importer->getEvents();
     //$this->numRecordsImported = $this->importer->numRecordsImported;
-
-    // removes the file from the server
-    unlink($this->importPath);
 
     unset($this->importer);
     $this->timer = (time() - $this->timer);

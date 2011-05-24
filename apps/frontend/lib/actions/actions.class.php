@@ -39,13 +39,18 @@ class agActions extends sfActions
     //TODO: module_ACTION_status instead? -UA
     $statusId = implode('_', array($this->moduleName, 'status'));
     $context = $this->getContext();
-    $statuses = $context->has($statusId) ? $this->getContext()->get($statusId) : array();
+    $statuses = $context->has($statusId) ? $this->getContext()->get($statusId) : array(0, 0, 0);
     $format = $request->getRequestFormat();
     if ('json' == $format) {
       $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
       $statuses = json_encode($statuses);
     }
     //TODO: else, use partial instead of returning?
+    //TODO: the else block below is for testing -- remove when finished
+    else {
+      $this->getResponse()->setHttpHeader('Content-Type', 'text/plain; charset=utf-8');
+      $statuses = json_encode($statuses);
+    }
     
     return $this->renderText($statuses);
   }
