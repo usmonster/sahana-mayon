@@ -162,7 +162,7 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function buildTempSelectQuery()
   {
-    $query = 'SELECT t.* ' .
+    $query = 'SELECT t.unique_id, t.response, t.time_stamp ' .
          'FROM ' . $this->tempTable . ' AS t ' .
          'ORDER BY t.unique_id ASC, t.time_stamp ASC';
 
