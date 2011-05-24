@@ -1,10 +1,10 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-through (pre) ======
 
 ===== Pre-Creation =====
 
 **What it does:**
 
-Because a scenario is used to plan staff and facility resource deployment it's important that you have added your staff and facilities to Agasti before planning a Scenario.  Also, though not required, Organization information can be helpful if there are city or non-profit agencies that typically aid with your emergency response.
+Because a scenario is used to plan staff and facility resource deployment it's important that you have added your staff and facilities to Sahana Agasti before planning a Scenario.  Also, though not required, Organization information can be helpful if there are city or non-profit agencies that typically aid with your emergency response.
 
 **If you have not entered staff and facility details to Agasti, click the links to do so now before continuing with the Scenario Creator.**
 
@@ -12,8 +12,7 @@ Because a scenario is used to plan staff and facility resource deployment it's i
 
 The three links on this page each perform a separate action:
 
-{{:scenario:screenshot_033.png?500}}
-
+{{:scenario:prescenario.png?600|Before You Start}}
 
 Click **"Continue and Create a Scenario"** if you have already uploaded or entered your staff and facilities.
 
@@ -30,16 +29,18 @@ After you've completed one of these actions click the "Next" button below.
   - **Will I be able to update my staff before I create an Event later?** - Yes.  Because Agasti uses Staff Resource Types and not individual staff members in Scenario planning you can add more staff later and they will be automatically assigned based on the Deployment Priority rules made in the Scenario Creator.
 ====== Continue ======
 
-[[scenario:new|{{ :manual:user:next.png|}}]] 
-[[manual:user:scenario:walkthrough|{{:manual:user:previous.png?135 }}]]
+[[scenario:new|{{ :manual:user:next.png?135|Create a New Scenario}}]] 
+[[manual:user:scenario:walkthrough|{{:manual:user:previous.png?135|Introduction }}]]
 
 ====== Jump to Another Step ======
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:walkthrough|Introduction]]
   - **Pre Scenario Creation**
-  - [[scenario:new|Create A Scenario]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
   - [[scenario:newgroup| Create Facility Groups]]
   - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]

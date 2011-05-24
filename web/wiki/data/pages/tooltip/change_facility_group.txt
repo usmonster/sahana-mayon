@@ -1,0 +1,3 @@
+For easy navigation between groups, select the group you want to edit from the drop down.  To create a new group select no group.
+
+**Save before selecting another group.  Any changes made without saving will be lost.**

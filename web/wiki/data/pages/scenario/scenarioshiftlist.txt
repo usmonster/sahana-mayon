@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-through (scenarioshifts) ======
 
 ===== Scenario Shifts =====
 
@@ -13,7 +13,7 @@
 
 ====== Continue ======
 
-[[scenario:staff resource pool|{{ :manual:user:next.png|}}]] 
+[[scenario:review|{{ :manual:user:next.png?135|}}]] 
 [[scenario:newstaffresources|{{:manual:user:previous.png?135 }}]]
 
 ===== Jump to Another Step =====

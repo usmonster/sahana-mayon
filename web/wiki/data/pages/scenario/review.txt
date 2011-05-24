@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-Through ======
 
 ===== Review =====
 
@@ -6,21 +6,25 @@
 
 
 ===== Walk-Through =====
-
+{{:scenario:scenarioreview.png?700|Scenario Review}}
 
 ===== FAQ =====
 
 
 ====== Continue ======
 
-[[scenario:staff_resource_pool|{{:manual:user:previous.png?135| }}]] 
+[[scenario:shift|{{:manual:user:previous.png?135|Scenario Shifts }}]] 
+
+After a scenario has been successfully created it remains ready for deployment until needed for an event.  However, it's important to familiarize with event management before the need arises.  
 
 ===== Jump to Another Step =====
 
   - [[scenario:pre|Pre Scenario Creation]]
-  - [[scenario:new|Create A Scenario]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
   - [[scenario:newgroup| Create Facility Groups]]
   - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
-  - [[scenario:review| Review]]
+  - [[scenario:shift| Generate and Verify Shifts]]
+  - **Review**

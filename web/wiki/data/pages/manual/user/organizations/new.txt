@@ -13,20 +13,6 @@ This page will walk you through creating a new organization record manually.
   * It's a good idea to name your first Organization 'Volunteer' so one is available for extraneous staff.
   * An organization's **Name** is used throughout the application to reference that group.  The **Description** is used for reference when in the Organization module.
 
-====== Staff Management Walk-Through ======
-
-
-===== Creating New Staff =====
-
-Staff records in Agasti represent the potential workforce for your emergency response and there are two ways to add new records: manual and [[manual:user:staff:import]].  This page will walk you through creating a new staff resource manually and, later on in this walk-through, you'll be instructed on how to import a staff records file should you desire to do so.
-
-===== Reference Information =====
-
-==== Things To Know ====
-
-  * **Staff Resources** are used when creating staff deployment rules in a Scenario.  If you plan to use a portion of your available staff records (instead of all staff), or if you want to deploy some staff with a higher priority than others, to add a staff's resource type and/or the [[manual:user:organizations|organization]] they are associated with.
-  * [[manual:user:organizations|Organization]] information can be customized through the Organization module and, ideally, will be entered before staff are created (though staff records can be updated later).
-
 ===== Walk-Through =====
 
 In the form for a New Organization, add the name of the organization and a brief description.  **Reminder:** It's a good idea to create an organization called "Volunteer" for any unaffiliated staff that may want to help.
@@ -49,4 +35,3 @@ After entering the information, click "Save and Continue".  The information will
   - [[manual:user:Organizations:list|Listing Organizations]]
   - [[manual:user:Organizations:edit|Editing Organizations Records]]
   - [[manual:user:Organizations:review|Organization Management Review]]
-===== FAQ =====

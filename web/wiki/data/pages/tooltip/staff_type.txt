@@ -1,0 +1,3 @@
+===== Staff Type in Search =====
+
+Staff Pool searches are built by selecting Staff Types and the Organizations they work for.  Select the staff type for this search from the drop down.

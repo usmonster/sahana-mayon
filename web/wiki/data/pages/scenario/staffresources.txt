@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-through (resreq) ======
 
 ===== Staff Resource Requirements =====
 
@@ -16,7 +16,7 @@ For Agasti to assign staff personnel to a facility the system must know how many
 
 ===== Walk-Through =====
 
-{{:scenario:screenshot_024.png?900}}
+{{:scenario:staffresrequirements.png?700|Enter Staff Numbers}}
 
   - For each facility record listed enter **at least some staff** required for **at least one staff type** for __**every facility**__.  
   - When you've finished entering the staff requirements click "Save and Continue".
@@ -27,17 +27,19 @@ After you've clicked "Save and Continue" hit the "Next" button below.
   - **Does a facility need to have every staff type assigned?** - No, you do not need to have every staff type assigned to every facility.  If a facility does not need some staff then those fields can be blank.
 ====== Continue ======
 
-[[scenario:newstaffresources|{{ :manual:user:next.png|}}]] 
-[[scenario:newgroup|{{:manual:user:previous.png?135 }}]]
+[[scenario:staff_resource_pool|{{ :manual:user:next.png?135|Create Staff Pool Searches}}]] 
+[[scenario:newgroup|{{:manual:user:previous.png?135|Create Facility Groups }}]]
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
   - [[manual:user:scenario:walkthrough|Start]]
   - [[scenario:pre|Pre Scenario Creation]]
-  - [[scenario:new|Create A Scenario]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
   - [[scenario:newgroup| Create Facility Groups]]
   - **Set Staff Resource Requirements**
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]

@@ -2,7 +2,7 @@
 
 
 ===== List Staff =====
-The Mayon Staff list makes it easy for administrators to update or locate individual staff or a group of staff records.  The list is sortable by status and searchable through the menu.
+The Sahana Agasti Staff list makes it easy for administrators to update or locate individual staff or a group of staff records.  The list is sortable by status and searchable through the menu.
 ===== Reference Information =====
 ==== Things To Know ====
 

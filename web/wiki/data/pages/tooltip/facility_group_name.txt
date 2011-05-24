@@ -1,0 +1,5 @@
+===== Naming Facility Groups =====
+
+Facility Groups are a cluster of facility resources in a scenario (and later an event).  
+
+**Facility Group names must be unique** and are used throughout the application to identify this group.

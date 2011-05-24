@@ -1,0 +1,7 @@
+===== Facility Phone =====
+
+A reliable contact number for the facility that could be called during an activation.
+
+**Phone numbers should be entered as 5559991111x1234**
+
+**Format**: 9 digits without spaces.  Extensions begin with an x.

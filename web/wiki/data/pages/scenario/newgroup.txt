@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-Through (fgr) ======
 
 ===== Facility Group Creation =====
 
@@ -28,25 +28,26 @@ It's important to understand what facility groups are used for later on; though 
 
 After all groups have been created select the "Next" button below.
 
-
-{{:scenario:facgroup.png?900}}
+{{:scenario:facilitygroups.png?700|}}
 ===== FAQ =====
 
   - **Do I need any facility groups?** - Yes.  Facility groups are how facility resources are included in the scenario, and therefore an event when it's activated.  Every scenario needs at least one facility group.
   - **Can I have only one facility group?** - Yes, one is enough; however a scenario can have as many facility groups as are necessary for planning.
 ====== Continue ======
 
-[[scenario:staffresources|{{ :manual:user:next.png|}}]] 
-[[scenario:new|{{:manual:user:previous.png?135 }}]]
+[[scenario:staffresources|{{ :manual:user:next.png?135|}}]] 
+[[scenario:resources|{{:manual:user:previous.png?135 }}]]
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:walkthrough|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
-  - [[scenario:new|Create A Scenario]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
   - **Create Facility Groups**
   - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]

@@ -1,0 +1,3 @@
+===== Filtering Facility Resources =====
+
+To make building facility groups easier you can filter the Facility Resource Types displayed.  Click the arrow to the left to expand the menu and select or unselect the Resource Types you want displayed.
