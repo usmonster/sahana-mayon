@@ -265,8 +265,8 @@ class agPersonForm extends BaseagPersonForm
       $languageContainer->embedForm('language ' . $i, $languageSubContainer);
       $languageContainer->widgetSchema->setLabel('language ' . $i, false);
     }
-
-    $primaryContainer->embedForm('languages', $languageContainer);
+    $primaryContainer->embedForm('Languages', $languageContainer);
+    $primaryContainer->widgetSchema['Languages']->setLabel('Languages <a href="' . $this->wikiUrl . '/doku.php?id=tooltip:languages&do=export_xhtmlbody" class="tooltipTrigger" title="Languages">?</a>');
   }
 
   /**
@@ -300,7 +300,7 @@ class agPersonForm extends BaseagPersonForm
       }
     }
     $nameContainer = new sfForm();
-    $nameConDeco = new agFormatterNameLevelOne($nameContainer->getWidgetSchema());
+    $nameConDeco = new agWidgetFormSchemaFormatterSubContainer($nameContainer->getWidgetSchema());
     $nameContainer->getWidgetSchema()->addFormFormatter('nameConDeco', $nameConDeco);
     $nameContainer->getWidgetSchema()->setFormFormatterName('nameConDeco');
     foreach ($nameTypes as $nameType) {

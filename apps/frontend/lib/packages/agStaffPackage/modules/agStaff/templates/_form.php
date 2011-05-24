@@ -42,8 +42,6 @@ use_javascripts_for_form($form);
       <br />
       <br />
       <div class="displayBlock">
-        <h4><?php //echo $form['languages']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:languages&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Languages">?</a></h4>
-        <?php //echo $form['languages']; ?>
       </div>
       <div class="clearBoth"> </div>
       <br />

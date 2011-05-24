@@ -51,7 +51,7 @@ class agStaffPoolFilterForm extends sfForm
         array(
             'agStaffResourceType.staff_resource_type' => new sfWidgetFormChoice(
                array('choices' => $defaultStaffTypes,
-                     'label' => 'Staff Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_typee&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource Type">?</a>'),
+                     'label' => 'Staff Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_type&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource Type">?</a>'),
                array('class' => 'filter')
              ),
             'agOrganization.organization' => new sfWidgetFormDoctrineChoice(
