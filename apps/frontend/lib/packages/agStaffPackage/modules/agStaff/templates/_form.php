@@ -37,7 +37,7 @@ use_javascripts_for_form($form);
         <?php echo $form['ag_sex_list'] ?>
       </div>
       <div class="displayInlineBlock">
-        <?php echo $form['date of birth']; ?>
+        <?php echo $form['Date of Birth']; ?>
       </div>
       <br />
       <br />
@@ -53,10 +53,10 @@ use_javascripts_for_form($form);
     </div>
     <?php echo $form['_csrf_token'] ?>
     <div class="infoHolder">
-      <h3><?php echo $form['address']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:contact_address&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Address">?</a></h3>
+      <h3><?php echo $form['Address']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:contact_address&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Address">?</a></h3>
       <hr class="ruleGray" />
       <div class="clearBoth"> </div>
-      <?php echo $form['address']; ?>
+      <?php echo $form['Address']; ?>
     </div>
   </div>
   <br />

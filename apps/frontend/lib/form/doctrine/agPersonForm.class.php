@@ -128,10 +128,10 @@ class agPersonForm extends BaseagPersonForm
 //    $this->embedNameForm();
     $this->embedContactForms();
     $this->embedAddressForm();
-    $this->embedPrimaryForm();
+    $this->embedPrimaryForms();
   }
 
-  public function embedPrimaryForm()
+  public function embedPrimaryForms()
   {
     $primaryContainer = new sfForm();
     $primaryContainerFormatter = new agFormatterPrimaryLevelOne($primaryContainer->getWidgetSchema());
@@ -162,7 +162,7 @@ class agPersonForm extends BaseagPersonForm
     $dateOfBirthForm = new agEmbeddedPersonDateOfBirthForm($this->getObject()->getAgPersonDateOfBirth());
     $dateOfBirthForm->getWidgetSchema()->setLabel('date_of_birth', 'Date of Birth <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:date_of_birth&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>');
     $dateOfBirthForm->setDefault('person_id', $this->getObject()->id);
-    $this->embedForm('date of birth', $dateOfBirthForm);
+    $this->embedForm('Date of Birth', $dateOfBirthForm);
   }
 
   /**
@@ -349,8 +349,8 @@ class agPersonForm extends BaseagPersonForm
       
       $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
     }
-    $contactContainer->embedForm('email', $emailContainer);
-    $contactContainer->widgetSchema['email']->setLabel('Email <a href="' . $this->wikiUrl . '/doku.php?id=tooltip:contact_email&do=export_xhtmlbody" class="tooltipTrigger" title="Email">?</a>');
+    $contactContainer->embedForm('Email', $emailContainer);
+    $contactContainer->widgetSchema['Email']->setLabel('Email <a href="' . $this->wikiUrl . '/doku.php?id=tooltip:contact_email&do=export_xhtmlbody" class="tooltipTrigger" title="Email">?</a>');
   }
 
   /**
@@ -384,8 +384,8 @@ class agPersonForm extends BaseagPersonForm
       $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
     }
 
-    $contactContainer->embedForm('phone', $phoneContainer);
-    $contactContainer->widgetSchema['phone']->setLabel('Phone <a href="' . $this->wikiUrl . '/doku.php?id=tooltip:contact_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Phone">?</a>');
+    $contactContainer->embedForm('Phone', $phoneContainer);
+    $contactContainer->widgetSchema['Phone']->setLabel('Phone <a href="' . $this->wikiUrl . '/doku.php?id=tooltip:contact_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Phone">?</a>');
   }
 
   /**
@@ -516,7 +516,7 @@ class agPersonForm extends BaseagPersonForm
       $addressContainer->embedForm($address_contact_type, $addressSubContainer);
     }
     //Embed all the addresses into agPersonForm.
-    $this->embedForm('address', $addressContainer);
+    $this->embedForm('Address', $addressContainer);
   }
 
   /**
@@ -916,10 +916,14 @@ class agPersonForm extends BaseagPersonForm
   public function saveLanguageForm($form, $joinId)
   {
     if ($form instanceof agEmbeddedAgPersonMjAgLanguageForm) {
-      $joinQuery = Doctrine::getTable('agPersonMjAgLanguage')->createQuery('d')
-              ->select('d.id')
-              ->from('agPersonMjAgLanguage d')
-              ->where('d.id =?', $form->getObject()->id);
+//      $joinQuery = Doctrine::getTable('agPersonMjAgLanguage')->createQuery('d')
+//              ->select('d.id')
+//              ->from('agPersonMjAgLanguage d')
+//              ->where('d.id =?', $form->getObject()->id);
+      $joinQuery = agDoctrineQuery::create()
+              ->select()
+              ->from('agPersonMjAgLanguage')
+              ->where('id = ?', $form->getObject()->id);
 
       if ($form->getObject()->language_id <> null) {
         //Create a new agPersonMjAgLanguageForm. Populate it with an existing object, if it exists.
@@ -1004,28 +1008,29 @@ class agPersonForm extends BaseagPersonForm
     /**
      * Date of Birth
      * */
-    if (isset($this->embeddedForms['date of birth'])) {
-      $this->saveDateOfBirthForm($this->embeddedForms['date of birth']);
-      unset($this->embeddedForms['date of birth']);
+    if (isset($this->embeddedForms['Date of Birth'])) {
+      $this->saveDateOfBirthForm($this->embeddedForms['Date of Birth']);
+      unset($this->embeddedForms['Date of Birth']);
     }
     /**
      * Name
      * */
-    if (isset($this->embeddedForms['name'])) {
-      foreach ($this->embeddedForms['name']->embeddedForms as $key => $form) {
-        $values = $this->values['name'][$key];
+    if (isset($this->embeddedForms['Primary']['Name'])) {
+      $b = $this->getEmbeddedForm('Primary')->getEmbeddedForm('Name')->getEmbeddedForms();
+      foreach ($this->getEmbeddedForm('Primary')->getEmbeddedForm('Name')->getEmbeddedForms() as $key => $form) {
+        $values = $this->values['Primary']['Name'][$key];
         $this->saveNameForm($key, $form, $values);
-        unset($this->embeddedForms['name'][$key]);
+        unset($this->getEmbeddedForm('Primary')->embeddedForms['Name'][$key]);
       }
     }
     /**
      * Email
      * */
-    if (isset($this->embeddedForms['email'])) {
-      foreach ($this->embeddedForms['email']->embeddedForms as $key => $form) {
-        $values = $this->values['email'][$key];
+    if (isset($this->embeddedForms['Contact']['Email'])) {
+      foreach ($this->getEmbeddedForm('Contact')->getEmbeddedForm('Email')->getEmbeddedForms() as $key => $form) {
+        $values = $this->values['Contact']['Email'][$key];
         $this->saveEmailForm($key, $form, $values);
-        unset($this->embeddedForms['email'][$key]);
+        unset($this->getEmbeddedForm('Contact')->embeddedForms['Email'][$key]);
       }
     }
     /**
@@ -1034,28 +1039,30 @@ class agPersonForm extends BaseagPersonForm
      * formatted first, as the DB holds them in 2125551212 form, but users will
      * input in (212) 555-1212 form (or 212.555.1212, etc.). Because the values
      * will always be processed, the form's object will always be seen as modified.
-     * That's the purpose of calling stat(Doctrine_Record::STATE_CLEAN) on the
+     * That's the purpose of calling state(Doctrine_Record::STATE_CLEAN) on the
      * object. After that, it will return unmodified. The phone number stored in
      * the $values array is also reformatted to be DB friendly.
      * */
-    if (isset($this->embeddedForms['phone'])) {
-      $phoneFormats = Doctrine::getTable('agPhoneFormatType')
-              ->createQuery('a')
-              ->execute();
-      foreach ($this->embeddedForms['phone']->embeddedForms as $key => $form) {
+    if (isset($this->embeddedForms['Contact']['Phone'])) {
+      $phoneFormats = agDoctrineQuery::create()
+              ->select('id, match_pattern')
+              ->from('agPhoneFormatType')
+              ->execute(array(), 'key_value_pair');
+      foreach ($this->getEmbeddedForm('Contact')->getEmbeddedForm('Phone')->getEmbeddedForms() as $key => $form) {
         $form->getObject()->phone_contact = preg_replace('/[^0-9x]+/', '', $form->getObject()->phone_contact);
-        foreach ($phoneFormats as $phoneFormat) {
-          if (preg_match($phoneFormat->match_pattern, $form->getObject()->phone_contact)) {
-            $form->getObject()->phone_format_id = $phoneFormat->id;
+        foreach ($phoneFormats as $fKey => $phoneFormat) {
+          if (preg_match($phoneFormat, $form->getObject()->phone_contact)) {
+            $form->getObject()->phone_format_id = $fKey;
+            break;
           }
         }
         if ($form->getObject()->phone_contact == $form->getDefault('phone_contact')) {
           $form->getObject()->state(Doctrine_Record::STATE_CLEAN);
         }
-        $values = $this->values['phone'][$key];
+        $values = $this->values['Contact']['Phone'][$key];
         $values['phone_contact'] = preg_replace('/[^0-9x]+/', '', $values['phone_contact']);
         $this->savePhoneForm($key, $form, $values);
-        unset($this->embeddedForms['phone'][$key]);
+        unset($this->getEmbeddedForm('Contact')->embeddedForms['Phone'][$key]);
       }
     }
     /**
@@ -1064,28 +1071,28 @@ class agPersonForm extends BaseagPersonForm
      * The saveAddressForm() function is in need of reactoring, which will most likely
      * necessitate some changes here as well
      * */
-    if (isset($this->embeddedForms['address'])) {
-      foreach ($this->embeddedForms['address']->embeddedForms as $aKey => $addressForm) {
+    if (isset($this->embeddedForms['Address'])) {
+      foreach ($this->embeddedForms['Address']->embeddedForms as $aKey => $addressForm) {
         foreach ($addressForm->embeddedForms as $fKey => $form) {
           $this->saveAddressForm($form);
-          unset($this->embeddedForms['address']->embeddedForms[$aKey]->embeddedForms[$fKey]);
+          unset($this->embeddedForms['Address']->embeddedForms[$aKey]->embeddedForms[$fKey]);
         }
-        unset($this->embeddedForms['address'][$aKey]);
+        unset($this->embeddedForms['Address'][$aKey]);
       }
     }
     /**
      * Language
      *
-     * The saveLanguageForm() function is in need of reactoring, which will most likely
+     * The saveLanguageForm() function is in need of refactoring, which will most likely
      * necessitate some changes here as well
      * */
-    if (isset($this->embeddedForms['languages'])) {
-      foreach ($this->embeddedForms['languages']->embeddedForms as $lKey => $languageForm) {
+    if (isset($this->embeddedForms['Primary']['Languages'])) {
+      foreach ($this->getEmbeddedForm('Primary')->getEmbeddedForm('Languages')->getEmbeddedForms() as $lKey => $languageForm) {
         foreach ($languageForm->embeddedForms as $fKey => $form) {
           $joinId = $this->saveLanguageForm($form, (isset($joinId) ? $joinId : null));
-          unset($this->embeddedForms['languages']->embeddedForms[$lKey]->embeddedForms[$fKey]);
+          unset($this->getEmbeddedForm('Primary')->getEmbeddedForm('Languages')->embeddedForms[$lKey]->embeddedForms[$fKey]);
         }
-        unset($this->embeddedForms['languages'][$aKey]);
+        unset($this->getEmbeddedForm('Primary')->embeddedForms['Languages'][$lKey]);
       }
     }
     /**
