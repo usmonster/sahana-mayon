@@ -36,7 +36,7 @@ $descArrow = '&#x25BC;';
         } ?>
         </th>
 <?php endforeach; ?>
-        <th>Staff Count <a href="<?php url_for('@wiki'); ?>/doku.php?id=tooltip:organization_staff_count&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Count">?</a></th>
+        <th>Staff Count <a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:organization_staff_count&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Count">?</a></th>
       </tr>
     </thead>
     <tbody>

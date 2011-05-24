@@ -124,7 +124,7 @@ class agPersonForm extends BaseagPersonForm
   public function embedAgPersonForms()
   {
     $this->embedDateOfBirthForm();
-    $this->embedLanguageForm();
+//    $this->embedLanguageForm();
 //    $this->embedNameForm();
     $this->embedContactForms();
     $this->embedAddressForm();
@@ -138,7 +138,7 @@ class agPersonForm extends BaseagPersonForm
     $primaryContainer->getWidgetSchema()->addFormFormatter('primaryContainerFormatter', $primaryContainerFormatter);
     $primaryContainer->getWidgetSchema()->setFormFormatterName('primaryContainerFormatter');
     $this->embedNameForm($primaryContainer);
-//    $this->embedPhoneForm($primaryContainer);
+    $this->embedLanguageForm($primaryContainer);
     $this->embedForm('Primary', $primaryContainer);
   }
   public function embedContactForms()
@@ -171,7 +171,7 @@ class agPersonForm extends BaseagPersonForm
    *
    * @todo refactor this function similarly to embedNameForm() and embedEmailForm().
    * */
-  public function embedLanguageForm()
+  public function embedLanguageForm($primaryContainer)
   {
     $this->ag_person_language_formats = Doctrine::getTable('agLanguageFormat')->createQuery('a')->execute();
     //create the container form and set it's formatter.
@@ -266,7 +266,7 @@ class agPersonForm extends BaseagPersonForm
       $languageContainer->widgetSchema->setLabel('language ' . $i, false);
     }
 
-    $this->embedForm('languages', $languageContainer);
+    $primaryContainer->embedForm('languages', $languageContainer);
   }
 
   /**
