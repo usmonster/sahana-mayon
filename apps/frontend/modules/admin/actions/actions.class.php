@@ -23,14 +23,15 @@ class adminActions extends agActions
   {
 
   }
+
   /**
-   * necessary function which triggers rendering of the indexSuccess template
+   * Method provided to disable staff.
    * @param sfWebRequest $request is what the user is asking of the server
    */
   public function executeDisablestaff(sfWebRequest $request)
   {
     $foo = PluginagStaffResource::disableAllStaff();
-    return sfView::NONE;//$this->renderText($foo);
+    $this->redirect('admin/index');
   }
   
   
