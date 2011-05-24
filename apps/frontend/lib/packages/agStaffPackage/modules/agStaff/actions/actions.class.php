@@ -758,7 +758,7 @@ class agStaffActions extends agActions
     $this->importPath = $importPath;
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)
-    $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
+    $this->dispatcher->notify(new sfEvent($this, 'import.file_ready'));
     // TODO: eventually use this ^^^ to replace this vvv.
 
     $this->importer = new agStaffImportNormalization(NULL, agEventHandler::EVENT_INFO);

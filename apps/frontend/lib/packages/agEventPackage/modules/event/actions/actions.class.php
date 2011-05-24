@@ -29,22 +29,23 @@ class eventActions extends agActions
    * @param sfWebRequest $request
    * @return results
    */
-  
   public function executeImportreplies(sfWebRequest $request)
   {
-     $uploadedFile = $_FILES['import'];
 
-    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
-    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-      return sfView::ERROR;
+    if ($request->isMethod(sfRequest::POST)) {
+      $uploadedFile = $_FILES['import'];
+
+      $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+      if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+        return sfView::ERROR;
+      }
+
+      // fires event so listener will process the file (see ProjectConfiguration.class.php)
+      $this->dispatcher->notify(new sfEvent($this, 'import.staff_responses',
+              array('importPath' => $importPath)));
     }
- 
-    // fires event so listener will process the file (see ProjectConfiguration.class.php)
-    $this->dispatcher->notify(new sfEvent($this,'import.staff_responses',
-        array('importPath' => $importPath)));
-
   }
-  
+
   /**
    * Displays the index page for the event module.
    *
@@ -277,16 +278,19 @@ class eventActions extends agActions
 
     // Grab person's primary information by their entity ids.
     $addressHelper = new agEntityAddressHelper();
-    $person_addresses = $addressHelper->getEntityAddress($entity_array, TRUE, TRUE, agAddressHelper::ADDR_GET_TYPE);
+    $person_addresses = $addressHelper->getEntityAddress($entity_array, TRUE, TRUE,
+                                                         agAddressHelper::ADDR_GET_TYPE);
     unset($addressHelper);
 
     $defaultPhoneCountryCodeUSA = agGlobal::getParam('default_phone_country_code_usa');
     $phoneHelper = new agEntityPhoneHelper();
-    $person_phones = $phoneHelper->getEntityPhone($entity_array, TRUE, FALSE, agPhoneHelper::PHN_GET_COMPONENT);
+    $person_phones = $phoneHelper->getEntityPhone($entity_array, TRUE, FALSE,
+                                                  agPhoneHelper::PHN_GET_COMPONENT);
     unset($phoneHelpers);
 
     $emailHelper = new agEntityEmailHelper();
-    $person_emails = $emailHelper->getEntityEmail($entity_array, TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
+    $person_emails = $emailHelper->getEntityEmail($entity_array, TRUE, FALSE,
+                                                  agEmailHelper::EML_GET_VALUE);
     unset($emailHelper);
 
     // The order of the column header in the array coinsides with the ordinal of the column
@@ -365,7 +369,7 @@ class eventActions extends agActions
       'ADDRESS 2' => 60,
       'CITY' => 30,
       'STATE/PROVINCE' => 80,
-      'ZIP/POSTAL CODE' =>10,
+      'ZIP/POSTAL CODE' => 10,
       'COUNTRY' => 128,
       'PHONE LABEL' => 20,
       'PHONE COUNTRY CODE' => 5,
@@ -379,49 +383,40 @@ class eventActions extends agActions
     $row = 1;
     $content[$row++] = array_combine($columnHeaders, $columnHeaders);
     $NUMBER_OF_CONTACT_TYPE = 2;
-    foreach ($eventStaffs AS $staff)
-    {
+    foreach ($eventStaffs AS $staff) {
       $logMsg = array();
       // Initialize content with NULL value.  Later, we'll populate the columns with real data only
       // if data is provided.
-      foreach ($columnHeaders AS $idx => $header)
-      {
+      foreach ($columnHeaders AS $idx => $header) {
         $staffData[$header] = NULL;
       }
 
       $staffData['UNIQUE ID'] = $staff['es_id'];
 
       // Assign person's name.
-      foreach ($nameMapping AS $nameLabel => $hdrName)
-      {
-        if (isset($person_names[$staff['p_id']][$nameLabel]))
-        {
+      foreach ($nameMapping AS $nameLabel => $hdrName) {
+        if (isset($person_names[$staff['p_id']][$nameLabel])) {
           $charLimit = $characterLimit[$nameMapping[$nameLabel]];
           $personName = substr($person_names[$staff['p_id']][$nameLabel], 0, $charLimit);
           $staffData[$hdrName] = $personName;
-          if (strlen($personName) > $charLimit)
-          {
+          if (strlen($personName) > $charLimit) {
             $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s', $hdrName,
-                                                                   $charLimit, $personName);
+                                $charLimit, $personName);
           }
         }
       }
 
       // Assign person's address by component.
-      if (isset($person_addresses[$staff['p_entity_id']]))
-      {
+      if (isset($person_addresses[$staff['p_entity_id']])) {
         $addressComponents = $person_addresses[$staff['p_entity_id']][1];
-        foreach($addressComponents AS $element => $value)
-        {
-          if (array_key_exists($element, $addressMapping))
-          {
+        foreach ($addressComponents AS $element => $value) {
+          if (array_key_exists($element, $addressMapping)) {
             $charLimit = $characterLimit[$addressMapping[$element]];
             $address = substr($value, 0, $charLimit);
             $staffData[$addressMapping[$element]] = $address;
-            if (strLen($value) > $charLimit)
-            {
+            if (strLen($value) > $charLimit) {
               $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                              $addressMapping[$element], $charLimit, $address);
+                                  $addressMapping[$element], $charLimit, $address);
             }
           }
         }
@@ -429,17 +424,14 @@ class eventActions extends agActions
 
       // Build person's phone by component.
       $cnt = 0;
-      if (isset($person_phones[$staff['p_entity_id']]))
-      {
-        foreach ($person_phones[$staff['p_entity_id']] AS $priority => $contact)
-        {
+      if (isset($person_phones[$staff['p_entity_id']])) {
+        foreach ($person_phones[$staff['p_entity_id']] AS $priority => $contact) {
           // Keep track of how many contacts we are required to provide.
           $cnt++;
 
           // Build phone column headers with a counter appending to the end of each component of
           // the phone column headers.
-          foreach ($phoneMapping AS $phoneLabel => $hdrPhone)
-          {
+          foreach ($phoneMapping AS $phoneLabel => $hdrPhone) {
             $newPhoneHeader[$phoneLabel] = $hdrPhone . ' ' . $cnt;
           }
 
@@ -452,91 +444,81 @@ class eventActions extends agActions
           $charLimit = $characterLimit[$phoneMapping['contact type']];
           $phoneType = substr($contact[0], 0, $charLimit);
           $staffData[$newPhoneHeader['contact type']] = $phoneType;
-          if (strLen($contact[0]) > $charLimit)
-          {
+          if (strLen($contact[0]) > $charLimit) {
             $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                         $newPhoneHeader['country code'], $charLimit, $contact[0]);
+                                $newPhoneHeader['country code'], $charLimit, $contact[0]);
           }
 
           // Check for extension.  The 'x' in the phone value indicates an extension number
           // following.
           $fullPhone = $contact[1];
           $extIdxPos = stripos($fullPhone, 'x');
-          if ($extIdxPos === FALSE)
-          {
+          if ($extIdxPos === FALSE) {
             // Phone is assumed to have no extension so just process phone as is.
             $charLimit = $characterLimit[$phoneMapping['phone']];
             $staffData[$newPhoneHeader['phone']] = substr($fullPhone, 0, $charLimit);
-            if (strLen($fullPhone) > $charLimit)
-            {
+            if (strLen($fullPhone) > $charLimit) {
               $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                              $newPhoneHeader['phone'], $charLimit, $fullPhone);
+                                  $newPhoneHeader['phone'], $charLimit, $fullPhone);
             }
-          }
-          else
-          {
+          } else {
             // Grab just the phone number plus areacode.
             $charLimit = $characterLimit[$phoneMapping['phone']];
             $phone = substr($fullPhone, 0, $extIdxPos);
             $staffData[$newPhoneHeader['phone']] = substr($phone, 0, $charLimit);
-            if (strLen($phone) > $charLimit)
-            {
+            if (strLen($phone) > $charLimit) {
               $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                              $newPhoneHeader['phone'], $charLimit, $phone);
+                                  $newPhoneHeader['phone'], $charLimit, $phone);
             }
 
             // Grab only the extension number.
-            $extension = substr($fullPhone, $extIdxPos+1);
+            $extension = substr($fullPhone, $extIdxPos + 1);
             $charLimit = $characterLimit[$phoneMapping['extension']];
             $staffData[$newPhoneHeader['extension']] = substr($extension, 0, $charLimit);
-            if (strLen($extension) > $charLimit)
-            {
+            if (strLen($extension) > $charLimit) {
               $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                              $newPhoneHeader['extension'], $charLimit, $extension);
+                                  $newPhoneHeader['extension'], $charLimit, $extension);
             }
           }
 
           // Once we reached the number of contacts required, we don't need to capture the rest.
-          if ($cnt == $NUMBER_OF_CONTACT_TYPE)
-          { break; }
+          if ($cnt == $NUMBER_OF_CONTACT_TYPE) {
+            break;
+          }
         }
       }
 
       // Build person's email.
       $cnt = 0;
-      if (isset($person_emails[$staff['p_entity_id']]))
-      {
-        foreach ($person_emails[$staff['p_entity_id']] AS $priority => $contact)
-        {
+      if (isset($person_emails[$staff['p_entity_id']])) {
+        foreach ($person_emails[$staff['p_entity_id']] AS $priority => $contact) {
           // Keep track of how many contacts we are required to provide.
           $cnt++;
 
           // Build email column headers with a counter appending to the end of each component of
           // the email column headers.
-          foreach ($emailMapping AS $emailLabel => $hdrEmail)
-          {
+          foreach ($emailMapping AS $emailLabel => $hdrEmail) {
             $newEmailHeader[$emailLabel] = $hdrEmail . ' ' . $cnt;
           }
 
           $charLimit = $characterLimit[$emailMapping['contact type']];
           $staffData[$newEmailHeader['contact type']] = substr($contact[0], 0, $charLimit);
-          if (strLen($contact[0]) > $charLimit)
-          {
+          if (strLen($contact[0]) > $charLimit) {
             $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                          $newEmailHeader['contact type'], $charLimit, $contact[0]);
+                                $newEmailHeader['contact type'], $charLimit, $contact[0]);
           }
 
           $charLimit = $characterLimit[$emailMapping['email']];
           $staffData[$newEmailHeader['email']] = substr($contact[1], 0, $charLimit);
-          if (strLen($contact[1]) > $charLimit)
-          {
+          if (strLen($contact[1]) > $charLimit) {
             $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                          $newEmailHeader['email'], $charLimit, $contact[1]);
+                                $newEmailHeader['email'], $charLimit, $contact[1]);
           }
 
           // Once we reached the number of contacts required, we don't need to capture the rest.
-          if ($cnt == $NUMBER_OF_CONTACT_TYPE)
-          { break; }
+          if ($cnt == $NUMBER_OF_CONTACT_TYPE) {
+            break;
+          }
         }
       }
 
@@ -558,10 +540,8 @@ class eventActions extends agActions
     // Set default font
     $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Times');
     $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
-    foreach ($content AS $rowKey => $rowValue)
-    {
-      foreach ($columnHeaders AS $hKey => $heading)
-      {
+    foreach ($content AS $rowKey => $rowValue) {
+      foreach ($columnHeaders AS $hKey => $heading) {
         $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $rowKey)->setValue($rowValue[$heading]);
       }
     }
@@ -603,7 +583,7 @@ class eventActions extends agActions
     $this->getResponse()->send();
     $objWriter->save('php://output');
     unlink($filePath);
-    
+
     $this->exportComplete = sizeof($content);
     $this->redirect('event/messaging?event=' . urlencode($this->event_name)); //need to pass in event id
   }
@@ -890,28 +870,28 @@ class eventActions extends agActions
         ->andWhere('es.event_id = ?', $this->event_id)
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     $this->eventAvailableStaff = $eventAvailableStaff['es_COUNT'];
-    
-    $this->eventStaffPool = agDoctrineQuery::create()
-          ->select('COUNT(es.id)')
-          ->from('agEventStaff es')
-          ->where('es.event_id = ?', $this->event_id)
-          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-      if (empty($this->eventStaffPool)) {
-        $this->eventStaffPool = 0;
-      }
-      
-      $this->event_description = agDoctrineQuery::create()
-          ->select('ed.description, e.id')
-          ->from('agEvent e')
-          ->addFrom('e.agEventDescription ed')
-          ->where('e.id = ?', $this->event_id)
-          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-      if (empty($this->event_description)) {
-        $this->event_description = 0;
-      }          
 
-      
-      
+    $this->eventStaffPool = agDoctrineQuery::create()
+        ->select('COUNT(es.id)')
+        ->from('agEventStaff es')
+        ->where('es.event_id = ?', $this->event_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    if (empty($this->eventStaffPool)) {
+      $this->eventStaffPool = 0;
+    }
+
+    $this->event_description = agDoctrineQuery::create()
+        ->select('ed.description, e.id')
+        ->from('agEvent e')
+        ->addFrom('e.agEventDescription ed')
+        ->where('e.id = ?', $this->event_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    if (empty($this->event_description)) {
+      $this->event_description = 0;
+    }
+
+
+
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
     //end p-code
@@ -1324,14 +1304,15 @@ class eventActions extends agActions
       $this->searchedModels = array('agEventStaff');  //we want the search model to be agEventStaff
       //note, this does not provide ability to add event
       parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
-      return $this->renderPartial('search/resultform', array(
-                                                         'hits' => $this->hits,
-                                                         'searchquery' => $this->searchquery,
-                                                         'results' => $this->results,
-                                                         'widget' => $this->widget,
-                                                         'shift_id' => $this->shift_id,
-                                                         'event_id' => $this->event_id
-                                                       ));
+      return $this->renderPartial('search/resultform',
+                                  array(
+        'hits' => $this->hits,
+        'searchquery' => $this->searchquery,
+        'results' => $this->results,
+        'widget' => $this->widget,
+        'shift_id' => $this->shift_id,
+        'event_id' => $this->event_id
+      ));
     } elseif ($request->getParameter('Add')) {
       $staffPotentials = $request->getPostParameter('resultform'); //('staff_list'); //ideally get only the widgets whose corresponding checkbox
       foreach ($staffPotentials as $key => $staffAdd) {

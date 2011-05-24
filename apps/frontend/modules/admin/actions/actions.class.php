@@ -23,7 +23,17 @@ class adminActions extends agActions
   {
 
   }
-
+  /**
+   * necessary function which triggers rendering of the indexSuccess template
+   * @param sfWebRequest $request is what the user is asking of the server
+   */
+  public function executeDisablestaff(sfWebRequest $request)
+  {
+    $foo = PluginagStaffResource::disableAllStaff();
+    return sfView::NONE;//$this->renderText($foo);
+  }
+  
+  
   /** Pacman is the basic shell for package management, it is currently NOT STABLE
    *
    * @param sfWebRequest $request is what the user is asking of the server

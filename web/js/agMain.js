@@ -207,7 +207,7 @@ $(document).ready(function() {
   var eventWatcher = $('#eventWatcher');
   if(eventWatcher.length > 0) {
     
-    $(eventWatcher).html(getActiveEvents($('#urlHolder').attr(href)));
+    //$(eventWatcher).html(getActiveEvents($('#urlHolder').attr(href)));
     
   }
 
