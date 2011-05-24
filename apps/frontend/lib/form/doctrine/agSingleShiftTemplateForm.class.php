@@ -150,7 +150,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           ,
           'deployment_algorithm_id' =>         new sfWidgetFormDoctrineChoice(
             array(
-              'label' => 'Deployment Method <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:demployment_method&do=export_xhtmlbody" class="tooltipTrigger" title="Deployment Method">?</a>',
+              'label' => 'Deployment Method <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:deployment_method&do=export_xhtmlbody" class="tooltipTrigger" title="Deployment Method">?</a>',
               'model' => $this->getRelatedModelName('agDeploymentAlgorithm'),
               'add_empty' => false,
               'method' => 'getDeploymentAlgorithm',
