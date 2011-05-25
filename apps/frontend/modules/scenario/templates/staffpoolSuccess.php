@@ -83,6 +83,7 @@ deployment of staff based on the scale of the plan and response.</p>
         'pager' => $pager,
         'order' => $order,
         'sort' => $sort,
+        'limit' => $limit,
         'status' => $status,
         'target_module' => 'staff',
         'caption' => 'Search Results',

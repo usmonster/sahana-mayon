@@ -9,8 +9,6 @@
 <br />
 <h3>Current Event Staff Members, <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event_name . '</span> Event' : ' for all Events'); ?></h3>
 
-
-
 <?php
 $displayColumns = array(
   'fn' => array('title' => 'First Name', 'sortable' => false),

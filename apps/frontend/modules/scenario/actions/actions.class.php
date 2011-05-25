@@ -461,6 +461,7 @@ class scenarioActions extends agActions
       $staff_ids = agStaffGeneratorHelper::executeStaffPreview($search_condition);
 
       $resultArray = agListHelper::getStaffList($staff_ids);
+      $this->limit = null;
       $this->status = 'active';
       $this->pager = new agArrayPager(null, 10);
       $this->pager->setResultArray($resultArray);

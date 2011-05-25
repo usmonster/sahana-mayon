@@ -245,6 +245,18 @@ class eventActions extends agActions
         ->execute();
   }
 
+  public function executeExportfacilities(sfWebRequest $request)
+  {
+      $this->setEventBasics();
+
+      $event_facilities = agDoctrineQuery::create()->
+          select('*')->
+          from('agEventFacilityResource')
+          ->execute(array());
+
+
+  }
+  
   public function executeExportcontacts(sfWebRequest $request)
   {
     $this->setEventBasics($request);

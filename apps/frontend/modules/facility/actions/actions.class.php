@@ -396,6 +396,7 @@ class facilityActions extends agActions
    * */
   public function executeExport(sfWebRequest $request)
   {
+
     $facilityExporter = new agFacilityExporter();
     $exportResponse = $facilityExporter->export();
     // Free up some memory by getting rid of the agFacilityExporter object.
@@ -410,6 +411,8 @@ class facilityActions extends agActions
     unlink($exportResponse['filePath']);
 
     $this->redirect('facility/index');
+
+
   }
 
   /**
