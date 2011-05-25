@@ -127,4 +127,64 @@ class agFacilityResource extends BaseagFacilityResource
     }
   }
 
+  public static function getFacilityResourceQuery()
+  {
+    $q = agDoctrineQuery::create()
+      ->select('fr.id AS facility_resource_id')
+          ->addSelect('f.id AS facility_id')
+          ->addSelect('sfr.id')
+          ->addSelect('sfg.id')
+          ->addSelect('e.id')
+          ->addSelect('s.id')
+          ->addSelect('a.id')
+          ->addSelect('f.facility_name')
+          ->addSelect('pc.phone_contact')
+          ->addSelect('ec.email_contact')
+          ->addSelect('frt.facility_resource_type_abbr')
+          ->addSelect('sfg.scenario_facility_group')
+          ->addSelect('epc.id')
+          ->addSelect('pc.id')
+          ->addSelect('eec.id')
+          ->addSelect('ec.id')
+        ->from('agFacility AS f')
+          ->innerJoin('f.agSite AS s')
+          ->innerJoin('s.agEntity AS e')
+          ->innerJoin('f.agFacilityResource AS fr')
+          ->innerJoin('fr.agFacilityResourceType AS frt')
+          ->innerJoin('fr.agScenarioFacilityResource AS sfr')
+          ->innerJoin('sfr.agScenarioFacilityGroup AS sfg')
+          ->leftJoin('e.agEntityPhoneContact AS epc')
+          ->leftJoin('epc.agPhoneContact AS pc')
+          ->leftJoin('epc.agPhoneContactType AS pct WITH pct.phone_contact_type = ?', 'work')
+          ->leftJoin('e.agEntityEmailContact AS eec')
+          ->leftJoin('eec.agEmailContact AS ec')
+          ->leftJoin('eec.agEmailContactType AS ect WITH ect.email_contact_type = ?', 'work');
+
+    $emailWhere = '(' .
+        '(EXISTS (' .
+        'SELECT subE.id ' .
+        'FROM agEntityEmailContact AS subE ' .
+        'WHERE subE.entity_id = eec.entity_id ' .
+        'HAVING MIN(subE.priority) = eec.priority' .
+        ')) ' .
+        'OR (eec.id IS NULL)' .
+        ')';
+    $q->where($emailWhere);
+
+    $phoneWhere = '(' .
+        '(EXISTS (' .
+        'SELECT subP.id ' .
+        'FROM agEntityPhoneContact AS subP ' .
+        'WHERE subP.entity_id = epc.entity_id ' .
+        'HAVING MIN(subP.priority) = epc.priority' .
+        ')) ' .
+        'OR (epc.id IS NULL)' .
+        ')';
+    $q->andWhere($phoneWhere);
+
+    $results = $q->getSqlQuery();
+    #print_r($results);
+    return $results;
+  }
+
 }
