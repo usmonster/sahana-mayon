@@ -61,7 +61,7 @@ class agEmailHelper extends agBulkRecordHelper
           ->addSelect('ect.id')
         ->from('agEmailContactType ect')
         ->whereIn('ect.email_contact_type', $emailTypes)
-      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->useResultCache(TRUE, 3600)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 

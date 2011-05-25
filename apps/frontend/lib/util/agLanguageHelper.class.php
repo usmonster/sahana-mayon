@@ -39,7 +39,7 @@ class agLanguageHelper extends agBulkRecordHelper
           ->addSelect('l.id')
         ->from('agLanguage l')
         ->whereIn('l.language', $languages)
-//      ->useResultCache(TRUE, 3600, __FUNCTION__)
+//      ->useResultCache(TRUE, 3600)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
@@ -55,7 +55,7 @@ class agLanguageHelper extends agBulkRecordHelper
           ->addSelect('lf.id')
         ->from('agLanguageFormat lf')
         ->whereIn('lf.language_format', $languageFormats)
-//      ->useResultCache(TRUE, 3600, __FUNCTION__)
+//      ->useResultCache(TRUE, 3600)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
@@ -71,7 +71,7 @@ class agLanguageHelper extends agBulkRecordHelper
           ->addSelect('lc.id')
         ->from('agLanguageCompetency lc')
         ->whereIn('lc.language_competency', $languageCompetencies)
-//      ->useResultCache(TRUE, 3600, __FUNCTION__)
+//      ->useResultCache(TRUE, 3600)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 

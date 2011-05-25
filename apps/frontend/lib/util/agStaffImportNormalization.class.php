@@ -196,14 +196,51 @@ class agStaffImportNormalization extends agImportNormalization
   {
     // array( [order] => array(component => component name, helperClass => Name of the helper class, throwOnError => boolean, method => method name) )
     // setEntity creates entity, person, and staff records.
-    $this->importComponents[] = array( 'component' => 'entity', 'throwOnError' => TRUE, 'method' => 'setEntities');
-    $this->importComponents[] = array( 'component' => 'personName', 'throwOnError' => TRUE, 'method' => 'setPersonNames', 'helperClass' => 'agPersonNameHelper');
-    $this->importComponents[] = array( 'component' => 'phone', 'throwOnError' => FALSE, 'method' => 'setEntityPhone', 'helperClass' => 'agEntityPhoneHelper');
-    $this->importComponents[] = array( 'component' => 'email', 'throwOnError' => FALSE, 'method' => 'setEntityEmail', 'helperClass' => 'agEntityEmailHelper');
-    $this->importComponents[] = array( 'component' => 'address', 'throwOnError' => FALSE, 'method' => 'setEntityAddress', 'helperClass' => 'agEntityAddressHelper');
-    $this->importComponents[] = array( 'component' => 'customField', 'throwOnError' => FALSE, 'method' => 'setPersonCustomField');
-    $this->importComponents[] = array( 'component' => 'staffResource', 'throwOnError' => TRUE, 'method' => 'setStaffResourceOrg');
-    $this->importComponents[] = array( 'component' => 'personLanguage', 'throwOnError' => FALSE, 'method' => 'setPersonLanguage', 'helperClass' => 'agPersonLanguageHelper');
+    $this->importComponents[] = array(
+      'component' => 'entity',
+      'throwOnError' => TRUE,
+      'method' => 'setEntities'
+    );
+    $this->importComponents[] = array(
+      'component' => 'personName',
+      'throwOnError' => TRUE,
+      'method' => 'setPersonNames',
+      'helperClass' => 'agPersonNameHelper'
+    );
+    $this->importComponents[] = array(
+      'component' => 'phone',
+      'throwOnError' => FALSE,
+      'method' => 'setEntityPhone',
+      'helperClass' => 'agEntityPhoneHelper'
+    );
+    $this->importComponents[] = array(
+      'component' => 'email',
+      'throwOnError' => FALSE,
+      'method' => 'setEntityEmail',
+      'helperClass' => 'agEntityEmailHelper'
+    );
+    $this->importComponents[] = array(
+      'component' => 'address',
+      'throwOnError' => FALSE,
+      'method' => 'setEntityAddress',
+      'helperClass' => 'agEntityAddressHelper'
+    );
+    $this->importComponents[] = array(
+      'component' => 'customField',
+      'throwOnError' => FALSE,
+      'method' => 'setPersonCustomField'
+    );
+    $this->importComponents[] = array(
+      'component' => 'staffResource',
+      'throwOnError' => TRUE,
+      'method' => 'setStaffResourceOrg'
+    );
+    $this->importComponents[] = array(
+      'component' => 'personLanguage',
+      'throwOnError' => FALSE,
+      'method' => 'setPersonLanguage',
+      'helperClass' => 'agPersonLanguageHelper'
+    );
   }
 
 
@@ -417,7 +454,7 @@ class agStaffImportNormalization extends agImportNormalization
   protected function setEntityEmail($throwOnError, Doctrine_Connection $conn)
   {
     // always start with any data maps we'll need so they're explicit
-    $importEmailTypes = array('work_email'=>'work', 'home_email'=>'personal');
+    $importEmailTypes = array('work_email' => 'work', 'home_email' => 'personal');
     $entityEmails = array();
     $results = array();
 

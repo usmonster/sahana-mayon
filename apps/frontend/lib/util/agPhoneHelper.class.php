@@ -103,7 +103,7 @@ class agPhoneHelper extends agBulkRecordHelper
           ->addSelect('ept.id')
         ->from('agPhoneContactType ept')
         ->whereIn('ept.phone_contact_type', $phoneTypes)
-      ->useResultCache(TRUE, 3600, __FUNCTION__)
+      ->useResultCache(TRUE, 3600)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
@@ -607,7 +607,7 @@ class agPhoneHelper extends agBulkRecordHelper
     $phonesOnly = array();
     foreach ($phones as &$p)
     {
-      $p[0] = strtolower($trim($p[0]));
+      $p[0] = strtolower(trim($p[0]));
       $phonesOnly[] = $p[0];
     }
     unset($p);

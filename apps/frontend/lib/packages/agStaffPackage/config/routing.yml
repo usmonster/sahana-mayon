@@ -20,6 +20,14 @@ staff_import:
   #TODO: check on this
   requirements:
     sf_method: [post]
+
+#staff_import_show:
+#  url:   /staff/import
+#  #class: sfRequestRoute
+#  param: { module: agStaff, action: ??? }
+#  #TODO: check on this
+#  requirements:
+#    sf_method: [get]
 staff_import_cancel:
   url:   /staff/import
   #class: sfRequestRoute

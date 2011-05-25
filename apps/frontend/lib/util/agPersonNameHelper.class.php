@@ -413,7 +413,7 @@ class agPersonNameHelper extends agBulkRecordHelper
     $q = agDoctrineQuery::create()
       ->select('pnt.id')
         ->from('agPersonNameType pnt')
-        ->useResultCache(TRUE, 3600, __FUNCTION__);
+        ->useResultCache(TRUE, 3600);
     
     $results = array();
     foreach ($nameTypes as $nameType)
