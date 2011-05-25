@@ -184,7 +184,6 @@ class agFacilityImportXLS extends agImportXLS
 
       return true;
     }
-
   }
 
   /**

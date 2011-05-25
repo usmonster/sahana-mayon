@@ -24,7 +24,6 @@ abstract class agImportHelper extends agEventHandler
             $fileInfo,
             $tempTable,
             $tempTableOptions = array(),
-            $tempToRawQueryName = 'import_temp_to_raw',
             $importSpec = array(),
             $requiredImportColumns = array(),
             $successColumn = '_import_success',
@@ -43,12 +42,6 @@ abstract class agImportHelper extends agEventHandler
   abstract protected function cleanColumnName($columnName);
 
   abstract protected function addDynamicColumns(array $importHeaders);
-
-  /**
-   * Method to dynamically build a (mostly) static tempSelectQuery
-   * @return string Returns a string query
-   */
-  abstract protected function buildTempSelectQuery();
 
   /**
    * This class's constructor.
@@ -79,8 +72,8 @@ abstract class agImportHelper extends agEventHandler
    */
   public function __destruct()
   {
-    // remove the temporary file
-    $file = $this->fileInfo["dirname"] . DIRECTORY_SEPARATOR . $this->fileInfo["basename"];
+    // removes the temporary file
+    $file = $this->fileInfo['dirname'] . DIRECTORY_SEPARATOR . $this->fileInfo['basename'];
     if (!@unlink($file)) {
       $this->logAlert('Failed to delete the {' . $this->fileInfo['basename'] . '} import file.');
     } else {
@@ -121,44 +114,36 @@ abstract class agImportHelper extends agEventHandler
   }
 
   /**
-   * Method to initiate the import query from temp
-   * @param $query A SQL query string
-   */
-  protected function tempToRaw($query)
-  {
-    $conn = $this->getConnection(self::CONN_TEMP_READ);
-
-    // first get a count of what we need from temp
-    $this->logDebug('Fetching the total number of records and establishing batch size.');
-    $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
-    $ctResults = $this->executePdoQuery($conn, $ctQuery);
-    $this->iterData['fetchCount'] = $ctResults->fetchColumn();
-
-    // now caclulate the number of batches we'll need to process it all
-    $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
-    $this->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
-      'into {' . $this->iterData['batchCount'] . '} batches of {' . $this->iterData['batchSize'] .
-      '} records per batch.');
-
-    // now we can legitimately execute our real search
-    $this->logDebug('Starting initial fetch from temp.');
-    $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
-    $this->logInfo("Successfully established the PDO fetch iterator.");
-  }
-
-  /**
    *
    * @param sfEvent $event
    * @todo document this
    */
   public static function processImportEvent(sfEvent $event)
   {
+//    sleep(15);
+//    return;
     // gets the action, context, and importer object
     $action = $event->getSubject();
-    $context = $action->getContext();
+    //$context = $action->getContext();
+    $context = sfContext::getInstance();
     $importer = $action->importer;
+    $moduleName = $action->getModuleName();
 
-    $importer->processXlsImportFile($action->importPath);
+    // uploads the file
+    $uploadedFile = $action->uploadedFile;
+    $importDir = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $moduleName;
+    if (!file_exists($importDir)) {
+      mkdir($importDir);
+    }
+
+    $importPath = $importDir . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+      $this->logEmerg('Cannot move uploaded file to destination!');
+      // exception is already thrown by logEmerg ^ , but just in case...
+      return;
+    }
+
+    $importer->processXlsImportFile($importPath);
 
     // initializes the job progress information
     $totalBatchCount = $importer->iterData['batchCount'];
@@ -167,7 +152,7 @@ abstract class agImportHelper extends agEventHandler
     $recordsLeft = $totalRecordCount;
 
     // generates the identifier for the event status
-    $statusId = implode('_', array($action->getModuleName(), /* $action->actionName, */ 'status'));
+    $statusId = implode('_', array($moduleName, /* $action->actionName, */ 'status'));
     if ($context->has($statusId)) {
       $status = $context->get($statusId);
     }
@@ -179,6 +164,7 @@ abstract class agImportHelper extends agEventHandler
       return;
     }
 
+    // processes batches until complete, aborted, or an unrecoverable error occurs
     $abortFlagId = implode('_', array('abort', $statusId));
     while ($batchesLeft > 0) {
       if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
@@ -188,17 +174,20 @@ abstract class agImportHelper extends agEventHandler
       $batchResult = $importer->processBatch();
       // if the last batch did nothing
       if ($batchResult == $recordsLeft) {
-        //TODO: decide what to do in this case
         $this->logEmerg('No progress since last batch! Stopping import.');
-        //break; // exception is already thrown by logEmerg ^
+        // exception is already thrown by logEmerg ^ , but just in case...
+        break;
       } else {
         $recordsLeft = $batchResult;
       }
 
+      //TODO: use $batchResult ("records left") instead?
       $batchesLeft = $importer->iterData['batchCount'] - $importer->iterData['batchPosition'] - 1;
-      //$context->set($statusId, array($recordsLeft, $totalRecordCount));
       $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
     }
+
+    unset($action->importer);
+    //unset($importer);
   }
 
   /**

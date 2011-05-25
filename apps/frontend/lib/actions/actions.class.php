@@ -38,27 +38,22 @@ class agActions extends sfActions
   {
     //TODO: module_ACTION_status instead? -UA
     $statusId = implode('_', array($this->moduleName, 'status'));
-    $context = $this->getContext();
-    $statuses = $context->has($statusId) ? $this->getContext()->get($statusId) : array(0, 0, 0);
+    //$context = $this->getContext();
+    $context = sfContext::getInstance();
+    $status = $context->has($statusId) ? $this->getContext()->get($statusId) : $statusId/*array(0, 0, 0)*/;
     $format = $request->getRequestFormat();
     if ('json' == $format) {
       $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
-      $statuses = json_encode($statuses);
+      $status = json_encode($status);
     }
     //TODO: else, use partial instead of returning?
     //TODO: the else block below is for testing -- remove when finished
     else {
       $this->getResponse()->setHttpHeader('Content-Type', 'text/plain; charset=utf-8');
-      $statuses = json_encode($statuses);
+      $status = json_encode($status);
     }
     
-    return $this->renderText($statuses);
-  }
-
-  public function executeEventpoll(sfWebRequest $request)
-  {
-    $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
-    return $this->renderText(json_encode($this->getContext()->get('job_statuses')));
+    return $this->renderText($status);
   }
 
   public function doSearch($searchquery, $isFuzzy = TRUE, $widget = NULL)

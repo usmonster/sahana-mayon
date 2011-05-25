@@ -5,7 +5,7 @@
 
     var xmlHttp = new XMLHttpRequest();
     var async = false;
-    xmlHttp.open("GET", "<?php echo url_for('agStaff/status.json'/*'@facility/status.json'*/); ?>", async);
+    xmlHttp.open("GET", "<?php echo url_for('agStaff/status.json'/*'facility/status.json'*/); ?>", async);
     if(async)
     {
       xmlHttp.onreadystatechange = function()

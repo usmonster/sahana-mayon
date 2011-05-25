@@ -40,6 +40,10 @@ staff_poll:
   url:  /staff/poll
   param: { module: agStaff, action: poll }
 
+staff_status:
+  url: /staff/status.:sf_format
+  param: { module: agStaff, action: status }
+
 staff:
   url: /staff/:action/*
   param: { module: agStaff }

@@ -749,59 +749,23 @@ class agStaffActions extends agActions
   public function executeImport(sfWebRequest $request)
   {
     $this->timer = time();
-    $uploadedFile = $_FILES['import'];
+    $this->uploadedFile = $_FILES['import'];
 
-    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $this->moduleName .
-        DIRECTORY_SEPARATOR . $uploadedFile['name'];
-    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-      return sfView::ERROR;
-    }
-    $this->importPath = $importPath;
-
-    // fires event so listener will process the file (see ProjectConfiguration.class.php)
-    $this->dispatcher->notify(new sfEvent($this, 'import.file_ready'));
-    // TODO: eventually use this ^^^ to replace this vvv.
+    //TODO: fires event so listener will process the file (see ProjectConfiguration.class.php)
+    //$this->dispatcher->notify(new sfEvent($this, 'import.file_ready'));
 
     $this->importer = new agStaffImportNormalization(NULL, agEventHandler::EVENT_INFO);
 
     //TODO: test this one
     $this->dispatcher->notify(new sfEvent($this, 'import.start'));
-//    $this->importer->processBatch();
-//    $this->importer->processBatch();
-    //print_r($this->importer->getEvents());
-    $this->events = $this->importer->getEvents();
-    //$this->numRecordsImported = $this->importer->numRecordsImported;
 
-    unset($this->importer);
+    //unset($this->importer);
     $this->timer = (time() - $this->timer);
 
-////    $returned = $import->createTempTable();
-//
-//    $processedToTemp = $import->processImport($this->importPath);
-//    $this->numRecordsImported = $import->numRecordsImported;
-//    $this->events = $import->events;
-//
-//    // Normalize imported temp data only if import is successful.
-//    if ($processedToTemp) {
-//      // Grab table name from AgImportXLS class.
-//      $sourceTable = $import->tempTable;
-//      $dataNorm = new agStaffImportNormalization($scenarioId, $sourceTable, 'staff');
-//
-//      $dataNorm->normalizeImport();
-//
-//      $this->summary = $dataNorm->summary;
-//    }
-//
-//
 //    //this below block is a bit hard coded and experimental, it should be changed to use gparams
 //
 //    $agLuceneIndex = new agLuceneIndex(array('agStaff'));
 //    $indexResult = $agLuceneIndex->indexAll();
-//
-////      chdir(sfConfig::get('sf_root_dir')); // Trick plugin into thinking you are in a project directory
-////      $dispatcher = sfContext::getInstance()->getEventDispatcher();
-////      $task = new luceneReindexTask($dispatcher, new sfFormatter()); //this->dispatcher
-////      $task->run(array('model' => 'agStaff'), array('env' => 'all', 'connection' => 'doctrine', 'application' => 'frontend'));
   }
 
 }

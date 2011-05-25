@@ -20,6 +20,8 @@ abstract class agImportNormalization extends agImportHelper
 
   protected $helperObjects = array(),
 
+            $tempToRawQueryName = 'import_temp_to_raw',
+
             // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
             $importComponents = array(),
 
@@ -43,6 +45,12 @@ abstract class agImportNormalization extends agImportHelper
   }
 
   /**
+   * Method to dynamically build a (mostly) static tempSelectQuery
+   * @return string Returns a string query
+   */
+  abstract protected function buildTempSelectQuery();
+
+  /**
    * Method to reset ALL iter data.
    */
   protected function resetIterData()
@@ -60,9 +68,9 @@ abstract class agImportNormalization extends agImportHelper
   protected function resetRawIterData()
   {
     // add additional iter members
-    $this->iterData['fetchPosition'] = 1;
+    $this->iterData['fetchPosition'] = 0;
     $this->iterData['fetchCount'] = 0;
-    $this->iterData['batchPosition'] = 1;
+    $this->iterData['batchPosition'] = 0;
     $this->iterData['batchCount'] = 0;
     $this->iterData['batchSize'] = intval(agGlobal::getParam('default_batch_size'));
   }
@@ -246,6 +254,32 @@ abstract class agImportNormalization extends agImportHelper
   }
 
   /**
+   * Method to initiate the import query from temp
+   * @param $query A SQL query string
+   */
+  protected function tempToRaw($query)
+  {
+    $conn = $this->getConnection(self::CONN_TEMP_READ);
+
+    // first get a count of what we need from temp
+    $this->logDebug('Fetching the total number of records and establishing batch size.');
+    $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
+    $ctResults = $this->executePdoQuery($conn, $ctQuery);
+    $this->iterData['fetchCount'] = $ctResults->fetchColumn();
+
+    // now caclulate the number of batches we'll need to process it all
+    $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
+    $this->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
+      'into {' . $this->iterData['batchCount'] . '} batches of {' . $this->iterData['batchSize'] .
+      '} records per batch.');
+
+    // now we can legitimately execute our real search
+    $this->logDebug('Starting initial fetch from temp.');
+    $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
+    $this->logInfo("Successfully established the PDO fetch iterator.");
+  }
+
+   /**
    * Method to normalize and insert raw data. Returns TRUE if successful or FALSE if unsucessful.
    * @return boolean Boolean value indicating whether the import was successful or unsucessful.
    */
@@ -279,6 +313,7 @@ abstract class agImportNormalization extends agImportHelper
       try
       {
         // Calling method to set data.
+        //TODO: ask Chad what's going on here when it gets to setPersonNames... -UA
         $this->$method($componentData['throwOnError'], $conn);
         $conn->commit($savepoint);
       }
@@ -300,7 +335,7 @@ abstract class agImportNormalization extends agImportHelper
         }
       }
 
-      // you'll want to do your records keeping here (eg, counts or similar)
+      // you'll want to do your record keeping here (eg, counts or similar)
       // be sure to use class properties to store that info so additional loops can
       // reference it
     }
