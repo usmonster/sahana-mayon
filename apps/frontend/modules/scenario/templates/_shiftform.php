@@ -170,5 +170,9 @@
     </tbody>
   </table>
 </div>
+<?php 
+$shiftlisturl = url_for('scenario/shifts?id=' .$scenario_id);
+echo link_to('Back to List', $shiftlisturl, array('class' => 'generalButton'));
+?>
 <input type="submit"  class="continueButton" value="Save" name="Save"/>
 <input type="submit"  class="deleteButton" value="Delete" name="Delete"/>
