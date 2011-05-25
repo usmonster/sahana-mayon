@@ -89,9 +89,9 @@ abstract class agImportHelper extends agPdoHelper
     // removes the temporary file
     $file = $this->fileInfo['dirname'] . DIRECTORY_SEPARATOR . $this->fileInfo['basename'];
     if (!@unlink($file)) {
-      $this->logAlert('Failed to delete the {' . $this->fileInfo['basename'] . '} import file.');
+      $this->eh->logAlert('Failed to delete the {' . $this->fileInfo['basename'] . '} import file.');
     } else {
-      $this->logInfo('Successfully deleted the {' . $this->fileInfo['basename'] . '} import file.');
+      $this->eh->logInfo('Successfully deleted the {' . $this->fileInfo['basename'] . '} import file.');
     }
   }
 
@@ -149,7 +149,7 @@ abstract class agImportHelper extends agPdoHelper
 
     $importPath = $importDir . DIRECTORY_SEPARATOR . $uploadedFile['name'];
     if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-      $this->logEmerg('Cannot move uploaded file to destination!');
+      $importer->eh->logEmerg('Cannot move uploaded file to destination!');
       // exception is already thrown by logEmerg ^ , but just in case...
       return;
     }
@@ -171,9 +171,8 @@ abstract class agImportHelper extends agPdoHelper
       $startTime = time();
       $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
     } else {
-      //TODO: decide what to do in this case
-      $this->eh->logAlert('Import in progress, or starting new import after failed attempt?');
-      return; //, right?
+      $importer->eh->logAlert('Import in progress, or starting new import after failed attempt?');
+      return;
     }
 
     // processes batches until complete, aborted, or an unrecoverable error occurs
@@ -186,9 +185,9 @@ abstract class agImportHelper extends agPdoHelper
       $batchResult = $importer->processBatch();
       // if the last batch did nothing
       if ($batchResult == $recordsLeft) {
-        //TODO: decide what to do in this case
-        $this->eh->logErr('No progress since last batch!');
-        //break; //, right?
+        $this->eh->logEmerg('No progress since last batch! Stopping import.');
+        // exception is already thrown by logEmerg ^ , but just in case...
+        break;
       } else {
         $recordsLeft = $batchResult;
       }

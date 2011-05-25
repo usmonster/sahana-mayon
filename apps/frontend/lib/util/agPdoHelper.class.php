@@ -33,7 +33,7 @@ abstract class agPdoHelper
   /*
    * Method to set the import connection object property.
    */
-  abstract protected function setConnections() {}
+  abstract protected function setConnections();
 
   /**
    * This classes' constructor

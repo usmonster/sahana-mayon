@@ -68,6 +68,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function resetRawIterData()
   {
     // add additional iter members
+    //TODO: really figure out these bounds. -UA
     $this->iterData['fetchPosition'] = 0;
     $this->iterData['fetchCount'] = 0;
     $this->iterData['batchPosition'] = 0;
@@ -330,10 +331,10 @@ abstract class agImportNormalization extends agImportHelper
         if($componentData['throwOnError'])
         {
           $err = $e;
-          $this->logErr($e->getMessage(), 0);
+          $this->eh->logErr($e->getMessage(), 0);
           break;
         } else {
-          $this->logDebug($e->getMessage());
+          $this->eh->logDebug($e->getMessage());
         }
       }
 

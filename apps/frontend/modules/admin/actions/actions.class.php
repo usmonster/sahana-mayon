@@ -334,6 +334,7 @@ class adminActions extends agActions
    */
   protected function processParam(sfWebRequest $request, sfForm $paramform)
   {
+    $formName = $paramform->getName();
     $paramform->bind($request->getParameter($paramform->getName()), $request->getFiles($paramform->getName()));
     if ($paramform->isValid()) {
       $paramform->save();

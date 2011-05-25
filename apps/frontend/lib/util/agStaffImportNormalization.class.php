@@ -306,7 +306,7 @@ class agStaffImportNormalization extends agImportNormalization
     // we no longer need this array (used for the ->whereIN)
     unset($rawEntityIds);
 
-    $this->eh->logDebug('{' . count($entities) . '} person entities found in the dataabse.');
+    $this->eh->logDebug('{' . count($entities) . '} person entities found in the database.');
 
     //loop foreach $entities member
     foreach ($entities as $entityId => &$entityData)
@@ -1131,94 +1131,4 @@ class agStaffImportNormalization extends agImportNormalization
     // @todo do your results reporting here
   }
 
-  public function testDataNorm()
-  {
-    $this->eh->setLogEventLevel(self::EVENT_DEBUG);
-    $_rawData1 = array('entity_id' => '3',
-                      'first_name' => 'Mork',
-                      'last_name' => 'Ork',
-                      'mobile_phone' => '123.123.1234',
-                      'home_email' => 'mork.ork@home.com',
-                      'home_address_line_1' => '5 Silly Lane Street',
-                      'home_address_city' => 'Inwood',
-                      'home_address_state' => 'Bronze',
-                      'home_address_country' => 'United States of America',
-                      'home_address_zip' => '10563',
-                      'home_latitude' => '12.3213',
-                      'home_longitude' => '12.2314',
-                      'work_address_line_1' => '5 Silly Man',
-                      'work_address_line_2' => 'In rooom 728',
-                      'work_address_city' => 'New York',
-                      'work_address_state' => 'NY',
-                      'work_address_zip' => '10013',
-                      'work_address_country' => 'United States of America',
-                      'work_latitude' => '1.23123',
-                      'work_longitude' => '0.932384',
-                      'organization' => 'GOAL',
-                      'resource_type' => 'EC Operator',
-                      'resource_status' => 'active',
-                      'language_1' => 'English',
-                      'l1_speak' => 'fluent',
-                      'l1_read' => 'fluent',
-                      'l1_write' => 'fluent',
-                      'language_2' => 'Spanish',
-                      'l2_speak' => 'intermediate',
-                      'drivers_license_class' => 'Class A',
-                      'civil_service_title' => 'Court Clerk'
-                     );
-
-    $_rawData2 = array('entity_id' => '183',
-                      'first_name' => 'Ork',
-                      'middle_name' => 'Mork',
-                      'home_phone' => '(222) 222-1234',
-                      'work_phone' => '(212) 234-2344 x234',
-                      'work_address_line_1' => '235 President Pl',
-                      'work_address_city' => 'New York',
-                      'work_address_state' => 'NY',
-                      'work_address_zip' => '11001',
-                      'work_address_country' => 'United States of America',
-                      'work_latitude' => '1.123123',
-                      'work_longitude' => '2.389347',
-                      'organization' => 'GOAL',
-                      'resource_type' => 'Operator',
-                      'resource_status' => 'inactive',
-                      'language_2' => 'Latin',
-                      'l1_read' => 'superior',
-                      'civil_service_title' => 'Judge'
-                     );
-
-    $_rawData3 = array('entity_id' => '11',
-                      'work_phone' => '333.3333.3333.',
-                      'new custom field' => 'smiley face'
-                     );
-
-    $_rawData4 = array('entity_id' => '4983',
-                      'first_name' => 'Ae432',
-                      'middle_name' => 'LinjaAA  ',
-                      'last_name' => '   asdkfjkl;   ',
-                      'mobile_phone' => '999.9999.9999',
-                      'work_phone' => '222.3333.4444 x342',
-                      'work_email' => 'Linjawork.com',
-                      'organization' => 'CHAD',
-                      'resource_type' => 'Medical Assistant',
-                      'resource_status' => 'Bouncing',
-                      'pms_id' => 'P23423452'
-                     );
-
-    $_rawData5 = array('entity_id' => '392',
-                      'first_name' => 'Aimee',
-                      'last_name' => 'Adu',
-                      'work_email' => 'aimeeemailnow@work.com'
-                     );
-
-    $this->importData[1] = array( '_rawData' => $_rawData1, 'primaryKeys' => array(), 'success' => 0);
-    $this->importData[2] = array( '_rawData' => $_rawData2, 'primaryKeys' => array(), 'success' => 0);
-//    $this->importData[3] = array( '_rawData' => $_rawData3, 'primaryKeys' => array(), 'success' => 0);
-//    $this->importData[4] = array( '_rawData' => $_rawData4, 'primaryKeys' => array(), 'success' => 0);
-//    $this->importData[5] = array( '_rawData' => $_rawData5, 'primaryKeys' => array(), 'success' => 0);
-
-    $this->clearNullRawData();
-    $this->normalizeData();
-    print_r($this->eh->getEvents());
-  }
 }

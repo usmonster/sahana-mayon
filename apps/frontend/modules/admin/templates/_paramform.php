@@ -1,4 +1,4 @@
-<form action="<?php echo url_for('admin/config') ?> " method="post">
+<form action="<?php echo url_for('admin/globals') ?> " method="post">
 <?php if (!$paramform->getObject()->isNew()): ?>
 <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
