@@ -5,7 +5,7 @@
   $sf_response->setCookie('wizardOp', $encodedWizard);
 
   ?>
-<h2>Scenario Shifts for <span class="highlightedText"><?php echo $scenario_name ?></span></h2>
+<h2>Scenario Shifts for <span class="highlightedText"><?php echo $scenarioName ?></span></h2>
   <?php include_partial('wizard', array('wizardDiv' => $wizardDiv)); ?>
 
 <?php #include_partial('scenarioshiftform', array('scenarioshiftform' => $scenarioshiftform, 'myRandomParam' => $myRandomParam, 'outputResults' => $outputResults)) ?>
@@ -30,7 +30,11 @@
   $descArrow = '&#x25BC;';
 
 ?>
-<p>Needed Shifts to be filled for this scenario are listed below.</p>
+
+<p>A total of <span class="highlightedText">
+          <?php echo $shifts ?></span> shifts have been generated covering
+          <span class="highlightedText"><?php echo $operationTime ?></span> of operation.  Click the id below to customize individual shifts.</p>
+
 <table class="staffTable">
   <thead>
     <tr class="head">

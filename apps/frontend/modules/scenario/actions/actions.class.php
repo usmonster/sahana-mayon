@@ -1100,6 +1100,28 @@ class scenarioActions extends agActions
         $this->setTemplate('editshift');
       } else {
 //LIST
+              // shifts
+      $shiftsData = agDoctrineQuery::create()
+          ->select('COUNT(ss.id) AS ctShifts')
+          ->addSelect('MIN(ss.minutes_start_to_facility_activation) AS minStart')
+          ->addSelect('MAX((ss.minutes_start_to_facility_activation + ss.task_length_minutes
+              + ss.break_length_minutes)) AS maxEnd')
+          ->from('agScenarioShift ss')
+          ->innerJoin('ss.agScenarioFacilityResource sfr')
+          ->innerJoin('sfr.agScenarioFacilityGroup sfg')
+          ->where('sfg.scenario_id = ?', $this->scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+      if (array_key_exists(0, $shiftsData)) {
+        $this->shifts = $shiftsData[0]['ss_ctShifts'];
+        $this->operationTime = agDateTimeHelper::minsToComponentsStr(($shiftsData[0]['ss_maxEnd']
+                - $shiftsData[0]['ss_minStart']), TRUE);
+      } else {
+        $this->shifts = 0;
+        $this->operationTime = 0;
+      }
+        
+        
         $query = agDoctrineQuery::create()
             ->select('ss.*, sfg.id, sfg.scenario_facility_group, sfr.id')
             ->from('agScenarioShift as ss')
