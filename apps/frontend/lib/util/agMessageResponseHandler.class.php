@@ -135,7 +135,7 @@ class agMessageResponseHandler extends agImportNormalization
     if (strlen($columnName) == 0)
     {
       $errMsg = "Column name {$oldColumnName} could not be parsed.";
-      $this->logCrit($errMsg, 1);
+      $this->eh->logCrit($errMsg, 1);
       throw new Exception($errMsg);
     }
     return $columnName;
@@ -188,7 +188,7 @@ class agMessageResponseHandler extends agImportNormalization
     $responses = array();
 
     // loop through our raw data and build our person language data
-    $this->logInfo('Looping throw the message reponses and retrieving the most recent.');
+    $this->eh->logInfo('Looping throw the message reponses and retrieving the most recent.');
     foreach ($this->importData as $rowId => $rowData)
     {
       $rd = $rowData['_rawData'];
@@ -221,14 +221,14 @@ class agMessageResponseHandler extends agImportNormalization
         // if the timestamps were the same, update the response
         $eventMsg = 'Updating existing response for event staff id {' . $rec['event_staff_id'] .
           '}.';
-        $this->logDebug($eventMsg);
+        $this->eh->logDebug($eventMsg);
         $rec['staff_allocation_status_id'] = $rVals[0];
       }
       else if ($rec['time_stamp'] < $rVals[1])
       {
         $eventMsg = 'Creating new status record for event staff id {' . $rec['event_staff_id'] .
           '}.';
-        $this->logDebug($eventMsg);
+        $this->eh->logDebug($eventMsg);
 
         // if the db timestamp is older than the import one, make a new record and add it
         $nRec = new agEventStaffStatus();
@@ -241,7 +241,7 @@ class agMessageResponseHandler extends agImportNormalization
       {
         $eventMsg = 'Import timestamp {' . $rVals[1] . '} is older than the current timestamp in' .
           'the database {' . $rec['time_stamp'] . '}. Skipping insertion of older timestamp.';
-        $this->logWarn($eventMsg);
+        $this->eh->logWarn($eventMsg);
       }
 
       // either way, we can be safely done this response
@@ -260,7 +260,7 @@ class agMessageResponseHandler extends agImportNormalization
     // Either way, we should warn the user that these records will not be updated
     $eventMsg = 'Event staff with IDs {' . implode(',', array_keys($responses)) . '} are no ' .
       'longer valid members of this event. Skipping response updates.';
-    $this->logWarn($eventMsg);
+    $this->eh->logWarn($eventMsg);
 
     // here's the big to-do; let's save!
     $coll->save();
