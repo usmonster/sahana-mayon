@@ -916,10 +916,6 @@ class agPersonForm extends BaseagPersonForm
   public function saveLanguageForm($form, $joinId)
   {
     if ($form instanceof agEmbeddedAgPersonMjAgLanguageForm) {
-//      $joinQuery = Doctrine::getTable('agPersonMjAgLanguage')->createQuery('d')
-//              ->select('d.id')
-//              ->from('agPersonMjAgLanguage d')
-//              ->where('d.id =?', $form->getObject()->id);
       $joinQuery = agDoctrineQuery::create()
               ->select()
               ->from('agPersonMjAgLanguage')

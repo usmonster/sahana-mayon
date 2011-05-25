@@ -53,7 +53,7 @@ class agListHelper
         'ln' => $value[$family_return],
         'organization' => $value['o_organization'],
         'resource' => $value['srt_staff_resource_type'],
-        'phones' => $value['pc_phone_contact'], // only for testing, prefer the above
+        'phones' => ($value['pc_phone_contact'] == null ? $value['pc_phone_contact'] : agListHelper::formatPhone($value['pc_phone_contact'])),
         'emails' => $value['ec_email_contact'],
         'staff_status' => $value['srs_staff_resource_status']
           /** @todo benchmark scale */
@@ -62,6 +62,21 @@ class agListHelper
     return $resultArray;
   }
 
+  private static function formatPhone($phoneContact)
+  {
+    $formatters = agDoctrineQuery::create()
+                  ->select('pc.id')
+                  ->addSelect('pf.id')
+                  ->addSelect('pft.id')
+                  ->addSelect('pft.replacement_pattern')
+                  ->addSelect('pft.match_pattern')
+                  ->from('agPhoneContact pc')
+                  ->leftJoin('pc.agPhoneFormat pf')
+                  ->leftJoin('pf.agPhoneFormatType pft')
+                  ->where('pc.phone_contact = ?', $phoneContact)
+                  ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    return preg_replace($formatters[0]['pft_match_pattern'], $formatters[0]['pft_replacement_pattern'], $phoneContact);
+  }
   public static function getFacilityList($facility_ids = null, $sort = null, $order = null)
   {
 
