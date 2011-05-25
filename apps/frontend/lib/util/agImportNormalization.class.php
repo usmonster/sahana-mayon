@@ -286,7 +286,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function normalizeData()
   {
     $err = NULL ;
-    $this->logDebug("Normalizing and inserting batch data into database.");
+    $this->logDebug('Normalizing and inserting batch data into database.');
 
 
     // get our connection object and start an outer transaction for the batch
@@ -313,7 +313,6 @@ abstract class agImportNormalization extends agImportHelper
       try
       {
         // Calling method to set data.
-        //TODO: ask Chad what's going on here when it gets to setPersonNames... -UA
         $this->$method($componentData['throwOnError'], $conn);
         $conn->commit($savepoint);
       }
@@ -331,7 +330,10 @@ abstract class agImportNormalization extends agImportHelper
         if($componentData['throwOnError'])
         {
           $err = $e;
+          $this->logErr($e->getMessage(), 0);
           break;
+        } else {
+          $this->logDebug($e->getMessage());
         }
       }
 

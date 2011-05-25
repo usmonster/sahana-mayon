@@ -418,7 +418,7 @@ class agPersonNameHelper extends agBulkRecordHelper
     $results = array();
     foreach ($nameTypes as $nameType)
     {
-      $typeId = $q->where('pnt.person_name_type', $nameType)
+      $typeId = $q->where('pnt.person_name_type = ?', $nameType)
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
       
       if (!empty($typeId)) { $results[$nameType] = $typeId; }

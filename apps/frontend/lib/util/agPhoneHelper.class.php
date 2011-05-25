@@ -278,7 +278,7 @@ class agPhoneHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array, where
    * array( phoneId => A phone segment)
    */
-  protected function _getPhoneComponent(array $phones = NULL, $keepAsDefault, $startIndex = NULL, $length = NULL )
+  protected function _getPhoneComponent(array $phones, $keepAsDefault, $startIndex = NULL, $length = NULL )
   {
     // always a good idea to explicitly declare this
     $results = array();
@@ -430,7 +430,7 @@ class agPhoneHelper extends agBulkRecordHelper
     // ONLY return the ID, not the value because of casing (for comparison)
     $q = agDoctrineQuery::create()
       ->select('pc.id')
-        ->from('agPhoneContact')
+        ->from('agPhoneContact pc')
       ->useResultCache(TRUE, 1800);
 
     $results = array();

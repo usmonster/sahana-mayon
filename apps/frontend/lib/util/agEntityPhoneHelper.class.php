@@ -199,14 +199,14 @@ class agEntityPhoneHelper extends agEntityContactHelper
    * only phone ID's will be returned.
    * @param array $phoneArgs An array of arguments to pass forward to the phone helper.
    * @return array A three dimensional array, by entityId, then indexed from highest priority
-   * phone to lowest, with a third dimension containing the email type as index[0], and the
+   * phone to lowest, with a third dimension containing the phone type as index[0], and the
    * phone value as index[1].
    */
-  public function getEntityPhone ($entityIds = NULL,
+  public function getEntityPhone (array $entityIds = NULL,
                                   $strType = NULL,
                                   $primary = NULL,
                                   $phoneHelperMethod = NULL,
-                                  $phoneArgs = array())
+                                  array $phoneArgs = array())
   {
     // initial results declarations
     $entityPhones = array();
@@ -420,13 +420,13 @@ class agEntityPhoneHelper extends agEntityContactHelper
 
     try
     {
-      // process emails, setting or returning, whichever is better with our s/getter
+      // process phone numbers, setting or returning, whichever is better with our s/getter
       $uniqContacts = $phoneHelper->setPhones($uniqContacts, $throwOnError, $conn);
     }
     catch(Exception $e)
     {
       // log our error
-      $errMsg = sprintf('Could not set emails %s. Rolling back!', json_encode($uniqContacts));
+      $errMsg = sprintf('Could not set phone numbers %s. Rolling back!', json_encode($uniqContacts));
 
       // hold onto this exception for later
       $err = $e;

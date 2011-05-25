@@ -38,7 +38,7 @@ class agEmailHelper extends agBulkRecordHelper
    * @param array $emails A monodimensional array of emails.
    * @return array An associative array, keyed by email, with a value of email_id.
    */
-  public function getEmailIds($emails)
+  public function getEmailIds(array $emails)
   {
     $q = agDoctrineQuery::create()
       ->select('e.email_contact')
@@ -54,7 +54,7 @@ class agEmailHelper extends agBulkRecordHelper
    * @param array $emailTypes An array of email_contact_types
    * @return array An associative array of email contact type ids keyed by email contact type.
    */
-  static public function getEmailContactTypeIds($emailTypes)
+  static public function getEmailContactTypeIds(array $emailTypes)
   {
     return agDoctrineQuery::create()
       ->select('ect.email_contact_type')
@@ -83,7 +83,7 @@ class agEmailHelper extends agBulkRecordHelper
    * )
    * </code>
    */
-  protected function setNewEmails($emails, $throwOnError, $conn)
+  protected function setNewEmails(array $emails, $throwOnError, $conn)
   {
     // declare our results array
     $results = array();
@@ -163,7 +163,7 @@ class agEmailHelper extends agBulkRecordHelper
    * )
    * </code>
    */
-  protected function _setEmails( $emails, $throwOnError = NULL, Doctrine_Connection $conn = NULL)
+  protected function _setEmails(array $emails, $throwOnError = NULL, Doctrine_Connection $conn = NULL)
   {
     // declare our results array
     $results = array();
@@ -232,7 +232,7 @@ class agEmailHelper extends agBulkRecordHelper
    * )
    * </code>
    */
-  public function setEmails($emails, $throwOnError = NULL, $conn = NULL)
+  public function setEmails(array $emails, $throwOnError = NULL, $conn = NULL)
   {
     // either way, we eventually pass the 'cleared' emails to our setter
     $results = $this->_setEmails($emails, $throwOnError, $conn);

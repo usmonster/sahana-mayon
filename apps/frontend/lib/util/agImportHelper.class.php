@@ -79,9 +79,6 @@ abstract class agImportHelper extends agEventHandler
     } else {
       $this->logInfo('Successfully deleted the {' . $this->fileInfo['basename'] . '} import file.');
     }
-
-    // drop the temporary table
-    $this->dropTempTable();
   }
 
   /**

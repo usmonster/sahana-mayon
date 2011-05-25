@@ -43,7 +43,7 @@ class agEntityEmailHelper extends agEntityContactHelper
    * be returned as an ID value or its string equivalent.
    * @return Doctrine_Query An agDoctrineQuery object.
    */
-  private function _getEntityEmailQuery($entityIds = NULL, $strType = NULL)
+  private function _getEntityEmailQuery(array $entityIds = NULL, $strType = NULL)
   {
     // if no (null) ID's are passed, get the entityIds from the class property
     $entityIds = $this->getRecordIds($entityIds);
@@ -90,11 +90,11 @@ class agEntityEmailHelper extends agEntityContactHelper
    * @return array A two or three dimensional array (depending on the setting of the $primary
    * parameter), by entityId, by emailContactType.
    */
-  public function getEntityEmailByType ($entityIds = NULL,
+  public function getEntityEmailByType (array $entityIds = NULL,
                                         $strType = NULL,
                                         $primary = NULL,
                                         $emailHelperMethod = NULL,
-                                        $emailArgs = array())
+                                        array $emailArgs = array())
   {
     // initial results declarations
     $entityEmails = array();
@@ -202,11 +202,11 @@ class agEntityEmailHelper extends agEntityContactHelper
    * email to lowest, with a third dimension containing the email type as index[0], and the
    * email value as index[1].
    */
-  public function getEntityEmail ($entityIds = NULL,
+  public function getEntityEmail (array $entityIds = NULL,
                                   $strType = NULL,
                                   $primary = NULL,
                                   $emailHelperMethod = NULL,
-                                  $emailArgs = array())
+                                  array $emailArgs = array())
   {
     // initial results declarations
     $entityEmails = array();
@@ -236,7 +236,7 @@ class agEntityEmailHelper extends agEntityContactHelper
       $entityEmails[$row[0]][] = array($row[4], $row[1], $row[2], $row[3]);
 
       // here we build the mono-dimensional emailId array, excluding dupes as we go; only useful
-      // if we're actually going to use the phone helper
+      // if we're actually going to use the email helper
       if (! is_null($emailHelperMethod) && ! in_array($row[1], $emailIds))
       {
         $emailHelperArgs[0][] = $row[1];
@@ -253,7 +253,7 @@ class agEntityEmailHelper extends agEntityContactHelper
     // otherwise... we keep going and lazily load our email helper, 'cause we'll need her
     $emailHelper = $this->getAgEmailHelper();
 
-    // finish appending the rest of our phone helper args
+    // finish appending the rest of our email helper args
     foreach ($emailArgs as $arg)
     {
       $emailHelperArgs[] = $arg;
@@ -317,7 +317,7 @@ class agEntityEmailHelper extends agEntityContactHelper
    * @return array An associative array of operations performed including the number of upserted
    * records, removed records, an a positional array of failed inserts.
    */
-  public function setEntityEmail( $entityContacts,
+  public function setEntityEmail(array $entityContacts,
                                   $keepHistory = NULL,
                                   $enforceStrict = NULL,
                                   $throwOnError = NULL,

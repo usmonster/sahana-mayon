@@ -855,6 +855,7 @@ class agStaffImportNormalization extends agImportNormalization
             ->addSelect('srs.id')
           ->from('agStaffResourceStatus srs')
           ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $stfRscStatusIds = array_change_key_case($stfRscStatusIds, CASE_LOWER);
 
     // Retrieve staff ids from raw data.
     $staffIds = array();
