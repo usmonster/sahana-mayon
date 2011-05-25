@@ -80,7 +80,7 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function resetImportData()
   {
-    $this->logDebug('Removing existing pre-normalization import data.');
+    $this->eh->logDebug('Removing existing pre-normalization import data.');
     $this->importData = array();
   }
 
@@ -115,7 +115,7 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function updateTempSuccess($success)
   {
-    $this->logDebug("Updating temp with batch success data");
+    $this->eh->logDebug("Updating temp with batch success data");
 
     // grab our connection object
     $conn = $this->getConnection(self::CONN_TEMP_WRITE);
@@ -132,7 +132,7 @@ abstract class agImportNormalization extends agImportHelper
     // mark this batch accordingly
     $this->executePdoQuery($conn, $q, $qParam);
 
-    $this->logNotice("Temp table successfully updated with batch success data");
+    $this->eh->logNotice("Temp table successfully updated with batch success data");
   }
 
   /**
@@ -183,7 +183,7 @@ abstract class agImportNormalization extends agImportHelper
     try
     {
       // check it once before we start anything and once after
-      $this->checkErrThreshold();
+      $this->eh->checkErrThreshold();
 
       // load up a batch into the helper
       $this->fetchNextBatch();
@@ -198,7 +198,7 @@ abstract class agImportNormalization extends agImportHelper
       $this->updateTempSuccess($normalizeSuccess);
 
       // probably best to check this one more time
-      $this->checkErrThreshold();
+      $this->eh->checkErrThreshold();
     }
     catch (Exception $e)
     {
@@ -230,7 +230,7 @@ abstract class agImportNormalization extends agImportHelper
 
     // log this event
     $eventMsg = "Loading batch starting at {$fetchPosition} from the temp table";
-    $this->logDebug($eventMsg);
+    $this->eh->logDebug($eventMsg);
 
     // fetch the data up until it ends or we hit our batchsize limit
     while (($row = $pdo->fetch()) && ($fetchPosition <= $batchEnd))
@@ -241,7 +241,7 @@ abstract class agImportNormalization extends agImportHelper
       unset($row[$this->successColumn]);
 
       // add it to import data array and iterate our counter
-      $this->logDebug('Fetching row {' . $rowId . '} from temp table into import data.');
+      $this->eh->logDebug('Fetching row {' . $rowId . '} from temp table into import data.');
       $this->importData[$rowId]['_rawData'] = $row;
       $fetchPosition++;
     }
@@ -250,7 +250,7 @@ abstract class agImportNormalization extends agImportHelper
     $batchPosition++;
 
     $eventMsg = "Successfully fetched batch {$batchPosition} (Records {$batchStart} to {$fetchPosition})";
-    $this->logInfo($eventMsg);
+    $this->eh->logInfo($eventMsg);
   }
 
   /**
@@ -262,21 +262,21 @@ abstract class agImportNormalization extends agImportHelper
     $conn = $this->getConnection(self::CONN_TEMP_READ);
 
     // first get a count of what we need from temp
-    $this->logDebug('Fetching the total number of records and establishing batch size.');
+    $this->eh->logDebug('Fetching the total number of records and establishing batch size.');
     $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
     $ctResults = $this->executePdoQuery($conn, $ctQuery);
     $this->iterData['fetchCount'] = $ctResults->fetchColumn();
 
     // now caclulate the number of batches we'll need to process it all
     $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
-    $this->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
+    $this->eh->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
       'into {' . $this->iterData['batchCount'] . '} batches of {' . $this->iterData['batchSize'] .
       '} records per batch.');
 
     // now we can legitimately execute our real search
-    $this->logDebug('Starting initial fetch from temp.');
+    $this->eh->logDebug('Starting initial fetch from temp.');
     $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
-    $this->logInfo("Successfully established the PDO fetch iterator.");
+    $this->eh->logInfo("Successfully established the PDO fetch iterator.");
   }
 
    /**
@@ -286,7 +286,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function normalizeData()
   {
     $err = NULL ;
-    $this->logDebug('Normalizing and inserting batch data into database.');
+    $this->eh->logDebug("Normalizing and inserting batch data into database.");
 
 
     // get our connection object and start an outer transaction for the batch
@@ -306,7 +306,7 @@ abstract class agImportNormalization extends agImportHelper
       $savepoint = __FUNCTION__ . '_'. $componentData['component'];
 
       // log an event so we can follow what portion of the insert was begun
-      $eventMsg = $this->logDebug("Calling batch processing method {$method}");
+      $eventMsg = $this->eh->logDebug("Calling batch processing method {$method}");
 
       // start an inner transaction / savepoint per component
       $conn->beginTransaction($savepoint) ;
@@ -322,7 +322,7 @@ abstract class agImportNormalization extends agImportHelper
           $this->iterData['batchPosition'], $componentData['method']);
 
         // let's capture this error, regardless of whether we'll throw
-        $this->logErr($errMsg, count($this->importData));
+        $this->eh->logErr($errMsg, count($this->importData));
 
         $conn->rollback($savepoint);
 
@@ -363,13 +363,13 @@ abstract class agImportNormalization extends agImportHelper
 
     if (is_null($err))
     {
-      $this->logNotice("Successfully inserted and normalized batch data");
+      $this->eh->logNotice("Successfully inserted and normalized batch data");
       return TRUE;
     }
     else
     {
       // our rollback and error logging happen regardless of whether this is an optional component
-      $this->logErr($errMsg, count($this->importData)) ;
+      $this->eh->logErr($errMsg, count($this->importData)) ;
       $conn->rollback();
 
       // return false if not
@@ -412,7 +412,7 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function clearNullRawData()
   {
-    $this->logInfo("Removing null data from batch.");
+    $this->eh->logInfo("Removing null data from batch.");
     foreach ($this->importData as $rowId => &$rowData)
     {
       foreach($rowData['_rawData'] as $key => $val)

@@ -41,12 +41,31 @@ class agEmailHelper extends agBulkRecordHelper
   public function getEmailIds(array $emails)
   {
     $q = agDoctrineQuery::create()
-      ->select('e.email_contact')
-          ->addSelect('e.id')
-        ->from('agEmailContact e')
-        ->whereIn('e.email_contact',$emails);
+      ->select('ec.id')
+        ->from('agEmailContact ec')
+      ->useResultCache(TRUE, 1800);
 
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $results = array();
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+    foreach ($emails as $index => $email)
+    {
+      $q->where('ec.email_contact = ?', $email);
+
+      $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      // clear the cache if we had no result
+      if (empty($result))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results[$email] = $result;
+      }
+      unset($emails[$index]);
+    }
+
+    return $results;
   }
 
   /**

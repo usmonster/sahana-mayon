@@ -72,7 +72,7 @@ class agStaffImportNormalization extends agImportNormalization
     foreach($dynamicColumns as $column)
     {
       $this->importSpec[$column] = $this->dynamicFieldType;
-      $this->logInfo('Adding dynamic column {' . $column . '} to the import specification.');
+      $this->eh->logInfo('Adding dynamic column {' . $column . '} to the import specification.');
     }
   }
 
@@ -154,7 +154,7 @@ class agStaffImportNormalization extends agImportNormalization
     if (strlen($columnName) == 0)
     {
       $errMsg = "Column name {$oldColumnName} could not be parsed.";
-      $this->logCrit($errMsg, 1);
+      $this->eh->logCrit($errMsg, 1);
       throw new Exception($errMsg);
     }
     return $columnName;
@@ -306,7 +306,7 @@ class agStaffImportNormalization extends agImportNormalization
     // we no longer need this array (used for the ->whereIN)
     unset($rawEntityIds);
 
-    $this->logDebug('{' . count($entities) . '} person entities found in the dataabse.');
+    $this->eh->logDebug('{' . count($entities) . '} person entities found in the dataabse.');
 
     //loop foreach $entities member
     foreach ($entities as $entityId => &$entityData)
@@ -314,14 +314,14 @@ class agStaffImportNormalization extends agImportNormalization
       // if staff id doesn't exist yet, make it so
       if (is_null($entityData[1]))
       {
-        $this->logDebug('Person ID {' . $entityData[0] . '} exists but is not staff. ' .
+        $this->eh->logDebug('Person ID {' . $entityData[0] . '} exists but is not staff. ' .
           'Creating staff record.');
         $entityData[1] = $this->createNewRec('agStaff', array('person_id' => $entityData[0]));
       }
     }
     
     // update our row keys array
-    $this->logDebug('Updating primary keys for found entities.');
+    $this->eh->logDebug('Updating primary keys for found entities.');
     foreach ($this->importData as $rowId => &$rowData)
     {
       if (array_key_exists('entity_id', $rowData['_rawData']))
@@ -368,15 +368,15 @@ class agStaffImportNormalization extends agImportNormalization
       if ($createNew)
       {
 
-        $this->logDebug('Creating new entity for import rowId {' . $rowId . '}.');
+        $this->eh->logDebug('Creating new entity for import rowId {' . $rowId . '}.');
         $fKeys = array();
         $pKeys['entity_id'] = $this->createNewRec('agEntity', $fKeys);
 
-        $this->logDebug('Creating new person for import Entity ID {' . $pKeys['entity_id'] . '}.');
+        $this->eh->logDebug('Creating new person for import Entity ID {' . $pKeys['entity_id'] . '}.');
         $fKeys = array('entity_id' => $pKeys['entity_id']);
         $pKeys['person_id'] = $this->createNewRec('agPerson', $fKeys);
 
-        $this->logDebug('Creating new staff for import Person ID {' . $pKeys['person_id'] . '}.');
+        $this->eh->logDebug('Creating new staff for import Person ID {' . $pKeys['person_id'] . '}.');
         $fKeys = array('person_id' => $pKeys['person_id']);
         $pKeys['staff_id'] = $this->createNewRec('agStaff', $fKeys);
       }
@@ -386,7 +386,7 @@ class agStaffImportNormalization extends agImportNormalization
       {
         $warnMsg = sprintf("Bad entity id (%s).  Generated a new entity id (%s).",
           $rawData['entity_id'], $pKeys['entity_id']);
-        $this->logWarning($warnMsg);
+        $this->eh->logWarning($warnMsg);
       }
     }
   }
@@ -643,12 +643,12 @@ class agStaffImportNormalization extends agImportNormalization
 
           if($throwOnError)
           {
-            $this->logErr($errMsg);
+            $this->eh->logErr($errMsg);
             throw new Exception($errMsg);
           }
           else
           {
-            $this->logWarning($errMsg);
+            $this->eh->logWarning($errMsg);
           }
         }
 
@@ -668,12 +668,12 @@ class agStaffImportNormalization extends agImportNormalization
 
           if($throwOnError)
           {
-            $this->logErr($errMsg);
+            $this->eh->logErr($errMsg);
             throw new Exception($errMsg);
           }
           else
           {
-            $this->logWarning($errMsg);
+            $this->eh->logWarning($errMsg);
           }
         }
       }
@@ -782,7 +782,7 @@ class agStaffImportNormalization extends agImportNormalization
     {
       // log our error
       $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage());
-      $this->logErr($errMsg);
+      $this->eh->logErr($errMsg);
 
       // rollback
       if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
@@ -877,7 +877,7 @@ class agStaffImportNormalization extends agImportNormalization
       else
       {
         // Capture error in error log.
-        $this->logErr($errMsg);
+        $this->eh->logErr($errMsg);
 
         if($throwOnError)
         {
@@ -909,7 +909,7 @@ class agStaffImportNormalization extends agImportNormalization
                                $rawData['resource_type'], $staffIds[$stfId]);
 
           // Capture error in error log.
-          $this->logErr($errMsg);
+          $this->eh->logErr($errMsg);
 
           if($throwOnError)
           {
@@ -928,7 +928,7 @@ class agStaffImportNormalization extends agImportNormalization
                                $rawData['resource_status'], $staffIds[$stfId]);
 
           // Capture error in error log.
-          $this->logErr($errMsg);
+          $this->eh->logErr($errMsg);
 
           if($throwOnError)
           {
@@ -970,7 +970,7 @@ class agStaffImportNormalization extends agImportNormalization
     {
       // log our error
       $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage());
-      $this->logErr($errMsg);
+      $this->eh->logErr($errMsg);
 
       // rollback
       if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
@@ -998,7 +998,7 @@ class agStaffImportNormalization extends agImportNormalization
                                $rawData['resource_type'], $staffIds[$stfId]);
 
           // Capture error in error log.
-          $this->logErr($errMsg);
+          $this->eh->logErr($errMsg);
 
           if($throwOnError)
           {
@@ -1017,7 +1017,7 @@ class agStaffImportNormalization extends agImportNormalization
                                $rawData['resource_type'], $staffIds[$stfId]);
 
           // Capture error in error log.
-          $this->logErr($errMsg);
+          $this->eh->logErr($errMsg);
 
           if($throwOnError)
           {
@@ -1036,7 +1036,7 @@ class agStaffImportNormalization extends agImportNormalization
                                $rawData['resource_status'], $staffIds[$stfId]);
 
           // Capture error in error log.
-          $this->logErr($errMsg);
+          $this->eh->logErr($errMsg);
 
           if($throwOnError)
           {
@@ -1133,7 +1133,7 @@ class agStaffImportNormalization extends agImportNormalization
 
   public function testDataNorm()
   {
-    $this->setLogEventLevel(self::EVENT_DEBUG);
+    $this->eh->setLogEventLevel(self::EVENT_DEBUG);
     $_rawData1 = array('entity_id' => '3',
                       'first_name' => 'Mork',
                       'last_name' => 'Ork',
@@ -1219,6 +1219,6 @@ class agStaffImportNormalization extends agImportNormalization
 
     $this->clearNullRawData();
     $this->normalizeData();
-    print_r($this->getEvents());
+    print_r($this->eh->getEvents());
   }
 }

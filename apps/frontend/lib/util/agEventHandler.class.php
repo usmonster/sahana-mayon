@@ -38,6 +38,7 @@ class agEventHandler
 
   private     $events,
               $lastEvent,
+              $lastEventByType,
               $errCount,
               $logLevelValue,
               $logEventLevel = self::EVENT_ERR;
@@ -69,10 +70,8 @@ class agEventHandler
   /**
    * Method to reset the events array.
    */
-  protected function resetEvents()
+  public function resetEvents()
   {
-    $this->lastEvent = array();
-
     $this->events = array();
     $this->events[self::EVENT_EMERG] = array();
     $this->events[self::EVENT_ALERT] = array();
@@ -82,6 +81,18 @@ class agEventHandler
     $this->events[self::EVENT_NOTICE] = array();
     $this->events[self::EVENT_INFO] = array();
     $this->events[self::EVENT_DEBUG] = array();
+
+    $this->lastEvent = array();
+
+    $this->lastEventByType = array();
+    $this->lastEventByType[self::EVENT_EMERG] = array();
+    $this->lastEventByType[self::EVENT_ALERT] = array();
+    $this->lastEventByType[self::EVENT_CRIT] = array();
+    $this->lastEventByType[self::EVENT_ERR] = array();
+    $this->lastEventByType[self::EVENT_WARNING] = array();
+    $this->lastEventByType[self::EVENT_NOTICE] = array();
+    $this->lastEventByType[self::EVENT_INFO] = array();
+    $this->lastEventByType[self::EVENT_DEBUG] = array();
 
     $this->errCount = 0;
   }
@@ -125,8 +136,10 @@ class agEventHandler
       $logger = strtolower($eventType);
       sfContext::getInstance()->getLogger()->$logger($eventMsg);
       $timestamp = microtime(TRUE);
-      $this->events[$eventType][] = array('ts' => $timestamp, 'msg' => $eventMsg);
-      $this->lastEvent = array('type' => $eventType, 'ts' => $timestamp, 'msg' => $eventMsg);
+      $event = array('ts' => $timestamp, 'msg' => $eventMsg);
+      $this->events[$eventType][] = $event;
+      $this->lastEventByType[$eventType] = $event;
+      $this->lastEvent = ($event + array('type' => $eventType));
     }
   }
 
@@ -152,7 +165,7 @@ class agEventHandler
    * Method to log an event of type notice
    * @param $string $eventMsg An event message
    */
-  protected function logNotice($eventMsg)
+  public function logNotice($eventMsg)
   {
     $this->logEvent(self::EVENT_NOTICE, $eventMsg);
   }
@@ -161,7 +174,7 @@ class agEventHandler
    * Method to log an event of type WARN and log the results to file
    * @param $string $eventMsg An event message
    */
-  protected function logWarning($eventMsg)
+  public function logWarning($eventMsg)
   {
     $this->logEvent(self::EVENT_WARNING, $eventMsg);
   }
@@ -171,7 +184,7 @@ class agEventHandler
    * @param string $eventMsg An error message
    * @param integer $errCount The number of failures encountered
    */
-  protected function logErr($eventMsg, $errCount = 1)
+  public function logErr($eventMsg, $errCount = 1)
   {
     $this->logEvent(self::EVENT_ERR, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
@@ -280,12 +293,18 @@ class agEventHandler
 
   /**
    * Method to return the last event.
+   * @param $eventTypeConst Constant following the EVENT_$EVENTTYPE pattern.
    * @return array An array of datapoints concerning the last inserted event.
    * <code> array('type' => $eventType, 'ts' => $timestamp, 'msg' => $eventMsg)</code>
    */
-  public function getLastEvent()
+  public function getLastEvent( $eventTypeConst = NULL)
   {
-    return $this->lastEvent;
+    if (is_null($eventType))
+    {
+      return $this->lastEvent;
+    }
+
+    return $this->lastEventByType[$eventTypeConst];
   }
 
   /**
