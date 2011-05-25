@@ -41,9 +41,8 @@ class agEventHandler
               $lastEventByType,
               $errCount,
               $logLevelValue,
-              $logEventLevel = self::EVENT_ERR;
-
-  protected   $errThreshold = 1000;
+              $logEventLevel = self::EVENT_ERR,
+              $errThreshold = 1000;
 
   /**
    * This class's constructor.
@@ -233,6 +232,30 @@ class agEventHandler
 
     self::__destruct();
     throw new Exception($eventMsg);
+  }
+
+  /**
+   * Method to return the current error threshold
+   */
+  public function getErrThreshold()
+  {
+    return $this->errThreshold;
+  }
+
+  /**
+   * Method to set an error threshold.
+   * @param integer $integer
+   */
+  public function setErrThreshold($integer)
+  {
+    if (is_int($integer))
+    {
+      $this->errThreshold = $integer;
+    }
+    else
+    {
+      $this->logAlert('Error threshold {' . $integer . '} is not an integer.');
+    }
   }
 
   /**

@@ -39,7 +39,7 @@ class agStaffImportNormalization extends agImportNormalization
     $this->tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8');
     $this->importHeaderStrictValidation = TRUE;
 
-    $this->errThreshold = 100;
+    $this->eh->setErrThreshold(100);
   }
 
   /**
