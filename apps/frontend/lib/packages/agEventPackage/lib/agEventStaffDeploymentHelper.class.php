@@ -57,13 +57,46 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
   protected function queryShifts()
   {
+    // build our basic query
     $q = agDoctrineQuery::create()
       ->select('efg.id')
-          ->addSelect('')
+          ->addSelect('efgs.id')
+          ->addSelect('efr.id')
+          ->addSelect('efrs.id')
+          ->addSelect('es.id')
+          ->addSelect('ss.id')
         ->from('agEventFacilityGroup efg')
-          ->innerJoin('efg.agEventFacilityGroupStatus efgs'),
-          ->innerJoin('efg.agEventFacilityResource efr'),
-          ->innerJoin('efrs.agEventFacilityResourceStatus efrs'),
+          ->innerJoin('efg.agEventFacilityGroupStatus efgs')
+          ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
+          ->innerJoin('efg.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityResourceStatus efrs')
+          ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
+          ->innerJoin('efr.agEventShift es')
+          ->innerJoin('es.agShiftStatus ss')
+        ->where('fgas.active = ?', TRUE)
+          ->andWhere('fras.staffed = ?', TRUE)
+          ->andWhere('ss.disabled = ?', FALSE );
+
+    // ensure that we only get the most recent group status
+    $recentGroupStatus = 'EXISTS (' .
+      'SELECT sefgs.id ' .
+        'FROM agEventFacilityGroupStatus AS sefgs ' .
+        'WHERE sefgs.time_stamp <= CURRENT_TIMESTAMP ' .
+          'AND sefgs.event_facility_group_id = efgs.event_facility_group_id ' .
+        'HAVING MAX(sefgs.time_stamp) = efgs.time_stamp' .
+      ')';
+    $q->andWhere($recentGroupStatus);
+
+    // ensure that we only get the most recent facility resource status
+    $recentGroupStatus = 'EXISTS (' .
+      'SELECT sefrs.id ' .
+        'FROM agEventFacilityGroupStatus AS sefrs ' .
+        'WHERE sefrs.time_stamp <= CURRENT_TIMESTAMP ' .
+          'AND sefrs.event_facility_resource_id = efrs.event_facility_resource_id ' .
+        'HAVING MAX(sefrs.time_stamp) = efrs.time_stamp' .
+      ')';
+    $q->andWhere($recentGroupStatus);
+
   }
 
   public function deployEventStaff()
