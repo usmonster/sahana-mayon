@@ -12,6 +12,7 @@ $(document).ready(function initialize(){
   initExpandAll();
   initExpand();
   initTextToForm();
+  initTriggerModal();
 });
 
 /** Start Initializer Section *********************************************************************/
@@ -28,7 +29,6 @@ function initTextToForm() {
     submitTextToForm();
   }
 }
-
 /***************************************************************************************************
 * Initializes the equalizeHeight() function. Used on scenario/[scenario_id]/resourcetypes.
 ***************************************************************************************************/
@@ -112,6 +112,13 @@ function initCollapseAll() {
     collapseAll();
   }
 }
+
+function initTriggerModal() {
+  var modalTrigger = $('.modalTrigger');
+  if(modalTrigger.length) {
+    triggerModal();
+  }
+}
 /** End Initializer Section ***********************************************************************/
 
 /***************************************************************************************************
@@ -132,7 +139,270 @@ function reveal(revealer) {
     return false;
   });
 }
+/***************************************************************************************************
+* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.
+***************************************************************************************************/
+function checkAll() {
+  $('#checkAll').live('click', function () {
+    var check = this.checked;
+    $('.checkBoxContainer').find('.checkToggle').each(function() {
+      this.checked = check;
+      $(this).trigger('change');
+    });
+  });
+}
+/***************************************************************************************************
+* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.
+***************************************************************************************************/
+function checkToggle() {
+  $('.checkToggle').live('change', function(){
+    var a = $('.checkToggle').length;
+    var b = $('.checkToggle:checked').length;
+    if($('.checkToggle').length == $('.checkToggle:checked').length) {
+      $('#checkAll').attr('checked', 'checked');
+    } else {
+      $("#checkAll").removeAttr('checked');
+    }
+  });
+}
+/***************************************************************************************************
+* expandAll() expands all collapsed elements that are subject to an .expander class.
+***************************************************************************************************/
+function expandAll() {
+  $('.expandAll').live('click', function() {
+    $('.expander').each(function(){
+      if($('#expandable_' + $(this).attr('id')).children().length == 0) {
+        $(this).click();
+      }
+    });
+    return false;
+  });
+}
+/***************************************************************************************************
+* collapseAll() collapses all expanded elements that are subject to an .expander class.
+***************************************************************************************************/
+function collapseAll() {
+  $('.collapseAll').live('click', function() {
+    $('.expander').each(function(){
+      if($('#expandable_' + $(this).attr('id')).children().length != 0) {
+        $(this).click();
+      }
+    });
+    return false;
+  });
+}
+/***************************************************************************************************
+* expand() expands elements that are subject to an .expander class.
+***************************************************************************************************/
+function expand() {
+  $('.expander').click(function() {
+    var expandToggle = '#expandable_' + $(this).attr('id');
+    if($(expandToggle).children().length == 0) {
+      $(expandToggle).load($(this).attr('href'), function() {
+        $(expandToggle).slideToggle();
+      });
+    } else {
+      $(expandToggle).slideToggle(function() {
+        $(expandToggle).empty();
+      });
+    }
+    $(this).html(pointerCheck($(this).html()));
+    return false;
+  });
+}
+/***************************************************************************************************
+* textToForm() converts an anchor to a form populated with the anchor's value.
+***************************************************************************************************/
+function textToForm() {
+  $('.textToForm').live('click', function() {
+    var passId = '#' + $(this).attr('id');
+    var $poster = $(this);
+    $.post($(this).attr('href'), {
+      type: $(this).attr('name'),
+      current: $(this).html(),
+      id: $(this).attr('id')
+    }, function(data) {
+      $(passId).parent().append(data);
+      $poster.attr('id', 'poster_' + $poster.attr('id'));
+      $poster.hide();
+      $(passId + ' > .submitTextToForm').focus();
+    });
+    return false;
+  });
+}
+/***************************************************************************************************
+* configSubmitTextToForm() disables submit from the keyboard on .submitTextToForm elements.
+***************************************************************************************************/
+function configSubmitTextToForm() {
+  $('.submitTextToForm').live('keypress', function(evt) {
+    var charCode = evt.charCode || evt.keyCode;
+    if (charCode  == 13) {
+      return false;
+    }
+  });
+}
+/***************************************************************************************************
+* submitTextToForm() submits .submitTextToForm forms and returns their value. Then the form reverts
+* to the original anchor.
+***************************************************************************************************/
+function submitTextToForm() {
+  $('.submitTextToForm').live('blur submit', function() {
+    var $poster = $(this);
+    $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'), function(data) {
+      var returned = $.parseJSON(data);
+      if(returned.status == 'failure') {
+        $poster.css('color', 'red')
+        $poster.val(returned.refresh);
+      } else {
+        var idTransfer = $poster.parent().attr('id');
+        $poster.parent().remove();
+        $('#poster_' + idTransfer).html(returned.refresh);
+        $('#poster_' + idTransfer).show();
+        $('#poster_' + idTransfer).attr('id', idTransfer);
+      }
+    });
+    return false;
+  });
+}
+/***************************************************************************************************
+* pointerCheck is called by a number of other functions to check the state of an arrow used for
+* expanding or showing UI elements in order to set the pointer to the correct value after expansion,
+* collapse, revealing or hiding.
+***************************************************************************************************/
+function pointerCheck(pointer) {
+  if(pointer == (String.fromCharCode(9654))) {
+    return '&#9660;';
+  } else if(pointer == (String.fromCharCode(9660))) {
+    return '&#9654;';
+  } else {
+    return null;
+  }
+}
+/***************************************************************************************************
+* equalizeHeight() sets two div elements with the .inlineLists class to the height of whichever is
+* taller.
+***************************************************************************************************/
+function equalizeHeight(containerElement) {
+  var maxHeight = 0;
 
+  containerElement.children('div.inlineLists').each(function(){
+    maxHeight = Math.max(maxHeight, $(this).height());
+  });
+
+  containerElement.children('div.inlineLists').height(maxHeight);
+}
+/***************************************************************************************************
+* buildSortList() sets up the sortable lists used on scenario/[scenario_id]/fgroup.
+***************************************************************************************************/
+function buildSortList() {
+  $('.available tbody, .allocated tbody' ).sortable({
+    connectWith: ".sortTable tbody",
+    items: 'tr.sort',
+    forcePlaceholderSize: true
+  });
+
+  $('.allocated tbody').bind('beforestop', function(event, ui) {
+    if(ui.helper.find('td').length < 3) {
+      ui.helper.find('td.right').removeClass('right').addClass('inner');
+      ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
+      ui.helper.css('width', '305px');
+    }
+  });
+
+  $('.available tbody').bind('beforestop', function(event, ui) {
+    if(ui.helper.find('td').length == 3) {
+      ui.helper.find('td.right').remove();
+      ui.helper.find('td.inner').removeClass('inner').addClass('right');
+      ui.helper.css('width', '257px');
+    }
+  });
+
+  $('.allocated tbody').bind('sortover', function(event, ui) {
+    if(ui.helper.find('td').length < 3) {
+      ui.helper.find('td.right').removeClass('right').addClass('inner');
+      ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
+      ui.helper.css('width', '305px');
+    }
+  });
+
+  $('.available tbody').bind('sortover', function(event, ui) {
+    if(ui.helper.find('td').length == 3) {
+      ui.helper.find('td.right').remove();
+      ui.helper.find('td.inner').removeClass('inner').addClass('right');
+      ui.helper.css('width', '257px');
+    }
+  });
+  $('.allocated tbody').bind('sortupdate', function () {
+    if($(this).find('tr').is(':hidden')) {
+      $(this).find('.sort').hide();
+    }
+    countSorts($('tr#' + $(this).attr('title')).find('.count'));
+  });
+
+  $('.allocated tbody').bind('sortreceive', function(event, ui) {
+    if(ui.item.hasClass('serialIn') == false) {
+      ui.item.addClass('serialIn');
+    }
+  });
+
+  $('.available tbody').bind('sortreceive', function(event, ui) {
+    if(ui.item.hasClass('serialIn') == true) {
+      ui.item.removeClass('serialIn');
+    }
+  });
+}
+/***************************************************************************************************
+* countSorts() counts the elements in each allocated sort group on scenario/[scenario_id]/fgroup. It
+* is used in conjunction with buildSortLists(), so is initialized with initSortableTables();
+***************************************************************************************************/
+function countSorts(countMe) {
+  $(countMe).html(function() {
+    var counted = $('tbody.' + $(this).parent().attr('id')).children('tr.sort').length;
+    if(counted == 0) {
+      $('tbody.' + $(this).parent().attr('id')).append('<tr class="countZero"><td colspan="3">No facilities selected for this status.</td></tr>')
+    } else if (counted != 0) {
+      $('tbody.' + $(this).parent().attr('id')).children('tr.countZero').remove();
+    }
+    return 'Count: ' + counted;
+  });
+}
+/***************************************************************************************************
+* triggerModal is called from the click event of an element (used to be called on those elements   *
+* with the modalTrigger class. It calls buildModal and then loads and opens the modal dialog.      *
+*                                                                                                  *
+* @return false  Return false is used here to prevent the clicked link from returning and sending  *
+*                the user forward in the browser.                                                  *
+***************************************************************************************************/
+function triggerModal() {
+  $('.modalTrigger').live('click', function() {
+    var $dialog = buildModal('<div id="modalContent"></div>', $(this).attr('title'));
+    $dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
+    return false;
+  });
+}
+/***************************************************************************************************
+* buildModal creates a jQuery UI modal dialog window.                                              *
+*                                                                                                  *
+* @param  element  A DOM element, most likely a div, that will display content inside the          *
+*                  modal window.                                                                   *
+* @param  title    The title for the modal window.                                                 *
+* @return $dialog  A configured modal dialog.                                                      *
+*                                                                                                  *
+* @todo   Add more params for greater configurability.                                             *
+***************************************************************************************************/
+function buildModal(element, title) {
+  var $dialog = $(element)
+  .dialog({
+    title: title,
+    autoOpen: false,
+    resizable: false,
+    width: 'auto',
+    height: 'auto',
+    draggable: false,
+    modal: true
+  });
+  return $dialog;
+}
 $(document).ready(function() {
   // Used in scenario/staffresources
   var toggleGroup = $('.toggleGroup');
@@ -305,32 +575,7 @@ $(document).ready(function() {
 });
 
 
-/***************************************************************************************************
-* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.
-***************************************************************************************************/
-function checkAll() {
-  $('#checkAll').live('click', function () {
-    var check = this.checked;
-    $('.checkBoxContainer').find('.checkToggle').each(function() {
-      this.checked = check;
-      $(this).trigger('change');
-    });
-  });
-}
-/***************************************************************************************************
-* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.
-***************************************************************************************************/
-function checkToggle() {
-  $('.checkToggle').live('change', function(){
-    var a = $('.checkToggle').length;
-    var b = $('.checkToggle:checked').length;
-    if($('.checkToggle').length == $('.checkToggle:checked').length) {
-      $('#checkAll').attr('checked', 'checked');
-    } else {
-      $("#checkAll").removeAttr('checked');
-    }
-  });
-}
+
 
   $(document).ready(function() {
     $('.searchParams .checkToggle').live('change', function() {
@@ -342,105 +587,7 @@ function checkToggle() {
     });
   });
 
-/***************************************************************************************************
-* expandAll() expands all collapsed elements that are subject to an .expander class.
-***************************************************************************************************/
-function expandAll() {
-  $('.expandAll').live('click', function() {
-    $('.expander').each(function(){
-      if($('#expandable_' + $(this).attr('id')).children().length == 0) {
-        $(this).click();
-      }
-    });
-    return false;
-  });
-}
-/***************************************************************************************************
-* collapseAll() collapses all expanded elements that are subject to an .expander class.
-***************************************************************************************************/
-function collapseAll() {
-  $('.collapseAll').live('click', function() {
-    $('.expander').each(function(){
-      if($('#expandable_' + $(this).attr('id')).children().length != 0) {
-        $(this).click();
-      }
-    });
-    return false;
-  });
-}
-/***************************************************************************************************
-* expand() expands elements that are subject to an .expander class.
-***************************************************************************************************/
-function expand() {
-  $('.expander').click(function() {
-    var expandToggle = '#expandable_' + $(this).attr('id');
-    if($(expandToggle).children().length == 0) {
-      $(expandToggle).load($(this).attr('href'), function() {
-        $(expandToggle).slideToggle();
-      });
-    } else {
-      $(expandToggle).slideToggle(function() {
-        $(expandToggle).empty();
-      });
-    }
-    $(this).html(pointerCheck($(this).html()));
-    return false;
-  });
-}
-/***************************************************************************************************
-* textToForm() converts an anchor to a form populated with the anchor's value.
-***************************************************************************************************/
-function textToForm() {
-  $('.textToForm').live('click', function() {
-    var passId = '#' + $(this).attr('id');
-    var $poster = $(this);
-    $.post($(this).attr('href'), {
-      type: $(this).attr('name'), 
-      current: $(this).html(),
-      id: $(this).attr('id')
-    }, function(data) {
-      $(passId).parent().append(data);
-      $poster.attr('id', 'poster_' + $poster.attr('id'));
-      $poster.hide();
-      $(passId + ' > .submitTextToForm').focus();
-    });
-    return false;
-  });
-}
-/***************************************************************************************************
-* configSubmitTextToForm() disables submit from the keyboard on .submitTextToForm elements.
-***************************************************************************************************/
-function configSubmitTextToForm() {
-  $('.submitTextToForm').live('keypress', function(evt) {
-    var charCode = evt.charCode || evt.keyCode;
-    if (charCode  == 13) {
-      return false;
-    }
-  });
-}
-/***************************************************************************************************
-* submitTextToForm() submits .submitTextToForm forms and returns their value. Then the form reverts
-* to the original anchor.
-***************************************************************************************************/
-function submitTextToForm() {
-  $('.submitTextToForm').live('blur submit', function() {
-    var $poster = $(this);
-    $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'), function(data) {
-      var returned = $.parseJSON(data);
-      if(returned.status == 'failure') {
-        $poster.css('color', 'red')
-        $poster.val(returned.refresh);
-      } else {
-        var idTransfer = $poster.parent().attr('id');
-        $poster.parent().remove();
-        $('#poster_' + idTransfer).html(returned.refresh);
-        $('#poster_' + idTransfer).show();
-        $('#poster_' + idTransfer).attr('id', idTransfer);
-      }
-    });
-    return false;
-  });
-}
+
 
 $(document).ready(function() {
   $('.includeAndAdd').live('click', function() {
@@ -462,20 +609,6 @@ $(document).ready(function() {
 });
 
 
-/***************************************************************************************************
-* pointerCheck is called by a number of other functions to check the state of an arrow used for
-* expanding or showing UI elements in order to set the pointer to the correct value after expansion,
-* collapse, revealing or hiding.
-***************************************************************************************************/
-function pointerCheck(pointer) {
-  if(pointer == (String.fromCharCode(9654))) {
-    return '&#9660;';
-  } else if(pointer == (String.fromCharCode(9660))) {
-    return '&#9654;';
-  } else {
-    return null;
-  }
-}
 
   $(document).ready(function() {
     $("ul.stepperList li").live('mouseover',function(){
@@ -583,133 +716,52 @@ function pointerCheck(pointer) {
   }
 
 /***************************************************************************************************
-* equalizeHeight() sets two div elements with the .inlineLists class to the height of whichever is
-* taller.
+* buildTooltip creates a jQuery UI modal dialog window to contain the tooltip information.
+*
+* @param  element  A DOM element, most likely a div, that will display content inside the
+*                  modal window.
+* @param  title    The title for the modal window.
+* @return $dialog  A configured modal dialog.
+*
+* @todo   Add more params for greater configurability.
 ***************************************************************************************************/
-function equalizeHeight(containerElement) {
-  var maxHeight = 0;
-
-  containerElement.children('div.inlineLists').each(function(){
-    maxHeight = Math.max(maxHeight, $(this).height());
+function buildTooltip(element, obj, title) {
+  var $dialog = $(element)
+  .dialog({
+    dialogClass: 'tooltipDialog',
+    autoOpen: false,
+    resizable: false,
+    position: {
+      my: 'left',
+      at: 'right',
+      of: obj,
+      offset: "20 65"
+    },
+    title: title
   });
-
-  containerElement.children('div.inlineLists').height(maxHeight);
+  return $dialog;
 }
 
-  /**
-   * buildTooltip creates a jQuery UI modal dialog window to contain the tooltip information.
-   *
-   * @param  element  A DOM element, most likely a div, that will display content inside the
-   *                  modal window.
-   * @param  title    The title for the modal window.
-   * @return $dialog  A configured modal dialog.
-   *
-   * @todo   Add more params for greater configurability.
-   **/
-  function buildTooltip(element, obj, title) {
-    var $dialog = $(element)
-    .dialog({
-      dialogClass: 'tooltipDialog',
-      autoOpen: false,
-      resizable: false,
-      position: {
-        my: 'left',
-        at: 'right',
-        of: obj,
-        offset: "20 65"
-      },
-      title: title
+/**
+ * This unnamed function catches the click of an element with .tooltipTrigger class. It calls
+ * buildTooltip and then loads and opens the modal dialog.
+ *
+ * @return false  Return false is used here to prevent the clicked link from returning and sending
+ *                the user forward in the browser.
+ **/
+$(document).ready(function() {
+  $('.tooltipTrigger').live('click', function() {
+    var $dialog = buildTooltip('<div id="tooltipContent"></div>', this, $(this).attr('title'));
+    $dialog.load($(this).attr('href'), function() {
+      $dialog.dialog('open')
     });
-    return $dialog;
-  }
-
-  /**
-   * This unnamed function catches the click of an element with .tooltipTrigger class. It calls
-   * buildTooltip and then loads and opens the modal dialog.
-   *
-   * @return false  Return false is used here to prevent the clicked link from returning and sending
-   *                the user forward in the browser.
-   **/
-  $(document).ready(function() {
-    $('.tooltipTrigger').live('click', function() {
-      var $dialog = buildTooltip('<div id="tooltipContent"></div>', this, $(this).attr('title'));
-      $dialog.load($(this).attr('href'), function() {
-        $dialog.dialog('open')
-      });
-      $(document).find('div.ui-dialog-titlebar').addClass('titleClass');
-      return false;
-    });
+    $(document).find('div.ui-dialog-titlebar').addClass('titleClass');
+    return false;
   });
+});
 
-  function buildSortList() {
-    $('.available tbody, .allocated tbody' ).sortable({
-      connectWith: ".sortTable tbody",
-      items: 'tr.sort',
-      forcePlaceholderSize: true
-    });
 
-    $('.allocated tbody').bind('beforestop', function(event, ui) {
-      if(ui.helper.find('td').length < 3) {
-        ui.helper.find('td.right').removeClass('right').addClass('inner');
-        ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
-        ui.helper.css('width', '305px');
-      }
-    });
 
-    $('.available tbody').bind('beforestop', function(event, ui) {
-      if(ui.helper.find('td').length == 3) {
-        ui.helper.find('td.right').remove();
-        ui.helper.find('td.inner').removeClass('inner').addClass('right');
-        ui.helper.css('width', '257px');
-      }
-    });
-
-    $('.allocated tbody').bind('sortover', function(event, ui) {
-      if(ui.helper.find('td').length < 3) {
-        ui.helper.find('td.right').removeClass('right').addClass('inner');
-        ui.helper.append('<td class="right narrow"><input class="inputGraySmall" type="text"></td>');
-        ui.helper.css('width', '305px');
-      }
-    });
-
-    $('.available tbody').bind('sortover', function(event, ui) {
-      if(ui.helper.find('td').length == 3) {
-        ui.helper.find('td.right').remove();
-        ui.helper.find('td.inner').removeClass('inner').addClass('right');
-        ui.helper.css('width', '257px');
-      }
-    });
-    $('.allocated tbody').bind('sortupdate', function () {
-      if($(this).find('tr').is(':hidden')) {
-        $(this).find('.sort').hide();
-      }
-      countSorts($('tr#' + $(this).attr('title')).find('.count'));
-    });
-
-    $('.allocated tbody').bind('sortreceive', function(event, ui) {
-      if(ui.item.hasClass('serialIn') == false) {
-        ui.item.addClass('serialIn');
-      }
-    });
-
-    $('.available tbody').bind('sortreceive', function(event, ui) {
-      if(ui.item.hasClass('serialIn') == true) {
-        ui.item.removeClass('serialIn');
-      }
-    });
-  }
-
-  function countSorts(countMe) {
-    $(countMe).html(function() {
-      var counted = $('tbody.' + $(this).parent().attr('id')).children('tr.sort').length;
-      if(counted == 0) {
-        $('tbody.' + $(this).parent().attr('id')).append('<tr class="countZero"><td colspan="3">No facilities selected for this status.</td></tr>')
-      } else if (counted != 0) {
-        $('tbody.' + $(this).parent().attr('id')).children('tr.countZero').remove();
-      }
-      return 'Count: ' + counted;
-    });
-  }
 
   /**
    * These 3 functions are for error reporting/highlighting in the browser.
@@ -727,28 +779,28 @@ function equalizeHeight(containerElement) {
   }
   /**************************************************************************************************/
 
-  function sortSlide() {
-    $('.sortHead th a').live('click', function(){
-      $('div.' + $(this).attr('class')).slideToggle();
-      var pointer = pointerCheck($(this).html());
-      if(pointer == '&#9654;') {
-        $(this).attr('title', 'Expand')
-      } else if (pointer == '&#9660;') {
-        $(this).attr('title', 'Collapse')
-      }
-      $(this).html(pointer);
-      return false;
-    })
-  }
+function sortSlide() {
+  $('.sortHead th a').live('click', function(){
+    $('div.' + $(this).attr('class')).slideToggle();
+    var pointer = pointerCheck($(this).html());
+    if(pointer == '&#9654;') {
+      $(this).attr('title', 'Expand')
+    } else if (pointer == '&#9660;') {
+      $(this).attr('title', 'Collapse')
+    }
+    $(this).html(pointer);
+    return false;
+  })
+}
 
 
 
-  function reloadGroup (reloader) {
-    $.post(
+function reloadGroup (reloader) {
+  $.post(
     $(reloader).parent().attr('action'),
     {
-      change: true, 
-      groupid: $(reloader).siblings('select').val(), 
+      change: true,
+      groupid: $(reloader).siblings('select').val(),
       groupname: $(reloader).siblings('select').find(':selected').text()
     },
     function(data) {
@@ -758,36 +810,36 @@ function equalizeHeight(containerElement) {
       countSorts('.count');
     }
   );
-  }
+}
 
-  function serialTran(poster) {
-    var values = new Object;
-    $('.serialIn').each(function(index) {
-      values[index] = {
-        'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
-        'actSeq' : ($(this).find('input')).val(),
-        'actStat': ($(this).parents('tbody').attr('title'))
-      }
-    });
-    $("#ag_scenario_facility_group_values").val(JSON.stringify(values));
+function serialTran(poster) {
+  var values = new Object;
+  $('.serialIn').each(function(index) {
+    values[index] = {
+      'frId' : $(this).attr('id').replace('facility_resource_id_', ''),
+      'actSeq' : ($(this).find('input')).val(),
+      'actStat': ($(this).parents('tbody').attr('title'))
+    }
+  });
+  $("#ag_scenario_facility_group_values").val(JSON.stringify(values));
 
-    $('#' + $(poster).parent().attr('id') + ' :input[type="button"]').each(function() {
-      if($(this).attr('name') != $(poster).attr('name')) {
-        $(this).addClass('exclude');
-      }
-    });
+  $('#' + $(poster).parent().attr('id') + ' :input[type="button"]').each(function() {
+    if($(this).attr('name') != $(poster).attr('name')) {
+      $(this).addClass('exclude');
+    }
+  });
 
-    $.post($(poster).parent().attr('action'), $('#' + $(poster).parent().attr('id') + ' :input:not(.exclude)'), function(data) {
-      $('.exclude').removeClass('exclude');
-      var response = $.parseJSON(data);
-      if(response.redirect == true) {
-        window.location.href = response.response;
-      } else {
-        highLight('#ag_scenario_facility_group_scenario_facility_group', 'redHighLight');
-        alert(response.response);
-      }
-    });
-  }
+  $.post($(poster).parent().attr('action'), $('#' + $(poster).parent().attr('id') + ' :input:not(.exclude)'), function(data) {
+    $('.exclude').removeClass('exclude');
+    var response = $.parseJSON(data);
+    if(response.redirect == true) {
+      window.location.href = response.response;
+    } else {
+      highLight('#ag_scenario_facility_group_scenario_facility_group', 'redHighLight');
+      alert(response.response);
+    }
+  });
+}
 
   /**
    * This function is used in scenario/staffpool to construct and save the staff pool query.
@@ -817,48 +869,9 @@ function equalizeHeight(containerElement) {
       $("#staff_pool_search_search_condition").val(JSON.stringify(out));
     }
   }
-
-
-  /**
-   * buildModal creates a jQuery UI modal dialog window.
-   *
-   * @param  element  A DOM element, most likely a div, that will display content inside the
-   *                  modal window.
-   * @param  title    The title for the modal window.
-   * @return $dialog  A configured modal dialog.
-   *
-   * @todo   Add more params for greater configurability.
-   **/
-  function buildModal(element, title) {
-    var $dialog = $(element)
-    .dialog({
-      title: title,
-      autoOpen: false,
-      resizable: false,
-      width: 'auto',
-      height: 'auto',
-      draggable: false,
-      modal: true
-    });
-    return $dialog;
-  }
-
-  /**
-   * triggerModal is called from the click event of an element (used to be called on those elements
-   * with the modalTrigger class. It calls buildModal and then loads and opens the modal dialog.
-   *
-   * @return false  Return false is used here to prevent the clicked link from returning and sending
-   *                the user forward in the browser.
-   **/
-  function triggerModal(element) {
-    var $dialog = buildModal('<div id="modalContent"></div>', $(element).attr('title'));
-    $dialog.load($(element).attr('href'), function() {$dialog.dialog('open')});
-    return false;
-  }
-
-  /**
-   * This function is used to render a new staff resource type form on the staff creation page.
-   **/
+/***************************************************************************************************
+* This function is used to render a new staff resource type form on the staff creation page.       *
+***************************************************************************************************/
   function addStaffResource(element) {
     $.ajax({
       type: 'GET',
