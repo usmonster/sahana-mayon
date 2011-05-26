@@ -90,7 +90,8 @@ class adminActions extends agActions
       $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
       //$this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
       //are we editing or creating a new param
-      $this->processParam($request, $this->paramform);
+      $values = $request->getParameter('ag_global_param');
+      $this->processParam($values, $this->paramform);
     }
   }
 
@@ -332,15 +333,22 @@ class adminActions extends agActions
    * @param sfWebRequest $request
    * @param sfForm $paramform the form to be processed
    */
-  protected function processParam(sfWebRequest $request, sfForm $paramform)
+  protected function processParam($values, sfForm $paramform)
   {
-    $formName = $paramform->getName();
-    $paramform->bind($request->getParameter($paramform->getName()), $request->getFiles($paramform->getName()));
-    if ($paramform->isValid()) {
-      $paramform->save();
-
-      $this->redirect('admin/globals');
-    }
+    $param = agDoctrineQuery::create()
+               ->select()
+               ->from('agGlobalParam')
+               ->where('id = ?', $values['id'])
+               ->fetchOne();
+    $param->synchronizeWithArray($values);
+//    $paramform->bind($request->getParameter($paramform->getName()), $request->getFiles($paramform->getName()));
+    $param->save();
+    $this->redirect('admin/globals');
+//    if ($paramform->isValid()) {
+//      $paramform->save();
+//
+//
+//    }
   }
 
 }
