@@ -223,7 +223,8 @@ class adminActions extends agActions
     $credObject = null;
 
     //get our post parameters
-    if ($cred_id = $request->getParameter('id')) {
+    $cred_id = $request->getParameter('id');
+    if (isset($cred_id)) {
       $credObject = Doctrine::getTable('sfGuardPermission')->find(array($cred_id));
     }
 

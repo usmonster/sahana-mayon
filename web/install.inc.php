@@ -23,6 +23,7 @@ require_once(dirname(__FILE__) . '/requirements.inc.php');
 require_once (dirname(__FILE__) . '/../apps/frontend/lib/install/func.inc.php');
 //OR sfProjectConfiguration::getActive()->loadHelpers(array('Install)); ^
 $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+
 //perhaps we should also autoload-regsiter...
 
 class agInstall
@@ -511,13 +512,13 @@ class agInstall
       $installed[] = 'Could not create tables! : ' . "\n" . $e->getMessage();
     }
 
-     try {
-        Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
-        //$installed[] = 'Successfully loaded core data fixtures';
-        $installed = 'Success!';
-      } catch (Exception $e) {
-        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
-      }
+    try {
+      Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
+      //$installed[] = 'Successfully loaded core data fixtures';
+      $installed = 'Success!';
+    } catch (Exception $e) {
+      $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
+    }
 //
 //    $packages = agPluginManager::getPackagesByStatus(1); //get all enabled packages
 //    foreach($packages as $package)
@@ -535,7 +536,6 @@ class agInstall
 //        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
 //      }
 //    }
-
 //    this entry is achieved by proxy of the agHost.yml fixture/example
 //
 //    try {
@@ -543,29 +543,26 @@ class agInstall
 //      $ag_host->setHostname($this->getConfig('DB_SERVER'));
 //      $ag_host->save();
 //      //$installed[] = 'Successfully generated host record based on database server host';
-
 //    } catch (Exception $e) {
 //      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
 //    }
-     try {
-        $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
-        $databaseManager = new sfDatabaseManager($configuration);
+    try {
+      $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+      $databaseManager = new sfDatabaseManager($configuration);
 //        $connection = Doctrine_Manager::connection()->connect();
-        sfContext::createInstance($configuration)->dispatch();
+      sfContext::createInstance($configuration)->dispatch();
 
-       $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup'));
-       $luceneIndex->indexAll();
-       $installed = 'Success!';
-      } catch (Exception $e) {
-        $installed[] = 'Could not index Data! : ' . "\n" . $e->getMessage();
-      }
-    if(is_array($installed)){
-      return implode('<br>', $installed);
+      $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup'));
+      $luceneIndex->indexAll();
+      $installed = 'Success!';
+    } catch (Exception $e) {
+      $installed[] = 'Could not index Data! : ' . "\n" . $e->getMessage();
     }
-      else{
+    if (is_array($installed)) {
+      return implode('<br>', $installed);
+    } else {
       return $installed;
     }
-
   }
 
   function EventHandler()
@@ -593,20 +590,19 @@ class agInstall
     if ($this->getStep() == 3) {
 //on our first pass, these values won't exist (or if someone has returned with no POST
       $current = $this->getCurrent();
-      if($_POST['db_host']){
-      $db_params = array(
-        'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name']), // ilya 2010-07-21 15:16:58
-  //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
-        'username' => $_POST['db_user'],
-        'password' => $_POST['db_pass']);
-      $this->setConfig('DB_SERVER', $_POST['db_host']);
-      $this->setConfig('DB_DATABASE', $_POST['db_name']);
-      $this->setConfig('DB_USER', $_POST['db_user']);
-      $this->setConfig('DB_PASSWORD', $_POST['db_pass']);
-      $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
-      $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
-      }
-      else{
+      if ($_POST['db_host']) {
+        $db_params = array(
+          'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name']), // ilya 2010-07-21 15:16:58
+          //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+          'username' => $_POST['db_user'],
+          'password' => $_POST['db_pass']);
+        $this->setConfig('DB_SERVER', $_POST['db_host']);
+        $this->setConfig('DB_DATABASE', $_POST['db_name']);
+        $this->setConfig('DB_USER', $_POST['db_user']);
+        $this->setConfig('DB_PASSWORD', $_POST['db_pass']);
+        $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
+        $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
+      } else {
         $db_params = $current[0];
         $config_array = $current[1];
       }
@@ -665,7 +661,7 @@ class agInstall
       }
     }
 //STEP FINISH
-    if (isset($_REQUEST['finish'])) {       //isset($_REQUEST['Next'][$this->getStep()]
+    if (isset($_REQUEST['Finish'])) {       //isset($_REQUEST['Next'][$this->getStep()]
 //$this->doNext();
       $sudo = $this->getCurrent();
       $sudoer = $sudo[1]['sudo']['super_user']; //get username and password from config.yml, should be cleaner.
