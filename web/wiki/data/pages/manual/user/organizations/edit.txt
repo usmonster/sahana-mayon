@@ -11,8 +11,8 @@ On the edit screen you can update the Name and Description information, much lik
 
 ====== Continue ======
 
-[[manual:user:organizations:review|{{ :manual:user:next.png|}}]] 
-[[manual:user:organizations:list|{{:manual:user:previous.png?135 }}]]
+[[manual:user:organizations:list|{{:manual:user:previous.jpg?135|List Organizations }}]]
+[[manual:user:organizations:review|{{ :manual:user:next.jpg?135|Review}}]] 
 
 ===== Jump to Another Step =====
 

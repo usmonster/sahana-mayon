@@ -1,3 +1,4 @@
 ====== Introduction To Sahana Agasti ======
 
 <<This is a placeholder for an introduction.>>
+{{ :manual:user:org_jump_2.jpg?200|Organization Management}}

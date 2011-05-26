@@ -6,7 +6,8 @@
 
 Because a scenario is used to plan staff and facility resource deployment it's important that you have added your staff and facilities to Sahana Agasti before planning a Scenario.  Also, though not required, Organization information can be helpful if there are city or non-profit agencies that typically aid with your emergency response.
 
-**If you have not entered staff and facility details to Agasti, click the links to do so now before continuing with the Scenario Creator.**
+**If you have not entered staff and facility details to Agasti, click the links in Sahana Agasti to do so now before continuing with the Scenario Creator.**
+You can use the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-Through]] or [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]] as a guide.
 
 ===== Walk-Through =====
 

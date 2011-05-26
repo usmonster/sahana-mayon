@@ -24,8 +24,8 @@ In the form for a New Organization, add the name of the organization and a brief
 After entering the information, click "Save and Continue".  The information will save and the page will refresh.  After the information saves, click "Back to List" to be taken to the Organization list.
 ====== Continue ======
 
-[[manual:user:organizations:list|{{ :manual:user:next.png|}}]] 
-[[manual:user:organizations:walkthrough|{{:manual:user:previous.png?135 }}]]
+[[manual:user:organizations:walkthrough|{{:manual:user:previous.jpg?135|Introduction }}]]
+[[manual:user:organizations:list|{{ :manual:user:next.jpg?135|List Organizations}}]] 
 
 ===== Jump to Another Step =====
 

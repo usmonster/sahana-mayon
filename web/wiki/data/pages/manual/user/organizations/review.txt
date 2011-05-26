@@ -9,8 +9,8 @@ In this walk-through we've reviewed how Organizations are used in Agasti and how
 
 Continue adding Organizations to Sahana Agasti until any government departments or NGOs you'll want available have been entered.  When the Organizations have been entered, continue on to [[manual:user:staff|Staff Management]].
 
+[[manual:user:Organizations:edit|{{:manual:user:previous.jpg?135|Editing Organizations }}]]
 [[manual:user:staff:staff_creation_walkthrough|{{ :manual:user:organizations:staff_jump.png?150|Staff Management}}]]
-[[manual:user:Organizations:edit|{{:manual:user:previous.png?135|Editing Organizations }}]]
 
 ===== Jump to Another Step =====
 

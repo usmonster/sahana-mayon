@@ -13,8 +13,8 @@ Next we'll be editing existing organization.  Click the ID number to view that o
 
 ====== Continue ======
 
-[[manual:user:organizations:edit|{{ :manual:user:next.png|}}]] 
-[[manual:user:organizations:new|{{:manual:user:previous.png?135 }}]]
+[[manual:user:organizations:new|{{:manual:user:previous.png?135|Create New Organization }}]]
+[[manual:user:organizations:edit|{{ :manual:user:next.jpg?135|Edit Existing Organization}}]] 
 
 ===== Jump to Another Step =====
 
