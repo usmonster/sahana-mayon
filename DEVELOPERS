@@ -3,7 +3,7 @@ Emergency Management Software
 
 INFORMATION FOR DEVELOPERS
 
-Updated: 2011-05-17
+Updated: 2011-05-26
 
 GETTING STARTED
 ===============
@@ -56,6 +56,25 @@ SYSTEM CONFIGURATION
 Configure
 Test
 Install
+
+[...]
+
+* NOTES: The install script by default only installs the standard data for the
+  application to operate. Sample data are provided in [AG_ROOT]/data/samples. To
+  execute both standard and sample data, modify the script
+  [AG_ROOT]/web/install.inc.php by replacing the line
+
+     Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
+
+  with the following three lines
+
+      $dataDirectories = array(sfConfig::get('sf_data_dir') . '/fixtures',
+                               sfConfig::get('sf_data_dir') . '/samples');
+      Doctrine_Core::loadData($dataDirectories, false);
+
+       
+  in the doInstall method; otherwise, use the developer tool, clean-project.sh.
+
 [...]
 >>
 

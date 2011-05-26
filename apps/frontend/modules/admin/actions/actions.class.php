@@ -33,8 +33,7 @@ class adminActions extends agActions
     $foo = PluginagStaffResource::disableAllStaff();
     $this->redirect('admin/index');
   }
-  
-  
+
   /** Pacman is the basic shell for package management, it is currently NOT STABLE
    *
    * @param sfWebRequest $request is what the user is asking of the server
@@ -63,7 +62,9 @@ class adminActions extends agActions
    */
   public function executeGlobals(sfWebRequest $request)
   {
-    if ($ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(array($request->getParameter('param')))) {
+    $ag_global_param = Doctrine_Core::getTable('agGlobalParam')
+            ->find(array($request->getParameter('param')));
+    if (isset($ag_global_param)) {
       $this->paramform = new agGlobalParamForm($ag_global_param);
     } else {
       $this->paramform = new agGlobalParamForm();
@@ -72,7 +73,7 @@ class adminActions extends agActions
             ->createQuery('a')
             ->execute();
 
-    if ($request->getParameter('delete')) {
+    if ($request->hasParameter('delete')) {
       //$request->checkCSRFProtection();
 
       $this->forward404Unless(
@@ -86,12 +87,11 @@ class adminActions extends agActions
       $this->redirect('admin/globals');
     }
 
-    if ($request->getParameter('update')) {
+    if ($request->hasParameter('update') /* && $request->hasParameter('ag_global_param') */) {
       $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
       //$this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
       //are we editing or creating a new param
-      $values = $request->getParameter('ag_global_param');
-      $this->processParam($values, $this->paramform);
+      $this->processParam($request, $this->paramform);
     }
   }
 
@@ -317,7 +317,7 @@ class adminActions extends agActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_account = $form->save();
-      if ($request->getParameter('Continue')) {
+      if ($request->hasParameter('Continue')) {
         /** @todo pass the previously created username to the new template for verification */
         $this->redirect('admin/new');
       } else {
@@ -333,15 +333,15 @@ class adminActions extends agActions
    * @param sfWebRequest $request
    * @param sfForm $paramform the form to be processed
    */
-  protected function processParam($values, sfForm $paramform)
+  protected function processParam(sfWebRequest $request, sfForm $paramform)
   {
-    if($values['id'] != null) {
+    $values = $request->getParameter('ag_global_param');
+    if (isset($values['id'])) {
       $param = agDoctrineQuery::create()
-                 ->select()
-                 ->from('agGlobalParam')
-                 ->where('id = ?', $values['id'])
-                 ->fetchOne();
-      
+              ->select()
+              ->from('agGlobalParam')
+              ->where('id = ?', $values['id'])
+              ->fetchOne();
     } else {
       $param = new agGlobalParam();
     }
