@@ -909,10 +909,10 @@ class agPersonForm extends BaseagPersonForm
     }
   }
 
-  /**   * **************************************************************************
+  /*****************************************************************************
    * Saves data in an embedded language form.
    *
-   * *************************************************************************** */
+   *****************************************************************************/
   public function saveLanguageForm($form, $joinId)
   {
     if ($form instanceof agEmbeddedAgPersonMjAgLanguageForm) {
@@ -937,10 +937,8 @@ class agPersonForm extends BaseagPersonForm
           }
           $joinId = $form->getObject()->id;
           $form->updateObject($form->getDefaults());
-//          unset($forms[$key]);
         } else {
           //If it didn't change, just unset it and be done w/ it.
-//          unset($forms[$key]);
           $joinId = (isset($form->getObject()->id)) ? $form->getObject()->id : null;
           ////Need this for the agEmbeddedAgPersonLanguageCompetencyForm section.
         }

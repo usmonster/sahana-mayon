@@ -1,33 +1,139 @@
-// This main document ready function determines which other functions will be needed by the current
-// page. Determined by the presence of relevant DOM elements.
+/***************************************************************************************************
+* Initializer function. Calls all of the initialize functions to determine which functions will
+* be used on the page.
+***************************************************************************************************/
+$(document).ready(function initialize(){
+  initEqualizeHeight();
+  initSortableTables();
+  initVerticalTabs();
+  initCheckBoxToggling();
+  initReveal();
+  initCollapseAll();
+  initExpandAll();
+  initExpand();
+  initTextToForm();
+});
 
-// Start Initializer
-$(document).ready(function() {
+/** Start Initializer Section *********************************************************************/
 
-  //Used in Respond Landing page for Verticaltabs
-  var verticalTab = $('#textExample');
-  if(verticalTab.length > 0)
-  {
-    $("#textExample").verticaltabs();
+/***************************************************************************************************
+* Initializes the textToForm(), configSubmitTextToForm(), and submitTextToForm() functions. Used on
+* event/[event_name]/listgroups.
+***************************************************************************************************/
+function initTextToForm() {
+  var ttfElement = $('.textToForm');
+  if(ttfElement.length) {
+    textToForm();
+    configSubmitTextToForm();
+    submitTextToForm();
   }
+}
 
-    
-  // Used in scenario/resourcetypes
+/***************************************************************************************************
+* Initializes the equalizeHeight() function. Used on scenario/[scenario_id]/resourcetypes.
+***************************************************************************************************/
+function initEqualizeHeight() {
   var containerElement = $('.inlineListWrapper');
-  if(containerElement.length > 0) {
-    containerElement.each(function() {
-      equalizeHeight($(this))
-    });
+  if(containerElement.length) {
+    equalizeHeight(containerElement);
   }
-
-  // Used in scenario/fgroup
+}
+/***************************************************************************************************
+* Initializes the buildSortList(), countSorts(), and sortSlide() functions. Used on
+* scenario/[scenario_id]/fgroup.
+***************************************************************************************************/
+function initSortableTables() {
   var bucketHolder = $('.bucketHolder');
-  if(bucketHolder.length > 0) {
+  if(bucketHolder.length) {
     buildSortList();
     countSorts('.count');
     sortSlide();
   }
+}
+/***************************************************************************************************
+* Initializes the verticalTabs() function. Used on /respond. This should be removed at some point
+* as there is an overabundance of code behind this that does nothing but create extaneous UI elements
+* that don't fit with the rest of the applications overall UI design.
+***************************************************************************************************/
+function initVerticalTabs() {
+  var verticalTab = $('#textExample');
+  if(verticalTab.length)
+  {
+    $("#textExample").verticaltabs();
+  }
+}
+/***************************************************************************************************
+* Initializes the checkToggle(), and checkAll() functions. Used on scenario/[scenario_id]/fgroup.
+***************************************************************************************************/
+function initCheckBoxToggling() {
+  var checkAllInit = $('#checkAll');
+  if(checkAllInit.length) {
+    checkAll();
+  }
 
+  var checkToggleInit = $('.checkToggle');
+  if(checkToggleInit.length) {
+    checkToggle();
+  }
+}
+/***************************************************************************************************
+* Initializes the reveal() function. Used on scenario/[scenario_id]/fgroup.
+***************************************************************************************************/
+function initReveal() {
+  var revealerInit = $('#revealer');
+  if(revealerInit.length) {
+    reveal();
+  }
+}
+/***************************************************************************************************
+* Initializes the expandAll() function. Used on event/[event_name]/listgroups.
+***************************************************************************************************/
+function initExpand() {
+  var expandInit = $('.expander');
+  if(expandInit.length) {
+    expand();
+  }
+}
+/***************************************************************************************************
+* Initializes the expandAll() function. Used on event/[event_name]/listgroups.
+***************************************************************************************************/
+function initExpandAll() {
+  var expandAllInit = $('.expandAll');
+  if(expandAllInit.length) {
+    expandAll();
+  }
+}
+/***************************************************************************************************
+* Initializes the expandAll() function. Used on event/[event_name]/listgroups.
+***************************************************************************************************/
+function initCollapseAll() {
+  var collapseAllInit = $('.collapseAll');
+  if(collapseAllInit.length) {
+    collapseAll();
+  }
+}
+/** End Initializer Section ***********************************************************************/
+
+/***************************************************************************************************
+* reveal() reveals whatever content is within #revealable.
+***************************************************************************************************/
+function reveal(revealer) {
+  $('#reveal').click(function() {
+    var pos = $(revealer).offset();
+    var height = $(revealer).height();
+
+    $("#revealable").css( {
+      "left": pos.left + "px",
+      "top":(pos.top + height) + "px"
+    } );
+
+    $("#revealable").fadeToggle();
+    $(revealer).html(pointerCheck($(revealer).html()));
+    return false;
+  });
+}
+
+$(document).ready(function() {
   // Used in scenario/staffresources
   var toggleGroup = $('.toggleGroup');
   if(toggleGroup.length > 0) {
@@ -111,7 +217,6 @@ $(document).ready(function() {
         var elementNumberIndex = elementId.search('[0-9]');
         var elementNumber = elementId.substr(elementNumberIndex);
         var elementName = elementId.substr(0,elementNumberIndex);
-        //var storedElement = $(this).prev(':input:hidden');
         var storedField = $(this).prev().attr('id');
         var storedValue = $(this).prev().val();
       
@@ -121,10 +226,7 @@ $(document).ready(function() {
         else{
           addSlider($(this), elementNumber, elementName, storedValue, storedField, ttLabels, 30);  
         }
-      
       });
-
-
       return false;
     });
 
@@ -187,67 +289,48 @@ $(document).ready(function() {
       return false;
     })
   }
-  ///////////////////////////////////////////////////////
+  
 
   var dateOfBirth = $('#dob');
   if(dateOfBirth.length > 0) {
     createDatePicker();
   }
-
-  var checkAllInit = $('#checkAll');
-  if(checkAllInit.length > 0) {
-    checkAll();
-  }
-
-  var checkToggleInit = $('.checkToggle');
-  if(checkToggleInit.length > 0) {
-    checkToggle();
-  }
-  
+ 
   var eventWatcher = $('#eventWatcher');
   if(eventWatcher.length > 0) {
     
     //$(eventWatcher).html(getActiveEvents($('#urlHolder').attr(href)));
     
   }
+});
 
 
+/***************************************************************************************************
+* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.
+***************************************************************************************************/
+function checkAll() {
+  $('#checkAll').live('click', function () {
+    var check = this.checked;
+    $('.checkBoxContainer').find('.checkToggle').each(function() {
+      this.checked = check;
+      $(this).trigger('change');
+    });
   });
-  // End Initializer
-
-
-  /**
-   * This function is used to check or uncheck a series of checkboxes.
-   **/
-
-  //$(document).ready(function(){
-  // Checking the checkbox w/ id checkAll will check all boxes w/ class chekToggle
-  // unchecking checkAll will uncheck all checkToggles.
-
-  function checkAll() {
-    $('#checkAll').live('click', function () {
-      var check = this.checked;
-      $('.checkBoxContainer').find('.checkToggle').each(function() {
-        this.checked = check;
-        $(this).trigger('change');
-      });
-    });
-  }
-  // This unsets the check in checkAll if one of the checkToggles are unchecked.
-  // or it will set the check on checkAll if all the checkToggles have been checked
-  // individually.
-  function checkToggle() {
-    $('.checkToggle').live('change', function(){
-      var a = $('.checkToggle').length;
-      var b = $('.checkToggle:checked').length;
-      if($('.checkToggle').length == $('.checkToggle:checked').length) {
-        $('#checkAll').attr('checked', 'checked');
-      } else {
-        $("#checkAll").removeAttr('checked');
-      }
-    });
-  }
-  //});
+}
+/***************************************************************************************************
+* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.
+***************************************************************************************************/
+function checkToggle() {
+  $('.checkToggle').live('change', function(){
+    var a = $('.checkToggle').length;
+    var b = $('.checkToggle:checked').length;
+    if($('.checkToggle').length == $('.checkToggle:checked').length) {
+      $('#checkAll').attr('checked', 'checked');
+    } else {
+      $("#checkAll").removeAttr('checked');
+    }
+  });
+}
 
   $(document).ready(function() {
     $('.searchParams .checkToggle').live('change', function() {
@@ -259,124 +342,140 @@ $(document).ready(function() {
     });
   });
 
-  $(document).ready(function() {
-    $('.expandAll').live('click', function() {
-      $('.expander').each(function(){
-        if($('#expandable_' + $(this).attr('id')).children().length == 0) {
-          $(this).click();
-        }
-      });
-      return false;
-    });
-  });
-
-  $(document).ready(function() {
-    $('.collapseAll').live('click', function() {
-      $('.expander').each(function(){
-        if($('#expandable_' + $(this).attr('id')).children().length != 0) {
-          $(this).click();
-        }
-      });
-      return false;
-    });
-  });
-
-  $(document).ready(function() {
-    $('.expander').click(function() {
-      var expandToggle = '#expandable_' + $(this).attr('id');
-      if($(expandToggle).children().length == 0) {
-        $(expandToggle).load($(this).attr('href'), function() {
-          $(expandToggle).slideToggle();
-        });
-      } else {
-        $(expandToggle).slideToggle(function() {
-          $(expandToggle).empty();
-        });
-      }
-      $(this).html(pointerCheck($(this).html()));
-      return false;
-    });
-  });
-
-  $(document).ready(function() {
-    $('.textToForm').live('click', function() {
-      var passId = '#' + $(this).attr('id');
-      var $poster = $(this);
-      $.post($(this).attr('href'), {
-        type: $(this).attr('name'), 
-        current: $(this).html(), 
-        id: $(this).attr('id')
-      }, function(data) {
-        $(passId).parent().append(data);
-        $poster.attr('id', 'poster_' + $poster.attr('id'));
-        $poster.hide();
-        $(passId + ' > .submitTextToForm').focus();
-      });
-
-      return false;
-    });
-  });
-
-  $(document).ready(function() {
-    $('.includeAndAdd').live('click', function() {
-      var passId = '#' + $(this).attr('id');
-      var $poster = $(this);
-      $.post($(this).attr('href'), {
-        type: $(this).attr('name'), 
-        current: $(this).html(), 
-        id: $(this).attr('id')
-      }, function(data) {
-        $(passId).parent().append(data + '<br />' + $poster.parent().html());
-        $poster.attr('id', 'poster_' + $poster.attr('id'));
-        $poster.hide();
-        $(passId + ' > .submitTextToForm').focus();
-      });
-
-      return false;
-    });
-  });
-
-
-  // Disable submitting with enter for .submitTextToForm inputs.
-  $(document).ready(function() {
-    $('.submitTextToForm').live('keypress', function(evt) {
-      var charCode = evt.charCode || evt.keyCode;
-      if (charCode  == 13) {
-        return false;
+/***************************************************************************************************
+* expandAll() expands all collapsed elements that are subject to an .expander class.
+***************************************************************************************************/
+function expandAll() {
+  $('.expandAll').live('click', function() {
+    $('.expander').each(function(){
+      if($('#expandable_' + $(this).attr('id')).children().length == 0) {
+        $(this).click();
       }
     });
+    return false;
   });
-
-  $(document).ready(function() {
-    $('.submitTextToForm').live('blur submit', function() {
-      var $poster = $(this);
-
-      $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'), function(data) {
-        var returned = $.parseJSON(data);
-        if(returned.status == 'failure') {
-          $poster.css('color', 'red')
-          $poster.val(returned.refresh);
-        } else {
-          var idTransfer = $poster.parent().attr('id');
-          $poster.parent().remove();
-          $('#poster_' + idTransfer).html(returned.refresh);
-          $('#poster_' + idTransfer).show();
-          $('#poster_' + idTransfer).attr('id', idTransfer);
-        }
-      });
-      return false;
+}
+/***************************************************************************************************
+* collapseAll() collapses all expanded elements that are subject to an .expander class.
+***************************************************************************************************/
+function collapseAll() {
+  $('.collapseAll').live('click', function() {
+    $('.expander').each(function(){
+      if($('#expandable_' + $(this).attr('id')).children().length != 0) {
+        $(this).click();
+      }
     });
+    return false;
   });
-
-  function pointerCheck(pointer) {
-    if(pointer == (String.fromCharCode(9654))) {
-      return '&#9660;';
-    } else if(pointer == (String.fromCharCode(9660))) {
-      return '&#9654;';
+}
+/***************************************************************************************************
+* expand() expands elements that are subject to an .expander class.
+***************************************************************************************************/
+function expand() {
+  $('.expander').click(function() {
+    var expandToggle = '#expandable_' + $(this).attr('id');
+    if($(expandToggle).children().length == 0) {
+      $(expandToggle).load($(this).attr('href'), function() {
+        $(expandToggle).slideToggle();
+      });
     } else {
-      return null;
+      $(expandToggle).slideToggle(function() {
+        $(expandToggle).empty();
+      });
     }
+    $(this).html(pointerCheck($(this).html()));
+    return false;
+  });
+}
+/***************************************************************************************************
+* textToForm() converts an anchor to a form populated with the anchor's value.
+***************************************************************************************************/
+function textToForm() {
+  $('.textToForm').live('click', function() {
+    var passId = '#' + $(this).attr('id');
+    var $poster = $(this);
+    $.post($(this).attr('href'), {
+      type: $(this).attr('name'), 
+      current: $(this).html(),
+      id: $(this).attr('id')
+    }, function(data) {
+      $(passId).parent().append(data);
+      $poster.attr('id', 'poster_' + $poster.attr('id'));
+      $poster.hide();
+      $(passId + ' > .submitTextToForm').focus();
+    });
+    return false;
+  });
+}
+/***************************************************************************************************
+* configSubmitTextToForm() disables submit from the keyboard on .submitTextToForm elements.
+***************************************************************************************************/
+function configSubmitTextToForm() {
+  $('.submitTextToForm').live('keypress', function(evt) {
+    var charCode = evt.charCode || evt.keyCode;
+    if (charCode  == 13) {
+      return false;
+    }
+  });
+}
+/***************************************************************************************************
+* submitTextToForm() submits .submitTextToForm forms and returns their value. Then the form reverts
+* to the original anchor.
+***************************************************************************************************/
+function submitTextToForm() {
+  $('.submitTextToForm').live('blur submit', function() {
+    var $poster = $(this);
+    $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'), function(data) {
+      var returned = $.parseJSON(data);
+      if(returned.status == 'failure') {
+        $poster.css('color', 'red')
+        $poster.val(returned.refresh);
+      } else {
+        var idTransfer = $poster.parent().attr('id');
+        $poster.parent().remove();
+        $('#poster_' + idTransfer).html(returned.refresh);
+        $('#poster_' + idTransfer).show();
+        $('#poster_' + idTransfer).attr('id', idTransfer);
+      }
+    });
+    return false;
+  });
+}
+
+$(document).ready(function() {
+  $('.includeAndAdd').live('click', function() {
+    var passId = '#' + $(this).attr('id');
+    var $poster = $(this);
+    $.post($(this).attr('href'), {
+      type: $(this).attr('name'),
+      current: $(this).html(),
+      id: $(this).attr('id')
+    }, function(data) {
+      $(passId).parent().append(data + '<br />' + $poster.parent().html());
+      $poster.attr('id', 'poster_' + $poster.attr('id'));
+      $poster.hide();
+      $(passId + ' > .submitTextToForm').focus();
+    });
+
+    return false;
+  });
+});
+
+
+/***************************************************************************************************
+* pointerCheck is called by a number of other functions to check the state of an arrow used for
+* expanding or showing UI elements in order to set the pointer to the correct value after expansion,
+* collapse, revealing or hiding.
+***************************************************************************************************/
+function pointerCheck(pointer) {
+  if(pointer == (String.fromCharCode(9654))) {
+    return '&#9660;';
+  } else if(pointer == (String.fromCharCode(9660))) {
+    return '&#9654;';
+  } else {
+    return null;
   }
+}
 
   $(document).ready(function() {
     $("ul.stepperList li").live('mouseover',function(){
@@ -482,16 +581,20 @@ $(document).ready(function() {
 
     addLabels(sComponent,sliderOptions);
   }
-                   
-  function equalizeHeight(containerElement) {
-    var maxHeight = 0;
 
-    containerElement.children('div.inlineLists').each(function(){
-      maxHeight = Math.max(maxHeight, $(this).height());
-    });
+/***************************************************************************************************
+* equalizeHeight() sets two div elements with the .inlineLists class to the height of whichever is
+* taller.
+***************************************************************************************************/
+function equalizeHeight(containerElement) {
+  var maxHeight = 0;
 
-    containerElement.children('div.inlineLists').height(maxHeight);
-  }
+  containerElement.children('div.inlineLists').each(function(){
+    maxHeight = Math.max(maxHeight, $(this).height());
+  });
+
+  containerElement.children('div.inlineLists').height(maxHeight);
+}
 
   /**
    * buildTooltip creates a jQuery UI modal dialog window to contain the tooltip information.
@@ -638,19 +741,7 @@ $(document).ready(function() {
     })
   }
 
-  function reveal (revealer) {
-    var pos = $(revealer).offset();
-    var height = $(revealer).height();
 
-    $("#revealable").css( {
-      "left": pos.left + "px", 
-      "top":(pos.top + height) + "px"
-    } );
-
-    $("#revealable").fadeToggle();
-    $(revealer).html(pointerCheck($(revealer).html()));
-    return false;
-  }
 
   function reloadGroup (reloader) {
     $.post(
