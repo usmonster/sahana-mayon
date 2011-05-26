@@ -3,6 +3,7 @@ config/config.yml
 config/databases.yml
 data/search/**
 data/sql/schema.sql
+data/uploads/**
 cache/**
 log/**
 web/wiki/conf/users.auth.php
