@@ -54,9 +54,9 @@ Apache
 
   $ sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/search/ \
       data/sql/ data/uploads/ web/wiki/conf/ web/wiki/data/
-  $ chmod -cR g+wr config/ apps/*/config/ data/search/ data/sql/ data/uploads/ \
+  $ sudo chmod -cR g+wr config/ apps/*/config/ data/search/ data/sql/ data/uploads/ \
       web/wiki/conf/ web/wiki/data/
-  $ ./symfony project:permissions
+  $ sudo ./symfony project:permissions
 
   * NOTE: Replace WEB_GROUP with the group associated with the Apache user, e.g.
     www-data or apache.
@@ -224,6 +224,23 @@ After you have configured your system, navigate to the install page for your
 Agasti instance, e.g.:
 
   http://localhost/agasti/install.php
+
+  * NOTES: The install script by default only installs the standard 
+    data for the application to operate.  Sample data are provided in 
+    [AG_ROOT]/data/samples.  To execute both standard and sample data,
+    modify the script [AG_ROOT]/web/install.inc.php
+    by replacing the line
+
+       Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
+
+    with the following three lines
+
+        $dataDirectories = array(sfConfig::get('sf_data_dir') . '/fixtures',
+                                 sfConfig::get('sf_data_dir') . '/samples');
+        Doctrine_Core::loadData($dataDirectories, false);
+
+         
+    in the doInstall method.
 
 Follow the instructions on each screen, making modifications to your system in
 response to any reported misconfigurations and entering appropriate information
