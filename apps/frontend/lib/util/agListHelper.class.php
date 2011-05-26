@@ -9,7 +9,7 @@ class agListHelper
                                        $sort = null, $order = null, $limit = null, $offset = null)
   {
 
-    $newquery = PluginagStaffResource::getStaffResourceQuery();
+    $newquery = agStaffResource::getStaffResourceQuery();
     $headers = $newquery[0];
     $query = $newquery[1];
 

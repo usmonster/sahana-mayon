@@ -30,7 +30,7 @@ class adminActions extends agActions
    */
   public function executeDisablestaff(sfWebRequest $request)
   {
-    $foo = PluginagStaffResource::disableAllStaff();
+    $foo = agStaffResource::disableAllStaff();
     $this->redirect('admin/index');
   }
 
