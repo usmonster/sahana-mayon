@@ -38,7 +38,7 @@ $PROJECT_ROOT/symfony cc
 # instead:
 
 # rotates the logs
-$PROJECT_ROOT/symfony log:rotate --period=1 --history=8
+$PROJECT_ROOT/symfony log:rotate --period=1 --history=8 frontend all
 
 # removes search index files to avoid pollution from previous installs
 sudo rm -rf $PROJECT_ROOT/data/search/*
