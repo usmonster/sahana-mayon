@@ -335,20 +335,20 @@ class adminActions extends agActions
    */
   protected function processParam($values, sfForm $paramform)
   {
-    $param = agDoctrineQuery::create()
-               ->select()
-               ->from('agGlobalParam')
-               ->where('id = ?', $values['id'])
-               ->fetchOne();
+    if($values['id'] != null) {
+      $param = agDoctrineQuery::create()
+                 ->select()
+                 ->from('agGlobalParam')
+                 ->where('id = ?', $values['id'])
+                 ->fetchOne();
+      
+    } else {
+      $param = new agGlobalParam();
+    }
     $param->synchronizeWithArray($values);
-//    $paramform->bind($request->getParameter($paramform->getName()), $request->getFiles($paramform->getName()));
+
     $param->save();
     $this->redirect('admin/globals');
-//    if ($paramform->isValid()) {
-//      $paramform->save();
-//
-//
-//    }
   }
 
 }
