@@ -3,7 +3,7 @@
   use_javascript('jquery.ui.custom.js');
   use_stylesheet('jquery/jquery.ui.custom.css');
   use_stylesheet('jquery/mayon.jquery.ui.css');
-?>
+  ?>
 <h2>Staff Resource Pool: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2>
 <?php
 include_partial('wizard', array('wizardDiv' => $wizardDiv));
@@ -72,6 +72,23 @@ deployment of staff based on the scale of the plan and response.</p>
         'staff_status' => array('title' => 'Status', 'sortable' => false),
       );
 
+$statusTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_list_resource_status&do=export_xhtmlbody';
+$orgTooltip = url_for('@wiki') . '/doku.php?id=tooltip:organization&do=export_xhtmlbody';
+$resourceTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody';
+
+$displayColumns = array(
+  'id' => array('title' => '', 'sortable' => false),
+  'fn' => array('title' => 'First Name', 'sortable' => true),
+  'ln' => array('title' => 'Last Name', 'sortable' => true),
+  'organization' => array('title' => 'Organization', 'sortable' => true, 'tooltip' => $orgTooltip),
+  'resource' => array('title' => 'Resource', 'sortable' => true, 'tooltip' => $resourceTooltip),
+  'phones' => array('title' => 'Phone', 'sortable' => false),
+  'emails' => array('title' => 'Email', 'sortable' => false),
+  'staff_status' => array('title' => 'Status', 'sortable' => false, 'tooltip' => $statusTooltip),
+);      
+      
+      
+      
 //pager comes in from the action
 
       $order = null;

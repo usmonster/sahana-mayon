@@ -458,8 +458,19 @@ class scenarioActions extends agActions
         $this->filterForm->setDefault($querypart['field'], $defaultValue[0]);
       }
     }
-//PREVIEW
-    if ($request->getParameter('Preview') ||
+
+   
+     if ($request->getParameter('Delete')) {
+//DELETE
+      $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
+      $searchQuery = $ag_staff_gen->getAgSearch();
+      //get the related lucene search
+      $ag_staff_gen->delete();
+      $searchQuery->delete();
+      $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
+    }
+//PREVIEW    
+    elseif ($request->getParameter('Preview') ||
         $request->getParameter('search_id')
         && !($request->getParameter('Continue'))) {
 
@@ -474,14 +485,6 @@ class scenarioActions extends agActions
       $this->pager->setResultArray($resultArray);
       $this->pager->setPage($this->getRequestParameter('page', 1));
       $this->pager->init();
-    } elseif ($request->getParameter('Delete')) {
-//DELETE
-      $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
-      $searchQuery = $ag_staff_gen->getAgSearch();
-      //get the related lucene search
-      $ag_staff_gen->delete();
-      $searchQuery->delete();
-      $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
     }
 //SAVE
     elseif ($request->getParameter('Save') || $request->getParameter('Continue')) { //otherwise, we're SAVING/UPDATING
@@ -498,14 +501,14 @@ class scenarioActions extends agActions
 
       if ($this->poolform->isValid()) {
         $ag_staff_pool = $this->poolform->saveEmbeddedForms();
-
-        agStaffGeneratorHelper::generateStaffPool($this->scenario_id);
+      }
+        sagStaffGeneratorHelper::generateStaffPool($this->scenario_id);
         if ($request->getParameter('Continue')) {
           $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
         } else {
           $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
         }
-      }
+      
     }
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario Staff Pool');
   }
