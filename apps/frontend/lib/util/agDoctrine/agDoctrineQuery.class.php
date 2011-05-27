@@ -16,12 +16,12 @@
 class agDoctrineQuery extends Doctrine_Query
 {
   // these constants map to the custom hydration methods provides in this project
-  const     HYDRATE_ASSOC_THREE_DIM = 'assoc_three_dim',
-            HYDRATE_ASSOC_TWO_DIM = 'assoc_two_dim',
-            HYDRATE_ASSOC_ONE_DIM = 'assoc_one_dim',
-            HYDRATE_KEY_VALUE_PAIR = 'key_value_pair',
-            HYDRATE_KEY_VALUE_ARRAY = 'key_value_array',
-            HYDRATE_SINGLE_VALUE_ARRAY = 'single_value_array';
+  const     HYDRATE_ASSOC_THREE_DIM = 'assoc_three_dim';
+  const     HYDRATE_ASSOC_TWO_DIM = 'assoc_two_dim';
+  const     HYDRATE_ASSOC_ONE_DIM = 'assoc_one_dim';
+  const     HYDRATE_KEY_VALUE_PAIR = 'key_value_pair';
+  const     HYDRATE_KEY_VALUE_ARRAY = 'key_value_array';
+  const     HYDRATE_SINGLE_VALUE_ARRAY = 'single_value_array';
 
   /**
    * Extends the existing whereIn method so that a negative clause (WHERE FALSE) is returned if

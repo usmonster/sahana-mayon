@@ -12,5 +12,16 @@
  */
 abstract class PluginagStaffAllocationStatus extends BaseagStaffAllocationStatus
 {
+  /**
+   * Method to return the event staff post-deployed status
+   */
+  public static function getEventStaffDeployedStatusId()
+  {
+    return agDoctrineQuery::create()
+      ->select('sas.id')
+        ->from('agStaffAllocationStatus sas')
+        ->where('sas.staff_allocation_status = ?', 'Committed')
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
 
 }

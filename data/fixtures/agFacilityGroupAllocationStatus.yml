@@ -1,6 +1,6 @@
 agFacilityGroupAllocationStatus:
   available:
-    facility_group_allocation_status: Available
+    facility_group_allocation_status: Allocatable
     allocatable: 1
     standby: 0
     active: 0
