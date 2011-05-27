@@ -4,19 +4,19 @@ agScenarioFacilityGroup:
     agScenario: hurricaneA
     scenario_facility_group: ScenA_UORC
     agFacilityGroupType: uorc
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   hurrA_G01:
     agScenario: hurricaneA
     scenario_facility_group: ScenA_G01
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: allocatable
     activation_sequence: 1
   hurrA_G02:
     agScenario: hurricaneA
     scenario_facility_group: ScenA_G02
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 2
   hurrA_G03:
     agScenario: hurricaneA
@@ -29,31 +29,31 @@ agScenarioFacilityGroup:
     agScenario: hurricaneB
     scenario_facility_group: ScenB_UORC
     agFacilityGroupType: uorc
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   hurrB_G01:
     agScenario: hurricaneB
     scenario_facility_group: ScenB_G01
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   hurrB_G02:
     agScenario: hurricaneB
     scenario_facility_group: ScenB_G02
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 2
   hurrB_G03:
     agScenario: hurricaneB
     scenario_facility_group: ScenB_G03
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 3
   hurrB_G04:
     agScenario: hurricaneB
     scenario_facility_group: ScenB_G04
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 3
   hurrB_G05:
     agScenario: hurricaneB
@@ -66,31 +66,31 @@ agScenarioFacilityGroup:
     agScenario: hurricaneC
     scenario_facility_group: ScenC_UORC
     agFacilityGroupType: uorc
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   hurrC_G01:
     agScenario: hurricaneC
     scenario_facility_group: ScenC_G01
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   hurrC_G02:
     agScenario: hurricaneC
     scenario_facility_group: ScenC_G02
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   hurrC_G03:
     agScenario: hurricaneC
     scenario_facility_group: ScenC_G03
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   hurrC_G04:
     agScenario: hurricaneC
     scenario_facility_group: ScenC_G04
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 3
   hurrC_G05:
     agScenario: hurricaneC
@@ -109,7 +109,7 @@ agScenarioFacilityGroup:
     agScenario: earthquake
     scenario_facility_group: Shelters01
     agFacilityGroupType: shelters
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   equake_G02:
     agScenario: earthquake
@@ -121,18 +121,18 @@ agScenarioFacilityGroup:
     agScenario: earthquake
     scenario_facility_group: Medical01
     agFacilityGroupType: shelters
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
 # plaque
   plague_G01:
     agScenario: plague
     scenario_facility_group: POD01
     agFacilityGroupType: pod
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   plague_G02:
     agScenario: plague
     scenario_facility_group: POD02
     agFacilityGroupType: pod
-    agFacilityGroupAllocationStatus: Allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 2

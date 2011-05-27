@@ -20,24 +20,48 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   const QUERY_SHIFTS = 'query_shifts';
 
 
-  protected $eventStaffDeployedStatusId,
-            $eventFacilityGroups = array();
+  protected $eventId,
+            $eventStaffDeployedStatusId,
+            $eventFacilityGroups = array(),
+            $addrGeoTypeId,
+            $shiftOffset;
 
   /**
    * @var agEventHandler An instance of agEventHandler
    */
   private   $eh;
 
-  public function __construct()
+  /**
+   * Method to return an instance of agEventStaffDeploymentHelper
+   * @param integer $eventId An event ID
+   * @return self An instance of agEventStaffDeploymentHelper
+   */
+  public static function getInstance($eventId)
+  {
+    $esdh = new self();
+    $esdh->__init($eventId);
+    return $esdh;
+  }
+
+  /**
+   * A method to act like this classes' own constructor
+   * @param integer $eventId An event ID
+   */
+  protected function __init($eventId)
   {
     // instantiate our event handler
     $this->eh = new agEventHandler();
 
-    // grab the new statusid we'll be applying to staff
-    $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
-
     // set our connections
     $this->setConnections();
+
+    // grab some global defaults
+    $this->addrGeoTypeId = agGeoType::getAddressGeoTypeId();
+    $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
+    $this->shiftOffset = agGlobal::getParam('shift_change_restriction');
+
+    // get our event facility groups loaded and ready to process
+    $this->getEventFacilityGroups();
   }
 
   /**
@@ -61,19 +85,22 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->_conn[self::CONN_WRITE] = Doctrine_Manager::connection($adapter, self::CONN_WRITE);
   }
 
-  public function getEventFacilityGroups($eventId)
+  public function processBatch($continue = TRUE)
   {
 
   }
 
-  protected static function _getEventFacilityGroups($eventId)
+  /**
+   * Method to query the database for event facility groups and set the class property.
+   */
+  protected function getEventFacilityGroups()
   {
     $q = agDoctrineQuery::create()
       ->select('efg.id')
         ->from('agEventFacilityGroup efg')
           ->innerJoin('efg.agEventFacilityGroupStatus efgs')
           ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
-        ->where('efg.event_id = ?', $eventId)
+        ->where('efg.event_id = ?', $this->eventId)
           ->andWhere('fgas.active = ?', TRUE)
         ->orderBy('efg.activation_sequence ASC');
 
@@ -90,44 +117,46 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->eventFacilityGroups = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
   }
 
-  protected function queryShifts($eventId)
+  protected function getFacGrpShifts($eventFacilityGroupId)
   {
-    // @todo add min start to facility activation
-    // @todo break apart into facgrps
-    // @todo figure out how many total people of each type are needed at a fac simultaneously
-    // @todo add sums of min/max and other shift-info
-    // @todo add max prio address geo
     // build our basic query
     $q = agDoctrineQuery::create()
-      ->select('efg.id')
-          ->addSelect('efr.id')
-          ->addSelect('es.id')
-        ->from('agEventFacilityGroup efg')
-          ->innerJoin('efg.agEventFacilityGroupStatus efgs')
-          ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
-          ->innerJoin('efg.agEventFacilityResource efr')
+      ->select('es.id')
+          ->addSelect('es.event_facility_resource_id')
+          ->addSelect('es.minimum_staff')
+          ->addSelect('es.maximum_staff')
+          ->addSelect('gc.latitude')
+          ->addSelect('gc.longitude')
+        ->from('agEventShift es')
+          ->innerJoin('es.agShiftStatus ss')
+          ->innerJoin('es.agEventFacilityResource efr')
           ->innerJoin('efr.agEventFacilityResourceActivationTime')
           ->innerJoin('efr.agEventFacilityResourceStatus efrs')
           ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
-          ->innerJoin('efr.agEventShift es')
-          ->innerJoin('es.agShiftStatus ss')
-        ->where('efg.event_id = ?')
-          ->andWhere('fgas.active = ?')
-          ->andWhere('fras.staffed = ?')
-          ->andWhere('ss.disabled = ?')
-        ->orderBy('efg.activation_sequence ASC')
-          ->addOrderBy('efr.activation_sequence ASC')
-          ->addOrderBy('es.staff_wave ASC');
+          ->innerJoin('efr.agFacilityResource fr')
+          ->innerJoin('fr.agFacilityResourceStatus frs')
+          ->innerJoin('fr.agFacility f')
+          ->innerJoin('f.agSite s')
+          ->innerJoin('s.agEntity e')
+          ->innerJoin('e.agEntityAddressContact eac')
+          ->innerJoin('eac.agAddress a')
+          ->innerJoin('a.agAddressGeo ag')
+          ->innerJoin('ag.agGeo g')
+          ->innerJoin('g.agGeoFeature gf')
+          ->innerJoin('gf.agGeoCoordinate gc')
+        ->where('fras.staffed = ?', TRUE)
+          ->andWhere('frs.is_available = ?', TRUE)
+          ->andWhere('ss.disabled = ?', FALSE)
+          ->andWhere('efr.event_facility_group_id = ?', $eventFacilityGroupId)
+          ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
+        ->orderBy('es.staff_wave ASC')
+          ->addOrderBy('efr.activation_sequence ASC');
+ 
+    // restrict ourselves only to allocatable shifts
+    $allocatableShifts = '(es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
+      ') <= CURRENT_TIMESTAMP';
+    $q->andWhere($allocatableShifts);
 
-    // ensure that we only get the most recent group status
-    $recentGroupStatus = 'EXISTS (' .
-      'SELECT sefgs.id ' .
-        'FROM agEventFacilityGroupStatus AS sefgs ' .
-        'WHERE sefgs.time_stamp <= CURRENT_TIMESTAMP ' .
-          'AND sefgs.event_facility_group_id = efgs.event_facility_group_id ' .
-        'HAVING MAX(sefgs.time_stamp) = efgs.time_stamp' .
-      ')';
-    $q->andWhere($recentGroupStatus);
 
     // ensure that we only get the most recent facility resource status
     $recentFacRscStatus = 'EXISTS (' .
@@ -139,14 +168,21 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       ')';
     $q->andWhere($recentFacRscStatus);
 
-    // set our indexed params
-    $params = array(TRUE, FALSE);
+    // just pick up the lowest priority facility address
+    $minFacAddr = 'EXISTS (' .
+      'SELECT seac.id ' .
+        'FROM agEntityAddressContact AS seac ' .
+        'WHERE seac.id = eac.id ' .
+        'HAVING MIN(seac.priority) = eac.priority' .
+      ')';
+    $q->andWhere($minFacAddr);
 
     // grab a connection
     $conn = $this->getConnection(self::CONN_READ);
 
-    // grab the sql query and pass it to pdo
+    // grab the query components and pass it to pdo
     $sql = $q->getSqlQuery();
+    $params = $q->getParams();
     $pdoStmt = $this->executePdoQuery($conn, $sql, $params, NULL, self::QUERY_SHIFTS);
     
     return $pdoStmt;
@@ -164,6 +200,6 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
   public function test()
   {
-    return $this->queryShifts(7);
+    return $this->eventFacilityGroups;
   }
 }

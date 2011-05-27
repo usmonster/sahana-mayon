@@ -119,14 +119,7 @@ class agAddressHelper extends agBulkRecordHelper
    */
   protected function _setDefaultAddressGeoType()
   {
-    $geoType = agGlobal::getParam($this->_globalDefaultAddressGeoType) ;
-    $geoTypeId = agDoctrineQuery::create()
-      ->select('gt.id')
-        ->from('agGeoType gt')
-        ->where('gt.geo_type = ?', $geoType)
-        ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
-
-    $this->_addressGeoTypeId = $geoTypeId ;
+    $this->_addressGeoTypeId = agGeoType::getAddressGeoTypeId() ;
   }
 
   /**

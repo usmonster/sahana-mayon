@@ -66,7 +66,7 @@ class agFooActions extends agActions
   {
 // <-------- CUT HERE -------->
     // this step is necessary to avoid index constraint
-    $dh = new agEventStaffDeploymentHelper();
+    $dh = agEventStaffDeploymentHelper::getInstance(6);
     $results = $dh->test();
     print_r($results) ;
 // <-------- CUT HERE -------->

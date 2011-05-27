@@ -38,7 +38,7 @@ abstract class agPdoHelper
   /**
    * This classes' constructor
    */
-  public function __construct()
+  protected function __construct()
   {
     // Sets a new connection.
     $this->setConnections();
