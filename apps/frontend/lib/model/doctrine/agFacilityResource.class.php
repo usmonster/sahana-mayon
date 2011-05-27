@@ -138,6 +138,7 @@ class agFacilityResource extends BaseagFacilityResource
           ->addSelect('s.id')
           ->addSelect('a.id')
           ->addSelect('f.facility_name')
+          ->addSelect('f.facility_code')
           ->addSelect('pc.phone_contact')
           ->addSelect('ec.email_contact')
           ->addSelect('frt.facility_resource_type_abbr')
@@ -184,7 +185,7 @@ class agFacilityResource extends BaseagFacilityResource
 
     $results = $q->getSqlQuery();
     #print_r($results);
-    return $results;
+    return $q;
   }
 
 }

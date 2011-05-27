@@ -451,7 +451,7 @@ class scenarioActions extends agActions
         $this->filterForm->setDefault($querypart['field'], $defaultValue[0]);
       }
     }
-
+//PREVIEW
     if ($request->getParameter('Preview') ||
         $request->getParameter('search_id')
         && !($request->getParameter('Continue'))) {

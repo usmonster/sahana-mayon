@@ -95,6 +95,13 @@ event_exportcontacts:
   url:    /event/:event/exportcontacts
   param:  { module: event, action: exportcontacts }
 
+api_event_exportfacilities:
+  url:    /event/:event/exportfacilities.:sf_format
+  param:  { module: event, action: exportfacilities, sf_format: html }
+  requirements:
+    sf_method: [get]
+    sf_format: (?:html|json)
+
 event_importreplies:
   url:    /event/:event/importreplies
   param:  { module: event, action: importreplies }

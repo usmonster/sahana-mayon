@@ -122,7 +122,7 @@ class agEventMigrationHelper
       $eventFacilityGroupStatus->save();
 
       $existingFacilityResources = self::migrateFacilityResources($scenFacGrp,
-                                                                  $eventFacilityGroup->id);
+                                                                  $eventFacilityGroup->id, $event_id);
 
       $eventFacilityGroup->free(TRUE);
       $eventFacilityGroupStatus->free(TRUE);
@@ -136,8 +136,16 @@ class agEventMigrationHelper
    * @param integer $eventFacilityResourceId the facility resource with shifts for migration
    * @return integer Count of shifts migrated from Scenario to Event
    */
-  public static function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id)
+  public static function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id,
+      $event_id)
   {
+    //get the event's zero hour for setting in facility resources with the proper conditions
+    $eventZeroHour =  agDoctrineQuery::create()
+        ->select('ae.zero_hour')
+        ->from('agEvent ae')
+        ->where('ae.id = ?', $event_id)
+        ->execute(array(),Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    
     $existingScenarioFacilityResources = $scenarioFacilityGroup->getAgScenarioFacilityResource();
     foreach ($existingScenarioFacilityResources as $scenFacRes) {
       $eventFacilityResource = new agEventFacilityResource();
@@ -152,6 +160,31 @@ class agEventMigrationHelper
           ->set('facility_resource_allocation_status_id',
                 $scenFacRes->facility_resource_allocation_status_id);
       $eventFacilityResourceStatus->save();
+
+      $staffedAllocationStatus = agDoctrineQuery::create()
+        ->select('afras.id')
+        ->from('agFacilityResourceAllocationStatus afras')
+        ->where('afras.staffed = ?', 1)
+        ->execute(array(),Doctrine_Core::HYDRATE_SCALAR);
+
+      $activeGroupAllocationStatus = agDoctrineQuery::create()
+        ->select('afgas.id')
+        ->from('agFacilityGroupAllocationStatus afgas')
+        ->where('afgas.active = ?', 1)
+        ->execute(array(),Doctrine_Core::HYDRATE_SCALAR);      
+      
+
+      //if the coniditions are met, set the activation time to the event zero hour.
+      if(in_array($staffedAllocationStatus,$scenFacRes->facility_resource_allocation_status_id)
+         && $scenarioFacilityGroup->getFacilityGroupAllocationStatus() ==  $activeGroupAllocationStatus)
+      {
+
+        $eventFacilityResourceActivationTime = new agEventFacilityResourceActivationTime();
+        $eventFacilityResourceActivationTime->set('event_facility_resource_id', $eventFacilityResource->id)
+          ->set('activation_time', $eventZeroHour);
+        $eventFacilityResourceActivationTime->save();
+        
+      }
 
       // Should the shifts be process as the facility resources get processed?
       // Another solution: create a temp table mapping the scenario to event facility resources?

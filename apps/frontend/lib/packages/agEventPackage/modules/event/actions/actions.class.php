@@ -174,10 +174,10 @@ class eventActions extends agActions
       // ...if not.
       $eventMeta = null;
     }
-
+      $this->metaForm = new PluginagEventDefForm($eventMeta);
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
       //if someone has posted, but is not creating an event from a scenario.
-      $this->metaForm = new PluginagEventDefForm($eventMeta);
+
       $this->metaForm->bind(
           $request->getParameter($this->metaForm->getName()),
                                  $request->getFiles($this->metaForm->getName())
@@ -247,13 +247,12 @@ class eventActions extends agActions
 
   public function executeExportfacilities(sfWebRequest $request)
   {
-      $this->setEventBasics();
+      $this->setEventBasics($request);
 
-      $event_facilities = agDoctrineQuery::create()->
-          select('*')->
-          from('agEventFacilityResource')
-          ->execute(array());
-
+      $event_facility_query = PluginagEventFacilityResource::getEventFacilityResourceQuery($this->event_id);
+        
+      $this->event_facility_resources = 
+        $event_facility_query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
   }
   
@@ -902,8 +901,18 @@ class eventActions extends agActions
       $this->event_description = 0;
     }
 
-
-
+    $this->event_facility_groups = agDoctrineQuery::create()
+        ->select('COUNT(efg.id)')
+        ->from('agEventFacilityGroup efg')
+        ->where('efg.event_id = ?', $this->event_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+     $this->event_facility_resources = agDoctrineQuery::create()
+        ->select('COUNT(efr.id)')
+        ->from('agEventFacilityResource efr')
+        ->leftJoin('agEventFacilityGroup efg')
+        ->where('efg.event_id = ?', $this->event_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
     //end p-code

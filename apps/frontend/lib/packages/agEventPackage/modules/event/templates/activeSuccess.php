@@ -67,7 +67,8 @@ if (isset($blackOutFacilities)) {
       <a class="buttonText" href="<?php echo url_for('event/listgroups?event=' . $urlEncodedEventName); ?>">Event Facility Management</a>
     </td>
     <td>
-      <div style="font-style:oblique">No statistical data is currently available.</div>
+      Facility Groups: <span class="highlightedText"><?php echo $event_facility_groups ?></span><br /> 
+      Facility Resources: <span class="highlightedText"><?php echo $event_facility_resources ?></span>
     </td>
   </tr>
   <tr>
