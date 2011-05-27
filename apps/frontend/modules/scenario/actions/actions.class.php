@@ -226,15 +226,7 @@ class scenarioActions extends agActions
             $subSubKey = $scenarioFacilityResource
             ->getAgFacilityResource()
                 ->getAgFacility()->facility_name;
-            $subSubKeyLabel = $scenarioFacilityResource
-            ->getAgFacilityResource()
-                ->getAgFacility()->facility_name . 
-                ': ' . ucwords($scenarioFacilityResource
-                    ->getAgFacilityResource()
-                    ->getAgFacilityResourceType()->facility_resource_type) . 
-                    ' (' . $scenarioFacilityResource
-                    ->getAgFacilityResource()
-                        ->getAgFacility()->facility_code . ')';
+
             
 //this existing check should be refactored to be more efficient
             $existing = agDoctrineQuery::create()
@@ -251,6 +243,15 @@ class scenarioActions extends agActions
               $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
                   new agEmbeddedAgFacilityStaffResourceForm();
             }
+            $facilityLabels[$subKey][$subSubKey] = $scenarioFacilityResource
+            ->getAgFacilityResource()
+                ->getAgFacility()->facility_name . 
+                ': ' . ucwords($scenarioFacilityResource
+                    ->getAgFacilityResource()
+                    ->getAgFacilityResourceType()->facility_resource_type) . 
+                    ' (' . $scenarioFacilityResource
+                    ->getAgFacilityResource()
+                        ->getAgFacility()->facility_code . ')';
             $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('scenario_facility_resource_id',
                                                                                           $scenarioFacilityResource->getId());
             $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('staff_resource_type_id',
@@ -262,7 +263,8 @@ class scenarioActions extends agActions
 
       $this->formsArray = $formsArray;
     }
-    $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray);
+    $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray,
+        $facilityLabels);
 
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario['scenario'] . ' Scenario');
   }

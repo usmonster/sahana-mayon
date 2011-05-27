@@ -20,15 +20,18 @@
 class agFacilityStaffResourceContainerForm extends sfForm
 {
 
-  public $formsArray;
+  private $formsArray;
+  private $facilityLabels;
 
-  /**
-   *
-   * @param integer $staff_gen_id an incoming staff generator id to construct the form
-   */
-  public function __construct($formsArray = null) //we should disallow null from coming in as we NEED an array of forms
+/**
+ *
+ * @param type $formsArray array of forms
+ * @param type $facilityLabels labels for the facility resource containers
+ */
+  public function __construct($formsArray = null, $facilityLabels = null) //we should disallow null from coming in as we NEED an array of forms
   {
     $this->formsArray = $formsArray;
+    $this->facilityLabels = $facilityLabels;
     parent::__construct(array(), array(), array());
   }
 
@@ -51,8 +54,8 @@ class agFacilityStaffResourceContainerForm extends sfForm
       $groupForm->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupFormDeco);
       $groupForm->getWidgetSchema()->setFormFormatterName('groupFormDeco');
       // More container forms to hold the staff requirement forms for each facility.
-      foreach ($facilityGroup as $resourceKey => $facilityResources) {
-        
+      foreach ($facilityGroup as $facilityResourceKey => $facilityResources) {
+        $facilityResourceLabel = $this->facilityLabels[$groupKey][$facilityResourceKey];
 //                    $subSubKeyLabel = $resourceKey
 //            ->getAgFacilityResource()
 //                ->getAgFacility()->facility_name . 
@@ -93,7 +96,7 @@ class agFacilityStaffResourceContainerForm extends sfForm
           $resourceForm->embedForm($staffKey, $staffResourceForm);
         }
         
-        $groupForm->embedForm($facilityResourceKey, $resourceForm);
+        $groupForm->embedForm($facilityResourceLabel, $resourceForm);
       }
       $this->embedForm($groupKey, $groupForm);
     }
