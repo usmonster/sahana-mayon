@@ -185,9 +185,7 @@ class agStaffActions extends agActions
 //                  namejoin.agPersonName name,
 //                  name.agPersonNameType nametype'
 //    );
-
     //$this->pager = new sfDoctrinePager('agStaff', 1);
-
     //if we have exceucted a search
 //    if ($request['query']) {
 //      $lqResults = Doctrine_core::getTable('agStaff')->getForLuceneQuery($request['query']);
@@ -231,13 +229,13 @@ class agStaffActions extends agActions
 //      $this->pager->init();
 //    }
 
-    
-        $this->forward404Unless(
+
+    $this->forward404Unless(
         $this->agStaff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
         sprintf('Object ag_staff does not exist (%s).',
             $request->getParameter('id'))
     );
-    
+
     $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')
             ->createQuery('b')
             ->execute();
@@ -254,7 +252,7 @@ class agStaffActions extends agActions
             ->createQuery('f')
             ->execute();
 
-    
+
     //$this->agStaff = $this->pager->getResults()->getFirst();
     $agPerson = $this->agStaff->getAgPerson();
     $this->addressArray = $agPerson->getEntityAddressByType(
@@ -747,7 +745,9 @@ class agStaffActions extends agActions
     //$this->getContext()->set($abortFlagId, TRUE);
     //TODO: get import data directory root info from global param
     $importDataRoot = sfConfig::get('sf_upload_dir');
-    $statusFile = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'status.yml';
+    $statusFile = $importDataRoot .
+        DIRECTORY_SEPARATOR . $this->moduleName .
+        DIRECTORY_SEPARATOR . 'status.yml';
     if (is_writable($statusFile)) {
       $status = sfYaml::load($statusFile);
       $status[$abortFlagId] = TRUE;

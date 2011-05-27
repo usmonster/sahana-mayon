@@ -19,7 +19,7 @@ abstract class BaseagFacilityResourceForm extends BaseFormDoctrine
       'facility_id'                     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacility'), 'add_empty' => false)),
       'facility_resource_type_id'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'), 'add_empty' => false)),
       'facility_resource_status_id'     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceStatus'), 'add_empty' => false)),
-      'capacity'                        => new sfWidgetFormInputText,
+      'capacity'                        => new sfWidgetFormInputText(),
       'created_at'                      => new sfWidgetFormDateTime(),
       'updated_at'                      => new sfWidgetFormDateTime(),
       'ag_event_facility_group_list'    => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agEventFacilityGroup')),

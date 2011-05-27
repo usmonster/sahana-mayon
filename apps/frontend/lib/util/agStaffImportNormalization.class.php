@@ -843,12 +843,14 @@ class agStaffImportNormalization extends agImportNormalization
             ->addSelect('o.id')
           ->from('agOrganization o')
           ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $organizationIds = array_change_key_case($organizationIds, CASE_LOWER);
 
     $stfRscTypeIds = agDoctrineQuery::create()
         ->select('srt.staff_resource_type')
             ->addSelect('srt.id')
           ->from('agStaffResourceType srt')
           ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $stfRscTypeIds = array_change_key_case($stfRscTypeIds, CASE_LOWER);
 
     $stfRscStatusIds = agDoctrineQuery::create()
         ->select('srs.staff_resource_status')
@@ -903,10 +905,10 @@ class agStaffImportNormalization extends agImportNormalization
         $rawData = $this->importData[$staffIds[$stfId][$stfRscType]]['_rawData'];
 
         // Check if import organization is valid.
-        if (!array_key_exists($rawData['organization'], $organizationIds))
+        if (!array_key_exists(strtolower($rawData['organization']), $organizationIds))
         {
           $errMsg = sprintf('Invalid organization %s from record id %d.',
-                               $rawData['resource_type'], $staffIds[$stfId]);
+                               $rawData['organization'], $staffIds[$stfId]);
 
           // Capture error in error log.
           $this->eh->logErr($errMsg);
@@ -922,7 +924,7 @@ class agStaffImportNormalization extends agImportNormalization
         }
 
         // Check if import staff resource status is valid.
-        if (!array_key_exists($rawData['resource_status'], $stfRscStatusIds))
+        if (!array_key_exists(strtolower($rawData['resource_status']), $stfRscStatusIds))
         {
           $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
                                $rawData['resource_status'], $staffIds[$stfId]);
@@ -940,9 +942,9 @@ class agStaffImportNormalization extends agImportNormalization
           }
         }
 
-        $orgId = $organizationIds[$rawData['organization']];
+        $orgId = $organizationIds[strtolower($rawData['organization'])];
         $record['organization_id'] = $orgId;
-        $stfRscStatusId = $stfRscStatusIds[$rawData['resource_status']];
+        $stfRscStatusId = $stfRscStatusIds[strtolower($rawData['resource_status'])];
         $record['staff_resource_status_id'] = $stfRscStatusId;
         unset($staffIds[$stfId][$stfRscType]);
       }
@@ -992,7 +994,7 @@ class agStaffImportNormalization extends agImportNormalization
         $rawData = $this->importData[$rowId]['_rawData'];
 
         // Check if import resource type is valid.
-        if (!array_key_exists($rawData['resource_type'], $stfRscTypeIds))
+        if (!array_key_exists(strtolower($rawData['resource_type']), $stfRscTypeIds))
         {
           $errMsg = sprintf('Invalid resource type %s from record id %d.',
                                $rawData['resource_type'], $staffIds[$stfId]);
@@ -1011,10 +1013,10 @@ class agStaffImportNormalization extends agImportNormalization
         }
 
         // Check if import organization is valid.
-        if (!array_key_exists($rawData['organization'], $organizationIds))
+        if (!array_key_exists(strtolower($rawData['organization']), $organizationIds))
         {
           $errMsg = sprintf('Invalid organization %s from record id %d.',
-                               $rawData['resource_type'], $staffIds[$stfId]);
+                               $rawData['organization'], $staffIds[$stfId]);
 
           // Capture error in error log.
           $this->eh->logErr($errMsg);
@@ -1030,7 +1032,7 @@ class agStaffImportNormalization extends agImportNormalization
         }
 
         // Check if import staff resource status is valid.
-        if (!array_key_exists($rawData['resource_status'], $stfRscStatusIds))
+        if (!array_key_exists(strtolower($rawData['resource_status']), $stfRscStatusIds))
         {
           $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
                                $rawData['resource_status'], $staffIds[$stfId]);
@@ -1050,9 +1052,9 @@ class agStaffImportNormalization extends agImportNormalization
 
         $fKeys = array();
         $fKeys['staff_id'] = $stfId;
-        $fKeys['organization_id'] = $organizationIds[$rawData['organization']];
-        $fKeys['staff_resource_type_id'] = $stfRscTypeIds[$rawData['resource_type']];
-        $fKeys['staff_resource_status_id'] = $stfRscStatusIds[$rawData['resource_status']];
+        $fKeys['organization_id'] = $organizationIds[strtolower($rawData['organization'])];
+        $fKeys['staff_resource_type_id'] = $stfRscTypeIds[strtolower($rawData['resource_type'])];
+        $fKeys['staff_resource_status_id'] = $stfRscStatusIds[strtolower($rawData['resource_status'])];
 
         $staffResource = $this->createNewRec('agStaffResource', $fKeys);
       }

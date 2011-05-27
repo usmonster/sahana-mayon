@@ -39,8 +39,14 @@ class agActions extends sfActions
     //TODO: module_ACTION_status instead? -UA
     $statusId = implode('_', array($this->moduleName, 'status'));
     //$context = $this->getContext();
-    $context = sfContext::getInstance();
-    $status = $context->has($statusId) ? $this->getContext()->get($statusId) : $statusId/*array(0, 0, 0)*/;
+    ////$context = sfContext::getInstance();
+    //$status = $context->has($statusId) ? $this->getContext()->get($statusId) : $statusId/*array(0, 0, 0)*/;
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $statusFile = $importDataRoot .
+        DIRECTORY_SEPARATOR . $this->moduleName .
+        DIRECTORY_SEPARATOR . 'status.yml';
+    $status = is_readable($statusFile) ? sfYaml::load($statusFile) : $statusId/* array(0, 0, 0) */;
     $format = $request->getRequestFormat();
     if ('json' == $format) {
       $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
@@ -52,7 +58,7 @@ class agActions extends sfActions
       $this->getResponse()->setHttpHeader('Content-Type', 'text/plain; charset=utf-8');
       $status = json_encode($status);
     }
-    
+
     return $this->renderText($status);
   }
 

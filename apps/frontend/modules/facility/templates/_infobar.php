@@ -21,6 +21,7 @@
     xmlHttp.send();
 
     var data = xmlHttp.responseText;
+    document.getElementById('infobar').innerHTML += data;
     //alert(data);
   </script>
 
