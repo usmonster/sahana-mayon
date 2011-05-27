@@ -337,6 +337,8 @@ class agEntityAddressHelper extends agEntityContactHelper
     {
       foreach ($contacts as $index => $contact)
       {
+        $geo = NULL;
+
         // Trim leading and trailing spaces from contact values.
         foreach ($contact[1][0] as $elem => $val)
         {
