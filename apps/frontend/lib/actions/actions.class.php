@@ -72,6 +72,7 @@ class agActions extends sfActions
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
     $this->widget = $widget;
+    $this->limit = null();
     $resultArray = array();
 
     $this->pager = new agArrayPager(null, 10);

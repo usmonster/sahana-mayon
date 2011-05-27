@@ -247,7 +247,9 @@ class eventActions extends agActions
 
   public function executeExportfacilities(sfWebRequest $request)
   {
-      $this->setEventBasics($request);
+      
+    //TODO put switch in here to check for type of request
+    $this->setEventBasics($request);
 
       $event_facility_query = PluginagEventFacilityResource::getEventFacilityResourceQuery($this->event_id);
         
