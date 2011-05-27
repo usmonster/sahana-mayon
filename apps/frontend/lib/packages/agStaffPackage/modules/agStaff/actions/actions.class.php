@@ -155,82 +155,89 @@ class agStaffActions extends agActions
    */
   public function executeShow(sfWebRequest $request)
   {
-    $query = Doctrine::getTable('agStaff')
-            ->createQuery('a')
-            ->select(
-                'p.*,
-                  st.*,
-                  ps.*,
-                  s.*,
-                  pn.*,
-                  n.*,
-                  e.*,
-                  lang.*,
-                  religion.*,
-                  namejoin.*,
-                  name.*,
-                  nametype.*'
-            )
-            ->from(
-                'agStaff st,
-                  st.agPerson p,
-                  p.agPersonSex ps,
-                  ps.agSex s,
-                  p.agPersonMjAgNationality pn,
-                  pn.agNationality n,
-                  p.agEthnicity e,
-                  p.agLanguage lang,
-                  p.agReligion religion,
-                  p.agPersonMjAgPersonName namejoin,
-                  namejoin.agPersonName name,
-                  name.agPersonNameType nametype'
-    );
+//    $query = Doctrine::getTable('agStaff')
+//            ->createQuery('a')
+//            ->select(
+//                'p.*,
+//                  st.*,
+//                  ps.*,
+//                  s.*,
+//                  pn.*,
+//                  n.*,
+//                  e.*,
+//                  lang.*,
+//                  religion.*,
+//                  namejoin.*,
+//                  name.*,
+//                  nametype.*'
+//            )
+//            ->from(
+//                'agStaff st,
+//                  st.agPerson p,
+//                  p.agPersonSex ps,
+//                  ps.agSex s,
+//                  p.agPersonMjAgNationality pn,
+//                  pn.agNationality n,
+//                  p.agEthnicity e,
+//                  p.agLanguage lang,
+//                  p.agReligion religion,
+//                  p.agPersonMjAgPersonName namejoin,
+//                  namejoin.agPersonName name,
+//                  name.agPersonNameType nametype'
+//    );
 
-    $this->pager = new sfDoctrinePager('agStaff', 1);
+    //$this->pager = new sfDoctrinePager('agStaff', 1);
 
     //if we have exceucted a search
-    if ($request['query']) {
-      $lqResults = Doctrine_core::getTable('agStaff')->getForLuceneQuery($request['query']);
+//    if ($request['query']) {
+//      $lqResults = Doctrine_core::getTable('agStaff')->getForLuceneQuery($request['query']);
+//
+//      $i = 0;
+//      $lqIds = array();
+//
+//      foreach ($lqResults as $lqResult) {
+//        $lqIds[$i] = $lqResult->getId();
+//        $i++;
+//      }
+//
+//      if (count($lqIds) > 0) {
+//        $q = Doctrine::getTable('agStaff')
+//                ->createQuery('a')
+//                ->select('s.*')
+//                ->from('agStaff s')
+//                ->where('s.id IN (' . implode(',', $lqIds) . ')');
+//        $this->pager->setQuery($q);
+//        $this->pager->setPage($request->getParameter('page', 1));
+//        $this->pager->init();
+//
+//        $this->query = $request['query'];
+//      }
+//    } else {
+//      if ($request->getParameter('sort')) {
+//        if (substr($request->getParameter('sort'), 0, 11) == 'person_name') {
+//          $nameId = substr($request->getParameter('sort'), 12);
+//          $sortOrder = $request->getParameter('order', 'DESC');
+//          $this->pager->setQuery($query->orderBy('namejoin.person_name_type_id = ' . $nameId . ' ' . $sortOrder . ', person_name ' . $sortOrder));
+//        } else {
+//          $this->pager->setQuery($query->orderBy($request->getParameter('sort', 'person_name') . ' ' . $request->getParameter('order',
+//                      'DESC')));
+//        }
+//        //$this->sortAppend = $sortOrder;
+//      } else {
+//        //$this->pager->setQuery(Doctrine::getTable('agPerson')->createQuery('a'));
+//        $this->pager->setQuery($query);
+//      }
+//      $this->pager->setPage($request->getParameter('page', 1));
+//      $this->pager->init();
+//    }
 
-      $i = 0;
-      $lqIds = array();
-
-      foreach ($lqResults as $lqResult) {
-        $lqIds[$i] = $lqResult->getId();
-        $i++;
-      }
-
-      if (count($lqIds) > 0) {
-        $q = Doctrine::getTable('agStaff')
-                ->createQuery('a')
-                ->select('s.*')
-                ->from('agStaff s')
-                ->where('s.id IN (' . implode(',', $lqIds) . ')');
-        $this->pager->setQuery($q);
-        $this->pager->setPage($request->getParameter('page', 1));
-        $this->pager->init();
-
-        $this->query = $request['query'];
-      }
-    } else {
-      if ($request->getParameter('sort')) {
-        if (substr($request->getParameter('sort'), 0, 11) == 'person_name') {
-          $nameId = substr($request->getParameter('sort'), 12);
-          $sortOrder = $request->getParameter('order', 'DESC');
-          $this->pager->setQuery($query->orderBy('namejoin.person_name_type_id = ' . $nameId . ' ' . $sortOrder . ', person_name ' . $sortOrder));
-        } else {
-          $this->pager->setQuery($query->orderBy($request->getParameter('sort', 'person_name') . ' ' . $request->getParameter('order',
-                      'DESC')));
-        }
-        //$this->sortAppend = $sortOrder;
-      } else {
-        //$this->pager->setQuery(Doctrine::getTable('agPerson')->createQuery('a'));
-        $this->pager->setQuery($query);
-      }
-      $this->pager->setPage($request->getParameter('page', 1));
-      $this->pager->init();
-    }
-
+    
+        $this->forward404Unless(
+        $this->agStaff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
+        sprintf('Object ag_staff does not exist (%s).',
+            $request->getParameter('id'))
+    );
+    
     $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')
             ->createQuery('b')
             ->execute();
@@ -246,7 +253,9 @@ class agStaffActions extends agActions
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
             ->createQuery('f')
             ->execute();
-    $this->agStaff = $this->pager->getResults()->getFirst();
+
+    
+    //$this->agStaff = $this->pager->getResults()->getFirst();
     $agPerson = $this->agStaff->getAgPerson();
     $this->addressArray = $agPerson->getEntityAddressByType(
             true, true, agAddressHelper::ADDR_GET_NATIVE_STRING
