@@ -446,7 +446,7 @@ class agFacilityForm extends BaseagFacilityForm
         if ($form instanceof agEmbeddedFacilityResourceForm) {
           if ($form->isNew()) {
             $newFacilityResource = $form->getObject();
-            if ($newFacilityResource->capacity && $newFacilityResource->facility_resource_type_id
+            if (isset ($newFacilityResource->capacity) && $newFacilityResource->facility_resource_type_id
                 && $newFacilityResource->facility_resource_status_id) {
               $newFacilityResource->setFacilityId($this->getObject()->getId());
               $newFacilityResource->save();
