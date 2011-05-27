@@ -517,6 +517,7 @@ $(document).ready(function() {
           $('.overlay').remove();
         });
       });
+      return false;
     });
 
 

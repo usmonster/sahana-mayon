@@ -52,6 +52,18 @@ class agFacilityStaffResourceContainerForm extends sfForm
       $groupForm->getWidgetSchema()->setFormFormatterName('groupFormDeco');
       // More container forms to hold the staff requirement forms for each facility.
       foreach ($facilityGroup as $resourceKey => $facilityResources) {
+        
+//                    $subSubKeyLabel = $resourceKey
+//            ->getAgFacilityResource()
+//                ->getAgFacility()->facility_name . 
+//                ': ' . ucwords($scenarioFacilityResource
+//                    ->getAgFacilityResource()
+//                    ->getAgFacilityResourceType()->facility_resource_type) . 
+//                    ' (' . $scenarioFacilityResource
+//                    ->getAgFacilityResource()
+//                        ->getAgFacility()->facility_code . ')';
+        //TODO ^ add nice labels to facility resource containers.
+        
         $resourceForm = new sfForm();
 
         //if(isset($scenarioFacilityGroups)){  get our existing real data...
@@ -81,7 +93,7 @@ class agFacilityStaffResourceContainerForm extends sfForm
           $resourceForm->embedForm($staffKey, $staffResourceForm);
         }
         
-        $groupForm->embedForm($resourceKey, $resourceForm);
+        $groupForm->embedForm($facilityResourceKey, $resourceForm);
       }
       $this->embedForm($groupKey, $groupForm);
     }

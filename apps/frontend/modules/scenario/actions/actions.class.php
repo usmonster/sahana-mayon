@@ -197,7 +197,8 @@ class scenarioActions extends agActions
       } else {
         $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
       }
-    } else {
+//READ/LIST Present forms
+      } else {
 // Query to get all staff resource types.
       $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
       if (count($dsrt) > 0) {
@@ -223,6 +224,9 @@ class scenarioActions extends agActions
           foreach ($this->staffResourceTypes as $srt) {
             $subKey = $group['scenario_facility_group'];
             $subSubKey = $scenarioFacilityResource
+            ->getAgFacilityResource()
+                ->getAgFacility()->facility_name;
+            $subSubKeyLabel = $scenarioFacilityResource
             ->getAgFacilityResource()
                 ->getAgFacility()->facility_name . 
                 ': ' . ucwords($scenarioFacilityResource
@@ -251,6 +255,7 @@ class scenarioActions extends agActions
                                                                                           $scenarioFacilityResource->getId());
             $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('staff_resource_type_id',
                                                                                           $srt['srt_id']);
+            //$formsArray[$subKey]->setLabel($subSubKey, $subSubKeyLabel);
           }
         }
       }
