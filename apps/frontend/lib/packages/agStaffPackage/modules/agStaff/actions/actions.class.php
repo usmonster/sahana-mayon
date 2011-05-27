@@ -269,13 +269,6 @@ class agStaffActions extends agActions
     //end p-code
   }
 
-  public function executePoll(sfWebRequest $request)
-  {
-    $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');
-    return $this->renderText(json_encode(array()/* agImportHelper::getImportState() */));
-    //return $this->renderPartial('global/ajax', array('data' => agImportHelper::getImportState()));
-  }
-
   /**
    * Creates a blank agPerson form to create and save a new agPerson/staff-member
    *
@@ -742,7 +735,16 @@ class agStaffActions extends agActions
   public function executeCancelimport(sfWebRequest $request)
   {
     $abortFlagId = implode('_', array('abort', $this->moduleName, 'import'));
-    $this->getContext()->set($abortFlagId, TRUE);
+    //$this->getContext()->set($abortFlagId, TRUE);
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $statusFile = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'status.yml';
+    if (is_writable($statusFile)) {
+      $status = sfYaml::load($statusFile);
+      $status[$abortFlagId] = TRUE;
+      file_put_contents($statusFile, sfYaml::dump($status));
+    }
+
     return sfView::NONE;
   }
 

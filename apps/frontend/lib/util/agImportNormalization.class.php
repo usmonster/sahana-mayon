@@ -379,6 +379,95 @@ abstract class agImportNormalization extends agImportHelper
   }
 
   /**
+   *
+   * @param sfEvent $event
+   * @todo document this
+   */
+  public static function processImportEvent(sfEvent $event)
+  {
+//    sleep(15);
+//    return;
+    // gets the action, context, and importer object
+    $action = $event->getSubject();
+    $context = $action->getContext();
+    ////$context = sfContext::getInstance();
+    $importer = $action->importer;
+    $moduleName = $action->getModuleName();
+
+    //TODO: block import if already in progress
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $statusFile = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'status.yml';
+    if (is_writable($statusFile)) {
+      $status = sfYaml::load($statusFile);
+      $status[$abortFlagId] = TRUE;
+      file_put_contents($statusFile, sfYaml::dump($status));
+    }
+
+
+    // uploads the file
+    $uploadedFile = $action->uploadedFile;
+    $importDir = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $moduleName;
+    if (!file_exists($importDir)) {
+      mkdir($importDir);
+    }
+
+    $importPath = $importDir . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+      $importer->eh->logEmerg('Cannot move uploaded file to destination!');
+      // exception is already thrown by logEmerg ^ , but just in case...
+      return;
+    }
+
+    $importer->processXlsImportFile($importPath);
+
+    // initializes the job progress information
+    $totalBatchCount = $importer->iterData['batchCount'];
+    $batchesLeft = $totalBatchCount;
+    $totalRecordCount = $importer->iterData['tempCount'];
+    $recordsLeft = $totalRecordCount;
+
+    // generates the identifier for the event status
+    $statusId = implode('_', array($moduleName, /* $action->actionName, */ 'status'));
+    if ($context->has($statusId)) {
+      $status = $context->get($statusId);
+    }
+    // TODO: rejigger logic to check and return early; THEN do the upload, processXls, etc. business
+    if (!isset($status) || 0 == $status[0]) {
+      $startTime = time();
+      $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+    } else {
+      $importer->eh->logAlert('Import in progress, or starting new import after failed attempt?');
+      return;
+    }
+
+    // processes batches until complete, aborted, or an unrecoverable error occurs
+    $abortFlagId = implode('_', array('abort', $statusId));
+    while ($batchesLeft > 0) {
+      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
+        $context->set($abortFlagId, NULL);
+        break;
+      }
+      $batchResult = $importer->processBatch();
+      // if the last batch did nothing
+      if ($batchResult == $recordsLeft) {
+        $this->eh->logEmerg('No progress since last batch! Stopping import.');
+        // exception is already thrown by logEmerg ^ , but just in case...
+        break;
+      } else {
+        $recordsLeft = $batchResult;
+      }
+
+      //TODO: use $batchResult ("records left") instead?
+      $batchesLeft = $importer->iterData['batchCount'] - $importer->iterData['batchPosition'] - 1;
+      $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+    }
+
+    unset($action->importer);
+    //unset($importer);
+  }
+
+  /**
    * Simple method for instantiating what are effectively blank records.
    * @param string $recordName The name of the record / model that will be created.
    * @param array $foreignKeys An array of foreign keys that will be set with the new record.
