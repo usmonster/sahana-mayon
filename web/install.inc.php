@@ -180,9 +180,9 @@ class agInstall
     $this->DISABLE_NEXT = !$this->getConfig('agree', false);
 
     $license = 'Missing licence file. See GPL licence.';
-    if (file_exists($LICENSE_FILE))
+    if (file_exists($LICENSE_FILE)) {
       $license = file_get_contents($LICENSE_FILE);
-
+    }
 
     $agree = '<input class="checkbox" type="checkbox" value="yes" name="agree" id="agree" onclick="submit();"';
     $this->getConfig('agree', false) == 'yes' ? $agree .= ' checked=checked>' : $agree .= '>';
@@ -247,7 +247,7 @@ class agInstall
 
   function stage3()
   {
-    global $AG_CONFIG;
+    global $AG_CONFIG; //why? why not $this->AG_CONFIG? -UA
     $this->getCurrent();
 
     if (isset($_REQUEST['retry']) && $this->RETRY_SUCCESS == false) {
@@ -407,7 +407,7 @@ class agInstall
     return array($dbArray, $cfgArray);
   }
 
-  function dbParams($db_params)
+  function dbParams(array $db_params)
   {
     $arguments = array(
       'task' => 'configure:database',
@@ -440,7 +440,7 @@ class agInstall
     return $configuration;
   }
 
-  function CheckConnection($db_config)
+  function CheckConnection(array $db_config)
   {
     if ($db_config['dsn'] != '') {
       try {
@@ -456,7 +456,7 @@ class agInstall
     return $result;
   }
 
-  function doInstall($db_params)
+  function doInstall(array $db_params)
   {
     $databaseManager = new sfDatabaseManager($this->dbParams($db_params));
     $buildSql = new Doctrine_Task_GenerateSql();
@@ -582,8 +582,16 @@ class agInstall
     }
 
 //STEP TWO
-    if ($this->getStep() == 2 && isset($_REQUEST['Next'][$this->getStep()]) && !isset($_REQUEST['problem'])) {
-      $this->dbParams($db_params);
+    if ($this->getStep() == 2
+        && isset($_REQUEST['Next'][$this->getStep()])
+        && !isset($_REQUEST['problem'])) {
+      $filename = sfConfig::get('sf_config_dir') . '/databases.yml';
+      if (file_exists($filename)) {
+        $dbArray = sfYaml::load($filename);
+      } else {
+        $dbArray = array();
+      }
+      $this->dbParams($dbArray);
       $this->DoNext();
     }
 //STEP THREE
