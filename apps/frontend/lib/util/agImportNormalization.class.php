@@ -397,7 +397,9 @@ abstract class agImportNormalization extends agImportHelper
     //TODO: block import if already in progress
     //TODO: get import data directory root info from global param
     $importDataRoot = sfConfig::get('sf_upload_dir');
-    $statusFile = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . 'status.yml';
+    $statusFile = $importDataRoot .
+        DIRECTORY_SEPARATOR . $moduleName .
+        DIRECTORY_SEPARATOR . 'status.yml';
     if (is_writable($statusFile)) {
       $status = sfYaml::load($statusFile);
       $status[$abortFlagId] = TRUE;
