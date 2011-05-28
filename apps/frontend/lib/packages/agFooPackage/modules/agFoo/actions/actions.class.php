@@ -17,8 +17,11 @@ class agFooActions extends agActions
             ->createQuery('a')
             ->execute();
 
-    $normObj = new agStaffImportNormalization('temp_staffImport');
-    $test = $normObj->testDataNorm();
+// <-------- CUT HERE -------->
+    $dh = agEventStaffDeploymentHelper::getInstance(8, agEventHandler::EVENT_DEBUG);
+    $results = $dh->test();
+    print_r($results) ;
+// <-------- CUT HERE -------->
   }
 
   public function executeList(sfWebRequest $request)
@@ -64,13 +67,6 @@ class agFooActions extends agActions
 
   public function executeShow(sfWebRequest $request)
   {
-// <-------- CUT HERE -------->
-    // this step is necessary to avoid index constraint
-    $dh = agEventStaffDeploymentHelper::getInstance(6);
-    $results = $dh->test();
-    print_r($results) ;
-// <-------- CUT HERE -------->
-
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_foo);
   }

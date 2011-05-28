@@ -41,7 +41,7 @@ class agEventHandler
               $lastEventByType,
               $errCount,
               $logLevelValue,
-              $logEventLevel = self::EVENT_ERR,
+              $logEventLevel,
               $errThreshold = 1000;
 
   /**
@@ -49,13 +49,26 @@ class agEventHandler
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  public function __construct($logEventLevel = NULL)
+  public function __construct($logEventLevel = NULL, $minEventLevel = self::EVENT_EMERG)
   {
-    // check to see if a log level was passed at construction and, if so, set it
-    if (! is_null($logEventLevel)) { $this->setLogEventLevel($logEventLevel); }
-
     // reset any events (or initialize the handlers)
     $this->resetEvents();
+
+    // check to see if a log level was passed at construction and, if so, set it
+    if (is_null($logEventLevel)) { $logEventLevel = self::EVENT_ERR; }
+
+    // test to see if the log level was set too low
+    $logLevelValue = constant('self::EVENT_' . $logEventLevel . '_LEVEL');
+    $minLevelValue = constant('self::EVENT_' . $minEventLevel . '_LEVEL');
+    if ($logLevelValue < $minLevelValue)
+    {
+      $this->setLogEventLevel($minEventLevel);
+      $this->logWarning('Event level was set too low at construction. Used hinted min level');
+    }
+    else
+    {
+      $this->setLogEventLevel($logEventLevel);
+    }
   }
 
   /**
@@ -322,7 +335,7 @@ class agEventHandler
    */
   public function getLastEvent( $eventTypeConst = NULL)
   {
-    if (is_null($eventType))
+    if (is_null($eventTypeConst))
     {
       return $this->lastEvent;
     }

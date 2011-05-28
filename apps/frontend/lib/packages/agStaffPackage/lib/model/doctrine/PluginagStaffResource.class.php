@@ -20,7 +20,7 @@ abstract class PluginagStaffResource extends BaseagStaffResource
    * To sort, add a doctrine orderBy clause using the header name you wish to sort by.
    *
    * <code>
-   * $query = PluginagStaffResource::getStaffResourceQuery();
+   * $query = agStaffResource::getStaffResourceQuery();
    * $headers = $query[0];
    * $query = $query[1];
    *
@@ -31,7 +31,7 @@ abstract class PluginagStaffResource extends BaseagStaffResource
    * To limit, apply the doctrine limit and offset clauses, respectively.
    *
    * <code>
-   * $query = PluginagStaffResource::getStaffResourceQuery();
+   * $query = agStaffResource::getStaffResourceQuery();
    * $headers = $query[0];
    * $query = $query[1];
    *
