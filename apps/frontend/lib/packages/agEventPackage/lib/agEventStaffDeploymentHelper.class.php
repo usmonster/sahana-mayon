@@ -24,7 +24,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
             $eventFacilityGroups = array(),
             $addrGeoTypeId,
             $shiftOffset,
-            $skipUnfilled = TRUE,
+            $skipUnfilled,
             $err = FALSE,
             $startTime,
             $endTime;
@@ -60,8 +60,11 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   /**
    * A method to act like this classes' own constructor
    * @param integer $eventId An event ID
+   * @param boolean $skipUnfilled Tells the class whether or not to halt on facility shifts that
+   * could not be filled.
+   * @param string $eventDebugLevel One of the EVENT_* constants of agEventHandler
    */
-  protected function __init($eventId, $eventDebugLevel = NULL)
+  protected function __init($eventId, $skipUnfilled = TRUE, $eventDebugLevel = NULL)
   {
     // start our timer
     $this->startTime = time();
@@ -71,6 +74,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     // grab some global defaults and/or set new vars
     $this->eventId = $eventId;
+    $this->skipUnfilled = $skipUnfilled;
     $this->addrGeoTypeId = agGeoType::getAddressGeoTypeId();
     $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
     $this->shiftOffset = agGlobal::getParam('shift_change_restriction');
@@ -87,7 +91,15 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->getEventFacilityGroups();
   }
 
-
+  /**
+   * Method to save and commit the processed transactions and return a final results tally.
+   * @return array Returns an array of statistics for display.
+   * <code>
+   * array( [err] => $errorBool, [msg] => $lastEventMessage, [waves] => $numWavesProcessed,
+   *   [shifts] => $numShiftsProcessed, [staff] => $numStaffProcessed, [start] => $phpTimestampStart,
+   *   [end] => $phpTimestampEnd, [duration] => $secondsDuration ) 
+   * </code>
+   */
   public function save()
   {
     $lastEvent = $this->eh->getLastEvent(agEventHandler::EVENT_NOTICE);
