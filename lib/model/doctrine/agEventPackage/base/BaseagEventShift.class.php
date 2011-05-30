@@ -17,6 +17,7 @@
  * @property integer $shift_status_id
  * @property integer $staff_wave
  * @property integer $deployment_algorithm_id
+ * @property integer $originator_id
  * @property agStaffResourceType $agStaffResourceType
  * @property agTask $agShiftTask
  * @property agEventFacilityResource $agEventFacilityResource
@@ -37,6 +38,7 @@
  * @method integer                 getShiftStatusId()                        Returns the current record's "shift_status_id" value
  * @method integer                 getStaffWave()                            Returns the current record's "staff_wave" value
  * @method integer                 getDeploymentAlgorithmId()                Returns the current record's "deployment_algorithm_id" value
+ * @method integer                 getOriginatorId()                         Returns the current record's "originator_id" value
  * @method agStaffResourceType     getAgStaffResourceType()                  Returns the current record's "agStaffResourceType" value
  * @method agTask                  getAgShiftTask()                          Returns the current record's "agShiftTask" value
  * @method agEventFacilityResource getAgEventFacilityResource()              Returns the current record's "agEventFacilityResource" value
@@ -56,6 +58,7 @@
  * @method agEventShift            setShiftStatusId()                        Sets the current record's "shift_status_id" value
  * @method agEventShift            setStaffWave()                            Sets the current record's "staff_wave" value
  * @method agEventShift            setDeploymentAlgorithmId()                Sets the current record's "deployment_algorithm_id" value
+ * @method agEventShift            setOriginatorId()                         Sets the current record's "originator_id" value
  * @method agEventShift            setAgStaffResourceType()                  Sets the current record's "agStaffResourceType" value
  * @method agEventShift            setAgShiftTask()                          Sets the current record's "agShiftTask" value
  * @method agEventShift            setAgEventFacilityResource()              Sets the current record's "agEventFacilityResource" value
@@ -131,6 +134,10 @@ abstract class BaseagEventShift extends sfDoctrineRecord
         $this->hasColumn('deployment_algorithm_id', 'integer', 4, array(
              'type' => 'integer',
              'notnull' => true,
+             'length' => 4,
+             ));
+        $this->hasColumn('originator_id', 'integer', 4, array(
+             'type' => 'integer',
              'length' => 4,
              ));
     }

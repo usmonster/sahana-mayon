@@ -203,6 +203,7 @@ class agEventMigrationHelper
    * @param integer $scenarioFacilityResourceId the facility resource with shifts to be migrated
    * @param integer $eventFacilityResourceId the facility resource with shifts for migration
    * @return integer Count of shifts migrated from Scenario to Event
+   * @todo Don't use the getTable methods or findby (all of which are VERY expensive)
    */
   public static function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId)
   {
@@ -214,17 +215,18 @@ class agEventMigrationHelper
       // time when agEventFacilityActivationTime is populated.
       $eventShift = new agEventShift();
       $eventShift->set('event_facility_resource_id', $eventFacilityResourceId)
-          ->set('staff_resource_type_id', $scenShift->staff_resource_type_id)
-          ->set('minimum_staff', $scenShift->minimum_staff)
-          ->set('maximum_staff', $scenShift->maximum_staff)
+          ->set('staff_resource_type_id', $scenShift['staff_resource_type_id'])
+          ->set('minimum_staff', $scenShift['minimum_staff'])
+          ->set('maximum_staff', $scenShift['maximum_staff'])
           ->set('minutes_start_to_facility_activation',
-                $scenShift->minutes_start_to_facility_activation)
-          ->set('task_length_minutes', $scenShift->task_length_minutes)
-          ->set('break_length_minutes', $scenShift->break_length_minutes)
-          ->set('task_id', $scenShift->task_id)
-          ->set('shift_status_id', $scenShift->shift_status_id)
-          ->set('staff_wave', $scenShift->staff_wave)
-          ->set('deployment_algorithm_id', $scenShift->deployment_algorithm_id);
+                $scenShift['minutes_start_to_facility_activation'])
+          ->set('task_length_minutes', $scenShift['task_length_minutes'])
+          ->set('break_length_minutes', $scenShift['break_length_minutes'])
+          ->set('task_id', $scenShift['task_id'])
+          ->set('shift_status_id', $scenShift['shift_status_id'])
+          ->set('staff_wave', $scenShift['staff_wave'])
+          ->set('deployment_algorithm_id', $scenShift['deployment_algorithm_id'])
+          ->set('originator_id', $scenShift['originator_id']);
       $eventShift->save();
       $eventShift->free(TRUE);
     }

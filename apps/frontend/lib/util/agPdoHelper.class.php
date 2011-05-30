@@ -45,6 +45,42 @@ abstract class agPdoHelper
   }
 
   /**
+   * This classes' destructor. Mostly performs a santiy check on the connections for
+   * any open transactions and rolls back if the transactions have not completed then
+   * closes any open connections.
+   */
+  public function __destruct()
+  {
+    foreach($this->_conn as &$conn)
+    {
+      // check for open transactions and rollback
+      if ($this->rollbackSafe($conn))
+      {
+        $eventMsg = 'Found unresolved transaction on connection ' . $conn->getName() . ' during ' .
+          __CLASS__ . 'class destruction. Rolled back changes.';
+        sfContext::getInstance()->getLogger()->alert($eventMsg);
+      }
+    }
+    unset($conn);
+  }
+
+  /**
+   * Method to safely rollback a transaction by first checking the transaction level.
+   * @param Doctrine_Connection $conn
+   * @return boolean Whether or not a rollback was performed.
+   */
+  public function rollbackSafe(Doctrine_Connection $conn)
+  {
+    // check for open transactions and kill them
+    if ($conn->getTransactionLevel() > 0)
+    {
+      $conn->rollback();
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
    * Method to get (and lazy load) a doctrine connection object
    * @return Doctrine_Connection A doctrine connection object
    */

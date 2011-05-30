@@ -79,13 +79,14 @@ abstract class agImportHelper extends agPdoHelper
     $this->_conn[self::CONN_TEMP_WRITE] = Doctrine_Manager::connection($adapter, self::CONN_TEMP_WRITE);
   }
 
-
-
   /**
    * This classes' destructor.
    */
   public function __destruct()
   {
+    // the parent's destructor will rollback any oustanding open transactions and close conns
+    parent::__destruct();
+    
     // removes the temporary file
     $file = $this->fileInfo['dirname'] . DIRECTORY_SEPARATOR . $this->fileInfo['basename'];
     if (!@unlink($file)) {

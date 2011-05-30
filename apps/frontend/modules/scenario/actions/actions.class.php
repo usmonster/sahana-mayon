@@ -502,7 +502,7 @@ class scenarioActions extends agActions
       if ($this->poolform->isValid()) {
         $ag_staff_pool = $this->poolform->saveEmbeddedForms();
       }
-        sagStaffGeneratorHelper::generateStaffPool($this->scenario_id);
+        agStaffGeneratorHelper::generateStaffPool($this->scenario_id);
         if ($request->getParameter('Continue')) {
           $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
         } else {

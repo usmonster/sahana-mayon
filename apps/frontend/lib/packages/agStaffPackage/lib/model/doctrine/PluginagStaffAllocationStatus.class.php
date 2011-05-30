@@ -23,5 +23,4 @@ abstract class PluginagStaffAllocationStatus extends BaseagStaffAllocationStatus
         ->where('sas.staff_allocation_status = ?', 'Committed')
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
-
 }

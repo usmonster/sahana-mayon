@@ -18,7 +18,7 @@ class agFooActions extends agActions
             ->execute();
 
 // <-------- CUT HERE -------->
-    $dh = agEventStaffDeploymentHelper::getInstance(8, agEventHandler::EVENT_DEBUG);
+    $dh = agEventStaffDeploymentHelper::getInstance(6, agEventHandler::EVENT_DEBUG);
     $results = $dh->test();
     print_r($results) ;
 // <-------- CUT HERE -------->
