@@ -124,6 +124,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     // registers event listeners
     $this->dispatcher->connect('import.staff_responses', array('agMessageResponseHandler', 'consumeResponses'));
     $this->dispatcher->connect('import.file_ready', array('agImportXLS', 'processFile'));
+    $this->dispatcher->connect('deploy.do_deployment', array('agEventStaffDeploymentHelper', 'doDeployment'));
     $this->dispatcher->connect('import.start', array('agImportNormalization', 'processImportEvent'));
     $this->dispatcher->connect('import.do_reindex', array('agLuceneIndex', 'indexAll'));
     $this->dispatcher->connect('global_param.param_updated', array('agGlobal', 'loadParams'));

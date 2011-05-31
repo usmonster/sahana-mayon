@@ -8,9 +8,3 @@
 <div id="result">
   <p><?php echo image_tag('indicator.gif') ?> please wait, calculation taking place</p>
 </div>
-
-
-<script type="text/javascript">
-
-
-</script>

@@ -1391,9 +1391,19 @@ class eventActions extends agActions
     if ($request->isXmlHttpRequest()) {
       //return sfView::HEADER_ONLY;
 
-      $staffDeployer = new agEventStaffDeploymentHelper();
-      $staffDeployer->batchSize = 10;
-      $staffDeployer->eh->setLogEventLevel(agEventHandler::EVENT_DEBUG);
+      //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
+      
+      /**
+       * @todo
+       * the above should only be called once, then the javascript can poll for the status.
+       * 
+       * the below, though, should currently work (given the getInstance call returns the same
+       * instance
+       */
+      
+      $staffDeployer = agEventStaffDeploymentHelper::getInstance($this->event_id);
+      //$staffDeployer->batchSize = 10;
+      //$staffDeployer->eh->setLogEventLevel(agEventHandler::EVENT_DEBUG);
 
       $continue = TRUE;
       while ($continue == TRUE) {

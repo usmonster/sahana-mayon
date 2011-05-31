@@ -1,1 +1,1 @@
-<?php echo $results; ?>
+<?php echo $sf_data->getRaw('results'); ?>

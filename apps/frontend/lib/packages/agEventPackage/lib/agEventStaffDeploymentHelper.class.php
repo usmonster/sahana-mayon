@@ -257,6 +257,60 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   {
     return $this->processBatchMins();
   }
+  public function doDeployment(sfEvent $event)
+  {
+        $action = $event->getSubject();
+    $context = $action->getContext();
+    ////$context = sfContext::getInstance();
+    $importer = $action->importer;
+    $moduleName = $action->getModuleName();
+
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
+    if (!file_exists($importDir)) {
+      mkdir($importDir);
+    }
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+
+    if (!file_exists($statusFile)) {
+      //TODO: check if directory is writeable? -UA
+      touch($statusFile);
+    }
+    if (!is_writable($statusFile)) {
+      $importer->eh->logEmerg('Status file not writeable: '. $statusFile);
+      return;
+    }
+
+
+    $action->getUser()->shutdown();
+    session_write_close();
+
+    // blocks import if already in progress
+    $status = sfYaml::load($statusFile);
+    $abortFlagId = 'aborted';
+
+    $continueDeploy == TRUE;
+    while ($continueDeploy == TRUE) {
+//      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
+//        $context->set($abortFlagId, NULL);
+//        break;
+//      }
+      $status = sfYaml::load($statusFile);
+
+        $batch = $staffDeployer->processBatch();
+        $continueDeploy = $batch['continue'];
+      
+      $batchResult = $importer->processBatch();
+      // if the last batch did nothing
+
+      $status = sfYaml::load($statusFile);
+      $status['continueDeploy'] = $continueDeploy;
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+    }    
+
+      
+  }
 
   /**
    * Method to process shifts until their minimum complements have been filled
