@@ -496,6 +496,20 @@ abstract class agImportNormalization extends agImportHelper
     //unset($importer);
   }
 
+  public static function resetImportStatus($moduleName) {
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+    if (is_writable($statusFile)) {
+      $status = sfYaml::load($statusFile);
+      $status['batchesLeft'] = 0;
+      $status['totalBatchCount'] = 0;
+      $status['startTime'] = 0;
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+    }
+  }
+
   /**
    * Simple method for instantiating what are effectively blank records.
    * @param string $recordName The name of the Doctrine_Record / model that will be created.

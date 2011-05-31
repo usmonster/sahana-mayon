@@ -35,6 +35,13 @@ staff_import_cancel:
   #TODO: check on this
   requirements:
     sf_method: [delete]
+staff_import_clear:
+  url:   /staff/import
+  #class: sfRequestRoute
+  param: { module: agStaff, action: clearimport }
+  #TODO: check on this
+  requirements:
+    sf_method: [delete]
 staff_addstaffresource:
   url:   /staff/addstaffresource
   param: { module: agStaff, action: addstaffresource }

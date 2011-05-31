@@ -36,8 +36,8 @@ class agActions extends sfActions
 
   public function executeStatus(sfWebRequest $request)
   {
-    //TODO: module_ACTION_status instead? -UA
-    $statusId = implode('_', array($this->moduleName, 'status'));
+    ////TODO: module_ACTION_status instead? -UA
+    //$statusId = implode('_', array($this->moduleName, 'status'));
     //$context = $this->getContext();
     ////$context = sfContext::getInstance();
     //$status = $context->has($statusId) ? $this->getContext()->get($statusId) : $statusId/*array(0, 0, 0)*/;
@@ -46,7 +46,7 @@ class agActions extends sfActions
     $importDataRoot = sfConfig::get('sf_upload_dir');
     $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
     $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
-    $status = is_readable($statusFile) ? sfYaml::load($statusFile) : $statusId/* array(0, 0, 0) */;
+    $status = is_readable($statusFile) ? sfYaml::load($statusFile) : array()/* array(0, 0, 0) */;
     $format = $request->getRequestFormat();
     if ('json' == $format) {
       $this->getResponse()->setHttpHeader('Content-Type', 'application/json; charset=utf-8');

@@ -759,6 +759,12 @@ class agStaffActions extends agActions
     return sfView::NONE;
   }
 
+  public function executeClearimport(sfWebRequest $request)
+  {
+    agImportNormalization::resetImportStatus($this->moduleName);
+    return sfView::NONE;
+  }
+
   public function executeImport(sfWebRequest $request)
   {
     $this->timer = time();

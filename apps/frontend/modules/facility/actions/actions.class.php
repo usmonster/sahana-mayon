@@ -254,7 +254,6 @@ class facilityActions extends agActions
 
     //$this->redirect('facility/import');
     $import = new agFacilityImportXLS();
-//    $returned = $import->createTempTable();
 
     $this->timer = time();
     $processedToTemp = $import->processImport($this->importPath);
@@ -266,7 +265,7 @@ class facilityActions extends agActions
     $this->numRecordsImported = $import->numRecordsImported;
     $this->events = $import->events;
 
-    // Normalize imported temp data only if import is successful.
+    // Normalizes imported temp data only if import is successful.
     if ($processedToTemp) {
       // Grab table name from AgImportXLS class.
       $sourceTable = $import->tempTable;
