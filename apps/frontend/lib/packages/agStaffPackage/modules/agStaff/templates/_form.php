@@ -21,30 +21,25 @@ use_javascripts_for_form($form);
       <br />
       <a href="<?php echo url_for('staff/addstaffresource'); ?>" name="groupStatus" class="generalButton addStaffResource" id="staff_id_1">Add Staff Resource</a>
       </div>
-    <div class="clearBoth"> </div>
     <div class="infoHolder">
       <h3>Primary Information</h3>
       <hr class="ruleGray" />
       <?php echo $form['id'] ?>
-      <div class="clearBoth"> </div>
       <?php echo $form['Primary'] ?>
-      <div class="clearBoth"> </div>
-      <div class="displayInlineBlock">
-        <h4>
-          <?php echo $form['ag_sex_list']->renderLabel(); ?>
-          <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:sex&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Sex">?</a>
-        </h4>
-        <?php echo $form['ag_sex_list'] ?>
+      <div class="demoContainer">
+        <h4>Demographic</h4>
+        <hr class="ruleGray" />
+        <div class="displayInlineBlock">
+          <h4>
+            <?php echo $form['ag_sex_list']->renderLabel(); ?>
+            <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:sex&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Sex">?</a>
+          </h4>
+          <?php echo $form['ag_sex_list'] ?>
+        </div>
+        <div class="displayInlineBlock">
+          <?php echo $form['Date of Birth']; ?>
+        </div>
       </div>
-      <div class="displayInlineBlock">
-        <?php echo $form['Date of Birth']; ?>
-      </div>
-      <br />
-      <br />
-      <div class="displayBlock">
-      </div>
-      <div class="clearBoth"> </div>
-      <br />
     </div>
     <div class="infoHolder">
       <h3>Contact</h3>

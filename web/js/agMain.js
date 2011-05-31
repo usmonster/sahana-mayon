@@ -13,10 +13,20 @@ $(document).ready(function initialize(){
   initExpand();
   initTextToForm();
   initTriggerModal();
+  initFileImportReplacer();
 });
 
 /** Start Initializer Section *********************************************************************/
 
+/***************************************************************************************************
+* Initializes the fileImportReplacer() function. Used on scenario/[scenario_id]/review.                                                                *
+***************************************************************************************************/
+function initFileImportReplacer() {
+  var replacer = $('#fileImportReplacer');
+  if(replacer.length) {
+    fileImportReplacer();
+  }
+}
 /***************************************************************************************************
 * Initializes the textToForm(), configSubmitTextToForm(), and submitTextToForm() functions. Used   *
 * on event/[event_name]/listgroups.                                                                *
@@ -121,6 +131,20 @@ function initTriggerModal() {
 }
 /** End Initializer Section ***********************************************************************/
 
+/***************************************************************************************************
+* fileImportReplacer() switches the content of a td to a file upload form.                         *
+***************************************************************************************************/
+function fileImportReplacer() {
+  $('#fileImportReplacer').click(function () {
+      var $importForm = '<form id="importForm"  method="post" action="' + $('#fileImportReplacer').attr('href') + '">\n\
+                           <input type="file" name="import" />\n\
+                           <input type="submit" value="Import Facilities"/>\n\
+                         </form>';
+    $('#replaceMe').hide();
+    $('#replaceMe').parent().append($importForm);
+    return false;
+  });
+}
 /***************************************************************************************************
 * reveal() reveals whatever content is within #revealable.                                         *
 ***************************************************************************************************/

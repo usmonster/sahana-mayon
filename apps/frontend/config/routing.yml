@@ -133,6 +133,16 @@ scenario_facility_group:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: listgroup }
 
+scenario_facility_export:
+  url:     /scenario/facilityexport/:id
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: facilityexport }
+
+scenario_facility_import:
+  url:     /scenario/facilityimport/:id
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: facilityimport }
+
 sf_guard_signin:
   url:   /login
   param: { module: sfGuardAuth, action: signin }

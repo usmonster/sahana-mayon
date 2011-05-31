@@ -269,13 +269,37 @@ class scenarioActions extends agActions
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenario['scenario'] . ' Scenario');
   }
 
+
+  /*************************************************************************************************
+  * This function will handle export facilities. It takes a scenario id as a param.
+  *************************************************************************************************/
+  public function executeFacilityexport(sfWebRequest $request)
+  {
+    $this->setScenarioBasics($request);
+  }
+  /*************************************************************************************************
+  * This function will handle incoming facilities. Scenario ID comes in as a param.
+  * setScenarioBasics() will use the $request and the ID contained within.
+  *************************************************************************************************/
+  public function executeFacilityimport(sfWebRequest $request)
+  {
+    $this->setScenarioBasics($request);
+  }
+
   /**
    * calls index template
    * @param sfWebRequest $request
    */
   public function executeIndex(sfWebRequest $request)
   {
-//here we can use $request to better form the index page for scenario
+    $inputs = array('scenario_id' => new sfWidgetFormDoctrineChoice(array('model' => 'agScenario', 'label' => 'scenario', 'add_empty' => true)),
+    );
+    //set up inputs for form
+    $this->filterForm = new sfForm();
+    foreach ($inputs as $key => $input) {
+      $input->setAttribute('class', 'filter');
+      $this->filterForm->setWidget($key, $input);
+    }
   }
 
   /**

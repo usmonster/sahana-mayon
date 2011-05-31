@@ -14,17 +14,21 @@
 
 <table class="blueTable">
     <tr class="head">
-        <th class="row1">Steps</th>
-        <th>Description</th>
+      <th class="row1">Steps</th>
+      <th>Description</th>
     </tr>
     <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>"
-   title="Modify Basic Scenario Information">Scenario Name and Description</a></td>
-        <td>Name: <span class="highlightedText"><?php echo $scenario_name ?></span><br>Description: <span class="highlightedText"><?php echo $scenario_description ?></span></td>
+      <td>
+        <a  class="buttonText" href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>" title="Modify Basic Scenario Information">Scenario Name and Description</a>
+      </td>
+      <td>
+        Name: <span class="highlightedText"><?php echo $scenario_name ?></span><br>Description: <span class="highlightedText"><?php echo $scenario_description ?></span>
+      </td>
     </tr>
     <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>"
-   title="Edit Required Resource Types for Scenario">Manage Required Resource Types</a></td>
+        <td>
+          <a  class="buttonText" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>" title="Edit Required Resource Types for Scenario">Manage Required Resource Types</a>
+        </td>
         <td>Selected Staff Resource Types: <span class="highlightedText"><?php echo $staffResourceTypeCt ?></span>
           <br>
           Selected Facility Resource Types: <span class="highlightedText"><?php echo $facilityResourceTypeCt ?></span>
@@ -61,12 +65,31 @@
         </td>
     </tr>
     <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>"
-   title="View Scenario Shifts">Scenario Shifts</a></td>
-        <td>A total of <span class="highlightedText">
-          <?php echo $shifts ?></span> shifts have been generated covering
-          <span class="highlightedText"><?php echo $operationTime ?></span> of operation
-        </td>
+      <td>
+        <a  class="buttonText" href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>" title="View Scenario Shifts">Scenario Shifts</a>
+      </td>
+      <td>
+        A total of <span class="highlightedText"><?php echo $shifts ?></span> shifts have been generated covering
+        <span class="highlightedText"><?php echo $operationTime ?></span> of operation
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a id="fileImportReplacer" class="buttonText" href="<?php echo url_for('scenario/facilityimport?id=' . $scenario_id) ?>" title="Import Facilities">Import Facilities</a>
+        <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_import&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Import Facilities"> ?</a>
+      </td>
+      <td>
+        <p id="replaceMe">Import facilities for the <span class="highlightedText"><?php echo $scenario_name ?></span> scenario.</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a class="buttonText" href="<?php echo url_for('scenario/facilityexport?id=' . $scenario_id) ?>" title="Export Facilities">Export Facilities</a>
+        <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_export&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Export Facilities"> ?</a>
+      </td>
+      <td>
+        Export facilities for the <span class="highlightedText"><?php echo $scenario_name ?></span> scenario.
+      </td>
     </tr>
 </table>
 

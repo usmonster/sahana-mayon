@@ -49,12 +49,12 @@ class facilityActions extends agActions
   }
 
   /**
-   * executeList()
-   *
-   * Executes the list action for facility module
-   *
-   * @param $request sfWebRequest object for current page request
-   * */
+  * executeList()
+  *
+  * Executes the list action for facility module
+  *
+  * @param $request sfWebRequest object for current page request
+  **/
   public function executeList(sfWebRequest $request)
   {
     /**

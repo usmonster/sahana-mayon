@@ -19,8 +19,8 @@
 class agFormatterAddressLevelTwo extends sfWidgetFormSchemaFormatter
 {
   protected
-    $rowFormat       = "<li style=\"padding: .5em 0;\"><h4 style=\"display: inline-block; width: 60px; text-align: left;\">%error%%label%:</h4>\n  <div class=\"level2\" style=\"display: inline-block\">%field%%help%\n%hidden_fields%</div></li>\n",
+    $rowFormat       = "<li class=\"agFormatterAddressLevelTwo\"><h4 class=\"agFormatterAddressLevelTwo\">%error%%label%:</h4>\n  <div class=\"agFormatterAddressLevelTwo\">%field%%help%\n%hidden_fields%</div></li>\n",
     $errorRowFormat  = "<li>\n%errors%</li>\n",
     $helpFormat      = '<br />%help%',
-    $decoratorFormat = "<ul class=\"level2container\" style=\"display: inline; list-style-type: none;\">\n  %content%</ul>";
+    $decoratorFormat = "<ul class=\"agFormatterAddressLevelTwo\">\n  %content%</ul>";
 }

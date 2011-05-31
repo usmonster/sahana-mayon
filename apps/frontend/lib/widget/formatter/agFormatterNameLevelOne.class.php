@@ -20,10 +20,8 @@ class agFormatterNameLevelOne extends sfWidgetFormSchemaFormatter
 {
 
   protected
-    $rowFormat       = "<div class=\"nameholder\" style=\"display: inline-block\">\n  %error%\n <div class=\"here\">%field%%help%\n%hidden_fields%</div>\n</div>\n",
-//    $rowFormat       = "<div style=\"display: inline-block; margin: .5em; padding: .5em; text-align: center; border: solid 1px #dadada; -moz-border-radius: 10px; vertical-align: top;\"><h4>\n  %error%%label%</h4>\n<hr class=\"ruleGray\" />\n  <div class=\"here\">%field%%help%\n%hidden_fields%</div>\n</div>\n",
+    $rowFormat       = "<div class=\"nameholder\">\n  %error%\n <div>%field%%help%\n%hidden_fields%</div>\n</div>\n",
     $errorRowFormat  = "<li>\n%errors%</li>\n",
     $helpFormat      = '<br />%help%',
-    $decoratorFormat = "<div style=\"display: inline-block; margin: .5em; padding: .5em; text-align: center; vertical-align: top;\">\n%content%</div>";
-//    $decoratorFormat = "<div class=\"holder\">\n%content%</div>";
+    $decoratorFormat = "<div class=\"nameSubHolder\">\n%content%</div>";
 }

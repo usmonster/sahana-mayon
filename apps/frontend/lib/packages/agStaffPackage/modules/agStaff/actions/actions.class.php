@@ -460,7 +460,6 @@ class agStaffActions extends agActions
    */
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
-    $b = $form->getName();
     //if count of staff form data is greater than count in this person's form, assume an add
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
