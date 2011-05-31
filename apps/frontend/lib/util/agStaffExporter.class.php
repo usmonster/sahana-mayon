@@ -102,41 +102,97 @@ class agStaffExporter
     );
   }
 
-  public function export()
+  public function getPersonCustomFields(array $personCustomFields = NULL)
   {
+    $q = agDoctrineQuery::create()
+           ->select('pcf.person_custom_field')
+               ->addSelect('pcf.id')
+           ->from('agPersonCustomField AS pcf');
+
+    if (!is_null($personCustomFields))
+    {
+      $q->whereIn('pcf.person_custom_field', $personCustomFields);
+    }
+
+    $results = $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    return $results;
+  }
+
+  public function getStaffResourceGeneralInfo()
+  {
+    $staffInfo = array();
+
     $q = agDoctrineQuery::create()
       ->select('sr.id')
           ->addSelect('s.id')
           ->addSelect('p.id')
           ->addSelect('e.id')
-          ->addSelect('sr.id')
-          ->addSelect('sr.staff_resource_type')
+          ->addSelect('srt.staff_resource_type')
           ->addSelect('o.id')
           ->addSelect('o.organization')
           ->addSelect('srs.id')
           ->addSelect('srs.staff_resource_status')
-          ->addSelect('pcf1.person_custom_field')
-          ->addSelect('pcv1.value')
-          ->addSelect('pcf2.person_custom_field')
-          ->addSelect('pcv2.value')
-          ->addSelect('pcf3.person_custom_field')
-          ->addSelect('pcv3.value')
+//          ->addSelect('pcf1.person_custom_field')
+          ->addSelect('pcfv1.value')
+//          ->addSelect('pcf2.person_custom_field')
+          ->addSelect('pcfv2.value')
+//          ->addSelect('pcf3.person_custom_field')
+          ->addSelect('pcfv3.value')
         ->from('agStaffResource AS sr')
-          ->innerJoin('agStaff AS s')
+          ->innerJoin('sr.agStaff AS s')
           ->innerJoin('s.agPerson AS p')
           ->innerJoin('p.agEntity AS e')
           ->innerJoin('sr.agStaffResourceType AS srt')
           ->innerJoin('sr.agStaffResourceStatus AS srs')
-          ->innerJoin('sr.agOrganization AS o')
-          ->leftJoin('p.agPersonCustomFieldValue pcv1');
+          ->innerJoin('sr.agOrganization AS o');
 
-    $staffInfo = $q->execute(array(), DOCTRINE_CORE::HYDRATE_SCALAR);
+    // Query for person_custom_field and their ids.
+    $personCustomFields = array('Drivers License Class', 
+                                'PMS ID', 
+                                'Civil Service Title');
+    $personCustomFieldIds = $this->getPersonCustomFields($personCustomFields);
+
+    // Add person custom fields to query.
+    $cnt = 1;
+    foreach ($personCustomFields AS $customField)
+    {
+      $tblAlias = 'pcfv' . $cnt++;
+      $q->leftJoin('p.agPersonCustomFieldValue AS ' . $tblAlias .
+                   ' WITH ' . $tblAlias . '.person_custom_field_id = ' .
+                   $personCustomFieldIds[$customField]);
+    }
+
+    $results = $q->execute(array(), DOCTRINE_CORE::HYDRATE_SCALAR);
+
+    // Construct the array of the staff's custom fields.
+    foreach ($results AS $row)
+    {
+      $cnt = 1;
+      foreach ($personCustomFields AS $customField)
+      {
+        $tblAlias = 'pcfv' . $cnt++;
+        $staffCustomFields[$row['sr_id']][$customField] = $row[$tblAlias . '_value'];
+      }
+    }
 
     // Construct arrays for later use from the query results
-    foreach ($staffInfo AS $index => $staff)
+    foreach ($results AS $index => $staffResource)
     {
-
+      $staffResourceId = array_shift($staffResource);
+      $staffInfo[$staffResourceId] = $staffResource;
     }
+
+    return $staffInfo;
+  }
+
+  public function export()
+  {
+    $staffInfo = $this->getStaffResourceGeneralInfo();
+
+    // Collect email info
+    // Collect phone info
+    // Collect Address & Geo info
+    // Build xls export files.
   }
 
   private function gatherLookupValues($lookUps = null)
