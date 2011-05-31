@@ -26,7 +26,6 @@ function html_wikilink($id,$name=null,$search=''){
 /**
  * Helps building long attribute lists
  *
- * @deprecated Use buildAttributes instead
  * @author Andreas Gohr <andi@splitbrain.org>
  */
 function html_attbuild($attributes){
@@ -62,11 +61,17 @@ function html_login(){
     $form->endFieldset();
 
     if(actionOK('register')){
-        $form->addElement('<p>'.$lang['reghere'].': '.tpl_actionlink('register','','','',true).'</p>');
+        $form->addElement('<p>'
+                          . $lang['reghere']
+                          . ': <a href="'.wl($ID,'do=register').'" rel="nofollow" class="wikilink1">'.$lang['register'].'</a>'
+                          . '</p>');
     }
 
     if (actionOK('resendpwd')) {
-        $form->addElement('<p>'.$lang['pwdforget'].': '.tpl_actionlink('resendpwd','','','',true).'</p>');
+        $form->addElement('<p>'
+                          . $lang['pwdforget']
+                          . ': <a href="'.wl($ID,'do=resendpwd').'" rel="nofollow" class="wikilink1">'.$lang['btn_resendpwd'].'</a>'
+                          . '</p>');
     }
 
     html_form('login', $form);
@@ -284,8 +289,7 @@ function html_hilight($html,$phrases){
     $regex = join('|',array_map('ft_snippet_re_preprocess', array_map('preg_quote_cb',$phrases)));
 
     if ($regex === '') return $html;
-    if (!utf8_check($regex)) return $html;
-    $html = @preg_replace_callback("/((<[^>]*)|$regex)/ui",'html_hilight_callback',$html);
+    $html = preg_replace_callback("/((<[^>]*)|$regex)/ui",'html_hilight_callback',$html);
     return $html;
 }
 
@@ -313,13 +317,7 @@ function html_search(){
     global $ID;
     global $lang;
 
-    $intro = p_locale_xhtml('searchpage');
-    // allow use of placeholder in search intro
-    $intro = str_replace(
-                array('@QUERY@','@SEARCH@'),
-                array(hsc(rawurlencode($QUERY)),hsc($QUERY)),
-                $intro);
-    echo $intro;
+    print p_locale_xhtml('searchpage');
     flush();
 
     //show progressbar
@@ -355,7 +353,7 @@ function html_search(){
         }
         print '</ul> ';
         //clear float (see http://www.complexspiral.com/publications/containing-floats/)
-        print '<div class="clearer"></div>';
+        print '<div class="clearer">&nbsp;</div>';
         print '</div>';
     }
     flush();
@@ -457,7 +455,11 @@ function html_revisions($first=0){
         $form->addElement($date);
         $form->addElement(form_makeCloseTag('span'));
 
-        $form->addElement('<img src="'.DOKU_BASE.'lib/images/blank.gif" width="15" height="11" alt="" />');
+        $form->addElement(form_makeTag('img', array(
+                        'src' =>  DOKU_BASE.'lib/images/blank.gif',
+                        'width' => '15',
+                        'height' => '11',
+                        'alt'    => '')));
 
         $form->addElement(form_makeOpenTag('a', array(
                         'class' => 'wikilink1',
@@ -495,7 +497,11 @@ function html_revisions($first=0){
                             'name' => 'rev2[]',
                             'value' => $rev)));
         }else{
-            $form->addElement('<img src="'.DOKU_BASE.'lib/images/blank.gif" width="15" height="11" alt="" />');
+            $form->addElement(form_makeTag('img', array(
+                            'src' => DOKU_BASE.'lib/images/blank.gif',
+                            'width' => 14,
+                            'height' => 11,
+                            'alt' => '')));
         }
 
         $form->addElement(form_makeOpenTag('span', array('class' => 'date')));
@@ -516,7 +522,11 @@ function html_revisions($first=0){
             $form->addElement($ID);
             $form->addElement(form_makeCloseTag('a'));
         }else{
-            $form->addElement('<img src="'.DOKU_BASE.'lib/images/blank.gif" width="15" height="11" alt="" />');
+            $form->addElement(form_makeTag('img', array(
+                            'src' => DOKU_BASE.'lib/images/blank.gif',
+                            'width' => '15',
+                            'height' => '11',
+                            'alt'   => '')));
             $form->addElement($ID);
         }
 
@@ -853,17 +863,12 @@ function html_backlinks(){
  * show diff
  *
  * @author Andreas Gohr <andi@splitbrain.org>
- * @param  string $text - compare with this text with most current version
- * @param  bool   $intr - display the intro text
  */
-function html_diff($text='',$intro=true,$type=null){
+function html_diff($text='',$intro=true){
     global $ID;
     global $REV;
     global $lang;
     global $conf;
-
-    if(!$type) $type = $_REQUEST['difftype'];
-    if($type != 'inline') $type = 'sidebyside';
 
     // we're trying to be clever here, revisions to compare can be either
     // given as rev and rev2 parameters, with rev2 being optional. Or in an
@@ -881,9 +886,6 @@ function html_diff($text='',$intro=true,$type=null){
     }else{
         $rev2 = (int) $_REQUEST['rev2'];
     }
-
-    $r_minor = '';
-    $l_minor = '';
 
     if($text){                      // compare text to the most current revision
         $l_rev   = '';
@@ -981,48 +983,17 @@ function html_diff($text='',$intro=true,$type=null){
     $df = new Diff(explode("\n",htmlspecialchars($l_text)),
         explode("\n",htmlspecialchars($r_text)));
 
-    if($type == 'inline'){
-        $tdf = new InlineDiffFormatter();
-    } else {
-        $tdf = new TableDiffFormatter();
-    }
-
-
-
+    $tdf = new TableDiffFormatter();
     if($intro) print p_locale_xhtml('diff');
 
     if (!$text) {
-        ptln('<div class="diffoptions">');
-
-        $form = new Doku_Form(array('action'=>wl()));
-        $form->addHidden('id',$ID);
-        $form->addHidden('rev2[0]',$l_rev);
-        $form->addHidden('rev2[1]',$r_rev);
-        $form->addHidden('do','diff');
-        $form->addElement(form_makeListboxField(
-                            'difftype',
-                            array(
-                                'sidebyside' => $lang['diff_side'],
-                                'inline'     => $lang['diff_inline']),
-                            $type,
-                            $lang['diff_type'],
-                            '','',
-                            array('class'=>'quickselect')));
-        $form->addElement(form_makeButton('submit', 'diff','Go'));
-        $form->printForm();
-
-
-        $diffurl = wl($ID, array(
-                        'do'       => 'diff',
-                        'rev2[0]'  => $l_rev,
-                        'rev2[1]'  => $r_rev,
-                        'difftype' => $type,
-                      ));
-        ptln('<p><a class="wikilink1" href="'.$diffurl.'">'.$lang['difflink'].'</a></p>');
-        ptln('</div>');
+        $diffurl = wl($ID, array('do'=>'diff', 'rev2[0]'=>$l_rev, 'rev2[1]'=>$r_rev));
+        ptln('<p class="difflink">');
+        ptln('  <a class="wikilink1" href="'.$diffurl.'">'.$lang['difflink'].'</a>');
+        ptln('</p>');
     }
     ?>
-    <table class="diff diff_<?php echo $type?>">
+    <table class="diff">
     <tr>
     <th colspan="2" <?php echo $l_minor?>>
     <?php echo $l_head?>
@@ -1062,10 +1033,7 @@ function html_conflict($text,$summary){
  * @author Andreas Gohr <andi@splitbrain.org>
  */
 function html_msgarea(){
-    global $MSG, $MSG_shown;
-    // store if the global $MSG has already been shown and thus HTML output has been started
-    $MSG_shown = true;
-
+    global $MSG;
     if(!isset($MSG)) return;
 
     $shown = array();
@@ -1077,8 +1045,6 @@ function html_msgarea(){
         print '</div>';
         $shown[$hash] = 1;
     }
-
-    unset($GLOBALS['MSG']);
 }
 
 /**
@@ -1094,17 +1060,17 @@ function html_register(){
     print p_locale_xhtml('register');
     print '<div class="centeralign">'.NL;
     $form = new Doku_Form(array('id' => 'dw__register'));
-    $form->startFieldset($lang['btn_register']);
+    $form->startFieldset($lang['register']);
     $form->addHidden('do', 'register');
     $form->addHidden('save', '1');
-    $form->addElement(form_makeTextField('login', $_POST['login'], $lang['user'], '', 'block', array('size'=>'50')));
+    $form->addElement(form_makeTextField('login', $_POST['login'], $lang['user'], null, 'block', array('size'=>'50')));
     if (!$conf['autopasswd']) {
         $form->addElement(form_makePasswordField('pass', $lang['pass'], '', 'block', array('size'=>'50')));
         $form->addElement(form_makePasswordField('passchk', $lang['passchk'], '', 'block', array('size'=>'50')));
     }
     $form->addElement(form_makeTextField('fullname', $_POST['fullname'], $lang['fullname'], '', 'block', array('size'=>'50')));
     $form->addElement(form_makeTextField('email', $_POST['email'], $lang['email'], '', 'block', array('size'=>'50')));
-    $form->addElement(form_makeButton('submit', '', $lang['btn_register']));
+    $form->addElement(form_makeButton('submit', '', $lang['register']));
     $form->endFieldset();
     html_form('register', $form);
 
@@ -1247,9 +1213,9 @@ function html_edit(){
     if($wr && $conf['license']){
         $form->addElement(form_makeOpenTag('div', array('class'=>'license')));
         $out  = $lang['licenseok'];
-        $out .= ' <a href="'.$license[$conf['license']]['url'].'" rel="license" class="urlextern"';
+        $out .= '<a href="'.$license[$conf['license']]['url'].'" rel="license" class="urlextern"';
         if(isset($conf['target']['extern'])) $out .= ' target="'.$conf['target']['extern'].'"';
-        $out .= '>'.$license[$conf['license']]['name'].'</a>';
+        $out .= '> '.$license[$conf['license']]['name'].'</a>';
         $form->addElement($out);
         $form->addElement(form_makeCloseTag('div'));
     }
@@ -1423,11 +1389,10 @@ function html_admin(){
     }
 
     // data security check
-    // @todo: could be checked and only displayed if $conf['savedir'] is under the web root
-    echo '<a style="border:none; float:right;"
-            href="http://www.dokuwiki.org/security#web_access_security">
-            <img src="data/security.png" alt="Your data directory seems to be protected properly."
-             onerror="this.parentNode.style.display=\'none\'" /></a>';
+    echo '<a style="background: transparent url(data/security.png) left top no-repeat;
+                  display: block; width:380px; height:73px; border:none; float:right"
+           target="_blank"
+           href="http://www.dokuwiki.org/security#web_access_security"></a>';
 
     print p_locale_xhtml('admin');
 

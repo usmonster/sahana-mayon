@@ -8,7 +8,6 @@
  * @author Enrico Nicoletto <liverig@gmail.com>
  * @author Fil <fil@meteopt.com>
  * @author André Neves <drakferion@gmail.com>
- * @author José Campos zecarlosdecampos@gmail.com
  */
 $lang['admin_acl']             = 'Gestão de ACLs';
 $lang['acl_group']             = 'Grupo';

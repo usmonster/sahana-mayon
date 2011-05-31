@@ -395,8 +395,13 @@ EOD;
         $this->output($error->getXml());
     }
     function output($xml) {
-        header('Content-Type: text/xml; charset=utf-8');
-        echo '<?xml version="1.0"?>', "\n", $xml;
+        $xml = '<?xml version="1.0"?>'."\n".$xml;
+        $length = strlen($xml);
+        header('Connection: close');
+        header('Content-Length: '.$length);
+        header('Content-Type: text/xml');
+        header('Date: '.date('r'));
+        echo $xml;
         exit;
     }
     function hasMethod($method) {

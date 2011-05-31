@@ -158,11 +158,8 @@ class auth_ldap extends auth_basic {
             // in some cases getUserData is called outside the authentication workflow
             // eg. for sending email notification on subscribed pages. This data might not
             // be accessible anonymously, so we try to rebind the current user here
-            list($loginuser,$loginsticky,$loginpass) = auth_getCookie();
-            if($loginuser && $loginpass){
-                $loginpass = PMA_blowfish_decrypt($loginpass, auth_cookiesalt(!$loginsticky));
-                $this->checkPass($loginuser, $loginpass);
-            }
+            $pass = PMA_blowfish_decrypt($_SESSION[DOKU_COOKIE]['auth']['pass'],auth_cookiesalt());
+            $this->checkPass($_SESSION[DOKU_COOKIE]['auth']['user'], $pass);
         }
 
         $info['user']   = $user;
@@ -460,4 +457,4 @@ class auth_ldap extends auth_basic {
     }
 }
 
-//Setup VIM: ex: et ts=4 :
+//Setup VIM: ex: et ts=4 enc=utf-8 :

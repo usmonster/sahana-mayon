@@ -141,7 +141,7 @@ function media_metaform($id,$auth){
 }
 
 /**
- * Convenience function to check if a media file is still in use
+ * Conveinience function to check if a media file is still in use
  *
  * @author Michael Klier <chi@chimeric.de>
  */
@@ -160,26 +160,19 @@ function media_inuse($id) {
     }
 }
 
-define('DOKU_MEDIA_DELETED', 1);
-define('DOKU_MEDIA_NOT_AUTH', 2);
-define('DOKU_MEDIA_INUSE', 4);
-define('DOKU_MEDIA_EMPTY_NS', 8);
-
 /**
  * Handles media file deletions
  *
  * If configured, checks for media references before deletion
  *
  * @author Andreas Gohr <andi@splitbrain.org>
- * @return int One of: 0,
-                       DOKU_MEDIA_DELETED,
-                       DOKU_MEDIA_DELETED | DOKU_MEDIA_EMPTY_NS,
-                       DOKU_MEDIA_NOT_AUTH,
-                       DOKU_MEDIA_INUSE
+ * @return mixed false on error, true on delete or array with refs
  */
 function media_delete($id,$auth){
-    if($auth < AUTH_DELETE) return DOKU_MEDIA_NOT_AUTH;
-    if(media_inuse($id)) return DOKU_MEDIA_INUSE;
+    if($auth < AUTH_DELETE) return false;
+    if(!checkSecurityToken()) return false;
+    global $conf;
+    global $lang;
 
     $file = mediaFN($id);
 
@@ -203,22 +196,38 @@ function media_delete($id,$auth){
     unset($evt);
 
     if($data['unl'] && $data['del']){
-        return DOKU_MEDIA_DELETED | DOKU_MEDIA_EMPTY_NS;
+        // current namespace was removed. redirecting to root ns passing msg along
+        send_redirect(DOKU_URL.'lib/exe/mediamanager.php?msg1='.
+                rawurlencode(sprintf(noNS($id),$lang['deletesucc'])));
     }
 
-    return $data['unl'] ? DOKU_MEDIA_DELETED : 0;
+    return $data['unl'];
 }
 
 /**
  * Handles media file uploads
  *
+ * This generates an action event and delegates to _media_upload_action().
+ * Action plugins are allowed to pre/postprocess the uploaded file.
+ * (The triggered event is preventable.)
+ *
+ * Event data:
+ * $data[0]     fn_tmp: the temporary file name (read from $_FILES)
+ * $data[1]     fn: the file name of the uploaded file
+ * $data[2]     id: the future directory id of the uploaded file
+ * $data[3]     imime: the mimetype of the uploaded file
+ * $data[4]     overwrite: if an existing file is going to be overwritten
+ *
+ * @triggers MEDIA_UPLOAD_FINISH
  * @author Andreas Gohr <andi@splitbrain.org>
  * @author Michael Klier <chi@chimeric.de>
  * @return mixed false on error, id of the new file on success
  */
 function media_upload($ns,$auth){
+    if($auth < AUTH_UPLOAD) return false;
     if(!checkSecurityToken()) return false;
     global $lang;
+    global $conf;
 
     // get file and id
     $id   = $_POST['id'];
@@ -240,50 +249,8 @@ function media_upload($ns,$auth){
         msg(sprintf($lang['mediaextchange'],$fext,$iext));
     }
 
-    $res = media_save(array('name' => $file['tmp_name'],
-                            'mime' => $imime,
-                            'ext'  => $iext), $ns.':'.$id,
-                      $_REQUEST['ow'], $auth, 'move_uploaded_file');
-    if (is_array($res)) {
-        msg($res[0], $res[1]);
-        return false;
-    }
-    return $res;
-}
-
-/**
- * This generates an action event and delegates to _media_upload_action().
- * Action plugins are allowed to pre/postprocess the uploaded file.
- * (The triggered event is preventable.)
- *
- * Event data:
- * $data[0]     fn_tmp: the temporary file name (read from $_FILES)
- * $data[1]     fn: the file name of the uploaded file
- * $data[2]     id: the future directory id of the uploaded file
- * $data[3]     imime: the mimetype of the uploaded file
- * $data[4]     overwrite: if an existing file is going to be overwritten
- *
- * @triggers MEDIA_UPLOAD_FINISH
- */
-function media_save($file, $id, $ow, $auth, $move) {
-    if($auth < AUTH_UPLOAD) {
-        return array("You don't have permissions to upload files.", -1);
-    }
-
-    if (!isset($file['mime']) || !isset($file['ext'])) {
-        list($ext, $mime) = mimetype($id);
-        if (!isset($file['mime'])) {
-            $file['mime'] = $mime;
-        }
-        if (!isset($file['ext'])) {
-            $file['ext'] = $ext;
-        }
-    }
-
-    global $lang;
-
     // get filename
-    $id   = cleanID($id,false,true);
+    $id   = cleanID($ns.':'.$id,false,true);
     $fn   = mediaFN($id);
 
     // get filetype regexp
@@ -292,35 +259,40 @@ function media_save($file, $id, $ow, $auth, $move) {
     $regex = join('|',$types);
 
     // because a temp file was created already
-    if(!preg_match('/\.('.$regex.')$/i',$fn)) {
-        return array($lang['uploadwrong'],-1);
-    }
+    if(preg_match('/\.('.$regex.')$/i',$fn)){
+        //check for overwrite
+        $overwrite = @file_exists($fn);
+        if($overwrite && (!$_REQUEST['ow'] || $auth < AUTH_DELETE)){
+            msg($lang['uploadexist'],0);
+            return false;
+        }
+        // check for valid content
+        $ok = media_contentcheck($file['tmp_name'],$imime);
+        if($ok == -1){
+            msg(sprintf($lang['uploadbadcontent'],".$iext"),-1);
+            return false;
+        }elseif($ok == -2){
+            msg($lang['uploadspam'],-1);
+            return false;
+        }elseif($ok == -3){
+            msg($lang['uploadxss'],-1);
+            return false;
+        }
 
-    //check for overwrite
-    $overwrite = @file_exists($fn);
-    if($overwrite && (!$ow || $auth < AUTH_DELETE)) {
-        return array($lang['uploadexist'], 0);
-    }
-    // check for valid content
-    $ok = media_contentcheck($file['name'], $file['mime']);
-    if($ok == -1){
-        return array(sprintf($lang['uploadbadcontent'],'.' . $file['ext']),-1);
-    }elseif($ok == -2){
-        return array($lang['uploadspam'],-1);
-    }elseif($ok == -3){
-        return array($lang['uploadxss'],-1);
-    }
+        // prepare event data
+        $data[0] = $file['tmp_name'];
+        $data[1] = $fn;
+        $data[2] = $id;
+        $data[3] = $imime;
+        $data[4] = $overwrite;
 
-    // prepare event data
-    $data[0] = $file['name'];
-    $data[1] = $fn;
-    $data[2] = $id;
-    $data[3] = $file['mime'];
-    $data[4] = $overwrite;
-    $data[5] = $move;
+        // trigger event
+        return trigger_event('MEDIA_UPLOAD_FINISH', $data, '_media_upload_action', true);
 
-    // trigger event
-    return trigger_event('MEDIA_UPLOAD_FINISH', $data, '_media_upload_action', true);
+    }else{
+        msg($lang['uploadwrong'],-1);
+    }
+    return false;
 }
 
 /**
@@ -329,8 +301,8 @@ function media_save($file, $id, $ow, $auth, $move) {
  */
 function _media_upload_action($data) {
     // fixme do further sanity tests of given data?
-    if(is_array($data) && count($data)===6) {
-        return media_upload_finish($data[0], $data[1], $data[2], $data[3], $data[4], $data[5]);
+    if(is_array($data) && count($data)===5) {
+        return media_upload_finish($data[0], $data[1], $data[2], $data[3], $data[4]);
     } else {
         return false; //callback error
     }
@@ -342,14 +314,14 @@ function _media_upload_action($data) {
  * @author Andreas Gohr <andi@splitbrain.org>
  * @author Michael Klier <chi@chimeric.de>
  */
-function media_upload_finish($fn_tmp, $fn, $id, $imime, $overwrite, $move = 'move_uploaded_file') {
+function media_upload_finish($fn_tmp, $fn, $id, $imime, $overwrite) {
     global $conf;
     global $lang;
 
     // prepare directory
     io_createNamespace($id, 'media');
 
-    if($move($fn_tmp, $fn)) {
+    if(move_uploaded_file($fn_tmp, $fn)) {
         // Set the correct permission here.
         // Always chmod media because they may be saved with different permissions than expected from the php umask.
         // (Should normally chmod to $conf['fperm'] only if $conf['fperm'] is set.)
@@ -364,7 +336,7 @@ function media_upload_finish($fn_tmp, $fn, $id, $imime, $overwrite, $move = 'mov
         }
         return $id;
     }else{
-        return array($lang['uploadfail'],-1);
+        msg($lang['uploadfail'],-1);
     }
 }
 

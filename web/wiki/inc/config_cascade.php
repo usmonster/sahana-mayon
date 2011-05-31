@@ -5,8 +5,7 @@
  * This array configures the default locations of various files in the
  * DokuWiki directory hierarchy. It can be overriden in inc/preload.php
  */
-$config_cascade = array_merge(
-    array(
+$config_cascade = array(
         'main' => array(
             'default'   => array(DOKU_CONF.'dokuwiki.php'),
             'local'     => array(DOKU_CONF.'local.php'),
@@ -49,11 +48,10 @@ $config_cascade = array_merge(
             'local'     => array(DOKU_CONF.'wordblock.local.conf'),
             ),
         'userstyle' => array(
-            'screen'  => DOKU_CONF.'userstyle.css',
-            'rtl'     => DOKU_CONF.'userrtl.css',
-            'print'   => DOKU_CONF.'userprint.css',
-            'feed'    => DOKU_CONF.'userfeed.css',
-            'all'     => DOKU_CONF.'userall.css',
+            'default' => DOKU_CONF.'userstyle.css',
+            'print'   => DOKU_CONF.'printstyle.css',
+            'feed'    => DOKU_CONF.'feedstyle.css',
+            'all'     => DOKU_CONF.'allstyle.css',
             ),
         'userscript' => array(
             'default' => DOKU_CONF.'userscript.js'
@@ -64,7 +62,5 @@ $config_cascade = array_merge(
         'plainauth.users' => array(
             'default' => DOKU_CONF.'users.auth.php',
             ),
-        ),
-        $config_cascade
 );
 

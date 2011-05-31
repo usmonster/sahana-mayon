@@ -1,14 +1,14 @@
-משתמש חדש נרשם. להלן הפרטים:
+משתמש חדש נרשם. הנה הפרטים:
 
 שם משתמש   : @NEWUSER@
 שם מלא     : @NEWNAME@
-דוא״ל      : @NEWEMAIL@
+דוא"ל      : @NEWEMAIL@
 
 תאריך      : @DATE@
 דפדפן      : @BROWSER@
-כתובת IP&rlm;  : @IPADDRESS@
-שם המארח   : @HOSTNAME@
+כתובת רשת  : @IPADDRESS@
+שם המחשב   : @HOSTNAME@
 
 -- 
-הודעת דוא״ל זו נוצרה על ידי ה־DokuWiki הזמין בכתובת
+דוא"ל זה נוצר על ידי DokuWiki ב-
 @DOKUWIKIURL@

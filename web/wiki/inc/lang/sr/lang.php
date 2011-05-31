@@ -4,7 +4,8 @@
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author Filip Brcic <brcha@users.sourceforge.net>
- * @author Иван Петровић (Ivan Petrovic) <petrovicivan@ubuntusrbija.org>
+ * @author Иван Петровић petrovicivan@ubuntusrbija.org
+ * @author Ivan Petrovic <petrovicivan@ubuntusrbija.org>
  * @author Miroslav Šolti <solti.miroslav@gmail.com>
  */
 $lang['encoding']              = 'utf-8';
@@ -46,7 +47,6 @@ $lang['btn_draft']             = 'Измени нацрт';
 $lang['btn_recover']           = 'Опорави нацрт';
 $lang['btn_draftdel']          = 'Обриши нацрт';
 $lang['btn_revert']            = 'Врати на пређашњу верзију';
-$lang['btn_register']          = 'Региструј се';
 $lang['loggedinas']            = 'Пријављен као';
 $lang['user']                  = 'Корисничко име';
 $lang['pass']                  = 'Лозинка';
@@ -56,6 +56,7 @@ $lang['passchk']               = 'поново';
 $lang['remember']              = 'Запамти ме';
 $lang['fullname']              = 'Име и презиме';
 $lang['email']                 = 'Е-адреса';
+$lang['register']              = 'Региструј се';
 $lang['profile']               = 'Кориснички профил';
 $lang['badlogin']              = 'Извините, није добро корисничко име или шифра.';
 $lang['minoredit']             = 'Мала измена';

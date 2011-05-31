@@ -1,3 +1,4 @@
 ====== Predogled ======
 
-Prikazan je predogled strani. Stran še ni shranjena!
+To je predogled strani. Lahko si ogledate kako bo izgledal dokument. Ne pozabite pa, da še ni shranjen!
+

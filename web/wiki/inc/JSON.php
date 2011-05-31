@@ -112,16 +112,6 @@ define('JSON_STRICT_TYPE', 11);
  * @deprecated
  */
 class JSON {
-
-    /**
-     * Disables the use of PHP5's native json_decode()
-     *
-     * You shouldn't change this usually because the native function is much
-     * faster. However, this non-native will also parse slightly broken JSON
-     * which might be handy when talking to a non-conform endpoint
-     */
-    public $skipnative = false;
-
     /**
      * constructs a new JSON instance
      *
@@ -140,7 +130,6 @@ class JSON {
 
     /**
      * encodes an arbitrary variable into JSON format
-     * If available the native PHP JSON implementation is used.
      *
      * @param    mixed   $var    any number, boolean, string, array, or object to be encoded.
      *                           see argument 1 to JSON() above for array-parsing behavior.
@@ -151,7 +140,6 @@ class JSON {
      * @access   public
      */
     function encode($var) {
-        if (function_exists('json_encode')) return json_encode($var);
         switch (gettype($var)) {
             case 'boolean':
                 return $var ? 'true' : 'false';
@@ -364,7 +352,6 @@ class JSON {
 
     /**
      * decodes a JSON string into appropriate variable
-     * If available the native PHP JSON implementation is used.
      *
      * @param    string  $str    JSON-formatted string
      *
@@ -376,10 +363,6 @@ class JSON {
      * @access   public
      */
     function decode($str) {
-        if (!$this->skipnative && function_exists('json_decode')){
-            return json_decode($str,($this->use == JSON_LOOSE_TYPE));
-        }
-
         $str = $this->reduce_string($str);
 
         switch (strtolower($str)) {

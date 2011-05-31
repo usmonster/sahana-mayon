@@ -2,9 +2,8 @@
 /**
  * Latin language file
  *
- * @author Massimiliano Vassalli <vassalli.max@gmail.com>
  */
-$lang['menu']                  = 'Addendorum administratio';
+$lang['menu']                  = 'Administrationis addenda';
 $lang['download']              = 'Noua addenda cape';
 $lang['manage']                = 'Addenta in usu';
 $lang['btn_info']              = 'Notae';

@@ -71,7 +71,6 @@ class DokuHTTPClient extends HTTPClient {
  * @link   http://www.splitbrain.org/go/videodb
  * @author Andreas Goetz <cpuidle@gmx.de>
  * @author Andreas Gohr <andi@splitbrain.org>
- * @author Tobias Sarnowski <sarnowski@new-thoughts.org>
  */
 class HTTPClient {
     //set these if you like
@@ -87,14 +86,13 @@ class HTTPClient {
     var $headers;
     var $debug;
     var $start = 0; // for timings
-    var $keep_alive = true; // keep alive rocks
 
     // don't set these, read on error
     var $error;
     var $redirect_count;
 
     // read these after a successful request
-    var $status;
+    var $resp_status;
     var $resp_body;
     var $resp_headers;
 
@@ -109,9 +107,6 @@ class HTTPClient {
     var $proxy_pass;
     var $proxy_ssl; //boolean set to true if your proxy needs SSL
     var $proxy_except; // regexp of URLs to exclude from proxy
-
-    // list of kept alive connections
-    static $connections = array();
 
     // what we use as boundary on multipart/form-data posts
     var $boundary = '---DokuWikiHTTPClient--4523452351';
@@ -227,7 +222,7 @@ class HTTPClient {
         $path   = $uri['path'];
         if(empty($path)) $path = '/';
         if(!empty($uri['query'])) $path .= '?'.$uri['query'];
-        if(isset($uri['port']) && !empty($uri['port'])) $port = $uri['port'];
+        $port = $uri['port'];
         if(isset($uri['user'])) $this->user = $uri['user'];
         if(isset($uri['pass'])) $this->pass = $uri['pass'];
 
@@ -240,7 +235,7 @@ class HTTPClient {
         }else{
             $request_url = $path;
             $server      = $server;
-            if (!isset($port)) $port = ($uri['scheme'] == 'https') ? 443 : 80;
+            if (empty($port)) $port = ($uri['scheme'] == 'https') ? 443 : 80;
         }
 
         // add SSL stream prefix if needed - needs SSL support in PHP
@@ -252,11 +247,7 @@ class HTTPClient {
         if($uri['port']) $headers['Host'].= ':'.$uri['port'];
         $headers['User-Agent'] = $this->agent;
         $headers['Referer']    = $this->referer;
-        if ($this->keep_alive) {
-            $headers['Connection'] = 'Keep-Alive';
-        } else {
-            $headers['Connection'] = 'Close';
-        }
+        $headers['Connection'] = 'Close';
         if($method == 'POST'){
             if(is_array($data)){
                 if($headers['Content-Type'] == 'multipart/form-data'){
@@ -282,34 +273,15 @@ class HTTPClient {
         // stop time
         $start = time();
 
-        // already connected?
-        $connectionId = $this->_uniqueConnectionId($server,$port);
-        $this->_debug('connection pool', $this->connections);
-        $socket = null;
-        if (isset($this->connections[$connectionId])) {
-            $this->_debug('reusing connection', $connectionId);
-            $socket = $this->connections[$connectionId];
+        // open socket
+        $socket = @fsockopen($server,$port,$errno, $errstr, $this->timeout);
+        if (!$socket){
+            $this->status = -100;
+            $this->error = "Could not connect to $server:$port\n$errstr ($errno)";
+            return false;
         }
-        if (is_null($socket) || feof($socket)) {
-            $this->_debug('opening connection', $connectionId);
-            // open socket
-            $socket = @fsockopen($server,$port,$errno, $errstr, $this->timeout);
-            if (!$socket){
-                $this->status = -100;
-                $this->error = "Could not connect to $server:$port\n$errstr ($errno)";
-                return false;
-            }
-
-            // keep alive?
-            if ($this->keep_alive) {
-                $this->connections[$connectionId] = $socket;
-            } else {
-                unset($this->connections[$connectionId]);
-            }
-        }
-
-        //set blocking
-        stream_set_blocking($socket,1);
+        //set non blocking
+        stream_set_blocking($socket,0);
 
         // build request
         $request  = "$method $request_url HTTP/".$this->http.HTTP_NL;
@@ -320,39 +292,18 @@ class HTTPClient {
 
         $this->_debug('request',$request);
 
-        // select parameters
-        $sel_r = null;
-        $sel_w = array($socket);
-        $sel_e = null;
-
         // send request
         $towrite = strlen($request);
         $written = 0;
         while($written < $towrite){
-            // check timeout
-            if(time()-$start > $this->timeout){
-                $this->status = -100;
-                $this->error = sprintf('Timeout while sending request (%.3fs)',$this->_time() - $this->start);
-                unset($this->connections[$connectionId]);
-                return false;
-            }
-
-            // wait for stream ready or timeout (1sec)
-            if(stream_select($sel_r,$sel_w,$sel_e,1) === false) continue;
-
-            // write to stream
-            $ret = fwrite($socket, substr($request,$written,4096));
+            $ret = fwrite($socket, substr($request,$written));
             if($ret === false){
                 $this->status = -100;
                 $this->error = 'Failed writing to socket';
-                unset($this->connections[$connectionId]);
                 return false;
             }
             $written += $ret;
         }
-
-        // continue non-blocking
-        stream_set_blocking($socket,0);
 
         // read headers from socket
         $r_headers = '';
@@ -360,12 +311,10 @@ class HTTPClient {
             if(time()-$start > $this->timeout){
                 $this->status = -100;
                 $this->error = sprintf('Timeout while reading headers (%.3fs)',$this->_time() - $this->start);
-                unset($this->connections[$connectionId]);
                 return false;
             }
             if(feof($socket)){
                 $this->error = 'Premature End of File (socket)';
-                unset($this->connections[$connectionId]);
                 return false;
             }
             $r_headers .= fgets($socket,1024);
@@ -378,7 +327,6 @@ class HTTPClient {
             if($match[1] > $this->max_bodysize){
                 $this->error = 'Reported content length exceeds allowed response size';
                 if ($this->max_bodysize_abort)
-                    unset($this->connections[$connectionId]);
                     return false;
             }
         }
@@ -386,7 +334,6 @@ class HTTPClient {
         // get Status
         if (!preg_match('/^HTTP\/(\d\.\d)\s*(\d+).*?\n/', $r_headers, $m)) {
             $this->error = 'Server returned bad answer';
-            unset($this->connections[$connectionId]);
             return false;
         }
         $this->status = $m[2];
@@ -412,11 +359,6 @@ class HTTPClient {
 
         // check server status code to follow redirect
         if($this->status == 301 || $this->status == 302 ){
-            // close the connection because we don't handle content retrieval here
-            // that's the easiest way to clean up the connection
-            fclose($socket);
-            unset($this->connections[$connectionId]);
-
             if (empty($this->resp_headers['location'])){
                 $this->error = 'Redirect but no Location Header found';
                 return false;
@@ -444,7 +386,6 @@ class HTTPClient {
         // check if headers are as expected
         if($this->header_regexp && !preg_match($this->header_regexp,$r_headers)){
             $this->error = 'The received headers did not match the given regexp';
-            unset($this->connections[$connectionId]);
             return false;
         }
 
@@ -456,13 +397,11 @@ class HTTPClient {
                 do {
                     if(feof($socket)){
                         $this->error = 'Premature End of File (socket)';
-                        unset($this->connections[$connectionId]);
                         return false;
                     }
                     if(time()-$start > $this->timeout){
                         $this->status = -100;
                         $this->error = sprintf('Timeout while reading chunk (%.3fs)',$this->_time() - $this->start);
-                        unset($this->connections[$connectionId]);
                         return false;
                     }
                     $byte = fread($socket,1);
@@ -479,12 +418,10 @@ class HTTPClient {
 
                 if($this->max_bodysize && strlen($r_body) > $this->max_bodysize){
                     $this->error = 'Allowed response size exceeded';
-                    if ($this->max_bodysize_abort){
-                        unset($this->connections[$connectionId]);
+                    if ($this->max_bodysize_abort)
                         return false;
-                    } else {
+                    else
                         break;
-                    }
                 }
             } while ($chunk_size);
         }else{
@@ -493,19 +430,16 @@ class HTTPClient {
                 if(time()-$start > $this->timeout){
                     $this->status = -100;
                     $this->error = sprintf('Timeout while reading response (%.3fs)',$this->_time() - $this->start);
-                    unset($this->connections[$connectionId]);
                     return false;
                 }
                 $r_body .= fread($socket,4096);
                 $r_size = strlen($r_body);
                 if($this->max_bodysize && $r_size > $this->max_bodysize){
                     $this->error = 'Allowed response size exceeded';
-                    if ($this->max_bodysize_abort) {
-                        unset($this->connections[$connectionId]);
+                    if ($this->max_bodysize_abort)
                         return false;
-                    } else {
+                    else
                         break;
-                    }
                 }
                 if(isset($this->resp_headers['content-length']) &&
                    !isset($this->resp_headers['transfer-encoding']) &&
@@ -516,13 +450,9 @@ class HTTPClient {
             }
         }
 
-        if (!$this->keep_alive ||
-                (isset($this->resp_headers['connection']) && $this->resp_headers['connection'] == 'Close')) {
-            // close socket
-            $status = socket_get_status($socket);
-            fclose($socket);
-            unset($this->connections[$connectionId]);
-        }
+        // close socket
+        $status = socket_get_status($socket);
+        fclose($socket);
 
         // decode gzip if needed
         if(isset($this->resp_headers['content-encoding']) &&
@@ -576,13 +506,12 @@ class HTTPClient {
      */
     function _parseHeaders($string){
         $headers = array();
-        if (!preg_match_all('/^\s*([\w-]+)\s*:\s*([\S \t]+)\s*$/m', $string,
-                            $matches, PREG_SET_ORDER)) {
-            return $headers;
-        }
-        foreach($matches as $match){
-            list(, $key, $val) = $match;
-            $key = strtolower($key);
+        $lines = explode("\n",$string);
+        foreach($lines as $line){
+            list($key,$val) = explode(':',$line,2);
+            $key = strtolower(trim($key));
+            $val = trim($val);
+            if(empty($val)) continue;
             if(isset($headers[$key])){
                 if(is_array($headers[$key])){
                     $headers[$key][] = $val;
@@ -669,14 +598,6 @@ class HTTPClient {
         return $out;
     }
 
-    /**
-     * Generates a unique identifier for a connection.
-     *
-     * @return string unique identifier
-     */
-    function _uniqueConnectionId($server, $port) {
-        return "$server:$port";
-    }
 }
 
-//Setup VIM: ex: et ts=4 :
+//Setup VIM: ex: et ts=4 enc=utf-8 :

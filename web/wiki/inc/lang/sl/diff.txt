@@ -1,3 +1,4 @@
-====== Primerjava izbranih različic ======
+====== Primerjaj izbrane različice ======
 
-Prikazane so razlike med izbrano in trenutno različico strani.
+Prikazana je razlika med izbrano in trenutno različico te strani.
+

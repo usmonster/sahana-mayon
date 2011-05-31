@@ -8,7 +8,6 @@
  * @author tomas@valenta.cz
  * @author Marek Sacha <sachamar@fel.cvut.cz>
  * @author Lefty <lefty@multihost.cz>
- * @author Vojta Beran <xmamut@email.cz>
  */
 $lang['admin_acl']             = 'Správa přístupových práv';
 $lang['acl_group']             = 'Skupina';

@@ -1,14 +1,14 @@
-Nov uporabniški račun je uspešno vpisan.
-Podatki računa:
+Nov uporabnik registriran. Podatki:
 
-Uporabniško ime   : @NEWUSER@
-Polno ime         : @NEWNAME@
-Elektronski naslov: @NEWEMAIL@
+Uporabniško ime: @NEWUSER@
+Polno ime: @NEWNAME@
+E-mail: @NEWEMAIL@
 
-Datum             : @DATE@
-Brskalnik         : @BROWSER@
-Naslov IP         : @IPADDRESS@
-Ime gostitelja    : @HOSTNAME@
+Datum: @DATE@
+Brskalnik: @BROWSER@
+IP naslov: @IPADDRESS@
+Hostname: @HOSTNAME@
 
 -- 
-Sporočilo je samodejno ustvarjeno na spletišču @DOKUWIKIURL@
+To sporočilo je ustvaril DokuWiki na
+@DOKUWIKIURL@

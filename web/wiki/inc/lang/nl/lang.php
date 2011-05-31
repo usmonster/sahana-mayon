@@ -11,7 +11,8 @@
  * @author John de Graaff <john@de-graaff.net>
  * @author Dion Nicolaas <dion@nicolaas.net>
  * @author Danny Rotsaert <danny.rotsaert@edpnet.be>
- * @author Matthias Carchon <webmaster@c-mattic.be>
+ * @author Marijn Hofstra hofstra.m@gmail.com
+ * @author Matthias Carchon webmaster@c-mattic.be
  * @author Marijn Hofstra <hofstra.m@gmail.com>
  * @author Timon Van Overveldt <timonvo@gmail.com>
  */
@@ -54,7 +55,6 @@ $lang['btn_draft']             = 'Bewerk concept';
 $lang['btn_recover']           = 'Herstel concept';
 $lang['btn_draftdel']          = 'Verwijder concept';
 $lang['btn_revert']            = 'Herstellen';
-$lang['btn_register']          = 'Registreren';
 $lang['loggedinas']            = 'Ingelogd als';
 $lang['user']                  = 'Gebruikersnaam';
 $lang['pass']                  = 'Wachtwoord';
@@ -64,6 +64,7 @@ $lang['passchk']               = 'nogmaals';
 $lang['remember']              = 'Bewaar';
 $lang['fullname']              = 'Volledige naam';
 $lang['email']                 = 'E-mail';
+$lang['register']              = 'Registreren';
 $lang['profile']               = 'Gebruikersprofiel';
 $lang['badlogin']              = 'Sorry, gebruikersnaam of wachtwoord onjuist';
 $lang['minoredit']             = 'Kleine wijziging';
@@ -166,9 +167,6 @@ $lang['yours']                 = 'Jouw versie';
 $lang['diff']                  = 'Toon verschillen met huidige revisie';
 $lang['diff2']                 = 'Toon verschillen tussen geselecteerde revisies';
 $lang['difflink']              = 'Link naar deze vergelijking';
-$lang['diff_type']             = 'Bekijk verschillen:';
-$lang['diff_inline']           = 'Inline';
-$lang['diff_side']             = 'Zij aan zij';
 $lang['line']                  = 'Regel';
 $lang['breadcrumb']            = 'Spoor';
 $lang['youarehere']            = 'Je bent hier';

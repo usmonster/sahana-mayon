@@ -6,7 +6,7 @@ class ap_delete extends ap_manage {
         if (!$this->dir_delete(DOKU_PLUGIN.plugin_directory($this->manager->plugin))) {
             $this->manager->error = sprintf($this->lang['error_delete'],$this->manager->plugin);
         } else {
-            msg(sprintf($this->lang['deleted'],$this->plugin));
+            msg("Plugin {$this->manager->plugin} successfully deleted.");
             $this->refresh();
         }
     }

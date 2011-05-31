@@ -36,21 +36,19 @@ function ft_pageSearch($query,&$highlight){
  * @author Kazutaka Miyasaka <kazmiya@gmail.com>
  */
 function _ft_pageSearch(&$data) {
-    $Indexer = idx_get_indexer();
-
     // parse the given query
-    $q = ft_queryParser($Indexer, $data['query']);
+    $q = ft_queryParser($data['query']);
     $data['highlight'] = $q['highlight'];
 
     if (empty($q['parsed_ary'])) return array();
 
     // lookup all words found in the query
-    $lookup = $Indexer->lookup($q['words']);
+    $lookup = idx_lookup($q['words']);
 
     // get all pages in this dokuwiki site (!: includes nonexistent pages)
     $pages_all = array();
-    foreach ($Indexer->getPages() as $id) {
-        $pages_all[$id] = 0; // base: 0 hit
+    foreach (idx_getIndex('page', '') as $id) {
+        $pages_all[trim($id)] = 0; // base: 0 hit
     }
 
     // process the query
@@ -124,12 +122,29 @@ function _ft_pageSearch(&$data) {
 /**
  * Returns the backlinks for a given page
  *
- * Uses the metadata index.
+ * Does a quick lookup with the fulltext index, then
+ * evaluates the instructions of the found pages
  */
 function ft_backlinks($id){
+    global $conf;
+    $swfile   = DOKU_INC.'inc/lang/'.$conf['lang'].'/stopwords.txt';
+    $stopwords = @file_exists($swfile) ? file($swfile) : array();
+
     $result = array();
 
-    $result = idx_get_indexer()->lookupKey('relation_references', $id);
+    // quick lookup of the pagename
+    $page    = noNS($id);
+    $matches = idx_lookup(idx_tokenizer($page,$stopwords));  // pagename may contain specials (_ or .)
+    $docs    = array_keys(ft_resultCombine(array_values($matches)));
+    $docs    = array_filter($docs,'isVisiblePage'); // discard hidden pages
+    if(!count($docs)) return $result;
+
+    // check metadata for matching links
+    foreach($docs as $match){
+        // metadata relation reference links are already resolved
+        $links = p_get_metadata($match,'relation references');
+        if (isset($links[$id])) $result[] = $match;
+    }
 
     if(!count($result)) return $result;
 
@@ -153,14 +168,17 @@ function ft_backlinks($id){
  * Aborts after $max found results
  */
 function ft_mediause($id,$max){
+    global $conf;
+    $swfile   = DOKU_INC.'inc/lang/'.$conf['lang'].'/stopwords.txt';
+    $stopwords = @file_exists($swfile) ? file($swfile) : array();
+
     if(!$max) $max = 1; // need to find at least one
 
     $result = array();
 
     // quick lookup of the mediafile
-    // FIXME use metadata key lookup
     $media   = noNS($id);
-    $matches = idx_lookup(idx_tokenizer($media));
+    $matches = idx_lookup(idx_tokenizer($media,$stopwords));
     $docs    = array_keys(ft_resultCombine(array_values($matches)));
     if(!count($docs)) return $result;
 
@@ -211,6 +229,7 @@ function ft_pageLookup($id, $in_ns=false, $in_title=false){
 }
 
 function _ft_pageLookup(&$data){
+    global $conf;
     // split out original parameters
     $id = $data['id'];
     if (preg_match('/(?:^| )@(\w+)/', $id, $matches)) {
@@ -220,27 +239,25 @@ function _ft_pageLookup(&$data){
 
     $in_ns    = $data['in_ns'];
     $in_title = $data['in_title'];
+
+    $pages  = array_map('rtrim', idx_getIndex('page', ''));
+    $titles = array_map('rtrim', idx_getIndex('title', ''));
+    // check for corrupt title index #FS2076
+    if(count($pages) != count($titles)){
+        $titles = array_fill(0,count($pages),'');
+        @unlink($conf['indexdir'].'/title.idx'); // will be rebuilt in inc/init.php
+    }
+    $pages = array_combine($pages, $titles);
+
     $cleaned = cleanID($id);
-
-    $Indexer = idx_get_indexer();
-    $page_idx = $Indexer->getPages();
-
-    $pages = array();
     if ($id !== '' && $cleaned !== '') {
-        foreach ($page_idx as $p_id) {
-            if ((strpos($in_ns ? $p_id : noNSorNS($p_id), $cleaned) !== false)) {
-                if (!isset($pages[$p_id]))
-                    $pages[$p_id] = p_get_first_heading($p_id, METADATA_DONT_RENDER);
-            }
-        }
-        if ($in_title) {
-            foreach ($Indexer->lookupKey('title', $id, '_ft_pageLookupTitleCompare') as $p_id) {
-                if (!isset($pages[$p_id]))
-                    $pages[$p_id] = p_get_first_heading($p_id, METADATA_DONT_RENDER);
+        foreach ($pages as $p_id => $p_title) {
+            if ((strpos($in_ns ? $p_id : noNSorNS($p_id), $cleaned) === false) &&
+                (!$in_title || (stripos($p_title, $id) === false)) ) {
+                unset($pages[$p_id]);
             }
         }
     }
-
     if (isset($ns)) {
         foreach (array_keys($pages) as $p_id) {
             if (strpos($p_id, $ns) !== 0) {
@@ -261,15 +278,6 @@ function _ft_pageLookup(&$data){
 
     uksort($pages,'ft_pagesorter');
     return $pages;
-}
-
-/**
- * Tiny helper function for comparing the searched title with the title
- * from the search index. This function is a wrapper around stripos with
- * adapted argument order and return value.
- */
-function _ft_pageLookupTitleCompare($search, $title) {
-    return stripos($title, $search) !== false;
 }
 
 /**
@@ -296,7 +304,6 @@ function ft_pagesorter($a, $b){
  */
 function ft_snippet($id,$highlight){
     $text = rawWiki($id);
-    $text = str_replace("\xC2\xAD",'',$text); // remove soft-hyphens
     $evdata = array(
             'id'        => $id,
             'text'      => &$text,
@@ -389,11 +396,6 @@ function ft_snippet($id,$highlight){
  * Wraps a search term in regex boundary checks.
  */
 function ft_snippet_re_preprocess($term) {
-    // do not process asian terms where word boundaries are not explicit
-    if(preg_match('/'.IDX_ASIAN.'/u',$term)){
-        return $term;
-    }
-
     if(substr($term,0,2) == '\\*'){
         $term = substr($term,2);
     }else{
@@ -492,7 +494,11 @@ function ft_resultComplement($args) {
  * @author Andreas Gohr <andi@splitbrain.org>
  * @author Kazutaka Miyasaka <kazmiya@gmail.com>
  */
-function ft_queryParser($Indexer, $query){
+function ft_queryParser($query){
+    global $conf;
+    $swfile    = DOKU_INC.'inc/lang/'.$conf['lang'].'/stopwords.txt';
+    $stopwords = @file_exists($swfile) ? file($swfile) : array();
+
     /**
      * parse a search query and transform it into intermediate representation
      *
@@ -538,7 +544,7 @@ function ft_queryParser($Indexer, $query){
         if (preg_match('/^(-?)"(.+)"$/u', $term, $matches)) {
             // phrase-include and phrase-exclude
             $not = $matches[1] ? 'NOT' : '';
-            $parsed = $not.ft_termParser($Indexer, $matches[2], false, true);
+            $parsed = $not.ft_termParser($matches[2], $stopwords, false, true);
         } else {
             // fix incomplete phrase
             $term = str_replace('"', ' ', $term);
@@ -585,10 +591,10 @@ function ft_queryParser($Indexer, $query){
                     $parsed .= '(N+:'.$matches[1].')';
                 } elseif (preg_match('/^-(.+)$/', $token, $matches)) {
                     // word-exclude
-                    $parsed .= 'NOT('.ft_termParser($Indexer, $matches[1]).')';
+                    $parsed .= 'NOT('.ft_termParser($matches[1], $stopwords).')';
                 } else {
                     // word-include
-                    $parsed .= ft_termParser($Indexer, $token);
+                    $parsed .= ft_termParser($token, $stopwords);
                 }
             }
         }
@@ -722,18 +728,18 @@ function ft_queryParser($Indexer, $query){
  *
  * @author Kazutaka Miyasaka <kazmiya@gmail.com>
  */
-function ft_termParser($Indexer, $term, $consider_asian = true, $phrase_mode = false) {
+function ft_termParser($term, &$stopwords, $consider_asian = true, $phrase_mode = false) {
     $parsed = '';
     if ($consider_asian) {
         // successive asian characters need to be searched as a phrase
         $words = preg_split('/('.IDX_ASIAN.'+)/u', $term, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
         foreach ($words as $word) {
-            $phrase_mode = $phrase_mode ? true : preg_match('/'.IDX_ASIAN.'/u', $word);
-            $parsed .= ft_termParser($Indexer, $word, false, $phrase_mode);
+            if (preg_match('/'.IDX_ASIAN.'/u', $word)) $phrase_mode = true;
+            $parsed .= ft_termParser($word, $stopwords, false, $phrase_mode);
         }
     } else {
         $term_noparen = str_replace(array('(', ')'), ' ', $term);
-        $words = $Indexer->tokenizer($term_noparen, true);
+        $words = idx_tokenizer($term_noparen, $stopwords, true);
 
         // W_: no need to highlight
         if (empty($words)) {
@@ -750,4 +756,4 @@ function ft_termParser($Indexer, $term, $consider_asian = true, $phrase_mode = f
     return $parsed;
 }
 
-//Setup VIM: ex: et ts=4 :
+//Setup VIM: ex: et ts=4 enc=utf-8 :

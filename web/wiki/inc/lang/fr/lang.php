@@ -12,6 +12,7 @@
  * @author Stéphane Chamberland <stephane.chamberland@ec.gc.ca>
  * @author Delassaux Julien <julien@delassaux.fr>
  * @author Maurice A. LeBlanc <leblancma@cooptel.qc.ca>
+ * @author gb@isis.u-strasbg.fr
  * @author stephane.gully@gmail.com
  * @author Guillaume Turri <guillaume.turri@gmail.com>
  * @author Erik Pedersen <erik.pedersen@shaw.ca>
@@ -19,8 +20,7 @@
  * @author Vincent Feltz <psycho@feltzv.fr>
  * @author Philippe Bajoit <philippe.bajoit@gmail.com>
  * @author Florian Gaub <floriang@floriang.net>
- * @author Samuel Dorsaz <samuel.dorsaz@novelion.net>
- * @author Johan Guilbaud <guilbaud.johan@gmail.com>
+ * @author Samuel Dorsaz samuel.dorsaz@novelion.net
  */
 $lang['encoding']              = 'utf-8';
 $lang['direction']             = 'ltr';
@@ -61,7 +61,6 @@ $lang['btn_draft']             = 'Modifier le brouillon';
 $lang['btn_recover']           = 'Récupérer le brouillon';
 $lang['btn_draftdel']          = 'Effacer le brouillon';
 $lang['btn_revert']            = 'Restaurer';
-$lang['btn_register']          = 'S\'enregistrer';
 $lang['loggedinas']            = 'Connecté en tant que ';
 $lang['user']                  = 'Utilisateur';
 $lang['pass']                  = 'Mot de passe';
@@ -71,6 +70,7 @@ $lang['passchk']               = 'Répéter nouveau mot de passe';
 $lang['remember']              = 'Mémoriser';
 $lang['fullname']              = 'Nom';
 $lang['email']                 = 'Adresse de courriel';
+$lang['register']              = 'S\'enregistrer';
 $lang['profile']               = 'Profil utilisateur';
 $lang['badlogin']              = 'L\'utilisateur ou le mot de passe est incorrect.';
 $lang['minoredit']             = 'Modification mineure';
@@ -173,9 +173,6 @@ $lang['yours']                 = 'Votre version';
 $lang['diff']                  = 'Différences avec la version actuelle';
 $lang['diff2']                 = 'Différences entre les versions sélectionnées';
 $lang['difflink']              = 'Lien vers cette vue';
-$lang['diff_type']             = 'Voir les différences :';
-$lang['diff_inline']           = 'Sur une seule ligne';
-$lang['diff_side']             = 'Côte à côte';
 $lang['line']                  = 'Ligne';
 $lang['breadcrumb']            = 'Piste';
 $lang['youarehere']            = 'Vous êtes ici';

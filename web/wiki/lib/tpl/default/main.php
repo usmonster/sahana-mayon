@@ -29,7 +29,7 @@ if (!defined('DOKU_INC')) die();
 
   <?php tpl_metaheaders()?>
 
-  <link rel="shortcut icon" href="<?php echo tpl_getFavicon() ?>" />
+  <link rel="shortcut icon" href="<?php echo DOKU_TPL?>images/favicon.ico" />
 
   <?php /*old includehook*/ @include(dirname(__FILE__).'/meta.html')?>
 </head>
@@ -92,7 +92,7 @@ if (!defined('DOKU_INC')) die();
     <!-- wikipage stop -->
   </div>
 
-  <div class="clearer"></div>
+  <div class="clearer">&nbsp;</div>
 
   <?php tpl_flush()?>
 

@@ -574,20 +574,11 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
             $params = $parts[1];
         }
 
-        // For empty $id we need to know the current $ID
-        // We need this check because _simpleTitle needs
-        // correct $id and resolve_pageid() use cleanID($id)
-        // (some things could be lost)
-        if ($id === '') {
-            $id = $ID;
-        }
-
         // default name is based on $id as given
         $default = $this->_simpleTitle($id);
 
         // now first resolve and clean up the $id
         resolve_pageid(getNS($ID),$id,$exists);
-
         $name = $this->_getLinkTitle($name, $default, $isImage, $id, $linktype);
         if ( !$isImage ) {
             if ( $exists ) {
@@ -743,9 +734,9 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
 
         $name = $this->_getLinkTitle($name, '', $isImage);
         if ( !$isImage ) {
-            $link['class']='mail';
+            $link['class']='mail JSnocheck';
         } else {
-            $link['class']='media';
+            $link['class']='media JSnocheck';
         }
 
         $address = $this->_xmlEntities($address);
@@ -1144,7 +1135,7 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
             return $this->_imageTitle($title);
         } elseif ( is_null($title) || trim($title)=='') {
             if (useHeading($linktype) && $id) {
-                $heading = p_get_first_heading($id);
+                $heading = p_get_first_heading($id,true);
                 if ($heading) {
                     return $this->_xmlEntities($heading);
                 }
@@ -1214,4 +1205,4 @@ class Doku_Renderer_xhtml extends Doku_Renderer {
 
 }
 
-//Setup VIM: ex: et ts=4 :
+//Setup VIM: ex: et ts=4 enc=utf-8 :

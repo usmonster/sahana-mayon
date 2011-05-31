@@ -7,6 +7,7 @@
  * @author Edmondas Girkantas <eg@zemaitija.net>
  * @author Arūnas Vaitekūnas <aras@fan.lt>
  * @author audrius.klevas@gmail.com
+ * @author Arunas Vaitekunas <aras@fan.lt>
  */
 $lang['encoding']              = 'utf-8';
 $lang['direction']             = 'ltr';
@@ -49,7 +50,6 @@ $lang['btn_resendpwd']         = 'Išsiųsti naują slaptažodį';
 $lang['btn_draft']             = 'Redaguoti juodraštį';
 $lang['btn_recover']           = 'Atkurti juodraštį';
 $lang['btn_draftdel']          = 'Šalinti juodraštį';
-$lang['btn_register']          = 'Registruotis';
 $lang['loggedinas']            = 'Prisijungęs kaip';
 $lang['user']                  = 'Vartotojo vardas';
 $lang['pass']                  = 'Slaptažodis';
@@ -59,6 +59,7 @@ $lang['passchk']               = 'dar kartą';
 $lang['remember']              = 'Prisiminti mane';
 $lang['fullname']              = 'Visas vardas';
 $lang['email']                 = 'El. pašto adresas';
+$lang['register']              = 'Registruotis';
 $lang['profile']               = 'Vartotojo profilis';
 $lang['badlogin']              = 'Nurodėte blogą vartotojo vardą arba slaptažodį.';
 $lang['minoredit']             = 'Nedidelis pataisymas';

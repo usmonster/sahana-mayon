@@ -206,7 +206,7 @@ var media_manager = {
         media_manager.id = id;
         if(!opener){
             // if we don't run in popup display example
-            var ex = $('ex'+id.replace(/:/g,'_'));
+            var ex = $('ex_'+id.replace(/:/g,'_'));
             if(ex.style.display == ''){
                 ex.style.display = 'none';
             } else {
@@ -214,6 +214,14 @@ var media_manager = {
             }
             return false;
         }
+
+        // FIXME these lines deactivate the media options dialog and restore
+        // the old behavior according to FS#2047
+        opener.insertTags('wiki__text','{{'+id+'|','}}','');
+        if(!media_manager.keepopen) window.close();
+        opener.focus();
+        return false;
+
 
         media_manager.ext = false;
         var dot = id.lastIndexOf(".");
@@ -234,11 +242,21 @@ var media_manager = {
         media_manager.popup.style.top = event.pageY + 'px';
 
         // set all buttons to outset
-        for (var i = 1; i < 5; i++) {
-            media_manager.outSet('media__linkbtn' + i);
-            media_manager.outSet('media__alignbtn' + i);
-            media_manager.outSet('media__sizebtn' + i);
-        }
+        media_manager.outSet('media__linkbtn1');
+        media_manager.outSet('media__linkbtn2');
+        media_manager.outSet('media__linkbtn3');
+        media_manager.outSet('media__linkbtn4');
+
+        media_manager.outSet('media__alignbtn0');
+        media_manager.outSet('media__alignbtn1');
+        media_manager.outSet('media__alignbtn2');
+        media_manager.outSet('media__alignbtn3');
+
+        media_manager.outSet('media__sizebtn1');
+        media_manager.outSet('media__sizebtn2');
+        media_manager.outSet('media__sizebtn3');
+        media_manager.outSet('media__sizebtn4');
+
 
         if (ext == '.swf') {
             media_manager.ext = 'swf';
@@ -248,7 +266,7 @@ var media_manager = {
             $('media__linkbtn2').style.display = 'none';
 
             // set the link button to default
-            if (media_manager.link !== false) {
+            if (media_manager.link != false) {
                 if ( media_manager.link == '2' || media_manager.link == '1')  {
                     media_manager.inSet('media__linkbtn3');
                     media_manager.link = '3';
@@ -275,11 +293,6 @@ var media_manager = {
 
             // disable button for original size
             $('media__sizebtn4').style.display = 'none';
-            if (media_manager.size == 4) {
-                media_manager.size = 2;
-                DokuCookie.setValue('size', '2');
-                media_manager.inSet('media__sizebtn2');
-            }
 
         } else {
             media_manager.ext = 'img';
@@ -293,7 +306,7 @@ var media_manager = {
             if (DokuCookie.getValue('link')) {
                 media_manager.link = DokuCookie.getValue('link');
             }
-            if (!media_manager.link) {
+            if (media_manager.link == false) {
                 // default case
                 media_manager.link = '1';
                 DokuCookie.setValue('link','1');
@@ -311,23 +324,23 @@ var media_manager = {
             $('media__size').style.display = 'block';
 
             // set the align button to default
-            if (media_manager.align !== false) {
+            if (media_manager.align != false) {
                 media_manager.inSet('media__alignbtn'+media_manager.align);
             } else if (DokuCookie.getValue('align')) {
                 media_manager.inSet('media__alignbtn'+DokuCookie.getValue('align'));
                 media_manager.align = DokuCookie.getValue('align');
             } else {
                 // default case
-                media_manager.align = '1';
-                media_manager.inSet('media__alignbtn1');
-                DokuCookie.setValue('align','1');
+                media_manager.align = '0';
+                media_manager.inSet('media__alignbtn0');
+                DokuCookie.setValue('align','0');
             }
 
             // set the size button to default
             if (DokuCookie.getValue('size')) {
                 media_manager.size = DokuCookie.getValue('size');
             }
-            if (!media_manager.size || (media_manager.size === '4' && ext === '.swf')) {
+            if (media_manager.size == false || (media_manager.size === '4' && ext === '.swf')) {
                 // default case
                 media_manager.size = '2';
                 DokuCookie.setValue('size','2');
@@ -349,10 +362,9 @@ var media_manager = {
 
         media_manager.popup = document.createElement('div');
         media_manager.popup.setAttribute('id','media__popup');
-        media_manager.popup.style.display = 'none';
 
         var root = document.getElementById('media__manager');
-        if (root === null) return;
+        if (root == null) return;
         root.appendChild(media_manager.popup);
 
         var headline    = document.createElement('h1');
@@ -382,7 +394,8 @@ var media_manager = {
         for (var i = 0 ; i < linkbtns.length ; ++i) {
             var linkbtn = document.createElement('button');
             linkbtn.className = 'button';
-            linkbtn.id    = "media__linkbtn" + (i+1);
+            linkbtn.value = i + 1;
+            linkbtn.id    = "media__linkbtn" + (i + 1);
             linkbtn.title = LANG['media' + linkbtns[i]];
             linkbtn.style.borderStyle = 'outset';
             addEvent(linkbtn,'click',function(event){ return media_manager.setlink(event,this); });
@@ -414,7 +427,8 @@ var media_manager = {
             var alignimg = document.createElement('img');
             alignimg.src = DOKU_BASE + 'lib/images/media_align_' + alignbtns[n] + '.png';
 
-            alignbtn.id    = "media__alignbtn" + (n+1);
+            alignbtn.id    = "media__alignbtn" + n;
+            alignbtn.value = n;
             alignbtn.title = LANG['media' + alignbtns[n]];
             alignbtn.className = 'button';
             alignbtn.appendChild(alignimg);
@@ -448,6 +462,7 @@ var media_manager = {
 
             sizebtn.className = 'button';
             sizebtn.appendChild(sizeimg);
+            sizebtn.value = size + 1;
             sizebtn.id    = 'media__sizebtn' + (size + 1);
             sizebtn.title = LANG['media' + sizebtns[size]];
             sizebtn.style.borderStyle = 'outset';
@@ -501,7 +516,7 @@ var media_manager = {
                     optsstart = true;
                 }
 
-                var s = parseInt(media_manager.size, 10);
+                var s = parseInt(media_manager.size);
 
                 if (s && s >= 1) {
                     opts += (optsstart)?'&':'?';
@@ -522,23 +537,21 @@ var media_manager = {
                         }
                     }
                 }
-                if (media_manager.align == '2') {
+                if (media_manager.align == '1') {
                     alignleft = '';
                     alignright = ' ';
                 }
-                if (media_manager.align == '3') {
+                if (media_manager.align == '2') {
                     alignleft = ' ';
                     alignright = ' ';
                 }
-                if (media_manager.align == '4') {
+                if (media_manager.align == '3') {
                     alignleft = ' ';
                     alignright = '';
                 }
             }
         }
-        var edid = String.prototype.match.call(document.location, /&edid=([^&]+)/);
-        edid = edid ? edid[1] : 'wiki__text';
-        opener.insertTags(edid,'{{'+alignleft+id+opts+alignright+'|','}}','');
+        opener.insertTags('wiki__text','{{'+alignleft+id+opts+alignright+'|','}}','');
 
         if(!media_manager.keepopen) window.close();
         opener.focus();
@@ -658,15 +671,14 @@ var media_manager = {
      * @author Dominik Eckelmann <eckelmann@cosmocode.de>
      */
     setalign: function(event,cb){
-
-        var id = cb.id.substring(cb.id.length -1);
-        if(id){
-            DokuCookie.setValue('align',id);
-            media_manager.align = id;
-            for (var i = 1; i<=4; i++) {
-                media_manager.outSet("media__alignbtn" + i);
-            }
-            media_manager.inSet("media__alignbtn"+id);
+        if(cb.value){
+            DokuCookie.setValue('align',cb.value);
+            media_manager.align = cb.value;
+            media_manager.outSet("media__alignbtn0");
+            media_manager.outSet("media__alignbtn1");
+            media_manager.outSet("media__alignbtn2");
+            media_manager.outSet("media__alignbtn3");
+            media_manager.inSet("media__alignbtn"+cb.value);
         }else{
             DokuCookie.setValue('align','');
             media_manager.align = false;
@@ -678,34 +690,23 @@ var media_manager = {
      * @author Dominik Eckelmann <eckelmann@cosmocode.de>
      */
     setlink: function(event,cb){
-        var id = cb.id.substring(cb.id.length -1);
-        if(id){
-            DokuCookie.setValue('link',id);
-            for (var i = 1; i<=4; i++) {
-                media_manager.outSet("media__linkbtn"+i);
-            }
-            media_manager.inSet("media__linkbtn"+id);
-
+        if(cb.value){
+            DokuCookie.setValue('link',cb.value);
+            media_manager.link = cb.value;
+            media_manager.outSet("media__linkbtn1");
+            media_manager.outSet("media__linkbtn2");
+            media_manager.outSet("media__linkbtn3");
+            media_manager.outSet("media__linkbtn4");
+            media_manager.inSet("media__linkbtn"+cb.value);
             var size = document.getElementById("media__size");
             var align = document.getElementById("media__align");
-            if (id != '4') {
+            if (cb.value != '4') {
                 size.style.display  = "block";
                 align.style.display = "block";
-                if (media_manager.link == '4') {
-                    media_manager.align = '1';
-                    DokuCookie.setValue('align', '1');
-                    media_manager.inSet('media__alignbtn1');
-
-                    media_manager.size = '2';
-                    DokuCookie.setValue('size', '2');
-                    media_manager.inSet('media__sizebtn2');
-                }
-
             } else {
                 size.style.display  = "none";
                 align.style.display = "none";
             }
-            media_manager.link = id;
         }else{
             DokuCookie.setValue('link','');
             media_manager.link = false;
@@ -754,14 +755,13 @@ var media_manager = {
      * @author Dominik Eckelmann <eckelmann@cosmocode.de>
      */
     setsize: function(event,cb){
-        var id = cb.id.substring(cb.id.length -1);
-        if (id) {
-            DokuCookie.setValue('size',id);
-            media_manager.size = id;
-            for (var i = 1 ; i <=4 ; ++i) {
+        if (cb.value) {
+            DokuCookie.setValue('size',cb.value);
+            media_manager.size = cb.value;
+            for (var i = 1 ; i <= 4 ; ++i) {
                 media_manager.outSet("media__sizebtn" + i);
             }
-            media_manager.inSet("media__sizebtn"+id);
+            media_manager.inSet("media__sizebtn"+cb.value);
         } else {
             DokuCookie.setValue('size','');
             media_manager.width = false;

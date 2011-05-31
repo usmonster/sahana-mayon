@@ -48,7 +48,6 @@ function js_out(){
                 DOKU_INC.'lib/scripts/textselection.js',
                 DOKU_INC.'lib/scripts/toolbar.js',
                 DOKU_INC.'lib/scripts/edit.js',
-                DOKU_INC.'lib/scripts/locktimer.js',
                 DOKU_INC.'lib/scripts/linkwiz.js',
                 DOKU_INC.'lib/scripts/media.js',
                 DOKU_INC.'lib/scripts/subscriptions.js',
@@ -113,7 +112,7 @@ function js_out(){
     js_runonstart("initSizeCtl('size__ctl','wiki__text')");
     js_runonstart("initToolbar('tool__bar','wiki__text',toolbar)");
     if($conf['locktime'] != 0){
-        js_runonstart("locktimer.init(".($conf['locktime'] - 60).",'".js_escape($lang['willexpire'])."',".$conf['usedraft'].", 'wiki__text')");
+        js_runonstart("locktimer.init(".($conf['locktime'] - 60).",'".js_escape($lang['willexpire'])."',".$conf['usedraft'].")");
     }
     js_runonstart('scrollToMarker()');
     js_runonstart('focusMarker()');
@@ -188,11 +187,9 @@ function js_cacheok($cache,$files){
     $ctime = @filemtime($cache);
     if(!$ctime) return false; //There is no cache
 
-    global $config_cascade;
-
     // some additional files to check
     $files = array_merge($files, getConfigFiles('main'));
-    $files[] = $config_cascade['userscript']['default'];
+    $files[] = DOKU_CONF.'userscript.js';
     $files[] = __FILE__;
 
     // now walk the files
@@ -399,4 +396,4 @@ function js_compress($s){
     return trim($result);
 }
 
-//Setup VIM: ex: et ts=4 :
+//Setup VIM: ex: et ts=4 enc=utf-8 :
