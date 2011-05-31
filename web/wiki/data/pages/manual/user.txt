@@ -8,14 +8,12 @@
 
 ----
     * [[manual:User:Intro|Introduction]]
-    * [[manual:User:Staff|Staff Mgmt]]
-    * [[manual:User:Facilities|Facilities]]
     * [[manual:User:Organizations|Organizations]]
+    * [[manual:User:Staff|Staff]]
+    * [[manual:User:Facilities|Facilities]]
     * [[manual:User:Scenario|Scenarios]]
     * [[manual:User:Event|Event Deployment]]
-    * [[manual:User:FAQ|FAQ]]
 <html><div style="text-align: center;"><br><br></html>
-
 
 ----
 <html>

@@ -1,6 +1,3 @@
-1305903208	127.0.0.1	C	manual:user:organizations:screenshot_062.png	admin		
-1305903652	127.0.0.1	C	manual:user:organizations:clickaddneworg.png	admin		
-1305904478	127.0.0.1	C	manual:user:organization:neworg.png	admin		
 1306172797	127.0.0.1	C	manual:user:organizations:orglist.png	admin		
 1306173102	127.0.0.1	C	manual:user:organizations:orgview.png	admin		
 1306173684	127.0.0.1	C	manual:user:organizations:staff_jump.png	admin		
@@ -21,3 +18,11 @@
 1306340510	127.0.0.1	C	manual:user:next.jpg	admin		
 1306340520	127.0.0.1	C	manual:user:previous.jpg	admin		
 1306442599	127.0.0.1	C	manual:user:org_jump_2.jpg	admin		
+1306848234	::1	C	manual:user:organizations:staff_jump_2.jpg	admin		
+1306848370	::1	C	manual:user:staff:fac_jump_2.jpg	admin		
+1306848630	::1	C	manual:user:facilities:scenario_jump_2.jpg	admin		
+1306848701	::1	C	scenario:event_jump_2.jpg	admin		
+1306869432	::1	C	manual:user:staff:screenshot_070.png	admin		
+1306870086	::1	C	manual:user:staff:new_primary.png	admin		
+1306870592	::1	C	manual:user:staff:new_contact.png	admin		
+1306872073	::1	C	manual:user:staff:new_buttons.png	admin		

@@ -10,7 +10,7 @@ To help organize the information each page of the walk-through will contain the 
   * **FAQ** - Frequently Asked Questions about that step and its repercussions later on.
 
 ===== Getting Started =====
-To start, you'll want to add your first Organization.  You'll need it later to associate staff resources with.  Keep this walk-through open while you progress through organization management and remember that you can always come back and edit an organizations information later if their information changes.
+To start, you'll want to add your first Organization; later, you'll associate staff resources with it.  Keep this walk-through open while you progress through organization management, and remember that you can always come back and edit an organization's information if it changes.
 
 To get started, use the menu to navigate to the Organization Management page.  Hover over "Prepare" in the menu and then click "Organization".  
 

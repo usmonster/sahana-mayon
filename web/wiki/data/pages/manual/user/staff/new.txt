@@ -1,20 +1,49 @@
 ====== Staff Management Walk-Through ======
 
-
 ===== Creating New Staff =====
 
-Staff records in Agasti represent the potential workforce for your emergency response and there are two ways to add new records: manual and [[manual:user:staff:import]].  This page will walk you through creating a new staff resource manually and, later on in this walk-through, you'll be instructed on how to import a staff records file should you desire to do so.
+Staff records in Agasti represent the potential workforce for your emergency response and there are two ways to add new records: manual and [[manual:user:staff:import]].  This page will walk you through creating a new staff resource manually and, later on in this walk-through, you'll be instructed on how to import a staff records file should you wish to maintain staff lists via an imported Microsoft Excel 2003 spreadsheet.
 
 ===== Reference Information =====
 
 ==== Things To Know ====
 
-  * **Staff Resources** are used when creating staff deployment rules in a Scenario.  If you plan to use a portion of your available staff records (instead of all staff), or if you want to deploy some staff with a higher priority than others, to add a staff's resource type and/or the [[manual:user:organizations|organization]] they are associated with.
+  * **Staff Resources** are used when creating staff deployment rules in a Scenario.  Staff Resources can be thought of as staff roles. Each individual staff member may provide multiple staff resources but will only be utilized as the type that has the most immediate need during deployment.  If you plan to use a portion of your available staff records (instead of all staff), or if you want to deploy some staff with a higher priority than others, be sure to add a staff's resource type and the [[manual:user:organizations|organization]] they are associated with to their record.
   * [[manual:user:organizations|Organization]] information can be customized through the Organization module and, ideally, will be entered before staff are created (though staff records can be updated later).
 
 ===== Walk-Through =====
 
-<<Placeholder for new screenshot>>
+From the Staff Management page click "Add Staff" to create a new staff record.  For ease of reference the walk-through for this page is broken up with instructions following the image for a section of the form.
+
+{{:manual:user:staff:screenshot_070.png|Add Resources}}
+
+Begin by adding resources to the record.  The form defaults to the first option in each drop-down.  *Be sure to add a resource or they will be saved as the default.*
+  * **Staff Resource Type** - Select the type, similar to the role, that the staff member will have.
+  * **Status** - Select the Status of this resource record
+  * **Organization** - Select the organization associated with this staff type.
+Staff can have multiple resources associated with their record; however only one of each type. To add another resource click "Add Staff Resource".
+
+{{:manual:user:staff:new_primary.png|Add Primary Information}}
+
+Add the staff members primary information:
+  * Names
+    * Given Name - Also known as first name.
+    * Middle Name - Middle name or initial
+    * Family Name - Also known as last name
+  * **Languages**
+    * Language Name - Select the language from the drop down
+    * Read, Write, and Speak - These drop downs are for language proficiency reading, writing, and speaking.  Select the proficiency in each from the drop down.
+  * **Sex** - Select the gender of the staff member
+  * **Date of Birth** - Select the staff member's date of birth
+
+{{:manual:user:staff:new_contact.png|New Staff Contact Information}}
+
+Enter the email and phone information:
+  * Depending on your messaging method email, may be the primary way to contact your staff pool.  Email should be properly formatted to be effective.  Example: name@domain.com
+  * Enter the contact phone numbers for the person. Phone numbers should be entered as 5559991111×1234
+
+{{:manual:user:staff:new_buttons.png|New Staff Buttons}}
+
 
 ===== FAQ =====
 

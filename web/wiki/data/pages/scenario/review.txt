@@ -13,7 +13,9 @@ To jump to any step in the Scenario Wizard click the name of the step.
 
 [[scenario:shift|{{:manual:user:previous.png?135|Scenario Shifts }}]] 
 
-After a scenario has been successfully created it remains ready for deployment until needed for an event.  However, it's important to familiarize with event management before the need arises.  
+After a scenario has been successfully created it remains ready for deployment until needed for an event.  However, it's important to familiarize with event management before the need arises.  [[manual:user:event|{{ :scenario:event_jump_2.jpg?200|Event Management}}]]
+
+
 
 ===== Jump to Another Step =====
 

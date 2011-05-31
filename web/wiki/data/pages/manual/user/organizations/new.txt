@@ -4,12 +4,10 @@
 ===== Creating a New Organization =====
 Organizations in Sahana Agasti are primarily used to group staff.  In a deployment you may wish to use staff of different types from particular responding organizations; such as prioritizing volunteers from the Red Cross above others because of the training they receive.
 
-This page will walk you through creating a new organization record manually.
-
 ===== Reference Information =====
 
 ==== Things To Know ====
-  * Organizations can be Non-Government Organizations, Government Departments, or volunteers.
+  * Organizations can be Non-Government Organizations, Government Departments, or a group of volunteers.
   * It's a good idea to name your first Organization 'Volunteer' so one is available for extraneous staff.
   * An organization's **Name** is used throughout the application to reference that group.  The **Description** is used for reference when in the Organization module.
 
@@ -19,7 +17,7 @@ In the form for a New Organization, add the name of the organization and a brief
   * **Name**: the name of the organization or department
   * **Description**: a brief description for your reference
 
-{{:manual:user:organization:neworg.png|Create an Organization}}
+{{:manual:user:organization:neworg.png?400|Create an Organization}}
 
 After entering the information, click "Save and Continue".  The information will save and the page will refresh.  After the information saves, click "Back to List" to be taken to the Organization list.
 ====== Continue ======
