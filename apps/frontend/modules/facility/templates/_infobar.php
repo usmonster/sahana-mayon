@@ -23,9 +23,9 @@
 //
 //    var data = xmlHttp.responseText;
 //    document.getElementById('infobar').innerHTML += data;
-    var url = "<?php echo url_for('agStaff/status.json'); ?>";
-    while (true) {
-      setTimeout(updateStatus(url), 5000);
-    }
+    var status_url = "<?php echo url_for('agStaff/status.json'); ?>";
+//    while (true) {
+//      setTimeout(updateStatus(status_url), 5000);
+//    }
     //alert(data);
   </script>

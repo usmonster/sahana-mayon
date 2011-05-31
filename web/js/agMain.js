@@ -15,7 +15,7 @@ $(document).ready(function initialize(){
   initTriggerModal();
   initDeployStaff();
   initFileImportReplacer();
-
+  initStatusPolling();
 });
 
 /** Start Initializer Section *********************************************************************/
@@ -1108,11 +1108,16 @@ function calcBatch() {
   return count;
 }
 
+function initStatusPolling() {
+  if ($('#infobar').size()) {
+    updateStatus(status_url);
+  }
+}
+
 function updateStatus(url) {
   $.getJSON(url, function(data) {
     $('#infobar').text(data);
-  }
-  );
-
-
+    setTimeout(updateStatus(url), 5000);
+    return false;
+  });
 }
