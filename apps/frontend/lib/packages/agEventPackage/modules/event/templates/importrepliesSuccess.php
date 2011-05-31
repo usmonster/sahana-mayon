@@ -4,7 +4,13 @@ use_javascript('jQuery.fileinput.js');
 use_javascript('jquery.ui.custom.js');
 use_stylesheet('jquery/jquery.ui.custom.css');
 use_stylesheet('jquery/mayon.jquery.ui.css');
+
+
 ?>
+<script>
+
+
+</script>
 
 <h2>Staff Messaging Response Import: <span class="highlightedText"><?php echo $event_name; ?> </span></h2>
 

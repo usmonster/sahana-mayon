@@ -114,16 +114,11 @@ class eventActions extends agActions
         ->where('event_id = ?', $this->event_id)
         ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
     if ($this->scenario_id) {
-      $this->scenarioName = Doctrine::getTable('agScenario')
-              ->findByDql('id = ?', $this->scenario_id)
-              ->getFirst()->scenario;
-
       if ($request->isMethod(sfRequest::POST)) {
         agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
         $this->redirect('event/active?event=' . urlencode($this->event_name));
       } else {
-        $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
-        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Deploy');
+        $this->redirect('event/active?event=' . urlencode($this->event_name));
       }
     } else {
       $this->forward404('you cannot deploy an event without a scenario.');
@@ -170,11 +165,29 @@ class eventActions extends agActions
       $eventMeta = Doctrine::getTable('agEvent')
           ->findByDql('id = ?', $this->event_id)
           ->getFirst();
+      $this->scenario_id = agDoctrineQuery::create()
+          ->select('scenario_id')
+          ->from('agEventScenario')
+          ->where('event_id = ?', $this->event_id)
+          ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
     } else {
       // ...if not.
       $eventMeta = null;
     }
-      $this->metaForm = new PluginagEventDefForm($eventMeta);
+    $this->metaForm = new PluginagEventDefForm($eventMeta);
+    if ($request->hasParameter('ag_scenario_list')) {
+      $this->scenario_id =
+          $request->getParameter('ag_scenario_list');
+    } elseif ($request->hasParameter('scenario_id')) {
+      $this->scenario_id =
+          $request->getParameter('scenario_id');
+    }
+    $this->scenarioName = Doctrine::getTable('agScenario')
+            ->findByDql('id = ?', $this->scenario_id)
+            ->getFirst()->scenario;
+    $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
+    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Deploy');
+
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
       //if someone has posted, but is not creating an event from a scenario.
 
@@ -247,23 +260,26 @@ class eventActions extends agActions
 
   public function executeExportfacilities(sfWebRequest $request)
   {
-      
+
     //TODO put switch in here to check for type of request
     $this->setEventBasics($request);
 
-      $event_facility_query = PluginagEventFacilityResource::getEventFacilityResourceQuery($this->event_id);
-        
-      $this->event_facility_resources = 
-        $event_facility_query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    $event_facility_query = PluginagEventFacilityResource::getEventFacilityResourceQuery($this->event_id);
 
+    $this->event_facility_resources =
+        $event_facility_query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
   }
-  
+
   public function executeExportcontacts(sfWebRequest $request)
   {
+
     $this->setEventBasics($request);
     $this->info = array();
 
-    $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
+
+    if (!$request->getParameter('all'))
+      $unAllocatedStaffStatus =
+          agEventStaffHelper::returnDefaultEventStaffStatus();
 
     $eventStaffs = agDoctrineQuery::create()
         ->select('es.id, p.id, p.entity_id')
@@ -908,13 +924,13 @@ class eventActions extends agActions
         ->from('agEventFacilityGroup efg')
         ->where('efg.event_id = ?', $this->event_id)
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-     $this->event_facility_resources = agDoctrineQuery::create()
+    $this->event_facility_resources = agDoctrineQuery::create()
         ->select('COUNT(efr.id)')
         ->from('agEventFacilityResource efr')
         ->leftJoin('agEventFacilityGroup efg')
         ->where('efg.event_id = ?', $this->event_id)
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-    
+
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
     //end p-code
@@ -1366,7 +1382,33 @@ class eventActions extends agActions
 
   public function executeDeploystaff(sfWebRequest $request)
   {
+
     $this->setEventBasics($request);
+    $this->todeployStaff = 5; // @TODO make static method in agEventStaffDeploymentHelper
+    //before the user clicks the deploy staff button
+    //give them some information on what this will do
+
+    if ($request->isXmlHttpRequest()) {
+      //return sfView::HEADER_ONLY;
+
+      $staffDeployer = new agEventStaffDeploymentHelper();
+      $staffDeployer->batchSize = 10;
+      $staffDeployer->eh->setLogEventLevel(agEventHandler::EVENT_DEBUG);
+
+      $continue = TRUE;
+      while ($continue == TRUE) {
+        $batch = $staffDeployer->processBatch();
+        $continue = $batch['continue'];
+
+        $this->results = $continue;
+      }
+
+      //if the entire process is complete, give us some GOOD results
+      $this->results = $staffDeployer->save();
+      //print_r($results);
+      //return "<br/><br/>" . "Success!";
+      return sfView::$this->renderPartial('deploystaff', array('results' => $this->results));
+    }
   }
 
 }

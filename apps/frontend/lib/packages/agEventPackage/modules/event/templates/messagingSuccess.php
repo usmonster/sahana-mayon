@@ -11,16 +11,12 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 <p>Use this page to send messages and receive responses to your staff for <span class="highlightedText"><?php echo $event_name; ?></span>.</p>
 <?php
   $exportUrl = url_for('event/exportcontacts?event=' . urlencode($sf_data->getRaw('event_name'))) ;
-  echo link_to('Export Staff Contact List', $exportUrl, array('class' => 'generalButton')); 
+  echo link_to('Export Unconfirmed Staff Contact List', $exportUrl, array('class' => 'generalButton')); 
   //on click of this button, set the div content to 'exporting data, please wait'
 if(isset($exportComplete)){
   echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';
 }
   ?>
-<span class="infoText" style="padding-left: 10px;">status of export here</span>
-<a href="<?php echo url_for('eventpoll') ?>"><span class="infoText" style="padding-left: 10px;">"refresh status</span></a>
-<span id="eventWatcher" style="padding-left: 10px;">status of export here</span>
-
 
 <br />
 <br />
@@ -53,6 +49,20 @@ if(isset($exportComplete)){
 <a href="#" class="generalButton">Preview Confirmed Staff Pool</a>
 <br />
 <br />
+
+<?php
+
+  echo link_to('Export All Staff Contact List', $exportUrl . '&all', array('class' => 'generalButton')); 
+  //on click of this button, set the div content to 'exporting data, please wait'
+if(isset($exportComplete)){
+  echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';
+}
+  ?>
+<br />
+<br />
+
+
+
 <?php
   $deployUrl = url_for('event/deploystaff?event=' . urlencode($sf_data->getRaw('event_name'))) ;
   echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'generalButton')); 

@@ -1,16 +1,8 @@
 <?php
-   use_javascript('jquery.ui.custom.js');
-  use_stylesheet('jquery/jquery.ui.custom.css');
 
-//actions.class.php global list actions
-//template
+use_javascript('jquery.ui.custom.js');
+use_stylesheet('jquery/jquery.ui.custom.css');
 
-
-//this piece here could be refactored, the above 3 parsed lines
-
-?>
-
-<?php
 $statusTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_list_resource_status&do=export_xhtmlbody';
 $orgTooltip = url_for('@wiki') . '/doku.php?id=tooltip:organization&do=export_xhtmlbody';
 $resourceTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody';
@@ -28,7 +20,8 @@ $displayColumns = array(
 
 //pager comes in from the action
 
-include_partial('global/list', array('sf_request' => $sf_request,
+include_partial('global/list',
+                array('sf_request' => $sf_request,
   'displayColumns' => $displayColumns,
   'pager' => $pager,
   'order' => $order,
@@ -39,5 +32,4 @@ include_partial('global/list', array('sf_request' => $sf_request,
   'caption' => 'Staff List',
   'widgets' => array($statusWidget)
 ));
-
 ?>

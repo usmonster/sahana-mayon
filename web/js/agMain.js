@@ -13,10 +13,60 @@ $(document).ready(function initialize(){
   initExpand();
   initTextToForm();
   initTriggerModal();
+  initDeployStaff();
   initFileImportReplacer();
+
 });
 
 /** Start Initializer Section *********************************************************************/
+
+/**
+ *Initialize the deploy staff button for staff deployment
+ */
+
+function initDeployStaff() {
+
+  var dsElement = $('#deploystaff');
+  if(dsElement.length) {
+    var start = 5;//$("#result").children('#totalstart')
+    var totalLeft = start;
+    var totalProcessed = 0;
+
+    $('#deploystaff').click(function()
+    {
+      var startTime, endTime, totalProcessed, totalTimeElapsed = 0, averageTime = 0, estimateTimeLeft = 0;
+      $("#result").show();
+      //if(xmlHttp.readyState==4)
+      // {
+      do {
+        // Start timing.
+        startTime = new Date().getTime();
+
+        var recordProcessed = calcBatch();
+        totalProcessed += recordProcessed;
+        // End Timing.
+        endTime = new Date().getTime();
+
+        totalLeft = start - totalProcessed;
+
+        // Time elapsed for batch processing.
+        intervalTimeElapsed = endTime - startTime;
+        totalTimeElapsed += endTime - startTime;
+        if (totalProcessed != 0) {
+          averageTime = totalTimeElapsed / totalProcessed;
+          estimateTimeLeft = averageTime * totalLeft;
+        }
+        //@TODO remove hardcoding of image
+        $("#combos").html(totalLeft);
+        $("#result").html('<img src="../images/indicator.gif"> done processing '+totalProcessed + " out of "+start+ " records!<BR>Total time elapsed to process " + totalProcessed + " records: "+ (totalTimeElapsed / 1000) + 's<BR>Estimated time left to process ' + totalLeft + ' records: ' + (estimateTimeLeft / 1000) + 's');
+      } while (totalLeft > 0);
+      $("#result").html('<a class="generalButton" id="deploystaff" href="#">Export Staff Deployment</a>'
+        +
+        "done processing "+totalProcessed + " out of "+start+ " records!");
+    // }
+    });
+  }
+}
 
 /***************************************************************************************************
 * Initializes the fileImportReplacer() function. Used on scenario/[scenario_id]/review.                                                                *
@@ -402,7 +452,9 @@ function countSorts(countMe) {
 function triggerModal() {
   $('.modalTrigger').live('click', function() {
     var $dialog = buildModal('<div id="modalContent"></div>', $(this).attr('title'));
-    $dialog.load($(this).attr('href'), function() {$dialog.dialog('open')});
+    $dialog.load($(this).attr('href'), function() {
+      $dialog.dialog('open')
+      });
     return false;
   });
 }
@@ -458,7 +510,7 @@ $(document).ready(function() {
 
     //adding forward slash after minimum_staff  input box
     $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
-    // End watermark stuff
+  // End watermark stuff
   }
   
   var shiftTemplateCounter = $('.shiftTemplateCounter');
@@ -466,34 +518,34 @@ $(document).ready(function() {
 
     var stLabels = []; //task time
     stLabels[0]=
-      {
+    {
       value: -7200,
       text: '-5days'
     };
     stLabels[1]=
-      {
+    {
       value: 0,
       text: '0'
     };
     stLabels[2] =
-      {
+    {
       value: 7200,
       text: '+5days'
     };
 
     var ttLabels = []; //task time
     ttLabels[0]=
-      {
+    {
       value: 0,
       text: '0hrs'
     };
     ttLabels[1]=
-      {
+    {
       value: 360,
       text: '6hrs'
     };
     ttLabels[2] =
-      {
+    {
       value: 720,
       text: '12hrs'
     };
@@ -535,7 +587,7 @@ $(document).ready(function() {
                  
       $('#newshifttemplates').prepend('<h2 class="overlay">'
         + removeShiftTemplate(
-      $(this).attr('id'), $(this).attr('href'))
+          $(this).attr('id'), $(this).attr('href'))
 
         + '</h2>');
       $('.overlay').fadeIn(1200, function() {
@@ -596,23 +648,23 @@ $(document).ready(function() {
   var eventWatcher = $('#eventWatcher');
   if(eventWatcher.length > 0) {
     
-    //$(eventWatcher).html(getActiveEvents($('#urlHolder').attr(href)));
+//$(eventWatcher).html(getActiveEvents($('#urlHolder').attr(href)));
     
-  }
+}
 });
 
 
 
 
-  $(document).ready(function() {
-    $('.searchParams .checkToggle').live('change', function() {
-      if($(this).is(':checked')) {
-        $('.available .' + $(this).attr('id')).show();
-      } else {
-        $('.available .' + $(this).attr('id')).hide();
-      }
-    });
+$(document).ready(function() {
+  $('.searchParams .checkToggle').live('change', function() {
+    if($(this).is(':checked')) {
+      $('.available .' + $(this).attr('id')).show();
+    } else {
+      $('.available .' + $(this).attr('id')).hide();
+    }
   });
+});
 
 
 
@@ -637,58 +689,58 @@ $(document).ready(function() {
 
 
 
-  $(document).ready(function() {
-    $("ul.stepperList li").live('mouseover',function(){
-      $("li.altLItext").text($(this).attr('title'))
-    }).live('mouseout',function(){
-      $("li.altLItext").text('')
-    });
+$(document).ready(function() {
+  $("ul.stepperList li").live('mouseover',function(){
+    $("li.altLItext").text($(this).attr('title'))
+  }).live('mouseout',function(){
+    $("li.altLItext").text('')
+  });
+});
+
+function getActiveEvents(eventURL) {
+  var r = $.ajax({
+    type: 'get',
+    url: eventURL,
+    async: false //the above could and should be refactored for re-usability
+  }).responseText;
+  return r;
+}
+
+
+//deleteUrl =
+//echo url_for('scenario/deleteshifttemplate') .
+function removeShiftTemplate(stId, deleteUrl) {
+  var r = $.ajax({
+    type: 'DELETE',
+    url: deleteUrl + '?stId=' + stId,
+    async: false //the above could and should be refactored for re-usability
+  }).responseText;
+  return r;
+}
+
+//addUrl = 
+//echo url_for('scenario/addshifttemplate?id=' . $scenario_id)
+function addShiftTemplate(formId, addUrl) {
+  var r = $.ajax({
+    type: 'GET',
+    url: addUrl + '?num=' + formId,
+    async: false
+  }).responseText;
+  return r;
+}
+
+function addLabels(element, labels){
+  var scale = element.append('<ol class="ui-slider-scale ui-helper-reset" role="presentation"></ol>').find('.ui-slider-scale:eq(0)');
+  jQuery(labels).each(function(i){
+    scale.append('<li style="left:'+ leftVal(i, this.length) +'"><span class="ui-slider-label">'+ this.text +'</span><span class="ui-slider-tic ui-widget-content"></span></li>');
   });
 
-  function getActiveEvents(eventURL) {
-    var r = $.ajax({
-      type: 'get',
-      url: eventURL,
-      async: false //the above could and should be refactored for re-usability
-    }).responseText;
-    return r;
-  }
+}
+function leftVal(i){
+  return (i/(2) * 100).toFixed(2)  +'%';
+}
 
-
-  //deleteUrl =
-  //echo url_for('scenario/deleteshifttemplate') .
-  function removeShiftTemplate(stId, deleteUrl) {
-    var r = $.ajax({
-      type: 'DELETE',
-      url: deleteUrl + '?stId=' + stId,
-      async: false //the above could and should be refactored for re-usability
-    }).responseText;
-    return r;
-  }
-
-  //addUrl = 
-  //echo url_for('scenario/addshifttemplate?id=' . $scenario_id)
-  function addShiftTemplate(formId, addUrl) {
-    var r = $.ajax({
-      type: 'GET',
-      url: addUrl + '?num=' + formId,
-      async: false
-    }).responseText;
-    return r;
-  }
-
-  function addLabels(element, labels){
-    var scale = element.append('<ol class="ui-slider-scale ui-helper-reset" role="presentation"></ol>').find('.ui-slider-scale:eq(0)');
-    jQuery(labels).each(function(i){
-      scale.append('<li style="left:'+ leftVal(i, this.length) +'"><span class="ui-slider-label">'+ this.text +'</span><span class="ui-slider-tic ui-widget-content"></span></li>');
-    });
-
-  }
-  function leftVal(i){
-    return (i/(2) * 100).toFixed(2)  +'%';
-  }
-
-  function addSlider(
+function addSlider(
   sliderObject,
   formNumber,
   formRootName,
@@ -696,51 +748,55 @@ $(document).ready(function() {
   stored_field,
   sliderOptions,
   stepVal
-) {
-    var sComponent;
-    var hourTextBox = $("#st_" + formNumber + "_" + formRootName + "_hours");
-    var minuteTextBox =  $("#st_" + formNumber + "_" + formRootName + "_minutes");
-    var storedInput = $('#' + stored_field);
+  ) {
+  var sComponent;
+  var hourTextBox = $("#st_" + formNumber + "_" + formRootName + "_hours");
+  var minuteTextBox =  $("#st_" + formNumber + "_" + formRootName + "_minutes");
+  var storedInput = $('#' + stored_field);
     
     
-    sComponent = sliderObject.slider({
-      orientation: "horizontal",
-      value: stored_time,
-      min: sliderOptions[0].value, //the first
-      max: sliderOptions[sliderOptions.length-1].value,
-      step: stepVal,
-      slide: function( event, ui ) {
-        var hours = Math.floor(ui.value / 60);
-        var minutes = ui.value - (hours * 60);
-        hours = hours.toString();
-        minutes = minutes.toString();
-        if(hours.length == 1) hours = '0' + hours;
-        if(minutes.length == 1) minutes = '0' + minutes;
-        hourTextBox.val(hours);
-        minuteTextBox.val(minutes);
-        storedInput.val(ui.value);
-      }
-    });
+  sComponent = sliderObject.slider({
+    orientation: "horizontal",
+    value: stored_time,
+    min: sliderOptions[0].value, //the first
+    max: sliderOptions[sliderOptions.length-1].value,
+    step: stepVal,
+    slide: function( event, ui ) {
+      var hours = Math.floor(ui.value / 60);
+      var minutes = ui.value - (hours * 60);
+      hours = hours.toString();
+      minutes = minutes.toString();
+      if(hours.length == 1) hours = '0' + hours;
+      if(minutes.length == 1) minutes = '0' + minutes;
+      hourTextBox.val(hours);
+      minuteTextBox.val(minutes);
+      storedInput.val(ui.value);
+    }
+  });
     
-    hourTextBox.bind('blur change keyup', {sliderObj: sliderObject}, function(e) {
-      var sliderObject = e.data.sliderObj
-      var sliderValue = Math.abs($(this).val()) * 60 + Math.abs(minuteTextBox.val());
-      var setValue = $(this).val() > 0 ? sliderValue : -1*sliderValue;
-      sliderObject.slider("value", setValue);
-      storedInput.val(setValue);
+  hourTextBox.bind('blur change keyup', {
+    sliderObj: sliderObject
+  }, function(e) {
+    var sliderObject = e.data.sliderObj
+    var sliderValue = Math.abs($(this).val()) * 60 + Math.abs(minuteTextBox.val());
+    var setValue = $(this).val() > 0 ? sliderValue : -1*sliderValue;
+    sliderObject.slider("value", setValue);
+    storedInput.val(setValue);
       
-    });
+  });
     
-    minuteTextBox.bind('blur change keyup', {sliderObj: sliderObject}, function(e) {
-      var sliderObject = e.data.sliderObj
-      var setValue = Math.abs(hourTextBox.val()) * 60 + Math.abs($(this).val());
-      sliderObject.slider("value", setValue);//handleIndex, thisIndex);
-      storedInput.val(setValue);
+  minuteTextBox.bind('blur change keyup', {
+    sliderObj: sliderObject
+  }, function(e) {
+    var sliderObject = e.data.sliderObj
+    var setValue = Math.abs(hourTextBox.val()) * 60 + Math.abs($(this).val());
+    sliderObject.slider("value", setValue);//handleIndex, thisIndex);
+    storedInput.val(setValue);
       
-    });
+  });
 
-    addLabels(sComponent,sliderOptions);
-  }
+  addLabels(sComponent,sliderOptions);
+}
 
 /***************************************************************************************************
 * buildTooltip creates a jQuery UI modal dialog window to contain the tooltip information.
@@ -790,21 +846,21 @@ $(document).ready(function() {
 
 
 
-  /**
+/**
    * These 3 functions are for error reporting/highlighting in the browser.
    **/
-  function highLight(id, highLightClass) {
-    $(id).addClass(highLightClass).attr('onfocus', 'emptyHighLight(this)').attr('onkeypress', 'removeHighLight(this, \'' + highLightClass + '\')');
-  }
+function highLight(id, highLightClass) {
+  $(id).addClass(highLightClass).attr('onfocus', 'emptyHighLight(this)').attr('onkeypress', 'removeHighLight(this, \'' + highLightClass + '\')');
+}
 
-  function emptyHighLight(element) {
-    $(element).val('');
-  }
+function emptyHighLight(element) {
+  $(element).val('');
+}
 
-  function removeHighLight(element, highLightClass) {
-    $(element).removeClass(highLightClass);
-  }
-  /**************************************************************************************************/
+function removeHighLight(element, highLightClass) {
+  $(element).removeClass(highLightClass);
+}
+/**************************************************************************************************/
 
 function sortSlide() {
   $('.sortHead th a').live('click', function(){
@@ -836,7 +892,7 @@ function reloadGroup (reloader) {
       buildSortList();
       countSorts('.count');
     }
-  );
+    );
 }
 
 function serialTran(poster) {
@@ -868,84 +924,86 @@ function serialTran(poster) {
   });
 }
 
-  /**
+/**
    * This function is used in scenario/staffpool to construct and save the staff pool query.
    **/
-  function queryConstruct() {
-    var out = new Array();
-    $('.filter option:selected').each(function(index) {
-      conditionObject = new Object();
-      if($(this).text() != ''){
-        conditionObject.condition = $(this).text();
-        conditionObject.field = $(this).parent().attr('id');
-        conditionObject.operator = '=';
-        out.push(conditionObject);
-      }
-      //ONLY IF text is NOT empty
-    })
-    if (out.length == 1) {
-      var query_c = Array(out.pop());
-      if(query_c != undefined){
-        $("#staff_pool_search_search_condition").val(JSON.stringify(query_c));
-      }
+function queryConstruct() {
+  var out = new Array();
+  $('.filter option:selected').each(function(index) {
+    conditionObject = new Object();
+    if($(this).text() != ''){
+      conditionObject.condition = $(this).text();
+      conditionObject.field = $(this).parent().attr('id');
+      conditionObject.operator = '=';
+      out.push(conditionObject);
     }
-    else if(out.length == 0) {
-      $("#staff_pool_search_search_condition").val('[ ]');
-    }
-    else if(out.length > 0) {
-      $("#staff_pool_search_search_condition").val(JSON.stringify(out));
+  //ONLY IF text is NOT empty
+  })
+  if (out.length == 1) {
+    var query_c = Array(out.pop());
+    if(query_c != undefined){
+      $("#staff_pool_search_search_condition").val(JSON.stringify(query_c));
     }
   }
+  else if(out.length == 0) {
+    $("#staff_pool_search_search_condition").val('[ ]');
+  }
+  else if(out.length > 0) {
+    $("#staff_pool_search_search_condition").val(JSON.stringify(out));
+  }
+}
 /***************************************************************************************************
 * This function is used to render a new staff resource type form on the staff creation page.       *
 ***************************************************************************************************/
-  function addStaffResource(element) {
-    $.ajax({
-      type: 'GET',
-      url: $(element).attr('href') + '?num=' + $('.staffCounter').length,
-      async:false,
-      complete: function(data) {
-        //     $(element).parent().append(data.responseText);
-        $(element).parent().find('.staffCounter').filter(':last').after(data.responseText);
-      }
-    });
-  }
-
-  function removeStaffResource(element) {
-    // Only hit the server and delete from the database if an id (set to the db object's id) has been
-    // assigned to [element]. The id attribute is also removed from [element], in case it ends up being
-    // the only staff resource form on the page and gets reset in the next conditional.
-    if($(element).attr('id') != undefined) {
-      $.post($(element).attr('href'), {staffResourceId: $(element).attr('id').replace('staff_resource_', '')});
-      $(element).removeAttr('id');
+function addStaffResource(element) {
+  $.ajax({
+    type: 'GET',
+    url: $(element).attr('href') + '?num=' + $('.staffCounter').length,
+    async:false,
+    complete: function(data) {
+      //     $(element).parent().append(data.responseText);
+      $(element).parent().find('.staffCounter').filter(':last').after(data.responseText);
     }
+  });
+}
 
-    // Reset the select options in the form to the first option, if this was the last staff resource
-    // form on the page.
-    if($('.staffCounter').length < 2) {
-      $(element).parent().find('select').each(function() {
-        var p = $(this).val();
-        $(this)[0].selectedIndex = 0;
+function removeStaffResource(element) {
+  // Only hit the server and delete from the database if an id (set to the db object's id) has been
+  // assigned to [element]. The id attribute is also removed from [element], in case it ends up being
+  // the only staff resource form on the page and gets reset in the next conditional.
+  if($(element).attr('id') != undefined) {
+    $.post($(element).attr('href'), {
+      staffResourceId: $(element).attr('id').replace('staff_resource_', '')
       });
-    } else {
-      $(element).parent().remove();
-    }
+    $(element).removeAttr('id');
   }
 
-
-  function createDatePicker() {
-    $("#dob").datepicker({
-      changeMonth: true,
-      changeYear: true,
-      defaultDate: new Date($("#dob").val()),
-      duration: 'fast',
-      minDate: -110*365,
-      maxDate: 0,
-      yearRange: 'c-110:c'
+  // Reset the select options in the form to the first option, if this was the last staff resource
+  // form on the page.
+  if($('.staffCounter').length < 2) {
+    $(element).parent().find('select').each(function() {
+      var p = $(this).val();
+      $(this)[0].selectedIndex = 0;
     });
+  } else {
+    $(element).parent().remove();
   }
+}
 
-  /**
+
+function createDatePicker() {
+  $("#dob").datepicker({
+    changeMonth: true,
+    changeYear: true,
+    defaultDate: new Date($("#dob").val()),
+    duration: 'fast',
+    minDate: -110*365,
+    maxDate: 0,
+    yearRange: 'c-110:c'
+  });
+}
+
+/**
    * This unnamed function catches the click event on an element (most likely a form submit) with the
    * .modalSubmit class. The complete function of the .ajax call makes a call to showFeedback, which
    * handles user feedback and the loading of any other data that may be necessary.
@@ -954,32 +1012,32 @@ function serialTran(poster) {
    *                and sending the user forward in the browser.
    *
    **/
-  $(document).ready(function() {
-    $('.modalSubmit').live('click',function(){
-      var $submitter = $(this);
-      $.ajax({
-        context: $submitter,
-        url: $(this).parent().attr('action'),
-        type: "POST",
-        data: $('#' + $(this).parent().attr('id') + ' :input'),
-        success:
-          function (data) {
-          if($('#modalReloadable').length) {
-            $('#modalReloadable').replaceWith(data);
-          } else {
-            $('#modalContent').append(data);
-            //          showFeedBack(data, $(this), processReturn);
-          }
+$(document).ready(function() {
+  $('.modalSubmit').live('click',function(){
+    var $submitter = $(this);
+    $.ajax({
+      context: $submitter,
+      url: $(this).parent().attr('action'),
+      type: "POST",
+      data: $('#' + $(this).parent().attr('id') + ' :input'),
+      success:
+      function (data) {
+        if($('#modalReloadable').length) {
+          $('#modalReloadable').replaceWith(data);
+        } else {
+          $('#modalContent').append(data);
+        //          showFeedBack(data, $(this), processReturn);
         }
-      });
-      return false;
+      }
     });
-    $('#modalContent').bind('dialogclose', function() {
-      $('#tableContainer').load(window.location.pathname + ' .singleTable');
-    });
+    return false;
   });
+  $('#modalContent').bind('dialogclose', function() {
+    $('#tableContainer').load(window.location.pathname + ' .singleTable');
+  });
+});
 
-  /**
+/**
    * showFeedBack is used to confirm to the user that a modal form has successfully submitted to the
    * server. It simply appends a new <h2>, fades it in, then out, then drops it, and calls a callback
    * function, if necessary.
@@ -989,45 +1047,58 @@ function serialTran(poster) {
    *
    * @todo  Abstract and parametize this function.
    **/
-  function showFeedBack(data, $submitter, callBackFunc) {
-    $('#modalContent').append('<h2 class="overlay">Status Changed</h2>');
-    $('.overlay').fadeIn(1200, function() {
-      $('.overlay').fadeOut(1200, function() {
-        $('.overlay').remove();
-        if($.isFunction(callBackFunc)) {
-          callBackFunc.call($submitter, data);
-        }
-      });
+function showFeedBack(data, $submitter, callBackFunc) {
+  $('#modalContent').append('<h2 class="overlay">Status Changed</h2>');
+  $('.overlay').fadeIn(1200, function() {
+    $('.overlay').fadeOut(1200, function() {
+      $('.overlay').remove();
+      if($.isFunction(callBackFunc)) {
+        callBackFunc.call($submitter, data);
+      }
     });
-  }
+  });
+}
 
-  /**
+/**
    * returnContent handles the data returned to the browser by an .ajax call. It is used to launch a
    * second modal dialog, should the returned data dictate so.
    *
    * @param data  The returned data from a call to .ajax.
    **/
-  function returnContent(data) {
-    var $dialog = buildModal('<div id="#modalFgroup"></div>', 'Set Facility Resource Activation Time');
-    $.post(data, function(data) {
-      $dialog.html(data);
-      $dialog.dialog('open');
-    });
-  }
+function returnContent(data) {
+  var $dialog = buildModal('<div id="#modalFgroup"></div>', 'Set Facility Resource Activation Time');
+  $.post(data, function(data) {
+    $dialog.html(data);
+    $dialog.dialog('open');
+  });
+}
 
-  /**
+/**
    * @todo refactor so we can pass pattern to this. JSON stuff, probably.
    **/
-  function processReturn(data) {
-    pattern = /facilityresource\/[\w\d+%-]*/
-    if(data == $(this).attr('id')) {
-      appendContent($(this), data);
-      //    returnContent(data);
-    }
+function processReturn(data) {
+  pattern = /facilityresource\/[\w\d+%-]*/
+  if(data == $(this).attr('id')) {
+    appendContent($(this), data);
+  //    returnContent(data);
   }
+}
 
-  function appendContent($submitter, data) {
-    $('#modalAppend').load(($submitter).attr('id'), function() {
-      $('#modalAppend').slideDown(1000);
-    });
-  }
+function appendContent($submitter, data) {
+  $('#modalAppend').load(($submitter).attr('id'), function() {
+    $('#modalAppend').slideDown(1000);
+  });
+}
+function calcBatch() {
+  var count = 0;
+  $.ajax({
+    async: false,
+    type: "POST",
+    url: window.location.pathname,
+    success: function(html)
+    {
+      count = parseInt(html);
+    }
+  });
+  return count;
+}

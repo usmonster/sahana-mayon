@@ -97,7 +97,7 @@ event_exportcontacts:
 
 api_event_exportfacilities:
   url:    /event/:event/exportfacilities.:sf_format
-  param:  { module: event, action: exportfacilities, sf_format: html }
+  param:  { module: event, action: exportfacilities, sf_format: json }
   requirements:
     sf_method: [get]
     sf_format: (?:html|json)
