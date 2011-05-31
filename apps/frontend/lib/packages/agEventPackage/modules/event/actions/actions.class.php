@@ -1025,7 +1025,7 @@ class eventActions extends agActions
       $params = $request->getPostParameters();
 
       // Render the Forms
-      if ($params['type'] == 'resourceStatus') {
+      if (isset($params['type']) && $params['type'] == 'resourceStatus') {
         // This case is for loading the event-facility-resource-status form to replace the link that sumbitted
         // the request.
         $facilityResourceStatus = new agEventFacilityResourceStatus();
@@ -1050,7 +1050,7 @@ class eventActions extends agActions
                                                                                   'res_stat_id_')
             )
         );
-      } elseIf ($params['type'] == 'resourceActivationTime') {
+      } elseIf (isset($params['type']) && $params['type'] == 'resourceActivationTime') {
         // This case is for loading the even-facility-resource-activation-time form in place of the submittal link.
         if ($params['current'] != '----') {
           $eventFacilityResourceActivationTime = agDoctrineQuery::create()
@@ -1170,7 +1170,6 @@ class eventActions extends agActions
                   $params['ag_event_facility_group_status']['facility_group_allocation_status_id'])
           ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
       return $this->renderText(json_encode(array('status' => 'success', 'refresh' => $refresh)));
-//      return $this->renderText('success');
     }
   }
 
