@@ -1,6 +1,6 @@
 /***************************************************************************************************
-* Initializer function. Calls all of the initialize functions to determine which functions will
-* be used on the page.
+* Initializer function. Calls all of the initialize functions to determine which functions will be *
+* used on the page.                                                                                *
 ***************************************************************************************************/
 $(document).ready(function initialize(){
   initEqualizeHeight();
@@ -18,8 +18,8 @@ $(document).ready(function initialize(){
 /** Start Initializer Section *********************************************************************/
 
 /***************************************************************************************************
-* Initializes the textToForm(), configSubmitTextToForm(), and submitTextToForm() functions. Used on
-* event/[event_name]/listgroups.
+* Initializes the textToForm(), configSubmitTextToForm(), and submitTextToForm() functions. Used   *
+* on event/[event_name]/listgroups.                                                                *
 ***************************************************************************************************/
 function initTextToForm() {
   var ttfElement = $('.textToForm');
@@ -30,7 +30,7 @@ function initTextToForm() {
   }
 }
 /***************************************************************************************************
-* Initializes the equalizeHeight() function. Used on scenario/[scenario_id]/resourcetypes.
+* Initializes the equalizeHeight() function. Used on scenario/[scenario_id]/resourcetypes.         *
 ***************************************************************************************************/
 function initEqualizeHeight() {
   var containerElement = $('.inlineListWrapper');
@@ -39,8 +39,8 @@ function initEqualizeHeight() {
   }
 }
 /***************************************************************************************************
-* Initializes the buildSortList(), countSorts(), and sortSlide() functions. Used on
-* scenario/[scenario_id]/fgroup.
+* Initializes the buildSortList(), countSorts(), and sortSlide() functions. Used on                *
+* scenario/[scenario_id]/fgroup.                                                                   *
 ***************************************************************************************************/
 function initSortableTables() {
   var bucketHolder = $('.bucketHolder');
@@ -51,9 +51,9 @@ function initSortableTables() {
   }
 }
 /***************************************************************************************************
-* Initializes the verticalTabs() function. Used on /respond. This should be removed at some point
-* as there is an overabundance of code behind this that does nothing but create extaneous UI elements
-* that don't fit with the rest of the applications overall UI design.
+* Initializes the verticalTabs() function. Used on /respond. This should be removed at some point  *
+* as there is an overabundance of code behind this that does nothing but create extaneous UI       *
+* elements that don't fit with the rest of the applications overall UI design.                     *
 ***************************************************************************************************/
 function initVerticalTabs() {
   var verticalTab = $('#textExample');
@@ -63,7 +63,7 @@ function initVerticalTabs() {
   }
 }
 /***************************************************************************************************
-* Initializes the checkToggle(), and checkAll() functions. Used on scenario/[scenario_id]/fgroup.
+* Initializes the checkToggle(), and checkAll() functions. Used on scenario/[scenario_id]/fgroup.  *
 ***************************************************************************************************/
 function initCheckBoxToggling() {
   var checkAllInit = $('#checkAll');
@@ -77,7 +77,7 @@ function initCheckBoxToggling() {
   }
 }
 /***************************************************************************************************
-* Initializes the reveal() function. Used on scenario/[scenario_id]/fgroup.
+* Initializes the reveal() function. Used on scenario/[scenario_id]/fgroup.                        *
 ***************************************************************************************************/
 function initReveal() {
   var revealerInit = $('#revealer');
@@ -86,7 +86,7 @@ function initReveal() {
   }
 }
 /***************************************************************************************************
-* Initializes the expandAll() function. Used on event/[event_name]/listgroups.
+* Initializes the expandAll() function. Used on event/[event_name]/listgroups.                     *
 ***************************************************************************************************/
 function initExpand() {
   var expandInit = $('.expander');
@@ -95,7 +95,7 @@ function initExpand() {
   }
 }
 /***************************************************************************************************
-* Initializes the expandAll() function. Used on event/[event_name]/listgroups.
+* Initializes the expandAll() function. Used on event/[event_name]/listgroups.                     *
 ***************************************************************************************************/
 function initExpandAll() {
   var expandAllInit = $('.expandAll');
@@ -104,7 +104,7 @@ function initExpandAll() {
   }
 }
 /***************************************************************************************************
-* Initializes the expandAll() function. Used on event/[event_name]/listgroups.
+* Initializes the expandAll() function. Used on event/[event_name]/listgroups.                     *
 ***************************************************************************************************/
 function initCollapseAll() {
   var collapseAllInit = $('.collapseAll');
@@ -122,7 +122,7 @@ function initTriggerModal() {
 /** End Initializer Section ***********************************************************************/
 
 /***************************************************************************************************
-* reveal() reveals whatever content is within #revealable.
+* reveal() reveals whatever content is within #revealable.                                         *
 ***************************************************************************************************/
 function reveal(revealer) {
   $('#reveal').click(function() {
@@ -140,7 +140,7 @@ function reveal(revealer) {
   });
 }
 /***************************************************************************************************
-* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.
+* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.  *
 ***************************************************************************************************/
 function checkAll() {
   $('#checkAll').live('click', function () {
@@ -152,7 +152,7 @@ function checkAll() {
   });
 }
 /***************************************************************************************************
-* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.
+* checkAll() and checkToggle() are used in conjunction to check or uncheck a group of checkboxes.  *
 ***************************************************************************************************/
 function checkToggle() {
   $('.checkToggle').live('change', function(){
@@ -166,7 +166,7 @@ function checkToggle() {
   });
 }
 /***************************************************************************************************
-* expandAll() expands all collapsed elements that are subject to an .expander class.
+* expandAll() expands all collapsed elements that are subject to an .expander class.               *
 ***************************************************************************************************/
 function expandAll() {
   $('.expandAll').live('click', function() {
@@ -179,7 +179,7 @@ function expandAll() {
   });
 }
 /***************************************************************************************************
-* collapseAll() collapses all expanded elements that are subject to an .expander class.
+* collapseAll() collapses all expanded elements that are subject to an .expander class.            *
 ***************************************************************************************************/
 function collapseAll() {
   $('.collapseAll').live('click', function() {
@@ -211,7 +211,7 @@ function expand() {
   });
 }
 /***************************************************************************************************
-* textToForm() converts an anchor to a form populated with the anchor's value.
+* textToForm() converts an anchor to a form populated with the anchor's value.                     *
 ***************************************************************************************************/
 function textToForm() {
   $('.textToForm').live('click', function() {
@@ -231,7 +231,7 @@ function textToForm() {
   });
 }
 /***************************************************************************************************
-* configSubmitTextToForm() disables submit from the keyboard on .submitTextToForm elements.
+* configSubmitTextToForm() disables submit from the keyboard on .submitTextToForm elements.        *
 ***************************************************************************************************/
 function configSubmitTextToForm() {
   $('.submitTextToForm').live('keypress', function(evt) {
@@ -242,12 +242,14 @@ function configSubmitTextToForm() {
   });
 }
 /***************************************************************************************************
-* submitTextToForm() submits .submitTextToForm forms and returns their value. Then the form reverts
-* to the original anchor.
+* submitTextToForm() submits .submitTextToForm forms and returns their value. Then the form        *
+* reverts to the original anchor.                                                                  *
 ***************************************************************************************************/
 function submitTextToForm() {
   $('.submitTextToForm').live('blur submit', function() {
     var $poster = $(this);
+    var b = $(this).parent().attr('action');
+    var c = $('#' + $(this).parent().attr('id') + ' :input');
     $.post($(this).parent().attr('action'), $('#' + $(this).parent().attr('id') + ' :input'), function(data) {
       var returned = $.parseJSON(data);
       if(returned.status == 'failure') {
@@ -265,9 +267,9 @@ function submitTextToForm() {
   });
 }
 /***************************************************************************************************
-* pointerCheck is called by a number of other functions to check the state of an arrow used for
-* expanding or showing UI elements in order to set the pointer to the correct value after expansion,
-* collapse, revealing or hiding.
+* pointerCheck is called by a number of other functions to check the state of an arrow used for    *
+* expanding or showing UI elements in order to set the pointer to the correct value after          *
+* expansion, collapse, revealing or hiding.                                                        *
 ***************************************************************************************************/
 function pointerCheck(pointer) {
   if(pointer == (String.fromCharCode(9654))) {
@@ -279,8 +281,8 @@ function pointerCheck(pointer) {
   }
 }
 /***************************************************************************************************
-* equalizeHeight() sets two div elements with the .inlineLists class to the height of whichever is
-* taller.
+* equalizeHeight() sets two div elements with the .inlineLists class to the height of whichever is *
+* taller.                                                                                          *
 ***************************************************************************************************/
 function equalizeHeight(containerElement) {
   var maxHeight = 0;
@@ -292,7 +294,7 @@ function equalizeHeight(containerElement) {
   containerElement.children('div.inlineLists').height(maxHeight);
 }
 /***************************************************************************************************
-* buildSortList() sets up the sortable lists used on scenario/[scenario_id]/fgroup.
+* buildSortList() sets up the sortable lists used on scenario/[scenario_id]/fgroup.                *
 ***************************************************************************************************/
 function buildSortList() {
   $('.available tbody, .allocated tbody' ).sortable({
@@ -352,8 +354,8 @@ function buildSortList() {
   });
 }
 /***************************************************************************************************
-* countSorts() counts the elements in each allocated sort group on scenario/[scenario_id]/fgroup. It
-* is used in conjunction with buildSortLists(), so is initialized with initSortableTables();
+* countSorts() counts the elements in each allocated sort group on scenario/[scenario_id]/fgroup.  *
+* It is used in conjunction with buildSortLists(), so is initialized with initSortableTables();    *
 ***************************************************************************************************/
 function countSorts(countMe) {
   $(countMe).html(function() {

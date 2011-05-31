@@ -1131,7 +1131,7 @@ class eventActions extends agActions
     // Get the incoming params.
     $params = $request->getPostParameters();
 
-    if ($params['type'] == 'groupStatus') {
+    if (isset($params['type']) && $params['type'] == 'groupStatus') {
       // Build an agEventFacilityGroupStatus object from incoming params, then stick it in a form.
       $groupAllocationStatus = new agEventFacilityGroupStatus();
       $groupAllocationStatus->event_facility_group_id = ltrim($params['id'], 'group_id_');
@@ -1147,10 +1147,10 @@ class eventActions extends agActions
                                                                                                  'inputGray submitTextToForm set100');
       return $this->renderPartial('global/includeForm',
                                   array('form' => $groupAllocationStatusForm,
-        'set' => $params['type'],
-        'id' => $params['id'],
-        'url' => 'event/eventfacilitygroup'
-          )
+                                        'set' => $params['type'],
+                                        'id' => $params['id'],
+                                        'url' => 'event/eventfacilitygroup'
+                                  )
       );
     }
     // This checks for an incoming form. We'll always be saving here, not updating.
