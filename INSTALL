@@ -256,9 +256,6 @@ Finally, generate the wiki indexes by running the following command:
     - Replace WEB_USER with the user associated with the Apache, e.g.
       www-data or apache.
 
-    - You can safely ignore any PHP warning of the form:
-      PHP Warning:  parse_url(http:///web/wiki/bin/): Unable to parse URL in ...
-
 
 ERRORS AND TROUBLESHOOTING
 ==========================
