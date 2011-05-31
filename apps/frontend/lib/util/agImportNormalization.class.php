@@ -394,26 +394,41 @@ abstract class agImportNormalization extends agImportHelper
     $importer = $action->importer;
     $moduleName = $action->getModuleName();
 
-    //TODO: block import if already in progress
     //TODO: get import data directory root info from global param
     $importDataRoot = sfConfig::get('sf_upload_dir');
-    $statusFile = $importDataRoot .
-        DIRECTORY_SEPARATOR . $moduleName .
-        DIRECTORY_SEPARATOR . 'status.yml';
-    if (is_writable($statusFile)) {
-      $status = sfYaml::load($statusFile);
-      $status[$abortFlagId] = TRUE;
-      file_put_contents($statusFile, sfYaml::dump($status));
-    }
-
-
-    // uploads the file
-    $uploadedFile = $action->uploadedFile;
-    $importDir = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $moduleName;
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
     if (!file_exists($importDir)) {
       mkdir($importDir);
     }
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
 
+    // generates the identifier for the event status
+//    $statusId = implode('_', array($moduleName, /* $action->actionName, */ 'status'));
+//    if ($context->has($statusId)) {
+//      $status = $context->get($statusId);
+//    }
+    if (!file_exists($statusFile)) {
+      //TODO: check if directory is writeable? -UA
+      touch($statusFile);
+    }
+    if (!is_writable($statusFile)) {
+      $importer->eh->logEmerg('Status file not writeable: '. $statusFile);
+      return;
+    }
+
+    // let other things happen
+    $action->getUser()->shutdown();
+    session_write_close();
+
+    // blocks import if already in progress
+    $status = sfYaml::load($statusFile);
+    if (isset($status) && 0 != $status['batchesLeft']) {
+      $importer->eh->logAlert('Import in progress, or attempting new import after failed attempt?');
+      return;
+    }
+
+    // uploads the import file
+    $uploadedFile = $action->uploadedFile;
     $importPath = $importDir . DIRECTORY_SEPARATOR . $uploadedFile['name'];
     if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
       $importer->eh->logEmerg('Cannot move uploaded file to destination!');
@@ -429,25 +444,25 @@ abstract class agImportNormalization extends agImportHelper
     $totalRecordCount = $importer->iterData['tempCount'];
     $recordsLeft = $totalRecordCount;
 
-    // generates the identifier for the event status
-    $statusId = implode('_', array($moduleName, /* $action->actionName, */ 'status'));
-    if ($context->has($statusId)) {
-      $status = $context->get($statusId);
-    }
-    // TODO: rejigger logic to check and return early; THEN do the upload, processXls, etc. business
-    if (!isset($status) || 0 == $status[0]) {
-      $startTime = time();
-      $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
-    } else {
-      $importer->eh->logAlert('Import in progress, or starting new import after failed attempt?');
-      return;
-    }
+    $startTime = time();
+    //$context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+    $status['batchesLeft'] = $batchesLeft;
+    $status['totalBatchCount'] = $totalBatchCount;
+    $status['startTime'] = $startTime;
+    file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
 
     // processes batches until complete, aborted, or an unrecoverable error occurs
-    $abortFlagId = implode('_', array('abort', $statusId));
+    $abortFlagId = 'aborting';//implode('_', array('abort', $statusId));
     while ($batchesLeft > 0) {
-      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
-        $context->set($abortFlagId, NULL);
+//      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
+//        $context->set($abortFlagId, NULL);
+//        break;
+//      }
+      $status = sfYaml::load($statusFile);
+      if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
+        $this->eh->logAlert('User canceled import, stopping import.');
+        unset($status[$abortFlagId]);
+        file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
         break;
       }
       $batchResult = $importer->processBatch();
@@ -462,7 +477,12 @@ abstract class agImportNormalization extends agImportHelper
 
       //TODO: use $batchResult ("records left") instead?
       $batchesLeft = $importer->iterData['batchCount'] - $importer->iterData['batchPosition'] - 1;
-      $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+      //$context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+      $status = sfYaml::load($statusFile);
+      $status['batchesLeft'] = $batchesLeft;
+      $status['totalBatchCount'] = $totalBatchCount;
+      $status['startTime'] = $startTime;
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
     }
 
     $context->getEventDispatcher()->notify(new sfEvent($action, 'import.do_reindex'));

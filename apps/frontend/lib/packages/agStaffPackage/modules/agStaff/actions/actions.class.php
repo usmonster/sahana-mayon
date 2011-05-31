@@ -743,17 +743,17 @@ class agStaffActions extends agActions
 
   public function executeCancelimport(sfWebRequest $request)
   {
-    $abortFlagId = implode('_', array('abort', $this->moduleName, 'import'));
+    $abortFlagId = 'aborting';//implode('_', array('abort', $this->moduleName, 'import'));
     //$this->getContext()->set($abortFlagId, TRUE);
+
     //TODO: get import data directory root info from global param
     $importDataRoot = sfConfig::get('sf_upload_dir');
-    $statusFile = $importDataRoot .
-        DIRECTORY_SEPARATOR . $this->moduleName .
-        DIRECTORY_SEPARATOR . 'status.yml';
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
     if (is_writable($statusFile)) {
       $status = sfYaml::load($statusFile);
       $status[$abortFlagId] = TRUE;
-      file_put_contents($statusFile, sfYaml::dump($status));
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
     }
 
     return sfView::NONE;

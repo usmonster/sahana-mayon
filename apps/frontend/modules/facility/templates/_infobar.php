@@ -1,5 +1,6 @@
 <div id="infobar" style="border:2px solid blue;">
   Completed in <?php echo $timer; ?> seconds.
+</div>
   <script type="text/javascript">
     //TODO: use jQuery, put script in agMain.js
 
@@ -24,5 +25,3 @@
     document.getElementById('infobar').innerHTML += data;
     //alert(data);
   </script>
-
-</div>

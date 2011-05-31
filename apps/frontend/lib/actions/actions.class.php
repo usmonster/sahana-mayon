@@ -41,11 +41,11 @@ class agActions extends sfActions
     //$context = $this->getContext();
     ////$context = sfContext::getInstance();
     //$status = $context->has($statusId) ? $this->getContext()->get($statusId) : $statusId/*array(0, 0, 0)*/;
+
     //TODO: get import data directory root info from global param
     $importDataRoot = sfConfig::get('sf_upload_dir');
-    $statusFile = $importDataRoot .
-        DIRECTORY_SEPARATOR . $this->moduleName .
-        DIRECTORY_SEPARATOR . 'status.yml';
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
     $status = is_readable($statusFile) ? sfYaml::load($statusFile) : $statusId/* array(0, 0, 0) */;
     $format = $request->getRequestFormat();
     if ('json' == $format) {
