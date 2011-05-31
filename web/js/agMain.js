@@ -186,12 +186,17 @@ function initTriggerModal() {
 ***************************************************************************************************/
 function fileImportReplacer() {
   $('#fileImportReplacer').click(function () {
+    if($('#importForm').length < 1) {
       var $importForm = '<form id="importForm"  method="post" action="' + $('#fileImportReplacer').attr('href') + '">\n\
                            <input type="file" name="import" />\n\
                            <input type="submit" value="Import Facilities"/>\n\
                          </form>';
-    $('#replaceMe').hide();
-    $('#replaceMe').parent().append($importForm);
+      $('#replaceMe').hide();
+      $('#replaceMe').parent().append($importForm);
+    } else {
+      $('#importForm').remove();
+      $('#replaceMe').show();
+    }
     return false;
   });
 }
