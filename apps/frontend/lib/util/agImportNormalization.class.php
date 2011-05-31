@@ -465,25 +465,26 @@ abstract class agImportNormalization extends agImportHelper
       $context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
     }
 
+    $context->getEventDispatcher()->notify(new sfEvent($action, 'import.do_reindex'));
+
     unset($action->importer);
     //unset($importer);
   }
 
   /**
    * Simple method for instantiating what are effectively blank records.
-   * @param string $recordName The name of the record / model that will be created.
+   * @param string $recordName The name of the Doctrine_Record / model that will be created.
    * @param array $foreignKeys An array of foreign keys that will be set with the new record.
    * <code>array( $columnName => $columnValue, ...)</code>
    * @return integer The newly instantiated record's ID
    */
-  protected function createNewRec( $recordName, $foreignKeys )
+  protected function createNewRec($recordName, array $foreignKeys)
   {
     // get our connection object
     $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
 
     // instantiate the new record object
-    //TODO: fix this so indexing doesn't happen
-    $newRec = new $recordName();
+    $newRec = new $recordName(null, TRUE, FALSE);
 
     // loop through our keys and set values
     foreach($foreignKeys as $columnName => $columnValue)

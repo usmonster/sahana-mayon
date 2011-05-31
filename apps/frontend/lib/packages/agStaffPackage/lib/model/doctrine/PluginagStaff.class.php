@@ -14,9 +14,19 @@
 abstract class PluginagStaff extends BaseagStaff
 {
 
+  protected $isAutoIndexed;
+
+  public function __construct($table = null, $isNewEntry = false, $isAutoIndexed = true)
+  {
+    parent::__construct($table, $isNewEntry);
+    $this->isAutoIndexed = $isAutoIndexed;
+  }
+
   public function updateLucene()
   {
-    
+    if (!$this->isAutoIndexed) {
+      return null;
+    }
     Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     //Charles Wisniewski @ 00:11 03/08/2011: perhaps this should be abstracted to a 'staff helper'
     //or parts of it, to be called when updating lucene index for eventstaff AND regular staff
@@ -41,37 +51,30 @@ abstract class PluginagStaff extends BaseagStaff
     $staff_pool = NULL;
     $staff_combo_array = array();
     $available_status = 0;
-    foreach ($staffResources as $stf)
-    {
+    foreach ($staffResources as $stf) {
       $staff_resource .= ' "' . $stf['srt_staff_resource_type'] . '"';
       $staff_resource_status .= ' ' . $stf['srs_staff_resource_status'];
       $staff_organization .= ' ' . $stf['o_organization'];
       $staff_available_bool = ($stf['srs_is_available'] == 1) ? 'TRUE' : 'FALSE';
       $staff_combo_array[] = array($staff_available_bool, $stf['srt_staff_resource_type'], $stf['o_organization']);
-      if ($staff_available_bool == 'TRUE')
-      {
+      if ($staff_available_bool == 'TRUE') {
         $available_status = 'TRUE';
       }
     }
-    if (isset($staff_resource))
-    {
+    if (isset($staff_resource)) {
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_type', $staff_resource, 'utf-8'));
     }
-    if (isset($staff_resource_status))
-    {
+    if (isset($staff_resource_status)) {
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_type_status', $staff_resource_status, 'utf-8'));
     }
-    if (isset($staff_organization))
-    {
+    if (isset($staff_organization)) {
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_org', $staff_organization, 'utf-8'));
     }
-    if ($available_status == 'TRUE')
-    {
+    if ($available_status == 'TRUE') {
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_avail', 'TRUE', 'utf-8'));
     }
     $i = 0;
-    foreach ($staff_combo_array AS $stfCmb)
-    {
+    foreach ($staff_combo_array AS $stfCmb) {
 #      $staff_pool .= ' TRUE' . $stfCmb[0] . $stfCmb[1] . $stfCmb[2];
       $stfRscType = preg_replace('/[\W|_]/', '', $stfCmb[1]);
       $stfRscOrg = preg_replace('/[\W|_]/', '', $stfCmb[2]);
@@ -82,8 +85,7 @@ abstract class PluginagStaff extends BaseagStaff
        * 2) staff status and organization
        */
     }
-    if (isset($staff_pool))
-    {
+    if (isset($staff_pool)) {
       $doc->addField(Zend_Search_Lucene_Field::unStored('staff_pool', $staff_pool, 'utf-8'));
     }
     // Make staff searchable by name.
@@ -309,7 +311,7 @@ abstract class PluginagStaff extends BaseagStaff
                   ->select('srt.id as stfRsrcTypId, count(distinct s.id) as count')
                   ->from('agStaffResourceType as srt')
                   ->leftJoin('srt.agStaff as s');
-  //                ->where('1=1');
+          //                ->where('1=1');
 
           /*
            * Append a where clause to query for specific staff resource type if

@@ -18,6 +18,8 @@
 class agStaffActions extends agActions
 {
 
+  protected $_searchedModels = array('agStaff');
+
   /**
    * executeIndex is currently used to execute the index action
    *
@@ -772,11 +774,6 @@ class agStaffActions extends agActions
 
     //unset($this->importer);
     $this->timer = (time() - $this->timer);
-
-//    //this below block is a bit hard coded and experimental, it should be changed to use gparams
-//
-//    $agLuceneIndex = new agLuceneIndex(array('agStaff'));
-//    $indexResult = $agLuceneIndex->indexAll();
   }
 
 }
