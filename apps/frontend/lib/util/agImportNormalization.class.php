@@ -460,7 +460,7 @@ abstract class agImportNormalization extends agImportHelper
 //      }
       $status = sfYaml::load($statusFile);
       if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
-        $this->eh->logAlert('User canceled import, stopping import.');
+        $importer->eh->logAlert('User canceled import, stopping import.');
         unset($status[$abortFlagId]);
         file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
         break;
@@ -468,7 +468,7 @@ abstract class agImportNormalization extends agImportHelper
       $batchResult = $importer->processBatch();
       // if the last batch did nothing
       if ($batchResult == $recordsLeft) {
-        $this->eh->logEmerg('No progress since last batch! Stopping import.');
+        $importer->eh->logEmerg('No progress since last batch! Stopping import.');
         // exception is already thrown by logEmerg ^ , but just in case...
         break;
       } else {
