@@ -1,15 +1,17 @@
-====== Scenario Creator Walk-through (resreq) ======
+====== Scenario Creator Walk-through ======
 
 ===== Staff Resource Requirements =====
+For Agasti to assign staff personnel to a facility the system must know how many of each type of staff is required for that facility to open.  Staffing requirements are stored as a [min] / [max] pair representing the minimum and maximum number of staff that should be deployed to each individual facility resource. This data must be entered for each of the default staff types chosen in Step 2 of the Scenario Creation Wizard; emphasizing the importance of only selecting the staff resource types you intend to use in this scenario.
 
-**What it does:**
+**As with facility group creation, this step can be managed using [[manual:user:facilities:import|Facility Import]]**.
 
-For Agasti to assign staff personnel to a facility the system must know how many of each type of staff is required for that facility to open.  In this step the minimum and maximum required staff will be entered for the facilities you included in your groups.
 ===== Reference Information =====
 
-**Good things to know about Staff Resource Requirements.**:
+==== How Staff Resource Requirements affect Deployment ====
+Using the default automated deployment engine, staff resources are distributed according to the highest priority facility group, then highest priority facility within that group. As staff are distributed, once a facility has reached its minimum threshold, the next facility is queued to receive resource allocations until its minimum threshold is met and so on. Once all active facilities in all active facility groups have had their minimum requirements satisfied, staff are distributed in a round-robin fashion that shares resources equally until facilities reach their maximum capacities.
 
-  * Every facility must have at least one staff type with staff assigned (otherwise, there will be facilities open without staff in them).
+==== Important Concepts ====
+  * Every facility must have at least one staff type with staff assigned (otherwise, there will be facilities unable to open without staff in them).
   * Not every facility needs to have every staff type assigned. (Shelters without medical facilities don't need doctors).
   * If you assign a minimum you must assign a maximum.
   * The facilities are broken up by group, so if there are multiple groups they will be listed with the facilities together in the order you put them in when creating your facility groups.
@@ -21,9 +23,10 @@ For Agasti to assign staff personnel to a facility the system must know how many
   - For each facility record listed enter **at least some staff** required for **at least one staff type** for __**every facility**__.  
   - When you've finished entering the staff requirements click "Save and Continue".
 
-After you've clicked "Save and Continue" hit the "Next" button below.
+After you've clicked "Save and Continue", click "Next" below to move to the next step in the walk-through.
 ===== FAQ =====
 
+  - **Why Staff Resource Requirements are Defined Individually?** - Even though two facilities may provide the same resource (eg, Hospital), the facility sizes may be widely different. Because size is variable, each facility resource may have different resource requirements. For this reason, facility resource requirements are defined individually to be certain that resource requirements are suited to the individual facility.
   - **Does a facility need to have every staff type assigned?** - No, you do not need to have every staff type assigned to every facility.  If a facility does not need some staff then those fields can be blank.
 ====== Continue ======
 

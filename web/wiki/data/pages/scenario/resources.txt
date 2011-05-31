@@ -1,15 +1,22 @@
-====== Scenario Creator Walk-through (staff res) ======
+====== Scenario Creator Walk-through ======
 
 ===== Select Staff Resources =====
+To expedite the creation of Scenarios, select only the resources you'll need available for this scenario.
 
 ===== Reference Information =====
-
+As you learned when you entered staff and facilities into Sahana Agasti, they are recorded as "Resources".  Staff Resources are a combination of staff records and their associated skill. Facility Resources are a combination of the physical location of a facility and the services offered at that location.
 
 ===== Walk-Through =====
 {{:scenario:resourcetypes.png?700|Select Resources Types for this Scenario}}
+  - Check the staff resources you would like available for this scenario.
+  - Check the facility resources you would like available for this scenario
+
+When you have selected the resources required for this scenario, click "Save and Continue" in Sahana Agasti, then click the "Next" button below to move to the next step.
 
 ===== FAQ =====
-
+  - **Why do I need to add resources?**  Staff and facilities are grouped by their resources to make them easy to sort, group, and search.  You'll want to add the resource types you need to be sure you have people and services available in the event of a response.
+  - **Why don't I just use all the resources?** Selecting specific resources that you require will expedite the scenario creation process by limiting the number of options show to only what you need.  If you need all resources available, select all resources.
+  - **Can I add more resources later?** Yes!  Though be sure to go through each of the remaining steps in the Scenario Creator to add those resources to groups and shifts.
 
 ====== Continue ======
 [[scenario:newgroup|{{ :manual:user:next.png?135|Create Facility Groups}}]] 
