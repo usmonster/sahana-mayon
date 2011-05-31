@@ -1102,3 +1102,12 @@ function calcBatch() {
   });
   return count;
 }
+
+function updateStatus(url) {
+  $.getJSON(url, function(data) {
+    $('#infobar').text(data);
+  }
+  );
+
+
+}
