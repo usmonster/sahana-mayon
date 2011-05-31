@@ -741,9 +741,10 @@ class agStaffActions extends agActions
     unlink($filePath);
   }
 
+  //TODO: put this in the global actions file?
   public function executeCancelimport(sfWebRequest $request)
   {
-    $abortFlagId = 'aborting';//implode('_', array('abort', $this->moduleName, 'import'));
+    $abortFlagId = 'aborted';//implode('_', array('abort', $this->moduleName, 'import'));
     //$this->getContext()->set($abortFlagId, TRUE);
 
     //TODO: get import data directory root info from global param
@@ -762,14 +763,11 @@ class agStaffActions extends agActions
   public function executeImport(sfWebRequest $request)
   {
     $this->timer = time();
-    $this->uploadedFile = $_FILES['import'];
 
-    //TODO: fires event so listener will process the file (see ProjectConfiguration.class.php)
-    //$this->dispatcher->notify(new sfEvent($this, 'import.file_ready'));
+    $this->uploadedFile = $_FILES['import'];
 
     $this->importer = new agStaffImportNormalization(NULL, agEventHandler::EVENT_INFO);
 
-    //TODO: test this one
     $this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
     //unset($this->importer);

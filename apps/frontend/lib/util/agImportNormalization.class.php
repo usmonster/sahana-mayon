@@ -385,8 +385,6 @@ abstract class agImportNormalization extends agImportHelper
    */
   public static function processImportEvent(sfEvent $event)
   {
-//    sleep(15);
-//    return;
     // gets the action, context, and importer object
     $action = $event->getSubject();
     $context = $action->getContext();
@@ -422,14 +420,21 @@ abstract class agImportNormalization extends agImportHelper
 
     // blocks import if already in progress
     $status = sfYaml::load($statusFile);
+    $abortFlagId = 'aborted';
     if (isset($status) && 0 != $status['batchesLeft']) {
-      $importer->eh->logAlert('Import in progress, or attempting new import after failed attempt?');
-      return;
+      if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
+        $importer->eh->logNotice('Starting new import after user aborted previous attempt.');
+        unset($status[$abortFlagId]);
+      } else {
+        //TODO: distinguish between the two, add cleanup method (action?) for recovery workflow. -UA
+        $importer->eh->logAlert('Import in progress, or attempting new import after failed attempt?');
+        return;
+      }
     }
 
     // uploads the import file
     $uploadedFile = $action->uploadedFile;
-    $importPath = $importDir . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+    $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /*$uploadedFile['name']*/;
     if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
       $importer->eh->logEmerg('Cannot move uploaded file to destination!');
       // exception is already thrown by logEmerg ^ , but just in case...
@@ -452,7 +457,7 @@ abstract class agImportNormalization extends agImportHelper
     file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
 
     // processes batches until complete, aborted, or an unrecoverable error occurs
-    $abortFlagId = 'aborting';//implode('_', array('abort', $statusId));
+    //$abortFlagId = implode('_', array('abort', $statusId));
     while ($batchesLeft > 0) {
 //      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
 //        $context->set($abortFlagId, NULL);

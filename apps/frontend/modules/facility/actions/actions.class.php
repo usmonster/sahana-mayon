@@ -235,21 +235,23 @@ class facilityActions extends agActions
     $this->form = new agImportForm();
 
     $uploadedFile = $_FILES['import'];
-    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
 
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
+    if (!file_exists($importDir)) {
+      mkdir($importDir);
+    }
+    $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /*$uploadedFile['name']*/;
     if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+      $importer->eh->logEmerg('Cannot move uploaded file to destination!');
+      // exception is already thrown by logEmerg ^ , but just in case...
       return sfView::ERROR;
     }
+
     $this->importPath = $importPath;
 
-    // fires event so listener will process the file (see ProjectConfiguration.class.php)
-    $this->dispatcher->notify(
-        new sfEvent($this, 'import.facility_file_ready', array($scenarioId, $this->importPath))
-    );
     //$this->redirect('facility/import');
-    //$this->dispatcher->notify(new sfEvent($this, 'import.facility_file_ready', array('cursor' => $cursor)));
-    // TODO: eventually use this ^^^ to replace this vvv.
-
     $import = new agFacilityImportXLS();
 //    $returned = $import->createTempTable();
 
@@ -268,17 +270,13 @@ class facilityActions extends agActions
       // Grab table name from AgImportXLS class.
       $sourceTable = $import->tempTable;
 
-      $dataNorm = new agFacilityImportNormalization($scenarioId, $sourceTable, 'facility');
-
-//      $format = "%d/%m/%Y %H:%M:%S";
-//      echo strftime($format);
+      $this->importer = new agFacilityImportNormalization($scenarioId, $sourceTable, 'facility');
+      //TODO: $this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
       $this->timer = time();
-      $dataNorm->normalizeImport();
-      //$this->timer = (time()-$this->timer);
+      $this->importer->normalizeImport();
 
-      $this->summary = $dataNorm->summary;
-//      echo strftime($format);
+      $this->summary = $this->importer->summary;
     }
 
     $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
