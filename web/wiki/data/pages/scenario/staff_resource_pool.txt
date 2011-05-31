@@ -1,30 +1,15 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-through (staffpool) ======
 
 ===== Staff Pool =====
-In this phase of the Agasti Mayon Scenario Creation Wizard, we will be defining and ranking our staff resource pools. Staff resource pools are saved, automated searches used to generate a pool of staff available resources for an emergency response effort.
 
 ===== Reference Information =====
 
-==== Important Concepts ====
-  * Sahana Agasti has a unique staff pooling system that allows emergency managers to define saved searches based on criteria such as the staff type or parent organization. This will expand in the future to include criteria such as skill and training levels.
-  * As each search is defined, it is given a weight to ensure that staff meeting the preferred credentials are deployed first. Staffpersons who meet the criteria of several searches are always favored with their highest priority.
-  * **Staff Pool Generation** - Staff pool generation is part of event deployment. By waiting until the last minute to select individual staff (eg, an event), more time has been created for data updates which enables Sahana Agasti to generate a significantly more reliable pool of human resources than could be done through manual assignment.
 
 ===== Walk-Through =====
 {{:scenario:staffpool.png?700|}}
 
-At the top of the pages users are presented with any currently saved searches. The names of these searches are click-able buttons that enable users to edit a given search condition.  Directly below the saved searches, is a form that can be used to create a new staff search. 
-
-Enter the information for the search:
-  - **Name**: There must be a unique name for each search.
-  - **Search Weight:** The search weight is used to assign priority to searches and, by extension, to the staff generated from a search. The higher the weight, the higher priority this search will get during deployment. Staff that would naturally be selected in more than one search are automatically assigned the highest priority that befits them.
-  - **Staff Type:** Staff type represents a staff's resource role during an emergency event. Staff persons who do not possess the select role, are not captured in this search. If staff type is left blank, staff of any resource will be selected.
-  - **Organization:** One of the search filters, organization simply represents the staff's parent organization. It may be used to ensure that specific response partners receive higher or lower priority than others. If organization is left blank, staff from any organization will be selected.
-
-When you have created your staff pools, click "Save and Continue" to move to the next step, then click the "Next" button below to move to the next step of the walk-through.
 ===== FAQ =====
-  * **How do I include all staff?** To add all staff leave both Staff Type and Organization blank.
-  * **Do I have to have a Staff Pool search?** Yes.  Without at least one search no staff will be deployed.
+
 
 ====== Continue ======
 [[scenario:newstaffresources|{{ :manual:user:next.png?135|Create Shift Templates}}]] 

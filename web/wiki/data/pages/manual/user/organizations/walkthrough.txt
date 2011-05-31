@@ -19,11 +19,9 @@ You can also click the "Prepare" button on the Home page and then click the "Man
 {{:manual:user:organizations:screenshot_062.png?500|Clicking in the menu to Organization}}
 
 Next, click 'Create Organization' to add an organization record.
-
 {{:manual:user:organizations:clickaddneworg.png?500|Create New}}
 
-[[manual:user:organizations:new|{{ :manual:user:next.jpg?135|Adding Organizations}}]] 
-
+[[manual:user:organizations:new|{{ :manual:user:next.png|Adding Organizations}}]] 
 After you've clicked the "Add Organization" link, click next in this tutorial.
 
 ===== Jump to Another Step =====

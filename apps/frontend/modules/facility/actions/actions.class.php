@@ -228,7 +228,8 @@ class facilityActions extends agActions
    * Imports facility records from a properly formatted XLS file.
    *
    * @todo: define a standard import format and document it for the end user.
-   * */
+   * @deprecated moved to scenario
+   */
   public function executeImport(sfWebRequest $request)
   {
     $this->forward404Unless($scenarioId = $request->getParameter('scenario_id'));

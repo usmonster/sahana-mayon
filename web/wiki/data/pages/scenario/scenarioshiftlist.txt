@@ -1,41 +1,15 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-through (scenarioshifts) ======
 
 ===== Scenario Shifts =====
-In the last step, we created a shift template that was used to generate shifts. This page gives emergency managers the opportunity to review the created shifts, edit them directly, or add new ones.
 
 ===== Reference Information =====
 
-==== Important Concepts ====
-  * Individual shifts can be altered; but this will not affect later shifts.  If you edit a staff members first shift, changing the break from 8 hours to 6, the later shifts will remain 8 hours.
-  * **If shifts are regenerated, custom shifts are lost.**  If you return later to the Shifts Template page and the shifts are regenerated any individually created shifts will be lost.
-  * **Creating customized shifts is rare.** Shift templates are used to generate shifts; and though custom shifts are useful for specific situations they are rare.  You will likely not need them.
 
 ===== Walk-Through =====
-{{:scenario:scenarioshifts.png?650|}}
-==== Editing an Existing Shift ====
-  - To edit an individual existing shift, click the shift ID.
-  - Edit the information and click save.
-=== Creating a New Shift ===
-  - Below the list of existing shifts click {{:scenario:screenshot_067.png?150|Create a New Scenario}}.
-  - Enter the requested information:
-    - Scenario Facility Resource - because shifts are for individual facilities, select the facility this shift is for
-    - Staff Resource Type - select the resource type this shift applies to
-    - Shift Status - select the status for this shift
-    - Task - Select the task for this shift
-    - Minimum Staff - Enter the minimum number of staff required for this shift
-    - Maximum Staff - Enter the maximum staff needed for this shift
-    - Staff Wave - Shifts repeat in rotation between groupings of staff called **staff waves**.  Enter the number of which staff wave this shift applies to.
-    - Select the time before the facility opens that this shift will start
-    - Select the length of time this shift will be
-    - Select the length of the break staff in this shift will be unavailable after the shift is completed
-  - Click "Save" to save the shift.
-  - Click "Back to List" to return to the Scenario Shift list.
-{{:scenario:screenshot_068.png?500|New Scenario Shift}}
 
-When you are ready, click {{:scenario:screenshot_069.png?200|Finish Wizard}} to review.  Click "Next" below to move to the next walk-through step.
 
 ===== FAQ =====
-  * **Do I need to create custom shifts?** No.  If a shift template has been created for each combination of Facility Resource and required Staff Resources for that facility the shift generator will produce all general shifts needed.
+
 
 ====== Continue ======
 

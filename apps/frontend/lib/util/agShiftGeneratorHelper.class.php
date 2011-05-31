@@ -19,12 +19,24 @@ class agShiftGeneratorHelper
 {
 
   /**
-   * @method shiftGenerator()
    * Auto-generate shifts from ag_shift_template table to ag_scenario_shift table.
+   * @param integer $scenarioId A valid scenario ID.
    * @return integer Returns 1 if successful.  Otherwise, 0.
    */
-  public static function shiftGenerator()
+  public static function shiftGenerator($scenarioId, Doctrine_Connection $conn = NULL)
   {
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__) ;
+    }
+    else
+    {
+      $conn->beginTransaction() ;
+    }
+
+
     try {
       // Query for the information to populate scenario shift.
       $scenarioShifts = agDoctrineQuery::create()
@@ -39,13 +51,21 @@ class agShiftGeneratorHelper
               ->innerJoin('fsr.agScenarioFacilityResource sfr2')
               ->where('sfr1.id = sfr2.id')
               ->andWhere('st.scenario_id = sfg.scenario_id')
+              ->andWhere('st.scenario_id = ?', $scenarioId)
               ->execute(array(), Doctrine::HYDRATE_SCALAR);
 
       // Delete all scenario shift records prior to generating scenario shifts
       // from shift template tables.
-      $deleteQuery = agDoctrineQuery::create()
+
+      $delExists = 'scenario_facility_resource_id IN (' .
+        'SELECT ssfr.id ' .
+          'FROM agScenarioFacilityResource AS ssfr ' .
+            'INNER JOIN ssfr.agScenarioFacilityGroup AS ssfg ' .
+          'WHERE ssfg.scenario_id = ?)';
+      $deleteQuery = agDoctrineQuery::create($conn)
               ->delete()
               ->from('agScenarioShift')
+              ->where($delExists, $scenarioId)
               ->execute();
 
       foreach ($scenarioShifts as $row) {
@@ -85,7 +105,15 @@ class agShiftGeneratorHelper
             $reset_break_length = $row['st_break_length_minutes'];
           }
 
-          $reset_minutes_start_to_facility_activation = ($shift_counter == 1 ) ? $row['st_minutes_start_to_facility_activation'] : $reset_minutes_start_to_facility_activation + $row['st_task_length_minutes'];
+          
+          if ($shift_counter == 1 )
+          {
+            $reset_minutes_start_to_facility_activation =  $row['st_minutes_start_to_facility_activation'];
+          }
+          else
+          {
+            $reset_minutes_start_to_facility_activation = $reset_minutes_start_to_facility_activation + $row['st_task_length_minutes'];
+          }
 
           $scenarioShift = new agScenarioShift();
           $scenarioShift->set('scenario_facility_resource_id', $row['fsr_scenario_facility_resource_id'])
@@ -100,13 +128,21 @@ class agShiftGeneratorHelper
               ->set('shift_status_id', $row['st_shift_status_id'])
               ->set('deployment_algorithm_id', $row['st_deployment_algorithm_id'])
               ->set('originator_id', $row['st_id']);
-          $scenarioShift->save();
+          $scenarioShift->save($conn);
           $shift_counter++;
         }
       }
+      if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
       return 1;
-    } catch (\Doctrine\ORM\ORMException $e) {
-      print_r($e);
+    } catch (Exception $e) {
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      $eMsg = 'The application encountered an error during automatic generation of shifts. No ' .
+        'shifts were created at this time.';
+      sfContext::getInstance()->getLogger()->err($eMsg);
+      sfContext::getInstance()->getLogger()->err($e->getMessage());
+
+      echo $eMsg;
       return 0;
     }
   }
