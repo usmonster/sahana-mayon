@@ -303,11 +303,12 @@ class agPhoneHelper extends agBulkRecordHelper
    * 
    * @param array $phoneIds An optional single-dimension array of phone id's. If NULL, the
    * classes' $phoneIds property is used.
-   * @param array $strSubsetType An optional associative array defining the param for the method substr.
+   * @param string $strSubsetType A string to determine the phone substr array.  If NULL, return class
+   * default property.
    * @return array A mono-dimensional associative array, where
    * array( phoneId => A phone segment)
    */
-  public function getPhoneComponent(array $phoneIds = NULL, array $strSubsetType = NULL)
+  public function getPhoneComponent(array $phoneIds = NULL, $strSubsetType = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array();
