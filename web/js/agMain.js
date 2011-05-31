@@ -1117,7 +1117,7 @@ function initStatusPolling() {
 function updateStatus(url) {
   $.getJSON(url, function(data) {
     $('#infobar').text(data);
-    setTimeout(updateStatus(url), 5000);
+    setTimeout("updateStatus(url)", 5000);
     return false;
   });
 }
