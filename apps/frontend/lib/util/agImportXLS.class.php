@@ -66,11 +66,13 @@ abstract class agImportXLS extends agImportHelper
   function __destruct()
   {
     $file = $this->fileInfo["dirname"] . DIRECTORY_SEPARATOR . $this->fileInfo["basename"];
+    
     if (!@unlink($file)) {
       $this->events[] = array("type" => "ERROR", "message" => $php_errormsg);
     } else {
       $this->events[] = array('type' => 'OK', "message" => "Deleted {$this->fileInfo['basename']} upload file.");
     }
+   
   }
 
   /**

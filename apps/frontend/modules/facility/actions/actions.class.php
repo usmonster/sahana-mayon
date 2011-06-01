@@ -245,8 +245,6 @@ class facilityActions extends agActions
     }
     $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /*$uploadedFile['name']*/;
     if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-      $importer->eh->logEmerg('Cannot move uploaded file to destination!');
-      // exception is already thrown by logEmerg ^ , but just in case...
       return sfView::ERROR;
     }
 

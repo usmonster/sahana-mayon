@@ -513,8 +513,11 @@ class agInstall
     }
 
     try {
-      Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
+      //Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
       //$installed[] = 'Successfully loaded core data fixtures';
+      $dataDirectories = array(sfConfig::get('sf_data_dir') . '/fixtures',
+                               sfConfig::get('sf_data_dir') . '/samples');
+      Doctrine_Core::loadData($dataDirectories, false);
       $installed = 'Success!';
     } catch (Exception $e) {
       $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();

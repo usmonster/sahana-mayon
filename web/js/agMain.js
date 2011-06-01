@@ -187,7 +187,7 @@ function initTriggerModal() {
 function fileImportReplacer() {
   $('#fileImportReplacer').click(function () {
     if($('#importForm').length < 1) {
-      var $importForm = '<form id="importForm"  method="post" action="' + $('#fileImportReplacer').attr('href') + '">\n\
+      var $importForm = '<form id="importForm" enctype="multipart/form-data" method="post" action="' + $('#fileImportReplacer').attr('href') + '">\n\
                            <input type="file" name="import" />\n\
                            <input type="submit" value="Import Facilities"/>\n\
                          </form>';
