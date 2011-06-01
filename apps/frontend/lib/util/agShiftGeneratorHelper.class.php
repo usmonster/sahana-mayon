@@ -133,7 +133,6 @@ class agShiftGeneratorHelper
         }
       }
       if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
-      return 1;
     } catch (Exception $e) {
       if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
 
@@ -143,7 +142,9 @@ class agShiftGeneratorHelper
       sfContext::getInstance()->getLogger()->err($e->getMessage());
 
       echo $eMsg;
-      return 0;
+      return FALSE;
     }
+    return TRUE;
+
   }
 }

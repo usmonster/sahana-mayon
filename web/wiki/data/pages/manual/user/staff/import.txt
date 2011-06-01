@@ -2,14 +2,14 @@
 
 
 ===== Import Staff =====
-While staff can be entered manually in Sahana Agasti large staff lists are more easily entered via import.  
+Staff import in Sahana Agasti allows for management of staff records via an Excel 2003 spreadsheet.  While staff can be entered manually in Sahana Agasti large staff lists are more easily entered via import.  
 
 
 ===== Reference Information =====
 ==== Things to Know ====
   * If you are updating existing records in Sahana Agasti, use the [[manual:user:staff:export|Staff Export]] feature to create a spreadsheet of existing records.  Sahana Agasti will match the "entity ID" of the updated record to the existing one to prevent duplication.
 ==== Import Spreadsheet Columns ====
-It's **very important** that staff records be properly loaded into the import template (available at step 1 below).  The following are the column headers for the import template (Required fields in **Bold**):
+It's **very important** that staff records be properly loaded into the import template (the template is available at step 1 below).  The following are the column headers for the import template (Required fields in **Bold**.  Either home or work address is required.):
     * Entity ID - assigned in Sahana Agasti.  **There is no Entity ID for new records.**
     * **First Name** - the staff members first name
     * Middle Name - the staff members middle name
@@ -48,11 +48,11 @@ It's **very important** that staff records be properly loaded into the import te
     * L2 Write - Proficiency writing that language (basic, intermediate, fluent, superior)
 ===== Walk-Through =====
 
-**Important:** all uploaded staff records __must__ be formatted to the proper xls spreadsheet format.  Download the template and be sure your staff records are in the proper configuration:
+**Important:** All uploaded staff records __must__ be formatted to the proper xls spreadsheet format.  Download the template and be sure your staff records are in the proper configuration:
 
-  - Download the import template: {{:manual:user:staff:staff_import_and_export_template.xls|}}
+  - Download the {{:manual:user:staff:staff_import_and_export_template.xls|Staff Import Template}}
   - Load staff into the import fields.
-  - Click "Import Staff" to expand the file select option {{:manual:user:staff:staff_import_highlighted.png?350}}
+  - Click "Import Staff" to expand the file select option {{:manual:user:staff:staff_import_highlighted.png?250}}
   - Select "Browse" and select a file from your computer {{:manual:user:staff:browse_button.png|}}
   - Select "Submit" to upload the file {{:manual:user:staff:submit_button.png|}}
 ===== FAQ =====
@@ -61,8 +61,8 @@ It's **very important** that staff records be properly loaded into the import te
   * **Can I upload staff without any Resource Types?** Yes; though without resources associated the staff will not be available for deployment.
 ====== Continue ======
 
-[[manual:user:staff:export|{{ :manual:user:next.png|}}]] 
-[[manual:user:staff:edit|{{:manual:user:previous.png?135 }}]]
+[[manual:user:staff:export|{{ :manual:user:next.jpg?135|Export Staff}}]] 
+[[manual:user:staff:edit|{{:manual:user:previous.jpg?135|Edit Staff }}]]
 
 ===== Jump to Another Step =====
 

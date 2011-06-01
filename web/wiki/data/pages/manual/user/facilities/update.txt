@@ -45,7 +45,7 @@ To delete a Facility Resource remove it from the form and click "Save".
 
 <<<hmmm....??>>>
 ====== Continue ======
-[[manual:user:facilities:import|{{ :manual:user:next.png|Import}}]] 
+[[manual:user:facilities:review|{{ :manual:user:next.png|Import}}]] 
 [[manual:user:facilities:create|{{:manual:user:previous.png?135|Create }}]]
 
 ====== Jump to Another Step ======
@@ -54,6 +54,4 @@ To delete a Facility Resource remove it from the form and click "Save".
   - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
   - [[manual:user:facilities:create|Create Facility]]
   - **Update Facility**
-  - [[manual:user:facilities:import|Import Facility]]
-  - [[manual:user:facilities:export|Export Facility]]
   - [[manual:user:facilities:review|Facility Management Review]]

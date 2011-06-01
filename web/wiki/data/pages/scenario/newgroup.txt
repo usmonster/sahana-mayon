@@ -61,3 +61,6 @@ After all groups have been created select the "Next" button below.
   - [[scenario:newstaffresources| Create Shift Templates]]
   - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

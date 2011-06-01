@@ -53,3 +53,6 @@ When you are ready, click {{:scenario:screenshot_069.png?200|Finish Wizard}} to 
   - [[scenario:newstaffresources| Create Shift Templates]]
   - **Generate Scenario Shifts**
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

@@ -4,17 +4,9 @@ This is the Sahana Agasti 2.0 manual developed for the New York City Office of E
 
 ====== About Sahana ======
 
-Sahana 2.0 was created by CUNY School of Professional Studies (SPS) under contract from the New York Office of Emergency Management (OEM), and currently is actively developed and supported by CUNY SPS and the greater Sahana software community.
+Sahana Agasti was created by CUNY School of Professional Studies (SPS) for the New York City Office of Emergency Management (OEM), and currently is actively developed and supported by the greater Sahana software community.
 
-Sahana 2.0 is an enterprise-class open source disaster management solution. The original project was initiated by volunteers in the Sri Lankan FOSS development community to help fellow country men and women affected during the December 2004 Asian Tsunami. It has been further developed and enhanced for New York City purposes by support from OEM.
-
-Sahana 2.0 is free of cost. Sahana is written and distributed under the GPL General Public License version 2. It means that its source code is freely distributed and available for the general public. 
-
-====== About OEM ======
-
-Established in 1996, the New York City Office of Emergency Management (OEM) plans and prepares for emergencies, educates the public about preparedness, coordinates emergency response and recovery, and collects and disseminates emergency information.
-
-To accomplish this mission, OEM maintains a disciplined unit of emergency management personnel, including responders, planners, watch commanders, and administrative and support staff, to identify and respond to various hazards. 
+Sahana Agasti is an enterprise-class open source disaster management solution. The original project was initiated by volunteers in the Sri Lankan FOSS development community to help fellow country men and women affected during the December 2004 Asian Tsunami. It has been further developed and enhanced for New York City purposes by support from OEM.  Agasti is available free of cost and is written and distributed under the GPL General Public License version 2. It means that its source code is freely distributed and available for the general public. 
 
 ====== Help Sections ======
   * [[manual:administrator|Administrator Manual]]
@@ -23,3 +15,4 @@ To accomplish this mission, OEM maintains a disciplined unit of emergency manage
     * [[manual:user:facilities| Facility Management]]
     * [[manual:user:organizations| Organization Management]]
     * [[manual:user:scenario| Scenario Management]]
+    * [[manual:user:event| Event Management]]

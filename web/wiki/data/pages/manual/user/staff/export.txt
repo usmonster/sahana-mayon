@@ -4,22 +4,20 @@
 ===== Export Staff =====
 
 Exporting staff records can be useful for many applications such as reporting on staff, exporting to other management systems, and updating information.
-===== Reference Information =====
-
 
 ===== Walk-Through =====
 
   - Beginning on the Staff Management home page select the "Export Staff" link.
-  - In the pop up window either select to open the document or select a place locally to save the document.
+  - Depending on your browser you may be prompted to select where to save the export file or the file will download automatically.  If prompted to select to open the document or select a place locally to save the document.
 
-{{:manual:user:staff:staff_export_highlight.png?700}}
+{{:manual:user:staff:staff_export_highlight.png?500}}
 ===== FAQ =====
 
   * **Can I customize the fields available for export?** - Agasti currently supports a bulk export of all staff without custom fields.  To create a staff export with custom fields remove the undesired information from the spreadsheet produced by the export.
 ====== Continue ======
 
-[[manual:user:staff:review|{{ :manual:user:next.png|}}]] 
-[[manual:user:staff:import|{{:manual:user:previous.png?135 }}]]
+[[manual:user:staff:review|{{ :manual:user:next.jpg?135|Staff Review}}]] 
+[[manual:user:staff:import|{{:manual:user:previous.jpg?135|Import Staff }}]]
 
 ===== Jump to Another Step =====
 

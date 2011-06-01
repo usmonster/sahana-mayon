@@ -12,8 +12,8 @@ To jump to any step in the Scenario Wizard click the name of the step.
 ====== Continue ======
 
 [[scenario:shift|{{:manual:user:previous.png?135|Scenario Shifts }}]] 
+[[scenario:facilityimport|{{ :manual:user:next.png?135|Import Facilities}}]] 
 
-After a scenario has been successfully created it remains ready for deployment until needed for an event.  However, it's important to familiarize with event management before the need arises.  [[manual:user:event|{{ :scenario:event_jump_2.jpg?200|Event Management}}]]
 
 
 
@@ -28,3 +28,8 @@ After a scenario has been successfully created it remains ready for deployment u
   - [[scenario:newstaffresources| Create Shift Templates]]
   - [[scenario:shift| Generate and Verify Shifts]]
   - **Review**
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

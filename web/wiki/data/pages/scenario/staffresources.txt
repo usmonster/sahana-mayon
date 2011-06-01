@@ -46,3 +46,6 @@ After you've clicked "Save and Continue", click "Next" below to move to the next
   - [[scenario:newstaffresources| Create Shift Templates]]
   - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]
