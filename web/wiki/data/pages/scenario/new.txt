@@ -42,3 +42,6 @@ When you've added a name and description click "Save and Continue" and then clic
   - [[scenario:newstaffresources| Create Shift Templates]]
   - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

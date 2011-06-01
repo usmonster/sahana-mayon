@@ -1,4 +1,4 @@
-====== Facility Management Walk-Through ======
+====== Scenario Creator Walk-Through ======
 
 ===== Importing Facilities =====
 Facility Import can be a helpful time saver when your response plan has many facilities or if you are planning to have multiple scenarios, some of which use the same facility resources.  Facilities are imported in association with the scenarios they are used in.  See the Reference Information section below for a better understanding of when to import facilities.
@@ -70,15 +70,21 @@ This walk through is for facility imports after the scenario has been created.  
   * **How do I import facilities for multiple scenarios?**  Each scenario will have a separate spreadsheet and facility import.  Be sure that if a facility is repeated between spreadsheets it has the same Facility Code.
 ====== Continue ======
 
-[[manual:user:facilities:export|{{ :manual:user:next.png|}}]] 
-[[manual:user:facilities:update|{{:manual:user:previous.png?135 }}]]
+[[scenario:facilityexport|{{ :manual:user:next.png?135|Create a New Scenario}}]] 
+[[manual:user:scenario:walkthrough|{{:manual:user:previous.png?135|Introduction }}]]
 
-====== Jump to Another Step ======
 
-{{ :logo_c3.jpg?200}}
-  - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
-  - [[manual:user:facilities:create|Create Facility]]
-  - [[manual:user:facilities:update|Update Facility]]
-  - **Import Facility**
-  - [[manual:user:facilities:export|Export Facility]]
-  - [[manual:user:facilities:review|Facility Management Review]]
+===== Jump to Another Step =====
+
+  - [[scenario:pre|Pre Scenario Creation]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
+  - [[scenario:newgroup| Create Facility Groups]]
+  - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
+  - [[scenario:newstaffresources| Create Shift Templates]]
+  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:review| Review]]
+  - **Facility Import**
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

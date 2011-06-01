@@ -43,3 +43,6 @@ When you have created your staff pools, click "Save and Continue" to move to the
   - [[scenario:newstaffresources| Create Shift Templates]]
   - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

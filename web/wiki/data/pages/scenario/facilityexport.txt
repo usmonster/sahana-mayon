@@ -1,4 +1,4 @@
-====== Facility Management Walk-Through ======
+====== Scenario Creator Walk-Through ======
 
 ===== Exporting Facility Records =====
 The facility export function can be useful for updating records or saving the data for use in another system.  Below are instructions for how to export facility data from Sahana Agasti.
@@ -14,17 +14,24 @@ Starting from the Facility Management page:
 {{:manual:user:facilities:screenshot_076.png?500|Export Facilities}}
 ===== FAQ =====
   * **Can I customize the fields available for export?** - Agasti currently supports a bulk export of all facilities without custom fields. To create a facility export with custom fields remove the undesired information from the spreadsheet produced by the export.
+
 ====== Continue ======
 
-[[manual:user:facilities:review|{{ :manual:user:next.png|List}}]] 
-[[manual:user:facilities:import|{{:manual:user:previous.png?135|Import }}]]
+[[scenario:deployevent|{{ :manual:user:next.png?135|Deploy an Event}}]] 
+[[scenario:facilityimport|{{:manual:user:previous.png?135|Introduction }}]]
 
-====== Jump to Another Step ======
 
-{{ :logo_c3.jpg?200}}
-  - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
-  - [[manual:user:facilities:create|Create Facility]]
-  - [[manual:user:facilities:update|Update Facility]]
-  - [[manual:user:facilities:import|Import Facility]]
-  - **Export Facility**
-  - [[manual:user:facilities:review|Facility Management Review]]
+===== Jump to Another Step =====
+
+  - [[scenario:pre|Pre Scenario Creation]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
+  - [[scenario:newgroup| Create Facility Groups]]
+  - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
+  - [[scenario:newstaffresources| Create Shift Templates]]
+  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - **Facility Export**
+  - [[scenario:deployevent| Deploying an Event]]

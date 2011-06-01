@@ -25,4 +25,6 @@ It's time to get started in creating your first Scenario.  Keep this walk-throug
   - [[scenario:newstaffresources| Create Shift Templates]]
   - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
-
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

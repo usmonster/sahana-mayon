@@ -47,3 +47,6 @@ A shift templates define what facility and staff resources it applies to, time e
   - **Create Shift Templates**
   - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

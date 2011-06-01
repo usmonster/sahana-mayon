@@ -17,6 +17,4 @@ Now that staff and facilities have been entered in the Sahana Agasti you're read
   - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
   - [[manual:user:facilities:create|Create Facility]]
   - [[manual:user:facilities:update|Update Facility]]
-  - [[manual:user:facilities:import|Import Facility]]
-  - [[manual:user:facilities:export|Export Facility]]
   - **Facility Management Review**
