@@ -71,13 +71,12 @@ class agShiftGeneratorHelper
       foreach ($scenarioShifts as $row) {
         $shift_counter = 1;
         $staff_wave = 1;
-        $reset_break_length = $row['st_break_length_minutes'];
         $reset_minutes_start_to_facility_activation = $row['st_minutes_start_to_facility_activation'];
 
         // calculate the true number of repeats
         if ($row['st_task_length_minutes'] > 0)
         {
-          $shiftRepeats = ceil(($row['st_days_in_operation'] * ((24*60) / $row['st_task_length_minutes'])))-1;
+          $shiftRepeats = ceil($row['st_days_in_operation'] * ((24*60) / $row['st_task_length_minutes']));
         }
         else
         {
@@ -85,7 +84,7 @@ class agShiftGeneratorHelper
         }
 
         while ($shift_counter <= $shiftRepeats) {
-          // A staff should only be working at one shift and rest while the
+          // A staff should only be working on one shift and rest while the
           // next following shift starts.  He/she should only be assigned to
           // every other shifts if a staff should work multiple shifts.  Thus,
           // the staff wave is multipled by two.
@@ -96,10 +95,11 @@ class agShiftGeneratorHelper
           }
 
           // Release staffs as they finish their last shift.
-          if ((($shift_counter % $staff_shift_repeat) == 0) ||
-              (($shift_counter % $staff_shift_repeat) == ($staff_shift_repeat - 1)) ||
-              ($shift_counter == ($row['st_days_in_operation'] + 1)) ||
-              ($shift_counter == $row['st_days_in_operation'])) {
+          if ( (($shift_counter % $staff_shift_repeat) == 0) ||
+               ((($shift_counter +1) % $staff_shift_repeat) == 0) ||
+               ($shift_counter == $shiftRepeats) ||
+               (($shift_counter +1 ) == $shiftRepeats) )
+          {
             $reset_break_length = 0;
           } else {
             $reset_break_length = $row['st_break_length_minutes'];

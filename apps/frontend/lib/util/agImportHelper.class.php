@@ -45,14 +45,12 @@ abstract class agImportHelper extends agPdoHelper
   abstract protected function addDynamicColumns(array $importHeaders);
 
   /**
-   * This class's constructor.
+   * Method to initialize this class
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  public function __construct($tempTable, $logEventLevel = NULL)
+  protected function __init($tempTable, $logEventLevel)
   {
-    parent::__construct($logEventLevel);
-
     $this->eh = new agEventHandler($logEventLevel);
 
     // get our error threshold
@@ -514,7 +512,7 @@ abstract class agImportHelper extends agPdoHelper
    * @param string $sheetName The name of the sheet being validated.
    * @return boolean A boolean indicating un/successful validation of column headers.
    */
-  private function validateColumnHeaders(array $importFileHeaders, $sheetName)
+  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
   {
     // Check if import file header is empty
     if (empty($importFileHeaders)) {

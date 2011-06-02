@@ -64,7 +64,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
    * could not be filled.
    * @param string $eventDebugLevel One of the EVENT_* constants of agEventHandler
    */
-  protected function __init($eventId, $skipUnfilled = TRUE, $eventDebugLevel = NULL)
+  public function __init($eventId, $skipUnfilled = TRUE, $eventDebugLevel = NULL)
   {
     // start our timer
     $this->startTime = time();
