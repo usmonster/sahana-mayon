@@ -15,7 +15,7 @@ class agShiftTemplateContainerForm extends sfForm
 {
   public $scenario_id;
 
-  public function __construct($scenario_id = null)
+  public function __construct($scenario_id = null, $requiredResourceCombo = null)
   {
     if ($scenario_id == null)
     {
@@ -23,6 +23,8 @@ class agShiftTemplateContainerForm extends sfForm
     } else {
       $this->scenario_id = $scenario_id;
     }
+    $this->requiredResourceCombo = (empty($requiredResourceCombo)) ? array() : $requiredResourceCombo;
+
     parent::__construct(array(), array(), array());
   }
 
@@ -54,17 +56,7 @@ class agShiftTemplateContainerForm extends sfForm
     unset($this['_csrf_token']);
 
     $formCounter = 0;
-    // Query for all predefined staff resource and faciltiy resource combinations.
-    $requiredResourceCombo = agDoctrineQuery::create()
-      ->select('fsr.staff_resource_type_id')
-          ->addSelect('fr.facility_resource_type_id')
-        ->from('agFacilityStaffResource AS fsr')
-          ->innerJoin('fsr.agScenarioFacilityResource AS sfr')
-          ->innerJoin('sfr.agFacilityResource AS fr')
-          ->innerJoin('sfr.agScenarioFacilityGroup AS sfg')
-        ->where('sfg.scenario_id = ?', $this->scenario_id)
-        ->orderBy('fsr.staff_resource_type_id, fr.facility_resource_type_id')
-     ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+    $requiredResourceCombo = $this->requiredResourceCombo;
 
     $shiftTemplates = agDoctrineQuery::create()
             ->from('agShiftTemplate a')

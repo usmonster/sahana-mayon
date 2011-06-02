@@ -1095,31 +1095,42 @@ class scenarioActions extends agActions
   {
     $this->setScenarioBasics($request);
     $this->wizardHandler($request, 6);
+    $requiredResourceCombo = array();
 
-//    $facility_staff_resources = agDoctrineQuery::create()
-//        ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
-//        ->from('agFacilityStaffResource fsr')
-//        ->leftJoin('agScenarioFacilityResource sfr, sfr.agFacilityResource fr, sfr.agScenarioFacilityGroup sfg')
-//        ->where('sfg.scenario_id = ?', $this->scenario_id)
-//        ->distinct()  //need to be keyed by the possibly existing shift template record..
-//        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
-    $this->shifttemplateforms = new agShiftTemplateContainerForm($this->scenario_id); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
+    if ($request->isMethod(sfRequest::POST) and $request->hasParameter('Predefined'))
+    {
+      // Query for all predefined staff resource and faciltiy resource combinations.
+      $requiredResourceCombo = agDoctrineQuery::create()
+        ->select('fsr.staff_resource_type_id')
+            ->addSelect('fr.facility_resource_type_id')
+          ->from('agFacilityStaffResource AS fsr')
+            ->innerJoin('fsr.agScenarioFacilityResource AS sfr')
+            ->innerJoin('sfr.agFacilityResource AS fr')
+            ->innerJoin('sfr.agScenarioFacilityGroup AS sfg')
+          ->where('sfg.scenario_id = ?', $this->scenario_id)
+          ->orderBy('fsr.staff_resource_type_id, fr.facility_resource_type_id')
+       ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+    }
+    $this->shifttemplateforms = new agShiftTemplateContainerForm($this->scenario_id,
+                                                                 $requiredResourceCombo);
     unset($this->shifttemplateforms['_csrf_token']);
-    if ($request->isMethod(sfRequest::POST)) {
+    if ($request->isMethod(sfRequest::POST))
+    {
       //foreach $this->shifttemplateforms...
       $this->shifttemplateforms->bind($request->getParameter('shift_template'),
                                                              $request->getFiles($this->shifttemplateforms->getName()));
-      if ($this->shifttemplateforms->isValid()) {
-        $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms();
-        if ($request->hasParameter('Continue')) {
+      if ($this->shifttemplateforms->isValid())
+      {
+        if ($request->hasParameter('Continue'))
+        {
+          $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms();
           $generatedResult = agShiftGeneratorHelper::shiftGenerator($this->scenario_id);
           //if this is a long process should be a try/catch here
           $this->redirect('scenario/shifts?id=' . $request->getParameter('id'));
-        } else {
-          $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
         }
       }
     }
+
     $this->getResponse()->setTitle('Sahana Agasti Edit ' . $this->scenarioName . ' Scenario');
   }
 
