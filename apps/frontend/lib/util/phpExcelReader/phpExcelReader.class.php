@@ -47,10 +47,10 @@
  * @see		OLE, Spreadsheet_Excel_Writer
  * --------------------------------------------------------------------------
  */
-
 abstract class phpExcelReader
 {
-  public function __construct()
+
+  public function construct()
   {
     // @todo it would be preferred to set these up as class constants anc change calls to them
     define('NUM_BIG_BLOCK_DEPOT_BLOCKS_POS', 0x2c);
@@ -116,7 +116,8 @@ abstract class phpExcelReader
     define('SPREADSHEET_EXCEL_READER_TYPE_DEFCOLWIDTH', 0x55);
     define('SPREADSHEET_EXCEL_READER_TYPE_STANDARDWIDTH', 0x99);
     define('SPREADSHEET_EXCEL_READER_DEF_NUM_FORMAT', "%s");
-}
+    
+  }
 
   public function GetInt4d($data, $pos)
   {
@@ -148,4 +149,5 @@ abstract class phpExcelReader
   {
     return ord($data[$pos]) | ord($data[$pos + 1]) << 8;
   }
+
 }

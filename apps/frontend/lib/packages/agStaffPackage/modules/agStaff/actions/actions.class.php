@@ -32,14 +32,14 @@ class agStaffActions extends agActions
   public function executeStafftypes(sfWebRequest $request)
   {
     $this->ag_staff_types = Doctrine_Core::getTable('agStaffResourceType')
-            ->createQuery('a')
-            ->execute();
+        ->createQuery('a')
+        ->execute();
 
     $this->staffTypeForm = new PluginagStaffTypeForm();
 
     if ($request->isMethod(sfRequest::POST)) {
       $this->staffTypeForm->bind($request->getParameter($this->staffTypeForm->getName()),
-          $request->getFiles($this->staffTypeForm->getName()));
+                                                        $request->getFiles($this->staffTypeForm->getName()));
       if ($this->staffTypeForm->isValid()) {
         $this->staffTypeForm->save();
       }
@@ -79,15 +79,15 @@ class agStaffActions extends agActions
 
     /** @todo take into consideration app_display */
     $staffStatusOptions = agDoctrineQuery::create()
-            ->select('s.staff_resource_status, s.staff_resource_status')
-            ->from('agStaffResourceStatus s')
-            ->execute(array(), 'key_value_pair');
+        ->select('s.staff_resource_status, s.staff_resource_status')
+        ->from('agStaffResourceStatus s')
+        ->execute(array(), 'key_value_pair');
     //the above query returns an array of keys matching their values.
     //ideally the above should exist in a global param,
     //so the database is not queried all the time
     $staffStatusOptions['all'] = 'all';
     if ($request->getParameter('status') && in_array($request->getParameter('status'),
-            $staffStatusOptions)) {
+                                                                            $staffStatusOptions)) {
       $this->status = $request->getParameter('status');
     }
     $this->statusWidget = new sfForm();
@@ -114,7 +114,8 @@ class agStaffActions extends agActions
 //      $staffArray = apc_fetch('staffArray');
 //    }
 //    else{
-    $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order, $this->limit);
+    $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order,
+                                             $this->limit);
 //      apc_store('staffArray', $staffArray);
 //    }  this will not work currently on update, there needs to be a hook/callback
 
@@ -126,11 +127,11 @@ class agStaffActions extends agActions
 
 
     $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
-            ->createQuery('c')
-            ->execute();
+        ->createQuery('c')
+        ->execute();
     $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
-            ->createQuery('d')
-            ->execute();
+        ->createQuery('d')
+        ->execute();
     //p-code
     //$this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' ');
     //end p-code
@@ -234,25 +235,25 @@ class agStaffActions extends agActions
 
     $this->forward404Unless(
         $this->agStaff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-        sprintf('Object ag_staff does not exist (%s).',
-            $request->getParameter('id'))
+                                                                                    sprintf('Object ag_staff does not exist (%s).',
+                                                                                            $request->getParameter('id'))
     );
 
     $this->ag_person_name_types = Doctrine::getTable('agPersonNameType')
-            ->createQuery('b')
-            ->execute();
+        ->createQuery('b')
+        ->execute();
     $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
-            ->createQuery('c')
-            ->execute();
+        ->createQuery('c')
+        ->execute();
     $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
-            ->createQuery('d')
-            ->execute();
+        ->createQuery('d')
+        ->execute();
     $this->ag_language_formats = Doctrine::getTable('agLanguageFormat')
-            ->createQuery('e')
-            ->execute();
+        ->createQuery('e')
+        ->execute();
     $this->ag_address_contact_types = Doctrine::getTable('agAddressContactType')
-            ->createQuery('f')
-            ->execute();
+        ->createQuery('f')
+        ->execute();
 
 
     //$this->agStaff = $this->pager->getResults()->getFirst();
@@ -309,9 +310,9 @@ class agStaffActions extends agActions
     $this->forward404unless($request->isXmlHttpRequest());
     if ($request->hasParameter('staffResourceId')) {
       $staffResource = agDoctrineQuery::create()
-              ->delete('agStaffResource sr')
-              ->where('id = ?', $request->getParameter('staffResourceId'))
-              ->execute();
+          ->delete('agStaffResource sr')
+          ->where('id = ?', $request->getParameter('staffResourceId'))
+          ->execute();
     }
   }
 
@@ -348,8 +349,8 @@ class agStaffActions extends agActions
   {
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-        sprintf('Object ag_staff does not exist (%s).',
-            $request->getParameter('id'))
+                                                                               sprintf('Object ag_staff does not exist (%s).',
+                                                                                       $request->getParameter('id'))
     );
 
     $ag_person = $ag_staff->getAgPerson();
@@ -372,8 +373,8 @@ class agStaffActions extends agActions
     );
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-        sprintf('Object ag_staff does not exist (%s).',
-            $request->getParameter('id'))
+                                                                               sprintf('Object ag_staff does not exist (%s).',
+                                                                                       $request->getParameter('id'))
     );
 
     $ag_person = $ag_staff->getAgPerson();
@@ -406,8 +407,8 @@ class agStaffActions extends agActions
 
     $this->forward404Unless(
         $ag_staff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
-        sprintf('Object ag_staff does not exist (%s).',
-            $request->getParameter('id'))
+                                                                               sprintf('Object ag_staff does not exist (%s).',
+                                                                                       $request->getParameter('id'))
     );
 
     $ag_person = $ag_staff->getAgPerson();
@@ -476,19 +477,19 @@ class agStaffActions extends agActions
       $ag_staff = $form->save();
       $refAgStaff = $ag_staff->getAgStaff();
       $staffObj = agDoctrineQuery::create()
-              ->from('agStaff s')
-              ->where('s.person_id=?', $ag_staff->id)
-              ->fetchOne();
+          ->from('agStaff s')
+          ->where('s.person_id=?', $ag_staff->id)
+          ->fetchOne();
       LuceneRecord::updateLuceneRecord($staffObj);
 
       //$staff_id = $ag_staff->getAgStaff()->getFirst()->getId();
 //not an object? first it's a collection, now not an object if i just get one
 
       $staff_id = Doctrine::getTable('agStaff')->createQuery('a')
-              ->select('a.id')
-              ->from('agStaff a')
-              ->where('a.person_id = ?', $ag_staff->id)
-              ->fetchOne();
+          ->select('a.id')
+          ->from('agStaff a')
+          ->where('a.person_id = ?', $ag_staff->id)
+          ->fetchOne();
 
       //get id of STAFF person from the saved, extended agpersonform.
       // Check if the Save and Create Another button was used to submit. If it was, redirect to staff/new.
@@ -512,7 +513,8 @@ class agStaffActions extends agActions
     // Free up some memory by getting rid of the agFacilityExporter object.
     unset($staffExporter);
     $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportResponse['fileName'] . '"');
+    $this->getResponse()->setHttpHeader('Content-Disposition',
+                                        'attachment;filename="' . $exportResponse['fileName'] . '"');
 
     $exportFile = file_get_contents($exportResponse['filePath']);
 
@@ -526,9 +528,8 @@ class agStaffActions extends agActions
   //TODO: put this in the global actions file?
   public function executeCancelimport(sfWebRequest $request)
   {
-    $abortFlagId = 'aborted';//implode('_', array('abort', $this->moduleName, 'import'));
+    $abortFlagId = 'aborted'; //implode('_', array('abort', $this->moduleName, 'import'));
     //$this->getContext()->set($abortFlagId, TRUE);
-
     //TODO: get import data directory root info from global param
     $importDataRoot = sfConfig::get('sf_upload_dir');
     $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
@@ -550,40 +551,42 @@ class agStaffActions extends agActions
 
   public function executeImport(sfWebRequest $request)
   {
-//    $this->timer = time();
+    //    $this->timer = time();
 
     $uploadedFile = $_FILES['import'];
 
-    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
-    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-      return sfView::ERROR;
-    }
+    print("<pre>" . print_r($_FILES, true) . "</pre>");
 
-    $this->importPath = $importPath;
+    $this->importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+
+    print("<pre>Move {$uploadedFile['tmp_name']} to " . $this->importPath . "</pre>");
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $this->importPath)) {
+      print("<pre>Failed to move {$uploadedFile['tmp_name']} to ".$this->importPath."</pre>");
+      //return sfView::ERROR;
+    }
 
 
     // fires event so listener will process the file (see ProjectConfiguration.class.php)
-//    $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
+    //$this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
     // TODO: eventually use this ^^^ to replace this vvv.
 
     $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_DEBUG);
+    
     $this->importer->processXlsImportFile($this->importPath);
+
     $left = 1;
-    while ($left > 0)
-    {
+    while ($left > 0) {
       $left = $this->importer->processBatch();
       print_r($left);
     }
     $this->importer->concludeImport();
 
     // removes the file from the server
-    unlink($this->importPath);
-
-
-//    $this->dispatcher->notify(new sfEvent($this, 'import.start'));
-
+    //unlink($this->importPath);
+    
+    //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
     //unset($this->importer);
-//    $this->timer = (time() - $this->timer);
+    //$this->timer = (time() - $this->timer);
   }
 
 }
