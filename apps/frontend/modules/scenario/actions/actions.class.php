@@ -1096,13 +1096,13 @@ class scenarioActions extends agActions
     $this->setScenarioBasics($request);
     $this->wizardHandler($request, 6);
 
-    $facility_staff_resources = agDoctrineQuery::create()
-        ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
-        ->from('agFacilityStaffResource fsr')
-        ->leftJoin('agScenarioFacilityResource sfr, sfr.agFacilityResource fr, sfr.agScenarioFacilityGroup sfg')
-        ->where('sfg.scenario_id = ?', $this->scenario_id)
-        ->distinct()  //need to be keyed by the possibly existing shift template record..
-        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
+//    $facility_staff_resources = agDoctrineQuery::create()
+//        ->select('fsr.staff_resource_type_id, fr.facility_resource_type_id') // we want distinct
+//        ->from('agFacilityStaffResource fsr')
+//        ->leftJoin('agScenarioFacilityResource sfr, sfr.agFacilityResource fr, sfr.agScenarioFacilityGroup sfg')
+//        ->where('sfg.scenario_id = ?', $this->scenario_id)
+//        ->distinct()  //need to be keyed by the possibly existing shift template record..
+//        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR); //if these items were keyed better, in the shift template form step(next) we could remove existing templates by that key
     $this->shifttemplateforms = new agShiftTemplateContainerForm($this->scenario_id); //$object, $options, $CSRFSecret) ShiftGeneratorForm($facility_staff_resources, $this->scenario_id); //sfForm(); //agShiftGeneratorContainerForm ??
     unset($this->shifttemplateforms['_csrf_token']);
     if ($request->isMethod(sfRequest::POST)) {
