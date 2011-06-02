@@ -550,16 +550,40 @@ class agStaffActions extends agActions
 
   public function executeImport(sfWebRequest $request)
   {
-    $this->timer = time();
+//    $this->timer = time();
 
-    $this->uploadedFile = $_FILES['import'];
+    $uploadedFile = $_FILES['import'];
 
-    $this->importer = new agStaffImportNormalization(NULL, agEventHandler::EVENT_INFO);
+    $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+      return sfView::ERROR;
+    }
 
-    $this->dispatcher->notify(new sfEvent($this, 'import.start'));
+    $this->importPath = $importPath;
+
+
+    // fires event so listener will process the file (see ProjectConfiguration.class.php)
+//    $this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
+    // TODO: eventually use this ^^^ to replace this vvv.
+
+    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_DEBUG);
+    $this->importer->processXlsImportFile($this->importPath);
+    $left = 1;
+    while ($left > 0)
+    {
+      $left = $this->importer->processBatch();
+      print_r($left);
+    }
+    $this->importer->concludeImport();
+
+    // removes the file from the server
+    unlink($this->importPath);
+
+
+//    $this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
     //unset($this->importer);
-    $this->timer = (time() - $this->timer);
+//    $this->timer = (time() - $this->timer);
   }
 
 }

@@ -23,16 +23,30 @@
 class agStaffImportNormalization extends agImportNormalization
 {
   /**
-   * This class's constructor.
+   * Method to return an instance of this class
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
+   * @return self An instance of this class
    */
-  public function __construct($tempTable = NULL, $logEventLevel = NULL)
+  public static function getInstance($tempTable, $logEventLevel = NULL)
+  {
+    $self = new self();
+    $self->__init($tempTable, $logEventLevel);
+    return $self;
+  }
+
+  /**
+   * Method to return an instance of this class
+   * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
+   * @return self An instance of this class
+   */
+  public function __init($tempTable = NULL, $logEventLevel = NULL)
   {
     if (is_null($tempTable)) { $tempTable = 'temp_staff_import'; }
 
     // DO NOT REMOVE
-    parent::__construct($tempTable, $logEventLevel);
+    parent::__init($tempTable, $logEventLevel);
 
     // set the import components array as a class property
     $this->setImportComponents();

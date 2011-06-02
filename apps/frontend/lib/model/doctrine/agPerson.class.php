@@ -26,13 +26,17 @@ class agPerson extends BaseagPerson
   private $_helperObjects = array(),
   $_helperMethods;
 
+  protected $isAutoIndexed;
+
+
   /**
    * This classes' constructor.
    */
-  public function construct()
+  public function __construct($table = null, $isNewEntry = false, $isAutoIndexed = true)
   {
     // call the parent's constructor
-    parent::construct();
+    parent::__construct($table, $isNewEntry);
+    $this->isAutoIndexed = $isAutoIndexed;
 
     // pre-load any helper methods we might want to look for in __call()
     $this->loadHelperMethods();
@@ -120,6 +124,10 @@ class agPerson extends BaseagPerson
 
   public function updateLucene()
   {
+    if (!$this->isAutoIndexed) {
+      return null;
+    }
+
     Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     $doc = new Zend_Search_Lucene_Document();
     //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());

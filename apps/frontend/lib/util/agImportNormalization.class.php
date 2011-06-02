@@ -29,22 +29,6 @@ abstract class agImportNormalization extends agImportHelper
             $importData = array();
 
   /**
-   * This class's constructor.
-   * @param string $tempTable The name of the temporary import table to use
-   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
-   */
-  public function __construct($tempTable, $logEventLevel = NULL)
-  {
-    // DO NOT REMOVE
-    parent::__construct($tempTable, $logEventLevel);
-  }
-
-  public function __destruct()
-  {
-    parent::__destruct();
-  }
-
-  /**
    * Method to dynamically build a (mostly) static tempSelectQuery
    * @return string Returns a string query
    */

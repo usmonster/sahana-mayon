@@ -105,8 +105,3 @@ $i = 1;
     <?php else: ?>
       <br /><strong>File not imported.</strong>
     <?php endif ?>
-
-
-
-
-
