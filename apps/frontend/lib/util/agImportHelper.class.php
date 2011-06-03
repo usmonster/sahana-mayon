@@ -85,17 +85,13 @@ abstract class agImportHelper extends agPdoHelper
     // the parent's destructor will rollback any oustanding open transactions and close conns
     parent::__destruct();
 
-    /*
-
-      // removes the temporary file
-      $file = $this->fileInfo['dirname'] . DIRECTORY_SEPARATOR . $this->fileInfo['basename'];
-      if (!@unlink($file)) {
-      $this->eh->logAlert('Failed to delete the {' . $this->fileInfo['basename'] . '} import file.');
-      } else {
-      $this->eh->logInfo('Successfully deleted the {' . $this->fileInfo['basename'] . '} import file.');
-      }
-     * 
-     */
+    // removes the temporary file
+    $file = $this->fileInfo['dirname'] . DIRECTORY_SEPARATOR . $this->fileInfo['basename'];
+    if (!@unlink($file)) {
+    $this->eh->logAlert('Failed to delete the {' . $this->fileInfo['basename'] . '} import file.');
+    } else {
+    $this->eh->logInfo('Successfully deleted the {' . $this->fileInfo['basename'] . '} import file.');
+    }
   }
 
   /**
@@ -109,8 +105,7 @@ abstract class agImportHelper extends agPdoHelper
     // now add some records-keeping fields we'll need across usages
     $this->requiredImportColumns[$this->idColumn] = array('type' => 'integer',
       'autoincrement' => true, 'primary' => true);
-    $this->requiredImportColumns[$this->successColumn] = array('type' => "boolean",
-      'default' => TRUE);
+    $this->requiredImportColumns[$this->successColumn] = array('type' => "boolean");
 
     // we can't trust that they got it right so we're going to clean import spec columns
     foreach ($this->importSpec as $column => $value) {
