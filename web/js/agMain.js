@@ -997,10 +997,19 @@ function removeStaffResource(element) {
 
 
 function createDatePicker() {
+  if($("#dob").val().length == 0) {
+    var curDate = new Date();
+    var useDate = (curDate.getMonth()+1) + '/' + curDate.getDate() + '/' + (curDate.getFullYear()-36);
+  }
+  else {
+    var useDate = $("#dob").val();
+  }
+
+
   $("#dob").datepicker({
     changeMonth: true,
     changeYear: true,
-    defaultDate: new Date($("#dob").val()),
+    defaultDate: new Date(useDate),
     duration: 'fast',
     minDate: -110*365,
     maxDate: 0,
