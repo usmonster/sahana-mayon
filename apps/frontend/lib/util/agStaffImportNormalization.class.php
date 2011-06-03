@@ -964,7 +964,7 @@ class agStaffImportNormalization extends agImportNormalization
       }
     }
 
-   // here we check our current transaction scope and create a transaction or savepoint
+    // here we check our current transaction scope and create a transaction or savepoint
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
     if ($useSavepoint)
     {

@@ -318,7 +318,7 @@ class scenarioActions extends agActions
 
     // Normalizes imported temp data only if import is successful.
     if ($processedToTemp) {
-      // Grab table name from AgImportXLS class.
+      // Grab table name from import class.
       $sourceTable = $import->tempTable;
 
       $this->importer = new agFacilityImportNormalization($this->scenario_id, $sourceTable, 'facility');

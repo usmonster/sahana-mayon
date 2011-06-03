@@ -28,6 +28,12 @@ abstract class agImportNormalization extends agImportHelper
            //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue)) 
             $importData = array();
 
+  public function __deconstruct()
+  {
+    parent::__deconstruct();
+    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+  }
+
   /**
    * Method to dynamically build a (mostly) static tempSelectQuery
    * @return string Returns a string query

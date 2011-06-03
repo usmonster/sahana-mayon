@@ -39,7 +39,7 @@
  * send a note to license@php.net so we can mail you a copy immediately.
  *
  * @category   Spreadsheet
- * @package	Spreadsheet_Excel_Reader
+ * @package	spreadsheetExcelReader
  * @author	 Vadim Tkachenko <vt@apachephp.com>
  * @license	http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version	CVS: $Id: reader.php 19 2007-03-13 12:42:41Z shangxiao $
