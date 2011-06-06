@@ -13,7 +13,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 
 <a href="<?php echo url_for('staff/new'); ?>" class="generalButton" title="Create New Staff">Add Staff</a><br/><br/>
 
-<a href="<?php echo url_for('staff/list'); ?>" class="generalButton" title="List Existing Staff">List Staff</a><br/><br/>
+<a href="<?php echo url_for('staff/list'); ?>" class="generalButton" title="List Existing Staff Resources">List Staff Resources</a><br/><br/>
 
 <span style="display: inline-block; margin: 0px; padding: 0px" >
 <?php echo link_to('Import Staff', 'staff/import', array('class' => 'generalButton', 'title' => 'Import Staff', 'id' => 'import')); ?><a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_import&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Importing Staff"> ?</a>

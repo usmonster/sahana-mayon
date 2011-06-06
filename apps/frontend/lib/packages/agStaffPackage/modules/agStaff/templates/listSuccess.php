@@ -29,7 +29,7 @@ include_partial('global/list',
   'sort' => $sort,
   'status' => $status,
   'target_module' => 'staff',
-  'caption' => 'Staff List',
+  'caption' => 'Staff Resource List',
   'widgets' => array($statusWidget)
 ));
 ?>
