@@ -570,7 +570,7 @@ class agStaffActions extends agActions
     //$this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
     // TODO: eventually use this ^^^ to replace this vvv.
 
-    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_DEBUG);
+    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_INFO);
     
     $this->importer->processXlsImportFile($this->importPath);
 
