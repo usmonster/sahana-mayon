@@ -276,6 +276,23 @@ class scenarioActions extends agActions
   public function executeFacilityexport(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
+
+    $scenarioId = $request->getParameter('id');
+
+    $facilityExporter = new agFacilityExporter($scenarioId);
+    $exportResponse = $facilityExporter->export();
+    // Free up some memory by getting rid of the agFacilityExporter object.
+    unset($facilityExporter);
+    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportResponse['fileName'] . '"');
+
+    $exportFile = file_get_contents($exportResponse['filePath']);
+
+    $this->getResponse()->setContent($exportFile);
+    $this->getResponse()->send();
+    unlink($exportResponse['filePath']);
+
+    $this->redirect('facility/index');
   }
 
   /*   * ***********************************************************************************************
