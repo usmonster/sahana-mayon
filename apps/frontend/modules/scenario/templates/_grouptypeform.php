@@ -1,6 +1,6 @@
 <?php use_stylesheets_for_form($grouptypeform) ?>
 <?php use_javascripts_for_form($grouptypeform) ?>
-
+<?php use_javascript('jquery.ui.custom.js'); ?>
 <form action="<?php
 echo url_for('scenario/grouptype' .
     ($grouptypeform->getObject()->isNew() ? 'create' : 'update') .
@@ -9,6 +9,7 @@ echo url_for('scenario/grouptype' .
         <?php if (!$grouptypeform->getObject()->isNew()): ?>
     <input type="hidden" name="sf_method" value="put" />
   <?php endif; ?>
+
           <table>
             <tfoot>
               <tr>
@@ -20,7 +21,7 @@ echo url_for('scenario/grouptype' .
                 $grouptypeform->getObject()->getId(),
                 array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')) ?>
 <?php endif; ?>
-            <input type="submit" value="Save" />
+            <input type="submit" value="Save" class="continueButton"/>
           </td>
         </tr>
       </tfoot>
