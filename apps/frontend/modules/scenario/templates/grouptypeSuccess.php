@@ -16,6 +16,6 @@
     <?php endforeach; ?>
   </tbody>
 </table>
-<br>
+<br><br>
 <h3>Add Facility Group Type</h3>
 <?php include_partial('grouptypeform', array('grouptypeform' => $grouptypeform)) ?>

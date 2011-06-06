@@ -28,9 +28,8 @@ echo url_for('scenario/grouptype' .
       <tbody>
 <?php echo $grouptypeform->renderGlobalErrors() ?>
             <tr>
-              <th>Facility Group Type Information</th>
+             <!--<th>Facility Group Type Information</th>-->
               <td>
-
 <?php echo $grouptypeform ?>
         </td>
       </tr>

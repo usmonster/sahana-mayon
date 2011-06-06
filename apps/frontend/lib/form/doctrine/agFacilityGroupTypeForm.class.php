@@ -63,8 +63,8 @@ class agFacilityGroupTypeForm extends BaseagFacilityGroupTypeForm
  //
     $this->widgetSchema->setLabels(
              array(
-               'facility_group_type' => 'Facility Group Type <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_name&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Type">?</a>',
-               'description'  => 'Description <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_description&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Type Description">?</a>',
+               'facility_group_type' => 'Facility Group Type <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_group_type&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Type">?</a>',
+               'description'  => 'Description <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_group_type_description&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Type Description">?</a>',
              )
            );
 
