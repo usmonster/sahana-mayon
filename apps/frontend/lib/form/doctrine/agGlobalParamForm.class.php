@@ -25,7 +25,9 @@ class agGlobalParamForm extends BaseagGlobalParamForm
               array('model' => $this->getRelatedModelName('agHost'), 'add_empty' => false)
           ),
           'datapoint' => new sfWidgetFormInputText(),
-          'value' => new sfWidgetFormTextarea(),
+          'value' => new sfWidgetFormTextarea(
+                  array(),array('rows'=> '1')),
+          'description'=> new sfWidgetFormTextarea(),
         //'created_at' => new sfWidgetFormDateTime(),
         //'updated_at' => new sfWidgetFormDateTime(),
         )
@@ -44,6 +46,7 @@ class agGlobalParamForm extends BaseagGlobalParamForm
           ),
           'datapoint' => new sfValidatorString(array('trim' => true, 'max_length' => 128)),
           'value' => new sfValidatorString(array('trim' => true, 'max_length' => 128)),
+          'description' => new sfValidatorString(array('trim' => true, 'max_length' => 256)),
         //'created_at' => new sfValidatorDateTime(),
         //'updated_at' => new sfValidatorDateTime(),
         )

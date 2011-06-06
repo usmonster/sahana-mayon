@@ -720,7 +720,7 @@ th .tableRow {
   border: none;
 }
 
-.staffTable, .singleTable {
+.staffTable, .singleTable, .adminGlobal {
   border-collapse: collapse;
 }
 .staffTable {
@@ -731,7 +731,7 @@ th .tableRow {
   border: solid #bcbcbc 1px;
 }
 
-.staffTable tr, .singleTable tr {
+.staffTable tr, .singleTable tr, .adminGlobal tr {
   border-bottom: solid #bcbcbc 1px;
 }
 
@@ -739,7 +739,11 @@ th .tableRow {
   background: #e5f7ff;
 }
 
-.staffTable td, .staffTable th {
+.adminGlobal tr:hover{
+    background:#f7f7f7;
+}
+
+.staffTable td, .staffTable th, .adminGlobal td, .adminGlobal th {
   padding: .25em;
   margin: 0;
   text-align: center;
@@ -757,10 +761,14 @@ table.staffTable td.right {
   text-align: center
 }
 
-.staffTable .head, .singleTable .head, .singleTable .headLeft, .singleTable .headMid {
+.staffTable .head, .singleTable .head, .singleTable .headLeft, .singleTable .headMid, .adminGlobal .head {
   background: #dadada;
   text-align: center;
   color: #848484;
+}
+
+.adminGlobal tr.head:hover{
+    background-color: #dadada;
 }
 
 .singleTable .headLeft {
@@ -778,10 +786,10 @@ table.staffTable td.right {
   padding: .25em 1em;
   color: #dadada;
 }*/
-.staffTable .buttonText {
+.staffTable .buttonText, .adminGlobal .buttonText {
   font-size:1em;
 }
-.staffTable .headsort .buttonText {
+.staffTable .headsort .buttonText, .adminGlobal .headsort .buttonText {
   color: #000000;
 }
 
@@ -802,7 +810,7 @@ table.staffTable td.right {
   font-weight: bold;
 }*/
 
-.staffTable caption, .singleTable caption {
+.staffTable caption, .singleTable caption, .adminGlobal caption {
   font-size: 1.5em;
   font-weight: bold;
   color: #848484;
@@ -1324,7 +1332,7 @@ P {
 
 }
 
-.staffTable td, .staffTable th {
+.staffTable td, .staffTable th, .adminGlobal th {
   padding: .25em;
 
   text-align: center;
@@ -1911,4 +1919,8 @@ div.agFormatterAddressLevelTwo {
 
 .textLeft{
   text-align: left !important;
+}
+
+.adminGlobal2 select{
+    margin-left: 0px
 }
