@@ -20,7 +20,7 @@ class agWidgetFormSchemaFormatterSubContainerLabel extends sfWidgetFormSchemaFor
 {
 
   protected
-  $rowFormat = "<div style=\"padding-top:15px;\">[+]</div><div class=\"groupLabel\">%label%</div>%error%%field%%help%%hidden_fields%",
+  $rowFormat = "<div style=\"padding-top:15px;\" class=\"toggleGroup\">[-]</div><div class=\"groupLabel\">%label%</div>%error%%field%%help%%hidden_fields%",
   $errorRowFormat = "<tr><td colspan=\"2\">\n%errors%</td></tr>\n",
   $helpFormat = '<br />%help%',
   $decoratorFormat = "<div class=\"decoratorFormatContent3\">\n%content%</div>";

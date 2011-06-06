@@ -1,52 +1,66 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-Through ======
 
 ===== Facility Group Creation =====
-
-**What it does:**
-
 Facility groups are just that: groups of facilities.  Facilities can be grouped for many reasons including activation order, geographical location, or type of resources.  
+
 ===== Reference Information =====
 
-It's important to understand what facility groups are used for later on; though hard to know so early in Scenario creation.  Here are some additional details that may be helpful.
+It's important to understand what facility groups are used for later on in planning and, eventually, in event deployment.  Here are some additional details that may be helpful.
 
-**Good things to know about Facility Groups:**
-  * The deployment order for the **group** is set at the text box at the top.  The deployment order of the **facility resources** is set by it's order in the right side select box.
-  * Groups are specific to the scenario they're in; so a group in one scenario can be completely different in another (even if they're called the same thing).
+**As an alternative to creating groups manually, groups may be created and maintained through the [[manual:user:facilities:import|facility import]] functionality that loads facilities from a Microsoft Excel 2003 spreadsheet.**
+
 ==== Important Concepts ====
+  * **Groups are individual to a scenario.**  Groups are specific to the scenario they're in; so a group in one scenario can be completely different in another (even if they're called the same thing).
+  * **If you want to have a facility available, even on stand by, be sure to include it in a facility group.**  Facilities that are not in the scenario will not be available during the event.
+  * Because only the facility resources are grouped an individual facility can span multiple groups.  
 
 === What Facility Groups Are Used For ===
 
-  * Including and Excluding Facility Resources from your Scenario - Any facility resource not included in a group will not be made available when your scenario becomes an event.  **Note: If you want to have a facility available, even on stand by, be sure to include it in a facility group.**
+  * Including and Excluding Facility Resources from your Scenario - Any facility resource not included in a group will not be made available when your scenario becomes an event.
   * Distribution of Resources at Deployment - During the deployment of an event facilities come on line in an order specified by facility group.  The facilities activated first will get resources and staff first.
   * Reporting and Data - After an event is activated information about that event is reported a few ways; and some of those reports are specific to facility groups.
-===== Walk-Through =====
 
-  - To begin the creation of your first facility group **assign the required properties**; give it a unique name, select the type of group, the status it will take when an event is created, and the order it should activate in relation to the other groups.
-  - Next select the facilities and resources you'll use and drag & drop them from the left to the right column.
-  - After you've selected the resources for this group you can "Save and Create Another" or, if you're only making one group, "Save and Continue".
+==== Key Words ====
+  * **Facility Group** - A grouping of Facility Resources.
+  * **Deployment Priority** - This is the order in which facility groups, and the facilities in them, are activated.  A group with a lower number will be activated and the staff assigned before a group with a higher number.  The same within that early group, the facility with a lower number will be populated with staff before the higher number.
+
+===== Walk-Through =====
+{{:scenario:facilitygroups.png?700|Create Facility Groups}}
+  - To begin the creation of your first facility group **assign the required properties**: name the group, select the type of grouping, the status it will take when an event is created, and the order it should activate in relation to the other groups.
+    - Name the group: the group name should be unique within the scenario
+    - Group Type: The facility group type is an operational label that can be later used to organize your facility groups according to their type.
+    - Group Status: The facility group status represents the status the group will posses when an event based on this scenario is initially activated. This does not represent the status of the group currently, but instead allows emergency managers to take such actions as creating standby groups that are not active, but are immediately deployable during an event.
+    - Priority: Resources are assigned to facilities in the order they have been prioritized. Lower activation sequences activate before higher sequences, however, multiple groups may share the same sequence number (eg, 100) and would deploy at the same time.
+  - Next, select the facility resources you'll use in this group.  Click the resource in the left column to pick them up, then  drag & drop them from the left to the right column.  Resources can be filtered using the "Available Resources Filter" by clicking the orange arrow just above the left column.
+    - In the right hand column different status options are represented in rows.  Drop the selected resource into the prefered status.
+    - Just like Facility Groups, facility resources have deployment priority.  Assign priority; lower numbers will be activated first.
+  - After you've selected the resources for this group you can "Save and Create Another"; or, if you're only making one group, "Save and Continue".
   - If you "Save and Create Another" the groups you have already created will list at the top of the page.  Repeat 1 through 3 until all groups have been created and then select "Save and Continue".
 
 After all groups have been created select the "Next" button below.
 
-
-{{:scenario:facgroup.png?900}}
 ===== FAQ =====
-
   - **Do I need any facility groups?** - Yes.  Facility groups are how facility resources are included in the scenario, and therefore an event when it's activated.  Every scenario needs at least one facility group.
   - **Can I have only one facility group?** - Yes, one is enough; however a scenario can have as many facility groups as are necessary for planning.
+
 ====== Continue ======
 
-[[scenario:staffresources|{{ :manual:user:next.png|}}]] 
-[[scenario:new|{{:manual:user:previous.png?135 }}]]
+[[scenario:staffresources|{{ :manual:user:next.png?135|}}]] 
+[[scenario:resources|{{:manual:user:previous.png?135 }}]]
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:walkthrough|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
-  - [[scenario:new|Create A Scenario]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
   - **Create Facility Groups**
   - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

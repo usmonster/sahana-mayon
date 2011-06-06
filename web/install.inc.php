@@ -23,6 +23,7 @@ require_once(dirname(__FILE__) . '/requirements.inc.php');
 require_once (dirname(__FILE__) . '/../apps/frontend/lib/install/func.inc.php');
 //OR sfProjectConfiguration::getActive()->loadHelpers(array('Install)); ^
 $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+
 //perhaps we should also autoload-regsiter...
 
 class agInstall
@@ -166,7 +167,7 @@ class agInstall
       <p>Agasti is an emergency management application with tools to manage staff, resources, 
       client information and facilities through an easy to use web interface. The Installation
       Wizard will guide you through the installation of Agasti 2.0.</p> <br />
-      Click the "Next" button to proceed to the next screen. If you want to change something at 
+      Click the "Next" button to proceed to the Next screen. If you want to change something at 
       a previous step, click the "Previous" button.  You may cancel installation at any time by
       clicking the "Cancel" button.</p>
       <p><b> Click the "Next" button to continue.</p></b></div>';
@@ -179,9 +180,9 @@ class agInstall
     $this->DISABLE_NEXT = !$this->getConfig('agree', false);
 
     $license = 'Missing licence file. See GPL licence.';
-    if (file_exists($LICENSE_FILE))
+    if (file_exists($LICENSE_FILE)) {
       $license = file_get_contents($LICENSE_FILE);
-
+    }
 
     $agree = '<input class="checkbox" type="checkbox" value="yes" name="agree" id="agree" onclick="submit();"';
     $this->getConfig('agree', false) == 'yes' ? $agree .= ' checked=checked>' : $agree .= '>';
@@ -246,7 +247,7 @@ class agInstall
 
   function stage3()
   {
-    global $AG_CONFIG;
+    global $AG_CONFIG; //why? why not $this->AG_CONFIG? -UA
     $this->getCurrent();
 
     if (isset($_REQUEST['retry']) && $this->RETRY_SUCCESS == false) {
@@ -258,7 +259,7 @@ class agInstall
       $retry_label = 'test connection';
       $instruct = 'Press "Test connection" button when done.';
     } else {
-      $instruct = 'Database Settings are <span class="green">Ok</span> please click next';
+      $instruct = 'Database Settings are <span class="green">Ok</span> please click Next';
     }
     $retry = '';
     if ($this->RETRY_SUCCESS == false) {
@@ -296,16 +297,29 @@ class agInstall
               <legend><img src="images/config.png" alt="config gear icon" />Administrator Information:</legend>
               <ul>
                 <li>
-                  <label>name:</label>
+                  <label>Name:</label>
                   <input type="text" name="admin_name" id="admin_name" class="inputGray"
                          value="' . $this->getConfig('ADMIN_NAME', 'administrator') . '" /><br />
                 </li>
                 <li>
-                  <label>email:</label>
+                  <label>Email:</label>
                   <input type="text" name="admin_email" id="admin_email" class="inputGray"
                          value="' . $this->getConfig('ADMIN_EMAIL', 'b@m.an') . '" /><br />
                 </li>
               </ul>
+              <legend><img src="images/config.png" alt="config gear icon" />Superuser Information:</legend>
+              <ul>
+                <li>
+                  <label>Superuser:</label>
+                  <input type="text" name="admin_user" id="admin_user" class="inputGray"
+                         value="' . $this->getConfig('ADMIN_USER', 'superuser') . '" /><br />
+                </li>
+                <li>
+                  <label>Password:</label>
+                  <input type="text" name="admin_pass" id="admin_pass" class="inputGray"
+                         value="' . $this->getConfig('ADMIN_PASS', 'sEcur3P45s!') . '" /><br />
+                </li>
+              </ul>              
             </fieldset>';
     $results = 'The database is created manually.  First, the Agasti Installer will test your
       configuration settings before continuing.  Enter your database settings and click "Test Connection". <br /><br/>'
@@ -320,14 +334,18 @@ class agInstall
   {
     $current = $this->getCurrent();
 
-    return 'Below is your installation configuration summary:<br /><div class="info">
+    return 'Configuration files written. Below is your installation configuration summary:<br />
+      <div class="info">
         <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
     '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
     '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
     '<br /><strong>Database Password</strong>: ' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
-    '<br /><strong>Administrator</strong>: ' . $this->getConfig('ADMIN_NAME') .
+    '<br /><strong>Administrator Name </strong>: ' . $this->getConfig('ADMIN_NAME') .
     '<br /><strong>Admin E-mail</strong>: ' . $this->getConfig('ADMIN_EMAIL') .
-    '</div><br /> Please verify your settings.  By clicking next you will install Sahana Agasti.';
+    '<br /><strong>Super User</strong>: ' . $this->getConfig('ADMIN_USER') .
+    '<br /><strong>Super User Password:</strong>: *******' .
+    '</div>
+      <br /> Please verify your settings.  By clicking Next you will install Sahana Agasti.';
   }
 
   function stage5()
@@ -377,6 +395,9 @@ class agInstall
       $this->setConfig('DB_DATABASE', $db_params['dbname']);
       $this->setConfig('DB_USER', $dbArray['all']['doctrine']['param']['username']);
       $this->setConfig('DB_PASSWORD', $dbArray['all']['doctrine']['param']['password']);
+
+      $this->setConfig('ADMIN_PASS', $cfgArray['sudo']['super_pass']);
+      $this->setConfig('ADMIN_USER', $cfgArray['sudo']['super_user']);
       $this->setConfig('ADMIN_NAME', $cfgArray['admin']['admin_name']);
       $this->setConfig('ADMIN_EMAIL', $cfgArray['admin']['admin_email']);
       $this->setConfig('AUTH_METHOD', $cfgArray['admin']['auth_method']['value']);
@@ -386,7 +407,7 @@ class agInstall
     return array($dbArray, $cfgArray);
   }
 
-  function dbParams($db_params)
+  function dbParams(array $db_params)
   {
     $arguments = array(
       'task' => 'configure:database',
@@ -419,7 +440,7 @@ class agInstall
     return $configuration;
   }
 
-  function CheckConnection($db_config)
+  function CheckConnection(array $db_config)
   {
     if ($db_config['dsn'] != '') {
       try {
@@ -435,7 +456,7 @@ class agInstall
     return $result;
   }
 
-  function doInstall($db_params)
+  function doInstall(array $db_params)
   {
     $databaseManager = new sfDatabaseManager($this->dbParams($db_params));
     $buildSql = new Doctrine_Task_GenerateSql();
@@ -491,13 +512,16 @@ class agInstall
       $installed[] = 'Could not create tables! : ' . "\n" . $e->getMessage();
     }
 
-     try {
-        Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
-        //$installed[] = 'Successfully loaded core data fixtures';
-        $installed = 'Success!';
-      } catch (Exception $e) {
-        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
-      }
+    try {
+      //Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
+      //$installed[] = 'Successfully loaded core data fixtures';
+      $dataDirectories = array(sfConfig::get('sf_data_dir') . '/fixtures',
+                               sfConfig::get('sf_data_dir') . '/samples');
+      Doctrine_Core::loadData($dataDirectories, false);
+      $installed = 'Success!';
+    } catch (Exception $e) {
+      $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
+    }
 //
 //    $packages = agPluginManager::getPackagesByStatus(1); //get all enabled packages
 //    foreach($packages as $package)
@@ -515,7 +539,6 @@ class agInstall
 //        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
 //      }
 //    }
-
 //    this entry is achieved by proxy of the agHost.yml fixture/example
 //
 //    try {
@@ -523,29 +546,26 @@ class agInstall
 //      $ag_host->setHostname($this->getConfig('DB_SERVER'));
 //      $ag_host->save();
 //      //$installed[] = 'Successfully generated host record based on database server host';
-
 //    } catch (Exception $e) {
 //      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
 //    }
-     try {
-        $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
-        $databaseManager = new sfDatabaseManager($configuration);
+    try {
+      $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+      $databaseManager = new sfDatabaseManager($configuration);
 //        $connection = Doctrine_Manager::connection()->connect();
-        sfContext::createInstance($configuration)->dispatch();
+      sfContext::createInstance($configuration)->dispatch();
 
-       $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup'));
-       $luceneIndex->indexAll();
-       $installed = 'Success!';
-      } catch (Exception $e) {
-        $installed[] = 'Could not index Data! : ' . "\n" . $e->getMessage();
-      }
-    if(is_array($installed)){
-      return implode('<br>', $installed);
+      $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup'));
+      $luceneIndex->indexAll();
+      $installed = 'Success!';
+    } catch (Exception $e) {
+      $installed[] = 'Could not index Data! : ' . "\n" . $e->getMessage();
     }
-      else{
+    if (is_array($installed)) {
+      return implode('<br>', $installed);
+    } else {
       return $installed;
     }
-
   }
 
   function EventHandler()
@@ -554,38 +574,49 @@ class agInstall
       $this->DoBack();
 //STEP ONE
     if ($this->getStep() == 1) {
-      if (!isset($_REQUEST['next'][0]) && !isset($_REQUEST['back'][2])) {
+      if (!isset($_REQUEST['Next'][0]) && !isset($_REQUEST['back'][2])) {
         $this->setConfig('agree', isset($_REQUEST['agree']));
         //$this->doNext();
       }
 
-      if (isset($_REQUEST['next'][$this->getStep()]) && $this->getConfig('agree', false)) {
+      if (isset($_REQUEST['Next'][$this->getStep()]) && $this->getConfig('agree', false)) {
         $this->DoNext();
       }
     }
 
-    $foo = $this->getStep();
-    $zoo = $_REQUEST['next'][$this->getStep()];
-    $poo = $_REQUEST['problem'];
 //STEP TWO
-    if ($this->getStep() == 2 && isset($_REQUEST['next'][$this->getStep()]) && !isset($_REQUEST['problem'])) {
-      $this->dbParams($db_params);
+    if ($this->getStep() == 2
+        && isset($_REQUEST['Next'][$this->getStep()])
+        && !isset($_REQUEST['problem'])) {
+      $filename = sfConfig::get('sf_config_dir') . '/databases.yml';
+      if (file_exists($filename)) {
+        $dbArray = sfYaml::load($filename);
+      } else {
+        $dbArray = array();
+      }
+      $this->dbParams($dbArray);
       $this->DoNext();
     }
+//STEP THREE
     if ($this->getStep() == 3) {
 //on our first pass, these values won't exist (or if someone has returned with no POST
       $current = $this->getCurrent();
-      $db_params = array(
-        'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name']), // ilya 2010-07-21 15:16:58
-//'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
-        'username' => $_POST['db_user'],
-        'password' => $_POST['db_pass']);
-      $this->setConfig('DB_SERVER', $_POST['db_host']);
-      $this->setConfig('DB_DATABASE', $_POST['db_name']);
-      $this->setConfig('DB_USER', $_POST['db_user']);
-      $this->setConfig('DB_PASSWORD', $_POST['db_pass']);
-      $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
-      $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
+      if ($_POST['db_host']) {
+        $db_params = array(
+          'dsn' => buildDsnString('mysql', $_POST['db_host'], $_POST['db_name']), // ilya 2010-07-21 15:16:58
+          //'dsn' => buildDsnString($_POST['db_type'], $_POST['db_host'], $_POST['db_name'], $_POST['db_port']),
+          'username' => $_POST['db_user'],
+          'password' => $_POST['db_pass']);
+        $this->setConfig('DB_SERVER', $_POST['db_host']);
+        $this->setConfig('DB_DATABASE', $_POST['db_name']);
+        $this->setConfig('DB_USER', $_POST['db_user']);
+        $this->setConfig('DB_PASSWORD', $_POST['db_pass']);
+        $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
+        $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
+      } else {
+        $db_params = $current[0];
+        $config_array = $current[1];
+      }
       $config_array = array(
         'is_installed' => array('value' => 'true'),
         'sudo' => array(
@@ -597,17 +628,13 @@ class agInstall
           'auth_method' => array('value' => 'bypass'),
           'log_level' => array('value' => 'default'),
         //'db_type' => $_POST['db_type'],
-//'db_host' => $_POST['db_host'],
-//'db_name' => $_POST['db_port'], //ilya 2010-07-21 15:17:13
+        //'db_host' => $_POST['db_host'],
+        //'db_name' => $_POST['db_port'], //ilya 2010-07-21 15:17:13
           ));
-//we've set our config to post values, now let's try to save
-//agSaveSetup only saves config.yml and app.yml, databases.yml is not touched
-//to save our databases.yml,
-//$this->dbParams($db_params);
-//database parameters are good here.
+
       if (!($this->agSaveSetup($config_array))) {
         $this->DISABLE_NEXT = true;
-        unset($_REQUEST['next']);
+        unset($_REQUEST['Next']);
 //if we cannot save our configuration
       } else {
         $dbcheck = $this->CheckConnection($db_params);
@@ -619,10 +646,10 @@ class agInstall
           $this->DISABLE_NEXT = true;
           $this->ERROR_MESSAGE = $dbcheck;
 //set the installer's global error message to the return of our connection attempt
-          unset($_REQUEST['next']);
+          unset($_REQUEST['Next']);
         }
       }
-      if (isset($_REQUEST['next'][$this->getStep()])) {
+      if (isset($_REQUEST['Next'][$this->getStep()])) {
 //the validation comment below can be handled by:
 //$this->getCurrent();
         $this->setConfig('db_config', $db_params);
@@ -636,15 +663,16 @@ class agInstall
 //we should validate here in case someone changes correct information
       }
     }
-
+//STEP FOUR
     if ($this->getStep() == 4) {
 //present user with configuration settings, show 'install button'
-      if (isset($_REQUEST['next'][$this->getStep()])) {
+      if (isset($_REQUEST['Next'][$this->getStep()])) {
         $this->INSTALL_RESULT = $this->doInstall($this->getConfig('db_config'));
         $this->DoNext();
       }
     }
-    if (isset($_REQUEST['finish'])) {       //isset($_REQUEST['next'][$this->getStep()]
+//STEP FINISH
+    if (isset($_REQUEST['Finish'])) {       //isset($_REQUEST['Next'][$this->getStep()]
 //$this->doNext();
       $sudo = $this->getCurrent();
       $sudoer = $sudo[1]['sudo']['super_user']; //get username and password from config.yml, should be cleaner.
@@ -663,7 +691,7 @@ class agInstall
       return;
     }
 
-    if (isset($_REQUEST['next'][$this->getStep()])) {
+    if (isset($_REQUEST['Next'][$this->getStep()])) {
       $this->DoNext();
     }
   }

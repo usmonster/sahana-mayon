@@ -1,0 +1,26 @@
+====== Organization Management Walk-Through ======
+
+===== Listing Organizations =====
+In Sahana Agasti Organizations can be listed for easy reference and sorted by the number of staff, the description, or the Organization name.
+
+===== Walk-Through =====
+
+To sort the list click the arrows next the Name and Description.
+
+{{:manual:user:organizations:orglist.png?500|Organization List}}
+
+Next we'll be editing existing organization.  Click the ID number to view that organization's record, then click "Next" below.
+
+====== Continue ======
+
+[[manual:user:organizations:new|{{:manual:user:previous.jpg?135|Create New Organization }}]]
+[[manual:user:organizations:edit|{{ :manual:user:next.jpg?135|Edit Existing Organization}}]] 
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:organizations:walkthrough|Introduction]]
+  - [[manual:user:organizations:new|Create New Organization]]
+  - **Listing Organizations**
+  - [[manual:user:Organizations:edit|Editing Organizations Records]]
+  - [[manual:user:Organizations:review|Organization Management Review]]

@@ -3,6 +3,7 @@ config/config.yml
 config/databases.yml
 data/search/**
 data/sql/schema.sql
+data/uploads/**
 cache/**
 log/**
 web/wiki/conf/users.auth.php
@@ -10,6 +11,8 @@ web/wiki/data/cache/**
 web/wiki/data/index/**
 web/wiki/data/meta/**/*.meta
 web/wiki/data/meta/**/*.changes
+web/wiki/data/locks/**
+web/wiki/data/tmp/**
 .DS_Store
 nbproject
 plugins/.*

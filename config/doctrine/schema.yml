@@ -13,6 +13,8 @@ agGlobalParam:
     value:
       type: string(128)
       notnull: true
+    description:
+      type: string(255)
   indexes:
     agGlobalParam_unq:
       fields: [host_id, datapoint]
@@ -119,4 +121,4 @@ agEntityRelationshipTypeInverse:
       local: entity_inverse_relationship_type_id
       foreign: id
 actAs:
-  Timestampable:
+  Timestampable: 

@@ -1,0 +1,3 @@
+Facility groups are clusters of facility resources with similar staffing needs, geographic location, or operational needs that your organization has grouped together.
+
+**Click the name to edit a facility group.**

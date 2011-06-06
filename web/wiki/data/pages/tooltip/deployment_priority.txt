@@ -1,0 +1,3 @@
+===== Deployment Priority =====
+
+Priority refers to the order groups, and the facilities in them, will be brought on line and staff added to them.  In Priority 1 "goes first"; so groups with the priority 1 are staffed before groups with priority 2.

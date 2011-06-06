@@ -1,0 +1,24 @@
+====== Organization Management Walk-Through ======
+===== Review =====
+
+In this walk-through we've reviewed how Organizations are used in Agasti and how to create, list, and edit Organization records.
+
+===== Key Concepts =====
+  * **Organizations in Staff Resources** - Staff records include "resources": the jobs they can be used in.  These resources are attached to Organizations for sorting and grouping
+  * **Organizations in Scenarios** - Scenarios are response plans and staff from certain organizations can be prioritized within each scenario for a highly customizable response.
+
+====== Continue ======
+
+Continue adding Organizations to Sahana Agasti for any government departments or NGOs whose staff may be available in an active event.  When you're ready, continue on to [[manual:user:staff|Staff Management]].
+
+[[manual:user:Organizations:edit|{{:manual:user:previous.jpg?135|Editing Organizations }}]]
+[[manual:user:staff|{{ :manual:user:organizations:staff_jump_2.jpg?200|Staff Management}}]]
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:organizations:walkthrough|Introduction]]
+  - [[manual:user:organizations:new|Create New Organization]]
+  - [[manual:user:Organizations:list|Listing Organizations]]
+  - [[manual:user:Organizations:edit|Editing Organizations Records]]
+  - **Organization Management Review**

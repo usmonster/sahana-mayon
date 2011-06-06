@@ -1,0 +1,3 @@
+===== Addresses =====
+
+For a staff member to be deployable they **must** have at least one valid address in Sahana Agasti.  Enter the physical street address not the postal address.

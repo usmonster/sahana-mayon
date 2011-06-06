@@ -1,0 +1,3 @@
+===== Date of Birth =====
+
+Click in the box to select the Date of Birth from the calendar.  To enter it manually use MM/DD/YYYY format.

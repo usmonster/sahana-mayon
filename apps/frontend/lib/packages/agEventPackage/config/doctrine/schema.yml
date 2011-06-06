@@ -418,6 +418,8 @@ agEventShift:
     deployment_algorithm_id:
       type: integer(4)
       notnull: true
+    originator_id:
+      type: integer(4)
   relations:
     agStaffResourceType:
       local: staff_resource_type_id

@@ -12,7 +12,7 @@
   <tbody>
     <?php foreach ($sf_guard_permissions as $sf_guard_permission): ?>
     <tr>
-      <td><a href="<?php echo url_for('admin/cred/?id='.$sf_guard_permission->getPermission()->getId()) ?>" class="linkButton"><?php echo $sf_guard_permission->getPermission()->getName() ?></a></td>
+      <td><a href="<?php echo url_for('admin/cred/?id='.$sf_guard_permission->getPermission()->getId()) ?>" class="continueButton"><?php echo $sf_guard_permission->getPermission()->getName() ?></a></td>
       <td><?php echo $sf_guard_permission->getPermission()->getDescription() ?></td>
       <td><?php echo $sf_guard_permission->getUser() //can i get account name from here, that would be good?></td>
     </tr>

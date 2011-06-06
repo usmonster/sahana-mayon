@@ -24,5 +24,5 @@
 </table>
 <br>
 <div>
-<a href="<?php echo url_for('admin/new') ?>" class="linkButton" title="Create New User Account">Create New</a>
+<a href="<?php echo url_for('admin/new') ?>" class="continueButton" title="Create New User Account">Create New</a>
 </div>

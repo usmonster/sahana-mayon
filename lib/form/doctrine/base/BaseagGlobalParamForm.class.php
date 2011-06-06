@@ -15,21 +15,23 @@ abstract class BaseagGlobalParamForm extends BaseFormDoctrine
   public function setup()
   {
     $this->setWidgets(array(
-      'id'         => new sfWidgetFormInputHidden(),
-      'host_id'    => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agHost'), 'add_empty' => false)),
-      'datapoint'  => new sfWidgetFormInputText(),
-      'value'      => new sfWidgetFormInputText(),
-      'created_at' => new sfWidgetFormDateTime(),
-      'updated_at' => new sfWidgetFormDateTime(),
+      'id'          => new sfWidgetFormInputHidden(),
+      'host_id'     => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agHost'), 'add_empty' => false)),
+      'datapoint'   => new sfWidgetFormInputText(),
+      'value'       => new sfWidgetFormInputText(),
+      'description' => new sfWidgetFormInputText(),
+      'created_at'  => new sfWidgetFormDateTime(),
+      'updated_at'  => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'host_id'    => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agHost'))),
-      'datapoint'  => new sfValidatorString(array('max_length' => 128)),
-      'value'      => new sfValidatorString(array('max_length' => 128)),
-      'created_at' => new sfValidatorDateTime(),
-      'updated_at' => new sfValidatorDateTime(),
+      'id'          => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
+      'host_id'     => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agHost'))),
+      'datapoint'   => new sfValidatorString(array('max_length' => 128)),
+      'value'       => new sfValidatorString(array('max_length' => 128)),
+      'description' => new sfValidatorString(array('max_length' => 255, 'required' => false)),
+      'created_at'  => new sfValidatorDateTime(),
+      'updated_at'  => new sfValidatorDateTime(),
     ));
 
     $this->validatorSchema->setPostValidator(

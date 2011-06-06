@@ -47,6 +47,8 @@ class agStaffPoolForm extends sfForm
    * */
   public function embedAgSearchForms()
   {
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $this->wikiUrl = url_for('@wiki');
     $this->embedSearchForm();
     $this->embedStaffGeneratorForm();
     $this->getWidgetSchema()->setLabel('staff_generator', false);
@@ -67,7 +69,7 @@ class agStaffPoolForm extends sfForm
               ->from('agScenarioStaffGenerator a')
               ->where('a.search_id = ?', $this->search_id) //and scenario id?
               ->execute()->getFirst();
-      $this->staff_gen_id = $staffGenObject->id;
+      //if($this->staff_gen_id = $staffGenObject->getId();
     }
     $staffGenForm = new agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
 
@@ -77,7 +79,7 @@ class agStaffPoolForm extends sfForm
 
     $staffGenForm->setWidget('search_id', new sfWidgetFormInputHidden());
     $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
-    $staffGenForm->setWidget('search_weight', new sfWidgetFormChoice(array('choices' => range(0, 10))));
+    $staffGenForm->setWidget('search_weight', new sfWidgetFormInputText(array(),array('class' => 'inputGray')));//'Choice(array('choices' => range(0, 10))));
 
     $staffGenForm->setValidator('search_id', new sfValidatorPass(array('required' => false)));
 //    $staffGenForm->setValidator('search_weight', new sfValidatorPass(array('required' => false)));
@@ -88,9 +90,17 @@ class agStaffPoolForm extends sfForm
     if (is_array($this->sg_values)) {
       $staffGenForm->setDefault('search_weight', $this->sg_values['search_weight']);
     } elseif(!$this->staff_gen_id) {
-      $staffGenForm->setDefault('search_weight', 5);
+      $staffGenForm->setDefault('search_weight', 50);
     }
-    
+
+    /**
+     * Set labels on a few fields
+     */
+
+    $staffGenForm->getWidgetSchema()->setLabel(
+        'search_weight',
+        'Search Weight <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:search_weight&do=export_xhtmlbody" class="tooltipTrigger" title="Search Weight">?</a>');
+
     $this->embedForm('staff_generator', $staffGenForm);
   }
 
@@ -117,7 +127,9 @@ class agStaffPoolForm extends sfForm
     $searchForm->setWidget('search_type_id', new sfWidgetFormInputHidden());
     $searchForm->setWidget('search_hash', new sfWidgetFormInputHidden());
     $searchForm->getWidget('search_name')->setAttribute('class', 'inputGray');
-
+    $searchForm->getWidgetSchema()->setLabel(
+    'search_name',
+    'Name <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:search_name&do=export_xhtmlbody" class="tooltipTrigger" title="Search Name">?</a>');
     $searchForm->setValidator('search_hash', new sfValidatorPass(array('required' => false)));
     $searchForm->setValidator('search_type_id', new sfValidatorPass(array('required' => false)));
 
@@ -170,7 +182,11 @@ class agStaffPoolForm extends sfForm
   public function saveSearchForm($values)
   {
     $searchCondition = json_decode($values['search_condition'],true);
-    $this->search_id = agSearchHelper::getSearchId($searchCondition, TRUE, $values['search_name'], agScenarioStaffGeneratorHelper::getDefaultSearchTypeId());
+    $this->search_id = agSearchHelper::getSearchId(
+        $searchCondition,
+        TRUE,
+        $values['search_name'],
+        agStaffGeneratorHelper::getDefaultSearchTypeId());
   }
 
   /**

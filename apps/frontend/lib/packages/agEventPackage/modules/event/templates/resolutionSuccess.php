@@ -7,6 +7,6 @@
   <p>Please close these facilities before ending the event.</p>
 <?php 
 }?>
-<a href="<?php echo url_for('event/active?event=' . urlencode($event_name)); ?>" class="linkButton">Cancel</a>
+<a href="<?php echo url_for('event/active?event=' . urlencode($event_name)); ?>" class="continueButton">Cancel</a>
 
 <?php include_partial('resForm', array('resForm' => $resForm, 'event_name' => $event_name)) ?>

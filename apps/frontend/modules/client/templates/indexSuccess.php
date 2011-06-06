@@ -12,10 +12,10 @@ Please select one of the following staff administration actions:<br />
   <form id="importForm" action="staff/import" method="post" enctype="multipart/form-data">
     <div>
       <input class="inputGray displayInlineBlock" id="show" />
-      <a class="linkButton displayInlineBlock padding3Px">Browse</a>
+      <a class="continueButton displayInlineBlock padding3Px">Browse</a>
     </div>
     <input type="file" name="import" id="fileUpload" class="clientIndexInputUpload"/>
-    <input type="submit" name="submit" value="Submit" class="linkButton clientIndexSubmit"/>
+    <input type="submit" name="submit" value="Submit" class="continueButton clientIndexSubmit"/>
   </form>
 </span>
 <br/>

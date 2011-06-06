@@ -15,8 +15,9 @@ agGeo:
       type: integer(4)
       notnull: true
   indexes:
-    IX_agGeo_hash:
+    UX_agGeo_hash:
       fields: [geo_coordinate_hash]
+      type: unique
   relations:
     agGeoType:
       local: geo_type_id

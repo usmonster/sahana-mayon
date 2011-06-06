@@ -1,16 +1,15 @@
 ====== Facility Management Walk-Through ======
+In this walk-through we've reviewed how to enter facilities, facility resources, editing facilities, deleting facilities and resources, import, and export.  Facilities and their resources are used in scenarios for planning and, if an event is ever activated, assigned staff from the staff pool.
 
-===== Review =====
-
-===== Reference Information =====
-
-===== Walk-Through =====
-
-===== FAQ =====
+===== Key Concepts =====
+  * **Facility Resources** - 
+  * **Facility Name and Facility Code** -
 
 ====== Continue ======
+Now that staff and facilities have been entered in the Sahana Agasti you're ready to make Scenarios.  Click the green button to jump to the [[manual:user:scenario:walkthrough|Scenario Management Walk Through]].
 
-[[manual:user:facilities:export|{{:manual:user:previous.png?135|Export }}]]
+[[manual:user:facilities:export|{{:manual:user:previous.png?135|Export }}]] [[manual:user:scenario:walkthrough|{{ :manual:user:facilities:scenario_jump_2.jpg?200|Scenario Management Walk Through}}]]
+
 
 ====== Jump to Another Step ======
 
@@ -18,6 +17,4 @@
   - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
   - [[manual:user:facilities:create|Create Facility]]
   - [[manual:user:facilities:update|Update Facility]]
-  - [[manual:user:facilities:import|Import Facility]]
-  - [[manual:user:facilities:export|Export Facility]]
   - **Facility Management Review**

@@ -44,11 +44,11 @@ $descArrow = '&#x25BC;';
 <?php $recordRowNumber = $pager->getFirstIndice(); ?>
 <?php foreach ($pager->getResults() as $ag_shift_template): ?>
           <tr>
-            <td><a class=linkButton href="<?php echo url_for
+            <td><a class=continueButton href="<?php echo url_for
             ('scenario/newshifttemplate?scenId=' . $ag_shift_template->getScenarioId()) ?>" title="View Shift Templates in Scenario <?php echo $ag_shift_template->getScenarioId() ?>"><?php echo $recordRowNumber++; ?></a></td>
             <td><?php echo $ag_shift_template->getAgScenario()->getScenario() ?></td>
             <td><?php echo $ag_shift_template->getCount(); ?></td>
-            <td><?php echo link_to('delete', 'scenario/deleteshifttemplategroup?scenId=' . $ag_shift_template->getScenarioId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?></td>
+            <td><?php echo link_to('delete', 'scenario/deleteshifttemplategroup?scenId=' . $ag_shift_template->getScenarioId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'continueButton')) ?></td>
           </tr>
 <?php endforeach; ?>
         </tbody>
@@ -56,7 +56,7 @@ $descArrow = '&#x25BC;';
 
       <br>
       <div>
-        <a href="<?php echo url_for('scenario/generatescenarioshift') ?>" class="linkButton" title="Generate Scenario Shifts">Generate Scenario Shifts</a>
+        <a href="<?php echo url_for('scenario/generatescenarioshift') ?>" class="continueButton" title="Generate Scenario Shifts">Generate Scenario Shifts</a>
       </div>
 
       <div class="rightFloat">

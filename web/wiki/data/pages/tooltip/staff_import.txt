@@ -1,0 +1,11 @@
+===== Staff Import =====
+To begin importing staff, click the **Import Staff** button.  A box will expand to enter the address of the file to import.  To select the file on your computer, click "Browse".  After the file is selected, click "Submit".
+
+==== To Import Staff ====
+  - Download the {{:manual:user:staff:staff_import_and_export_template.xls|Staff Import Spreadsheet Template}}
+  - Enter the required information into the spreadsheet and save on your computer
+  - Click the Import Staff Button
+  - Click "Browse" and select the location of the file on your computer
+  - Click "Submit" to upload the file
+
+For more details about importing staff see the [[manual:user:staff:import|Staff Import Walk-through]].

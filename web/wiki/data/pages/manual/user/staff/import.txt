@@ -2,23 +2,67 @@
 
 
 ===== Import Staff =====
+Staff import in Sahana Agasti allows for management of staff records via an Excel 2003 spreadsheet.  While staff can be entered manually in Sahana Agasti large staff lists are more easily entered via import.  
+
 
 ===== Reference Information =====
-
-
+==== Things to Know ====
+  * If you are updating existing records in Sahana Agasti, use the [[manual:user:staff:export|Staff Export]] feature to create a spreadsheet of existing records.  Sahana Agasti will match the "entity ID" of the updated record to the existing one to prevent duplication.
+==== Import Spreadsheet Columns ====
+It's **very important** that staff records be properly loaded into the import template (the template is available at step 1 below).  The following are the column headers for the import template (Required fields in **Bold**.  Either home or work address is required.):
+    * Entity ID - assigned in Sahana Agasti.  **There is no Entity ID for new records.**
+    * **First Name** - the staff members first name
+    * Middle Name - the staff members middle name
+    * **Last Name** - the staff members last name
+    * **Mobile Phone** -  cell phone number
+    * Home Phone - home phone number
+    * Home Email - home email address
+    * Work Phone - work phone number (can have extension)
+    * Work Email - work email address
+    * Home Address Line 1 - first line of the home address
+    * Home Address Line 2 - second line of the home address
+    * Home Address - City the home address is in
+    * Home Address State - state the home address is in
+    * **Home Address Zip** - zip of the home address
+    * Home Address Country - country of the home address
+    * **Home Latitude** - For deployment to work, Latitude and Longitude **must** be included
+    * **Home Longitude** - For deployment to work, Latitude and Longitude **must** be included
+    * Work Address Line 1 - first line of the work address
+    * Work Address Line 2 - second line of the work address
+    * Work Address - City the work address is in
+    * Work Address State - state the work address is in
+    * **Work Address Zip** - zip of the work address
+    * Work Address Country - country of the work address
+    * **Work Latitude** - For deployment to work, Latitude and Longitude **must** be included
+    * **Work Longitude** - For deployment to work, Latitude and Longitude **must** be included
+    * Organization - the Organization the staff member is associated with
+    * Resource Type - the Resource that staff member is in the organization
+    * Resource Status - the status of the resource above (active, inactive, retired, other)
+    * Language 1 - First language the staff member knows
+    * L1 Speak - Proficiency speaking that language (basic, intermediate, fluent, superior)
+    * L1 Read - Proficiency reading that language (basic, intermediate, fluent, superior)
+    * L1 Write - Proficiency writing that language (basic, intermediate, fluent, superior)
+    * Language 2 - Second language the staff member knows
+    * L2 Speak - Proficiency speaking that language (basic, intermediate, fluent, superior)
+    * L2 Read - Proficiency reading that language (basic, intermediate, fluent, superior)
+    * L2 Write - Proficiency writing that language (basic, intermediate, fluent, superior)
 ===== Walk-Through =====
 
+**Important:** All uploaded staff records __must__ be formatted to the proper xls spreadsheet format.  Download the template and be sure your staff records are in the proper configuration:
 
-  - Click "Import Staff" to expand the file select option {{ :manual:user:staff:staff_import_highlight.png?700 }}
-  - Select "Browse" and select a file from your computer {{ :manual:user:staff:staff_import_fileselect.png?700 }}
-  - Select "Submit" to upload the file
+  - Download the {{:manual:user:staff:staff_import_and_export_template.xls|Staff Import Template}}
+  - Load staff into the import fields.
+  - Click "Import Staff" to expand the file select option {{:manual:user:staff:staff_import_highlighted.png?250}}
+  - Select "Browse" and select a file from your computer {{:manual:user:staff:browse_button.png|}}
+  - Select "Submit" to upload the file {{:manual:user:staff:submit_button.png|}}
 ===== FAQ =====
 
-
+  * **I want to update staff via import.  How do I prevent duplication?** Use staff export to create a report of the current staff and update that information.  The "Entity ID" of the record will be used during the import to identify any records that already exist in Sahana Agasti.
+  * **Can I upload staff without any Resource Types?** Yes; though without resources associated the staff will not be available for deployment.
 ====== Continue ======
 
-[[manual:user:staff:review|{{ :manual:user:next.png|}}]] 
-[[manual:user:staff:import|{{:manual:user:previous.png?135 }}]]
+[[manual:user:staff:export|{{ :manual:user:next.jpg?135|Export Staff}}]] 
+[[manual:user:staff:edit|{{:manual:user:previous.jpg?135|Edit Staff }}]]
 
 ===== Jump to Another Step =====
 

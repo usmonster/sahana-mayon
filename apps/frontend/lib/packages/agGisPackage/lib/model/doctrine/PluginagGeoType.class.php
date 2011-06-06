@@ -13,4 +13,19 @@
 abstract class PluginagGeoType extends BaseagGeoType
 {
 
+  /**
+   * Method to return the address geo type id
+   * @return integer Geo Type ID
+   */
+  public static function getAddressGeoTypeId()
+  {
+    $geoType = agGlobal::getParam('default_address_geo_type') ;
+    $geoTypeId = agDoctrineQuery::create()
+      ->select('gt.id')
+        ->from('agGeoType gt')
+        ->where('gt.geo_type = ?', $geoType)
+        ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
+    return $geoTypeId;
+  }
+
 }

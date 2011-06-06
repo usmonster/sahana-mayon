@@ -5,9 +5,9 @@ if (2 == 2) {
 
   $columns = array(
     'id' => array('title' => 'Id', 'sortable' => false),
-    'facility_name' => array('title' => 'Facility Name', 'sortable' => true),
-    'services' => array('title' => 'Services', 'sortable' => false),
-    'facility_codes' => array('title' => 'Facility Code', 'sortable' => true)
+    'facility_name' => array('title' => 'Facility Name <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:facility_name&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>', 'sortable' => true),
+    'Resources' => array('title' => 'Resources <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Resources">?</a>', 'sortable' => false),
+    'facility_codes' => array('title' => 'Facility Code <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger" title="Date of Birth">?</a>', 'sortable' => true)
   );
 
 //pager comes in from the action
@@ -20,7 +20,7 @@ else
 {
 $displayColumns = array(
     'id' => array('title' => 'Id', 'sortable' => false),
-    'facility_name' => array('title' => 'Facility Name', 'sortable' => true),
+    'facility_name' => array('title' => 'Facility Name ', 'sortable' => true),
     'services' => array('title' => 'Services', 'sortable' => false),
     'facility_codes' => array('title' => 'Facility Code', 'sortable' => true)
 );
@@ -34,7 +34,7 @@ include_partial('global/list', array( 'sf_request' => $sf_request,
                                       'sort' => $sort,
                                       'filter' => $filter,
                                       'target_module' => $target_module,
-                                      'caption' => 'Staff List',
+                                      'caption' => 'List Facilities',
                                       'widgets' => array()
 
   ));

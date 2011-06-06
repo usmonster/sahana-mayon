@@ -9,9 +9,9 @@ $i = 1;
 
 <h2>Facility Import Status</h2>
 
-<?php include_partial('infobar', array('form' => $form)); ?>
+<?php include_partial('facility/infobar', array('form' => $form, 'timer' => $timer)); ?>
 
-<p>Records imported into temporary table: <?php echo $numRecordsImported ?><br/>
+<p>Records imported into temporary table: <?php echo $numRecordsImported; ?><br/>
 
     <?php if (count($events) > 0): ?>
     <hr class="ruleGray" />

@@ -1,9 +1,10 @@
 <?php use_javascript('agasti.js') ?>
 <?php use_javascript('jQuery.fileinput.js') ?>
-<?php use_javascript('jquery.ui.custom.js');
+<?php
+use_javascript('jquery.ui.custom.js');
 use_stylesheet('jquery/jquery.ui.custom.css');
-use_stylesheet('jquery/mayon.jquery.ui.css');?>
-<?php use_javascript('agTooltip.js'); ?>
+use_stylesheet('jquery/mayon.jquery.ui.css');
+?>
 <h2>Organization Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:organization_management&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Organization Management">?</a></h2>
 
 <p>The Organization Management function in Sahana Agasti is used to record information on government and
@@ -13,7 +14,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');?>
 
 <h3>Please select one of the following actions:</h3>
 <?php
-echo '<a href="' . url_for('organization/new') . '" class="buttonText"title="Create New Organization">Create Organization<a/><br/>';
-echo '<a href="' . url_for('organization/list') . '" class="buttonText" title="List Existing Organization">List Organization</a><br/>';
-echo '<a href="' . public_path('wiki/doku.php?id=manual:user:organizations') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
+echo '<a href="' . url_for('organization/new') . '" class="generalButton"title="Create New Organization">Create Organization<a/><br/><br/>';
+echo '<a href="' . url_for('organization/list') . '" class="generalButton" title="List Existing Organization">List Organization</a><br/><br/>';
+echo '<a href="' . public_path('wiki/doku.php?id=manual:user:organizations') . '" target="new" class="generalButton" title="Help">Help</a><br/><br/>';
 ?>

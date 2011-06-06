@@ -11,33 +11,30 @@
 class PluginagEmbeddedAgStaffResourceForm extends PluginagStaffResourceForm
 {
 
-  public function setup()
+  public function configure()
   {
     $this->setWidgets(array(
       'id'                       => new sfWidgetFormInputHidden(),
-//      'staff_id'                 => new sfWidgetFormInputHidden(),//sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaff'), 'add_empty' => false)),
       'staff_resource_type_id'   => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => false, 'method' => 'getStaffResourceType')),
       'staff_resource_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceStatus'), 'add_empty' => false, 'method' => 'getStaffResourceStatus')),
       'organization_id'          => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agOrganization'), 'add_empty' => false, 'method' => 'getOrganization')),
-      //'created_at'               => new sfWidgetFormDateTime(),
-      //'updated_at'               => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
       'id'                       => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-  //    'staff_id'                 => new sfValidatorInteger(), //new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaff'))),
       'staff_resource_type_id'   => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'))),
       'staff_resource_status_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceStatus'))),
       'organization_id'          => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agOrganization'))),
-      //'created_at'               => new sfValidatorDateTime(),
-      //'updated_at'               => new sfValidatorDateTime(),
     ));
-    //$this->getWidgetSchema()->setFormFormatterName($name);
 
-      $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->getWidgetSchema());
-      $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
-      $this->getWidgetSchema()->setFormFormatterName('custDeco');
-    }
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $this->wikiUrl = url_for('@wiki');
 
-
+    $this->getWidget('staff_resource_type_id')->setLabel('Staff Resource Type ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource">?</a>');
+    $this->getWidget('staff_resource_status_id')->setLabel('Staff Resource Status ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:staff_resource_status&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource Status">?</a>');
+    $this->getWidget('organization_id')->setLabel('Organization ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a>');
+    $custDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
+    $this->getWidgetSchema()->setFormFormatterName('custDeco');
+  }
 }

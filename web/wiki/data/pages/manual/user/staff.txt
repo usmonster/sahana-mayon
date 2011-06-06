@@ -1,39 +1,36 @@
-====== Staff Management ======
+====== Staff Management Quick Guide ======
 
-Managing staff is a key component of Agasti.  In an emergency response it's important to have up to date contact information for staff and volunteers as well as their roles in your response plan.  Agasti provides tools for these and more.  To start, use the walk-through below to create a staff member.
-
-[[manual:user:staff:staff_creation_walkthrough|Managing Staff Walk-Through]]
-
-
-More general information can be found below.
-
+Managing staff is a key component of Agasti.  In an emergency response it's important to have up-to-date contact information for staff and volunteers as well as their roles in your response plan.  Agasti provides tools for these and more.  Below are quick-reference instructions for staff management.  For detailed how-to instruction see the [[manual:user:staff:staff_creation_walkthrough|Managing Staff Walk-Through]].
 
 ===== Staff Management Functions =====
 
-The functionality of the Staff Management module is broken into a few parts:
-  * Entering staff records
-  * Editing staff records
-  * Deleting records
-  * Importing
-  * Exporting
+In the Staff Management module a user can:
+  * Enter staff records
+    * Manually
+    * Via Import
+  * Edit staff records
+  * Delete records
+  * Export
 
 In general the staff module is used to maintain staff records and prepare for the deployment of staff during an activation.  While staff information could be uploaded or entered in response to an event, if the records are available prior to an emergency response it will greatly increase the effectiveness if the initial response.
 
-Below are general details regarding staff management and its functionality.  For a detailed walk-through of all the functionality of this module see the [[manual:user:staff:staff_creation_walkthrough|Managing Staff Walk-Through]].
-
 ===== Staff Resources =====
 
-A "Staff Resource" is a person combined with a skill set that is potentially available for emergency response.  For example: Jane is a nurse who volunteers with the Red Cross.  While Jane may not be directly assigned during the preparation phase of creating a scenario, the Typhoon scenario calls for 4 nurses.  When the Typhoon scenario is deployed as the "2011 Typhoon" event, Jane is available as a Staff Resource and deployed as a nurse by Agasti.
+A "Staff Resource" is a person combined with a skill set that is potentially available for emergency response.  For example: Erica is a nurse who volunteers with the Red Cross.  While Erica may not be directly assigned during the preparation phase of creating a scenario, the Typhoon scenario calls for 4 nurses.  When the Typhoon scenario is deployed as the "2011 Typhoon" event, Jane is available as a Staff Resource and deployed as a nurse by Sahana Agasti.
 
-==== Editing Staff Resource Types ====
+==== How Staff Are Used ====
+
+Before understanding how staff are used in Sahana Agasti, it's helpful to understand Staff Resources.  **Staff Resources** can be thought of as staff roles. Each individual staff member may provide multiple staff resources but will only be utilized as the type that has the most immediate need during deployment.
+
+Using the default automated deployment engine, staff resources are distributed according to the highest priority facility group, then highest priority facility within that group. As staff are distributed, once a facility has reached its minimum threshold, the next facility is queued to receive resource allocations until its minimum threshold is met and so on and so forth. Once all active facilities in all active facility groups have had their minimum requirements satisfied, staff are distributed in a round-robin fashion that shares resources equally until facilities reach their maximum capacities.
 
 ===== Entering Staff =====
 
-Staff can be entered into Agasti in two ways: manually and via import.  Below are brief instructions for using both; however a walk-through is available for [[manual:user:staff:new|manual entry]] and [[manual:user:staff:import|import]].
+Staff can be entered into Agasti in two ways: manually and via import.  Below are brief instructions for using both.  A walk-through is available for [[manual:user:staff:new|manual entry]] and [[manual:user:staff:import|import]].
 
 ==== Manual ====
 To manually enter staff, beginning from the Staff Management page:
-  - Click "Create Staff"
+  - Click "Add Staff"
   - Select the staff's status
     * **Active** staff are available for deployment
     * **Inactive** staff are not available for deployment
@@ -49,8 +46,9 @@ Beginning on the Staff Management page:
   - Click "Import Staff" to expand the file select option
   - Select "Browse" and select a file from your computer
   - Select "Submit" to upload the file
+  - On the results page review the import feedback for errors.  Any rejected records will contain a message describing why it was rejected.
 ===== Editing Staff =====
-Staff records can be updated manually or via the import instructions above.  Below are brief instructions for editing staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walkthrough]].
+Staff records can be updated manually or via the import instructions above.  Below are brief instructions for editing staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-Through]].
 
   - Beginning on the Staff Management page select "List Staff".
   - From the staff list locate the staff record you wish to update.  There are two ways to locate the record:
@@ -62,21 +60,21 @@ Staff records can be updated manually or via the import instructions above.  Bel
 
 ===== Deleting Staff =====
 
-Below are brief instructions for deleting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walkthrough]].
+Below are brief instructions for deleting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-Through]].
 
   - Beginning on the Staff Management page select "List Staff".
-  - From the staff list locate the staff record you wish to update.  There are two ways to locate the record:
+  - From the staff list locate the staff record you wish to delete.  There are two ways to locate the record:
     * Search using the "Search" box in the upper right corner
     * Scroll manually through records via the navigation arrows in the lower right corner
   - To select a staff record to view, click the number to the left of the record
   - To delete the record click the "delete" button
   - To confirm the deletion of the record click "ok" after the warning
 
-===== Duplication =====
 
 ===== Staff Export =====
 
-Below are brief instructions for exporting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walkthrough]].
+Below are brief instructions for exporting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-Through]].
 
   - Beginning on the Staff Management home page select the "Export Staff" link.
-  - In the pop up window either select to open the document or select a place locally to save the document.
+  - Depending on your browser you may be asked where to save the file.  In the pop up window either select to open the document or select a place locally to save the document.
+    - If your browser automatically downloads files check the "download" folder on your computer.

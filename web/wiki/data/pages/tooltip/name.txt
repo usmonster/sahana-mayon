@@ -1,0 +1,6 @@
+===== Name =====
+
+Enter the person's name in the fields below:
+  * **Given** - Enter the given name. Also known as first name.
+  * **Middle** - Enter the middle name.
+  * **Family** - Enter the family name.  Also known as last name.

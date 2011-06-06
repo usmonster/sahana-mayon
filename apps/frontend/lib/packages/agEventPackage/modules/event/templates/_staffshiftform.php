@@ -11,7 +11,7 @@
 
 </script>
 
-<form name="staffshiftform" id="staffshiftform" action="<?php echo url_for('event/staffshift?event=' . urlencode($event_name)) . '/' . $shift_id?>" method="post"<?php echo ($xmlHttpRequest != false ? ' class="modalForm"' : ''); ?>>
+<form name="staffshiftform" id="staffshiftform" action="<?php echo url_for('event/staffshift?event=' . urlencode($sf_data->getRaw('event_name'))) . '/' . $shift_id?>" method="post"<?php echo ($xmlHttpRequest != false ? ' class="modalForm"' : ''); ?>>
 
 <h3>Construct Search Conditions:</h3>
 <?php
@@ -24,7 +24,7 @@ foreach($fields as $key => $field)
   echo $filterForm[$key];
 }
 ?>
-<input type="submit" name="Search" id="Search" value="Search" onclick="queryConstruct()" class="linkButton<?php echo ($xmlHttpRequest != false ? ' modalSubmit' : '');?>">
+<input type="submit" name="Search" id="Search" value="Search" onclick="queryConstruct()" class="continueButton<?php echo ($xmlHttpRequest != false ? ' modalSubmit' : '');?>">
 
 </form>
 

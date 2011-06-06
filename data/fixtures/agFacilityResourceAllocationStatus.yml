@@ -1,6 +1,6 @@
 agFacilityResourceAllocationStatus:
   unknown:
-    facility_resource_allocation_status: unknown
+    facility_resource_allocation_status: Unknown
     description: Facility resource is allocated to a facility group but has an unknown status.
     available: 1
     committed: 0
@@ -10,7 +10,7 @@ agFacilityResourceAllocationStatus:
     servicing_clients: 0
     scenario_display: 1
   standby:
-    facility_resource_allocation_status: standby
+    facility_resource_allocation_status: Standby
     description: Facility resource designated as a standby resource within its facility group.
     available: 1
     committed: 1
@@ -20,7 +20,7 @@ agFacilityResourceAllocationStatus:
     servicing_clients: 0
     scenario_display: 1
   setup:
-    facility_resource_allocation_status: setup
+    facility_resource_allocation_status: Setup
     description: Facility resource is currently undergoing setup operations and only open to staff.
     available: 1
     committed: 1
@@ -30,7 +30,7 @@ agFacilityResourceAllocationStatus:
     servicing_clients: 0
     scenario_display: 1
   registration:
-    facility_resource_allocation_status: registration
+    facility_resource_allocation_status: Registration
     description: Facility resource currently accepting clients.
     available: 1
     committed: 1
@@ -40,7 +40,7 @@ agFacilityResourceAllocationStatus:
     servicing_clients: 1
     scenario_display: 1
   operating:
-    facility_resource_allocation_status: operating
+    facility_resource_allocation_status: Operating
     description: Facility resource is servicing clients, but not accepting new clients at the moment.
     available: 1
     committed: 1
@@ -50,7 +50,7 @@ agFacilityResourceAllocationStatus:
     servicing_clients: 1
     scenario_display: 0
   closing:
-    facility_resource_allocation_status: closing
+    facility_resource_allocation_status: Closing
     description: Facility resource is shutting down and is not accepting or servicing clients.
     available: 1
     committed: 1
@@ -60,7 +60,7 @@ agFacilityResourceAllocationStatus:
     servicing_clients: 0
     scenario_display: 0
   closed:
-    facility_resource_allocation_status: closed
+    facility_resource_allocation_status: Closed
     description: Facility resource is closed and resources are released for re-assignment.
     available: 1
     committed: 0
@@ -70,7 +70,7 @@ agFacilityResourceAllocationStatus:
     servicing_clients: 0
     scenario_display: 0
   unavailable:
-    facility_resource_allocation_status: unavailable
+    facility_resource_allocation_status: Unavailable
     description: Facility resource is unavailable for operation.
     available: 0
     committed: 0

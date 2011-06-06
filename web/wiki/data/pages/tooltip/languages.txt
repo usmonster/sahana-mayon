@@ -1,0 +1,13 @@
+===== Languages =====
+
+For shelter staffing and response it's important to know which staff can speak the languages of the clients.  Use the drop downs to select the individuals languages and proficiency.
+
+==== Language Name ====
+Choose the Language from the dropdown.
+
+==== Proficiency ====
+  * **Basic** - A basic ability to read, write, or speak
+  * **Intermediate** - A moderate ability to read, write, or speak.  Can have a basic conversation.
+  * **Fluent** - An advanced ability to read, write, or speak.  Can have a normal conversation.
+  * **Superior** - Mastery of reading, writing, or speaking.  Can have technical or specific conversations.
+

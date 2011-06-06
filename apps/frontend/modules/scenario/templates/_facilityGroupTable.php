@@ -20,7 +20,7 @@
       <?php
       if(is_numeric($group_id)){
       ?>
-      <th class="head"><a href="<?php echo url_for('scenario/fgroup?id=' . $facilityGroup->scenario_id) ?>" class="linkButton">Create New Facility Group</a></th>
+      <th class="head"><a href="<?php echo url_for('scenario/fgroup?id=' . $facilityGroup->scenario_id) ?>" class="continueButton">Create New Facility Group</a></th>
       <?php
       }
       ?>

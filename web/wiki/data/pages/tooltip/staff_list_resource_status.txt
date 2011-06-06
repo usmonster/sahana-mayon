@@ -1,1 +1,7 @@
-I am a tooltip, too!
+===== Staff Resource Status =====
+
+A staff record's status is determined by the status of the Resources associated to the record. Statuses are:
+  * **Active** - Available for a response
+  * **Inactive** - Not available for a response
+  * **Retired** - Retired, but could be called up in extreme situations
+  * **Other** - Unknown or not one of the above

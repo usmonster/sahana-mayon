@@ -3,7 +3,7 @@
 <br
   <table class="singleTable">
   <thead>
-  <h3>Organization</h3>
+  <h3>Organization <a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a></h3>
 </thead>
 <tbody>
   <tr>
@@ -25,7 +25,7 @@
 
 <table class="singleTable">
   <thead>
-  <h3>Staff Count</h3>
+  <h3>Staff Count <a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:organization_staff_count&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Count">?</a></h3>
 </thead>
 <tbody>
   <?php foreach ($staffResourceTypes as $stfResTypeId => $stfResType): ?>
@@ -58,6 +58,6 @@
 
     <br>
 
-  <a href="<?php echo url_for('organization/edit?id=' . $ag_organization->getId()) ?>" class="linkButton" >Edit</a>
+  <a href="<?php echo url_for('organization/edit?id=' . $ag_organization->getId()) ?>" class="continueButton" >Edit</a>
   &nbsp;
-  <a href="<?php echo url_for('organization/list') ?>" class="linkButton" >List</a>
+  <a href="<?php echo url_for('organization/list') ?>" class="generalButton" >List</a>

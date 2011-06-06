@@ -124,6 +124,7 @@ class PluginagStaffPersonForm extends agPersonForm
 
         $staffResourceForm = new PluginagEmbeddedAgStaffResourceForm($staffResourceObject);
         $staffResourceForm->setWidget('staff_resource_type_id', new sfWidgetFormChoice(array('choices' => $resourceTypeOptions)));
+        $staffResourceForm->getWidget('staff_resource_type_id')->setLabel('Staff Resource Type ' . '<a href="'. url_for('@wiki') . '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Resource">?</a>');
 
 
 //unset($staffResourceForm['created_at'], $staffResourceForm['updated_at']);

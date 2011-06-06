@@ -1,0 +1,37 @@
+====== Scenario Creator Walk-Through ======
+
+===== Exporting Facility Records =====
+The facility export function can be useful for updating records or saving the data for use in another system.  Below are instructions for how to export facility data from Sahana Agasti.
+===== Reference Information =====
+
+==== Things to Know ====
+  * The facility export will produce records for any facility resource used in a scenario.  **If a facility resource is used in more than one scenario there will be a record in the spreadsheet for each time its used.**
+===== Walk-Through =====
+Starting from the Facility Management page:
+  * Select the “Export Staff” link.
+  * Depending on your browser you may be asked where to store the file.  In the pop up window either select to open the document or select a place locally to save the document.
+
+{{:manual:user:facilities:screenshot_076.png?500|Export Facilities}}
+===== FAQ =====
+  * **Can I customize the fields available for export?** - Agasti currently supports a bulk export of all facilities without custom fields. To create a facility export with custom fields remove the undesired information from the spreadsheet produced by the export.
+
+====== Continue ======
+
+[[scenario:deployevent|{{ :manual:user:next.png?135|Deploy an Event}}]] 
+[[scenario:facilityimport|{{:manual:user:previous.png?135|Introduction }}]]
+
+
+===== Jump to Another Step =====
+
+  - [[scenario:pre|Pre Scenario Creation]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
+  - [[scenario:newgroup| Create Facility Groups]]
+  - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
+  - [[scenario:newstaffresources| Create Shift Templates]]
+  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - **Facility Export**
+  - [[scenario:deployevent| Deploying an Event]]

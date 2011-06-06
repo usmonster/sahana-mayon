@@ -1,15 +1,35 @@
 ====== Facility Management Walk-Through ======
 
 ===== Create a Facility =====
+Facilities in Sahana Agasti are physical locations.  These physical locations hold "resources", where staff can be deployed for response, management, and further instruction or assignment.  There are two ways to enter facility information into Sahana Agasti: manual and import.  This page will walk you through the manual creation of a facility record.  Later, in the [[scenario:facilityimport|Scenario Creator Walk-Through]], you will receive further information on importing facility records.
 
 ===== Reference Information =====
 
+==== Things To Know ====
+  *  A **facility** is a physical location.  **Facility Resources** are the services available at a facility. Staff are deployed to resources available at the facility.  **A facility can have more than one resource; but not more than one of the same type.**  __For Example__: a local high school has a large gym and a cafeteria.  During an emergency the gym is used for a shelter and a cafeteria for medical overflow. In Agasti the school would be listed as two Facility Resources. Let's name the gym Lincoln High; it would be listed in Agasti as:
+    * Lincoln High: Shelter
+    * Lincoln High: Medical Overflow
+  * When a new facility is created the type of resources available and the capacity of those resources will be entered.
+  * **Facility Code** is used to identify the facility in Sahana Agasti uniquely.  The Facility Code **must** be unique to each physical location in the system.
+
 ===== Walk-Through =====
+Beginning on the Facility Management page:
+  * Click "Add Facility" to be taken to a black facility form 
+{{:manual:user:facilities:add_fac_link.png?500|Click "Add Facility" to view a blank form}}
+  * Enter the name of the Facility.  Remember, a facility is a physical location like "Local High School" or "Hillsdale Park".  The available services, such as "Shelter" will be entered as resources. {{ :manual:user:facilities:fac_name.png?150|Facility Names are used for reference}}
+  * Enter the Facility Code. In Sahana Agasti the Facility Code (not the name) is used to uniquely identify the facility and it's resources.  **The Facility Code must be unique.** {{ :manual:user:facilities:fac_code.png?150|Facility Codes must be unique to that facility}}
+  * Add Facility Resources.  **Remember**, [[tooltip:facility_resource|Facility Resources]] are services available at the physical location of facility.  {{ :manual:user:facilities:fac_resources.png?300|Select facility resources available at this location}}
+  * A facility can have more than one Facility Resource available, but not more than one of the same type. A facility does not need to have resources assigned; however, **without resources a facility is not able to be included in a scenario.** 
+    * Select the type
+    *  Select if it is available now or unavailable for use in a scenario.
+    * Enter the Capacity.  For sheltering facilities this is the total of clients potentially sheltered.  For administrative or distribution centers who do not shelter clients enter 0.
+  * Enter any available contact information for the facility that will be reliable during an activation. 
+  * Click {{:manual:user:facilities:save_button.png|Save}} to save the information or {{:manual:user:facilities:back_to_list_button.png|Back to List}} to cancel and go to the facility list.
 
 ===== FAQ =====
 
+  * **Can a facility have more than one Resource?** - Yes, a Facility can have more than one resource, but not more than one of the same type. 
 ====== Continue ======
-
 
 [[manual:user:facilities:update|{{ :manual:user:next.png|Update}}]] 
 [[manual:user:facilities:facilities_management_walkthrough|{{:manual:user:previous.png?135|Introduction }}]]
@@ -20,6 +40,4 @@
   - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
   - **Create Facility**
   - [[manual:user:facilities:update|Update Facility]]
-  - [[manual:user:facilities:import|Import Facility]]
-  - [[manual:user:facilities:export|Export Facility]]
   - [[manual:user:facilities:review|Facility Management Review]]

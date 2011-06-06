@@ -2,8 +2,8 @@
 //Defines the columns of the organization display list page.
 $columns = array(
   'id' => array('title' => 'Id', 'sortable' => false),
-  'organization' => array('title' => 'Organization', 'sortable' => true),
-  'description' => array('title' => 'Description', 'sortable' => true)
+  'organization' => array('title' => 'Organization <a href="' . url_for('@wiki') . '/doku.php?id=tooltip:organization_name&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a>', 'sortable' => true),
+  'description' => array('title' => 'Description <a href="' . url_for('@wiki') . '/doku.php?id=tooltip:organization_description&do=export_xhtmlbody" class="tooltipTrigger" title="Description">?</a>', 'sortable' => true)
 );
 
 $thisUrl = url_for('organization/list');
@@ -14,8 +14,7 @@ $thisUrl = url_for('organization/list');
 $ascArrow = '&#x25B2;';
 $descArrow = '&#x25BC;';
 ?>
-<p>Below are the current organizations in Agasti.  To search for a specific organization use the
-  search box above.</p>
+<p>Below are the current organizations in Sahana Agasti. Click the ID number to view or edit the organization.</p>
 <table class="staffTable">
     <caption>Organizations
     <?php
@@ -37,14 +36,14 @@ $descArrow = '&#x25BC;';
         } ?>
         </th>
 <?php endforeach; ?>
-        <th>Staff Count</th>
+        <th>Staff Count <a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:organization_staff_count&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Count">?</a></th>
       </tr>
     </thead>
     <tbody>
 <?php $recordRowNumber = $pager->getFirstIndice(); ?>
 <?php foreach ($pager->getResults() as $ag_organization): ?>
           <tr>
-            <td><a class=linkButton href="<?php echo url_for('organization/show?id=' . $ag_organization->getId()) ?>" title="View Organization <?php echo $ag_organization->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+            <td><a class=continueButton href="<?php echo url_for('organization/show?id=' . $ag_organization->getId()) ?>" title="View Organization <?php echo $ag_organization->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
             <td><?php echo $ag_organization->getOrganization() ?></td>
             <td><?php echo $ag_organization->getDescription(); ?></td>
             <td><?php echo $ag_organization->get('staffCount'); ?></td>
@@ -54,7 +53,7 @@ $descArrow = '&#x25BC;';
       </table>
       <br>
       <div>
-        <a href="<?php echo url_for('organization/new') ?>" class="linkButton" title="Create New Organization">Create New</a>
+        <a href="<?php echo url_for('organization/new') ?>" class="continueButton" title="Create New Organization">Create New</a>
       </div>
 
       <div class="rightFloat">

@@ -20,17 +20,23 @@ class agPerson extends BaseagPerson
 
   public $luceneSearchFields = array('id' => 'keyword');
   protected $helperClasses = array('agPersonNameHelper' => 'id',
-    'agEntityAddressHelper' => 'entity_id');
+                                    'agEntityAddressHelper' => 'entity_id',
+                                    'agEntityPhoneHelper' => 'entity_id',
+                                    'agEntityEmailHelper' => 'entity_id');
   private $_helperObjects = array(),
   $_helperMethods;
+
+  protected $isAutoIndexed;
+
 
   /**
    * This classes' constructor.
    */
-  public function construct()
+  public function __construct($table = null, $isNewEntry = false, $isAutoIndexed = true)
   {
     // call the parent's constructor
-    parent::construct();
+    parent::__construct($table, $isNewEntry);
+    $this->isAutoIndexed = $isAutoIndexed;
 
     // pre-load any helper methods we might want to look for in __call()
     $this->loadHelperMethods();
@@ -61,7 +67,7 @@ class agPerson extends BaseagPerson
         $id = $this->$classId;
 
         // set up our args
-        array_unshift($arguments, $id);
+        array_unshift($arguments, array($id));
 
         // execute and return
         $results = call_user_func_array(array($helperObject, $method), $arguments);
@@ -118,6 +124,11 @@ class agPerson extends BaseagPerson
 
   public function updateLucene()
   {
+    if (!$this->isAutoIndexed) {
+      return null;
+    }
+
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     $doc = new Zend_Search_Lucene_Document();
     //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
     $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));
@@ -127,15 +138,12 @@ class agPerson extends BaseagPerson
 //    foreach ($names as $key => $name) {
 //      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
 //    }
-
 //    $sex = $this->getSex();
 //    $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
-
 //    $nationalities = $this->getNationality();
 //    foreach ($nationalities as $nationality) {
 //      $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
 //    }
-
 //    $ethnicity = $this->getEthnicity();
 //    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
 

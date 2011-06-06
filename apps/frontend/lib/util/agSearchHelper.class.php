@@ -156,7 +156,7 @@ class agSearchHelper
       ->select('s.id')
         ->from('agSearch s')
         ->where('s.search_hash = ?', $searchHash);
-        //->useResultCache(TRUE, 3600, __FUNCTION__);
+        //->useResultCache(TRUE, 3600);
 
     $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
@@ -180,7 +180,7 @@ class agSearchHelper
       ->select('st.id')
         ->from('agSearchType st')
         ->where('st.search_type = ?', $searchTypeStr)
-        ->useResultCache(TRUE, 3600, __FUNCTION__);
+        ->useResultCache(TRUE, 3600);
 
     return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
   }
@@ -201,7 +201,7 @@ class agSearchHelper
         ->from('agSearch s')
           ->innerJoin('s.agSearchType st')
         ->where('s.id = ?', $searchId);
-        //->useResultCache(TRUE, 3600, __FUNCTION__)
+        //->useResultCache(TRUE, 3600);
 
 
     // we're only getting one row back so we can reduce our return array nesting by one

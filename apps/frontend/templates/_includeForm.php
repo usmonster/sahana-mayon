@@ -5,4 +5,3 @@
     <input type="submit" name="<?php echo $button['name'];?>" value="<?php echo $button['value'];?>" class="<?php echo $button['class'];?>">
   <?php endif; ?>
 </form>
-

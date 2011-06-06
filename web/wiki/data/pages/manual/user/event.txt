@@ -1,1 +1,2 @@
-====== Event Planning ======
+====== Event Management ======
+<<This is a placeholder for event management>>

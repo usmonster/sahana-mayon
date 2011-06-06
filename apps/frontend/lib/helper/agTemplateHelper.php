@@ -85,7 +85,7 @@ function buildCheckBoxTable(array $contents, $id, $html, $cssClass = null, $cssI
     $input = '<input type="checkbox" name="" id="" class="checkToggle"' . ($checked == true ? ' checked="checked"' : '') . '>';
     $header = '<tr>' . PHP_EOL .
               '<th colspan="' . $maxColumns . '">' . PHP_EOL .
-              '<input type="checkbox" name="checkall" id="checkall" value="checkall"' . ($checked == true ? ' checked="checked"' : '') . '>' . PHP_EOL .
+              '<input type="checkbox" name="checkAll" id="checkAll" value="checkAll"' . ($checked == true ? ' checked="checked"' : '') . '>' . PHP_EOL .
               '<label for="checkAll">Select All</label>' . PHP_EOL .
               '</th>' . PHP_EOL . '</tr>';
   } else {

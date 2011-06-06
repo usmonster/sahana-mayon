@@ -9,45 +9,87 @@
 <h3><?php echo $scenario_description ?></h3>
 <!-- ideally the above should be 'editable text', i.e. when clicked on they convert to input fields -->
 <br/>
+
+<h4>Click the Step name to jump to the step in the Scenario Creator Wizard.</h4>
+
 <table class="blueTable">
     <tr class="head">
-        <th class="row1">Steps</th>
-        <th>Description</th>
+      <th class="row1">Steps</th>
+      <th>Description</th>
     </tr>
     <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>"
-   title="Modify Basic Scenario Information">Scenario Name and Description</a></td>
-        <td>Name: <span class="highlightedText"><?php echo $scenario_name ?></span><br>Description: <span class="highlightedText"><?php echo $scenario_description ?></span></td>
+      <td>
+        <a  class="buttonText" href="<?php echo url_for('scenario/meta?id=' . $scenario_id) ?>" title="Modify Basic Scenario Information">Scenario Name and Description</a>
+      </td>
+      <td>
+        Name: <span class="highlightedText"><?php echo $scenario_name ?></span><br>Description: <span class="highlightedText"><?php echo $scenario_description ?></span>
+      </td>
     </tr>
     <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>"
-   title="Edit Required Resource Types for Scenario">Manage Required Resource Types</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>
+          <a  class="buttonText" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>" title="Edit Required Resource Types for Scenario">Manage Required Resource Types</a>
+        </td>
+        <td>Selected Staff Resource Types: <span class="highlightedText"><?php echo $staffResourceTypeCt ?></span>
+          <br>
+          Selected Facility Resource Types: <span class="highlightedText"><?php echo $facilityResourceTypeCt ?></span>
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/listgroup?id=' . $scenario_id) ?>"
    title="Edit Facility Groups">Manage Facility Groups</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>Selected Facility Groups: <span class="highlightedText"><?php echo $facilityGroups ?></span>
+          <br>
+          Selected Facility Resources: <span class="highlightedText"><?php echo $facilities ?></span>
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/staffresources?id=' . $scenario_id) ?>"
    title="Edit Staff Requirements">Staff Resource Requirements</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>Completed Resource Requirement Definitions: <span class="highlightedText">
+          <?php echo $completedResourceReqs ?></span> of <span class="highlightedText">
+          <?php echo ($staffResourceTypeCt * $facilities) ?></span>
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/staffpool?id=' . $scenario_id) ?>"
    title="Edit Staff Pool">Staff Pool Definitions</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>This scenario has <span class="highlightedText">
+          <?php echo $staffSearches ?></span> defined staff searches
+        </td>
     </tr>
     <tr>
         <td><a  class="buttonText" href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>"
    title="Edit Shift Templates">Shift Templates</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+        <td>A total of <span class="highlightedText">
+          <?php echo $shiftTemplates ?></span> shift templates have been defined for this scenario
+        </td>
     </tr>
     <tr>
-        <td><a  class="buttonText" href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>"
-   title="View Scenario Shifts">Scenario Shifts</a></td>
-        <td><div style="font-style:oblique">No statistical data is currently available.</div></td>
+      <td>
+        <a  class="buttonText" href="<?php echo url_for('scenario/shifts?id=' . $scenario_id) ?>" title="View Scenario Shifts">Scenario Shifts</a>
+      </td>
+      <td>
+        A total of <span class="highlightedText"><?php echo $shifts ?></span> shifts have been generated covering
+        <span class="highlightedText"><?php echo $operationTime ?></span> of operation
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a id="fileImportReplacer" class="buttonText" href="<?php echo url_for('scenario/facilityimport?id=' . $scenario_id) ?>" title="Import Facilities">Import Facilities</a>
+        <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_import&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Import Facilities"> ?</a>
+      </td>
+      <td>
+        <p id="replaceMe">Import facilities for the <span class="highlightedText"><?php echo $scenario_name ?></span> scenario.</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a class="buttonText" href="<?php echo url_for('scenario/facilityexport?id=' . $scenario_id) ?>" title="Export Facilities">Export Facilities</a>
+        <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_export&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Export Facilities"> ?</a>
+      </td>
+      <td>
+        Export facilities for the <span class="highlightedText"><?php echo $scenario_name ?></span> scenario.
+      </td>
     </tr>
 </table>
 
@@ -56,11 +98,11 @@
 
 <form action="<?php echo url_for('event/meta')?>" method="post" name="scenario">
   <input type="hidden" value="<?php echo $scenario_id ?>" id ="ag_scenario_list" name="ag_scenario_list" />
-  <input type="submit" value="Deploy Scenario as Event"  class="linkButton" />
+  <input type="submit" value="Deploy Scenario as Event"  class="continueButton" />
 </form>
 
 <br />
   <hr class="ruleGray" />
 
-  <a href="<?php echo url_for('scenario/list') ?>" class="linkButton">List Scenarios</a>
-  <a href="<?php echo url_for('scenario/meta') ?>" class="linkButton">Create Another Scenario</a>
+  <a href="<?php echo url_for('scenario/list') ?>" class="continueButton">List Scenarios</a>
+  <a href="<?php echo url_for('scenario/meta') ?>" class="continueButton">Create Another Scenario</a>

@@ -1,0 +1,3 @@
+===== Facility Address =====
+
+For a facility to be properly matched with available staff it **must** have a physical address with zip code.

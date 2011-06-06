@@ -1,6 +1,6 @@
 ====== Facility Management ======
 
-The facility management module of Agasti is designed to track available site and resources for sheltering and response in the event of an emergency response.  Intended to supplement response plans where sites are pre-designated, facilities have specific roles as well as contact information for on-site response.
+The facility management module of Sahana Agasti is designed to track available sites and resources for sheltering and response in the event of an emergency.  Intended to supplement response plans where sites are pre-designated, facilities have specific roles in the application, are assigned staff to fill those roles as part of a Scenario, as well as recording contact information for that location.
 
 Below is a quick guide to Facilities Management functionality; however, more detailed information is available via the [[manual:user:facilities:facilities_management_walkthrough|Facilities Management Walk-Through]].
 
@@ -9,40 +9,61 @@ The functionality of Facilities Management is broken down into several parts:
 
   * Entering Facilities
   * Editing Facility records
-  * Deleting records
-  * Importing Facilities
-  * Exporting Facilities
+  * Deleting Facility records
 
-The Facilities Management module is used largely for the maintaining of facility information for an emergency response.  While facility information could be uploaded at the time of response, the effectiveness of the response is greatly increased if the information is available prior to response.
+The Facilities Management module is used primarily to maintain facility information for an emergency response.  While facility information could be uploaded at the time of response, the effectiveness of the response is greatly increased if the information is available prior to response.
 
 ===== Facility Resources =====
 
-A "Facility Resource" is the combination of a physical site and the function that site can serve.  For example, a local high school with a large gym and a cafeteria can be used both as a shelter and for medical overflow.  In Agasti the gym would be listed as two Facility Resources.  Let's name the gym Lincoln High; it would be listed in Agasti as:
+A "Facility Resource" is the combination of a physical site and the function that site can serve.  For example, a local high school with a large gym and a cafeteria can be used both as a shelter and for medical overflow.  In Sahana Agasti the gym would be listed as two Facility Resources.  Let's name the gym Lincoln High; it would be listed in Agasti as:
   * Lincoln High: Shelter
   * Lincoln High: Medical Overflow
 
 When a new facility is created the type of resources available and the capacity of those resources will be entered.
 
-==== Editing Facility Resources ====
-
+**A facility can only have one of any Resource Type available.**
 
 ===== Creating Facilities =====
 
-Facility records can be created two ways in Agasti: manual entry and import.
+Facility records can be created two ways in Agasti; manual entry and import.  Below are basic instructions for Adding Facilities manually, more details on manual entry are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].  Importing facilities is included in scenario creation.
+
+==== Manual Entry ====
+To manually enter Facilities, begin on the Facility Management Page:
+  - Click "Add Facility"
+  - Enter the name and facility code for the facility.
+    - Facility names **should** be unique for easy reference.
+    - Facility codes **must** be unique as they are the internal reference in Sahana Agasti
+  - Select any Facility Resource types, the default opening statuses, and the capacity of that resource
+  - Enter the contact information for the point of contact at the facility
+  - Select "Save"
+
+**Note:** Importing and exporting facilities is part of scenario creation.  See the [[scenario:facilityimport|Scenario Creator Walk-Through]] for details on how to import facility records.
 ===== Editing Facilities =====
 
+To ensure proper staffing and response, facility records, including contact information and status, should be kept as accurate at possible.  Below are basic instructions for Editing Facilities, more details are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].
 
-===== Exporting Facilities =====
+To edit a facility record begin on the Facility Management page:
+  - Click "List Facilities"
+  - Locate the facility record in the facility list
+  - Click the Facility ID Number on the left side to view the facility record
+  - On the view page click the "Edit" button at the bottom
+  - Update the record
+  - Click "Save" at the bottom
+
+**Note:** Facilities can also be updated via import.  The combination of a Facility Code and the assigned resources at that facility identify the facility record for import.  Facility import is covered in the [[manual:user:scenario:walkthrough|Scenario Wizard Walk-Through]].
 
 ===== Deleting Facility Records =====
+Facilities can only be disabled when there are none of its resources is being used in a scenario or event.  If a facility is being used in a scenario and is no longer available the record can either be disabled or the resources removed from any scenarios to allow it to be deleted.
 
+Below are brief instructions for deleting facilities; however, more details are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].
 
-Listed below are the help topics for the facility management module of Sahana Agasti 2.0, Mayon
+Beginning on the Facility Management page:
+  - Click the "List Facility" page
+  - Click the ID number of the facility to be deleted to view the facility record
+  - Click the "Edit" button at the bottom of the page
+  - Click the "Delete" button at the bottom
 
-Please select one of the following facility administration actions:
-
-  * [[..Create|Create Facility]]
-  * List Facilities
-  * Import Facilities
-  * Export Facilities
-  * Search
+**If you receive a warning that the facility is in use in a scenario**:
+  * if the facility is temporarily unavailable select the "Disable" button next to the delete button.
+  * if the facility is to be completely removed from the system remove it from any scenarios it is associated with.  The facility can then be deleted.
+  * if the facility has ever been used in an event it can not be deleted, only deactivated.

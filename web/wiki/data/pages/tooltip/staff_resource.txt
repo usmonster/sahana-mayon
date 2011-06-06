@@ -1,0 +1,4 @@
+===== Staff Resources =====
+Staff Resources are a combination of staff records and their associated skill, called 'Resources'. 
+
+Staff records can have multiple "resources" attached; however, they can only have one resource per Organization and they will only be deployed once per activation.

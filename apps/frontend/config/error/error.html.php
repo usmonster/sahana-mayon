@@ -13,7 +13,7 @@ $path = sfConfig::get('sf_relative_url_root', preg_replace
     <meta name="description" content="Emergency Management" />
     <meta name="language" content="en" />
     <title>Sahana Agasti, Mayon 2.0</title>
-    <link rel="shortcut icon" href="<?php echo url_for('images/favicon.ico'); ?>" />
+    <link rel="shortcut icon" href="<?php echo public_path('images/favicon.ico'); ?>" />
     <?php echo stylesheet_tag('agMain'); ?>
     <!--[if lte IE 6]>
     <?php echo stylesheet_tag('lte_ie6_css'); ?>
@@ -43,8 +43,8 @@ $path = sfConfig::get('sf_relative_url_root', preg_replace
         </h4>
         <br/>
         <br/>
-        <?php echo link_to('Back', htmlspecialchars($_SERVER['HTTP_REFERER'])); ?>
-        <?php echo link_to('Return to homepage.', 'home/index', array('class' => 'linkButton')); ?>
+        <?php echo link_to('Back', htmlspecialchars($_SERVER['HTTP_REFERER']), array('class' => 'generalButton')); ?>
+        <?php echo link_to('Return to homepage.', 'home/index', array('class' => 'generalButton')); ?>
         </div>
       </div>
     <?php include_partial('global/Footer'); ?>

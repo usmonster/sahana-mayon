@@ -18,8 +18,9 @@ abstract class agImportNormalization extends agImportHelper
 {
   const     CONN_NORMALIZE_WRITE = 'import_normalize_write';
 
-  protected $tempToRawQueryName = 'import_temp_to_raw',
-            $helperObjects = array(),
+  protected $helperObjects = array(),
+
+            $tempToRawQueryName = 'import_temp_to_raw',
 
             // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
             $importComponents = array(),
@@ -27,23 +28,17 @@ abstract class agImportNormalization extends agImportHelper
            //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue)) 
             $importData = array();
 
-  /**
-   * This class's constructor.
-   * @param string $tempTable The name of the temporary import table to use
-   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
-   */
-  public function __construct($tempTable, $logEventLevel = NULL)
+  public function __deconstruct()
   {
-    // DO NOT REMOVE
-    parent::__construct($tempTable, $logEventLevel);
+    parent::__deconstruct();
+    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
   }
 
-  public function __destruct()
-  {
-//    //drop temp table.
-//    $this->conn->export->dropTable($this->sourceTable);
-//    $this->conn->close();
-  }
+  /**
+   * Method to dynamically build a (mostly) static tempSelectQuery
+   * @return string Returns a string query
+   */
+  abstract protected function buildTempSelectQuery();
 
   /**
    * Method to reset ALL iter data.
@@ -63,6 +58,7 @@ abstract class agImportNormalization extends agImportHelper
   protected function resetRawIterData()
   {
     // add additional iter members
+    //TODO: really figure out these bounds. -UA
     $this->iterData['fetchPosition'] = 0;
     $this->iterData['fetchCount'] = 0;
     $this->iterData['batchPosition'] = 0;
@@ -75,9 +71,8 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function resetImportData()
   {
+    $this->eh->logDebug('Removing existing pre-normalization import data.');
     $this->importData = array();
-    $this->importData['_rawData'] = array();
-    $this->importData['primaryKeys'] = array();
   }
 
   /**
@@ -87,7 +82,9 @@ abstract class agImportNormalization extends agImportHelper
   protected function setConnections()
   {
     parent::setConnections();
-    $this->_conn[self::CONN_NORMALIZE_WRITE] = Doctrine_Manager::connection(NULL,
+
+    $adapter = Doctrine_Manager::connection()->getDbh();
+    $this->_conn[self::CONN_NORMALIZE_WRITE] = Doctrine_Manager::connection($adapter,
       self::CONN_NORMALIZE_WRITE);
   }
 
@@ -109,18 +106,24 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function updateTempSuccess($success)
   {
-    $this->logInfo("Updating temp with batch success data");
+    $this->eh->logDebug("Updating temp with batch success data");
 
     // grab our connection object
-    $conn = $this->getConnection('temp_write');
+    $conn = $this->getConnection(self::CONN_TEMP_WRITE);
 
     // create our query statement
-    $q = sprintf('UPDATE %s SET %s=? WHERE id IN(?);', $this->tempTable, $this->successColumn);
-    $this->logOk("Temp table successfully updated with batch success data");
+    $q = 'UPDATE ' . $this->tempTable .
+      ' SET ' . $this->successColumn . '=?' .
+      ' WHERE ' . $this->idColumn .
+      ' IN(' . implode(',', array_fill(0, count($this->importData), '?')) . ');';
 
-    // mark this batch as failed
-    $this->executePdoQuery($conn, $query,
-      array($success, array_keys($this->importData)));
+    // create our parameter array
+    $qParam = array_merge(array($success), array_keys($this->importData));
+
+    // mark this batch accordingly
+    $this->executePdoQuery($conn, $q, $qParam);
+
+    $this->eh->logNotice("Temp table successfully updated with batch success data");
   }
 
   /**
@@ -147,6 +150,7 @@ abstract class agImportNormalization extends agImportHelper
   public function concludeImport()
   {
     // @todo write the meta-method to clear an import and return import statistics
+    echo "Import is Done";
   }
 
   public function getFailedRecords()
@@ -162,7 +166,7 @@ abstract class agImportNormalization extends agImportHelper
 
   /**
    * Method to load and process a batch of records.
-   * @return The number of records left to process or -1 if a fatal error was encountered
+   * @return int The number of records left to process or -1 if a fatal error was encountered
    */
   public function processBatch()
   {
@@ -170,7 +174,7 @@ abstract class agImportNormalization extends agImportHelper
     try
     {
       // check it once before we start anything and once after
-      $this->checkErrThreshold();
+      $this->eh->checkErrThreshold();
 
       // load up a batch into the helper
       $this->fetchNextBatch();
@@ -185,7 +189,7 @@ abstract class agImportNormalization extends agImportHelper
       $this->updateTempSuccess($normalizeSuccess);
 
       // probably best to check this one more time
-      $this->checkErrThreshold();
+      $this->eh->checkErrThreshold();
     }
     catch (Exception $e)
     {
@@ -209,17 +213,18 @@ abstract class agImportNormalization extends agImportHelper
     $batchSize = $this->iterData['batchSize'];
     $fetchPosition =& $this->iterData['fetchPosition'];
     $batchPosition =& $this->iterData['batchPosition'];
-    $batchStart = ($batchPosition + 1);
+    $batchStart = $fetchPosition;
+    $batchEnd = ($fetchPosition + $batchSize -1);
 
     // get our PDO object
     $pdo = $this->_PDO[$this->tempToRawQueryName];
 
     // log this event
     $eventMsg = "Loading batch starting at {$fetchPosition} from the temp table";
-    $this->logInfo($eventMsg);
+    $this->eh->logDebug($eventMsg);
 
     // fetch the data up until it ends or we hit our batchsize limit
-    while (($row = $pdo->fetch()) && (($fetchPosition % $batchSize) != 0))
+    while (($row = $pdo->fetch()) && ($fetchPosition <= $batchEnd))
     {
       // modify the record just a little
       $rowId = $row['id'];
@@ -227,6 +232,7 @@ abstract class agImportNormalization extends agImportHelper
       unset($row[$this->successColumn]);
 
       // add it to import data array and iterate our counter
+      $this->eh->logDebug('Fetching row {' . $rowId . '} from temp table into import data.');
       $this->importData[$rowId]['_rawData'] = $row;
       $fetchPosition++;
     }
@@ -235,7 +241,7 @@ abstract class agImportNormalization extends agImportHelper
     $batchPosition++;
 
     $eventMsg = "Successfully fetched batch {$batchPosition} (Records {$batchStart} to {$fetchPosition})";
-    $this->logOk($eventMsg);
+    $this->eh->logInfo($eventMsg);
   }
 
   /**
@@ -247,26 +253,31 @@ abstract class agImportNormalization extends agImportHelper
     $conn = $this->getConnection(self::CONN_TEMP_READ);
 
     // first get a count of what we need from temp
+    $this->eh->logDebug('Fetching the total number of records and establishing batch size.');
     $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
     $ctResults = $this->executePdoQuery($conn, $ctQuery);
-    $this->iterData['fetchCount'] = $ctResults::fetchColumn();
-    
+    $this->iterData['fetchCount'] = $ctResults->fetchColumn();
+
     // now caclulate the number of batches we'll need to process it all
-    $this->iterData['batchCount'] = ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize']));
+    $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
+    $this->eh->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
+      'into {' . $this->iterData['batchCount'] . '} batches of {' . $this->iterData['batchSize'] .
+      '} records per batch.');
 
     // now we can legitimately execute our real search
+    $this->eh->logDebug('Starting initial fetch from temp.');
     $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
-    $this->logInfo("Successfully established the PDO fetch iterator.");
+    $this->eh->logInfo("Successfully established the PDO fetch iterator.");
   }
 
-  /**
+   /**
    * Method to normalize and insert raw data. Returns TRUE if successful or FALSE if unsucessful.
    * @return boolean Boolean value indicating whether the import was successful or unsucessful.
    */
   protected function normalizeData()
   {
     $err = NULL ;
-    $this->logInfo("Normalizing and inserting batch data into database.");
+    $this->eh->logDebug("Normalizing and inserting batch data into database.");
 
 
     // get our connection object and start an outer transaction for the batch
@@ -286,7 +297,7 @@ abstract class agImportNormalization extends agImportHelper
       $savepoint = __FUNCTION__ . '_'. $componentData['component'];
 
       // log an event so we can follow what portion of the insert was begun
-      $eventMsg = $this->logInfo("Calling batch processing method {$method}");
+      $eventMsg = $this->eh->logDebug("Calling batch processing method {$method}");
 
       // start an inner transaction / savepoint per component
       $conn->beginTransaction($savepoint) ;
@@ -302,7 +313,7 @@ abstract class agImportNormalization extends agImportHelper
           $this->iterData['batchPosition'], $componentData['method']);
 
         // let's capture this error, regardless of whether we'll throw
-        $this->logErr($errMsg, count($this->importData));
+        $this->eh->logErr($errMsg, count($this->importData));
 
         $conn->rollback($savepoint);
 
@@ -310,11 +321,14 @@ abstract class agImportNormalization extends agImportHelper
         if($componentData['throwOnError'])
         {
           $err = $e;
+          $this->eh->logErr($e->getMessage(), 0);
           break;
+        } else {
+          $this->eh->logDebug($e->getMessage());
         }
       }
 
-      // you'll want to do your records keeping here (eg, counts or similar)
+      // you'll want to do your record keeping here (eg, counts or similar)
       // be sure to use class properties to store that info so additional loops can
       // reference it
     }
@@ -340,13 +354,13 @@ abstract class agImportNormalization extends agImportHelper
 
     if (is_null($err))
     {
-      $this->logOk("Successfully inserted and normalized batch data");
+      $this->eh->logNotice("Successfully inserted and normalized batch data");
       return TRUE;
     }
     else
     {
       // our rollback and error logging happen regardless of whether this is an optional component
-      $this->logErr($errMsg, count($this->importData)) ;
+      $this->eh->logErr($errMsg, count($this->importData)) ;
       $conn->rollback();
 
       // return false if not
@@ -355,19 +369,151 @@ abstract class agImportNormalization extends agImportHelper
   }
 
   /**
+   *
+   * @param sfEvent $event
+   * @todo document this
+   */
+  public static function processImportEvent(sfEvent $event)
+  {
+    // gets the action, context, and importer object
+    $action = $event->getSubject();
+    $context = $action->getContext();
+    ////$context = sfContext::getInstance();
+    $importer = $action->importer;
+    $moduleName = $action->getModuleName();
+
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
+    if (!file_exists($importDir)) {
+      mkdir($importDir);
+    }
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+
+    // generates the identifier for the event status
+//    $statusId = implode('_', array($moduleName, /* $action->actionName, */ 'status'));
+//    if ($context->has($statusId)) {
+//      $status = $context->get($statusId);
+//    }
+    if (!file_exists($statusFile)) {
+      //TODO: check if directory is writeable? -UA
+      touch($statusFile);
+    }
+    if (!is_writable($statusFile)) {
+      $importer->eh->logEmerg('Status file not writeable: '. $statusFile);
+      return;
+    }
+
+    // let other things happen
+    $action->getUser()->shutdown();
+    session_write_close();
+
+    // blocks import if already in progress
+    $status = sfYaml::load($statusFile);
+    $abortFlagId = 'aborted';
+    if (isset($status) && 0 != $status['batchesLeft']) {
+      if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
+        $importer->eh->logNotice('Starting new import after user aborted previous attempt.');
+        unset($status[$abortFlagId]);
+      } else {
+        //TODO: distinguish between the two, add cleanup method (action?) for recovery workflow. -UA
+        $importer->eh->logAlert('Import in progress, or attempting new import after failed attempt?');
+        return;
+      }
+    }
+
+    // uploads the import file
+    $uploadedFile = $action->uploadedFile;
+    $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /*$uploadedFile['name']*/;
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+      $importer->eh->logEmerg('Cannot move uploaded file to destination!');
+      // exception is already thrown by logEmerg ^ , but just in case...
+      return;
+    }
+
+    $importer->processXlsImportFile($importPath);
+
+    // initializes the job progress information
+    $totalBatchCount = $importer->iterData['batchCount'];
+    $batchesLeft = $totalBatchCount;
+    $totalRecordCount = $importer->iterData['tempCount'];
+    $recordsLeft = $totalRecordCount;
+
+    $startTime = time();
+    //$context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+    $status['batchesLeft'] = $batchesLeft;
+    $status['totalBatchCount'] = $totalBatchCount;
+    $status['startTime'] = $startTime;
+    file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+
+    // processes batches until complete, aborted, or an unrecoverable error occurs
+    //$abortFlagId = implode('_', array('abort', $statusId));
+    while ($batchesLeft > 0) {
+//      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
+//        $context->set($abortFlagId, NULL);
+//        break;
+//      }
+      $status = sfYaml::load($statusFile);
+      if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
+        $importer->eh->logAlert('User canceled import, stopping import.');
+        unset($status[$abortFlagId]);
+        file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+        break;
+      }
+      $batchResult = $importer->processBatch();
+      // if the last batch did nothing
+      if ($batchResult == $recordsLeft) {
+        $importer->eh->logEmerg('No progress since last batch! Stopping import.');
+        // exception is already thrown by logEmerg ^ , but just in case...
+        break;
+      } else {
+        $recordsLeft = $batchResult;
+      }
+
+      //TODO: use $batchResult ("records left") instead?
+      $batchesLeft = $importer->iterData['batchCount'] - $importer->iterData['batchPosition'] - 1;
+      //$context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+      $status = sfYaml::load($statusFile);
+      $status['batchesLeft'] = $batchesLeft;
+      $status['totalBatchCount'] = $totalBatchCount;
+      $status['startTime'] = $startTime;
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+    }
+
+    $context->getEventDispatcher()->notify(new sfEvent($action, 'import.do_reindex'));
+
+    unset($action->importer);
+    //unset($importer);
+  }
+
+  public static function resetImportStatus($moduleName) {
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+    if (is_writable($statusFile)) {
+      $status = sfYaml::load($statusFile);
+      $status['batchesLeft'] = 0;
+      $status['totalBatchCount'] = 0;
+      $status['startTime'] = 0;
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+    }
+  }
+
+  /**
    * Simple method for instantiating what are effectively blank records.
-   * @param string $recordName The name of the record / model that will be created.
+   * @param string $recordName The name of the Doctrine_Record / model that will be created.
    * @param array $foreignKeys An array of foreign keys that will be set with the new record.
    * <code>array( $columnName => $columnValue, ...)</code>
    * @return integer The newly instantiated record's ID
    */
-  protected function createNewRec( $recordName, $foreignKeys )
+  protected function createNewRec($recordName, array $foreignKeys)
   {
     // get our connection object
     $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
 
     // instantiate the new record object
-    $newRec = new $recordName();
+    $newRec = new $recordName(null, TRUE, FALSE);
 
     // loop through our keys and set values
     foreach($foreignKeys as $columnName => $columnValue)
@@ -388,7 +534,7 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function clearNullRawData()
   {
-    $this->logInfo("Removing null data from batch.");
+    $this->eh->logInfo("Removing null data from batch.");
     foreach ($this->importData as $rowId => &$rowData)
     {
       foreach($rowData['_rawData'] as $key => $val)
@@ -411,8 +557,8 @@ abstract class agImportNormalization extends agImportHelper
     {
       foreach($rowData['_rawData'] as $key => &$val)
       {
-        $val = trim($val);
-        if ($val == '')
+        $trimmedVal = trim($val);
+        if (empty($trimmedVal))
         {
           unset($rowData['_rawData'][$key]);
         }

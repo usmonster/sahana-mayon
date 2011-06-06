@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Facility Import Class
  *
@@ -60,11 +59,13 @@ abstract class agImportXLS extends agImportHelper
   function __destruct()
   {
     $file = $this->fileInfo["dirname"] . DIRECTORY_SEPARATOR . $this->fileInfo["basename"];
+    
     if (!@unlink($file)) {
       $this->events[] = array("type" => "ERROR", "message" => $php_errormsg);
     } else {
       $this->events[] = array('type' => 'OK', "message" => "Deleted {$this->fileInfo['basename']} upload file.");
     }
+   
   }
 
   /**
@@ -137,7 +138,6 @@ abstract class agImportXLS extends agImportHelper
    */
   protected function saveImportTemp(array $importDataSet)
   {
-    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
     $dbManager = new sfDatabaseManager($configuration);
     $db = $dbManager->getDatabase('doctrine');
@@ -231,7 +231,8 @@ abstract class agImportXLS extends agImportHelper
   {
     // @todo Is this necessary?
     // Access Symfony...we'll only need these lines if we need to go the shell_exec route. Might need IReadFilter.php in any case though.
-    require_once(dirname(__FILE__) . '/../../../../config/ProjectConfiguration.class.php');
+    require_once(sfConfig::get('sf_config_dir') . '/ProjectConfiguration.class.php');
+    
     $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'prod', false);
 
     // Same here
@@ -279,7 +280,6 @@ abstract class agImportXLS extends agImportHelper
   {
 
     // @todo Is this *really* necessary?
-    require_once(dirname(__FILE__) . '/excel_reader2.php');
 
     $xlsObj = new Spreadsheet_Excel_Reader($importFile);
     $numRows = $xlsObj->rowcount($sheet_index = 0);

@@ -20,7 +20,7 @@ class agGeoHelper extends agBulkRecordHelper
             $_globalDefaultGeoMatchScore = 'default_geo_match_score',
             $_agGeoTypeData,
             $_addressGeoTypeId,
-            $_defaultGeoMatchScoreId ;
+            $_defaultGeoMatchScoreId;
 
   /**
    * Minimalist helper function to return the _agGeoTypeData property and lazy-load its values
@@ -107,7 +107,7 @@ class agGeoHelper extends agBulkRecordHelper
    * @param array $geoCoordinates An array of geo coordinates
    * @return boolean Boolean indicating whether or not the geo feature is valid.
    */
-  public function isValidGeoFeature($geoTypeId, $geoCoordinates)
+  public function isValidGeoFeature($geoTypeId, array $geoCoordinates)
   {
    
     // grab our coordinate counts and our requirements
@@ -123,7 +123,26 @@ class agGeoHelper extends agBulkRecordHelper
     return TRUE ;
   }
 
-  public function setGeo( $geoCoordinates,
+  /**
+   * A method uniquely reduce the $geoCoordinate array before passing it to _setGeo
+   * @param array $geoCoordinates An array of geo information keyed by an index
+   * <code>
+   * array([$index] =>
+   *   array(
+   *     array(
+   *       array($latitude, $longitude),
+   *       ...),
+   *     $matchScoreId)
+   *   ...)
+   * </code>
+   * @param integer $geoTypeId An integer value of the geoTypeId
+   * @param integer $geoSourceId An integer value describing the geoSource
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array An array of geoIds keyed by the same $index passed in the $geoCoordinates param.
+   */
+  public function setGeo( array $geoCoordinates,
                           $geoTypeId,
                           $geoSourceId,
                           $throwOnError = NULL,
@@ -170,7 +189,27 @@ class agGeoHelper extends agBulkRecordHelper
 
   }
   
-  protected function _setGeo( $geoCoordinates,
+  /**
+   * A method set and/or retrieve geoIds based on their coordinate values or the hash thereof.
+   *
+   * @param array $geoCoordinates An array of geo information keyed by an index
+   * <code>
+   * array([$index] =>
+   *   array(
+   *     array(
+   *       array($latitude, $longitude),
+   *       ...),
+   *     $matchScoreId)
+   *   ...)
+   * </code>
+   * @param integer $geoTypeId An integer value of the geoTypeId
+   * @param integer $geoSourceId An integer value describing the geoSource
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array An array of geoIds keyed by the same $index passed in the $geoCoordinates param.
+   */
+  protected function _setGeo( array $geoCoordinates,
                               $geoTypeId,
                               $geoSourceId,
                               $throwOnError = NULL,
@@ -207,7 +246,7 @@ class agGeoHelper extends agBulkRecordHelper
       }
       
       // calculate our coordinate hashes
-      $gcHashes[$index] = md5(json_encode($gc)) ;
+      $gcHashes[$index] = agBulkRecordHelper::getRecordComponentsHash($gc, TRUE);
     }
 
     // grab any existing ids from the db
@@ -266,7 +305,27 @@ class agGeoHelper extends agBulkRecordHelper
     return $geoIds ;
   }
 
-  public function setNewGeo($geoCoordinates,
+  /**
+   * A method to set new geoIds based on a set of geo coordinate data.
+   *
+   * @param array $geoCoordinates An array of geo information keyed by an index
+   * <code>
+   * array([$index] =>
+   *   array(
+   *     array(
+   *       array($latitude, $longitude),
+   *       ...),
+   *     $matchScoreId)
+   *   ...)
+   * </code>
+   * @param integer $geoTypeId An integer value of the geoTypeId
+   * @param integer $geoSourceId An integer value describing the geoSource
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @return array An array of geoIds keyed by the same $index passed in the $geoCoordinates param.
+   */
+  public function setNewGeo(array $geoCoordinates,
                             $geoTypeId,
                             $geoSourceId,
                             $throwOnError = NULL,
@@ -399,14 +458,31 @@ class agGeoHelper extends agBulkRecordHelper
    */
   public function getGeoIdsByHash($gcHashes)
   {
-    return agDoctrineQuery::create()
-      ->select('g.geo_coordinate_hash')
-          ->addSelect('g.id')
+    $results = array();
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+
+    $q = agDoctrineQuery::create()
+      ->select('g.id')
         ->from('agGeo g')
-        ->whereIn('g.geo_coordinate_hash', $gcHashes)
-      ->useResultCache(new Doctrine_Cache_Apc())
-      ->setResultCacheLifeSpan(60 * 15)
-      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
+      ->useResultCache(TRUE, 1800);
+
+    foreach ($gcHashes as $index => $hash)
+    {
+      $q->where('g.geo_coordinate_hash = ?', $hash);
+      $gId = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      if (empty($gId))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results[$hash] = $gId;
+      }
+      unset($gcHashes[$index]);
+    }
+ 
+    return $results;
   }
 
   /**
@@ -417,14 +493,22 @@ class agGeoHelper extends agBulkRecordHelper
    */
   public function getGeoCoordinateId($latitude, $longitude)
   {
-    return agDoctrineQuery::create()
+    $q = agDoctrineQuery::create()
       ->select('gc.id')
         ->from('agGeoCoordinate gc')
         ->where('gc.latitude = ?', $latitude)
           ->andWhere('gc.longitude = ?', $longitude)
-      ->useResultCache(new Doctrine_Cache_Apc())
-      ->setResultCacheLifeSpan(60 * 15)
-      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR) ;
+      ->useResultCache(TRUE, 1800);
+    
+    $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    
+    if (empty($result) || is_null($result))
+    {
+      $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+      $cacheDriver->delete($q->getResultCacheHash());
+    }
+
+    return $result;
   }
 
   /**
@@ -451,7 +535,7 @@ class agGeoHelper extends agBulkRecordHelper
 
     foreach ($groupedData as $geoId => $data)
     {
-      $hash = md5(json_encode($data)) ;
+      $hash = agBulkRecordHelper::getRecordComponentsHash($data, TRUE);
       $q = agDoctrineQuery::create()
         ->update('agGeo')
           ->set('geo_coordinate_hash', "'".$hash."'")
@@ -462,7 +546,27 @@ class agGeoHelper extends agBulkRecordHelper
     return $results ;
   }
 
-  public function setAddressGeo($addrCoordinates,
+  /**
+   * A method to set address geo many-to-many table based on the set of address id and geo id.
+   *
+   * @param array $addrCoordinates An array of geo information keyed by addressId
+   * <code>
+   * array([$addressId] =>
+   *   array(
+   *     array(
+   *       array($latitude, $longitude),
+   *       ...),
+   *     $matchScoreId)
+   *   ...)
+   * </code>
+   * @param integer $geoSourceId An integer value describing the geoSource
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
+   * @param Doctrine_Connection $conn A doctrine connection object.
+   * @param Doctrine_Connection $conn
+   * @return integer The number of collection of the size of the collection.
+   */
+  public function setAddressGeo(array $addrCoordinates,
                                 $geoSourceId,
                                 $geoTypeId = NULL,
                                 $throwOnError = NULL,
@@ -514,11 +618,11 @@ class agGeoHelper extends agBulkRecordHelper
     }
 
 
-    if (! is_null($err))
+    if (is_null($err))
     {
       $q = agDoctrineQuery::create()
         ->select('ag.*')
-          ->from('agAddressGeo ag INDEX BY a.address_id')
+          ->from('agAddressGeo ag INDEXBY ag.address_id')
           ->whereIn('ag.address_id', array_keys($addrCoordinates));
       $coll = $q->execute() ;
 
@@ -566,7 +670,7 @@ class agGeoHelper extends agBulkRecordHelper
         }
         // add the new record to our collection and release the resource
         $coll->add($newRec) ;
-        unsert($addrCoordinates[$addrId]) ;
+        unset($addrCoordinates[$addrId]) ;
       }
 
       try
@@ -601,5 +705,21 @@ class agGeoHelper extends agBulkRecordHelper
 
     // many happy returns
     return $results ;
+  }
+
+  /**
+   * Method to return geo match score ids from geo match score values.
+   * @param array $geoMatchScores An array of geo_match_scores
+   * @return array An associative array of geo match score ids keyed by geo match score.
+   */
+  static public function getGeoMatchScoreIds(array $geoMatchScores)
+  {
+    return agDoctrineQuery::create()
+      ->select('gms.geo_match_score')
+          ->addSelect('gms.id')
+        ->from('agGeoMatchScore gms')
+        ->whereIn('gms.geo_match_score', $geoMatchScores)
+      ->useResultCache(TRUE, 3600)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 }

@@ -1,0 +1,5 @@
+==== Email Format ====
+
+Sahana Agasti will only accept properly formatted emails.
+
+**Example:** name@domain.com

@@ -6,30 +6,28 @@ The Staff Management functionality in Sahana Agasti is designed to help administ
 
 To help organize the information each page of the walk-through will contain the following sections:
 
-  * **What It Does** - A brief overview of the step's purpose when building the scenario.
-  * **Reference Information** - Details that may not be intuitive for some users or will be good reference information when building later scenarios.
+  * **What It Does** - A brief overview of the page's functions.
+  * **Reference Information** - Details that may not be intuitive for some users or will be good reference information when returning to this module.
   * **Walk-Through** - A step by step detail of fields on the page and what to do next.
-  * **FAQ** - Frequently Asked Questions about that step and its repercussions later on.
+  * **FAQ** - Frequently Asked Questions about that step and its affect later on.
 
 ===== Getting Started =====
 
-It's time to get started in creating your first Staff record.  Keep this walk-through open while you progress through staff management and remember that you can always come back and edit the staff information later on if their information changes.
+It's time to get started in creating your first staff record.  Keep this walk-through open while you progress through staff management; and remember that you can always come back and edit the staff information later on if their information changes.
 
-To get started, use the menu to navigate to the Staff Management page.
+To get started, use the menu to navigate to the Staff Management page.  Hover over "Prepare" in the menu and then click "Staff".  
 
-{{ :manual:user:staff:staff_select1.png?800 }}
+You can also click the "Prepare" button on the Home page and then click the "Manage Staff" button.
 
+{{:manual:user:staff:nav_to_staff.png?500}}
 
+Next, select the link to create a staff record, "Add Staff".
 
-Next, select the link to create a staff record, "Create Staff".
-
-
-{{ :manual:user:staff:staff_create_highlight.png?800 }}
-
+{{:manual:user:staff:add_staff_hover.png?500}}
 
 
-[[manual:user:staff:new|{{ :manual:user:next.png|}}]] 
-After you've clicked the "Create Staff" link, click next in this tutorial.
+[[manual:user:staff:new|{{ :manual:user:next.png?135|New Staff}}]] 
+After you've clicked the "Add Staff" link, click next in this tutorial.
 
 
 ===== Jump to Another Step =====

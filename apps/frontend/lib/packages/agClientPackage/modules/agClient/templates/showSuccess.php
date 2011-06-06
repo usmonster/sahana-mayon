@@ -439,19 +439,19 @@
 ?>
       <div class="floatLeft">
         <a href="<?php echo url_for('staff/edit?id=' . $agPerson->getId()) ?>"
-           class="linkButton">Edit</a>
+           class="continueButton">Edit</a>
      <?php
       echo link_to(
           'Delete',
           'staff/delete?id=' . $agPerson->getId(),
-          array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')
+          array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')
       );
      ?>
      <?php
       echo (isset($query)) ?
           '<a href="' . url_for('staff/search') . '/page/' . $pager->getFirstPage() .
-          '?query=' . $query . '" class="linkButton">List</a>' :
-          '<a href="' . url_for('staff/list') . '" class="linkButton">List</a>';
+          '?query=' . $query . '" class="generalButton">List</a>' :
+          '<a href="' . url_for('staff/list') . '" class="generalButton">List</a>';
      ?>
  </div>
  <div class="floatRight">

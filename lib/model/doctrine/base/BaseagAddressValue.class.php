@@ -70,6 +70,7 @@ abstract class BaseagAddressValue extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
+        $this->option('collate', 'utf8_bin');
     }
 
     public function setUp()

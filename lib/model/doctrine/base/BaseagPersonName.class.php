@@ -44,6 +44,8 @@ abstract class BaseagPersonName extends sfDoctrineRecord
              'notnull' => true,
              'length' => 64,
              ));
+
+        $this->option('collate', 'utf8_bin');
     }
 
     public function setUp()

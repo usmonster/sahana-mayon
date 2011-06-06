@@ -1,0 +1,3 @@
+====== Scenario to Event ======
+
+[[ manual:user:event|{{:scenario:event_jump_2.jpg?200|Continue to Event}}]]

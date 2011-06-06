@@ -68,11 +68,12 @@ abstract class BaseagAddress extends sfDoctrineRecord
               0 => 'address_standard_id',
              ),
              ));
-        $this->index('IX_agAddress_hash', array(
+        $this->index('UX_agAddress_hash', array(
              'fields' => 
              array(
               0 => 'address_hash',
              ),
+             'type' => 'unique',
              ));
     }
 

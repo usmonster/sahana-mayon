@@ -1,19 +1,20 @@
 <form style="display: block;" action="<?php echo url_for('event/staffshift?id=' . $event_id) . '/' . $shift_id ?>" method="post" name="resultform">
-<table class="staffTable">
+<table class="staffTable" id="modalReloadable">
   <h3>Search Results:
     <?php
-    $count = count($hits);
-    if ($count == 0) {
-      echo "No results found for '<strong>" . $searchquery . "</strong>'";
-    } elseif ($count == 1) {
-      echo "1 result found for '<strong>" . $searchquery . "</strong>':";
-    } else {
-      echo sprintf("%d results found", $count) . " for '<strong>" . $searchquery . "</strong>':";
-    } ?></h3>
+      $count = count($hits);
+      if ($count == 0) {
+        echo "No results found for '<strong>" . $searchquery . "</strong>'";
+      } elseif ($count == 1) {
+        echo "1 result found for '<strong>" . $searchquery . "</strong>':";
+      } else {
+        echo sprintf("%d results found", $count) . " for '<strong>" . $searchquery . "</strong>':";
+      }
+    ?>
+  </h3>
 
 
   <?php
-  
     foreach ($hits as $hit) {
       //  print_r($hit->model);
       //  print_r($results);
@@ -36,7 +37,7 @@
       //  );
     }
   ?>
-  <input type="submit" name="Add" value="Add" id="add">
+  <input class="generalButton" type="submit" name="Add" value="Add" id="add">
 
 
 </table>

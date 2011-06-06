@@ -47,7 +47,6 @@
  * @see		OLE, Spreadsheet_Excel_Writer
  * --------------------------------------------------------------------------
  */
-
 class OLERead extends phpExcelReader
 {
 
@@ -55,13 +54,15 @@ class OLERead extends phpExcelReader
 
   function OLERead()
   {
-
+    parent::construct();
+    //print("<pre>" . print_r(get_defined_constants(true), true) . "</pre>");
   }
 
   function read($sFileName)
   {
     // check if file exist and is readable (Darko Miljanovic)
     if (!is_readable($sFileName)) {
+      
       $this->error = 1;
       return false;
     }
@@ -70,15 +71,16 @@ class OLERead extends phpExcelReader
       $this->error = 1;
       return false;
     }
+    
     if (substr($this->data, 0, 8) != IDENTIFIER_OLE) {
       $this->error = 1;
       return false;
     }
-    $this->numBigBlockDepotBlocks = GetInt4d($this->data, NUM_BIG_BLOCK_DEPOT_BLOCKS_POS);
-    $this->sbdStartBlock = GetInt4d($this->data, SMALL_BLOCK_DEPOT_BLOCK_POS);
-    $this->rootStartBlock = GetInt4d($this->data, ROOT_START_BLOCK_POS);
-    $this->extensionBlock = GetInt4d($this->data, EXTENSION_BLOCK_POS);
-    $this->numExtensionBlocks = GetInt4d($this->data, NUM_EXTENSION_BLOCK_POS);
+    $this->numBigBlockDepotBlocks = parent::GetInt4d($this->data, NUM_BIG_BLOCK_DEPOT_BLOCKS_POS);
+    $this->sbdStartBlock = parent::GetInt4d($this->data, SMALL_BLOCK_DEPOT_BLOCK_POS);
+    $this->rootStartBlock = parent::GetInt4d($this->data, ROOT_START_BLOCK_POS);
+    $this->extensionBlock = parent::GetInt4d($this->data, EXTENSION_BLOCK_POS);
+    $this->numExtensionBlocks = parent::GetInt4d($this->data, NUM_EXTENSION_BLOCK_POS);
 
     $bigBlockDepotBlocks = array();
     $pos = BIG_BLOCK_DEPOT_BLOCKS_POS;
@@ -88,7 +90,7 @@ class OLERead extends phpExcelReader
     }
 
     for ($i = 0; $i < $bbdBlocks; $i++) {
-      $bigBlockDepotBlocks[$i] = GetInt4d($this->data, $pos);
+      $bigBlockDepotBlocks[$i] = parent::GetInt4d($this->data, $pos);
       $pos += 4;
     }
 
@@ -98,13 +100,13 @@ class OLERead extends phpExcelReader
       $blocksToRead = min($this->numBigBlockDepotBlocks - $bbdBlocks, BIG_BLOCK_SIZE / 4 - 1);
 
       for ($i = $bbdBlocks; $i < $bbdBlocks + $blocksToRead; $i++) {
-        $bigBlockDepotBlocks[$i] = GetInt4d($this->data, $pos);
+        $bigBlockDepotBlocks[$i] = parent::GetInt4d($this->data, $pos);
         $pos += 4;
       }
 
       $bbdBlocks += $blocksToRead;
       if ($bbdBlocks < $this->numBigBlockDepotBlocks) {
-        $this->extensionBlock = GetInt4d($this->data, $pos);
+        $this->extensionBlock = parent::GetInt4d($this->data, $pos);
       }
     }
 
@@ -117,7 +119,7 @@ class OLERead extends phpExcelReader
       $pos = ($bigBlockDepotBlocks[$i] + 1) * BIG_BLOCK_SIZE;
       //echo "pos = $pos";
       for ($j = 0; $j < BIG_BLOCK_SIZE / 4; $j++) {
-        $this->bigBlockChain[$index] = GetInt4d($this->data, $pos);
+        $this->bigBlockChain[$index] = parent::GetInt4d($this->data, $pos);
         $pos += 4;
         $index++;
       }
@@ -132,7 +134,7 @@ class OLERead extends phpExcelReader
     while ($sbdBlock != -2) {
       $pos = ($sbdBlock + 1) * BIG_BLOCK_SIZE;
       for ($j = 0; $j < BIG_BLOCK_SIZE / 4; $j++) {
-        $this->smallBlockChain[$index] = GetInt4d($this->data, $pos);
+        $this->smallBlockChain[$index] = parent::GetInt4d($this->data, $pos);
         $pos += 4;
         $index++;
       }
@@ -167,8 +169,8 @@ class OLERead extends phpExcelReader
       $d = substr($this->entry, $offset, PROPERTY_STORAGE_BLOCK_SIZE);
       $nameSize = ord($d[SIZE_OF_NAME_POS]) | (ord($d[SIZE_OF_NAME_POS + 1]) << 8);
       $type = ord($d[TYPE_POS]);
-      $startBlock = GetInt4d($d, START_BLOCK_POS);
-      $size = GetInt4d($d, SIZE_POS);
+      $startBlock = parent::GetInt4d($d, START_BLOCK_POS);
+      $size = parent::GetInt4d($d, SIZE_POS);
       $name = '';
       for ($i = 0; $i < $nameSize; $i++) {
         $name .= $d[$i];
@@ -221,4 +223,5 @@ class OLERead extends phpExcelReader
       return $streamData;
     }
   }
+
 }

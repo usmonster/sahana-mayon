@@ -1,1 +1,15 @@
-====== Introduction To Sahana 2.0 (Agasti Mayon) ======
+====== Introduction To Sahana Agasti ======
+
+===== What is Sahana Agasti? =====
+
+===== How to Use This Guide =====
+
+===== Important Concepts =====
+
+===== Printing This Guide =====
+
+
+
+<<This is a placeholder for an introduction.>>
+
+[[manual:user:organizations|{{ :manual:user:org_jump_2.jpg?200|Organization Management}}]]

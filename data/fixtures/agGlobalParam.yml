@@ -96,7 +96,7 @@ agGlobalParam:
     agHost: localhost
     datapoint: import_error_threshold
     value: 20
-  default_shift_length:
+  default_shift_task_length:
     id: 20
     agHost: localhost
     datapoint: default_shift_task_length
@@ -111,10 +111,10 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_shift_minutes_start_to_facility_activation
     value: -4320
-  default_shift_repeats:
+  default_days_in_operation:
     id: 23
     agHost: localhost
-    datapoint: default_shift_repeats
+    datapoint: default_days_in_operation
     value: 0
   default_shift_max_staff_repeat_shifts:
     id: 24
@@ -126,3 +126,63 @@ agGlobalParam:
     agHost: localhost
     datapoint: staff_import_address_standard
     value: us standard
+  create_edge_table_values:
+    id: 26
+    agHost: localhost
+    datapoint: create_edge_table_values
+    value: 0
+  staff_import_geo_source:
+    id: 27
+    agHost: localhost
+    datapoint: staff_import_geo_source
+    value: import
+  default_event_status_type:
+    id: 28
+    agHost: localhost
+    datapoint: default_event_status_type
+    value: Pre-Deployment
+  default_event_staff_status:
+    id: 29
+    agHost: localhost
+    datapoint: default_event_staff_status
+    value: unknown
+  event_staff_available_status:
+    id: 30
+    agHost: localhost
+    datapoint: event_staff_available_status
+    value: available
+  default_phone_country_code_usa:
+    id: 31
+    agHost: localhost
+    datapoint: default_phone_country_code_usa
+    value: 1
+  default_facility_address_types:
+    id: 32
+    agHost: localhost
+    datapoint: default_facility_address_types
+    value: '<?php echo json_encode(array("work")); ?>'
+  default_facility_email_types:
+    id: 33
+    agHost: localhost
+    datapoint: default_facility_email_types
+    value: '<?php echo json_encode(array("work", "other")); ?>'
+  default_facility_phone_types:
+    id: 34
+    agHost: localhost
+    datapoint: default_facility_phone_types
+    value: '<?php echo json_encode(array("work", "other")); ?>'
+  default_list_page_size:
+    id: 35
+    agHost: localhost
+    datapoint: default_list_page_size
+    value: 20
+  event_staff_unavailable_status:
+    id: 36
+    agHost: localhost
+    datapoint: event_staff_unavailable_status
+    value: unavailable
+  staff_disabled_status:
+    id: 37
+    agHost: localhost
+    datapoint: staff_disabled_status
+    value: inactive

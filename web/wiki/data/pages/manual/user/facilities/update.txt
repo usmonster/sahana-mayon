@@ -1,15 +1,51 @@
 ====== Facility Management Walk-Through ======
 
 ===== Updating a Facility Record =====
-
+For scenarios to be current and deployment reliable it's important that records can be updated regularly.  There are two ways to update Facility records: manually and via import.  Below are instructions for manually updating a facility record; updating via import will be covered later in this tutorial.
 ===== Reference Information =====
-
+==== Things To Know ====
+  * By now you know that a Facility Resource is the combination of a physical location (facility) in Sahana Agasti and the Resource that is available at that facility in a response.  To ensure staff is deployed to accurate locations it's important to keep facility records up to date.
 ===== Walk-Through =====
+Beginning on the Facility Management page click the List Facilities link to view facility records in Sahana Agasti:
+
+{{:manual:user:facilities:list_facility_link.png?500|Click the List Facility link}}
+
+On the Facility List click the number of the facility to be edited:
+{{:manual:user:facilities:click_facility_link_button.png|Click the ID number to view the facility}}
+
+<<<Place holder for Facility View page>>>
+
+To edit the record click {{:manual:user:facilities:edit_button.png|Edit}}.
+
+For ease of reference, the different sections and possible updates are outlined in the breakdowns below:
+==== Facility Name and Facility Code ====
+{{:manual:user:facilities:fac_name_fac_res.png|Facility Name and Facility Resource}}
+=== Facility Name ===
+Facility Name is used as a label for the user, but not considered "unique" or used as an identifier in Sahana Agasti.  It can be updated as much as is desired by the user.
+
+=== Facility Code ===
+The Facility Code is the unique identifier of the Facility record in Sahana Agasti.  **Important:** Facility Code __must__ be unique to each facility.  Updating the Facility Code, or changing it on import, can cause problems with deployment and duplication.
+
+==== Facility Resources ====
+
+=== Editing Facility Resources ===
+To edit a facility resource, update the information and click "Save" at the bottom of the page.
+
+=== Deleting Facility Resources ===
+To delete a Facility Resource remove it from the form and click "Save".
+^ Before Editing ^ After Editing ^ 
+| {{:manual:user:facilities:fac_resources.png?350|Before Edit }} | {{ :manual:user:facilities:fac_res_after.png?350|After Edit}} |
+
+
+==== Facility Contact Information ====
+<<<Place holder for fac contact information>>>
+
 
 ===== FAQ =====
 
+<<<hmmm....??>>>
 ====== Continue ======
-[[manual:user:facilities:import|{{ :manual:user:next.png|Import}}]] 
+[[manual:user:facilities:review|{{ :manual:user:next.png|Import}}]] 
 [[manual:user:facilities:create|{{:manual:user:previous.png?135|Create }}]]
 
 ====== Jump to Another Step ======
@@ -18,6 +54,4 @@
   - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
   - [[manual:user:facilities:create|Create Facility]]
   - **Update Facility**
-  - [[manual:user:facilities:import|Import Facility]]
-  - [[manual:user:facilities:export|Export Facility]]
   - [[manual:user:facilities:review|Facility Management Review]]

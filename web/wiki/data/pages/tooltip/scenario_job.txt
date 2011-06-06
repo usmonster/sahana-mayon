@@ -1,0 +1,1 @@
+Select the job staff in these shifts will be assigned to.

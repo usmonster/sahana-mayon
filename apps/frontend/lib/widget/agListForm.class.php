@@ -43,7 +43,7 @@ class agListForm
     foreach ($pager->getResults() as $result) {
 
       $listbody .='<tr>
-          <td><a class=linkButton href="' . url_for('foo/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
+          <td><a class=continueButton href="' . url_for('foo/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
       $listbody .='<td>' . $result->getFoo() . '</td>';
       $listbody .='<td>' . $result->getBar() . '</td>';
       $listbody .='<td>';
@@ -57,7 +57,7 @@ class agListForm
 
       <br>
       <div>';
-    $listbody .= '<a href="' . url_for('foo/new') . '" class="linkButton" title="Create New Foo">Create New</a>
+    $listbody .= '<a href="' . url_for('foo/new') . '" class="continueButton" title="Create New Foo">Create New</a>
         </div>';
 
     $listfoot = '<div class="floatRight">';
@@ -115,7 +115,7 @@ class agListForm
     foreach ($pager->getResults() as $result) {
 
       $listbody .='<tr>
-          <td><a class=linkButton href="' . url_for('facility/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
+          <td><a class=continueButton href="' . url_for('facility/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
       $listbody .='<td>' . $result->getFacilityCode() . '</td>';
       $listbody .='<td>' . $result->getFacilityName() . '</td>';
 
@@ -135,7 +135,7 @@ class agListForm
 
       <br>
       <div>';
-    $listbody .= '<a href="' . url_for('facility/new') . '" class="linkButton" title="Create New Facility">Create New</a>
+    $listbody .= '<a href="' . url_for('facility/new') . '" class="continueButton" title="Create New Facility">Create New</a>
         </div>';
 
     $listfoot = '<div class="floatRight">';
@@ -175,7 +175,7 @@ class agListForm
 
 
     $listbody = '<table class="staffTable">';
-    $listbody .= '<caption>Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
+    $listbody .= '<caption>List Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
     $listbody .= '<thead>
     <tr class="head">';
     foreach ($columns as $column => $columnCaption) {
@@ -194,7 +194,7 @@ class agListForm
     foreach ($pager->getResults() as $result) {
 
       $listbody .='<tr>
-          <td><a class=linkButton href="' . url_for('facility/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
+          <td><a class=continueButton href="' . url_for('facility/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
       //$listbody .='<td>' . $result->getFacilityCode() . '</td>';
       $listbody .='<td>' . $result->getFacilityName() . '</td>';
 
@@ -232,7 +232,7 @@ class agListForm
 
       <br>
       <div>';
-    $listbody .= '<a href="' . url_for('facility/new') . '" class="linkButton" title="Create New Facility">Create New</a>
+    $listbody .= '<a href="' . url_for('facility/new') . '" class="continueButton" title="Create New Facility">Create New</a>
         </div>';
 
     $listfoot = '<div class="floatRight">';

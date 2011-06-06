@@ -1,0 +1,7 @@
+===== Staff Pool =====
+
+The staff pool for a scenario is built from saved searches combining the type of resource a staff record contains and the associated organizations.
+
+You can search by staff type, organization, both, or neither.
+
+**To obtain all staff leave both drop downs set to the empty option.**

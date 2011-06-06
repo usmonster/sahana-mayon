@@ -1,16 +1,15 @@
-<h3>Event Shifts for <?php echo $event_name ?></h3>
+<h2>Event Shifts for <span class="highlightedText"><?php echo $event_name ?></span></h2>
 
-<?php #include_partial('scenarioshiftform', array('scenarioshiftform' => $scenarioshiftform, 'myRandomParam' => $myRandomParam, 'outputResults' => $outputResults)) ?>
 <?php
-  //Defines the columns of the scenario shift display list page.
-  $columns = array(
+  //Defines the columns of the event shift display list page.
+
+$columns = array(
     'id' => array('title' => 'Id', 'sortable' => false),
-    'eventFacilityGroup' => array('title' => 'facility group', 'sortable' => false),
-    'eventFacilityResource' => array('title' => 'facility resource', 'sortable' => false),
-    'staffResourceType' =>  array('title' => 'staff resource type', 'sortable' => false),
-    'start_time' =>  array('title' => 'start', 'sortable' => false),
-    'end_time' =>  array('title' => 'end', 'sortable' => false),
-    'committed_staff' =>  array('title' => 'committed staff', 'sortable' => false)
+    'eventFacilityGroup' => array('title' => 'Facility Group', 'sortable' => false),
+    'eventFacilityResource' => array('title' => 'Staff Resource Type /<br/>Facility Resource', 'sortable' => false),
+    'start_time' =>  array('title' => 'Start', 'sortable' => false),
+    'end_time' =>  array('title' => 'End', 'sortable' => false),
+    'committed_staff' =>  array('title' => 'Committed Staff', 'sortable' => false)
   );
 
   $thisUrl = url_for('event/shifts?event=' . $event_name);
@@ -39,12 +38,38 @@
     <?php $recordRowNumber = $pager->getFirstIndice(); ?>
     <?php foreach ($pager->getResults() as $ag_event_shift): ?>
     <tr>
-      <td><a class=linkButton href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) . '/' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+      <td><a class=continueButton href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) . '/' . $ag_event_shift->getId() ?>" title="View event Shift <?php echo $ag_event_shift->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
       <td><?php echo $ag_event_shift->getAgEventFacilityResource()->getAgEventFacilityGroup()->getEventFacilityGroup() ?></td>
-      <td><?php echo $ag_event_shift->getAgEventFacilityResource()->getAgFacilityResource();//->getAgEventFacilityResource(); ?></td>
-      <td><?php echo $ag_event_shift->getAgStaffResourceType()->getStaffResourceType(); ?></td>
-      <td><?php echo 'do some math'; //$ag_event_shift->getStartTime(); ?></td>
-      <td><?php echo 'do some math'; //$ag_event_shift->getEndTime(); ?></td>
+      <td><?php echo $ag_event_shift->getAgStaffResourceType()->getStaffResourceType() . ' / <br />' . 
+            $ag_event_shift->getAgEventFacilityResource()->getAgFacilityResource();
+            ?>
+      </td>
+      
+      <?php
+      if(!$ag_event_shift->getAgEventFacilityResource()->getAgEventFacilityResourceActivationTime()){
+        $startTime = $ag_event_shift->getAgEvent()->getZeroHour() +
+            
+            $ag_event_shift['minutes_start_to_facility_activation'];
+        
+        $endTime = $ag_event_shift->getAgEvent()->getZeroHour() - 
+            $ag_event_shift['minutes_start_to_facility_activation'];
+
+      }
+      else{
+        $startTime = $ag_event_shift->getAgEvent()->getZeroHour() +
+        $startTime = $ag_event_shift->getAgEventFacilityResource()->getAgEventFacilityResourceActivationTime()
+            - $ag_event_shift['minutes_start_to_facility_activation'];
+
+        
+        $endTime = $ag_event_shift->getAgEventFacilityResource()->getAgEventFacilityResourceActivationTime()
+            - $ag_event_shift['minutes_start_to_facility_activation'];
+        
+      }
+      
+      
+        ?>
+      <td><?php echo $startTime; //$ag_event_shift->getStartTime(); ?></td>
+      <td><?php echo $endTime; //$ag_event_shift->getEndTime(); ?></td>
       <td><?php echo count($ag_event_shift->getAgStaffEvent()); ?></td>
     </tr>
     <?php endforeach; ?>
@@ -53,14 +78,12 @@
 
 <br>
 <div>
-  <a href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) ?>/new" class="linkButton" title="Create New Scenario Shift">Create New Event Shift</a>
+  <a href="<?php echo url_for('event/shifts?event=' . urlencode($event_name)) ?>/new" class="continueButton" title="Create New Scenario Shift">Create New Event Shift</a>
 
 </div>
 
 <div class="rightFloat" >
   <?php
-
-//
 //First Page link (or inactive if we're at the first page).
     echo(!$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
 //Previous Page link (or inactive if we're at the first page).

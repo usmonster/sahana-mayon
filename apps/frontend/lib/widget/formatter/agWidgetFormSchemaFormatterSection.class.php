@@ -29,6 +29,5 @@ class agWidgetFormSchemaFormatterSection extends sfWidgetFormSchemaFormatter
     $errorRowFormat  = "<span>\n%errors%<span>\n",
     $helpFormat      = '<br />%help%',
     $decoratorFormat = "<div>\n  %content%</div>";
-
 }
 

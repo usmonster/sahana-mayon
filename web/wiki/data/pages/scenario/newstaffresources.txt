@@ -1,29 +1,52 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Walk-through (shifttemplates) ======
 
 ===== Shift Templates =====
+To keep facilities running shifts that define tasks, times, locations, and personnel requirements. These shifts are rarely consistent; according to the needs of the user, shifts may repeat several times in response to a theoretical event, staff may be released, and shifts may be incompatible between different staff types. To create shifts for an emergency event, Sahana Agasti utilizes a template system that enables emergency managers to define a basic shift that will act as a template for automatic shift generation.
 
 ===== Reference Information =====
 
+==== How Shift Templates Work ====
+A shift templates define what facility and staff resources it applies to, time elements that affect the facility and that staff type, and the number of times that shift information will repeat for individual staff persons as well as for the duration of the facility operation.  This governing information is used to generate shifts for all facilities throughout the scenario, ensuring the scenario is properly staffed.
+
+==== Important Concepts ====
+  * **Time is relative in a scenario.** As noted in the introduction, scenarios are plans that operate on relative time. Shifts are relative to their facility's activation. The facility group and facility resource statuses set during the facility group creation process determine the status of the facility upon the emergence of an event. When a facility is manually or automatically brought online, its shifts use the activation time as a basis and apply the relative time set here.
 
 ===== Walk-Through =====
-
+{{:scenario:shifttemplates.png?700|Enter Shift Information}}
+  - Select the Staff Resource Type and Facility Resource Type for your first template.
+  - Enter the number of day this Facility Resource is expected to operate.
+  - Enter the number of Consecutive Staff Shifts. This is the number of shifts a staff member can work before being relieved and released from work.
+  - Select the Shift Status.  If you would like to have staff standing by in the event some active staff do not respond make two shifts for this combination: one active and one stand by.
+    - **Active** - When the facility comes on line this shift will be activated.
+    - **Standby** - When the facility comes on line this staff will be held in stand-by.
+    - **Inactive** - When the facility comes on line this staff will not be available in the facility.
+  - Select the job the staff will be assigned to.
+  - Select the deployment method (currently unused; defaults to all staff).
+  - Set the time before or after zero hour the first shift will start.  This represents the amount of time before or after the occurance of the emergency event (such as hurricane land fall) staff should start working.
+  - Set the task length, the length of time a staff person will be actively performing emergency response duties
+  - Set the break length, the length of time following the completion of a person's shift that is used for rest and recovery. It is especially important in scenarios where staff are asked to work consecutive shifts.
 
 ===== FAQ =====
-
+  * **Why use templates?  Why not define shifts individually?** - Sahana Agasti uses templates instead of manual creation with one purpose in mind: scale. If one considers a scenario with fifty facilities that operate on eight hour shifts for ten days, that alone would generate over fifteen hundred individual shifts! The shift template system allow emergency managers to avoid dealing with the nuts and bolts of manual shift creation, and instead focus on designing powerful and effective emergency response plans.
 
 ====== Continue ======
 
-[[scenario:scenarioshiftlist|{{ :manual:user:next.png|}}]] 
-[[scenario:staffresources|{{:manual:user:previous.png?135 }}]]
+[[scenario:scenarioshiftlist|{{ :manual:user:next.png?135|Scenario Shift List}}]] 
+[[scenario:staffresources|{{:manual:user:previous.png?135|Staff Pool }}]]
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:walkthrough|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
-  - [[scenario:new|Create A Scenario]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
   - [[scenario:newgroup| Create Facility Groups]]
   - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - **Create Shift Templates**
-  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

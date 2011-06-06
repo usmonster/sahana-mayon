@@ -1,0 +1,138 @@
+agScenarioFacilityGroup:
+# Hurricane A
+  hurrA_uorc:
+    agScenario: hurricaneA
+    scenario_facility_group: ScenA_UORC
+    agFacilityGroupType: uorc
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  hurrA_G01:
+    agScenario: hurricaneA
+    scenario_facility_group: ScenA_G01
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: allocatable
+    activation_sequence: 1
+  hurrA_G02:
+    agScenario: hurricaneA
+    scenario_facility_group: ScenA_G02
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 2
+  hurrA_G03:
+    agScenario: hurricaneA
+    scenario_facility_group: ScenA_G03
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: standby
+    activation_sequence: 3
+# Hurricane B
+  hurrB_uorc:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_UORC
+    agFacilityGroupType: uorc
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  hurrB_G01:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_G01
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  hurrB_G02:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_G02
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 2
+  hurrB_G03:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_G03
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 3
+  hurrB_G04:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_G04
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 3
+  hurrB_G05:
+    agScenario: hurricaneB
+    scenario_facility_group: ScenB_G05
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: standby
+    activation_sequence: 4
+# Hurricane C
+  hurrC_uorc:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_UORC
+    agFacilityGroupType: uorc
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  hurrC_G01:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G01
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  hurrC_G02:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G02
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  hurrC_G03:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G03
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  hurrC_G04:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G04
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 3
+  hurrC_G05:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G05
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: standby
+    activation_sequence: 4
+  hurrC_G06:
+    agScenario: hurricaneC
+    scenario_facility_group: ScenC_G06
+    agFacilityGroupType: solar
+    agFacilityGroupAllocationStatus: standby
+    activation_sequence: 4
+# earthquake
+  equake_G01:
+    agScenario: earthquake
+    scenario_facility_group: Shelters01
+    agFacilityGroupType: shelters
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  equake_G02:
+    agScenario: earthquake
+    scenario_facility_group: Shelters02
+    agFacilityGroupType: shelters
+    agFacilityGroupAllocationStatus: standby
+    activation_sequence: 2
+  equake_G03:
+    agScenario: earthquake
+    scenario_facility_group: Medical01
+    agFacilityGroupType: shelters
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+# plaque
+  plague_G01:
+    agScenario: plague
+    scenario_facility_group: POD01
+    agFacilityGroupType: pod
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 1
+  plague_G02:
+    agScenario: plague
+    scenario_facility_group: POD02
+    agFacilityGroupType: pod
+    agFacilityGroupAllocationStatus: active
+    activation_sequence: 2

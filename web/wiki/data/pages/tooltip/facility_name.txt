@@ -1,0 +1,3 @@
+===== Naming Facilities =====
+
+The Facility Name should be the common name used to reference the facility.  This does not have to be unique for Sahana Agasti; but could be confusing for the user if it is not unique.

@@ -2,6 +2,7 @@
 # http://www.symfony-project.org/reference/1_4/en/10-Routing
 
 # default rules
+#TODO: Utilize route collections here! -UA
 homepage:
   url:   /
   param: { module: home, action: index }
@@ -29,6 +30,10 @@ about:
 facility_import:
   url:  /facility/import
   param: { module: facility, action: import }
+
+facility_poll:
+  url:  /facility/poll
+  param: { module: facility, action: poll }
 
 api_facility:
   url:     /facility/facilities.:sf_format
@@ -78,6 +83,11 @@ scenario_search:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action search }
 
+scenario_fgroup_delete:
+  url:     /scenario/facilityGroupDelete/:groupId
+  options: { model: agScenario, typeL object }
+  param:   { module: scenario, action: facilityGroupDelete }
+  
 scenario_fgroup_edit:
   url:     /scenario/:id/fgroup/:groupid
   options: { model: agScenario, type: object }
@@ -123,6 +133,16 @@ scenario_facility_group:
   options: { model: agScenario, type: object }
   param:   { module: scenario, action: listgroup }
 
+scenario_facility_export:
+  url:     /scenario/facilityexport/:id
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: facilityexport }
+
+scenario_facility_import:
+  url:     /scenario/facilityimport/:id
+  options: { model: agScenario, type: object }
+  param:   { module: scenario, action: facilityimport }
+
 sf_guard_signin:
   url:   /login
   param: { module: sfGuardAuth, action: signin }
@@ -140,6 +160,24 @@ respond:
   param: { module: home, action: respond }
 wiki:
   url:  /wiki
+
+status:
+  url:  /status.:sf_format
+  param: { module: admin, action: status, sf_format: html }
+  requirements:
+    sf_method: [get]
+    sf_format: (?:html|json)
+
+status_module:
+  url:  /:module/status.:sf_format
+  param: { action: status, sf_format: html }
+  requirements:
+    sf_method: [get]
+    sf_format: (?:html|json)
+
+eventpoll:
+  url:  /eventpoll
+  param: { module: global, action: eventpoll}
 
 # Keep these two at the bottom to aid in the addition of new routes.
 default:

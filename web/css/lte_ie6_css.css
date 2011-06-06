@@ -1,1 +1,9 @@
 ul.menu ul ul {position: absolute;left:93%;top:0px;}
+.footer_logo2 {
+ filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='../images/logo.png');
+    background:none;
+}
+.footer_logo1 {
+ filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='../images/agasti_logo.png');
+    background:none;
+}

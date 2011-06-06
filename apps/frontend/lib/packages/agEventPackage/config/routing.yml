@@ -82,3 +82,26 @@ event_fac_res_table:
 event_facility_group:
   url:    /event/eventfacilitygroup
   param:  { module: event, action: eventfacilitygroup }
+
+event_messaging:
+  url:    /event/:event/messaging
+  param:  { module: event, action: messaging }
+
+event_deploystaff:
+  url:    /event/:event/deploystaff
+  param:  { module: event, action: deploystaff }
+
+event_exportcontacts:
+  url:    /event/:event/exportcontacts
+  param:  { module: event, action: exportcontacts }
+
+api_event_exportfacilities:
+  url:    /event/:event/exportfacilities.:sf_format
+  param:  { module: event, action: exportfacilities, sf_format: json }
+  requirements:
+    sf_method: [get]
+    sf_format: (?:html|json)
+
+event_importreplies:
+  url:    /event/:event/importreplies
+  param:  { module: event, action: importreplies }

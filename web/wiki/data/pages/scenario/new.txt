@@ -2,9 +2,8 @@
 
 ===== Scenario Creation =====
 
-**What it does:**
-
-Scenarios are generic.  A few examples of a scenario title are "**Volcano Plan**", "**Earthquake Response**", or "**Tsunami Evacuation Level 1**" and "**Tsunami Evacuation Level 2**".  Later on, when an event is deployed as a scenario, the Event is given a specific name such as "Hurricane Earl" or "1999 Earthquake".  Scenarios can be built to be pre-Zero Hour sheltering or post-Zero Hour response; but more on that later.
+==== What it Does ====
+Scenarios are generic plans.  A few examples of a scenario title are "**Volcano Plan**", "**Earthquake Response**", or "**Tsunami Evacuation Level 1**" and "**Tsunami Evacuation Level 2**".  Later on, when an event is deployed as a scenario, the Event is given a specific name such as "Hurricane Earl" or "1999 Earthquake".  Scenarios can be built to be pre-Zero Hour sheltering or post-Zero Hour response; but more on that later.
 ===== Reference Information =====
 
 ==== Things To Know ====
@@ -13,11 +12,10 @@ Scenarios are generic.  A few examples of a scenario title are "**Volcano Plan**
   * Scenarios are stand-alone and all information in a scenario is specific to that scenario.  If you have multiple preparedness strategies that will be managed in Agasti you'll want to construct a scenario for each of them.
 ===== Walk-Through =====
 
-{{:scenario:new.png?900}}
+{{:scenario:name.png?700|Name and Describe}}
 
-Use the **Name** field to title your scenario.  The name should be generic to the type of response you might deploy for a specific event.
-
-Use the **Description** field to expand upon the name label.  
+  - Use the **Name** field to title your scenario.  The name should be generic to the type of response you might deploy for a specific event.
+  - Use the **Description** field to expand upon the name label.  
 
 **Note:** Only the name field is required.
 
@@ -25,20 +23,25 @@ When you've added a name and description click "Save and Continue" and then clic
 ===== FAQ =====
 
   - **Can I update the name and description later?** Yes, you can always edit a scenario from the Scenario List (reachable by visiting the Scenario Management page and clicking “List Scenarios").
-  - **What is the difference between a scenario and an event?** - A scenario is a plan and all details in a scenario are relative, such as relative times to a zero hour that hasn't been set yet.  An event is a specific response and all the relative elements from the scenario that an event is based upon become specific; to keep with the time example, at the start of an event you will set zero hour to be a specific date and time.
+  - **What is the difference between a scenario and an event?** - A scenario is a plan and all details in a scenario are relative, such as who could make up your available staff pool.  An event is a specific response and all the relative elements from the scenario that an event is based upon become specific; such as responding staff confirming that they are available when an event it built.
 ====== Continue ======
 
-[[scenario:newgroup|{{ :manual:user:next.png|}}]] 
-[[scenario:pre|{{:manual:user:previous.png?135 }}]]
+[[scenario:resources|{{ :manual:user:next.png?135|Select Resources}}]] 
+[[scenario:pre|{{:manual:user:previous.png?135|Pre-Scenario Information }}]]
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:walkthrough|Introduction]]  
   - [[scenario:pre|Pre Scenario Creation]]
-  - **Create A Scenario**
+  - **Name and Describe**
+  - [[scenario:resources|Select Resources]]
   - [[scenario:newgroup| Create Facility Groups]]
   - [[scenario:staffresources| Set Staff Resource Requirements]]
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:shift| Generate and Verify Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:deployevent| Deploying an Event]]

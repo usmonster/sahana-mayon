@@ -37,7 +37,7 @@ $('input:checkbox:checked').each(function(index) {
   ?>
 <tr>
   <td>
-    <input class="linkButton" type="submit" value="Update" id="selecter" onclick="pacTran()"/>
+    <input class="continueButton" type="submit" value="Update" id="selecter" onclick="pacTran()"/>
   </td>
 </tr>
 

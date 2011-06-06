@@ -1,0 +1,8 @@
+===== Facility Group Status =====
+
+At the time of activation a facility group can be in different statuses to organization activation:
+  * **Available** - Could be activated and used for deployment.
+  * **Standby** - Standing by for activation.
+  * **Active** - Active and in use.
+  * **Closed** - Closed.  No longer available.
+  * **Unavailable** - Unavailable for some reason.

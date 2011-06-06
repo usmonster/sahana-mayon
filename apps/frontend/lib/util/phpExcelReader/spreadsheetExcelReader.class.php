@@ -39,7 +39,7 @@
  * send a note to license@php.net so we can mail you a copy immediately.
  *
  * @category   Spreadsheet
- * @package	Spreadsheet_Excel_Reader
+ * @package	spreadsheetExcelReader
  * @author	 Vadim Tkachenko <vt@apachephp.com>
  * @license	http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version	CVS: $Id: reader.php 19 2007-03-13 12:42:41Z shangxiao $
@@ -112,7 +112,8 @@ class spreadsheetExcelReader extends phpExcelReader
   function val($row, $col, $sheet=0)
   {
     $col = $this->getCol($col);
-    if (array_key_exists($row, $this->sheets[$sheet]['cells']) && array_key_exists($col, $this->sheets[$sheet]['cells'][$row])) {
+    if (array_key_exists($row, $this->sheets[$sheet]['cells']) && array_key_exists($col,
+                                                                                   $this->sheets[$sheet]['cells'][$row])) {
       return $this->sheets[$sheet]['cells'][$row][$col];
     }
     return "";
@@ -838,10 +839,10 @@ class spreadsheetExcelReader extends phpExcelReader
     $pos = 0;
     $data = $this->data;
 
-    $code = v($data, $pos);
-    $length = v($data, $pos + 2);
-    $version = v($data, $pos + 4);
-    $substreamType = v($data, $pos + 6);
+    $code = parent::v($data, $pos);
+    $length = parent::v($data, $pos + 2);
+    $version = parent::v($data, $pos + 4);
+    $substreamType = parent::v($data, $pos + 6);
 
     $this->version = $version;
 
@@ -856,8 +857,8 @@ class spreadsheetExcelReader extends phpExcelReader
 
     $pos += $length + 4;
 
-    $code = v($data, $pos);
-    $length = v($data, $pos + 2);
+    $code = parent::v($data, $pos);
+    $length = parent::v($data, $pos + 2);
 
     while ($code != SPREADSHEET_EXCEL_READER_TYPE_EOF) {
       switch ($code) {
@@ -869,8 +870,8 @@ class spreadsheetExcelReader extends phpExcelReader
           for ($i = 0; $i < $uniqueStrings; $i++) {
             // Read in the number of characters
             if ($spos == $limitpos) {
-              $opcode = v($data, $spos);
-              $conlength = v($data, $spos + 2);
+              $opcode = parent::v($data, $spos);
+              $conlength = parent::v($data, $spos + 2);
               if ($opcode != 0x3c) {
                 return -1;
               }
@@ -889,7 +890,7 @@ class spreadsheetExcelReader extends phpExcelReader
 
             if ($richString) {
               // Read in the crun
-              $formattingRuns = v($data, $spos);
+              $formattingRuns = parent::v($data, $spos);
               $spos += 2;
             }
 
@@ -911,8 +912,8 @@ class spreadsheetExcelReader extends phpExcelReader
               $spos = $limitpos;
 
               while ($charsLeft > 0) {
-                $opcode = v($data, $spos);
-                $conlength = v($data, $spos + 2);
+                $opcode = parent::v($data, $spos);
+                $conlength = parent::v($data, $spos + 2);
                 if ($opcode != 0x3c) {
                   return -1;
                 }
@@ -972,9 +973,9 @@ class spreadsheetExcelReader extends phpExcelReader
         case SPREADSHEET_EXCEL_READER_TYPE_NAME:
           break;
         case SPREADSHEET_EXCEL_READER_TYPE_FORMAT:
-          $indexCode = v($data, $pos + 4);
+          $indexCode = parent::v($data, $pos + 4);
           if ($version == SPREADSHEET_EXCEL_READER_BIFF8) {
-            $numchars = v($data, $pos + 6);
+            $numchars = parent::v($data, $pos + 6);
             if (ord($data[$pos + 8]) == 0) {
               $formatString = substr($data, $pos + 9, $numchars);
             } else {
@@ -987,10 +988,10 @@ class spreadsheetExcelReader extends phpExcelReader
           $this->formatRecords[$indexCode] = $formatString;
           break;
         case SPREADSHEET_EXCEL_READER_TYPE_FONT:
-          $height = v($data, $pos + 4);
-          $option = v($data, $pos + 6);
-          $color = v($data, $pos + 8);
-          $weight = v($data, $pos + 10);
+          $height = parent::v($data, $pos + 4);
+          $option = parent::v($data, $pos + 6);
+          $color = parent::v($data, $pos + 8);
+          $weight = parent::v($data, $pos + 10);
           $under = ord($data[$pos + 14]);
           $font = "";
           // Font name
@@ -1088,7 +1089,8 @@ class spreadsheetExcelReader extends phpExcelReader
                 if (preg_match("/[^hmsday\/\-:\s\\\,AMP]/i", $tmp) == 0) { // found day and time format
                   $isdate = TRUE;
                   $formatstr = $tmp;
-                  $formatstr = str_replace(array('AM/PM', 'mmmm', 'mmm'), array('a', 'F', 'M'), $formatstr);
+                  $formatstr = str_replace(array('AM/PM', 'mmmm', 'mmm'), array('a', 'F', 'M'),
+                                           $formatstr);
                   // m/mm are used for both minutes and months - oh SNAP!
                   // This mess tries to fix for that.
                   // 'm' == minutes only if following h/hh or preceding s/ss
@@ -1101,7 +1103,8 @@ class spreadsheetExcelReader extends phpExcelReader
                   $formatstr = str_replace('mm', 'm', $formatstr);
                   // Convert single 'd' to 'j'
                   $formatstr = preg_replace("/(^|[^d])d([^d]|$)/", '$1j$2', $formatstr);
-                  $formatstr = str_replace(array('dddd', 'ddd', 'dd', 'yyyy', 'yy', 'hh', 'h'), array('l', 'D', 'd', 'Y', 'y', 'H', 'g'), $formatstr);
+                  $formatstr = str_replace(array('dddd', 'ddd', 'dd', 'yyyy', 'yy', 'hh', 'h'),
+                                           array('l', 'D', 'd', 'Y', 'y', 'H', 'g'), $formatstr);
                   $formatstr = preg_replace("/ss?/", 's', $formatstr);
                 }
               }
@@ -1366,7 +1369,8 @@ class spreadsheetExcelReader extends phpExcelReader
         case SPREADSHEET_EXCEL_READER_TYPE_LABEL:
           $row = ord($data[$spos]) | ord($data[$spos + 1]) << 8;
           $column = ord($data[$spos + 2]) | ord($data[$spos + 3]) << 8;
-          $this->addcell($row, $column, substr($data, $spos + 8, ord($data[$spos + 6]) | ord($data[$spos + 7]) << 8));
+          $this->addcell($row, $column,
+                         substr($data, $spos + 8, ord($data[$spos + 6]) | ord($data[$spos + 7]) << 8));
           break;
         case SPREADSHEET_EXCEL_READER_TYPE_EOF:
           $cont = false;
@@ -1474,7 +1478,9 @@ class spreadsheetExcelReader extends phpExcelReader
       $totalseconds -= $secs;
       $hours = floor($totalseconds / (60 * 60));
       $mins = floor($totalseconds / 60) % 60;
-      $string = date($format, mktime($hours, $mins, $secs, $dateinfo["mon"], $dateinfo["mday"], $dateinfo["year"]));
+      $string = date($format,
+                     mktime($hours, $mins, $secs, $dateinfo["mon"], $dateinfo["mday"],
+                            $dateinfo["year"]));
     } else if ($type == 'number') {
       $rectype = 'number';
       $formatted = $this->_format_value($format, $numValue, $formatIndex);
@@ -1525,8 +1531,10 @@ class spreadsheetExcelReader extends phpExcelReader
 
   function addcell($row, $col, $string, $info=null)
   {
-    $this->sheets[$this->sn]['maxrow'] = max($this->sheets[$this->sn]['maxrow'], $row + $this->_rowoffset);
-    $this->sheets[$this->sn]['maxcol'] = max($this->sheets[$this->sn]['maxcol'], $col + $this->_coloffset);
+    $this->sheets[$this->sn]['maxrow'] = max($this->sheets[$this->sn]['maxrow'],
+                                             $row + $this->_rowoffset);
+    $this->sheets[$this->sn]['maxcol'] = max($this->sheets[$this->sn]['maxcol'],
+                                             $col + $this->_coloffset);
     $this->sheets[$this->sn]['cells'][$row + $this->_rowoffset][$col + $this->_coloffset] = $string;
     if ($this->store_extended_info && $info) {
       foreach ($info as $key => $val) {
@@ -1568,7 +1576,8 @@ class spreadsheetExcelReader extends phpExcelReader
       switch ($this->_encoderFunction) {
         case 'iconv' : $result = iconv('UTF-16LE', $this->_defaultEncoding, $string);
           break;
-        case 'mb_convert_encoding' : $result = mb_convert_encoding($string, $this->_defaultEncoding, 'UTF-16LE');
+        case 'mb_convert_encoding' : $result = mb_convert_encoding($string, $this->_defaultEncoding,
+                                                                   'UTF-16LE');
           break;
       }
     }
@@ -1583,4 +1592,5 @@ class spreadsheetExcelReader extends phpExcelReader
     }
     return $value;
   }
+
 }

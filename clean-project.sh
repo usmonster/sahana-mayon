@@ -8,7 +8,7 @@ set -x
 set -e
 
 # Tries to infer the web user from a running Apache instance
-WEB_USER=$(ps axho user,comm|grep -E "httpd|apache"|uniq|awk 'END {print $1}')
+WEB_USER=$(ps axho user,comm|grep -E "httpd|apache"|uniq|grep -v "root"|awk 'END {print $1}')
 WEB_GROUP=$WEB_USER
 
 # This will drop your database, your data, and recreate everything anew
@@ -33,12 +33,24 @@ rm -rf $PROJECT_ROOT/lib/filter/doctrine/ag*
 # clears the cache
 $PROJECT_ROOT/symfony cc
 
+# purges the logs
+#$PROJECT_ROOT/symfony log:clear
+# instead:
+
+# rotates the logs
+$PROJECT_ROOT/symfony log:rotate --period=1 --history=8 frontend all
+
 # removes search index files to avoid pollution from previous installs
 sudo rm -rf $PROJECT_ROOT/data/search/*
 
-# resets file and directory perms (NOTE: chmod does NOT recurse in this case)
-sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
-chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/
+# removes any leftover uploaded files
+sudo rm -rf $PROJECT_ROOT/data/uploads/*
+
+# resets file and directory perms
+sudo chgrp -R $WEB_GROUP $PROJECT_ROOT/cache/ $PROJECT_ROOT/log/ $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/data/uploads/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/data/ $PROJECT_ROOT/web/wiki/lib/plugins/dw2pdf/mpdf/tmp/
+sudo chmod -cR g+wr $PROJECT_ROOT/data/search/ $PROJECT_ROOT/data/uploads/ $PROJECT_ROOT/web/wiki/data/
+# NOTE: chmod should NOT recurse for these, for security's sake:
+chmod -c g+wr $PROJECT_ROOT/config/ $PROJECT_ROOT/apps/*/config/ $PROJECT_ROOT/data/sql/ $PROJECT_ROOT/web/wiki/conf/ $PROJECT_ROOT/web/wiki/lib/plugins/dw2pdf/mpdf/tmp/
 #considered harmful?:
 #sudo $PROJECT_ROOT/symfony project:permissions
 
@@ -56,7 +68,8 @@ $PROJECT_ROOT/symfony doctrine:build-forms
 $PROJECT_ROOT/symfony doctrine:build-filters
 
 # loads sample data and fixtures from the yml files in the data directory
-sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load 
+sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load data/fixtures data/samples
 
 #indexes the data loaded so it is searchable to the user
 sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenario agStaff agFacility agScenarioFacilityGroup
+

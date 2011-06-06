@@ -3,13 +3,11 @@
 <p> Here you can tweak the staff resource pools you have defined in the planning phase. </p>
 
 <form action="<?php echo url_for($form_action) ?>" method="get" name="filter">
-<input type="submit" value="Filter By:" class="linkButton">
+<input type="submit" value="Filter By:" class="continueButton">
     <?php echo $filterForm ?> <!-- onChange: filter. -->
 </form>
 <br />
 <h3>Current Event Staff Members, <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event_name . '</span> Event' : ' for all Events'); ?></h3>
-
-
 
 <?php
 $displayColumns = array(

@@ -5,6 +5,7 @@ $descArrow = '&#x25BC;';
 ($status != 'active') ? $statusAppend = '?status=' . $status : $statusAppend = '?status=active';
 ($sort != null) ? $sortAppend = '&sort=' . $sort : $sortAppend = '';
 ($order != null) ? $orderAppend = '&order=' . $order : $orderAppend = '';
+($limit != null) ? $limitAppend = '&limit=' . $limit : $limitAppend = '';
 
 if (!(isset($caption)))
   $caption = 'List';
@@ -71,7 +72,13 @@ if (!(isset($caption)))
         <td colspan=<?php echo count($displayColumns) + 1 ?>>
         <?php
         // Output the current staff members being shown, as well total number in the list.
-        echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count();
+        // The if prevents getting a 1-0 display indicator if there is an empty list.
+        if($pager->count() == 0) {
+          $firstIndice = 0;
+        } else {
+          $firstIndice = $pager->getFirstIndice();
+        }
+        echo $firstIndice . "-" . $pager->getLastIndice() . " of " . $pager->count();
         ?>
       </td>
     </tr>

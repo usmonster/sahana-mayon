@@ -9,7 +9,7 @@ $data = $obj;
     // TODO fix the below to take in the module for show or edit action appendagism
     echo url_for($target_module . '/show?id=' . $data['id']); ?>"
        title="View Sc... <?php echo $data['id']; ?>"
-       class="linkButton"></a>
+       class="continueButton"></a>
   </td>
   <?php foreach ($data as $column => $value) {
  ?>

@@ -1,16 +1,16 @@
 agShiftStatus:
   active:
-    shift_status: active
+    shift_status: Active
     description: Active shifts.
     standby: 0
     disabled: 0
   standby:
-    shift_status: standby
+    shift_status: Standby
     description: Standby shifts.
     standby: 1
     disabled: 0
   inactive:
-    shift_status: inactive
+    shift_status: Inactive
     description: Inactive shifts.
     standby: 0
     disabled: 1

@@ -57,9 +57,11 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
    */
   public function setup()
   {
+      sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+      $this->wikiUrl = url_for('@wiki');
       //get default staff resource types for this scenario
       $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
-      if (count($dsrt) > 1) {
+      if (count($dsrt) > 0) {
         $defaultStaffResourceTypes = $dsrt;
       } else {
         $defaultStaffResourceTypes =
@@ -73,7 +75,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
       }
       //get default facility resource types for this scenario
       $dfrt = agScenarioResourceHelper::returnDefaulFacilityResourceTypes($this->scenario_id);
-      if (count($dfrt) > 1) {
+      if (count($dfrt) > 0) {
         $defaultFacilityResourceTypes = $dfrt;
       } else {
         $defaultFacilityResourceTypes =
@@ -86,20 +88,14 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
       foreach($defaultFacilityResourceTypes as $dfrt){
         $defaultFacilityTypes[$dfrt['frt_id']] = $dfrt['frt_facility_resource_type'];
       }
-
-
-
-
-
     
     $this->setWidgets(
         array(
           'id' => new sfWidgetFormInputHidden(),
           //'shift_template' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
           //'description' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-          'scenario_id' => new sfWidgetFormInputHidden(),
+          'scenario_id' => new sfWidgetFormInputHidden,
 
-          
           'facility_resource_type_id' =>
           new sfWidgetFormChoice(array('choices' => $defaultFacilityTypes),
               array('label' => 'Facility Resource Type','class' => 'filter')
@@ -115,7 +111,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           ,
           'staff_resource_type_id' =>
           new sfWidgetFormChoice(array('choices' => $defaultStaffTypes),
-              array('label' => 'Staff Resource Type','class' => 'filter')
+              array('label' => 'Staff Resource Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_resources&do=export_xhtmlbody" class="tooltipTrigger" title="Search Name">?</a>','class' => 'filter')
               )
 //          new sfWidgetFormDoctrineChoice(
 //            array(
@@ -128,27 +124,23 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'task_id' => new sfWidgetFormDoctrineChoice(
             array(
               'model' => $this->getRelatedModelName('agTask'),
-              'add_empty' => false, 'method' => 'getTask','label' => 'Job'
+              'add_empty' => false, 'method' => 'getTask','label' => 'Job <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:scenario_job&do=export_xhtmlbody" class="tooltipTrigger" title="Scenario Job">?</a>'
             )
           ),
-          'task_length_minutes' => new sfWidgetFormInputText(
-              array('label'=> 'Shift Length'), array('class' => 'inputGray width30')
-          ),
-          'break_length_minutes' => new sfWidgetFormInputText(
-              array('label' => 'Break Length'), array('class' => 'inputGray width30')
-          ),
-          'minutes_start_to_facility_activation' => new sfWidgetFormInputText(
-              array('label' => 'Shifts Start Time'), array('class' => 'inputGray width30')
-          ),
-          'shift_repeats' => new sfWidgetFormInputText(
-              array('label' => 'Days Facility Open For'), array('class' => 'inputGray width30')
+
+          'task_length_minutes' => new sfWidgetFormInputHidden(),
+          'break_length_minutes' => new sfWidgetFormInputHidden(),
+          'minutes_start_to_facility_activation' => new sfWidgetFormInputHidden(),
+
+          'days_in_operation' => new sfWidgetFormInputText(
+              array('label' => 'Days in Operation <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:days_in_op&do=export_xhtmlbody" class="tooltipTrigger" title="Days in Operation">?</a>'), array('class' => 'inputGray width30')
           ),
           'max_staff_repeat_shifts' => new sfWidgetFormInputText(
-              array('label' => 'Person Shift Repeats'), array('class' => 'inputGray width30')
+              array('label' => 'Consecutive Staff Shifts <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:consecutive_shifts&do=export_xhtmlbody" class="tooltipTrigger" title="Consecutive Staff Shifts">?</a>'), array('class' => 'inputGray width30')
           ),
 
           'shift_status_id' =>         new sfWidgetFormDoctrineChoice(
-            array('label' => 'Shift Status',
+            array('label' => 'Shift Status <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:shift_status&do=export_xhtmlbody" class="tooltipTrigger" title="Shift Status">?</a>',
               'model' => $this->getRelatedModelName('agShiftStatus'),
               'add_empty' => false,
               'method' => 'getShiftStatus',
@@ -158,7 +150,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           ,
           'deployment_algorithm_id' =>         new sfWidgetFormDoctrineChoice(
             array(
-              'label' => 'Deployment Algorithm',
+              'label' => 'Deployment Method <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:deployment_method&do=export_xhtmlbody" class="tooltipTrigger" title="Deployment Method">?</a>',
               'model' => $this->getRelatedModelName('agDeploymentAlgorithm'),
               'add_empty' => false,
               'method' => 'getDeploymentAlgorithm',
@@ -167,17 +159,18 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
 
         )
     );
-    $this->getWidget('task_length_minutes')->setAttribute('size', '8');
-    $this->getWidget('break_length_minutes')->setAttribute('size', '8');
-    $this->getWidget('minutes_start_to_facility_activation')->setAttribute('size', '8');
+    $this->getWidgetSchema()->setLabel('task_length_minutes', false);
+    $this->getWidgetSchema()->setLabel('break_length_minutes', false);
+    $this->getWidgetSchema()->setLabel('minutes_start_to_facility_activation', false);
+    
     $this->getWidget('max_staff_repeat_shifts')->setAttribute('size', '8');
 //    $this->getWidgetSchema()->moveField(
 //        'max_staff_repeat_shifts',
 //        sfWidgetFormSchema::AFTER,
 //        'minutes_start_to_facility_activation'
 //    );
-    $this->getWidget('shift_repeats')->setAttribute('size', '8');
-    $this->getWidget('shift_status_id')->setAttribute('class', 'shifttemplateleft');
+    $this->getWidget('days_in_operation')->setAttribute('size', '8');
+    $this->getWidget('shift_status_id');
 
     $this->setValidators(
         array(
@@ -214,7 +207,7 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'minutes_start_to_facility_activation' => new sfValidatorInteger(
               array('required' => false)
           ),
-          'shift_repeats' => new sfValidatorInteger(array('required' => false)),
+          'days_in_operation' => new sfValidatorInteger(array('required' => false)),
           'max_staff_repeat_shifts' => new sfValidatorInteger(
               array('required' => false)
           ),

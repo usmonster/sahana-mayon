@@ -15,7 +15,6 @@ agLanguage:
     language: Albanian
   amharic:
     language: Amharic
-    app_display: 0
   arabic:
     language: Arabic
   aragonese:
@@ -26,49 +25,88 @@ agLanguage:
   assamese:
     language: Assamese
     app_display: 0
+  ashante:
+    language: Ashante
+  asl:
+    language: American Sign Language
+  assyrian:
+    language: Assyrian
   avaric:
     language: Avaric
     app_display: 0
   avestan:
     language: Avestan
+    app_display: 0
   aymara:
     language: Aymara
     app_display: 0
   azerbaijani:
     language: Azerbaijani
+  azeri:
+    language: Azeri
+  bajuni:
+    language: Bajuni
   bambara:
     language: Bambara
-    app_display: 0
   bashkir:
     language: Bashkir
+    app_display: 0
   basque:
     language: Basque
+  behdini:
+    language: Behdini
   belarusian:
-    language: Bearusian
+    language: Belorussian
   bengali:
     language: Bengali
+  berber:
+    language: Berber
   bihari:
     language: Bihari
+    app_display: 0
   bislama:
     language: Bislama
+    app_display: 0
   bosnian:
     language: Bosnian
+  bravanese:
+    language: Bravanese
   breton:
     language: Breton
+    app_display: 0
   bulgarian:
     language: Bulgarian
   burmese:
     language: Burmese
+    app_display: 0
+  cakchiquel:
+    language: Cakchiquel
+  cambodian:
+    language: Cambodian
+  cantonese:
+    language: Cantonese
   catalan:
     language: Catalan
+  chaldean:
+    language: Chaldean
   chamorro:
     language: Chamoro
+  chaochow:
+    language: Chao-chow
+  chavacano:
+    language: Chavacano
   chechen:
     language: Chechen
+    app_display: 0
   chichewa:
     language: Chichewa
+    app_display: 0
+  chin:
+    language: Chin
   chinese:
     language: Chinese
+  chuukese:
+    language: Chuukese
   chuvash:
     language: Chuvash
     app_display: 0
@@ -77,15 +115,23 @@ agLanguage:
     app_display: 0
   corsican:
     language: Corsican
+    app_display: 0
   cree:
     language: Cree
-    app_display: 0
   croatian:
     language: Croatian
   czech:
     language: Czech
+  dakota:
+    language: Dakota
   danish:
     language: Danish
+  dari:
+    language: Dari
+  danika:
+    language: Danika
+  diula:
+    language: Diula
   divehi:
     language: Divehi
     app_display: 0
@@ -106,63 +152,104 @@ agLanguage:
     app_display: 0
   faroese:
     language: Faroese
+  farsi:
+    language: Farsi
   fijian:
     language: Fijian
   finnish:
     language: Finnish
+  flemish:
+    language: Flemish
   french:
     language: French
+  frenchcanadian:
+    language: French Canadian
   fula:
     language: Fula
+  fulani:
+    language: Fulani
+  fuzhou:
+    language: Fuzhou
+  ga:
+    language: Ga
+  gaddang:
+    language: Gaddang
+  gaelic:
+    language: Gaelic
+  gaelicirish:
+    language: Gaelic-Irish
+  gaelicscots:
+    language: Gaelic-Scots
   galician:
     language: Galician
+    app_display: 0
   georgian:
     language: Georgian
   german:
     language: German
+  gorani:
+    language: Gorani
   greek:
     language: Greek
   guarani:
     language: Guarani
+    app_display: 0
   gujarati:
     language: Gujarati
   haitan:
-    language: Haitan
+    language: Haitan Creole
+  hakka:
+    language: Hakka
+  hakkachina:
+    language: Hakka-china
+  hassaniyya:
+    language: Hassaniyya
   hausa:
     language: Hausa
   hebrew:
     language: Hebrew
   herero:
     language: Herero
+    app_display: 0
   hindi:
     language: Hindi
   hiri_motu:
     language: Hiri Motu
+  hmong:
+    language: Hmong
   hungarian:
     language: Hungarian
-  interlingua:
-    language: Interlingua
+  ibanag:
+    language: Ibanag
+  ibo:
+    language: Ibo
+  icelandic:
+    language: Icelandic
+  ido:
+    language: Ido
+    app_display: 0
+  igbo:
+    language: Igbo
   indonesian:
     language: Indonesian
+    app_display: 0
+  interlingua:
+    language: Interlingua
+    app_display: 0
   interlingue:
     language: Interlingue
     app_display: 0
-  irish:
-    language: Irish
-  igbo:
-    language: Igbo
+  inuktitut:
+    language: Inuktitut
   inupiaq:
     language: Inupiaq
     app_display: 0
-  ido:
-    language: Ido
-  icelandic:
-    language: Icelandic
+  irish:
+    language: Irish
   italian:
     language: Italian
-  inuktitut:
-    language: Inuktitut
-    app_display: 0
+  jakartanese:
+    language: Jakartanese
   japanese:
     language: Japanese
   javanese:
@@ -172,52 +259,87 @@ agLanguage:
     app_display: 0
   kannada:
     language: Kannada
+    app_display: 0
+  kanjobal:
+    language: Kanjobal
   kanuri:
     language: Kanuri
+    app_display: 0
+  karen:
+    language: Karen
   kashmiri:
     language: Kashmiri
   khmer:
     language: Khmer
+    app_display: 0
   kikuyu:
     language: Kikuyu
+  kirundi:
+    language: Kirundi
+    app_display: 0
   kinyarwanda:
     language: Kinyarwanda
-    app_display: 0
   kirghiz:
     language: Kyrgyz
     app_display: 0
+  kirundi:
+    language: Kirundi
   komi:
     language: Komi
+    app_display: 0
   kongo:
     language: Kongo
+    app_display: 0
   korean:
     language: Korean
+    app_display: 0
+  kosoyan:
+    language: Kosoyan
+  kotokoli:
+    language: Kotokoli
+  kpelle:
+    language: Kpelle
+  krio:
+    language: Krio
   kurdish:
     language: Kurdish
+  kurmanji:
+    language: Kurmanji
   kwanyama:
     language: Kwanyama
+    app_display: 0
+  lakota:
+    language: Lakota
+  lao:
+    language: Lao
+    app_display: 0
+  laotian:
+    language: Laotian
+  latvian:
+    language: Latvian
   latin:
     language: Latin
     app_display: 0
-  luxembourgish:
-    language: Luxembourgish
-    app_display: 0
-  luganda:
-    language: Luganda
   limburgish:
     language: Limburgish
+    app_display: 0
   lingala:
     language: Lingala
-  lao:
-    language: Lao
   lithuanian:
     language: Lithuanian
+  luganda:
+    language: Luganda
   luba_katanga:
     language: Luba-Katanga
     app_display: 0
-  manx:
-    language: Manx
-    app_display: 0
+  luo:
+    language: Luo
+  lusoga:
+    language: Lusoga
+  luxembourgeois:
+    language: Luxembourgeois
+  maay:
+    language: Maay
   macedonian:
     language: Macedonian
   malagasy:
@@ -226,32 +348,64 @@ agLanguage:
     language: Malay
   malayaiam:
     language: Malayalam
-    app_display: 0
   maltese:
     language: Maltese
+  malinke:
+    language: Malinke
+  mandarin:
+    language: Mandarin
+  mandigo:
+    language: Mandigo
+  mandinka:
+    language: Mandinka
+  manx:
+    language: Manx
+    app_display: 0
   maori:
     language: Maori
+    app_display: 0
   marathi:
     language: Marathi
   marshallese:
     language: Marshallese
     app_display: 0
+  mien:
+    language: Mien
+  mina:
+    language: Mina
+  mirpuri:
+    language: Mirpuri
+  mixteco:
+    language: Mixteco
+  moldayan:
+    language: Moldayan
   mongolian:
     language: Mongolian
+  montenegrin:
+    language: Montenegrin
   nauru:
     language: Nauru
     app_display: 0
   navajo:
     language: Navajo
+  neopolitan:
+    language: Neopolitan
+  nepali:
+    language: Nepali
+  ngrpidgineng:
+    language: Ngr Pidgin Eng
   norwegian:
     language: Norwegian Bokmal
+    app_display: 0
   north_ndebele:
     language: North Ndebele
     app_display: 0
-  nepali:
-    language: Nepali
+  northern_sami:
+    language: Northern Sami
+    app_display: 0
   ndonga:
     language: Ndonga
+    app_display: 0
   norwegian_nynorsk:
     language: Norwegian Nynorsk
     app_display: 0
@@ -259,76 +413,102 @@ agLanguage:
     language: Norwegian
   nuosu:
     language: Nuosu
-  south_ndebele:
-    language: South Ndebele
     app_display: 0
+  nuer:
+    language: Nuer
   occitan:
     language: Occitan
+    app_display: 0
   ojibwa:
     language: Ojibwa
-  slvaonic:
-    language: Old Church Slavonic
-    app_display: 0
-  oromo:
-    language: Oromo
     app_display: 0
   oriya:
     language: Oriya
     app_display: 0
+  oromo:
+    language: Oromo
   ossetian:
     language: Ossetian
-  panjabi:
-    language: Punjabi
+    app_display: 0
+  pahari:
+    language: Pahari
   pali:
     language: Pali
-  persian:
-    language: Persian
-  polish:
-    language: Polish
   pashto:
     language: Pashto
+  patois:
+    language: Patois
+  persian:
+    language: Persian
+  Pidgin English:
+    language: Pigdin English
+  polish:
+    language: Polish
   portuguese:
     language: Portuguese
-  quechua:
-    language: Quechua
-    app_display: 0
+  portuguesecreo:
+    language: Portuguese Creo
+  pothwari:
+    language: Pothwari
+  punjabi:
+    language: Punjabi
+  putian:
+    language: Putian
+  quichua:
+    language: Quichua
   romansh:
     language: Romansh
-  kirundi:
-    language: Kirundi
+    app_display: 0
   romanian:
     language: Romanian
   russian:
     language: Russian
-  sanskrit:
-    language: Sanskrit
-  sardinian:
-    language: Sardinian
-  sindhi:
-    language: Sindhi
-  northern_sami:
-    language: Northern Sami
-    app_display: 0
   samoan:
     language: Samoan
   sango:
     language: Sango
+  sanskrit:
+    language: Sanskrit
+    app_display: 0
+  sardinian:
+    language: Sardinian
+    app_display: 0
   serbian:
     language: Serbian
   scottish:
-    language: Gaelic
+    language: Scottish
     app_display: 0
+  shanghainese:
+    language: Shanghainese
   shona:
     language: Shona
+  sichuan:
+    language: Sichuan
+  sicilian:
+    language: Sicilian
+  sindhi:
+    language: Sindhi
   sinhala:
     language: Sinhalese
+  slvaonic:
+    language: Old Church Slavonic
     app_display: 0
   slovak:
     language: Slovak
+  slovenian:
+    language: Slovenian
   slovene:
     language: Slovene
+    app_display: 0
   somali:
     language: Somali
+  soninke:
+    language: Soninke
+  sorani:
+    language: Sorani
+  south_ndebele:
+    language: South Ndebele
+    app_display: 0
   southern_sotho:
     language: Southern Sotho
     app_display: 0
@@ -336,14 +516,28 @@ agLanguage:
     language: Spanish
   sundanese:
     language: Sundanese
+  sundanesearabic:
+    language: Sundanese Arabic
+  susu:
+    language: Susu
   swahili:
     language: Swahili
   swati:
     language: Swati
+    app_display: 0
   swedish:
     language: Swedish
+  tagalog:
+    language: Tagalog
+  tahitian:
+    language: Tahitian
+    app_display: 0
+  taiwanese:
+    language: Taiwanese
   tamil:
     language: Tamil
+  tatar:
+    language: Tatar
     app_display: 0
   telugu:
     language: Telugu
@@ -354,27 +548,34 @@ agLanguage:
     language: Thai
   tigrinya:
     language: Tigrinya
+    app_display: 0
   tibetan:
     language: Tibetan
-  turkmen:
-    language: Turkmen
-  tagalog:
-    language: Tagalog
+  tigre:
+    language: Tigre
+  tigrinya:
+    language: Tigrinya
+  toishanese:
+    language: Toishanese
+  tongan:
+    language: Tongan
+  toucouleur:
+    language: Toucouleur
+  tshiluba:
+    language: Tshiluba
+  tsonga:
+    language: Tsonga
     app_display: 0
   tswana:
     language: Tswana
-  tonga:
-    language: Tonga
+    app_display: 0
+  turkmen:
+    language: Turkmen
+    app_display: 0
   turkish:
     language: Turkish
-  tsonga:
-    language: Tsonga
-  tatar:
-    language: Tatar
   twi:
     language: Twi
-  tahitian:
-    language: Tahitian
   uighur:
     language: Uyghur
   ukrainian:
@@ -385,8 +586,11 @@ agLanguage:
     language: Uzbek
   venda:
     language: Venda
+    app_display: 0
   vietnamese:
     language: Vietnamese
+  visayan:
+    language: Visayan
   volapuk:
     language: Volapuk
     app_display: 0
@@ -398,7 +602,6 @@ agLanguage:
     app_display: 0
   wolof:
     language: Wolof
-    app_display: 0
   frisian:
     language: Western Frisian
     app_display: 0
@@ -409,8 +612,11 @@ agLanguage:
     language: Yiddish
   yoruba:
     language: Yoruba
+  yupik:
+    language: Yupik
   zhuang:
     language: Zhuang
+    app_display: 0
   zulu:
     language: Zulu
   other:

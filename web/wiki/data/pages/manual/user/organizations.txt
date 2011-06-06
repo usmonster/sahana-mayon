@@ -1,1 +1,32 @@
-====== Managing Organizations ======
+====== Managing Organizations Quick Guide ======
+In Sahana Agasti, Organizations are used to group staff resources for scenario planning and, later, deployment.
+
+Organizations can be municipal departments or non-government organizations whose affiliated staff are made available during a response. During scenario creation groups of staff resources can be prioritized by organization affiliation in the staff pool; which is the currently the primary function of organizations.
+
+Below are general how-tos and quick reference information.  For full details on Organization Management see the [[manual:user:organizations:walkthrough|Managing Organizations Walk Through]].
+
+===== Organization Management Functions =====
+The functions of Organization Management are:
+  * Entering Organization name and details
+  * Editing Organizations
+  * Views statistics on staff affiliated with an organization
+
+===== Entering Organizations =====
+Organizations records can be manually entered into Sahana Agasti via the Organization Management module.
+
+Beginning from the Organization Management home page:
+  - Click "Create Organization"
+  - Enter the Organization name and Description
+  - Click "Save and Continue"
+
+===== Editing or Deleting Organizations =====
+Organization records are manually updated in Sahana Agasti via the Organization Management module.
+
+Beginning from the Organization Management home page:
+  - Click "List Organizations"
+  - Click the ID number next to the name of the Organization to be updated
+  - At the bottom of the page click the "Edit" button
+  - Update the information in the form
+  - Click "Save and Continue" to save the information, "Delete" to delete the organization, and "Back to List" to cancel and return to the main page.
+
+For full details on Organization Management see the [[manual:user:organizations:walkthrough|Managing Organizations Walk Through]].

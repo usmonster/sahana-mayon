@@ -2,7 +2,6 @@
 <?php   use_javascript('jquery.ui.custom.js');
   use_stylesheet('jquery/jquery.ui.custom.css');
   use_stylesheet('jquery/mayon.jquery.ui.css');?>
-<?php use_javascript('agTooltip.js'); ?>
 
 <h2>Create New Scenario</h2>
 <p>Scenarios are plans for emergency response.  Using the Scenario Creator you'll add facilities

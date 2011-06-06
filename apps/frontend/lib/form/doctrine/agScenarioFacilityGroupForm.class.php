@@ -34,7 +34,8 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
    * */
   public function setup()
   {
-
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $this->wikiUrl = url_for('@wiki');
     $this->setWidgets(
         array(
           'id' => new sfWidgetFormInputHidden(),
@@ -45,17 +46,19 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
           'facility_group_type_id' => new sfWidgetFormDoctrineChoice(
               array(
                 'model' => $this->getRelatedModelName('agFacilityGroupType'),
-                'add_empty' => false
+                'add_empty' => false,
+                'label' => 'Facility Group Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_group_type&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Type">?</a>'
               )
           ),
           'facility_group_allocation_status_id' => new sfWidgetFormDoctrineChoice(
-              array(
-                'model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'),
-                'add_empty' => false,
-                'method' => 'getFacilityGroupAllocationStatus',
-                'label' => 'Status')
+            array(
+              'model' => $this->getRelatedModelName('agFacilityGroupAllocationStatus'),
+              'add_empty' => false,
+              'method' => 'getFacilityGroupAllocationStatus',
+              'label' => 'Status <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_group_status&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Status">?</a>'
+            )
           ),
-          'activation_sequence' => new sfWidgetFormInputText(array('label' => 'Priority'), array('class' => 'inputGraySmall')),
+          'activation_sequence' => new sfWidgetFormInputText(array('label' => 'Priority <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:deployment_priority&do=export_xhtmlbody" class="tooltipTrigger" title="Deployment Priority">?</a>'), array('class' => 'inputGraySmall')),
           //facility resource list needs to minus options that are in $currentoptions
           //'ag_facility_resource_list'          => new sfWidgetFormChoice(array
           //  ('choices' => $availtoptions,'multiple' => true),array('class' => 'widthAndHeight150')),
@@ -97,6 +100,7 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
         //  ('required' => false))
         )
     );
+    
     $this->validatorSchema->setOption('allow_extra_fields', true);
     $this->validatorSchema->setPostValidator(
         new sfValidatorAnd(
@@ -119,12 +123,12 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
             )
         )
     );
-    $this->widgetSchema->setLabel('scenario_facility_group', 'Facility Group Name');
-    $this->widgetSchema->setNameFormat('ag_scenario_facility_group[%s]');
+   $this->getValidator('scenario_id')->setMessage('required', 'Your facility group must be associated with a scenario.');
+   $this->getValidator('scenario_facility_group')->setMessage('required', 'You must enter a name for this Facility Group.');
+   $this->getValidatorSchema()->getPostValidator()->setMessage('invalid', 'A Facility Group with the same name already exists.');
 
-    $custDeco = new agWidgetFormSchemaFormatterShift($this->getWidgetSchema());
-    $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
-    $this->getWidgetSchema()->setFormFormatterName('custDeco');
+    $this->widgetSchema->setLabel('scenario_facility_group', 'Facility Group Name <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_group_name&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Name">?</a>');
+    $this->widgetSchema->setNameFormat('ag_scenario_facility_group[%s]');
 
     $groupDeco = new agWidgetFormSchemaFormatterInlineBigTopLabel($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('groupFormDeco', $groupDeco);

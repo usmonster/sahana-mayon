@@ -44,6 +44,8 @@ abstract class BaseagEmailContact extends sfDoctrineRecord
              'notnull' => true,
              'length' => 255,
              ));
+
+        $this->option('collate', 'utf8_bin');
     }
 
     public function setUp()
