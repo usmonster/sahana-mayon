@@ -25,7 +25,7 @@ class agFacilityGroupTypeForm extends BaseagFacilityGroupTypeForm
           'id' => new sfWidgetFormInputHidden(),
           'facility_group_type' => new sfWidgetFormInputText(
                   array(),array('class' => 'inputGray setWidgetsScenario')),
-          'description' => new sfWidgetFormInputText(array(),
+          'description' => new sfWidgetFormTextArea(array(),
             array('class' => 'inputGray setWidgetsDesc')),
         //'app_display'         => new sfWidgetFormInputCheckbox(),
 //      'created_at'          => new sfWidgetFormDateTime(),
