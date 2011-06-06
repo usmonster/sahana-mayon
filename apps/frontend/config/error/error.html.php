@@ -15,6 +15,7 @@ $path = sfConfig::get('sf_relative_url_root', preg_replace
     <title>Sahana Agasti, Mayon 2.0</title>
     <link rel="shortcut icon" href="<?php echo public_path('images/favicon.ico'); ?>" />
     <?php echo stylesheet_tag('agMain'); ?>
+    <?php echo stylesheet_tag('agMenu'); ?>
     <!--[if lte IE 6]>
     <?php echo stylesheet_tag('lte_ie6_css'); ?>
     <![endif]-->
@@ -33,14 +34,16 @@ $path = sfConfig::get('sf_relative_url_root', preg_replace
       <div id="navigation">
       </div>
       <div id="columns">
-        <br/> <?php echo $_SERVER['REQUEST_URI'] ?>
+        <!--Error occured on page -->
+        <!--<br/> <?php echo $_SERVER['REQUEST_URI'] ?> -->
         <h2> New York City Sahana Agasti</h2>
         <br/>
         <h5>The server returned a "<?php echo $code ?> <?php echo $text ?>".</h5>
         <br/>
         <h4>
-          <!--<?php echo $exception->getmessage(); ?>-->
-          An error occured on server. Please click 'Back' button to reload the page.
+          <?php echo $exception->getmessage(); ?>
+            
+        <!--An error occured on server. Please click 'Back' button to reload the page.-->
         </h4>
         <br/>
         <br/>
