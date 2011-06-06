@@ -160,6 +160,7 @@ class eventActions extends agActions
   public function executeMeta(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+    $this->checkResults = null;
     //if someone is coming here from an edit context...
     if ($this->event_id != "") {
       $eventMeta = Doctrine::getTable('agEvent')
@@ -182,10 +183,15 @@ class eventActions extends agActions
       $this->scenario_id =
           $request->getParameter('scenario_id');
     }
-    $this->scenarioName = Doctrine::getTable('agScenario')
-            ->findByDql('id = ?', $this->scenario_id)
-            ->getFirst()->scenario;
-    $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
+
+    if (!empty($this->scenario_id))
+    {
+      $this->scenarioName = Doctrine::getTable('agScenario')
+              ->findByDql('id = ?', $this->scenario_id)
+              ->getFirst()->scenario;
+      $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
+    }
+    
     $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Deploy');
 
     if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
@@ -910,13 +916,18 @@ class eventActions extends agActions
     }
 
     $this->event_description = agDoctrineQuery::create()
-        ->select('ed.description, e.id')
+        ->select('ed.description')
         ->from('agEvent e')
         ->addFrom('e.agEventDescription ed')
         ->where('e.id = ?', $this->event_id)
-        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-    if (empty($this->event_description)) {
-      $this->event_description = 0;
+        ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    if (empty($this->event_description[0]))
+    {
+      $this->event_description = '---';
+    }
+    else
+    {
+      $this->event_description = $this->event_description[0];
     }
 
     $this->event_facility_groups = agDoctrineQuery::create()
