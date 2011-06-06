@@ -41,8 +41,9 @@ $path = sfConfig::get('sf_relative_url_root', preg_replace
         <h5>The server returned a "<?php echo $code ?> <?php echo $text ?>".</h5>
         <br/>
         <h4>
-          <?php echo $exception->getmessage(); ?>
-            
+          <?php preg_match('SQLSTATE',$exception->getmessage()) ?>
+          <?php $exception_message = preg_match("/SQLSTATE/i",$exception)? "Error related to MYSQL Database." : $exception->getmessage(); ?>
+          <?php echo $exception_message; ?>
         <!--An error occured on server. Please click 'Back' button to reload the page.-->
         </h4>
         <br/>
