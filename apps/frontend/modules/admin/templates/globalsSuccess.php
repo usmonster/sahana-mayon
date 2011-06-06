@@ -7,7 +7,7 @@ Here you can set up global parameters (variables) that can be used throughout th
   <thead>
     <tr>
       <th>Global Param</th>
-      <th>Description</th>
+      <th>Value</th>
     </tr>
   </thead>
   <tbody>

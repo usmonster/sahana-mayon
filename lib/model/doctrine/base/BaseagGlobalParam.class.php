@@ -9,18 +9,21 @@
  * @property integer $host_id
  * @property string $datapoint
  * @property string $value
+ * @property string $description
  * @property agHost $agHost
  * 
- * @method integer       getId()        Returns the current record's "id" value
- * @method integer       getHostId()    Returns the current record's "host_id" value
- * @method string        getDatapoint() Returns the current record's "datapoint" value
- * @method string        getValue()     Returns the current record's "value" value
- * @method agHost        getAgHost()    Returns the current record's "agHost" value
- * @method agGlobalParam setId()        Sets the current record's "id" value
- * @method agGlobalParam setHostId()    Sets the current record's "host_id" value
- * @method agGlobalParam setDatapoint() Sets the current record's "datapoint" value
- * @method agGlobalParam setValue()     Sets the current record's "value" value
- * @method agGlobalParam setAgHost()    Sets the current record's "agHost" value
+ * @method integer       getId()          Returns the current record's "id" value
+ * @method integer       getHostId()      Returns the current record's "host_id" value
+ * @method string        getDatapoint()   Returns the current record's "datapoint" value
+ * @method string        getValue()       Returns the current record's "value" value
+ * @method string        getDescription() Returns the current record's "description" value
+ * @method agHost        getAgHost()      Returns the current record's "agHost" value
+ * @method agGlobalParam setId()          Sets the current record's "id" value
+ * @method agGlobalParam setHostId()      Sets the current record's "host_id" value
+ * @method agGlobalParam setDatapoint()   Sets the current record's "datapoint" value
+ * @method agGlobalParam setValue()       Sets the current record's "value" value
+ * @method agGlobalParam setDescription() Sets the current record's "description" value
+ * @method agGlobalParam setAgHost()      Sets the current record's "agHost" value
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -52,6 +55,10 @@ abstract class BaseagGlobalParam extends sfDoctrineRecord
              'type' => 'string',
              'notnull' => true,
              'length' => 128,
+             ));
+        $this->hasColumn('description', 'string', 255, array(
+             'type' => 'string',
+             'length' => 255,
              ));
 
 
