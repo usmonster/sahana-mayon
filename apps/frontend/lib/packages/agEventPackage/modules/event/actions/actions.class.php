@@ -916,18 +916,18 @@ class eventActions extends agActions
     }
 
     $this->event_description = agDoctrineQuery::create()
-        ->select('ed.description')
+        ->select('ed.description, e.id')
         ->from('agEvent e')
         ->addFrom('e.agEventDescription ed')
         ->where('e.id = ?', $this->event_id)
-        ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
-    if (empty($this->event_description[0]))
+        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    if (empty($this->event_description[1]))
     {
       $this->event_description = '---';
     }
     else
     {
-      $this->event_description = $this->event_description[0];
+      $this->event_description = $this->event_description[1];
     }
 
     $this->event_facility_groups = agDoctrineQuery::create()
