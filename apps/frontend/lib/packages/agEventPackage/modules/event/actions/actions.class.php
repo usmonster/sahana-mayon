@@ -236,11 +236,21 @@ class eventActions extends agActions
 
         //have to do this for delete also, i.e. delete the event_scenario object
         if ($request->getParameter('scenario_id') && $request->getParameter('scenario_id') != "") {
-          //the way this is constructed we will always have a scenario_id
-          $ag_event_scenario = new agEventScenario();
-          $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
-          $ag_event_scenario->setEventId($ag_event->getId());
-          $ag_event_scenario->save();
+          $eventScenarioId = agDoctrineQuery::create()
+            ->select('es.id')
+            ->from('agEventScenario AS es')
+            ->where('es.event_id = ?', $this->event_id)
+            ->andWhere('es.scenario_id = ?', $request->getParameter('scenario_id'))
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+          if (empty($eventScenarioId))
+          {
+            //the way this is constructed we will always have a scenario_id
+            $ag_event_scenario = new agEventScenario();
+            $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
+            $ag_event_scenario->setEventId($ag_event->getId());
+            $ag_event_scenario->save();
+          }
           $this->redirect('event/deploy?event=' . urlencode($ag_event->getEventName()));
         }
         $this->blackOutFacilities = agEventFacilityHelper::returnActivationBlacklistFacilities($ag_event->getId(),
