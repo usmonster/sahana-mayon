@@ -546,29 +546,11 @@ abstract class agImportNormalization extends agImportHelper
     $this->eh->logInfo("Removing null data from batch.");
     foreach ($this->importData as $rowId => &$rowData) {
       foreach ($rowData['_rawData'] as $key => $val) {
-        if (is_null($val)) {
+        if (empty($val)) {
           unset($rowData['_rawData'][$key]);
         }
       }
     }
-  }
-
-  /**
-   * Method to remove zero-length-string values in importData['_rawData']
-   * @deprecated This method is deprecated in favor of clearNullRawData
-   */
-  protected function clearZLS()
-  {
-    foreach ($this->importData as $rowId => &$rowData) {
-      foreach ($rowData['_rawData'] as $key => &$val) {
-        $trimmedVal = trim($val);
-        if (empty($trimmedVal)) {
-          unset($rowData['_rawData'][$key]);
-        }
-      }
-    }
-
     unset($rowData);
   }
-
 }
