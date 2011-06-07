@@ -34,14 +34,15 @@ if(isset($exportComplete)){
   
   <form id="importForm" style="position: relative; display: inline-block" action="
   <?php echo $importUrl ?>" method="post" enctype="multipart/form-data">
-    <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
+    < <div style="position: absolute; top: 0px; left: 0px; width: 250px">
       <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
-      <a class="continueButton" style="display: inline-block; padding: 3px">Browse</a>
+      <a class="continueButton fileUploadBrowse" style="padding: 5px;">Browse</a>
     </div>
-    <input type="file" name="import" id="fileUpload" />
+
+    <input type="file" name="import" id="fileUpload" style="height:25px" />
 
 
-    <input type="submit" name="submit" value="Submit" class="submitLinkButton" />
+    <input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px"/>
   </form>
 </span>
 <br />
@@ -51,8 +52,15 @@ if(isset($exportComplete)){
 <br />
 
 <?php
+  $deployUrl = url_for('event/deploystaff?event=' . urlencode($sf_data->getRaw('event_name'))) ;
+  echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'generalButton')); 
+?>
+<br />
+<br />
 
-  echo link_to('Export All Staff Contact List', $exportUrl . '&all', array('class' => 'generalButton')); 
+<?php
+
+  echo link_to('Export All Staff Contact List', $exportUrl . '&all', array('class' => 'generalButton'));
   //on click of this button, set the div content to 'exporting data, please wait'
 if(isset($exportComplete)){
   echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';
@@ -60,10 +68,3 @@ if(isset($exportComplete)){
   ?>
 <br />
 <br />
-
-
-
-<?php
-  $deployUrl = url_for('event/deploystaff?event=' . urlencode($sf_data->getRaw('event_name'))) ;
-  echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'generalButton')); 
-?>
