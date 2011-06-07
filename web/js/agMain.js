@@ -16,6 +16,7 @@ $(document).ready(function initialize(){
   initDeployStaff();
   initFileImportReplacer();
   initStatusPolling();
+  fileUploadBrowseHover();
 });
 
 /** Start Initializer Section *********************************************************************/
@@ -1129,4 +1130,15 @@ function updateStatus(url) {
     setTimeout("updateStatus(url)", 5000);
     return false;
   });
+}
+
+function fileUploadBrowseHover() {
+    $('#fileUpload').mouseover(function()
+    {
+        $('a.fileUploadBrowse').addClass("fileUploadHover").removeClass("continueButton");
+    });
+     $('#fileUpload').mouseout(function()
+    {
+        $('a.fileUploadBrowse').removeClass("fileUploadHover").addClass("continueButton");
+    });
 }

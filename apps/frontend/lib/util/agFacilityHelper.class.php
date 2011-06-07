@@ -27,8 +27,10 @@ class agFacilityHelper
    *
    * @param string $packageType Optional.  Currently can pass in scenario,
    *                            event, or NULL.
+   * @param integer $packageId Optional.  The id of either scenario or event based on the $packageType
+   * passed in.
    */
-  public static function facilityGeneralInfo($packageType = NULL)
+  public static function facilityGeneralInfo($packageType = NULL, $packageId = NULL)
   {
     try {
       $facilityQuery = agDoctrineQuery::create()
@@ -54,6 +56,10 @@ class agFacilityHelper
                     ->leftJoin('sfg.agFacilityGroupAllocationStatus fgas')
                     ->where('sfr.id IS NOT NULL')
                     ->addOrderBy('sfg.id, sfg.activation_sequence, sfr.activation_sequence');
+            if (!is_null($packageId))
+            {
+              $facilityQuery->andWhere('sfg.scenario_id = ?', $packageId);
+            }
             break;
           case "event":
             $facilityQuery->addSelect('efr.id, efr.activation_sequence, fras.facility_resource_allocation_status')
@@ -68,6 +74,10 @@ class agFacilityHelper
                     ->leftJoin('efgs.agFacilityGroupAllocationStatus fgas')
                     ->where('efr.id IS NOT NULL')
                     ->addOrderBy('efg.id, efg.activation_sequence, efr.activation_sequence');
+            if (!is_null($packageId))
+            {
+              $facilityQuery->andWhere('efg.scenario_id = ?', $packageId);
+            }
             break;
           default:
             // Do nothing.
@@ -75,7 +85,7 @@ class agFacilityHelper
         }
       }
 
-      $facilityQueryString = $facilityQuery->getSqlQuery();
+//      $facilityQueryString = $facilityQuery->getSqlQuery();
       $facilityInfo = $facilityQuery->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
       return $facilityInfo;
     } catch (Exception $e) {

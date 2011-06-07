@@ -23,8 +23,10 @@ class agFacilityGroupTypeForm extends BaseagFacilityGroupTypeForm
     $this->setWidgets(
         array(
           'id' => new sfWidgetFormInputHidden(),
-          'facility_group_type' => new sfWidgetFormInputText(),
-          'description' => new sfWidgetFormInputText(),
+          'facility_group_type' => new sfWidgetFormInputText(
+                  array(),array('class' => 'inputGray setWidgetsScenario')),
+          'description' => new sfWidgetFormTextArea(array(),
+            array('class' => 'inputGray setWidgetsDesc')),
         //'app_display'         => new sfWidgetFormInputCheckbox(),
 //      'created_at'          => new sfWidgetFormDateTime(),
 //      'updated_at'          => new sfWidgetFormDateTime(),
@@ -58,7 +60,19 @@ class agFacilityGroupTypeForm extends BaseagFacilityGroupTypeForm
     );
 
     $this->widgetSchema->setNameFormat('ag_facility_group_type[%s]');
+ //
+    $this->widgetSchema->setLabels(
+             array(
+               'facility_group_type' => 'Facility Group Type <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_group_type&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Type">?</a>',
+               'description'  => 'Description <a href="' . $wikiUrl .  '/doku.php?id=tooltip:facility_group_type_description&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Group Type Description">?</a>',
+             )
+           );
 
+
+    $sectionsDeco = new agWidgetFormSchemaFormatterSection($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('section', $sectionsDeco);
+    $this->getWidgetSchema()->setFormFormatterName('section');
+//
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
   }
 

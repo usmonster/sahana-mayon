@@ -276,6 +276,23 @@ class scenarioActions extends agActions
   public function executeFacilityexport(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
+
+    $scenarioId = $request->getParameter('id');
+
+    $facilityExporter = new agFacilityExporter($scenarioId);
+    $exportResponse = $facilityExporter->export();
+    // Free up some memory by getting rid of the agFacilityExporter object.
+    unset($facilityExporter);
+    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportResponse['fileName'] . '"');
+
+    $exportFile = file_get_contents($exportResponse['filePath']);
+
+    $this->getResponse()->setContent($exportFile);
+    $this->getResponse()->send();
+    unlink($exportResponse['filePath']);
+
+    $this->redirect('facility/index');
   }
 
   /*   * ***********************************************************************************************
@@ -1431,9 +1448,26 @@ class scenarioActions extends agActions
     $this->forward404Unless($ag_facility_group_type = Doctrine_Core::getTable('agFacilityGroupType')->find(array($request->getParameter('id'))),
                                                                                                                                         sprintf('Object ag_facility_group_type does not exist (%s).',
                                                                                                                                                 $request->getParameter('id')));
-    $ag_facility_group_type->delete();
+    $facilityGroupTypeId = $request->getParameter('id');
+    $scenarioFacilityGroupByTypeCount = agDoctrineQuery::create()
+                                        ->select('COUNT(g.id)')
+                                        ->from('agScenarioFacilityGroup AS g')
+                                        ->where('g.facility_group_type_id = ?', $facilityGroupTypeId)
+                                        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-    $this->redirect('scenario/grouptype');
+    $eventFacilityGroupByTypeCount = agDoctrineQuery::create()
+                                     ->select('COUNT(g.id)')
+                                     ->from('agEventFacilityGroup AS g')
+                                     ->where('g.facility_group_type_id = ?', $facilityGroupTypeId)
+                                     ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    if ( ($scenarioFacilityGroupByTypeCount == 0) && ($eventFacilityGroupByTypeCount == 0) )
+    {
+      $ag_facility_group_type->delete();
+
+      $this->redirect('scenario/grouptype');
+    }
+    $this->facilityGroupType = Doctrine_Core::getTable('agFacilityGroupType')->find($facilityGroupTypeId)->getFacilityGroupType();
   }
 
   /**

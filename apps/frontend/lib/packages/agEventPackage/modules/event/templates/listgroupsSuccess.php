@@ -102,7 +102,8 @@
     </div>
 <?php if(isset($event_id)): ?>
   <br />
-  <a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="continueButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
+  <a href="<?php echo url_for('event/active?event=' . urlencode($event->event_name)) ?>" class="continueButton"><?php echo $event->event_name ?> Event Management</a><br />
+<!--<a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="continueButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>-->
 <?php endif; ?>
           <div class="floatRight">
   <?php

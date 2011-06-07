@@ -26,16 +26,17 @@ class agFacilityExporter {
   *
   * @todo Refactor so these parameters can be dynamically defined.
   **/
-  function __construct() {
+  function __construct($scenarioId) {
     $this->primaryOnly = TRUE;
     $this->contactType = 'work';
     $this->addressStandard = 'us standard';
-    $this->exportHeaders = array('Facility Name', 'Facility Resource Type Abbr',
+    $this->exportHeaders = array('Facility Name', 'Facility Code', 'Facility Resource Type Abbr',
         'Facility Resource Status', 'Facility Capacity', 'Facility Activation Sequence',
         'Facility Allocation Status', 'Facility Group', 'Facility Group Type',
         'Facility Group Allocation Status', 'Facility Group Activation Sequence',
         'Work Email', 'Work Phone');
-    $this->facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario');
+    $this->facilityGeneralInfo = agFacilityHelper::facilityGeneralInfo('Scenario', $scenarioId);
+    $this->scenarioName = Doctrine_Core::getTable('agScenario')->find($scenarioId)->getScenario();
     $this->facilityAddress = agFacilityHelper::facilityAddress($this->addressStandard, $this->primaryOnly, $this->contactType);
     $this->facilityGeo = agFacilityHelper::facilityGeo($this->primaryOnly, $this->contactType);
     $this->facilityEmail = agFacilityHelper::facilityEmail($this->primaryOnly, $this->contactType);
@@ -293,6 +294,8 @@ class agFacilityExporter {
     $todaydate = date("d-m-y");
     $todaydate = $todaydate . '-' . date("H-i-s");
     $fileName = 'Facilities';
+    $safeScenarioName = preg_replace('/\W/', '_', $this->scenarioName);
+    $fileName = $fileName . '-' . $safeScenarioName;
     $fileName = $fileName . '-' . $todaydate;
     $fileName = $fileName . '.xls';
     $filePath = realpath(sys_get_temp_dir()) . '/' . $fileName;

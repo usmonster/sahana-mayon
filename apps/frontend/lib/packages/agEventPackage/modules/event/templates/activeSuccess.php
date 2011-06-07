@@ -47,19 +47,19 @@ if (isset($blackOutFacilities)) {
   </tr>
   <tr>
     <td>
-      <a class="buttonText" href="<?php echo url_for('event/staff?event=' . $urlEncodedEventName); ?>">Event Staff Management</a>
+      <a class="buttonText" href="<?php echo url_for('event/messaging?event=' . $urlEncodedEventName); ?>">Event Staff Messaging</a>
     </td>
     <td>
-      Total Staff: <span class="highlightedText"><?php echo $eventStaffPool ?></span>
+      Total Staff: <span class="highlightedText"><?php echo $eventStaffPool ?></span><br />
+      Confirmed Staff: <span class="highlightedText"><?php echo $eventAvailableStaff ?></span>
     </td>
   </tr>
   <tr>
     <td>
-      <a class="buttonText" href="<?php echo url_for('event/messaging?event=' . $urlEncodedEventName); ?>">Event Staff Messaging</a>
+      <a class="buttonText" href="<?php echo url_for('event/staff?event=' . $urlEncodedEventName); ?>">Event Staff Management</a>
     </td>
     <td>
-      Total Staff: <span class="highlightedText"><?php echo $eventStaffPool ?></span><br /> 
-      Confirmed Staff: <span class="highlightedText"><?php echo $eventAvailableStaff ?></span>
+      Total Staff: <span class="highlightedText"><?php echo $eventStaffPool ?></span>
     </td>
   </tr>
   <tr>

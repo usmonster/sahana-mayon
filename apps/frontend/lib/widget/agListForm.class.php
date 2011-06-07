@@ -175,7 +175,7 @@ class agListForm
 
 
     $listbody = '<table class="staffTable">';
-    $listbody .= '<caption>List Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
+    $listbody .= '<caption>Facility Resource List</caption>'; //' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '
     $listbody .= '<thead>
     <tr class="head">';
     foreach ($columns as $column => $columnCaption) {
@@ -189,6 +189,10 @@ class agListForm
     }
     $listbody .= ' </tr>
     </thead>
+    <tfoot class="tFootInfo">
+      <tr>
+        <td colspan="4">' .$pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count(). '</td>
+      </tr>
     <tbody>';
 
     foreach ($pager->getResults() as $result) {

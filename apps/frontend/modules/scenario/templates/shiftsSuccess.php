@@ -75,7 +75,7 @@
 
 <br>
 <div>
-  <a href="<?php echo url_for('scenario/shifts?id=' .$scenario_id) .'/new'?>" class="continueButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
+<!--  <a href="<?php echo url_for('scenario/shifts?id=' .$scenario_id) .'/new'?>" class="continueButton" title="Create New Scenario Shift">Create New Scenario Shift</a>-->
   <a href="<?php echo url_for('scenario/review?id=' .$scenario_id ) ?>" class="continueButton" title="Finish Wizard">Finish Wizard and Review Scenario</a>
 
 </div>

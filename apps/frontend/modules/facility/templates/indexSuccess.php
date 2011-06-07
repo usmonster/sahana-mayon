@@ -10,7 +10,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');?>
   <?php
     echo
     link_to('Add Facility', 'facility/new', array('class' => 'generalButton', 'title' => 'Create New Facility')) . '<br/><br/>' .
-    link_to('List Facilities', 'facility/list', array('class' => 'generalButton', 'title' => 'List Existing Facility')) . '<br/><br/>';
+    link_to('List Facilitiy Resources', 'facility/list', array('class' => 'generalButton', 'title' => 'List Existing Facility')) . '<br/><br/>';
   ?>
   <?php
       echo link_to(

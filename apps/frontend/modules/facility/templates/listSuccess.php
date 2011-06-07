@@ -34,7 +34,7 @@ include_partial('global/list', array( 'sf_request' => $sf_request,
                                       'sort' => $sort,
                                       'filter' => $filter,
                                       'target_module' => $target_module,
-                                      'caption' => 'List Facilities',
+                                      'caption' => 'Facilitiy Resource List',
                                       'widgets' => array()
 
   ));
