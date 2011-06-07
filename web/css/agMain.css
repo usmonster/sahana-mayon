@@ -244,7 +244,7 @@ float:right;
 
 
 /**** Links ****/
-.continueButton, .deleteButton, .generalButton {
+.continueButton, .deleteButton, .generalButton, .submitLinkButton {
   display: inline-block;
   padding: 5px 10px;
   border: solid 1px;
@@ -286,7 +286,7 @@ float:right;
   border-color: #ff8f00;
 }
 
-input.continueButton, input.deleteButton {
+input.continueButton, input.deleteButton, imput.submitLinkButton {
   font-family: helvetica, arial, verdana, sans-serif;
   padding: 0.32em 0.6em;
   margin: 0.12em;
@@ -327,14 +327,14 @@ input.continueButton, input.deleteButton {
   position: relative;
 }
 
-.continueButton:hover, .buttonSmall:hover, .smallLinkButton:hover {
+.continueButton:hover, .buttonSmall:hover, .smallLinkButton:hover, .submitLinkButton:hover {
   color: #009931;
   border-color: #009931;
   background: #cdffdd;
   cursor: pointer;
 }
 
-.continueButton:active, .buttonSmall:active{
+.continueButton:active, .buttonSmall:active, .submitLinkButton:active{
   background: #98ffb9;
   color: #009931;
   border-color: #009931;
@@ -689,6 +689,28 @@ input[type="button"]:-moz-focus-inner, form input[type="submit"]:-moz-focus-inne
   position: relative; 
   width: 190px;
 }
+.fileUploadHover {
+    /*fromjquery*/
+  color: #009931;
+  border-color: #009931;
+  background: #cdffdd;
+  cursor: pointer;
+
+
+   display: inline-block;
+  padding: 5px 10px;
+  border: solid 1px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  outline: none; 
+}
+
+
 
 #login ul {
   list-style-type: none;

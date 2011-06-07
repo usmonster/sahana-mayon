@@ -18,14 +18,15 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 <span style="display: inline-block; margin: 0px; padding: 0px" >
 <?php echo link_to('Import Staff', 'staff/import', array('class' => 'generalButton', 'title' => 'Import Staff', 'id' => 'import')); ?><a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_import&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Importing Staff"> ?</a>
   <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('staff/import') ?>" method="post" enctype="multipart/form-data">
-    <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
+    <div style="position: absolute; top: 0px; left: 0px; width: 250px">
       <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
-      <a class="continueButton" style="display: inline-block; padding: 3px">Browse</a>
+      <a class="continueButton fileUploadBrowse" style="padding: 5px;">Browse</a>
     </div>
-    <input type="file" name="import" id="fileUpload" />
+      
+    <input type="file" name="import" id="fileUpload" style="height:25px" />
 
 
-    <input type="submit" name="submit" value="Submit" class="submitLinkButton" />
+    <input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px"/>
   </form>
 </span>
 <br/><br/>
