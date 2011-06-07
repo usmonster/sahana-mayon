@@ -1,8 +1,8 @@
-====== Scenario Creator Walk-through (intro) ======
+====== Scenario Creator Walk Through ======
 
-Scenarios are plans; response plans that mirror or complement a municipal response plan.  Scenarios help to prepare for the deployment of staff and facility resources for the duration of an emergency response, while specific emergency responses are referred to as Events.
+Scenarios are plans; response plans that mirror or complement a municipalities existing response plans.  Scenarios help to prepare for the deployment of staff and facility resources for the duration of an emergency response, while specific emergency responses are referred to as Events.
 
-This Scenario Creator Walk-through is meant to take someone unfamiliar with Scenarios and Events and guide them through with enough reference information to create more Scenarios on their own.  It can also be used for reference later on and the pages printed (using the Printable Version link in the left side menu) for a handy guide.  The sections of each page in this walk-through will be:
+This Scenario Creator Walk Through is meant to take someone unfamiliar with Scenarios and Events and guide them through with enough reference information to create more Scenarios on their own.  It can also be used for reference later on and the pages printed (using the Printable Version link in the left side menu) for a handy guide.  The sections of each page in this walk-through will be:
 
   * **What It Does** - A brief overview of the step's purpose when building the scenario.
   * **Reference Information** - Details that may not be intuitive for some users or will be good reference information when building later scenarios.
@@ -11,7 +11,7 @@ This Scenario Creator Walk-through is meant to take someone unfamiliar with Scen
 
 ===== Getting Started =====
 
-It's time to get started in creating your first Scenario.  Keep this walk-through open while you progress through the scenario creation steps and remember that you can always come back and edit the Scenario's information later on if your preparation changes. [[scenario:pre|{{ :manual:user:next.png?135|}}]] 
+It's time to get started in creating your first Scenario.  Keep this walk through open while you progress through the scenario creation steps and remember that you can always come back and edit the Scenario's information later on if your plan changes. [[scenario:pre|{{ :manual:user:next.jpg?135| Pre Scenario Creation}}]] 
 
 ===== Jump to Another Step =====
 {{ :logo_c3.jpg?200}}

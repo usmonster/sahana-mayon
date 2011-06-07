@@ -3,7 +3,7 @@
 ===== Scenario Creation =====
 
 ==== What it Does ====
-Scenarios are generic plans.  A few examples of a scenario title are "**Volcano Plan**", "**Earthquake Response**", or "**Tsunami Evacuation Level 1**" and "**Tsunami Evacuation Level 2**".  Later on, when an event is deployed as a scenario, the Event is given a specific name such as "Hurricane Earl" or "1999 Earthquake".  Scenarios can be built to be pre-Zero Hour sheltering or post-Zero Hour response; but more on that later.
+Scenarios are generic plans.  A few examples of a scenario title are "**Volcano Plan**", "**Earthquake Response**", or "**Tsunami Evacuation Level 1**" and "**Tsunami Evacuation Level 2**".  Later on, when an event is deployed from a scenario, the Event is given a specific name such as "Hurricane Earl" or "1999 Earthquake".  Scenarios can be built to be pre-Zero Hour sheltering or post-Zero Hour response; but more on that later.
 ===== Reference Information =====
 
 ==== Things To Know ====
@@ -12,7 +12,7 @@ Scenarios are generic plans.  A few examples of a scenario title are "**Volcano 
   * Scenarios are stand-alone and all information in a scenario is specific to that scenario.  If you have multiple preparedness strategies that will be managed in Agasti you'll want to construct a scenario for each of them.
 ===== Walk-Through =====
 
-{{:scenario:name.png?700|Name and Describe}}
+{{:scenario:name.png?600|Name and Describe}}
 
   - Use the **Name** field to title your scenario.  The name should be generic to the type of response you might deploy for a specific event.
   - Use the **Description** field to expand upon the name label.  
@@ -22,12 +22,13 @@ Scenarios are generic plans.  A few examples of a scenario title are "**Volcano 
 When you've added a name and description click "Save and Continue" and then click the "Next" button below.
 ===== FAQ =====
 
-  - **Can I update the name and description later?** Yes, you can always edit a scenario from the Scenario List (reachable by visiting the Scenario Management page and clicking “List Scenarios").
-  - **What is the difference between a scenario and an event?** - A scenario is a plan and all details in a scenario are relative, such as who could make up your available staff pool.  An event is a specific response and all the relative elements from the scenario that an event is based upon become specific; such as responding staff confirming that they are available when an event it built.
+  * **Can I update the name and description later?** Yes, you can always edit a scenario via the Scenario List (reachable by visiting the Scenario Management page and clicking “List Scenarios").
+  * **What is the difference between a scenario and an event?** - A scenario is a plan and all details in a scenario are relative, such as who could make up your available staff pool.  An event is the response to a specific emergency and all the relative elements from the scenario that an event is based upon become specific.  For example, potential staff respond and confirming that they are available after they have been messaged and the opening times for facilities that are relative to zero hour become specific times; like 6pm.
+
 ====== Continue ======
 
-[[scenario:resources|{{ :manual:user:next.png?135|Select Resources}}]] 
-[[scenario:pre|{{:manual:user:previous.png?135|Pre-Scenario Information }}]]
+[[scenario:resources|{{ :manual:user:next.jpg?135|Select Resources}}]] 
+[[scenario:pre|{{:manual:user:previous.jpg?135|Pre-Scenario Information }}]]
 
 ===== Jump to Another Step =====
 

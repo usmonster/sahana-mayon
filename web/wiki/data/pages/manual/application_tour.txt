@@ -1,0 +1,68 @@
+====== Application Tour ======
+Sahana Agasti is a suite of two applications, Mayon and Vesuvius.  Mayon is a management application designed to record staff and facility resource information, manage response plans, and deploy available staff to facilities if there is an active response.  This section of the guide will help you log in to the application after the initial setup, take a quick tour of the menu and landing pages, and familiarize you with Mayon.  Later sections will have details on how to use the application.
+
+**Before you get started**: the administrator who set up the application should have created an account in Mayon.  If you do not have an account please contact the systems administrator to have an account created before you log in.
+
+===== Logging In =====
+The systems administrator who installed Sahana Agasti will have provided you with a link or location for the application.  Go the that location and you should be on the Mayon home page:
+
+{{:manual:home.png?500|Log In}}
+
+In the upper right corner enter your user name and password.  Click "Sign In" or hit the "Enter" key.
+
+===== The Home Page =====
+After logging in the Home Page will refresh with additional information, menus, and buttons.
+
+{{:manual:home-loggedin.png?nolink&500|Home}}
+
+There are two ways to navigate within Mayon; menus and hubs.  The menus expand as you hover over each option, while hubs consist of buttons that may be more intuitive to new users.  The buttons on the home menu like to hubs in different sections of Mayon:
+  * **Prepare** - Manage resource information, plan scenarios
+  * **Respond** - Activate scenarios as events and manage event-specific resources
+  * **Wiki Home** - Launch the help wiki's home page
+  * **Administration** - Visit the Administration menu to perform high level management tasks
+
+===== Navigation with Menus =====
+Navigating with menus is quick and convenient for users familiar with Sahana Agasti and who know what action they are going to perform.  Menus work by hovering over different options to expand sub-menus.
+
+To open the first level menu hover over a main menu item.  The menu will expand:
+
+{{:manual:menu1.png?nolink&300|Menu Level 1}}
+
+You can click the word "Prepare" to be brought to the prepare hub, or move the pointer over another menu item:
+
+{{:manual:menu2.png?nolink&300|Menu Level 2}}
+
+The second level item, in this example "Staff", can also be clicked to bring you to a management hub, or a specific option clicked on the side menu.  If you hover over a word on the menu and no additional menu is opened then click that option as no additional menu exists.
+
+===== Prepare Hub =====
+From the home page or via the menu click "Prepare" to navigate to the prepare hub.
+
+{{:manual:preparehub.png?nolink&500|Prepare Hub}}
+
+The prepare hub focuses around the preparedness phase of emergency response. This hub is divided into two sections: Managing Resources and Managing Scenarios.  **Resources** are people, locations, or materials that are available in a response.  **Scenarios** are plans in Sahana Agasti that accompany existing emergency plans.  Clicking any of these buttons will bring you to the hubs for these specific functions of Sahana Agasti.
+
+==== Manage Resources ====
+The buttons in this section of the Prepare Hub focus on management of people and locations that might be available in a response.
+  * **Manage Staff** - Enter and maintain the records of staff that may be available for response.
+  * **Manage Facilities** - Enter and maintain the records of facilities that may be available for response.
+  * **Manage Organizations** - Enter and maintain the organization information for NGO's and government organizations that may make staff available for response.
+
+==== Manage Scenarios ====
+The buttons in this section of the Prepare Hub focus on creating and managing Scenarios, the plans that Sahana Agasti's resource distribution functions are built on.
+  * **Create New Scenario** - Create a scenario using the Scenario Creation Wizard.
+  * **Manage Existing Scenarios** - List and manage existing scenarios
+  * **Deploy a Scenario** - Select a scenario to deploy for response
+  * **Scenario Creator Walk-Through** - Launch the wiki's Scenario Creator Walk-through (viewable later in this guide)
+
+===== Response Hub =====
+The response hub focuses on the common used functions in a response.  Whereas Scenarios are generic plans such as "Wild Fire Sheltering", **Events** are specific instances such as "2009 Wild Fires".  From the response hub a user can deploy a scenario to create an event, manage an active event, resolve an event, or view the data from a closed event.
+
+{{:manual:respondhub.png?nolink&500|Response Hub}}
+
+At this time your response hub may be empty if no sample data has been loaded.  Later, as you navigate through the tutorial, more information will be entered into Sahana Agasti and you will deploy a test event.
+
+===== Continue =====
+[[:manual:important|{{ :manual:important_concepts.png?200|Important Concepts}}]]
+
+For now, click the "Home" link on the menu to return to the Home Page; then continue to [[:manual:important|Important Concepts]].
+

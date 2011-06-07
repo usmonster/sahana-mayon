@@ -1,15 +1,23 @@
 ====== Introduction To Sahana Agasti ======
 
 ===== What is Sahana Agasti? =====
+Sahana Agasti is a suite of applications designed to assist emergency managers with staff and facility resource management in the event of an emergency.  Two applications, Mayon and Vesuvius, work together to retain staff and facility records, manage response plans, assign available staff where they are needed in an emergency, and track information on clients in shelters.
 
 ===== How to Use This Guide =====
+One of the features of Agasti Mayon is a built-in wiki that is pre-filled with instructions and tutorials to guide new administrators through the application. One benefit of the wiki is it can be filled-out with details specific to your organization, or left as-is for more generic instruction.
 
-===== Important Concepts =====
+If you are viewing a print version of this guide you can view it in Agasti Mayon by logging in and clicking the "Help" link.  More information about editing this guide is available on the [[manual:wiki|Wiki Manual]].
 
 ===== Printing This Guide =====
+The tutorials and quick guides for Agasti Mayon were designed to be viewed within the wiki, though for your convenience they are able to be exported via PDF and printed into a book.  Because this book is an assembly of the wiki pages references to links, 'next' and 'previous' button, and other icons may seem out of place.  If you are reading this in a printed guide and prefer to use the wiki, log into Sahana Agasti and click the "Help" link in the menu to get started.
 
+If you would like to print additional copies of this manual, or update the book, visit [[wiki:ebook |ebook]] on the wiki and select the book to print.  You can view additional instructions on managing this wiki plugin visit the [[hhttp://www.dokuwiki.org/plugin:bookcreator?s[]=book|book creator plugin]] page on dokuwiki's home site.
 
+===== Continue =====
+To begin learning about Sahana Agasti you can continue to the [[:manual:application_tour |Application Tour]] or select another section to jump to below. [[:manual:application_tour|{{ :manual:user:app_tour.jpg?200|Application Tour}}]]
 
-<<This is a placeholder for an introduction.>>
-
-[[manual:user:organizations|{{ :manual:user:org_jump_2.jpg?200|Organization Management}}]]
+    * [[manual:User:Organizations|Organization Management]]
+    * [[manual:User:Staff|Staff Management]]
+    * [[manual:User:Facilities|Facility Management]]
+    * [[manual:User:Scenario|Scenario Management]]
+    * [[manual:User:Event|Event Deployment]]

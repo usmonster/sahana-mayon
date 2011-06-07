@@ -1,7 +1,7 @@
 ====== Facility Management Walk-Through ======
 
 ===== Introduction =====
-The Facility Management functionality in Sahana Agasti is designed to track available sites and resources for sheltering and response in the event of an emergency. Intended to supplement response plans where sites are pre-designated, facility records have specific roles set in Agasti as well as contact information.  While the interface is designed to be intuitive, some users will find additional information helpful.  This walk through will help guide a user through the steps of entering facility information, listing and editing that information, importing facility spreadsheets, and exporting that information for other use.
+The Facility Management functionality in Sahana Agasti is designed to track available sites and resources for sheltering and response in the event of an emergency. Intended to supplement response plans where sites are pre-designated, facility records have specific roles set in Agasti as well as contact information.  While the interface is designed to be intuitive, some users will find additional information helpful.  This walk-through will help guide a user through the steps of entering facility information, listing and editing that information, importing facility spreadsheets, and exporting that information for other use.
 
 To help organize the information each page of the walk-through will contain the following sections:
 

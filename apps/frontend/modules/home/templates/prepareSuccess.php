@@ -20,7 +20,7 @@ that complement your organizations Emergency plans.</p>
 <table cellspacing="20">
     <tr>
       <td><?php echo link_to('Create<br>New Scenario', 'scenario/pre', array('class' => 'generalButton width140')) ?></td>
-      <td><?php echo link_to('Manage<br>Existing Scenarios', 'scenario/index', array('class' => 'generalButton width140')) ?></td>
+      <td><?php echo link_to('Manage<br>Scenarios', 'scenario/index', array('class' => 'generalButton width140')) ?></td>
       <td><?php echo link_to('Deploy a<br>Scenario', 'event/index', array('class' => 'generalButton width140')) ?></td>
       <td><?php echo link_to('Scenario Creator<br>Walkthrough', public_path('wiki/doku.php?id=manual:user:scenario:walkthrough'), array('class' => 'generalButton width140', 'title' => 'Help', 'target' => '_blank')) ?></td>
       <td></td>
