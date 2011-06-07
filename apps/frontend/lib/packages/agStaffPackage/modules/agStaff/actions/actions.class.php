@@ -61,7 +61,7 @@ class agStaffActions extends agActions
 
   public function executeList(sfWebRequest $request)
   {
-    $this->status = 'active';
+    $this->status = 'all';
     $this->sort = null;
     $this->order = null;
     $this->limit = null;
@@ -551,27 +551,23 @@ class agStaffActions extends agActions
 
   public function executeImport(sfWebRequest $request)
   {
-    //    $this->timer = time();
+    $this->startTime = microtime(true);
 
     $uploadedFile = $_FILES['import'];
 
-    print("<pre>" . print_r($_FILES, true) . "</pre>");
+    //print("<pre>" . print_r($_FILES, true) . "</pre>");
 
     $this->importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
 
-    print("<pre>Move {$uploadedFile['tmp_name']} to " . $this->importPath . "</pre>");
+
     if (!move_uploaded_file($uploadedFile['tmp_name'], $this->importPath)) {
-      print("<pre>Failed to move {$uploadedFile['tmp_name']} to ".$this->importPath."</pre>");
+      print("<pre>Failed to move {$uploadedFile['tmp_name']} to " . $this->importPath . "</pre>");
       //return sfView::ERROR;
     }
 
 
-    // fires event so listener will process the file (see ProjectConfiguration.class.php)
-    //$this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
-    // TODO: eventually use this ^^^ to replace this vvv.
-
     $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_INFO);
-    
+
     $this->importer->processXlsImportFile($this->importPath);
 
     $left = 1;
@@ -581,12 +577,21 @@ class agStaffActions extends agActions
     }
     $this->importer->concludeImport();
 
-    // removes the file from the server
-    //unlink($this->importPath);
-    
+    // Update lucene index
+    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+
+
     //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
-    //unset($this->importer);
-    //$this->timer = (time() - $this->timer);
+    // Get some stats on the import
+    $this->importCount = $this->importer->getImportStatistics();
+    $this->errorLog = $this->importer->getImportEvents();
+
+    // Report elapsed time
+    $this->endTime = microtime(true);
+    $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+    $this->importTime = date("H:i:s", $time);
+
+    unset($this->importer);
   }
 
 }

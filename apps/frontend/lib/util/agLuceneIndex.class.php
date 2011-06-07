@@ -22,8 +22,13 @@ class agLuceneIndex
    * @param boolean $reset by default is 0, meaning the entire index is rewritten.
    * @todo maybe refactor to do all this stuff by reference? -UA
    */
-  public static function indexAll(sfEvent $event = null, $reset = 0)
+  public static function indexAll(sfEvent $event = null, $reset = true)
   {
+
+    ignore_user_abort(true);
+    set_time_limit(0);
+
+
     if (isset($event)) {
       $action = $event->getSubject();
     }
@@ -48,10 +53,10 @@ class agLuceneIndex
         $task->run(
             array('model' => $indexModel),
             array(
-              'reset' => $reset,
-              'env' => 'all',
-              'connection' => 'doctrine',
-              'application' => 'frontend'
+          'reset' => $reset,
+          'env' => 'all',
+          'connection' => 'doctrine',
+          'application' => 'frontend'
             )
         );
       }
@@ -59,10 +64,10 @@ class agLuceneIndex
       $task->run(
           array(),
           array(
-            'reset' => $reset,
-            'env' => 'all',
-            'connection' => 'doctrine',
-            'application' => 'frontend'
+        'reset' => $reset,
+        'env' => 'all',
+        'connection' => 'doctrine',
+        'application' => 'frontend'
           )
       );
     }
