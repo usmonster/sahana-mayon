@@ -161,6 +161,22 @@ class eventActions extends agActions
   {
     $this->setEventBasics($request);
     $this->checkResults = null;
+    $eventStatus = agDoctrineQuery::create()
+      ->select('est.event_status_type')
+//          ->addSelect('est.active')
+        ->from('agEvent AS e')
+          ->innerJoin('e.agEventStatus AS es')
+          ->innerJoin('es.agEventStatusType AS est')
+        ->where('e.id = ?', $this->event_id)
+          ->andWhere('EXISTS (SELECT es1.id
+                              FROM agEventStatus AS es1
+                              WHERE es1.event_id = es.event_id
+                              HAVING MAX(es1.time_stamp) = es.time_stamp)')
+      ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+
+    $this->eventStatusType = (empty($eventStatus)) ? null : $eventStatus[0][0];
+//    $this->isActiveEvent = (empty($eventStatus)) ? null : $eventStatus[0][1];
+
     //if someone is coming here from an edit context...
     if ($this->event_id != "") {
       $eventMeta = Doctrine::getTable('agEvent')

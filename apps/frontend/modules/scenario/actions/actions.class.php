@@ -303,6 +303,8 @@ class scenarioActions extends agActions
   public function executeFacilityimport(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
+    $this->returnPage = $this->getUser()->getAttribute('returnPage');
+    $this->getUser()->getAttributeHolder()->remove('returnPage');
 
     $this->forward404Unless($scenarioId = $this->scenario_id);
     $this->form = new agImportForm();
@@ -374,6 +376,8 @@ class scenarioActions extends agActions
    */
   public function executeReview(sfWebRequest $request)
   {
+    $this->getUser()->setAttribute('returnPage', 'scenarioReview');
+
     if ($this->scenario_id = $request->getParameter('id')) {
       if ($request->getCookie('wizardOp')) {
         $this->setScenarioBasics($request);
@@ -661,6 +665,9 @@ class scenarioActions extends agActions
   {
     $this->setScenarioBasics($request);
     $this->wizardHandler($request, 2);
+    
+    $this->getUser()->setAttribute('returnPage', 'scenarioResourceTypes');
+
     $this->resourceForm = new agDefaultResourceTypeForm($this->scenario_id);
     $this->getResponse()->setTitle('Scenario Creation Wizard - set Default Resource Types needed for ' . $this->scenarioName . ' Scenario');
     if ($request->isMethod(sfRequest::POST)) {
@@ -669,7 +676,6 @@ class scenarioActions extends agActions
 
       $facilityDefaults = Doctrine::getTable('agDefaultScenarioFacilityResourceType')
           ->findByDql('scenario_id = ?', $this->scenario_id);
-
 
       $topForm = $request->getParameter($this->resourceForm->getName());
 
