@@ -105,3 +105,9 @@ $i = 1;
     <?php else: ?>
       <br /><strong>File not imported.</strong>
     <?php endif ?>
+
+    <?php if (isset($returnPage) && ($returnPage == 'scenarioResourceTypes')): ?>
+      <a  class="continueButton" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>">Return to Scenario Resource Types Page</a>
+    <?php elseif (isset($returnPage) && ($returnPage == 'scenarioReview')): ?>
+      <a  class="continueButton" href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>">Return to Review</a>
+    <?php endif ?>
