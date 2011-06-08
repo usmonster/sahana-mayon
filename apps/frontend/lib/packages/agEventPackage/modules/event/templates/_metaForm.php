@@ -14,11 +14,11 @@ else{
 }
 ?>
 
-<form action="<?php echo $formAct;?>" method="post">
+<form action="<?php echo $formAct;?>" method="post"  class="formSmall">
   <table>
     <tfoot>
       <tr>
-        <td colspan="2">
+        <td colspan="2" style="padding-top:10px">
           <input type="submit" value="Save" name="Save" class="continueButton"/>
           <input type="submit" value="Save and Deploy" class="continueButton"<?php echo $confirmScript ?>>
           <input type="hidden" value="<?php echo $scenario_id ?>" name="scenario_id">

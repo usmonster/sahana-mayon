@@ -33,26 +33,36 @@ else{
 <?php
 $checkResults = $sf_data->getRaw('checkResults');
 if (isset($checkResults)) {
+
+  echo '<table class="blueTable" style="width:auto">';
+  echo '<tr class="head"><th class="row1">Steps</th><th>Count</th></tr>';
+
   foreach ($checkResults as $label => $checkResult)
   {
-    echo '<em>' . $label . '</em>: ';
+    echo '<tr>';
+    echo '<td><em>' . $label . '</em>:</td><td>';
+
     if (is_array($checkResult))
     {
       echo implode(', ', $checkResult);
     } else {
       echo $checkResult;
     }
-      echo '<br />';
+      echo '</td></tr>';
   }
+
+  echo '</table>';
+
 }
 ?>
-<br />
+
 <form action="<?php echo url_for('event/meta?event=' .  urlencode($event_name)) ?>" method="post">
 
 <?php
 //We should have some warnings here in case you're missing something.
 ?>
-
+<br />
 </form>
 
 <?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_name' => $event_name)) ?>
+<br />
