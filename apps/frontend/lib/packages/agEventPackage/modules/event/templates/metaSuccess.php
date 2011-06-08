@@ -34,24 +34,34 @@ else{
 $checkResults = $sf_data->getRaw('checkResults');
 if (isset($checkResults)) {
 
-  echo '<table class="headerLess">';
- // echo '<tr class="head"><th class="row1">Warning</th><th>Count</th></tr>';
+    echo '<table class="headerLess">';
+    // echo '<tr class="head"><th class="row1">Warning</th><th>Count</th></tr>';
 
-  foreach ($checkResults as $label => $checkResult)
-  {
-    echo '<tr>';
-    echo '<td><span>' . $label . '</span></td><td class="highlightedText">';
+    foreach ($checkResults as $label => $checkResult) {
+        echo '<tr>';
+        echo '<td><span>' . $label . '</span></td><td class="highlightedText">';
 
-    if (is_array($checkResult))
-    {
-      echo implode(', ', $checkResult);
-    } else {
-      echo $checkResult;
+        if (is_array($checkResult)) {
+
+
+            echo implode(', ', $checkResult);
+
+
+            if (isset($checkResult)) {
+                echo '<span style="color:green; font-weight:bold">OK</span>';
+
+                }
+
+                
+        } else {
+            
+                echo $checkResult;
+
+        }
+        echo '</td></tr>';
     }
-      echo '</td></tr>';
-  }
 
-  echo '</table>';
+    echo '</table>';
 
 }
 ?>
