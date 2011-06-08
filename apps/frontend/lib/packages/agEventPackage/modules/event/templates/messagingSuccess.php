@@ -38,10 +38,10 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
                 echo link_to('Import Staff Responses', $importUrl,
                         array('class' => 'generalButton', 'title' => 'Import Staff', 'id' => 'import'));
 
-                $wikiUrl = url_for('@wiki') . '/doku.php?id=tooltip:staff_import&do=export_xhtmlbody';
-                echo link_to('?', $wikiUrl,
-                        array('class' => 'tooltipTrigger', 'title' => 'Importing Staff Replies', 'id' => 'import'));
-                $foo = new agStaff();
+//                $wikiUrl = url_for('@wiki') . '/doku.php?id=tooltip:staff_import&do=export_xhtmlbody';
+//                echo link_to('?', $wikiUrl,
+//                        array('class' => 'tooltipTrigger', 'title' => 'Importing Staff Replies', 'id' => 'import'));
+//                $foo = new agStaff();
                 ?>
 
 
@@ -92,3 +92,9 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
         </td>
         <td> description</td>
     </tr></table>
+<br> 
+
+<?php   $importUrl = url_for('event/active?event=' . urlencode($sf_data->getRaw('event_name')));
+                echo link_to($event_name.' Event Management', $importUrl,
+                array('class' => 'generalButton', 'title' => $event_name.' Event Management'));
+                ?>
