@@ -64,6 +64,11 @@ if (isset($checkResults)) {
     echo '</table>';
 
 }
+
+if (isset($errMsg))
+{
+  echo '<p>' . $errMsg . '</p>';
+}
 ?>
 
 <form action="<?php echo url_for('event/meta?event=' .  urlencode($event_name)) ?>" method="post">

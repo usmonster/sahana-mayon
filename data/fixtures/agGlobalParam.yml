@@ -186,3 +186,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: staff_disabled_status
     value: inactive
+  event_deploy_status:
+    id: 38
+    agHost: localhost
+    datapoint: event_deploy_status
+    value: open

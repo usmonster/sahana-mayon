@@ -20,7 +20,7 @@ else{
       <tr>
         <td colspan="2" style="padding-top:10px">
           <input type="submit" value="Save" name="Save" class="continueButton"/>
-          <input type="submit" value="Save and Deploy" class="continueButton"<?php echo $confirmScript ?>>
+          <input type="submit" value="Save and Deploy" name ="Deploy" class="continueButton"<?php echo $confirmScript ?>>
           <input type="hidden" value="<?php echo $scenario_id ?>" name="scenario_id">
         </td>
       </tr>

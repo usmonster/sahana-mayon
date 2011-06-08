@@ -160,113 +160,171 @@ class eventActions extends agActions
   public function executeMeta(sfWebRequest $request)
   {
     $this->setEventBasics($request);
-    $this->checkResults = null;
-    $eventStatus = agDoctrineQuery::create()
-      ->select('est.event_status_type')
-//          ->addSelect('est.active')
-        ->from('agEvent AS e')
-          ->innerJoin('e.agEventStatus AS es')
-          ->innerJoin('es.agEventStatusType AS est')
-        ->where('e.id = ?', $this->event_id)
-          ->andWhere('EXISTS (SELECT es1.id
-                              FROM agEventStatus AS es1
-                              WHERE es1.event_id = es.event_id
-                              HAVING MAX(es1.time_stamp) = es.time_stamp)')
-      ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+    $this->eventStatusType = NULL;
+    $this->eventStatusTypeId = NULL;
+    $this->checkResults = NULL;
 
-    $this->eventStatusType = (empty($eventStatus)) ? null : $eventStatus[0][0];
-//    $this->isActiveEvent = (empty($eventStatus)) ? null : $eventStatus[0][1];
+    if (empty($this->event_id))
+    {
+      $eventMeta = NULL;
 
-    //if someone is coming here from an edit context...
-    if ($this->event_id != "") {
+      if ($request->hasParameter('ag_scenario_list')) {
+        $this->scenario_id = $request->getParameter('ag_scenario_list');
+      } elseif ($request->hasParameter('scenario_id')) {
+        $this->scenario_id = $request->getParameter('scenario_id');
+      } else {
+        $this->scenario_id = NULL;
+      }
+
+    }
+    else
+    {
       $eventMeta = Doctrine::getTable('agEvent')
           ->findByDql('id = ?', $this->event_id)
           ->getFirst();
+
       $this->scenario_id = agDoctrineQuery::create()
           ->select('scenario_id')
           ->from('agEventScenario')
           ->where('event_id = ?', $this->event_id)
           ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
-    } else {
-      // ...if not.
-      $eventMeta = null;
-    }
-    $this->metaForm = new PluginagEventDefForm($eventMeta);
-    if ($request->hasParameter('ag_scenario_list')) {
-      $this->scenario_id =
-          $request->getParameter('ag_scenario_list');
-    } elseif ($request->hasParameter('scenario_id')) {
-      $this->scenario_id =
-          $request->getParameter('scenario_id');
+
+      $eventStatus = agDoctrineQuery::create()
+        ->select('es.id')
+            ->addSelect('est.id')
+            ->addSelect('est.event_status_type')
+            ->addSelect('est.active')
+          ->from('agEvent AS e')
+            ->innerJoin('e.agEventStatus AS es')
+            ->innerJoin('es.agEventStatusType AS est')
+          ->where('e.id = ?', $this->event_id)
+            ->andWhere('EXISTS (SELECT es1.id
+                                FROM agEventStatus AS es1
+                                WHERE es1.event_id = es.event_id
+                                HAVING MAX(es1.time_stamp) = es.time_stamp)')
+        ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+
+      $eventStatusId = (empty($eventStatus)) ? null : $eventStatus[0][0];
+      $this->eventStatusTypeId = (empty($eventStatus)) ? null : $eventStatus[0][1];
+      $this->eventStatusType = (empty($eventStatus)) ? null : $eventStatus[0][2];
+      $this->isActiveEvent = (empty($eventStatus)) ? null : $eventStatus[0][3];
     }
 
+    $this->metaForm = new PluginagEventDefForm($eventMeta);
+
+    // Query for pre-migration statistics if the event is associated to a scenario.
     if (!empty($this->scenario_id))
     {
       $this->scenarioName = Doctrine::getTable('agScenario')
               ->findByDql('id = ?', $this->scenario_id)
               ->getFirst()->scenario;
+
       $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
     }
-    
-    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Deploy');
 
-    if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
-      //if someone has posted, but is not creating an event from a scenario.
-
-      $this->metaForm->bind(
-          $request->getParameter($this->metaForm->getName()),
-                                 $request->getFiles($this->metaForm->getName())
-      );
-      if ($this->metaForm->isValid()) {
-
-        $ag_event = $this->metaForm->save();
-
-        $eventStatusObject = agDoctrineQuery::create()
-                ->from('agEventStatus a')
-                ->where('a.id =?', $ag_event->getId())
-                ->execute()->getFirst();
-
-        $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
-        $defaultEventStatusType = agEventHelper::returnDefaultEventStatus();
-        $ag_event_status->setEventStatusTypeId($defaultEventStatusType);
-
-        $ag_event_status->setEventId($ag_event->getId());
-        $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
-        $ag_event_status->save();
-
-        //have to do this for delete also, i.e. delete the event_scenario object
-        if ($request->getParameter('scenario_id') && $request->getParameter('scenario_id') != "") {
-          $eventScenarioId = agDoctrineQuery::create()
-            ->select('es.id')
-            ->from('agEventScenario AS es')
-            ->where('es.event_id = ?', $this->event_id)
-            ->andWhere('es.scenario_id = ?', $request->getParameter('scenario_id'))
-            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-
-          if (empty($eventScenarioId))
-          {
-            //the way this is constructed we will always have a scenario_id
-            $ag_event_scenario = new agEventScenario();
-            $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
-            $ag_event_scenario->setEventId($ag_event->getId());
-            $ag_event_scenario->save();
-          }
-          $this->redirect('event/deploy?event=' . urlencode($ag_event->getEventName()));
+    // Saving event meta.
+    if ($request->isMethod(sfRequest::POST)) {
+      try{
+        $conn = Doctrine_Manager::connection();
+        // here we check our current transaction scope and create a transaction or savepoint
+        $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+        if ($useSavepoint)
+        {
+          $conn->beginTransaction(__FUNCTION__);
         }
-        $this->blackOutFacilities = agEventFacilityHelper::returnActivationBlacklistFacilities($ag_event->getId(),
-                                                                                               $ag_event->getZeroHour());
+        else
+        {
+          $conn->beginTransaction();
+        }
+
+        if ($request->hasParameter('Deploy') || $request->hasParameter('Save'))
+        {
+
+          $deployStatus = agGlobal::getParam('event_deploy_status');
+          $deployStatusId = Doctrine_Core::getTable('agEventStatusType')
+                              ->findBy('event_status_type', $deployStatus)->getFirst()->id;
+
+          // Do not allow meta updates if an event is not in pre-deploymnet status.
+          if (!is_null($this->isActiveEvent))
+          {
+            if (!$this->isActiveEvent) {
+              $this->errMsg = 'Cannot apply changes to meta on closed event.';
+              return sfView::SUCCESS;
+
+            } elseif ($this->eventStatusTypeId == $deployStatusId) {
+              $this->errMsg = 'Cannot apply changes to meta on an active event.';
+              return sfView::SUCCESS;
+            }
+          }
+
+          $this->metaForm->bind(
+              $request->getParameter($this->metaForm->getName()),
+                                     $request->getFiles($this->metaForm->getName())
+          );
+
+          $ag_event = $this->metaForm->save($conn);
+
+          if ($this->metaForm->isValid()) {
+
+            // Save event meta updates as deploy event status.
+            if ($request->hasParameter('Deploy'))
+            {
+              $event_status_type_id = $deployStatusId;
+            }
+            else
+            { // Save event meta updates as default event status.
+              $event_status_type_id = (empty($this->eventStatusTypeId)) ? 
+                                      agEventHelper::returnDefaultEventStatus() :
+                                      $this->eventStatusTypeId;
+            }
+
+            $agEventStatus = (empty($eventStatusId)) ? 
+                               new agEventStatus() : 
+                               Doctrine_Core::getTable('agEventStatus')->find($eventStatusId);
+            $agEventStatus->setEventId($ag_event->getId());
+            $agEventStatus->setTimeStamp(new Doctrine_Expression('CURRENT_TIMESTAMP'));
+            $agEventStatus->setEventStatusTypeId($event_status_type_id);
+            $agEventStatus->save($conn);
+
+            $eventScenarioId = agDoctrineQuery::create()
+              ->select('es.id')
+              ->from('agEventScenario AS es')
+              ->where('es.event_id = ?', $this->event_id)
+              ->andWhere('es.scenario_id = ?', $request->getParameter('scenario_id'))
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+            // Save event-scenario entry
+            if (!empty($this->scenario_id))
+            {
+              $ag_event_scenario = (empty($eventScenarioId)) ?
+                                   new agEventScenario() :
+                                   Doctrine_Core::getTable('agEventScenario')->find($eventScenarioId);
+
+              $ag_event_scenario->setScenarioId($this->scenario_id);
+              $ag_event_scenario->setEventId($ag_event->getId());
+              $ag_event_scenario->save($conn);
+            }
+          }
+        }
+        if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit(); }
+      } catch(Exception $e) {
+        // rollback
+        if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+
+        $this->errMsg = 'Cannot save event.  Error Msg: ' . $e->getMessage();
+        return sfView::SUCCESS;
+      }
+    }
+
+    if ($request->isMethod(sfRequest::POST)) {
+      if ($request->hasParameter('Deploy'))
+      {
+        $this->redirect('event/deploy?event=' . urlencode($ag_event->getEventName()));
+      }
+      elseif ($request->hasParameter('Save'))
+      {
         $this->redirect('event/active?event=' . urlencode($ag_event->getEventName()));
       }
-    } elseif ($request->getParameter('ag_scenario_list')) {
-      //get scenario information passed from previous form
-      //we should save the scenario that this event is based on
-
-      $this->scenario_id = $request->getParameter('ag_scenario_list');
-      $this->scenarioName = Doctrine::getTable('agScenario')
-              ->findByDql('id = ?', $this->scenario_id)
-              ->getFirst()->scenario;
-
-      $this->metaForm = new PluginagEventDefForm($eventMeta);
     }
 
     //p-code
