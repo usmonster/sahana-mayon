@@ -28,8 +28,8 @@ After you've clicked "Save and Continue", click "Next" below to move to the next
   - **Does a facility need to have every staff type assigned?** - No, you do not need to have every staff type assigned to every facility.  If a facility does not need some staff then those fields can be blank.
 ====== Continue ======
 
-[[scenario:staff_resource_pool|{{ :manual:user:next.jpg?135|Create Staff Pool Searches}}]] 
 [[scenario:newgroup|{{:manual:user:previous.jpg?135|Create Facility Groups }}]]
+[[scenario:staff_resource_pool|{{ :manual:user:next.jpg?135|Create Staff Pool Searches}}]] 
 
 ===== Jump to Another Step =====
 
@@ -42,8 +42,8 @@ After you've clicked "Save and Continue", click "Next" below to move to the next
   - **Set Staff Resource Requirements**
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

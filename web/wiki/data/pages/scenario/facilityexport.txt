@@ -5,20 +5,31 @@ The facility export function can be useful for updating records or saving the da
 ===== Reference Information =====
 
 ==== Things to Know ====
-  * The facility export will produce records for any facility resource used in a scenario.  **If a facility resource is used in more than one scenario there will be a record in the spreadsheet for each time its used.**
+  * The facility export is specific to the scenario it is being exported from.  This means only the facility resources used in this scenario will be included in the export.
+
 ===== Walk-Through =====
-Starting from the Facility Management page:
+
+{{:scenario:exportingfac.png?600|Exporting Facilities}}
+
+Beginning on the Scenario Creator Review page:
   * Select the “Export Staff” link.
   * Depending on your browser you may be asked where to store the file.  In the pop up window either select to open the document or select a place locally to save the document.
 
-{{:manual:user:facilities:screenshot_076.png?500|Export Facilities}}
+==== Updating Via Export/Import ====
+If you want to use export/import for updating facilities in a scenario:
+  * Follow the instructions above to export the facility information for this Scenario
+  * Update the facility records in the spreadsheet.  Be sure to:
+    * Keep all Facility Codes unique for each physical facility
+    * Only assign one of each Facility Resource Type to each facility
+  * Click the "Next" button below for information about Facility import
+
 ===== FAQ =====
   * **Can I customize the fields available for export?** - Agasti currently supports a bulk export of all facilities without custom fields. To create a facility export with custom fields remove the undesired information from the spreadsheet produced by the export.
 
 ====== Continue ======
 
-[[scenario:deployevent|{{ :manual:user:next.png?135|Deploy an Event}}]] 
-[[scenario:facilityimport|{{:manual:user:previous.png?135|Introduction }}]]
+[[scenario:review|{{:manual:user:previous.png?135|Review }}]]
+[[scenario:facilityimport|{{ :manual:user:next.png?135|Facility Import}}]] 
 
 
 ===== Jump to Another Step =====
@@ -30,8 +41,8 @@ Starting from the Facility Management page:
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - **Facility Export**
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

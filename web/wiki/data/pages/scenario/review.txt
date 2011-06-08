@@ -10,12 +10,12 @@ To jump to any step in the Scenario Wizard click the name of the step.
   * To Deploy the scenario as an event click **Deploy as Event**.
   * If your organization has multiple response plans you'll want to have a scenario for each plan.  Click the **Create Another Scenario** button.
 
+For information about importing updates and exporting facility information click "Next" below to continue.
+
 ====== Continue ======
 
-[[scenario:shift|{{:manual:user:previous.png?135|Scenario Shifts }}]] 
-[[scenario:facilityimport|{{ :manual:user:next.png?135|Import Facilities}}]] 
-
-
+[[scenario:scenarioshiftlist|{{:manual:user:previous.png?135|Scenario Shifts }}]] 
+[[scenario:facilityexport|{{ :manual:user:next.png?135|Export Facilities}}]] 
 
 
 ===== Jump to Another Step =====
@@ -27,8 +27,8 @@ To jump to any step in the Scenario Wizard click the name of the step.
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - **Review**
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

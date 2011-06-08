@@ -27,8 +27,9 @@ When you've added a name and description click "Save and Continue" and then clic
 
 ====== Continue ======
 
-[[scenario:resources|{{ :manual:user:next.jpg?135|Select Resources}}]] 
 [[scenario:pre|{{:manual:user:previous.jpg?135|Pre-Scenario Information }}]]
+[[scenario:resources|{{ :manual:user:next.jpg?135|Select Resources}}]] 
+
 
 ===== Jump to Another Step =====
 
@@ -41,8 +42,8 @@ When you've added a name and description click "Save and Continue" and then clic
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

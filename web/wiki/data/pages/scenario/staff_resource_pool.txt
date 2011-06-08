@@ -29,8 +29,10 @@ When you have created your staff pools, click "Save and Continue" to move to the
   * **Do I have to have a Staff Pool search?** Yes.  Without at least one search no staff will be deployed.
 
 ====== Continue ======
-[[scenario:newstaffresources|{{ :manual:user:next.jpg?135|Create Shift Templates}}]] 
+
 [[scenario:staffResources|{{:manual:user:previous.jpg?135|Set Staff Resource Requirements }}]]
+[[scenario:newstaffresources|{{ :manual:user:next.jpg?135|Create Shift Templates}}]] 
+
 
 ===== Jump to Another Step =====
 
@@ -43,8 +45,8 @@ When you have created your staff pools, click "Save and Continue" to move to the
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - **Create Staff Pool Searches**
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

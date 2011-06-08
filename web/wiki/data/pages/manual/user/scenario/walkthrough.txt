@@ -11,7 +11,9 @@ This Scenario Creator Walk Through is meant to take someone unfamiliar with Scen
 
 ===== Getting Started =====
 
-It's time to get started in creating your first Scenario.  Keep this walk through open while you progress through the scenario creation steps and remember that you can always come back and edit the Scenario's information later on if your plan changes. [[scenario:pre|{{ :manual:user:next.jpg?135| Pre Scenario Creation}}]] 
+It's time to get started in creating your first Scenario.  Keep this walk through open while you progress through the scenario creation steps and remember that you can always come back and edit the Scenario's information later on if your plan changes. 
+
+[[scenario:pre|{{ :manual:user:next.jpg?135| Pre Scenario Creation}}]] 
 
 ===== Jump to Another Step =====
 {{ :logo_c3.jpg?200}}
@@ -23,8 +25,8 @@ It's time to get started in creating your first Scenario.  Keep this walk throug
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

@@ -55,8 +55,9 @@ Enter the email and phone information:
   * **If a staff record has multiple resource types will that staff member be deployed more than once?** - No.  Sahana Agasti is designed to deploy a staff person only once; allowing you to record all the potential roles of an individual without worrying about them being counted more than onces.
 ====== Continue ======
 
-[[manual:user:staff:import|{{ :manual:user:next.jpg?135|Importing Staff}}]] 
 [[manual:user:staff:list|{{:manual:user:previous.jpg?135|List Staff }}]]
+[[manual:user:staff:import|{{ :manual:user:next.jpg?135|Importing Staff}}]] 
+
 
 ===== Jump to Another Step =====
 

@@ -12,8 +12,9 @@ In this walk-through we've reviewed how to enter staff, edit existing records, m
 
 Using the manual and import methods of adding staff, continue expanding the potential staff pool in Sahana Agasti.  When the staff pool is built, continue on to [[manual:user:facilities|Facility Management]].
 
+[[manual:user:staff:export|{{:manual:user:previous.jpg?135|Exporting Staff }}]]
 [[manual:user:facilities|{{ :manual:user:staff:fac_jump_2.jpg?200|Facility Management Walk Through}}]]
-[[manual:user:staff:export|{{:manual:user:previous.png?135|Exporting Staff }}]]
+
 
 
 ===== Jump to Another Step =====

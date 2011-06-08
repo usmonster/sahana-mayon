@@ -31,8 +31,9 @@ Beginning on the Facility Management page:
   * **Can a facility have more than one Resource?** - Yes, a Facility can have more than one resource, but not more than one of the same type. 
 ====== Continue ======
 
-[[manual:user:facilities:update|{{ :manual:user:next.jpg?135|Update}}]] 
 [[manual:user:facilities:facilities_management_walkthrough|{{:manual:user:previous.jpg?135|Introduction }}]]
+[[manual:user:facilities:update|{{ :manual:user:next.jpg?135|Update}}]] 
+
 
 ===== Jump to Another Step =====
 

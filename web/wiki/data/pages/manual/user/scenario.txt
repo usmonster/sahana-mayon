@@ -16,7 +16,7 @@ Though you only enter staff and facilities once, you can deliver shared resource
 ==== Re-using Scenarios ====
 Another feature of Sahana Agasti is reusing your scenarios after an active event.  As covered in [[manual:important#scenarios_vs_events|Important Concepts]], Events are based on Scenarios; and when events are activated they carry over the current scenario information and use it to build available staff pools, define what facility resources are available and what time they are open, and assign staff to those facility resources.  Later, after the events are resolved, the scenarios can be updated and refined based on lessons learned during the activation.  See the graphic below and the example that follows for more details.
 
-{{ :manual:user:scenario_multiple_activations.png?nolink&600 |Re-using Scenarios}}
+{{ :manual:user:scenario_multiple_activations.jpg?600 |Re-using Scenarios}}
 
 __For Example__: Pretty Flower Valley has a history of hurricane activity and the towns have formed a Regional Flooding Task Force to come up with a plan.  They use Sahana Agasti to formalize their sheltering plan in which towns by the river evacuate to higher ground.  In 2005, Hurricane Charles hits Pretty Flower Valley and the towns by the river are evacuated.  The Regional Flooding Task Force uses Sahana Agasti to staff shelters on higher ground (and Sahana Agasti's Vesuvius software to maintain records on shelter clients).  
 

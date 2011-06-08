@@ -19,20 +19,21 @@ When you are ready, click {{:scenario:screenshot_069.png?200|Finish Wizard}} to 
 
 ====== Continue ======
 
-[[scenario:review|{{ :manual:user:next.jpg?135|}}]] 
-[[scenario:newstaffresources|{{:manual:user:previous.jpg?135 }}]]
+[[scenario:newstaffresources|{{:manual:user:previous.jpg?135|Shift Templates }}]]
+[[scenario:review|{{ :manual:user:next.jpg?135|Scenario Review}}]] 
+
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:walkthrough|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Create A Scenario]]
   - [[scenario:newgroup| Create Facility Groups]]
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - **Generate Scenario Shifts**
+  - **Review Scenario Shifts**
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

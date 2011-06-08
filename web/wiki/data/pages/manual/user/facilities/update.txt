@@ -1,7 +1,7 @@
 ====== Facility Management Walk-Through ======
 
 ===== Updating a Facility Record =====
-For scenarios to be current and deployment reliable it's important that records can be updated regularly.  There are two ways to update Facility records: manually and via import.  Below are instructions for manually updating a facility record; updating via import will be covered later in this tutorial.
+For scenarios to be current and deployment reliable it's important that records can be updated regularly.  There are two ways to update Facility records: manually and via import.  Below are instructions for manually updating a facility record; updating facility records via import is in the Scenario Creator Walk Through.
 ===== Reference Information =====
 ==== Things To Know ====
   * By now you know that a Facility Resource is the combination of a physical location (facility) in Sahana Agasti and the Resource that is available at that facility in a response.  To ensure staff is deployed to accurate locations it's important to keep facility records up to date.
@@ -54,8 +54,9 @@ To delete a Facility Resource remove it from the form and click "Save".
   * To make updates to the facility phone number edit the number and click "Save" at the bottom of the page.  A reliable contact number for the facility that could be called during an activation.  Phone numbers should be entered as 5559991111×1234. Format: 9 digits without spaces. Extensions begin with an x.
 
 ====== Continue ======
-[[manual:user:facilities:review|{{ :manual:user:next.jpg?135|Review}}]] 
 [[manual:user:facilities:create|{{:manual:user:previous.jpg?135|Create }}]]
+[[manual:user:facilities:review|{{ :manual:user:next.jpg?135|Review}}]] 
+
 
 ====== Jump to Another Step ======
 

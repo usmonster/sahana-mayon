@@ -23,6 +23,7 @@ The Facility Management page will look like this:
 {{:manual:user:facilities:fac_mgmt.png?700}}
 
 Once you navigate to the Facility Management page click Next to continue to the next step: Creating a Facility.
+
 [[manual:user:facilities:create|{{ :manual:user:next.jpg?135|Create a Facility}}]] 
 
 

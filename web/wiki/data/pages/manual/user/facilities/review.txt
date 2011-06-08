@@ -8,7 +8,8 @@ In this walk-through we've reviewed how to enter facilities, facility resources,
 ====== Continue ======
 Now that staff and facilities have been entered in the Sahana Agasti you're ready to make Scenarios.  Click the green button to jump to the [[manual:user:scenario:walkthrough|Scenario Management Walk Through]].
 
-[[manual:user:facilities:update|{{:manual:user:previous.png?135|Update }}]] [[manual:user:scenario|{{ :manual:user:facilities:scenario_jump_2.jpg?200|Scenario Management Walk Through}}]]
+[[manual:user:facilities:update|{{:manual:user:previous.jpg?135|Update }}]] 
+[[manual:user:scenario|{{ :manual:user:facilities:scenario_jump_2.jpg?200|Scenario Management Walk Through}}]]
 
 
 ====== Jump to Another Step ======

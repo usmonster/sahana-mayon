@@ -282,6 +282,16 @@ ERRORS AND TROUBLESHOOTING
 
   and try again.
 
+- If the database has been deleted and you are unable to log in, even with the superadmin credentials enable super admin by editing the /apps/frontend/config/app.yml file by adding the following lines after the first line (which should read 'all:')
+
+  sf_guard_plugin:
+    check_password_callable:
+      - agSudoAuth
+      - authenticate
+  sf_guard_plugin_signin_form: agSudoSigninForm
+
+It is important that pre-line spacing is maintained in the copy and paste of the lines.
+
 - I have another error, or my issue still isn't resolved:
 
   Please see the SUPPORT section in the README file for information on how to

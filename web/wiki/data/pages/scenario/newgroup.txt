@@ -11,6 +11,7 @@ It's important to understand what facility groups are used for later on in plann
   * **Groups are individual to a scenario.**  Groups are specific to the scenario they're in; so a group in one scenario can be completely different in another (even if they're called the same thing).
   * **If you want to have a facility available, even on stand by, be sure to include it in a facility group.**  Facilities that are not in the scenario will not be available during the event.
   * Because only the facility resources are grouped an individual facility can span multiple groups.  
+  * **If you Imported your facilities and groups** you will begin step three on the Facility Group List.  Here you can review the status of existing facility groups and verify that the uploaded information is correct.
 
 === What Facility Groups Are Used For ===
 
@@ -23,7 +24,9 @@ It's important to understand what facility groups are used for later on in plann
   * **Deployment Priority** - This is the order in which facility groups, and the facilities in them, are activated.  A group with a lower number will be activated and the staff assigned before a group with a higher number.  The same within that early group, the facility with a lower number will be populated with staff before the higher number.
 
 ===== Walk-Through =====
-{{:scenario:facilitygroups.png?700|Create Facility Groups}}
+
+==== Manual Scenario Creation (without import) ====
+{{:scenario:facilitygroups.png?600|Create Facility Groups}}
   - To begin the creation of your first facility group **assign the required properties**: name the group, select the type of grouping, the status it will take when an event is created, and the order it should activate in relation to the other groups.
     - **Name the group**: the group name should be unique within the scenario
     - **Group Type**: The facility group type is an operational label that can be later used to organize your facility groups according to their type.
@@ -35,6 +38,15 @@ It's important to understand what facility groups are used for later on in plann
   - After you've selected the resources for this group you can "Save and Create Another"; or, if you're only making one group, "Save and Continue".
   - If you "Save and Create Another" the groups you have already created will list at the top of the page.  Repeat 1 through 3 until all groups have been created and then select "Save and Continue".
 
+==== Imported Facilities ====
+If you have imported your facilities for this scenario you will begin step three on the Facility Group List.  
+
+{{:scenario:facgrouplist.png?600|Facility Group List}}
+
+Use this list to verify that the facility groups created in the import are correct.  If you'd like to manually edit any of the groups click the name of the facility group (Group 1 in the image above) and follow instructions above to edit the group.
+  * To add a new group click {{:scenario:add_new_fac_gorup_button.png|Add New Group}}
+  * To continue in the Scenario Creator Wizard click {{:scenario:continue_button.png?|Continue}}
+
 After all groups have been created select the "Next" button below.
 
 ===== FAQ =====
@@ -43,8 +55,9 @@ After all groups have been created select the "Next" button below.
 
 ====== Continue ======
 
-[[scenario:staffresources|{{ :manual:user:next.jpg?135|}}]] 
-[[scenario:resources|{{:manual:user:previous.jpg?135 }}]]
+[[scenario:resources|{{:manual:user:previous.jpg?135|Select Scenario Resources }}]]
+[[scenario:staffresources|{{ :manual:user:next.jpg?135|Set Staff Resource Requirements}}]] 
+
 
 ===== Jump to Another Step =====
 
@@ -57,8 +70,8 @@ After all groups have been created select the "Next" button below.
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

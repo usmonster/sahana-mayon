@@ -18,8 +18,9 @@ The Sahana Agasti Staff list makes it easy for administrators to update or locat
 
 Next you'll be editing an existing record in Agasti Mayon.  Click the "Edit" button on a record and click the next button below.
 
-[[manual:user:staff:edit|{{ :manual:user:next.jpg?135|Edit Staff}}]] 
 [[manual:user:staff:new|{{:manual:user:previous.jpg?135|New Staff }}]]
+[[manual:user:staff:edit|{{ :manual:user:next.jpg?135|Edit Staff}}]] 
+
 
 ===== Jump to Another Step =====
 

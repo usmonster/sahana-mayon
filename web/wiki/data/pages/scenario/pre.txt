@@ -29,8 +29,9 @@ If you're ready to continue, click "Continue and Create a Scenario" and then the
 
 ====== Continue ======
 
-[[scenario:new|{{ :manual:user:next.jpg?135|Create a New Scenario}}]] 
 [[manual:user:scenario:walkthrough|{{:manual:user:previous.jpg?135|Introduction }}]]
+[[scenario:new|{{ :manual:user:next.jpg?135|Create a New Scenario}}]] 
+
 
 ====== Jump to Another Step ======
 {{ :logo_c3.jpg?200}}
@@ -42,8 +43,8 @@ If you're ready to continue, click "Continue and Create a Scenario" and then the
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

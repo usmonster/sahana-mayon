@@ -15,6 +15,7 @@ A shift template defines what facility and staff resources it applies to, time e
 
 {{:scenario:shifttemplates.png?700|Enter Shift Information}}
 
+  - To ensure shifts are generated for all combinations of Facility and Staff Resources, click the {{:scenario:generateresourcetypebutton.png?200|Generate Resource Type Templates}}.  This will refresh the page with a template for every combination of staff and facility type.  **If you have already created templates they will be lost if you click this button.**
   - Select the Staff Resource Type and Facility Resource Type for your first template.
   - Enter the number of days this Facility Resource is expected to operate.
   - Enter the number of Consecutive Staff Shifts. This is the number of shifts a staff member can work before being relieved and released from work.
@@ -33,8 +34,9 @@ A shift template defines what facility and staff resources it applies to, time e
 
 ====== Continue ======
 
+[[scenario:staff_resource_pool|{{:manual:user:previous.jpg?135|Staff Pool }}]]
 [[scenario:scenarioshiftlist|{{ :manual:user:next.jpg?135|Scenario Shift List}}]] 
-[[scenario:staffresources|{{:manual:user:previous.jpg?135|Staff Pool }}]]
+
 
 ===== Jump to Another Step =====
 
@@ -47,8 +49,8 @@ A shift template defines what facility and staff resources it applies to, time e
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - **Create Shift Templates**
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

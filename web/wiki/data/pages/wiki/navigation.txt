@@ -1,14 +1,12 @@
-  * [[:manual:Administrator|Administrator Manual]]
+  * [[:manual:Administrator|Systems Administrator Manual]]
     * [[manual:Administrator:Intro|About]]
     * [[manual:Administrator:Installation|Installation]]
-    * [[manual:Administrator:Modules|Module Selection]]
-    * [[manual:Administrator:Customization|Customization and Localization]]
     * [[manual:Administrator:Support|Support]]
       * [[manual:Administrator:Support:Performance|Performance]]
       * [[manual:Administrator:Support:Troubleshooting|Troubleshooting]]
 
 
-  * [[:manual:User|User Manual]]
+  * [[:manual:User|Application Manager Manual]]
     * [[manual:User:Intro|Introduction]]
     * [[manual:User:Staff|Staff Mgmt]]
     * [[manual:User:Facilities|Facilities]]
@@ -17,7 +15,3 @@
       * [[manual:user:scenario:walkthrough|Scenario Walk-Through]]
     * [[manual:User:Event|Event Deployment]]
     * [[manual:User:FAQ|FAQ]]
-
-  * [[:manual:uorc|UORC Manual]]
-
-  * [[:manual:specialist|Specialist Manual]]

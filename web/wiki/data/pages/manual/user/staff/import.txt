@@ -61,8 +61,9 @@ It's **very important** that staff records be properly loaded into the import te
   * **Can I upload staff without any Resource Types?** Yes; though without resources associated the staff will not be available for deployment.
 ====== Continue ======
 
-[[manual:user:staff:export|{{ :manual:user:next.jpg?135|Export Staff}}]] 
 [[manual:user:staff:edit|{{:manual:user:previous.jpg?135|Edit Staff }}]]
+[[manual:user:staff:export|{{ :manual:user:next.jpg?135|Export Staff}}]] 
+
 
 ===== Jump to Another Step =====
 

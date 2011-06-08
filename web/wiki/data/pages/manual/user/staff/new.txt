@@ -65,8 +65,9 @@ At the bottom of the page there are several action buttons:
 
 When you have finished creating the staff record click "Save" at the bottom to save the record, then click "Back to List" to move to the staff list.  Then click "Next" below to move to the next step in the walk-through.
 
-[[manual:user:staff:list|{{ :manual:user:next.png?135|List}}]] 
-[[manual:user:staff:staff_creation_walkthrough|{{:manual:user:previous.png?135|Introduction }}]]
+[[manual:user:staff:staff_creation_walkthrough|{{:manual:user:previous.jpg?135|Introduction }}]]
+[[manual:user:staff:list|{{ :manual:user:next.jpg?135|List}}]] 
+
 
 ===== Jump to Another Step =====
 
