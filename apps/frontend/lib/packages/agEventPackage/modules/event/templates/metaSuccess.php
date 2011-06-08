@@ -47,7 +47,7 @@ if (isset($checkResults)) {
             echo implode(', ', $checkResult);
 
 
-            if (isset($checkResult)) {
+            if (empty($checkResult)) {
                 echo '<span style="color:green; font-weight:bold">OK</span>';
 
                 }
