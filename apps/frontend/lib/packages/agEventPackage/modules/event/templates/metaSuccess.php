@@ -34,7 +34,7 @@ else{
 $checkResults = $sf_data->getRaw('checkResults');
 if (isset($checkResults)) {
 
-  echo '<table class="blueTable" style="width:auto">';
+  echo '<table class="blueTable" style="width:auto; margin-bottom:10px">';
   echo '<tr class="head"><th class="row1">Steps</th><th>Count</th></tr>';
 
   foreach ($checkResults as $label => $checkResult)
@@ -61,7 +61,7 @@ if (isset($checkResults)) {
 <?php
 //We should have some warnings here in case you're missing something.
 ?>
-<br />
+ 
 </form>
 
 <?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_name' => $event_name)) ?>
