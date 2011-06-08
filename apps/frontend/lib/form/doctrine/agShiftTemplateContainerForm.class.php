@@ -23,8 +23,18 @@ class agShiftTemplateContainerForm extends sfForm
     } else {
       $this->scenario_id = $scenario_id;
     }
-    $this->requiredResourceCombo = (empty($requiredResourceCombo)) ? array() : $requiredResourceCombo;
 
+    // Only grabbing the unique staff/facility resource types combo.
+    $this->uniqRequiredResourceCombo = array();
+    foreach ($requiredResourceCombo AS $set)
+    {
+      $pos = array_search($set, $this->uniqRequiredResourceCombo);
+      if ($pos === FALSE)
+      {
+        $this->uniqRequiredResourceCombo[] = $set;
+      }
+    }
+    
     parent::__construct(array(), array(), array());
   }
 
@@ -56,7 +66,7 @@ class agShiftTemplateContainerForm extends sfForm
     unset($this['_csrf_token']);
 
     $formCounter = 0;
-    $requiredResourceCombo = $this->requiredResourceCombo;
+    $requiredResourceCombo = $this->uniqRequiredResourceCombo;
 
     $shiftTemplates = agDoctrineQuery::create()
             ->from('agShiftTemplate a')
@@ -72,7 +82,7 @@ class agShiftTemplateContainerForm extends sfForm
         $existingTemplate = array($shiftTemplate->getStaffResourceTypeId(), 
                                   $shiftTemplate->getFacilityResourceTypeId());
         $pos = array_search($existingTemplate, $requiredResourceCombo);
-        if ($pos)
+        if ($pos !== FALSE)
         {
           unset($requiredResourceCombo[$pos]);
         }
