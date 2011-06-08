@@ -34,13 +34,13 @@ else{
 $checkResults = $sf_data->getRaw('checkResults');
 if (isset($checkResults)) {
 
-  echo '<table class="blueTable" style="width:auto; margin-bottom:10px">';
-  echo '<tr class="head"><th class="row1">Steps</th><th>Count</th></tr>';
+  echo '<table class="headerLess">';
+ // echo '<tr class="head"><th class="row1">Warning</th><th>Count</th></tr>';
 
   foreach ($checkResults as $label => $checkResult)
   {
     echo '<tr>';
-    echo '<td><em>' . $label . '</em>:</td><td>';
+    echo '<td><span>' . $label . '</span></td><td class="highlightedText">';
 
     if (is_array($checkResult))
     {

@@ -1816,6 +1816,11 @@ table.blueTable tr:hover{background-color: #f7f7f7
 }
 
 
+
+table.headerLess{border: 1px solid #dadada; border-collapse: collapse; width:auto; margin-bottom:10px}
+table.headerLess tr td span{font-size:1em; color:#848484; font-weight: bold}
+table.headerLess tr td{ border:1px solid #dadada; padding:5px;}
+table.headerLess tr:hover{background-color: #f7f7f7}
 /*table.staffPool tr.head:hover{ background-color: #e5f7ff
 }*/
 
