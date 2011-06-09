@@ -115,7 +115,7 @@ class eventActions extends agActions
         ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
     if ($this->scenario_id) {
       if ($request->isMethod(sfRequest::POST)) {
-        agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
+        $this->migrationCount = agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
         $this->redirect('event/active?event=' . urlencode($this->event_name));
       } else {
         $this->redirect('event/active?event=' . urlencode($this->event_name));
@@ -319,7 +319,9 @@ class eventActions extends agActions
     if ($request->isMethod(sfRequest::POST)) {
       if ($request->hasParameter('Deploy'))
       {
-        $this->redirect('event/deploy?event=' . urlencode($ag_event->getEventName()));
+        $eventName = $this->metaForm->getObject()->getEventName();
+        $this->getRequest()->setParameter('event', $eventName);
+        $this->forward($request->getParameter('module'), 'deploy');
       }
       elseif ($request->hasParameter('Save'))
       {
