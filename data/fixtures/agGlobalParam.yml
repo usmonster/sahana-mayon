@@ -55,7 +55,7 @@ agGlobalParam:
     id: 11
     agHost: localhost
     datapoint: default_batch_size
-    value: 20000
+    value: 100
   lucene_delimiter:
     id: 12
     agHost: localhost
