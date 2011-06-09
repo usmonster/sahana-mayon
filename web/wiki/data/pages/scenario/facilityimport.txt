@@ -1,7 +1,7 @@
-====== Scenario Creator Walk-Through ======
+====== Scenario Creator Tutorial ======
 
 ===== Importing Facilities =====
-As mentioned in [[scenario:resources|step 3]] of the Scenario Creator Walk-Through, Facilities are imported as part of the scenario they are included in.  Facilities can be uploaded during Scenario Creation; but also after a scenario is created to help with keeping the scenario current.
+As mentioned in [[scenario:resources|step 3]] of the Scenario Creator Tutorial, Facilities are imported as part of the scenario they are included in.  Facilities can be uploaded during Scenario Creation; but also after a scenario is created to help with keeping the scenario current.
 
 ===== Reference Information =====
 
@@ -81,6 +81,9 @@ This walk through is for facility imports after the scenario has been created.  
 
 ===== Jump to Another Step =====
 
+{{ :logo_c3.jpg?200}}
+
+  - [[manual:user:scenario:tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]

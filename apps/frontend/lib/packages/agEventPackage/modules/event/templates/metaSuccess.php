@@ -19,8 +19,8 @@ else{
 ?>
 
 <p>Below are checks that the scenario is correct and ready to be deployed.
-  If the checks show "OK", proceed with   deployment.  If not, return to the
-  scenario and make corrections.  </p>
+  If the checks show "OK" and the staff pool meets your staffing needs, proceed with deployment.
+  If not, return to the scenario and make corrections.  </p>
 
 <?php
 $checkResults = $sf_data->getRaw('checkResults');
@@ -72,7 +72,7 @@ if (isset($errMsg))
 </form><br/>
 <h3>Provide a name for the event and the Zero Hour:</h3>
 <p><strong>Note:</strong> the name should be specific.  For example: a hurricane response to Hurricane Erica could
-  be named "Erica" in Agasti.  The Zero Hour is the time the event occurred or is expected to occur.
+  be named "Erica".  The Zero Hour is the time the event occurred or is expected to occur.
 <strong>Remember</strong> facility activation time is based on Zero Hour.</p>
 <?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_name' => $event_name)) ?>
 <br />

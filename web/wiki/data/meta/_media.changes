@@ -37,3 +37,8 @@
 1307568351	::1	C	scenario:deployscenariolist.png	admin		
 1307568591	::1	C	scenario:deployfromscenariowizard.png	admin		
 1307634271	::1	E	manual:user:facilities:facility_import_and_export_template.xls	admin		
+1307659438	::1	C	manual:user:event:messaging_unconfirmed.png	admin		
+1307659963	::1	C	manual:user:event:messaging_import.png	admin		
+1307660051	::1	C	manual:user:event:messaging_preview.png	admin		
+1307660162	::1	C	manual:user:event:messaging_deploy.png	admin		
+1307660203	::1	C	manual:user:event:messaging_export_staff.png	admin		

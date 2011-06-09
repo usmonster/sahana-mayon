@@ -28,7 +28,7 @@ After entering the information, click "Save and Continue".  The information will
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:organizations:Tutorial|Introduction]]
+  - [[manual:user:organizations:tutorial|Introduction]]
   - **Create New Organization**
   - [[manual:user:Organizations:list|Listing Organizations]]
   - [[manual:user:Organizations:edit|Editing Organizations Records]]

@@ -69,7 +69,7 @@ It's **very important** that staff records be properly loaded into the import te
 
 {{ :logo_c3.jpg?200}}
 
-  - [[manual:user:staff:staff_creation_Tutorial|Introduction]]
+  - [[manual:user:staff:staff_creation_tutorial|Introduction]]
   - [[manual:user:staff:new|Create New Staff]]
   - [[manual:user:staff:list|Listing Staff]]
   - [[manual:user:staff:edit|Editing Staff Records]]

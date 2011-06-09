@@ -62,7 +62,7 @@ After all groups have been created select the "Next" button below.
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:Tutorial|Introduction]]
+  - [[manual:user:scenario:tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]

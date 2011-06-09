@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-Through ======
+====== Scenario Creator Tutorial ======
 
 ===== Exporting Facility Records =====
 The facility export function can be useful for updating records or saving the data for use in another system.  Below are instructions for how to export facility data from Sahana Agasti.
@@ -34,6 +34,9 @@ If you want to use export/import for updating facilities in a scenario:
 
 ===== Jump to Another Step =====
 
+{{ :logo_c3.jpg?200}}
+
+  - [[manual:user:scenario:tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]

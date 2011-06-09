@@ -33,6 +33,7 @@ Click the button below to continue to further instructions about Event Managemen
 From the Scenario Review page at the end of the Scenario Creator click "Deploy as Event" to deploy that scenario.
 {{:scenario:deployfromscenariowizard.png?500|Deploy as Event}}
 
+[[manual:user:event|{{ :scenario:event_jump_2.jpg?200|Continue to Event}}]]
+
 Click the button below to continue to further instructions about Event Management.
 
-[[ manual:user:event|{{:scenario:event_jump_2.jpg?200|Continue to Event}}]]

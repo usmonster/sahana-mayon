@@ -19,7 +19,7 @@ Next we'll be editing existing organization.  Click the ID number to view that o
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:organizations:Tutorial|Introduction]]
+  - [[manual:user:organizations:tutorial|Introduction]]
   - [[manual:user:organizations:new|Create New Organization]]
   - **Listing Organizations**
   - [[manual:user:Organizations:edit|Editing Organizations Records]]

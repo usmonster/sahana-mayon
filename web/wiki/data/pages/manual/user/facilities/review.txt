@@ -15,7 +15,7 @@ Now that staff and facilities have been entered in the Sahana Agasti you're read
 ====== Jump to Another Step ======
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:facilities:facilities_management_Tutorial|Introduction]]
+  - [[manual:user:facilities:facilities_management_tutorial|Introduction]]
   - [[manual:user:facilities:create|Create Facility]]
   - [[manual:user:facilities:update|Update Facility]]
   - **Facility Management Review**

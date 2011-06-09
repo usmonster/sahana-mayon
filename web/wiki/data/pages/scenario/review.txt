@@ -20,6 +20,9 @@ For information about importing updates and exporting facility information click
 
 ===== Jump to Another Step =====
 
+{{ :logo_c3.jpg?200}}
+
+  - [[manual:user:scenario:tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]
