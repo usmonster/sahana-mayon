@@ -49,8 +49,8 @@ From the Prepare hub click "Manage Scenarios"; then, on the Scenario Management 
 
 **Note**: If the facility group type is used in a current scenario it can not be deleted.
 
-===== Walk-Through =====
-[[manual:user:scenario:walkthrough|{{ :manual:user:next.jpg?135|Introduction}}]]
+===== Tutorial =====
+[[manual:user:scenario:Tutorial|{{ :manual:user:next.jpg?135|Introduction}}]]
 
 
-Unlike other tutorials in this manual, the Scenario Creator Wizard Walk-Through does not contain a quick guide.  Creating and maintaining Scenarios is a detailed process and the best way to learn how to maintain them it to create a scenario.  Follow the Walk-Through to learn details about creating and maintaining Scenarios.
+Unlike other tutorials in this manual, the Scenario Creator Wizard Tutorial does not contain a quick guide.  Creating and maintaining Scenarios is a detailed process and the best way to learn how to maintain them it to create a scenario.  Follow the Tutorial to learn details about creating and maintaining Scenarios.

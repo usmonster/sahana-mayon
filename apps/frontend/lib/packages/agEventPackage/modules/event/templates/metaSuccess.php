@@ -1,9 +1,4 @@
-<h2>Event Management</h2>
-<p>Event deployment depends largely on when the event will begun/began.  To facilitate pre-deployment
-  settings and the activation of the event's resources, please provide a name for the event and
-  the Zero Hour.</p>
-<p><strong>Note:</strong> the name should be specific.  For example: a hurricane response to Hurricane Erica could
-  be named "Erica" in Agasti.</p>
+<h2>Event Management</h2> <br/>
 <?php if(isset($scenarioName)){
 
 ?>
@@ -22,13 +17,10 @@ else{
   $event_name = $sf_data->getRaw('event_name');
 }
 ?>
-<br>
 
-<h2><strong><span class="highlightedText"><?php echo $event_name; ?></span></strong> Pre-Deployment</h2>
-<p>The final steps in preparation are often the most critical.  
-  In the final steps of pre-deployment, you'll ensure all geographic reference information for
-  your staff and facility resources are up to date, and that the shifts for <span class="highlightedText"><?php echo $event_name; ?></span> event are
-  up to date.</p>
+<p>Below are checks that the scenario is correct and ready to be deployed.
+  If the checks show "OK", proceed with   deployment.  If not, return to the
+  scenario and make corrections.  </p>
 
 <?php
 $checkResults = $sf_data->getRaw('checkResults');
@@ -77,7 +69,10 @@ if (isset($errMsg))
 //We should have some warnings here in case you're missing something.
 ?>
  
-</form>
-
+</form><br/>
+<h3>Provide a name for the event and the Zero Hour:</h3>
+<p><strong>Note:</strong> the name should be specific.  For example: a hurricane response to Hurricane Erica could
+  be named "Erica" in Agasti.  The Zero Hour is the time the event occurred or is expected to occur.
+<strong>Remember</strong> facility activation time is based on Zero Hour.</p>
 <?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_name' => $event_name)) ?>
 <br />

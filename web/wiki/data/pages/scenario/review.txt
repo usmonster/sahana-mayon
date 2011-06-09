@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-Through ======
+====== Scenario Creator Tutorial ======
 
 ===== Review =====
 The scenario review page is available to emergency managers from the Scenario List and at the conclusion of the Scenario Creation Wizard. From here users will be able to view summary statistics regarding their scenarios, jump to a step in the wizard to edit the scenario, and deploy this scenario as an event.
@@ -14,8 +14,8 @@ For information about importing updates and exporting facility information click
 
 ====== Continue ======
 
-[[scenario:scenarioshiftlist|{{:manual:user:previous.png?135|Scenario Shifts }}]] 
-[[scenario:facilityexport|{{ :manual:user:next.png?135|Export Facilities}}]] 
+[[scenario:scenarioshiftlist|{{:manual:user:previous.jpg?135|Scenario Shifts }}]] 
+[[scenario:facilityexport|{{ :manual:user:next.jpg?135|Export Facilities}}]] 
 
 
 ===== Jump to Another Step =====

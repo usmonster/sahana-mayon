@@ -8,4 +8,4 @@ To begin importing staff, click the **Import Staff** button.  A box will expand 
   - Click "Browse" and select the location of the file on your computer
   - Click "Submit" to upload the file
 
-For more details about importing staff see the [[manual:user:staff:import|Staff Import Walk-through]].
+For more details about importing staff see the [[manual:user:staff:import|Staff Import Tutorial]].

@@ -1,4 +1,4 @@
-====== Scenario Creator Walk Through ======
+====== Scenario Creator Tutorial ======
 
 ===== Shift Templates =====
 To keep facilities running staff shifts are required that define tasks, times, locations, and personnel requirements. These shifts are rarely consistent; according to the needs of the user, shifts may repeat several times in response to a theoretical event, staff may be released, and shifts may be incompatible between different staff types. To create shifts for an emergency event, Sahana Agasti utilizes a template system that enables emergency managers to define a basic shift that will act as a template for automatic shift generation.
@@ -11,7 +11,7 @@ A shift template defines what facility and staff resources it applies to, time e
 ==== Important Concepts ====
   * **Time is relative in a scenario.** As noted in the introduction, scenarios are plans that operate on relative time. Shifts are relative to their facility's activation. The facility group and facility resource statuses set during the facility group creation process determine the status of the facility upon the emergence of an event. When a facility is manually or automatically brought online, its shifts use the activation time as a basis and apply the relative time set here.
 
-===== Walk-Through =====
+===== Tutorial =====
 
 {{:scenario:shifttemplates.png?700|Enter Shift Information}}
 
@@ -41,7 +41,7 @@ A shift template defines what facility and staff resources it applies to, time e
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Introduction]]
+  - [[manual:user:scenario:Tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]

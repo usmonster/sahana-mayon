@@ -33,7 +33,7 @@
 
 <p>A total of <span class="highlightedText">
           <?php echo $shifts ?></span> shifts have been generated covering
-          <span class="highlightedText"><?php echo $operationTime ?></span> of operation.  Click the id below to customize individual shifts.</p>
+          <span class="highlightedText"><?php echo $operationTime ?></span> of operation. </p>
 
 <table class="staffTable">
   <thead>

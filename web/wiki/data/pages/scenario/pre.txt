@@ -1,4 +1,4 @@
-====== Scenario Creator Walk Through ======
+====== Scenario Creator Tutorial ======
 
 ===== Pre-Creation =====
 
@@ -7,9 +7,9 @@
 Because a scenario is used to plan staff and facility resource deployment it's important that you have added your staff and facilities to Sahana Agasti before planning a Scenario.  
 
 **If you have not entered staff and facility details to Agasti, click the links in Sahana Agasti to do so now before continuing with the Scenario Creator.**
-You can use the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-Through]] or [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]] as a guide.
+You can use the [[manual:user:staff:staff_creation_Tutorial|Staff Management Tutorial]] or [[manual:user:facilities:facilities_management_Tutorial|Facility Management Tutorial]] as a guide.
 
-===== Walk-Through =====
+===== Tutorial =====
 
 The three links on this page each perform a separate action:
 
@@ -29,13 +29,13 @@ If you're ready to continue, click "Continue and Create a Scenario" and then the
 
 ====== Continue ======
 
-[[manual:user:scenario:walkthrough|{{:manual:user:previous.jpg?135|Introduction }}]]
+[[manual:user:scenario:Tutorial|{{:manual:user:previous.jpg?135|Introduction }}]]
 [[scenario:new|{{ :manual:user:next.jpg?135|Create a New Scenario}}]] 
 
 
 ====== Jump to Another Step ======
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Introduction]]
+  - [[manual:user:scenario:Tutorial|Introduction]]
   - **Pre Scenario Creation**
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]

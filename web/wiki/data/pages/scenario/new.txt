@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Tutorial ======
 
 ===== Scenario Creation =====
 
@@ -10,7 +10,7 @@ Scenarios are generic plans.  A few examples of a scenario title are "**Volcano 
   * **Scenarios** are plans.  **Events** are the actualization of those plans.
   * **Scenarios** are general.  **Events** are specific.
   * Scenarios are stand-alone and all information in a scenario is specific to that scenario.  If you have multiple preparedness strategies that will be managed in Agasti you'll want to construct a scenario for each of them.
-===== Walk-Through =====
+===== Tutorial =====
 
 {{:scenario:name.png?600|Name and Describe}}
 
@@ -34,7 +34,7 @@ When you've added a name and description click "Save and Continue" and then clic
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Introduction]]  
+  - [[manual:user:scenario:Tutorial|Introduction]]  
   - [[scenario:pre|Pre Scenario Creation]]
   - **Name and Describe**
   - [[scenario:resources|Select Resources]]

@@ -1,11 +1,11 @@
-====== Facility Management Walk-Through ======
+====== Facility Management Tutorial ======
 
 ===== Updating a Facility Record =====
-For scenarios to be current and deployment reliable it's important that records can be updated regularly.  There are two ways to update Facility records: manually and via import.  Below are instructions for manually updating a facility record; updating facility records via import is in the Scenario Creator Walk Through.
+For scenarios to be current and deployment reliable it's important that records can be updated regularly.  There are two ways to update Facility records: manually and via import.  Below are instructions for manually updating a facility record; updating facility records via import is in the Scenario Creator Tutorial.
 ===== Reference Information =====
 ==== Things To Know ====
   * By now you know that a Facility Resource is the combination of a physical location (facility) in Sahana Agasti and the Resource that is available at that facility in a response.  To ensure staff is deployed to accurate locations it's important to keep facility records up to date.
-===== Walk-Through =====
+===== Tutorial =====
 Beginning on the Facility Management page click the List Facilities link to view facility records in Sahana Agasti:
 
 {{:manual:user:facilities:list_facility_link.png?500|Click the List Facility link}}
@@ -61,7 +61,7 @@ To delete a Facility Resource remove it from the form and click "Save".
 ====== Jump to Another Step ======
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
+  - [[manual:user:facilities:facilities_management_Tutorial|Introduction]]
   - [[manual:user:facilities:create|Create Facility]]
   - **Update Facility**
   - [[manual:user:facilities:review|Facility Management Review]]

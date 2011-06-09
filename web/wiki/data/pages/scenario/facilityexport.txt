@@ -28,8 +28,8 @@ If you want to use export/import for updating facilities in a scenario:
 
 ====== Continue ======
 
-[[scenario:review|{{:manual:user:previous.png?135|Review }}]]
-[[scenario:facilityimport|{{ :manual:user:next.png?135|Facility Import}}]] 
+[[scenario:review|{{:manual:user:previous.jpg?135|Review }}]]
+[[scenario:facilityimport|{{ :manual:user:next.jpg?135|Facility Import}}]] 
 
 
 ===== Jump to Another Step =====

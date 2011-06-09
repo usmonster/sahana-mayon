@@ -1,4 +1,4 @@
-====== Staff Management Walk-Through ======
+====== Staff Management Tutorial ======
 
 
 ===== Import Staff =====
@@ -46,7 +46,7 @@ It's **very important** that staff records be properly loaded into the import te
     * L2 Speak - Proficiency speaking that language (basic, intermediate, fluent, superior)
     * L2 Read - Proficiency reading that language (basic, intermediate, fluent, superior)
     * L2 Write - Proficiency writing that language (basic, intermediate, fluent, superior)
-===== Walk-Through =====
+===== Tutorial =====
 
 **Important:** All uploaded staff records __must__ be formatted to the proper xls spreadsheet format.  Download the template and be sure your staff records are in the proper configuration:
 
@@ -69,7 +69,7 @@ It's **very important** that staff records be properly loaded into the import te
 
 {{ :logo_c3.jpg?200}}
 
-  - [[manual:user:staff:staff_creation_walkthrough|Introduction]]
+  - [[manual:user:staff:staff_creation_Tutorial|Introduction]]
   - [[manual:user:staff:new|Create New Staff]]
   - [[manual:user:staff:list|Listing Staff]]
   - [[manual:user:staff:edit|Editing Staff Records]]

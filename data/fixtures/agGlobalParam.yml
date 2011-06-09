@@ -191,3 +191,13 @@ agGlobalParam:
     agHost: localhost
     datapoint: event_deploy_status
     value: open
+  vesuvius_address:
+    id: 39
+    agHost: localhost
+    datapoint: vesuvius_address
+    value: http://
+  organization_name:
+    id: 40
+    agHost: localhost
+    datapoint: owner_name
+    value: New York City OEM

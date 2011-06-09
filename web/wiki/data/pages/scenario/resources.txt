@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Tutorial ======
 
 ===== Selecting Resources and Importing Facilities =====
 This step is designed to help limit the scope of the scenario, as well as expedite Scenario Creation through an optional Facility Import.
@@ -71,8 +71,8 @@ It it **very important** that facility records be entered properly into the impo
 === Facility Import Dos and Donts ===
 A facility import quick guide with dos and donts is available for download: {{:manual:user:facilities:facility_import_quick_guide.pdf|Facility Import Quick Guide}}
 
-===== Walk-Through =====
-For easy reference this Walk Through has been broken into two parts: the selection of Resource Types and Facility Import.
+===== Tutorial =====
+For easy reference this Tutorial has been broken into two parts: the selection of Resource Types and Facility Import.
 
 ==== Selecting Scenario Resources ====
 If you are not importing facilities for this scenario begin by selecting the resources required.
@@ -109,7 +109,7 @@ If you are importing facilities some of the remaining steps in scenario will be 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Introduction]]
+  - [[manual:user:scenario:Tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - **Select Resources**

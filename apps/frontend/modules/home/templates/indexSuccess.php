@@ -7,9 +7,9 @@ if ($sf_user->isAuthenticated()) {
 }
 ?>
 
-<p>Sahana Agasti is the NYC Office of Emergency Management Coastal Storm Plan web application.
-  Agasti is an emergency management application with tools to manage staff, resources, client
-  information and facilities through an easy to use web interface. </p>
+<p>Sahana Agasti is the NYC Office of Emergency Management Coastal emergency planning and 
+  response application with tools to manage staff and facility resources, response plans, and deploy
+  emergency event response via an easy to use web interface. </p>
 
 <?php
 if (!$sf_user->isAuthenticated()) {

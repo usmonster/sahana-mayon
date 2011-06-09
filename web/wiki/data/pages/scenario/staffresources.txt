@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Tutorial ======
 
 ===== Staff Resource Requirements =====
 For Sahana Agasti to assign staff personnel to a facility the system must know how many of each type of staff is required for that facility to open.  Staffing requirements are stored as a [min] / [max] pair representing the minimum and maximum number of staff that should be deployed to each individual facility resource. This data must be entered for each of the default staff types chosen in Step 2 of the Scenario Creation Wizard; emphasizing the importance of only selecting the staff resource types you intend to use in this scenario.
@@ -14,14 +14,14 @@ Using the automated deployment engine, staff resources are distributed according
   * If you assign a minimum you must assign a maximum.
   * The facilities are broken up by group, so if there are multiple groups they will be listed with the facilities together in the order you put them in when creating your facility groups.
 
-===== Walk-Through =====
+===== Tutorial =====
 
 {{:scenario:staffresrequirements.png?700|Enter Staff Numbers}}
 
   - For each facility record listed enter **at least some staff** required for **at least one staff type** for __**every facility**__.  
   - When you've finished entering the staff requirements click "Save and Continue".
 
-After you've clicked "Save and Continue", click "Next" below to move to the next step in the walk-through.
+After you've clicked "Save and Continue", click "Next" below to move to the next step in the Tutorial.
 ===== FAQ =====
 
   - **Why are Staff Resource Requirements defined individually?** - Even though two facilities may provide the same resource (eg, Hospital), the facility sizes may be widely different. Because size is variable, each facility resource may have different resource requirements. For this reason, facility resource requirements are defined individually to be certain that resource requirements are suited to the individual facility.
@@ -34,7 +34,7 @@ After you've clicked "Save and Continue", click "Next" below to move to the next
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:Tutorial|Start]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]

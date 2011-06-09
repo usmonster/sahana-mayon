@@ -1,11 +1,10 @@
 <h2>Prepare</h2>
 <p>In Sahana Agasti, preparing means creating Scenarios.  Scenarios are plans within the application
-that complement your organizations Emergency plans.</p>
-<p><strong>Important:</strong> Resources, like staff or facilities, must be loaded into the application
-  before creating a scenario.  Staff must be loaded before scenarios are created.
-  Facilities can be entered manually before scenario creation or uploaded during the creation
-  of each scenario.</p>
-<p>For more information about Scenario Creation click "Scenario Creator Walkthrough" below.</p>
+that complement your organizations existing emergency plans.</p>
+<p><strong>Important:</strong> Resources, like staff or facilities, should be loaded into the application
+  before creating a scenario.  Facilities can be entered manually before scenario creation or 
+  uploaded during the creation of each scenario.</p>
+<p>For more information about Scenario Creation click "Scenario Creator Tutorial" below.</p>
 
 <h3>Please select one of the following actions: </h3><br>
 <h4>Manage Resources</h4>
@@ -22,7 +21,7 @@ that complement your organizations Emergency plans.</p>
       <td><?php echo link_to('Create<br>New Scenario', 'scenario/pre', array('class' => 'generalButton width140')) ?></td>
       <td><?php echo link_to('Manage<br>Scenarios', 'scenario/index', array('class' => 'generalButton width140')) ?></td>
       <td><?php echo link_to('Deploy a<br>Scenario', 'event/index', array('class' => 'generalButton width140')) ?></td>
-      <td><?php echo link_to('Scenario Creator<br>Walkthrough', public_path('wiki/doku.php?id=manual:user:scenario:walkthrough'), array('class' => 'generalButton width140', 'title' => 'Help', 'target' => '_blank')) ?></td>
+      <td><?php echo link_to('Scenario Creator<br>Tutorial', public_path('wiki/doku.php?id=manual:user:scenario:Tutorial'), array('class' => 'generalButton width140', 'title' => 'Help', 'target' => '_blank')) ?></td>
       <td></td>
     </tr>
 </table>

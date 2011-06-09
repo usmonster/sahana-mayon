@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Tutorial ======
 
 ===== Scenario Shifts =====
 In the last step, we created a shift template that was used to generate shifts. This page gives emergency managers the opportunity to review the created shifts and, in the event of a problem, return to the templates to tweak and re-generate shifts.
@@ -8,14 +8,14 @@ In the last step, we created a shift template that was used to generate shifts. 
 ==== Important Concepts ====
   * If you return to the previous page, change templates, and regenerate shifts the old shifts will be lost.
 
-===== Walk-Through =====
+===== Tutorial =====
 
 {{:scenario:scenarioshifts.png?650|}}
 
 ==== Regenerating Shifts ====
 If you determine that the shift templates are not correct and would like to return and regenerate your shifts, click the '6' in the Scenario Creator Wizard menu above the shifts to return to the Shift Template step.
 
-When you are ready, click {{:scenario:screenshot_069.png?200|Finish Wizard}} to review.  Click "Next" below to move to the next walk-through step.
+When you are ready, click {{:scenario:screenshot_069.png?200|Finish Wizard}} to review.  Click "Next" below to move to the next Tutorial step.
 
 ====== Continue ======
 
@@ -26,7 +26,7 @@ When you are ready, click {{:scenario:screenshot_069.png?200|Finish Wizard}} to 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Introduction]]
+  - [[manual:user:scenario:Tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Create A Scenario]]
   - [[scenario:newgroup| Create Facility Groups]]

@@ -12,6 +12,6 @@
     * [[manual:User:Facilities|Facilities]]
     * [[manual:User:Organizations|Organizations]]
     * [[manual:User:Scenario|Scenarios]]
-      * [[manual:user:scenario:walkthrough|Scenario Walk-Through]]
+      * [[manual:user:scenario:Tutorial|Scenario Tutorial]]
     * [[manual:User:Event|Event Deployment]]
     * [[manual:User:FAQ|FAQ]]

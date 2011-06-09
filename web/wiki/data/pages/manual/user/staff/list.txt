@@ -1,4 +1,4 @@
-====== Staff Management Walk-Through ======
+====== Staff Management Tutorial ======
 
 
 ===== List Staff =====
@@ -9,7 +9,7 @@ The Sahana Agasti Staff list makes it easy for administrators to update or locat
   * Even if a staff record has more than one resource they are only listed once.
   * The list defaults to show staff in "active" status.  To view all records adjust the dropdown in the upper right corner. {{:manual:user:staff:staff_status_dropdown.png|}}
 
-===== Walk-Through =====
+===== Tutorial =====
 
   - To find a specific record, search by Name, Resource Type, Organization, City (or Borough), or email address. {{:manual:user:staff:search_box.png|Search Box}}
   - From the Staff List you can either Edit or View a staff record.  Each record has two buttons on the left column: Edit and View. Click "Edit" to edit the record and "Show" to view the record. {{:manual:user:staff:edit_show_staff_list.png|Edit or Show}}
@@ -26,7 +26,7 @@ Next you'll be editing an existing record in Agasti Mayon.  Click the "Edit" but
 
 {{ :logo_c3.jpg?200}}
 
-  - [[manual:user:staff:staff_creation_walkthrough|Introduction]]
+  - [[manual:user:staff:staff_creation_Tutorial|Introduction]]
   - [[manual:user:staff:new|Create New Staff]]
   - **Listing Staff**
   - [[manual:user:staff:edit|Editing Staff Records]]

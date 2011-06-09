@@ -1,11 +1,11 @@
-====== Staff Management Walk-Through ======
+====== Staff Management Tutorial ======
 
 
 ===== Export Staff =====
 
 Exporting staff records can be useful for many applications such as reporting on staff, exporting to other management systems, and updating information.
 
-===== Walk-Through =====
+===== Tutorial =====
 
   - Beginning on the Staff Management home page select the "Export Staff" link.
   - Depending on your browser you may be prompted to select where to save the export file or the file will download automatically.  If prompted to select to open the document or select a place locally to save the document.
@@ -24,7 +24,7 @@ Exporting staff records can be useful for many applications such as reporting on
 
 {{ :logo_c3.jpg?200}}
 
-  - [[manual:user:staff:staff_creation_walkthrough|Introduction]]
+  - [[manual:user:staff:staff_creation_Tutorial|Introduction]]
   - [[manual:user:staff:new|Create New Staff]]
   - [[manual:user:staff:list|Listing Staff]]
   - [[manual:user:staff:edit|Editing Staff Records]]

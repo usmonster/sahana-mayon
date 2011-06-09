@@ -1,4 +1,4 @@
-====== Scenario Creator Walk-Through ======
+====== Scenario Creator Tutorial ======
 
 ===== Facility Group Creation =====
 Facility groups are just that: groups of facilities.  Facilities can be grouped for many reasons including activation order, geographical location, or type of resources.  
@@ -23,7 +23,7 @@ It's important to understand what facility groups are used for later on in plann
   * **Facility Group** - A grouping of Facility Resources.
   * **Deployment Priority** - This is the order in which facility groups, and the facilities in them, are activated.  A group with a lower number will be activated and the staff assigned before a group with a higher number.  The same within that early group, the facility with a lower number will be populated with staff before the higher number.
 
-===== Walk-Through =====
+===== Tutorial =====
 
 ==== Manual Scenario Creation (without import) ====
 {{:scenario:facilitygroups.png?600|Create Facility Groups}}
@@ -62,7 +62,7 @@ After all groups have been created select the "Next" button below.
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Introduction]]
+  - [[manual:user:scenario:Tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]
