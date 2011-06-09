@@ -25,10 +25,12 @@ class agEventMigrationHelper
   public static function facilityGroupCheck($scenario_id)
   {
     $facilityGroupQuery = agDoctrineQuery::create()
-        ->select('aFG.id, aFG.scenario_facility_group')
+        ->select('aFG.id')
+        ->addSelect('aFG.scenario_facility_group')
         ->from('agScenarioFacilityGroup aFG')
         ->leftJoin('aFG.agScenarioFacilityResource aFR')
-        ->where('aFR.id is NULL');
+        ->where('aFR.id is NULL')
+        ->andWhere('aFG.scenario_id = ?', $scenario_id);
     $returnvalue = $facilityGroupQuery->execute(array(), 'key_value_pair');
     $facilityGroupQuery->free();
     return $returnvalue;
