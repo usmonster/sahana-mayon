@@ -1028,6 +1028,16 @@ class eventActions extends agActions
 
     //p-code
     $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
+
+
+     $current_status = agEventFacilityHelper::returnCurrentEventStatus($this->event_id);
+       if ($current_status != "") {
+        $cur_status = Doctrine::getTable('agEventStatusType')
+                        ->findByDql('id = ?', $current_status)
+                        ->getFirst()->event_status_type;
+  }
+  $this->upper_case_cur_Status = strtoupper($cur_status);
+
     //end p-code
   }
 

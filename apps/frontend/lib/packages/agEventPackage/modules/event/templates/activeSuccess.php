@@ -26,30 +26,18 @@ if (isset($blackOutFacilities)) {
         <th>Description</th>
     </tr>
 
-    <?php
-    $current_status = agEventFacilityHelper::returnCurrentEventStatus($event_id);
-    if ($current_status != "") {
-        $cur_status = Doctrine::getTable('agEventStatusType')
-                        ->findByDql('id = ?', $current_status)
-                        ->getFirst()->event_status_type;
-
-        $upper_case_cur_Status = strtoupper($cur_status);
-        if ($upper_case_cur_Status == "PRE-DEPLOYMENT") {
-            //echo $cur_status;
-
-            echo "<tr>
+    <?php if ($upper_case_cur_Status == "PRE-DEPLOYMENT"): ?>
+    <tr>
         <td>
-        <a class=\"buttonText\" href=\"<?php echo url_for('event/meta?event=' . $urlEncodedEventName); ?>\">Event Name and Zero Hour</a>
+        <a class="buttonText" href="<?php echo url_for('event/meta?event=' . $urlEncodedEventName); ?>">Event Name and Zero Hour</a>
         </td>
-        <td>Name: <span class=\"highlightedText\"><?php echo $event_name
+        <td>Name: <span class="highlightedText"><?php echo $event_name
 ?></span>
 
             </td>
-          </tr>";
-            //<br />Description: <span class=\"highlightedText\"><?php echo $event_description
-        }
-    }
-    ?>
+          </tr>
+            <?php endif ?>
+  
 
     <tr>
         <td>
