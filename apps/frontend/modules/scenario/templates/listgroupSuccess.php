@@ -9,7 +9,7 @@
 <h4>Click the group name to edit the group, or "Add New" to make a new group in the <span class="highlightedText"><?php echo $scenarioName;
 ?> </span> scenario.</h4>
 <p>Facility Groups are collections of facility resources that complement the groupings of facilities
-  in the real-world response plan.<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_group_types&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="What is a Facility Resource?">?</a></p>
+  in the real-world response plan.</p>
 
 <table class="staffTable">
     <tr class="head">
