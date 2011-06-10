@@ -150,6 +150,8 @@ class eventActions extends agActions
 
       $this->event_id = $this->event->id;
       $this->event_name = $this->event->event_name;
+      $this->organization_name = agGlobal::getParam('organization_name');
+      $this->vesuvius_address = agGlobal::getParam('vesuvius_address');
     }
   }
 

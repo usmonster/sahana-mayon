@@ -67,10 +67,11 @@ if (isset($blackOutFacilities)) {
     </tr>
     <tr>
         <td>
-            <a class="buttonText" href="#">Client Information</a>
+            <a class="buttonText" href="<?php echo $vesuvius_address; ?>" target="_blank">Client Information</a>
         </td>
         <td>
-            <div style="font-style:oblique">No statistical data is currently available.</div>
+            <div>Click the Client Information link to jump to the Vesuvius client information
+              tracking system.</div>
         </td>
     </tr>
     <tr>
@@ -78,7 +79,7 @@ if (isset($blackOutFacilities)) {
             <a class="buttonText" href="#">Reporting</a>
         </td>
         <td>
-            <div style="font-style:oblique">No statistical data is currently available.</div>
+            <div style="font-style:oblique">No information currently available .</div>
         </td>
     </tr>
 </table>

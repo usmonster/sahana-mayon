@@ -167,9 +167,17 @@ class agStaffPoolForm extends sfForm
     }
 
     if (isset($this->embeddedForms['staff_generator'])) {
-      $form = $this->embeddedForms['staff_generator'];
-      $values = $this->values['staff_generator'];
-      $this->saveStaffGenForm($form, $values);
+      // Check whether or not the search is already saved for the scenario.
+	    // Save only if the scenario and search is not saved in scenario staff generator table.
+      $found = Doctrine_core::getTable('agScenarioStaffGenerator')
+                 ->findByDql('scenario_id =? AND search_id = ?', 
+                             array($this->scenario_id, $this->search_id))
+                 ->count();
+      if ($found === 0) {
+        $form = $this->embeddedForms['staff_generator'];
+        $values = $this->values['staff_generator'];
+        $this->saveStaffGenForm($form, $values);
+      }
       unset($this->embeddedForms['staff_generator']);
     }
   }

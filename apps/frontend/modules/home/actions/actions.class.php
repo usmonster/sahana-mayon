@@ -31,6 +31,8 @@ class homeActions extends agActions
   public function executeIndex(sfWebRequest $request)
   {
   //$this->forward('default', 'module');
+    $this->organization_name = agGlobal::getParam('organization_name');
+    $this->vesuvius_address = agGlobal::getParam('vesuvius_address');
   }
   public function executeError(sfWebRequest $request)
   {

@@ -199,5 +199,5 @@ agGlobalParam:
   organization_name:
     id: 40
     agHost: localhost
-    datapoint: owner_name
+    datapoint: organization_name
     value: New York City OEM
