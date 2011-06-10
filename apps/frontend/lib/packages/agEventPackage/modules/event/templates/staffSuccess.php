@@ -1,5 +1,6 @@
-<h2><span class="highlightedText"><?php echo $event_name ?></span> Staff Management</h2>
-
+<h2>Staff Management: <span class="highlightedText"><?php echo $event_name ?></span></h2>
+<br/>
+<h4>Manage staff pools and shifts for the  <span class="highlightedText"><?php echo $event_name; ?></span> event.</h4>
 <div class="infoHolder">
 <a href="<?php echo url_for('event/staffpool?event=' . $event_name); ?>" class="continueButton" title="View Staff Resource Pools for Event">Modify Staff Resource Pools for Event</a><br/>
 <br/>

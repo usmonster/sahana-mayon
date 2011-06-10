@@ -8,8 +8,8 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 ?>
 
 <h2>Staff Messaging: <span class="highlightedText"><?php echo $event_name; ?> </span></h2>
-
-<p>Use this page to send messages and receive responses to your staff for <span class="highlightedText"><?php echo $event_name; ?></span>.</p>
+<br/>
+<h4>Message and import responses for the staff of the <span class="highlightedText"><?php echo $event_name; ?></span> event.</h4>
 
 <table class="blueTable">
     <tr class="head">
