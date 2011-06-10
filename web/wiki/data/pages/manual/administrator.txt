@@ -3,11 +3,16 @@
 
 ----
 
-<html><div style="text-align: center; font-size: 400%; margin: 20px 0;">Administrator's Guide</div></html>
-
+<html><div style="text-align: center; font-size: 400%; margin: 20px 0;">System Administrator's Guide</div></html>
 
 ----
-<html><div style="text-align: center;"><br><br><br><br><br><br><br><br><br><br><br>
+  * [[manual:administrator:intro|Introduction]]
+  * [[manual:administrator:installation|Installation]]
+  * [[manual:administrator:customization|Customization]]
+  * [[manual:administrator:support|Support]]
+
+<html><div style="text-align: center;"><br><br><br><br>
+
 
 Sahana Foundation <br>
 http://www.sahanafoundation.org <br>

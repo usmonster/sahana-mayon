@@ -27,7 +27,8 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
                 echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';
             }
             ?></td>
-        <td> description</td>
+        <td> Export list of staff in the <span class="highlightedText"><?php echo $event_name; ?> </span> event
+        staff pool who have not yet responded.</td>
     </tr>
     <tr>
         <td>
@@ -47,7 +48,8 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 
             </span></td>
         <td>
-            <span id="descText">testing</span>
+            <span id="descText">Import response spreadsheet from staff messaging. Be sure the imported file matches the
+              <a href="/agasti/wiki/doku.php?id=manual:user:event:send_word_now_import" target="_blank" title="Send Word NOW Import Specification">Send Word NOW Import Specification</a>.</span>
             <form id="importForm" style="position: relative; display: inline-block" action="
                   <?php echo $importUrl ?>" method="post" enctype="multipart/form-data">
                 <div style="position: absolute; top: 0px; left: 0px; width: 250px">
@@ -67,7 +69,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 
             <a href="#" class="generalButton">Preview Confirmed Staff Pool</a>
         </td>
-        <td> description</td>
+        <td> Preview pool of staff who have confirmed they will respond to this event.</td>
     </tr>
     <tr>
         <td>
@@ -77,7 +79,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
                   echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'generalButton'));
             ?>
               </td>
-              <td> description</td>
+              <td> After a sufficient staff pool have responded, deploy staff to facilities.</td>
           </tr>
           <tr>
               <td>
@@ -90,7 +92,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
                   }
             ?>
         </td>
-        <td> description</td>
+        <td> Export contact list of confirmed staff and their deployment assignments.</td>
     </tr></table>
 <br> 
 
