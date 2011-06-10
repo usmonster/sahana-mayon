@@ -223,9 +223,7 @@ class scenarioActions extends agActions
         foreach ($group->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
           foreach ($this->staffResourceTypes as $srt) {
             $subKey = $group['scenario_facility_group'];
-            $subSubKey = $scenarioFacilityResource
-                    ->getAgFacilityResource()
-                    ->getAgFacility()->facility_name;
+            $subSubKey = $scenarioFacilityResource->id;
 
 
 //this existing check should be refactored to be more efficient
