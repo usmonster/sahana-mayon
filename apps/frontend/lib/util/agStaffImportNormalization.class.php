@@ -23,9 +23,9 @@
 class agStaffImportNormalization extends agImportNormalization
 {
 
-  public function __deconstruct()
+  public function __destruct()
   {
-    parent::__deconstruct();
+    parent::__destruct();
   }
 
   /**

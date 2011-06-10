@@ -30,11 +30,11 @@ abstract class agImportNormalization extends agImportHelper
   $importCount = 0;
 
   /*
-  public function __construct()
-  {
+    public function __construct()
+    {
     // get our dispatcher;
     $dispatcher = new sfEventDispatcher();
-  }
+    }
    * 
    */
 
@@ -44,7 +44,6 @@ abstract class agImportNormalization extends agImportHelper
   public function __destruct()
   {
     parent::__destruct();
-    
   }
 
   /**
@@ -195,6 +194,9 @@ abstract class agImportNormalization extends agImportHelper
   {
     // preempt this method with a check on our error threshold and stop if we shouldn't continue
     try {
+
+      $this->eh->logNotice("Memory: " . memory_get_usage());
+
       // check it once before we start anything and once after
       $this->eh->checkErrThreshold();
 
@@ -204,7 +206,6 @@ abstract class agImportNormalization extends agImportHelper
       // clean our rawData to make it free of zero length strings and related
       // @todo Remove once working fetch is confirmed
       //$this->clearNullRawData();
-
       // normalize and insert our data
       $normalizeSuccess = $this->normalizeData();
 
@@ -232,8 +233,8 @@ abstract class agImportNormalization extends agImportHelper
 
     // these aren't required but make the code more readable
     $batchSize = $this->iterData['batchSize'];
-    $fetchPosition =& $this->iterData['fetchPosition'];
-    $batchPosition =& $this->iterData['batchPosition'];
+    $fetchPosition = & $this->iterData['fetchPosition'];
+    $batchPosition = & $this->iterData['batchPosition'];
     $batchStart = $fetchPosition;
     $batchEnd = ($fetchPosition + $batchSize - 1);
 
@@ -243,7 +244,7 @@ abstract class agImportNormalization extends agImportHelper
     // log this event
     $eventMsg = "Loading batch starting at {$fetchPosition} from the temp table";
     $this->eh->logDebug($eventMsg);
-    
+
     // fetch the data up until it ends or we hit our batchsize limit
     while (($row = $pdo->fetch()) && ($fetchPosition <= $batchEnd)) {
       // modify the record just a little
@@ -253,11 +254,9 @@ abstract class agImportNormalization extends agImportHelper
       $this->eh->logDebug('Fetching row {' . $rowId . '} from temp table into import data.');
 
       // use the import spec as our definitive columns list and add the obj properties magically
-      foreach ($this->importSpec as $columnName => $columnSpec)
-      {
+      foreach ($this->importSpec as $columnName => $columnSpec) {
         // checking for empty negates the need for an explicit removal step
-        if (!empty($row->$columnName))
-        {
+        if (!empty($row->$columnName)) {
           $this->importData[$rowId]['_rawData'][$columnName] = $row->$columnName;
         }
       }
@@ -295,7 +294,7 @@ abstract class agImportNormalization extends agImportHelper
     // now we can legitimately execute our real search
     $this->eh->logDebug('Starting initial fetch from temp.');
     $this->executePdoQuery($conn, $query, array(), Doctrine_Core::FETCH_OBJ,
-      $this->tempToRawQueryName);
+                           $this->tempToRawQueryName);
     $this->eh->logInfo("Successfully established the PDO fetch iterator.");
   }
 
@@ -565,4 +564,5 @@ abstract class agImportNormalization extends agImportHelper
     }
     unset($rowData);
   }
+
 }

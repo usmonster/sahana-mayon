@@ -578,7 +578,7 @@ class agStaffActions extends agActions
     $this->importer->concludeImport();
 
     // Update lucene index
-    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+    //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
 
 
     //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
