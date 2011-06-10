@@ -201,3 +201,13 @@ agGlobalParam:
     agHost: localhost
     datapoint: organization_name
     value: New York City OEM
+  staff_messaging_allocation_status:
+    id: 41
+    agHost: localhost
+    datapoint: staff_messaging_allocation_status
+    value: '<?php echo json_encode(array(1 => "Available", 2 => "Unavailable")); ?>'
+  default_staff_messaging_allocation_status:
+    id: 42
+    agHost: localhost
+    datapoint: default_staff_messaging_allocation_status
+    value: Unknown
