@@ -202,7 +202,8 @@ abstract class agImportNormalization extends agImportHelper
       $this->fetchNextBatch();
 
       // clean our rawData to make it free of zero length strings and related
-      $this->clearNullRawData();
+      // @todo Remove once working fetch is confirmed
+      //$this->clearNullRawData();
 
       // normalize and insert our data
       $normalizeSuccess = $this->normalizeData();
@@ -231,8 +232,8 @@ abstract class agImportNormalization extends agImportHelper
 
     // these aren't required but make the code more readable
     $batchSize = $this->iterData['batchSize'];
-    $fetchPosition = & $this->iterData['fetchPosition'];
-    $batchPosition = & $this->iterData['batchPosition'];
+    $fetchPosition =& $this->iterData['fetchPosition'];
+    $batchPosition =& $this->iterData['batchPosition'];
     $batchStart = $fetchPosition;
     $batchEnd = ($fetchPosition + $batchSize - 1);
 
@@ -242,17 +243,25 @@ abstract class agImportNormalization extends agImportHelper
     // log this event
     $eventMsg = "Loading batch starting at {$fetchPosition} from the temp table";
     $this->eh->logDebug($eventMsg);
-
+    
     // fetch the data up until it ends or we hit our batchsize limit
     while (($row = $pdo->fetch()) && ($fetchPosition <= $batchEnd)) {
       // modify the record just a little
-      $rowId = $row['id'];
-      unset($row['id']);
-      unset($row[$this->successColumn]);
+      $rowId = $row->id;
 
       // add it to import data array and iterate our counter
       $this->eh->logDebug('Fetching row {' . $rowId . '} from temp table into import data.');
-      $this->importData[$rowId]['_rawData'] = $row;
+
+      // use the import spec as our definitive columns list and add the obj properties magically
+      foreach ($this->importSpec as $columnName => $columnSpec)
+      {
+        // checking for empty negates the need for an explicit removal step
+        if (!empty($row->$columnName))
+        {
+          $this->importData[$rowId]['_rawData'][$columnName] = $row->$columnName;
+        }
+      }
+      // unset($row); // @todo Remove this if it proves unnecessary
       $fetchPosition++;
     }
 
@@ -285,7 +294,8 @@ abstract class agImportNormalization extends agImportHelper
 
     // now we can legitimately execute our real search
     $this->eh->logDebug('Starting initial fetch from temp.');
-    $this->executePdoQuery($conn, $query, NULL, NULL, $this->tempToRawQueryName);
+    $this->executePdoQuery($conn, $query, array(), Doctrine_Core::FETCH_OBJ,
+      $this->tempToRawQueryName);
     $this->eh->logInfo("Successfully established the PDO fetch iterator.");
   }
 
@@ -540,6 +550,8 @@ abstract class agImportNormalization extends agImportHelper
 
   /**
    * Method to remove null values from _rawData
+   * @deprecated The use of the FETCH_OBJ allows value-by-value examination at the fetch and
+   * avoids inserting empty values altogether
    */
   protected function clearNullRawData()
   {

@@ -55,7 +55,7 @@ agGlobalParam:
     id: 11
     agHost: localhost
     datapoint: default_batch_size
-    value: 20000
+    value: 100
   lucene_delimiter:
     id: 12
     agHost: localhost
@@ -186,3 +186,18 @@ agGlobalParam:
     agHost: localhost
     datapoint: staff_disabled_status
     value: inactive
+  event_deploy_status:
+    id: 38
+    agHost: localhost
+    datapoint: event_deploy_status
+    value: open
+  vesuvius_address:
+    id: 39
+    agHost: localhost
+    datapoint: vesuvius_address
+    value: http://
+  organization_name:
+    id: 40
+    agHost: localhost
+    datapoint: owner_name
+    value: New York City OEM

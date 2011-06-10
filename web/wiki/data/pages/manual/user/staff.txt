@@ -1,6 +1,6 @@
 ====== Staff Management Quick Guide ======
 
-Managing staff is a key component of Agasti.  In an emergency response it's important to have up-to-date contact information for staff and volunteers as well as their roles in your response plan.  Agasti provides tools for these and more.  Below are quick-reference instructions for staff management.  For detailed how-to instruction see the [[manual:user:staff:staff_creation_walkthrough|Managing Staff Walk-Through]].
+Managing staff is a key component of Agasti.  In an emergency response it's important to have up-to-date contact information for staff and volunteers as well as their roles in your response plan.  Agasti provides tools for these and more.  Below are quick-reference instructions for staff management.  For detailed how-to instruction see the [[manual:user:staff:staff_creation_tutorial|Managing Staff Tutorial]].
 
 ===== Staff Management Functions =====
 
@@ -26,7 +26,7 @@ Using the default automated deployment engine, staff resources are distributed a
 
 ===== Entering Staff =====
 
-Staff can be entered into Agasti in two ways: manually and via import.  Below are brief instructions for using both.  A walk-through is available for [[manual:user:staff:new|manual entry]] and [[manual:user:staff:import|import]].
+Staff can be entered into Agasti in two ways: manually and via import.  Below are brief instructions for using both.  A Tutorial is available for [[manual:user:staff:new|manual entry]] and [[manual:user:staff:import|import]].
 
 ==== Manual ====
 To manually enter staff, beginning from the Staff Management page:
@@ -48,7 +48,7 @@ Beginning on the Staff Management page:
   - Select "Submit" to upload the file
   - On the results page review the import feedback for errors.  Any rejected records will contain a message describing why it was rejected.
 ===== Editing Staff =====
-Staff records can be updated manually or via the import instructions above.  Below are brief instructions for editing staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-Through]].
+Staff records can be updated manually or via the import instructions above.  Below are brief instructions for editing staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_Tutorial|Staff Management Tutorial]].
 
   - Beginning on the Staff Management page select "List Staff".
   - From the staff list locate the staff record you wish to update.  There are two ways to locate the record:
@@ -60,7 +60,7 @@ Staff records can be updated manually or via the import instructions above.  Bel
 
 ===== Deleting Staff =====
 
-Below are brief instructions for deleting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-Through]].
+Below are brief instructions for deleting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_Tutorial|Staff Management Tutorial]].
 
   - Beginning on the Staff Management page select "List Staff".
   - From the staff list locate the staff record you wish to delete.  There are two ways to locate the record:
@@ -73,7 +73,7 @@ Below are brief instructions for deleting staff records manually; however for mo
 
 ===== Staff Export =====
 
-Below are brief instructions for exporting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_walkthrough|Staff Management Walk-Through]].
+Below are brief instructions for exporting staff records manually; however for more detail please see the [[manual:user:staff:staff_creation_Tutorial|Staff Management Tutorial]].
 
   - Beginning on the Staff Management home page select the "Export Staff" link.
   - Depending on your browser you may be asked where to save the file.  In the pop up window either select to open the document or select a place locally to save the document.

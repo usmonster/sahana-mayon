@@ -1,21 +1,22 @@
-====== Facility Management Walk-Through ======
+====== Facility Management Tutorial ======
 
 ===== Updating a Facility Record =====
-For scenarios to be current and deployment reliable it's important that records can be updated regularly.  There are two ways to update Facility records: manually and via import.  Below are instructions for manually updating a facility record; updating via import will be covered later in this tutorial.
+For scenarios to be current and deployment reliable it's important that records can be updated regularly.  There are two ways to update Facility records: manually and via import.  Below are instructions for manually updating a facility record; updating facility records via import is in the Scenario Creator Tutorial.
 ===== Reference Information =====
 ==== Things To Know ====
   * By now you know that a Facility Resource is the combination of a physical location (facility) in Sahana Agasti and the Resource that is available at that facility in a response.  To ensure staff is deployed to accurate locations it's important to keep facility records up to date.
-===== Walk-Through =====
+===== Tutorial =====
 Beginning on the Facility Management page click the List Facilities link to view facility records in Sahana Agasti:
 
 {{:manual:user:facilities:list_facility_link.png?500|Click the List Facility link}}
 
-On the Facility List click the number of the facility to be edited:
+  * On the Facility List click the number of the facility to be edited:
 {{:manual:user:facilities:click_facility_link_button.png|Click the ID number to view the facility}}
 
-<<<Place holder for Facility View page>>>
+  * After clicking the ID number you'll view the facility record:
+{{:manual:user:facilities:fac_view.png?400|View Facility Record}}
 
-To edit the record click {{:manual:user:facilities:edit_button.png|Edit}}.
+  * To edit the record click {{:manual:user:facilities:edit_button.png|Edit}} at the bottom of the page.
 
 For ease of reference, the different sections and possible updates are outlined in the breakdowns below:
 ==== Facility Name and Facility Code ====
@@ -27,31 +28,40 @@ Facility Name is used as a label for the user, but not considered "unique" or us
 The Facility Code is the unique identifier of the Facility record in Sahana Agasti.  **Important:** Facility Code __must__ be unique to each facility.  Updating the Facility Code, or changing it on import, can cause problems with deployment and duplication.
 
 ==== Facility Resources ====
-
 === Editing Facility Resources ===
 To edit a facility resource, update the information and click "Save" at the bottom of the page.
 
 === Deleting Facility Resources ===
 To delete a Facility Resource remove it from the form and click "Save".
-^ Before Editing ^ After Editing ^ 
+^ Before Deleting ^ After Deleting ^ 
 | {{:manual:user:facilities:fac_resources.png?350|Before Edit }} | {{ :manual:user:facilities:fac_res_after.png?350|After Edit}} |
 
-
 ==== Facility Contact Information ====
-<<<Place holder for fac contact information>>>
 
+=== Address ===
 
-===== FAQ =====
+{{:manual:user:facilities:fac_addy_update.png?200|Updating Facility Address}}
+  * To make updates to the facility address edit the address information and click "Save" at the bottom.
 
-<<<hmmm....??>>>
+=== Email Address ===
+
+{{:manual:user:facilities:fac_email_update.png?300|Updating Facility Email}}
+  * To make updates to the email address edit the email information and click "Save" at the bottom.  Sahana Agasti will only accept properly formatted emails. Example: name@domain.com
+
+=== Phone ===
+
+{{:manual:user:facilities:fac_phone_update.png?300|Updating Facility Phone}}
+  * To make updates to the facility phone number edit the number and click "Save" at the bottom of the page.  A reliable contact number for the facility that could be called during an activation.  Phone numbers should be entered as 5559991111×1234. Format: 9 digits without spaces. Extensions begin with an x.
+
 ====== Continue ======
-[[manual:user:facilities:review|{{ :manual:user:next.png|Import}}]] 
-[[manual:user:facilities:create|{{:manual:user:previous.png?135|Create }}]]
+[[manual:user:facilities:create|{{:manual:user:previous.jpg?135|Create }}]]
+[[manual:user:facilities:review|{{ :manual:user:next.jpg?135|Review}}]] 
+
 
 ====== Jump to Another Step ======
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
+  - [[manual:user:facilities:facilities_management_Tutorial|Introduction]]
   - [[manual:user:facilities:create|Create Facility]]
   - **Update Facility**
   - [[manual:user:facilities:review|Facility Management Review]]

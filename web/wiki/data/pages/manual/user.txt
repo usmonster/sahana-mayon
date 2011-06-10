@@ -3,7 +3,7 @@
 
 ----
 
-<html><div style="text-align: center; font-size: 400%; margin: 20px 0;">User's Guide</div></html>
+<html><div style="text-align: center; font-size: 400%; margin: 20px 0;">Application Manager Guide</div></html>
 
 
 ----

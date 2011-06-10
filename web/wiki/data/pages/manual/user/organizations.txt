@@ -3,7 +3,7 @@ In Sahana Agasti, Organizations are used to group staff resources for scenario p
 
 Organizations can be municipal departments or non-government organizations whose affiliated staff are made available during a response. During scenario creation groups of staff resources can be prioritized by organization affiliation in the staff pool; which is the currently the primary function of organizations.
 
-Below are general how-tos and quick reference information.  For full details on Organization Management see the [[manual:user:organizations:walkthrough|Managing Organizations Walk Through]].
+Below are general how-tos and quick reference information.  For full details on Organization Management see the [[manual:user:organizations:Tutorial|Managing Organizations Tutorial]].
 
 ===== Organization Management Functions =====
 The functions of Organization Management are:
@@ -29,4 +29,4 @@ Beginning from the Organization Management home page:
   - Update the information in the form
   - Click "Save and Continue" to save the information, "Delete" to delete the organization, and "Back to List" to cancel and return to the main page.
 
-For full details on Organization Management see the [[manual:user:organizations:walkthrough|Managing Organizations Walk Through]].
+For full details on Organization Management see the [[manual:user:organizations:Tutorial|Managing Organizations Tutorial]].

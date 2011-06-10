@@ -1,0 +1,28 @@
+====== Event Management Tutorial ======
+
+===== Introduction =====
+[[manual:important#scenarios|Scenarios]] are plans in Sahana Agasti.  When real world emergencies arise the activation of these plans are referred to in Sahana Agasti as **Events**.  Events Management includes naming and setting the time for the event, messaging staff, and deploying staff to facilities.
+
+===== Reference Information =====
+  * If Scenarios are plans, **Events** are the actualization of those plans. Scenarios are broad ideas of what could happen and who may be available, and events are specifically timed and actualized by who is available to respond.
+
+==== Time Management in Events ====
+While time is relative in Scenarios, during events time becomes specific. Events and scenarios refer to Zero Hour, the time while the event is expected to happen or, depending on the emergency, did happen. _For Example_: a hurricane sheltering plan may have facilities open the day before zero hour in the anticipation of flooding, while in an earthquake plan the shelters open after zero hour because it's unpredictable.
+
+During the deployment of an event the Zero Hour is set and all the relative time relationships created in the Scenario become specific times in relationship to the zero hour. This concept will be explored in more detail in the Scenario Creator Wizard tutorial and the Event Management Tutorial.
+
+===== Getting Started =====
+You begin an event by selecting a scenario to deploy from.  Click "Next" for step by step instructions for deploying an event.
+
+[[manual:user:event:deploying_an_event|{{ :manual:user:next.jpg?135|Deploying an Event}}]] 
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - **Introduction**
+  - [[manual:user:event:deploying_an_event|Deploying an Event]]
+  - [[manual:user:event:messaging_staff|Messaging and Deploying Staff]]
+  - [[manual:user:event:managing_event_staff|Managing Event Staff]]
+  - [[manual:user:event:managing_event_facilities|Managing Event Facilities]]
+  - [[manual:user:event:resolving_events|Resolving Events]]
+  - [[manual:user:event:clients|Vesuvius Client Tracking System]]

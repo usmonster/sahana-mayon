@@ -309,12 +309,12 @@ class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Q
                 }
         }
 
-        // Walk through positions of the term with lowest cardinality
+        // Tutorial positions of the term with lowest cardinality
         foreach ($this->_termsPositions[$lowCardTermId][$docId] as $lowCardPos) {
             // We expect phrase to be found
             $freq++;
 
-            // Walk through other terms
+            // Tutorial other terms
             foreach ($this->_terms as $termId => $term) {
                 if ($termId != $lowCardTermId) {
                     $expectedPosition = $lowCardPos +
@@ -347,12 +347,12 @@ class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Q
         $phraseQueue[0] = array(); // empty phrase
         $lastTerm = null;
 
-        // Walk through the terms to create phrases.
+        // Tutorial the terms to create phrases.
         foreach ($this->_terms as $termId => $term) {
             $queueSize = count($phraseQueue);
             $firstPass = true;
 
-            // Walk through the term positions.
+            // Tutorial the term positions.
             // Each term position produces a set of phrases.
             foreach ($this->_termsPositions[$termId][$docId] as $termPosition ) {
                 if ($firstPass) {

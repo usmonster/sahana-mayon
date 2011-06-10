@@ -2,7 +2,7 @@
 
 The facility management module of Sahana Agasti is designed to track available sites and resources for sheltering and response in the event of an emergency.  Intended to supplement response plans where sites are pre-designated, facilities have specific roles in the application, are assigned staff to fill those roles as part of a Scenario, as well as recording contact information for that location.
 
-Below is a quick guide to Facilities Management functionality; however, more detailed information is available via the [[manual:user:facilities:facilities_management_walkthrough|Facilities Management Walk-Through]].
+Below is a quick guide to Facilities Management functionality; however, more detailed information is available via the [[manual:user:facilities:facilities_management_Tutorial|Facilities Management Tutorial]].
 
 ===== Facility Management Functions =====
 The functionality of Facilities Management is broken down into several parts:
@@ -25,7 +25,7 @@ When a new facility is created the type of resources available and the capacity 
 
 ===== Creating Facilities =====
 
-Facility records can be created two ways in Agasti; manual entry and import.  Below are basic instructions for Adding Facilities manually, more details on manual entry are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].  Importing facilities is included in scenario creation.
+Facility records can be created two ways in Agasti; manual entry and import.  Below are basic instructions for Adding Facilities manually, more details on manual entry are available on the [[manual:user:facilities:facilities_management_Tutorial|Facility Management Tutorial]].  Importing facilities is included in scenario creation.
 
 ==== Manual Entry ====
 To manually enter Facilities, begin on the Facility Management Page:
@@ -37,10 +37,10 @@ To manually enter Facilities, begin on the Facility Management Page:
   - Enter the contact information for the point of contact at the facility
   - Select "Save"
 
-**Note:** Importing and exporting facilities is part of scenario creation.  See the [[scenario:facilityimport|Scenario Creator Walk-Through]] for details on how to import facility records.
+**Note:** Importing and exporting facilities is part of scenario creation.  See the [[scenario:facilityimport|Scenario Creator Tutorial]] for details on how to import facility records.
 ===== Editing Facilities =====
 
-To ensure proper staffing and response, facility records, including contact information and status, should be kept as accurate at possible.  Below are basic instructions for Editing Facilities, more details are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].
+To ensure proper staffing and response, facility records, including contact information and status, should be kept as accurate at possible.  Below are basic instructions for Editing Facilities, more details are available on the [[manual:user:facilities:facilities_management_Tutorial|Facility Management Tutorial]].
 
 To edit a facility record begin on the Facility Management page:
   - Click "List Facilities"
@@ -50,12 +50,12 @@ To edit a facility record begin on the Facility Management page:
   - Update the record
   - Click "Save" at the bottom
 
-**Note:** Facilities can also be updated via import.  The combination of a Facility Code and the assigned resources at that facility identify the facility record for import.  Facility import is covered in the [[manual:user:scenario:walkthrough|Scenario Wizard Walk-Through]].
+**Note:** Facilities can also be updated via import.  The combination of a Facility Code and the assigned resources at that facility identify the facility record for import.  Facility import is covered in the [[manual:user:scenario:Tutorial|Scenario Wizard Tutorial]].
 
 ===== Deleting Facility Records =====
 Facilities can only be disabled when there are none of its resources is being used in a scenario or event.  If a facility is being used in a scenario and is no longer available the record can either be disabled or the resources removed from any scenarios to allow it to be deleted.
 
-Below are brief instructions for deleting facilities; however, more details are available on the [[manual:user:facilities:facilities_management_walkthrough|Facility Management Walk-Through]].
+Below are brief instructions for deleting facilities; however, more details are available on the [[manual:user:facilities:facilities_management_Tutorial|Facility Management Tutorial]].
 
 Beginning on the Facility Management page:
   - Click the "List Facility" page

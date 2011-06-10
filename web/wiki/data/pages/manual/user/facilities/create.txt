@@ -1,7 +1,7 @@
-====== Facility Management Walk-Through ======
+====== Facility Management Tutorial ======
 
 ===== Create a Facility =====
-Facilities in Sahana Agasti are physical locations.  These physical locations hold "resources", where staff can be deployed for response, management, and further instruction or assignment.  There are two ways to enter facility information into Sahana Agasti: manual and import.  This page will walk you through the manual creation of a facility record.  Later, in the [[scenario:facilityimport|Scenario Creator Walk-Through]], you will receive further information on importing facility records.
+Facilities in Sahana Agasti are physical locations.  These physical locations hold "resources", where staff can be deployed for response, management, and further instruction or assignment.  There are two ways to enter facility information into Sahana Agasti: manual and import.  This page will walk you through the manual creation of a facility record.  Later, in the [[scenario:facilityimport|Scenario Creator Tutorial]], you will receive further information on importing facility records.
 
 ===== Reference Information =====
 
@@ -12,7 +12,7 @@ Facilities in Sahana Agasti are physical locations.  These physical locations ho
   * When a new facility is created the type of resources available and the capacity of those resources will be entered.
   * **Facility Code** is used to identify the facility in Sahana Agasti uniquely.  The Facility Code **must** be unique to each physical location in the system.
 
-===== Walk-Through =====
+===== Tutorial =====
 Beginning on the Facility Management page:
   * Click "Add Facility" to be taken to a black facility form 
 {{:manual:user:facilities:add_fac_link.png?500|Click "Add Facility" to view a blank form}}
@@ -31,13 +31,14 @@ Beginning on the Facility Management page:
   * **Can a facility have more than one Resource?** - Yes, a Facility can have more than one resource, but not more than one of the same type. 
 ====== Continue ======
 
-[[manual:user:facilities:update|{{ :manual:user:next.png|Update}}]] 
-[[manual:user:facilities:facilities_management_walkthrough|{{:manual:user:previous.png?135|Introduction }}]]
+[[manual:user:facilities:facilities_management_Tutorial|{{:manual:user:previous.jpg?135|Introduction }}]]
+[[manual:user:facilities:update|{{ :manual:user:next.jpg?135|Update}}]] 
+
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:facilities:facilities_management_walkthrough|Introduction]]
+  - [[manual:user:facilities:facilities_management_Tutorial|Introduction]]
   - **Create Facility**
   - [[manual:user:facilities:update|Update Facility]]
   - [[manual:user:facilities:review|Facility Management Review]]

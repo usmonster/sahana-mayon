@@ -1,4 +1,4 @@
-====== Staff Management Walk-Through ======
+====== Staff Management Tutorial ======
 
 ===== Editing Staff Records =====
 Though staff resources can be updated through import, minor updates can be done on individual staff records through the application.  Here you can update the languages known, contact information, and resources available.
@@ -7,7 +7,7 @@ Though staff resources can be updated through import, minor updates can be done 
 
 ==== Things To Know ====
   * By now you know that a Staff Resource is the combination of a staff information in Sahana Agasti and the Resource that they could be deployed as.  To ensure an accurate staff pool (used in scenario) the information on available staff should be maintained as closely as possible.
-===== Walk-Through =====
+===== Tutorial =====
 For ease of reference, the different sections and possible updates are outlined in the breakdowns below:
 
 ==== Staff Resource Updates ====
@@ -55,14 +55,15 @@ Enter the email and phone information:
   * **If a staff record has multiple resource types will that staff member be deployed more than once?** - No.  Sahana Agasti is designed to deploy a staff person only once; allowing you to record all the potential roles of an individual without worrying about them being counted more than onces.
 ====== Continue ======
 
-[[manual:user:staff:import|{{ :manual:user:next.jpg?135|Importing Staff}}]] 
 [[manual:user:staff:list|{{:manual:user:previous.jpg?135|List Staff }}]]
+[[manual:user:staff:import|{{ :manual:user:next.jpg?135|Importing Staff}}]] 
+
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
 
-  - [[manual:user:staff:staff_creation_walkthrough|Introduction]]
+  - [[manual:user:staff:staff_creation_Tutorial|Introduction]]
   - [[manual:user:staff:new|Create New Staff]]
   - [[manual:user:staff:list|Listing Staff]]
   - **Editing Staff Records**

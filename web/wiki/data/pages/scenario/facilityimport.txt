@@ -1,14 +1,16 @@
-====== Scenario Creator Walk-Through ======
+====== Scenario Creator Tutorial ======
 
 ===== Importing Facilities =====
-Facility Import can be a helpful time saver when your response plan has many facilities or if you are planning to have multiple scenarios, some of which use the same facility resources.  Facilities are imported in association with the scenarios they are used in.  See the Reference Information section below for a better understanding of when to import facilities.
+As mentioned in [[scenario:resources|step 3]] of the Scenario Creator Tutorial, Facilities are imported as part of the scenario they are included in.  Facilities can be uploaded during Scenario Creation; but also after a scenario is created to help with keeping the scenario current.
 
 ===== Reference Information =====
+
 ==== Things to Know ====
   * The Facility Import template includes all the information on a facility resource, it's capacity, its activation sequence in a given scenario, and contact information. {{:manual:user:facilities:facility_import_and_export_template.xls|Facility Import Template}}
   * **Imported facilities are directly related to specific scenarios.** When importing a facility you're required to select the scenario that import sheet relates to.
-  * Facilities can be imported as part of scenario creation, or the scenarios can be created and facilities imported later.
+  * Facilities can be imported as part of scenario creation, or uploaded regularly to keep Scenarios current.
   * Each row in import is for a Facility Resource.  If a facility has more than one resource each resource will be a new line in the import spreadsheet.
+
 ==== Facility Import Column Headers ====
 It it **very important** that facility records be entered properly into the import template.  Below are the column headers for the facility import spreadsheet.  Required fields are **in bold**.
   * Facility Name - Name of the facility.  Displayed as a title for the user.
@@ -58,24 +60,30 @@ It it **very important** that facility records be entered properly into the impo
 
 ==== Facility Import Dos and Donts ====
 A facility import quick guide with dos and donts is available for download: {{:manual:user:facilities:facility_import_quick_guide.pdf|Facility Import Quick Guide}}
+
 ===== Walk-Through =====
-This walk through is for facility imports after the scenario has been created.  **If you are importing facilities as part of scenario creation, or you have not yet created a scenario, see the [[manual:user:scenario:walkthrough|Scenario Creator Walk-through]].**
+This walk through is for facility imports after the scenario has been created.  **If you are importing facilities as part of scenario creation begin at [[scenario:pre|Step 1]] of this Walk-Through.**
+
+{{:scenario:importingfac.png?600|Click to Import Facilities}}
 
   - Download the {{:manual:user:facilities:facility_import_and_export_template.xls|Facility Import Template}}, remove the example information, and enter information for your scenarios' facilities.
-  - Beginning on the Facility Management page click "Import Facilities" {{:manual:user:facilities:import_fac.png?400|Click "Import Facilities"}}
+  - Beginning on the Scenario Creation Wizard Review page, click "Import Facilities" 
   - Click {{:manual:user:facilities:browse_button.png|Browse}} and select the file to upload from your computer
-  - Select the Scenario for this import from the drop down {{:manual:user:facilities:select_scenario.png?150|Select the Scenario}}
-  - Click {{:manual:user:facilities:submit_button.png|Submit}}
+  - Click {{:manual:user:facilities:submit_button.png|Submit}} and wait while the file uploads.
+  - On the confirmation screen review that the facilities imported successfully.  To return to the Scenario Creator Review page click {{:scenario:return_to_review.png|Return to Review}}
+
 ===== FAQ =====
   * **How do I import facilities for multiple scenarios?**  Each scenario will have a separate spreadsheet and facility import.  Be sure that if a facility is repeated between spreadsheets it has the same Facility Code.
 ====== Continue ======
 
-[[scenario:facilityexport|{{ :manual:user:next.png?135|Create a New Scenario}}]] 
-[[manual:user:scenario:walkthrough|{{:manual:user:previous.png?135|Introduction }}]]
-
+[[scenario:facilityexport|{{:manual:user:previous.jpg?135|Exporting Facilities }}]]
+[[scenario:deployevent|{{ :manual:user:next.jpg?135|Deploying an Event}}]] 
 
 ===== Jump to Another Step =====
 
+{{ :logo_c3.jpg?200}}
+
+  - [[manual:user:scenario:tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]
@@ -83,8 +91,8 @@ This walk through is for facility imports after the scenario has been created.  
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - **Facility Import**
   - [[scenario:facilityexport| Facility Export]]
+  - **Facility Import**
   - [[scenario:deployevent| Deploying an Event]]

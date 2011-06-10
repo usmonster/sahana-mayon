@@ -1,24 +1,28 @@
-====== Scenario Creator Walk-Through ======
+====== Scenario Creator Tutorial ======
 
 ===== Review =====
-The scenario review page is available to emergency managers from the Scenario List and at the conclusion of the Scenario Creation Wizard. From here users will be able to view summary statistics regarding their scenarios as well as deploy this scenario as an event.
+The scenario review page is available to emergency managers from the Scenario List and at the conclusion of the Scenario Creation Wizard. From here users will be able to view summary statistics regarding their scenarios, jump to a step in the wizard to edit the scenario, and deploy this scenario as an event.
 
 To jump to any step in the Scenario Wizard click the name of the step.
+
 {{:scenario:scenarioreview.png?700|Scenario Review}}
 
   * To Deploy the scenario as an event click **Deploy as Event**.
   * If your organization has multiple response plans you'll want to have a scenario for each plan.  Click the **Create Another Scenario** button.
 
+For information about importing updates and exporting facility information click "Next" below to continue.
+
 ====== Continue ======
 
-[[scenario:shift|{{:manual:user:previous.png?135|Scenario Shifts }}]] 
-[[scenario:facilityimport|{{ :manual:user:next.png?135|Import Facilities}}]] 
-
-
+[[scenario:scenarioshiftlist|{{:manual:user:previous.jpg?135|Scenario Shifts }}]] 
+[[scenario:facilityexport|{{ :manual:user:next.jpg?135|Export Facilities}}]] 
 
 
 ===== Jump to Another Step =====
 
+{{ :logo_c3.jpg?200}}
+
+  - [[manual:user:scenario:tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - [[scenario:resources|Select Resources]]
@@ -26,10 +30,8 @@ To jump to any step in the Scenario Wizard click the name of the step.
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - **Review**
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
   - [[scenario:facilityimport| Facility Import]]
-  - [[scenario:facilityexport| Facility Export]]
   - [[scenario:deployevent| Deploying an Event]]

@@ -15,6 +15,7 @@
 <h4 class="highlightedText">You must select at least one default for each of the resource types below.</h4>
 <h4 class="highlightedText">Please do so and resubmit.</h4>
 <?php endif; ?>
+
 <?php include_partial('resourceForm', array('resourceForm' => $resourceForm, 'scenario_id' => $scenario_id)) ?>
 
 <p> Click "Save and Continue" to move to the next step.</p>

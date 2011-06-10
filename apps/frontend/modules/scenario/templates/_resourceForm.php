@@ -9,9 +9,12 @@
     ?>
   </div>
   <br />
-  <br />
+  <h3>Optional: Facility Import</h3>
+  <h4>Should you want to import facilities for this scenario click "Import Facilities" to upload.</h4>
+  <p>If you have selected Resource Types before importing be sure to click "Save" below before clicking
+  "Import Facilities".</p>
   <div>
-    <a id="fileImportReplacer" class="generalButton" href="<?php echo url_for('scenario/facilityimport?id=' . $scenario_id) ?>" title="Import Facilities">Import Facilities</a>
+    <a id="fileImportReplacer" class="generalButton" href="<?php echo url_for('scenario/facilityimport?id=' . $scenario_id) ?>" title="Import Facilities">Import Facilities</a><a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_import&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Import Facilities"> ?</a>
     <p id="replaceMe"></p>
   </div>
   <br />

@@ -1,2 +1,56 @@
 ====== Scenarios ======
-<<This is a placeholder for the intro to Scenarios>>
+
+===== Overview =====
+Scenarios are plans for theoretical emergencies and are intended to complement existing emergency management strategies.  Sahana Agasti does not limit the number of scenarios a user can create and manage, and users are encouraged to create as many scenarios as needed to represent their response plans.  Scenarios can be used and re-used throughout several activations and revised with experience.
+
+__For Example__: Shangrala lies near the Hypothetical Fault Line and has a municipal sheltering plan that deploys unaffected school teachers to local schools to house those who've been affected following an earthquake.  They also call on volunteer nurses to help with non-emergency medical assistance at the schools.  The city Emergency Manager uses Sahana Agasti to create a scenario called "Earthquake Sheltering" where teachers and nurses are pooled and school resources stored as available and stand-by.  
+
+==== Time Management in Scenarios ====
+Emergency managers are acutely aware of the unpredictable timing of emergencies and it is common practice to develop emergency plans in relative time. As emergency plans themselves, scenarios follow this paradigm. All times stored in Sahana Agasti's scenario system are relative to key response events such as the zero-hour of hurricane landing or the opening of a facility. This allows Sahana Agasti's scenarios to immediately adapt to the timing of an emergency; whether it occurs at 8am, 8pm, or 3:41 in the morning.
+
+==== Shared Resources ====
+A key component of Sahana Agasti is its ability to use shared resources throughout its scenarios and events. As an example, a facility in Mayon may function as any one of a number of resources; an evacuation shelter, a hospital, or a medical supply warehouse. As you discovered when creating facilities, these resources are specific to each facility. Similarly, staff and other resources types may fill multiple roles.
+
+Though you only enter staff and facilities once, you can deliver shared resource plans that allow that same pool of resources to be used across several scenarios. As with our earlier example, a facility that can function as a medical supply warehouse could be utilized in either an urban flu pandemic scenario or a toxic waste evacuation scenario. As this resource's status changes (eg, the building goes under construction), it can be made available or unavailable to both scenarios simultaneously with a single edit.
+
+==== Re-using Scenarios ====
+Another feature of Sahana Agasti is reusing your scenarios after an active event.  As covered in [[manual:important#scenarios_vs_events|Important Concepts]], Events are based on Scenarios; and when events are activated they carry over the current scenario information and use it to build available staff pools, define what facility resources are available and what time they are open, and assign staff to those facility resources.  Later, after the events are resolved, the scenarios can be updated and refined based on lessons learned during the activation.  See the graphic below and the example that follows for more details.
+
+{{ :manual:user:scenario_multiple_activations.jpg?600 |Re-using Scenarios}}
+
+__For Example__: Pretty Flower Valley has a history of hurricane activity and the towns have formed a Regional Flooding Task Force to come up with a plan.  They use Sahana Agasti to formalize their sheltering plan in which towns by the river evacuate to higher ground.  In 2005, Hurricane Charles hits Pretty Flower Valley and the towns by the river are evacuated.  The Regional Flooding Task Force uses Sahana Agasti to staff shelters on higher ground (and Sahana Agasti's Vesuvius software to maintain records on shelter clients).  
+
+After the flooding subsides the Regional Flooding Task Force reviews the data and sees they had more shelters open than they needed.  They revise the initial plan to have more stand-by shelters available, but fewer initially open.  Similarly, after the 2009 Dam Breach that floods Pretty Flower Valley people are evacuated and the lessons learned influence the sheltering plan.  This time the shelters were kept open weeks longer than initially designed so staff became tired and irritable.  To help mitigate that the shift lengths were adjusted in the flooding plan so when Hurricane Shirley hit in 2011 the staff were rotated more frequently, keeping them fresh.
+
+==== Navigating Scenarios ====
+Because Scenarios are designed to manage the different planning aspects of a response up-front, thereby saving time during an actual event, there are several sub-components within Scenario Management.  These sub-components have been stitched together into the Scenario Creation Wizard.  This wizard will walk you through creating a scenario and later you can return to the wizard to edit specific details within any step of the wizard.
+
+===== Scenario Group Types =====
+There is one step in Scenario creation that happens outside the Wizard; the creation of Scenario Group Types.  Scenario groups are the groups of facilities used in your scenario, and depending on your plans their may be different types of groups.  These grouping titles should be established before your scenarios are created.
+
+==== Creating Scenario Groups ====
+From the Prepare hub click "Manage Scenarios"; then, on the Scenario Management page click "Manage Facility Group Types".
+
+{{:manual:user:facgrouptypes.png?600|Managing Facility Group Types}}
+
+=== Create a Facility Group Type ===
+  - To create a facility group type enter the name and description of a facility group type. 
+  - Click "Save"
+
+=== Editing a Facility Group Type ===
+  - To edit a facility group type click the name of an exisiting facility group type.  
+  - The name and description of the facility group type will enter the form.  Edit the information.
+  - Click "Save"
+
+=== Deleting a Facility Group Type ===
+  - To delete a facility group type select it by clicking the name of the facility group type in the list.
+  - The name and description of the facility group type will enter the form.
+  - Click "Delete".  A confirmation will pop up; click "Ok".
+
+**Note**: If the facility group type is used in a current scenario it can not be deleted.
+
+===== Tutorial =====
+[[manual:user:scenario:Tutorial|{{ :manual:user:next.jpg?135|Introduction}}]]
+
+
+Unlike other tutorials in this manual, the Scenario Creator Wizard Tutorial does not contain a quick guide.  Creating and maintaining Scenarios is a detailed process and the best way to learn how to maintain them it to create a scenario.  Follow the Tutorial to learn details about creating and maintaining Scenarios.

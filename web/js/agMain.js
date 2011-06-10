@@ -190,7 +190,7 @@ function fileImportReplacer() {
     if($('#importForm').length < 1) {
       var $importForm = '<form id="importForm" enctype="multipart/form-data" method="post" action="' + $('#fileImportReplacer').attr('href') + '"><span style="margin-top:3px;position:absolute;"><input  style="display: inline; color: #848484; width:136px" class="inputGray" id="show" /> <a class="continueButton fileUploadBrowse" style="padding:4px 5px; width:60px">Browse</a></span>\n\
                            <input type="file" name="import" style="opacity:0; z-index:2; width:215px; margin-top:5px" class="inputfileupload2"/>\n\
-                           <input type="submit" value="Import Facilities" class="continueButton"/>\n\
+                           <input type="submit" value="Submit" class="continueButton"/>\n\
                          </form>';
       $('#replaceMe').hide();
       $('#replaceMe').parent().append($importForm);

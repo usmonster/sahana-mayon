@@ -103,7 +103,7 @@ abstract class agPdoHelper
    */
   protected function executePdoQuery( Doctrine_Connection $conn,
                                       $query,
-                                      $params = array(),
+                                      array $params = array(),
                                       $fetchMode = NULL,
                                       $pdoName = NULL)
   {
