@@ -337,14 +337,18 @@ class adminActions extends agActions
   protected function processParam(sfWebRequest $request, sfForm $paramform)
   {
     $values = $request->getParameter('ag_global_param');
-    if (isset($values['id'])) {
+    if (empty($values['id'])) {
+
+      if (!is_null($values['id']))
+      { $values['id'] = NULL; }
+
+      $param = new agGlobalParam();
+    } else {
       $param = agDoctrineQuery::create()
               ->select()
               ->from('agGlobalParam')
               ->where('id = ?', $values['id'])
               ->fetchOne();
-    } else {
-      $param = new agGlobalParam();
     }
     $param->synchronizeWithArray($values);
 
