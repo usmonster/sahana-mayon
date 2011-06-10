@@ -309,7 +309,15 @@ abstract class agImportNormalization extends agImportHelper
 
 
     // get our connection object and start an outer transaction for the batch
-    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
+    //$this->setConnections();
+    //$conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
+    
+    /**
+     * @todo find a better way of open and closing the CONN_NORMALIZE_WRITE connection
+     */
+    $conn = Doctrine_Manager::connection('mysql://root:fubar@localhost/agasti_mayon', 'connection_1');
+    
+    
     $conn->beginTransaction();
 
     foreach ($this->importComponents as $index => $componentData) {
@@ -374,12 +382,16 @@ abstract class agImportNormalization extends agImportHelper
       // reference it
 
       $this->importCount += count($this->importData);
+      
+      $conn->close();
 
       return TRUE;
     } else {
       // our rollback and error logging happen regardless of whether this is an optional component
       $this->eh->logErr($errMsg, count($this->importData));
       $conn->rollback();
+      
+      $conn->close();
 
       // return false if not
       return FALSE;
