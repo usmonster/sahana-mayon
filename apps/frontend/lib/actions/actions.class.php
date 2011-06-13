@@ -22,7 +22,7 @@ class agActions extends sfActions
   {
     parent::__construct($context, $moduleName, $actionName);
     if (empty($this->_searchedModels)) {
-      $this->_searchedModels = array('agStaff', 'agFacility');
+      $this->_searchedModels = array('agStaff', 'agFacility', 'agOrganization');
     }
   }
 
@@ -101,6 +101,11 @@ class agActions extends sfActions
         $facility_ids = $facilityCollection->getKeys(); // toArray();
         $resultArray = agListHelper::getFacilityList($facility_ids);
         // @todo change the above to use a FacilityList return
+      } elseif(isset($searchResult['agOrganization'])) {
+        $this->target_module = 'organization';
+        $organizationCollection = $searchResult['agOrganization'];
+        $organization_id = $organizationCollection->getKeys();
+        $resultArray = agListHelper::getOrganizationList($organization_id);
       } else {
         //$resultArray = array();
       }

@@ -555,7 +555,7 @@ class agInstall
 //        $connection = Doctrine_Manager::connection()->connect();
       sfContext::createInstance($configuration)->dispatch();
 
-      $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup'));
+      $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup', 'agOrganization'));
       $luceneIndex->indexAll();
       $installed = 'Success!';
     } catch (Exception $e) {
