@@ -223,9 +223,7 @@ class scenarioActions extends agActions
         foreach ($group->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
           foreach ($this->staffResourceTypes as $srt) {
             $subKey = $group['scenario_facility_group'];
-            $subSubKey = $scenarioFacilityResource
-                    ->getAgFacilityResource()
-                    ->getAgFacility()->facility_name;
+            $subSubKey = $scenarioFacilityResource->id;
 
 
 //this existing check should be refactored to be more efficient
@@ -884,7 +882,7 @@ class scenarioActions extends agActions
               $scenarioFacRes = agDoctrineQuery::create()
                   ->select()
                   ->from('agScenarioFacilityResource')
-                  ->where('facility_resource_id = ?', $facilityResource['frId'])
+                  ->where('id = ?', $preSaveFrIds[$facilityResource['frId']])
                   ->fetchOne();
               // Knock off the fac res id. Those that are left will be used for a delete query.
               unset($preSaveFrIds[$facilityResource['frId']]);

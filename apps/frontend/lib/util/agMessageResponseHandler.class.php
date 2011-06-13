@@ -47,9 +47,10 @@ class agMessageResponseHandler extends agImportNormalization
     $this->eh->setErrThreshold(100);
   }
 
-  public function consumeResponses(sfEvent $event = null, $reset = 0)
+  public static function consumeResponses(sfEvent $event = null, $reset = 0)
   {
-    $this->importResponsesFromExcel($event['importFile']);
+//    $this->importResponsesFromExcel($event['importFile']);
+    self::importResponsesFromExcel($event['importPath']);
     
     if (isset($event)) {
       $action = $event->getSubject();
@@ -75,13 +76,15 @@ class agMessageResponseHandler extends agImportNormalization
   /**
    * Method to import staff from an excel file.
    */
-  private function importResponsesFromExcel($importFile)
+  protected function importResponsesFromExcel($importFile)
   {
     // process the excel file and create a temporary table
     $this->processXlsImportFile($importFile);
+//    parent::processXlsImportFile($importFile);
 
     // start our iterator and initialize our select query
     $this->tempToRaw($this->buildTempSelectQuery());
+//    parent::tempToRaw($this->buildTempSelectQuery());
   }
 
   
@@ -272,7 +275,37 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected static function mapResponse( $response )
   {
-    //@todo make this do something
-    return $response;
+    $staffAllocationStatuses = json_decode(agGlobal::getParam('staff_messaging_allocation_status'), TRUE);
+    $defaultStaffAllocationStatus = agGlobal::getParam('default_staff_messaging_allocation_status');
+    $staffAllocationStatusIds = agDoctrineQuery::create()
+                               ->select('sas.staff_allocation_status')
+                                 ->addSelect('sas.id')
+                               ->from('agStaffAllocationStatus AS sas')
+                               ->useResultCache(TRUE, 3600)
+                               ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $staffAllocationStatusIds = array_change_key_case($staffAllocationStatusIds);
+
+    if ( isset($staffAllocationStatuses[$response]) &&
+         isset($staffAllocationStatusIds[strtolower($staffAllocationStatus[$response])]) )
+    {
+      $statusId = $staffAllocationStatusIds[strtolower($staffAllocationStatus[$response])];
+    }
+    else
+    {
+      $statusId = $staffAllocationStatusIds[strtolower($defaultStaffAllocationStatus)];
+    }
+
+    return $statusId;
   }
+
+    protected function setDynamicFieldType()
+  {
+    //required, but not used?
+  }
+
+  protected function addDynamicColumns(array $importHeaders)
+  {
+    //required, but not used?
+  }
+
 }
