@@ -72,9 +72,13 @@ abstract class agImportHelper extends agPdoHelper
     $this->_conn = array();
 
     $adapter = Doctrine_Manager::connection()->getDbh();
-    $this->_conn[self::CONN_TEMP_READ] = Doctrine_Manager::connection($adapter, self::CONN_TEMP_READ);
+    $this->_conn[self::CONN_TEMP_READ] = Doctrine_Manager::connection($adapter,
+      self::CONN_TEMP_READ);
     $this->_conn[self::CONN_TEMP_WRITE] = Doctrine_Manager::connection($adapter,
-                                                                       self::CONN_TEMP_WRITE);
+      self::CONN_TEMP_WRITE);
+
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
   }
 
   /**

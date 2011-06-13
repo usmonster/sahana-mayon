@@ -18,25 +18,15 @@ abstract class agImportNormalization extends agImportHelper
 {
   const CONN_NORMALIZE_WRITE = 'import_normalize_write';
 
-  // Not sure what these inline comments were for 
-  //  -- Clayton
-  //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue)) 
-  // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
-
   protected $helperObjects = array(),
   $tempToRawQueryName = 'import_temp_to_raw',
+
+  // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
   $importComponents = array(),
+
+  //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue))
   $importData = array(),
   $importCount = 0;
-
-  /*
-    public function __construct()
-    {
-    // get our dispatcher;
-    $dispatcher = new sfEventDispatcher();
-    }
-   * 
-   */
 
   /**
    * This classes' destructor.
@@ -93,11 +83,16 @@ abstract class agImportNormalization extends agImportHelper
    */
   protected function setConnections()
   {
-    parent::setConnections();
+    $dm = Doctrine_Manager::getInstance();
+    $dm->closeConnection($conn);
 
     $adapter = Doctrine_Manager::connection()->getDbh();
-    $this->_conn[self::CONN_NORMALIZE_WRITE] = Doctrine_Manager::connection($adapter,
-                                                                            self::CONN_NORMALIZE_WRITE);
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_WRITE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, FALSE);
+    $this->_conn[self::CONN_NORMALIZE_WRITE] = $conn;
+
+    parent::setConnections();
   }
 
   /**
@@ -113,7 +108,6 @@ abstract class agImportNormalization extends agImportHelper
 
   /**
    * Method to update the temp table and mark this batch as successful or failed print("Import is Done<br>");
-    print("Successfully imported " . $this->import_count );
    * @param boolean $success The success value to set
    */
   protected function updateTempSuccess($success)
@@ -195,7 +189,7 @@ abstract class agImportNormalization extends agImportHelper
     // preempt this method with a check on our error threshold and stop if we shouldn't continue
     try {
 
-      $this->eh->logNotice("Memory: " . memory_get_usage());
+      $this->eh->logInfo("Memory: " . memory_get_usage());
 
       // check it once before we start anything and once after
       $this->eh->checkErrThreshold();
@@ -206,6 +200,7 @@ abstract class agImportNormalization extends agImportHelper
       // clean our rawData to make it free of zero length strings and related
       // @todo Remove once working fetch is confirmed
       //$this->clearNullRawData();
+
       // normalize and insert our data
       $normalizeSuccess = $this->normalizeData();
 
@@ -260,7 +255,6 @@ abstract class agImportNormalization extends agImportHelper
           $this->importData[$rowId]['_rawData'][$columnName] = $row->$columnName;
         }
       }
-      // unset($row); // @todo Remove this if it proves unnecessary
       $fetchPosition++;
     }
 
@@ -305,17 +299,16 @@ abstract class agImportNormalization extends agImportHelper
   protected function normalizeData()
   {
     $err = NULL;
-    $this->eh->logDebug("Normalizing and inserting batch data into database.");
+    $this->eh->logInfo("Normalizing and inserting batch data into database.");
 
+    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);    
 
-    // get our connection object and start an outer transaction for the batch
-    //$this->setConnections();
-    //$conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
-    
     /**
      * @todo find a better way of open and closing the CONN_NORMALIZE_WRITE connection
      */
-    $conn = Doctrine_Manager::connection('mysql://root:fubar@localhost/agasti_mayon', 'connection_1');
+    //$conn = Doctrine_Manager::connection('mysql://root:fubar@localhost/agasti_mayon', 'connection_1');
+    // get our connection object and start an outer transaction for the batch
+    //$this->setConnections();
     
     
     $conn->beginTransaction();
