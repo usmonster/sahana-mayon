@@ -4,6 +4,8 @@
 ?>
 <h3>Congratulations, Your Event Has Been Deployed</h3>
 <br />
+<?php echo "Zero Hour: <span class=\"highlightedText\">". $zero_hour. "</span>"?>
+<br/>
 <?php
 $urlEncodedEventName = urlencode($sf_data->getRaw('event_name'));
 if (isset($blackOutFacilities)) {
