@@ -77,11 +77,8 @@ abstract class BaseagStaff extends sfDoctrineRecord
              'local' => 'id',
              'foreign' => 'updated_by'));
 
-        $luceneable0 = new Luceneable(array(
-             ));
         $timestampable0 = new Doctrine_Template_Timestampable(array(
              ));
-        $this->actAs($luceneable0);
         $this->actAs($timestampable0);
     }
 }

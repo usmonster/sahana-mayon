@@ -88,6 +88,14 @@ class agPerson extends BaseagPerson
     return parent::__call($method, $arguments);
   }
 
+  public function setUp()
+  {
+    parent::setUp();
+
+    $luceneable0 = new Luceneable();
+    $this->actAs($luceneable0);
+  }
+
   /**
    * A happy little helper function to return all methods explicitly
    * (publicly) defined by a helper class.
