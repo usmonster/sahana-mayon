@@ -357,13 +357,15 @@ class agStaffImportNormalization extends agImportNormalization
   {
     // make these explicit at the to to avoid building the graph multiple times
     $entityTable = $conn->getTable('agEntity');
-    $personTable = $conn->getTable('agPerson');
-    $staffTable = $conn->getTable('agStaff');
+    $personTable = $conn->getTable('agPersonBulkLoad');
+    $staffTable = $conn->getTable('agStaffBulkLoad');
+
+    $personListener = $personTable->getListener();
 
     // define the collections once
     $entityColl = new Doctrine_Collection('agEntity');
-    $personColl = new Doctrine_Collection('agPerson');
-    $staffColl = new Doctrine_Collection('agStaff');
+    $personColl = new Doctrine_Collection('agPersonBulkLoad');
+    $staffColl = new Doctrine_Collection('agStaffBulkLoad');
 
     // add new entities / persons / staff for records with bad or no entity ids.
     foreach ($this->importData as $rowId => $rowData) {
@@ -424,7 +426,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // create a new person entry and add it to the person collection
       $this->eh->logDebug('Creating new person for import Entity ID {' . $entityId . '}.');
-      $newRec = new agPerson($personTable, TRUE, FALSE);
+      $newRec = new agPersonBulkLoad($personTable, TRUE);
       $newRec['entity_id'] = $entityId;
       $personColl->add($newRec, $rowId);
     }
@@ -448,7 +450,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // create a new staff entry and add it to the staff collection
       $this->eh->logDebug('Creating new staff for import Person ID {' . $personId . '}.');
-      $newRec = new agStaff($staffTable, TRUE, FALSE);
+      $newRec = new agStaffBulkLoad($staffTable, TRUE);
       $newRec['person_id'] = $personId;
       $staffColl->add($newRec, $rowId);
     }

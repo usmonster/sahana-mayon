@@ -9,7 +9,6 @@ agPerson:
       type: integer(5)
       notnull: true
   actAs:
-    Luceneable:
     Timestampable:
   indexes:
     agPerson_unq:

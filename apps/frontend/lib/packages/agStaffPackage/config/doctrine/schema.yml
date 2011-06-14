@@ -41,7 +41,7 @@ agStaff:
     person_id:
       type: integer(5)
       notnull: true
-  actAs: [Luceneable, Timestampable]
+  actAs: [Timestampable]
   indexes:
     agStaff_unq:
       fields: [person_id]
