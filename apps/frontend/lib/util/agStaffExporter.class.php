@@ -1,5 +1,6 @@
 <?php
-/* 
+
+/*
  * Class to export all staffs and their latest resource types.
  *
  * It is called by the staff action class.
@@ -17,10 +18,12 @@
 
 class agStaffExporter
 {
+
   /**
    * The construct() method sets up array variables for header mappings and lookup definitions.
    */
-  function __construct() {
+  function __construct()
+  {
     // The array index specify the order of the header in the export file.
     $this->exportHeaders = array(
       'Entity ID',
@@ -66,42 +69,42 @@ class agStaffExporter
     );
 
     $this->lookUps = array(
-        'state' => array(
-            'selectTable' => 'agAddressValue',
-            'selectColumn' => 'value',
-            'whereColumn' => 'address_element_id',
-            'whereValue' => 4
-        ),
-        'resourcetype' => array(
-            'selectTable' => 'agStaffResourceType',
-            'selectColumn' => 'staff_resource_type',
-            'whereColumn' => null,
-            'whereValue' => null
-        ),
-        'resourcestatus' => array(
-            'selectTable' => 'agStaffResourceStatus',
-            'selectColumn' => 'staff_resource_status',
-            'whereColumn' => null,
-            'whereValue' => null
-        ),
-        'language' => array(
-            'selectTable' => 'agLanguage',
-            'selectColumn' => 'language',
-            'whereColumn' => null,
-            'whereValue' => null
-        ),
-        'competency' => array(
-            'selectTable' => 'agLanguageCompetency',
-            'selectColumn' => 'language_competency',
-            'whereColumn' => null,
-            'whereValue' => null
-        ),
-        'organization' => array(
-            'selectTable' => 'agOrganization',
-            'selectColumn' => 'organization',
-            'whereColumn' => null,
-            'whereValue' => null
-        )
+      'state' => array(
+        'selectTable' => 'agAddressValue',
+        'selectColumn' => 'value',
+        'whereColumn' => 'address_element_id',
+        'whereValue' => 4
+      ),
+      'resourcetype' => array(
+        'selectTable' => 'agStaffResourceType',
+        'selectColumn' => 'staff_resource_type',
+        'whereColumn' => null,
+        'whereValue' => null
+      ),
+      'resourcestatus' => array(
+        'selectTable' => 'agStaffResourceStatus',
+        'selectColumn' => 'staff_resource_status',
+        'whereColumn' => null,
+        'whereValue' => null
+      ),
+      'language' => array(
+        'selectTable' => 'agLanguage',
+        'selectColumn' => 'language',
+        'whereColumn' => null,
+        'whereValue' => null
+      ),
+      'competency' => array(
+        'selectTable' => 'agLanguageCompetency',
+        'selectColumn' => 'language_competency',
+        'whereColumn' => null,
+        'whereValue' => null
+      ),
+      'organization' => array(
+        'selectTable' => 'agOrganization',
+        'selectColumn' => 'organization',
+        'whereColumn' => null,
+        'whereValue' => null
+      )
     );
 
     // This array is reconstructed below when retrieving staff resoure information.
@@ -115,7 +118,7 @@ class agStaffExporter
 
     $this->phoneHeaderMapping = array(
       'mobile' => 'Mobile Phone',
-      'home'=> 'Home Phone',
+      'home' => 'Home Phone',
       'work' => 'Work Phone'
     );
 
@@ -138,8 +141,10 @@ class agStaffExporter
     $this->addressTypeHeaderRequirements = array('home' => 'Home', 'work' => 'Work');
 
     $this->languageFormatTypeHeaderRequirements = array('read' => 'Read',
-                                                        'write' => 'Write',
-                                                        'speak' => 'Speak');
+      'write' => 'Write',
+      'speak' => 'Speak');
+
+    $this->peakMemory = 0;
   }
 
   /**
@@ -154,12 +159,11 @@ class agStaffExporter
   public function getPersonCustomFields(array $personCustomFields = NULL)
   {
     $q = agDoctrineQuery::create()
-           ->select('pcf.person_custom_field')
-               ->addSelect('pcf.id')
-           ->from('agPersonCustomField AS pcf');
+        ->select('pcf.person_custom_field')
+        ->addSelect('pcf.id')
+        ->from('agPersonCustomField AS pcf');
 
-    if (!is_null($personCustomFields))
-    {
+    if (!is_null($personCustomFields)) {
       $q->whereIn('pcf.person_custom_field', $personCustomFields);
     }
 
@@ -185,63 +189,58 @@ class agStaffExporter
     );
 
     $q = agDoctrineQuery::create()
-      ->select('sr.id')
-          ->addSelect('sr.staff_id')
-          ->addSelect('s.person_id')
-          ->addSelect('p.entity_id')
-          ->addSelect('srt.staff_resource_type')
-          ->addSelect('o.id')
-          ->addSelect('o.organization')
-          ->addSelect('srs.id')
-          ->addSelect('srs.staff_resource_status')
-          ->addSelect('pcfv1.value')
-          ->addSelect('pcfv2.value')
-          ->addSelect('pcfv3.value')
+        ->select('sr.id')
+        ->addSelect('sr.staff_id')
+        ->addSelect('s.person_id')
+        ->addSelect('p.entity_id')
+        ->addSelect('srt.staff_resource_type')
+        ->addSelect('o.id')
+        ->addSelect('o.organization')
+        ->addSelect('srs.id')
+        ->addSelect('srs.staff_resource_status')
+        ->addSelect('pcfv1.value')
+        ->addSelect('pcfv2.value')
+        ->addSelect('pcfv3.value')
         ->from('agStaffResource AS sr')
-          ->innerJoin('sr.agStaff AS s')
-          ->innerJoin('s.agPerson AS p')
-          ->innerJoin('sr.agStaffResourceType AS srt')
-          ->innerJoin('sr.agStaffResourceStatus AS srs')
-          ->innerJoin('sr.agOrganization AS o');
+        ->innerJoin('sr.agStaff AS s')
+        ->innerJoin('s.agPerson AS p')
+        ->innerJoin('sr.agStaffResourceType AS srt')
+        ->innerJoin('sr.agStaffResourceStatus AS srs')
+        ->innerJoin('sr.agOrganization AS o');
 
     // Query for person_custom_field and their ids.
-    $personCustomFields = array('Drivers License Class', 
-                                'PMS ID', 
-                                'Civil Service Title');
+    $personCustomFields = array('Drivers License Class',
+      'PMS ID',
+      'Civil Service Title');
     $personCustomFieldIds = $this->getPersonCustomFields($personCustomFields);
 
     // Add person custom fields to query.
     $cnt = 1;
-    foreach ($personCustomFields AS $customField)
-    {
+    foreach ($personCustomFields AS $customField) {
       $tblAlias = 'pcfv' . $cnt++;
       $q->leftJoin('p.agPersonCustomFieldValue AS ' . $tblAlias .
-                   ' WITH ' . $tblAlias . '.person_custom_field_id = ' .
-                   $personCustomFieldIds[$customField]);
+          ' WITH ' . $tblAlias . '.person_custom_field_id = ' .
+          $personCustomFieldIds[$customField]);
       $this->staffResourceHeaderMapping[$customField] = $tblAlias . '_value';
     }
 
-    if (!is_null($staff_ids))
-    {
+    if (!is_null($staff_ids)) {
       $q->whereIn('sr.staff_id', $staff_ids);
     }
 
     $results = $q->execute(array(), DOCTRINE_CORE::HYDRATE_SCALAR);
 
     // Construct the array of the staff's custom fields.
-    foreach ($results AS $row)
-    {
+    foreach ($results AS $row) {
       $cnt = 1;
-      foreach ($personCustomFields AS $customField)
-      {
+      foreach ($personCustomFields AS $customField) {
         $tblAlias = 'pcfv' . $cnt++;
         $staffCustomFields[$row['sr_id']][$customField] = $row[$tblAlias . '_value'];
       }
     }
 
     // Construct arrays for later use from the query results
-    foreach ($results AS $index => $staffResource)
-    {
+    foreach ($results AS $index => $staffResource) {
       $staffResourceId = array_shift($staffResource);
       $staffInfo[$staffResourceId] = $staffResource;
     }
@@ -257,21 +256,20 @@ class agStaffExporter
   private function buildExportRecords()
   {
     $staffResources = agDoctrineQuery::create()
-      ->select('sr.id')
-          ->addSelect('sr.staff_id')
-          ->addSelect('s.person_id')
-          ->addSelect('p.entity_id')
+        ->select('sr.id')
+        ->addSelect('sr.staff_id')
+        ->addSelect('s.person_id')
+        ->addSelect('p.entity_id')
         ->from('agStaffResource AS sr')
-          ->innerJoin('sr.agStaff AS s')
-          ->innerJoin('s.agPerson p')
+        ->innerJoin('sr.agStaff AS s')
+        ->innerJoin('s.agPerson p')
         ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
     // Build person id and entity id arrays for later use to retrieve persons names and contacts.
     $staff_ids = array();
     $entity_ids = array();
     $person_ids = array();
-    foreach ($staffResources AS $stfRsc)
-    {
+    foreach ($staffResources AS $stfRsc) {
       $staff_ids[] = $stfRsc['sr_staff_id'];
       $person_ids[] = $stfRsc['s_person_id'];
       $entity_ids[] = $stfRsc['p_entity_id'];
@@ -281,8 +279,7 @@ class agStaffExporter
     // Process records by batch.
     $content = array();
     $defaultBatchSize = agGlobal::getParam('default_batch_size');
-    while (!empty($staff_ids))
-    {
+    while (!empty($staff_ids)) {
       // Process by batches.
       $subsetSIds = array_slice($staff_ids, 0, $defaultBatchSize);
       array_splice($staff_ids, 0, $defaultBatchSize);
@@ -308,28 +305,22 @@ class agStaffExporter
       $languageHelper = new agPersonLanguageHelper();
       $staffLanguages = $languageHelper->getPersonLanguage($subsetPIds, FALSE);
 
-      foreach($staffInfo AS $stfRscIds => $stfRsc)
-      {
+      foreach ($staffInfo AS $stfRscIds => $stfRsc) {
         $row = array();
-        foreach($this->exportHeaders AS $header)
-        {
+        foreach ($this->exportHeaders AS $header) {
           $row[$header] = null;
         }
 
         // Populate staff resource information into $row array.
-        foreach ($this->staffResourceHeaderMapping AS $header => $field)
-        {
+        foreach ($this->staffResourceHeaderMapping AS $header => $field) {
           $row[$header] = $stfRsc[$field];
         }
 
         // Populate staff's name into $row array.
-        if (array_key_exists($stfRsc['s_person_id'], $staffNames))
-        {
-          foreach($staffNames[$stfRsc['s_person_id']] AS $nameType => $name)
-          {
+        if (array_key_exists($stfRsc['s_person_id'], $staffNames)) {
+          foreach ($staffNames[$stfRsc['s_person_id']] AS $nameType => $name) {
             // Populate the row with name components only for the ones that we care for.
-            if (array_key_exists($nameType, $this->nameHeaderMapping))
-            {
+            if (array_key_exists($nameType, $this->nameHeaderMapping)) {
               $row[$this->nameHeaderMapping[$nameType]] = $name;
             }
           }
@@ -337,13 +328,10 @@ class agStaffExporter
         }
 
         // Populate staff's emails into $row array.
-        if (array_key_exists($stfRsc['p_entity_id'], $staffPhones))
-        {
-          foreach($staffPhones[$stfRsc['p_entity_id']] AS $phoneType => $phone)
-          {
+        if (array_key_exists($stfRsc['p_entity_id'], $staffPhones)) {
+          foreach ($staffPhones[$stfRsc['p_entity_id']] AS $phoneType => $phone) {
             // Populate the row with email only for the email type that we care for.
-            if (array_key_exists($phoneType, $this->phoneHeaderMapping))
-            {
+            if (array_key_exists($phoneType, $this->phoneHeaderMapping)) {
               $row[$this->phoneHeaderMapping[$phoneType]] = $phone[0][0];
             }
           }
@@ -351,13 +339,10 @@ class agStaffExporter
         }
 
         // Populate staff's phone numbers into $row array.
-        if (array_key_exists($stfRsc['p_entity_id'], $staffEmails))
-        {
-          foreach($staffEmails[$stfRsc['p_entity_id']] AS $emailType => $email)
-          {
+        if (array_key_exists($stfRsc['p_entity_id'], $staffEmails)) {
+          foreach ($staffEmails[$stfRsc['p_entity_id']] AS $emailType => $email) {
             // Populate the row with email only for the email type that we care for.
-            if (array_key_exists($emailType, $this->emailHeaderMapping))
-            {
+            if (array_key_exists($emailType, $this->emailHeaderMapping)) {
               $row[$this->emailHeaderMapping[$emailType]] = $email[0][0];
             }
           }
@@ -365,18 +350,13 @@ class agStaffExporter
         }
 
         // Populate staff's address & geo info into $row array.
-        if (array_key_exists($stfRsc['p_entity_id'], $staffAddresses))
-        {
-          foreach ($staffAddresses[$stfRsc['p_entity_id']] AS $addressType => $address)
-          {
+        if (array_key_exists($stfRsc['p_entity_id'], $staffAddresses)) {
+          foreach ($staffAddresses[$stfRsc['p_entity_id']] AS $addressType => $address) {
             // Populate the row with address & geo info only for the address types and address
             // elements that we care for.
-            if (array_key_exists($addressType, $this->addressTypeHeaderRequirements))
-            {
-              foreach ($address[0][0] AS $elem => $value)
-              {
-                if (array_key_exists($elem, $this->addressLineHeaderMapping))
-                {
+            if (array_key_exists($addressType, $this->addressTypeHeaderRequirements)) {
+              foreach ($address[0][0] AS $elem => $value) {
+                if (array_key_exists($elem, $this->addressLineHeaderMapping)) {
                   $type = $this->addressTypeHeaderRequirements[$addressType];
                   $component = $this->addressLineHeaderMapping[$elem];
                   $header = $type . ' ' . $component;
@@ -391,29 +371,22 @@ class agStaffExporter
         // Populate staff's languages into $row.
         $iteration = 1;
         $max_language_count = 2;
-        if (array_key_exists($stfRsc['s_person_id'], $staffLanguages))
-        {
-          foreach($staffLanguages[$stfRsc['s_person_id']] AS $priority => $languageComponents)
-          {
-            if ($iteration <= $max_language_count)
-            {
+        if (array_key_exists($stfRsc['s_person_id'], $staffLanguages)) {
+          foreach ($staffLanguages[$stfRsc['s_person_id']] AS $priority => $languageComponents) {
+            if ($iteration <= $max_language_count) {
               $language = $languageComponents[0];
               $languageHeader = 'Language ' . $iteration;
               $row[$languageHeader] = $language;
 
-              if (isset($languageComponents[1]))
-              {
+              if (isset($languageComponents[1])) {
                 $languageFormats = $languageComponents[1];
-                foreach($languageFormats AS $format => $competency)
-                {
+                foreach ($languageFormats AS $format => $competency) {
                   $formatType = $this->languageFormatTypeHeaderRequirements[$format];
                   $languageFormatHeader = 'L' . $iteration . ' ' . $formatType;
                   $row[$languageFormatHeader] = $competency;
                 }
               }
-            }
-            else
-            {
+            } else {
               break;
             }
             $iteration += 1;
@@ -428,16 +401,16 @@ class agStaffExporter
     return $content;
   }
 
- /**
-  * This function calls the other functions needed to export staff data and
-  * returns the constructed XLS file.
-  *
-  * @return array() $exportResponse     An associative array of two elements,
-  *                                     fileName and filePath. fileName is the name
-  *                                     of the XLS file that has been constructed
-  *                                     and is held in temporary storage.
-  *                                     filePath is the path to that file.
-  */
+  /**
+   * This function calls the other functions needed to export staff data and
+   * returns the constructed XLS file.
+   *
+   * @return array() $exportResponse     An associative array of two elements,
+   *                                     fileName and filePath. fileName is the name
+   *                                     of the XLS file that has been constructed
+   *                                     and is held in temporary storage.
+   *                                     filePath is the path to that file.
+   */
   public function export()
   {
     $staffExportRecords = $this->buildExportRecords();
@@ -463,162 +436,107 @@ class agStaffExporter
    */
   private function buildXls($staffExportRecords, $lookUpContent)
   {
-    require_once 'PHPExcel/Cell/AdvancedValueBinder.php';
-    PHPExcel_Cell::setValueBinder(new PHPExcel_Cell_AdvancedValueBinder());
 
-    $objPHPExcel = new sfPhpExcel();
-    $objPHPExcel->setActiveSheetIndex(0);
-    $objPHPExcel->getActiveSheet()->setTitle("Sheet 1");
+    // load the Excel writer object
+    $sheet = new agExcel2003ExportHelper("foo");
 
-    $objPHPExcel->getProperties()->setCreator("Agasti 2.0");
-    $objPHPExcel->getProperties()->setLastModifiedBy("Agasti 2.0");
-    $objPHPExcel->getProperties()->setTitle("Facility List");
+    // Setup some debugging
+    //$logger = sfContext::getInstance()->getLogger();
 
-    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Arial');
-    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
-
-
-    $this->buildSheetHeaders($objPHPExcel);
-
-    // Create the lookup/definition sheet. Function?
-    $lookUpSheet = new PHPExcel_Worksheet($objPHPExcel, 'Lookup');
-    // Populate the lookup sheet.
-    $c = 0;
-    foreach($lookUpContent as $key => $column) {
+    /**
+      // Populate the lookup sheet.
+      $c = 0;
+      foreach($lookUpContent as $key => $column) {
       $lookUpSheet->getCellByColumnAndRow($c, 1)->setValue($key);
       foreach($column as $k => $value) {
-        $lookUpSheet->getCellByColumnAndRow($c, ($k + 2))->setValue($value);
+      $lookUpSheet->getCellByColumnAndRow($c, ($k + 2))->setValue($value);
       }
       $c++;
+      }
+     * 
+     */
+    // Write the column headers
+    foreach (array_keys($staffExportRecords[0]) as $columnHeader) {
+      $sheet->label($columnHeader);
+      $sheet->right();
     }
 
-    $highestColumn = $lookUpSheet->getHighestColumn();
-    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-    for ($i = $highestColumnIndex; $i >= 0; $i--) {
-      $lookUpSheet->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($i))->setAutoSize(true);
-    }
 
     $row = 2;
     foreach ($staffExportRecords as $rKey => $staffExportRecord) {
-      if($rKey <> 0 && (($rKey) % 64000 == 0)) {
-        // check if the row limit has been reached (up this to 64,000 later)
-        // if we get in here, set the cell sizes on the sheet that was just finished.
-        // Then make a new sheet, set it to active, build its headers, and reset
-        // row to 2.
-        $this->sizeColumns($objPHPExcel);
-        $objPHPExcel->createSheet();
-        $objPHPExcel->setActiveSheetIndex($objPHPExcel->getActiveSheetIndex() + 1);
-        $objPHPExcel->getActiveSheet()->setTitle("Sheet " . ($objPHPExcel->getActiveSheetIndex() + 1));
-        $this->buildSheetHeaders($objPHPExcel);
-        $row = 2;
-      }
-      foreach ($this->exportHeaders as $hKey => $heading) {
-        $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $row)->setValue($staffExportRecord[$heading]);
-        if(array_key_exists($heading, $lookUpContent)) {
-          $columnNumber = array_search($heading, array_keys($lookUpContent));
-          $columnLetter = base_convert(($columnNumber +10), 10, 36);
-          $topRow = count($lookUpContent[$heading]) + 1;
-          $objValidation = $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $row)->getDataValidation();
-          $objValidation->setType( PHPExcel_Cell_DataValidation::TYPE_LIST );
-          $objValidation->setErrorStyle( PHPExcel_Cell_DataValidation::STYLE_INFORMATION );
-          $objValidation->setAllowBlank(true);
-          $objValidation->setShowInputMessage(true);
-          $objValidation->setShowErrorMessage(true);
-          $objValidation->setShowDropDown(true);
-          $objValidation->setErrorTitle('Input error');
-          $objValidation->setError('Value is not in list.');
-          $objValidation->setPromptTitle('Pick from list');
-          $objValidation->setPrompt('Please pick a value from the drop-down list.');
-          $objValidation->setFormula1('Lookup!$' . $columnLetter . '$2:$'. $columnLetter . '$' . $topRow);
+      if ($row <= 64000) {
+
+        //$logger->info(print_r($staffExportRecord, true));
+
+        $sheet->down();
+        $sheet->home();
+
+        // Write values
+        foreach ($staffExportRecord as $value) {
+          $sheet->label($value);
+          $sheet->right();
         }
       }
+
+      // Capture peak memory
+      $currentMemoryUsage = memory_get_usage();
+
+      if ($currentMemoryUsage > $this - PeakMemory) {
+        $this->peakMemory = memory_get_usage();
+      }
+
       $row++;
     }
-    $this->sizeColumns($objPHPExcel);
 
-    // Add the lookup sheet. The null argument makes it the last sheet.
-    $objPHPExcel->addSheet($lookUpSheet, null);
-
-    $objPHPExcel->setActiveSheetIndex(0);
-    $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
     $todaydate = date("d-m-y");
     $todaydate = $todaydate . '-' . date("H-i-s");
     $fileName = 'Staffs';
     $fileName = $fileName . '-' . $todaydate;
     $fileName = $fileName . '.xls';
     $filePath = realpath(sys_get_temp_dir()) . '/' . $fileName;
-    $objWriter->save($filePath);
+
+    $sheet->save($filePath);
     return array('fileName' => $fileName, 'filePath' => $filePath);
   }
 
-
   /**
-  * Each of the column in the XLS's active sheet is sized to display all contents.
-  *
-  * @param sfPhpExcel object $objPHPExcel   The sfPhpExcel object that is being
-  *                                         populated by buildXls.
-  **/
-  private function sizeColumns($objPHPExcel)
-  {
-    $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
-    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-    for ($i = $highestColumnIndex; $i >= 0; $i--) {
-      $objPHPExcel->getActiveSheet()->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($i))->setAutoSize(true);
-    }
-  }
-
-  /**
-   * $this->exportHeaders are used to create the headers for each sheet in the XLS. This functions
-   * is called whenever a new sheet is added (aside from the final definition sheet).
+   * This function constructs a Doctrine Query based on the values of the parameter passed in.
    *
-   * @param sfPhpExcel object $objPHPExcel   The sfPhpExcel object that is being
-   *                                         populated by buildXls.
+   * The query will return the values from a single column of a table, with the possiblity to
+   * add a where clause to the query.
+   *
+   * @param $lookups array()  gatherLookupValues expects $lookups to be a two-dimensional array.
+   *                          Keys of the outer level are expected to be column headers for a
+   *                          lookup column, or some other kind of organized data list. However,
+   *                          submitting a non-associative array will not cause any errors.
+   *
+   *                          The expected structure of the array is something like this:
+   *
+   *                          $lookUps = array(
+   *                                       'Staff Resource Status' => array(
+   *                                           'selectTable'  => 'agStaffResourceStatus',
+   *                                           'selectColumn' => 'staff_resource_status',
+   *                                           'whereColumn'  => null,
+   *                                           'whereValue' => null
+   *                                       ),
+   *                                       'Staff Resource Type' => array(
+   *                                           'selectTable'  => 'agStaffResourceType',
+   *                                           'selectColumn' => 'staff_resource_type',
+   *                                           'whereColumn'  => null,
+   *                                           'whereValue' => null
+   *                                       )
+   *                          );
+   *
+   *                          Additional values of the $lookUps array can also be included.
+   *                          The keys of the inner array musy be set to selectTable, selectColumn,
+   *                          whereColumn, and whereValue.
    */
-  private function buildSheetHeaders($objPHPExcel)
-  {
-    foreach ($this->exportHeaders as $hKey => $heading) {
-      $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, 1)->setValue($heading);
-    }
-  }
-
-  /**
-  * This function constructs a Doctrine Query based on the values of the parameter passed in.
-  *
-  * The query will return the values from a single column of a table, with the possiblity to
-  * add a where clause to the query.
-  *
-  * @param $lookups array()  gatherLookupValues expects $lookups to be a two-dimensional array.
-  *                          Keys of the outer level are expected to be column headers for a
-  *                          lookup column, or some other kind of organized data list. However,
-  *                          submitting a non-associative array will not cause any errors.
-  *
-  *                          The expected structure of the array is something like this:
-  *
-  *                          $lookUps = array(
-  *                                       'Staff Resource Status' => array(
-  *                                           'selectTable'  => 'agStaffResourceStatus',
-  *                                           'selectColumn' => 'staff_resource_status',
-  *                                           'whereColumn'  => null,
-  *                                           'whereValue' => null
-  *                                       ),
-  *                                       'Staff Resource Type' => array(
-  *                                           'selectTable'  => 'agStaffResourceType',
-  *                                           'selectColumn' => 'staff_resource_type',
-  *                                           'whereColumn'  => null,
-  *                                           'whereValue' => null
-  *                                       )
-  *                          );
-  *
-  *                          Additional values of the $lookUps array can also be included.
-  *                          The keys of the inner array musy be set to selectTable, selectColumn,
-  *                          whereColumn, and whereValue.
-  */
   private function gatherLookupValues($lookUps = null)
   {
     foreach ($lookUps as $key => $lookUp) {
       $lookUpQuery = agDoctrineQuery::create()
-                      ->select($lookUp['selectColumn'])
-                      ->from($lookUp['selectTable']);
+          ->select($lookUp['selectColumn'])
+          ->from($lookUp['selectTable']);
       if (isset($lookUp['whereColumn']) && isset($lookUp['whereValue'])) {
         //$lookUpQuery->where("'" . $lookUp['whereColumn'] . " = ?', " . $lookUp['whereValue']);
         $lookUpQuery->where($lookUp['whereColumn'] . " = " . $lookUp['whereValue']);

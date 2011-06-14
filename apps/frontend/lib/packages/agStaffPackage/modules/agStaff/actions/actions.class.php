@@ -506,23 +506,41 @@ class agStaffActions extends agActions
    * @todo: allow export of group selections or search results, implement export for other modules and models.
    * @todo: add some more formatting to the file that is output to make reading easier.
    * */
-  public function executeExport()
+  public function executeExport(sfWebRequest $request)
   {
+    $this->startTime = microtime(true);
+
     $staffExporter = new agStaffExporter();
     $exportResponse = $staffExporter->export();
+
+    // Get the memory usage
+    $peakMemory = $staffExporter->peakMemory;
+
     // Free up some memory by getting rid of the agFacilityExporter object.
     unset($staffExporter);
-    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-    $this->getResponse()->setHttpHeader('Content-Disposition',
-                                        'attachment;filename="' . $exportResponse['fileName'] . '"');
 
-    $exportFile = file_get_contents($exportResponse['filePath']);
+    //$this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+    //$this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportResponse['fileName'] . '"');
+    //$exportFile = file_get_contents($exportResponse['filePath']);
+    //$this->getResponse()->setContent($exportFile);
+    //$this->getResponse()->send();
+    //unlink($exportResponse['filePath']);
+    //
+    // Report elapsed time
+    $this->endTime = microtime(true);
+    $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+    $this->importTime = date("H:i:s", $time);
 
-    $this->getResponse()->setContent($exportFile);
-    $this->getResponse()->send();
-    unlink($exportResponse['filePath']);
+    // Format memory
+    $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+    if ($peakMemory <= 999) {
+      $peakMemory = 1;
+    }
+    for ($i = 0; $peakMemory > 999; $i++) {
+      $peakMemory /= 1024;
+    }
+    $this->peakMemory = ceil($peakMemory) ." ". $bytes[$i];
 
-    $this->redirect('staff/index');
   }
 
   //TODO: put this in the global actions file?
@@ -579,8 +597,6 @@ class agStaffActions extends agActions
 
     // Update lucene index
     //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
-
-
     //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
     // Get some stats on the import
     $this->importCount = $this->importer->getImportStatistics();
