@@ -1,6 +1,6 @@
 Options +FollowSymLinks +ExecCGI
 
-php_flag xdebug.profiler_enable 0 
+php_flag xdebug.profiler_enable 0
 php_value xdebug.profiler_output_name cachegrind.out.%t.%p
 php_value xdebug.profiler_output_dir /home/tmp
 

@@ -17,5 +17,5 @@ $i = 1;
   <li><strong>End:</strong> <?php echo date('F j, Y, g:i:s a',$endTime); ?></li>
   <li><strong>Time Elapsed:</strong> <?php echo $importTime; ?></li>
   <li><strong>Records Imported:</strong> <?php echo $importCount; ?></li>
-  <li><strong>Total Process: </strong></li>
+  <li><strong>Peak Memory Usage: </strong> <?php echo $peakMemory; ?></li>
 </ul>

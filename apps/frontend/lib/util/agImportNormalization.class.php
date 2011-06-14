@@ -22,10 +22,8 @@ abstract class agImportNormalization extends agImportHelper
 
   protected $helperObjects = array(),
   $tempToRawQueryName = 'import_temp_to_raw',
-
   // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
   $importComponents = array(),
-
   //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue))
   $importData = array(),
   $importCount = 0;
@@ -203,7 +201,7 @@ abstract class agImportNormalization extends agImportHelper
     // preempt this method with a check on our error threshold and stop if we shouldn't continue
     try {
 
-      $this->eh->logInfo("Memory: " . memory_get_usage());
+
 
       // check it once before we start anything and once after
       $this->eh->checkErrThreshold();
@@ -225,6 +223,10 @@ abstract class agImportNormalization extends agImportHelper
 
     // since everything's hunky-dory, let's count what's left and return that
     $remaining = ($this->iterData['fetchCount'] - $this->iterData['fetchPosition']);
+
+    // Get memory usage
+    $this->getPeakMemoryUsage();
+
     return $remaining;
   }
 
@@ -312,7 +314,7 @@ abstract class agImportNormalization extends agImportHelper
     $err = NULL;
     $this->eh->logInfo("Normalizing and inserting batch data into database.");
 
-    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);    
+    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
     $conn->beginTransaction();
 
     foreach ($this->importComponents as $index => $componentData) {
@@ -377,13 +379,13 @@ abstract class agImportNormalization extends agImportHelper
       // reference it
 
       $this->importCount += count($this->importData);
-      
+
       return TRUE;
     } else {
       // our rollback and error logging happen regardless of whether this is an optional component
       $this->eh->logErr($errMsg, count($this->importData));
       $conn->rollback();
-      
+
       // return false if not
       return FALSE;
     }

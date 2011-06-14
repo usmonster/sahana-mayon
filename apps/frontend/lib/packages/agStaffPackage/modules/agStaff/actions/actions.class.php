@@ -607,6 +607,19 @@ class agStaffActions extends agActions
     $this->endTime = microtime(true);
     $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
     $this->importTime = date("H:i:s", $time);
+    
+    // Get the memory usage
+    $peakMemory = $this->importer->getPeakMemoryUsage();
+    
+    // Format memory
+    $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+    if ($peakMemory <= 999) {
+      $peakMemory = 1;
+    }
+    for ($i = 0; $peakMemory > 999; $i++) {
+      $peakMemory /= 1024;
+    }
+    $this->peakMemory = ceil($peakMemory) ." ". $bytes[$i];
 
     unset($this->importer);
   }
