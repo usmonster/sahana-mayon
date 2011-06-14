@@ -389,19 +389,6 @@ class agStaffImportNormalization extends agImportNormalization
         $this->eh->logDebug('Creating new entity for import rowId {' . $rowId . '}.');
         $newRec = new agEntity($entityTable, TRUE);
         $entityColl->add($newRec, $rowId);
-
-
-//        $this->eh->logDebug('Creating new entity for import rowId {' . $rowId . '}.');
-//        $fKeys = array();
-//        $pKeys['entity_id'] = $this->createNewRec($entityTable, $fKeys);
-//
-//        $this->eh->logDebug('Creating new person for import Entity ID {' . $pKeys['entity_id'] . '}.');
-//        $fKeys = array('entity_id' => $pKeys['entity_id']);
-//        $pKeys['person_id'] = $this->createNewRec($personTable, $fKeys);
-//
-//        $this->eh->logDebug('Creating new staff for import Person ID {' . $pKeys['person_id'] . '}.');
-//        $fKeys = array('person_id' => $pKeys['person_id']);
-//        $pKeys['staff_id'] = $this->createNewRec($staffTable, $fKeys);
       }
 
       // here we log warnings about bad entities that we've been passed and chose to override
@@ -411,9 +398,9 @@ class agStaffImportNormalization extends agImportNormalization
         $this->eh->logWarning($warnMsg);
       }
     }
-    $this->eh->logInfo('Saving new entities.');
+    $this->eh->logDebug('Saving new entities.');
     $entityColl->save($conn);
-    $this->eh->logInfo('New entities successfully saved.');
+    $this->eh->logDebug('New entities successfully saved.');
 
     // now, loop through using the recently return import data and build staff the same way
     foreach ($this->importData as $rowId => &$rowData)
@@ -431,9 +418,9 @@ class agStaffImportNormalization extends agImportNormalization
       $personColl->add($newRec, $rowId);
     }
     unset($rowData);
-    $this->eh->logInfo('Saving new persons.');
+    $this->eh->logDebug('Saving new persons.');
     $personColl->save($conn);
-    $this->eh->logInfo('New persons successfully saved.');
+    $this->eh->logDebug('New persons successfully saved.');
 
     // now we can free the entity collection's resources
     $entityColl->free();
@@ -455,9 +442,9 @@ class agStaffImportNormalization extends agImportNormalization
       $staffColl->add($newRec, $rowId);
     }
     unset($rowData);
-    $this->eh->logInfo('Saving new staff.');
+    $this->eh->logDebug('Saving new staff.');
     $staffColl->save($conn);
-    $this->eh->logInfo('New staff successfully saved.');
+    $this->eh->logDebug('New staff successfully saved.');
 
     // now we can free the person collection's resources
     $personColl->free();
