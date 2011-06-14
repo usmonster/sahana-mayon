@@ -33,3 +33,5 @@ include_partial('global/list',
   'widgets' => array($statusWidget)
 ));
 ?>
+
+<a href="<?php echo url_for('staff/list') ?>" class="generalButton">Create New</a>
