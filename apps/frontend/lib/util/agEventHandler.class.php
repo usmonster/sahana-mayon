@@ -42,15 +42,22 @@ class agEventHandler
               $errCount,
               $logLevelValue,
               $logEventLevel,
-              $errThreshold = 1000;
+              $errThreshold = 1000,
+              $sfContext;
 
   /**
    * This class's constructor.
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
+   * @param sfContext $sfContext An instance of the sfContext to use
    */
-  public function __construct($logEventLevel = NULL, $minEventLevel = self::EVENT_EMERG)
+  public function __construct($logEventLevel = NULL,
+                              $minEventLevel = self::EVENT_EMERG,
+                              sfContext $sfContext = NULL)
   {
+    if (empty($sfContext)) { $sfContext = sfContext::getInstance(); }
+    $this->sfContext = $sfContext;
+
     // reset any events (or initialize the handlers)
     $this->resetEvents();
 
@@ -146,7 +153,7 @@ class agEventHandler
     if ($this->logLevelValue >= constant('self::EVENT_' . $eventType . '_LEVEL'))
     {
       $logger = strtolower($eventType);
-      sfContext::getInstance()->getLogger()->$logger($eventMsg);
+      $this->sfContext->getLogger()->$logger($eventMsg);
       $timestamp = microtime(TRUE);
       $event = array('ts' => $timestamp, 'msg' => $eventMsg);
       $this->events[$eventType][] = $event;
@@ -299,7 +306,7 @@ class agEventHandler
         $event = sprintf("\t%s (%s): %s\n", $level, $event['ts'], $event['msg']);
         $eventLog = $eventLog . $event;
       }
-      sfContext::getInstance()->getLogger()->$logType($eventLog);
+      $this->sfContext->getLogger()->$logType($eventLog);
     }
   }
 

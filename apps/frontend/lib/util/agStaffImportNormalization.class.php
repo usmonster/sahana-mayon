@@ -22,7 +22,6 @@
  */
 class agStaffImportNormalization extends agImportNormalization
 {
-
   public function __destruct()
   {
     parent::__destruct();
@@ -272,8 +271,8 @@ class agStaffImportNormalization extends agImportNormalization
   {
     // we need to capture errors just to make sure we don't store failed ID inserts
     try {
-      $this->loadCurrentEntities();
-      $this->setNewEntities();
+      $this->loadCurrentEntities($conn);
+      $this->setNewEntities($conn);
     } catch (Exception $e) {
       foreach ($this->importData as $rowId => &$rowData) {
         unset($rowData['primaryKeys']['entity_id']);
@@ -288,9 +287,10 @@ class agStaffImportNormalization extends agImportNormalization
 
   /*
    * Method to load any existing entities from the database into our object.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
 
-  protected function loadCurrentEntities()
+  protected function loadCurrentEntities(Doctrine_Connection $conn)
   {
     // explicit declarations are good
     $rawEntityIds = array();
@@ -314,11 +314,14 @@ class agStaffImportNormalization extends agImportNormalization
         ->leftJoin('p.agStaff s')
         ->whereIn('e.id', $rawEntityIds);
     $entities = $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_ARRAY);
+    $q->free();
 
     // we no longer need this array (used for the ->whereIN)
     unset($rawEntityIds);
 
     $this->eh->logDebug('{' . count($entities) . '} person entities found in the database.');
+
+    $staffTable = $conn->getTable('agStaff');
 
     //loop foreach $entities member
     foreach ($entities as $entityId => &$entityData) {
@@ -326,7 +329,7 @@ class agStaffImportNormalization extends agImportNormalization
       if (is_null($entityData[1])) {
         $this->eh->logDebug('Person ID {' . $entityData[0] . '} exists but is not staff. ' .
             'Creating staff record.');
-        $entityData[1] = $this->createNewRec('agStaff', array('person_id' => $entityData[0]));
+        $entityData[1] = $this->createNewRec($staffTable, array('person_id' => $entityData[0]));
       }
     }
 
@@ -343,23 +346,34 @@ class agStaffImportNormalization extends agImportNormalization
         }
       }
     }
+    unset($rowData);
   }
 
   /*
    * Method to set new entities from our $_rawData.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
-
-  protected function setNewEntities()
+  protected function setNewEntities(Doctrine_Connection $conn)
   {
+    // make these explicit at the to to avoid building the graph multiple times
+    $entityTable = $conn->getTable('agEntity');
+    $personTable = $conn->getTable('agPerson');
+    $staffTable = $conn->getTable('agStaff');
+
+    // define the collections once
+    $entityColl = new Doctrine_Collection('agEntity');
+    $personColl = new Doctrine_Collection('agPerson');
+    $staffColl = new Doctrine_Collection('agStaff');
+
     // add new entities / persons / staff for records with bad or no entity ids.
-    foreach ($this->importData as $rowId => &$rowData) {
+    foreach ($this->importData as $rowId => $rowData) {
       // initially be pessimistic about the actions we'll need to take
       $createNew = FALSE;
       $warnBadEntity = FALSE;
 
       // pick these up by reference so we can use the pointers more easily
-      $rawData = & $rowData['_rawData'];
-      $pKeys = & $rowData['primaryKeys'];
+      $rawData = $rowData['_rawData'];
+      $pKeys = $rowData['primaryKeys'];
 
       // this should satisfy both NULL entity_ids and ones that didn't make our initial filter
       if (!array_key_exists('entity_id', $rawData)) {
@@ -370,27 +384,97 @@ class agStaffImportNormalization extends agImportNormalization
       }
 
       if ($createNew) {
-
         $this->eh->logDebug('Creating new entity for import rowId {' . $rowId . '}.');
-        $fKeys = array();
-        $pKeys['entity_id'] = $this->createNewRec('agEntity', $fKeys);
+        $newRec = new agEntity($entityTable, TRUE);
+        $entityColl->add($newRec, $rowId);
 
-        $this->eh->logDebug('Creating new person for import Entity ID {' . $pKeys['entity_id'] . '}.');
-        $fKeys = array('entity_id' => $pKeys['entity_id']);
-        $pKeys['person_id'] = $this->createNewRec('agPerson', $fKeys);
 
-        $this->eh->logDebug('Creating new staff for import Person ID {' . $pKeys['person_id'] . '}.');
-        $fKeys = array('person_id' => $pKeys['person_id']);
-        $pKeys['staff_id'] = $this->createNewRec('agStaff', $fKeys);
+//        $this->eh->logDebug('Creating new entity for import rowId {' . $rowId . '}.');
+//        $fKeys = array();
+//        $pKeys['entity_id'] = $this->createNewRec($entityTable, $fKeys);
+//
+//        $this->eh->logDebug('Creating new person for import Entity ID {' . $pKeys['entity_id'] . '}.');
+//        $fKeys = array('entity_id' => $pKeys['entity_id']);
+//        $pKeys['person_id'] = $this->createNewRec($personTable, $fKeys);
+//
+//        $this->eh->logDebug('Creating new staff for import Person ID {' . $pKeys['person_id'] . '}.');
+//        $fKeys = array('person_id' => $pKeys['person_id']);
+//        $pKeys['staff_id'] = $this->createNewRec($staffTable, $fKeys);
       }
 
       // here we log warnings about bad entities that we've been passed and chose to override
       if ($warnBadEntity) {
-        $warnMsg = sprintf("Bad entity id (%s).  Generated a new entity id (%s).",
-                           $rawData['entity_id'], $pKeys['entity_id']);
+        $warnMsg = sprintf("Bad entity id (%s).  Generated a new entity id.",
+                           $rawData['entity_id']);
         $this->eh->logWarning($warnMsg);
       }
     }
+    $this->eh->logInfo('Saving new entities.');
+    $entityColl->save($conn);
+    $this->eh->logInfo('New entities successfully saved.');
+
+    // now, loop through using the recently return import data and build staff the same way
+    foreach ($this->importData as $rowId => &$rowData)
+    {
+      // grab our entityId from the entity collection
+      $entityId = $entityColl[$rowId]['id'];
+
+      // make sure we add it to the primary keys array
+      $rowData['primaryKeys']['entity_id'] = $entityId;
+
+      // create a new person entry and add it to the person collection
+      $this->eh->logDebug('Creating new person for import Entity ID {' . $entityId . '}.');
+      $newRec = new agPerson($personTable, TRUE, FALSE);
+      $newRec['entity_id'] = $entityId;
+      $personColl->add($newRec, $rowId);
+    }
+    unset($rowData);
+    $this->eh->logInfo('Saving new persons.');
+    $personColl->save($conn);
+    $this->eh->logInfo('New persons successfully saved.');
+
+    // now we can free the entity collection's resources
+    $entityColl->free();
+    unset($entityColl);
+
+    // repeat for staff
+    foreach ($this->importData as $rowId => &$rowData)
+    {
+      // grab our personId from the person collection
+      $personId = $personColl[$rowId]['id'];
+
+      // make sure we add it to the primary keys array
+      $rowData['primaryKeys']['person_id'] = $personId;
+
+      // create a new staff entry and add it to the staff collection
+      $this->eh->logDebug('Creating new staff for import Person ID {' . $personId . '}.');
+      $newRec = new agStaff($staffTable, TRUE, FALSE);
+      $newRec['person_id'] = $personId;
+      $staffColl->add($newRec, $rowId);
+    }
+    unset($rowData);
+    $this->eh->logInfo('Saving new staff.');
+    $staffColl->save($conn);
+    $this->eh->logInfo('New staff successfully saved.');
+
+    // now we can free the person collection's resources
+    $personColl->free();
+    unset($personColl);
+
+    // repeat for staff
+    foreach ($this->importData as $rowId => &$rowData)
+    {
+      // grab our staffId from the staff collection
+      $staffId = $staffColl[$rowId]['id'];
+
+      // make sure we add it to the primary keys array
+      $rowData['primaryKeys']['staff_id'] = $staffId;
+    }
+    unset($rowData);
+
+    // now we can free the staff collection's resources
+    $staffColl->free();
+    unset($staffColl);
   }
 
   /**
@@ -407,7 +491,7 @@ class agStaffImportNormalization extends agImportNormalization
     $results = array();
 
     // let's get ahold of our helper object since we're going to use him/her a lot
-    $pnh = & $this->helperObjects['agPersonNameHelper'];
+    $pnh =& $this->helperObjects['agPersonNameHelper'];
 
     // get our name types and map them back to the importNameTypes
     $nameTypes = $pnh->getNameTypeIds(array_values($importNameTypes));
@@ -651,11 +735,16 @@ class agStaffImportNormalization extends agImportNormalization
     // pick up some of our components / objects
     $keepHistory = agGlobal::getParam('staff_import_keep_history');
     $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
-    $geoSourceId = agDoctrineQuery::create()
-        ->select('gs.id')
-        ->from('agGeoSource gs')
-        ->where('gs.geo_source = ?', agGlobal::getParam('staff_import_geo_source'))
-        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    if (!isset($this->geoSourceId))
+    {
+      $this->geoSourceId = agDoctrineQuery::create()
+      ->select('gs.id')
+      ->from('agGeoSource gs')
+      ->where('gs.geo_source = ?', agGlobal::getParam('staff_import_geo_source'))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
+    $geoSourceId = $this->geoSourceId;
 
     $addressGeo = array();
     // @TODO Handle geo upserts along with address.
@@ -680,15 +769,17 @@ class agStaffImportNormalization extends agImportNormalization
       'pms_id' => 'PMS ID',
       'civil_service_title' => 'Civil Service Title');
 
-    // @TODO Generate person custom field edges and s/getter.
-
-    $customFieldIds = agDoctrineQuery::create()
-        ->select('pcf.person_custom_field')
-        ->addSelect('pcf.id')
-        ->from('agPersonCustomField pcf')
-        ->whereIn('pcf.person_custom_field', array_values($importCustomFields))
-        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
-
+    // save this for future iterations
+    if (!isset($this->customFieldIds))
+    {
+      $this->customFieldIds = agDoctrineQuery::create()
+          ->select('pcf.person_custom_field')
+          ->addSelect('pcf.id')
+          ->from('agPersonCustomField pcf')
+          ->whereIn('pcf.person_custom_field', array_values($importCustomFields))
+          ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    }
+    $customFieldIds = $this->customFieldIds;
 
     // first loop through and grab all our personIds into a single array
     // we intentionally let this fail if there is no person id since we should never have that case
@@ -759,7 +850,10 @@ class agStaffImportNormalization extends agImportNormalization
       }
     }
 
+    $coll->free();
     unset($coll);
+
+    $personCustomFieldTable = $conn->getTable('agPersonCustomFieldValue');
 
     // Now process person with new custom field if provided in import.
     foreach ($personIds AS $pId => $rowId) {
@@ -775,7 +869,7 @@ class agStaffImportNormalization extends agImportNormalization
             $fKeys['person_custom_field_id'] = $customFieldIds[$importCustomFields[$customField]];
             $fKeys['value'] = $rawData[$customField];
 
-            $personCustomField = $this->createNewRec('agPersonCustomFieldValue', $fKeys);
+            $personCustomField = $this->createNewRec($personCustomFieldTable, $fKeys);
           }
         }
       }
@@ -798,26 +892,38 @@ class agStaffImportNormalization extends agImportNormalization
     // Required columns.
     $requiredColumns = array('organization', 'resource_type', 'resource_status');
 
-    $organizationIds = agDoctrineQuery::create()
-        ->select('o.organization')
-        ->addSelect('o.id')
-        ->from('agOrganization o')
-        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
-    $organizationIds = array_change_key_case($organizationIds, CASE_LOWER);
+    if (!isset($this->organizationIds))
+    {
+      $this->organizationIds = agDoctrineQuery::create()
+          ->select('o.organization')
+          ->addSelect('o.id')
+          ->from('agOrganization o')
+          ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+      $this->organizationIds = array_change_key_case($this->organizationIds, CASE_LOWER);
+    }
+    $organizationIds = $this->organizationIds;
 
-    $stfRscTypeIds = agDoctrineQuery::create()
-        ->select('srt.staff_resource_type')
-        ->addSelect('srt.id')
-        ->from('agStaffResourceType srt')
-        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
-    $stfRscTypeIds = array_change_key_case($stfRscTypeIds, CASE_LOWER);
+    if (!isset($this->stfRscTypeIds))
+    {
+      $this->stfRscTypeIds = agDoctrineQuery::create()
+          ->select('srt.staff_resource_type')
+          ->addSelect('srt.id')
+          ->from('agStaffResourceType srt')
+          ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+      $this->stfRscTypeIds = array_change_key_case($this->stfRscTypeIds, CASE_LOWER);
+    }
+    $stfRscTypeIds = $this->stfRscTypeIds;
 
-    $stfRscStatusIds = agDoctrineQuery::create()
-        ->select('srs.staff_resource_status')
-        ->addSelect('srs.id')
-        ->from('agStaffResourceStatus srs')
-        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
-    $stfRscStatusIds = array_change_key_case($stfRscStatusIds, CASE_LOWER);
+    if (!isset($this->stfRscStatusIds))
+    {
+      $this->stfRscStatusIds = agDoctrineQuery::create()
+          ->select('srs.staff_resource_status')
+          ->addSelect('srs.id')
+          ->from('agStaffResourceStatus srs')
+          ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+      $this->stfRscStatusIds = array_change_key_case($this->stfRscStatusIds, CASE_LOWER);
+    }
+    $stfRscStatusIds = $this->stfRscStatusIds;
 
     // Retrieve staff ids from raw data.
     $staffIds = array();
@@ -928,7 +1034,10 @@ class agStaffImportNormalization extends agImportNormalization
       }
     }
 
+    $coll->free();
     unset($coll);
+
+    $staffResourceTable = $conn->getTable('agStaffResource');
 
     // Now $staffIds are left with new staff resources.
     foreach ($staffIds AS $stfId => $stfResources) {
@@ -986,7 +1095,7 @@ class agStaffImportNormalization extends agImportNormalization
         $fKeys['staff_resource_type_id'] = $stfRscTypeIds[strtolower($rawData['resource_type'])];
         $fKeys['staff_resource_status_id'] = $stfRscStatusIds[strtolower($rawData['resource_status'])];
 
-        $staffResource = $this->createNewRec('agStaffResource', $fKeys);
+        $staffResource = $this->createNewRec($staffResourceTable, $fKeys);
       }
     }
   }
@@ -1015,7 +1124,7 @@ class agStaffImportNormalization extends agImportNormalization
     $results = array();
 
     // let's get ahold of our helper object since we're going to use him/her a lot
-    $plh = & $this->helperObjects['agPersonLanguageHelper'];
+    $plh =& $this->helperObjects['agPersonLanguageHelper'];
 
 
     // loop through our raw data and build our person language data
