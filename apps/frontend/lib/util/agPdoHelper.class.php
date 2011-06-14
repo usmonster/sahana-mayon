@@ -131,4 +131,16 @@ abstract class agPdoHelper
 
     return $pdoStmt ;
   }
+
+  /**
+   * Method to clear a connection object of memory and evict tables
+   */
+  protected static function clearConnection(Doctrine_Connection $conn)
+  {
+    $conn->flush();
+    $conn->clear();
+    $conn->evictTables();
+    $conn->clear();
+    return $conn;
+  }
 }
