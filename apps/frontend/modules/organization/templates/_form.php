@@ -14,7 +14,8 @@
           <?php if (!$form->getObject()->isNew()): ?>
             &nbsp;<?php echo link_to ('Delete', 'organization/delete?id='.$form->getObject()->getId(), array('class' => 'deleteButton', 'method' => 'delete', 'confirm' => 'Are you sure?')) ?>
           <?php endif; ?>
-          <input type="submit" value="Save" name="Continue" class="continueButton"/>
+          <input type="submit" value="Save" name="Save" class="continueButton"/>
+          <input type="submit" value="Save and Create Another" name="Another" class="continueButton"/>
         </td>
       </tr>
     </tfoot>

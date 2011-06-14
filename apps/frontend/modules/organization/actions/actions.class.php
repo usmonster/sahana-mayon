@@ -235,7 +235,14 @@ class organizationActions extends agActions
     {
       $ag_organization = $form->save();
 
-      $this->redirect('organization/edit?id='.$ag_organization->getId());
+      if ($request->hasParameter("Another"))
+      {
+        $this->redirect('organization/new');
+      }
+      else
+      {
+        $this->redirect('organization/edit?id='.$ag_organization->getId());
+      }
     }
   }
 }
