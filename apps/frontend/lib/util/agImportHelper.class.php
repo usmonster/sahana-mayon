@@ -50,7 +50,8 @@ abstract class agImportHelper extends agPdoHelper
    */
   protected function __init($tempTable, $logEventLevel)
   {
-    $this->eh = new agEventHandler($logEventLevel);
+    $this->eh = new agEventHandler($logEventLevel, agEventHandler::EVENT_NOTICE,
+        sfContext::getInstance());
 
     // get our error threshold
     $this->errThreshold = intval(agGlobal::getParam('import_error_threshold'));
@@ -69,12 +70,25 @@ abstract class agImportHelper extends agPdoHelper
    */
   protected function setConnections()
   {
-    $this->_conn = array();
+    $dm = Doctrine_Manager::getInstance();
 
+    // always re-parent, then 'copy' the connection
+    $dm->setCurrentConnection('doctrine');
     $adapter = Doctrine_Manager::connection()->getDbh();
-    $this->_conn[self::CONN_TEMP_READ] = Doctrine_Manager::connection($adapter, self::CONN_TEMP_READ);
-    $this->_conn[self::CONN_TEMP_WRITE] = Doctrine_Manager::connection($adapter,
-                                                                       self::CONN_TEMP_WRITE);
+    $this->_conn[self::CONN_TEMP_READ] = Doctrine_Manager::connection($adapter,
+      self::CONN_TEMP_READ);
+
+    // always re-parent, then 'copy' the connection
+    $dm->setCurrentConnection('doctrine');
+    $adapter = $dm->getCurrentConnection()->getDbh();
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_TEMP_WRITE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $this->_conn[self::CONN_TEMP_WRITE] = $conn;
+
+    // reset our default connection
+    $dm->setCurrentConnection('doctrine');
   }
 
   /**

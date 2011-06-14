@@ -13,9 +13,17 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class organizationActions extends sfActions
+class organizationActions extends agActions
 {
   protected $agOrganizationHelper ;
+  protected $_searchedModels = array('agOrganization');
+
+  public function executeSearch(sfWebRequest $request)
+  {
+    parent::doSearch($request->getParameter('query'));
+    $this->target_module = 'organization';
+    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
+  }
 
   /**
    * Method to lazily load the agOrganizationHelper helper class.

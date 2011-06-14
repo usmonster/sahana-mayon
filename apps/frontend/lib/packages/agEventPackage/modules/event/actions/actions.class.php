@@ -985,6 +985,9 @@ class eventActions extends agActions
     $this->setEventBasics($request);
     $availableStaffStatus = agEventStaffHelper::returnAvailableEventStaffStatus();
 
+    $zero_hour_ts = agEvent::getEventZeroHour($this->event_id);
+    $this->zero_hour = date("Y-m-d H:i e", $zero_hour_ts);
+
     $eventAvailableStaff = agDoctrineQuery::create()
         ->select('es.id, COUNT(es.id), ess.id, sr.id')
         ->from('agEventStaff es')

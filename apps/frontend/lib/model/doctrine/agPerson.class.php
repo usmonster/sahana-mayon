@@ -134,18 +134,18 @@ class agPerson extends BaseagPerson
     $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));
 
     // uses the agPersonNameHelper method that includes all names / aliases of type in a string
-//    $names = $this->getNameByTypeAsString();
-//    foreach ($names as $key => $name) {
-//      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
-//    }
-//    $sex = $this->getSex();
-//    $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
-//    $nationalities = $this->getNationality();
-//    foreach ($nationalities as $nationality) {
-//      $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
-//    }
-//    $ethnicity = $this->getEthnicity();
-//    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
+    $names = $this->getNameByTypeAsString();
+    foreach ($names as $key => $name) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
+    }
+    $sex = $this->getSex();
+    $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
+    $nationalities = $this->getNationality();
+    foreach ($nationalities as $nationality) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
+    }
+    $ethnicity = $this->getEthnicity();
+    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
 
     return $doc;
   }

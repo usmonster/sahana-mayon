@@ -62,11 +62,7 @@ class agPersonNameHelper extends agBulkRecordHelper
     }
  
     // grab all of the name types into an array (once) for quick-reference later on
-    $nameTypes = agDoctrineQuery::create()
-      ->select('pnt.person_name_type')
-          ->addSelect('pnt.id')
-        ->from('agPersonNameType pnt')
-        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
+    $nameTypes = $this->getNameTypeIds(array()) ;
 
     // quickly dash in and build our results array, replacing the string name type with the id
     foreach ($strNameComponents as $component)
@@ -410,20 +406,32 @@ class agPersonNameHelper extends agBulkRecordHelper
    */
   public function getNameTypeIds(array $nameTypes)
   {
+    $results = array();
+
     $q = agDoctrineQuery::create()
       ->select('pnt.id')
         ->from('agPersonNameType pnt')
         ->useResultCache(TRUE, 3600);
     
-    $results = array();
-    foreach ($nameTypes as $nameType)
+    if (empty($nameTypes))
     {
-      $typeId = $q->where('pnt.person_name_type = ?', $nameType)
-        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-      
-      if (!empty($typeId)) { $results[$nameType] = $typeId; }
+      $typeIds = $q->addSelect('pnt.person_name_type')
+        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+      $results = array_flip($typeIds);
+      return $results ;
     }
-    return $results;
+    else
+    {
+      foreach ($nameTypes as $nameType)
+      {
+        $typeId = $q->where('pnt.person_name_type = ?', $nameType)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+        if (!empty($typeId)) { $results[$nameType] = $typeId; }
+      }
+      return $results;
+    }
   }
 
   /**
@@ -613,7 +621,7 @@ class agPersonNameHelper extends agBulkRecordHelper
       $currNames = $this->getNameByTypeId(array_keys($personNames), FALSE) ;
     }
 
-    // execute the reprioritization helper and pass it our current addresses as found in the db
+    // execute the reprioritization helper and pass it our current names as found in the db
     $personNames = $this->reprioritizePersonNames($personNames, $currNames ) ;
 
     // define our blank collection

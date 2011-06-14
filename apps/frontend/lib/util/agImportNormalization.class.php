@@ -16,27 +16,19 @@
  */
 abstract class agImportNormalization extends agImportHelper
 {
+  const CONN_NORMALIZE_READ = 'import_normalize_read';
   const CONN_NORMALIZE_WRITE = 'import_normalize_write';
 
-  // Not sure what these inline comments were for 
-  //  -- Clayton
-  //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue)) 
-  // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
 
   protected $helperObjects = array(),
   $tempToRawQueryName = 'import_temp_to_raw',
+
+  // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
   $importComponents = array(),
+
+  //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue))
   $importData = array(),
   $importCount = 0;
-
-  /*
-    public function __construct()
-    {
-    // get our dispatcher;
-    $dispatcher = new sfEventDispatcher();
-    }
-   * 
-   */
 
   /**
    * This classes' destructor.
@@ -95,9 +87,26 @@ abstract class agImportNormalization extends agImportHelper
   {
     parent::setConnections();
 
-    $adapter = Doctrine_Manager::connection()->getDbh();
-    $this->_conn[self::CONN_NORMALIZE_WRITE] = Doctrine_Manager::connection($adapter,
-                                                                            self::CONN_NORMALIZE_WRITE);
+    $dm = Doctrine_Manager::getInstance();
+
+    // always re-parent properly
+    $dm->setCurrentConnection('doctrine');
+    $adapter = $dm->getCurrentConnection()->getDbh();
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_WRITE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
+    $this->_conn[self::CONN_NORMALIZE_WRITE] = $conn;
+
+
+    $dm->setCurrentConnection('doctrine');
+    $adapter = $dm->getCurrentConnection()->getDbh();
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_READ);
+    $this->_conn[self::CONN_NORMALIZE_READ] = $conn;
   }
 
   /**
@@ -113,7 +122,6 @@ abstract class agImportNormalization extends agImportHelper
 
   /**
    * Method to update the temp table and mark this batch as successful or failed print("Import is Done<br>");
-    print("Successfully imported " . $this->import_count );
    * @param boolean $success The success value to set
    */
   protected function updateTempSuccess($success)
@@ -195,7 +203,7 @@ abstract class agImportNormalization extends agImportHelper
     // preempt this method with a check on our error threshold and stop if we shouldn't continue
     try {
 
-      $this->eh->logNotice("Memory: " . memory_get_usage());
+      $this->eh->logInfo("Memory: " . memory_get_usage());
 
       // check it once before we start anything and once after
       $this->eh->checkErrThreshold();
@@ -203,9 +211,6 @@ abstract class agImportNormalization extends agImportHelper
       // load up a batch into the helper
       $this->fetchNextBatch();
 
-      // clean our rawData to make it free of zero length strings and related
-      // @todo Remove once working fetch is confirmed
-      //$this->clearNullRawData();
       // normalize and insert our data
       $normalizeSuccess = $this->normalizeData();
 
@@ -260,7 +265,7 @@ abstract class agImportNormalization extends agImportHelper
           $this->importData[$rowId]['_rawData'][$columnName] = $row->$columnName;
         }
       }
-      // unset($row); // @todo Remove this if it proves unnecessary
+      $this->importData[$rowId]['primaryKeys'] = array();
       $fetchPosition++;
     }
 
@@ -305,19 +310,9 @@ abstract class agImportNormalization extends agImportHelper
   protected function normalizeData()
   {
     $err = NULL;
-    $this->eh->logDebug("Normalizing and inserting batch data into database.");
+    $this->eh->logInfo("Normalizing and inserting batch data into database.");
 
-
-    // get our connection object and start an outer transaction for the batch
-    //$this->setConnections();
-    //$conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
-    
-    /**
-     * @todo find a better way of open and closing the CONN_NORMALIZE_WRITE connection
-     */
-    $conn = Doctrine_Manager::connection('mysql://root:fubar@localhost/agasti_mayon', 'connection_1');
-    
-    
+    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);    
     $conn->beginTransaction();
 
     foreach ($this->importComponents as $index => $componentData) {
@@ -383,16 +378,12 @@ abstract class agImportNormalization extends agImportHelper
 
       $this->importCount += count($this->importData);
       
-      $conn->close();
-
       return TRUE;
     } else {
       // our rollback and error logging happen regardless of whether this is an optional component
       $this->eh->logErr($errMsg, count($this->importData));
       $conn->rollback();
       
-      $conn->close();
-
       // return false if not
       return FALSE;
     }
@@ -538,23 +529,18 @@ abstract class agImportNormalization extends agImportHelper
    * <code>array( $columnName => $columnValue, ...)</code>
    * @return integer The newly instantiated record's ID
    */
-  protected function createNewRec($recordName, array $foreignKeys)
+  protected function createNewRec(Doctrine_Table $tableObject, array $foreignKeys)
   {
     // get our connection object
     $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
+    $recordName = $tableObject->getComponentName();
 
     // instantiate the new record object
-    $newRec = new $recordName(null, TRUE, FALSE);
-
-    // loop through our keys and set values
-    foreach ($foreignKeys as $columnName => $columnValue) {
-      $newRec[$columnName] = $columnValue;
-    }
+    $newRec = new $recordName($tableObject, TRUE, FALSE);
+    $newRec->synchronizeWithArray($foreignKeys);
 
     // save and return our new id
     $newRec->save($conn);
-    // @todo Figure out why this causes a huge chain of queries; likely this forces an update
-    // of the record and it tries to populate with related records
 
     return $newRec['id'];
   }

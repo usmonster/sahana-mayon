@@ -128,6 +128,45 @@ class agListHelper
     return $resultArray;
   }
 
+  public static function getOrganizationList($organization_ids = null, $sort = null, $order = null)
+  {
+    $organization_array = array();
+    $resultArray = array();
+
+    // Define staff resource query.
+    $query = agDoctrineQuery::create()
+              ->select('o.id')
+                  ->addSelect('o.organization')
+                  ->addSelect('o.description')
+                ->from('agOrganization o')
+                ->where('1 = ?', 1); //there must be a better way to do this :)
+
+    if ($organization_ids !== null) {
+      $query->andWhereIn('o.id', $organization_ids);
+    }
+
+    if ($sort == 'organization') {
+      $sortField = 'o.organization';
+    }
+    else {
+      $sortField = 'o.id';
+      $order = 'ASC';
+    }
+    $query->orderBy($sortField . ' ' . $order);
+
+    // Execute the organization query
+    $ag_organization = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    foreach ($ag_organization as $organization => $value)
+    {
+      $resultArray[] = array(
+        'id' => $value['o_id'],
+        'organization' => $value['o_organization'],
+        'description' => $value['o_description']
+      );
+    }
+    return $resultArray;
+  }
 }
 
 ?>

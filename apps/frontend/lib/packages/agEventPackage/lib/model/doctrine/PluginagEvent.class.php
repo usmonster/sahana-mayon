@@ -12,4 +12,18 @@
  */
 abstract class PluginagEvent extends BaseagEvent
 {
+  /**
+   * Method to get the event zero hour
+   * @param integer $eventId The event ID being queried
+   * @return integer A unix timestamp representing the event zero hour
+   */
+  public static function getEventZeroHour($eventId)
+  {
+    $q = agDoctrineQuery::create()
+      ->select('e.zero_hour')
+        ->from('agEvent e')
+        ->where('e.id = ?', $eventId);
+
+    return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
 }

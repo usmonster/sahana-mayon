@@ -25,16 +25,6 @@ class agPersonName extends BaseagPersonName
     'person_name' => 'unstored'
   );
 
-  public function updateLucene()
-  {
-    $doc = new Zend_Search_Lucene_Document();
-    //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
-    $doc->addField(Zend_Search_Lucene_Field::unStored('name', $this->getPersonName(), 'utf-8'));
-    //$doc->addField(Zend_Search_Lucene_Field::Unstored('id', $this->getLocation(), 'utf-8'));
-
-    return $doc;
-  }
-
   /**
    * <description>
    * @todo add description of function above and details below

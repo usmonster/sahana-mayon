@@ -51,6 +51,9 @@ abstract class agPdoHelper
    */
   public function __destruct()
   {
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
+
     foreach($this->_conn as &$conn)
     {
       // check for open transactions and rollback
@@ -60,6 +63,8 @@ abstract class agPdoHelper
           __CLASS__ . 'class destruction. Rolled back changes.';
         sfContext::getInstance()->getLogger()->alert($eventMsg);
       }
+
+     $dm->closeConnection($conn);
     }
     unset($conn);
   }
@@ -87,7 +92,6 @@ abstract class agPdoHelper
   protected function getConnection($conn)
   {
     // Lazy load and return pdo connection.
-    if (!isset($this->_conn)) { $this->setConnections(); }
     return $this->_conn[$conn];
   }
 

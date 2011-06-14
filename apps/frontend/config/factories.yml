@@ -40,5 +40,5 @@ all:
         automatic_cleaning_factor: 0
         lifetime: 31556926
 
-  view_cache_manager:
+  view_cache:
     class: sfAPCCache

@@ -13,6 +13,11 @@ agOrganization:
     entity_id:
       type: integer(5)
       notnull: true
+  actAs:
+    Timestampable:
+    Luceneable: 
+      fields:
+        organization: unstored
   indexes:
     agOrganization_unq:
       fields: [organization]
