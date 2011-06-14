@@ -225,7 +225,10 @@ abstract class agImportNormalization extends agImportHelper
     $remaining = ($this->iterData['fetchCount'] - $this->iterData['fetchPosition']);
 
     // Get memory usage
-    $this->getPeakMemoryUsage();
+    $memoryUsage = $this->getPeakMemoryUsage();
+    
+    $this->eh->logNotice("Memory: $memoryUsage");
+    
 
     return $remaining;
   }
@@ -315,6 +318,13 @@ abstract class agImportNormalization extends agImportHelper
     $this->eh->logInfo("Normalizing and inserting batch data into database.");
 
     $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
+    $connName = $conn->getName();
+    
+    // These are for debugging
+    //$this->eh->logInfo("Connection: " . $connName . " " . json_encode($conn->getAttributes()));
+    //$this->eh->logInfo("$connName size: " . strlen(serialize($conn)));
+    
+    
     $conn->beginTransaction();
 
     foreach ($this->importComponents as $index => $componentData) {
