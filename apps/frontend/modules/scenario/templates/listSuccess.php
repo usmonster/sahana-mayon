@@ -36,5 +36,5 @@
       </table>
     <br>
     <div>
-      <a class="continueButton" href="<?php echo url_for('scenario/meta') ?>">New</a>
+      <a class="continueButton" href="<?php echo url_for('scenario/meta') ?>">Create New</a>
     </div>
