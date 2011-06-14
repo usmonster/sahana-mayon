@@ -36,6 +36,9 @@ class agEventHandler
   const       EVENT_INFO_LEVEL = 64;      // Informational
   const       EVENT_DEBUG_LEVEL = 128;    // Debug-level messages
 
+  const       EVENT_SORT_TYPE = 1;
+  const       EVENT_SORT_TS = 2;
+
   private     $events,
               $lastEvent,
               $lastEventByType,
@@ -329,9 +332,39 @@ class agEventHandler
    * )
    * </code>
    */
-  public function getEvents()
+  public function getEvents($sortType = self::EVENT_SORT_TYPE)
   {
-    return $this->events;
+    if ($sortType == self::EVENT_SORT_TYPE)
+    {
+      return $this->events;
+    }
+
+    $sorted = array();
+    foreach ($this->events as $type => $events)
+    {
+      foreach($events as $event)
+      {
+        $tsKeyed = array_merge(array('type' => $type), $event);
+        $sorted[] = $tsKeyed;
+      }
+    }
+    usort($sorted, array('self', 'tsCompare'));
+    return $sorted;
+  }
+
+  /**
+   * Timestamp comparison method
+   * @param array $a
+   * @param array $b
+   * @return integer
+   */
+  public static function tsCompare(array $a, array $b)
+  {
+    if ($a['ts'] == $b['ts'])
+    {
+      return 0;
+    }
+    return ($a['ts'] > $b['ts']) ? +1 : -1;
   }
 
   /**

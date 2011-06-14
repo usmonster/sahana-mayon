@@ -174,7 +174,7 @@ abstract class agImportNormalization extends agImportHelper
 
   public function getImportEvents()
   {
-    return $this->eh->getEvents();
+    return $this->eh->getEvents(agEventHandler::EVENT_SORT_TS);
   }
 
   public function concludeImport()
@@ -317,10 +317,7 @@ abstract class agImportNormalization extends agImportHelper
     $this->eh->logInfo("Normalizing and inserting batch data into database.");
 
     $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
-    $m = memory_get_usage();
     self::clearConnection($conn);
-    self::clearConnection($this->getConnection(self::CONN_NORMALIZE_READ));
-    $m = memory_get_usage();
     $conn->beginTransaction();
 
     foreach ($this->importComponents as $index => $componentData) {
