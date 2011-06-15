@@ -19,3 +19,57 @@ $i = 1;
   <li><strong>Records Imported:</strong> <?php echo $importCount; ?></li>
   <li><strong>Peak Memory Usage: </strong> <?php echo $peakMemory; ?></li>
 </ul>
+
+<br><br>
+
+<table class="blueTable" style="width:auto;" cellspacing="10" cellpadding="10">
+    <tr class="head">
+        <th>Time</th>
+        <th>Type</th>
+        <th>Message</th>
+    </tr>
+
+ <?php
+
+ foreach ($multidimarray as $value1) {
+
+
+        foreach($value1 as $key2 => $value2) {
+
+            
+            echo "<tr><td>";
+        echo date("H:i:s",$value1['ts']);
+        echo "</td><td ";
+
+         if($value1['lvl'] <=8){
+             echo "class =\"redColorText boldText\">";
+         }
+         elseif($value1['lvl'] ==16){
+
+             echo "class =\"orangeColorText boldText\">";
+         }
+         else{
+           echo "class =\"greenColorText boldText\">";
+        }
+
+
+        echo $value1['type'];
+
+
+
+        echo "</td><td>";
+        echo $value1['msg'];
+
+
+        echo "</td></tr>";
+     
+
+        }
+
+}
+?>
+ 
+
+</table>
+
+   

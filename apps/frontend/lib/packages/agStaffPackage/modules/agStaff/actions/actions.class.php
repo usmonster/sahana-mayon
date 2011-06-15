@@ -595,7 +595,7 @@ class agStaffActions extends agActions
     }
     $this->importer->concludeImport();
 
-    //$this->importer->getImportEvents();
+    $this-> multidimarray = $this->importer->getImportEvents();
 
     // Update lucene index
     //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
