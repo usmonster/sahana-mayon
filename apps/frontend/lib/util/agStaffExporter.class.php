@@ -144,7 +144,35 @@ class agStaffExporter
       'write' => 'Write',
       'speak' => 'Speak');
 
+    // Setup some debugging
+    $this->logger = sfContext::getInstance()->getLogger();
     $this->peakMemory = 0;
+  }
+
+  /**
+   *  Creates a zip file object 
+   */
+  private function createZipFile($fileName)
+  {
+    
+  }
+
+  /**
+   * Returns an array of Organizations 
+   * 
+   * @return type array
+   */
+  private function getOrganizationList()
+  {
+
+    // Query for organizations
+    $q = agDoctrineQuery::create()
+        ->select('o.id, o.organization')
+        ->from('agOrganization as o');
+
+    $results = $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    return $results;
   }
 
   /**
@@ -253,16 +281,18 @@ class agStaffExporter
    *
    * @return array $content An associate array of staff resource information in the export format.
    */
-  private function buildExportRecords()
+  private function buildExportRecords($orgId)
   {
     $staffResources = agDoctrineQuery::create()
         ->select('sr.id')
         ->addSelect('sr.staff_id')
         ->addSelect('s.person_id')
         ->addSelect('p.entity_id')
-        ->from('agStaffResource AS sr')
-        ->innerJoin('sr.agStaff AS s')
+        ->from('agStaffResource sr')
+        ->innerJoin('sr.agStaff s')
         ->innerJoin('s.agPerson p')
+        ->innerJoin('sr.agOrganization o')
+        ->where('o.id = ' . $orgId)
         ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
     // Build person id and entity id arrays for later use to retrieve persons names and contacts.
@@ -354,7 +384,7 @@ class agStaffExporter
           foreach ($staffAddresses[$stfRsc['p_entity_id']] AS $addressType => $address) {
             // Populate the row with address & geo info only for the address types and address
             // elements that we care for.
-            if (array_key_exists($addressType, $this->addressTypeHeaderRequirements)) {
+            if (array_key_exists($addressType, $this->addressTypeHeaderRequirements) && isset($address[0][0])) {
               foreach ($address[0][0] AS $elem => $value) {
                 if (array_key_exists($elem, $this->addressLineHeaderMapping)) {
                   $type = $this->addressTypeHeaderRequirements[$addressType];
@@ -413,9 +443,54 @@ class agStaffExporter
    */
   public function export()
   {
-    $staffExportRecords = $this->buildExportRecords();
-    $lookUps = $this->gatherLookupValues($this->lookUps);
-    $exportResponse = $this->buildXls($staffExportRecords, $lookUps);
+    // Get list of orgs
+    $orgList = $this->getOrganizationList();
+
+    // Create zip file
+    $zipFile = new ZipArchive();
+    $filePath = realpath(sys_get_temp_dir()) . '/staff_export.zip';
+    
+    unlink($filePath);
+
+    if ($zipFile->open($filePath, ZIPARCHIVE::CREATE) !== TRUE) {
+      $this->logger->err("Export: Could not create zip file $filePath. Check permissions.");
+    } else {
+      $this->logger->debug("Export: Successfully created $filePath.");
+    }
+
+
+    $i = 0;
+    $exportFiles = array();
+    
+    // Interate through each organization
+    foreach ($orgList as $key => $orgName) {
+
+      $this->logger->debug("Export: Collecting staff for $orgName");
+      $staffExportRecords = $this->buildExportRecords($key);
+
+      if (count($staffExportRecords) > 0) {
+
+        // Populate lookups
+        $lookUps = $this->gatherLookupValues($this->lookUps);
+
+        $this->logger->debug("Export: Saving $orgName xls to tmp folder");
+        $exportFiles[$i] = $this->buildXls($staffExportRecords, $lookUps, $orgName);
+        
+        // Add export file to zip
+        $zipFile->addFile($exportFiles[$i][0],$exportFiles[$i][1]);
+        
+        $i++;
+      }
+    }
+    
+    // Close up the zip
+    $zipFile->close();
+    
+    // Delete raw files
+    foreach($exportFiles as $file) {
+      unlink($file[0]);
+    }
+
     return $exportResponse;
   }
 
@@ -434,14 +509,11 @@ class agStaffExporter
    *                                         constructed and is held in temporary
    *                                         storage. filePath is the path to that file.
    */
-  private function buildXls($staffExportRecords, $lookUpContent)
+  private function buildXls($staffExportRecords, $lookUpContent, $orgName)
   {
 
     // load the Excel writer object
     $sheet = new agExcel2003ExportHelper("foo");
-
-    // Setup some debugging
-    //$logger = sfContext::getInstance()->getLogger();
 
     /**
       // Populate the lookup sheet.
@@ -465,9 +537,7 @@ class agStaffExporter
     $row = 2;
     foreach ($staffExportRecords as $rKey => $staffExportRecord) {
       if ($row <= 64000) {
-
-        //$logger->info(print_r($staffExportRecord, true));
-
+        
         $sheet->down();
         $sheet->home();
 
@@ -481,22 +551,22 @@ class agStaffExporter
       // Capture peak memory
       $currentMemoryUsage = memory_get_usage();
 
-      if ($currentMemoryUsage > $this - PeakMemory) {
+      if ($currentMemoryUsage > $this->peakMemory) {
         $this->peakMemory = memory_get_usage();
       }
 
       $row++;
     }
-
-    $todaydate = date("d-m-y");
-    $todaydate = $todaydate . '-' . date("H-i-s");
-    $fileName = 'Staffs';
-    $fileName = $fileName . '-' . $todaydate;
-    $fileName = $fileName . '.xls';
+    
+    
+    $todaydate = date("Ymd"). '_' . date("His");
+    
+    $fileName = $sheet->filename($orgName);
+    $fileName = sprintf("staff_%s_%s.xls", $fileName, $todaydate);
     $filePath = realpath(sys_get_temp_dir()) . '/' . $fileName;
 
     $sheet->save($filePath);
-    return array('fileName' => $fileName, 'filePath' => $filePath);
+    return array($filePath, $fileName);
   }
 
   /**
