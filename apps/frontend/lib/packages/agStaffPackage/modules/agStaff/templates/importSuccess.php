@@ -38,7 +38,7 @@ $i = 1;
 
             
             echo "<tr><td>";
-        echo date("H:i:s",$value1['ts']);
+        echo date("M d, Y H:i:s.u T",$value1['ts']);
         echo "</td><td ";
 
          if($value1['lvl'] <=8){
