@@ -150,14 +150,6 @@ class agStaffExporter
   }
 
   /**
-   *  Creates a zip file object 
-   */
-  private function createZipFile($fileName)
-  {
-    
-  }
-
-  /**
    * Returns an array of Organizations 
    * 
    * @return type array
@@ -384,14 +376,23 @@ class agStaffExporter
           foreach ($staffAddresses[$stfRsc['p_entity_id']] AS $addressType => $address) {
             // Populate the row with address & geo info only for the address types and address
             // elements that we care for.
-            if (array_key_exists($addressType, $this->addressTypeHeaderRequirements) && isset($address[0][0])) {
-              foreach ($address[0][0] AS $elem => $value) {
-                if (array_key_exists($elem, $this->addressLineHeaderMapping)) {
-                  $type = $this->addressTypeHeaderRequirements[$addressType];
-                  $component = $this->addressLineHeaderMapping[$elem];
-                  $header = $type . ' ' . $component;
-                  $row[$header] = $value;
+            if (array_key_exists($addressType, $this->addressTypeHeaderRequirements)) {
+              
+              $foo = $address[0][0];
+
+              //$this->logger->debug(print_r($address[0][0], true));
+              if (!is_array($address[0][0])) {
+                foreach ($address[0][0] AS $elem => $value) {
+                  if (array_key_exists($elem, $this->addressLineHeaderMapping)) {
+                    $type = $this->addressTypeHeaderRequirements[$addressType];
+                    $component = $this->addressLineHeaderMapping[$elem];
+                    $header = $type . ' ' . $component;
+                    $row[$header] = $value;
+                  }
                 }
+              } else {
+                $foo = $address[0][0];
+                
               }
             }
           }
@@ -448,20 +449,19 @@ class agStaffExporter
 
     // Create zip file
     $zipFile = new ZipArchive();
-    $filePath = realpath(sys_get_temp_dir()) . '/staff_export.zip';
-    
-    unlink($filePath);
+    $downloadFile = "staff_export.zip";
+    $tmpPath = realpath(sys_get_temp_dir()) . "/$downloadFile";
 
-    if ($zipFile->open($filePath, ZIPARCHIVE::CREATE) !== TRUE) {
-      $this->logger->err("Export: Could not create zip file $filePath. Check permissions.");
+    if ($zipFile->open($tmpPath, ZIPARCHIVE::CREATE) !== TRUE) {
+      $this->logger->err("Export: Could not create zip file $tmpPath. Check permissions.");
     } else {
-      $this->logger->debug("Export: Successfully created $filePath.");
+      $this->logger->debug("Export: Successfully created $tmpPath.");
     }
 
 
     $i = 0;
     $exportFiles = array();
-    
+
     // Interate through each organization
     foreach ($orgList as $key => $orgName) {
 
@@ -475,23 +475,29 @@ class agStaffExporter
 
         $this->logger->debug("Export: Saving $orgName xls to tmp folder");
         $exportFiles[$i] = $this->buildXls($staffExportRecords, $lookUps, $orgName);
-        
+
         // Add export file to zip
-        $zipFile->addFile($exportFiles[$i][0],$exportFiles[$i][1]);
-        
+        $zipFile->addFile($exportFiles[$i][0], $exportFiles[$i][1]);
+
         $i++;
       }
     }
-    
+
     // Close up the zip
     $zipFile->close();
-    
+
     // Delete raw files
-    foreach($exportFiles as $file) {
+    foreach ($exportFiles as $file) {
       unlink($file[0]);
     }
 
-    return $exportResponse;
+    // Move zip file
+    $downloadPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $downloadFile;
+    if (!rename($tmpPath, $downloadPath)) {
+      return sfView::ERROR;
+    }
+
+    return array('fileName' => $downloadFile, 'filePath' => $downloadPath);
   }
 
   /**
@@ -537,7 +543,7 @@ class agStaffExporter
     $row = 2;
     foreach ($staffExportRecords as $rKey => $staffExportRecord) {
       if ($row <= 64000) {
-        
+
         $sheet->down();
         $sheet->home();
 
@@ -557,10 +563,10 @@ class agStaffExporter
 
       $row++;
     }
-    
-    
-    $todaydate = date("Ymd"). '_' . date("His");
-    
+
+
+    $todaydate = date("Ymd") . '_' . date("His");
+
     $fileName = $sheet->filename($orgName);
     $fileName = sprintf("staff_%s_%s.xls", $fileName, $todaydate);
     $filePath = realpath(sys_get_temp_dir()) . '/' . $fileName;

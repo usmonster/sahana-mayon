@@ -508,7 +508,7 @@ class agStaffActions extends agActions
    * */
   public function executeExport(sfWebRequest $request)
   {
-    $this->startTime = microtime(true);
+    //$this->startTime = microtime(true);
 
     $staffExporter = new agStaffExporter();
     $exportResponse = $staffExporter->export();
@@ -526,20 +526,42 @@ class agStaffActions extends agActions
     //$this->getResponse()->send();
     //unlink($exportResponse['filePath']);
     //
-    // Report elapsed time
-    $this->endTime = microtime(true);
-    $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
-    $this->importTime = date("H:i:s", $time);
+    
+    /*
+      // Report elapsed time
+      $this->endTime = microtime(true);
+      $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+      $this->importTime = date("H:i:s", $time);
 
-    // Format memory
-    $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
-    if ($peakMemory <= 999) {
+      // Format memory
+      $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+      if ($peakMemory <= 999) {
       $peakMemory = 1;
-    }
-    for ($i = 0; $peakMemory > 999; $i++) {
+      }
+      for ($i = 0; $peakMemory > 999; $i++) {
       $peakMemory /= 1024;
-    }
-    $this->peakMemory = ceil($peakMemory) ." ". $bytes[$i];
+      }
+      $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
+
+
+     */
+    
+    // Make sure the browser doesn't try to deliver a chached version
+    $this->getResponse()->setHttpHeader("Pragma", "public");
+    $this->getResponse()->setHttpHeader("Expires", "0");
+    $this->getResponse()->setHttpHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+
+    // Provide application and file info headers
+    $this->getResponse()->setHttpHeader("Content-Type", "application/zip");
+    $this->getResponse()->setHttpHeader("Content-Disposition", "attachment; filename='" . $exportResponse['fileName'] ."'");
+    $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
+    $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($exportResponse['filePath']));
+
+    $exportFile = file_get_contents($exportResponse['filePath']);
+    
+    $this->getResponse()->setContent($exportFile);
+    $this->getResponse()->send();
+    //$this->redirect('staff/index');
 
   }
 
@@ -579,8 +601,7 @@ class agStaffActions extends agActions
 
 
     if (!move_uploaded_file($uploadedFile['tmp_name'], $this->importPath)) {
-      print("<pre>Failed to move {$uploadedFile['tmp_name']} to " . $this->importPath . "</pre>");
-      //return sfView::ERROR;
+      return sfView::ERROR;
     }
 
 
@@ -591,11 +612,11 @@ class agStaffActions extends agActions
     $left = 1;
     while ($left > 0) {
       $left = $this->importer->processBatch();
-     // print_r($left);
+      // print_r($left);
     }
     $this->importer->concludeImport();
 
-    $this-> multidimarray = $this->importer->getImportEvents();
+    $this->multidimarray = $this->importer->getImportEvents();
 
     // Update lucene index
     //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
@@ -608,10 +629,10 @@ class agStaffActions extends agActions
     $this->endTime = microtime(true);
     $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
     $this->importTime = date("H:i:s", $time);
-    
+
     // Get the memory usage
     $peakMemory = $this->importer->getPeakMemoryUsage();
-    
+
     // Format memory
     $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
     if ($peakMemory <= 999) {
@@ -620,7 +641,7 @@ class agStaffActions extends agActions
     for ($i = 0; $peakMemory > 999; $i++) {
       $peakMemory /= 1024;
     }
-    $this->peakMemory = ceil($peakMemory) ." ". $bytes[$i];
+    $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
 
     unset($this->importer);
   }
