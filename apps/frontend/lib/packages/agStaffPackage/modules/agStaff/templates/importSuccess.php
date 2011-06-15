@@ -20,7 +20,7 @@ $i = 1;
   <li><strong>Peak Memory Usage: </strong> <?php echo $peakMemory; ?></li>
 </ul>
 
-<br><br>
+<br> 
 
 <table class="blueTable" style="width:auto;" cellspacing="10" cellpadding="10">
     <tr class="head">

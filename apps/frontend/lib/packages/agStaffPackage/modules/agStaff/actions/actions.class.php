@@ -591,7 +591,7 @@ class agStaffActions extends agActions
     $left = 1;
     while ($left > 0) {
       $left = $this->importer->processBatch();
-      print_r($left);
+     // print_r($left);
     }
     $this->importer->concludeImport();
 
