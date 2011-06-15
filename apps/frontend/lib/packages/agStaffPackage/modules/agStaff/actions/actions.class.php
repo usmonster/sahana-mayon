@@ -584,7 +584,7 @@ class agStaffActions extends agActions
     }
 
 
-    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_INFO);
+    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_ERR);
 
     $this->importer->processXlsImportFile($this->importPath);
 
