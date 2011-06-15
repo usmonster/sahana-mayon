@@ -30,46 +30,25 @@ $i = 1;
     </tr>
 
  <?php
-
  foreach ($multidimarray as $value1) {
-
-
-        foreach($value1 as $key2 => $value2) {
-
-            
+        foreach ($value1 as $key2 => $value2) {
             echo "<tr><td>";
-        echo date("M d, Y H:i:s.u T",$value1['ts']);
-        echo "</td><td ";
-
-         if($value1['lvl'] <=8){
-             echo "class =\"redColorText boldText\">";
-         }
-         elseif($value1['lvl'] ==16){
-
-             echo "class =\"orangeColorText boldText\">";
-         }
-         else{
-           echo "class =\"greenColorText boldText\">";
+            echo date("M d, Y H:i:s.u T", $value1['ts']);
+            echo "</td><td ";
+            if ($value1['lvl'] <= 8) {
+                echo "class =\"redColorText boldText\">";
+            } elseif ($value1['lvl'] == 16) {
+                echo "class =\"orangeColorText boldText\">";
+            } else {
+                echo "class =\"greenColorText boldText\">";
+            }
+            echo $value1['type'];
+            echo "</td><td>";
+            echo $value1['msg'];
+            echo "</td></tr>";
         }
-
-
-        echo $value1['type'];
-
-
-
-        echo "</td><td>";
-        echo $value1['msg'];
-
-
-        echo "</td></tr>";
-     
-
-        }
-
-}
-?>
- 
-
+    }
+    ?>
 </table>
 
    
