@@ -68,8 +68,8 @@ class agEventHandler
     if (is_null($logEventLevel)) { $logEventLevel = self::EVENT_ERR; }
 
     // test to see if the log level was set too low
-    $logLevelValue = constant('self::EVENT_' . $logEventLevel . '_LEVEL');
-    $minLevelValue = constant('self::EVENT_' . $minEventLevel . '_LEVEL');
+    $logLevelValue = self::getEventLevel($logEventLevel);
+    $minLevelValue = self::getEventLevel($minEventLevel);
     if ($logLevelValue < $minLevelValue)
     {
       $this->setLogEventLevel($minEventLevel);
@@ -132,7 +132,7 @@ class agEventHandler
       throw new Exception($e);
     }
 
-    $this->logLevelValue = constant('self::EVENT_' . $logEventLevel . '_LEVEL');
+    $this->logLevelValue = self::getEventLevel($logEventLevel);
     $this->logEventLevel = $logEventLevel;
   }
 
@@ -153,7 +153,7 @@ class agEventHandler
     }
 
     // if our log level has been set high enough to capture these events, do so
-    if ($this->logLevelValue >= constant('self::EVENT_' . $eventType . '_LEVEL'))
+    if ($this->logLevelValue >= self::getEventLevel($eventType))
     {
       $logger = strtolower($eventType);
       $this->sfContext->getLogger()->$logger($eventMsg);
@@ -344,7 +344,7 @@ class agEventHandler
     {
       foreach($events as $event)
       {
-        $tsKeyed = array_merge(array('type' => $type), $event);
+        $tsKeyed = array_merge(array('type' => $type, 'lvl' => self::getEventLevel($type)), $event);
         $sorted[] = $tsKeyed;
       }
     }
@@ -365,6 +365,17 @@ class agEventHandler
       return 0;
     }
     return ($a['ts'] > $b['ts']) ? +1 : -1;
+  }
+
+
+  /**
+   * Small helper function to return an event type's event level
+   * @param string $eventType One of the EVENT_* types
+   * @return integer The integer value of the event type
+   */
+  public static function getEventLevel($eventType)
+  {
+    return constant('self::EVENT_' . $eventType . '_LEVEL');
   }
 
   /**

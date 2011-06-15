@@ -50,7 +50,7 @@ abstract class agImportHelper extends agPdoHelper
    */
   protected function __init($tempTable, $logEventLevel)
   {
-    $this->eh = new agEventHandler($logEventLevel, agEventHandler::EVENT_ERR,
+    $this->eh = new agEventHandler($logEventLevel, agEventHandler::EVENT_NOTICE,
             sfContext::getInstance());
 
     // get our error threshold

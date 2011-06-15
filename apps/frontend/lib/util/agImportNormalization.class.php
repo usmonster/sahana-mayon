@@ -225,8 +225,7 @@ abstract class agImportNormalization extends agImportHelper
 
     // Get memory usage
     $memoryUsage = $this->getPeakMemoryUsage();
-    
-    $this->eh->logCrit("Memory: $memoryUsage");
+    $this->eh->logInfo("Memory: $memoryUsage");
     
 
     return $remaining;

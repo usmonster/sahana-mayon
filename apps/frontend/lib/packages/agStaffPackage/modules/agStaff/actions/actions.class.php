@@ -584,7 +584,7 @@ class agStaffActions extends agActions
     }
 
 
-    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_ERR);
+    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_NOTICE);
 
     $this->importer->processXlsImportFile($this->importPath);
 
@@ -594,6 +594,8 @@ class agStaffActions extends agActions
       print_r($left);
     }
     $this->importer->concludeImport();
+
+    //$this->importer->getImportEvents();
 
     // Update lucene index
     //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
