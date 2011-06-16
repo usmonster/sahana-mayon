@@ -51,22 +51,7 @@ abstract class agPdoHelper
    */
   public function __destruct()
   {
-    $dm = Doctrine_Manager::getInstance();
-    $dm->setCurrentConnection('doctrine');
-
-    foreach($this->_conn as &$conn)
-    {
-      // check for open transactions and rollback
-      if ($this->rollbackSafe($conn))
-      {
-        $eventMsg = 'Found unresolved transaction on connection ' . $conn->getName() . ' during ' .
-          __CLASS__ . 'class destruction. Rolled back changes.';
-        sfContext::getInstance()->getLogger()->alert($eventMsg);
-      }
-
-     $dm->closeConnection($conn);
-    }
-    unset($conn);
+    $this->closeConnections();
   }
 
   /**
@@ -74,7 +59,7 @@ abstract class agPdoHelper
    * @param Doctrine_Connection $conn
    * @return boolean Whether or not a rollback was performed.
    */
-  public function rollbackSafe(Doctrine_Connection $conn)
+  public static function rollbackSafe(Doctrine_Connection $conn)
   {
     // check for open transactions and kill them
     if ($conn->getTransactionLevel() > 0)
@@ -142,5 +127,63 @@ abstract class agPdoHelper
     $conn->evictTables();
     $conn->clear();
     return $conn;
+  }
+
+  /**
+   * Method to clear all connections
+   */
+  protected function clearConnections()
+  {
+    foreach ($this->_conn as $conn)
+    {
+      self::clearConnection($conn);
+    }
+  }
+
+  /**
+   * Method to close a doctrine connection safely
+   * @param Doctrine_Connection $conn A doctrine connection object
+   * @param Doctrine_Manager $dm An optional doctrine manager object to use
+   * @return boolean Indicates success or failure
+   */
+  protected function closeConnection(Doctrine_Connection $conn, Doctrine_Manager $dm = NULL)
+  {
+    if (is_null($dm)) { $dm = Doctrine_Manager::getInstance(); }
+    if ($conn == $dm->getCurrentConnection())
+    {
+      $eventMsg = 'Trying to close the current connection is not allowed. Skipping request.';
+      sfContext::getInstance()->getLogger()->alert($eventMsg);
+      return FALSE;
+    }
+
+    $idx = array_search($conn, $this->_conn, TRUE);
+
+    // check for open transactions and rollback
+    if (self::rollbackSafe($conn))
+    {
+      $eventMsg = 'Found unresolved transaction on connection ' . $conn->getName() . ' during ' .
+        __CLASS__ . 'class destruction. Rolled back changes.';
+      sfContext::getInstance()->getLogger()->alert($eventMsg);
+    }
+
+    $dm->closeConnection($conn);
+    unset($conn);
+    if ($idx !== FALSE) { unset($this->_PDO[$idx]); }
+    return TRUE;
+  }
+
+  /**
+   * Method to close all connections open in this object
+   */
+  protected function closeConnections()
+  {
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
+
+    foreach($this->_conn as $idx => $conn)
+    {
+      $this->closeConnection($conn,$dm);
+      unset($this->_conn[$idx]);
+    }
   }
 }

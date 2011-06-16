@@ -173,6 +173,15 @@ abstract class agImportHelper extends agPdoHelper
   }
 
   /**
+   * Method to get the iterData array
+   * @return array The iterdata array (containing import statistics)
+   */
+  public function getIterData()
+  {
+    return $this->iterData;
+  }
+
+  /**
    * Returns the peak memory
    * 
    * @return type int
@@ -477,7 +486,7 @@ abstract class agImportHelper extends agPdoHelper
 
       // log this info event
       $eventMsg = 'Dropped temporary table {' . $this->tempTable . '}';
-      $this->eh->logNotice($eventMsg);
+      $this->eh->logInfo($eventMsg);
     } catch (Doctrine_Connection_Exception $e) {
       // we only want to silence 'no such table' errors
       if ($e->getPortableCode() !== Doctrine_Core::ERR_NOSUCHTABLE) {
@@ -506,7 +515,7 @@ abstract class agImportHelper extends agPdoHelper
     try {
       // uses the Doctrine_Export methods see Doctrine_Export api for more details
       $conn->export->createTable($this->tempTable, $importSpec, $this->tempTableOptions);
-      $this->eh->logNotice('Successfully created temp table {' . $this->tempTable . '}.');
+      $this->eh->logInfo('Successfully created temp table {' . $this->tempTable . '}.');
     } catch (Doctrine_Exception $e) {
       $this->eh->logEmerg('Error creating temp table ({' . $this->tempTable . '} for import.');
     }

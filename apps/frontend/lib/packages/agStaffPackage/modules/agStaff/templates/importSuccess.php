@@ -16,11 +16,22 @@ $i = 1;
   <li><strong>Start:</strong> <?php echo date('F j, Y, g:i:s a',$startTime); ?></li>
   <li><strong>End:</strong> <?php echo date('F j, Y, g:i:s a',$endTime); ?></li>
   <li><strong>Time Elapsed:</strong> <?php echo $importTime; ?></li>
-  <li><strong>Records Imported:</strong> <?php echo $importCount; ?></li>
+  <li><strong>Total Records:</strong> <?php echo $totalRecords; ?></li>
+  <ul>
+    <li><strong>Successful:</strong> <?php echo $successful; ?></li>
+    <li><strong>Failed:</strong> <?php echo $failed; ?></li>
+    <li><strong>Unprocessed:</strong> <?php echo $unprocessed; ?></li>
+  </ul>
   <li><strong>Peak Memory Usage: </strong> <?php echo $peakMemory; ?></li>
 </ul>
+<br>
 
-<br> 
+<?php if ($unprocessedXLS !== FALSE) { ?>
+<h3>Notice:</h3>
+<p>All import records could not be processed. Please click the Export Failed Records button below to download an XLS with the failed rows. You are encouraged to correct these rows and re-submit the file. Do not re-submit the original file as it may cause errors and duplication.</p>
+<a href="<?php echo $unprocessedXLS; ?>" class="generalButton" title="Export Failed Records">Export Failed Records</a>
+<br>
+<?php } ?>
 
 <table class="blueTable" style="width:auto;" cellspacing="10" cellpadding="10">
     <tr class="head">
@@ -30,20 +41,20 @@ $i = 1;
     </tr>
 
  <?php
- foreach ($multidimarray as $value1) {
+ foreach ($importer->getImportEvents() as $value) {
         echo "<tr><td>";
-        echo date("M d, Y H:i:s.u T", $value1['ts']);
+        echo date("M d, Y H:i:s T", $value['ts']);
         echo "</td><td ";
-        if ($value1['lvl'] <= 8) {
+        if ($value['lvl'] <= 8) {
             echo "class =\"redColorText boldText centerText\">";
-        } elseif ($value1['lvl'] == 16) {
+        } elseif ($value['lvl'] == 16) {
             echo "class =\"orangeColorText boldText centerText\">";
         } else {
             echo "class =\"greenColorText boldText centerText\">";
         }
-        echo $value1['type'];
+        echo $value['type'];
         echo "</td><td>";
-        echo $value1['msg'];
+        echo $value['msg'];
         echo "</td></tr>";
     }
     ?>

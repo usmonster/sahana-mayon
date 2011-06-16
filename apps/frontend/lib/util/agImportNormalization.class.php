@@ -19,14 +19,14 @@ abstract class agImportNormalization extends agImportHelper
   const CONN_NORMALIZE_READ = 'import_normalize_read';
   const CONN_NORMALIZE_WRITE = 'import_normalize_write';
 
-
   protected $helperObjects = array(),
   $tempToRawQueryName = 'import_temp_to_raw',
   // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
   $importComponents = array(),
   //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue))
   $importData = array(),
-  $importCount = 0;
+  $importCount = 0,
+  $unprocessedXLS = FALSE;
 
   /**
    * This classes' destructor.
@@ -63,9 +63,13 @@ abstract class agImportNormalization extends agImportHelper
     //TODO: really figure out these bounds. -UA
     $this->iterData['fetchPosition'] = 0;
     $this->iterData['fetchCount'] = 0;
+    $this->iterData['batchStart'] = 0;
     $this->iterData['batchPosition'] = 0;
     $this->iterData['batchCount'] = 0;
     $this->iterData['batchSize'] = intval(agGlobal::getParam('default_batch_size'));
+    $this->iterData['processedSuccessful'] = 0;
+    $this->iterData['processedFailed'] = 0;
+    $this->iterData['unprocessed'] = 0;
   }
 
   /**
@@ -130,11 +134,13 @@ abstract class agImportNormalization extends agImportHelper
     // grab our connection object
     $conn = $this->getConnection(self::CONN_TEMP_WRITE);
 
+    $dataSize = count($this->importData);
+
     // create our query statement
     $q = 'UPDATE ' . $this->tempTable .
         ' SET ' . $this->successColumn . '=?' .
         ' WHERE ' . $this->idColumn .
-        ' IN(' . implode(',', array_fill(0, count($this->importData), '?')) . ');';
+        ' IN(' . implode(',', array_fill(0, $dataSize, '?')) . ');';
 
     // create our parameter array
     $qParam = array_merge(array($success), array_keys($this->importData));
@@ -142,7 +148,17 @@ abstract class agImportNormalization extends agImportHelper
     // mark this batch accordingly
     $this->executePdoQuery($conn, $q, $qParam);
 
-    $this->eh->logNotice("Temp table successfully updated with batch success data");
+    if ($success)
+    {
+      $this->iterData['processedSuccessful'] += $dataSize;
+    }
+    else
+    {
+      $this->iterData['processedFailed'] += $dataSize;
+    }
+
+    $this->iterData['unprocessed'] -= $dataSize;
+    $this->eh->logInfo("Temp table successfully updated with batch success data");
   }
 
   /**
@@ -161,36 +177,100 @@ abstract class agImportNormalization extends agImportHelper
     $this->executePdoQuery($conn, $query);
   }
 
-  public function getImportStatistics()
-  {
-    // @todo write method to return import statistics
-    return $this->importCount;
-  }
-
   public function getImportDataDump()
   {
     return $this->importData;
   }
 
+  /**
+   * Method to return all import events as an array
+   * @return array An array of import events
+   */
   public function getImportEvents()
   {
     return $this->eh->getEvents(agEventHandler::EVENT_SORT_TS);
   }
 
+  /**
+   * Method to close out an import procedure
+   */
   public function concludeImport()
   {
-    // @todo write the meta-method to clear an import and return import statistics
+    // first clear any oustanding bits on existing connections
+    $this->clearConnections();
+
+    // now, close any unnecessary connections to release as much memory as possible
+    $this->closeConnection($this->getConnection(self::CONN_TEMP_WRITE));
+    $this->closeConnection($this->getConnection(self::CONN_NORMALIZE_READ));
+    $this->closeConnection($this->getConnection(self::CONN_NORMALIZE_WRITE));
+    
+    // build our unprocessed XLS file
+    $this->unprocessedXLS = $this->setUnprocessedXLS();
+
+    // now release all remaining connections
+    $this->closeConnections();
+
+    // finally, kick off this hellish piece of work
+    //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
   }
 
-  public function getFailedRecords()
+  /**
+   *
+   * @return string Path to the unprocessed XLS or FALSE
+   */
+  public function getUnprocessedXLS()
   {
-    //@todo write method to instantiate / return an excel file with failed records
+    return $this->unprocessedXLS;
   }
 
-  public function clearImport()
+  /**
+   * Method to construct an XLS file of unprocessed records returns the path of the XLS file if
+   * successful and FALSE if not
+   * @return boolean Whether or not the process was successful
+   */
+  protected function setUnprocessedXLS()
   {
-    // @todo write method to clear/reset import but note in documentation that it will potentially
-    // leave the class unusable
+    // return false if there are no records to process
+    if ($this->iterData['unprocessed'] == 0 && $this->iterData['fetchCount'] > 0)
+    {
+      $eventMsg = 'All records were successfully processed.';
+      $this->eh->logNotice($eventMsg);
+      return FALSE;
+    }
+
+    $eventMsg = 'All records could not be successfully processed.';
+    $this->eh->logWarning($eventMsg);
+
+    // get our temporary table read connection
+    $conn = $this->getConnection(self::CONN_TEMP_READ);
+    $columnHeaders = array_keys($this->importSpec);
+    $selectCols = 't.' . implode(', t.', $columnHeaders);
+
+    // build our query statement
+    $q = 'SELECT ' . $selectCols . ' FROM ' . $this->tempTable . ' AS t WHERE t.' .
+      $this->successColumn . ' != ?;';
+    $pdo = $this->executePdoQuery($conn, $q, array(TRUE));
+    
+    // fetch into the file?
+
+    $path = '/SOME/PATH';
+
+    $eventMsg = 'Successfully created export file of unprocessed records.';
+    $this->eh->logNotice($eventMsg);
+
+    return $path;
+  }
+
+  /**
+   * Basically everything that can be wiped about this object
+   * @param $resetEvents Boolean to determine whether or not events will also be reset
+   */
+  protected function clearImport($resetEvents = FALSE)
+  {
+    $this->resetImportData();
+    $this->resetIterData();
+    $this->clearConnections();
+    if ($resetEvents) { $this->eh->resetEvents(); }
   }
 
   /**
@@ -227,7 +307,6 @@ abstract class agImportNormalization extends agImportHelper
     $memoryUsage = $this->getPeakMemoryUsage();
     $this->eh->logInfo("Memory: $memoryUsage");
     
-
     return $remaining;
   }
 
@@ -243,6 +322,7 @@ abstract class agImportNormalization extends agImportHelper
     $batchSize = $this->iterData['batchSize'];
     $fetchPosition = & $this->iterData['fetchPosition'];
     $batchPosition = & $this->iterData['batchPosition'];
+    $batchStart = & $this->iterData['batchStart'];
     $batchStart = $fetchPosition;
     $batchEnd = ($fetchPosition + $batchSize - 1);
 
@@ -295,15 +375,17 @@ abstract class agImportNormalization extends agImportHelper
 
     // now caclulate the number of batches we'll need to process it all
     $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
-    $this->eh->logInfo('Dataset comprised of {' . $this->iterData['fetchCount'] . '} records divided ' .
-        'into {' . $this->iterData['batchCount'] . '} batches of {' . $this->iterData['batchSize'] .
-        '} records per batch.');
+    $this->eh->logNotice('Dataset comprised of ' . $this->iterData['fetchCount'] . ' records divided ' .
+        'into ' . $this->iterData['batchCount'] . ' batches of ' . $this->iterData['batchSize'] .
+        ' records per batch.');
 
     // now we can legitimately execute our real search
     $this->eh->logDebug('Starting initial fetch from temp.');
     $this->executePdoQuery($conn, $query, array(), Doctrine_Core::FETCH_OBJ,
                            $this->tempToRawQueryName);
     $this->eh->logInfo("Successfully established the PDO fetch iterator.");
+
+    $this->eh->logNotice('Beginning insertion of import data from temporary table.');
   }
 
   /**
@@ -313,7 +395,9 @@ abstract class agImportNormalization extends agImportHelper
   protected function normalizeData()
   {
     $err = NULL;
-    $this->eh->logInfo("Normalizing and inserting batch data into database.");
+    $eventMsg = 'Normalizing and inserting batch data into database. (Batch ' .
+      $this->iterData['batchPosition'] . '/' . $this->iterData['batchCount'] . ')';
+    $this->eh->logInfo($eventMsg);
 
     $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
     self::clearConnection($conn);
@@ -374,7 +458,9 @@ abstract class agImportNormalization extends agImportHelper
     }
 
     if (is_null($err)) {
-      $this->eh->logNotice("Successfully inserted and normalized batch data");
+      $this->eh->logNotice('Successfully processed batch ' . $this->iterData['batchPosition'] .
+        ' of ' .  $this->iterData['batchCount'] . '. (Records ' . $this->iterData['batchStart'] .
+        ' through ' . $this->iterData['fetchPosition'] . ')');
 
       // you'll want to do your record keeping here (eg, counts or similar)
       // be sure to use class properties to store that info so additional loops can

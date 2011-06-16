@@ -603,7 +603,7 @@ class agStaffActions extends agActions
     if (!move_uploaded_file($uploadedFile['tmp_name'], $this->importPath)) {
       return sfView::ERROR;
     }
-
+    //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
     $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_NOTICE);
 
@@ -614,16 +614,11 @@ class agStaffActions extends agActions
       $left = $this->importer->processBatch();
       // print_r($left);
     }
-    $this->importer->concludeImport();
-
-    $this->multidimarray = $this->importer->getImportEvents();
-
-    // Update lucene index
-    //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
-    //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
-    //
-    // Get some stats on the import
-    $this->importCount = $this->importer->getImportStatistics();
+    $iterData = $this->importer->getIterData();
+    $this->totalRecords = $iterData['fetchCount'];
+    $this->successful = $iterData['processedSuccessful'];
+    $this->failed = $iterData['processedFailed'];
+    $this->unprocessed = $iterData['unprocessed'];
 
     // Report elapsed time
     $this->endTime = microtime(true);
@@ -643,7 +638,8 @@ class agStaffActions extends agActions
     }
     $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
 
-    unset($this->importer);
+    // close out import components and create an xls if needed
+    $this->importer->concludeImport();
+    $this->unprocessedXLS = $this->importer->getUnprocessedXLS;
   }
-
 }

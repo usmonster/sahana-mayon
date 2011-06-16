@@ -364,7 +364,7 @@ class agEventHandler
     {
       return 0;
     }
-    return ($a['ts'] > $b['ts']) ? +1 : -1;
+    return ($a['ts'] > $b['ts']) ? -1 : +1;
   }
 
 
