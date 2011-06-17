@@ -162,6 +162,7 @@ class eventActions extends agActions
   public function executeMeta(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+    $this->isPreDeploy = 1;
     $this->eventStatusType = NULL;
     $this->eventStatusTypeId = NULL;
     $this->checkResults = NULL;
@@ -207,9 +208,9 @@ class eventActions extends agActions
         ->execute(array(), Doctrine_Core::HYDRATE_NONE);
 
       $eventStatusId = (empty($eventStatus)) ? null : $eventStatus[0][0];
-      $this->eventStatusTypeId = (empty($eventStatus)) ? null : $eventStatus[0][1];
-      $this->eventStatusType = (empty($eventStatus)) ? null : $eventStatus[0][2];
-      $this->isActiveEvent = (empty($eventStatus)) ? null : $eventStatus[0][3];
+      $eventStatusTypeId = (empty($eventStatus)) ? null : $eventStatus[0][1];
+      $eventStatusType = (empty($eventStatus)) ? null : $eventStatus[0][2];
+      $isActiveEvent = (empty($eventStatus)) ? null : $eventStatus[0][3];
     }
 
     $this->metaForm = new PluginagEventDefForm($eventMeta);
@@ -247,13 +248,13 @@ class eventActions extends agActions
                               ->findBy('event_status_type', $deployStatus)->getFirst()->id;
 
           // Do not allow meta updates if an event is not in pre-deploymnet status.
-          if (!is_null($this->isActiveEvent))
+          if (!is_null(isActiveEvent))
           {
-            if (!$this->isActiveEvent) {
+            if (!$isActiveEvent) {
               $this->errMsg = 'Cannot apply changes to meta on closed event.';
               return sfView::SUCCESS;
 
-            } elseif ($this->eventStatusTypeId == $deployStatusId) {
+            } elseif ($eventStatusTypeId == $deployStatusId) {
               $this->errMsg = 'Cannot apply changes to meta on an active event.';
               return sfView::SUCCESS;
             }
@@ -275,9 +276,9 @@ class eventActions extends agActions
             }
             else
             { // Save event meta updates as default event status.
-              $event_status_type_id = (empty($this->eventStatusTypeId)) ? 
+              $event_status_type_id = (empty($eventStatusTypeId)) ? 
                                       agEventHelper::returnDefaultEventStatus() :
-                                      $this->eventStatusTypeId;
+                                      $eventStatusTypeId;
             }
 
             $agEventStatus = (empty($eventStatusId)) ? 
@@ -338,17 +339,14 @@ class eventActions extends agActions
       $this->getResponse()->setTitle('Sahana Agasti: New Event');
     }
 
-    $currentStatus = agEventFacilityHelper::returnCurrentEventStatus($this->metaForm->getObject()->getId());
-    if ($currentStatus != "") {
-      $curStatus = Doctrine::getTable('agEventStatusType')
-                      ->findByDql('id = ?', $currentStatus)
-                      ->getFirst()->event_status_type;
-    }
-    $upperCaseCurStatus = strtoupper($curStatus);
-    $preDeployStatus = agGlobal::getParam('event_pre_deploy_status');
-    $preDeployStatus = strtoupper($preDeployStatus);
+    if (!empty($this->event_id))
+    {
+      $upperCaseCurStatus = strtoupper($eventStatusType);
+      $preDeployStatus = agGlobal::getParam('event_pre_deploy_status');
+      $preDeployStatus = strtoupper($preDeployStatus);
 
-    $this->isPreDeploy = ($upperCaseCurStatus === $preDeployStatus) ? 1 : 0;
+      $this->isPreDeploy = ($upperCaseCurStatus === $preDeployStatus) ? 1 : 0;
+    }
 
     //end p-code
   }
