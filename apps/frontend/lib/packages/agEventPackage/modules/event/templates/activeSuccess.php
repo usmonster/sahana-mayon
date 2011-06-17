@@ -2,9 +2,9 @@
 <?php
 //You should probably add a confirmation that the event was deployed here when it's first created.
 ?>
-<h3>Congratulations, Your Event Has Been Deployed</h3>
+
 <br />
-<?php echo "Zero Hour: <span class=\"highlightedText\">". $zero_hour. "</span>"?>
+<?php echo "Current Event Status: <span class=\"highlightedText\">".$upper_case_cur_Status."</span><br />Zero Hour: <span class=\"highlightedText\">". $zero_hour. "</span>"?>
 <br/>
 <?php
 $urlEncodedEventName = urlencode($sf_data->getRaw('event_name'));

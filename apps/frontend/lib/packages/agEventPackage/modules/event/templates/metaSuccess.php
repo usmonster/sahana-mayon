@@ -74,5 +74,5 @@ if (isset($errMsg))
 <p><strong>Note:</strong> the name should be specific.  For example: a hurricane response to Hurricane Erica could
   be named "Erica".  The Zero Hour is the time the event occurred or is expected to occur.
 <strong>Remember</strong> facility activation time is based on Zero Hour.</p>
-<?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_name' => $event_name)) ?>
+<?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_name' => $event_name, 'event_status_upper' => $upper_case_cur_Status)) ?>
 <br />

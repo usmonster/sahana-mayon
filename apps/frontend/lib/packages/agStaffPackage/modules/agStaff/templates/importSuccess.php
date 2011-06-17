@@ -12,6 +12,26 @@ $i = 1;
 <?php // include_partial('facility/infobar', array('timer' => $timer)); ?>
 
 <h3>Import Statistics</h3>
+<<<<<<< TREE
+<br> 
+<table class="headerLess">
+    <tr>
+        <td><span>Start:</span></td><td><?php echo date('F j, Y, g:i:s a',$startTime); ?></td>
+    </tr>
+    <tr>
+        <td><span>End:</span></td><td><?php echo date('F j, Y, g:i:s a',$endTime); ?></td>
+    </tr>
+    <tr>
+        <td><span>Time Elapsed:</span></td><td><?php echo $importTime; ?></td>
+    </tr>
+    <tr>
+        <td><span>Records Imported:</span></td><td><?php echo $importCount; ?></td>
+    </tr><tr>
+        <td><span>Peak Memory Usage: </span></td><td><?php echo $peakMemory; ?></td>
+    </tr>
+</table>
+<br> 
+=======
 <ul>
   <li><strong>Start:</strong> <?php echo date('F j, Y, g:i:s a',$startTime); ?></li>
   <li><strong>End:</strong> <?php echo date('F j, Y, g:i:s a',$endTime); ?></li>
@@ -32,6 +52,7 @@ $i = 1;
 <a href="<?php echo $unprocessedXLS; ?>" class="generalButton" title="Export Failed Records">Export Failed Records</a>
 <br>
 <?php } ?>
+>>>>>>> MERGE-SOURCE
 
 <table class="blueTable" style="width:auto;" cellspacing="10" cellpadding="10">
     <tr class="head">
@@ -41,6 +62,26 @@ $i = 1;
     </tr>
 
  <?php
+<<<<<<< TREE
+foreach ($multidimarray as $value1) {
+  echo "<tr><td>";
+  echo date("M d, Y H:i:s.u T", $value1['ts']);
+  echo "</td><td ";
+  if ($value1['lvl'] <= 8) {
+    echo "class =\"redColorText boldText centerText\">";
+        }
+  elseif ($value1['lvl'] == 16) {
+    echo "class =\"orangeColorText boldText centerText\">";
+        }
+  else {
+    echo "class =\"greenColorText boldText centerText\">";
+        }
+  echo $value1['type'];
+  echo "</td><td>";
+  echo $value1['msg'];
+  echo "</td></tr>";
+}
+=======
  foreach ($importer->getImportEvents() as $value) {
         echo "<tr><td>";
         echo date("M d, Y H:i:s T", $value['ts']);
@@ -57,6 +98,7 @@ $i = 1;
         echo $value['msg'];
         echo "</td></tr>";
     }
+>>>>>>> MERGE-SOURCE
     ?>
 </table>
 

@@ -11,6 +11,8 @@ if ($event_name != "") {
 } else {
     $formAct = url_for('event/meta');
 }
+
+
 ?>
 
 <form action="<?php echo $formAct; ?>" method="post"  class="formSmall">
@@ -18,8 +20,14 @@ if ($event_name != "") {
         <tfoot>
             <tr>
                 <td colspan="2" style="padding-top:10px">
-                    <input type="submit" value="Save" name="Save" class="continueButton"/>
-                    <input type="submit" value="Save and Deploy" name ="Deploy" class="continueButton"<?php echo $confirmScript ?>>
+                    <?php if ($event_status_upper == "PRE-DEPLOYMENT"): ?>
+                      <input type="submit" value="Save" name="Save" class="continueButton"/>
+                      <input type="submit" value="Save and Deploy" name ="Deploy" class="continueButton"<?php echo $confirmScript ?>>
+                    <?php endif ?>
+                    <?php   $importUrl = url_for('event/active?event=' . urlencode($sf_data->getRaw('event_name')));
+                echo link_to($event_name.' Event Management', $importUrl,
+                array('class' => 'generalButton', 'title' => $event_name.' Event Management'));
+                ?>
                     <input type="hidden" value="<?php echo $scenario_id ?>" name="scenario_id">
                 </td>
             </tr>
