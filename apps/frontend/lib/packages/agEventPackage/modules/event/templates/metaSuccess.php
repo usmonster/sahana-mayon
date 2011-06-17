@@ -25,41 +25,26 @@ else{
 <?php
 $checkResults = $sf_data->getRaw('checkResults');
 if (isset($checkResults)) {
-
     echo '<table class="headerLess">';
     // echo '<tr class="head"><th class="row1">Warning</th><th>Count</th></tr>';
-
     foreach ($checkResults as $label => $checkResult) {
         echo '<tr>';
         echo '<td><span>' . $label . '</span></td><td class="highlightedText">';
-
         if (is_array($checkResult)) {
-
-
             echo implode(', ', $checkResult);
-
-
             if (empty($checkResult)) {
                 echo '<span style="color:green; font-weight:bold">OK</span>';
-
-                }
-
-                
+            }
         } else {
-            
-                echo $checkResult;
-
+            echo $checkResult;
         }
         echo '</td></tr>';
     }
-
     echo '</table>';
-
 }
 
-if (isset($errMsg))
-{
-  echo '<p>' . $errMsg . '</p>';
+if (isset($errMsg)) {
+    echo '<p>' . $errMsg . '</p>';
 }
 ?>
 

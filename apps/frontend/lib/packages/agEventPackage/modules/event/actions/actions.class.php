@@ -339,7 +339,7 @@ class eventActions extends agActions
     }
 
 
-$this->current_status = agEventFacilityHelper::returnCurrentEventStatus($this->metaForm->getObject()->getId());
+$current_status = agEventFacilityHelper::returnCurrentEventStatus($this->metaForm->getObject()->getId());
        if ($current_status != "") {
         $cur_status = Doctrine::getTable('agEventStatusType')
                         ->findByDql('id = ?', $current_status)

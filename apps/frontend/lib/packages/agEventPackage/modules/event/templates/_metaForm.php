@@ -34,7 +34,6 @@ if ($event_name != "") {
         </tfoot>
         <tbody>
 <?php echo $metaForm ?>
-
         </tbody>
     </table>
 </form>
