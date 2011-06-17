@@ -15,21 +15,73 @@ $i = 1;
 <br> 
 <table class="headerLess">
     <tr>
-        <td><span>Start:</span></td><td><?php echo date('F j, Y, g:i:s a',$startTime); ?></td>
+        <td>
+            <span>Start:</span>
+        </td>
+        <td>
+            <?php echo date('F j, Y, g:i:s a', $startTime); ?>
+        </td>
     </tr>
     <tr>
-        <td><span>End:</span></td><td><?php echo date('F j, Y, g:i:s a',$endTime); ?></td>
+        <td>
+            <span>End:</span>
+        </td>
+        <td>
+            <?php echo date('F j, Y, g:i:s a', $endTime); ?>
+        </td>
     </tr>
     <tr>
-        <td><span>Time Elapsed:</span></td><td><?php echo $importTime; ?></td>
+        <td>
+            <span>Time Elapsed:</span>
+        </td>
+
+        <td>
+            <?php echo $importTime; ?>
+        </td>
     </tr>
     <tr>
-        <td><span>Records Imported:</span></td><td><?php echo $importCount; ?></td>
-    </tr><tr>
-        <td><span>Peak Memory Usage: </span></td><td><?php echo $peakMemory; ?></td>
+        <td colspan="2">
+            <span>Total Records:</span> <?php echo $totalRecords; ?>
+            <br>
+            <table class="headerLess" style="margin:5px 0 5px 96px">
+                <tr>
+                    <td>
+                        <span>Successful:</span>
+                    </td>
+                    <td>
+                        <?php echo $successful; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Failed:</span>
+                    </td>
+                    <td>
+                        <?php echo $failed; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>Unprocessed:</span>
+                    </td>
+                    <td>
+                        <?php echo $unprocessed; ?>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span>Peak Memory Usage: </span>
+        </td>
+        <td>
+            <?php echo $peakMemory; ?>
+        </td>
     </tr>
 </table>
-<br> 
+<br>
+
 
 <?php if ($unprocessedXLS !== FALSE) { ?>
 <div class="formSmall">
