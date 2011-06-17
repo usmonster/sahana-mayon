@@ -22,16 +22,11 @@
  */
 class agStaffImportNormalization extends agImportNormalization
 {
-  public function __destruct()
-  {
-    parent::__destruct();
-  }
-
   /**
    * Method to return an instance of this class
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
-   * @return self An instance of this class
+   * @return agStaffImportNormalization An instance of this class
    */
   public static function getInstance($tempTable, $logEventLevel = NULL)
   {
@@ -41,10 +36,9 @@ class agStaffImportNormalization extends agImportNormalization
   }
 
   /**
-   * Method to return an instance of this class
+   * Method to initialize this class
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
-   * @return self An instance of this class
    */
   public function __init($tempTable = NULL, $logEventLevel = NULL)
   {
@@ -60,7 +54,7 @@ class agStaffImportNormalization extends agImportNormalization
     $this->tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8');
     $this->importHeaderStrictValidation = TRUE;
 
-    $this->eh->setErrThreshold(10000);
+    $this->eh->setErrThreshold(agGlobal::getParam('import_error_threshold'));
   }
 
   /**
@@ -73,6 +67,14 @@ class agStaffImportNormalization extends agImportNormalization
 
     // start our iterator and initialize our select query
     $this->tempToRaw($this->buildTempSelectQuery());
+  }
+
+  /**
+   * Method to set the unprocessed records basename
+   */
+  protected function  setUnprocessedBaseName()
+  {
+    $this->unprocessedBaseName = agGlobal::getParam('unprocessed_staff_import_basename');
   }
 
   /**

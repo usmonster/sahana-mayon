@@ -26,7 +26,9 @@ abstract class agImportNormalization extends agImportHelper
   //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue))
   $importData = array(),
   $importCount = 0,
-  $unprocessedXLS = FALSE;
+  $unprocessedXLS = FALSE,
+  $unprocessedBaseName,
+  $XlsMaxExportSize;
 
   /**
    * This classes' destructor.
@@ -37,10 +39,30 @@ abstract class agImportNormalization extends agImportHelper
   }
 
   /**
+   * Method to initialize this class
+   * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
+   */
+  public function __init($tempTable = NULL, $logEventLevel = NULL)
+  {
+    // DO NOT REMOVE
+    parent::__init($tempTable, $logEventLevel);
+
+    $this->setUnprocessedBaseName();
+    $this->XlsMaxExportSize = agGlobal::getParam('xls_max_export_size');
+  }
+
+
+  /**
    * Method to dynamically build a (mostly) static tempSelectQuery
    * @return string Returns a string query
    */
   abstract protected function buildTempSelectQuery();
+
+  /**
+   * Method to set the unprocessed records basename
+   */
+  abstract protected function setUnprocessedBaseName();
 
   /**
    * Method to reset ALL iter data.
@@ -200,6 +222,7 @@ abstract class agImportNormalization extends agImportHelper
     $this->clearConnections();
 
     // now, close any unnecessary connections to release as much memory as possible
+    Doctrine_Manager::getInstance()->setCurrentConnection('doctrine');
     $this->closeConnection($this->getConnection(self::CONN_TEMP_WRITE));
     $this->closeConnection($this->getConnection(self::CONN_NORMALIZE_READ));
     $this->closeConnection($this->getConnection(self::CONN_NORMALIZE_WRITE));
@@ -238,27 +261,175 @@ abstract class agImportNormalization extends agImportHelper
       return FALSE;
     }
 
+    // log a message and continue
     $eventMsg = 'All records could not be successfully processed.';
     $this->eh->logWarning($eventMsg);
 
+    // first search our directory for existing unprocessed files and remove
+    $pathBase = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
+    foreach(glob(($pathBase . '*')) as $filename) {
+      $eventMsg = 'Export: Removing old export file ' . $filename . '.';
+      $this->eh->logDebug($eventMsg);
+      unlink($filename);
+      $eventMsg = 'Export: Successfully removed old export file ' . $filename . '.';
+      $this->eh->logInfo($eventMsg);
+    }
+
+    // set some smart variables
+    $date = date('Ymd_His');
+    $downloadFile = $this->unprocessedBaseName . '_' . $date . '.zip';
+    $zipPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $downloadFile;
+    $exportFiles = array();
+
+    // Create zip file
+    $zipFile = new ZipArchive();
+
+    if ($zipFile->open($zipPath, ZIPARCHIVE::CREATE) !== TRUE) {
+      $this->eh->err('Export: Could not create the output zip file' .  $zipPath .
+        '. Check your permissions to make sure you have write access.');
+    } else {
+      $this->eh->logDebug('Export: Successfully created' .  $zipPath . '.');
+    }
     // get our temporary table read connection
     $conn = $this->getConnection(self::CONN_TEMP_READ);
     $columnHeaders = array_keys($this->importSpec);
     $selectCols = 't.' . implode(', t.', $columnHeaders);
 
     // build our query statement
+    $this->eh->logDebug('Export: Establishing fetch from the database.');
     $q = 'SELECT ' . $selectCols . ' FROM ' . $this->tempTable . ' AS t WHERE t.' .
-      $this->successColumn . ' != ?;';
+      $this->successColumn . ' != ? OR ' . $this->successColumn . ' IS NULL;';
     $pdo = $this->executePdoQuery($conn, $q, array(TRUE));
-    
-    // fetch into the file?
+    $this->eh->logDebug('Export: PDO object successfully created.');
 
-    $path = '/SOME/PATH';
+    // set counters
+    $i = 1;
+    $fetchPosition = 0;
 
-    $eventMsg = 'Successfully created export file of unprocessed records.';
+    // begin fetching from the database, starting with our first record
+    while ($row = $pdo->fetch()) {
+      // start by incrementing our fetch position
+      $fetchPosition++;
+
+      // reset our exportData array and add our first row to it
+      $exportData = array();
+      $exportData[] = $row;
+
+      // continue fetching until we either run out of records or hit our batch limit
+      while (($row = $pdo->fetch()) && ($fetchPosition % $this->XlsMaxExportSize != 0)) {
+        // always increment fetch position immediately
+        $fetchPosition++;
+
+        // add the row to our $rows array
+        $exportData[] = $row;
+      }
+
+      // set our xlsname and pass it and our export data to the buildXls method
+      $xlsName = $this->unprocessedBaseName . '_' . $date . '_' . $i . '.xls';
+      $this->eh->logInfo('Export: Fetched ' . count($rows) . ' records from the database into ' .
+        'batch ' . $i . '. Now adding records to ' . $xlsName . '.');
+      $xlsPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $xlsName;
+
+      // check for successful creation of the xlsfile (both soft and hard)
+      try {
+        if (! $this->buildXls($xlsPath, $exportData)) {
+          break;
+        }
+      } catch (Exception $e) {
+        $this->eh->logErr($e->getMessage());
+        break;
+      }
+
+      // if all went well, add it to the exportFiles array
+      $exportFiles[$i] = array($xlsPath, $xlsName);
+
+      // iterate our batch counter
+      $i++;
+    }
+
+    // we do this to check if any records were processed at all
+    if ($fetchPosition == 0 || count($exportFiles) == 0) {
+
+      // if none were, log a warning
+      $this->eh->logWarning('Export No unprocessed records could be retrieved. Could not create' .
+        'unprocessed records export.');
+
+      // close out and remove our zipfile
+      $zipFile->close();
+      unlink($zipPath);
+
+      // then return false
+      return FALSE;
+    }
+
+    // otherwise, add our xls files to the zip
+    foreach ($exportFiles as $xlsFileInfo) {
+      $this->eh->logDebug('Export: Adding ' . $xlsFileInfo[1] . ' to zip file.');
+      $zipFile->addFile($xlsFileInfo[0], $xlsFileInfo[1]);
+    }
+    $this->eh->logInfo('Export: Successfully added ' . count($exportFiles) .
+      ' xls files to zip file.');
+
+    // close the zip
+    $zipFile->close();
+
+    // remove the individual xls files
+    foreach ($exportFiles as $xlsFileInfo) {
+      $this->eh->logDebug('Export: Removing ' . $xlsFileInfo[1] . ' from the temp directory.');
+      unlink($xlsFileInfo[0]);
+    }
+    $this->eh->logInfo('Export: Successfully removed xls files from the temp directory.');
+
+    // finally, move the zip file to its final web-accessible location
+    $this->eh->logDebug('Export: Moving ' . $downloadFile . ' to user-accesible directory.');
+    $downloadPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $downloadFile;
+    if (! rename($zipPath, $downloadPath)) {
+      $this->eh->logErr('Export: Unable to move ' . $downloadFile . ' to the specified upload ' .
+        'directory. Check your sf_upload_dir configuration to ensure you have write permissions.');
+    }
+
+    $eventMsg = 'Export: Successfully created export file of unprocessed records.';
     $this->eh->logNotice($eventMsg);
 
-    return $path;
+    return $downloadPath;
+  }
+
+  /**
+   * Method to create an xls import file and return TRUE if successful
+   * @param string $xlsPath Path of the export file to create
+   * @param array $exportData An array of export data to write to the xls file
+   * @return boolean Returns TRUE if successful
+   */
+  protected function buildXls($xlsPath, array $exportData)
+  {
+    // load the Excel writer object
+    $sheet = new agExcel2003ExportHelper($this->unprocessedBaseName);
+
+    // Write the column headers
+    foreach (array_keys($exportData[0]) as $columnHeader) {
+      $sheet->label($columnHeader);
+      $sheet->right();
+    }
+
+    foreach ($exportData as $exportRowData) {
+      $sheet->down();
+      $sheet->home();
+
+      // Write values
+      foreach ($exportRowData as $value) {
+        $sheet->label($value);
+        $sheet->right();
+      }
+
+      // Capture peak memory
+      $currentMemoryUsage = memory_get_usage();
+      if ($currentMemoryUsage > $this->peakMemory) {
+        $this->peakMemory = memory_get_usage();
+      }
+    }
+
+    $sheet->save($xlsPath);
+    return TRUE;
   }
 
   /**
