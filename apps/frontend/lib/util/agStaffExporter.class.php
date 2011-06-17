@@ -16,133 +16,135 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
 
-class agStaffExporter
-{
+class agStaffExporter {
 
   /**
    * The construct() method sets up array variables for header mappings and lookup definitions.
    */
-  function __construct()
-  {
+  function __construct() {
     // The array index specify the order of the header in the export file.
     $this->exportHeaders = array(
-      'Entity ID',
-      'First Name',
-      'Middle Name',
-      'Last Name',
-      'Mobile Phone',
-      'Home Phone',
-      'Home Email',
-      'Work Phone',
-      'Work Email',
-      'Home Address Line 1',
-      'Home Address Line 2',
-      'Home Address City',
-      'Home Address State',
-      'Home Address Zip',
-      'Home Address Country',
-      'Home Latitude',
-      'Home Longitude',
-      'Work Address Line 1',
-      'Work Address Line 2',
-      'Work Address City',
-      'Work Address State',
-      'Work Address State',
-      'Work Address Zip',
-      'Work Address Country',
-      'Work Latitude',
-      'Work Longitude',
-      'Organization',
-      'Resource Type',
-      'Resource Status',
-      'Language 1',
-      'L1 Speak',
-      'L1 Read',
-      'L1 Write',
-      'Language 2',
-      'L2 Speak',
-      'L2 Read',
-      'L2 Write',
-      'Drivers License Class',
-      'PMS ID',
-      'Civil Service Title'
+        'Entity ID',
+        'First Name',
+        'Middle Name',
+        'Last Name',
+        'Mobile Phone',
+        'Home Phone',
+        'Home Email',
+        'Work Phone',
+        'Work Email',
+        'Home Address Line 1',
+        'Home Address Line 2',
+        'Home Address City',
+        'Home Address State',
+        'Home Address Zip',
+        'Home Address Country',
+        'Home Latitude',
+        'Home Longitude',
+        'Work Address Line 1',
+        'Work Address Line 2',
+        'Work Address City',
+        'Work Address State',
+        'Work Address State',
+        'Work Address Zip',
+        'Work Address Country',
+        'Work Latitude',
+        'Work Longitude',
+        'Organization',
+        'Resource Type',
+        'Resource Status',
+        'Language 1',
+        'L1 Speak',
+        'L1 Read',
+        'L1 Write',
+        'Language 2',
+        'L2 Speak',
+        'L2 Read',
+        'L2 Write',
+        'Language 3',
+        'L3 Speak',
+        'L3 Read',
+        'L3 Write',
+        'Drivers License Class',
+        'PMS ID',
+        'Civil Service Title'
     );
 
     $this->lookUps = array(
-      'state' => array(
-        'selectTable' => 'agAddressValue',
-        'selectColumn' => 'value',
-        'whereColumn' => 'address_element_id',
-        'whereValue' => 4
-      ),
-      'resourcetype' => array(
-        'selectTable' => 'agStaffResourceType',
-        'selectColumn' => 'staff_resource_type',
-        'whereColumn' => null,
-        'whereValue' => null
-      ),
-      'resourcestatus' => array(
-        'selectTable' => 'agStaffResourceStatus',
-        'selectColumn' => 'staff_resource_status',
-        'whereColumn' => null,
-        'whereValue' => null
-      ),
-      'language' => array(
-        'selectTable' => 'agLanguage',
-        'selectColumn' => 'language',
-        'whereColumn' => null,
-        'whereValue' => null
-      ),
-      'competency' => array(
-        'selectTable' => 'agLanguageCompetency',
-        'selectColumn' => 'language_competency',
-        'whereColumn' => null,
-        'whereValue' => null
-      ),
-      'organization' => array(
-        'selectTable' => 'agOrganization',
-        'selectColumn' => 'organization',
-        'whereColumn' => null,
-        'whereValue' => null
-      )
+        'state' => array(
+            'selectTable' => 'agAddressValue',
+            'selectColumn' => 'value',
+            'whereColumn' => 'address_element_id',
+            'whereValue' => 4
+        ),
+        'resourcetype' => array(
+            'selectTable' => 'agStaffResourceType',
+            'selectColumn' => 'staff_resource_type',
+            'whereColumn' => null,
+            'whereValue' => null
+        ),
+        'resourcestatus' => array(
+            'selectTable' => 'agStaffResourceStatus',
+            'selectColumn' => 'staff_resource_status',
+            'whereColumn' => null,
+            'whereValue' => null
+        ),
+        'language' => array(
+            'selectTable' => 'agLanguage',
+            'selectColumn' => 'language',
+            'whereColumn' => null,
+            'whereValue' => null
+        ),
+        'competency' => array(
+            'selectTable' => 'agLanguageCompetency',
+            'selectColumn' => 'language_competency',
+            'whereColumn' => null,
+            'whereValue' => null
+        ),
+        'organization' => array(
+            'selectTable' => 'agOrganization',
+            'selectColumn' => 'organization',
+            'whereColumn' => null,
+            'whereValue' => null
+        )
     );
 
     // This array is reconstructed below when retrieving staff resoure information.
     $this->staffResourceHeaderMapping = array();
 
     $this->nameHeaderMapping = array(
-      'given' => 'First Name',
-      'middle' => 'Middle Name',
-      'family' => 'Last Name'
+        'given' => 'First Name',
+        'middle' => 'Middle Name',
+        'family' => 'Last Name'
     );
 
     $this->phoneHeaderMapping = array(
-      'mobile' => 'Mobile Phone',
-      'home' => 'Home Phone',
-      'work' => 'Work Phone'
+        'mobile' => 'Mobile Phone',
+        'home' => 'Home Phone',
+        'work' => 'Work Phone'
     );
 
     $this->emailHeaderMapping = array(
-      'personal' => 'Home Email',
-      'work' => 'Work Email'
+        'personal' => 'Home Email',
+        'work' => 'Work Email'
     );
 
     $this->addressLineHeaderMapping = array(
-      'line 1' => 'Address Line 1',
-      'line 2' => 'Address Line 2',
-      'city' => 'Address City',
-      'state' => 'Address State',
-      'zip5' => 'Address Zip',
-      'country' => 'Address Country',
-      'latitude' => 'Latitude',
-      'longitude' => 'Longitude'
+        'line 1' => 'Address Line 1',
+        'line 2' => 'Address Line 2',
+        'city' => 'Address City',
+        'state' => 'Address State',
+        'zip5' => 'Address Zip',
+        'country' => 'Address Country',
+        'latitude' => 'Latitude',
+        'longitude' => 'Longitude'
     );
 
     $this->addressTypeHeaderRequirements = array('home' => 'Home', 'work' => 'Work');
 
     $this->languageFormatTypeHeaderRequirements = array('read' => 'Read',
-      'write' => 'Write',
-      'speak' => 'Speak');
+        'write' => 'Write',
+        'speak' => 'Speak');
 
     // Setup some debugging
     $this->logger = sfContext::getInstance()->getLogger();
@@ -154,13 +156,12 @@ class agStaffExporter
    * 
    * @return type array
    */
-  private function getOrganizationList()
-  {
+  private function getOrganizationList() {
 
     // Query for organizations
     $q = agDoctrineQuery::create()
-        ->select('o.id, o.organization')
-        ->from('agOrganization as o');
+            ->select('o.id, o.organization')
+            ->from('agOrganization as o');
 
     $results = $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
 
@@ -176,12 +177,11 @@ class agStaffExporter
    * @return array $results An associative array, keyed by person custom field, with a value of
    * person_custom_field_id.
    */
-  public function getPersonCustomFields(array $personCustomFields = NULL)
-  {
+  public function getPersonCustomFields(array $personCustomFields = NULL) {
     $q = agDoctrineQuery::create()
-        ->select('pcf.person_custom_field')
-        ->addSelect('pcf.id')
-        ->from('agPersonCustomField AS pcf');
+            ->select('pcf.person_custom_field')
+            ->addSelect('pcf.id')
+            ->from('agPersonCustomField AS pcf');
 
     if (!is_null($personCustomFields)) {
       $q->whereIn('pcf.person_custom_field', $personCustomFields);
@@ -197,41 +197,40 @@ class agStaffExporter
    * @param array $staff_ids An array of staff ids.
    * @return array $staffInfo An associative array of staff information.
    */
-  private function getStaffResourceGeneralInfo(array $staff_ids = NULL)
-  {
+  private function getStaffResourceGeneralInfo(array $staff_ids = NULL) {
     $staffInfo = array();
 
     $this->staffResourceHeaderMapping = array(
-      'Entity ID' => 'p_entity_id',
-      'Organization' => 'o_organization',
-      'Resource Type' => 'srt_staff_resource_type',
-      'Resource Status' => 'srs_staff_resource_status'
+        'Entity ID' => 'p_entity_id',
+        'Organization' => 'o_organization',
+        'Resource Type' => 'srt_staff_resource_type',
+        'Resource Status' => 'srs_staff_resource_status'
     );
 
     $q = agDoctrineQuery::create()
-        ->select('sr.id')
-        ->addSelect('sr.staff_id')
-        ->addSelect('s.person_id')
-        ->addSelect('p.entity_id')
-        ->addSelect('srt.staff_resource_type')
-        ->addSelect('o.id')
-        ->addSelect('o.organization')
-        ->addSelect('srs.id')
-        ->addSelect('srs.staff_resource_status')
-        ->addSelect('pcfv1.value')
-        ->addSelect('pcfv2.value')
-        ->addSelect('pcfv3.value')
-        ->from('agStaffResource AS sr')
-        ->innerJoin('sr.agStaff AS s')
-        ->innerJoin('s.agPerson AS p')
-        ->innerJoin('sr.agStaffResourceType AS srt')
-        ->innerJoin('sr.agStaffResourceStatus AS srs')
-        ->innerJoin('sr.agOrganization AS o');
+            ->select('sr.id')
+            ->addSelect('sr.staff_id')
+            ->addSelect('s.person_id')
+            ->addSelect('p.entity_id')
+            ->addSelect('srt.staff_resource_type')
+            ->addSelect('o.id')
+            ->addSelect('o.organization')
+            ->addSelect('srs.id')
+            ->addSelect('srs.staff_resource_status')
+            ->addSelect('pcfv1.value')
+            ->addSelect('pcfv2.value')
+            ->addSelect('pcfv3.value')
+            ->from('agStaffResource AS sr')
+            ->innerJoin('sr.agStaff AS s')
+            ->innerJoin('s.agPerson AS p')
+            ->innerJoin('sr.agStaffResourceType AS srt')
+            ->innerJoin('sr.agStaffResourceStatus AS srs')
+            ->innerJoin('sr.agOrganization AS o');
 
     // Query for person_custom_field and their ids.
     $personCustomFields = array('Drivers License Class',
-      'PMS ID',
-      'Civil Service Title');
+        'PMS ID',
+        'Civil Service Title');
     $personCustomFieldIds = $this->getPersonCustomFields($personCustomFields);
 
     // Add person custom fields to query.
@@ -239,8 +238,8 @@ class agStaffExporter
     foreach ($personCustomFields AS $customField) {
       $tblAlias = 'pcfv' . $cnt++;
       $q->leftJoin('p.agPersonCustomFieldValue AS ' . $tblAlias .
-          ' WITH ' . $tblAlias . '.person_custom_field_id = ' .
-          $personCustomFieldIds[$customField]);
+              ' WITH ' . $tblAlias . '.person_custom_field_id = ' .
+              $personCustomFieldIds[$customField]);
       $this->staffResourceHeaderMapping[$customField] = $tblAlias . '_value';
     }
 
@@ -273,19 +272,18 @@ class agStaffExporter
    *
    * @return array $content An associate array of staff resource information in the export format.
    */
-  private function buildExportRecords($orgId)
-  {
+  private function buildExportRecords($orgId) {
     $staffResources = agDoctrineQuery::create()
-        ->select('sr.id')
-        ->addSelect('sr.staff_id')
-        ->addSelect('s.person_id')
-        ->addSelect('p.entity_id')
-        ->from('agStaffResource sr')
-        ->innerJoin('sr.agStaff s')
-        ->innerJoin('s.agPerson p')
-        ->innerJoin('sr.agOrganization o')
-        ->where('o.id = ' . $orgId)
-        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+            ->select('sr.id')
+            ->addSelect('sr.staff_id')
+            ->addSelect('s.person_id')
+            ->addSelect('p.entity_id')
+            ->from('agStaffResource sr')
+            ->innerJoin('sr.agStaff s')
+            ->innerJoin('s.agPerson p')
+            ->innerJoin('sr.agOrganization o')
+            ->where('o.id = ' . $orgId)
+            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
     // Build person id and entity id arrays for later use to retrieve persons names and contacts.
     $staff_ids = array();
@@ -316,14 +314,11 @@ class agStaffExporter
       $personNameHelper = new agPersonNameHelper();
       $staffNames = $personNameHelper->getPrimaryNameByType($subsetPIds);
       $phoneHelper = new agEntityPhoneHelper();
-      $staffPhones = $phoneHelper->getEntityPhoneByType($subsetEIds, TRUE, TRUE,
-                                                        agPhoneHelper::PHN_GET_COMPONENT);
+      $staffPhones = $phoneHelper->getEntityPhoneByType($subsetEIds, TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT);
       $emailHelper = new agEntityEmailHelper();
-      $staffEmails = $emailHelper->getEntityEmailByType($subsetEIds, TRUE, TRUE,
-                                                        agEmailHelper::EML_GET_VALUE);
+      $staffEmails = $emailHelper->getEntityEmailByType($subsetEIds, TRUE, TRUE, agEmailHelper::EML_GET_VALUE);
       $addressHelper = new agEntityAddressHelper();
-      $staffAddresses = $addressHelper->getEntityAddressByType($subsetEIds, TRUE, TRUE,
-                                                               agAddressHelper::ADDR_GET_TYPE);
+      $staffAddresses = $addressHelper->getEntityAddressByType($subsetEIds, TRUE, TRUE, agAddressHelper::ADDR_GET_TYPE);
       $languageHelper = new agPersonLanguageHelper();
       $staffLanguages = $languageHelper->getPersonLanguage($subsetPIds, FALSE);
 
@@ -377,11 +372,11 @@ class agStaffExporter
             // Populate the row with address & geo info only for the address types and address
             // elements that we care for.
             if (array_key_exists($addressType, $this->addressTypeHeaderRequirements)) {
-              
+
               $foo = $address[0][0];
 
               //$this->logger->debug(print_r($address[0][0], true));
-              if (!is_array($address[0][0])) {
+              if (is_array($address[0][0])) {
                 foreach ($address[0][0] AS $elem => $value) {
                   if (array_key_exists($elem, $this->addressLineHeaderMapping)) {
                     $type = $this->addressTypeHeaderRequirements[$addressType];
@@ -392,7 +387,6 @@ class agStaffExporter
                 }
               } else {
                 $foo = $address[0][0];
-                
               }
             }
           }
@@ -401,7 +395,7 @@ class agStaffExporter
 
         // Populate staff's languages into $row.
         $iteration = 1;
-        $max_language_count = 2;
+        $max_language_count = 3;
         if (array_key_exists($stfRsc['s_person_id'], $staffLanguages)) {
           foreach ($staffLanguages[$stfRsc['s_person_id']] AS $priority => $languageComponents) {
             if ($iteration <= $max_language_count) {
@@ -420,7 +414,7 @@ class agStaffExporter
             } else {
               break;
             }
-            $iteration += 1;
+            $iteration++;
           }
         }
 
@@ -442,10 +436,17 @@ class agStaffExporter
    *                                     and is held in temporary storage.
    *                                     filePath is the path to that file.
    */
-  public function export()
-  {
+  public function export() {
     // Get list of orgs
     $orgList = $this->getOrganizationList();
+
+    // Populate lookups
+    $lookUps = $this->gatherLookupValues($this->lookUps);
+
+
+
+    // Get our max export size
+    $XlsMaxExportSize = agGlobal::getParam('xls_max_export_size');
 
     // Create zip file
     $zipFile = new ZipArchive();
@@ -459,7 +460,7 @@ class agStaffExporter
     }
 
 
-    $i = 0;
+
     $exportFiles = array();
 
     // Interate through each organization
@@ -470,17 +471,47 @@ class agStaffExporter
 
       if (count($staffExportRecords) > 0) {
 
-        // Populate lookups
-        $lookUps = $this->gatherLookupValues($this->lookUps);
+        // Chunk the records
+        $xlsBatch = array_chunk($staffExportRecords, $XlsMaxExportSize);
 
-        $this->logger->debug("Export: Saving $orgName xls to tmp folder");
-        $exportFiles[$i] = $this->buildXls($staffExportRecords, $lookUps, $orgName);
+        for ($i = 0; $i < count($xlsBatch); $i++) {
 
-        // Add export file to zip
-        $zipFile->addFile($exportFiles[$i][0], $exportFiles[$i][1]);
+          // load the Excel writer object
+          $this->xlsWb = new agExcel2003ExportHelper($orgName);
 
-        $i++;
+          $todaydate = date("Ymd_His");
+          $fileName = $this->xlsWb->filename($orgName);
+
+          if (count($xlsBatch) > 1) {
+            $fileName .= "-" . ($i + 1);
+          }
+
+          $fileName = sprintf("staff_%s_%s.xls", $fileName, $todaydate);
+          $filePath = realpath(sys_get_temp_dir()) . '/' . $fileName;
+
+          $foo = $xlsBatch[$i];
+
+          // Generate the Excel file
+          $this->buildExcelWorkbook($xlsBatch[$i], $lookUps, $filePath, $orgName);
+          $exportFiles[] = array($filePath, $fileName);
+        }
+
+
+        // Capture peak memory
+        $currentMemoryUsage = memory_get_usage();
+
+        if ($currentMemoryUsage > $this->peakMemory) {
+          $this->peakMemory = memory_get_usage();
+        }
+
+        // Cleanup
+        unset($this->xlsWb);
       }
+    }
+
+    foreach ($exportFiles as $file) {
+      // Add export file to zip
+      $zipFile->addFile($file[0], $file[1]);
     }
 
     // Close up the zip
@@ -491,13 +522,7 @@ class agStaffExporter
       unlink($file[0]);
     }
 
-    // Move zip file
-    $downloadPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $downloadFile;
-    if (!rename($tmpPath, $downloadPath)) {
-      return sfView::ERROR;
-    }
-
-    return array('fileName' => $downloadFile, 'filePath' => $downloadPath);
+    return array('fileName' => $downloadFile, 'filePath' => $tmpPath);
   }
 
   /**
@@ -515,11 +540,7 @@ class agStaffExporter
    *                                         constructed and is held in temporary
    *                                         storage. filePath is the path to that file.
    */
-  private function buildXls($staffExportRecords, $lookUpContent, $orgName)
-  {
-
-    // load the Excel writer object
-    $sheet = new agExcel2003ExportHelper("foo");
+  private function buildExcelWorkbook(array $staffExportRecords, array $lookUpContent, $filePath, $orgName) {
 
     /**
       // Populate the lookup sheet.
@@ -534,45 +555,31 @@ class agStaffExporter
      * 
      */
     // Write the column headers
-    foreach (array_keys($staffExportRecords[0]) as $columnHeader) {
-      $sheet->label($columnHeader);
-      $sheet->right();
+    $keys = array_keys($staffExportRecords[0]);
+
+    if (!isset($keys)) {
+      $this->logger->err(print_r($staffExportRecords, true));
     }
 
-
-    $row = 2;
-    foreach ($staffExportRecords as $rKey => $staffExportRecord) {
-      if ($row <= 64000) {
-
-        $sheet->down();
-        $sheet->home();
-
-        // Write values
-        foreach ($staffExportRecord as $value) {
-          $sheet->label($value);
-          $sheet->right();
-        }
-      }
-
-      // Capture peak memory
-      $currentMemoryUsage = memory_get_usage();
-
-      if ($currentMemoryUsage > $this->peakMemory) {
-        $this->peakMemory = memory_get_usage();
-      }
-
-      $row++;
+    foreach ($keys as $columnHeader) {
+      $this->xlsWb->label($columnHeader);
+      $this->xlsWb->right();
     }
 
+    foreach ($staffExportRecords as $staffExportRecord) {
 
-    $todaydate = date("Ymd") . '_' . date("His");
+      // Move to next row
+      $this->xlsWb->down();
+      $this->xlsWb->home();
 
-    $fileName = $sheet->filename($orgName);
-    $fileName = sprintf("staff_%s_%s.xls", $fileName, $todaydate);
-    $filePath = realpath(sys_get_temp_dir()) . '/' . $fileName;
-
-    $sheet->save($filePath);
-    return array($filePath, $fileName);
+      // Write values
+      foreach ($staffExportRecord as $value) {
+        $this->xlsWb->label($value);
+        $this->xlsWb->right();
+      }
+    }
+    $this->xlsWb->save($filePath);
+    return $filePath;
   }
 
   /**
@@ -607,12 +614,11 @@ class agStaffExporter
    *                          The keys of the inner array musy be set to selectTable, selectColumn,
    *                          whereColumn, and whereValue.
    */
-  private function gatherLookupValues($lookUps = null)
-  {
+  private function gatherLookupValues($lookUps = null) {
     foreach ($lookUps as $key => $lookUp) {
       $lookUpQuery = agDoctrineQuery::create()
-          ->select($lookUp['selectColumn'])
-          ->from($lookUp['selectTable']);
+              ->select($lookUp['selectColumn'])
+              ->from($lookUp['selectTable']);
       if (isset($lookUp['whereColumn']) && isset($lookUp['whereValue'])) {
         //$lookUpQuery->where("'" . $lookUp['whereColumn'] . " = ?', " . $lookUp['whereValue']);
         $lookUpQuery->where($lookUp['whereColumn'] . " = " . $lookUp['whereValue']);
