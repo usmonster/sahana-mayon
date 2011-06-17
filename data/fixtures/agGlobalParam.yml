@@ -95,7 +95,7 @@ agGlobalParam:
     id: 19
     agHost: localhost
     datapoint: import_error_threshold
-    value: 20
+    value: 100
   default_shift_task_length:
     id: 20
     agHost: localhost
@@ -211,3 +211,13 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_staff_messaging_allocation_status
     value: Unknown
+  unprocessed_staff_import_basename:
+    id: 43
+    agHost: localhost
+    datapoint: unprocessed_staff_import_basename
+    value: unprocessed_staff_import
+  xls_max_export_size:
+    id: 44
+    agHost: localhost
+    datapoint: xls_max_export_size
+    value: 20000
