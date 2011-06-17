@@ -18,17 +18,18 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
 <?php if ($ag_events) {
 ?>
 <hr class="ruleGray"/>
+<br>
   <h3>Existing Events</h3>
 
-  <table>
+  <table class="blueTable" style="width:auto">
     <thead>
-      <tr>
+      <tr class="head">
         <th>Event Name</th>
-        <th>Scenario Base</th>
-        <th>Created at</th>
-        <th>Updated at</th>
+        <th>Base Scenario</th>
+        <!--<th>Created at</th>
+        <th>Updated at</th>-->
         <th>Status</th>
-        <th>&nbsp;</th>
+        <th>Reports</th>
       </tr>
     </thead>
     <tbody>
@@ -48,10 +49,10 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
 
         ?>
 
-        <td><a href="<?php echo url_for('event/active?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton"><?php echo $ag_event->getEventName() ?></a></td>
+        <td><a href="<?php echo url_for('event/active?event=' . urlencode($ag_event->getEventName())) ?>" class="buttonText"><?php echo $ag_event->getEventName() ?></a></td>
         <td><?php #echo $ag_event->getAgEventScenario()->getFirst()->getAgScenario() ?></td>
-        <td><?php echo $ag_event->getCreatedAt() ?></td>
-        <td><?php echo $ag_event->getUpdatedAt() ?></td>
+        <!--<td><?php echo $ag_event->getCreatedAt() ?></td>
+        <td><?php echo $ag_event->getUpdatedAt() ?></td>-->
         <td><?php echo $cur_status; ?></td>
         <td><a href="<?php echo url_for('report/list') ?>" class="continueButton">reports</a></td>
       </tr>
