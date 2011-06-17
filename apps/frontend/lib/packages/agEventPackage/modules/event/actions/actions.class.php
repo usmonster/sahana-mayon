@@ -339,15 +339,9 @@ class eventActions extends agActions
       $this->getResponse()->setTitle('Sahana Agasti: New Event');
     }
 
-    if (!empty($this->event_id))
-    {
-      $upperCaseCurStatus = strtoupper($eventStatusType);
-      $preDeployStatus = agGlobal::getParam('event_pre_deploy_status');
-      $preDeployStatus = strtoupper($preDeployStatus);
-
-      $this->isPreDeploy = ($upperCaseCurStatus === $preDeployStatus) ? 1 : 0;
+    if (strtoupper(agGlobal::getParam('event_pre_deploy_status')) <> strtoupper($eventStatusType)) {
+            $this->redirect('event/active?event=' . urlencode($eventMeta->event_name));
     }
-
     //end p-code
   }
 

@@ -71,10 +71,10 @@ class homeActions extends agActions
 
 
     $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
-    $this->ag_events = agDoctrineQuery::create()
-        ->select('a.*')
-        ->from('agEvent a')
-        ->execute();
+//    $this->ag_events = agDoctrineQuery::create()
+//        ->select('a.*')
+//        ->from('agEvent a')
+//        ->execute();
 
 
   }

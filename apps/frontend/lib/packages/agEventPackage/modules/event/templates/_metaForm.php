@@ -20,10 +20,8 @@ if ($event_name != "") {
         <tfoot>
             <tr>
                 <td colspan="2" style="padding-top:10px">
-                    <?php if ($isPreDeploy): ?>
                       <input type="submit" value="Save" name="Save" class="continueButton"/>
                       <input type="submit" value="Save and Deploy" name ="Deploy" class="continueButton"<?php echo $confirmScript ?>>
-                    <?php endif ?>
                     <?php   $importUrl = url_for('event/active?event=' . urlencode($sf_data->getRaw('event_name')));
                 echo link_to($event_name.' Event Management', $importUrl,
                 array('class' => 'generalButton', 'title' => $event_name.' Event Management'));
