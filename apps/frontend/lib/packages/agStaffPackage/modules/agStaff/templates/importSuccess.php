@@ -40,35 +40,35 @@ $i = 1;
         </td>
     </tr>
     <tr>
-        <td colspan="2">
-            <span>Total Records:</span> <?php echo $totalRecords; ?>
-            <br>
-            <table class="headerLess" style="margin:5px 0 5px 96px">
-                <tr>
-                    <td>
-                        <span>Successful:</span>
-                    </td>
-                    <td>
-                        <?php echo $successful; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span>Failed:</span>
-                    </td>
-                    <td>
-                        <?php echo $failed; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span>Unprocessed:</span>
-                    </td>
-                    <td>
-                        <?php echo $unprocessed; ?>
-                    </td>
-                </tr>
-            </table>
+        <td>
+            <span>Total Records:</span>
+        </td>
+        <td>
+            <?php echo $totalRecords; ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span>Successful:</span>
+        </td>
+        <td>
+            <?php echo $successful; ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span>Failed:</span>
+        </td>
+        <td>
+            <?php echo $failed; ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <span>Unprocessed:</span>
+        </td>
+        <td>
+            <?php echo $unprocessed; ?>
         </td>
     </tr>
     <tr>
