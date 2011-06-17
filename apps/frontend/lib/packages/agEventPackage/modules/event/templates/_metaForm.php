@@ -20,7 +20,7 @@ if ($event_name != "") {
         <tfoot>
             <tr>
                 <td colspan="2" style="padding-top:10px">
-                    <?php if ($event_status_upper == "PRE-DEPLOYMENT"): ?>
+                    <?php if ($isPreDeploy): ?>
                       <input type="submit" value="Save" name="Save" class="continueButton"/>
                       <input type="submit" value="Save and Deploy" name ="Deploy" class="continueButton"<?php echo $confirmScript ?>>
                     <?php endif ?>

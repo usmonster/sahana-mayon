@@ -338,16 +338,17 @@ class eventActions extends agActions
       $this->getResponse()->setTitle('Sahana Agasti: New Event');
     }
 
+    $currentStatus = agEventFacilityHelper::returnCurrentEventStatus($this->metaForm->getObject()->getId());
+    if ($currentStatus != "") {
+      $curStatus = Doctrine::getTable('agEventStatusType')
+                      ->findByDql('id = ?', $currentStatus)
+                      ->getFirst()->event_status_type;
+    }
+    $upperCaseCurStatus = strtoupper($curStatus);
+    $preDeployStatus = agGlobal::getParam('event_pre_deploy_status');
+    $preDeployStatus = strtoupper($preDeployStatus);
 
-$current_status = agEventFacilityHelper::returnCurrentEventStatus($this->metaForm->getObject()->getId());
-       if ($current_status != "") {
-        $cur_status = Doctrine::getTable('agEventStatusType')
-                        ->findByDql('id = ?', $current_status)
-                        ->getFirst()->event_status_type;
-  }
-  $this->upper_case_cur_Status = strtoupper($cur_status);
-
-
+    $this->isPreDeploy = ($upperCaseCurStatus === $preDeployStatus) ? 1 : 0;
 
     //end p-code
   }

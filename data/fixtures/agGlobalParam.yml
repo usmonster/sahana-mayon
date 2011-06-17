@@ -220,4 +220,9 @@ agGlobalParam:
     id: 44
     agHost: localhost
     datapoint: xls_max_export_size
-    value: 20000
+    value: 20000>>>>>>> MERGE-SOURCE
+  event_pre_deploy_status:
+    id: 45
+    agHost: localhost
+    datapoint: event_pre_deploy_status
+    value: Pre-Deployment
