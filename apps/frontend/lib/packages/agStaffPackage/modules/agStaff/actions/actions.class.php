@@ -641,5 +641,6 @@ class agStaffActions extends agActions
     // close out import components and create an xls if needed
     $this->importer->concludeImport();
     $this->unprocessedXLS = $this->importer->getUnprocessedXLS;
+    echo "";
   }
 }
