@@ -18,10 +18,81 @@ class agFooActions extends agActions
             ->execute();
 
 // <-------- CUT HERE -------->
-    $dh = agEventStaffDeploymentHelper::getInstance(6, agEventHandler::EVENT_DEBUG);
-    $results = $dh->test();
-    print_r($results) ;
+//    $dh = agEventStaffDeploymentHelper::getInstance(6, agEventHandler::EVENT_DEBUG);
+//    $results = $dh->test();
+//    print_r($results) ;
+
+//    if ($request->hasParameter('count'))
+//    {
+//      $this->count = $request->getParameter('count');
+//    }
+//    else
+//    {
+//      $this->count = 0;
+//    }
+//#    $this->count = ($request->hasParameter('count')) ? $request->getParameter('count')+1 : 0;
+//#    $this->stop = ($request->hasParameter('stop')) ? $request->getParameter('stop') : 0;
+//
+//    $this->exportPath = '/home/s/Downloads/Facilities-Hurricane_A-17-06-11-15-21-15.xls';
+//    $this->exportFileName = 'ExportFile.xls';
+//
+//    if ($request->isMethod(sfRequest::POST)) {
+//      $this->count = $request->getParameter('count')+1;
+//      if ($request->hasParameter('exportXls') && (!$request->hasParameter('stop')))
+//      {
+//        $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+//        $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $this->exportFileName . '"');
+//
+//        $exportFile = file_get_contents($request->getParameter('filePath'));
+//
+//        $this->getResponse()->setContent($exportFile);
+//        $this->getResponse()->send();
+//        unlink($exportResponse['filePath']);
+//
+//        $this->getRequest()->setParameter('count', $this->count);
+//        $this->getRequest()->setParameter('stop', 1);
+//        $this->forward($request->getParameter('module'), 'index');
+//      }
+//      else
+//      {
+//        $this->getRequest()->getParameterHolder()->remove('stop');
+//        echo "hello";
+//      }
+//    }
+
+
+    $exportFileName = 'ExportFile.xls';
+    $this->getUser()->setAttribute('exportFileName', $exportFileName);
+
+    $exportFile = '/home/s/Downloads/Facilities-Hurricane_A-17-06-11-15-21-15.xls';
+    $this->getUser()->setAttribute('exportFile', $exportFile);
 // <-------- CUT HERE -------->
+  }
+
+  public function executeExport(sfWebRequest $request)
+  {
+    $this->errMsg = NULL;
+
+    if ($this->getUser()->hasAttribute('exportFile') && $this->getUser()->hasAttribute('exportFileName'))
+    {
+      $exportFileName = $this->getUser()->getAttribute('exportFileName');
+      $exportFile = $this->getUser()->getAttribute('exportFile');
+
+      $exportFile = file_get_contents($exportFile);
+
+      $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportFileName . '"');
+
+      $this->getResponse()->setContent($exportFile);
+      $this->getResponse()->send();
+
+//      $this->getUser()->getAttributeHolder()->remove('exportFile');
+//      $this->getUser()->getAttributeHolder()->remove('exportFileName');
+    }
+    else
+    {
+      $this->errMsg = 'Error exporting file!';
+    }
   }
 
   public function executeList(sfWebRequest $request)
