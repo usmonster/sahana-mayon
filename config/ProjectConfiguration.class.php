@@ -85,8 +85,9 @@ class ProjectConfiguration extends sfProjectConfiguration
 
   public function setup()
   {
-    // redefines the upload directory to be in a secure (i.e. web-inaccessible) location
+    // redefines the upload and download directories to be in a secure (i.e. web-inaccessible) location
     sfConfig::set('sf_upload_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'uploads');
+    sfConfig::set('sf_download_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'downloads');
 
     //$this->appendEnabledModules();
     // plugins are considered 'core' elements, akin to apps/frontend/modules, they should not be

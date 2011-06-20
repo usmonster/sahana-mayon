@@ -21,6 +21,10 @@ staff_import:
   requirements:
     sf_method: [post]
 
+staff_download:
+  url:  /staff/download
+  param: { module: agStaff, action: download }
+
 #staff_import_show:
 #  url:   /staff/import
 #  #class: sfRequestRoute

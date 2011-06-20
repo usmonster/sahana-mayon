@@ -508,7 +508,7 @@ class agStaffActions extends agActions
    * */
   public function executeExport(sfWebRequest $request)
   {
-    //$this->startTime = microtime(true);
+    $this->startTime = microtime(true);
 
     $staffExporter = new agStaffExporter();
     $exportResponse = $staffExporter->export();
@@ -527,42 +527,25 @@ class agStaffActions extends agActions
     //unlink($exportResponse['filePath']);
     //
     
-    /*
+    
       // Report elapsed time
-      $this->endTime = microtime(true);
-      $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
-      $this->importTime = date("H:i:s", $time);
+    $this->endTime = microtime(true);
+    $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+    $this->importTime = date("H:i:s", $time);
 
-      // Format memory
-      $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
-      if ($peakMemory <= 999) {
+    // Format memory
+    $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+    if ($peakMemory <= 999) {
       $peakMemory = 1;
-      }
-      for ($i = 0; $peakMemory > 999; $i++) {
+    }
+    for ($i = 0; $peakMemory > 999; $i++) {
       $peakMemory /= 1024;
-      }
-      $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
+    }
+    $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
 
 
-     */
 
-    // Make sure the browser doesn't try to deliver a chached version
-    $this->getResponse()->setHttpHeader("Pragma", "public");
-    $this->getResponse()->setHttpHeader("Expires", "0");
-    $this->getResponse()->setHttpHeader("Cache-Control",
-                                        "must-revalidate, post-check=0, pre-check=0");
 
-    // Provide application and file info headers
-    $this->getResponse()->setHttpHeader("Content-Type", "application/zip");
-    $this->getResponse()->setHttpHeader("Content-Disposition",
-                                        "attachment; filename='" . $exportResponse['fileName'] . "'");
-    $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
-    $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($exportResponse['filePath']));
-
-    $exportFile = file_get_contents($exportResponse['filePath']);
-
-    $this->getResponse()->setContent($exportFile);
-    $this->getResponse()->send();
     //$this->redirect('staff/index');
   }
 
@@ -641,21 +624,46 @@ class agStaffActions extends agActions
 
     // close out import components and create an xls if needed
     $this->importer->concludeImport();
-    $this->unprocessedXLS = $this->importer->getUnprocessedXLS();
+    $downloadFile = $this->importer->getUnprocessedXLS();
+    $this->unprocessedXLS = $downloadFile;
   }
 
-  public function executeExportunprocessed(sfWebRequest $request)
+  public function executeDownload(sfWebRequest $request)
   {
-    $filename = $request['file'];
-    $path = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $filename;
-    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' .
-      $filename . '"');
+    // being sure no other content wil be output
+    $this->setLayout(false);
+    //sfConfig::set('sf_web_debug', false);
 
-    $exportFile = file_get_contents($path);
+    $fileName = preg_replace("/\.zip/", "", $request->getParameter('filename'));
 
-    $this->getResponse()->setContent($exportFile);
+    $filePath = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR
+        . 'data/downloads' . DIRECTORY_SEPARATOR
+        . $fileName . '.zip';
+
+
+    // check if the file exists
+    $this->forward404Unless(file_exists($filePath));
+
+    // Make sure the browser doesn't try to deliver a chached version
+    $this->getResponse()->setHttpHeader("Pragma", "public");
+    $this->getResponse()->setHttpHeader("Expires", "0");
+    $this->getResponse()->setHttpHeader("Cache-Control",
+                                        "must-revalidate, post-check=0, pre-check=0");
+
+    // Provide application and file info headers
+    $this->getResponse()->setHttpHeader("Content-Type", "application/zip");
+    $this->getResponse()->setHttpHeader("Content-Disposition",
+                                        "attachment; filename='" . $fileName . ".zip'");
+    $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
+    $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($filePath));
+
+    $this->getResponse()->sendHttpHeaders();
+    $this->getResponse()->setContent(readfile($filePath));
     $this->getResponse()->send();
+
+
+    return sfView::NONE;
+
   }
 
 }

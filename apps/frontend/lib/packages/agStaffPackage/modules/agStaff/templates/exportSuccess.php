@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/*
+
 ?>
 
 <h2>Staff Export Status</h2>
@@ -29,7 +29,7 @@
   </li>
 </ul>
 
-<?php 
-*/
-?>
+<p>You can download your export file and have your processing stats without leaving the page.</p>
+<?php echo button_to('Download', 'staff/download?filename=staff_export') ?>
+ 
 

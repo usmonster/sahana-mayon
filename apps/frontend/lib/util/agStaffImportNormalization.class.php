@@ -22,6 +22,7 @@
  */
 class agStaffImportNormalization extends agImportNormalization
 {
+
   /**
    * Method to return an instance of this class
    * @param string $tempTable The name of the temporary import table to use
@@ -72,7 +73,7 @@ class agStaffImportNormalization extends agImportNormalization
   /**
    * Method to set the unprocessed records basename
    */
-  protected function  setUnprocessedBaseName()
+  protected function setUnprocessedBaseName()
   {
     $this->unprocessedBaseName = agGlobal::getParam('unprocessed_staff_import_basename');
   }
@@ -355,6 +356,7 @@ class agStaffImportNormalization extends agImportNormalization
    * Method to set new entities from our $_rawData.
    * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
+
   protected function setNewEntities(Doctrine_Connection $conn)
   {
     // make these explicit at the to to avoid building the graph multiple times
@@ -395,8 +397,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // here we log warnings about bad entities that we've been passed and chose to override
       if ($warnBadEntity) {
-        $warnMsg = sprintf("Bad entity id (%s).  Generated a new entity id.",
-                           $rawData['entity_id']);
+        $warnMsg = sprintf("Bad entity id (%s).  Generated a new entity id.", $rawData['entity_id']);
         $this->eh->logWarning($warnMsg);
       }
     }
@@ -405,8 +406,7 @@ class agStaffImportNormalization extends agImportNormalization
     $this->eh->logDebug('New entities successfully saved.');
 
     // now, loop through using the recently return import data and build staff the same way
-    foreach ($this->importData as $rowId => &$rowData)
-    {
+    foreach ($this->importData as $rowId => &$rowData) {
       // grab our entityId from the entity collection
       $entityId = $entityColl[$rowId]['id'];
 
@@ -429,8 +429,7 @@ class agStaffImportNormalization extends agImportNormalization
     unset($entityColl);
 
     // repeat for staff
-    foreach ($this->importData as $rowId => &$rowData)
-    {
+    foreach ($this->importData as $rowId => &$rowData) {
       // grab our personId from the person collection
       $personId = $personColl[$rowId]['id'];
 
@@ -453,8 +452,7 @@ class agStaffImportNormalization extends agImportNormalization
     unset($personColl);
 
     // repeat for staff
-    foreach ($this->importData as $rowId => &$rowData)
-    {
+    foreach ($this->importData as $rowId => &$rowData) {
       // grab our staffId from the staff collection
       $staffId = $staffColl[$rowId]['id'];
 
@@ -482,7 +480,7 @@ class agStaffImportNormalization extends agImportNormalization
     $results = array();
 
     // let's get ahold of our helper object since we're going to use him/her a lot
-    $pnh =& $this->helperObjects['agPersonNameHelper'];
+    $pnh = & $this->helperObjects['agPersonNameHelper'];
 
     // get our name types and map them back to the importNameTypes
     $nameTypes = $pnh->getNameTypeIds(array_values($importNameTypes));
@@ -727,13 +725,12 @@ class agStaffImportNormalization extends agImportNormalization
     $keepHistory = agGlobal::getParam('staff_import_keep_history');
     $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
 
-    if (!isset($this->geoSourceId))
-    {
+    if (!isset($this->geoSourceId)) {
       $this->geoSourceId = agDoctrineQuery::create()
-      ->select('gs.id')
-      ->from('agGeoSource gs')
-      ->where('gs.geo_source = ?', agGlobal::getParam('staff_import_geo_source'))
-      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+          ->select('gs.id')
+          ->from('agGeoSource gs')
+          ->where('gs.geo_source = ?', agGlobal::getParam('staff_import_geo_source'))
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     }
     $geoSourceId = $this->geoSourceId;
 
@@ -761,8 +758,7 @@ class agStaffImportNormalization extends agImportNormalization
       'civil_service_title' => 'Civil Service Title');
 
     // save this for future iterations
-    if (!isset($this->customFieldIds))
-    {
+    if (!isset($this->customFieldIds)) {
       $this->customFieldIds = agDoctrineQuery::create()
           ->select('pcf.person_custom_field')
           ->addSelect('pcf.id')
@@ -883,8 +879,7 @@ class agStaffImportNormalization extends agImportNormalization
     // Required columns.
     $requiredColumns = array('organization', 'resource_type', 'resource_status');
 
-    if (!isset($this->organizationIds))
-    {
+    if (!isset($this->organizationIds)) {
       $this->organizationIds = agDoctrineQuery::create()
           ->select('o.organization')
           ->addSelect('o.id')
@@ -894,8 +889,7 @@ class agStaffImportNormalization extends agImportNormalization
     }
     $organizationIds = $this->organizationIds;
 
-    if (!isset($this->stfRscTypeIds))
-    {
+    if (!isset($this->stfRscTypeIds)) {
       $this->stfRscTypeIds = agDoctrineQuery::create()
           ->select('srt.staff_resource_type')
           ->addSelect('srt.id')
@@ -905,8 +899,7 @@ class agStaffImportNormalization extends agImportNormalization
     }
     $stfRscTypeIds = $this->stfRscTypeIds;
 
-    if (!isset($this->stfRscStatusIds))
-    {
+    if (!isset($this->stfRscStatusIds)) {
       $this->stfRscStatusIds = agDoctrineQuery::create()
           ->select('srs.staff_resource_status')
           ->addSelect('srs.id')
@@ -1115,7 +1108,7 @@ class agStaffImportNormalization extends agImportNormalization
     $results = array();
 
     // let's get ahold of our helper object since we're going to use him/her a lot
-    $plh =& $this->helperObjects['agPersonLanguageHelper'];
+    $plh = & $this->helperObjects['agPersonLanguageHelper'];
 
 
     // loop through our raw data and build our person language data

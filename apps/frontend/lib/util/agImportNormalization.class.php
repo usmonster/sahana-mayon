@@ -266,7 +266,7 @@ abstract class agImportNormalization extends agImportHelper
     $this->eh->logWarning($eventMsg);
 
     // first search our directory for existing unprocessed files and remove
-    $pathBase = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
+    $pathBase = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
     foreach(glob(($pathBase . '*')) as $filename) {
       $eventMsg = 'Export: Removing old export file ' . $filename . '.';
       $this->eh->logDebug($eventMsg);
@@ -382,16 +382,18 @@ abstract class agImportNormalization extends agImportHelper
 
     // finally, move the zip file to its final web-accessible location
     $this->eh->logDebug('Export: Moving ' . $downloadFile . ' to user-accesible directory.');
-    $downloadPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $downloadFile;
+    $downloadPath = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $downloadFile;
     if (! rename($zipPath, $downloadPath)) {
       $this->eh->logErr('Export: Unable to move ' . $downloadFile . ' to the specified upload ' .
         'directory. Check your sf_upload_dir configuration to ensure you have write permissions.');
     }
 
-    $eventMsg = 'Export: Successfully created export file of unprocessed records.';
+    $eventMsg = "Export: Successfully created export file of unprocessed records.";
     $this->eh->logNotice($eventMsg);
 
-    return array('basename' => $downloadFile, 'path' => $downloadPath);
+
+    return $downloadFile;
+
   }
 
   /**
