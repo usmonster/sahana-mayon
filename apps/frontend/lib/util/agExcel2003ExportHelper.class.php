@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Provides entity phone helper functions and inherits several methods and properties from the
  * bulk record helper.

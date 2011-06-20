@@ -545,24 +545,25 @@ class agStaffActions extends agActions
 
 
      */
-    
+
     // Make sure the browser doesn't try to deliver a chached version
     $this->getResponse()->setHttpHeader("Pragma", "public");
     $this->getResponse()->setHttpHeader("Expires", "0");
-    $this->getResponse()->setHttpHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+    $this->getResponse()->setHttpHeader("Cache-Control",
+                                        "must-revalidate, post-check=0, pre-check=0");
 
     // Provide application and file info headers
     $this->getResponse()->setHttpHeader("Content-Type", "application/zip");
-    $this->getResponse()->setHttpHeader("Content-Disposition", "attachment; filename='" . $exportResponse['fileName'] ."'");
+    $this->getResponse()->setHttpHeader("Content-Disposition",
+                                        "attachment; filename='" . $exportResponse['fileName'] . "'");
     $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
     $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($exportResponse['filePath']));
 
     $exportFile = file_get_contents($exportResponse['filePath']);
-    
+
     $this->getResponse()->setContent($exportFile);
     $this->getResponse()->send();
     //$this->redirect('staff/index');
-
   }
 
   //TODO: put this in the global actions file?
@@ -643,4 +644,5 @@ class agStaffActions extends agActions
     $this->unprocessedXLS = $this->importer->getUnprocessedXLS;
     echo "";
   }
+
 }
