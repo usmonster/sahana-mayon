@@ -316,7 +316,7 @@ abstract class agImportNormalization extends agImportHelper
       $exportData[] = $row;
 
       // continue fetching until we either run out of records or hit our batch limit
-      while (($row = $pdo->fetch()) && ($fetchPosition % $this->XlsMaxExportSize != 0)) {
+      while (($fetchPosition % $this->XlsMaxExportSize != 0) && ($row = $pdo->fetch())) {
         // always increment fetch position immediately
         $fetchPosition++;
 
@@ -494,10 +494,13 @@ abstract class agImportNormalization extends agImportHelper
     // these aren't required but make the code more readable
     $batchSize = $this->iterData['batchSize'];
     $fetchPosition = & $this->iterData['fetchPosition'];
+
+    // increment our fetch counter
     $batchPosition = & $this->iterData['batchPosition'];
+    $batchPosition++;
     $batchStart = $fetchPosition + 1;
     $this->iterData['batchStart'] = $batchStart;
-    $batchEnd = ($fetchPosition + $batchSize - 1);
+    $batchEnd = ($fetchPosition + $batchSize);
 
     // get our PDO object
     $pdo = $this->_PDO[$this->tempToRawQueryName];
@@ -507,12 +510,15 @@ abstract class agImportNormalization extends agImportHelper
     $this->eh->logDebug($eventMsg);
 
     // fetch the data up until it ends or we hit our batchsize limit
-    while (($row = $pdo->fetch()) && ($fetchPosition <= $batchEnd)) {
+    while (($fetchPosition < $batchEnd) && ($row = $pdo->fetch())) {
+      // increment our fetch counter
+      $fetchPosition++;
+
       // modify the record just a little
       $rowId = $row->id;
 
       // add it to import data array and iterate our counter
-      $this->eh->logDebug('Fetching row {' . $rowId . '} from temp table into import data.');
+      $this->eh->logDebug('Fetching row ' . $rowId . ' from temp table into import data.');
 
       // use the import spec as our definitive columns list and add the obj properties magically
       foreach ($this->importSpec as $columnName => $columnSpec) {
@@ -522,11 +528,7 @@ abstract class agImportNormalization extends agImportHelper
         }
       }
       $this->importData[$rowId]['primaryKeys'] = array();
-      $fetchPosition++;
     }
-
-    // iterate our batch counter too
-    $batchPosition++;
 
     $eventMsg = 'Successfully fetched batch ' . $batchPosition . ' (Records ' . $batchStart .
       ' to ' . $fetchPosition . ')';
