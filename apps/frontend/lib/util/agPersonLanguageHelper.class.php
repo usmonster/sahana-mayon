@@ -358,13 +358,13 @@ class agPersonLanguageHelper extends agLanguageHelper
               else
               {
                 // Capture invalid format/competency records.
-                if (isset($invalidLanguages[$personId]))
+                if (isset($invalidLanguages[$personId][$priority]))
                 {
-                  $invalidLanguages[$personId][$priority][1][$formatIds[$format]] = $competencyIds[$competency];
+                  $invalidLanguages[$personId][$priority][1][$format] = $competency;
                 }
                 else
                 {
-                  $invalidLanguages[$personId][$priority] = array($langComps[1], array($format => $competency));
+                  $invalidLanguages[$personId][$priority] = array($langComps[0], array($format => $competency));
                 }
               }
               unset($personLanguages[$personId][$priority][1][$format]);
