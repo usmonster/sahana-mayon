@@ -28,32 +28,5 @@
 
 <br />
 
-<?php #include_partial('exportXls', array('exportPath' => $exportPath, 'count' => $count)) ?>
-
-<?php 
-//echo link_to('Export Nonprocessed Staff File',
-//                   'foo/export',
-//                   array('exportFile' => $exportFile,
-//                         'exportFileName' => $exportFileName
-//                        ),
-//                   'class' => 'buttonText',
-//                   'target' => 'blank'
-//                  );
-        ?>
-<a class="buttonText" href="<?php echo url_for('foo/export') ?>" target="_blank">Export Error File</a>
-
-<!--<form action="<?php #echo url_for('foo/index')?>" method="post" name="foo">
-  <table>
-    <tr>
-      <th>Count</th>
-      <td><?php #echo $count; ?></td>
-    </tr>
-      <th>File</th>
-      <td>
-        <input type="submit" value="Export Hello to Xls" id ="export" name="exportXls" class="buttonText"/>
-        <input type="hidden" value="<?php #echo $exportPath; ?>" id ="filePath" name="filePath" />
-        <input type="hidden" value="<?php #echo $count; ?>" id="count" name="count" />
-      </td>
-    </tr>
-  </table>
-</form>-->
+<!-- Comment out link for export testing. -->
+<!--<a class="buttonText" href="<?php #echo url_for('foo/export') ?>" target="_blank">Export Error File</a>-->

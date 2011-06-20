@@ -22,45 +22,9 @@ class agFooActions extends agActions
 //    $results = $dh->test();
 //    print_r($results) ;
 
-//    if ($request->hasParameter('count'))
-//    {
-//      $this->count = $request->getParameter('count');
-//    }
-//    else
-//    {
-//      $this->count = 0;
-//    }
-//#    $this->count = ($request->hasParameter('count')) ? $request->getParameter('count')+1 : 0;
-//#    $this->stop = ($request->hasParameter('stop')) ? $request->getParameter('stop') : 0;
-//
-//    $this->exportPath = '/home/s/Downloads/Facilities-Hurricane_A-17-06-11-15-21-15.xls';
-//    $this->exportFileName = 'ExportFile.xls';
-//
-//    if ($request->isMethod(sfRequest::POST)) {
-//      $this->count = $request->getParameter('count')+1;
-//      if ($request->hasParameter('exportXls') && (!$request->hasParameter('stop')))
-//      {
-//        $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-//        $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $this->exportFileName . '"');
-//
-//        $exportFile = file_get_contents($request->getParameter('filePath'));
-//
-//        $this->getResponse()->setContent($exportFile);
-//        $this->getResponse()->send();
-//        unlink($exportResponse['filePath']);
-//
-//        $this->getRequest()->setParameter('count', $this->count);
-//        $this->getRequest()->setParameter('stop', 1);
-//        $this->forward($request->getParameter('module'), 'index');
-//      }
-//      else
-//      {
-//        $this->getRequest()->getParameterHolder()->remove('stop');
-//        echo "hello";
-//      }
-//    }
-
-
+    // This is to test exporting an xls file without refreshing current html page.
+    // These attributes will be used in a new window.  The new window will call the executeExport
+    // method to export the xls file.
     $exportFileName = 'ExportFile.xls';
     $this->getUser()->setAttribute('exportFileName', $exportFileName);
 
@@ -69,31 +33,35 @@ class agFooActions extends agActions
 // <-------- CUT HERE -------->
   }
 
-  public function executeExport(sfWebRequest $request)
-  {
-    $this->errMsg = NULL;
-
-    if ($this->getUser()->hasAttribute('exportFile') && $this->getUser()->hasAttribute('exportFileName'))
-    {
-      $exportFileName = $this->getUser()->getAttribute('exportFileName');
-      $exportFile = $this->getUser()->getAttribute('exportFile');
-
-      $exportFile = file_get_contents($exportFile);
-
-      $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportFileName . '"');
-
-      $this->getResponse()->setContent($exportFile);
-      $this->getResponse()->send();
-
-//      $this->getUser()->getAttributeHolder()->remove('exportFile');
-//      $this->getUser()->getAttributeHolder()->remove('exportFileName');
-    }
-    else
-    {
-      $this->errMsg = 'Error exporting file!';
-    }
-  }
+//  /**
+//   * For testing purposes.  This method was to spit out an xls file that was defined in the user's
+//   * attributes.
+//   */
+//  public function executeExport(sfWebRequest $request)
+//  {
+//    $this->errMsg = NULL;
+//
+//    if ($this->getUser()->hasAttribute('exportFile') && $this->getUser()->hasAttribute('exportFileName'))
+//    {
+//      $exportFileName = $this->getUser()->getAttribute('exportFileName');
+//      $exportFile = $this->getUser()->getAttribute('exportFile');
+//
+//      $exportFile = file_get_contents($exportFile);
+//
+//      $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+//      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportFileName . '"');
+//
+//      $this->getResponse()->setContent($exportFile);
+//      $this->getResponse()->send();
+//
+////      $this->getUser()->getAttributeHolder()->remove('exportFile');
+////      $this->getUser()->getAttributeHolder()->remove('exportFileName');
+//    }
+//    else
+//    {
+//      $this->errMsg = 'Error exporting file!';
+//    }
+//  }
 
   public function executeList(sfWebRequest $request)
   {
