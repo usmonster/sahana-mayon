@@ -54,7 +54,7 @@ class agStaffImportNormalization extends agImportNormalization
     $this->tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8');
     $this->importHeaderStrictValidation = TRUE;
 
-    $this->eh->setErrThreshold(agGlobal::getParam('import_error_threshold'));
+    $this->eh->setErrThreshold(intval(agGlobal::getParam('import_error_threshold')));
   }
 
   /**

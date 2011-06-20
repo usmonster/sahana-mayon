@@ -87,7 +87,8 @@ $i = 1;
 <div class="formSmall">
 <h3>Notice:</h3>
 <p>All import records could not be processed. Please click the Export Failed Records button below to download an XLS with the failed rows. You are encouraged to correct these rows and re-submit the file. Do not re-submit the original file as it may cause errors and duplication.</p>
-<a href="<?php echo $unprocessedXLS; ?>" class="generalButton" title="Export Failed Records">Export Failed Records</a>
+<?php echo link_to('Export Unprocessed Records', 'staff/import/exportunprocessed', array(
+  'query_string' => 'file=' . $unprocessedXLS['path'])) ?>
 </div>
 <?php } ?>
 

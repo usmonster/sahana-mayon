@@ -391,7 +391,7 @@ abstract class agImportNormalization extends agImportHelper
     $eventMsg = 'Export: Successfully created export file of unprocessed records.';
     $this->eh->logNotice($eventMsg);
 
-    return $downloadPath;
+    return array('basename' => $downloadFile, 'path' => $downloadPath);
   }
 
   /**
@@ -493,15 +493,15 @@ abstract class agImportNormalization extends agImportHelper
     $batchSize = $this->iterData['batchSize'];
     $fetchPosition = & $this->iterData['fetchPosition'];
     $batchPosition = & $this->iterData['batchPosition'];
-    $batchStart = & $this->iterData['batchStart'];
-    $batchStart = $fetchPosition;
+    $batchStart = $fetchPosition + 1;
+    $this->iterData['batchStart'] = $batchStart;
     $batchEnd = ($fetchPosition + $batchSize - 1);
 
     // get our PDO object
     $pdo = $this->_PDO[$this->tempToRawQueryName];
 
     // log this event
-    $eventMsg = "Loading batch starting at {$fetchPosition} from the temp table";
+    $eventMsg = 'Loading batch starting at ' . $batchStart . ' from the temp table';
     $this->eh->logDebug($eventMsg);
 
     // fetch the data up until it ends or we hit our batchsize limit
@@ -514,7 +514,7 @@ abstract class agImportNormalization extends agImportHelper
 
       // use the import spec as our definitive columns list and add the obj properties magically
       foreach ($this->importSpec as $columnName => $columnSpec) {
-        // checking for empty negates the need for an explicit removal step
+        // checking for empty negates the neebasenamed for an explicit removal step
         if (!empty($row->$columnName)) {
           $this->importData[$rowId]['_rawData'][$columnName] = $row->$columnName;
         }
@@ -526,7 +526,8 @@ abstract class agImportNormalization extends agImportHelper
     // iterate our batch counter too
     $batchPosition++;
 
-    $eventMsg = "Successfully fetched batch {$batchPosition} (Records {$batchStart} to {$fetchPosition})";
+    $eventMsg = 'Successfully fetched batch ' . $batchPosition . ' (Records ' . $batchStart .
+      ' to ' . $fetchPosition . ')';
     $this->eh->logInfo($eventMsg);
   }
 
@@ -543,6 +544,7 @@ abstract class agImportNormalization extends agImportHelper
     $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
     $ctResults = $this->executePdoQuery($conn, $ctQuery);
     $this->iterData['fetchCount'] = $ctResults->fetchColumn();
+    $this->iterData['unprocessed'] = $this->iterData['fetchCount'];
 
     // now caclulate the number of batches we'll need to process it all
     $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));

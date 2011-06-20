@@ -641,8 +641,21 @@ class agStaffActions extends agActions
 
     // close out import components and create an xls if needed
     $this->importer->concludeImport();
-    $this->unprocessedXLS = $this->importer->getUnprocessedXLS;
-    echo "";
+    $this->unprocessedXLS = $this->importer->getUnprocessedXLS();
+  }
+
+  public function executeExportunprocessed(sfWebRequest $request)
+  {
+    $filename = $request['file'];
+    $path = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $filename;
+    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+    $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' .
+      $filename . '"');
+
+    $exportFile = file_get_contents($path);
+
+    $this->getResponse()->setContent($exportFile);
+    $this->getResponse()->send();
   }
 
 }

@@ -42,6 +42,9 @@ staff_import_clear:
   #TODO: check on this
   requirements:
     sf_method: [delete]
+staff_export_unprocessed:
+  url:   /staff/import/exportunprocessed
+  param: { module: agStaff, action: exportunprocessed }
 staff_addstaffresource:
   url:   /staff/addstaffresource
   param: { module: agStaff, action: addstaffresource }
