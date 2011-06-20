@@ -67,6 +67,10 @@ class agExcel2003ExportHelper
     header("Content-Transfer-Encoding: binary ");
   }
 
+  /**
+   * Streams the data to the browser
+   * @return nothing
+   */
   function send()
   {
     $this->eofMarker();
@@ -74,6 +78,11 @@ class agExcel2003ExportHelper
     echo $this->data;
   }
 
+  /**
+   * Saves XLS file to a file path location
+   * @param type $file 
+   * @return nothing
+   */
   function save($file)
   {
     $this->eofMarker();
