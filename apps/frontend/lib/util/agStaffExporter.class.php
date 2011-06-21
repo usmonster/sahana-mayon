@@ -456,8 +456,6 @@ class agStaffExporter
     // set some smart variables
     $date = date('Ymd_His');
     $downloadFile = sprintf("staff_export_%s.zip", $date);
-    $filePath = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR
-        . 'data/downloads' . DIRECTORY_SEPARATOR . $fileName;
     $zipPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $downloadFile;
     $exportFiles = array();
 
