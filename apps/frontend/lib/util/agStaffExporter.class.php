@@ -453,14 +453,20 @@ class agStaffExporter
     // Populate lookups
     $lookUps = $this->gatherLookupValues($this->lookUps);
 
-
+    // set some smart variables
+    $date = date('Ymd_His');
+    $downloadFile = sprintf("staff_export_%s.zip", $date);
+    $filePath = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR
+        . 'data/downloads' . DIRECTORY_SEPARATOR . $fileName;
+    $zipPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $downloadFile;
+    $exportFiles = array();
 
     // Get our max export size
     $XlsMaxExportSize = agGlobal::getParam('xls_max_export_size');
 
     // Create zip file
     $zipFile = new ZipArchive();
-    $downloadFile = "staff_export.zip";
+    
     $tmpPath = realpath(sys_get_temp_dir()) . "/$downloadFile";
 
     if ($zipFile->open($tmpPath, ZIPARCHIVE::CREATE) !== TRUE) {
@@ -468,10 +474,6 @@ class agStaffExporter
     } else {
       $this->logger->debug("Export: Successfully created $tmpPath.");
     }
-
-
-
-    $exportFiles = array();
 
     // Interate through each organization
     foreach ($orgList as $key => $orgName) {
@@ -489,23 +491,19 @@ class agStaffExporter
           // load the Excel writer object
           $this->xlsWb = new agExcel2003ExportHelper($orgName);
 
-          $todaydate = date("Ymd_His");
           $fileName = $this->xlsWb->filename($orgName);
 
           if (count($xlsBatch) > 1) {
             $fileName .= "-" . ($i + 1);
           }
 
-          $fileName = sprintf("staff_%s_%s.xls", $fileName, $todaydate);
+          $fileName = sprintf("staff_%s_%s.xls", $fileName, $date);
           $filePath = realpath(sys_get_temp_dir()) . '/' . $fileName;
-
-          $foo = $xlsBatch[$i];
 
           // Generate the Excel file
           $this->buildExcelWorkbook($xlsBatch[$i], $lookUps, $filePath, $orgName);
           $exportFiles[] = array($filePath, $fileName);
         }
-
 
         // Capture peak memory
         $currentMemoryUsage = memory_get_usage();
@@ -526,13 +524,21 @@ class agStaffExporter
 
     // Close up the zip
     $zipFile->close();
+    
+    // finally, move the zip file to its final web-accessible location
+    $this->logger->debug('Export: Moving ' . $downloadFile . ' to user-accesible directory.');
+    $downloadPath = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $downloadFile;
+    if (! rename($zipPath, $downloadPath)) {
+      $this->logger->err('Export: Unable to move ' . $downloadFile . ' to the specified upload ' .
+        'directory. Check your sf_upload_dir configuration to ensure you have write permissions.');
+    }
 
     // Delete raw files
     foreach ($exportFiles as $file) {
       unlink($file[0]);
     }
 
-    return array('fileName' => $downloadFile, 'filePath' => $tmpPath);
+    return $downloadFile;
   }
 
   /**

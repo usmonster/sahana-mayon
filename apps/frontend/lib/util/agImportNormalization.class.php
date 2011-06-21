@@ -290,6 +290,7 @@ abstract class agImportNormalization extends agImportHelper
     } else {
       $this->eh->logDebug('Export: Successfully created' .  $zipPath . '.');
     }
+    
     // get our temporary table read connection
     $conn = $this->getConnection(self::CONN_TEMP_READ);
     $columnHeaders = array_keys($this->importSpec);

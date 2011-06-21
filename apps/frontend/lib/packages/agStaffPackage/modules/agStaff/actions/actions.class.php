@@ -511,22 +511,13 @@ class agStaffActions extends agActions
     $this->startTime = microtime(true);
 
     $staffExporter = new agStaffExporter();
-    $exportResponse = $staffExporter->export();
+    $this->exportFile = $staffExporter->export();
 
     // Get the memory usage
     $peakMemory = $staffExporter->peakMemory;
 
     // Free up some memory by getting rid of the agFacilityExporter object.
     unset($staffExporter);
-
-    //$this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-    //$this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportResponse['fileName'] . '"');
-    //$exportFile = file_get_contents($exportResponse['filePath']);
-    //$this->getResponse()->setContent($exportFile);
-    //$this->getResponse()->send();
-    //unlink($exportResponse['filePath']);
-    //
-    
     
       // Report elapsed time
     $this->endTime = microtime(true);
@@ -543,10 +534,6 @@ class agStaffActions extends agActions
     }
     $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
 
-
-
-
-    //$this->redirect('staff/index');
   }
 
   //TODO: put this in the global actions file?

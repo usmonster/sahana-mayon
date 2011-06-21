@@ -29,7 +29,7 @@
   </li>
 </ul>
 
-<p>You can download your export file and have your processing stats without leaving the page.</p>
-<?php echo button_to('Download', 'staff/download?filename=staff_export') ?>
+<p>Download the <?php echo $exportFile ?>.</p>
+<?php echo button_to("Download", "staff/download?filename=$exportFile") ?>
  
 
