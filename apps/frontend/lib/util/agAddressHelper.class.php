@@ -816,6 +816,17 @@ class agAddressHelper extends agBulkRecordHelper
       throw new Exception($errMsg);
     }
 
+    // clean up our data (ucwords etc)
+    foreach ($addresses as &$address)
+    {
+      foreach($address[0] as &$component)
+      {
+        $component = self::ucTrim($component);
+      }
+      unset($component);
+    }
+    unset($address);
+
     // set up the incompletes (non-processed) array
     $incompleteAddresses = array() ;
 
@@ -1185,9 +1196,6 @@ class agAddressHelper extends agBulkRecordHelper
             // save the address
             $addrValue->save($conn) ;
             $valueId = $addrValue->getId() ;
-
-            // and since that went right, add it to our results arrays
-            $resultsCache[$elementId] = $valueId ;
           }
           catch(Exception $e)
           {
@@ -1200,6 +1208,9 @@ class agAddressHelper extends agBulkRecordHelper
             break ;
           }
         }
+
+      // and since that all went right, add it to our results arrays
+      $resultsCache[$elementId] = $valueId ;
       }
 
       // now we attempt to insert the new address_id with all of our value bits, again only useful

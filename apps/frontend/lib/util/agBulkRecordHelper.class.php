@@ -17,6 +17,9 @@
 abstract class agBulkRecordHelper
 {
 
+  const       REGEX_MULTISPACE_PATTERN = '/  +/';
+  const       REGEX_MULTISPACE_REPLACE = ' ';
+
   public      $strictBatchSize = FALSE,
               $throwOnError = TRUE,
               $purgeOrphans = FALSE,
@@ -153,6 +156,23 @@ abstract class agBulkRecordHelper
 
     // we json encode the return to
     return md5(json_encode($recordComponentsArray));
+  }
+
+  /**
+   * Method to take a record component array and return a json encoded, md5sum'ed record component hash.
+   * @param array $recordComponentsArray An associative array of record components keyed by
+   * elementId with the string value.
+   * @param boolean $isKeyOrderTrusted A flag to specify whether or not the component array already
+   * has a trusted order. A value of TRUE will skip the ordering step of hash generation.
+   * @return string(128) A 128-bit md5sum string.
+   */
+  public static function ucTrim($value)
+  {
+    return strtolower(
+      trim(
+        preg_replace(self::REGEX_MULTISPACE_PATTERN, self::REGEX_MULTISPACE_REPLACE, $value)
+      )
+    );
   }
 
 }
