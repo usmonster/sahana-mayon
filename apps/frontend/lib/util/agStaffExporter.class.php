@@ -463,6 +463,17 @@ class agStaffExporter
 
     // Get our max export size
     $XlsMaxExportSize = agGlobal::getParam('xls_max_export_size');
+    
+    // first search our directory for existing unprocessed files and remove
+    $pathBase = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . 'staff_export_';
+    foreach(glob(($pathBase . '*')) as $filename) {
+      $eventMsg = 'Export: Removing old export file ' . $filename . '.';
+      $this->logger->debug($eventMsg);
+      unlink($filename);
+      $eventMsg = 'Export: Successfully removed old export file ' . $filename . '.';
+      $this->logger->info($eventMsg);
+    }
+    
 
     // Create zip file
     $zipFile = new ZipArchive();
