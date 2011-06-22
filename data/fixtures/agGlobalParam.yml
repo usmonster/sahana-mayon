@@ -226,3 +226,13 @@ agGlobalParam:
     agHost: localhost
     datapoint: event_pre_deploy_status
     value: Pre-Deployment
+  staff_list_results_per_page:
+    id: 46
+    agHost: localhost
+    datapoint: staff_list_results_per_page
+    value: 20
+  search_list_results_per_page:
+    id: 47
+    agHost: localhost
+    datapoint: search_list_results_per_page
+    value: 20

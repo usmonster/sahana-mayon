@@ -499,7 +499,7 @@ class scenarioActions extends agActions
     $this->wizardHandler($request, 5);
     $this->scenario_staff_count = Doctrine_Core::getTable('agScenarioStaffResource')
             ->findby('scenario_id', $this->scenario_id)->count();
-    $this->target_module = 'staff';
+    $this->targetModule = 'staff';
 
     $this->saved_searches = $existing = agDoctrineQuery::create()
         ->select('ssg.*')
@@ -570,13 +570,13 @@ class scenarioActions extends agActions
 
       $staff_resource_ids = agStaffGeneratorHelper::executeStaffPreview($search_condition);
 
-      $resultArray = agListHelper::getStaffList($staff_resource_ids);
-      $this->limit = null;
       $this->status = 'active';
-      $this->pager = new agArrayPager(null, 10);
-      $this->pager->setResultArray($resultArray);
-      $this->pager->setPage($this->getRequestParameter('page', 1));
-      $this->pager->init();
+      list($this->displayColumns, $query) = agListHelper::getStaffList($staff_resource_ids, $this->status, $this->sort, $this->order, 'staffresource');
+
+      $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+      $resultsPerPage = agGlobal::getParam('search_list_results_per_page');
+      $this->pager = new Doctrine_Pager($query, $currentPage, $resultsPerPage);
+      $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
     }
 //SAVE
     elseif ($request->getParameter('Save') || $request->getParameter('Continue')) { //otherwise, we're SAVING/UPDATING

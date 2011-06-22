@@ -61,9 +61,11 @@ abstract class PluginagStaffResource extends BaseagStaffResource
         ->addSelect('srt.staff_resource_type_abbr')
         ->addSelect('srs.staff_resource_status')
         ->addSelect('srs.is_available')
+        ->addSelect('eec.id')
         ->addSelect('ect.email_contact_type')
         ->addSelect('o.organization')
         ->addSelect('ec.email_contact')
+        ->addSelect('epc.id')
         ->addSelect('pct.phone_contact_type')
         ->addSelect('pc.phone_contact')
         ->from('agStaffResource AS sr')
@@ -134,6 +136,7 @@ abstract class PluginagStaffResource extends BaseagStaffResource
       $ncId = $nc[0];
 
       // build the clause strings
+      $selectId = 'pmpn' . $ncId . '.id';
       $column = 'pn' . $ncId . '.person_name';
       $select = $column . ' AS name' . $ncId;
       $pmpnJoin = 'p.agPersonMjAgPersonName AS pmpn' . $ncId . ' WITH pmpn' . $ncId .
@@ -152,7 +155,8 @@ abstract class PluginagStaffResource extends BaseagStaffResource
           ')';
 
       // add the clauses to the query
-      $q->addSelect($select)
+      $q->addSelect($selectId)
+          ->addSelect($select)
           ->leftJoin($pmpnJoin, $ncId)
           ->leftJoin($pnJoin)
           ->andWhere($where, $ncId);

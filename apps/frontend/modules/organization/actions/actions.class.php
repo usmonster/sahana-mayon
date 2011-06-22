@@ -20,8 +20,14 @@ class organizationActions extends agActions
 
   public function executeSearch(sfWebRequest $request)
   {
-    parent::doSearch($request->getParameter('query'));
-    $this->target_module = 'organization';
+    $this->targetAction = 'search';
+    $string = $request->getParameter('query');
+    $pattern = "/\W/";
+    $replace = " ";
+    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
+//    $this->params = '?query=' . $request->getParameter('query');
+    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+    parent::doSearch($request->getParameter('query'), $currentPage);
     $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
   }
 

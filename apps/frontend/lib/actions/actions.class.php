@@ -28,8 +28,14 @@ class agActions extends sfActions
 
   public function executeSearch(sfWebRequest $request)
   {
-
-    self::doSearch($request->getParameter('query'));
+    $this->targetAction = 'search';
+    $string = $request->getParameter('query');
+    $pattern = "/\W/";
+    $replace = " ";
+    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
+//    $this->params = '?query=' . $request->getParameter('query');
+    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+    self::doSearch($request->getParameter('query'), $currentPage);
     $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
     //$this->setTemplate('global/search');
   }
@@ -62,10 +68,10 @@ class agActions extends sfActions
     return $this->renderText($status);
   }
 
-  public function doSearch($searchquery, $isFuzzy = TRUE, $widget = NULL)
+  public function doSearch($searchquery, $currentPage, $isFuzzy = TRUE, $widget = NULL)
   {
     $models = $this->getSearchedModels();
-    $this->target_module = 'staff';
+    $this->targetModule = 'staff';
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
 
@@ -78,43 +84,48 @@ class agActions extends sfActions
     $this->results = $query->getRecords();
     $this->hits = $query->getHits();
     $this->widget = $widget;
-    $this->limit = null;
-    $resultArray = array();
-
-    $this->pager = new agArrayPager(null, 10);
 
     $searchResult = $query->getRecords(); //agStaff should be $models
     // TODO
     //a) we can return the results hydrated as scalar
     // (only get the PK's[person,entity,staff,facility,etc])
-    //if($models == 'agStaff'){
 
-    if (count($searchResult) > 0) {
-      if (isset($searchResult['agStaff'])) {
-        $this->target_module = 'staff';
+    $resultsPerPage = agGlobal::getParam('search_list_results_per_page');
+
+    if ($models[0] == 'agStaff')
+    {
+      $staff_ids = array();
+      $this->targetModule = 'staff';
+      if ( (isset($searchResult['agStaff']) || ($models[0] == 'agStaff')) && (count($searchResult) != 0) )
+      {
         $staffCollection = $searchResult['agStaff'];
-        $staff_ids = $staffCollection->getKeys(); // toArray();
-        $resultArray = agListHelper::getStaffList($staff_ids);
-      } elseif (isset($searchResult['agFacility'])) {
-        $this->target_module = 'facility';
-        $facilityCollection = $searchResult['agFacility'];
-        $facility_ids = $facilityCollection->getKeys(); // toArray();
-        $resultArray = agListHelper::getFacilityList($facility_ids);
-        // @todo change the above to use a FacilityList return
-      } elseif(isset($searchResult['agOrganization'])) {
-        $this->target_module = 'organization';
-        $organizationCollection = $searchResult['agOrganization'];
-        $organization_id = $organizationCollection->getKeys();
-        $resultArray = agListHelper::getOrganizationList($organization_id);
-      } else {
-        //$resultArray = array();
+        $staff_ids = $staffCollection->getKeys();
       }
+      list($this->displayColumns, $pagerQuery) = agListHelper::getStaffList($staff_ids);
+    } elseif ($models[0] == 'agFacility') {
+      $facility_ids = array();
+      $this->targetModule = 'facility';
+      if ( (isset($searchResult['agFacility']) || ($models[0] == 'agFacility')) && (count($searchResult) != 0) )
+      {
+        $facilityCollection = $searchResult['agFacility'];
+        $facility_ids = $facilityCollection->getKeys();
+      }
+      list($this->displayColumns, $pagerQuery) = agListHelper::getFacilityList($facility_ids);
+    } elseif($models[0] == 'agOrganization') {
+      $organization_ids = array();
+      $this->targetModule = 'organization';
+      if ( (isset($searchResult['agOrganization']) || ($models[0] == 'agOrganization')) && (count($searchResult) != 0) )
+      {
+        $organizationCollection = $searchResult['agOrganization'];
+        $organization_ids = $organizationCollection->getKeys();
+      }
+      list($this->displayColumns, $pagerQuery) = agListHelper::getOrganizationList($organization_ids);
+    } else {
+      $this->forward404("Search Module Undefined.");
     }
 
-    $this->pager->setResultArray($resultArray);
-    // $this->pager->setResultArray($staffArray);
-    $this->pager->setPage($this->getRequestParameter('page', 1));
-    $this->pager->init();
+    $this->pager = new Doctrine_Pager($pagerQuery, $currentPage, $resultsPerPage);
+    $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
   }
 
   public function getSearchedModels()

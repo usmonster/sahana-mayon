@@ -1,23 +1,19 @@
 <?php
-$data = $obj; //->getRaw();
-//$column_array = $displayColumns->toArray();
-//this is used draw each result as a row, coming from _list.php
-//$columns are our desired columns.. keyed by the name of the value array to echo
-foreach ($displayColumns as $key => $value) {
-  $display_columns[] = $key;
-}
-?>
-<tr>
+  $data = $sf_data->getRaw('data');
+  $displayColumns = $sf_data->getRaw('displayColumns');
+  $display_columns = array_keys($displayColumns);
 
-  <?php
-  foreach ($data as $column => $value) {
-//array_keys
-    if (in_array($column, $display_columns)) {
-  ?>
-      <td><?php
+  foreach ($data as $row)
+  {
+    echo '<tr>';
+
+    foreach ($display_columns AS $key => $column)
+    {
+      echo '<td>';
+      $value = $row[$displayColumns[$column]['index']];
       if ($column == 'id') {
-        echo link_to('Edit', $target_module . '/edit?id=' . $data['id'], array('class' => 'continueButton', 'title' => 'Edit'));
-        echo link_to('Show', $target_module . '/show?id=' . $data['id'], array('class' => 'generalButton', 'title' => 'Show'));
+        echo link_to('Edit', $targetModule . '/edit?id=' . $value, array('class' => 'continueButton', 'title' => 'Edit'));
+        echo link_to('Show', $targetModule . '/show?id=' . $value, array('class' => 'generalButton', 'title' => 'Show'));
       } elseif($column == 'emails') {
         if($value != '---'){
           echo '<a class="linkText" href="mailto:' . $value . '">' . $value . '</a>';
@@ -29,9 +25,10 @@ foreach ($displayColumns as $key => $value) {
       else{
         echo $value;
       }
-  ?></td>
-  <?php
+
+      echo '</td>';
     }
+
+    echo '</tr>';
   }
   ?>
-</tr>
