@@ -27,7 +27,7 @@
           <form action="<?php echo url_for('event/meta')?>" method="post" name="scenario">
             <input type="hidden" value="<?php echo $ag_scenario->getId() ?>"
                    id ="ag_scenario_list" name="ag_scenario_list" />
-            <input type="submit" value="Deploy as Event" class="continueButton" />
+            <input type="submit" value="Deploy as Event" class="continueButton" name="create"/>
           </form>
         </td>
     </tr>

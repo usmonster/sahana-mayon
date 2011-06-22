@@ -48,7 +48,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   /**
    * Method to return an instance of agEventStaffDeploymentHelper
    * @param integer $eventId An event ID
-   * @return self An instance of agEventStaffDeploymentHelper
+   * @return agEventStaffDeploymentHelper An instance of agEventStaffDeploymentHelper
    */
   public static function getInstance($eventId, $eventDebugLevel = NULL)
   {
@@ -658,14 +658,10 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                              $facLon)
   {
     // start with our basic query object
-    $q = agDoctrineQuery::create()
-      ->select('evs.id')
-        ->from('agEventStaff evs')
-          ->innerJoin('evs.agEventStaffStatus ess')
-          ->innerJoin('ess.agStaffAllocationStatus sas')
-          ->innerJoin('evs.agStaffResource sr')
-          ->innerJoin('sr.agStaffResourceStatus srs')
-          ->innerJoin('sr.agStaff s')
+    $q = agEventStaff::getActiveEventStaffQuery($this->eventId);
+
+    $q->select('evs.id')
+        ->innerJoin('sr.agStaff s')
           ->innerJoin('s.agPerson p')
           ->innerJoin('p.agEntity e')
           ->innerJoin('e.agEntityAddressContact eac')
@@ -674,10 +670,8 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('ag.agGeo g')
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
-        ->where('evs.event_id = ?', $this->eventId)
-          ->andWhere('sr.staff_resource_type_id = ?', $staffResourceTypeId)
+        ->andWhere('sr.staff_resource_type_id = ?', $staffResourceTypeId)
           ->andWhere('sas.allocatable = ?', TRUE)
-          ->andWhere('srs.is_available = ?', TRUE)
           ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
         ->orderBy('evs.deployment_weight DESC')
         ->limit($staffCount);

@@ -158,6 +158,7 @@ class agStaffGeneratorHelper extends agSearchHelper
         $coll->remove($index);
       }
     }
+    unset($record);
 
     // we've now done updates and deletes, let's handle our inserts
     foreach ($staffResources as $staffResourceId => $searchWeight)
@@ -260,7 +261,7 @@ class agStaffGeneratorHelper extends agSearchHelper
   {
     // build our basic staff search query
     $q = agDoctrineQuery::create()
-        ->select('agStaffResource.staff_id')
+        ->select('agStaffResource.id')
         ->from('agStaffResource agStaffResource')
           ->innerJoin('agStaffResource.agOrganization agOrganization')
           ->innerJoin('agStaffResource.agStaffResourceType agStaffResourceType')

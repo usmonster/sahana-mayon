@@ -21,7 +21,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 
             <?php
             $exportUrl = url_for('event/exportcontacts?event=' . urlencode($sf_data->getRaw('event_name')));
-            echo link_to('Export Unconfirmed Staff Contact List', $exportUrl, array('class' => 'generalButton'));
+            echo link_to('Export Unconfirmed Staff List', $exportUrl, array('class' => 'generalButton'));
             //on click of this button, set the div content to 'exporting data, please wait'
             if (isset($exportComplete)) {
                 echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';

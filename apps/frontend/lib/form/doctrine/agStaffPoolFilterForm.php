@@ -57,6 +57,7 @@ class agStaffPoolFilterForm extends sfForm
             'agOrganization.organization' => new sfWidgetFormDoctrineChoice(
                array(
                  'model' => 'agOrganization',
+                 'order_by' => array('organization', 'asc'),
                  'method' => 'getOrganization',
                  'label' => 'Organization <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a>',
                  'add_empty' => true),

@@ -248,7 +248,7 @@ class eventActions extends agActions
                               ->findBy('event_status_type', $deployStatus)->getFirst()->id;
 
           // Do not allow meta updates if an event is not in pre-deploymnet status.
-          if (!is_null(isActiveEvent))
+          if (!is_null($isActiveEvent))
           {
             if (!$isActiveEvent) {
               $this->errMsg = 'Cannot apply changes to meta on closed event.';
@@ -339,8 +339,11 @@ class eventActions extends agActions
       $this->getResponse()->setTitle('Sahana Agasti: New Event');
     }
 
-    if (strtoupper(agGlobal::getParam('event_pre_deploy_status')) <> strtoupper($eventStatusType)) {
-            $this->redirect('event/active?event=' . urlencode($eventMeta->event_name));
+    if (!$request->hasParameter('create'))
+    {
+      if (strtoupper(agGlobal::getParam('event_pre_deploy_status')) <> strtoupper($eventStatusType)) {
+              $this->redirect('event/active?event=' . urlencode($eventMeta->event_name));
+      }
     }
     //end p-code
   }
