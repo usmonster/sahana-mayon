@@ -17,14 +17,11 @@
  * @property Doctrine_Collection $agEthnicity
  * @property Doctrine_Collection $agSex
  * @property Doctrine_Collection $agMaritalStatus
- * @property Doctrine_Collection $agImport
  * @property Doctrine_Collection $agResidentialStatus
  * @property Doctrine_Collection $agPersonName
  * @property Doctrine_Collection $agPersonNameType
  * @property Doctrine_Collection $agPersonCustomField
  * @property Doctrine_Collection $agStaff
- * @property Doctrine_Collection $agPersonLastImport
- * @property Doctrine_Collection $agImportType
  * @property Doctrine_Collection $agClient
  * @property Doctrine_Collection $agPersonMjAgNationality
  * @property Doctrine_Collection $agPersonEthnicity
@@ -51,14 +48,11 @@
  * @method Doctrine_Collection getAgEthnicity()               Returns the current record's "agEthnicity" collection
  * @method Doctrine_Collection getAgSex()                     Returns the current record's "agSex" collection
  * @method Doctrine_Collection getAgMaritalStatus()           Returns the current record's "agMaritalStatus" collection
- * @method Doctrine_Collection getAgImport()                  Returns the current record's "agImport" collection
  * @method Doctrine_Collection getAgResidentialStatus()       Returns the current record's "agResidentialStatus" collection
  * @method Doctrine_Collection getAgPersonName()              Returns the current record's "agPersonName" collection
  * @method Doctrine_Collection getAgPersonNameType()          Returns the current record's "agPersonNameType" collection
  * @method Doctrine_Collection getAgPersonCustomField()       Returns the current record's "agPersonCustomField" collection
  * @method Doctrine_Collection getAgStaff()                   Returns the current record's "agStaff" collection
- * @method Doctrine_Collection getAgPersonLastImport()        Returns the current record's "agPersonLastImport" collection
- * @method Doctrine_Collection getAgImportType()              Returns the current record's "agImportType" collection
  * @method Doctrine_Collection getAgClient()                  Returns the current record's "agClient" collection
  * @method Doctrine_Collection getAgPersonMjAgNationality()   Returns the current record's "agPersonMjAgNationality" collection
  * @method Doctrine_Collection getAgPersonEthnicity()         Returns the current record's "agPersonEthnicity" collection
@@ -84,14 +78,11 @@
  * @method agPerson            setAgEthnicity()               Sets the current record's "agEthnicity" collection
  * @method agPerson            setAgSex()                     Sets the current record's "agSex" collection
  * @method agPerson            setAgMaritalStatus()           Sets the current record's "agMaritalStatus" collection
- * @method agPerson            setAgImport()                  Sets the current record's "agImport" collection
  * @method agPerson            setAgResidentialStatus()       Sets the current record's "agResidentialStatus" collection
  * @method agPerson            setAgPersonName()              Sets the current record's "agPersonName" collection
  * @method agPerson            setAgPersonNameType()          Sets the current record's "agPersonNameType" collection
  * @method agPerson            setAgPersonCustomField()       Sets the current record's "agPersonCustomField" collection
  * @method agPerson            setAgStaff()                   Sets the current record's "agStaff" collection
- * @method agPerson            setAgPersonLastImport()        Sets the current record's "agPersonLastImport" collection
- * @method agPerson            setAgImportType()              Sets the current record's "agImportType" collection
  * @method agPerson            setAgClient()                  Sets the current record's "agClient" collection
  * @method agPerson            setAgPersonMjAgNationality()   Sets the current record's "agPersonMjAgNationality" collection
  * @method agPerson            setAgPersonEthnicity()         Sets the current record's "agPersonEthnicity" collection
@@ -189,11 +180,6 @@ abstract class BaseagPerson extends sfDoctrineRecord
              'local' => 'person_id',
              'foreign' => 'marital_status_id'));
 
-        $this->hasMany('agImport', array(
-             'refClass' => 'agPersonLastImport',
-             'local' => 'person_id',
-             'foreign' => 'last_import_id'));
-
         $this->hasMany('agResidentialStatus', array(
              'refClass' => 'agPersonResidentialStatus',
              'local' => 'person_id',
@@ -217,15 +203,6 @@ abstract class BaseagPerson extends sfDoctrineRecord
         $this->hasMany('agStaff', array(
              'local' => 'id',
              'foreign' => 'person_id'));
-
-        $this->hasMany('agPersonLastImport', array(
-             'local' => 'id',
-             'foreign' => 'person_id'));
-
-        $this->hasMany('agImportType', array(
-             'refClass' => 'agImport',
-             'local' => 'person_id',
-             'foreign' => 'import_type_id'));
 
         $this->hasMany('agClient', array(
              'local' => 'id',

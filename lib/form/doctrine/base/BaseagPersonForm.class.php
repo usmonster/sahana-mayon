@@ -27,12 +27,10 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
       'ag_ethnicity_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agEthnicity')),
       'ag_sex_list'                 => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agSex')),
       'ag_marital_status_list'      => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agMaritalStatus')),
-      'ag_import_list'              => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agImport')),
       'ag_residential_status_list'  => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agResidentialStatus')),
       'ag_person_name_list'         => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonName')),
       'ag_person_name_type_list'    => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonNameType')),
       'ag_person_custom_field_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonCustomField')),
-      'ag_import_type_list'         => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agImportType')),
     ));
 
     $this->setValidators(array(
@@ -48,12 +46,10 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
       'ag_ethnicity_list'           => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agEthnicity', 'required' => false)),
       'ag_sex_list'                 => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agSex', 'required' => false)),
       'ag_marital_status_list'      => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agMaritalStatus', 'required' => false)),
-      'ag_import_list'              => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agImport', 'required' => false)),
       'ag_residential_status_list'  => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agResidentialStatus', 'required' => false)),
       'ag_person_name_list'         => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonName', 'required' => false)),
       'ag_person_name_type_list'    => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonNameType', 'required' => false)),
       'ag_person_custom_field_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonCustomField', 'required' => false)),
-      'ag_import_type_list'         => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agImportType', 'required' => false)),
     ));
 
     $this->validatorSchema->setPostValidator(
@@ -118,11 +114,6 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
       $this->setDefault('ag_marital_status_list', $this->object->agMaritalStatus->getPrimaryKeys());
     }
 
-    if (isset($this->widgetSchema['ag_import_list']))
-    {
-      $this->setDefault('ag_import_list', $this->object->agImport->getPrimaryKeys());
-    }
-
     if (isset($this->widgetSchema['ag_residential_status_list']))
     {
       $this->setDefault('ag_residential_status_list', $this->object->agResidentialStatus->getPrimaryKeys());
@@ -143,11 +134,6 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
       $this->setDefault('ag_person_custom_field_list', $this->object->agPersonCustomField->getPrimaryKeys());
     }
 
-    if (isset($this->widgetSchema['ag_import_type_list']))
-    {
-      $this->setDefault('ag_import_type_list', $this->object->agImportType->getPrimaryKeys());
-    }
-
   }
 
   protected function doSave($con = null)
@@ -160,12 +146,10 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
     $this->saveagEthnicityList($con);
     $this->saveagSexList($con);
     $this->saveagMaritalStatusList($con);
-    $this->saveagImportList($con);
     $this->saveagResidentialStatusList($con);
     $this->saveagPersonNameList($con);
     $this->saveagPersonNameTypeList($con);
     $this->saveagPersonCustomFieldList($con);
-    $this->saveagImportTypeList($con);
 
     parent::doSave($con);
   }
@@ -474,44 +458,6 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
     }
   }
 
-  public function saveagImportList($con = null)
-  {
-    if (!$this->isValid())
-    {
-      throw $this->getErrorSchema();
-    }
-
-    if (!isset($this->widgetSchema['ag_import_list']))
-    {
-      // somebody has unset this widget
-      return;
-    }
-
-    if (null === $con)
-    {
-      $con = $this->getConnection();
-    }
-
-    $existing = $this->object->agImport->getPrimaryKeys();
-    $values = $this->getValue('ag_import_list');
-    if (!is_array($values))
-    {
-      $values = array();
-    }
-
-    $unlink = array_diff($existing, $values);
-    if (count($unlink))
-    {
-      $this->object->unlink('agImport', array_values($unlink));
-    }
-
-    $link = array_diff($values, $existing);
-    if (count($link))
-    {
-      $this->object->link('agImport', array_values($link));
-    }
-  }
-
   public function saveagResidentialStatusList($con = null)
   {
     if (!$this->isValid())
@@ -661,44 +607,6 @@ abstract class BaseagPersonForm extends BaseFormDoctrine
     if (count($link))
     {
       $this->object->link('agPersonCustomField', array_values($link));
-    }
-  }
-
-  public function saveagImportTypeList($con = null)
-  {
-    if (!$this->isValid())
-    {
-      throw $this->getErrorSchema();
-    }
-
-    if (!isset($this->widgetSchema['ag_import_type_list']))
-    {
-      // somebody has unset this widget
-      return;
-    }
-
-    if (null === $con)
-    {
-      $con = $this->getConnection();
-    }
-
-    $existing = $this->object->agImportType->getPrimaryKeys();
-    $values = $this->getValue('ag_import_type_list');
-    if (!is_array($values))
-    {
-      $values = array();
-    }
-
-    $unlink = array_diff($existing, $values);
-    if (count($unlink))
-    {
-      $this->object->unlink('agImportType', array_values($unlink));
-    }
-
-    $link = array_diff($values, $existing);
-    if (count($link))
-    {
-      $this->object->link('agImportType', array_values($link));
     }
   }
 
