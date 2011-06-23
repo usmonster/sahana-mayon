@@ -213,11 +213,11 @@ class agPersonForm extends BaseagPersonForm
       }
       // If not, just create the empty forms.
       // Only create the labels if this is the first language, so everything shows up in a matrix.
-      if ($i <> 1) {
-        $languageForm->widgetSchema->setLabel('language_id', false);
-      } else {
+//      if ($i <> 1) {
+//        $languageForm->widgetSchema->setLabel('language_id', false);
+//      } else {
         $languageForm->widgetSchema->setLabel('language_id', 'Language Name');
-      }
+//      }
 
       $languageSubContainer->embedForm('language', $languageForm);
       $languageSubContainer->widgetSchema->setLabel('language', false);
@@ -251,14 +251,14 @@ class agPersonForm extends BaseagPersonForm
         // If the $languagForm doesn't have an object, make an empty $formatForm.
         // Same as with $languageForm. We only want labels for the first row of objects.
         // The others will fall directly under, so the labels should be understandable.
-        if ($i <> 1) {
-          $formatForm->widgetSchema->setLabel('language_competency_id', false);
-        } else {
+//        if ($i <> 1) {
+//          $formatForm->widgetSchema->setLabel('language_competency_id', false);
+//        } else {
           $formatForm->widgetSchema->setLabel(
               'language_competency_id',
               ucwords($langFormat->language_format)
           );
-        }
+//        }
         $languageSubContainer->embedForm($langFormat->language_format, $formatForm);
         $languageSubContainer->widgetSchema->setLabel($langFormat->language_format, false);
       }
