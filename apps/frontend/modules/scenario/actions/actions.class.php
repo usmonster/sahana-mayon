@@ -305,7 +305,7 @@ class scenarioActions extends agActions
     $this->getUser()->getAttributeHolder()->remove('returnPage');
 
     $this->forward404Unless($scenarioId = $this->scenario_id);
-    $this->form = new agImportForm();
+//    $this->form = new agImportForm();
 
     $uploadedFile = $_FILES['import'];
     
