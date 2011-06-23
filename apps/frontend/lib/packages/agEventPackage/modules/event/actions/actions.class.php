@@ -352,17 +352,17 @@ class eventActions extends agActions
 
     //p-code
     if (isset($eventMeta->event_name)) {
+
+      // Redirect back to the active page if the existing event is not in pre-deploy state.
+      if (strtoupper(agGlobal::getParam('event_pre_deploy_status')) <> strtoupper($eventStatusType)) {
+              $this->redirect('event/active?event=' . urlencode($eventMeta->event_name));
+      }
+      
       $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Event Management');
     } else {
       $this->getResponse()->setTitle('Sahana Agasti: New Event');
     }
 
-    if (!$request->hasParameter('create'))
-    {
-      if (strtoupper(agGlobal::getParam('event_pre_deploy_status')) <> strtoupper($eventStatusType)) {
-              $this->redirect('event/active?event=' . urlencode($eventMeta->event_name));
-      }
-    }
     //end p-code
   }
 
