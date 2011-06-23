@@ -109,7 +109,7 @@ class agListHelper
         'id' => array('title' => 'Id', 'sortable' => false, 'index' => 'f_id'),
         'facility_name' => array('title' => 'Facility Name', 'sortable' => true, 'index' => 'f_facility_name'),
         'services' => array('title' => 'Services', 'sortable' => false, 'index' => 'frt_facility_resource_type'),
-        'facility_codes' => array('title' => 'Facility Code', 'sortable' => true, 'index' => 'f_facility_code')
+        'facility_code' => array('title' => 'Facility Code', 'sortable' => true, 'index' => 'f_facility_code')
     );
 
     return array($displayColumns, $query);
