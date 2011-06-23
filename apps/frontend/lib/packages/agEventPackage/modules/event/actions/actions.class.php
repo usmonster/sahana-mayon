@@ -67,10 +67,28 @@ class eventActions extends agActions
 
 
     $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
-    $this->ag_events = agDoctrineQuery::create()
-        ->select('a.*')
-        ->from('agEvent a')
-        ->execute();
+
+    // Query all existing events and their info for display.
+    $query = agDoctrineQuery::create()
+            ->select('e.event_name')
+            ->addSelect('esc.id')
+            ->addSelect('s.scenario')
+            ->addSelect('es.id')
+            ->addSelect('est.event_status_type')
+            ->from('agEvent e')
+            ->innerJoin('e.agEventStatus es')
+            ->innerJoin('es.agEventStatusType est')
+            ->innerJoin('e.agEventScenario esc')
+            ->innerJoin('esc.agScenario s')
+            ->where(
+                'EXISTS (
+                  SELECT s.id
+                    FROM agEventStatus es2
+                    WHERE es2.event_id = es.event_id
+                      AND es2.time_stamp <= CURRENT_TIMESTAMP
+                    HAVING MAX(es2.time_stamp) = es.time_stamp)'
+              );
+    $this->allEvents = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
   }
 
   public function executeFacilityresource(sfWebRequest $request)
