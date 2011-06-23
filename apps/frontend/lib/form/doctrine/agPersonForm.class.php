@@ -421,6 +421,20 @@ class agPersonForm extends BaseagPersonForm
 //      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element] = $af->getAgAddressElement()->id;
 //    }
 
+    $elementIds = agDoctrineQuery::create()
+            ->select('ae.id')
+            ->from('agAddressElement ae')
+            ->whereIn('address_element', array('country', 'state'))
+            ->orderby('address_element')
+            ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+    $countryAddressElementId = $elementIds[0][0];
+    $stateAddressElementId = $elementIds[1][0];
+
+    $countryList = Doctrine::getTable('agCountry')
+            ->createQuery('addressCountries')
+            ->select('c.country')
+            ->from('agCountry c');
+
     foreach ($this->address_formats as $af) {
       $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['id'] = $af->getAgAddressElement()->id;
       $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['fieldType'] = $af->getAgFieldType()->getFieldType();
@@ -470,24 +484,47 @@ class agPersonForm extends BaseagPersonForm
           // This sets the widget for the agEmbeddedAddressValueForm. Generally, it will be a text
           // widget, but in the case of things like state, a select box is preferred.
           if ($addressElement[key($addressElement)]['fieldType'] == 'sfWidgetFormDoctrineChoice') {
-            $valueForm->setWidget(
-                'value',
-                new sfWidgetFormDoctrineChoice(
-                    array(
-                      'multiple' => false,
-                      'model' => 'agAddressValue',
-                      'add_empty' => true,
-                      'key_method' => 'getValue'
-                    ),
-                    array('class' => 'inputGray')
-                )
-            );
+            if ($addressElement[key($addressElement)]['id'] == $stateAddressElementId) {
+              $valueForm->setWidget(
+                  'value',
+                  new sfWidgetFormDoctrineChoice(
+                      array(
+                        'multiple' => false,
+                        'model' => 'agAddressValue',
+                        'add_empty' => true,
+                        'key_method' => 'getValue'
+                      ),
+                      array('class' => 'inputGray')
+                  )
+              );
 
-            $valueForm->widgetSchema->setLabel('value', false);
-            $valueForm->widgetSchema['value']->addOption(
-                'query',
-                $stateList
-            );
+              $valueForm->widgetSchema->setLabel('value', false);
+
+              $valueForm->widgetSchema['value']->addOption(
+                  'query',
+                  $stateList
+              );
+            } elseif ($addressElement[key($addressElement)]['id'] == $countryAddressElementId) {
+              $valueForm->setWidget(
+                  'value',
+                  new sfWidgetFormDoctrineChoice(
+                      array(
+                        'multiple' => false,
+                        'model' => 'agAddressValue',
+                        'add_empty' => true,
+                        'key_method' => 'getCountry'
+                      ),
+                      array('class' => 'inputGray')
+                  )
+              );
+
+              $valueForm->widgetSchema->setLabel('value', false);
+
+              $valueForm->widgetSchema['value']->addOption(
+                  'query',
+                  $countryList
+              );
+            }
           }
 
           if (isset($this->entityAddress) && $this->entityAddress) {
