@@ -238,8 +238,8 @@ abstract class agImportNormalization extends agImportHelper
   }
 
   /**
-   *
-   * @return string Path to the unprocessed XLS or FALSE
+   * Method to return an array pointing to
+   * @return array An array containing the XLS data filename and path
    */
   public function getUnprocessedXLS()
   {
@@ -266,6 +266,16 @@ abstract class agImportNormalization extends agImportHelper
     $this->eh->logWarning($eventMsg);
 
     // first search our directory for existing unprocessed files and remove
+    $pathBase = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
+    foreach(glob(($pathBase . '*')) as $filename) {
+      $eventMsg = 'Export: Removing old export file ' . $filename . '.';
+      $this->eh->logDebug($eventMsg);
+      unlink($filename);
+      $eventMsg = 'Export: Successfully removed old export file ' . $filename . '.';
+      $this->eh->logInfo($eventMsg);
+    }
+
+    // rinse and repeat
     $pathBase = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
     foreach(glob(($pathBase . '*')) as $filename) {
       $eventMsg = 'Export: Removing old export file ' . $filename . '.';

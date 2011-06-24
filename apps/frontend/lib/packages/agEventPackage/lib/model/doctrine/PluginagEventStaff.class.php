@@ -28,7 +28,7 @@ abstract class PluginagEventStaff extends BaseagEventStaff
           ->innerJoin('ess.agStaffAllocationStatus sas')
           ->innerJoin('evs.agStaffResource sr')
           ->innerJoin('sr.agStaffResourceStatus srs')
-        ->where('evs.event_id = ?', $this->eventId)
+        ->where('evs.event_id = ?', $eventId)
           ->andWhere('srs.is_available = ?', TRUE);
 
     // ensure that we only get the most recent staff status
@@ -40,5 +40,7 @@ abstract class PluginagEventStaff extends BaseagEventStaff
         'HAVING MAX(sess.time_stamp) = ess.time_stamp' .
       ')';
     $q->andWhere($recentStaffStatus);
+
+    return $q;
   }
 }

@@ -676,16 +676,6 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->orderBy('evs.deployment_weight DESC')
         ->limit($staffCount);
 
-    // ensure that we only get the most recent staff status
-    $recentStaffStatus = 'EXISTS (' .
-      'SELECT sess.id ' .
-        'FROM agEventStaffStatus AS sess ' .
-        'WHERE sess.time_stamp <= CURRENT_TIMESTAMP ' .
-          'AND sess.event_staff_id = ess.event_staff_id ' .
-        'HAVING MAX(sess.time_stamp) = ess.time_stamp' .
-      ')';
-    $q->andWhere($recentStaffStatus);
-
     // just pick up the lowest priority staff address
     $minStaffAddr = 'EXISTS (' .
       'SELECT seac.id ' .

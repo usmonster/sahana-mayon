@@ -17,6 +17,7 @@
 
 class agShiftGeneratorHelper
 {
+  const     CONN_WRITE_SHIFTS = 'CONN_WRITE_SHIFTS';
 
   /**
    * Auto-generate shifts from ag_shift_template table to ag_scenario_shift table.
@@ -25,6 +26,19 @@ class agShiftGeneratorHelper
    */
   public static function shiftGenerator($scenarioId, Doctrine_Connection $conn = NULL)
   {
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
+    $adapter = $dm->getCurrentConnection()->getDbh();
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_WRITE_SHIFTS);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
+    $dm->setCurrentConnection('doctrine');
+
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
     if ($useSavepoint)
@@ -52,8 +66,6 @@ class agShiftGeneratorHelper
               ->execute();
       unset($deleteQuery);
 
-$mt = new agMemoryTester();
-
       // Query for the information to populate scenario shift.
       $scenarioShifts = agDoctrineQuery::create()
               ->select('st.*, fsr.*')
@@ -68,7 +80,7 @@ $mt = new agMemoryTester();
               ->where('sfr1.id = sfr2.id')
               ->andWhere('st.scenario_id = sfg.scenario_id')
               ->andWhere('st.scenario_id = ?', $scenarioId)
-              ->execute(array(), Doctrine::HYDRATE_ON_DEMAND);
+              ->execute(array(), Doctrine::HYDRATE_SCALAR);
 
       foreach ($scenarioShifts as $index => $row) {
         $coll = new Doctrine_Collection('agScenarioShift');
@@ -134,19 +146,19 @@ $mt = new agMemoryTester();
           $scenarioShift['originator_id'] = $row['st_id'];
           $coll->add($scenarioShift);
           $shift_counter++;
-          $mt->testMem();
         }
         $coll->save($conn);
         $coll->free();
         $conn->clear();
         $conn->evictTables();
 
-        //unset($coll);
-        //unset($scenarioShifts[$index]);
+        unset($coll);
+        unset($scenarioShifts[$index]);
       }
       if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
     } catch (Exception $e) {
       if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+      $dm->closeConnection($conn);
 
       $eMsg = 'The application encountered an error during automatic generation of shifts. No ' .
         'shifts were created at this time.';
@@ -156,7 +168,7 @@ $mt = new agMemoryTester();
       echo $eMsg;
       return FALSE;
     }
+    $dm->closeConnection($conn);
     return TRUE;
-
   }
 }
