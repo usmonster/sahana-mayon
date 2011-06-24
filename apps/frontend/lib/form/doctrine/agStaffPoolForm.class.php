@@ -173,7 +173,7 @@ class agStaffPoolForm extends sfForm
                  ->findByDql('scenario_id =? AND search_id = ?', 
                              array($this->scenario_id, $this->search_id))
                  ->count();
-      if ($found === 0) {
+      if ($found === 0 || $found === 1) {
         $form = $this->embeddedForms['staff_generator'];
         $values = $this->values['staff_generator'];
         $this->saveStaffGenForm($form, $values);

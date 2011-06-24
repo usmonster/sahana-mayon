@@ -510,16 +510,46 @@ class scenarioActions extends agActions
         ->orderBy('ssg.search_weight DESC, s.search_name ASC')
         ->execute();
 //get all available staff
-    $this->total_staff = Doctrine_Core::getTable('agStaff')->count();
-    $this->total_resources = Doctrine_Core::getTable('agStaffResource')->count();
+    $this->total_staff = agDoctrineQuery::create()
+            ->select('count(*)')
+              ->from('agStaff s')
+              ->innerJoin('s.agStaffResource sr')
+              ->innerJoin('sr.agStaffResourceStatus srs')
+              ->where('srs.is_available = ?', 1)
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
 //EDIT
-    if ($request->getParameter('search_id') && !($request->getParameter('Delete'))) {
+    if ($request->hasParameter('search_id') && !($request->hasParameter('Delete'))) {
+      $searchWeight = NULL;
       $this->search_id = $request->getParameter('search_id');
-      $this->poolform = new agStaffPoolForm($this->search_id);
-      $search_condition = json_decode(
-          $this->poolform->getEmbeddedForm('search')->getObject()->search_condition, true);
-    } elseif ($request->getParameter('Preview')) {
+      $searchWeight = agDoctrineQuery::create()
+            ->select('search_weight')
+              ->from('agScenarioStaffGenerator')
+              ->where('search_id = ?', $request->getParameter('search_id'))
+              ->andWhere('scenario_id = ?', $this->scenario_id)
+              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      $searchInfo = agDoctrineQuery::create()
+            -> select('search_name')
+                ->addSelect('search_type_id')
+                ->addSelect('search_condition')
+              ->from('agSearch s')
+              ->where('id = ?', $this->search_id)
+              ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+        $search_name = $searchInfo[0]['s_search_name'];
+        $search_type_id = $searchInfo[0]['s_search_type_id'];
+        $search_condition = json_decode($searchInfo[0]['s_search_condition'], true);
+      if (empty($searchWeight))
+      {
+        $this->poolform = new agStaffPoolForm($this->search_id);
+      }
+      else
+      {
+        $values = array('sg_values' => array('search_weight' => $searchWeight),
+                        's_values' => array('search_name' => $search_name,
+                                            'search_type_id' => $search_type_id));
+        $this->poolform = new agStaffPoolForm(null, $values);
+      }
+    } elseif ($request->hasParameter('Preview')) {
       $postParam = $request->getPostParameter('staff_pool');
       $search = $postParam['search'];
       $search_condition = json_decode($search['search_condition'], true);
@@ -551,20 +581,24 @@ class scenarioActions extends agActions
       }
     }
 
+    $saveStatus = $request->getParameter('Save');
+    $saveFlag = $request->hasParameter('Save');
+    $contFlag = $request->hasParameter('Continue');
 
-    if ($request->getParameter('Delete')) {
+    if ($request->hasParameter('Delete')) {
 //DELETE
-      $ag_staff_gen = Doctrine_Core::getTable('agScenarioStaffGenerator')->find(array($request->getParameter('search_id'))); //maybe we should do a forward404unless, although no post should come otherwise
-      $searchQuery = $ag_staff_gen->getAgSearch();
-      //get the related lucene search
-      $ag_staff_gen->delete();
-      $searchQuery->delete();
+      $deleteScenarioStaffGen = agDoctrineQuery::create()
+        ->delete('agScenarioStaffGenerator')
+        ->where('scenario_id = ?', $this->scenario_id)
+        ->andWhere('search_id = ?', $request->getParameter('search_id'))
+        ->execute();
+      agStaffGeneratorHelper::generateStaffPool($this->scenario_id);
       $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
     }
 //PREVIEW    
-    elseif ($request->getParameter('Preview') ||
-        $request->getParameter('search_id')
-        && !($request->getParameter('Continue'))) {
+    elseif ( ($request->hasParameter('Preview') || $request->hasParameter('search_id'))
+             && !($request->hasParameter('Continue'))
+             && !($request->hasParameter('Save'))) {
 
       $search_id = null;
 
@@ -579,7 +613,7 @@ class scenarioActions extends agActions
       $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
     }
 //SAVE
-    elseif ($request->getParameter('Save') || $request->getParameter('Continue')) { //otherwise, we're SAVING/UPDATING
+    elseif ($request->hasParameter('Save') || $request->hasParameter('Continue')) { //otherwise, we're SAVING/UPDATING
       if ($request->getParameter('search_id')) {
         $this->search_id = $request->getParameter('search_id');
         $this->poolform = new agStaffPoolForm($this->search_id); //make sfForm with search_id
