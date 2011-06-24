@@ -38,6 +38,22 @@ class agShiftGeneratorHelper
 
 
     try {
+      // Delete all scenario shift records prior to generating scenario shifts
+      // from shift template tables.
+      $delExists = 'scenario_facility_resource_id IN (' .
+        'SELECT ssfr.id ' .
+          'FROM agScenarioFacilityResource AS ssfr ' .
+            'INNER JOIN ssfr.agScenarioFacilityGroup AS ssfg ' .
+          'WHERE ssfg.scenario_id = ?)';
+      $deleteQuery = agDoctrineQuery::create($conn)
+              ->delete()
+              ->from('agScenarioShift')
+              ->where($delExists, $scenarioId)
+              ->execute();
+      unset($deleteQuery);
+
+$mt = new agMemoryTester();
+
       // Query for the information to populate scenario shift.
       $scenarioShifts = agDoctrineQuery::create()
               ->select('st.*, fsr.*')
@@ -52,23 +68,11 @@ class agShiftGeneratorHelper
               ->where('sfr1.id = sfr2.id')
               ->andWhere('st.scenario_id = sfg.scenario_id')
               ->andWhere('st.scenario_id = ?', $scenarioId)
-              ->execute(array(), Doctrine::HYDRATE_SCALAR);
+              ->execute(array(), Doctrine::HYDRATE_ON_DEMAND);
 
-      // Delete all scenario shift records prior to generating scenario shifts
-      // from shift template tables.
+      foreach ($scenarioShifts as $index => $row) {
+        $coll = new Doctrine_Collection('agScenarioShift');
 
-      $delExists = 'scenario_facility_resource_id IN (' .
-        'SELECT ssfr.id ' .
-          'FROM agScenarioFacilityResource AS ssfr ' .
-            'INNER JOIN ssfr.agScenarioFacilityGroup AS ssfg ' .
-          'WHERE ssfg.scenario_id = ?)';
-      $deleteQuery = agDoctrineQuery::create($conn)
-              ->delete()
-              ->from('agScenarioShift')
-              ->where($delExists, $scenarioId)
-              ->execute();
-
-      foreach ($scenarioShifts as $row) {
         $shift_counter = 1;
         $staff_wave = 1;
         $reset_minutes_start_to_facility_activation = $row['st_minutes_start_to_facility_activation'];
@@ -116,21 +120,29 @@ class agShiftGeneratorHelper
           }
 
           $scenarioShift = new agScenarioShift();
-          $scenarioShift->set('scenario_facility_resource_id', $row['fsr_scenario_facility_resource_id'])
-              ->set('staff_resource_type_id', $row['st_staff_resource_type_id'])
-              ->set('task_id', $row['st_task_id'])
-              ->set('task_length_minutes', $row['st_task_length_minutes'])
-              ->set('break_length_minutes', $reset_break_length)
-              ->set('minutes_start_to_facility_activation', $reset_minutes_start_to_facility_activation)
-              ->set('minimum_staff', $row['fsr_minimum_staff'])
-              ->set('maximum_staff', $row['fsr_maximum_staff'])
-              ->set('staff_wave', $shift_counter & 1 ? $staff_wave : $staff_wave + 1)
-              ->set('shift_status_id', $row['st_shift_status_id'])
-              ->set('deployment_algorithm_id', $row['st_deployment_algorithm_id'])
-              ->set('originator_id', $row['st_id']);
-          $scenarioShift->save($conn);
+          $scenarioShift['scenario_facility_resource_id'] = $row['fsr_scenario_facility_resource_id'];
+          $scenarioShift['staff_resource_type_id'] = $row['st_staff_resource_type_id'];
+          $scenarioShift['task_id'] = $row['st_task_id'];
+          $scenarioShift['task_length_minutes'] = $row['st_task_length_minutes'];
+          $scenarioShift['break_length_minutes'] = $reset_break_length;
+          $scenarioShift['minutes_start_to_facility_activation'] = $reset_minutes_start_to_facility_activation;
+          $scenarioShift['minimum_staff'] = $row['fsr_minimum_staff'];
+          $scenarioShift['maximum_staff'] = $row['fsr_maximum_staff'];
+          $scenarioShift['staff_wave'] = $shift_counter & 1 ? $staff_wave : $staff_wave + 1;
+          $scenarioShift['shift_status_id'] = $row['st_shift_status_id'];
+          $scenarioShift['deployment_algorithm_id'] = $row['st_deployment_algorithm_id'];
+          $scenarioShift['originator_id'] = $row['st_id'];
+          $coll->add($scenarioShift);
           $shift_counter++;
+          $mt->testMem();
         }
+        $coll->save($conn);
+        $coll->free();
+        $conn->clear();
+        $conn->evictTables();
+
+        //unset($coll);
+        //unset($scenarioShifts[$index]);
       }
       if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
     } catch (Exception $e) {
