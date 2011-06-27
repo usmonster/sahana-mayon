@@ -399,8 +399,17 @@ class agEntityAddressHelper extends agEntityContactHelper
             // purge this address
             unset($entityContacts[$entityId][$index]);
           } else {
-            // otherwise, get our real addressId
-            $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
+            // Check whether an addressId is generated.
+            if (isset($uniqContacts[0][$contact[1]]))
+            {
+              // otherwise, get our real addressId
+              $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
+            }
+            else
+            {
+              // purge this address
+              unset($entityContacts[$entityId][$index]);
+            }
           }
         }
       }

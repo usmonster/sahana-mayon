@@ -130,15 +130,18 @@ abstract class agEntityContactHelper extends agBulkRecordHelper
     // loop through our entityContacts
     foreach ($entityContacts as $entityId => $contacts) {
       foreach ($contacts as $index => $contact) {
-        // create a doctrine record with this info
-        $newRec = new $tableMetadata['table']();
-        $newRec['entity_id'] = $entityId;
-        $newRec['priority'] = ($index + 1);
-        $newRec[$tableMetadata['value']] = $contact[1];
-        $newRec[$tableMetadata['type']] = $contact[0];
+        if (!is_null($contact[1]))
+        {
+          // create a doctrine record with this info
+          $newRec = new $tableMetadata['table']();
+          $newRec['entity_id'] = $entityId;
+          $newRec['priority'] = ($index + 1);
+          $newRec[$tableMetadata['value']] = $contact[1];
+          $newRec[$tableMetadata['type']] = $contact[0];
 
-        // add the record to our collection
-        $coll->add($newRec);
+          // add the record to our collection
+          $coll->add($newRec);
+        }
 
         // recover a little resource
         unset($entityContacts[$entityId][$index]);
