@@ -1,6 +1,9 @@
 <?php
 /**
- * Provides some memory testing capabilities that can be used inside loops
+ * Provides some memory testing capabilities that can be used inside loops to track leaks.
+ * Recommended usage is to instantiate the class immediately outside a loop and call the test()
+ * method as the last line of the loop. This will ensure more accurate timing which takes the
+ * class construction as the first time marker.
  *
  * PHP Version 5.3
  *
@@ -19,47 +22,79 @@ class agMemoryTester
             $lastMem,
             $minMem,
             $maxMem,
-            $currGrowth,
-            $minGrowth,
-            $maxGrowth,
-            $avgGrowth,
-            $iterations = 0,
-            $isFirst = TRUE;
+            $currGrowth = 0,
+            $minGrowth = 0,
+            $maxGrowth = 0,
+            $avgGrowth = 0,
+            $initTime,
+            $currTime,
+            $lastTime,
+            $totalTime,
+            $currDuration = 0,
+            $minDuration = 0,
+            $maxDuration = 0,
+            $avgDuration = 0,
+            $iterations = 0;
 
-  public function testMem()
+  public function __construct()
   {
+    $this->initTime = microtime(TRUE);
+    $this->currTime = $this->initTime;
+
+    $this->currMem = memory_get_usage();
+    $this->minMem = $this->currMem;
+    $this->maxMem = $this->currMem;
+  }
+
+  /**
+   * Method to test memory and timing (usually called within a loop)
+   */
+  public function test()
+  {
+    $this->testMem();
+    $this->testTime();
+
+    $this->iterations++;
+  }
+
+  /**
+   * Method to test memory usage
+   */
+  protected function testMem()
+  {
+    $this->lastMem = $this->currMem;
     $this->currMem = memory_get_usage();
     
-    if ($this->isFirst) {
-      $this->minMem = $this->currMem;
-      $this->maxMem = $this->currMem;
-      $this->lastMem = $this->currMem;
-    }
-
     if ($this->currMem > $this->maxMem) { $this->maxMem = $this->currMem; }
     if ($this->currMem < $this->minMem) { $this->minMem = $this->currMem; }
 
     $this->currGrowth = $this->currMem - $this->lastMem;
-
-    if ($this->isFirst) {
-      $this->maxGrowth = $this->currGrowth;
-      $this->avgGrowth = $this->currGrowth;
-    } else {
-      $this->avgGrowth = ((($this->avgGrowth * $this->iterations) + $this->currGrowth) / ($this->iterations + 1));
-    }
+    $this->avgGrowth = ((($this->avgGrowth * $this->iterations) + $this->currGrowth) / ($this->iterations + 1));
 
     if ($this->currGrowth > $this->maxGrowth) { $this->maxGrowth = $this->currGrowth; }
     if ($this->currGrowth < $this->minGrowth) { $this->minGrowth = $this->currGrowth; }
-
-    $this->iterations++;
-    $this->lastMem = $this->currMem;
-
-    if ($this->isFirst) {
-      $this->isFirst = FALSE;
-    }
   }
 
+  /**
+   * Method to test operation timing
+   */
+  protected function testTime()
+  {
+    $this->lastTime = $this->currTime;
+    $this->currTime = microtime(TRUE);
+    $this->totalTime = $this->currTime - $this->initTime;
 
+    $this->currDuration = $this->currTime - $this->lastTime;
+    $this->avgDuration = ((($this->avgDuration * $this->iterations) + $this->currDuration) / ($this->iterations + 1));
+
+    if ($this->currDuration > $this->maxDuration) { $this->maxDuration = $this->currDuration; }
+    if ($this->currDuration < $this->minDuration) { $this->minDuration = $this->currDuration; }
+  }
+
+  /**
+   * Method to return memory usage statistics as an array
+   * @return array Returns memory usage statistics
+   */
   public function getMemUsage()
   {
     $results = array();
@@ -72,5 +107,36 @@ class agMemoryTester
     $results['maxGrowth'] = $this->maxGrowth;
     $results['avgGrowth'] = $this->avgGrowth;
     $results['iterations'] = $this->iterations;
+
+    return $results;
+  }
+
+  /**
+   * Returns timing results
+   * @return array An array of timing results
+   */
+  public function getTiming()
+  {
+    $results = array();
+    $results['initTime'] = $this->initTime;
+    $results['currTime'] = $this->currTime;
+    $results['lastTime'] = $this->lastTime;
+    $results['totalTime'] = $this->totalTime;
+    $results['avgDuration'] = $this->avgDuration;
+    $results['currDuration'] = $this->currDuration;
+    $results['minDuration'] = $this->minDuration;
+    $results['maxDuration'] = $this->maxDuration;
+    $results['iterations'] = $this->iterations;
+
+    return $results;
+  }
+
+  /**
+   * Method to return all results
+   * @return array An array of results
+   */
+  public function getResults()
+  {
+    return $this->getMemUsage() + $this->getTiming();
   }
 }

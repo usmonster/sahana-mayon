@@ -228,7 +228,6 @@ class eventActions extends agActions
       $eventStatusId = (empty($eventStatus)) ? null : $eventStatus[0][0];
       $eventStatusTypeId = (empty($eventStatus)) ? null : $eventStatus[0][1];
       $eventStatusType = (empty($eventStatus)) ? null : $eventStatus[0][2];
-      $isActiveEvent = (empty($eventStatus)) ? null : $eventStatus[0][3];
     }
 
     $this->metaForm = new PluginagEventDefForm($eventMeta);
@@ -264,19 +263,6 @@ class eventActions extends agActions
           $deployStatus = agGlobal::getParam('event_deploy_status');
           $deployStatusId = Doctrine_Core::getTable('agEventStatusType')
                               ->findBy('event_status_type', $deployStatus)->getFirst()->id;
-
-          // Do not allow meta updates if an event is not in pre-deploymnet status.
-          if (!is_null($isActiveEvent))
-          {
-            if (!$isActiveEvent) {
-              $this->errMsg = 'Cannot apply changes to meta on closed event.';
-              return sfView::SUCCESS;
-
-            } elseif ($eventStatusTypeId == $deployStatusId) {
-              $this->errMsg = 'Cannot apply changes to meta on an active event.';
-              return sfView::SUCCESS;
-            }
-          }
 
           $this->metaForm->bind(
               $request->getParameter($this->metaForm->getName()),
@@ -392,534 +378,540 @@ class eventActions extends agActions
 
   public function executeExportcontacts(sfWebRequest $request)
   {
-
     $this->setEventBasics($request);
     $this->info = array();
+    
+    $exporter = agSendWordNowPreDeploy::getInstance($this->event_id, 'staff_contacts_predeploy');
+    $this->fileInfo = $exporter->getExport();
+    print_r($this->fileInfo);
 
-
-    if (!$request->getParameter('all'))
-      $unAllocatedStaffStatus =
-          agEventStaffHelper::returnDefaultEventStaffStatus();
-
-    $eventStaffs = agDoctrineQuery::create()
-        ->select('es.id, p.id, p.entity_id')
-        ->from('agEventStaff es')
-        ->addFrom('es.agEventStaffStatus ess')
-        ->addFrom('es.agStaffResource sr')
-        ->addFrom('sr.agStaff s')
-        ->addFrom('s.agPerson p')
-        ->where('ess.staff_allocation_status_id = ?', $unAllocatedStaffStatus)
-        ->andWhere('es.event_id = ?', $this->event_id)
-        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-
-    $person_array = array();
-    $entity_array = array();
-    //get all event staff that are still marked as unavailable
-    foreach ($eventStaffs as $staffRecord) {
-      $person_array[$staffRecord['es_id']] = $staffRecord['p_id'];
-      $entity_array[$staffRecord['es_id']] = $staffRecord['p_entity_id'];
-    }
-
-    // Grab person's primary name by type.
-    $nameHelper = new agPersonNameHelper($person_array);
-    $person_names = $nameHelper->getPrimaryNameByType();
-    unset($nameHelper);
-
-    // Grab person's primary information by their entity ids.
-    $addressHelper = new agEntityAddressHelper();
-    $person_addresses = $addressHelper->getEntityAddress($entity_array, TRUE, TRUE,
-                                                         agAddressHelper::ADDR_GET_TYPE);
-    unset($addressHelper);
-
-    $defaultPhoneCountryCodeUSA = agGlobal::getParam('default_phone_country_code_usa');
-    $phoneHelper = new agEntityPhoneHelper();
-    $person_phones = $phoneHelper->getEntityPhone($entity_array, TRUE, FALSE,
-                                                  agPhoneHelper::PHN_GET_COMPONENT);
-    unset($phoneHelpers);
-
-    $emailHelper = new agEntityEmailHelper();
-    $person_emails = $emailHelper->getEntityEmail($entity_array, TRUE, FALSE,
-                                                  agEmailHelper::EML_GET_VALUE);
-    unset($emailHelper);
-
-    // The order of the column header in the array coinsides with the ordinal of the column
-    // placement of the export file.
-    $columnHeaders = array(
-      'UNIQUE ID',
-      'LAST NAME',
-      'FIRST NAME',
-      'MIDDLE INITIAL',
-      'PIN Code',
-      'GROUP ID',
-      'GROUP DESCRIPTION',
-      'ADDRESS 1',
-      'ADDRESS 2',
-      'CITY',
-      'STATE/PROVINCE',
-      'ZIP/POSTAL CODE',
-      'COUNTRY',
-      'TIME ZONE',
-      'CUSTOM LABEL',
-      'CUSTOM VALUE',
-      'PHONE LABEL 1',
-      'PHONE COUNTRY CODE 1',
-      'PHONE 1',
-      'PHONE EXTENSION 1',
-      'CASCADE 1',
-      'PHONE LABEL 2',
-      'PHONE COUNTRY CODE 2',
-      'PHONE 2',
-      'PHONE EXTENSION 2',
-      'CASCADE 2',
-      'EMAIL LABEL 1',
-      'EMAIL 1',
-      'EMAIL LABEL 2',
-      'EMAIL 2',
-      'SMS LABEL 1',
-      'SMS 1',
-      'BB PIN LABEL 1',
-      'BB PIN 1'
-    );
-
-    // Mapping column headers.
-    $nameMapping = array(
-      'family' => 'LAST NAME',
-      'given' => 'FIRST NAME',
-      'middle' => 'MIDDLE INITIAL'
-    );
-
-    $addressMapping = array(
-      'line 1' => 'ADDRESS 1',
-      'line 2' => 'ADDRESS 2',
-      'city' => 'CITY',
-      'state' => 'STATE/PROVINCE',
-      'zip5' => 'ZIP/POSTAL CODE',
-      'country' => 'COUNTRY'
-    );
-
-    $phoneMapping = array(
-      'contact type' => 'PHONE LABEL',
-      'country code' => 'PHONE COUNTRY CODE',
-      'phone' => 'PHONE',
-      'extension' => 'PHONE EXTENSION'
-    );
-
-    $emailMapping = array(
-      'contact type' => 'EMAIL LABEL',
-      'email' => 'EMAIL'
-    );
-
-    // Here, we're only specifying the ones we care for in this export.  Add to the array as needed.
-    $characterLimit = array(
-      'FIRST NAME' => 30,
-      'LAST NAME' => 30,
-      'MIDDLE INITIAL' => 1,
-      'ADDRESS 1' => 60,
-      'ADDRESS 2' => 60,
-      'CITY' => 30,
-      'STATE/PROVINCE' => 80,
-      'ZIP/POSTAL CODE' => 10,
-      'COUNTRY' => 128,
-      'PHONE LABEL' => 20,
-      'PHONE COUNTRY CODE' => 5,
-      'PHONE' => 14,
-      'PHONE EXTENSION' => 8,
-      'EMAIL LABEL' => 20,
-      'EMAIL' => 60
-    );
-
-    // Create first row of content with column header.
-    $row = 1;
-    $content[$row++] = array_combine($columnHeaders, $columnHeaders);
-    $NUMBER_OF_CONTACT_TYPE = 2;
-    foreach ($eventStaffs AS $staff) {
-      $logMsg = array();
-      // Initialize content with NULL value.  Later, we'll populate the columns with real data only
-      // if data is provided.
-      foreach ($columnHeaders AS $idx => $header) {
-        $staffData[$header] = NULL;
-      }
-
-      $staffData['UNIQUE ID'] = $staff['es_id'];
-
-      // Assign person's name.
-      foreach ($nameMapping AS $nameLabel => $hdrName) {
-        if (isset($person_names[$staff['p_id']][$nameLabel])) {
-          $charLimit = $characterLimit[$nameMapping[$nameLabel]];
-          $personName = substr($person_names[$staff['p_id']][$nameLabel], 0, $charLimit);
-          $staffData[$hdrName] = $personName;
-          if (strlen($personName) > $charLimit) {
-            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s', $hdrName,
-                                $charLimit, $personName);
-          }
-        }
-      }
-
-      // Assign person's address by component.
-      if (isset($person_addresses[$staff['p_entity_id']])) {
-        $addressComponents = $person_addresses[$staff['p_entity_id']][1];
-        foreach ($addressComponents AS $element => $value) {
-          if (array_key_exists($element, $addressMapping)) {
-            $charLimit = $characterLimit[$addressMapping[$element]];
-            $address = substr($value, 0, $charLimit);
-            $staffData[$addressMapping[$element]] = $address;
-            if (strLen($value) > $charLimit) {
-              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                  $addressMapping[$element], $charLimit, $address);
-            }
-          }
-        }
-      }
-
-      // Build person's phone by component.
-      $cnt = 0;
-      if (isset($person_phones[$staff['p_entity_id']])) {
-        foreach ($person_phones[$staff['p_entity_id']] AS $priority => $contact) {
-          // Keep track of how many contacts we are required to provide.
-          $cnt++;
-
-          // Build phone column headers with a counter appending to the end of each component of
-          // the phone column headers.
-          foreach ($phoneMapping AS $phoneLabel => $hdrPhone) {
-            $newPhoneHeader[$phoneLabel] = $hdrPhone . ' ' . $cnt;
-          }
-
-          // Currently, we are using a default value since there is no table in the db storing
-          // phone country code.
-          // @TODO Update code to collect phone country code once the db is implemented to handle
-          // country code for phone.
-          $staffData[$newPhoneHeader['country code']] = $defaultPhoneCountryCodeUSA;
-
-          $charLimit = $characterLimit[$phoneMapping['contact type']];
-          $phoneType = substr($contact[0], 0, $charLimit);
-          $staffData[$newPhoneHeader['contact type']] = $phoneType;
-          if (strLen($contact[0]) > $charLimit) {
-            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                $newPhoneHeader['country code'], $charLimit, $contact[0]);
-          }
-
-          // Check for extension.  The 'x' in the phone value indicates an extension number
-          // following.
-          $fullPhone = $contact[1];
-          $extIdxPos = stripos($fullPhone, 'x');
-          if ($extIdxPos === FALSE) {
-            // Phone is assumed to have no extension so just process phone as is.
-            $charLimit = $characterLimit[$phoneMapping['phone']];
-            $staffData[$newPhoneHeader['phone']] = substr($fullPhone, 0, $charLimit);
-            if (strLen($fullPhone) > $charLimit) {
-              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                  $newPhoneHeader['phone'], $charLimit, $fullPhone);
-            }
-          } else {
-            // Grab just the phone number plus areacode.
-            $charLimit = $characterLimit[$phoneMapping['phone']];
-            $phone = substr($fullPhone, 0, $extIdxPos);
-            $staffData[$newPhoneHeader['phone']] = substr($phone, 0, $charLimit);
-            if (strLen($phone) > $charLimit) {
-              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                  $newPhoneHeader['phone'], $charLimit, $phone);
-            }
-
-            // Grab only the extension number.
-            $extension = substr($fullPhone, $extIdxPos + 1);
-            $charLimit = $characterLimit[$phoneMapping['extension']];
-            $staffData[$newPhoneHeader['extension']] = substr($extension, 0, $charLimit);
-            if (strLen($extension) > $charLimit) {
-              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                  $newPhoneHeader['extension'], $charLimit, $extension);
-            }
-          }
-
-          // Once we reached the number of contacts required, we don't need to capture the rest.
-          if ($cnt == $NUMBER_OF_CONTACT_TYPE) {
-            break;
-          }
-        }
-      }
-
-      // Build person's email.
-      $cnt = 0;
-      if (isset($person_emails[$staff['p_entity_id']])) {
-        foreach ($person_emails[$staff['p_entity_id']] AS $priority => $contact) {
-          // Keep track of how many contacts we are required to provide.
-          $cnt++;
-
-          // Build email column headers with a counter appending to the end of each component of
-          // the email column headers.
-          foreach ($emailMapping AS $emailLabel => $hdrEmail) {
-            $newEmailHeader[$emailLabel] = $hdrEmail . ' ' . $cnt;
-          }
-
-          $charLimit = $characterLimit[$emailMapping['contact type']];
-          $staffData[$newEmailHeader['contact type']] = substr($contact[0], 0, $charLimit);
-          if (strLen($contact[0]) > $charLimit) {
-            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                $newEmailHeader['contact type'], $charLimit, $contact[0]);
-          }
-
-          $charLimit = $characterLimit[$emailMapping['email']];
-          $staffData[$newEmailHeader['email']] = substr($contact[1], 0, $charLimit);
-          if (strLen($contact[1]) > $charLimit) {
-            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
-                                $newEmailHeader['email'], $charLimit, $contact[1]);
-          }
-
-          // Once we reached the number of contacts required, we don't need to capture the rest.
-          if ($cnt == $NUMBER_OF_CONTACT_TYPE) {
-            break;
-          }
-        }
-      }
-
-      $info[] = array('rowId' => $row, 'warning' => $logMsg);
-      $content[$row++] = $staffData;
-    }
-    unset($eventStaffs, $staff);
-    unset($person_name, $person_addresses, $person_phones, $person_emails);
-
-    require_once 'PHPExcel/Cell/AdvancedValueBinder.php';
-    PHPExcel_Cell::setValueBinder(new PHPExcel_Cell_AdvancedValueBinder());
-    $objPHPExcel = new sfPhpExcel();
-    // Set active sheet index to the first sheet, so Excel opens this as the first sheet
-    $objPHPExcel->setActiveSheetIndex(0);
-    // Set properties
-    $objPHPExcel->getProperties()->setCreator("Agasti 2.0");
-    $objPHPExcel->getProperties()->setLastModifiedBy("Agasti 2.0");
-    $objPHPExcel->getProperties()->setTitle("Staff List");
-    // Set default font
-    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Times');
-    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
-    foreach ($content AS $rowKey => $rowValue) {
-      foreach ($columnHeaders AS $hKey => $heading) {
-        $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $rowKey)->setValue($rowValue[$heading]);
-      }
-    }
-
-    //This should be assigning an auto-width to each column that will fit the largest data in it. For some reason, it's not working.
-    $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
-    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-
-    for ($i = $highestColumnIndex; $i >= 0; $i--) {
-      $objPHPExcel
-          ->getActiveSheet()
-          ->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($i))
-          ->setAutoSize(true);
-    }
-    // Save Excel 2007 file
-
-    $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
-    $todaydate = date("d-m-y");
-    $todaydate = $todaydate . '-' . date("H-i-s");
-    $filename = 'Staff';
-    $filename = $filename . '-' . $todaydate;
-    $filename = $filename . '.xls';
-    $filePath = realpath(sys_get_temp_dir()) . '/' . $filename;
-    $objWriter->save($filePath);
-    $foo = new finfo();
-    $bar = $foo->file($filePath, FILEINFO_MIME_TYPE);
-
-    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-    $this->getResponse()->setHttpHeader(
-        'Content-Disposition', 'attachment;filename="' . $filename . '"'
-    );
-
-    $exportFile = file_get_contents($filePath);
-
-    //$this->getResponse()->setContent($objWriter);
-    //$this->getResponse()->setContent($exportFile);
-
-    $this->getResponse()->setHeaderOnly(true);
-    $this->getResponse()->send();
-    $objWriter->save('php://output');
-    unlink($filePath);
-
-    $this->exportComplete = sizeof($content);
-    $this->redirect('event/messaging?event=' . urlencode($this->event_name)); //need to pass in event id
-  }
-
-  /**
-   * provides event staff pool management functions.
-   * @param sfWebRequest $request request coming from web
-   */
-  public function executeStaffpool(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
-
-    $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')->findAll();
-
-    //get the possible filters from our request eg. &fr=1&type=generalist&org=volunteer
-    $filters = array();
-    foreach ($request->getParameterHolder() as $parameter => $filter) {
-      if ($parameter == 'fr') {
-        $filters['essh.event_facility_resource_id'] = $filter;
-      }
-      if ($parameter == 'st') {
-        $filters['sr.staff_resource_type_id'] = $filter;
-      }
-      if ($parameter == 'so') {
-        $filters['sr.organization_id'] = $filter;
-      }
-    }
-    //set up inputs for filter form
-    $inputs = array(
-      'st' => new sfWidgetFormDoctrineChoice(
-          array(
-            'model' => 'agStaffResourceType',
-            'label' => 'Staff Type',
-            'add_empty' => true
-          )
-      ),
-      // 'class' => 'filter')),
-      'so' => new sfWidgetFormDoctrineChoice(
-          array(
-            'model' => 'agOrganization',
-            'method' => 'getOrganization',
-            'label' => 'Staff Organization',
-            'add_empty' => true
-          )
-      ),
-      //, 'class' => 'filter'))
-      'fr' => new sfWidgetFormDoctrineChoice(
-          array(
-            'model' => 'agEventFacilityResource',
-            'label' => 'Facility Resource',
-            'add_empty' => true
-          )
-      )
-    );
-    /** @todo set defaults from the request */
-    $this->filterForm = new sfForm(null, array(), false);
-    //$this->filterForm->getWidgetSchema()->setNameFormat('filter[%s]');
-    foreach ($inputs as $key => $input) {
-      $input->setAttribute('class', 'filter');
-      $this->filterForm->setWidget($key, $input);
-    }
-
-    //begin construction of query used for listing
-    $query = agDoctrineQuery::create()
-        ->select(
-            'es.id,
-                  essh.id,
-                  esh.event_facility_resource_id,
-                  efr.facility_resource_id,
-                  fr.facility_id,
-                  f.facility_name,
-                  sr.id,
-                  srt.staff_resource_type,
-                  o.organization,
-                  sr.staff_resource_status_id,
-                  srs.staff_resource_status,
-                  p.id,
-                  ess.staff_allocation_status_id'
-        )//, sas.staff_allocation_status')
-        //maybe we should only get the id since it's needed for dropdown
-        ->from(
-            'agEventStaff es,
-              es.agEventStaffShift essh,
-              essh.agEventShift esh,
-              esh.agEventFacilityResource efr,
-              efr.agFacilityResource fr,
-              fr.agFacility f,
-              es.agStaffResource sr,
-              sr.agStaffResourceType srt,
-              sr.agOrganization o,
-              sr.agStaffResourceStatus srs,
-              sr.agStaff s,
-              s.agPerson p,
-              es.agEventStaffStatus ess'
-        )
-        //ess.agStaffAllocationStatus sas')
-        ->where('es.event_id = ?', $this->event_id);
-
-    if (sizeof($filters) > 0) {
-      foreach ($filters as $field => $filter) {
-        $query->andWhere($field . ' = ?', $filter);
-      }
-    }
-
-    if ($request->isMethod(sfRequest::POST)) {
-      if ($request->getParameter('event_status')) {
-        foreach ($request->getParameter('event_status') as $event_status) {
-          //this is inefficient here as we are executing the same query in a loop to get associated objects
-//check to see if this staff member already has a status set.
-          $eventStaffStatusObject = agDoctrineQuery::create()
-              ->from('agEventStaffStatus a')
-              ->where('a.event_staff_id =?', $event_status['event_staff_id'])
-              ->fetchOne();
-//NEW
-          if (!$eventStaffStatusObject) {
-            $eventStaffStatusObject = new agEventStaffStatus();
-            $eventStaffStatusObject->time_stamp = date('Y-m-d H:i:s', time());
-            $eventStaffStatusObject->event_staff_id = $event_status['event_staff_id'];
-            $eventStaffStatusObject->staff_allocation_status_id = $event_status['status'];
-            $eventStaffStatusObject->save();
-          } else {
-//UPDATE  ONLY IF staff_allocation_status has changed
-            //technically this should always be an update, by the time a staff member is in an event
-            if ($eventStaffStatusObject->staff_allocation_status_id != $event_status['status']) {
-              $eventStaffStatusObject->time_stamp = date('Y-m-d H:i:s', time());
-              //$eventStaffStatusObject->event_staff_id = $event_status['event_staff_id'];
-              $eventStaffStatusObject->staff_allocation_status_id = $event_status['status'];
-              $eventStaffStatusObject->save();
-            }
-          }
-          //we should throw a check here to see if the most recent status is the same as incoming
-        }
-      }
-    }
-    $eventStaff = array();
-    $person_array = array();
-    $ag_event_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-    foreach ($ag_event_staff as $key => $value) {
-      $person_array[] = $value['p_id'];
-      //$remapped_array[$ag_event_staff['es_id']] = $
-    }
-    $names = new agPersonNameHelper($person_array); //we need to get persons from the event staff ids that are returned here
-    $person_names = $names->getPrimaryNameByType();
-
-    //$names->
-    //this is the desired format of the return array:
-    $this->widget = new sfForm();
-    $this->widget->getWidgetSchema()->setNameFormat('event_status[][%s]');
-    $this->widget->setWidget('status',
-                             new sfWidgetFormDoctrineChoice(array('model' => 'agStaffAllocationStatus', 'method' => 'getStaffAllocationStatus')));
-
-    //the agStaffAllocationStatus ID coming from each of the selections will be saved to ag_Event_staff_status.
-    $this->widget->getWidgetSchema()->setLabel('status', false);
-    /** @todo set defaults for each status drop down from the web request */
-    $this->form_action = 'event/staffpool?event=' . $this->event_name;
-    $result_array = array();
-    foreach ($ag_event_staff as $staff => $value) {
-      $result_array[] = array(
-        'fn' => $person_names[$value['p_id']]['given'],
-        'ln' => $person_names[$value['p_id']]['family'],
-        'organization_name' => $value['o_organization'],
-        'status' => $value['srs_staff_resource_status'],
-        'type' => $value['srt_staff_resource_type'],
-        'facility' => $value['f_facility_name'],
-        'es_id' => $value['es_id'],
-        'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
-      );
-    }
-
-    $this->ag_event_staff = $result_array;
-//    foreach ($this->ag_event_staff as $eventFacilityGroup) {
-//      $tempArray = $this->groupResourceQuery($eventFacilityGroup->id);
-//      foreach ($tempArray as $ta) {
-//        array_push($eventStaff, $ta);
+//    $this->setEventBasics($request);
+//    $this->info = array();
+//
+//
+//    if (!$request->getParameter('all'))
+//      $unAllocatedStaffStatus =
+//          agEventStaffHelper::returnDefaultEventStaffStatus();
+//
+//    $eventStaffs = agDoctrineQuery::create()
+//        ->select('es.id, p.id, p.entity_id')
+//        ->from('agEventStaff es')
+//        ->addFrom('es.agEventStaffStatus ess')
+//        ->addFrom('es.agStaffResource sr')
+//        ->addFrom('sr.agStaff s')
+//        ->addFrom('s.agPerson p')
+//        ->where('ess.staff_allocation_status_id = ?', $unAllocatedStaffStatus)
+//        ->andWhere('es.event_id = ?', $this->event_id)
+//        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+//
+//    $person_array = array();
+//    $entity_array = array();
+//    //get all event staff that are still marked as unavailable
+//    foreach ($eventStaffs as $staffRecord) {
+//      $person_array[$staffRecord['es_id']] = $staffRecord['p_id'];
+//      $entity_array[$staffRecord['es_id']] = $staffRecord['p_entity_id'];
+//    }
+//
+//    // Grab person's primary name by type.
+//    $nameHelper = new agPersonNameHelper($person_array);
+//    $person_names = $nameHelper->getPrimaryNameByType();
+//    unset($nameHelper);
+//
+//    // Grab person's primary information by their entity ids.
+//    $addressHelper = new agEntityAddressHelper();
+//    $person_addresses = $addressHelper->getEntityAddress($entity_array, TRUE, TRUE,
+//                                                         agAddressHelper::ADDR_GET_TYPE);
+//    unset($addressHelper);
+//
+//    $defaultPhoneCountryCodeUSA = agGlobal::getParam('default_phone_country_code_usa');
+//    $phoneHelper = new agEntityPhoneHelper();
+//    $person_phones = $phoneHelper->getEntityPhone($entity_array, TRUE, FALSE,
+//                                                  agPhoneHelper::PHN_GET_COMPONENT);
+//    unset($phoneHelpers);
+//
+//    $emailHelper = new agEntityEmailHelper();
+//    $person_emails = $emailHelper->getEntityEmail($entity_array, TRUE, FALSE,
+//                                                  agEmailHelper::EML_GET_VALUE);
+//    unset($emailHelper);
+//
+//    // The order of the column header in the array coinsides with the ordinal of the column
+//    // placement of the export file.
+//    $columnHeaders = array(
+//      'UNIQUE ID',
+//      'LAST NAME',
+//      'FIRST NAME',
+//      'MIDDLE INITIAL',
+//      'PIN Code',
+//      'GROUP ID',
+//      'GROUP DESCRIPTION',
+//      'ADDRESS 1',
+//      'ADDRESS 2',
+//      'CITY',
+//      'STATE/PROVINCE',
+//      'ZIP/POSTAL CODE',
+//      'COUNTRY',
+//      'TIME ZONE',
+//      'CUSTOM LABEL',
+//      'CUSTOM VALUE',
+//      'PHONE LABEL 1',
+//      'PHONE COUNTRY CODE 1',
+//      'PHONE 1',
+//      'PHONE EXTENSION 1',
+//      'CASCADE 1',
+//      'PHONE LABEL 2',
+//      'PHONE COUNTRY CODE 2',
+//      'PHONE 2',
+//      'PHONE EXTENSION 2',
+//      'CASCADE 2',
+//      'EMAIL LABEL 1',
+//      'EMAIL 1',
+//      'EMAIL LABEL 2',
+//      'EMAIL 2',
+//      'SMS LABEL 1',
+//      'SMS 1',
+//      'BB PIN LABEL 1',
+//      'BB PIN 1'
+//    );
+//
+//    // Mapping column headers.
+//    $nameMapping = array(
+//      'family' => 'LAST NAME',
+//      'given' => 'FIRST NAME',
+//      'middle' => 'MIDDLE INITIAL'
+//    );
+//
+//    $addressMapping = array(
+//      'line 1' => 'ADDRESS 1',
+//      'line 2' => 'ADDRESS 2',
+//      'city' => 'CITY',
+//      'state' => 'STATE/PROVINCE',
+//      'zip5' => 'ZIP/POSTAL CODE',
+//      'country' => 'COUNTRY'
+//    );
+//
+//    $phoneMapping = array(
+//      'contact type' => 'PHONE LABEL',
+//      'country code' => 'PHONE COUNTRY CODE',
+//      'phone' => 'PHONE',
+//      'extension' => 'PHONE EXTENSION'
+//    );
+//
+//    $emailMapping = array(
+//      'contact type' => 'EMAIL LABEL',
+//      'email' => 'EMAIL'
+//    );
+//
+//    // Here, we're only specifying the ones we care for in this export.  Add to the array as needed.
+//    $characterLimit = array(
+//      'FIRST NAME' => 30,
+//      'LAST NAME' => 30,
+//      'MIDDLE INITIAL' => 1,
+//      'ADDRESS 1' => 60,
+//      'ADDRESS 2' => 60,
+//      'CITY' => 30,
+//      'STATE/PROVINCE' => 80,
+//      'ZIP/POSTAL CODE' => 10,
+//      'COUNTRY' => 128,
+//      'PHONE LABEL' => 20,
+//      'PHONE COUNTRY CODE' => 5,
+//      'PHONE' => 14,
+//      'PHONE EXTENSION' => 8,
+//      'EMAIL LABEL' => 20,
+//      'EMAIL' => 60
+//    );
+//
+//    // Create first row of content with column header.
+//    $row = 1;
+//    $content[$row++] = array_combine($columnHeaders, $columnHeaders);
+//    $NUMBER_OF_CONTACT_TYPE = 2;
+//    foreach ($eventStaffs AS $staff) {
+//      $logMsg = array();
+//      // Initialize content with NULL value.  Later, we'll populate the columns with real data only
+//      // if data is provided.
+//      foreach ($columnHeaders AS $idx => $header) {
+//        $staffData[$header] = NULL;
+//      }
+//
+//      $staffData['UNIQUE ID'] = $staff['es_id'];
+//
+//      // Assign person's name.
+//      foreach ($nameMapping AS $nameLabel => $hdrName) {
+//        if (isset($person_names[$staff['p_id']][$nameLabel])) {
+//          $charLimit = $characterLimit[$nameMapping[$nameLabel]];
+//          $personName = substr($person_names[$staff['p_id']][$nameLabel], 0, $charLimit);
+//          $staffData[$hdrName] = $personName;
+//          if (strlen($personName) > $charLimit) {
+//            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s', $hdrName,
+//                                $charLimit, $personName);
+//          }
+//        }
+//      }
+//
+//      // Assign person's address by component.
+//      if (isset($person_addresses[$staff['p_entity_id']])) {
+//        $addressComponents = $person_addresses[$staff['p_entity_id']][1];
+//        foreach ($addressComponents AS $element => $value) {
+//          if (array_key_exists($element, $addressMapping)) {
+//            $charLimit = $characterLimit[$addressMapping[$element]];
+//            $address = substr($value, 0, $charLimit);
+//            $staffData[$addressMapping[$element]] = $address;
+//            if (strLen($value) > $charLimit) {
+//              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+//                                  $addressMapping[$element], $charLimit, $address);
+//            }
+//          }
+//        }
+//      }
+//
+//      // Build person's phone by component.
+//      $cnt = 0;
+//      if (isset($person_phones[$staff['p_entity_id']])) {
+//        foreach ($person_phones[$staff['p_entity_id']] AS $priority => $contact) {
+//          // Keep track of how many contacts we are required to provide.
+//          $cnt++;
+//
+//          // Build phone column headers with a counter appending to the end of each component of
+//          // the phone column headers.
+//          foreach ($phoneMapping AS $phoneLabel => $hdrPhone) {
+//            $newPhoneHeader[$phoneLabel] = $hdrPhone . ' ' . $cnt;
+//          }
+//
+//          // Currently, we are using a default value since there is no table in the db storing
+//          // phone country code.
+//          // @TODO Update code to collect phone country code once the db is implemented to handle
+//          // country code for phone.
+//          $staffData[$newPhoneHeader['country code']] = $defaultPhoneCountryCodeUSA;
+//
+//          $charLimit = $characterLimit[$phoneMapping['contact type']];
+//          $phoneType = substr($contact[0], 0, $charLimit);
+//          $staffData[$newPhoneHeader['contact type']] = $phoneType;
+//          if (strLen($contact[0]) > $charLimit) {
+//            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+//                                $newPhoneHeader['country code'], $charLimit, $contact[0]);
+//          }
+//
+//          // Check for extension.  The 'x' in the phone value indicates an extension number
+//          // following.
+//          $fullPhone = $contact[1];
+//          $extIdxPos = stripos($fullPhone, 'x');
+//          if ($extIdxPos === FALSE) {
+//            // Phone is assumed to have no extension so just process phone as is.
+//            $charLimit = $characterLimit[$phoneMapping['phone']];
+//            $staffData[$newPhoneHeader['phone']] = substr($fullPhone, 0, $charLimit);
+//            if (strLen($fullPhone) > $charLimit) {
+//              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+//                                  $newPhoneHeader['phone'], $charLimit, $fullPhone);
+//            }
+//          } else {
+//            // Grab just the phone number plus areacode.
+//            $charLimit = $characterLimit[$phoneMapping['phone']];
+//            $phone = substr($fullPhone, 0, $extIdxPos);
+//            $staffData[$newPhoneHeader['phone']] = substr($phone, 0, $charLimit);
+//            if (strLen($phone) > $charLimit) {
+//              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+//                                  $newPhoneHeader['phone'], $charLimit, $phone);
+//            }
+//
+//            // Grab only the extension number.
+//            $extension = substr($fullPhone, $extIdxPos + 1);
+//            $charLimit = $characterLimit[$phoneMapping['extension']];
+//            $staffData[$newPhoneHeader['extension']] = substr($extension, 0, $charLimit);
+//            if (strLen($extension) > $charLimit) {
+//              $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+//                                  $newPhoneHeader['extension'], $charLimit, $extension);
+//            }
+//          }
+//
+//          // Once we reached the number of contacts required, we don't need to capture the rest.
+//          if ($cnt == $NUMBER_OF_CONTACT_TYPE) {
+//            break;
+//          }
+//        }
+//      }
+//
+//      // Build person's email.
+//      $cnt = 0;
+//      if (isset($person_emails[$staff['p_entity_id']])) {
+//        foreach ($person_emails[$staff['p_entity_id']] AS $priority => $contact) {
+//          // Keep track of how many contacts we are required to provide.
+//          $cnt++;
+//
+//          // Build email column headers with a counter appending to the end of each component of
+//          // the email column headers.
+//          foreach ($emailMapping AS $emailLabel => $hdrEmail) {
+//            $newEmailHeader[$emailLabel] = $hdrEmail . ' ' . $cnt;
+//          }
+//
+//          $charLimit = $characterLimit[$emailMapping['contact type']];
+//          $staffData[$newEmailHeader['contact type']] = substr($contact[0], 0, $charLimit);
+//          if (strLen($contact[0]) > $charLimit) {
+//            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+//                                $newEmailHeader['contact type'], $charLimit, $contact[0]);
+//          }
+//
+//          $charLimit = $characterLimit[$emailMapping['email']];
+//          $staffData[$newEmailHeader['email']] = substr($contact[1], 0, $charLimit);
+//          if (strLen($contact[1]) > $charLimit) {
+//            $logMsg[] = sprintf('%s exceeded maximam character limit of %d: %s',
+//                                $newEmailHeader['email'], $charLimit, $contact[1]);
+//          }
+//
+//          // Once we reached the number of contacts required, we don't need to capture the rest.
+//          if ($cnt == $NUMBER_OF_CONTACT_TYPE) {
+//            break;
+//          }
+//        }
+//      }
+//
+//      $info[] = array('rowId' => $row, 'warning' => $logMsg);
+//      $content[$row++] = $staffData;
+//    }
+//    unset($eventStaffs, $staff);
+//    unset($person_name, $person_addresses, $person_phones, $person_emails);
+//
+//    require_once 'PHPExcel/Cell/AdvancedValueBinder.php';
+//    PHPExcel_Cell::setValueBinder(new PHPExcel_Cell_AdvancedValueBinder());
+//    $objPHPExcel = new sfPhpExcel();
+//    // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+//    $objPHPExcel->setActiveSheetIndex(0);
+//    // Set properties
+//    $objPHPExcel->getProperties()->setCreator("Agasti 2.0");
+//    $objPHPExcel->getProperties()->setLastModifiedBy("Agasti 2.0");
+//    $objPHPExcel->getProperties()->setTitle("Staff List");
+//    // Set default font
+//    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setName('Times');
+//    $objPHPExcel->getActiveSheet()->getDefaultStyle()->getFont()->setSize(12);
+//    foreach ($content AS $rowKey => $rowValue) {
+//      foreach ($columnHeaders AS $hKey => $heading) {
+//        $objPHPExcel->getActiveSheet()->getCellByColumnAndRow($hKey, $rowKey)->setValue($rowValue[$heading]);
 //      }
 //    }
-    //$this->facilityGroupArray = $facilityResourceArray;
-    $this->pager = new agArrayPager(null, 10);
-
-
-    $this->pager->setResultArray($this->ag_event_staff);
-    $this->pager->setPage($this->getRequestParameter('page', 1));
-    $this->pager->init();
-    //set up the widget for use in the ' list form '
-    //p-code
-    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
-    //end p-code
+//
+//    //This should be assigning an auto-width to each column that will fit the largest data in it. For some reason, it's not working.
+//    $highestColumn = $objPHPExcel->getActiveSheet()->getHighestColumn();
+//    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+//
+//    for ($i = $highestColumnIndex; $i >= 0; $i--) {
+//      $objPHPExcel
+//          ->getActiveSheet()
+//          ->getColumnDimension(PHPExcel_Cell::stringFromColumnIndex($i))
+//          ->setAutoSize(true);
+//    }
+//    // Save Excel 2007 file
+//
+//    $objWriter = new PHPExcel_Writer_Excel5($objPHPExcel);
+//    $todaydate = date("d-m-y");
+//    $todaydate = $todaydate . '-' . date("H-i-s");
+//    $filename = 'Staff';
+//    $filename = $filename . '-' . $todaydate;
+//    $filename = $filename . '.xls';
+//    $filePath = realpath(sys_get_temp_dir()) . '/' . $filename;
+//    $objWriter->save($filePath);
+//    $foo = new finfo();
+//    $bar = $foo->file($filePath, FILEINFO_MIME_TYPE);
+//
+//    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+//    $this->getResponse()->setHttpHeader(
+//        'Content-Disposition', 'attachment;filename="' . $filename . '"'
+//    );
+//
+//    $exportFile = file_get_contents($filePath);
+//
+//    //$this->getResponse()->setContent($objWriter);
+//    //$this->getResponse()->setContent($exportFile);
+//
+//    $this->getResponse()->setHeaderOnly(true);
+//    $this->getResponse()->send();
+//    $objWriter->save('php://output');
+//    unlink($filePath);
+//
+//    $this->exportComplete = sizeof($content);
+//    $this->redirect('event/messaging?event=' . urlencode($this->event_name)); //need to pass in event id
+//  }
+//
+//  /**
+//   * provides event staff pool management functions.
+//   * @param sfWebRequest $request request coming from web
+//   */
+//  public function executeStaffpool(sfWebRequest $request)
+//  {
+//    $this->setEventBasics($request);
+//
+//    $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')->findAll();
+//
+//    //get the possible filters from our request eg. &fr=1&type=generalist&org=volunteer
+//    $filters = array();
+//    foreach ($request->getParameterHolder() as $parameter => $filter) {
+//      if ($parameter == 'fr') {
+//        $filters['essh.event_facility_resource_id'] = $filter;
+//      }
+//      if ($parameter == 'st') {
+//        $filters['sr.staff_resource_type_id'] = $filter;
+//      }
+//      if ($parameter == 'so') {
+//        $filters['sr.organization_id'] = $filter;
+//      }
+//    }
+//    //set up inputs for filter form
+//    $inputs = array(
+//      'st' => new sfWidgetFormDoctrineChoice(
+//          array(
+//            'model' => 'agStaffResourceType',
+//            'label' => 'Staff Type',
+//            'add_empty' => true
+//          )
+//      ),
+//      // 'class' => 'filter')),
+//      'so' => new sfWidgetFormDoctrineChoice(
+//          array(
+//            'model' => 'agOrganization',
+//            'method' => 'getOrganization',
+//            'label' => 'Staff Organization',
+//            'add_empty' => true
+//          )
+//      ),
+//      //, 'class' => 'filter'))
+//      'fr' => new sfWidgetFormDoctrineChoice(
+//          array(
+//            'model' => 'agEventFacilityResource',
+//            'label' => 'Facility Resource',
+//            'add_empty' => true
+//          )
+//      )
+//    );
+//    /** @todo set defaults from the request */
+//    $this->filterForm = new sfForm(null, array(), false);
+//    //$this->filterForm->getWidgetSchema()->setNameFormat('filter[%s]');
+//    foreach ($inputs as $key => $input) {
+//      $input->setAttribute('class', 'filter');
+//      $this->filterForm->setWidget($key, $input);
+//    }
+//
+//    //begin construction of query used for listing
+//    $query = agDoctrineQuery::create()
+//        ->select(
+//            'es.id,
+//                  essh.id,
+//                  esh.event_facility_resource_id,
+//                  efr.facility_resource_id,
+//                  fr.facility_id,
+//                  f.facility_name,
+//                  sr.id,
+//                  srt.staff_resource_type,
+//                  o.organization,
+//                  sr.staff_resource_status_id,
+//                  srs.staff_resource_status,
+//                  p.id,
+//                  ess.staff_allocation_status_id'
+//        )//, sas.staff_allocation_status')
+//        //maybe we should only get the id since it's needed for dropdown
+//        ->from(
+//            'agEventStaff es,
+//              es.agEventStaffShift essh,
+//              essh.agEventShift esh,
+//              esh.agEventFacilityResource efr,
+//              efr.agFacilityResource fr,
+//              fr.agFacility f,
+//              es.agStaffResource sr,
+//              sr.agStaffResourceType srt,
+//              sr.agOrganization o,
+//              sr.agStaffResourceStatus srs,
+//              sr.agStaff s,
+//              s.agPerson p,
+//              es.agEventStaffStatus ess'
+//        )
+//        //ess.agStaffAllocationStatus sas')
+//        ->where('es.event_id = ?', $this->event_id);
+//
+//    if (sizeof($filters) > 0) {
+//      foreach ($filters as $field => $filter) {
+//        $query->andWhere($field . ' = ?', $filter);
+//      }
+//    }
+//
+//    if ($request->isMethod(sfRequest::POST)) {
+//      if ($request->getParameter('event_status')) {
+//        foreach ($request->getParameter('event_status') as $event_status) {
+//          //this is inefficient here as we are executing the same query in a loop to get associated objects
+////check to see if this staff member already has a status set.
+//          $eventStaffStatusObject = agDoctrineQuery::create()
+//              ->from('agEventStaffStatus a')
+//              ->where('a.event_staff_id =?', $event_status['event_staff_id'])
+//              ->fetchOne();
+////NEW
+//          if (!$eventStaffStatusObject) {
+//            $eventStaffStatusObject = new agEventStaffStatus();
+//            $eventStaffStatusObject->time_stamp = date('Y-m-d H:i:s', time());
+//            $eventStaffStatusObject->event_staff_id = $event_status['event_staff_id'];
+//            $eventStaffStatusObject->staff_allocation_status_id = $event_status['status'];
+//            $eventStaffStatusObject->save();
+//          } else {
+////UPDATE  ONLY IF staff_allocation_status has changed
+//            //technically this should always be an update, by the time a staff member is in an event
+//            if ($eventStaffStatusObject->staff_allocation_status_id != $event_status['status']) {
+//              $eventStaffStatusObject->time_stamp = date('Y-m-d H:i:s', time());
+//              //$eventStaffStatusObject->event_staff_id = $event_status['event_staff_id'];
+//              $eventStaffStatusObject->staff_allocation_status_id = $event_status['status'];
+//              $eventStaffStatusObject->save();
+//            }
+//          }
+//          //we should throw a check here to see if the most recent status is the same as incoming
+//        }
+//      }
+//    }
+//    $eventStaff = array();
+//    $person_array = array();
+//    $ag_event_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+//    foreach ($ag_event_staff as $key => $value) {
+//      $person_array[] = $value['p_id'];
+//      //$remapped_array[$ag_event_staff['es_id']] = $
+//    }
+//    $names = new agPersonNameHelper($person_array); //we need to get persons from the event staff ids that are returned here
+//    $person_names = $names->getPrimaryNameByType();
+//
+//    //$names->
+//    //this is the desired format of the return array:
+//    $this->widget = new sfForm();
+//    $this->widget->getWidgetSchema()->setNameFormat('event_status[][%s]');
+//    $this->widget->setWidget('status',
+//                             new sfWidgetFormDoctrineChoice(array('model' => 'agStaffAllocationStatus', 'method' => 'getStaffAllocationStatus')));
+//
+//    //the agStaffAllocationStatus ID coming from each of the selections will be saved to ag_Event_staff_status.
+//    $this->widget->getWidgetSchema()->setLabel('status', false);
+//    /** @todo set defaults for each status drop down from the web request */
+//    $this->form_action = 'event/staffpool?event=' . $this->event_name;
+//    $result_array = array();
+//    foreach ($ag_event_staff as $staff => $value) {
+//      $result_array[] = array(
+//        'fn' => $person_names[$value['p_id']]['given'],
+//        'ln' => $person_names[$value['p_id']]['family'],
+//        'organization_name' => $value['o_organization'],
+//        'status' => $value['srs_staff_resource_status'],
+//        'type' => $value['srt_staff_resource_type'],
+//        'facility' => $value['f_facility_name'],
+//        'es_id' => $value['es_id'],
+//        'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
+//      );
+//    }
+//
+//    $this->ag_event_staff = $result_array;
+////    foreach ($this->ag_event_staff as $eventFacilityGroup) {
+////      $tempArray = $this->groupResourceQuery($eventFacilityGroup->id);
+////      foreach ($tempArray as $ta) {
+////        array_push($eventStaff, $ta);
+////      }
+////    }
+//    //$this->facilityGroupArray = $facilityResourceArray;
+//    $this->pager = new agArrayPager(null, 10);
+//
+//
+//    $this->pager->setResultArray($this->ag_event_staff);
+//    $this->pager->setPage($this->getRequestParameter('page', 1));
+//    $this->pager->init();
+//    //set up the widget for use in the ' list form '
+//    //p-code
+//    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+//    //end p-code
   }
 
   /**

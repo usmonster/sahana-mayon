@@ -612,7 +612,7 @@ class agEventFacilityHelper
             ->andWhere($andWhereClause, $actionTimeOffset);
     $releasedShifts = $query->execute(array(), 'key_value_array');
 
-    $results = agEventShiftHelper::setEventShiftStatus($releasedShifts, $disabledStatusId, TRUE);
+    $results = agEventShiftHelper::setEventShiftStatus($releasedShifts, $disabledStatusId, TRUE, $conn);
     return $results;
   }
 

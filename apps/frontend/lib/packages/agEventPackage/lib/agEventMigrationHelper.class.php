@@ -16,6 +16,7 @@
  */
 class agEventMigrationHelper
 {
+  const     CONN_MIGRATION_WRITE = 'CONN_MIGRATION_WRITE';
 
   /**
    * Provides check information (count of empty facility groups) for this scenario
@@ -112,48 +113,70 @@ class agEventMigrationHelper
    */
   protected static function migrateFacilityGroups($scenario_id, $event_id, Doctrine_Connection $conn = NULL)
   {
-    $subSet = array('Facility Resources' => 0, 'Shifts' => 0);
+    $results = array('Facility Resources' => 0, 'Shifts' => 0);
 
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    $existingScenarioFacilityGroups = Doctrine_Core::getTable('agScenarioFacilityGroup')->findBy('scenario_id',
-                                                                                                 $scenario_id);
-    $facilityGroupCount = $existingScenarioFacilityGroups->count();
+    // get the existing scenario facility groups
+    $existingScenarioFacilityGroups = agDoctrineQuery::create()
+      ->select('sfg.*')
+        ->addSelect('fgas.*')
+        ->from('agScenarioFacilityGroup sfg')
+        ->innerJoin('sfg.agFacilityGroupAllocationStatus fgas')
+        ->where('sfg.scenario_id = ?', $scenario_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_ON_DEMAND);
+
+    // grab a count for later
+    $facilityGroupCount = 0;
+
+    $mt = new agMemoryTester();
+
     foreach ($existingScenarioFacilityGroups as $scenFacGrp) {
+
+      // create a new facility group
       $eventFacilityGroup = new agEventFacilityGroup();
-      $eventFacilityGroup->set('event_id', $event_id)
-          ->set('event_facility_group', $scenFacGrp->scenario_facility_group)
-          ->set('facility_group_type_id', $scenFacGrp->facility_group_type_id)
-          ->set('activation_sequence', $scenFacGrp->activation_sequence);
+      $eventFacilityGroup['event_id'] = $event_id;
+      $eventFacilityGroup['event_facility_group'] = $scenFacGrp['scenario_facility_group'];
+      $eventFacilityGroup['facility_group_type_id'] = $scenFacGrp['facility_group_type_id'];
+      $eventFacilityGroup['activation_sequence'] = $scenFacGrp['activation_sequence'];
       $eventFacilityGroup->save($conn);
 
+      // get its id
+      $efgId = $eventFacilityGroup->getId();
+
+      // create a new event facility group status
       $eventFacilityGroupStatus = new agEventFacilityGroupStatus();
-      $eventFacilityGroupStatus->set('event_facility_group_id', $eventFacilityGroup->id)
-          ->set('time_stamp', date('Y-m-d H:i:s', time()))
-          ->set('facility_group_allocation_status_id',
-                $scenFacGrp->facility_group_allocation_status_id);
+      $eventFacilityGroupStatus['event_facility_group_id'] = $efgId;
+      $eventFacilityGroupStatus['time_stamp'] = date('Y-m-d H:i:s', time());
+      $eventFacilityGroupStatus['facility_group_allocation_status_id'] = $scenFacGrp['facility_group_allocation_status_id'];
       $eventFacilityGroupStatus->save($conn);
 
-      $tempResult = $existingFacilityResources = self::migrateFacilityResources($scenFacGrp,
-                                                                            $eventFacilityGroup->id,
-                                                                            $event_id,
-                                                                            $conn);
-      $subSet['Facility Resources'] += $tempResult['Facility Resources'];
-      $subSet['Shifts'] += $tempResult['Shifts'];
+      $tempResult = self::migrateFacilityResources($scenFacGrp, $efgId, $event_id, $conn);
+      $results['Facility Resources'] += $tempResult['Facility Resources'];
+      $results['Shifts'] += $tempResult['Shifts'];
 
+      // reclaim some memory
       $eventFacilityGroup->free(TRUE);
       $eventFacilityGroupStatus->free(TRUE);
+      unset($eventFacilityGroup);
+      unset($eventFacilityGroupStatus);
+      $conn->flush();
+      $conn->evictTables();
+      $conn->clear();
+
+      // up our counter
+      $facilityGroupCount++;
+      $mt->test();
     }
 
-    $existingScenarioFacilityGroups->free(TRUE);
-
-    return array('Facility Groups' => $facilityGroupCount) + $subSet;
+    return array('Facility Groups' => $facilityGroupCount) + $results;
   }
 
   /**
    * Migrates facility resources from a scenario facility group to an event facility group
-   * @param integer $scenarioFacilityResourceId the facility resource with shifts to be migrated
-   * @param integer $eventFacilityResourceId the facility resource with shifts for migration
+   * @param agScenarioFacilityGroup $scenFacGrp the facility group with resources to be migrated
+   * @param integer $eventFacilityGroupId the event facility group to which the resources will belong
+   * @param integer $eventId The event being created
    * @param Doctrine_Connection $conn A doctrine connection object
    * @return array Returns an array of migrated counts of elements, keyed by Facility Resources and
    * Shifts.  Returns the following array:
@@ -161,73 +184,90 @@ class agEventMigrationHelper
    *       'Shifts' => count of migrated shifts
    *      )
    */
-  protected static function migrateFacilityResources($scenarioFacilityGroup, $event_facility_group_id,
+  protected static function migrateFacilityResources($scenFacGrp, $eventFacilityGroupId,
       $event_id, Doctrine_Connection $conn = NULL)
   {
-    $subSet = array('Shifts' => 0);
+    $results = array('Shifts' => 0);
 
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
     //get the event's zero hour for setting in facility resources with the proper conditions
+    // @todo Put this result into a property somewhere so this doesn't get called again and again
+    // for each facility group --> that or make these proper objects and share via $this->
     $eventZeroHour =  agDoctrineQuery::create()
         ->select('ae.zero_hour')
         ->from('agEvent ae')
         ->where('ae.id = ?', $event_id)
+        ->useResultCache(TRUE, 1800)
         ->execute(array(),Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    // @todo Put this result into a property somewhere so this doesn't get called again and again
+    // for each facility group --> that or make these proper objects and share via $this->
+    $staffedAllocationStatus = agDoctrineQuery::create()
+      ->select('afras.id')
+      ->from('agFacilityResourceAllocationStatus afras')
+      ->where('afras.staffed = ?', TRUE)
+      ->useResultCache(TRUE, 3600)
+      ->execute(array(),agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+
+    // grab our scenario facility resources
+    $existingScenarioFacilityResources = agDoctrineQuery::create()
+      ->select('sfr.*')
+        ->from('agScenarioFacilityResource sfr')
+        ->where('sfr.scenario_facility_group_id = ?', $scenFacGrp['id'])
+        ->execute(array(), Doctrine_Core::HYDRATE_ON_DEMAND);
+
+    // pick this up once so we don't do so in a group
+    $activeGroup = $scenFacGrp['agFacilityGroupAllocationStatus']['active'];
     
-    $existingScenarioFacilityResources = $scenarioFacilityGroup->getAgScenarioFacilityResource();
-    $facilityResourceCount = $existingScenarioFacilityResources->count();
+    // initialize a counter
+    $facilityResourceCount = 0;
+
     foreach ($existingScenarioFacilityResources as $scenFacRes) {
+
+      // create a new event facility resource
       $eventFacilityResource = new agEventFacilityResource();
-      $eventFacilityResource->set('event_facility_group_id', $event_facility_group_id)
-          ->set('facility_resource_id', $scenFacRes->facility_resource_id)
-          ->set('activation_sequence', $scenFacRes->activation_sequence);
+      $eventFacilityResource['event_facility_group_id'] = $eventFacilityGroupId;
+      $eventFacilityResource['facility_resource_id'] = $scenFacRes['facility_resource_id'];
+      $eventFacilityResource['activation_sequence'] = $scenFacRes['activation_sequence'];
       $eventFacilityResource->save($conn);
 
-      $eventFacilityResourceStatus = new agEventFacilityResourceStatus();
-      $eventFacilityResourceStatus->set('event_facility_resource_id', $eventFacilityResource->id)
-          ->set('time_stamp', date('Y-m-d H:i:s', time()))
-          ->set('facility_resource_allocation_status_id',
-                $scenFacRes->facility_resource_allocation_status_id);
+      // get the id to be re-used later
+      $efrId = $eventFacilityResource->getId();
+
+      // then create its status entry
+      $eventFacilityResourceStatus = new agEventFacilityResourceStatusBulkLoad();
+      $eventFacilityResourceStatus['event_facility_resource_id'] = $efrId;
+      $eventFacilityResourceStatus['time_stamp'] = date('Y-m-d H:i:s', time());
+      $eventFacilityResourceStatus['facility_resource_allocation_status_id'] = $scenFacRes['facility_resource_allocation_status_id'];
       $eventFacilityResourceStatus->save($conn);
 
-      $staffedAllocationStatus = agDoctrineQuery::create()
-        ->select('afras.id')
-        ->from('agFacilityResourceAllocationStatus afras')
-        ->where('afras.staffed = ?', TRUE)
-        ->useResultCache(TRUE, 3600)
-        ->execute(array(),agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
-
-      $activeGroupAllocationStatus = agDoctrineQuery::create()
-        ->select('afgas.id')
-        ->from('agFacilityGroupAllocationStatus afgas')
-        ->where('afgas.active = ?', TRUE)
-        ->useResultCache(TRUE, 3600)
-        ->execute(array(),agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
-
       //if the conditions are met, set the activation time to the event zero hour.
-      if(in_array($scenFacRes['facility_resource_allocation_status_id'], $staffedAllocationStatus)
-         && in_array($scenarioFacilityGroup['facility_group_allocation_status_id'], $activeGroupAllocationStatus))
+      if($activeGroup && in_array($scenFacRes['facility_resource_allocation_status_id'], $staffedAllocationStatus))
       {
-
         $eventFacilityResourceActivationTime = new agEventFacilityResourceActivationTime();
-        $eventFacilityResourceActivationTime->set('event_facility_resource_id', $eventFacilityResource->id)
-          ->set('activation_time', $eventZeroHour);
+        $eventFacilityResourceActivationTime['event_facility_resource_id'] = $efrId;
+        $eventFacilityResourceActivationTime['activation_time'] = $eventZeroHour;
         $eventFacilityResourceActivationTime->save($conn);
-        
+        $eventFacilityResourceActivationTime->free(TRUE);
+        unset($eventFacilityResourceActivationTime);
       }
 
-      // Should the shifts be process as the facility resources get processed?
-      // Another solution: create a temp table mapping the scenario to event facility resources?
-      $subSet['Shifts'] += self::migrateShifts($scenFacRes->id, $eventFacilityResource->id, $conn);
-
+      // release the objects
       $eventFacilityResource->free(TRUE);
       $eventFacilityResourceStatus->free(TRUE);
+      unset($eventFacilityResource);
+      unset($eventFacilityResourceStatus);
+
+      // Generate shifts
+      $results['Shifts'] += self::migrateShifts($scenFacRes['id'], $efrId, $conn);
+
+      // up our counter
+      $facilityResourceCount++;
     }
+    unset($existingScenarioFacilityResources);
 
-    $existingScenarioFacilityResources->free(TRUE);
-
-    return array('Facility Resources' => $facilityResourceCount) + $subSet;
+    return array('Facility Resources' => $facilityResourceCount) + $results;
   }
 
   /**
@@ -236,42 +276,53 @@ class agEventMigrationHelper
    * @param integer $eventFacilityResourceId the facility resource with shifts for migration
    * @param Doctrine_Connection $conn A doctrine connection object
    * @return integer Count of shifts migrated from Scenario to Event
-   * @todo Don't use the getTable methods or findby (all of which are VERY expensive)
    */
   protected static function migrateShifts($scenarioFacilityResourceId, $eventFacilityResourceId,
       Doctrine_Connection $conn = NULL)
   {
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    $scenarioShifts = Doctrine_Core::getTable('agScenarioShift')->findby('scenario_facility_resource_id',
-                                                                         $scenarioFacilityResourceId);
-    $shiftCount = $scenarioShifts->count();
+    $scenarioShifts = agDoctrineQuery::create()
+      ->select('ss.*')
+        ->from('agScenarioShift ss')
+        ->where('ss.scenario_facility_resource_id = ?', $scenarioFacilityResourceId)
+        ->execute(array(), Doctrine_Core::HYDRATE_ON_DEMAND);
+    
+    // create a collection
+    $coll = new Doctrine_Collection('agEventShift');
+
     foreach ($scenarioShifts as $scenShift) {
-      // At this point all fields in agEventShifts will be populated with agScenarioShifts.  Only
-      // the real time fields in agEvnetShifts will not be populated.  It will be done so at a later
-      // time when agEventFacilityActivationTime is populated.
+      
+      // create a new shift record
       $eventShift = new agEventShift();
-      $eventShift->set('event_facility_resource_id', $eventFacilityResourceId)
-          ->set('staff_resource_type_id', $scenShift['staff_resource_type_id'])
-          ->set('minimum_staff', $scenShift['minimum_staff'])
-          ->set('maximum_staff', $scenShift['maximum_staff'])
-          ->set('minutes_start_to_facility_activation',
-                $scenShift['minutes_start_to_facility_activation'])
-          ->set('task_length_minutes', $scenShift['task_length_minutes'])
-          ->set('break_length_minutes', $scenShift['break_length_minutes'])
-          ->set('task_id', $scenShift['task_id'])
-          ->set('shift_status_id', $scenShift['shift_status_id'])
-          ->set('staff_wave', $scenShift['staff_wave'])
-          ->set('deployment_algorithm_id', $scenShift['deployment_algorithm_id'])
-          ->set('originator_id', $scenShift['originator_id']);
-      $eventShift->save();
-      $eventShift->free(TRUE);
+      $eventShift['event_facility_resource_id'] = $eventFacilityResourceId;
+      $eventShift['staff_resource_type_id'] = $scenShift['staff_resource_type_id'];
+      $eventShift['minimum_staff'] = $scenShift['minimum_staff'];
+      $eventShift['maximum_staff'] = $scenShift['maximum_staff'];
+      $eventShift['minutes_start_to_facility_activation'] = $scenShift['minutes_start_to_facility_activation'];
+      $eventShift['task_length_minutes'] = $scenShift['task_length_minutes'];
+      $eventShift['break_length_minutes'] = $scenShift['break_length_minutes'];
+      $eventShift['task_id'] = $scenShift['task_id'];
+      $eventShift['shift_status_id'] = $scenShift['shift_status_id'];
+      $eventShift['staff_wave'] = $scenShift['staff_wave'];
+      $eventShift['deployment_algorithm_id'] = $scenShift['deployment_algorithm_id'];
+      $eventShift['originator_id'] = $scenShift['originator_id'];
+
+      // add the record to our collection
+      $coll->add($eventShift);
     }
 
-    $scenarioShifts->free(TRUE);
+    // save the collection
+    $coll->save($conn);
+    $shiftCount = $coll->count();
+
+    // free up some memory
+    $coll->free(TRUE);
+    $conn->clear();
+    unset($coll);
+    unset($scenarioShifts);
 
     return $shiftCount;
-    //return 1;
   }
 
   /**
@@ -285,33 +336,48 @@ class agEventMigrationHelper
   {
     if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
 
-    $existingScenarioStaffPools = agDoctrineQuery::create()
+    // set the staff query
+    $existingScenarioStaff = agDoctrineQuery::create()
+      ->select('ssr.*')
         ->from('agScenarioStaffResource ssr')
-        ->where('scenario_id', $scenario_id)
-        ->orderBy('deployment_weight')
-        ->execute();
-    $staffCount = $existingScenarioStaffPools->count();
-    foreach ($existingScenarioStaffPools AS $scenStfPool) {
-      $eventStaff = new agEventStaff();
-      $eventStaff->set('event_id', $event_id)
-          ->set('staff_resource_id', $scenStfPool->staff_resource_id)
-          ->set('deployment_weight', $scenStfPool->deployment_weight);
-      $eventStaff->save();
+        ->where('scenario_id = ?', $scenario_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_ON_DEMAND);
 
-      $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
-      
-      $eventStaffStatus = new agEventStaffStatus();
-      $eventStaffStatus->set('event_staff_id', $eventStaff->id)
-          ->set('time_stamp', date('Y-m-d H:i:s', time()))
-          ->set('staff_allocation_status_id', $unAllocatedStaffStatus);
-      $eventStaffStatus->save();
-      $eventStaffStatus->free(TRUE);
+    // get the staff allocation status
+    $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
 
+    // initialize an iterator
+    $staffCount = 0;
+
+    $mt = new agMemoryTester();
+    foreach ($existingScenarioStaff AS $scenStfPool) {
+
+      // create an agEventStaff record
+      $eventStaff = new agEventStaffBulkLoad();
+      $eventStaff['event_id'] = $event_id;
+      $eventStaff['staff_resource_id'] = $scenStfPool['staff_resource_id'];
+      $eventStaff['deployment_weight'] = $scenStfPool['deployment_weight'];
+      $eventStaff->save($conn);
+      $eventStaffId = $eventStaff->getId();
       $eventStaff->free(TRUE);
+      unset($eventStaff);
+
+      // create the staff status record
+      $eventStaffStatus = new agEventStaffStatus();
+      $eventStaffStatus['event_staff_id'] = $eventStaffId;
+      $eventStaffStatus['time_stamp'] = date('Y-m-d H:i:s', time());
+      $eventStaffStatus['staff_allocation_status_id'] = $unAllocatedStaffStatus;
+      $eventStaffStatus->save($conn);
+      $eventStaffStatus->free(TRUE);
+      unset($eventStaffStatus);
+
+      $staffCount++;
+      $mt->test();
     }
 
-    $existingScenarioStaffPools->free(TRUE);
-    //return 1;
+    // free up some memory
+    unset($existingScenarioStaff);
+
     return $staffCount;
   }
 
@@ -329,10 +395,29 @@ class agEventMigrationHelper
    */
   public static function migrateScenarioToEvent($scenario_id, $event_id)
   {
+    // all of this jazz helps us keep a low memory profile
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
+    $adapter = $dm->getCurrentConnection()->getDbh();
+//    $adapter = clone $adapter;
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_MIGRATION_WRITE);
 
-    $conn = Doctrine_Manager::connection();
+    // this will disable re-use of query objects but keeps the connection memory profile low
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
+
+    // return back to our 'normal' doctrine connection before moving further
+    $dm->setCurrentConnection('doctrine');
+
+    // yay, transactions = data integrity
     $conn->beginTransaction();
 
+    $mt = new agMemoryTester();
     try {
 
       /**
@@ -348,38 +433,42 @@ class agEventMigrationHelper
        * 1d. Copy over scenario shift
        */
       $migrationResult = self::migrateFacilityGroups($scenario_id, $event_id, $conn);
+      $conn->clear();
+      $conn->flush();
+      $conn->evictTables();
+      $conn->clear();
+      $mt->test();
 
       /**
        * @todo
-       * 2. Populate facility start time, update event shift with real time, update facility resource/group status.
+       * 2. Update event shift with real time
        */
 
       /**
        * 3. Regenerate staff pool
        */
-      agDoctrineQuery::create($conn)
-        ->delete()
-          ->from('agEventStaff')
-          ->where('event_id = ?', $event_id)
-          ->execute();
-      /**
-       * @todo Wrap in an event helper class.
-       */
-      //regenerate staff pool with new search conditions
       agStaffGeneratorHelper::generateStaffPool($scenario_id, FALSE, $conn);
+      $conn->clear();
+      $conn->flush();
+      $conn->evictTables();
+      $conn->clear();
+      $mt->test();
 
       // 4. Copy over staff pool
       $migrationResult['Staffs'] = self::migrateStaffPool($scenario_id, $event_id, $conn);
-      // 5. Populate agEventStaffShift (assigning event staffs to shifts).
-      // 6. Update event status to deployed/active?
+      $mt->test();
 
       $conn->commit();
     } catch (Exception $e) {
       $conn->rollBack();
-
       throw $e;
     }
+    $conn->clear();
+    $conn->flush();
+    $conn->evictTables();
+    $conn->clear();
 
+    print_r($mt->getResults());
     return $migrationResult;
   }
 

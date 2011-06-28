@@ -32,37 +32,47 @@ class agEventShiftHelper
     $eventStaffUpdates = 0 ;
     $eventShiftUpdates = 0 ;
 
+      // query construction
+      $shiftsQuery = agDoctrineQuery::create()
+        ->update('agEventShift')
+        ->set('shift_status_id', '?', $shiftStatusId)
+        ->whereIn('id', $eventShiftIds);
+
       // set our default connection if one is not passed
       if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+      $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
 
-      // query construction
-      $shiftsQuery = agDoctrineQuery::create($conn)
-        ->update('agEventShift')
-          ->set('shift_status_id', '?', $shiftStatusId)
-          ->whereIn('id', $eventShiftIds) ;
+      // @todo This is a total hack because the adapter getTransactionLevel is broken if transactions
+      // exist on other connections to the same database (using the same adapter)
+      try {
+        if ($useSavepoint)
+        {
+          $conn->beginTransaction(__FUNCTION__);
+        }
+        else
+        {
+          $conn->beginTransaction();
+        }
+      } catch (Doctrine_Transaction_Exception $dte) {
+        $useSavepoint = TRUE;
+        $conn->beginTransaction(__FUNCTION__);
+      }
 
-      // wrap it all in a transaction and a try/catch to rollback if an exception occurs
-      $conn->beginTransaction() ;
       try
       {
-        $components = $shiftsQuery->getDql() ;
-//   Chad, if you work on this soon, I commented out the line below because it was causing 
-//   errors w/ the modal-modal. Somehow, the echo here was getting all the way back to the response,
-//   so the string that was expected to be event/[event-name]/fgroup turned out to be something like
-//   UPDATE agEventShift SET shift_status_id = ? WHERE id IN (?, ?, ?, ?, ?, ?, ?)event/[event-name]/fgroup.
-//        echo $components ;
         // update shifts
+        $shiftsQuery->setConnection($conn);
         $eventShiftUpdates = $shiftsQuery->execute() ;
 
         // release staff if instructed to do so
         if ($releaseStaff) { $eventStaffUpdates = self::releaseShiftStaff($eventShiftIds, $conn) ; }
 
         // commit
-        $conn->commit() ;
+        if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
       }
       catch(Exception $e)
       {
-        $conn->rollback(); // rollback if we must :(
+        if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
     }
 
     // return our respective record operation counts

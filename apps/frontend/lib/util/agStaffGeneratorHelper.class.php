@@ -171,7 +171,6 @@ class agStaffGeneratorHelper extends agSearchHelper
 
       // add it to our collection and remove it from the $staffResources array
       $coll->add($newRec);
-      unset($staffResources[$staffResourceId]);
     }
 
     // our staff resource collection has been updated, all that's left is to save

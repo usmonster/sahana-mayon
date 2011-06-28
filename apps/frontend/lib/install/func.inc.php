@@ -244,9 +244,6 @@ function writeAppYml($authMethod = NULL)
         'homepage' => array('label' => 'Home', 'route' => '@homepage'),
         'prepare' => array('label' => 'Prepare', 'route' => '@prepare'),
         'respond' => array('label' => 'Respond', 'route' => '@respond'),
-        'recover' => array('label' => 'Recover', 'route' => '@homepage'),
-        'mitigate' => array('label' => 'Mitigate', 'route' => '@homepage'),
-        'modules' => array('label' => 'Modules', 'route' => '@homepage'),
         'admin' => array('label' => 'Administration', 'route' => '@admin'),
         'help' => array('label' => 'Help', 'route' => '@wiki'));
 

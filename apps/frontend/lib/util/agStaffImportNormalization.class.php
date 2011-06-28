@@ -364,8 +364,6 @@ class agStaffImportNormalization extends agImportNormalization
     $personTable = $conn->getTable('agPersonBulkLoad');
     $staffTable = $conn->getTable('agStaffBulkLoad');
 
-    $personListener = $personTable->getListener();
-
     // define the collections once
     $entityColl = new Doctrine_Collection('agEntity');
     $personColl = new Doctrine_Collection('agPersonBulkLoad');
