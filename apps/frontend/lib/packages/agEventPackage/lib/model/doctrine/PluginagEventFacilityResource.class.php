@@ -18,6 +18,7 @@ abstract class PluginagEventFacilityResource extends BaseagEventFacilityResource
 
     $basefrQuery = agFacilityResource::getFacilityResourceQuery();
     $basefrQuery->addSelect('efr.id');
+    $basefrQuery->addSelect('fr.capacity');
     $basefrQuery->innerJoin('fr.agEventFacilityResource efr');
     $basefrQuery->innerJoin('efr.agEventFacilityGroup efg');
     $basefrQuery->andWhere('efg.event_id = ?', $event_id);
