@@ -76,15 +76,11 @@ class agPersonNameHelper extends agBulkRecordHelper
   /**
    * Method to construct and return a basic name query object.
    *
-   * @param array $personIds A single-dimension array of person id values. Default is NULL.
-   * @param boolean $primary A boolean that controls whether or not the query constructor will
-   * build a query that only returns primary names or all names.
+   * @param array $personId A person id value. Default is NULL.
    * @return Doctrine_Query An instantiated doctrine query object.
    */
-  protected function _getNameComponents(array $personIds = NULL, $primary = TRUE)
+  protected static function _getNameComponents($primary = TRUE)
   {
-    $personIds = $this->getRecordIds($personIds) ;
-
     //TODO: if empty, skip all this overhead and just return some default query
 
     $q = agDoctrineQuery::create()
@@ -93,8 +89,8 @@ class agPersonNameHelper extends agBulkRecordHelper
           ->addSelect('pn.person_name')
         ->from('agPersonMjAgPersonName pmpn')
           ->innerJoin('pmpn.agPersonName pn')
-        ->whereIn('pmpn.person_id', $personIds)
-        ->orderBy('pmpn.priority ASC') ;
+        ->orderBy('pmpn.priority ASC')
+        ->useResultCache(TRUE, 1800);
 
     if ($primary)
     {
@@ -117,11 +113,31 @@ class agPersonNameHelper extends agBulkRecordHelper
    */
   public function getPrimaryNameById(array $personIds = NULL)
   {
+    $personIds = $this->getRecordIds($personIds);
+    $results = array();
+
     // build our components query
-    $q = $this->_getNameComponents($personIds, TRUE) ;
+    $q = self::_getNameComponents(TRUE) ;
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+
+    foreach ($personIds as $personId) {
+      $q->where('pmpn.person_id = ?', $personId);
+      $result = $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_TWO_DIM);
+
+      if (empty($result))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results += $result;
+      }
+
+      unset($personIds[$personId]);
+    }
 
     // execute and return our results
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_TWO_DIM) ;
+    return $results;
   }
 
   /**
@@ -134,11 +150,31 @@ class agPersonNameHelper extends agBulkRecordHelper
    */
   public function getNameById(array $personIds = NULL, $primary = FALSE)
   {
+    $personIds = $this->getRecordIds($personIds);
+    $results = array();
+
     // build our components query
-    $q = $this->_getNameComponents($personIds, $primary) ;
+    $q = self::_getNameComponents($primary) ;
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+
+    foreach ($personIds as $personId) {
+      $q->where('pmpn.person_id = ?', $personId);
+      $result = $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_THREE_DIM);
+
+      if (empty($result))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results += $result;
+      }
+
+      unset($personIds[$personId]);
+    }
 
     // execute and return our results
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_ASSOC_THREE_DIM) ;
+    return $results;
   }
 
   /**
@@ -151,23 +187,36 @@ class agPersonNameHelper extends agBulkRecordHelper
    */
   public function getNameByTypeId(array $personIds = NULL, $primary = FALSE)
   {
-    // always good to declare results first
-    $results = array() ;
+    $personIds = $this->getRecordIds($personIds);
+    $results = array();
 
     // build our components query
-    $q = $this->_getNameComponents($personIds, $primary) ;
+    $q = self::_getNameComponents($primary) ;
     $q->addSelect('pn.id') ;
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
 
-    // execute, keeping in mind that we have to use custom hydration because of the new components
-    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
+    foreach ($personIds as $personId) {
+      $q->where('pmpn.person_id = ?', $personId);
+      $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
 
-    // otherwise iterate and place our results into a positional array
-    foreach ($rows as $row)
-    {
-      $results[$row[0]][$row[1]][] = $row[3] ;
+      if (empty($rows))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+
+        foreach ($rows as $row)
+        {
+          $results[$row[0]][$row[1]][] = $row[3] ;
+        }
+      }
+
+      unset($personIds[$personId]);
     }
 
-    return $results ;
+    // execute and return our results
+    return $results;
   }
 
   /**
@@ -181,25 +230,37 @@ class agPersonNameHelper extends agBulkRecordHelper
    */
   public function getNameByType(array $personIds = NULL, $primary = FALSE)
   {
-    // always good to declare results first
-    $results = array() ;
+    $personIds = $this->getRecordIds($personIds);
+    $results = array();
 
     // build our components query
-    $q = $this->_getNameComponents($personIds, $primary) ;
-    $q->addSelect('pnt.person_name_type')
-      ->innerJoin('pmpn.agPersonNameType pnt') ;
+    $q = self::_getNameComponents($primary);
+    $q->addSelect('pnt.person_name_type');
+    $q->innerJoin('pmpn.agPersonNameType pnt');
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
 
+    foreach ($personIds as $personId) {
+      $q->where('pmpn.person_id = ?', $personId);
+      $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
 
-    // execute, keeping in mind that we have to use custom hydration because of the new components
-    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
+      if (empty($rows))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
 
-    // otherwise iterate and place our results into a positional array
-    foreach ($rows as $row)
-    {
-      $results[$row[0]][$row[3]][] = $row[2] ;
+        foreach ($rows as $row)
+        {
+          $results[$row[0]][$row[3]][] = $row[2] ;
+        }
+      }
+
+      unset($personIds[$personId]);
     }
 
-    return $results ;
+    // execute and return our results
+    return $results;
   }
 
   /**

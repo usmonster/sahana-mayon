@@ -21,6 +21,7 @@ abstract class agExportHelper extends agPdoHelper {
             $helperObjects = array(),
             $exportSpec = array(),
             $exportComponents = array(),
+            $exportDate,
             $exportData = array(),
             $exportDataRowTemplate = array(),
             $exportRawData = array(),
@@ -31,7 +32,8 @@ abstract class agExportHelper extends agPdoHelper {
 
   protected $XlsMaxExportSize,
             $totalFetches = 0,
-            $fetchPosition = 0;
+            $fetchPosition = 0,
+            $batchPosition = 0;
 
   /**
    * Method to get the base doctrine query object used in export
@@ -62,6 +64,9 @@ abstract class agExportHelper extends agPdoHelper {
     // set our export basename
     $this->exportBaseName = $exportBaseName;
 
+    // get our export data
+    $this->exportDate = date('Ymd_His');
+
     // get our paths
     $this->tempPath = realpath(sys_get_temp_dir());
     $this->exportFileInfo['path'] = sfConfig::get('sf_download_dir');
@@ -86,6 +91,7 @@ abstract class agExportHelper extends agPdoHelper {
   /**
    * Method to lazily load helper objects
    * @param string $helperClassName Name of the helper class to load
+   * @return mixed Returns the loaded helper class
    */
   protected function getHelperObject($helperClassName)
   {
@@ -141,12 +147,13 @@ abstract class agExportHelper extends agPdoHelper {
     // reset our data row template
     $this->exportDataRowTemplate = array();
     foreach (array_keys($this->exportSpec) as $column) {
-      $this->exportDataRowTemplate['column'] = NULL;
+      $this->exportDataRowTemplate[$column] = NULL;
     }
 
     // reset our counters
     $this->fetchPosition = 0;
     $this->totalFetches = 0;
+    $this->batchPosition = 0;
 
     // clean our our export data
     $this->resetExportData();
@@ -170,7 +177,7 @@ abstract class agExportHelper extends agPdoHelper {
 
     // start the real export query
     $this->executePdoQuery($conn, $sql, $params['where'],
-      Doctrine_Core::FETCH_ASSOC, self::EXPORT_QUERY);
+      Doctrine_Core::FETCH_OBJ, self::EXPORT_QUERY);
   }
 
   /**
@@ -189,9 +196,7 @@ abstract class agExportHelper extends agPdoHelper {
     }
     unset($paths); // same goes for here
 
-    // set some smart variables
-    $date = date('Ymd_His');
-    $this->exportFileInfo['filename'] = $this->exportBaseName . '_' . $date . '.zip';
+    $this->exportFileInfo['filename'] = $this->exportBaseName . '_' . $this->exportDate . '.zip';
 
     $zipPath = $this->tempPath . DIRECTORY_SEPARATOR . $this->exportFileInfo['filename'];
 
@@ -239,20 +244,20 @@ abstract class agExportHelper extends agPdoHelper {
 
 
     // iterate the first fetch of a batch
-    while($row = $pdo->fetch()) {
+    while($obj = $pdo->fetch()) {
       // increment the fetch position
       $this->fetchPosition++;
 
       // add the data to our exportData array
-      $this->exportRawData[$this->fetchPosition] = $row;
+      $this->exportRawData[$this->fetchPosition] = $obj;
       $this->exportData[$this->fetchPosition] = $this->exportDataRowTemplate;
 
-      while((($this->fetchPosition % $this->XlsMaxExportSize) != 0) && ($row = $pdo->fetch())) {
+      while((($this->fetchPosition % $this->XlsMaxExportSize) != 0) && ($obj = $pdo->fetch())) {
         // increment the fetch position
         $this->fetchPosition++;
 
         // add the data to our exportData array
-        $this->exportRawData[$this->fetchPosition] = $row;
+        $this->exportRawData[$this->fetchPosition] = $obj;
         $this->exportData[$this->fetchPosition] = $this->exportDataRowTemplate;
       }
     }
@@ -263,7 +268,11 @@ abstract class agExportHelper extends agPdoHelper {
    */
   protected function getExportData()
   {
-    
+    foreach ($this->exportComponents as $component)
+    {
+      $method = $component['method'];
+      $this->$method();
+    }
   }
 
   /**
@@ -283,10 +292,8 @@ abstract class agExportHelper extends agPdoHelper {
   protected function closeExportZip()
   {
     // get our two respective move paths
-    $downloadPath = $this->exportFileInfo['path'] . DIRECTORY_SEPARATOR .
-      $this->exportFileInfo['filename'];
-    $tempPath = $this->tempPath . DIRECTORY_SEPARATOR .
-      $this->exportFileInfo['filename'];
+    $downloadPath = $this->exportFileInfo['path'] . DIRECTORY_SEPARATOR . $this->exportFileInfo['filename'];
+    $tempPath = $this->tempPath . DIRECTORY_SEPARATOR . $this->exportFileInfo['filename'];
 
     // close the zip
     $this->zipFile->close();
@@ -312,111 +319,21 @@ abstract class agExportHelper extends agPdoHelper {
   protected function createXlsFromExportData()
   {
 
+    $xlsName = $this->exportBaseName . '_' . $this->exportDate . '_' . $this->batchPosition . '.xls';
+    $fullPath = $this->tempPath . DIRECTORY_SEPARATOR . $xlsName;
 
-    // get our temporary table read connection
-    $conn = $this->getConnection(self::CONN_TEMP_READ);
-    $columnHeaders = array_keys($this->importSpec);
-    $selectCols = 't.' . implode(', t.', $columnHeaders);
-
-    // build our query statement
-    $this->eh->logDebug('Export: Establishing fetch from the database.');
-    $q = 'SELECT ' . $selectCols . ' FROM ' . $this->tempTable . ' AS t WHERE t.' .
-      $this->successColumn . ' != ? OR ' . $this->successColumn . ' IS NULL;';
-    $pdo = $this->executePdoQuery($conn, $q, array(TRUE));
-    $this->eh->logDebug('Export: PDO object successfully created.');
-
-    // set counters
-    $i = 1;
-    $fetchPosition = 0;
-
-    // begin fetching from the database, starting with our first record
-    while ($row = $pdo->fetch()) {
-      // start by incrementing our fetch position
-      $fetchPosition++;
-
-      // reset our exportData array and add our first row to it
-      $exportData = array();
-      $exportData[] = $row;
-
-      // continue fetching until we either run out of records or hit our batch limit
-      while (($fetchPosition % $this->XlsMaxExportSize != 0) && ($row = $pdo->fetch())) {
-        // always increment fetch position immediately
-        $fetchPosition++;
-
-        // add the row to our $rows array
-        $exportData[] = $row;
-      }
-
-      // set our xlsname and pass it and our export data to the buildXls method
-      $xlsName = $this->unprocessedBaseName . '_' . $date . '_' . $i . '.xls';
-      $this->eh->logInfo('Export: Fetched ' . count($rows) . ' records from the database into ' .
-        'batch ' . $i . '. Now adding records to ' . $xlsName . '.');
-      $xlsPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $xlsName;
-
-      // check for successful creation of the xlsfile (both soft and hard)
-      try {
-        if (! $this->buildXls($xlsPath, $exportData)) {
-          break;
-        }
-      } catch (Exception $e) {
-        $this->eh->logErr($e->getMessage());
-        break;
-      }
-
-      // if all went well, add it to the exportFiles array
-      $exportFiles[$i] = array($xlsPath, $xlsName);
-
-      // iterate our batch counter
-      $i++;
-    }
-
-    // we do this to check if any records were processed at all
-    if ($fetchPosition == 0 || count($exportFiles) == 0) {
-
-      // if none were, log a warning
-      $this->eh->logWarning('Export No unprocessed records could be retrieved. Could not create' .
-        'unprocessed records export.');
-
-      // close out and remove our zipfile
-      $zipFile->close();
-      unlink($zipPath);
-
-      // then return false
+    if (empty($this->exportData)) {
       return FALSE;
     }
 
-    // otherwise, add our xls files to the zip
-    foreach ($exportFiles as $xlsFileInfo) {
-      $this->eh->logDebug('Export: Adding ' . $xlsFileInfo[1] . ' to zip file.');
-      $zipFile->addFile($xlsFileInfo[0], $xlsFileInfo[1]);
-    }
-    $this->eh->logInfo('Export: Successfully added ' . count($exportFiles) .
-      ' xls files to zip file.');
-
-    // close the zip
-    $zipFile->close();
-
-    // remove the individual xls files
-    foreach ($exportFiles as $xlsFileInfo) {
-      $this->eh->logDebug('Export: Removing ' . $xlsFileInfo[1] . ' from the temp directory.');
-      unlink($xlsFileInfo[0]);
-    }
-    $this->eh->logInfo('Export: Successfully removed xls files from the temp directory.');
-
-    // finally, move the zip file to its final web-accessible location
-    $this->eh->logDebug('Export: Moving ' . $downloadFile . ' to user-accesible directory.');
-    $downloadPath = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $downloadFile;
-    if (! rename($zipPath, $downloadPath)) {
-      $this->eh->logErr('Export: Unable to move ' . $downloadFile . ' to the specified upload ' .
-        'directory. Check your sf_upload_dir configuration to ensure you have write permissions.');
+    // check for successful creation of the xlsfile (both soft and hard)
+    if (! $this->buildXls($fullPath, $this->exportData)) {
+      throw new sfException('Export failed during method ' . __FUNCTION__ . '.');
     }
 
-    $eventMsg = "Export: Successfully created export file of unprocessed records.";
-    $this->eh->logNotice($eventMsg);
+    $this->zipContents[] = array('path' => $this->tempPath, 'filename' => $xlsName);
 
-
-    return $downloadFile;
-
+    return TRUE;
   }
 
   /**
@@ -431,7 +348,7 @@ abstract class agExportHelper extends agPdoHelper {
     $sheet = new agExcel2003ExportHelper($this->exportBaseName);
 
     // Write the column headers
-    foreach (array_keys($exportData[0]) as $columnHeader) {
+    foreach ($this->exportSpec as $columnHeader => $specData) {
       $sheet->label($columnHeader);
       $sheet->right();
     }

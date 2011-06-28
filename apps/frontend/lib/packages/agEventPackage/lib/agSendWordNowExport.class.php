@@ -39,68 +39,40 @@ abstract class agSendWordNowExport extends agExportHelper {
   {
     // define a few variables
     $exportSpec = array();
-    $exportSpec['UNIQUE ID'] = array('type' => 'integer', 'mapsTo' => 'id');
-    $exportSpec['LAST NAME'] = array('type' => 'string', 'length' => 30);
-    $exportSpec['FIRST NAME'] = array('type' => 'string', 'length' => 30);
-    $exportSpec['MIDDLE INITIAL'] = array('type' => 'string', 'length' => 1);
+    $exportSpec['UNIQUE ID'] = array('type' => 'integer');
+    $exportSpec['LAST NAME'] = array('type' => 'string', 'length' => 30, 'mapsTo' => 'given');
+    $exportSpec['FIRST NAME'] = array('type' => 'string', 'length' => 30, 'mapsTo' => 'family');
+    $exportSpec['MIDDLE INITIAL'] = array('type' => 'string', 'length' => 1, 'mapsTo' => 'middle');
     $exportSpec['PIN Code'] = array();
-    $exportSpec['GROUP ID'] = array();
-    $exportSpec['GROUP DESCRIPTION'] = array();
-    $exportSpec['ADDRESS 1'] = array('type' => 'string', 'length' => 60);
-    $exportSpec['ADDRESS 2'] = array('type' => 'string', 'length' => 60);
-    $exportSpec['CITY'] = array('type' => 'string', 'length' => 30);
-    $exportSpec['STATE/PROVINCE'] = array('type' => 'string', 'length' => 80);
-    $exportSpec['ZIP/POSTAL CODE'] = array('type' => 'string', 'length' => 10);
-    $exportSpec['COUNTRY'] = array('type' => 'string', 'length' => 128);
+    $exportSpec['GROUP ID'] = array('type' => 'integer');
+    $exportSpec['GROUP DESCRIPTION'] = array('type' => 'string', 'length' => 128);
+    $exportSpec['ADDRESS 1'] = array('type' => 'string', 'length' => 60, 'mapsTo' => 'line 1');
+    $exportSpec['ADDRESS 2'] = array('type' => 'string', 'length' => 60, 'mapsTo' => 'line 2');
+    $exportSpec['CITY'] = array('type' => 'string', 'length' => 30, 'mapsTo' => 'city');
+    $exportSpec['STATE/PROVINCE'] = array('type' => 'string', 'length' => 80, 'mapsTo' => 'state');
+    $exportSpec['ZIP/POSTAL CODE'] = array('type' => 'string', 'length' => 10, 'mapsTo' => 'zip5');
+    $exportSpec['COUNTRY'] = array('type' => 'string', 'length' => 128, 'mapsTo' => 'country');
     $exportSpec['TIME ZONE'] = array();
     $exportSpec['CUSTOM LABEL'] = array();
     $exportSpec['CUSTOM VALUE'] = array();
-    $exportSpec['PHONE LABEL 1'] = array('type' => 'string', 'length' => 20);
-    $exportSpec['PHONE COUNTRY CODE 1'] = array('type' => 'string', 'length' => 5);
-    $exportSpec['PHONE 1'] = array('type' => 'string', 'length' => 14);
-    $exportSpec['PHONE EXTENSION 1'] = array('type' => 'string', 'length' => 8);
+    $exportSpec['PHONE LABEL 1'] = array('type' => 'string', 'length' => 20, 'mapsTo' => 'contact type');
+    $exportSpec['PHONE COUNTRY CODE 1'] = array('type' => 'string', 'length' => 5, 'mapsTo' => 'country code');
+    $exportSpec['PHONE 1'] = array('type' => 'string', 'length' => 14, 'mapsTo' => 'phone');
+    $exportSpec['PHONE EXTENSION 1'] = array('type' => 'string', 'length' => 8, 'mapsTo' => 'extension');
     $exportSpec['CASCADE 1'] = array();
-    $exportSpec['PHONE LABEL 2'] = array('type' => 'string', 'length' => 20);
-    $exportSpec['PHONE COUNTRY CODE 2'] = array('type' => 'string', 'length' => 5);
-    $exportSpec['PHONE 2'] = array('type' => 'string', 'length' => 14);
-    $exportSpec['PHONE EXTENSION 2'] = array('type' => 'string', 'length' => 14);
+    $exportSpec['PHONE LABEL 2'] = array('type' => 'string', 'length' => 20, 'mapsTo' => 'contact type');
+    $exportSpec['PHONE COUNTRY CODE 2'] = array('type' => 'string', 'length' => 5, 'mapsTo' => 'country code');
+    $exportSpec['PHONE 2'] = array('type' => 'string', 'length' => 14, 'mapsTo' => 'phone');
+    $exportSpec['PHONE EXTENSION 2'] = array('type' => 'string', 'length' => 14, 'mapsTo' => 'extension');
     $exportSpec['CASCADE 2'] = array();
-    $exportSpec['EMAIL LABEL 1'] = array('type' => 'string');
-    $exportSpec['EMAIL 1'] = array('type' => 'string');
-    $exportSpec['EMAIL LABEL 2'] = array('type' => 'string');
-    $exportSpec['EMAIL 2'] = array('type' => 'string');
+    $exportSpec['EMAIL LABEL 1'] = array('type' => 'string', 'length' => 20, 'mapsTo' => 'contact type');
+    $exportSpec['EMAIL 1'] = array('type' => 'string', 'length' => 60, 'mapsTo' => 'email');
+    $exportSpec['EMAIL LABEL 2'] = array('type' => 'string', 'length' => 20, 'mapsTo' => 'contact type');
+    $exportSpec['EMAIL 2'] = array('type' => 'string', 'length' => 60, 'mapsTo' => 'email');
     $exportSpec['SMS LABEL 1'] = array();
     $exportSpec['SMS 1'] = array();
     $exportSpec['BB PIN LABEL 1'] = array();
     $exportSpec['BB PIN 1'] = array();
-
-//        // Mapping column headers.
-//    $nameMapping = array(
-//      'family' => 'LAST NAME',
-//      'given' => 'FIRST NAME',
-//      'middle' => 'MIDDLE INITIAL'
-//    );
-//
-//    $addressMapping = array(
-//      'line 1' => 'ADDRESS 1',
-//      'line 2' => 'ADDRESS 2',
-//      'city' => 'CITY',
-//      'state' => 'STATE/PROVINCE',
-//      'zip5' => 'ZIP/POSTAL CODE',
-//      'country' => 'COUNTRY'
-//    );
-//
-//    $phoneMapping = array(
-//      'contact type' => 'PHONE LABEL',
-//      'country code' => 'PHONE COUNTRY CODE',
-//      'phone' => 'PHONE',
-//      'extension' => 'PHONE EXTENSION'
-//    );
-//
-//    $emailMapping = array(
-//      'contact type' => 'EMAIL LABEL',
-//      'email' => 'EMAIL'
-//    );
 
     // Set the exportSpec and components
     $this->exportSpec = $exportSpec;
@@ -115,6 +87,9 @@ abstract class agSendWordNowExport extends agExportHelper {
     $exportComponents = array();
     $exportComponents[] = array('method' => 'setUniqueId');
     $exportComponents[] = array('method' => 'setName');
+    $exportComponents[] = array('method' => 'setAddress');
+    $exportComponents[] = array('method' => 'setPhones');
+    $exportComponents[] = array('method' => 'setEmails');
 
     // Set the exportComponents and components
     $this->exportComponents = $exportComponents;
@@ -130,15 +105,148 @@ abstract class agSendWordNowExport extends agExportHelper {
     $q = agEventStaff::getActiveEventStaffQuery($this->eventId);
 
     // add some more necessary bits
-    $q->select('evs.id AS event_staff_id')
-        ->addSelect('sr.id AS staff_resource_id')
-        ->addSelect('s.id AS staff_id')
-        ->addSelect('p.id AS person_id')
-        ->addSelect('e.id AS entity_id')
+    $q->select('evs.id')
+        ->addSelect('sr.id')
+        ->addSelect('s.id')
+        ->addSelect('p.id')
+        ->addSelect('e.id')
+        ->addSelect('o.id')
+        ->addSelect('o.organization')
           ->innerJoin('sr.agStaff s')
           ->innerJoin('s.agPerson p')
-          ->innerJoin('p.agEntity e');
+          ->innerJoin('p.agEntity e')
+          ->innerJoin('sr.agOrganization o');
 
     return $q;
+  }
+
+  /**
+   * Method to set the unique id field
+   */
+  protected function setUniqueId()
+  {
+    foreach ($this->exportRawData as $rowId => $rawData) {
+      $this->exportData[$rowId]['UNIQUE ID'] = $rawData->a__id;
+      $this->exportData[$rowId]['GROUP ID'] = $rawData->a9__id;
+      $this->exportData[$rowId]['GROUP DESCRIPTION'] = substr($rawData->a9__organization, 0,
+        $this->exportSpec['GROUP DESCRIPTION']['length']);
+    }
+  }
+
+  /**
+   * Method to set person names
+   */
+  protected function setName()
+  {
+    $pnh = $this->getHelperObject('agPersonNameHelper');
+
+    $nameFields = array('LAST NAME', 'FIRST NAME', 'MIDDLE INITIAL');
+
+    foreach ($this->exportRawData as $rowId => $rowData) {
+      $names = $pnh->getPrimaryNameByType(array($rowData->a7__id));
+      $names = $names[$rowData->a7__id];
+
+      foreach ($nameFields as $nameField) {
+        $spec = $this->exportSpec[$nameField];
+        $type = $spec['mapsTo'];
+        if (array_key_exists($type, $names)) {
+          $this->exportData[$rowId][$nameField] = substr($names[$type], 0, $spec['length']);
+        }
+      }
+    }
+  }
+
+  /**
+   * Method to set address data
+   */
+  protected function setAddress()
+  {
+    $eah = $this->getHelperObject('agEntityAddressHelper');
+
+    $addressFields = array('ADDRESS 1', 'ADDRESS 2', 'CITY', 'STATE/PROVINCE', 'ZIP/POSTAL CODE',
+      'COUNTRY');
+
+    foreach ($this->exportRawData as $rowId => $rowData) {
+      $addresses = $eah->getEntityAddress(array($rowData->a8__id), TRUE, TRUE, agAddressHelper::ADDR_GET_TYPE);
+      $address = $addresses[$rowData->a8__id][1];
+
+      foreach ($addressFields as $addressField) {
+        $spec = $this->exportSpec[$addressField];
+        $component = $spec['mapsTo'];
+        if (array_key_exists($component, $address)) {
+          $this->exportData[$rowId][$addressField] = substr($address[$component], 0, $spec['length']);
+        }
+      }
+    }
+  }
+
+  /**
+   * Method to set phone done
+   */
+  protected function setPhones()
+  {
+    $eph = $this->getHelperObject('agEntityPhoneHelper');
+
+    $phoneFields = array('PHONE LABEL', 'PHONE COUNTRY CODE', 'PHONE', 'PHONE EXTENSION');
+    $suffixes = array(1, 2);
+
+    foreach ($this->exportRawData as $rowId => $rowData) {
+
+      $phones = $eph->getEntityPhone(array($rowData->a8__id), TRUE, FALSE, agPhoneHelper::PHN_GET_COMPONENT_SEGMENTS);
+      $phones = $phones[$rowData->a8__id];
+
+      foreach ($suffixes as $suffix) {
+        $sKey = $suffix - 1;
+        if (array_key_exists($sKey, $phones)) {
+          $phone = $phones[$sKey][1];
+          $phone['contact type'] = $phones[$sKey][0];
+
+          foreach ($phoneFields as $phoneField) {
+          $phoneField = $phoneField . ' ' . $suffix;
+          $spec = $this->exportSpec[$phoneField];
+          $component = $spec['mapsTo'];
+            if (array_key_exists($component, $phone)) {
+              $this->exportData[$rowId][$phoneField] = substr($phone[$component], 0, $spec['length']);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Method to set phone done
+   */
+  protected function setEmails()
+  {
+    $eeh = $this->getHelperObject('agEntityEmailHelper');
+    $eeh = new agEntityEmailHelper();
+
+    $emailFields = array('EMAIL LABEL', 'EMAIL');
+    $suffixes = array(1, 2);
+
+    foreach ($this->exportRawData as $rowId => $rowData) {
+
+      $emails = $eeh->getEntityEmail(array($rowData->a8__id), TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
+      $emails = $emails[$rowData->a8__id];
+
+      foreach ($suffixes as $suffix) {
+        $sKey = $suffix - 1;
+        if (array_key_exists($sKey, $emails)) {
+          $email = array();
+          $email['email'] = $emails[$sKey][1];
+          $email['contact type'] = $emails[$sKey][0];
+
+          foreach ($emailFields as $emailField) {
+          $emailField = $emailField . ' ' . $suffix;
+          $spec = $this->exportSpec[$emailField];
+          $component = $spec['mapsTo'];
+            if (array_key_exists($component, $email)) {
+              $this->exportData[$rowId][$emailField] = substr($email[$component], 0, $spec['length']);
+            }
+          }
+        }
+      }
+    }
   }
 }
