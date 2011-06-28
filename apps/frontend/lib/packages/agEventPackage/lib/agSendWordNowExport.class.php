@@ -220,7 +220,6 @@ abstract class agSendWordNowExport extends agExportHelper {
   protected function setEmails()
   {
     $eeh = $this->getHelperObject('agEntityEmailHelper');
-    $eeh = new agEntityEmailHelper();
 
     $emailFields = array('EMAIL LABEL', 'EMAIL');
     $suffixes = array(1, 2);
