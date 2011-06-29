@@ -70,7 +70,7 @@ agGlobalParam:
     id: 14
     agHost: localhost
     datapoint: default_country
-    value: United States
+    value: United States of America
   default_organization:
     id: 15
     agHost: localhost
