@@ -348,7 +348,9 @@ class scenarioActions extends agActions
       
     }
 
-    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+    // Commented out to allow UAT testing without lucene errors
+    //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+    
     $this->timer = (time() - $this->timer);
   }
 
