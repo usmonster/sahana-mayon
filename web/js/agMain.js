@@ -508,6 +508,7 @@ $(document).ready(function() {
       $(this).nextAll('div:eq(1)').slideToggle("slow");
       $(this).text($(this).text() =='[-]'? '[+]' :'[-]');
     });
+
     $(".facgroup :input:text").each(function(){
       if( $(this).val() == "")
       {
@@ -526,6 +527,53 @@ $(document).ready(function() {
     // Watermark stuff for scenario/staffresources
     $(":input[id$='minimum_staff']").Watermark("Min");
     $(":input[id$='maximum_staff']").Watermark("Max");
+
+
+        //start p-code
+
+        $(":input[id$='maximum_staff']").focusout(function(){
+            if( $(this).val() != "")
+            {
+                $(this).parent().parent().parent().children(':first-child').children(':first-child').children(':first-child').addClass('inputEmpty');
+                $(this).parent().parent().parent().children(':first-child').children(':first-child').children(':first-child').focusout(function(){
+                {
+                    if( $(this).val() != "")
+                    {
+                        $(this).removeClass('inputEmpty');
+                        $(this).parent().parent().parent().children(':nth-child(3)').children(':nth-child(1)').children(':first-child').removeClass('inputEmpty');
+                    }
+                }
+                });
+
+
+        }
+        });
+
+        
+
+    $(":input[id$='minimum_staff']").focusout(function(){
+        if( $(this).val() != "")
+        {
+            $(this).removeClass('inputEmpty');
+
+            $(this).parent().parent().parent().children(':nth-child(3)').children(':nth-child(1)').children(':first-child').addClass('inputEmpty');
+           
+            $(this).parent().parent().parent().children(':nth-child(3)').children(':nth-child(1)').children(':first-child').focusout(function(){
+            {
+                if( $(this).val() != "")
+                {
+                    $(this).removeClass('inputEmpty');
+                    $(this).parent().parent().parent().children(':first-child').children(':first-child').children(':first-child').removeClass('inputEmpty');
+                }
+              
+            }
+            });
+    }
+    });
+
+//end p-code
+
+
 
     //adding forward slash after minimum_staff  input box
     $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");

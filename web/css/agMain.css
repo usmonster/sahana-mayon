@@ -1961,3 +1961,7 @@ div.agFormatterAddressLevelTwo {
 .greenColorText{
     color:green;
 }
+
+.inputEmpty{
+    background-color: red;
+}
