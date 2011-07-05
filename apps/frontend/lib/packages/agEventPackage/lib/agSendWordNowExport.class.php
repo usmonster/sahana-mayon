@@ -43,7 +43,7 @@ abstract class agSendWordNowExport extends agExportHelper {
     $exportSpec['LAST NAME'] = array('type' => 'string', 'length' => 30, 'mapsTo' => 'given');
     $exportSpec['FIRST NAME'] = array('type' => 'string', 'length' => 30, 'mapsTo' => 'family');
     $exportSpec['MIDDLE INITIAL'] = array('type' => 'string', 'length' => 1, 'mapsTo' => 'middle');
-    $exportSpec['PIN Code'] = array();
+    $exportSpec['PIN Code'] = array('type' => 'integer');
     $exportSpec['GROUP ID'] = array('type' => 'integer');
     $exportSpec['GROUP DESCRIPTION'] = array('type' => 'string', 'length' => 128);
     $exportSpec['ADDRESS 1'] = array('type' => 'string', 'length' => 60, 'mapsTo' => 'line 1');
@@ -115,7 +115,8 @@ abstract class agSendWordNowExport extends agExportHelper {
           ->innerJoin('sr.agStaff s')
           ->innerJoin('s.agPerson p')
           ->innerJoin('p.agEntity e')
-          ->innerJoin('sr.agOrganization o');
+          ->innerJoin('sr.agOrganization o')
+        ->orderBy('o.organization');
 
     return $q;
   }
@@ -144,6 +145,9 @@ abstract class agSendWordNowExport extends agExportHelper {
 
     foreach ($this->exportRawData as $rowId => $rowData) {
       $names = $pnh->getPrimaryNameByType(array($rowData->a7__id));
+      if (! isset($names[$rowData->a7__id])) {
+        continue;
+      }
       $names = $names[$rowData->a7__id];
 
       foreach ($nameFields as $nameField) {
@@ -168,13 +172,17 @@ abstract class agSendWordNowExport extends agExportHelper {
 
     foreach ($this->exportRawData as $rowId => $rowData) {
       $addresses = $eah->getEntityAddress(array($rowData->a8__id), TRUE, TRUE, agAddressHelper::ADDR_GET_TYPE);
-      $address = $addresses[$rowData->a8__id][1];
 
-      foreach ($addressFields as $addressField) {
-        $spec = $this->exportSpec[$addressField];
-        $component = $spec['mapsTo'];
-        if (array_key_exists($component, $address)) {
-          $this->exportData[$rowId][$addressField] = substr($address[$component], 0, $spec['length']);
+      // skip this row if no addresses exist
+      if (isset($addresses[$rowData->a8__id][1])) {
+        $address = $addresses[$rowData->a8__id][1];
+
+        foreach ($addressFields as $addressField) {
+          $spec = $this->exportSpec[$addressField];
+          $component = $spec['mapsTo'];
+          if (array_key_exists($component, $address)) {
+            $this->exportData[$rowId][$addressField] = substr($address[$component], 0, $spec['length']);
+          }
         }
       }
     }
@@ -193,20 +201,24 @@ abstract class agSendWordNowExport extends agExportHelper {
     foreach ($this->exportRawData as $rowId => $rowData) {
 
       $phones = $eph->getEntityPhone(array($rowData->a8__id), TRUE, FALSE, agPhoneHelper::PHN_GET_COMPONENT_SEGMENTS);
-      $phones = $phones[$rowData->a8__id];
 
-      foreach ($suffixes as $suffix) {
-        $sKey = $suffix - 1;
-        if (array_key_exists($sKey, $phones)) {
-          $phone = $phones[$sKey][1];
-          $phone['contact type'] = $phones[$sKey][0];
+      // skip this row if no phone exists
+      if (isset($phones[$rowData->a8__id])) {
+        $phones = $phones[$rowData->a8__id];
 
-          foreach ($phoneFields as $phoneField) {
-          $phoneField = $phoneField . ' ' . $suffix;
-          $spec = $this->exportSpec[$phoneField];
-          $component = $spec['mapsTo'];
-            if (array_key_exists($component, $phone)) {
-              $this->exportData[$rowId][$phoneField] = substr($phone[$component], 0, $spec['length']);
+        foreach ($suffixes as $suffix) {
+          $sKey = $suffix - 1;
+          if (array_key_exists($sKey, $phones)) {
+            $phone = $phones[$sKey][1];
+            $phone['contact type'] = $phones[$sKey][0];
+
+            foreach ($phoneFields as $phoneField) {
+            $phoneField = $phoneField . ' ' . $suffix;
+            $spec = $this->exportSpec[$phoneField];
+            $component = $spec['mapsTo'];
+              if (array_key_exists($component, $phone)) {
+                $this->exportData[$rowId][$phoneField] = substr($phone[$component], 0, $spec['length']);
+              }
             }
           }
         }
@@ -227,21 +239,24 @@ abstract class agSendWordNowExport extends agExportHelper {
     foreach ($this->exportRawData as $rowId => $rowData) {
 
       $emails = $eeh->getEntityEmail(array($rowData->a8__id), TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
-      $emails = $emails[$rowData->a8__id];
+       // skip this row if no email exists
+      if (isset($emails[$rowData->a8__id])) {
+       $emails = $emails[$rowData->a8__id];
 
-      foreach ($suffixes as $suffix) {
-        $sKey = $suffix - 1;
-        if (array_key_exists($sKey, $emails)) {
-          $email = array();
-          $email['email'] = $emails[$sKey][1];
-          $email['contact type'] = $emails[$sKey][0];
+        foreach ($suffixes as $suffix) {
+          $sKey = $suffix - 1;
+          if (array_key_exists($sKey, $emails)) {
+            $email = array();
+            $email['email'] = $emails[$sKey][1];
+            $email['contact type'] = $emails[$sKey][0];
 
-          foreach ($emailFields as $emailField) {
-          $emailField = $emailField . ' ' . $suffix;
-          $spec = $this->exportSpec[$emailField];
-          $component = $spec['mapsTo'];
-            if (array_key_exists($component, $email)) {
-              $this->exportData[$rowId][$emailField] = substr($email[$component], 0, $spec['length']);
+            foreach ($emailFields as $emailField) {
+            $emailField = $emailField . ' ' . $suffix;
+            $spec = $this->exportSpec[$emailField];
+            $component = $spec['mapsTo'];
+              if (array_key_exists($component, $email)) {
+                $this->exportData[$rowId][$emailField] = substr($email[$component], 0, $spec['length']);
+              }
             }
           }
         }

@@ -106,7 +106,7 @@ class agStaffImportNormalization extends agImportNormalization
    */
   protected function setImportSpec()
   {
-    $importSpec['entity_id'] = array('type' => 'integer');
+    $importSpec['entity_id'] = array('type' => 'integer', 'length' => 20);
     $importSpec['first_name'] = array('type' => "string", 'length' => 64);
     $importSpec['middle_name'] = array('type' => "string", 'length' => 64);
     $importSpec['last_name'] = array('type' => "string", 'length' => 64);
@@ -335,6 +335,7 @@ class agStaffImportNormalization extends agImportNormalization
         $entityData[1] = $this->createNewRec($staffTable, array('person_id' => $entityData[0]));
       }
     }
+    unset($entityData);
 
     // update our row keys array
     $this->eh->logDebug('Updating primary keys for found entities.');

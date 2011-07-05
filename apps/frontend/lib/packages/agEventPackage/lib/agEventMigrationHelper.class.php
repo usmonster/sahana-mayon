@@ -54,18 +54,7 @@ class agEventMigrationHelper
     $facilityShiftReturn = $undefinedFacilityShiftQuery->execute(array(), 'single_value_array');
     $undefinedFacilityShiftQuery->free();
 
-    $undefinedStaffShiftQuery = agDoctrineQuery::create()
-        ->select('aSRT.id, aSSR.*, aSR.id')
-        ->from('agScenarioStaffResource aSSR')
-        ->innerJoin('aSSR.agStaffResource aSR')
-        ->innerJoin('aSR.agStaffResourceType aSRT')
-        ->leftJoin('aSRT.agScenarioShift aSS')
-        ->where('aSSR.scenario_id =?', $scenario_id)
-        ->andWhere('aSRT.id is NULL'); //returns the staff resource types without a shift
-    $staffShiftReturn = $undefinedStaffShiftQuery->execute(array(), 'single_value_array');
-    $undefinedStaffShiftQuery->free();
-
-    return array($facilityShiftReturn, $staffShiftReturn);
+    return $facilityShiftReturn;
   }
 
   /**
@@ -92,11 +81,9 @@ class agEventMigrationHelper
     // 0. Pre check: check event status (only proceed if event status is pre-deploy), clean event related tables in pre-deploy state, empty facility group, undefined staff pool rules making sure pools not empty, undefined shifts for staff/facility resource.
     $facilityGroupCheck = self::facilityGroupCheck($scenario_id);
     $staffPoolCheck = self::staffPoolCheck($scenario_id);
-    $undefinedShiftCheck = self::undefinedShiftCheck($scenario_id);
-    $undefinedFacilityShifts = $undefinedShiftCheck[0];
-    $undefinedStaffShifts = $undefinedShiftCheck[1];
+    $undefinedFacilityShifts = self::undefinedShiftCheck($scenario_id);
 
-    return array('Empty facility groups' => $facilityGroupCheck, 'Staff pool count' => $staffPoolCheck, 'Undefined facility shifts' => $undefinedFacilityShifts, 'Undefined staff shifts' => $undefinedStaffShifts);
+    return array('Empty facility groups' => $facilityGroupCheck, 'Staff pool count' => $staffPoolCheck, 'Undefined facility shifts' => $undefinedFacilityShifts);
   }
 
   /**

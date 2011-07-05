@@ -30,7 +30,6 @@ class agSendWordNowPreDeploy extends agSendWordNowExport
     return $self;
   }
 
-
   /**
    * Method to get the base doctrine query object used in export
    * @return agDoctrineQuery A doctrine query object

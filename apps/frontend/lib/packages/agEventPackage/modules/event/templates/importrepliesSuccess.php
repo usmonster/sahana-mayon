@@ -1,3 +1,6 @@
+
+
+<?php /**
 <?php
 use_javascript('agasti.js');
 use_javascript('jQuery.fileinput.js');
@@ -23,7 +26,6 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
   $wikiUrl =  url_for('@wiki') . '/doku.php?id=tooltip:staff_import&do=export_xhtmlbody';
   echo link_to('?', $wikiUrl, 
       array('class' => 'tooltipTrigger', 'title' => 'Importing Staff Replies', 'id' => 'import'));
-  $foo = new agStaff();
 ?>
   
   <form id="importForm" style="position: relative; display: inline-block" action="
@@ -43,3 +45,4 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 
 <h3>Import Status</h3>
 <?php include_partial('facility/infobar', array('timer' => $timer)); ?>
+ */ ?>

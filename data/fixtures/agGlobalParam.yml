@@ -241,3 +241,9 @@ agGlobalParam:
     agHost: localhost
     datapoint: staff_resource_requirements_per_page
     value: 3
+  import_auto_index:
+    id: 49
+    agHost: localhost
+    datapoint: import_auto_index
+    value: 0
+    description: This feature is not currently working. Do not enable.

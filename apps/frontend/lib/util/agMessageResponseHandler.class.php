@@ -14,80 +14,122 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
- * @author Charles Wisniewski, CUY SPS
+ * @author Charles Wisniewski, CUNY SPS
+ * @author Chad Heuschober, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
 class agMessageResponseHandler extends agImportNormalization
 {
-  public $agEventAvailableStaffStatus;
-  public $agEventUnAvailableStaffStatus;
+  protected $agEventAvailableStaffStatus,
+            $agEventUnAvailableStaffStatus,
+            $staffAllocationStatuses = array(),
+            $staffAllocationStatusIds = array(),
+            $defaultStaffAllocationStatus;
   /**
-   * This class's constructor.
+   * Method to return an instance of this class
+   * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
+   * @return agStaffImportNormalization An instance of this class
+   */
+  public static function getInstance($tempTable, $logEventLevel = NULL)
+  {
+    $self = new self();
+    $self->__init($tempTable, $logEventLevel);
+    return $self;
+  }
+
+  /**
+   * Method to initialize this class
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  public function __construct($tempTable = NULL, $logEventLevel = NULL)
+  public function __init($tempTable = NULL, $logEventLevel = NULL)
   {
-    if (is_null($tempTable)) { $tempTable = 'temp_message_import'; }
+    if (is_null($tempTable)) {
+      $tempTable = 'temp_message_import';
+    }
 
     // DO NOT REMOVE
-    parent::__construct($tempTable, $logEventLevel);
+    parent::__init($tempTable, $logEventLevel);
 
     // set the import components array as a class property
-    $this->agAvailbleEventStaffStatus = agEventStaffHelper::returnAvailableEventStaffStatus();
-    $this->agEventUnAvailableStaffStatus = agEventStaffHelper::returnUnAvailableEventStaffStatus();
-    
-    
     $this->setImportComponents();
     $this->tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8');
     $this->importHeaderStrictValidation = TRUE;
 
-    $this->eh->setErrThreshold(100);
+    // get some global defaults
+    $this->eh->setErrThreshold(intval(agGlobal::getParam('import_error_threshold')));
+    $this->staffAllocationStatuses = json_decode(agGlobal::getParam('staff_messaging_allocation_status'), TRUE);
+    $this->defaultStaffAllocationStatus = agGlobal::getParam('default_staff_messaging_allocation_status');
+
+    // add one more useful cached status array
+    $this->staffAllocationStatusIds = agDoctrineQuery::create()
+       ->select('sas.staff_allocation_status')
+          ->addSelect('sas.id')
+        ->from('agStaffAllocationStatus AS sas')
+        ->useResultCache(TRUE, 3600)
+        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $this->staffAllocationStatusIds = array_change_key_case($this->staffAllocationStatusIds);
   }
 
-  public static function consumeResponses(sfEvent $event = null, $reset = 0)
-  {
-//    $this->importResponsesFromExcel($event['importFile']);
-    self::importResponsesFromExcel($event['importPath']);
-    
-    if (isset($event)) {
-      $action = $event->getSubject();
-    }
-    if (isset($action)) {
-      $context = $action->getContext();
-      $models = $action->getSearchedModels();
-    } elseif (sfContext::hasInstance()) {
-      $context = sfContext::getInstance();
-    } else {
-      return;
-    }
-   
-    do {
-
-      $status = $this->processResponses();
-      $context->set('job_statuses', array('message_response_process' => $status));
-      
-    } while($status > 0);
-    
-  }
-  
   /**
-   * Method to import staff from an excel file.
+   * Imports staff from an excel file.
    */
-  protected function importResponsesFromExcel($importFile)
+  public function processXlsImportFile($importFile)
   {
     // process the excel file and create a temporary table
-    $this->processXlsImportFile($importFile);
-//    parent::processXlsImportFile($importFile);
+    parent::processXlsImportFile($importFile);
 
     // start our iterator and initialize our select query
     $this->tempToRaw($this->buildTempSelectQuery());
-//    parent::tempToRaw($this->buildTempSelectQuery());
   }
 
-  
+  /**
+   * Method to set the unprocessed records basename
+   */
+  protected function setUnprocessedBaseName()
+  {
+    $this->unprocessedBaseName = agGlobal::getParam('unprocessed_staff_import_basename');
+  }
+
+  /**
+   * Method to set the dynamic field type. Does not need to be called here, will be called in parent
+   */
+  protected function setDynamicFieldType()
+  {
+    $this->dynamicFieldType = array('type' => "string", 'length' => 255);
+  }
+
+  /**
+   * Method to extend the import specification to include dynamic columns from the file headers
+   * @param array $importFileHeaders A single-dimension array of import file headers / column names
+   */
+  protected function addDynamicColumns(array $importFileHeaders)
+  {
+    $dynamicColumns = array_diff($importFileHeaders, array_keys($this->importSpec));
+    foreach ($dynamicColumns as $column) {
+      $this->importSpec[$column] = $this->dynamicFieldType;
+      $this->eh->logInfo('Adding dynamic column {' . $column . '} to the import specification.');
+    }
+  }
+
+  /**
+   * This method is an extension of the parent validate column headers method allowing
+   * domain-specific header validation.
+   * @param array $importFileHeaders An array of import file headers.
+   * @param string $sheetName The name of the sheet being validated.
+   * @return boolean A boolean indicating un/successful validation of column headers.
+   */
+  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
+  {
+    // DO NOT REMOVE THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING
+    $validated = parent::validateColumnHeaders($importFileHeaders, $sheetName);
+
+    return $validated;
+  }
+
   /**
    * Method to set the classes' import specification.
    * Note: This intentionally excludes non-data fields (such as id, or success indicators); these
@@ -145,21 +187,6 @@ class agMessageResponseHandler extends agImportNormalization
   }
 
   /**
-   * This method is an extension of the parent validate column headers method allowing
-   * domain-specific header validation.
-   * @param array $importFileHeaders An array of import file headers.
-   * @param string $sheetName The name of the sheet being validated.
-   * @return boolean A boolean indicating un/successful validation of column headers.
-   */
-  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
-  {
-    // DO NOT REMOVE THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING
-    $validated = parent::validateColumnHeaders($importFileHeaders, $sheetName);
-
-    return $validated;
-  }
-
-  /**
    * Method to dynamically build a (mostly) static tempSelectQuery
    * @return string Returns a string query
    */
@@ -195,7 +222,7 @@ class agMessageResponseHandler extends agImportNormalization
     foreach ($this->importData as $rowId => $rowData)
     {
       $rd = $rowData['_rawData'];
-      if (array_key_exists('resonse', $rd)) {
+      if (array_key_exists('response', $rd)) {
         $rVals = array(self::mapResponse($rd['response']), strtotime($rd['time_stamp']));
         $responses[$rd['unique_id']] = $rVals;
       }
@@ -205,7 +232,7 @@ class agMessageResponseHandler extends agImportNormalization
     $coll = agDoctrineQuery::create()
       ->select('ess.*')
         ->from('agEventStaffStatus ess')
-        ->whereIn(array_keys($responses))
+        ->whereIn('ess.event_staff_id', array_keys($responses))
           ->andWhere('EXISTS (SELECT s.id ' .
               'FROM agEventStaffStatus AS s ' .
               'WHERE s.event_staff_id = ess.event_staff_id ' .
@@ -267,45 +294,28 @@ class agMessageResponseHandler extends agImportNormalization
 
     // here's the big to-do; let's save!
     $coll->save();
+    $coll->free(TRUE);
+    unset($coll);
   }
 
   /**
    * Method to map a message response to a database-understood status type.
    * @param string $response
    */
-  protected static function mapResponse( $response )
+  protected function mapResponse( $response )
   {
-    $staffAllocationStatuses = json_decode(agGlobal::getParam('staff_messaging_allocation_status'), TRUE);
-    $defaultStaffAllocationStatus = agGlobal::getParam('default_staff_messaging_allocation_status');
-    $staffAllocationStatusIds = agDoctrineQuery::create()
-                               ->select('sas.staff_allocation_status')
-                                 ->addSelect('sas.id')
-                               ->from('agStaffAllocationStatus AS sas')
-                               ->useResultCache(TRUE, 3600)
-                               ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
-    $staffAllocationStatusIds = array_change_key_case($staffAllocationStatusIds);
 
-    if ( isset($staffAllocationStatuses[$response]) &&
-         isset($staffAllocationStatusIds[strtolower($staffAllocationStatus[$response])]) )
+    if (isset($this->staffAllocationStatuses[$response]) &&
+         isset($this->staffAllocationStatusIds[strtolower($this->staffAllocationStatus[$response])]) )
     {
       $statusId = $staffAllocationStatusIds[strtolower($staffAllocationStatus[$response])];
     }
     else
     {
-      $statusId = $staffAllocationStatusIds[strtolower($defaultStaffAllocationStatus)];
+      $statusId = $staffAllocationStatusIds[strtolower($this->defaultStaffAllocationStatus)];
     }
 
     return $statusId;
-  }
-
-    protected function setDynamicFieldType()
-  {
-    //required, but not used?
-  }
-
-  protected function addDynamicColumns(array $importHeaders)
-  {
-    //required, but not used?
   }
 
 }

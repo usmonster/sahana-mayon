@@ -1,12 +1,3 @@
-<?php
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-$i = 1;
-?>
-
 <h2>Staff Import Status</h2>
 
 <?php // include_partial('facility/infobar', array('timer' => $timer)); ?>
@@ -90,11 +81,11 @@ $i = 1;
 <?php if ($unprocessedXLS !== FALSE) { ?>
   <div class="formSmall">
     <h3>Notice:</h3>
-    <p>All import records could not be processed. Please click the Export Failed Records 
+    <p>All import records could not be processed. Please click the Export Unprocessed
       button below to download an XLS with the failed rows. You are encouraged to correct these 
       rows and re-submit the file. Do not re-submit the original file as it may cause errors 
       and duplication.</p>
-    <?php echo button_to('Download', "staff/download?filename=$unprocessedXLS") ?>
+    <?php echo button_to('Export Unprocessed', "staff/download?filename=$unprocessedXLS") ?>
   </div>
 <?php } ?>
 

@@ -23,7 +23,7 @@ Please select one of the following staff administration actions:</p>
 <br/>
 <?php
   $exportUrl = url_for('admin/disablestaff') ;
-    echo link_to('Disable All Staff Resources', $exportUrl, array('method' => 'post', 'confirm' => 'Are you sure you want to inactivate all staff?', 'class' => 'deleteButton', 'title' => 'Inactivate all Staff Resources'));
+    echo link_to('Disable All Staff Resources', $exportUrl, array('method' => 'post', 'confirm' => 'Are you sure you want to set all staff to inactive? Setting all staff to inactive will make them all unavailable for deployment.', 'class' => 'deleteButton', 'title' => 'Inactivate all Staff Resources'));
 //all links on this page should use the link_to helper
   ?>
 <br/><br/>

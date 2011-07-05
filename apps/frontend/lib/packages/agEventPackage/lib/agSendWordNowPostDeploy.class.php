@@ -34,10 +34,10 @@ class agSendWordNowPostDeploy extends agSendWordNowExport
    * Method to get the base doctrine query object used in export
    * @return agDoctrineQuery A doctrine query object
    */
-  protected static function getDoctrineQuery()
+  protected function getDoctrineQuery()
   {
     // get our basic contact query
-    $q = self::getEventStaffContactQuery();
+    $q = $this->getEventStaffContactQuery();
 
     // add our pre-deploy components
     $q->andWhere('sas.committed = ?', TRUE);
