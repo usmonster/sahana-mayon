@@ -406,10 +406,21 @@ class agStaffImportNormalization extends agImportNormalization
 
     // now, loop through using the recently return import data and build staff the same way
     foreach ($this->importData as $rowId => &$rowData) {
-      // grab our entityId from the entity collection
-      $entityId = $entityColl[$rowId]['id'];
 
-      // make sure we add it to the primary keys array
+      // grab our entityId from the entity collection or skip if unfound
+      if (! isset($entityColl[$rowId])) {
+        if (! empty($rowData['primaryKeys']['person_id'])) {
+          // no new parent, child record exists
+          continue;
+        }
+        // no new parent, child record does not exist
+        $entityId = $rowData['primaryKeys']['entity_id'];
+      } else {
+        // new parent, child record is irrelevant
+        $entityId = $entityColl[$rowId]['id'];
+      }
+
+      // set our pkeys data
       $rowData['primaryKeys']['entity_id'] = $entityId;
 
       // create a new person entry and add it to the person collection
@@ -429,10 +440,21 @@ class agStaffImportNormalization extends agImportNormalization
 
     // repeat for staff
     foreach ($this->importData as $rowId => &$rowData) {
-      // grab our personId from the person collection
-      $personId = $personColl[$rowId]['id'];
 
-      // make sure we add it to the primary keys array
+      // grab our entityId from the entity collection or skip if unfound
+      if (! isset($personColl[$rowId])) {
+        if (! empty($rowData['primaryKeys']['staff_id'])) {
+          // no new parent, child record exists
+          continue;
+        }
+        // no new parent, child record does not exist
+        $personId = $rowData['primaryKeys']['person_id'];
+      } else {
+        // new parent, child record is irrelevant
+        $personId = $personColl[$rowId]['id'];
+      }
+
+      // set our pkeys data
       $rowData['primaryKeys']['person_id'] = $personId;
 
       // create a new staff entry and add it to the staff collection
@@ -453,10 +475,9 @@ class agStaffImportNormalization extends agImportNormalization
     // repeat for staff
     foreach ($this->importData as $rowId => &$rowData) {
       // grab our staffId from the staff collection
-      $staffId = $staffColl[$rowId]['id'];
-
-      // make sure we add it to the primary keys array
-      $rowData['primaryKeys']['staff_id'] = $staffId;
+      if (isset($staffColl[$rowId])) {
+        $rowData['primaryKeys']['staff_id'] = $staffColl[$rowId]['id'];
+      }
     }
     unset($rowData);
 
@@ -875,9 +896,6 @@ class agStaffImportNormalization extends agImportNormalization
   {
     $errMsg = NULL;
 
-    // Required columns.
-    $requiredColumns = array('organization', 'resource_type', 'resource_status');
-
     if (!isset($this->organizationIds)) {
       $this->organizationIds = agDoctrineQuery::create()
           ->select('o.organization')
@@ -908,15 +926,43 @@ class agStaffImportNormalization extends agImportNormalization
     }
     $stfRscStatusIds = $this->stfRscStatusIds;
 
-    // Retrieve staff ids from raw data.
+    // check for required columns
     $staffIds = array();
     foreach ($this->importData AS $rowId => $rowData) {
-      foreach ($requiredColumns AS $column) {
-        if (!array_key_exists($column, $rowData['_rawData'])) {
-          $errMsg = sprintf('Missing required column %s from record id %d.', $column, $rowId);
-          break;
-        }
+      
+      if (! isset($rowData['_rawData']['organization'])) {
+        $errMsg = 'Required column organization is missing from record id ' . $rowId . '.';
+        $this->eh->logErr($errMsg);
+        continue;
+      } else if (! array_key_exists($rowData['_rawData']['organization'], $this->organizationIds)) {
+        $errMsg = 'Invalid organization "' . $rowData['_rawData']['organization'] . '" given for ' .
+        'record id ' . $rowId . '.';
+        $this->eh->logErr($errMsg);
+        continue;
       }
+
+      if (! isset($rowData['_rawData']['resource_type'])) {
+        $errMsg = 'Required column resource type is missing from record id ' . $rowId . '.';
+        $this->eh->logErr($errMsg);
+        continue;
+      } else if (! array_key_exists($rowData['_rawData']['resource_type'], $this->stfRscTypeIds)) {
+        $errMsg = 'Invalid resource type "' . $rowData['_rawData']['resource_type'] .
+        '" supplied for record id ' . $rowId . '.';
+        $this->eh->logErr($errMsg);
+        continue;
+      }
+
+      if (! isset($rowData['_rawData']['resource_status'])) {
+        $errMsg = 'Required column resource status is missing from record id ' . $rowId . '.';
+        $this->eh->logErr($errMsg);
+        continue;
+      } else if (! array_key_exists($rowData['_rawData']['resource_status'], $this->stfRscStatusIds)) {
+        $errMsg = 'Invalid resource status "' . $rowData['_rawData']['resource_status'] .
+        '" supplied for record id ' . $rowId . '.';
+        $this->eh->logErr($errMsg);
+        continue;
+      }
+    }
 
       if (is_null($errMsg)) {
         $staffIds[$rowData['primaryKeys']['staff_id']][$rowData['_rawData']['resource_type']] = $rowId;
@@ -939,6 +985,14 @@ class agStaffImportNormalization extends agImportNormalization
     // Perform organization updates on existing staff resource.
     foreach ($coll AS $index => &$record) {
       $stfId = $record['staff_id'];
+      if (! array_key_exists( $record['staff_resource_type_id'], $stfRscTypeIds)) {
+          $errMsg = 'Invalid staff resource type ' . ' from record id ' . '.', $rawData['organization'],
+                            $staffIds[$stfId]);
+
+          // Capture error in error log.
+          $this->eh->logErr($errMsg);
+
+      }
       $stfRscType = array_search($record['staff_resource_type_id'], $stfRscTypeIds);
 
       if (isset($staffIds[$stfId][$stfRscType])) {
@@ -981,42 +1035,9 @@ class agStaffImportNormalization extends agImportNormalization
         unset($staffIds[$stfId][$stfRscType]);
       }
     }
+    unset($record);
 
-    // here we check our current transaction scope and create a transaction or savepoint
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $coll->save($conn);
-
-      // commit, being sensitive to our nesting
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // log our error
-      $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage());
-      $this->eh->logErr($errMsg);
-
-      // rollback
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      // ALWAYS throw an error, it's like stepping on a crack if you don't
-      if ($throwOnError) {
-        throw new Exception($errMsg);
-      }
-    }
-
+    $coll->save($conn);
     $coll->free();
     unset($coll);
 
