@@ -236,3 +236,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: search_list_results_per_page
     value: 20
+  staff_resource_requirements_per_page:
+    id: 48
+    agHost: localhost
+    datapoint: staff_resource_requirements_per_page
+    value: 3

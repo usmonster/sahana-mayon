@@ -194,73 +194,100 @@ class scenarioActions extends agActions
 //were there any changes?
       if ($request->hasParameter('Continue')) {
         $this->redirect('scenario/staffpool?id=' . $this->scenario_id);
-      } else {
+      } elseif ($request->hasParameter('Save')) {
         $this->redirect('scenario/staffresources?id=' . $this->scenario_id);
       }
 //READ/LIST Present forms
-    } else {
+    }
+
 // Query to get all staff resource types.
-      $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
-      if (count($dsrt) > 0) {
-        $this->staffResourceTypes = $dsrt;
-      } else {
-        $this->staffResourceTypes =
-            agDoctrineQuery::create()
-            ->select('srt.id, srt.staff_resource_type')
-            ->from('agStaffResourceType srt')
-            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      }
-      $groups = Doctrine::getTable('agScenarioFacilityGroup')
-          ->findByDql('scenario_id = ?', $this->scenario_id)
-          ->getData();
+    $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
+    if (count($dsrt) > 0) {
+      $this->staffResourceTypes = $dsrt;
+    } else {
+      $this->staffResourceTypes =
+          agDoctrineQuery::create()
+          ->select('srt.id, srt.staff_resource_type')
+          ->from('agStaffResourceType srt')
+          ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    }
 
-      foreach ($groups as $scenarioFacilityGroup) {
-        $facilitygroups[] = $scenarioFacilityGroup;
-      }
-      $this->scenarioFacilityGroup = $facilitygroups;
+    $query = agDoctrineQuery::create()
+      ->from('agScenarioFacilityGroup sfg')
+      ->where('sfg.scenario_id = ?', $this->scenario_id);
 
-      foreach ($this->scenarioFacilityGroup as $group) {
-        foreach ($group->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
-          foreach ($this->staffResourceTypes as $srt) {
-            $subKey = $group['scenario_facility_group'];
-            $subSubKey = $scenarioFacilityResource->id;
+//      $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+    if ($request->hasParameter('first'))
+    {
+      $currentPage = $request->getParameter('firstPage');
+    }
+    elseif ($request->hasParameter('previous'))
+    {
+      $currentPage = $request->getParameter('previousPage');
+    }
+    elseif ($request->hasParameter('next'))
+    {
+      $currentPage = $request->getParameter('nextPage');
+    }
+    elseif ($request->hasParameter('last'))
+    {
+      $currentPage = $request->getParameter('lastPage');
+    }
+    else
+    {
+      $currentPage = 1;
+    }
+    $resultsPerPage = agGlobal::getParam('staff_resource_requirements_per_page');
+    $this->pager = new Doctrine_Pager($query, $currentPage, $resultsPerPage);
+    $groups = $this->pager->execute();
+
+    foreach ($groups as $scenarioFacilityGroup) {
+      $facilitygroups[] = $scenarioFacilityGroup;
+    }
+    $this->scenarioFacilityGroup = $facilitygroups;
+
+    foreach ($this->scenarioFacilityGroup as $group) {
+      foreach ($group->getAgScenarioFacilityResource() as $scenarioFacilityResource) {
+        foreach ($this->staffResourceTypes as $srt) {
+          $subKey = $group['scenario_facility_group'];
+          $subSubKey = $scenarioFacilityResource->id;
 
 
 //this existing check should be refactored to be more efficient
-            $existing = agDoctrineQuery::create()
-                ->select('agFSR.*')
-                ->from('agFacilityStaffResource agFSR')
-                ->where('agFSR.staff_resource_type_id = ?', $srt['srt_id'])
-                ->andWhere('agFSR.scenario_facility_resource_id = ?', $scenarioFacilityResource->id)
-                ->fetchOne();
+          $existing = agDoctrineQuery::create()
+              ->select('agFSR.*')
+              ->from('agFacilityStaffResource agFSR')
+              ->where('agFSR.staff_resource_type_id = ?', $srt['srt_id'])
+              ->andWhere('agFSR.scenario_facility_resource_id = ?', $scenarioFacilityResource->id)
+              ->fetchOne();
 
-            if ($existing) {
-              $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
-                  new agEmbeddedAgFacilityStaffResourceForm($existing);
-            } else {
-              $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
-                  new agEmbeddedAgFacilityStaffResourceForm();
-            }
-            $facilityLabels[$subKey][$subSubKey] = $scenarioFacilityResource
-                    ->getAgFacilityResource()
-                    ->getAgFacility()->facility_name .
-                ': ' . ucwords($scenarioFacilityResource
-                        ->getAgFacilityResource()
-                        ->getAgFacilityResourceType()->facility_resource_type) .
-                ' (' . $scenarioFacilityResource
-                    ->getAgFacilityResource()
-                    ->getAgFacility()->facility_code . ')';
-            $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('scenario_facility_resource_id',
-                                                                                          $scenarioFacilityResource->getId());
-            $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('staff_resource_type_id',
-                                                                                          $srt['srt_id']);
-            //$formsArray[$subKey]->setLabel($subSubKey, $subSubKeyLabel);
+          if ($existing) {
+            $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
+                new agEmbeddedAgFacilityStaffResourceForm($existing);
+          } else {
+            $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']] =
+                new agEmbeddedAgFacilityStaffResourceForm();
           }
+          $facilityLabels[$subKey][$subSubKey] = $scenarioFacilityResource
+                  ->getAgFacilityResource()
+                  ->getAgFacility()->facility_name .
+              ': ' . ucwords($scenarioFacilityResource
+                      ->getAgFacilityResource()
+                      ->getAgFacilityResourceType()->facility_resource_type) .
+              ' (' . $scenarioFacilityResource
+                  ->getAgFacilityResource()
+                  ->getAgFacility()->facility_code . ')';
+          $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('scenario_facility_resource_id',
+                                                                                        $scenarioFacilityResource->getId());
+          $formsArray[$subKey][$subSubKey][$srt['srt_staff_resource_type']]->setDefault('staff_resource_type_id',
+                                                                                        $srt['srt_id']);
+          //$formsArray[$subKey]->setLabel($subSubKey, $subSubKeyLabel);
         }
       }
-
-      $this->formsArray = $formsArray;
     }
+
+    $this->formsArray = $formsArray;
+    
     $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray,
             $facilityLabels);
 
