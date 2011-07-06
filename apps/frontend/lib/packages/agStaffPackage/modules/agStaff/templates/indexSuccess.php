@@ -19,7 +19,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
   <?php echo link_to('Import Staff',
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             'staff/import',
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             array('class' => 'generalButton', 'title' => 'Import Staff', 'id' => 'import')); ?><a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_import&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Importing Staff"> ?</a>
-  <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('staff/import') ?>" method="post" enctype="multipart/form-data">
+  <form id="importForm" style="position: relative; display: inline-block" action="<?php echo url_for('staff/import') ?>" method="post" enctype="multipart/form-data" target="_blank">
     <div style="position: absolute; top: 0px; left: 0px; width: 250px">
       <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
       <a class="continueButton fileUploadBrowse" style="padding: 5px;">Browse</a>
@@ -28,7 +28,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
     <input type="file" name="import" id="fileUpload" style="height:25px" />
 
 
-    <input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px"/>
+    <input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px" onclick="return confirm('Submitting import will open a new page.  Please do not exist out from the page until after import is completed.');" />
   </form>
 </span>
 <br/><br/>

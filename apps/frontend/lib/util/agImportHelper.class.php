@@ -240,8 +240,18 @@ abstract class agImportHelper extends agPdoHelper
         continue;
       }
 
-      // Grab column headers at the beginning of each sheet.
-      $currentSheetHeaders = $xlsObj->sheets[$sheet]['cells'][1];
+      // Check whether the sheet has a header row.
+      if (isset($xlsObj->sheets[$sheet]['cells'][1]))
+      {
+        // Grab column headers at the beginning of each sheet.
+        $currentSheetHeaders = $xlsObj->sheets[$sheet]['cells'][1];
+      }
+      else
+      {
+        $eventMsg = "This worksheet " . $sheetName . " does not have a valid column headers for data import.";
+        $errCount = 1;
+        $this->eh->logEmerg($eventMsg, $errCount);
+      }
 
       // clean the column headers to ensure consistency
       $this->eh->logInfo('Cleaning worksheet headers');

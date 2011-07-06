@@ -51,7 +51,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
             <span id="descText">Import response spreadsheet from staff messaging. Be sure the imported file matches the
               <a href="/agasti/wiki/doku.php?id=manual:user:event:send_word_now_import" target="_blank" title="Send Word NOW Import Specification">Send Word NOW Import Specification</a>.</span>
             <form id="importForm" style="position: relative; display: inline-block" action="
-                  <?php echo $importUrl ?>" method="post" enctype="multipart/form-data">
+                  <?php echo $importUrl ?>" method="post" enctype="multipart/form-data" target="_blank">
                 <div style="position: absolute; top: 0px; left: 0px; width: 250px">
                     <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
                     <a class="continueButton fileUploadBrowse" style="padding: 5px;">Browse</a>
@@ -60,7 +60,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
                 <input type="file" name="import" id="fileUpload" style="height:25px" />
 
 
-                <input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px"/>
+                <input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px" onclick="return confirm('Submitting import will open a new page.  Please do not exist out from the page until after import is completed.');" />
             </form>
         </td>
     </tr>
