@@ -206,35 +206,45 @@ class agEventHandler
    * @param string $eventMsg An error message
    * @param integer $errCount The number of failures encountered
    */
-  public function logErr($eventMsg, $errCount = 1)
+  public function logErr($eventMsg, $errCount = 1, $checkThreshold = TRUE)
   {
     $this->logEvent(self::EVENT_ERR, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    $this->checkErrThreshold();
+    if ($checkThreshold) {
+      $this->checkErrThreshold();
+    }
   }
 
   /**
    * Method to explicitly log a critical message and up our error counter.
    * @param string $eventMsg A critical message
    * @param integer $errCount The number of failures encountered
+   * @param boolean $checkThreshold Whether or not this method performs an automatic err threshold
+   * check. Defaults to TRUE.
    */
-  public function logCrit($eventMsg, $errCount = 1)
+  public function logCrit($eventMsg, $errCount = 1, $checkThreshold = TRUE)
   {
     $this->logEvent(self::EVENT_CRIT, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    $this->checkErrThreshold();
+    if ($checkThreshold) {
+      $this->checkErrThreshold();
+    }
   }
 
   /**
    * Method to explicitly log an alert message and up our error counter.
    * @param string $eventMsg An alert message
    * @param integer $errCount The number of failures encountered
+   * @param boolean $checkThreshold Whether or not this method performs an automatic err threshold
+   * check. Defaults to TRUE.
    */
-  public function logAlert($eventMsg, $errCount = 1)
+  public function logAlert($eventMsg, $errCount = 1, $checkThreshold = TRUE)
   {
     $this->logEvent(self::EVENT_ALERT, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    $this->checkErrThreshold();
+    if ($checkThreshold) {
+      $this->checkErrThreshold();
+    }
   }
 
   /**

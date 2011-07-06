@@ -165,7 +165,7 @@ abstract class agImportNormalization extends agImportHelper
         ' IN(' . implode(',', array_fill(0, $dataSize, '?')) . ');';
 
     // create our parameter array
-    $qParam = array_merge(array($success), array_keys($this->importData));
+    $qParam = array_merge(array(intval($success)), array_keys($this->importData));
 
     // mark this batch accordingly
     $this->executePdoQuery($conn, $q, $qParam);
@@ -218,9 +218,6 @@ abstract class agImportNormalization extends agImportHelper
    */
   public function concludeImport()
   {
-    // first clear any oustanding bits on existing connections
-    $this->clearConnections();
-
     // now, close any unnecessary connections to release as much memory as possible
     Doctrine_Manager::getInstance()->setCurrentConnection('doctrine');
     $this->closeConnection($this->getConnection(self::CONN_TEMP_WRITE));
@@ -662,7 +659,9 @@ abstract class agImportNormalization extends agImportHelper
         $this->iterData['fetchPosition'] . ') encountered a fatal error and could not continue.';
 
       $conn->rollback();
-      $this->eh->logErr($errMsg, count($this->importData));
+
+      // log our err count but postpone the threshold check until the end of the processBatch
+      $this->eh->logErr($errMsg, count($this->importData), FALSE);
 
       // return false if not
       return FALSE;
