@@ -113,9 +113,41 @@ abstract class agImportNormalization extends agImportHelper
 
     $dm = Doctrine_Manager::getInstance();
 
-    // always re-parent properly
+    // we do this little one explicitly.
+    $this->getImportWrite();
+
     $dm->setCurrentConnection('doctrine');
     $adapter = $dm->getCurrentConnection()->getDbh();
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_READ);
+    $dm->setCurrentConnection(self::CONN_NORMALIZE_READ);
+    $this->_conn[self::CONN_NORMALIZE_READ] = $conn;
+  }
+
+  /**
+   * Method to return the import normalize write connection.
+   * @param <type> $new
+   * @return <type> 
+   */
+  protected function getImportWrite($new = TRUE) {
+    if ($conn = $this->getConnection(self::CONN_NORMALIZE_WRITE)) {
+      if (!$new) {
+        return $conn;
+      } else {
+       $this->closeConnection($conn);
+      }
+    }
+
+    // need this guy for all the heavy lifting
+    $dm = Doctrine_Manager::getInstance();
+
+    // save for re-setting
+    $currConn = $dm->getCurrentConnection();
+    $currConnName = $dm->getConnectionName($currConn);
+    $adapter = $currConn->getDbh();
+
+    // always re-parent properly
+    $dm->setCurrentConnection('doctrine');
+
     $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_WRITE);
     $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
     $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
@@ -126,12 +158,8 @@ abstract class agImportNormalization extends agImportHelper
     $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
     $this->_conn[self::CONN_NORMALIZE_WRITE] = $conn;
 
-
-    $dm->setCurrentConnection('doctrine');
-    $adapter = $dm->getCurrentConnection()->getDbh();
-    $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_READ);
-    $dm->setCurrentConnection(self::CONN_NORMALIZE_READ);
-    $this->_conn[self::CONN_NORMALIZE_READ] = $conn;
+    $dm->setCurrentConnection($currConnName);
+    return $conn;
   }
 
   /**
@@ -231,7 +259,9 @@ abstract class agImportNormalization extends agImportHelper
     $this->closeConnections();
 
     // finally, kick off this hellish piece of work
-    //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+    if (agGlobal::getParam('import_auto_index')) {
+      $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+    }
   }
 
   /**
@@ -585,8 +615,7 @@ abstract class agImportNormalization extends agImportHelper
       $this->iterData['batchPosition'] . '/' . $this->iterData['batchCount'] . ')';
     $this->eh->logInfo($eventMsg);
 
-    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
-    self::clearConnection($conn);
+    $conn = $this->getImportWrite(TRUE);
     $conn->beginTransaction();
 
     foreach ($this->importComponents as $index => $componentData) {

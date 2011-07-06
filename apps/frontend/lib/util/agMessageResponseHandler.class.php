@@ -266,7 +266,7 @@ class agMessageResponseHandler extends agImportNormalization
         ->execute();
 
     // loop through all of our event staff and insert for those who already have a status
-    foreach ($coll as $collId => &$rec)
+    foreach ($coll as $collId => $rec)
     {
       // grab that particular response record
       $rVals = $responses[$rec['event_staff_id']];
@@ -304,9 +304,6 @@ class agMessageResponseHandler extends agImportNormalization
       // either way, we can be safely done this response
       unset($responses[$rec['event_staff_id']]);
     }
-
-    // as a safety measure, always unset a referenced array value as soon as the loop is over
-    unset($rec);
    
     // If we still have members in $responses, they were not event staff as of this execution
     // NOTE: Theoretically, an event staff person could have an event staff record but no
@@ -324,8 +321,7 @@ class agMessageResponseHandler extends agImportNormalization
 
     // here's the big to-do; let's save!
     $coll->save();
-    $coll->free(TRUE);
-    unset($coll);
+    $coll->free();
   }
 
   /**

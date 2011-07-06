@@ -252,3 +252,9 @@ agGlobalParam:
     agHost: localhost
     datapoint: front_end_geo_source
     value: manual entry 
+  clear_cache_on_import:
+    id: 51
+    agHost: localhost
+    datapoint: clear_cache_on_import
+    value: 1
+    

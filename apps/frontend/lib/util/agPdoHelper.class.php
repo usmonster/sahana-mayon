@@ -77,6 +77,9 @@ abstract class agPdoHelper
   protected function getConnection($conn)
   {
     // Lazy load and return pdo connection.
+    if (!isset($this->_conn[$conn])) {
+      return FALSE;
+    }
     return $this->_conn[$conn];
   }
 

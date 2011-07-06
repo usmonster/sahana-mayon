@@ -50,6 +50,11 @@ abstract class agImportHelper extends agPdoHelper
    */
   protected function __init($tempTable, $logEventLevel)
   {
+    if (agGlobal::getParam('clear_cache_on_import') == 1) {
+      apc_clear_cache();
+      apc_clear_cache('user');
+    }
+
     $this->eh = new agEventHandler($logEventLevel, agEventHandler::EVENT_NOTICE,
             sfContext::getInstance());
 

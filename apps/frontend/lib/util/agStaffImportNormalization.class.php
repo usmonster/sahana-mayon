@@ -822,36 +822,9 @@ class agStaffImportNormalization extends agImportNormalization
       }
     }
 
-    // here we check our current transaction scope and create a transaction or savepoint
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
     try {
       $coll->save($conn);
-
-      // commit, being sensitive to our nesting
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
     } catch (Exception $e) {
-      // log our error
-      $errMsg = sprintf('%s failed at: %s', __FUNCTION__, $e->getMessage());
-      $this->eh->logErr($errMsg);
-
-      // rollback
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      // ALWAYS throw an error, it's like stepping on a crack if you don't
       if ($throwOnError) {
         throw new Exception($errMsg);
       }
