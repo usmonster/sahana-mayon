@@ -22,10 +22,14 @@ if ($event_name != "") {
                 <td colspan="2" style="padding-top:10px">
                       <input type="submit" value="Save" name="Save" class="continueButton"/>
                       <input type="submit" value="Save and Deploy" name ="Deploy" class="continueButton"<?php echo $confirmScript ?>>
-                    <?php   $importUrl = url_for('event/active?event=' . urlencode($sf_data->getRaw('event_name')));
-                echo link_to($event_name.' Event Management', $importUrl,
-                array('class' => 'generalButton', 'title' => $event_name.' Event Management'));
-                ?>
+                      <?php
+                        if (!empty($event_name))
+                        {
+                          $importUrl = url_for('event/active?event=' . urlencode($sf_data->getRaw('event_name')));
+                          echo link_to($event_name.' Event Management', $importUrl,
+                          array('class' => 'generalButton', 'title' => $event_name.' Event Management'));
+                        }
+                      ?>
                     <input type="hidden" value="<?php echo $scenario_id ?>" name="scenario_id">
                 </td>
             </tr>
