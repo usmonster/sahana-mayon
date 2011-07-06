@@ -548,6 +548,11 @@ class agPersonForm extends BaseagPersonForm
           $addressSubContainer->embedForm(key($addressElement), $valueForm);
         }
       }
+      $geo = new agEmbeddedGeoAddressForm();
+      
+      $addressSubContainer->embedForm('Geo Data', $geo);
+      $addressSubContainer->getWidgetSchema()->setLabel('Geo Data', false);
+      
       //Embed the addresses-by-type
       $addressContainer->embedForm($address_contact_type, $addressSubContainer);
     }
