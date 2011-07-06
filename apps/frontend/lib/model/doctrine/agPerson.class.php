@@ -170,6 +170,7 @@ class agPerson extends BaseagPerson
 
   public function getNationality()
   {
+    $nationalities = array();
     foreach ($this->getAgPersonMjAgNationality() as $nationality)
       $nationalities[] = $nationality->getAgNationality()->nationality;
 
@@ -178,6 +179,7 @@ class agPerson extends BaseagPerson
 
   public function getEthnicity()
   {
+    $ethnicities = array();
     foreach ($this->getAgPersonEthnicity() as $ethnicity) {
       $ethnicities = $ethnicity->getAgEthnicity()->ethnicity;
     }
@@ -186,6 +188,7 @@ class agPerson extends BaseagPerson
 
   public function getLanguages()
   {
+    $languages = array();
     foreach ($this->getAgPersonMjAgLanguage() as $languageCompetency) {
       $languages = $languageCompetency->getAgLanguage()->language;
     }
