@@ -247,3 +247,8 @@ agGlobalParam:
     datapoint: import_auto_index
     value: 0
     description: This feature is not currently working. Do not enable.
+  front_end_geo_source:
+    id: 50
+    agHost: localhost
+    datapoint: front_end_geo_source
+    value: manual entry 

@@ -124,8 +124,6 @@ class agPersonForm extends BaseagPersonForm
   public function embedAgPersonForms()
   {
     $this->embedDateOfBirthForm();
-//    $this->embedLanguageForm();
-//    $this->embedNameForm();
     $this->embedContactForms();
     $this->embedAddressForm();
     $this->embedPrimaryForms();
@@ -141,6 +139,7 @@ class agPersonForm extends BaseagPersonForm
     $this->embedLanguageForm($primaryContainer);
     $this->embedForm('Primary', $primaryContainer);
   }
+  
   public function embedContactForms()
   {
     $contactContainer = new sfForm();
