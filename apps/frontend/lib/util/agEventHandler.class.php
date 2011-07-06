@@ -289,7 +289,7 @@ class agEventHandler
     // continue only if our error count is below our error threshold
     if (0 < $this->errThreshold && $this->errThreshold < $this->getErrCount())
     {
-      $errMsg = 'Import error threshold ({' . $this->errThreshold . '}) has been exceeded.';
+      $errMsg = 'Import error threshold {' . $this->errThreshold . '} has been exceeded.';
       $this->logEmerg($errMsg);
     }
   }

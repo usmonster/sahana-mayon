@@ -659,6 +659,10 @@ abstract class agImportNormalization extends agImportHelper
       return TRUE;
     } else {
       // our rollback and error logging happen regardless of whether this is an optional component
+      $errMsg = 'Batch ' . $this->iterData['batchPosition'] . ' of ' . 
+        $this->iterData['batchCount'] . ' (Records ' . $this->iterData['batchStart'] . ' through ' .
+        $this->iterData['fetchPosition'] . ') encountered a fatal error and could not continue.';
+
       $conn->rollback();
       $this->eh->logErr($errMsg, count($this->importData));
 
