@@ -251,7 +251,8 @@ abstract class agImportNormalization extends agImportHelper
   protected function setUnprocessedXLS()
   {
     // return false if there are no records to process
-    if ($this->iterData['unprocessed'] == 0 && $this->iterData['fetchCount'] > 0)
+    $totalUnprocessed = $this->iterData['unprocessed'] + $this->iterData['processedFailed'];
+    if ($totalUnprocessed == 0 && $this->iterData['fetchCount'] > 0)
     {
       $eventMsg = 'All records were successfully processed.';
       $this->eh->logNotice($eventMsg);
@@ -334,7 +335,7 @@ abstract class agImportNormalization extends agImportHelper
 
       // set our xlsname and pass it and our export data to the buildXls method
       $xlsName = $this->unprocessedBaseName . '_' . $date . '_' . $i . '.xls';
-      $this->eh->logInfo('Fetched ' . count($rows) . ' records from the database into ' .
+      $this->eh->logInfo('Fetched ' . count($row) . ' records from the database into ' .
         'batch ' . $i . '. Now adding records to ' . $xlsName . '.');
       $xlsPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $xlsName;
 

@@ -23,27 +23,127 @@ class eventActions extends agActions
   public static $event;
   protected $searchedModels = array('agEventStaff');
 
+  //TODO: put this in the global actions file?
+  public function executeCancelimport(sfWebRequest $request)
+  {
+    $abortFlagId = 'aborted'; //implode('_', array('abort', $this->moduleName, 'import'));
+    //$this->getContext()->set($abortFlagId, TRUE);
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+    if (is_writable($statusFile)) {
+      $status = sfYaml::load($statusFile);
+      $status[$abortFlagId] = TRUE;
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+    }
+
+    return sfView::NONE;
+  }
+
+  public function executeClearimport(sfWebRequest $request)
+  {
+    agImportNormalization::resetImportStatus($this->moduleName);
+    return sfView::NONE;
+  }
+
   /**
-   * Import Replies is used in event messaging to receive input from a messaging vendor 
+   * Import Replies is used in event messaging to receive input from a messaging vendor
    * in the form of a spreadsheet with responses of Yes or No to messages
    * @param sfWebRequest $request
    * @return results
    */
   public function executeImportreplies(sfWebRequest $request)
   {
+    $this->startTime = microtime(true);
 
-    if ($request->isMethod(sfRequest::POST)) {
-      $uploadedFile = $_FILES['import'];
+    $uploadedFile = $_FILES['import'];
 
-      $importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
-      if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-        return sfView::ERROR;
-      }
+    //print("<pre>" . print_r($_FILES, true) . "</pre>");
 
-      // fires event so listener will process the file (see ProjectConfiguration.class.php)
-      $this->dispatcher->notify(new sfEvent($this, 'import.staff_responses',
-              array('importPath' => $importPath)));
+    $this->importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+
+
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $this->importPath)) {
+      return sfView::ERROR;
     }
+    //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
+
+    $this->importer = agMessageResponseHandler::getInstance(NULL, agEventHandler::EVENT_NOTICE);
+
+    $this->importer->processXlsImportFile($this->importPath);
+
+    $left = 1;
+    while ($left > 0) {
+      $left = $this->importer->processBatch();
+      // print_r($left);
+    }
+    $iterData = $this->importer->getIterData();
+    $this->totalRecords = $iterData['fetchCount'];
+    $this->successful = $iterData['processedSuccessful'];
+    $this->failed = $iterData['processedFailed'];
+    $this->unprocessed = $iterData['unprocessed'];
+
+    // Report elapsed time
+    $this->endTime = microtime(true);
+    $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+    $this->importTime = date("H:i:s", $time);
+
+    // Get the memory usage
+    $peakMemory = $this->importer->getPeakMemoryUsage();
+
+    // Format memory
+    $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+    if ($peakMemory <= 999) {
+      $peakMemory = 1;
+    }
+    for ($i = 0; $peakMemory > 999; $i++) {
+      $peakMemory /= 1024;
+    }
+    $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
+
+    // close out import components and create an xls if needed
+    $this->importer->concludeImport();
+    $downloadFile = $this->importer->getUnprocessedXLS();
+    $this->unprocessedXLS = $downloadFile;
+  }
+
+  public function executeDownload(sfWebRequest $request)
+  {
+    // being sure no other content wil be output
+    $this->setLayout(false);
+    //sfConfig::set('sf_web_debug', false);
+
+    $fileName = preg_replace("/\.zip/", "", $request->getParameter('filename'));
+
+    $filePath = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR
+        . 'data/downloads' . DIRECTORY_SEPARATOR
+        . $fileName . '.zip';
+
+
+    // check if the file exists
+    $this->forward404Unless(file_exists($filePath));
+
+    // Make sure the browser doesn't try to deliver a chached version
+    $this->getResponse()->setHttpHeader("Pragma", "public");
+    $this->getResponse()->setHttpHeader("Expires", "0");
+    $this->getResponse()->setHttpHeader("Cache-Control",
+                                        "must-revalidate, post-check=0, pre-check=0");
+
+    // Provide application and file info headers
+    $this->getResponse()->setHttpHeader("Content-Type", "application/zip");
+    $this->getResponse()->setHttpHeader("Content-Disposition",
+                                        "attachment; filename='" . $fileName . ".zip'");
+    $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
+    $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($filePath));
+
+    $this->getResponse()->sendHttpHeaders();
+    $this->getResponse()->setContent(readfile($filePath));
+    $this->getResponse()->send();
+
+
+    return sfView::NONE;
+
   }
 
   /**

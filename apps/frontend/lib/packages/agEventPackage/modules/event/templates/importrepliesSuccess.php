@@ -1,48 +1,118 @@
+<h2>Staff Messaging Response Import Status</h2>
+
+<?php // include_partial('facility/infobar', array('timer' => $timer)); ?>
+
+<h3>Import Statistics</h3>
+<br>
+<table class="headerLess">
+  <tr>
+    <td>
+      <span>Start:</span>
+    </td>
+    <td>
+      <?php
+      echo date('F j, Y, g:i:s a', $startTime);
+      ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>End:</span>
+    </td>
+    <td>
+      <?php
+      echo date('F j, Y, g:i:s a', $endTime);
+      ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Time Elapsed:</span>
+    </td>
+
+    <td>
+      <?php echo $importTime; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Total Records:</span>
+    </td>
+    <td>
+      <?php echo $totalRecords; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Successful:</span>
+    </td>
+    <td>
+      <?php echo $successful; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Failed:</span>
+    </td>
+    <td>
+      <?php echo $failed; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Unprocessed:</span>
+    </td>
+    <td>
+      <?php echo $unprocessed; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Peak Memory Usage: </span>
+    </td>
+    <td>
+      <?php echo $peakMemory; ?>
+    </td>
+  </tr>
+</table>
+<br>
 
 
-<?php /**
-<?php
-use_javascript('agasti.js');
-use_javascript('jQuery.fileinput.js');
-use_javascript('jquery.ui.custom.js');
-use_stylesheet('jquery/jquery.ui.custom.css');
-use_stylesheet('jquery/mayon.jquery.ui.css');
+<?php if ($unprocessedXLS !== FALSE) { ?>
+  <div class="formSmall">
+    <h3>Notice:</h3>
+    <p>All import records could not be processed. Please click the Export Unprocessed
+      button below to download an XLS with the failed rows. You are encouraged to correct these
+      rows and re-submit the file. Do not re-submit the original file as it may cause errors
+      and duplication.</p>
+    <?php echo button_to('Export Unprocessed', "event/download?filename=$unprocessedXLS") ?>
+  </div>
+<?php } ?>
 
-
-?>
-<script>
-
-
-</script>
-
-<h2>Staff Messaging Response Import: <span class="highlightedText"><?php echo $event_name; ?> </span></h2>
-
-<span style="display: inline-block; margin: 0px; padding: 0px" >
-<?php
-  $importUrl = url_for('event/importreplies?event=' . urlencode($sf_data->getRaw('event_name'))) ;
-  echo link_to('Import Staff Responses', $importUrl, 
-      array('class' => 'generalButton', 'title' => 'Import Staff', 'id' => 'import'));
-  
-  $wikiUrl =  url_for('@wiki') . '/doku.php?id=tooltip:staff_import&do=export_xhtmlbody';
-  echo link_to('?', $wikiUrl, 
-      array('class' => 'tooltipTrigger', 'title' => 'Importing Staff Replies', 'id' => 'import'));
-?>
-  
-  <form id="importForm" style="position: relative; display: inline-block" action="
-  <?php echo $importUrl ?>" method="post" enctype="multipart/form-data">
-    <div style="position: absolute; top: 0px; left: 0px; z-index: 1; width: 250px">
-      <input  style="display: inline-block; color: #848484" class="inputGray" id="show" />
-      <a class="continueButton" style="display: inline-block; padding: 3px">Browse</a>
-    </div>
-    <input type="file" name="import" id="fileUpload" />
-
-
-    <input type="submit" name="submit" value="Submit" class="submitLinkButton" />
-  </form>
-</span>
-<br />
-
-
-<h3>Import Status</h3>
-<?php include_partial('facility/infobar', array('timer' => $timer)); ?>
- */ ?>
+<br>
+<br>
+<table class="blueTable" style="width:auto;" cellspacing="10" cellpadding="10">
+  <tr class="head">
+    <th>Time</th>
+    <th>Type</th>
+    <th>Message</th>
+  </tr>
+  <?php
+  foreach ($importer->getImportEvents() as $value) {
+    echo "<tr><td>";
+    echo date("M d, Y H:i:s T", $value['ts']);
+    echo "</td><td ";
+    if ($value['lvl'] <= 8) {
+      echo "class =\"redColorText boldText centerText\">";
+    } elseif ($value['lvl'] == 16) {
+      echo "class =\"orangeColorText boldText centerText\">";
+    } else {
+      echo "class =\"greenColorText boldText centerText\">";
+    }
+    echo $value['type'];
+    echo "</td><td>";
+    echo $value['msg'];
+    echo "</td></tr>";
+  }
+  ?>
+</table>

@@ -72,6 +72,8 @@ class agMessageResponseHandler extends agImportNormalization
         ->useResultCache(TRUE, 3600)
         ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
     $this->staffAllocationStatusIds = array_change_key_case($this->staffAllocationStatusIds);
+
+    $this->requiredColumns = array('unique_id', 'time_stamp');
   }
 
   /**
@@ -91,7 +93,7 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function setUnprocessedBaseName()
   {
-    $this->unprocessedBaseName = agGlobal::getParam('unprocessed_staff_import_basename');
+    $this->unprocessedBaseName = 'unprocessed_staff_message_response';
   }
 
   /**
@@ -137,7 +139,7 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function setImportSpec()
   {
-    $importSpec['unique_id'] = array('type' => 'integer');
+    $importSpec['unique_id'] = array('type' => 'integer', 'length' => 20);
     $importSpec['last_name'] = array('type' => "string", 'length' => 64);
     $importSpec['first_name'] = array('type' => "string", 'length' => 64);
     $importSpec['label'] = array('type' => "string", 'length' => 32);
@@ -192,7 +194,7 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function buildTempSelectQuery()
   {
-    $query = 'SELECT t.unique_id, t.response, t.time_stamp ' .
+    $query = 'SELECT t.id, t.unique_id, t.response, t.time_stamp ' .
          'FROM ' . $this->tempTable . ' AS t ' .
          'ORDER BY t.unique_id ASC, t.time_stamp ASC';
 
@@ -222,6 +224,30 @@ class agMessageResponseHandler extends agImportNormalization
     foreach ($this->importData as $rowId => $rowData)
     {
       $rd = $rowData['_rawData'];
+
+      // Check if required columns are passed in from rowData
+      $err = FALSE;
+      foreach ($this->requiredColumns as $column)
+      {
+        if (!isset($rd[$column]))
+        {
+          $err = TRUE;
+          $errMsg = 'Response on row ' . $rowId . ' missing required column ' . $column .
+                      '.  Skipping response processing.';
+          break;
+        }
+      }
+      if ($err)
+      {
+        $this->eh->logErr($errMsg, 1, FALSE);
+        continue;
+      }
+
+      if (!isset($rd['response'])) {
+        $this->eh->logInfo('Column "response" missing on row ' . $rowId . '. Skipping row.');
+        continue;
+      }
+
       if (array_key_exists('response', $rd)) {
         $rVals = array(self::mapResponse($rd['response']), strtotime($rd['time_stamp']));
         $responses[$rd['unique_id']] = $rVals;
@@ -244,9 +270,10 @@ class agMessageResponseHandler extends agImportNormalization
     {
       // grab that particular response record
       $rVals = $responses[$rec['event_staff_id']];
+      $dbTimeStamp = strtotime($rec['time_stamp']);
 
       // @todo Check the timestamp output... this might need to be strtotime'd
-      if ($rec['time_stamp'] == $rVals[1])
+      if ($dbTimeStamp == $rVals[1])
       {
         // if the timestamps were the same, update the response
         $eventMsg = 'Updating existing response for event staff id {' . $rec['event_staff_id'] .
@@ -254,7 +281,7 @@ class agMessageResponseHandler extends agImportNormalization
         $this->eh->logDebug($eventMsg);
         $rec['staff_allocation_status_id'] = $rVals[0];
       }
-      else if ($rec['time_stamp'] < $rVals[1])
+      else if ($dbTimeStamp < $rVals[1])
       {
         $eventMsg = 'Creating new status record for event staff id {' . $rec['event_staff_id'] .
           '}.';
@@ -269,9 +296,9 @@ class agMessageResponseHandler extends agImportNormalization
       }
       else
       {
-        $eventMsg = 'Import timestamp {' . $rVals[1] . '} is older than the current timestamp in' .
+        $eventMsg = 'Import timestamp {' . $rVals[1] . '} is older than the current timestamp in ' .
           'the database {' . $rec['time_stamp'] . '}. Skipping insertion of older timestamp.';
-        $this->eh->logWarn($eventMsg);
+        $this->eh->logWarning($eventMsg);
       }
 
       // either way, we can be safely done this response
@@ -288,9 +315,12 @@ class agMessageResponseHandler extends agImportNormalization
     // status.
 
     // Either way, we should warn the user that these records will not be updated
-    $eventMsg = 'Event staff with IDs {' . implode(',', array_keys($responses)) . '} are no ' .
-      'longer valid members of this event. Skipping response updates.';
-    $this->eh->logWarn($eventMsg);
+    if (!empty($responses))
+    {
+      $eventMsg = 'Event staff with IDs {' . implode(',', array_keys($responses)) . '} are no ' .
+        'longer valid members of this event. Skipping response updates.';
+      $this->eh->logErr($eventMsg, 1, FALSE);
+    }
 
     // here's the big to-do; let's save!
     $coll->save();
@@ -306,13 +336,13 @@ class agMessageResponseHandler extends agImportNormalization
   {
 
     if (isset($this->staffAllocationStatuses[$response]) &&
-         isset($this->staffAllocationStatusIds[strtolower($this->staffAllocationStatus[$response])]) )
+         isset($this->staffAllocationStatusIds[strtolower($this->staffAllocationStatuses[$response])]) )
     {
-      $statusId = $staffAllocationStatusIds[strtolower($staffAllocationStatus[$response])];
+      $statusId = $this->staffAllocationStatusIds[strtolower($this->staffAllocationStatuses[$response])];
     }
     else
     {
-      $statusId = $staffAllocationStatusIds[strtolower($this->defaultStaffAllocationStatus)];
+      $statusId = $this->staffAllocationStatusIds[strtolower($this->defaultStaffAllocationStatus)];
     }
 
     return $statusId;
