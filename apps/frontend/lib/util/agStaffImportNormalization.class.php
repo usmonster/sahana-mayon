@@ -894,8 +894,6 @@ class agStaffImportNormalization extends agImportNormalization
    */
   protected function setStaffResourceOrg($throwOnError, Doctrine_Connection $conn)
   {
-    $errMsg = NULL;
-
     if (!isset($this->organizationIds)) {
       $this->organizationIds = agDoctrineQuery::create()
           ->select('o.organization')
@@ -928,13 +926,13 @@ class agStaffImportNormalization extends agImportNormalization
 
     // check for required columns
     $staffIds = array();
-    foreach ($this->importData AS $rowId => $rowData) {
-      
+    foreach ($this->importData AS $rowId => &$rowData) {
       if (! isset($rowData['_rawData']['organization'])) {
         $errMsg = 'Required column organization is missing from record id ' . $rowId . '.';
         $this->eh->logErr($errMsg);
+        throw new Exception($errMsg);
         continue;
-      } else if (! array_key_exists($rowData['_rawData']['organization'], $this->organizationIds)) {
+      } else if (!isset($this->organizationIds[strtolower($rowData['_rawData']['organization'])])) {
         $errMsg = 'Invalid organization "' . $rowData['_rawData']['organization'] . '" given for ' .
         'record id ' . $rowId . '.';
         $this->eh->logErr($errMsg);
@@ -945,37 +943,32 @@ class agStaffImportNormalization extends agImportNormalization
         $errMsg = 'Required column resource type is missing from record id ' . $rowId . '.';
         $this->eh->logErr($errMsg);
         continue;
-      } else if (! array_key_exists($rowData['_rawData']['resource_type'], $this->stfRscTypeIds)) {
+      } else {
+        $rscType = strtolower($rowData['_rawData']['resource_type']);
+        if (!isset($this->stfRscTypeIds[$rscType])) {
         $errMsg = 'Invalid resource type "' . $rowData['_rawData']['resource_type'] .
         '" supplied for record id ' . $rowId . '.';
         $this->eh->logErr($errMsg);
         continue;
+        }
       }
 
       if (! isset($rowData['_rawData']['resource_status'])) {
         $errMsg = 'Required column resource status is missing from record id ' . $rowId . '.';
         $this->eh->logErr($errMsg);
         continue;
-      } else if (! array_key_exists($rowData['_rawData']['resource_status'], $this->stfRscStatusIds)) {
+      } else if (!isset($this->stfRscStatusIds[strtolower($rowData['_rawData']['resource_status'])])) {
         $errMsg = 'Invalid resource status "' . $rowData['_rawData']['resource_status'] .
         '" supplied for record id ' . $rowId . '.';
         $this->eh->logErr($errMsg);
         continue;
       }
+
+      // add the row to our known-good records
+      $staffIds[$rowData['primaryKeys']['staff_id']][$rscType] = $rowId;
     }
 
-      if (is_null($errMsg)) {
-        $staffIds[$rowData['primaryKeys']['staff_id']][$rowData['_rawData']['resource_type']] = $rowId;
-      } else {
-        // Capture error in error log.
-        $this->eh->logErr($errMsg);
-
-        if ($throwOnError) {
-          throw new Exception($errMsg);
-        }
-      }
-    }
-
+    // build a collection of good / known staffIds
     $coll = agDoctrineQuery::create()
         ->select('sr.*')
         ->from('agStaffResource sr')
@@ -983,55 +976,16 @@ class agStaffImportNormalization extends agImportNormalization
         ->execute();
 
     // Perform organization updates on existing staff resource.
-    foreach ($coll AS $index => &$record) {
+    foreach ($coll AS $index => $record) {
       $stfId = $record['staff_id'];
-      if (! array_key_exists( $record['staff_resource_type_id'], $stfRscTypeIds)) {
-          $errMsg = 'Invalid staff resource type ' . ' from record id ' . '.', $rawData['organization'],
-                            $staffIds[$stfId]);
-
-          // Capture error in error log.
-          $this->eh->logErr($errMsg);
-
-      }
       $stfRscType = array_search($record['staff_resource_type_id'], $stfRscTypeIds);
 
+      // check for it in our existing db
       if (isset($staffIds[$stfId][$stfRscType])) {
         $rawData = $this->importData[$staffIds[$stfId][$stfRscType]]['_rawData'];
 
-        // Check if import organization is valid.
-        if (!array_key_exists(strtolower($rawData['organization']), $organizationIds)) {
-          $errMsg = sprintf('Invalid organization %s from record id %d.', $rawData['organization'],
-                            $staffIds[$stfId]);
-
-          // Capture error in error log.
-          $this->eh->logErr($errMsg);
-
-          if ($throwOnError) {
-            throw new Exception($errMsg);
-          } else {
-            continue;
-          }
-        }
-
-        // Check if import staff resource status is valid.
-        if (!array_key_exists(strtolower($rawData['resource_status']), $stfRscStatusIds)) {
-          $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
-                            $rawData['resource_status'], $staffIds[$stfId]);
-
-          // Capture error in error log.
-          $this->eh->logErr($errMsg);
-
-          if ($throwOnError) {
-            throw new Exception($errMsg);
-          } else {
-            continue;
-          }
-        }
-
-        $orgId = $organizationIds[strtolower($rawData['organization'])];
-        $record['organization_id'] = $orgId;
-        $stfRscStatusId = $stfRscStatusIds[strtolower($rawData['resource_status'])];
-        $record['staff_resource_status_id'] = $stfRscStatusId;
+        $record['organization_id'] = $organizationIds[strtolower($rawData['organization'])];
+        $record['staff_resource_status_id'] = $stfRscStatusIds[strtolower($rawData['resource_status'])];
         unset($staffIds[$stfId][$stfRscType]);
       }
     }
@@ -1042,66 +996,32 @@ class agStaffImportNormalization extends agImportNormalization
     unset($coll);
 
     $staffResourceTable = $conn->getTable('agStaffResource');
+    $coll = new Doctrine_Collection('agStaffResource');
 
-    // Now $staffIds are left with new staff resources.
+    // Now $staffIds are left with only new staff resources.
     foreach ($staffIds AS $stfId => $stfResources) {
       foreach ($stfResources AS $stfRsc => $rowId) {
+        // pick up our rawdata
         $rawData = $this->importData[$rowId]['_rawData'];
 
-        // Check if import resource type is valid.
-        if (!array_key_exists(strtolower($rawData['resource_type']), $stfRscTypeIds)) {
-          $errMsg = sprintf('Invalid resource type %s from record id %d.',
-                            $rawData['resource_type'], $staffIds[$stfId]);
+        // create a new record object
+        $rec = new agStaffResource($staffResourceTable, TRUE);
+        $rec['staff_id'] = $stfId;
+        $rec['organization_id'] = $organizationIds[strtolower($rawData['organization'])];
+        $rec['staff_resource_type_id'] = $stfRscTypeIds[strtolower($rawData['resource_type'])];
+        $rec['staff_resource_status_id'] = $stfRscStatusIds[strtolower($rawData['resource_status'])];
 
-          // Capture error in error log.
-          $this->eh->logErr($errMsg);
-
-          if ($throwOnError) {
-            throw new Exception($errMsg);
-          } else {
-            continue;
-          }
-        }
-
-        // Check if import organization is valid.
-        if (!array_key_exists(strtolower($rawData['organization']), $organizationIds)) {
-          $errMsg = sprintf('Invalid organization %s from record id %d.', $rawData['organization'],
-                            $staffIds[$stfId]);
-
-          // Capture error in error log.
-          $this->eh->logErr($errMsg);
-
-          if ($throwOnError) {
-            throw new Exception($errMsg);
-          } else {
-            continue;
-          }
-        }
-
-        // Check if import staff resource status is valid.
-        if (!array_key_exists(strtolower($rawData['resource_status']), $stfRscStatusIds)) {
-          $errMsg = sprintf('Invalid staff resource status %s from record id %d.',
-                            $rawData['resource_status'], $staffIds[$stfId]);
-
-          // Capture error in error log.
-          $this->eh->logErr($errMsg);
-
-          if ($throwOnError) {
-            throw new Exception($errMsg);
-          } else {
-            continue;
-          }
-        }
-
-        $fKeys = array();
-        $fKeys['staff_id'] = $stfId;
-        $fKeys['organization_id'] = $organizationIds[strtolower($rawData['organization'])];
-        $fKeys['staff_resource_type_id'] = $stfRscTypeIds[strtolower($rawData['resource_type'])];
-        $fKeys['staff_resource_status_id'] = $stfRscStatusIds[strtolower($rawData['resource_status'])];
-
-        $staffResource = $this->createNewRec($staffResourceTable, $fKeys);
+        // add it to our collection
+        $coll->add($rec);
       }
+
+      // try to offset building all those objects a little
+      unset($staffIds[$stfId]);
     }
+
+    // save and we're done
+    $coll->save($conn);
+    $coll->free();
   }
 
   /**

@@ -615,7 +615,7 @@ abstract class agImportNormalization extends agImportHelper
                           $this->iterData['batchPosition'], $componentData['method']);
 
         // let's capture this error, regardless of whether we'll throw
-        $this->eh->logErr($errMsg, count($this->importData));
+        $this->eh->logErr($errMsg, 0);
 
         $conn->rollback($savepoint);
 
@@ -659,8 +659,8 @@ abstract class agImportNormalization extends agImportHelper
       return TRUE;
     } else {
       // our rollback and error logging happen regardless of whether this is an optional component
-      $this->eh->logErr($errMsg, count($this->importData));
       $conn->rollback();
+      $this->eh->logErr($errMsg, count($this->importData));
 
       // return false if not
       return FALSE;
