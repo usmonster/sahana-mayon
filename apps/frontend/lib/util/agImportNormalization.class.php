@@ -611,8 +611,9 @@ abstract class agImportNormalization extends agImportHelper
         $this->$method($componentData['throwOnError'], $conn);
         $conn->commit($savepoint);
       } catch (Exception $e) {
-        $errMsg = sprintf('Import batch processing for batch %s failed during method: %s.',
-                          $this->iterData['batchPosition'], $componentData['method']);
+        $errMsg = 'Import batch processing for batch ' . $this->iterData['batchPosition'] .
+          ' failed during method: ' . $componentData['method'] . ' with message: ' .
+          $e->getMessage();
 
         // let's capture this error, regardless of whether we'll throw
         $this->eh->logErr($errMsg, 0);
@@ -622,10 +623,7 @@ abstract class agImportNormalization extends agImportHelper
         // if it's not an optional component, we do a bit more and stop execution entirely
         if ($componentData['throwOnError']) {
           $err = $e;
-          $this->eh->logErr($e->getMessage(), 0);
           break;
-        } else {
-          $this->eh->logDebug($e->getMessage());
         }
       }
     }

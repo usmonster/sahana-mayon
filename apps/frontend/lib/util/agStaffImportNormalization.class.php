@@ -926,46 +926,40 @@ class agStaffImportNormalization extends agImportNormalization
 
     // check for required columns
     $staffIds = array();
+    $requiredColumns = array( 'organization' => 'organizationIds',
+                              'resource_type' => 'stfRscTypeIds',
+                              'resource_status' => 'stfRscStatusIds');
     foreach ($this->importData AS $rowId => &$rowData) {
-      if (! isset($rowData['_rawData']['organization'])) {
-        $errMsg = 'Required column organization is missing from record id ' . $rowId . '.';
-        $this->eh->logErr($errMsg);
-        throw new Exception($errMsg);
-        continue;
-      } else if (!isset($this->organizationIds[strtolower($rowData['_rawData']['organization'])])) {
-        $errMsg = 'Invalid organization "' . $rowData['_rawData']['organization'] . '" given for ' .
-        'record id ' . $rowId . '.';
-        $this->eh->logErr($errMsg);
-        continue;
-      }
+      // used at the end to determine whether to continue processing this record
+      $err = FALSE;
 
-      if (! isset($rowData['_rawData']['resource_type'])) {
-        $errMsg = 'Required column resource type is missing from record id ' . $rowId . '.';
-        $this->eh->logErr($errMsg);
-        continue;
-      } else {
-        $rscType = strtolower($rowData['_rawData']['resource_type']);
-        if (!isset($this->stfRscTypeIds[$rscType])) {
-        $errMsg = 'Invalid resource type "' . $rowData['_rawData']['resource_type'] .
-        '" supplied for record id ' . $rowId . '.';
-        $this->eh->logErr($errMsg);
-        continue;
+      // loop through each of the required columns and validate it
+      foreach ($requiredColumns as $column => $validator) {
+        if (! isset($rowData['_rawData'][$column])) {
+          $errMsg = 'Required column ' . $column . ' is missing from record id ' . $rowId . '.';
+          $err = TRUE;
+        } else if (!isset(${$validator}[strtolower($rowData['_rawData'][$column])])) {
+          $errMsg = 'Invalid ' . $column . ' "' . $rowData['_rawData'][$column] . '" given for ' .
+          'record id ' . $rowId . '.';
+          $err = TRUE;
+        } else {
+          $staffIds[$rowData['primaryKeys']['staff_id']][strtolower($rowData['_rawData']['resource_type'])] = $rowId;
+        }
+
+        // oh, poo!
+        if ($err) {
+          // log our error either way
+          $this->eh->logErr($errMsg);
+
+          // if our calling method instructs us to throw, let's do that too
+          if ($throwOnError) {
+            throw new Exception($errMsg);
+          }
+
+          // otherwise just break
+          break;
         }
       }
-
-      if (! isset($rowData['_rawData']['resource_status'])) {
-        $errMsg = 'Required column resource status is missing from record id ' . $rowId . '.';
-        $this->eh->logErr($errMsg);
-        continue;
-      } else if (!isset($this->stfRscStatusIds[strtolower($rowData['_rawData']['resource_status'])])) {
-        $errMsg = 'Invalid resource status "' . $rowData['_rawData']['resource_status'] .
-        '" supplied for record id ' . $rowId . '.';
-        $this->eh->logErr($errMsg);
-        continue;
-      }
-
-      // add the row to our known-good records
-      $staffIds[$rowData['primaryKeys']['staff_id']][$rscType] = $rowId;
     }
 
     // build a collection of good / known staffIds
