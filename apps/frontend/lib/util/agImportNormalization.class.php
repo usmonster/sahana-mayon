@@ -268,20 +268,20 @@ abstract class agImportNormalization extends agImportHelper
     // first search our directory for existing unprocessed files and remove
     $pathBase = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
     foreach(glob(($pathBase . '*')) as $filename) {
-      $eventMsg = 'Export: Removing old export file ' . $filename . '.';
+      $eventMsg = 'Removing old export file ' . $filename . '.';
       $this->eh->logDebug($eventMsg);
       unlink($filename);
-      $eventMsg = 'Export: Successfully removed old export file ' . $filename . '.';
+      $eventMsg = 'Successfully removed old export file ' . $filename . '.';
       $this->eh->logInfo($eventMsg);
     }
 
     // rinse and repeat
     $pathBase = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
     foreach(glob(($pathBase . '*')) as $filename) {
-      $eventMsg = 'Export: Removing old export file ' . $filename . '.';
+      $eventMsg = 'Removing old export file ' . $filename . '.';
       $this->eh->logDebug($eventMsg);
       unlink($filename);
-      $eventMsg = 'Export: Successfully removed old export file ' . $filename . '.';
+      $eventMsg = 'Successfully removed old export file ' . $filename . '.';
       $this->eh->logInfo($eventMsg);
     }
 
@@ -295,10 +295,10 @@ abstract class agImportNormalization extends agImportHelper
     $zipFile = new ZipArchive();
 
     if ($zipFile->open($zipPath, ZIPARCHIVE::CREATE) !== TRUE) {
-      $this->eh->err('Export: Could not create the output zip file' .  $zipPath .
+      $this->eh->err('Could not create the output zip file' .  $zipPath .
         '. Check your permissions to make sure you have write access.');
     } else {
-      $this->eh->logDebug('Export: Successfully created' .  $zipPath . '.');
+      $this->eh->logDebug('Successfully created' .  $zipPath . '.');
     }
     
     // get our temporary table read connection
@@ -307,11 +307,11 @@ abstract class agImportNormalization extends agImportHelper
     $selectCols = 't.' . implode(', t.', $columnHeaders);
 
     // build our query statement
-    $this->eh->logDebug('Export: Establishing fetch from the database.');
+    $this->eh->logDebug('Establishing fetch from the database.');
     $q = 'SELECT ' . $selectCols . ' FROM ' . $this->tempTable . ' AS t WHERE t.' .
       $this->successColumn . ' != ? OR ' . $this->successColumn . ' IS NULL;';
     $pdo = $this->executePdoQuery($conn, $q, array(TRUE));
-    $this->eh->logDebug('Export: PDO object successfully created.');
+    $this->eh->logDebug('PDO object successfully created.');
 
     // set counters
     $i = 1;
@@ -337,7 +337,7 @@ abstract class agImportNormalization extends agImportHelper
 
       // set our xlsname and pass it and our export data to the buildXls method
       $xlsName = $this->unprocessedBaseName . '_' . $date . '_' . $i . '.xls';
-      $this->eh->logInfo('Export: Fetched ' . count($rows) . ' records from the database into ' .
+      $this->eh->logInfo('Fetched ' . count($rows) . ' records from the database into ' .
         'batch ' . $i . '. Now adding records to ' . $xlsName . '.');
       $xlsPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $xlsName;
 
@@ -362,7 +362,7 @@ abstract class agImportNormalization extends agImportHelper
     if ($fetchPosition == 0 || count($exportFiles) == 0) {
 
       // if none were, log a warning
-      $this->eh->logWarning('Export No unprocessed records could be retrieved. Could not create' .
+      $this->eh->logWarning('No unprocessed records could be retrieved. Could not create ' .
         'unprocessed records export.');
 
       // close out and remove our zipfile
@@ -375,10 +375,10 @@ abstract class agImportNormalization extends agImportHelper
 
     // otherwise, add our xls files to the zip
     foreach ($exportFiles as $xlsFileInfo) {
-      $this->eh->logDebug('Export: Adding ' . $xlsFileInfo[1] . ' to zip file.');
+      $this->eh->logDebug('Adding ' . $xlsFileInfo[1] . ' to zip file.');
       $zipFile->addFile($xlsFileInfo[0], $xlsFileInfo[1]);
     }
-    $this->eh->logInfo('Export: Successfully added ' . count($exportFiles) .
+    $this->eh->logInfo('Successfully added ' . count($exportFiles) .
       ' xls files to zip file.');
 
     // close the zip
@@ -386,20 +386,20 @@ abstract class agImportNormalization extends agImportHelper
 
     // remove the individual xls files
     foreach ($exportFiles as $xlsFileInfo) {
-      $this->eh->logDebug('Export: Removing ' . $xlsFileInfo[1] . ' from the temp directory.');
+      $this->eh->logDebug('Removing ' . $xlsFileInfo[1] . ' from the temp directory.');
       unlink($xlsFileInfo[0]);
     }
-    $this->eh->logInfo('Export: Successfully removed xls files from the temp directory.');
+    $this->eh->logInfo('Successfully removed xls files from the temp directory.');
 
     // finally, move the zip file to its final web-accessible location
-    $this->eh->logDebug('Export: Moving ' . $downloadFile . ' to user-accesible directory.');
+    $this->eh->logDebug('Moving ' . $downloadFile . ' to user-accesible directory.');
     $downloadPath = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $downloadFile;
     if (! rename($zipPath, $downloadPath)) {
-      $this->eh->logErr('Export: Unable to move ' . $downloadFile . ' to the specified upload ' .
+      $this->eh->logErr('Unable to move ' . $downloadFile . ' to the specified upload ' .
         'directory. Check your sf_upload_dir configuration to ensure you have write permissions.');
     }
 
-    $eventMsg = "Export: Successfully created export file of unprocessed records.";
+    $eventMsg = "Successfully created export file of unprocessed records.";
     $this->eh->logNotice($eventMsg);
 
 
