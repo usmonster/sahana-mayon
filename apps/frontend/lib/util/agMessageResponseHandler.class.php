@@ -24,8 +24,7 @@ class agMessageResponseHandler extends agImportNormalization
 {
   protected $agEventAvailableStaffStatus,
             $agEventUnAvailableStaffStatus,
-            $staffAllocationStatuses = array(),
-            $staffAllocationStatusIds = array(),
+            $staffMsgStatuses = array(),
             $defaultStaffAllocationStatus;
   /**
    * Method to return an instance of this class
@@ -61,17 +60,25 @@ class agMessageResponseHandler extends agImportNormalization
 
     // get some global defaults
     $this->eh->setErrThreshold(intval(agGlobal::getParam('import_error_threshold')));
-    $this->staffAllocationStatuses = json_decode(agGlobal::getParam('staff_messaging_allocation_status'), TRUE);
-    $this->defaultStaffAllocationStatus = agGlobal::getParam('default_staff_messaging_allocation_status');
+    $this->staffMsgStatuses = json_decode(agGlobal::getParam('staff_messaging_allocation_status'), TRUE);
 
     // add one more useful cached status array
-    $this->staffAllocationStatusIds = agDoctrineQuery::create()
+    $staffAllocationStatusIds = agDoctrineQuery::create()
        ->select('sas.staff_allocation_status')
           ->addSelect('sas.id')
         ->from('agStaffAllocationStatus AS sas')
         ->useResultCache(TRUE, 3600)
         ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
-    $this->staffAllocationStatusIds = array_change_key_case($this->staffAllocationStatusIds);
+    $staffAllocationStatusIds = array_change_key_case($staffAllocationStatusIds, CASE_LOWER);
+
+    foreach ($this->staffMsgStatuses as &$status) {
+      $status = $staffAllocationStatusIds[strtolower($status)];
+    }
+    unset($status);
+
+    // unused?
+    $this->defaultStaffAllocStatus = agGlobal::getParam('default_staff_messaging_allocation_status');
+
 
     $this->requiredColumns = array('unique_id', 'time_stamp');
   }
@@ -196,6 +203,7 @@ class agMessageResponseHandler extends agImportNormalization
   {
     $query = 'SELECT t.id, t.unique_id, t.response, t.time_stamp ' .
          'FROM ' . $this->tempTable . ' AS t ' .
+         'WHERE t.response IS NOT NULL AND t.response != ""' .
          'ORDER BY t.unique_id ASC, t.time_stamp ASC';
 
     return $query;
@@ -210,9 +218,10 @@ class agMessageResponseHandler extends agImportNormalization
     $this->importComponents[] = array( 'component' => 'message_response', 'throwOnError' => TRUE, 'method' => 'setEventStaffStatus');
   }
 
-
-  /*
+  /**
    * Method to set the event staff's allocation status
+   * @param boolean $throwOnError Whether or not this method will throw an error on failure
+   * @param Doctrine_Connection $conn The doctrine connection object
    */
   protected function setEventStaffStatus($throwOnError, Doctrine_Connection $conn)
   {
@@ -239,7 +248,7 @@ class agMessageResponseHandler extends agImportNormalization
       }
       if ($err)
       {
-        $this->eh->logErr($errMsg, 1, FALSE);
+        $this->eh->logWarning($errMsg);
         continue;
       }
 
@@ -248,14 +257,22 @@ class agMessageResponseHandler extends agImportNormalization
         continue;
       }
 
-      if (array_key_exists('response', $rd)) {
-        $rVals = array(self::mapResponse($rd['response']), strtotime($rd['time_stamp']));
-        $responses[$rd['unique_id']] = $rVals;
+      $response = self::mapResponse($rd['response']);
+      if ( $response === FALSE ) {
+        $eventMsg = 'Incorrect response value "' . $rd['response']  . '" given for row ' . $rowId .
+          '. Skipping response processing.';
+        $this->eh->logWarning($eventMsg);
+      } else {
+        $responses[$rd['unique_id']] = array($response, strtotime($rd['time_stamp']));
       }
     }
 
+    if (empty($responses)) {
+      return FALSE;
+    }
+
     // this step is necessary to avoid index constraints
-    $coll = agDoctrineQuery::create()
+    $coll = agDoctrineQuery::create($conn)
       ->select('ess.*')
         ->from('agEventStaffStatus ess')
         ->whereIn('ess.event_staff_id', array_keys($responses))
@@ -264,6 +281,8 @@ class agMessageResponseHandler extends agImportNormalization
               'WHERE s.event_staff_id = ess.event_staff_id ' .
               'HAVING MAX(s.time_stamp) = ess.time_stamp)')
         ->execute();
+
+    $statusTable = $conn->getTable('agEventStaffStatus');
 
     // loop through all of our event staff and insert for those who already have a status
     foreach ($coll as $collId => $rec)
@@ -288,9 +307,9 @@ class agMessageResponseHandler extends agImportNormalization
         $this->eh->logDebug($eventMsg);
 
         // if the db timestamp is older than the import one, make a new record and add it
-        $nRec = new agEventStaffStatus();
+        $nRec = new agEventStaffStatus($statusTable, TRUE);
         $nRec['event_staff_id'] = $rec['event_staff_id'];
-        $nRec['time_stamp'] = $rVals[1];
+        $nRec['time_stamp'] = date('Y-m-d H:i:s',$rVals[1]);
         $nRec['staff_allocation_status_id'] = $rVals[0];
         $coll->add($nRec);
       }
@@ -315,13 +334,14 @@ class agMessageResponseHandler extends agImportNormalization
     if (!empty($responses))
     {
       $eventMsg = 'Event staff with IDs {' . implode(',', array_keys($responses)) . '} are no ' .
-        'longer valid members of this event. Skipping response updates.';
-      $this->eh->logErr($eventMsg, 1, FALSE);
+        'longer valid members of this event. Skipping response processing.';
+      $this->eh->logWarning($eventMsg);
     }
 
     // here's the big to-do; let's save!
-    $coll->save();
+    $coll->save($conn);
     $coll->free();
+    return TRUE;
   }
 
   /**
@@ -330,18 +350,12 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function mapResponse( $response )
   {
-
-    if (isset($this->staffAllocationStatuses[$response]) &&
-         isset($this->staffAllocationStatusIds[strtolower($this->staffAllocationStatuses[$response])]) )
-    {
-      $statusId = $this->staffAllocationStatusIds[strtolower($this->staffAllocationStatuses[$response])];
+    $response = strtolower($response);
+    if (isset($this->staffMsgStatuses[$response])) {
+      return $this->staffMsgStatuses[$response];
     }
-    else
-    {
-      $statusId = $this->staffAllocationStatusIds[strtolower($this->defaultStaffAllocationStatus)];
-    }
-
-    return $statusId;
+    
+    return FALSE;
   }
 
 }
