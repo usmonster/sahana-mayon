@@ -111,11 +111,10 @@ abstract class agImportNormalization extends agImportHelper
   {
     parent::setConnections();
 
-    $dm = Doctrine_Manager::getInstance();
-
     // we do this little one explicitly.
     $this->getImportWrite();
 
+    $dm = Doctrine_Manager::getInstance();
     $dm->setCurrentConnection('doctrine');
     $adapter = $dm->getCurrentConnection()->getDbh();
     $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_READ);
@@ -125,8 +124,8 @@ abstract class agImportNormalization extends agImportHelper
 
   /**
    * Method to return the import normalize write connection.
-   * @param <type> $new
-   * @return <type> 
+   * @param boolean $new Whether or not this class returns a new instance of the connection
+   * @return Doctrine_Connection A doctrine connection object
    */
   protected function getImportWrite($new = TRUE) {
     if ($conn = $this->getConnection(self::CONN_NORMALIZE_WRITE)) {
@@ -256,7 +255,7 @@ abstract class agImportNormalization extends agImportHelper
     $this->unprocessedXLS = $this->setUnprocessedXLS();
 
     // now release all remaining connections
-    $this->closeConnections();
+    $this->closeConnection($this->getConnection(self::CONN_TEMP_READ));
 
     // finally, kick off this hellish piece of work
     if (agGlobal::getParam('import_auto_index')) {

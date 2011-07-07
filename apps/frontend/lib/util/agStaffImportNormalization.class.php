@@ -325,17 +325,29 @@ class agStaffImportNormalization extends agImportNormalization
     $this->eh->logDebug('{' . count($entities) . '} person entities found in the database.');
 
     $staffTable = $conn->getTable('agStaff');
+    $staffColl = new Doctrine_Collection('agStaff');
 
     //loop foreach $entities member
-    foreach ($entities as $entityId => &$entityData) {
+    foreach ($entities as $entityId => $entityData) {
       // if staff id doesn't exist yet, make it so
       if (is_null($entityData[1])) {
         $this->eh->logDebug('Person ID {' . $entityData[0] . '} exists but is not staff. ' .
             'Creating staff record.');
-        $entityData[1] = $this->createNewRec($staffTable, array('person_id' => $entityData[0]));
+        $nRec = new agStaff($staffTable,TRUE);
+        $nRec['person_id'] = $entityData[0];
+        $staffColl->add($nRec, $entityId);
       }
     }
-    unset($entityData);
+    $staffColl->save($conn);
+
+    // add the newly saved id's to the entities array
+    foreach($staffColl as $entityId => $staffRec) {
+       $entities[$entityId][1] = $staffRec['id'];
+    }
+
+    // free some mem
+    $staffColl->free();
+    unset($staffColl);
 
     // update our row keys array
     $this->eh->logDebug('Updating primary keys for found entities.');
@@ -381,9 +393,9 @@ class agStaffImportNormalization extends agImportNormalization
       $pKeys = $rowData['primaryKeys'];
 
       // this should satisfy both NULL entity_ids and ones that didn't make our initial filter
-      if (!array_key_exists('entity_id', $rawData)) {
+      if (!isset($rawData['entity_id'])) {
         $createNew = TRUE;
-      } elseif (!array_key_exists('entity_id', $pKeys) || $rawData['entity_id'] != $pKeys['entity_id']) {
+      } elseif (!isset($pKeys['entity_id']) || $rawData['entity_id'] != $pKeys['entity_id']) {
         $createNew = TRUE;
         $warnBadEntity = TRUE;
       }
@@ -409,7 +421,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // grab our entityId from the entity collection or skip if unfound
       if (! isset($entityColl[$rowId])) {
-        if (! empty($rowData['primaryKeys']['person_id'])) {
+        if (! isset($rowData['primaryKeys']['person_id'])) {
           // no new parent, child record exists
           continue;
         }
@@ -443,7 +455,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // grab our entityId from the entity collection or skip if unfound
       if (! isset($personColl[$rowId])) {
-        if (! empty($rowData['primaryKeys']['staff_id'])) {
+        if (! isset($rowData['primaryKeys']['staff_id'])) {
           // no new parent, child record exists
           continue;
         }
@@ -512,13 +524,13 @@ class agStaffImportNormalization extends agImportNormalization
 
     // loop through our raw data and build our person name data
     foreach ($this->importData as $rowId => $rowData) {
-      if (array_key_exists('person_id', $rowData['primaryKeys'])) {
+      if (isset($rowData['primaryKeys']['person_id'])) {
         $personId = $rowData['primaryKeys']['person_id'];
 
         // we start with an empty array, devoid of types in case the entity has no types/values
         $personNames[$personId] = array();
         foreach ($importNameTypes as $nameType => $nameTypeId) {
-          if (array_key_exists($nameType, $rowData['_rawData'])) {
+          if (isset($rowData['_rawData'][$nameType])) {
             $personNames[$personId][$nameTypeId][] = $rowData['_rawData'][$nameType];
           }
         }
@@ -561,14 +573,14 @@ class agStaffImportNormalization extends agImportNormalization
 
     // loop through our raw data and build our entity email data
     foreach ($this->importData as $rowId => $rowData) {
-      if (array_key_exists('entity_id', $rowData['primaryKeys'])) {
+      if (isset($rowData['primaryKeys']['entity_id'])) {
         // this just makes it easier to use
         $entityId = $rowData['primaryKeys']['entity_id'];
 
         // we start with an empty array, devoid of types in case the entity has no types/values
         $entityEmails[$entityId] = array();
         foreach ($importEmailTypes as $emailType => $emailTypeId) {
-          if (array_key_exists($emailType, $rowData['_rawData'])) {
+          if (isset($rowData['_rawData'][$emailType])) {
             $entityEmails[$entityId][] = array($emailTypeId, $rowData['_rawData'][$emailType]);
           }
         }
@@ -613,7 +625,7 @@ class agStaffImportNormalization extends agImportNormalization
 
     // loop through our raw data and build our entity phone data
     foreach ($this->importData as $rowId => $rowData) {
-      if (array_key_exists('entity_id', $rowData['primaryKeys'])) {
+      if (isset($rowData['primaryKeys']['entity_id'])) {
         // this just makes it easier to use
         $entityId = $rowData['primaryKeys']['entity_id'];
 
@@ -684,7 +696,7 @@ class agStaffImportNormalization extends agImportNormalization
 
     // loop through our raw data and build our entity address data
     foreach ($this->importData as $rowId => $rowData) {
-      if (array_key_exists('entity_id', $rowData['primaryKeys'])) {
+      if (isset($rowData['primaryKeys']['entity_id'])) {
         // this just makes it easier to use
         $entityId = $rowData['primaryKeys']['entity_id'];
 
@@ -701,8 +713,8 @@ class agStaffImportNormalization extends agImportNormalization
           }
         }
 
-        if (count($homeAddr) > 0 && array_key_exists('home_latitude', $rowData['_rawData']) &&
-            array_key_exists('home_longitude', $rowData['_rawData'])) {
+        if (count($homeAddr) > 0 && isset($rowData['_rawData']['home_latitude']) &&
+            isset($rowData['_rawData']['home_longitude'])) {
           $homeAddrComp = array($homeAddr, $addressStandardId);
           $homeAddrComp[] = array(array(array($rowData['_rawData']['home_latitude'],
                 $rowData['_rawData']['home_longitude'])),
@@ -720,8 +732,8 @@ class agStaffImportNormalization extends agImportNormalization
           }
         }
 
-        if (count($workAddr) > 0 && array_key_exists('work_latitude', $rowData['_rawData']) &&
-            array_key_exists('work_longitude', $rowData['_rawData'])) {
+        if (count($workAddr) > 0 && isset($rowData['_rawData']['work_latitude']) &&
+            isset($rowData['_rawData']['work_longitude'])) {
           $workAddrComp = array($workAddr, $addressStandardId);
           $workAddrComp[] = array(array(array($rowData['_rawData']['work_latitude'],
                 $rowData['_rawData']['work_longitude'])),
@@ -798,21 +810,21 @@ class agStaffImportNormalization extends agImportNormalization
     }
 
     // get all of our custom records in a collection
-    $coll = agDoctrineQuery::create()
+    $coll = agDoctrineQuery::create($conn)
         ->select('pcv.*')
         ->from('agPersonCustomFieldValue pcv')
         ->whereIn('pcv.person_id', array_keys($personIds))
         ->execute();
 
     // Perform custom updates on person with existing custom fields.
-    foreach ($coll AS $index => &$record) {
+    foreach ($coll AS $index => $record) {
       $pId = $record['person_id'];
       $rawData = $this->importData[$personIds[$pId]]['_rawData'];
       $recordCustomFieldId = $record['person_custom_field_id'];
       $customField = array_search(array_search($recordCustomFieldId, $customFieldIds),
                                                $importCustomFields);
 
-      if (array_key_exists($customField, $rawData)) {
+      if (isset($rawData[$customField])) {
         $record['value'] = $rawData[$customField];
         $updatedPersonCustomField[$pId][] = $customField;
       } else {
@@ -834,6 +846,7 @@ class agStaffImportNormalization extends agImportNormalization
     unset($coll);
 
     $personCustomFieldTable = $conn->getTable('agPersonCustomFieldValue');
+    $coll = new Doctrine_Collection('agPersonCustomFieldValue');
 
     // Now process person with new custom field if provided in import.
     foreach ($personIds AS $pId => $rowId) {
@@ -843,19 +856,25 @@ class agStaffImportNormalization extends agImportNormalization
         $rawData = $this->importData[$personIds[$pId]]['_rawData'];
         foreach ($newCustomFields AS $customField) {
           $mappedCustomField = $importCustomFields[$customField];
-          if (array_key_exists($customField, $rawData)) {
-            $fKeys = array();
-            $fKeys['person_id'] = $pId;
-            $fKeys['person_custom_field_id'] = $customFieldIds[$importCustomFields[$customField]];
-            $fKeys['value'] = $rawData[$customField];
+          if (isset($rawData[$customField])) {
+            $nRec = new agPersonCustomFieldValue($personCustomFieldTable, TRUE);
+            $nRec['person_id'] = $pId;
+            $nRec['person_custom_field_id'] = $customFieldIds[$importCustomFields[$customField]];
+            $nRec['value'] = $rawData[$customField];
 
-            $personCustomField = $this->createNewRec($personCustomFieldTable, $fKeys);
+            $coll->add($nRec);
           }
         }
       }
+
+      // get a little memory back
+      unset($personIds[$pId]);
+      unset($updatedPersonCustomField[$pId]);
     }
-    unset($personIds);
-    unset($updatedPersonCustomField);
+
+    // save
+    $coll->save($conn);
+    $coll->free();
   }
 
   /**
@@ -936,7 +955,7 @@ class agStaffImportNormalization extends agImportNormalization
     }
 
     // build a collection of good / known staffIds
-    $coll = agDoctrineQuery::create()
+    $coll = agDoctrineQuery::create($conn)
         ->select('sr.*')
         ->from('agStaffResource sr')
         ->whereIn('sr.staff_id', array_keys($staffIds))
@@ -1020,7 +1039,7 @@ class agStaffImportNormalization extends agImportNormalization
 
     // loop through our raw data and build our person language data
     foreach ($this->importData as $rowId => $rowData) {
-      if (array_key_exists('person_id', $rowData['primaryKeys'])) {
+      if (isset($rowData['primaryKeys']['person_id'])) {
         // this just makes it easier to use
         $personId = $rowData['primaryKeys']['person_id'];
 
@@ -1028,13 +1047,13 @@ class agStaffImportNormalization extends agImportNormalization
         // $personLanguages only if no language was specified from import.
         $languageComponents = array();
         foreach ($importLanguageComponents as $importLanguage => $langComponents) {
-          if (array_key_exists($importLanguage, $rowData['_rawData'])) {
+          if (isset($rowData['_rawData'][$importLanguage])) {
             // Always initialize $formatCompetencies as an emtpy array. Assign an emtpy array to
             // $languageComponents only if no format/competency details is specified for the
             // language from import.
             $formatCompetencies = array();
             foreach ($langComponents as $importFormat => $dbFormat) {
-              if (array_key_exists($importFormat, $rowData['_rawData'])) {
+              if (isset($rowData['_rawData'][$importFormat])) {
                 $formatCompetencies[$dbFormat] = $rowData['_rawData'][$importFormat];
               }
             }

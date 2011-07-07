@@ -476,10 +476,13 @@ class agStaffActions extends agActions
     $this->importer->processXlsImportFile($this->importPath);
 
     $left = 1;
+    $mt = new agMemoryTester();
     while ($left > 0) {
+      $mt->test();
       $left = $this->importer->processBatch();
       // print_r($left);
     }
+    print_r($mt->getResults());
     $iterData = $this->importer->getIterData();
     $this->totalRecords = $iterData['fetchCount'];
     $this->successful = $iterData['processedSuccessful'];
