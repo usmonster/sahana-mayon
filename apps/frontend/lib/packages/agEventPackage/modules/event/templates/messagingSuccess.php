@@ -60,7 +60,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
                 <input type="file" name="import" id="fileUpload" style="height:25px" />
 
 
-                <input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px" onclick="return confirm('Submitting import will open a new page.  Please do not exist out from the page until after import is completed.');" />
+                <input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px" onclick="return confirm('To begin importing click \'ok\' and a new tab will open.  Do not close the new tab until import is complete.');" />
             </form>
         </td>
     </tr>
