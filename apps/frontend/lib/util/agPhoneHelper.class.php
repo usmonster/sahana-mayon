@@ -535,7 +535,8 @@ class agPhoneHelper extends agBulkRecordHelper
         }
       }
 
-      $newPhone = new agPhoneContact();
+      $phoneContactTbl = $conn->getTable('agPhoneContact');
+      $newPhone = new agPhoneContact($phoneContactTbl, TRUE);
       $newPhone['phone_contact'] = $phone[0];
       $newPhone['phone_format_id'] = $phoneFormatId;
 

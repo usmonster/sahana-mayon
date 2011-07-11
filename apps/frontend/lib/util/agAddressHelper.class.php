@@ -646,7 +646,7 @@ class agAddressHelper extends agBulkRecordHelper
     $conn->beginTransaction() ;
     try
     {
-     $addressCollection->save() ;
+     $addressCollection->save($conn) ;
      $conn->commit() ;
     }
     catch(Exception $e)
@@ -1187,8 +1187,8 @@ class agAddressHelper extends agBulkRecordHelper
         // unfortunately, if we didn't get value we've got to add it!
         if (empty($valueId))
         {
-
-          $addrValue = new agAddressValue();
+          $addressValueTbl = $conn->getTable('agAddressValue');
+          $addrValue = new agAddressValue($addressValueTbl, TRUE);
           $addrValue['address_element_id'] = $elementId ;
           $addrValue['value'] = $value ;
           try
@@ -1218,7 +1218,8 @@ class agAddressHelper extends agBulkRecordHelper
       if (is_null($err))
       {
         // attempt to insert the actual address
-        $newAddr = new agAddress() ;
+        $addressTbl = $conn->getTable('agAddress');
+        $newAddr = new agAddress($addressTbl, TRUE) ;
         $newAddr['address_standard_id'] = $components[1] ;
         $newAddr['address_hash'] = $components[2] ;
 
@@ -1245,7 +1246,8 @@ class agAddressHelper extends agBulkRecordHelper
         // if we at any point pick up an error, don't bother
         if (! is_null($err)) { break ; }
 
-        $newAmav = new agAddressMjAgAddressValue() ;
+        $amavTbl = $conn->getTable('agAddressMjAgAddressValue');
+        $newAmav = new agAddressMjAgAddressValue($amavTbl, TRUE) ;
         $newAmav['address_id'] = $addrId ;
         $newAmav['address_value_id'] = $rValueId ;
 

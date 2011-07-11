@@ -213,24 +213,22 @@ class agEventFacilityHelper
 
       // set up a new collection for inserts
       $insertCollection = new Doctrine_Collection('agEventFacilityResourceActivationTime');
-
+      $eventFacRescActiveTimeTable = $conn->getTable('agEventFacilityResourceActivationTime');
       foreach ($insertIds as $id) {
         // build our values array
         $data = array('event_facility_resource_id' => $id, 'activation_time' => $activationTime);
 
         // new efrat object
-        $efrat = new agEventFacilityResourceActivationTime();
+        $efrat = new agEventFacilityResourceActivationTime($eventFacRescActiveTimeTable, TRUE);
         $efrat->fromArray($data);
 
         // add it to the collection.
         $insertCollection->add($efrat);
-
-        // since we've got it in memory, we can free it, right?
-        // $efrat->free() ;
       }
 
       // save the collection
       $insertCollection->save($conn);
+      $insertCollection->free(TRUE);
 
       // commit
       $conn->commit();
@@ -654,6 +652,7 @@ class agEventFacilityHelper
     try {
       // set up a new collection for inserts
       $collection = new Doctrine_Collection('agEventFacilityResourceStatus');
+      $eventFacRescStatusTable = $conn->getTable('agEventFacilityResourceStatus');
 
       foreach ($eventFacilityResourceIds as $id) {
         // build our values array
@@ -663,7 +662,7 @@ class agEventFacilityHelper
         $data['facility_resource_allocation_status_id'] = $allocationStatusId;
 
         // new efrat object
-        $efrs = new agEventFacilityResourceStatus();
+        $efrs = new agEventFacilityResourceStatus($eventFacRescStatusTable, TRUE);
         $efrs->fromArray($data);
 
         // add it to the collection.
@@ -673,7 +672,8 @@ class agEventFacilityHelper
       }
 
       // save the collection
-      $collection->save();
+      $collection->save($conn);
+      $collection->free(TRUE);
 
       // commit
       $conn->commit();

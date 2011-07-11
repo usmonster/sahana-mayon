@@ -357,7 +357,8 @@ class agGeoHelper extends agBulkRecordHelper
       }
 
       // first create a new geoId that we can later use when setting coordinates
-      $gObj = new agGeo() ;
+      $geoTbl = $conn->getTable('agGeo');
+      $gObj = new agGeo($geoTbl, TRUE) ;
       $gObj['geo_coordinate_hash'] = $geoValues[1] ;
       $gObj['geo_type_id'] = $geoTypeId ;
       $gObj['geo_source_id'] = $geoSourceId ;
@@ -388,7 +389,8 @@ class agGeoHelper extends agBulkRecordHelper
           if (empty($gcId))
           {
             // set up our new geo-coordinate object
-            $gcObj = new agGeoCoordinate() ;
+            $geoCoorTbl = $conn->getTable('agGeoCoordinate');
+            $gcObj = new agGeoCoordinate($geoCoorTbl, TRUE) ;
             $gcObj['latitude'] = $coordinates[0] ;
             $gcObj['longitude'] = $coordinates[1] ;
 
@@ -407,7 +409,8 @@ class agGeoHelper extends agBulkRecordHelper
             }
           }
           // now, let's create a geo feature record
-          $gfObj = new agGeoFeature() ;
+          $geoFeatureTbl = $conn->getTable('agGeoFeature');
+          $gfObj = new agGeoFeature($geoFeatureTbl, TRUE) ;
           $gfObj['geo_id'] = $gId ;
           $gfObj['geo_coordinate_id'] = $gcId ;
           $gfObj['geo_coordinate_order'] = $order ;
@@ -620,7 +623,7 @@ class agGeoHelper extends agBulkRecordHelper
 
     if (is_null($err))
     {
-      $q = agDoctrineQuery::create()
+      $q = agDoctrineQuery::create($conn)
         ->select('ag.*')
           ->from('agAddressGeo ag INDEXBY ag.address_id')
           ->whereIn('ag.address_id', array_keys($addrCoordinates));
@@ -653,7 +656,8 @@ class agGeoHelper extends agBulkRecordHelper
       // loop through the remaining $addrGeoIds and make new entries
       foreach ($addrCoordinates as $addrId => $geoId)
       {
-        $newRec = new agAddressGeo() ;
+        $addressGeoTbl = $conn->getTable('agAddressGeo');
+        $newRec = new agAddressGeo($addressGeoTbl, TRUE) ;
         $newRec['address_id'] = $addrId ;
         $newRec['geo_id'] = $geoId ;
 

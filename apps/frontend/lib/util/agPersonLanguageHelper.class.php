@@ -560,7 +560,8 @@ class agPersonLanguageHelper extends agLanguageHelper
         foreach ($component AS $languageId => $priority)
         {
           // Create new person language records.
-          $personLanguage = new agPersonMjAgLanguage();
+          $personMjLanguageTbl = $conn->getTable('agPersonMjAgLanguage');
+          $personLanguage = new agPersonMjAgLanguage($personMjLanguageTbl, TRUE);
           $personLanguage['person_id'] = $personId;
           $personLanguage['language_id'] = $languageId;
           $personLanguage['priority'] = $priority;
@@ -577,7 +578,8 @@ class agPersonLanguageHelper extends agLanguageHelper
             foreach ($languageComponents AS $formatId => $competencyId)
             {
               // Create new person's language component records.
-              $personLanguageCompetency = new agPersonLanguageCompetency();
+              $personLanguageCompTbl = $conn->getTable('agPersonLanguageCompetency');
+              $personLanguageCompetency = new agPersonLanguageCompetency($personLanguageCompTbl, TRUE);
               $personLanguageCompetency['person_language_id'] = $personLanguageId;
               $personLanguageCompetency['language_format_id'] = $formatId;
               $personLanguageCompetency['language_competency_id'] = $competencyId;
@@ -723,7 +725,8 @@ class agPersonLanguageHelper extends agLanguageHelper
         foreach($pLangs as $formatId => $competencyId)
         {
           // Create new person's language component records.
-          $personLanguageCompetency = new agPersonLanguageCompetency();
+          $personLangCompTbl = $conn->getTable('agPersonLanguageCompetency');
+          $personLanguageCompetency = new agPersonLanguageCompetency($personLangCompTbl, TRUE);
           $personLanguageCompetency['person_language_id'] = $personLanguageId;
           $personLanguageCompetency['language_format_id'] = $formatId;
           $personLanguageCompetency['language_competency_id'] = $competencyId;

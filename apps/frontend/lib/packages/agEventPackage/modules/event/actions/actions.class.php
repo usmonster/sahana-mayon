@@ -285,6 +285,7 @@ class eventActions extends agActions
     $this->eventStatusType = NULL;
     $this->eventStatusTypeId = NULL;
     $this->checkResults = NULL;
+    $conn = Doctrine_Manager::connection();
 
     if (empty($this->event_id)) {
       $eventMeta = NULL;
@@ -297,9 +298,12 @@ class eventActions extends agActions
         $this->scenario_id = NULL;
       }
     } else {
-      $eventMeta = Doctrine::getTable('agEvent')
-          ->findByDql('id = ?', $this->event_id)
-          ->getFirst();
+
+      $eventMeta = agDoctrineQuery::create($conn)
+        ->from('agEvent e')
+        ->where('e.id = ?', $this->event_id)
+        ->execute();
+      $eventMeta = $eventMeta[0];
 
       $this->scenario_id = agDoctrineQuery::create()
           ->select('scenario_id')
@@ -341,7 +345,6 @@ class eventActions extends agActions
     // Saving event meta.
     if ($request->isMethod(sfRequest::POST)) {
       try {
-        $conn = Doctrine_Manager::connection();
         // here we check our current transaction scope and create a transaction or savepoint
         $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
         if ($useSavepoint) {
@@ -374,9 +377,15 @@ class eventActions extends agActions
                   $eventStatusTypeId;
             }
 
-            $agEventStatus = (empty($eventStatusId)) ?
-                new agEventStatus() :
-                Doctrine_Core::getTable('agEventStatus')->find($eventStatusId);
+            $agEventStatusTable = $conn->getTable('agEventStatus');
+            if (empty($eventStatusId))
+            {
+                $agEventStatus = new agEventStatus($agEventStatusTable, TRUE);
+            }
+            else
+            {
+                $agEventStatus = $agEventStatusTable->find($eventStatusId);
+            }
             $agEventStatus->setEventId($ag_event->getId());
             $agEventStatus->setTimeStamp(new Doctrine_Expression('CURRENT_TIMESTAMP'));
             $agEventStatus->setEventStatusTypeId($event_status_type_id);
@@ -391,9 +400,14 @@ class eventActions extends agActions
 
             // Save event-scenario entry
             if (!empty($this->scenario_id)) {
-              $ag_event_scenario = (empty($eventScenarioId)) ?
-                  new agEventScenario() :
-                  Doctrine_Core::getTable('agEventScenario')->find($eventScenarioId);
+              $eventScenTable = $conn->getTable('agEventScenario');
+              if (empty($eventScenarioId)) {
+                $ag_event_scenario = new agEventScenario($eventScenTable, TRUE);
+              }
+              else
+              {
+                $ag_event_scenario = $eventScenTable->find($eventScenarioId);
+              }
 
               $ag_event_scenario->setScenarioId($this->scenario_id);
               $ag_event_scenario->setEventId($ag_event->getId());

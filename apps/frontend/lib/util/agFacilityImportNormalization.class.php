@@ -571,12 +571,15 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $entity = new agEntity();
+      $entityTbl = $conn->getTable('agEntity');
+      $entity = new agEntity($entityTbl, TRUE);
       $entity->save($conn);
-      $site = new agSite();
+      $siteTbl = $conn->getTable('agSite');
+      $site = new agSite($siteTbl, TRUE);
       $site->set('entity_id', $entity->id);
       $site->save($conn);
-      $facility = new agFacility(null, true, false);
+      $faciltiyTbl = $conn->getTable('agFacility');
+      $facility = new agFacility($faciltiyTbl, true, false);
       $facility->set('site_id', $site->id)
           ->set('facility_name', $facilityName)
           ->set('facility_code', $facilityCode);
@@ -674,7 +677,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $facilityResource = new agFacilityResource();
+      $facilityResourceTbl = $conn->getTable('agFacilityResource');
+      $facilityResource = new agFacilityResource($facilityResourceTbl, TRUE);
       $facilityResource->set('facility_id', $facility->id)
           ->set('facility_resource_type_id', $facilityResourceTypeAbbrId)
           ->set('facility_resource_status_id', $facilityResourceStatusId)
@@ -792,7 +796,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $scenarioFacilityGroup = new agScenarioFacilityGroup();
+      $scenFacGrpTbl = $conn->getTable('agScenarioFacilityGroup');
+      $scenarioFacilityGroup = new agScenarioFacilityGroup($scenFacGrpTbl, TRUE);
       $scenarioFacilityGroup->set('scenario_id', $this->scenarioId)
           ->set('scenario_facility_group', $facilityGroup)
           ->set('facility_group_type_id', $facilityGroupTypeId)
@@ -914,7 +919,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $scenarioFacilityResource = new agScenarioFacilityResource();
+      $scenFacRescTbl = $conn->getTable('agScenarioFacilityResource');
+      $scenarioFacilityResource = new agScenarioFacilityResource($scenFacRescTbl, TRUE);
       $scenarioFacilityResource->set('facility_resource_id', $facilityResource->id)
           ->set('scenario_facility_group_id', $scenarioFacilityGroup->id)
           ->set('facility_resource_allocation_status_id', $facilityResourceAllocationStatusId)
@@ -1127,7 +1133,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $facilityStaffResource = new agFacilityStaffResource();
+      $facStfRescTbl = $conn->getTable('agFacilityStaffResource');
+      $facilityStaffResource = new agFacilityStaffResource($facStfRescTbl, TRUE);
       $facilityStaffResource->set('staff_resource_type_id', $staffTypeId)
           ->set('scenario_facility_resource_id', $scenarioFacilityResourceId)
           ->set('minimum_staff', $min_staff)
@@ -1162,9 +1169,9 @@ class agFacilityImportNormalization //extends agImportNormalization
 
   /* EMAIL */
 
-  protected function getEmailObject($email)
+  protected function getEmailObject($email, $conn)
   {
-    $emailContact = agDoctrineQuery::create()
+    $emailContact = agDoctrineQuery::create($conn)
             ->from('agEmailContact')
             ->where('email_contact = ?', $email)
             ->fetchOne();
@@ -1188,7 +1195,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $emailContact = new agEmailContact();
+      $emailContactTbl = $conn->getTable('agEmailContact');
+      $emailContact = new agEmailContact($emailContactTbl, TRUE);
       $emailContact->set('email_contact', $email);
       $emailContact->save($conn);
 
@@ -1233,7 +1241,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $entityEmail = new agEntityEmailContact();
+      $entityEmailContactTbl = $conn->getTable('agEntityEmailContact');
+      $entityEmail = new agEntityEmailContact($entityEmailContactTbl, TRUE);
       $entityEmail->set('entity_id', $entityId)
           ->set('email_contact_id', $emailId)
           ->set('email_contact_type_id', $typeId)
@@ -1318,7 +1327,7 @@ class agFacilityImportNormalization //extends agImportNormalization
   protected function updateFacilityEmail($facility, $email, $workEmailTypeId, $conn)
   {
     $entityId = $facility->getAgSite()->entity_id;
-    $entityEmail = $this->getEntityContactObject('email', $entityId, $workEmailTypeId);
+    $entityEmail = $this->getEntityContactObject('email', $entityId, $workEmailTypeId, $conn);
 
     if (empty($entityEmail)) {
       $facilityEmail = '';
@@ -1372,7 +1381,7 @@ class agFacilityImportNormalization //extends agImportNormalization
       return TRUE;
     }
 
-    $emailEntity = $this->getEmailObject($email);
+    $emailEntity = $this->getEmailObject($email, $conn);
 
     if (empty($emailEntity)) {
       $emailEntity = $this->createEmail($email, $conn);
@@ -1417,7 +1426,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $phoneContact = new agPhoneContact();
+      $phoneContactTbl = $conn->getTable('agPhoneContact');
+      $phoneContact = new agPhoneContact($phoneContactTbl, TRUE);
       $phoneContact
           ->set('phone_contact', $phone)
           ->set('phone_format_id', $phoneFormatId);
@@ -1465,7 +1475,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $entityPhone = new agEntityPhoneContact();
+      $entityPhoneContactTbl = $conn->getTable('agEntityPhoneContact');
+      $entityPhone = new agEntityPhoneContact($entityPhoneContactTbl, TRUE);
       $entityPhone->set('entity_id', $entityId)
           ->set('phone_contact_id', $phoneContactId)
           ->set('phone_contact_type_id', $typeId)
@@ -1651,12 +1662,17 @@ class agFacilityImportNormalization //extends agImportNormalization
   protected function createAddressValues($fullAddress, $workAddressStandardId, $addressElementIds,
                                          $conn = NULL)
   {
+    // here you can pick up the default connection if not passed one explicitly
+    if (is_null($conn)) {
+      $conn = Doctrine_Manager::connection();
+    }
+
     $newAddressValueIds = array();
     foreach ($fullAddress as $elem => $elemVal) {
       if (empty($elemVal)) {
         continue;
       }
-      $addressValue = agDoctrineQuery::create()
+      $addressValue = agDoctrineQuery::create($conn)
               ->from('agAddressValue a')
               ->innerJoin('a.agAddressElement ae')
               ->where('a.value = ?', $elemVal)
@@ -1673,7 +1689,8 @@ class agFacilityImportNormalization //extends agImportNormalization
         }
 
         try {
-          $newAddressValue = new agAddressValue();
+          $addressValueTbl = $conn->getTable('agAddressValue');
+          $newAddressValue = new agAddressValue($addressValueTbl, TRUE);
           $newAddressValue->set('value', $elemVal)
               ->set('address_element_id', $addressElementIds[$elem]);
           $newAddressValue->save($conn);
@@ -1717,7 +1734,8 @@ class agFacilityImportNormalization //extends agImportNormalization
     }
 
     try {
-      $address = new agAddress();
+      $addressTbl = $conn->getTable('agAddress');
+      $address = new agAddress($addressTbl, TRUE);
       $address->set('address_standard_id', $addressStandardId);
       $address->save($conn);
       if ($useSavepoint) {
@@ -1762,8 +1780,9 @@ class agFacilityImportNormalization //extends agImportNormalization
 
       $newAddressValueIds = $this->createAddressValues($fullAddress, $addressStandardId, $addressElementIds, $conn);
 
+      $addrMjAddrValueTbl = $conn->getTable('agAddressMjAgAddressValue');
       foreach ($newAddressValueIds as $addressValueId) {
-        $mappingAddress = new agAddressMjAgAddressValue();
+        $mappingAddress = new agAddressMjAgAddressValue($addrMjAddrValueTbl, TRUE);
         $mappingAddress->set('address_id', $addressId)
             ->set('address_value_id', $addressValueId);
         $mappingAddress->save($conn);
@@ -1771,7 +1790,8 @@ class agFacilityImportNormalization //extends agImportNormalization
 
       $priority = $this->getPriorityCounter('address', $entityId);
 
-      $entityAddress = new agEntityAddressContact();
+      $entityAddrContact = $conn->getTable('agEntityAddressContact');
+      $entityAddress = new agEntityAddressContact($entityAddressContact, TRUE);
       $entityAddress->set('entity_id', $entityId)
           ->set('address_id', $addressId)
           ->set('priority', $priority)
@@ -1913,7 +1933,7 @@ class agFacilityImportNormalization //extends agImportNormalization
 
   /* ENTITY */
 
-  protected function getEntityContactObject($contactMedium, $entityId, $contactTypeId)
+  protected function getEntityContactObject($contactMedium, $entityId, $contactTypeId, $conn)
   {
     $entityContactObject = NULL;
 
@@ -1934,7 +1954,7 @@ class agFacilityImportNormalization //extends agImportNormalization
         return $entityContactObject;
     }
 
-    $entityContactObject = agDoctrineQuery::create()
+    $entityContactObject = agDoctrineQuery::create($conn)
             ->from($table)
             ->where('entity_id = ?', $entityId)
             ->andWhere($contactType . ' = ?', $contactTypeId)

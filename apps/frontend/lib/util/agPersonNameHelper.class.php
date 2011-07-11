@@ -1014,7 +1014,8 @@ class agPersonNameHelper extends agBulkRecordHelper
 
     foreach ($newNames as $name)
     {
-      $newRec = new agPersonName() ;
+      $personNameTbl = $conn->getTable('agPersonName');
+      $newRec = new agPersonName($personNameTbl, TRUE) ;
       $newRec['person_name'] = $name ;
 
       try
