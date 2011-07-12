@@ -680,7 +680,7 @@ input[type="button"]:-moz-focus-inner, form input[type="submit"]:-moz-focus-inne
   padding: .25em;
 }
 
-#fileUpload {
+#fileUpload, #inputfileupload2 {
   text-align: right; 
   opacity: 0; 
   -moz-opacity:0; 

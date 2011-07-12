@@ -188,21 +188,23 @@ function initTriggerModal() {
 function fileImportReplacer() {
   $('#fileImportReplacer').click(function () {
     if($('#importForm').length < 1) {
-      var $importForm = '<form id="importForm" enctype="multipart/form-data" method="post" action="' + $('#fileImportReplacer').attr('href') + '"><span style="margin-top:3px;position:absolute;"><input  style="display: inline; color: #848484; width:136px" class="inputGray" id="show" /> <a class="continueButton fileUploadBrowse" style="padding:4px 5px; width:60px">Browse</a></span>\n\
-                           <input type="file" name="import" style="opacity:0; z-index:2; width:215px; margin-top:5px" class="inputfileupload2"/>\n\
-                           <input type="submit" value="Submit" class="continueButton"/>\n\
-                         </form>';
+      var $importForm = '<form id="importForm" style="position: relative; display: inline-block" action="' + $('#fileImportReplacer').attr('href') + '" method="post" enctype="multipart/form-data" target="_blank"><div style="position: absolute; top: 0px; left: 0px; width: 250px"><input  style="display: inline-block; color: #848484" class="inputGray" id="show" /><a class="continueButton fileUploadBrowse" style="padding: 5px;margin-left: 5px;">Browse</a></div><input type="file" name="import" id="inputfileupload2" style="height:25px" onchange="javascript:document.getElementById(\'show\').value = this.value;"/><input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px" onclick="return confirm( \n\
+        \'To begin importing click \'ok\' and a new tab will open.  Do not close the new tab until import is complete.\');" /></form>';
+
       $('#replaceMe').hide();
       $('#replaceMe').parent().append($importForm);
 
-      $('input.inputfileupload2').mouseover(function()
+      
+
+           $('input#inputfileupload2').mouseover(function()
     {
-        $('a.fileUploadBrowse').removeClass("continueButton").addClass("fileUploadHover");
+        $('a.fileUploadBrowse').addClass("fileUploadHover").removeClass("continueButton");
     });
-     $('input.inputfileupload2').mouseout(function()
+     $('input#inputfileupload2').mouseout(function()
     {
         $('a.fileUploadBrowse').removeClass("fileUploadHover").addClass("continueButton");
     });
+
 
 
     } else {
@@ -211,8 +213,6 @@ function fileImportReplacer() {
     }
     return false;
   });
-
-   
 }
 /***************************************************************************************************
 * reveal() reveals whatever content is within #revealable.                                         *
