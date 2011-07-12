@@ -476,17 +476,14 @@ class agStaffActions extends agActions
     $this->importer->processXlsImportFile($this->importPath);
 
     $left = 1;
-    $mt = new agMemoryTester();
     while ($left > 0) {
-      $mt->test();
       $left = $this->importer->processBatch();
       // print_r($left);
     }
-    print_r($mt->getResults());
     $iterData = $this->importer->getIterData();
     $this->totalRecords = $iterData['fetchCount'];
     $this->successful = $iterData['processedSuccessful'];
-    $this->failed = $iterData['processedFailed'];
+    $this->failed = $iterData['processedFailed'] + $iterData['tempErrCt'];
     $this->unprocessed = $iterData['unprocessed'];
 
     // Report elapsed time
@@ -538,7 +535,7 @@ class agStaffActions extends agActions
     // Provide application and file info headers
     $this->getResponse()->setHttpHeader("Content-Type", "application/zip");
     $this->getResponse()->setHttpHeader("Content-Disposition",
-                                        "attachment; filename='" . $fileName . ".zip'");
+                                        'attachment; filename=' . $fileName . '.zip');
     $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
     $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($filePath));
 
