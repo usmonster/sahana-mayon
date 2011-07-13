@@ -29,7 +29,9 @@ abstract class agImportHelper extends agPdoHelper
   $excelImportBatchSize = 2500,
   $dynamicFieldType,
   $importHeaderStrictValidation = FALSE,
-  $iterData;
+  $iterData,
+  $maxBatchTime;
+
   /**
    * @var agEventHandler An agEventHandler instance
    */
@@ -54,6 +56,8 @@ abstract class agImportHelper extends agPdoHelper
       apc_clear_cache();
       apc_clear_cache('user');
     }
+
+    $this->maxBatchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
     $this->eh = new agEventHandler($logEventLevel, agEventHandler::EVENT_NOTICE,
             sfContext::getInstance());
@@ -92,6 +96,10 @@ abstract class agImportHelper extends agPdoHelper
     $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
     $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
     $this->_conn[self::CONN_TEMP_WRITE] = $conn;
 
     // reset our default connection
@@ -159,6 +167,7 @@ abstract class agImportHelper extends agPdoHelper
   {
     $this->iterData['tempPosition'] = 0;
     $this->iterData['tempCount'] = 0;
+    $this->iterData['tempErrCt'] = 0;
   }
 
   /**
@@ -235,6 +244,8 @@ abstract class agImportHelper extends agPdoHelper
 
     // Create a simplified array from the worksheets
     for ($sheet = 0; $sheet < $numSheets; $sheet++) {
+      set_time_limit($this->maxBatchTime);
+
       // Get the sheet name
       $this->eh->logInfo('Opening worksheet {' . $sheet . '}');
       $sheetName = $xlsObj->boundsheets[$sheet]['name'];
@@ -308,9 +319,6 @@ abstract class agImportHelper extends agPdoHelper
         }
       }
 
-      // prepare our insert query statement
-      $query = $this->prepareImportTemp();
-
       // Declare our initial batch data
       $batches = intval(ceil(($numRows / $this->excelImportBatchSize)));
       $batchStart = 2;
@@ -374,7 +382,7 @@ abstract class agImportHelper extends agPdoHelper
         $this->eh->logInfo('Successfully loaded batch {' . $batch . '} from file, now inserting into ' .
             'temp table {' . $this->tempTable . '}');
 
-        $inserted = $this->saveImportTempIter($importFileData, $query);
+        $inserted = $this->saveImportTempIter($importFileData);
         $this->iterData['tempCount'] += $inserted;
 
         // up our batch counters
@@ -396,10 +404,11 @@ abstract class agImportHelper extends agPdoHelper
 
   /**
    * Method to prepare the import/temp query
+   * @param Doctrine_Connection A doctrine connection object
    * @return Doctrine_Connection_Statement A prepared query statement.
    * @todo Make this capable of using positionals instead
    */
-  private function prepareImportTemp()
+  private function prepareImportTemp(Doctrine_Connection $conn)
   {
     // loop through the import spec and build our columns / values blocks
     $cols = '';
@@ -417,7 +426,6 @@ abstract class agImportHelper extends agPdoHelper
     $sql = 'INSERT INTO ' . $this->tempTable . ' (' . $cols . ') VALUES (' . $vals . ');';
 
     // grab our connection and prepare the query
-    $conn = $this->getConnection(self::CONN_TEMP_WRITE);
     $query = $conn->prepare($sql);
 
     // return the prepared query
@@ -428,11 +436,9 @@ abstract class agImportHelper extends agPdoHelper
    * Method to iteratively save import data to a temporary table. Note: this method is PDO-safe and
    * should work across database engines but is noticeably slower than MySQL multi-inserts.
    * @param array $importDataSet An array of import data keyed by rowId and by column name.
-   * @param PDOStatement $insertQuery A prepared PDO insert statement
    * @return int The number of records successfully inserted into the temporary table.
    */
-  private function saveImportTempIter(array $importDataSet,
-                                      Doctrine_Connection_Statement $insertQuery)
+  private function saveImportTempIter(array $importDataSet)
   {
     // first check to see if it's even worth running
     if (empty($importDataSet)) {
@@ -440,49 +446,43 @@ abstract class agImportHelper extends agPdoHelper
       return 0;
     }
 
-    // beginning a transaction should improve performance
+    // prepare our insert query statement
     $conn = $this->getConnection(self::CONN_TEMP_WRITE);
     $conn->beginTransaction();
+    $query = $this->prepareImportTemp($conn);
+
 
     // set up some initial vars
-    $err = FALSE;
     $inserted = 0;
+    $errCt = 0;
 
     // loop through the import data set and execute the prepared pdo query for each
-    foreach ($importDataSet as $row) {
+    foreach ($importDataSet as $rowId => $row) {
       try {
-        $insertQuery->execute($row);
+        $query->execute($row);
         $inserted++;
       } catch (Exception $e) {
         // in the event of an insert error, don't continue
-        $errMsg = 'Failed to insert to temp table with data (' . implode(',', $row) . '). ' .
-            "\n\n" . $e->getMessage();
-        $this->eh->logErr($errMsg, count($importDataSet));
-        $err = TRUE;
-        break;
+        $errMsg = 'Failed to insert data in row ' . $rowId . ' to temp table.';
+        $this->eh->logErr($errMsg, 1, FALSE);
+        $errCt++;
       }
     }
+
+    try {
+      $conn->commit();
+      $this->eh->logInfo('Successfully committed ' . $inserted . ' new records to the temp table.');
+    } catch (Exception $e) {
+      $errMsg = 'Failed to commit records in batch ending with row ' . $rowId;
+      $errCt = count($importDataSet);
+      $this->eh->logErr($errMsg, $errCt, FALSE);
+      $inserted = 0;
+    }
+
+    $this->iterData['tempErrCt'] += $errCt;
 
     // if no problems occurred so far, try to commit
-    if (!$err) {
-      try {
-        $conn->commit();
-      } catch (Exception $e) {
-        $errMsg = 'Committing temporary table import failed.' . "\n" . $e->getMessage();
-        $this->eh->logCrit($errMsg);
-        $err = TRUE;
-      }
-
-      // success! log it and return the number of transactions performed
-      $this->eh->logInfo('Successfully committed ' . $inserted . ' new records to the temp table.');
-      return $inserted;
-    }
-
-    // in the event that we had any failures, rollback and return the zero change count
-    if ($err) {
-      $conn->rollback();
-      return 0;
-    }
+    return $inserted;
   }
 
   /**

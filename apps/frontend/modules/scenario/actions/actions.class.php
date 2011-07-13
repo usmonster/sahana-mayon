@@ -526,8 +526,11 @@ class scenarioActions extends agActions
   {
     $this->setScenarioBasics($request);
     $this->wizardHandler($request, 5);
-    $this->scenario_staff_count = Doctrine_Core::getTable('agScenarioStaffResource')
-            ->findby('scenario_id', $this->scenario_id)->count();
+    $this->scenario_staff_count = agDoctrineQuery::create()
+      ->select('count(*)')
+        ->from('agScenarioStaffResource ssr')
+        ->where('ssr.scenario_id = ?', $this->scenario_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     $this->targetModule = 'staff';
 
     $this->saved_searches = $existing = agDoctrineQuery::create()
@@ -631,10 +634,12 @@ class scenarioActions extends agActions
 
       $search_id = null;
 
-      $staff_resource_ids = agStaffGeneratorHelper::executeStaffPreview($search_condition);
+    $list = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order);
+    $q = $list[1];
 
       $this->status = 'active';
-      list($this->displayColumns, $query) = agListHelper::getStaffList($staff_resource_ids, $this->status, $this->sort, $this->order, 'staffresource');
+      list($this->displayColumns, $query) = agListHelper::getStaffList(NULL, $this->status, $this->sort, $this->order, 'staffresource');
+      $query = agStaffGeneratorHelper::executeStaffPreview($query, $search_condition);
 
       $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
       $resultsPerPage = agGlobal::getParam('search_list_results_per_page');

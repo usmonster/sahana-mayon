@@ -346,6 +346,9 @@ abstract class agImportNormalization extends agImportHelper
 
     // begin fetching from the database, starting with our first record
     while ($row = $pdo->fetch()) {
+      // keeps up from potentially ending up in a neverending loop
+      set_time_limit($this->maxBatchTime);
+      
       // start by incrementing our fetch position
       $fetchPosition++;
 
@@ -490,6 +493,9 @@ abstract class agImportNormalization extends agImportHelper
    */
   public function processBatch()
   {
+    // keeps us from potentially ending up in a neverending loop
+    set_time_limit($this->maxBatchTime);
+    
     // preempt this method with a check on our error threshold and stop if we shouldn't continue
     try {
 
@@ -572,7 +578,6 @@ abstract class agImportNormalization extends agImportHelper
       ' to ' . $fetchPosition . ')';
     $this->eh->logInfo($eventMsg);
   }
-
   /**
    * Method to initiate the import query from temp
    * @param $query A SQL query string

@@ -434,6 +434,10 @@ agScenarioStaffResource:
     deployment_weight:
       type: integer(1)
       notnull: true
+    delete_flag:
+      type: boolean
+      default: 0
+      notnull: true
   indexes:
     UX_agScenarioStaffResource:
       fields: [scenario_id, staff_resource_id]

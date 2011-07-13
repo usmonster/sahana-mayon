@@ -15,17 +15,17 @@ class agListHelper
       {
         $query->andWhereIn('s.id', $staff_ids);
       } elseif ($staffIdType == 'staffresource') {
-        $query->andWhereIn('sr.id', $staff_ids);
+        $query->andWhereIn('agStaffResource.id', $staff_ids);
       }
     }
     if ($staffStatus != 'all') {
-      $query->andWhere('srs.staff_resource_status = ?', $staffStatus);
+      $query->andWhere('agStaffResourceStatus.staff_resource_status = ?', $staffStatus);
     }
     if ($sort == 'organization') {
-      $sortField = 'o.organization';
+      $sortField = 'agOrganization.organization';
     }
     elseif($sort == 'resource') {
-      $sortField = 'srt.staff_resource_type';
+      $sortField = 'agStaffResourceType.staff_resource_type';
     }
     elseif($sort == 'fn') {
       $sortField = $headers['given'][0];//'srt.staff_resource_type';
@@ -43,11 +43,14 @@ class agListHelper
       'id' => array('title' => '', 'sortable' => false, 'index' => 's_id'),
       'fn' => array('title' => 'First Name', 'sortable' => true, 'index' => 'pn1_name1'),
       'ln' => array('title' => 'Last Name', 'sortable' => true, 'index' => 'pn3_name3'),
-      'organization' => array('title' => 'Organization', 'sortable' => true, 'index' => 'o_organization'),
-      'resource' => array('title' => 'Resource', 'sortable' => true, 'index' => 'srt_staff_resource_type'),
+      'organization' => array('title' => 'Organization', 'sortable' => true,
+        'index' => 'agOrganization_organization'),
+      'resource' => array('title' => 'Resource', 'sortable' => true, 
+        'index' => 'agStaffResourceType_staff_resource_type'),
       'phones' => array('title' => 'Phone', 'sortable' => false, 'index' => 'pc_phone_contact'),
       'emails' => array('title' => 'Email', 'sortable' => false, 'index' => 'ec_email_contact'),
-      'staff_status' => array('title' => 'Status', 'sortable' => false, 'index' => 'srs_staff_resource_status'),
+      'staff_status' => array('title' => 'Status', 'sortable' => false,
+        'index' => 'agStaffResourceStatus_staff_resource_status'),
     );
 
     return array($genericDisplayColumns, $query);

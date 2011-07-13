@@ -16,16 +16,18 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
-class agMemoryTester
+class agPerfProfiler
 {
   protected $currMem,
             $lastMem,
+            $firstMem,
             $minMem,
             $maxMem,
             $currGrowth = 0,
             $minGrowth = 0,
             $maxGrowth = 0,
             $avgGrowth = 0,
+            $totalGrowth = 0,
             $initTime,
             $currTime,
             $lastTime,
@@ -44,6 +46,7 @@ class agMemoryTester
     $this->currMem = memory_get_usage();
     $this->minMem = $this->currMem;
     $this->maxMem = $this->currMem;
+    $this->firstMem = $this->currMem;
   }
 
   /**
@@ -63,12 +66,13 @@ class agMemoryTester
   protected function testMem()
   {
     $this->lastMem = $this->currMem;
-    $this->currMem = memory_get_usage();
+    $this->currMem = memory_get_peak_usage();
     
     if ($this->currMem > $this->maxMem) { $this->maxMem = $this->currMem; }
     if ($this->currMem < $this->minMem) { $this->minMem = $this->currMem; }
 
     $this->currGrowth = $this->currMem - $this->lastMem;
+    $this->totalGrowth = $this->currMem - $this->firstMem;
     $this->avgGrowth = ((($this->avgGrowth * $this->iterations) + $this->currGrowth) / ($this->iterations + 1));
 
     if ($this->currGrowth > $this->maxGrowth) { $this->maxGrowth = $this->currGrowth; }
@@ -98,14 +102,16 @@ class agMemoryTester
   public function getMemUsage()
   {
     $results = array();
-    $results['currMem'] = $this->currMem;
+    $results['firstMem'] = $this->firstMem;
     $results['lastMem'] = $this->lastMem;
+    $results['currMem'] = $this->currMem;
     $results['minMem'] = $this->minMem;
     $results['maxMem'] = $this->maxMem;
     $results['currGrowth'] = $this->currGrowth;
     $results['minGrowth'] = $this->minGrowth;
     $results['maxGrowth'] = $this->maxGrowth;
     $results['avgGrowth'] = $this->avgGrowth;
+    $results['totalGrowth'] = $this->totalGrowth;
     $results['iterations'] = $this->iterations;
 
     return $results;

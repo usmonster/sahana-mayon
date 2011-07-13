@@ -255,7 +255,7 @@ class agSearchHelper
       // build the left-side of the condition as a string and add it and the actual condition to our
       // doctrine query object
       $leftCondition = sprintf('%s %s (?)', $condition['field'], $condition['operator']);
-      $query = $query->andWhere($leftCondition, $condition['condition']);
+      $query->andWhere($leftCondition, $condition['condition']);
     }
 
     // return the doctrine query object

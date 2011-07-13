@@ -664,6 +664,7 @@ class agStaffImportNormalization extends agImportNormalization
     $importAddressElements = array('line_1' => 'line 1', 'line_2' => 'line 2', 'city' => 'city',
       'state' => 'state', 'zip' => 'zip5', 'country' => 'country');
     $entityAddresses = array();
+    $missingGeo = 0;
     $results = array();
     $errMsg = NULL;
 
@@ -721,15 +722,6 @@ class agStaffImportNormalization extends agImportNormalization
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
         } else {
-          // log our error
-          $errMsg = sprintf('Missing home address/geo information from record id  %d', $rowId);
-
-          if ($throwOnError) {
-            $this->eh->logErr($errMsg);
-            throw new Exception($errMsg);
-          } else {
-            $this->eh->logWarning($errMsg);
-          }
         }
 
         if (count($workAddr) > 0 && isset($rowData['_rawData']['work_latitude']) &&
@@ -740,14 +732,12 @@ class agStaffImportNormalization extends agImportNormalization
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
         } else {
-          // log our error
-          $errMsg = sprintf('Missing work address/geo information from record id  %d', $rowId);
-
+          // log our error or at least grab our counter
+          $missingGeo++;
           if ($throwOnError) {
+            $errMsg = sprintf('Missing work address/geo information from record id  %d', $rowId);
             $this->eh->logErr($errMsg);
             throw new Exception($errMsg);
-          } else {
-            $this->eh->logWarning($errMsg);
           }
         }
       }
@@ -773,6 +763,10 @@ class agStaffImportNormalization extends agImportNormalization
                                       $throwOnError, $conn);
     unset($entityAddresses);
 
+    if ($missingGeo > 0) {
+      $warnMsg = 'Batch contains ' . $missingGeo . ' addresses without associated geo information.';
+      $this->eh->logWarning($warnMsg);
+    }
     // @todo do your results reporting here
   }
 

@@ -44,4 +44,23 @@ class agDoctrineQuery extends Doctrine_Query
 
       return parent::andWhereIn($expr, $params, $not) ;
   }
+
+ /**
+  * Custom addition to Doctrine, to allow wrapping a set of OR clauses
+  * in parentheses, so that they can be combined with AND clauses.
+  *
+  * @see http://danielfamily.com/techblog/?p=37
+  * I modified it slightly to use an explicit reference.
+  *
+  * @return Doctrine_Query this object
+  */
+  public function whereParenWrap()
+  {
+    $where = &$this->_dqlParts['where'];
+    if (count($where) > 0) {
+      array_unshift($where, '(');
+      array_push($where, ')');
+      }
+    return $this;
+  }
 }

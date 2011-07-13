@@ -257,4 +257,9 @@ agGlobalParam:
     agHost: localhost
     datapoint: clear_cache_on_import
     value: 1
+  bulk_operation_max_batch_time:
+    id: 52
+    agHost: localhost
+    datapoint: bulk_operation_max_batch_time
+    value: 360
     

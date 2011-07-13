@@ -53,28 +53,28 @@ abstract class PluginagStaffResource extends BaseagStaffResource
 
     // build our basic query (that doesn't need fancy stuff)
     $q = agDoctrineQuery::create()
-        ->select('sr.id')
+        ->select('agStaffResource.id')
         ->addSelect('s.id')
         ->addSelect('p.id')
         ->addSelect('e.id')
-        ->addSelect('srt.staff_resource_type')
-        ->addSelect('srt.staff_resource_type_abbr')
-        ->addSelect('srs.staff_resource_status')
-        ->addSelect('srs.is_available')
+        ->addSelect('agStaffResourceType.staff_resource_type')
+        ->addSelect('agStaffResourceType.staff_resource_type_abbr')
+        ->addSelect('agStaffResourceStatus.staff_resource_status')
+        ->addSelect('agStaffResourceStatus.is_available')
         ->addSelect('eec.id')
         ->addSelect('ect.email_contact_type')
-        ->addSelect('o.organization')
+        ->addSelect('agOrganization.organization')
         ->addSelect('ec.email_contact')
         ->addSelect('epc.id')
         ->addSelect('pct.phone_contact_type')
         ->addSelect('pc.phone_contact')
-        ->from('agStaffResource AS sr')
-        ->innerJoin('sr.agStaff AS s')
+        ->from('agStaffResource agStaffResource')
+        ->innerJoin('agStaffResource.agStaff AS s')
         ->innerJoin('s.agPerson AS p')
         ->innerJoin('p.agEntity AS e')
-        ->innerJoin('sr.agStaffResourceType AS srt')
-        ->innerJoin('sr.agOrganization AS o')
-        ->innerJoin('sr.agStaffResourceStatus AS srs')
+        ->innerJoin('agStaffResource.agStaffResourceType agStaffResourceType')
+        ->innerJoin('agStaffResource.agOrganization agOrganization')
+        ->innerJoin('agStaffResource.agStaffResourceStatus agStaffResourceStatus')
         ->leftJoin('e.agEntityEmailContact AS eec')
         ->leftJoin('eec.agEmailContactType AS ect')
         ->leftJoin('eec.agEmailContact AS ec')
@@ -105,17 +105,17 @@ abstract class PluginagStaffResource extends BaseagStaffResource
     $q->andWhere($phoneWhere);
 
     // map the headers
-    $headers['sr_id'] = array('sr.id', 'Staff Resource ID');
+    $headers['agStaffResource_id'] = array('agStaffResource.id', 'Staff Resource ID');
     $headers['s_id'] = array('s.id', 'Staff ID');
     $headers['p_id'] = array('p.id', 'Person ID');
     $headers['e_id'] = array('e.id', 'Entity ID');
-    $headers['srt_staff_resource_type'] = array('srt.staff_resource_type', 'Staff Resource Type');
-    $headers['srt_staff_resource_type_abbr'] = array('srt.staff_resource_type_abbr',
+    $headers['agStaffResourceType_staff_resource_type'] = array('agStaffResourceType.staff_resource_type', 'Staff Resource Type');
+    $headers['agStaffResourceType_staff_resource_type_abbr'] = array('agStaffResourceType.staff_resource_type_abbr',
       'Type');
-    $headers['o_organization'] = array('o.organization', 'Organization');
-    $headers['srs_staff_resource_status'] = array('srs.staff_resource_status',
+    $headers['agOrganization_organization'] = array('agOrganization.organization', 'Organization');
+    $headers['agStaffResourceStatus_staff_resource_status'] = array('agStaffResourceStatus.staff_resource_status',
       'Staff Resource Status');
-    $headers['srs_is_available'] = array('srs.is_available', 'Available?');
+    $headers['agStaffResourceStatus_is_available'] = array('agStaffResourceStatus.is_available', 'Available?');
     $headers['ect_email_contact_type'] = array('ect.email_contact_type', 'E-Mail Type');
     $headers['ec_email_contact'] = array('ec.email_contact', 'E-Mail');
     $headers['pct_phone_contact_type'] = array('pct.phone_contact_type', 'Phone Type');
