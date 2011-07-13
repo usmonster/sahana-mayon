@@ -24,3 +24,4 @@ plugins/.*
 *.vtg
 *.pui
 *.xls
+web/apc.php
