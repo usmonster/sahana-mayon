@@ -116,8 +116,6 @@ class agEventMigrationHelper
     // grab a count for later
     $facilityGroupCount = 0;
 
-    $mt = new agMemoryTester();
-
     foreach ($existingScenarioFacilityGroups as $scenFacGrp) {
 
       // create a new facility group
@@ -153,7 +151,6 @@ class agEventMigrationHelper
 
       // up our counter
       $facilityGroupCount++;
-      $mt->test();
     }
 
     return array('Facility Groups' => $facilityGroupCount) + $results;
@@ -336,7 +333,6 @@ class agEventMigrationHelper
     // initialize an iterator
     $staffCount = 0;
 
-    $mt = new agMemoryTester();
     foreach ($existingScenarioStaff AS $scenStfPool) {
 
       // create an agEventStaff record
@@ -359,7 +355,6 @@ class agEventMigrationHelper
       unset($eventStaffStatus);
 
       $staffCount++;
-      $mt->test();
     }
 
     // free up some memory
@@ -404,7 +399,6 @@ class agEventMigrationHelper
     // yay, transactions = data integrity
     $conn->beginTransaction();
 
-    $mt = new agMemoryTester();
     try {
 
       /**
@@ -424,7 +418,6 @@ class agEventMigrationHelper
       $conn->flush();
       $conn->evictTables();
       $conn->clear();
-      $mt->test();
 
       /**
        * @todo
@@ -439,11 +432,9 @@ class agEventMigrationHelper
       $conn->flush();
       $conn->evictTables();
       $conn->clear();
-      $mt->test();
 
       // 4. Copy over staff pool
       $migrationResult['Staffs'] = self::migrateStaffPool($scenario_id, $event_id, $conn);
-      $mt->test();
 
       $conn->commit();
     } catch (Exception $e) {
@@ -455,7 +446,6 @@ class agEventMigrationHelper
     $conn->evictTables();
     $conn->clear();
 
-    print_r($mt->getResults());
     return $migrationResult;
   }
 

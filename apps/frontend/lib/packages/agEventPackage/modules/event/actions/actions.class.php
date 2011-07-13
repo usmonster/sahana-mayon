@@ -654,7 +654,7 @@ class eventActions extends agActions
     $this->event_facility_resources = agDoctrineQuery::create()
         ->select('COUNT(efr.id)')
         ->from('agEventFacilityResource efr')
-        ->leftJoin('agEventFacilityGroup efg')
+        ->leftJoin('efr.agEventFacilityGroup efg')
         ->where('efg.event_id = ?', $this->event_id)
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 

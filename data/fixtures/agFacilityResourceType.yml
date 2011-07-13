@@ -24,9 +24,9 @@ agFacilityResourceType:
     facility_resource_type_abbr: shl
     description: Area designated to house clients.
   smn:
-    facility_resource_type: Special Medical Need Center
+    facility_resource_type: Special Medical Need Shelter
     facility_resource_type_abbr: SMN
-    description: Area designated to be used as a medical center.
+    description: Area designated to be used as a medical shelter.
   uorc:
     facility_resource_type: Unified Operations Resource
     facility_resource_type_abbr: UORC
