@@ -9,7 +9,7 @@ $i = 1;
 
 <h2>Facility Import Status</h2>
 
-<?php include_partial('facility/infobar');//, array('form' => $form, 'timer' => $timer)); ?>
+<?php include_partial('facility/infobar', array('timer' => $timer)); ?>
 
 <p>Records imported into temporary table: <?php echo $numRecordsImported; ?><br/>
 
