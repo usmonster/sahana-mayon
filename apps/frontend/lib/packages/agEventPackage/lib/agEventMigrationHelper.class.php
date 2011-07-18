@@ -32,7 +32,7 @@ class agEventMigrationHelper
         ->leftJoin('aFG.agScenarioFacilityResource aFR')
         ->where('aFR.id is NULL')
         ->andWhere('aFG.scenario_id = ?', $scenario_id);
-    $returnvalue = $facilityGroupQuery->execute(array(), 'key_value_pair');
+    $returnvalue = $facilityGroupQuery->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
     $facilityGroupQuery->free();
     return $returnvalue;
   }
@@ -51,7 +51,7 @@ class agEventMigrationHelper
         ->leftJoin('aFR.agScenarioShift aSS')
         ->where('aSS.id is NULL')
         ->andWhere('aFG.scenario_id =?', $scenario_id); //returns the facility resources without shift
-    $facilityShiftReturn = $undefinedFacilityShiftQuery->execute(array(), 'single_value_array');
+    $facilityShiftReturn = $undefinedFacilityShiftQuery->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
     $undefinedFacilityShiftQuery->free();
 
     return $facilityShiftReturn;
@@ -64,10 +64,12 @@ class agEventMigrationHelper
    */
   public static function staffPoolCheck($scenario_id)
   {
-    $staffPoolQuery = agDoctrineQuery::create()
+    $staffPoolCount = agDoctrineQuery::create()
+        ->select('COUNT(*)')
         ->from('agScenarioStaffResource')
-        ->where('scenario_id =?', $scenario_id);
-    return $staffPoolQuery->count();
+        ->where('scenario_id =?', $scenario_id)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    return $staffPoolCount;
   }
 
   /**
@@ -363,6 +365,212 @@ class agEventMigrationHelper
     return $staffCount;
   }
 
+  public static function migrateScenarioToEvent($scenarioId, $eventId) {
+    // first set some static declarations
+    $evFacGrps = 0;
+    $evFacRscs = 0;
+    $evShifts = 0;
+    $evStfRscs = 0;
+    $err = FALSE;
+    $startTime = microtime(TRUE);
+
+    // also grab our db-driven vars
+    $batchSize = agGlobal::getParam('default_batch_size');
+    $batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
+
+    $evZeroHr = agDoctrineQuery::create()
+      ->select('ae.zero_hour')
+        ->from('agEvent ae')
+        ->where('ae.id = ?', $event_id)
+        ->useResultCache(TRUE, 1800)
+        ->execute(array(),Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    $staffedAllocationStatus = agDoctrineQuery::create()
+      ->select('afras.id')
+        ->from('agFacilityResourceAllocationStatus afras')
+        ->where('afras.staffed = ?', TRUE)
+        ->useResultCache(TRUE, 3600)
+        ->execute(array(),agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+
+    $unAllocatedStaffStatus = agEventStaffHelper::returnDefaultEventStaffStatus();
+
+    // all of this jazz helps us keep a low memory profile
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
+    $adapter = $dm->getCurrentConnection()->getDbh();
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_MIGRATION_WRITE);
+
+    // this will disable re-use of query objects but keeps the connection memory profile low
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
+
+    // return back to our 'normal' doctrine connection before moving further
+    $dm->setCurrentConnection('doctrine');
+
+    // yay, transactions = data integrity
+    $conn->beginTransaction();
+
+    // start by re-generating our staff pool
+    try {
+      agStaffGeneratorHelper::generateStaffPool($scenario_id, FALSE, $conn);
+    } catch (Exception $e) {
+      $err = TRUE;
+    }
+    $conn->clear();
+    $conn->evictTables();
+    
+    // since we have staff on our mind, we might as well use them
+    if (!$err) {
+      $eventStaffTable = $conn->getTable('agEventStaffBulkLoad');
+      $eventStaffStatusTable = $conn->getTable('agEventStaffStatus');
+
+      $evStaffColl = new Doctrine_Collection('agEventStaffBulkLoad');
+      $evStaffStatusColl = new Doctrine_Collection('agEventStaffStatus');
+
+      $existingScenarioStaff = agDoctrineQuery::create()
+        ->select('ssr.*')
+          ->from('agScenarioStaffResource ssr')
+          ->where('scenario_id = ?', $scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_ON_DEMAND);
+
+      $evStfRscs = 0;
+      foreach ($existingScenarioStaff AS $scenStfPool) {
+        // start by iterating our iterator
+        $evStfRscs++;
+
+        // create an agEventStaff record
+        $eventStaff = new agEventStaffBulkLoad($eventStaffTable, TRUE);
+        $eventStaff['event_id'] = $event_id;
+        $eventStaff['staff_resource_id'] = $scenStfPool['staff_resource_id'];
+        $eventStaff['deployment_weight'] = $scenStfPool['deployment_weight'];
+        $evStaffColl->add($eventStaff);
+
+        if (($evStfRscs % $batchSize) == 0) {
+
+          try {
+            $evStaffColl->save($conn);
+          } catch(Exception $e) {
+            $err = TRUE;
+            break;
+          }
+
+          // create the staff status records in a batch
+          foreach ($evStaffColl as $evStaff) {
+            $eventStaffStatus = new agEventStaffStatus($eventStaffStatusTable, TRUE);
+            $eventStaffStatus['event_staff_id'] = $evStaff['id'];
+            $eventStaffStatus['time_stamp'] = $startTime;
+            $eventStaffStatus['staff_allocation_status_id'] = $unAllocatedStaffStatus;
+            $evStaffStatusColl->add($eventStaffStatus);
+          }
+
+          try {
+            $evStaffStatusColl->save($conn);
+            $evStaffColl->free();
+            $evStaffStatusColl->free();
+            $evStaffColl = new Doctrine_Collection('agEventStaffBulkLoad');
+            $evStaffStatusColl = new Doctrine_Collection('agEventStaffStatus');
+          } catch(Exception $e) {
+            $err = TRUE;
+            break;
+          }
+        }
+      }
+
+      // now we sweep all the leftovers that weren't caught in a batch process
+      if ($evStaffColl->isModified()) {
+        try {
+          $evStaffColl->save($conn);
+        } catch(Exception $e) {
+          $err = TRUE;
+        }
+
+        // create the staff status record
+        foreach ($evStaffColl as $evStaff) {
+          $eventStaffStatus = new agEventStaffStatus($eventStaffStatusTable, TRUE);
+          $eventStaffStatus['event_staff_id'] = $evStaff['id'];
+          $eventStaffStatus['time_stamp'] = $startTime;
+          $eventStaffStatus['staff_allocation_status_id'] = $unAllocatedStaffStatus;
+          $evStaffStatusColl->add($eventStaffStatus);
+        }
+
+        try {
+          $evStaffStatusColl->save($conn);
+          $evStaffColl->free();
+          $evStaffStatusColl->free();
+        } catch(Exception $e) {
+          $err = TRUE;
+        }
+      }
+
+      // reclaim memory
+      unset($eventStaff);
+      unset($eventStaffStatus);
+      unset($scenStfPool);
+      $existingScenarioStaff->free(TRUE);
+      unset($existingScenarioStaff);
+      unset($eventStaffTable);
+      unset($eventStaffStatusTable);
+
+      $conn->evictTables();
+      $conn->clear();
+    }
+
+    // next we create our event facility groups
+    if (!$err) {
+
+      $scenarioFacilityGroups = agDoctrineQuery::create()
+        ->select('sfg.id')
+          ->addSelect('sfg.scenario_facility_group')
+          ->addSelect('sfg.facility_group_type_id')
+          ->addSelect('sfg.activation_sequence')
+          ->addSelect('fgas.id')
+          ->addSelect('fgas.active')
+          ->from('agScenarioFacilityGroup sfg')
+          ->innerJoin('sfg.agFacilityGroupAllocationStatus fgas')
+          ->where('sfg.scenario_id = ?', $scenario_id)
+          ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    }
+
+    // then we create our facility resources
+    if (!$err) {
+
+    }
+
+    // finally we create our shifts
+    if (!$err) {
+
+    }
+
+    // commit or rollback
+    if (!$err) {
+      try {
+        $conn->commit();
+      } catch (Exception $e) {
+        $err = TRUE;
+      }
+    } else {
+      $conn->rollBack();
+      throw $e;
+    }
+    $dm->closeConnection($conn);
+
+    $endTime = microtime(TRUE);
+
+    $results = array();
+    $results['Facility Groups'] = $evFacGrps;
+    $results['Facility Resources'] = $evFacRscs;
+    $results['Shifts'] = $evShifts;
+    $results['Staffs'] = $evStfRscs;
+
+    return $results;
+  }
+
   /**
    * Parent function to migrate a scenario to an event
    * @param integer $scenario_id the id of the scenario being operated on
@@ -381,7 +589,6 @@ class agEventMigrationHelper
     $dm = Doctrine_Manager::getInstance();
     $dm->setCurrentConnection('doctrine');
     $adapter = $dm->getCurrentConnection()->getDbh();
-//    $adapter = clone $adapter;
     $conn = Doctrine_Manager::connection($adapter, self::CONN_MIGRATION_WRITE);
 
     // this will disable re-use of query objects but keeps the connection memory profile low
@@ -448,5 +655,7 @@ class agEventMigrationHelper
 
     return $migrationResult;
   }
+
+
 
 }
