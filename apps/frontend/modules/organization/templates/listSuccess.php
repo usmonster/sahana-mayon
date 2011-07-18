@@ -48,15 +48,22 @@ $descArrow = '&#x25BC;';
             <td><?php echo $ag_organization->get('staffCount'); ?></td>
           </tr>
 <?php endforeach; ?>
-        </tbody>
-      </table>
-      <br>
-      <div>
-        <a href="<?php echo url_for('organization/new') ?>" class="continueButton" title="Create New Organization">Create New</a>
-      </div>
-
-      <div class="rightFloat">
-  <?php
+  <tfoot class="tFootInfo">
+      <tr>
+        <td colspan="4">
+        <?php
+          // Output the current staff members being shown, as well total number in the list.
+          // The if prevents getting a 1-0 display indicator if there is an empty list.
+          $totalRecords = $pager->count();
+          $firstIndice = ($totalRecords === 0) ? 0 : $pager->getFirstIndice();
+          $lastIndice = $pager->getLastIndice();
+          echo $firstIndice . " - " . $lastIndice . " of " . $totalRecords;
+        ?>
+      </td>
+    </tr>
+     <tr>
+        <td colspan="4">
+        <?php
 //
 //First Page link (or inactive if we're at the first page).
           echo(!$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
@@ -66,5 +73,16 @@ $descArrow = '&#x25BC;';
           echo(!$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getNextPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
 //Last Page link (or inactive if we're at the last page).
           echo(!$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
-  ?>
-</div>
+  ?>    
+      </td>
+    </tr>
+        </tbody>
+      </table>
+      <br>
+     
+      
+      
+      <div>
+        <a href="<?php echo url_for('organization/new') ?>" class="continueButton" title="Create New Organization">Create New</a>
+      </div>
+ 
