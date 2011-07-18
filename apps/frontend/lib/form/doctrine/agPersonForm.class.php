@@ -434,6 +434,9 @@ class agPersonForm extends BaseagPersonForm
             ->select('c.country')
             ->from('agCountry c');
 
+    // This loop makes a 3d array of line sequence values (as the first level key),
+    // inline sequence values (as the second level key), address element values
+    // (as the third level string key), and address element ids (as the third level value).
     foreach ($this->address_formats as $af) {
       $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['id'] = $af->getAgAddressElement()->id;
       $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['fieldType'] = $af->getAgFieldType()->getFieldType();
@@ -530,8 +533,18 @@ class agPersonForm extends BaseagPersonForm
             // Each of the agPerson's existing address records.
             foreach ($this->entityAddress->getAgEntityAddressContact() as $current) {
               if ($current->address_contact_type_id == $address_contact_type->id) {
-                $addressValueElement = $current->getId();
-
+                // Make a new agAddressHelper() and get geo-coordinates with it.
+                // put those coordinates into the $geoForm and lose the helper.
+                $addressHelper = new agAddressHelper();
+                // make a new form for the lat and long.
+                $geoForm = new agEmbeddedGeoAddressForm();
+                // See if the address has any geo data. If it does, put that data in the form.
+                if($addressCoords = $addressHelper->getAddressCoordinates(array($current['address_id']))) {
+                  $geoForm->setDefault('latitude', $addressCoords[$current['address_id']]['latitude']);
+                  $geoForm->setDefault('longitude', $addressCoords[$current['address_id']]['longitude']);
+                }
+                unset($addressHelper);
+                
                 //Get the joins from agAddress to agAddressValue
                 foreach ($current->getAgAddress()->getAgAddressMjAgAddressValue() as $av) {
                   if ($av->getAgAddressValue()->getAgAddressElement()->address_element == key($addressElement)) {
@@ -548,11 +561,13 @@ class agPersonForm extends BaseagPersonForm
           $addressSubContainer->embedForm(key($addressElement), $valueForm);
         }
       }
-      $geo = new agEmbeddedGeoAddressForm();
-      
-      $addressSubContainer->embedForm('Geo Data', $geo);
+      // Get rid of a set $geoForm for the next pass.
+      if (!isset($geoForm)) {
+        $geoForm = new agEmbeddedGeoAddressForm();
+      }
+      $addressSubContainer->embedForm('Geo Data', $geoForm);
+      unset($geoForm);
       $addressSubContainer->getWidgetSchema()->setLabel('Geo Data', false);
-      
       //Embed the addresses-by-type
       $addressContainer->embedForm($address_contact_type, $addressSubContainer);
     }
@@ -791,17 +806,16 @@ class agPersonForm extends BaseagPersonForm
    * @todo refactor and clean this up along the lines of phone, name, and email.
    * *************************************************************************** */
 
-  public function saveAddressForm($form)
+  public function saveAddressForm($aKey, $fKey, $form)
   {
     //This value is only set for agEmbeddedAgAddressValueForms.
     // Used due to multi-level complexity of address.
     //This query finds the address_contact_type ID we need for the next query.
-    $typeQuery = Doctrine::getTable('agAddressContactType')->createQuery('b')
+    $typeId = Doctrine::getTable('agAddressContactType')->createQuery('b')
             ->select('b.id')
             ->from('agAddressContactType b')
-            ->where('b.address_contact_type = ?', $form->addressType);
-
-    $typeId = $typeQuery->fetchOne()->id;
+            ->where('b.address_contact_type = ?', $aKey)
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     //This query gets the person's agEntityAddressContact object, based on
     //person_id and address_contact_type_id (as $typeId).
@@ -812,128 +826,175 @@ class agPersonForm extends BaseagPersonForm
             ->andWhere('c.entity_id = ?', $this->getObject()->entity_id);
     //Check if the agEmbeddedAgAddressValueForm has a value.
 
-    if ($form->getObject()->value <> null) {
-      // Get an agEntityAddressContact object from $joinEntityAddressQuery.
-      // Then create a new agEntityAddressContactForm
-      // and put the retrieved object inside it. Set its priority to $typeId
-      if ($join = $joinEntityAddressQuery->fetchOne()) {
-        $joinEntityAddressForm = new agEntityAddressContactForm($join);
-        $joinEntityAddressForm->getObject()->priority = $typeId;
-      }
-      // Or create a new agAddress, set its address_standard_id, and save it. Then create
-      // agEntityPhoneContactForm to be populated later and set its priority and address_id.
-      else {
-        $newAddress = new agAddress();
-        $newAddress->address_standard_id = 1;
-        $newAddress->save();
-        $joinEntityAddressForm = new agEntityAddressContactForm();
-        $joinEntityAddressForm->getObject()->priority = $typeId;
-        $joinEntityAddressForm->getObject()->address_id = $newAddress->id;
-        $joinEntityAddressForm->getObject()->address_contact_type_id = $typeId;
-        $joinEntityAddressForm->getObject()->entity_id = $this->getObject()->entity_id;
-        $joinEntityAddressForm->getObject()->save();
-      }
+    if($fKey <> 'Geo Data') {
+      if ($form->getObject()->value <> null) {
+        // Get an agEntityAddressContact object from $joinEntityAddressQuery.
+        // Then create a new agEntityAddressContactForm
+        // and put the retrieved object inside it. Set its priority to $typeId
+        if ($join = $joinEntityAddressQuery->fetchOne()) {
+          $joinEntityAddressForm = new agEntityAddressContactForm($join);
+          $joinEntityAddressForm->getObject()->priority = $typeId;
+        }
+        // Or create a new agAddress, set its address_standard_id, and save it. Then create
+        // agEntityPhoneContactForm to be populated later and set its priority and address_id.
+        else {
+          $newAddress = new agAddress();
+          $newAddress->address_standard_id = agDoctrineQuery::create()
+                                               ->select('as.id')
+                                               ->from('agAddressStandard as')
+                                               ->where('as.address_standard = (SELECT gp.value FROM agGlobalParam gp WHERE gp.datapoint = "default_address_standard")')
+                                               ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+          $newAddress->save();
+          $joinEntityAddressForm = new agEntityAddressContactForm();
+          $joinEntityAddressForm->getObject()->priority = $typeId;
+          $joinEntityAddressForm->getObject()->address_id = $newAddress->id;
+          $joinEntityAddressForm->getObject()->address_contact_type_id = $typeId;
+          $joinEntityAddressForm->getObject()->entity_id = $this->getObject()->entity_id;
+          $joinEntityAddressForm->getObject()->save();
+        }
 
-      // Check if the agAddressValue has changed since the page was rendered.
-      if ($form->getObject()->value <> $form->getDefault('value')) {
-        // Store the newly entered value as $addressValueLookUp. Then revert the object
-        // to its default values from the page render. This prevents a duplicate entry error.
-        $addressValueLookUp = $form->getObject()->value;
-        $form->updateObject($form->getDefaults());
+        // Check if the agAddressValue has changed since the page was rendered.
+        if ($form->getObject()->value <> $form->getDefault('value')) {
+          // Store the newly entered value as $addressValueLookUp. Then revert the object
+          // to its default values from the page render. This prevents a duplicate entry error.
+          $addressValueLookUp = $form->getObject()->value;
+          $form->updateObject($form->getDefaults());
 
-        // Create a query to see if the submitted address value, as $addressValueLookUp,
-        //  already exists
-        // in the database.
-        $addressValueQuery = Doctrine::getTable('agAddressValue')->createQuery('a')
-                ->select('a.id')
-                ->from('agAddressValue a')
-                ->where('a.value = ?', $addressValueLookUp)
-                ->andWhere('a.address_element_id = ?', $form->getObject()->address_element_id);
+          // Create a query to see if the submitted address value, as $addressValueLookUp,
+          //  already exists
+          // in the database.
+          $addressValueQuery = Doctrine::getTable('agAddressValue')->createQuery('a')
+                  ->select('a.id')
+                  ->from('agAddressValue a')
+                  ->where('a.value = ?', $addressValueLookUp)
+                  ->andWhere('a.address_element_id = ?', $form->getObject()->address_element_id);
 
-        // If it does...
-        if ($queried = $addressValueQuery->fetchOne()) {
-          // If it exists, get an agAddressMjAgAddressValue object that joins
-          // the id of the agAddress being worked with and the id of the original
-          // agAddressValue being worked with. Used to change an address_value_id
-          // on the agAddressMjAgAddressValue object. id_holder is only set for
-          // already joined address values.
-          if (isset($form->id_holder)) {
-            $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-                    ->select('a.id')
-                    ->from('agAddressMjAgAddressValue a')
-                    ->where('a.address_value_id = ?', $form->id_holder)
-                    ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
+          // If it does...
+          if ($queried = $addressValueQuery->fetchOne()) {
+            // If it exists, get an agAddressMjAgAddressValue object that joins
+            // the id of the agAddress being worked with and the id of the original
+            // agAddressValue being worked with. Used to change an address_value_id
+            // on the agAddressMjAgAddressValue object. id_holder is only set for
+            // already joined address values.
+            if (isset($form->id_holder)) {
+              $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
+                      ->select('a.id')
+                      ->from('agAddressMjAgAddressValue a')
+                      ->where('a.address_value_id = ?', $form->id_holder)
+                      ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
 
-            $joinAddressValue = $joinAddressValueQuery->fetchOne();
-            // reassign the agAddressValue of the join to the newly selected value.
-            $joinAddressValue->address_value_id = $queried->id;
-            $joinAddressValue->save();
-            //unset($forms[$key]);
-          } else {
-            $joinAddressValue = new agAddressMjAgAddressValue();
-            $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
-            $joinAddressValue->address_value_id = $queried->id;
-            $joinAddressValue->save();
-            //unset($forms[$key]);
+              $joinAddressValue = $joinAddressValueQuery->fetchOne();
+              // reassign the agAddressValue of the join to the newly selected value.
+              $joinAddressValue->address_value_id = $queried->id;
+              $joinAddressValue->save();
+              //unset($forms[$key]);
+            } else {
+              $joinAddressValue = new agAddressMjAgAddressValue();
+              $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
+              $joinAddressValue->address_value_id = $queried->id;
+              $joinAddressValue->save();
+              //unset($forms[$key]);
+            }
+          }
+          // If the entered address_value isn't in the database already,
+          // make a new agAddressValue object, populate it with the new
+          // address value, and save it.
+          elseif (!$queried = $addressValueQuery->fetchOne()) {
+            $newAddressValue = new agAddressValue();
+            $newAddressValue->value = $addressValueLookUp;
+            $newAddressValue->address_element_id = $form->getObject()->address_element_id;
+            $newAddressValue->save();
+
+            if (isset($form->id_holder)) {
+              $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
+                      ->select('a.id')
+                      ->from('agAddressMjAgAddressValue a')
+                      ->where('a.address_value_id = ?', $form->id_holder)
+                      ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
+
+              $joinAddressValue = $joinAddressValueQuery->fetchOne();
+              // reassign the agAddressValue of the join to the newly
+              // selected value.
+              $joinAddressValue->address_value_id = $newAddressValue->id;
+              $joinAddressValue->save();
+              //unset($forms[$key]);
+            } else {
+              $joinAddressValue = new agAddressMjAgAddressValue();
+              $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
+              $joinAddressValue->address_value_id = $newAddressValue->id;
+              $joinAddressValue->save();
+              //unset($forms[$key]);
+            }
           }
         }
-        // If the entered address_value isn't in the database already,
-        // make a new agAddressValue object, populate it with the new
-        // address value, and save it.
-        elseif (!$queried = $addressValueQuery->fetchOne()) {
-          $newAddressValue = new agAddressValue();
-          $newAddressValue->value = $addressValueLookUp;
-          $newAddressValue->address_element_id = $form->getObject()->address_element_id;
-          $newAddressValue->save();
-
-          if (isset($form->id_holder)) {
-            $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-                    ->select('a.id')
-                    ->from('agAddressMjAgAddressValue a')
-                    ->where('a.address_value_id = ?', $form->id_holder)
-                    ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
-
-            $joinAddressValue = $joinAddressValueQuery->fetchOne();
-            // reassign the agAddressValue of the join to the newly
-            // selected value.
-            $joinAddressValue->address_value_id = $newAddressValue->id;
-            $joinAddressValue->save();
-            //unset($forms[$key]);
-          } else {
-            $joinAddressValue = new agAddressMjAgAddressValue();
-            $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
-            $joinAddressValue->address_value_id = $newAddressValue->id;
-            $joinAddressValue->save();
-            //unset($forms[$key]);
-          }
+        // If the address_value hasn't been changed, unset the form.
+        else {
+          //unset($forms[$key]);
         }
       }
-      // If the address_value hasn't been changed, unset the form.
+      // If the address_value field is blank, unset the form...
       else {
         //unset($forms[$key]);
-      }
-    }
-    // If the address_value field is blank, unset the form...
-    else {
-      //unset($forms[$key]);
-      // ...if it was populated, delete the existing agAddressMjAgAddressValue
-      // object since it is no longer needed.
-      if ($form->getObject()->value <> $form->getDefault('value')) {
-        $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')->select('a.id')
-                ->from('agAddressMjAgAddressValue a')
-                ->where('a.address_value_id = ?', $form->id_holder)
-                ->andWhere('a.address_id = ?', $joinEntityAddressQuery->fetchOne()->address_id);
-
-        if ($join = $joinAddressValueQuery->fetchOne()) {
-          $join->delete();
+        // ...if it was populated, delete the existing agAddressMjAgAddressValue
+        // object since it is no longer needed.
+        if ($form->getObject()->value <> $form->getDefault('value')) {
+          $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')->select('a.id')
+                  ->from('agAddressMjAgAddressValue a')
+                  ->where('a.address_value_id = ?', $form->id_holder)
+                  ->andWhere('a.address_id = ?', $joinEntityAddressQuery->fetchOne()->address_id);
+          if ($join = $joinAddressValueQuery->fetchOne()) {
+            $join->delete();
+          }
         }
+      }
+/*
+ * Save Geo Data
+ */
+      // If it is the geo form...
+    } else {
+      if(($form->getObject()->getLatitude() <> null && $form->getObject()->getLongitude() <> null)) {
+        $geoSourceId = agDoctrineQuery::create()
+          ->select('id')
+          ->from('agGeoSource')
+          ->where('geo_source = "manual entry"')
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        // Check for the entity-address join.
+        $gh = new agGeoHelper();
+        if ($entToAdd = $joinEntityAddressQuery->fetchOne()) {
+          $gh->setAddressGeo(array($entToAdd->getAddressId() => array(array(array($form->getObject()->getLatitude(), $form->getObject()->getLongitude())))), $geoSourceId);
+        } else {
+          $this->createEmptyAddressAndJoin($typeId);
+          $entToAdd = $joinEntityAddressQuery->fetchOne();
+          $gh->setAddressGeo(array($entToAdd->getAddressId() => array(array(array($form->getObject()->getLatitude(), $form->getObject()->getLongitude())))), $geoSourceId);
+        }
+        unset($gh);
+      } else {
+        if($form->getDefault('latitude') <> null || $form->getDefault('longitude') <> null) {
+          $gh = new agGeoHelper();
+          $coordId = $gh->getGeoCoordinateId($form->getDefault('latitude'), $form->getDefault('longitude'));
+          $addressGeos = agDoctrineQuery::create()
+              ->select('')
+              ->from('agAddressGeo')
+              ->where('address_id = ?', $joinEntityAddressQuery->fetchOne()->address_id)
+              ->execute();
+          foreach($addressGeos as $$addressGeo) {
+            $addressGeo->delete();
+          }
+        }
+        // do something if the form values are blank.
       }
     }
     if ($entJoin = $joinEntityAddressQuery->fetchOne()) {
-      $q = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-              ->select('a.id')->from('agAddressMjAgAddressValue a')
-              ->where('a.address_id = ?', $entJoin->address_id);
-      if (!($r = $q->fetchOne())) {
+      $addToVal = agDoctrineQuery::create()
+                    ->select('')
+                    ->from('agAddressMjAgAddressValue')
+                    ->where('address_id = ?', $entJoin->address_id);
+      $addToGeo = agDoctrineQuery::create()
+                    ->select('')
+                    ->from('agAddressGeo')
+                    ->where('address_id = ?', $entJoin->address_id);
+      // Only delete an address if it has no geo or address info associated with it.
+      if ($addToVal->fetchOne() == FALSE && $addToGeo->fetchOne() == FALSE) {
         $entAdd = $entJoin->getAgAddress();
         $entJoin->delete();
 
@@ -950,6 +1011,28 @@ class agPersonForm extends BaseagPersonForm
     }
   }
 
+  /*****************************************************************************
+  * a function to create a new agAddress and agEntityAddressContactForm.
+  *
+  * @param $typeId    An integer corresponding to an agAddressType()->id
+  *                   Priority will be assigned to the same value as type.
+  *****************************************************************************/
+  private function createEmptyAddressAndJoin($typeId)
+  {
+    $newAddress = new agAddress();
+    $newAddress->address_standard_id = agDoctrineQuery::create()
+                                         ->select('as.id')
+                                         ->from('agAddressStandard as')
+                                         ->where('as.address_standard = (SELECT gp.value FROM agGlobalParam gp WHERE gp.datapoint = "default_address_standard")')
+                                         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    $newAddress->save();
+    $joinEntityAddress = new agEntityAddressContact();
+    $joinEntityAddress->setPriority($typeId);
+    $joinEntityAddress->setAddressId($newAddress->id);
+    $joinEntityAddress->setAddressContactTypeId($typeId);
+    $joinEntityAddress->setEntityId($this->getObject()->entity_id);
+    $joinEntityAddress->save();
+  }
   /*****************************************************************************
    * Saves data in an embedded language form.
    *
@@ -1107,13 +1190,89 @@ class agPersonForm extends BaseagPersonForm
      * necessitate some changes here as well
      * */
     if (isset($this->embeddedForms['Address'])) {
+      $addHelper = new agAddressHelper();
+      $entAddHelper = new agEntityAddressHelper();
+
+      $addressStandardId = $addHelper->getAddressStandardId();
+      $entId = $this->getObject()->getEntityId();
+//      $geoMatchScoreId = agDoctrineQuery::create()
+//        ->select('id')
+//        ->from('agGeoSource')
+//        ->where('geo_source = "manual entry"')
+//        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      
+// Original Code.
       foreach ($this->embeddedForms['Address']->embeddedForms as $aKey => $addressForm) {
         foreach ($addressForm->embeddedForms as $fKey => $form) {
-          $this->saveAddressForm($form);
+          $this->saveAddressForm($aKey, $fKey, $form);
           unset($this->embeddedForms['Address']->embeddedForms[$aKey]->embeddedForms[$fKey]);
         }
         unset($this->embeddedForms['Address'][$aKey]);
       }
+      // Update the address hashes for this entity.
+      $ah = new agAddressHelper();
+      $ah->updateAddressHashes(agDoctrineQuery::create()
+                              ->select('address_id')
+                              ->from('agEntityAddressContact')
+                              ->where('entity_id = ?', $entId)
+                              ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY));
+      unset($ah);
+// End Original Code.
+
+//      foreach ($this->embeddedForms['Address']->embeddedForms as $type => $addressForm) {
+//        $entArray[$entId][] = array();
+//        foreach ($addressForm->embeddedForms as $element => $value) {
+//          $typeId = agDoctrineQuery::create()
+//            ->select('id')
+//            ->from('agAddressContactType')
+//            ->where('address_contact_type = ?', $type)
+//            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+//          $entArray[$entId][count($entArray[$entId]) - 1][0] = $typeId;
+//          if($element <> 'Geo Data') {
+//            // Using those forms that hold address elements and not GeoData,
+//            // build an array for the agAddressHelper.
+//            if($value->getObject()->value <> null) {
+//              $entArray[$entId][count($entArray[$entId]) - 1][1][0][$value->getObject()->address_element_id] = $value->getObject()->value;
+//              $addresses[$type][0][$value->getObject()->address_element_id] = $value->getObject()->value;
+//              if (empty($addresses[$type][1])) {
+//                $addresses[$type][1] = $addressStandardId;
+//              }
+//              if(empty($entArray[$entId][count($entArray[$entId]) - 1][1][1])) {
+//                $entArray[$entId][count($entArray[$entId]) - 1][1][1] = $addressStandardId;
+//              }
+//            }
+//          } else {
+//            if($value->getObject()->getLatitude() <> null && $value->getObject()->getLongitude() <> null) {
+//              $entArray[$entId][count($entArray[$entId]) - 1][1][2] = array(array(array($value->getObject()->getLatitude(), $value->getObject()->getLongitude())));
+//              $geoArray[$type][0] = array(array($value->getObject()->getLatitude(), $value->getObject()->getLongitude()));
+//              $geoArray[$type][1] = $geoMatchScoreId;
+//            }
+//          }
+//        }
+//        unset($this->embeddedForms['Address'][$type]);
+//      }
+//      foreach($entArray[$entId] as $key => $address) {
+//        if(!isset($address[1])) {
+//          unset($entArray[$entId][$key]);
+//        }
+//      }
+//      $addressResults = $entAddHelper->setEntityAddress($entArray, $geoMatchScoreId);
+
+//      $returnedAddresses = $addHelper->setAddresses($addresses, $geoArray, $geoMatchScoreId);
+//      foreach ($returnedAddresses[0] as $key => $addressId) {
+//        $typeId = agDoctrineQuery::create()
+//          ->select('id')
+//          ->from('agAddressContactType')
+//          ->where('address_contact_type = ?', $key)
+//          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+//        $join = new agEntityAddressContact();
+//        $join->setEntityId($this->getObject()->getEntityId());
+//        $join->setAddressId($addressId);
+//        $join->setAddressContactTypeId($typeId);
+//        $join->setPriority($typeId);
+//        $join->save();
+//        unset($join);
+//      }
     }
     /**
      * Language

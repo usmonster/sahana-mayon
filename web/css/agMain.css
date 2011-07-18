@@ -1932,6 +1932,10 @@ div.agFormatterAddressLevelTwo {
   display: inline-block
 }
 
+.geoLine {
+  margin: 1em 0;
+}
+
 .nameHolder {
   display: inline-block;
 }

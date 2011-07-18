@@ -99,6 +99,9 @@ class agGeoHelper extends agBulkRecordHelper
         ->from('agGeoMatchScore gms')
         ->where('gms.geo_match_score = ?', $geoMatchScore)
         ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
+    // This wasn't actually being set, so I added it. Don't think it will break
+    // anything, as this seems like what the function was intended for. --nils
+    $this->_defaultGeoMatchScoreId = $geoMatchScoreId;
   }
 
   /**

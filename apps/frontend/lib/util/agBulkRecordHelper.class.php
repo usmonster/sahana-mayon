@@ -174,5 +174,4 @@ abstract class agBulkRecordHelper
       )
     );
   }
-
 }

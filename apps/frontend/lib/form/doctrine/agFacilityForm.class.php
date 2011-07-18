@@ -12,6 +12,7 @@
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Ilya Gulko, CUNY SPS
+ * @author Nils Stolpe, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
@@ -251,7 +252,6 @@ class agFacilityForm extends BaseagFacilityForm
                               ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
                             true
                           );
-
     $this->address_contact_types = agDoctrineQuery::create()
             ->select()
             ->from('agAddressContactType')
@@ -358,7 +358,14 @@ class agFacilityForm extends BaseagFacilityForm
             // Each of the agPerson's existing address records.
             foreach ($this->entityAddress->getAgEntityAddressContact() as $current) {
               if ($current->address_contact_type_id == $address_contact_type->id) {
-                $addressValueElement = $current->getId();
+                // Make a new agAddressHelper() and get geo-coordinates with it.
+                // put those coordinates into the $geoForm and lose the helper.
+                $addressHelper = new agAddressHelper();
+                $addressCoords = $addressHelper->getAddressCoordinates(array($current['address_id']));
+                $geoForm = new agEmbeddedGeoAddressForm();
+                $geoForm->setDefault('latitude', $addressCoords[$current['address_id']]['latitude']);
+                $geoForm->setDefault('longitude', $addressCoords[$current['address_id']]['longitude']);
+                unset($addressHelper);
 
                 foreach ($current->getAgAddress()->getAgAddressMjAgAddressValue() as $av) {
                   ////Get the joins from agAddress to agAddressValue
@@ -380,6 +387,14 @@ class agFacilityForm extends BaseagFacilityForm
           }
         }
       }
+      // Get rid of a set $geoForm for the next pass.
+      if (!isset($geoForm)) {
+        $geoForm = new agEmbeddedGeoAddressForm();
+      }
+      $addressSubContainer->embedForm('Geo Data', $geoForm);
+      unset($geoForm);
+      $addressSubContainer->getWidgetSchema()->setLabel('Geo Data', false);
+
       $addressContainer->embedForm($address_contact_type, $addressSubContainer);
       //Embed the addresses-by-type
 
