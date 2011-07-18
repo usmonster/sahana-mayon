@@ -82,6 +82,8 @@ class agShiftGeneratorHelper
               ->andWhere('st.scenario_id = ?', $scenarioId)
               ->execute(array(), Doctrine::HYDRATE_SCALAR);
 
+      $scenarioShiftTable = $conn->getTable('agScenarioShift');
+
       foreach ($scenarioShifts as $index => $row) {
         $coll = new Doctrine_Collection('agScenarioShift');
 
@@ -131,7 +133,7 @@ class agShiftGeneratorHelper
             $reset_minutes_start_to_facility_activation = $reset_minutes_start_to_facility_activation + $row['st_task_length_minutes'];
           }
 
-          $scenarioShift = new agScenarioShift();
+          $scenarioShift = new agScenarioShift($scenarioShiftTable, TRUE);
           $scenarioShift['scenario_facility_resource_id'] = $row['fsr_scenario_facility_resource_id'];
           $scenarioShift['staff_resource_type_id'] = $row['st_staff_resource_type_id'];
           $scenarioShift['task_id'] = $row['st_task_id'];
@@ -148,10 +150,9 @@ class agShiftGeneratorHelper
           $shift_counter++;
         }
         $coll->save($conn);
-        $coll->free();
+        $coll->free(TRUE);
         $conn->clear();
-        $conn->evictTables();
-
+        
         unset($coll);
         unset($scenarioShifts[$index]);
       }
