@@ -1202,3 +1202,13 @@ function fileUploadBrowseHover() {
         $('a.fileUploadBrowse').removeClass("fileUploadHover").addClass("continueButton");
     });
 }
+
+/***************************************************************************************************
+*                                                                *
+***************************************************************************************************/
+function shiftTemplateIdVal(stId) {
+  var eleId = $('#deleteShiftTemplateId');
+  if($('#deleteShiftTemplateId').length) {
+   eleId.val(stId);
+  }
+}

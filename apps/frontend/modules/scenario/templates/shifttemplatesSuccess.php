@@ -9,6 +9,8 @@
 <div id ="newshifttemplates">
 <a href="<?php echo url_for('scenario/addshifttemplate?id=' . $scenario_id); ?>" class="smallLinkButton addShiftTemplate" id="adder">+ Add Shift Template</a>
 </div>
+    <input type="hidden" name="deleteShiftTemplateId" id ="deleteShiftTemplateId"/>
+<!--    <input type="submit" class="continueButton" value="Generate Resource Type Templates" name="Predefined" onclick="shiftTemplateIdVal('Hello Shirley');"/> -->
     <input type="submit" class="continueButton" value="Generate Resource Type Templates" name="Predefined" onclick="return confirm('Are you sure you want to generate templates for this scenario resources?  If you have already created templates, they will be lost.')"/>
     <input type="submit" class="continueButton" value="Save, Generate Shifts and Continue" name="Continue" />
 </form>

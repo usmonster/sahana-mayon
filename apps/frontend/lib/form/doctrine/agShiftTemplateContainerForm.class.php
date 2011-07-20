@@ -139,7 +139,37 @@ class agShiftTemplateContainerForm extends sfForm
     $this->getValidatorSchema()->setOption('filter_extra_fields', false);
   }
 
-  public function saveEmbeddedForms($con = null, $forms = null)
+//  public function deleteEmbeddedForms($num = null, $forms = null)
+//  {
+//    if (null === $forms)
+//    {
+//      $forms = $this->embeddedForms;
+//    }
+//
+//    if (!empty($num))
+//    {
+//      $forms[$num]->updateObject($this->values[$num]);
+//      unset($forms[$num]);
+//    }
+//
+//    return;
+//  }
+
+  public function deleteShiftTemplates($shiftTemplateId)
+  {
+    $deleteCount = array();
+    $deleteCount['scenarioShift'] = agDoctrineQuery::create()
+      ->delete('agScenarioShift')
+      ->where('originator_id = ?', $shiftTemplateId)
+      ->execute();
+    $deleteCount['shiftTempalte'] = agDoctrineQuery::create()
+      ->delete('agShiftTemplate')
+      ->where('id = ?', $shiftTemplateId)
+      ->execute();
+    return $deleteCount;
+  }
+
+  public function saveEmbeddedForms($deleteEmbeddedFormId = null, $con = null, $forms = null)
   {
     if (null === $forms)
     {
@@ -147,39 +177,79 @@ class agShiftTemplateContainerForm extends sfForm
     }
     if (is_array($forms))
     {
-      foreach ($forms as $key => $form) {
+      foreach ($forms as $key => $form)
+      {
 
-        if ($form instanceof agSingleShiftTemplateForm) {
-          if ($form->isNew()) {
-            $form->updateObject($this->values[$key]);
-            $form->getObject()->scenario_id = $this->scenario_id;
-            $newShiftTemplate = $form->getObject();
-            if ($newShiftTemplate->staff_resource_type_id && $newShiftTemplate->task_id
-                && $newShiftTemplate->facility_resource_type_id) {
-              $newShiftTemplate->save();
-              //$this->getObject()->getAgShiftTemplate()->add($newShiftTemplate);
-              unset($forms[$key]);
-            } else {
-              unset($forms[$key]);
+        if ($form instanceof agSingleShiftTemplateForm)
+        {
+          // Save shift template if no $deleteEmbeddedFormId is passed in.
+          $form->updateObject($this->values[$key]);
+          $form->getObject()->scenario_id = $this->scenario_id;
+          $shiftTemplate = $form->getObject();
+
+          if (!empty($deleteEmbeddedFormId) && $key == $deleteEmbeddedFormId)
+          {
+            // Do not save embedded form.  Delete embedded form and related records in db for
+            // existing shift templates.
+            if (!$form->isNew())
+            {
+              $this->deleteShiftTemplates($shiftTemplate->id);
             }
           } else {
-            $form->updateObject($this->values[$key]);
-            $form->getObject()->scenario_id = $this->scenario_id;
-            $oldShiftTemplate = $form->getObject();
-            if ($oldShiftTemplate->staff_resource_type_id && $oldShiftTemplate->task_id
-                && $oldShiftTemplate->facility_resource_type_id) {
-
-              $oldShiftTemplate->save();
-            } else {
-              //$form->getObject()->delete(); don't delete this way :\
+            if ($shiftTemplate->staff_resource_type_id && $shiftTemplate->task_id
+                && $shiftTemplate->facility_resource_type_id)
+            {
+              $shiftTemplate->save();
             }
-            unset($forms[$key]);
           }
+          unset($forms[$key]);
         }
       }
     }
     return; // parent::saveEmbeddedForms($con, $forms); <-correct,
     //this should never have been here, sfForm will save nothing
   }
+//  public function saveEmbeddedForms($con = null, $forms = null)
+//  {
+//    if (null === $forms)
+//    {
+//      $forms = $this->embeddedForms;
+//    }
+//    if (is_array($forms))
+//    {
+//      foreach ($forms as $key => $form) {
+//
+//        if ($form instanceof agSingleShiftTemplateForm) {
+//          if ($form->isNew()) {
+//            $form->updateObject($this->values[$key]);
+//            $form->getObject()->scenario_id = $this->scenario_id;
+//            $newShiftTemplate = $form->getObject();
+//            if ($newShiftTemplate->staff_resource_type_id && $newShiftTemplate->task_id
+//                && $newShiftTemplate->facility_resource_type_id) {
+//              $newShiftTemplate->save();
+//              //$this->getObject()->getAgShiftTemplate()->add($newShiftTemplate);
+//              unset($forms[$key]);
+//            } else {
+//              unset($forms[$key]);
+//            }
+//          } else {
+//            $form->updateObject($this->values[$key]);
+//            $form->getObject()->scenario_id = $this->scenario_id;
+//            $oldShiftTemplate = $form->getObject();
+//            if ($oldShiftTemplate->staff_resource_type_id && $oldShiftTemplate->task_id
+//                && $oldShiftTemplate->facility_resource_type_id) {
+//
+//              $oldShiftTemplate->save();
+//            } else {
+//              //$form->getObject()->delete(); don't delete this way :\
+//            }
+//            unset($forms[$key]);
+//          }
+//        }
+//      }
+//    }
+//    return; // parent::saveEmbeddedForms($con, $forms); <-correct,
+//    //this should never have been here, sfForm will save nothing
+//  }
 
 }

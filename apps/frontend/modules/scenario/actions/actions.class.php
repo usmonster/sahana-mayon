@@ -1119,31 +1119,31 @@ class scenarioActions extends agActions
     return $parsedAllocatedFacilityResources;
   }
 
-  /**
-   * deleteShiftTemplate AJAX called method
-   * @param sfWebRequest $request
-   * @return response success or failure string to ouput in feedback flasher.
-   */
-  public function executeDeleteshifttemplate(sfWebRequest $request)
-  {
-    $this->forward404unless($request->isXmlHttpRequest());
-
-    $shiftTemplateId = $request->getParameter('stId');
-    $shiftTemplate = Doctrine_Core::getTable('agShiftTemplate')
-        ->findByDql('id = ?', $shiftTemplateId)
-        ->getFirst();
-
-    $scenShifts = Doctrine_Core::getTable('agScenarioShift')
-        ->findByDql('originator_id = ?', $shiftTemplateId);
-
-    $scenShifts->delete();
-
-    $result = $shiftTemplate->delete();
-
-    //we assume here that if no error was thrown the shift template and associated shifts
-    //have been deleted
-    return $this->renderText('Shift Template Deleted');
-  }
+//  /**
+//   * deleteShiftTemplate AJAX called method
+//   * @param sfWebRequest $request
+//   * @return response success or failure string to ouput in feedback flasher.
+//   */
+//  public function executeDeleteshifttemplate(sfWebRequest $request)
+//  {
+//    $this->forward404unless($request->isXmlHttpRequest());
+//
+//    $shiftTemplateId = $request->getParameter('stId');
+//    $shiftTemplate = Doctrine_Core::getTable('agShiftTemplate')
+//        ->findByDql('id = ?', $shiftTemplateId)
+//        ->getFirst();
+//
+//    $scenShifts = Doctrine_Core::getTable('agScenarioShift')
+//        ->findByDql('originator_id = ?', $shiftTemplateId);
+//
+//    $scenShifts->delete();
+//
+//    $result = $shiftTemplate->delete();
+//
+//    //we assume here that if no error was thrown the shift template and associated shifts
+//    //have been deleted
+//    return $this->renderText('Shift Template Deleted');
+//  }
 
   /**
    * addShiftTemplate AJAX called method to add a shift template
@@ -1210,12 +1210,35 @@ class scenarioActions extends agActions
                                                              $request->getFiles($this->shifttemplateforms->getName()));
       if ($this->shifttemplateforms->isValid())
       {
-        if ($request->hasParameter('Continue'))
+        if ($request->hasParameter('Continue') || $request->hasParameter('Delete'))
         {
-          $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms();
+//          if ($request->hasParameter('Delete'))
+//          {
+//            $this->shifttemplateforms->deleteEmbeddedForms($request->getParameter('deleteShiftTemplateId'));
+////            unset($this->shifttemplateforms[$request->getParameter('deleteShiftTemplateId')]);
+//          }
+
+          if  ($request->hasParameter('Delete'))
+          {
+            $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms($request->getParameter('deleteShiftTemplateId'));
+          }
+
+          if ($request->hasParameter('Continue'))
+          {
+            $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms();
+          }
           $generatedResult = agShiftGeneratorHelper::shiftGenerator($this->scenario_id);
-          //if this is a long process should be a try/catch here
-          $this->redirect('scenario/shifts?id=' . $request->getParameter('id'));
+
+          if ($request->hasParameter('Continue'))
+          {
+            //if this is a long process should be a try/catch here
+            $this->redirect('scenario/shifts?id=' . $request->getParameter('id'));
+          }
+
+          if ($request->hasParameter('Delete'))
+          {
+            $this->redirect('scenario/shifttemplates?id=' . $request->getParameter('id'));
+          }
         }
       }
     }

@@ -108,12 +108,13 @@ class agShiftGeneratorHelper
           // the staff wave is multipled by two.
           $staff_shift_repeat = $row['st_max_staff_repeat_shifts'] * 2;
 
-          if (($shift_counter != 1) && (($shift_counter % $staff_shift_repeat) == 1)) {
+          if (($staff_shift_repeat > 0) && ($shift_counter != 1) && (($shift_counter % $staff_shift_repeat) == 1)) {
             $staff_wave += 2;
           }
 
           // Release staffs as they finish their last shift.
-          if ( (($shift_counter % $staff_shift_repeat) == 0) ||
+          if ( ($staff_shift_repeat == 0) ||
+               (($shift_counter % $staff_shift_repeat) == 0) ||
                ((($shift_counter +1) % $staff_shift_repeat) == 0) ||
                ($shift_counter == $shiftRepeats) ||
                (($shift_counter +1 ) == $shiftRepeats) )

@@ -2,6 +2,7 @@
      style="width: 750px;"
      id="container<?php echo $number ?>">
        <?php
+       $formId = $number;
        if (!$shifttemplateform->getObject()->isNew()) {
          $number = $shifttemplateform['id']->getValue();
        } else{
@@ -23,9 +24,13 @@
       <tr>
         <td colspan="2" style="background-color: #E5F7FF;">
           <?php echo $shifttemplateform['staff_resource_type_id']->renderRow() ?>
-          <a href="<?php echo url_for('scenario/deleteshifttemplate') ?>" 
-             class="smallLinkButton floatRight removeShiftTemplate" id="<?php echo $number ?>">
-            - Delete Shift Template</a>
+<!--          <a href="<?php #echo url_for('scenario/deleteshifttemplate') ?>"
+             class="smallLinkButton floatRight removeShiftTemplate" id="<?php #echo $number ?>">
+            - Delete Shift Template</a>-->
+
+<!--              <input type="hidden" name="deleteShiftTemplateId" id ="deleteShiftTemplateId" value=""/> -->
+              <input type="submit" class="smallLinkButton floatRight removeShiftTemplate" value="Delete Shift Template" name="Delete" onClick="shiftTemplateIdVal('<?php echo $formId ?>');"/>
+
           <br/>
           <?php echo $shifttemplateform['facility_resource_type_id']->renderRow(); ?>
         </td>
