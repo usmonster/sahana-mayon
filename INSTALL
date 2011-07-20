@@ -52,7 +52,7 @@ Apache
 1. To set permissions to allow the web server appropriate access to the required
    directories, execute the following commands from the project root:
 
-  sudo chgrp -R www-data cache/ log/ config/ apps/*/config/ data/search/ \
+  sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/search/ \
       data/sql/ data/uploads/ web/wiki/conf/ web/wiki/data/ \
       web/wiki/lib/plugins/dw2pdf/mpdf/tmp/
   chmod -cR g+wr config/ apps/*/config/ data/search/ data/sql/ data/uploads/ \

@@ -977,7 +977,7 @@ class agPersonForm extends BaseagPersonForm
               ->from('agAddressGeo')
               ->where('address_id = ?', $joinEntityAddressQuery->fetchOne()->address_id)
               ->execute();
-          foreach($addressGeos as $$addressGeo) {
+          foreach($addressGeos as $addressGeo) {
             $addressGeo->delete();
           }
         }
