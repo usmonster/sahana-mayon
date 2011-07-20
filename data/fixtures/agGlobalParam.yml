@@ -115,7 +115,7 @@ agGlobalParam:
     id: 23
     agHost: localhost
     datapoint: default_days_in_operation
-    value: 0
+    value: 5
   default_shift_max_staff_repeat_shifts:
     id: 24
     agHost: localhost
