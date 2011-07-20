@@ -233,8 +233,8 @@ class eventActions extends agActions
         ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
     if ($this->scenario_id) {
       if ($request->isMethod(sfRequest::POST)) {
-        $this->migrationCount = agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id,
-                                                                               $this->event_id);
+        $mh = new agEventMigrationHelper();
+        $this->migrationCount = $mh->migrateScenarioToEvent($this->scenario_id, $this->event_id);
         $this->redirect('event/active?event=' . urlencode($this->event_name));
       } else {
         $this->redirect('event/active?event=' . urlencode($this->event_name));
