@@ -159,19 +159,22 @@ abstract class agBulkRecordHelper
   }
 
   /**
-   * Method to take a record component array and return a json encoded, md5sum'ed record component hash.
-   * @param array $recordComponentsArray An associative array of record components keyed by
-   * elementId with the string value.
-   * @param boolean $isKeyOrderTrusted A flag to specify whether or not the component array already
-   * has a trusted order. A value of TRUE will skip the ordering step of hash generation.
-   * @return string(128) A 128-bit md5sum string.
+   * Method to take a value and return it trimmed of undesirable characters and strToLowered
+   * @return string
    */
   public static function ucTrim($value)
   {
-    return strtolower(
-      trim(
-        preg_replace(self::REGEX_MULTISPACE_PATTERN, self::REGEX_MULTISPACE_REPLACE, $value)
-      )
+    return strtolower(self::fullTrim($value));
+  }
+
+  /**
+   * Method to take a value and return it trimmed of undesirable characters and strToLowered
+   * @return string
+   */
+  public static function fullTrim($value)
+  {
+    return trim(
+      preg_replace(self::REGEX_MULTISPACE_PATTERN, self::REGEX_MULTISPACE_REPLACE, $value)
     );
   }
 }
