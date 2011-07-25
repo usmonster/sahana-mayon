@@ -19,8 +19,8 @@ class agEmbeddedGeoAddressForm extends agGeoCoordinateForm
 
     unset($this['created_at'], $this['updated_at']);
 
-    $this->setValidator('longitude', new sfValidatorNumber(array('required' => false)));
-    $this->setValidator('latitude', new sfValidatorNumber(array('required' => false)));
+    $this->setValidator('longitude', new sfValidatorNumber(array('required' => false, 'min' => 0, 'max' => 180)));
+    $this->setValidator('latitude', new sfValidatorNumber(array('required' => false, 'min' => 0, 'max' => 90)));
 //    $this->setValidators(array(
 //      'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
 //      'longitude'  => new sfValidatorNumber(),
@@ -30,13 +30,31 @@ class agEmbeddedGeoAddressForm extends agGeoCoordinateForm
 //    ));
 
     $this->getWidget('latitude')->setLabel('Lat');
-    $this->getWidget('latitude')->setAttribute('class', 'inputGray');
+    $this->getWidget('latitude')->setAttribute('class', 'inputGray address-geo');
 
     $this->getWidget('longitude')->setLabel('Long');
-    $this->getWidget('longitude')->setAttribute('class', 'inputGray');
+    $this->getWidget('longitude')->setAttribute('class', 'inputGray address-geo');
 
     $custDeco = new agFormatterTopLabel($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
     $this->getWidgetSchema()->setFormFormatterName('custDeco');
+
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorCallback(array('callback' => array($this, 'checkStateBoth')))
+    );
+  }
+
+  /*
+   * A function to validate whether longitude and latitude have both been passed
+   * in with the form. Errors when one is NULL and the other not NULL.
+   */
+  public function checkStateBoth($validator, $values)
+  {
+    if(($values['latitude'] == NULL && $values['longitude'] <> NULL) ||
+       ($values['latitude'] <> NULL && $values['longitude'] == NULL)
+    ) {
+      throw new sfValidatorError($validator, 'Please set both latitude and longitude');
+    }
+    return $values;
   }
 }

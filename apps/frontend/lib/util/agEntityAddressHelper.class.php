@@ -334,7 +334,8 @@ class agEntityAddressHelper extends agEntityContactHelper
 
         // Trim leading and trailing spaces from contact values.
         foreach ($contact[1][0] as $elem => $val) {
-          $contact[1][0][$elem] = self::ucTrim($val);
+          $contact[1][0][$elem] = self::fullTrim($val);
+//          $contact[1][0][$elem] = self::ucTrim($val);
         }
 
         if (array_key_exists(2, $contact[1])) {

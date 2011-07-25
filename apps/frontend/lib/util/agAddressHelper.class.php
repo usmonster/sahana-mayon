@@ -821,7 +821,8 @@ class agAddressHelper extends agBulkRecordHelper
     {
       foreach($address[0] as &$component)
       {
-        $component = self::ucTrim($component);
+        $component = self::fullTrim($component);
+//        $component = self::ucTrim($component);
       }
       unset($component);
     }

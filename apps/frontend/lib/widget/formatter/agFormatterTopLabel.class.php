@@ -19,7 +19,7 @@
 class agFormatterTopLabel extends sfWidgetFormSchemaFormatter
 {
   protected
-    $rowFormat       = "<div class=\"geoLine\"><h4 class=\"agFormatterAddressLevelTwo\">%label%</h4><div class=\"agFormatterAddressLevelTwo\">%field%%help%\n%hidden_fields%</div></div>",
+    $rowFormat       = "<div class=\"geoLine\"><h4 class=\"agFormatterAddressLevelTwo\">%label%</h4><div class=\"agFormatterAddressLevelTwo\">%error%%field%%help%\n%hidden_fields%</div></div>",
     $errorRowFormat  = "<span>%errors%</span>\n",
     $helpFormat      = '<br />%help%',
     $decoratorFormat = "<h4>Geo Data</h4><hr class=\"ruleGray\"/><div>%content%</div>";

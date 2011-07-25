@@ -547,5 +547,4 @@ class agStaffActions extends agActions
     return sfView::NONE;
 
   }
-
 }

@@ -1,8 +1,9 @@
 <?php use_javascript('agasti.js') ?>
+<?php use_javascript('json.serialize.js') ?>
 <?php use_stylesheets_for_form($form);
 use_javascripts_for_form($form);
 ?>
-<form action="<?php echo url_for('agStaff/' . ($form->getObject()->isNew() ? 'create' : 'update') . (!$form->getObject()->isNew() ? '?id=' . $form->getObject()->getAgStaff()->getFirst()->getId() : '')) ?>" method="post" <?php $form->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
+<form id="staff-form" action="<?php echo url_for('agStaff/' . ($form->getObject()->isNew() ? 'create' : 'update') . (!$form->getObject()->isNew() ? '?id=' . $form->getObject()->getAgStaff()->getFirst()->getId() : '')) ?>" method="post" <?php $form->isMultipart() and print 'enctype="multipart/form-data" ' ?>>
 <?php if (!$form->getObject()->isNew()): ?>
   <input type="hidden" name="sf_method" value="put" />
 <?php endif; ?>
@@ -47,7 +48,7 @@ use_javascripts_for_form($form);
       <?php echo $form['Contact'] ?>
     </div>
     <?php echo $form['_csrf_token'] ?>
-    <div class="infoHolder">
+    <div class="infoHolder address-container">
       <h3><?php echo $form['Address']->renderLabel(); ?> <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:contact_address&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Address">?</a></h3>
       <hr class="ruleGray" />
       <div class="clearBoth"> </div>
