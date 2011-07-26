@@ -46,5 +46,14 @@ class agWebservicesActions extends agActions
     $method = 'get'.ucfirst($this->type);
     $this->results = agWebservicesHelper::$method();
   }
+  
+  
+    public function executeGetevent(sfWebRequest $request)
+  {
+    $this->getRoute()->getObjects();
+    $this->type = $request->getParameter('datapoint');
+    $method = 'get'.ucfirst($this->type);
+    $this->results = agWebservicesHelper::$method($request->getParameter('event'));
+  }
 
 }
