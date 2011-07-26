@@ -1,9 +1,0 @@
-all:
-  .array:
-    menu_children:
-      webservices_list: { label: 'Webservices', route: '@webservices_index', parent: 'modules' }  
-    menu_grandchildren:
-      webservices_clients: { label: 'Manage Clients', route: '/profile', parent: 'webservices_list' }
-      webservices_show_org: { label: 'Show Organizations', route: '/webservices/organizations', parent: 'webservices_list' }
-      webservices_show_staff: { label: 'Show Staffs', route: '/webservices/staff', parent: 'webservices_list' }
-      
