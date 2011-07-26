@@ -1,0 +1,18 @@
+webservices_get:
+  url:  /webservices/get/:token/:datapoint.:sf_format
+  class: sfDoctrineRoute
+  param: { module: agWebservices, action: get }
+  options: { model: sfGuardUserProfile, type: list, method: getByToken }
+  requirements:
+    sf_format: (?:xml|json)
+    datapoint: (?:staff|organizations)
+webservices_list:
+  url:  /webservices/list/:datapoint
+  param: { module: agWebservices, action: list }
+  requirements: { datapoint: (?:staff|organizations) }
+webservices_index:
+  url:  /webservices/index
+  param: { module: agWebservices, action: index }
+webservices:
+  url:  /webservices
+  param: { module: agWebservices, action: index }

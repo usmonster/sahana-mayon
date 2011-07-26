@@ -113,6 +113,7 @@ class ProjectConfiguration extends sfProjectConfiguration
           'agReportPackage',
           'agPetPackage',
           'agEventPackage',
+          'agWebservicesPackage',
           'agMessagePackage')
     );
 

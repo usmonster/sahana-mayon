@@ -1,0 +1,61 @@
+sfGuardUser:
+  Agasti:
+    id:             3
+    first_name:     Agasti
+    last_name:      Client
+    email_address:  agasti@sahana.com
+    username:       agasti
+    password:       agasti
+    is_super_admin: false
+    
+  Vesuvius:
+    id:             4
+    first_name:     Vesuvius
+    last_name:      Client
+    email_address:  vesuvius@sahana.com
+    username:       vesuvius
+    password:       vesuvius
+    is_super_admin: false
+    
+  Eden:
+    id:             5
+    first_name:     Eden
+    last_name:      Client
+    email_address:  eden@sahana.com
+    username:       eden
+    password:       eden
+    is_super_admin: false
+    
+  Sample:
+    id:             6
+    first_name:     Sample
+    last_name:      Client
+    email_address:  sample@sahana.com
+    username:       sample
+    password:       sample
+    is_super_admin: false
+    
+sfGuardUserProfile:
+  Agasti:
+    user_id:              3
+    token:                agasti
+    is_webservice_client: true
+    is_active:            true
+    
+  Vesuvius:
+    user_id:              4
+    token:                vesuvius
+    is_webservice_client: true
+    is_active:            true
+    
+  Eden:
+    user_id:              5
+    token:                eden
+    is_webservice_client: true
+    is_active:            true
+
+  Sample:
+    user_id:              6
+    token:                inactive_client
+    is_webservice_client: true
+    is_active:            false

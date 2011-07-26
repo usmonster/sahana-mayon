@@ -1,0 +1,6 @@
+all:
+  is_secure: false
+webservices_get:
+  is_secure: false
+webservices_list:
+  is_secure: true
