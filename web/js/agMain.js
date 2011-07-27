@@ -216,10 +216,10 @@ function fileImportReplacer() {
 /***************************************************************************************************
 * reveal() reveals whatever content is within #revealable.                                         *
 ***************************************************************************************************/
-function reveal(revealer) {
-  $('#reveal').click(function() {
-    var pos = $(revealer).offset();
-    var height = $(revealer).height();
+function reveal() {
+  $('#revealer').click(function() {
+    var pos = $(this).offset();
+    var height = $(this).height();
 
     $("#revealable").css( {
       "left": pos.left + "px",
@@ -227,7 +227,7 @@ function reveal(revealer) {
     } );
 
     $("#revealable").fadeToggle();
-    $(revealer).html(pointerCheck($(revealer).html()));
+    $(this).html(pointerCheck($(this).html()));
     return false;
   });
 }
@@ -621,7 +621,8 @@ $(document).ready(function() {
       var passId = '#' + $(this).attr('id');
       var $poster = $(this);
       var templates = $('.shiftTemplateCounter').length;
-      $(passId).parent().prepend(addShiftTemplate(templates, $(this).attr('href')));
+      $('#newshifttemplates').append(addShiftTemplate(templates, $(this).attr('href')));
+//      $(passId).parent().append(addShiftTemplate(templates, $(this).attr('href')));
       var STContainers = $(".shiftTemplateCounter");
       
       var newSTContainer = STContainers[STContainers.length -1];
@@ -646,21 +647,33 @@ $(document).ready(function() {
 
 
     $('.removeShiftTemplate').live('click', function() {
-      //if there is no id for this record(db_not_exists)
-      var passId = '#' + $(this).attr('id');
-      //send get/post to call delete
-      $('#container' + $(this).attr('id').replace('removeShiftTemplate', '')).remove();
-                 
-      $('#newshifttemplates').prepend('<h2 class="overlay">'
-        + removeShiftTemplate(
-          $(this).attr('id'), $(this).attr('href'))
+      if($(this).parents('#newshifttemplates').length) {
+        $(this).parents('.shiftTemplateCounter').remove();
+        return false;
+      } else {
+        $.post($(this).attr('href'), { stId: $(this).attr('id') }, function(data) {
+          var g = data;
+        })
+      }
 
-        + '</h2>');
-      $('.overlay').fadeIn(1200, function() {
-        $('.overlay').fadeOut(1200, function() {
-          $('.overlay').remove();
-        });
-      });
+
+
+
+//      //if there is no id for this record(db_not_exists)
+//      var passId = '#' + $(this).attr('id');
+//      //send get/post to call delete
+//      $('#container' + $(this).attr('id').replace('removeShiftTemplate', '')).remove();
+//
+//      $('#newshifttemplates').prepend('<h2 class="overlay">'
+//        + removeShiftTemplate(
+//          $(this).attr('id'), $(this).attr('href'))
+//
+//        + '</h2>');
+//      $('.overlay').fadeIn(1200, function() {
+//        $('.overlay').fadeOut(1200, function() {
+//          $('.overlay').remove();
+//        });
+//      });
       return false;
     });
 
@@ -1152,7 +1165,7 @@ function returnContent(data) {
    * @todo refactor so we can pass pattern to this. JSON stuff, probably.
    **/
 function processReturn(data) {
-  pattern = /facilityresource\/[\w\d+%-]*/
+  pattern = /facilityresource\/[\w\d+%-]*/;
   if(data == $(this).attr('id')) {
     appendContent($(this), data);
   //    returnContent(data);
