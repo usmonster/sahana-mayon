@@ -856,7 +856,9 @@ class agPersonForm extends BaseagPersonForm
       $i++;
     }
     // And set all the addresses.
-    $entAddHelper->setEntityAddress($addresses, $geoSourceId, FALSE);
+    if(isset($addresses)) {
+      $entAddHelper->setEntityAddress($addresses, $geoSourceId, FALSE);
+    }
     // Finally, unset any geo data that has been emptied.
     if(isset($emptyGeo)) {
       foreach($emptyGeo as $id => $type) {

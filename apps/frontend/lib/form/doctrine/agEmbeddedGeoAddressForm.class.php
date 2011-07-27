@@ -29,10 +29,10 @@ class agEmbeddedGeoAddressForm extends agGeoCoordinateForm
 //      'updated_at' => new sfValidatorDateTime(),
 //    ));
 
-    $this->getWidget('latitude')->setLabel('Lat');
+//    $this->getWidget('latitude')->setLabel('Lat');
     $this->getWidget('latitude')->setAttribute('class', 'inputGray address-geo');
 
-    $this->getWidget('longitude')->setLabel('Long');
+//    $this->getWidget('longitude')->setLabel('Long');
     $this->getWidget('longitude')->setAttribute('class', 'inputGray address-geo');
 
     $custDeco = new agFormatterTopLabel($this->getWidgetSchema());
