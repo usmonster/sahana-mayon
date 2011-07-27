@@ -23,6 +23,7 @@ abstract class agImportHelper extends agPdoHelper
   $tempTable,
   $tempTableOptions = array(),
   $importSpec = array(),
+  $specStrLengths = array(),
   $requiredImportColumns = array(),
   $successColumn = '_import_success',
   $idColumn = 'id',
@@ -132,7 +133,7 @@ abstract class agImportHelper extends agPdoHelper
     $this->setImportSpec();
 
     // now add some records-keeping fields we'll need across usages
-    $this->requiredImportColumns[$this->idColumn] = array('type' => 'integer',
+    $this->requiredImportColumns[$this->idColumn] = array('type' => 'integer', 'length' => 20,
       'autoincrement' => true, 'primary' => true);
     $this->requiredImportColumns[$this->successColumn] = array('type' => "boolean");
 
@@ -147,6 +148,19 @@ abstract class agImportHelper extends agPdoHelper
             'automatically renamed to {' . $cleanColumn . '}. It is recommended you correct this in' .
             'your import spec declaration.';
         $this->eh->logWarning($eventMsg);
+      }
+
+      // string length comparison auto-magic
+      if (isset($value['type']) && isset($value['length'])) {
+        switch($value['type']) {
+          case 'integer':
+          case 'int':
+            $this->specStrLengths[$cleanColumn] = 256^$value['length'];
+            break;
+          default:
+            $this->specStrLengths[$cleanColumn] = $value['length'];
+            break;
+        }
       }
     }
   }
@@ -356,7 +370,7 @@ abstract class agImportHelper extends agPdoHelper
             $val = trim($val);
             if ($val == '' || is_null($val)) {
               $val = NULL;
-            } elseif (strlen(strval($val)) > $this->importSpec[$currentSheetHeaders[$col]]['length']) {
+            } elseif (strlen(strval($val)) > $this->specStrLengths[$currentSheetHeaders[$col]]) {
               $eventMsg = 'Value in sheet {' . $sheet . '} row {' . $row . '} column {' .
                   $currentSheetHeaders[$col] . '} is too long and was set to NULL.';
               $this->eh->logWarning($eventMsg);

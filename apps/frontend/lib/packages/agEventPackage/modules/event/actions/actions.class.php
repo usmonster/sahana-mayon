@@ -503,27 +503,38 @@ class eventActions extends agActions
         return sfView::NONE;
     }
 
-    public function executeExportcontacts(sfWebRequest $request)
-    {
-        $this->setEventBasics($request);
-        $this->info = array();
+  public function executeExportcontacts(sfWebRequest $request)
+  {
+    $this->setEventBasics($request);
+    $this->info = array();
 
-        $exporter = agSendWordNowPreDeploy::getInstance($this->event_id, 'staff_contacts_predeploy');
-        $this->fileInfo = $exporter->getExport();
+    if ($request->hasParameter('type')) {
+      $type = $request->getParameter('type');
 
-        $this->getResponse()->setHttpHeader('Content-Type', 'application/zip');
-        $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' .
-            $this->fileInfo['filename'] . '"');
+      switch ($type) {
+        case 'pre':
+          $exporter = agSendWordNowPreDeploy::getInstance($this->event_id, 'staff_contacts_predeploy');
+          break;
+        case 'post':
+          $exporter = agSendWordNowPostDeploy::getInstance($this->event_id, 'staff_contacts_postdeploy');
+          break;
+      }
 
-        $exportFile = file_get_contents($this->fileInfo['path'] . DIRECTORY_SEPARATOR .
-            $this->fileInfo['filename']);
+      $this->fileInfo = $exporter->getExport();
 
-        $this->getResponse()->setContent($exportFile);
-        $this->getResponse()->send();
+      $this->getResponse()->setHttpHeader('Content-Type', 'application/zip');
+      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' .
+        $this->fileInfo['filename'] . '"');
 
-        $this->redirect('event/messaging?event=' . urlencode($this->event_name));
+      $exportFile = file_get_contents($this->fileInfo['path'] . DIRECTORY_SEPARATOR .
+        $this->fileInfo['filename']);
+
+      $this->getResponse()->setContent($exportFile);
+      $this->getResponse()->send();
     }
 
+    $this->redirect('event/messaging?event=' . urlencode($this->event_name));
+  }
     /**
      * provide event shift CRUD
      * @param sfWebRequest $request
