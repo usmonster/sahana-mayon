@@ -19,8 +19,8 @@ class agEmbeddedGeoAddressForm extends agGeoCoordinateForm
 
     unset($this['created_at'], $this['updated_at']);
 
-    $this->setValidator('longitude', new sfValidatorNumber(array('required' => false, 'min' => 0, 'max' => 180)));
-    $this->setValidator('latitude', new sfValidatorNumber(array('required' => false, 'min' => 0, 'max' => 90)));
+    $this->setValidator('longitude', new sfValidatorNumber(array('required' => false, 'min' => -180, 'max' => 180)));
+    $this->setValidator('latitude', new sfValidatorNumber(array('required' => false, 'min' => -90, 'max' => 90)));
 //    $this->setValidators(array(
 //      'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
 //      'longitude'  => new sfValidatorNumber(),
@@ -29,11 +29,11 @@ class agEmbeddedGeoAddressForm extends agGeoCoordinateForm
 //      'updated_at' => new sfValidatorDateTime(),
 //    ));
 
-//    $this->getWidget('latitude')->setLabel('Lat');
-    $this->getWidget('latitude')->setAttribute('class', 'inputGray address-geo');
 
-//    $this->getWidget('longitude')->setLabel('Long');
+    $this->getWidget('latitude')->setAttribute('class', 'inputGray address-geo');
     $this->getWidget('longitude')->setAttribute('class', 'inputGray address-geo');
+
+    $this->getWidgetSchema()->moveField('longitude', sfWidgetFormSchema::AFTER, 'latitude');
 
     $custDeco = new agFormatterTopLabel($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
