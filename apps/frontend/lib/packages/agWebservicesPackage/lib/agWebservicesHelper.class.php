@@ -31,7 +31,15 @@ class agWebservicesHelper
         return self::asStaffArray($staff_dql->execute());
     }
 
-    public static function getEvents(){
+    public static function getEvents()
+    {
+
+        $whereStr = 'EXISTS (SELECT subEs.id 
+            FROM agEventStatus subEs
+            WHERE subEs.time_stamp <= CURRENT_TIMESTAMP 
+            AND subEs.event_id = a.id
+            HAVING MAX(subEs.time_stamp) = st.time_stamp)';
+
         $ag_events = agDoctrineQuery::create()
             ->select('a.*')
             ->addSelect('s.scenario')
@@ -41,17 +49,17 @@ class agWebservicesHelper
             ->innerJoin('es.agScenario s')
             ->innerJoin('a.agEventStatus st')
             ->innerJoin('st.agEventStatusType est')
+            ->andWhere($whereStr)
             ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-        
-        
+
+
         return $ag_events;
     }
-    
+
     public static function getEventFacilities($eventId)
     {
         // Example:
         // http://localhost/mayon/webservices/getevent/:token/:event/eventFacilities.json
-        
         // Let's use Chad's magic method for getting event facilities
         $facilityData = agEvent::getEventFacilities($eventId);
 
@@ -145,14 +153,12 @@ class agWebservicesHelper
         foreach ($results as $k => $array) {
             // an associative array to facilitate the creation
             // of the documents in json and xml
-
-            
             // Alter the street lines to match export spec
             if (isset($array['line 1'])) {
                 $array['street_1'] = $array['line 1'];
                 unset($array['line 1']);
             }
-            
+
             if (isset($array['line 2'])) {
                 $array['street_2'] = $array['line 2'];
                 unset($array['line 2']);
@@ -162,14 +168,12 @@ class agWebservicesHelper
         }
         return $response;
     }
-    
-    private static function asEventArray($result) {
+
+    private static function asEventArray($result)
+    {
         $results = $result->toArray();
         $response = array();
         $i = 0;
-        
-        
-        
     }
 
 }
