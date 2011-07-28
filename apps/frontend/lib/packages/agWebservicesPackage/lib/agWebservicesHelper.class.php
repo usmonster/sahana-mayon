@@ -31,8 +31,27 @@ class agWebservicesHelper
         return self::asStaffArray($staff_dql->execute());
     }
 
+    public static function getEvents(){
+        $ag_events = agDoctrineQuery::create()
+            ->select('a.*')
+            ->addSelect('s.scenario')
+            ->addSelect('est.event_status_type, est.description')
+            ->from('agEvent a')
+            ->innerJoin('a.agEventScenario es')
+            ->innerJoin('es.agScenario s')
+            ->innerJoin('a.agEventStatus st')
+            ->innerJoin('st.agEventStatusType est')
+            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+        
+        
+        return $ag_events;
+    }
+    
     public static function getEventFacilities($eventId)
     {
+        // Example:
+        // http://localhost/mayon/webservices/getevent/:token/:event/eventFacilities.json
+        
         // Let's use Chad's magic method for getting event facilities
         $facilityData = agEvent::getEventFacilities($eventId);
 
@@ -142,6 +161,15 @@ class agWebservicesHelper
             $response[$k] = $array;
         }
         return $response;
+    }
+    
+    private static function asEventArray($result) {
+        $results = $result->toArray();
+        $response = array();
+        $i = 0;
+        
+        
+        
     }
 
 }
