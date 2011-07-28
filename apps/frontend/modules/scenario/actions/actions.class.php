@@ -324,62 +324,6 @@ class scenarioActions extends agActions
    * This function will handle incoming facilities. Scenario ID comes in as a param.
    * setScenarioBasics() will use the $request and the ID contained within.
    * *********************************************************************************************** */
-
-//  public function executeFacilityimport(sfWebRequest $request)
-//  {
-//    $this->setScenarioBasics($request);
-//    $this->returnPage = $this->getUser()->getAttribute('returnPage');
-//    $this->getUser()->getAttributeHolder()->remove('returnPage');
-//
-//    $this->forward404Unless($scenarioId = $this->scenario_id);
-////    $this->form = new agImportForm();
-//
-//    $uploadedFile = $_FILES['import'];
-//
-//    // Create import object
-//    $import = new agFacilityImportXLS();
-//
-//    //TODO: get import data directory root info from global param
-//    $importDataRoot = sfConfig::get('sf_upload_dir');
-//    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
-//    if (!file_exists($importDir)) {
-//      mkdir($importDir);
-//    }
-//    $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /* $uploadedFile['name'] */;
-//
-//    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-//      return sfView::ERROR;
-//    }
-//
-//    $this->importPath = $importPath;
-//
-//    $this->timer = time();
-//    $processedToTemp = $import->processImport($this->importPath);
-//    $this->timer = (time() - $this->timer);
-//
-//    $this->numRecordsImported = $import->numRecordsImported;
-//    $this->events = $import->events;
-//
-//    // Normalizes imported temp data only if import is successful.
-//    if ($processedToTemp) {
-//      // Grab table name from import class.
-//      $sourceTable = $import->tempTable;
-//
-//      $this->importer = new agFacilityImportNormalization($this->scenario_id, $sourceTable, 'facility');
-//      //TODO: $this->dispatcher->notify(new sfEvent($this, 'import.start'));
-//
-//      $this->timer = time();
-//      $this->importer->normalizeImport();
-//
-//      $this->summary = $this->importer->summary;
-//
-//    }
-//
-//    // Commented out to allow UAT testing without lucene errors
-//    //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
-//
-//    $this->timer = (time() - $this->timer);
-//  }
   public function executeFacilityimport(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
@@ -1250,22 +1194,15 @@ class scenarioActions extends agActions
     {
       // Query for all predefined staff resource and faciltiy resource combinations.
       $requiredResourceCombo = agDoctrineQuery::create()
-        ->select('sfts.id')
-            ->addSelect('fsr.staff_resource_type_id')
+        ->select('fsr.staff_resource_type_id')
             ->addSelect('fr.facility_resource_type_id')
-//            ->addSelect('sfr.id')
-          ->from('agShiftStatus AS sfts')
-            ->addFrom('agFacilityStaffResource AS fsr')
+          ->from('agFacilityStaffResource AS fsr')
             ->innerJoin('fsr.agScenarioFacilityResource AS sfr')
             ->innerJoin('sfr.agFacilityResource AS fr')
             ->innerJoin('sfr.agScenarioFacilityGroup AS sfg')
           ->where('sfg.scenario_id = ?', $this->scenario_id)
-            ->andWhere('sfts.disabled = ?', '0')
-          ->groupBy('fsr.staff_resource_type_id, fr.facility_resource_type_id, sfts.id')
-          ->orderBy('fsr.staff_resource_type_id, fr.facility_resource_type_id, sfts.id')
-        ->execute(array(), Doctrine_Core::HYDRATE_NONE);
-//      $query = $requiredResourceCombo->getSqlQuery();
-//      $requiredResourceCombo = $requiredResourceCombo->execute(array(), Doctrine_Core::HYDRATE_NONE);
+          ->orderBy('fsr.staff_resource_type_id, fr.facility_resource_type_id')
+       ->execute(array(), Doctrine_Core::HYDRATE_NONE);
     }
     $this->shifttemplateforms = new agShiftTemplateContainerForm($this->scenario_id,
                                                                  $requiredResourceCombo);
@@ -1279,6 +1216,12 @@ class scenarioActions extends agActions
       {
         if ($request->hasParameter('Continue') || $request->hasParameter('Delete'))
         {
+//          if ($request->hasParameter('Delete'))
+//          {
+//            $this->shifttemplateforms->deleteEmbeddedForms($request->getParameter('deleteShiftTemplateId'));
+////            unset($this->shifttemplateforms[$request->getParameter('deleteShiftTemplateId')]);
+//          }
+
           if  ($request->hasParameter('Delete'))
           {
             $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms($request->getParameter('deleteShiftTemplateId'));
