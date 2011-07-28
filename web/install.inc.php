@@ -28,6 +28,7 @@ $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', '
 
 class agInstall
 {
+ 
   /* protected *//*
     var $AG_CONFIG;
     var $DISABLE_NEXT;
@@ -265,6 +266,9 @@ class agInstall
     if ($this->RETRY_SUCCESS == false) {
       $retry = '<input type="submit" class="linkButton" id="retry" name="retry" value="' . $retry_label . '" />';
     }
+    $loadSamples = '<input class="checkbox" type="checkbox" value="yes" name="load_samples" id="load_samples" ';
+    $this->getConfig('LOAD_SAMPLES', false) == 'yes' ? $loadSamples .= ' checked=checked>' : $loadSamples .= '>';
+
     $table = '<fieldset>
               <legend><img src="images/database.png" alt="database icon" />Database Configuration:</legend>
 
@@ -289,6 +293,9 @@ class agInstall
                   <input type="password" name="db_pass" id="db_pass" class="inputGray"
                          value="' . $this->getConfig('DB_PASSWORD', 'root') . '" />
                 </li>
+                <li>
+                  <label>load sample data?:</label>' . $loadSamples .
+                '</li>
                 <input id="init_schema" type="hidden" name="init_schema" checked="checked" />
                 <li><span class="fail">this will drop your current database.</span></li>
               </ul>
@@ -333,6 +340,7 @@ class agInstall
   function stage4()
   {
     $current = $this->getCurrent();
+    $loadSamples = ($this->getConfig('LOAD_SAMPLES') == 'yes') ? 'Yes' : 'No';
 
     return 'Configuration files written. Below is your installation configuration summary:<br />
       <div class="info">
@@ -340,6 +348,7 @@ class agInstall
     '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
     '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
     '<br /><strong>Database Password</strong>: ' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
+    '<br /><strong>Load Sample Data:</strong>: ' . $loadSamples .
     '<br /><strong>Administrator Name </strong>: ' . $this->getConfig('ADMIN_NAME') .
     '<br /><strong>Admin E-mail</strong>: ' . $this->getConfig('ADMIN_EMAIL') .
     '<br /><strong>Super User</strong>: ' . $this->getConfig('ADMIN_USER') .
@@ -351,11 +360,13 @@ class agInstall
   function stage5()
   {
     if ($this->INSTALL_RESULT == 'Success!') {
+      $loadSamples = ($this->getConfig('LOAD_SAMPLES') == 'yes') ? 'Yes' : 'No';
       return '<span class="okay">Congratulations!  Installation was successful:</span> <br /><div class="info">
         <strong>Database Host</strong>: ' . $this->getConfig('DB_SERVER') .
       '<br /><strong>Database Name</strong>: ' . $this->getConfig('DB_DATABASE') .
       '<br /><strong>Database User</strong>: ' . $this->getConfig('DB_USER') .
       '<br /><strong>Database Password</strong>: ' . preg_replace('/./', '*', $this->getConfig('DB_PASSWORD', 'unknown')) .
+      '<br /><strong>Load Sample Data:</strong>: ' . $loadSamples .
       '<br /><strong>Administrator</strong>: ' . $this->getConfig('ADMIN_NAME') .
       '<br /><strong>Admin E-mail</strong>: ' . $this->getConfig('ADMIN_EMAIL') .
       '</div><br /> NOTE: to continue with Agasti setup you must first create the "Super User"
@@ -515,8 +526,10 @@ class agInstall
     try {
       //Doctrine_Core::loadData(sfConfig::get('sf_data_dir') . '/fixtures', false);
       //$installed[] = 'Successfully loaded core data fixtures';
-      $dataDirectories = array(sfConfig::get('sf_data_dir') . '/fixtures',
-                               sfConfig::get('sf_data_dir') . '/samples');
+      $dataDirectories = array(sfConfig::get('sf_data_dir') . '/fixtures');
+      if ($this->getConfig('LOAD_SAMPLES') == 'yes') {
+        $dataDirectories[] = sfConfig::get('sf_data_dir') . '/samples';
+      }
       Doctrine_Core::loadData($dataDirectories, false);
       $installed = 'Success!';
     } catch (Exception $e) {
@@ -613,6 +626,7 @@ class agInstall
         $this->setConfig('DB_PASSWORD', $_POST['db_pass']);
         $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
         $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
+        $this->setConfig('LOAD_SAMPLES', (isset($_POST['load_samples']) ? 'yes' : FALSE));
       } else {
         $db_params = $current[0];
         $config_array = $current[1];
@@ -659,6 +673,7 @@ class agInstall
         $this->setConfig('DB_PASSWORD', $_POST['db_pass']);
         $this->setConfig('ADMIN_NAME', $_POST['admin_name']);
         $this->setConfig('ADMIN_EMAIL', $_POST['admin_email']);
+        $this->setConfig('LOAD_SAMPLES', (isset($_POST['load_samples']) ? 'yes' : FALSE));
         $this->DoNext();
 //we should validate here in case someone changes correct information
       }

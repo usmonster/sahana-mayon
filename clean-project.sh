@@ -1,6 +1,44 @@
 #!/bin/bash
 PROJECT_ROOT=$(dirname $0)
 
+usage(){
+  echo "This script can be used by developers to effectively re-build a post-install Mayon system. It is not intended as a command-line installation/configuration option as several important steps taken by the web-based installer / configurator are missed.
+  
+  Example #1: Clean out the project and only load default data
+  user@pc:/project/root$ ./clean-project.sh
+  
+  Example #2: Cleans out the project and also load sample data
+  user@pc:/project/root$ ./clean-project.sh -s
+
+  Parameters (Required):
+      -s    Load sample data in addition to default data
+      -h    Prints this help statement"
+  exit 1
+}
+
+# accept the sample-data parameter
+SAMPLEDATA=false
+while getopts "s" option
+  do
+    case "$option" in
+      "s")
+        SAMPLEDATA=true
+        ;;
+      "h")
+        usage
+        exit 1
+        ;;
+      "?")
+        echo "Invalid option: -$OPTARG" >&2
+        exit 1
+       ;;
+      *)
+        echo "Unkown error processing options" >&2
+        exit 1
+        ;;
+    esac
+  done
+  
 # echoes commands as they're executed
 set -x
 
@@ -68,7 +106,13 @@ $PROJECT_ROOT/symfony doctrine:build-forms
 $PROJECT_ROOT/symfony doctrine:build-filters
 
 # loads sample data and fixtures from the yml files in the data directory
-sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load data/fixtures data/samples
+if $SAMPLEDATA
+then
+  sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load data/fixtures data/samples
+else
+  sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load data/fixtures
+fi
+
 
 #indexes the data loaded so it is searchable to the user
 sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenario agStaff agFacility agScenarioFacilityGroup agOrganization
