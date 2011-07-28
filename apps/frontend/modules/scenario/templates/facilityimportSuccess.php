@@ -1,113 +1,119 @@
-<?php
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+<h2>Staff Import Status</h2>
 
-$i = 1;
-?>
+<?php // include_partial('facility/infobar', array('timer' => $timer)); ?>
 
-<h2>Facility Import Status</h2>
+<h3>Import Statistics</h3>
+<br> 
+<table class="headerLess">
+  <tr>
+    <td>
+      <span>Start:</span>
+    </td>
+    <td>
+      <?php
+      echo date('F j, Y, g:i:s a', $startTime);
+      ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>End:</span>
+    </td>
+    <td>
+      <?php
+      echo date('F j, Y, g:i:s a', $endTime);
+      ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Time Elapsed:</span>
+    </td>
 
-<?php include_partial('facility/infobar', array('timer' => $timer)); ?>
+    <td>
+      <?php echo $importTime; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Total Records:</span>
+    </td>
+    <td>
+      <?php echo $totalRecords; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Successful:</span>
+    </td>
+    <td>
+      <?php echo $successful; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Failed:</span>
+    </td>
+    <td>
+      <?php echo $failed; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Unprocessed:</span>
+    </td>
+    <td>
+      <?php echo $unprocessed; ?>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span>Peak Memory Usage: </span>
+    </td>
+    <td>
+      <?php echo $peakMemory; ?>
+    </td>
+  </tr>
+</table>
+<br>
 
-<p>Records imported into temporary table: <?php echo $numRecordsImported; ?><br/>
 
-    <?php if (count($events) > 0): ?>
-    <hr class="ruleGray" />
-    <table>
-        <tr><th>&nbsp;</th><th>Step</th><th>Type</th><th>Message</th></tr>
-    <?php foreach ($events as $event): ?>
-            <tr bgcolor="<?php echo($i % 2 == 0 ? '#F7F7F7' : '#F1F1F1'); ?>">
-                
-        <?php switch ($event["type"]):
-            case "OK": ?>
-            <td><?php echo image_tag('ok.png', array('alt' => 'OK', 'width' => '24', 'height' => '24')); ?></td>
-            <?php break; ?>
-        <?php case "INFO": ?>
-            <td><?php echo image_tag('info.png', array('alt' => 'Information', 'width' => '24', 'height' => '24')); ?></td>
-            <?php break; ?>
-        <?php case "WARN": ?>
-            <td><?php echo image_tag('warn.png', array('alt' => 'Warning', 'width' => '24', 'height' => '24')); ?></td>
-            <?php break; ?>
-        <?php case "ERROR": ?>
-            <td><?php echo image_tag('error.png', array('alt' => 'Error', 'width' => '24', 'height' => '24')); ?></td>
-            <?php break; ?>
-        <?php default: ?>
-            <td><?php echo image_tag('question.png', array('alt' => 'Unknown', 'width' => '24', 'height' => '24')); ?></td>
-        <?php endswitch; ?>
-            <td><?php echo $i++; ?></td>
-            <td><?php echo $event["type"]; ?></td>
-            <td><?php echo $event["message"]; ?></td>
-        </tr>
-    <?php endforeach; ?>
-        </table>
+<?php if ($unprocessedXLS !== FALSE) { ?>
+  <div class="formSmall">
+    <h3>Notice:</h3>
+    <p>All import records could not be processed. Please click the Export Unprocessed
+      button below to download an XLS with the failed rows. You are encouraged to correct these 
+      rows and re-submit the file. Do not re-submit the original file as it may cause errors 
+      and duplication.</p>
+    <?php echo button_to('Export Unprocessed', "staff/download?filename=$unprocessedXLS") ?>
+  </div>
+<?php } ?>
 
-    <?php endif; ?>
+<br>
+<br>
+<table class="blueTable" style="width:auto;" cellspacing="10" cellpadding="10">
+  <tr class="head">
+    <th>Time</th>
+    <th>Type</th>
+    <th>Message</th>
+  </tr>
+  <?php
+  foreach ($importer->getImportEvents() as $value) {
+    echo "<tr><td>";
+    echo date("M d, Y H:i:s T", $value['ts']);
+    echo "</td><td ";
+    if ($value['lvl'] <= 8) {
+      echo "class =\"redColorText boldText centerText\">";
+    } elseif ($value['lvl'] == 16) {
+      echo "class =\"orangeColorText boldText centerText\">";
+    } else {
+      echo "class =\"greenColorText boldText centerText\">";
+    }
+    echo $value['type'];
+    echo "</td><td>";
+    echo $value['msg'];
+    echo "</td></tr>";
+  }
+  ?>
+</table>
 
-    <hr class="ruleGray" />
-
-    <?php #if (isset($errMsg)) echo $errMsg; ?>
-    <?php
-      if (isset($errMsg))
-      {
-        echo '<br />app: ' . $errMsg['app'];
-        echo '<br />env: ' . $errMsg['env'];
-        echo '<br />debug: ' . $errMsg['debug'];
-        echo '<br />no_script_name: ' . $errMsg['no_script_name'];
-      }
-    ?>
-
-    <?php if (isset($summary)): ?>
-      <br /><br /><strong>Total Number of Processed Records:</strong> <?php echo $summary['totalProcessedRecordCount']; ?>
-      <br /><br /><strong>Total New Facility Created:</strong> <?php echo $summary['totalNewFacilityCount']; ?>
-      <br /><br /><strong>Total New Facility Group Created:</strong> <?php echo $summary['totalNewFacilityGroupCount']; ?>
-      <br /><br /><strong>Total Number of Non-processed Records:</strong> <?php echo count($summary['nonprocessedRecords']); ?>
-
-      <br /><br />
-
-      <?php if (count($summary['nonprocessedRecords']) > 0): ?>
-        <table>
-          <caption>Non-processed Records</caption>
-          <tr><th>&nbsp;</th><th>Type</th><th>Record Info</th></tr>
-          <?php $i = 1; ?>
-          <?php foreach ($summary['nonprocessedRecords'] as $failedRecord): ?>
-          <tr bgcolor="<?php echo($i % 2 == 0 ? '#F7F7F7' : '#F1F1F1'); ?>">
-            <td><?php echo $i++; ?></td>
-            <td><?php echo $failedRecord['message']; ?></td>
-            <td>Facility Name: <?php echo $failedRecord['record']['facility_name']; ?>
-              <br />Facility Code: <?php echo $failedRecord['record']['facility_code']; ?>
-              <br />Facility Resource Type Abbr: <?php echo $failedRecord['record']['facility_resource_type_abbr']; ?>
-          </tr>
-          <?php endforeach ?>
-        </table>
-      <?php endif ?>
-
-      <br /><br />
-
-      <?php if (count($summary['warningMessages']) > 0): ?>
-      <table>
-        <caption>Warning Records</caption>
-        <tr><th>&nbsp;</th><th>Type</th><th>Record Info</th></tr>
-        <?php $i = 1; ?>
-        <?php foreach($summary['warningMessages'] as $warning): ?>
-        <tr bgcolor="<?php echo($i % 2 == 0 ? '#F7F7F7' : '#F1F1F1'); ?>">
-          <td><?php echo $i++; ?></td>
-          <td><?php echo $warning['message']; ?></td>
-          <td>Facility Name: <?php echo $warning['record']['facility_name']; ?>
-            <br />Facility Code: <?php echo $warning['record']['facility_code']; ?>
-            <br />Facility Resource Type Abbr: <?php echo $warning['record']['facility_resource_type_abbr']; ?>
-        </tr>
-        <?php endforeach ?>
-
-      </table>
-      <?php endif ?>
-    <?php else: ?>
-      <br /><strong>File not imported.</strong>
-    <?php endif ?>
-
-    <?php if (isset($returnPage) && ($returnPage == 'scenarioResourceTypes')): ?>
-      <a  class="continueButton" href="<?php echo url_for('scenario/resourcetypes?id=' . $scenario_id) ?>">Return to Scenario Resource Types Page</a>
-    <?php elseif (isset($returnPage) && ($returnPage == 'scenarioReview')): ?>
-      <a  class="continueButton" href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>">Return to Review</a>
-    <?php endif ?>

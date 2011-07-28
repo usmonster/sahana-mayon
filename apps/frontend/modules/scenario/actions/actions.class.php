@@ -325,6 +325,61 @@ class scenarioActions extends agActions
    * setScenarioBasics() will use the $request and the ID contained within.
    * *********************************************************************************************** */
 
+//  public function executeFacilityimport(sfWebRequest $request)
+//  {
+//    $this->setScenarioBasics($request);
+//    $this->returnPage = $this->getUser()->getAttribute('returnPage');
+//    $this->getUser()->getAttributeHolder()->remove('returnPage');
+//
+//    $this->forward404Unless($scenarioId = $this->scenario_id);
+////    $this->form = new agImportForm();
+//
+//    $uploadedFile = $_FILES['import'];
+//
+//    // Create import object
+//    $import = new agFacilityImportXLS();
+//
+//    //TODO: get import data directory root info from global param
+//    $importDataRoot = sfConfig::get('sf_upload_dir');
+//    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
+//    if (!file_exists($importDir)) {
+//      mkdir($importDir);
+//    }
+//    $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /* $uploadedFile['name'] */;
+//
+//    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+//      return sfView::ERROR;
+//    }
+//
+//    $this->importPath = $importPath;
+//
+//    $this->timer = time();
+//    $processedToTemp = $import->processImport($this->importPath);
+//    $this->timer = (time() - $this->timer);
+//
+//    $this->numRecordsImported = $import->numRecordsImported;
+//    $this->events = $import->events;
+//
+//    // Normalizes imported temp data only if import is successful.
+//    if ($processedToTemp) {
+//      // Grab table name from import class.
+//      $sourceTable = $import->tempTable;
+//
+//      $this->importer = new agFacilityImportNormalization($this->scenario_id, $sourceTable, 'facility');
+//      //TODO: $this->dispatcher->notify(new sfEvent($this, 'import.start'));
+//
+//      $this->timer = time();
+//      $this->importer->normalizeImport();
+//
+//      $this->summary = $this->importer->summary;
+//
+//    }
+//
+//    // Commented out to allow UAT testing without lucene errors
+//    //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+//
+//    $this->timer = (time() - $this->timer);
+//  }
   public function executeFacilityimport(sfWebRequest $request)
   {
     $this->setScenarioBasics($request);
@@ -332,53 +387,58 @@ class scenarioActions extends agActions
     $this->getUser()->getAttributeHolder()->remove('returnPage');
 
     $this->forward404Unless($scenarioId = $this->scenario_id);
-//    $this->form = new agImportForm();
+
+    $this->startTime = microtime(true);
 
     $uploadedFile = $_FILES['import'];
-    
-    // Create import object
-    $import = new agFacilityImportXLS();
 
-    //TODO: get import data directory root info from global param
-    $importDataRoot = sfConfig::get('sf_upload_dir');
-    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
-    if (!file_exists($importDir)) {
-      mkdir($importDir);
-    }
-    $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /* $uploadedFile['name'] */;
-    
-    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+    //print("<pre>" . print_r($_FILES, true) . "</pre>");
+
+    $this->importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
+
+
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $this->importPath)) {
       return sfView::ERROR;
     }
+    //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
-    $this->importPath = $importPath;
-    
-    $this->timer = time();
-    $processedToTemp = $import->processImport($this->importPath);
-    $this->timer = (time() - $this->timer);
+    $this->importer = agFacilityImportNormalization::getInstance($scenarioId, NULL, agEventHandler::EVENT_NOTICE);
 
-    $this->numRecordsImported = $import->numRecordsImported;
-    $this->events = $import->events;
+    $this->importer->processXlsImportFile($this->importPath);
 
-    // Normalizes imported temp data only if import is successful.
-    if ($processedToTemp) {
-      // Grab table name from import class.
-      $sourceTable = $import->tempTable;
-
-      $this->importer = new agFacilityImportNormalization($this->scenario_id, $sourceTable, 'facility');
-      //TODO: $this->dispatcher->notify(new sfEvent($this, 'import.start'));
-
-      $this->timer = time();
-      $this->importer->normalizeImport();
-
-      $this->summary = $this->importer->summary;
-      
+    $left = 1;
+    while ($left > 0) {
+      $left = $this->importer->processBatch();
+      // print_r($left);
     }
+    $iterData = $this->importer->getIterData();
+    $this->totalRecords = $iterData['fetchCount'];
+    $this->successful = $iterData['processedSuccessful'];
+    $this->failed = $iterData['processedFailed'] + $iterData['tempErrCt'];
+    $this->unprocessed = $iterData['unprocessed'];
 
-    // Commented out to allow UAT testing without lucene errors
-    //$this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
-    
-    $this->timer = (time() - $this->timer);
+    // Report elapsed time
+    $this->endTime = microtime(true);
+    $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+    $this->importTime = date("H:i:s", $time);
+
+    // Get the memory usage
+    $peakMemory = $this->importer->getPeakMemoryUsage();
+
+    // Format memory
+    $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+    if ($peakMemory <= 999) {
+      $peakMemory = 1;
+    }
+    for ($i = 0; $peakMemory > 999; $i++) {
+      $peakMemory /= 1024;
+    }
+    $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
+
+    // close out import components and create an xls if needed
+    $this->importer->concludeImport();
+    $downloadFile = $this->importer->getUnprocessedXLS();
+    $this->unprocessedXLS = $downloadFile;
   }
 
   /**
@@ -1190,15 +1250,22 @@ class scenarioActions extends agActions
     {
       // Query for all predefined staff resource and faciltiy resource combinations.
       $requiredResourceCombo = agDoctrineQuery::create()
-        ->select('fsr.staff_resource_type_id')
+        ->select('sfts.id')
+            ->addSelect('fsr.staff_resource_type_id')
             ->addSelect('fr.facility_resource_type_id')
-          ->from('agFacilityStaffResource AS fsr')
+//            ->addSelect('sfr.id')
+          ->from('agShiftStatus AS sfts')
+            ->addFrom('agFacilityStaffResource AS fsr')
             ->innerJoin('fsr.agScenarioFacilityResource AS sfr')
             ->innerJoin('sfr.agFacilityResource AS fr')
             ->innerJoin('sfr.agScenarioFacilityGroup AS sfg')
           ->where('sfg.scenario_id = ?', $this->scenario_id)
-          ->orderBy('fsr.staff_resource_type_id, fr.facility_resource_type_id')
-       ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+            ->andWhere('sfts.disabled = ?', '0')
+          ->groupBy('fsr.staff_resource_type_id, fr.facility_resource_type_id, sfts.id')
+          ->orderBy('fsr.staff_resource_type_id, fr.facility_resource_type_id, sfts.id')
+        ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+//      $query = $requiredResourceCombo->getSqlQuery();
+//      $requiredResourceCombo = $requiredResourceCombo->execute(array(), Doctrine_Core::HYDRATE_NONE);
     }
     $this->shifttemplateforms = new agShiftTemplateContainerForm($this->scenario_id,
                                                                  $requiredResourceCombo);
@@ -1212,12 +1279,6 @@ class scenarioActions extends agActions
       {
         if ($request->hasParameter('Continue') || $request->hasParameter('Delete'))
         {
-//          if ($request->hasParameter('Delete'))
-//          {
-//            $this->shifttemplateforms->deleteEmbeddedForms($request->getParameter('deleteShiftTemplateId'));
-////            unset($this->shifttemplateforms[$request->getParameter('deleteShiftTemplateId')]);
-//          }
-
           if  ($request->hasParameter('Delete'))
           {
             $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms($request->getParameter('deleteShiftTemplateId'));

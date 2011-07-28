@@ -9,1992 +9,1186 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
- * @author Charles Wisniewski, CUNY SPS
+ * @author Chad Heuschober, CUY SPS
  * @author Shirley Chan, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
-class agFacilityImportNormalization //extends agImportNormalization
+class agFacilityImportNormalization extends agImportNormalization
 {
 
-  public $summary = array();
-  private $importStaffList = array();
-  private $staffMapping = array();
-  private $errMsg;
+  protected $scenarioId = NULL;
 
-  function __construct($scenarioId, $sourceTable, $dataType)
+  /**
+   * Method to return an instance of this class
+   * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
+   * @return agFacilityImportNormalization An instance of this class
+   */
+  public static function getInstance($scenarioId, $tempTable, $logEventLevel = NULL)
   {
-    //TODO: uncomment when agImportNormalization is ready to be extended
-    //parent::__construct($sourceTable);
-    // declare variables
-    $this->dataType = $dataType;
+    $self = new self();
+    $self->__setScenario($scenarioId);
+    $self->__init($tempTable, $logEventLevel);
+    return $self;
+  }
+
+  /**
+   * Method to initialize this class
+   * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
+   */
+  public function __init($tempTable = NULL, $logEventLevel = NULL)
+  {
+    if (is_null($tempTable))
+    {
+      $tempTable = 'temp_facility_import';
+    }
+
+    // DO NOT REMOVE
+    parent::__init($tempTable, $logEventLevel);
+
+    // set the import components array as a class property
+    $this->setImportComponents();
+    $this->tempTableOptions = array('type' => 'MYISAM', 'charset' => 'utf8');
+    $this->importHeaderStrictValidation = TRUE;
+
+    $this->eh->setErrThreshold(intval(agGlobal::getParam('import_error_threshold')));
+
+    // Construct lookup variables.
+    $this->buildLookup();
+  }
+
+  /**
+   * Method to pre-gather all lookup values into class properties for later facility import 
+   * processing.  Note: All returned values are converted to all lower case characters to gaurantee
+   * a case-insensitive match.  For all data matching against these class property values much also
+   * be pre- lower case.
+   */
+  protected function buildLookup()
+  {
+    $this->facRscTypeAbbrIds = agDoctrineQuery::create()
+            ->select('frt.facility_resource_type_abbr')
+            ->addSelect('frt.id')
+            ->from('agFacilityResourceType frt')
+            ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $this->facRscTypeAbbrIds = array_change_key_case($this->facRscTypeAbbrIds, CASE_LOWER);
+
+    $this->facRscStatusIds = agDoctrineQuery::create()
+            ->select('frs.facility_resource_status')
+            ->addSelect('frs.id')
+            ->from('agFacilityResourceStatus frs')
+            ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $this->facRscStatusIds = array_change_key_case($this->facRscStatusIds, CASE_LOWER);
+
+    $this->facGrpTypeIds = agDoctrineQuery::create()
+            ->select('fg.facility_group_type')
+            ->addSelect('fg.id')
+            ->from('agFacilityGroupType fg')
+            ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $this->facGrpTypeIds = array_change_key_case($this->facGrpTypeIds, CASE_LOWER);
+
+    $this->facGrpAllocStatusIds = agDoctrineQuery::create()
+            ->select('fgas.facility_group_allocation_status')
+            ->addSelect('fgas.id')
+            ->from('agFacilityGroupAllocationStatus fgas')
+            ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $this->facGrpAllocStatusIds = array_change_key_case($this->facGrpAllocStatusIds, CASE_LOWER);
+
+    $this->facRscAllocStatusIds = agDoctrineQuery::create()
+            ->select('fras.facility_resource_allocation_status')
+            ->addSelect('fras.id')
+            ->from('agFacilityResourceAllocationStatus fras')
+            ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+    $this->facRscAllocStatusIds = array_change_key_case($this->facRscAllocStatusIds, CASE_LOWER);
+
+  }
+
+  public function __setScenario($scenarioId)
+  {
     $this->scenarioId = $scenarioId;
-    $this->sourceTable = $sourceTable;
-    $this->defineStatusTypes();
-    $this->summary = array();
-    $this->warningMessages = array();
-    $this->nonprocessedRecords = array();
-    $this->totalProcessedRecordCount = 0;
-    $this->totalNewFacilityCount = 0;
-    $this->totalNewFacilityGroupCount = 0;
-    $this->processedFacilityIds = array();
-    $this->conn = null;
-    $this->errMsg;
-  }
-
-  function __destruct()
-  {
-//    //drop temp table.
-//    $this->conn->export->dropTable($this->sourceTable);
-//    $this->conn->close();
   }
 
   /**
-   * Method to define status and type variables.
+   * Imports staff from an excel file.
    */
-  private function defineStatusTypes()
+  public function processXlsImportFile($importFile)
   {
-    $this->facilityContactType = 'work';
-    $this->defaultPhoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
-    $this->emailContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('email')), CASE_LOWER);
-    $this->phoneContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('phone')), CASE_LOWER);
-    $this->addressContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('address')), CASE_LOWER);
-    $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->defaultPhoneFormatTypes));
-    $this->staffResourceTypes = array_change_key_case(array_flip(agStaffHelper::getStaffResourceTypes(TRUE)), CASE_LOWER);
-    $this->mapStaffColumn();
-    $addressHelper = new agAddressHelper();
-    $this->addressStandards = $addressHelper->getAddressStandardId();
-    $this->addressElements = array_flip($addressHelper->getAddressAllowedElements());
-    $this->geoType = 'point';
-    $this->geoTypeId = agFacilityHelper::getGeoTypes($this->geoType);
-    $this->defaultGeoMatchScore = 'good';
-    $this->geoMatchScores = array_flip(agGisHelper::getGeoMatchScores());
-    $geoMatchScores = $this->geoMatchScores;
-    $this->geoMatchScoreId = $geoMatchScores[$this->defaultGeoMatchScore];
-    $this->geoSourceParamVal = agGlobal::getParam('facility_import_geo_source');
-    $this->geoSources = array_flip(agGisHelper::getGeoSources());
-    $this->geoSourceId = $this->geoSources[$this->geoSourceParamVal];
+    // process the excel file and create a temporary table
+    parent::processXlsImportFile($importFile);
 
-    if ($this->dataType == 'facility') {
-      $this->facilityResourceTypes = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceAbbrTypes()), CASE_LOWER);
-      $this->facilityResourceStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceStatuses()), CASE_LOWER);
-      $this->facilityResourceAllocationStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceAllocationStatuses()), CASE_LOWER);
-      $this->facilityGroupTypes = array_change_key_case(array_flip(agFacilityHelper::getFacilityGroupTypes()), CASE_LOWER);
-      $this->facilityGroupAllocationStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityGroupAllocationStatuses()), CASE_LOWER);
-    }
+    // start our iterator and initialize our select query
+    $this->tempToRaw($this->buildTempSelectQuery());
   }
 
   /**
-   * Verify data in record for required fields and valid statuses and types
+   * Method to set the unprocessed records basename
+   */
+  protected function setUnprocessedBaseName()
+  {
+    $this->unprocessedBaseName = agGlobal::getParam('unprocessed_facility_import_basename');
+  }
+
+  /**
+   * Method to set the dynamic field type. Does not need to be called here, will be called in parent
+   */
+  protected function setDynamicFieldType()
+  {
+
+  }
+
+  /**
+   * Method to extend the import specification to include dynamic columns from the file headers
+   * @param array $importFileHeaders A single-dimension array of import file headers / column names
+   */
+  protected function addDynamicColumns(array $importFileHeaders)
+  {
+
+  }
+
+  /**
+   * Method to set the classes' import specification.
+   * Note: This intentionally excludes non-data fields (such as id, or success indicators); these
+   * are set at a later point in the process.
+   */
+  protected function setImportSpec()
+  {
+    $importSpec['facility_name'] = array('type' => "string", 'length' => 64);
+    $importSpec['facility_code'] = array('type' => "string", 'length' => 10);
+    $importSpec['facility_resource_type_abbr'] = array('type' => "string", 'length' => 10);
+    $importSpec['facility_resource_status'] = array('type' => "string", 'length' => 40);
+    $importSpec['facility_capacity'] = array('type' => "integer", 'length' => 2);
+    $importSpec['facility_activation_sequence'] = array('type' => "integer", 'length' => 1);
+    $importSpec['facility_allocation_status'] = array('type' => "string", 'length' => 30);
+    $importSpec['facility_group'] = array('type' => "string", 'length' => 64);
+    $importSpec['facility_group_type'] = array('type' => "string", 'length' => 30);
+    $importSpec['facility_group_allocation_status'] = array('type' => "string", 'length' => 30);
+    $importSpec['facility_group_activation_sequence'] = array('type' => "integer", 'length' => 1);
+    $importSpec['work_email'] = array('type' => "string", 'length' => 255);
+    $importSpec['work_phone'] = array('type' => "string", 'length' => 16);
+    $importSpec['street_1'] = array('type' => "string", 'length' => 128);
+    $importSpec['street_2'] = array('type' => "string", 'length' => 128);
+    $importSpec['city'] = array('type' => "string", 'length' => 128);
+    $importSpec['state'] = array('type' => "string", 'length' => 128);
+    $importSpec['postal_code'] = array('type' => "string", 'length' => 128);
+    $importSpec['borough'] = array('type' => "string", 'length' => 128);
+    $importSpec['country'] = array('type' => "string", 'length' => 128);
+    $importSpec['longitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['latitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['ec_opr_min'] = array('type' => "integer", 'length' => 6);
+    $importSpec['ec_opr_max'] = array('type' => "integer", 'length' => 6);
+    $importSpec['hs_opr_min'] = array('type' => "integer", 'length' => 6);
+    $importSpec['hs_opr_max'] = array('type' => "integer", 'length' => 6);
+    $importSpec['spec_min'] = array('type' => "integer", 'length' => 6);
+    $importSpec['spec_max'] = array('type' => "integer", 'length' => 6);
+    $importSpec['uorc_min'] = array('type' => "integer", 'length' => 6);
+    $importSpec['uorc_max'] = array('type' => "integer", 'length' => 6);
+    $importSpec['med_nrs_min'] = array('type' => "integer", 'length' => 6);
+    $importSpec['med_nrs_max'] = array('type' => "integer", 'length' => 6);
+    $importSpec['med_oth_min'] = array('type' => "integer", 'length' => 6);
+    $importSpec['med_oth_max'] = array('type' => "integer", 'length' => 6);
+    $importSpec['staff_min'] = array('type' => "integer", 'length' => 6);
+    $importSpec['staff_max'] = array('type' => "integer", 'length' => 6);
+    $importSpec['opr_min'] = array('type' => "integer", 'length' => 6);
+    $importSpec['opr_max'] = array('type' => "integer", 'length' => 6);
+
+    // set the class property to the newly created
+    $this->importSpec = $importSpec;
+  }
+
+  /**
+   * Method to clean a column name, removing leading and trailing spaces, special characters,
+   * and replacing between-word spaces with an underscore. Will also throw if a zls is produced.
+   * Note: This method is intentionally kept in the child class to allow customization if necesary
    *
-   * @param array $record
-   * @return boolean TRUE if data in record satisfies all requirements for processing.  FALSE otherwise.
+   * @param string $columnName A string value representing a column name
+   * @return string A properly formatted column name.
    */
-  private function dataValidation(array $record)
+  protected function cleanColumnName($columnName)
   {
-    // Check for required fields
-    if (empty($record['facility_name'])) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Facility Name',
-        'message' => 'Invalid facility name.');
+    // keep this in case we need to throw an error
+    $oldColumnName = $columnName;
+
+    // trim once, for good measure, then replace spaces with underscores
+    $columnName = trim(strtolower($columnName));
+    $columnName = str_replace(' ', '_', trim(strtolower($columnName)));
+
+    // many db's complain about numbers prepending column names
+    $columnName = preg_replace('/^\d+/', '', $columnName);
+
+    // filter out all special characters
+    $columnName = preg_replace('/[\W]/', '', $columnName);
+
+    // reduce any duplicate underscore pairs we may have created
+    $columnName = preg_replace('/__+/', '_', $columnName);
+
+    // lastly, in case this method created an unusable empty string, we throw (eg, fatal)
+    if (strlen($columnName) == 0)
+    {
+      $errMsg = "Column name {$oldColumnName} could not be parsed.";
+      $this->eh->logCrit($errMsg, 1);
+      throw new Exception($errMsg);
+    }
+    return $columnName;
+  }
+
+  /**
+   * This method is an extension of the parent validate column headers method allowing
+   * domain-specific header validation.
+   * @param array $importFileHeaders An array of import file headers.
+   * @param string $sheetName The name of the sheet being validated.
+   * @return boolean A boolean indicating un/successful validation of column headers.
+   */
+  protected function validateColumnHeaders(array $importFileHeaders, $sheetName)
+  {
+    // DO NOT REMOVE THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING
+    $validated = parent::validateColumnHeaders($importFileHeaders, $sheetName);
+
+    return $validated;
+  }
+
+  /**
+   * Method to dynamically build a (mostly) static tempSelectQuery
+   * @return string Returns a string query
+   */
+  protected function buildTempSelectQuery()
+  {
+    $query = sprintf(
+                    'SELECT t.*
+         FROM %s AS t', $this->tempTable);
+
+    return $query;
+  }
+
+  /**
+   * @todo This data should belong in a configuration file (eg, YML)
+   */
+  protected function setImportComponents()
+  {
+    // array( [order] => array(component => component name, helperClass => Name of the helper class, throwOnError => boolean, method => method name) )
+    // setEntity creates entity, person, and staff records.
+    $this->importComponents[] = array(
+        'component' => 'facility',
+        'throwOnError' => TRUE,
+        'method' => 'setFacilities',
+    );
+    $this->importComponents[] = array(
+        'component' => 'facilityResource',
+        'throwOnError' => TRUE,
+        'method' => 'setFacilityResources'
+    );
+    $this->importComponents[] = array(
+      'component' => 'facilityGroup',
+      'throwOnError' => FALSE,
+      'method' => 'setScenarioFacilityGroups',
+    );
+    $this->importComponents[] = array(
+      'component' => 'scenarioFacilityResource',
+      'throwOnError' => FALSE,
+      'method' => 'setScenarioFacilityResources',
+    );
+    $this->importComponents[] = array(
+        'component' => 'email',
+        'throwOnError' => FALSE,
+        'method' => 'setEntityEmail',
+        'helperClass' => 'agEntityEmailHelper'
+    );
+    $this->importComponents[] = array(
+        'component' => 'phone',
+        'throwOnError' => FALSE,
+        'method' => 'setEntityPhone',
+        'helperClass' => 'agEntityPhoneHelper'
+    );
+
+
+    $this->importComponents[] = array(
+      'component' => 'address',
+      'throwOnError' => FALSE,
+      'method' => 'setEntityAddress',
+      'helperClass' => 'agEntityAddressHelper'
+    );
+  }
+
+  /**
+   * Method to check for required columns and calls the method to set / create new entities, site,
+   * and facility.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function setFacilities($throwOnError, Doctrine_Connection $conn)
+  {
+    // check for required columns
+    $requiredColumns = array('facility_name', 'facility_code');
+
+    foreach ($this->importData AS $rowId => &$rowData)
+    {
+      // used at the end to determine whether to continue processing this record
+      $err = FALSE;
+
+      foreach ($requiredColumns AS $column)
+      {
+        if (!isset($rowData['_rawData'][$column]))
+        {
+          $errMsg = 'Required column ' . $column . ' is missing from record id ' . $rowId .
+                  '.  This facility is excluded from import';
+          unset($this->import[$rowId]);
+          $err = TRUE;
+        }
+
+        // oh, poo!
+        if ($err)
+        {
+          // log our error either way
+          $this->eh->logErr($errMsg);
+
+          // otherwise just break
+          break;
+        }
+      }
     }
 
-    // Check for valid facility_code
-    if (empty($record['facility_code'])) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Facility Code',
-        'message' => 'Invalid facility code.');
+    // we need to capture errors just to make sure we don't store failed ID inserts
+    try {
+      $this->updateFacilities($conn);
     }
-
-    $this->fullAddress = array('line 1' => $record['street_1'],
-      'line 2' => $record['street_2'],
-      'city' => $record['city'],
-      'state' => $record['state'],
-      'zip5' => $record['postal_code'],
-      'borough' => $record['borough'],
-      'country' => $record['country']);
-
-    if (empty($record['street_1']) || empty($record['city']) ||
-        empty($record['state']) || empty($record['postal_code'])) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Mail Address',
-        'message' => 'Invalid street 1/city/state/postal_code address.');
-    }
-
-    if (empty($record['longitude']) or empty($record['latitude'])) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Geo',
-        'message' => 'Invalid longitutde/latitude.');
-    }
-
-    // Check for min/max set validation:
-    // (1) Check for valid staff type.
-    // (2) Either both min and max are provided or neither should be provided for each staff type.
-    // (3) max >= min.
-    foreach ($this->importStaffList as $staff) {
-      $staffMin = $staff . '_min';
-      $staffMax = $staff . '_max';
-      if (!array_key_exists($staff, $this->staffMapping)) {
-        return array('pass' => FALSE,
-          'status' => 'ERROR',
-          'type' => 'Staff Resource',
-          'message' => 'Invalid staff resource type.');
+    catch (Exception $e) {
+      foreach ($this->importData as $rowId => &$rowData)
+      {
+        unset($rowData['primaryKeys']['entity_id']);
+        unset($rowData['primaryKeys']['site_id']);
+        unset($rowData['primaryKeys']['facility_id']);
       }
 
-      // Check if column min/max exists.
-      if (!array_key_exists($staffMin, $record) || !array_key_exists($staffMax, $record)) {
-        return array('pass' => FALSE,
-          'status' => 'ERROR',
-          'type' => 'Staff Resource',
-          'message' => 'Invalid min/max set: missing column.');
+      // continue throwing our exception
+      throw $e;
+    }
+  }
+
+  /**
+   * Method to set / create new entities, site, and facility.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function updateFacilities(Doctrine_Connection $conn)
+  {
+    // explicit declarations are good
+    $rawFacilityCodes = array();
+
+    // loop our import data and pick up any existing facility code
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      $rawData = $rowData['_rawData'];
+
+      if (array_key_exists('facility_code', $rawData))
+      {
+        $rawFacilityCodes[$rowId] = strtolower($rawData['facility_code']);
       }
+    }
+    unset($rowData);
 
-      // Check if a set value is provided.
-      if (( empty($record[$staffMin]) && !empty($record[$staffMax]) )
-          || (!empty($record[$staffMin]) && empty($record[$staffMax]) )) {
-        return array('pass' => FALSE,
-          'status' => 'ERROR',
-          'type' => 'Staff Resource',
-          'message' => 'Invalid min/max set: missing value.');
+    // find current entity + facilities
+    $q = agDoctrineQuery::create($conn)
+                    ->select('f.*')
+                    ->addSelect('s.*')
+                    ->from('agFacility f')
+                    ->innerJoin('f.agSite s')
+                    ->whereIn('f.facility_code', $rawFacilityCodes);
+    $facilityColl = $q->execute();
+
+    $this->eh->logDebug('{' . count($facilityColl) . '} facility entities found in the database.');
+
+    // update our row keys array
+    $this->eh->logDebug('Updating primary keys for found entities.');
+
+    // Add entity id and facility id to $this->importData['primaryKeys'].
+    // While we're looping the existing facility, make facility update where necessary.
+    foreach ($facilityColl AS $facility)
+    {
+      $rowId = array_search(strtolower($facility['facility_code']), $rawFacilityCodes);
+      $this->importData[$rowId]['primaryKeys']['entity_id'] = $facility->agSite['entity_id'];
+      $this->importData[$rowId]['primaryKeys']['facility_id'] = $facility['id'];
+      $facility['facility_name'] = $this->importData[$rowId]['_rawData']['facility_name'];
+      unset($rawFacilityCodes[$rowId]);
+    }
+    $facilityColl->save($conn);
+    $facilityColl->free(TRUE);
+    unset($facilityColl);
+
+    // Build the table and collection objects for entity and site. Only build table object for
+    // facility as we will use the facility collection created from above.
+    $entityTable = $conn->getTable('agEntity');
+    $entityColl = new Doctrine_Collection('agEntity');
+    $siteTable = $conn->getTable('agSite');
+    $siteColl = new Doctrine_Collection('agSite');
+    $facilityTable = $conn->getTable('agFacility');
+
+    // Create new entity using rowId as the key to $entityColl.
+    foreach ($rawFacilityCodes AS $rowId => $facilityCode)
+    {
+      $entity = new agEntity($entityTable, TRUE);
+      $entityColl->add($entity, $rowId);
+      unset($rawFacilityCodes[$rowId]);
+    }
+    $entityColl->save($conn);
+
+    // Create new site using rowId as the key to $siteColl.
+    foreach ($entityColl AS $rowId => $entity)
+    {
+      $entityId = $entity['id'];
+      $site = new agSite($siteTable, TRUE);
+      $site['entity_id'] = $entityId;
+      $siteColl->add($site, $rowId);
+
+      $this->importData[$rowId]['primaryKeys']['entity_id'] = $entityId;
+    }
+    $siteColl->save($conn);
+    $entityColl->free(TRUE);
+    unset($entityColl);
+
+    // Create new facility using rowId as the key to $facilityColl.
+    $facilityColl = new Doctrine_Collection('agFacility');
+    foreach ($siteColl AS $rowId => $site)
+    {
+      $rawData = $this->importData[$rowId]['_rawData'];
+      $facility = new agFacility($facilityTable, TRUE);
+      $facility['site_id'] = $site['id'];
+      $facility['facility_name'] = $rawData['facility_name'];
+      $facility['facility_code'] = $rawData['facility_code'];
+      $facilityColl->add($facility, $rowId);
+    }
+    $facilityColl->save($conn);
+
+    // Store new facility ids to $this->importData['primaryKeys'].
+    foreach ($this->importData AS $rowId => &$rowData)
+    {
+      if (!isset($rowData['primaryKeys']['facility_id']))
+      {
+        $rowData['primaryKeys']['facility_id'] = $facilityColl[$rowId]['id'];
       }
-      // Check if min <= max
-      if ($record[$staffMin] > $record[$staffMax]) {
-        return array('pass' => FALSE,
-          'status' => 'ERROR',
-          'type' => 'Staff Resource',
-          'message' => 'Invalid min/max set: min > max.');
-      }
     }
-
-    // Check for valid email address
-    if (!empty($record['work_email']) && !preg_match('/^.+\@.+\..+$/', $record['work_email'])) {
-      return array('pass' => FALSE,
-        'status' => 'WARNING',
-        'type' => 'Email',
-        'message' => 'Invalid email address.');
-    }
-
-    // Check for valid phone number where it's either 10 digit or
-    // 10 digit follow by an 'x' and the extension.
-    if (!empty($record['work_phone']) && !preg_match('/^((\([\d]{3}\) *[\d]{3} *-?[\d]{4})|(([\d]{3}(.|-)? *){2}[\d]{4})) *(x\d+)?$/', $record['work_phone'])) {
-      return array('pass' => FALSE,
-        'status' => 'WARNING',
-        'type' => 'Phone',
-        'message' => 'Invalid phone number.');
-    }
-
-    // Check for valid status and type.
-
-    if (!array_key_exists(strtolower($record['facility_resource_type_abbr']), $this->facilityResourceTypes)) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Facility Resource Type Abbr',
-        'message' => 'Undefined facility resource type abbreviation.');
-    }
-
-    if (!array_key_exists(strtolower($record['facility_resource_status']), $this->facilityResourceStatuses)) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Facility Resource status',
-        'message' => 'Undefined facility resource status.');
-    }
-
-    if (!array_key_exists(strtolower($record['facility_allocation_status']), $this->facilityResourceAllocationStatuses)) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Facility Resource Allocation Status',
-        'message' => 'Undefined facility resource allocation status.');
-    }
-
-    if (!array_key_exists(strtolower($record['facility_group_type']), $this->facilityGroupTypes)) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Facility Group Type',
-        'message' => 'Undefined facility group type.');
-    }
-
-    if (!array_key_exists(strtolower($record['facility_group_allocation_status']), $this->facilityGroupAllocationStatuses)) {
-      return array('pass' => FALSE,
-        'status' => 'ERROR',
-        'type' => 'Facility Group Allocation Status',
-        'message' => 'Undefined facility group allocation status.');
-    }
-
-    return array('pass' => TRUE,
-      'status' => 'SUCCESS',
-      'type' => null,
-      'message' => null);
+    $facilityColl->free(TRUE);
+    unset($facilityColl);
   }
 
   /**
-   * Method to identify all the staff requirement fields, suffixed with either a _min or _max string.
-   *
-   * @param array $columnHeaders  An array of column headers.
+   * Method to check for required columns and to set / create new facility resources.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
-  private function getImportStaffList($columnHeaders)
+  protected function setFacilityResources($throwOnError, Doctrine_Connection $conn)
   {
+    $facRscTypeAbbrIds = $this->facRscTypeAbbrIds;
+    $facRscStatusIds = $this->facRscStatusIds;
 
-    $setHeaders = preg_grep('/_(min|max)$/i', $columnHeaders);
-    foreach ($setHeaders as $key => $column) {
-      $this->importStaffList[] = rtrim(rtrim(strtolower($column), '_min'), '_max');
-    }
-    $this->importStaffList = array_values(array_unique($this->importStaffList));
-  }
+    // Capacity is a required field but does not reference to any other tables, thus, pointing to
+    // NULL value.
+    $requiredColumns = array('facility_resource_type_abbr' => 'facRscTypeAbbrIds',
+                             'facility_resource_status' => 'facRscStatusIds',
+                             'facility_capacity' => NULL
+                            );
 
-  /**
-   * Method to replace a white space with underscore.
-   *
-   * @param string $name A string for replacement.
-   * @return string $name A reformatted string.
-   */
-  private function stripName($name = NULL)
-  {
-    if (is_null($name) || !is_string($name)) {
-      return $name;
-    }
+    // Check for valid facility resource type abbr and facility resource status provided.
+    // Meanwhile also build the $rawFacilityResources array for later use.
+    foreach ($this->importData AS $rowId => $rowData)
+    {
+      // used at the end to determine whether to continue processing this record
+      $err = FALSE;
 
-    $strippedName = strtolower(str_replace(' ', '_', $name));
-    return $strippedName;
-  }
-
-  /**
-   * Method to create a mapping of the staff resource types to their save column header formats.
-   */
-  private function mapStaffColumn()
-  {
-    foreach ($this->staffResourceTypes as $staff => $id) {
-      $cleanName = $this->stripName($staff);
-      $this->staffMapping[$cleanName] = $staff;
-    }
-  }
-
-  /**
-   * Method to dynamically generate staff requirements based off of the the pass in record.
-   *
-   * @param array $record An associative array of an entry from the import temp table.
-   */
-  private function dynamicStaffing($record)
-  {
-    $staffingRequirements = array();
-    foreach ($this->importStaffList as $staff) {
-      $staffId = $this->staffResourceTypes[$this->staffMapping[$staff]];
-      $staffMin = $staff . '_min';
-      $staffMax = $staff . '_max';
-      $staffingRequirements[$staffId] = array('min' => $record[$staffMin],
-        'max' => $record[$staffMax]);
-    }
-    return $staffingRequirements;
-  }
-
-  /**
-   * Method to normalize data from temp table.
-   */
-  public function normalizeImport()
-  {
-    // Declare static variables.
-    $facilityContactType = $this->facilityContactType;
-
-    // Setup db connection.
-    $conn = Doctrine_Manager::connection();
-
-    // Fetch import data.
-    $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
-    $pdo = $conn->execute($query);
-    $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
-    $sourceRecords = $pdo->fetchAll();
-
-    // Grab the dynamical columns of staff requirements.
-    if (count($sourceRecords) > 0) {
-      $this->getImportStaffList(array_keys($sourceRecords[0]));
-    }
-
-    //loop through records.
-    foreach ($sourceRecords as $record) {
-      $validEmail = 1;
-      $validPhone = 1;
-      $validAddress = 1;
-      $isNewFacilityRecord = 0;
-      $isNewFacilityGroupRecord = 0;
-
-      $isValidData = $this->dataValidation($record);
-      if (!$isValidData['pass']) {
-        switch ($isValidData['status']) {
-          case 'ERROR':
-            $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-              'record' => $record);
-            continue 2;
-          case 'WARNING':
-            switch ($isValidData['type']) {
-              case 'Email':
-                $validEmail = 0;
-                $this->warningMessages[] = array('message' => $isValidData['message'],
-                  'record' => $record);
-                break;
-              case 'Phone':
-                $validPhone = 0;
-                $this->warningMessages[] = array('message' => $isValidData['message'],
-                  'record' => $record);
-                break;
-              case 'Mail Address':
-                $validAddress = 0;
-                $this->warningMessages[] = array('message' => $isValidData['message'],
-                  'record' => $record);
-                break;
+      // loop through each of the required columns and validate it
+      foreach ($requiredColumns as $column => $validator)
+      {
+        if (!isset($rowData['_rawData'][$column]))
+        {
+          $errMsg = 'Required column ' . $column . ' is missing from record id ' . $rowId . '.';
+          $err = TRUE;
+        }
+        else
+        {
+          if (empty($validator))
+          {
+            // Make sure the column's value is a positive integer.
+            $value = $rowData['_rawData'][$column];
+            if (!ctype_digit($value))
+            {
+              if (!isset(${$validator}[strtolower($rowData['_rawData'][$column])]))
+              {
+                $errMsg = 'Invalid ' . $column . ' "' . $rowData['_rawData'][$column] . '" given for ' .
+                        'record id ' . $rowId . '.';
+                $err = TRUE;
+              }
             }
-            break;
-          default:
-            $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-              'record' => $record);
-            continue 2;
-        }
-      }
-
-      // Declare variables.
-      $facility_name = $record['facility_name'];
-      $facility_code = $record['facility_code'];
-      $facility_resource_type_abbr = strtolower($record['facility_resource_type_abbr']);
-      $facility_resource_status = strtolower($record['facility_resource_status']);
-      $capacity = $record['facility_capacity'];
-      $facility_activation_sequence = $record['facility_activation_sequence'];
-      $facility_allocation_status = strtolower($record['facility_allocation_status']);
-      $facility_group = $record['facility_group'];
-      $facility_group_type = strtolower($record['facility_group_type']);
-      $facility_group_allocation_status = strtolower($record['facility_group_allocation_status']);
-      $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
-      $email = $record['work_email'];
-      $phone = $record['work_phone'];
-      $fullAddress = $this->fullAddress;
-      $geoInfo = array('longitude' => $record['longitude'], 'latitude' => $record['latitude']);
-      $staffing = $this->dynamicStaffing($record);
-
-      $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
-      $facility_resource_status_id = $this->facilityResourceStatuses[$facility_resource_status];
-      $facility_group_type_id = $this->facilityGroupTypes[$facility_group_type];
-      $facility_group_allocation_status_id = $this->facilityGroupAllocationStatuses[$facility_group_allocation_status];
-      $facility_resource_allocation_status_id = $this->facilityResourceAllocationStatuses[$facility_allocation_status];
-      $workEmailTypeId = $this->emailContactTypes[$facilityContactType];
-      $workPhoneTypeId = $this->phoneContactTypes[$facilityContactType];
-      $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
-      $workPhoneFormatId = $this->phoneFormatTypes[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
-      $workAddressTypeId = $this->addressContactTypes[$facilityContactType];
-      $workAddressStandardId = $this->addressStandards;
-      $addressElementIds = $this->addressElements;
-
-      try {
-        // here we check our current transaction scope and create a transaction or savepoint based on need
-        $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-        if ($useSavepoint) {
-          $conn->beginTransaction(__FUNCTION__);
-        } else {
-          $conn->beginTransaction();
-        }
-
-        // facility
-        // tries to find an existing record based on a unique identifier.
-        $facility = agDoctrineQuery::create($conn)
-                ->from('agFacility f')
-                ->where('f.facility_code = ?', $facility_code)
-                ->fetchOne();
-        $facilityResource = NULL;
-        $scenarioFacilityResource = NULL;
-
-        if (empty($facility)) {
-          $facility = $this->createFacility($facility_name, $facility_code, $conn);
-          $isNewFacilityRecord = 1;
-        } else {
-          $facility = $this->updateFacility($facility, $facility_name, $conn);
-
-          // tries to find an existing record based on a set of unique identifiers.
-          $facilityResource = agDoctrineQuery::create($conn)
-                  ->from('agFacilityResource fr')
-                  ->where('fr.facility_id = ?', $facility->id)
-                  ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
-                  ->fetchOne();
-        }
-
-        // Facility Resource
-        if (empty($facilityResource)) {
-          $facilityResource = $this->createFacilityResource($facility, $facility_resource_type_id,
-                  $facility_resource_status_id, $capacity, $conn);
-        } else {
-          $facilityResource = $this->updateFacilityResource($facilityResource,
-                  $facility_resource_status_id, $capacity, $conn);
-
-          $scenarioFacilityResource = agDoctrineQuery::create($conn)
-                  ->from('agScenarioFacilityResource sfr')
-                  ->innerJoin('sfr.agScenarioFacilityGroup sfg')
-                  ->where('sfg.scenario_id = ?', $this->scenarioId)
-                  ->andWhere('facility_resource_id = ?', $facilityResource->id)
-                  ->fetchOne();
-        }
-
-        // facility group
-
-        $scenarioFacilityGroup = agDoctrineQuery::create()
-                ->from('agScenarioFacilityGroup')
-                ->where('scenario_id = ?', $this->scenarioId)
-                ->andWhere('scenario_facility_group = ?', $facility_group)
-                ->fetchOne();
-
-        if (empty($scenarioFacilityGroup)) {
-          $scenarioFacilityGroup = $this->createScenarioFacilityGroup($facility_group,
-                  $facility_group_type_id,
-                  $facility_group_allocation_status_id,
-                  $facility_group_activation_sequence,
-                  $conn);
-          $isNewFacilityGroupRecord = 1;
-        } else {
-          $scenarioFacilityGroup = $this->updateScenarioFacilityGroup($scenarioFacilityGroup,
-                  $facility_group_type_id,
-                  $facility_group_allocation_status_id,
-                  $facility_group_activation_sequence,
-                  $conn);
-        }
-
-        // facility resource
-        if (empty($scenarioFacilityResource)) {
-          $scenarioFacilityResource = $this->createScenarioFacilityResource($facilityResource,
-                  $scenarioFacilityGroup,
-                  $facility_resource_allocation_status_id,
-                  $facility_activation_sequence,
-                  $conn);
-        } else {
-          $scenarioFacilityResource = $this->updateScenarioFacilityResource($scenarioFacilityResource,
-                  $scenarioFacilityGroup->id,
-                  $facility_resource_allocation_status_id,
-                  $facility_activation_sequence,
-                  $conn);
-        }
-
-        //facility staff resource
-        $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing, $conn);
-
-        // email
-        if ($validEmail) {
-          $this->updateFacilityEmail($facility, $email, $workEmailTypeId, $conn);
-        }
-
-        // phone
-        if ($validPhone) {
-          $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId,
-              $workPhoneFormatId, $conn);
-        }
-
-        // address
-        if ($validAddress) {
-          $addressId = $this->updateFacilityAddress($facility, $fullAddress,
-                  $workAddressTypeId,
-                  $workAddressStandardId,
-                  $addressElementIds, $conn);
-          $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId,
-              $workAddressStandardId, $geoInfo, $conn);
-        }
-
-
-// Update script to reflect table modification with a required geo_hash field.
-//        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId,
-//                                 $workAddressStandardId, $geoInfo, $conn);
-        // Set summary counts
-        if ($isNewFacilityRecord) {
-          $this->totalNewFacilityCount++;
-        }
-        if ($isNewFacilityGroupRecord) {
-          $this->totalNewFacilityGroupCount++;
-        }
-        $this->totalProcessedRecordCount++;
-
-        $facilityId = $facility->id;
-        if (!is_integer(array_search($facilityId, $this->processedFacilityIds))) {
-          array_push($this->processedFacilityIds, $facilityId);
-        }
-
-        if ($useSavepoint) {
-          $conn->commit(__FUNCTION__);
-        } else {
-          $conn->commit();
-        }
-      } catch (Exception $e) {
-        $this->errMsg .= '  Unable to normalize data.  Exception error message: ' . $e->getMessage();
-        $this->nonprocessedRecords[] = array('message' => $this->errMsg,
-          'record' => $record);
-        sfContext::getInstance()->getLogger()->err($errMsg);
-
-        // if we started with a savepoint, let's end with one, otherwise, rollback globally
-        if ($useSavepoint) {
-          $conn->rollback(__FUNCTION__);
-        } else {
-          $conn->rollback();
-        }
-
-        break;
-      }
-    } // end foreach
-    //drop temp table.
-    $conn->export->dropTable($this->sourceTable);
-    $conn->close();
-
-
-    $this->summary = array('totalProcessedRecordCount' => $this->totalProcessedRecordCount,
-      'TotalFacilityProcessed' => count($this->processedFacilityIds),
-      'totalNewFacilityCount' => $this->totalNewFacilityCount,
-      'totalNewFacilityGroupCount' => $this->totalNewFacilityGroupCount,
-      'nonprocessedRecords' => $this->nonprocessedRecords,
-      'warningMessages' => $this->warningMessages);
-
-    // sets import state as done
-    // TODO: fire an event instead
-//    agImportHelper::setImportState('facility', agImportHelper::IMPORT_FINISHED,
-//        array(count($this->processedFacilityIds), $this->totalProcessedRecordCount));
-  }
-
-  /* Facility */
-
-  protected function createFacility($facilityName, $facilityCode, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $entityTbl = $conn->getTable('agEntity');
-      $entity = new agEntity($entityTbl, TRUE);
-      $entity->save($conn);
-      $siteTbl = $conn->getTable('agSite');
-      $site = new agSite($siteTbl, TRUE);
-      $site->set('entity_id', $entity->id);
-      $site->save($conn);
-      $faciltiyTbl = $conn->getTable('agFacility');
-      $facility = new agFacility($faciltiyTbl, true, false);
-      $facility->set('site_id', $site->id)
-          ->set('facility_name', $facilityName)
-          ->set('facility_code', $facilityCode);
-      $facility->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t insert facility  with facility code %s!
-                               Rolled back changes!', $facilityCode);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-
-    return $facility;
-  }
-
-  protected function updateFacility($facility, $facilityName, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      if ($facility->facility_name != $facilityName) {
-        $updateQuery = Doctrine_Query::create($conn)
-                ->update('agFacility f')
-                ->set('f.facility_name', '?', $facilityName)
-                ->where('f.id = ?', $facility->id)
-                ->execute();
-      }
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update facility with facility code %s!
-                               Rolled back changes!', $facility->facility_code);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $facility;
-  }
-
-  /* Facility Resource */
-
-  protected function createFacilityResource($facility, $facilityResourceTypeAbbrId,
-                                            $facilityResourceStatusId, $capacity, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $facilityResourceTbl = $conn->getTable('agFacilityResource');
-      $facilityResource = new agFacilityResource($facilityResourceTbl, TRUE);
-      $facilityResource->set('facility_id', $facility->id)
-          ->set('facility_resource_type_id', $facilityResourceTypeAbbrId)
-          ->set('facility_resource_status_id', $facilityResourceStatusId)
-          ->set('capacity', $capacity);
-      $facilityResource->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t insert facility resource (%s, %s)!
-                              Rolled back changes!', $facility->facility_code,
-              array_search($facilityResourceTypeAbbrId,
-                  $this->facilityResourceTypes));
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $facilityResource;
-  }
-
-  protected function updateFacilityResource($facilityResource, $facilityResourceStatusId, $capacity,
-                                            $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $doUpdate = FALSE;
-      $updateQuery = agDoctrineQuery::create($conn)
-              ->update('agFacilityResource fr')
-              ->where('id = ?', $facilityResource->id);
-
-      if ($facilityResource->facility_resource_status_id != $facilityResourceStatusId) {
-        $updateQuery->set('facility_resource_status_id', '?', $facilityResourceStatusId);
-        $doUpdate = TRUE;
-      }
-
-      if ($facilityResource->capacity != $capacity) {
-        $updateQuery->set('capacity', '?', $capacity);
-        $doUpdate = TRUE;
-      }
-
-      if ($doUpdate) {
-        $updateQuery = $updateQuery->execute();
-      } else {
-        $updateQuery = NULL;
-      }
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update facility resource (%s, %s)!
-                               Rolled back changes!',
-              $facilityResource->getAgFacility()->facility_code,
-              array_search($facilityResource->facility_resource_type_id,
-                  $this->facilityResourceTypes));
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $facilityResource;
-  }
-
-  /* Scenario Facility Group */
-
-  protected function createScenarioFacilityGroup($facilityGroup, $facilityGroupTypeId,
-                                                 $facilityGroupAllocationStatusId,
-                                                 $facilityGroupActivationSequence, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $scenFacGrpTbl = $conn->getTable('agScenarioFacilityGroup');
-      $scenarioFacilityGroup = new agScenarioFacilityGroup($scenFacGrpTbl, TRUE);
-      $scenarioFacilityGroup->set('scenario_id', $this->scenarioId)
-          ->set('scenario_facility_group', $facilityGroup)
-          ->set('facility_group_type_id', $facilityGroupTypeId)
-          ->set('facility_group_allocation_status_id', $facilityGroupAllocationStatusId)
-          ->set('activation_sequence', $facilityGroupActivationSequence);
-      $scenarioFacilityGroup->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t insert facility group %s! Rolled back changes!',
-              $facilityGroup);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-
-    return $scenarioFacilityGroup;
-  }
-
-  protected function updateScenarioFacilityGroup($scenarioFacilityGroup, $facilityGroupTypeId,
-                                                 $facilityGroupAllocationStatusId,
-                                                 $facilityGroupActivationSequence, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $doUpdate = FALSE;
-      $updateQuery = agDoctrineQuery::create($conn)
-              ->update('agScenarioFacilityGroup sfg')
-              ->where('id = ?', $scenarioFacilityGroup->id);
-
-      if (strtolower($scenarioFacilityGroup->facility_group_type_id) != strtolower($facilityGroupTypeId)) {
-        $updateQuery->set('facility_group_type_id', '?', $facilityGroupTypeId);
-        $doUpdate = TRUE;
-      }
-
-      if ($scenarioFacilityGroup->facility_group_allocation_status_id != $facilityGroupAllocationStatusId) {
-        $updateQuery->set('facility_group_allocation_status_id', '?', $facilityGroupAllocationStatusId);
-        $doUpdate = TRUE;
-      }
-
-      if ($scenarioFacilityGroup->activation_sequence != $facilityGroupActivationSequence) {
-        $updateQuery->set('activation_sequence', '?', $facilityGroupActivationSequence);
-        $doUpdate = TRUE;
-      }
-
-      if ($doUpdate) {
-        $updateQuery = $updateQuery->execute();
-      } else {
-        $updateQuery = NULL;
-      }
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update facility group %s!
-                               Rolled back changes!',
-              $scenarioFacilityGroup->scenario_facility_group);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $scenarioFacilityGroup;
-  }
-
-  /* Scenario Facility Resource */
-
-  protected function createScenarioFacilityResource($facilityResource, $scenarioFacilityGroup,
-                                                    $facilityResourceAllocationStatusId,
-                                                    $facilityActivationSequence, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $scenFacRescTbl = $conn->getTable('agScenarioFacilityResource');
-      $scenarioFacilityResource = new agScenarioFacilityResource($scenFacRescTbl, TRUE);
-      $scenarioFacilityResource->set('facility_resource_id', $facilityResource->id)
-          ->set('scenario_facility_group_id', $scenarioFacilityGroup->id)
-          ->set('facility_resource_allocation_status_id', $facilityResourceAllocationStatusId)
-          ->set('activation_sequence', $facilityActivationSequence);
-      $scenarioFacilityResource->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t insert scenario facility resource
-                               (%s, %s, %s)! Rolled back changes!',
-              $facilityResource->getAgFacility()->facility_name,
-              $facilityResource->getAgFacilityResourceType()->facility_resource_type_abbr,
-              $scenarioFacilityGroup->scenario_facility_group);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $scenarioFacilityResource;
-  }
-
-  protected function updateScenarioFacilityResource($scenarioFacilityResource,
-                                                    $scenarioFacilityGroupId,
-                                                    $facilityResourceAllocationStatusId,
-                                                    $facilityActivationSequence, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $doUpdate = FALSE;
-      $updateQuery = agDoctrineQuery::create($conn)
-              ->update('agScenarioFacilityResource')
-              ->where('id = ?', $scenarioFacilityResource->id);
-
-      if ($scenarioFacilityResource->scenario_facility_group_id != $scenarioFacilityGroupId) {
-        $updateQuery->set('scenario_facility_group_id', $scenarioFacilityGroupId);
-        $doUpdate = TRUE;
-      }
-
-      if ($scenarioFacilityResource->facility_resource_allocation_status_id != $facilityResourceAllocationStatusId) {
-        $updateQuery->set('facility_resource_allocation_status_id', $facilityResourceAllocationStatusId);
-        $doUpdate = TRUE;
-      }
-
-      if ($scenarioFacilityResource->activation_sequence != $facilityActivationSequence) {
-        $updateQuery->set('activation_sequence', $facilityActivationSequence);
-        $doUpdate = TRUE;
-      }
-
-      if ($doUpdate) {
-        $updateQuery = $updateQuery->execute();
-      } else {
-        $updateQuery = NULL;
-      }
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update scenario facility resource
-                               (%s, %s, %s)! Rolled back changes!',
-              $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name,
-              $scenarioFacilityResource->getAgFacilityResource()->getAgFacilityResourceType()->facility_resource_type_abbr,
-              Doctrine_Core::getTable('agScenarioFacilityGroup')->find($scenarioFacilityGroupId)->scenario_facility_group);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $scenarioFacilityResource;
-  }
-
-  protected function updateFacilityStaffResources($scenarioFacilityResourceId, $staff_data,
-                                                  $conn = NULL)
-  {
-    $facilityStaffResource = agDoctrineQuery::create()
-            ->select('srt.id, fsr.minimum_staff, fsr.maximum_staff, fsr.id')
-            ->from('agStaffResourceType srt')
-            ->innerJoin('srt.agFacilityStaffResource fsr')
-            ->where('fsr.scenario_facility_resource_id = ?', $scenarioFacilityResourceId)
-            ->execute(array(), 'key_value_array');
-
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $deleteFacStfResId = array();
-      foreach ($staff_data as $staffTypeId => $count) {
-        if (array_key_exists($staffTypeId, $facilityStaffResource)) {
-          $doUpdate = FALSE;
-          $updateQuery = agDoctrineQuery::create($conn)
-                  ->update('agFacilityStaffResource')
-                  ->where('id = ?', $facilityStaffResource[$staffTypeId][2]);
-
-          if ($count['min'] == 0 && $count['max'] == 0) {
-            $deleteFacStfResId[] = $facilityStaffResource[$staffTypeId][2];
-            continue;
           }
-
-          if ($facilityStaffResource[$staffTypeId][0] != $count['min']) {
-            $updateQuery->set('minimum_staff', $count['min']);
-            $doUpdate = TRUE;
-          }
-
-          if ($facilityStaffResource[$staffTypeId][1] != $count['max']) {
-            $updateQuery->set('maximum_staff', $count['max']);
-            $doUpdate = TRUE;
-          }
-
-          if ($doUpdate) {
-            $updateQuery->execute();
-          } else {
-            $updateQuery = NULL;
-          }
-        } else {
-          if ($count['min'] != 0 && $count['max'] != 0) {
-            $this->createFacilityStaffResource($scenarioFacilityResourceId, $staffTypeId, $count['min'], $count['max'], $conn);
+          else
+          {
+            // Validate all table referencing columns against the db values.
+            if (!isset(${$validator}[strtolower($rowData['_rawData'][$column])]))
+            {
+              $errMsg = 'Invalid ' . $column . ' "' . $rowData['_rawData'][$column] . '" given for ' .
+                      'record id ' . $rowId . '.';
+              $err = TRUE;
+            }
           }
         }
+
+        // oh, poo!
+        if ($err)
+        {
+          // log our error either way
+          $this->eh->logErr($errMsg);
+
+          unset($rawFacilityResources[$rowId]);
+
+          // Throw error immediately if any of the required columns are not provided.
+          throw new Exception($errMsg);
+        }
       }
+      $rawFacilityResources[$rowId]['facility_id'] = $rowData['primaryKeys']['facility_id'];
+      $facRscTypeId = $facRscTypeAbbrIds[strtolower($rowData['_rawData']['facility_resource_type_abbr'])];
+      $rawFacilityResources[$rowId]['facility_resource_type_id'] = $facRscTypeId;
+    }
 
-      if (!empty($deleteFacStfResId)) {
-        $deleteQuery = agDoctrineQuery::create($conn)
-                ->delete('agFacilityStaffResource')
-                ->whereIn('id', $deleteFacStfResId)
-                ->execute();
+    // Query for related facility resource in a doctrine collection.
+    $q = agDoctrineQuery::create($conn)
+                  ->from('agFacilityResource fr');
+
+    $firstWhereClause = TRUE;
+    foreach ($rawFacilityResources AS $rowId => $facRscInfo)
+    {
+      $facId = $facRscInfo['facility_id'];
+      $facRscTypeId = $facRscInfo['facility_resource_type_id'];
+
+      if ($firstWhereClause)
+      {
+        $q->where('(fr.facility_id = ? AND fr.facility_resource_type_id = ?)',
+                  array($facId, $facRscTypeId));
+        $firstWhereClause = FALSE;
       }
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
+      else
+      {
+        $q->orWhere('(fr.facility_id = ? AND fr.facility_resource_type_id = ?)',
+                    array($facId, $facRscTypeId));
       }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg .= sprintf('  Couldn\'t update facility staff resource!
-                                Rolled back changes!');
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
     }
-    return $facilityStaffResource;
-  }
+    $sql = $q->getSqlQuery();
+    $param = $q->getParams();
+    $facilityResourceColl = $q->execute();
+//    $facilityResourceTable = $facilityResourceColl->getTable();
+//    $facilityResourceTable->setConnection($conn);
 
-  protected function createFacilityStaffResource($scenarioFacilityResourceId, $staffTypeId,
-                                                 $min_staff, $max_staff, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
+    $this->eh->logDebug('{' . count($facilityResourceColl) . '} facility entities found in the database.');
+
+    // update our row keys array
+    $this->eh->logDebug('Updating primary keys for found entities.');
+
+    // Add facility resource id to $this->importData['primaryKeys'].
+    // While we're looping the existing facility, make facility resource updates where necessary.
+    foreach ($facilityResourceColl AS $facRsc)
+    {
+      $currFacRsc = array('facility_id' => $facRsc['facility_id'],
+                          'facility_resource_type_id' => $facRsc['facility_resource_type_id']);
+      $rowId = array_search($currFacRsc, $rawFacilityResources);
+
+      $rowData = & $this->importData[$rowId];
+      $rowData['primaryKeys']['facility_resource_id'] = $facRsc['id'];
+      $facRscStatusId = $facRscStatusIds[strtolower($rowData['_rawData']['facility_resource_status'])];
+      $facRsc['facility_resource_status_id'] = $facRscStatusId;
+      $facRsc['capacity'] = $rowData['_rawData']['facility_capacity'];
+      unset($rawFacilityResources[$rowId]);
+      unset($rowData);
     }
+    $facilityResourceColl->save($conn);
+    $facilityResourceColl->free(TRUE);
+    unset($facilityResourceColl);
 
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
+    // Create new facility resource using rowId as the key to $facilityResourceColl.
+    $facilityResourceColl = new Doctrine_Collection('agFacilityResource');
+    $facilityResourceTable = $conn->getTable('agFacilityResource');
+    foreach ($rawFacilityResources AS $rowId => $rawFacResc)
+    {
+      $rowData = $this->importData[$rowId];
+      $facResource = new agFacilityResource($facilityResourceTable, TRUE);
+      $facResource['facility_id'] = $rowData['primaryKeys']['facility_id'];
+      $facResource['facility_resource_type_id'] = $rawFacResc['facility_resource_type_id'];
+      $facRscStatusId = $facRscStatusIds[strtolower($rowData['_rawData']['facility_resource_status'])];
+      $facResource['facility_resource_status_id'] = $facRscStatusId;
+      $facResource['capacity'] = $rowData['_rawData']['facility_capacity'];
+      $facilityResourceColl->add($facResource, $rowId);
+      unset($rawFacilityResources[$rowId]);
     }
+    $facilityResourceColl->save($conn);
 
-    try {
-      $facStfRescTbl = $conn->getTable('agFacilityStaffResource');
-      $facilityStaffResource = new agFacilityStaffResource($facStfRescTbl, TRUE);
-      $facilityStaffResource->set('staff_resource_type_id', $staffTypeId)
-          ->set('scenario_facility_resource_id', $scenarioFacilityResourceId)
-          ->set('minimum_staff', $min_staff)
-          ->set('maximum_staff', $max_staff);
-      $facilityStaffResource->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      $scenarioFacilityResource = Doctrine_Core::getTable('agScenarioFacilityResource')
-              ->find($scenarioFacilityResourceId);
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t create facility staff resource (%s, %s)!',
-              $scenarioFacilityResource->getAgFacilityResource()->getAgFacility()->facility_name,
-              array_search($staffTypeId, $this->staffResourceTypes));
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
+    // Store new facility resource ids to $this->importData['primaryKeys'].
+    foreach ($facilityResourceColl AS $rowId => $facilityResource)
+    {
+      $this->importData[$rowId]['primaryKeys']['facility_resource_id'] = $facilityResource['id'];
     }
-    return $facilityStaffResource;
-  }
-
-  /* EMAIL */
-
-  protected function getEmailObject($email, $conn)
-  {
-    $emailContact = agDoctrineQuery::create($conn)
-            ->from('agEmailContact')
-            ->where('email_contact = ?', $email)
-            ->fetchOne();
-    return $emailContact;
-  }
-
-  protected function createEmail($email, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $emailContactTbl = $conn->getTable('agEmailContact');
-      $emailContact = new agEmailContact($emailContactTbl, TRUE);
-      $emailContact->set('email_contact', $email);
-      $emailContact->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t create email %s! Rolled back changes!', $email);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $emailContact;
-  }
-
-  protected function createEntityEmail($entityId, $emailId, $typeId, $conn = NULl)
-  {
-    $priority = $this->getPriorityCounter('email', $entityId);
-
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $entityEmailContactTbl = $conn->getTable('agEntityEmailContact');
-      $entityEmail = new agEntityEmailContact($entityEmailContactTbl, TRUE);
-      $entityEmail->set('entity_id', $entityId)
-          ->set('email_contact_id', $emailId)
-          ->set('email_contact_type_id', $typeId)
-          ->set('priority', $priority);
-      $entityEmail->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t create entity email (%s, %s)! Rolled back changes!',
-              array_search($typeId, $this->emailContactTypes),
-              Doctrine_Core::getTable('agEmailContact')->find($emailId)->email_contact);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $entityEmail;
-  }
-
-  protected function updateEntityEmail($entityEmailObject, $emailObject, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $entityEmailObject->set('email_contact_id', $emailObject->id);
-      $entityEmailObject->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update entity email (%s, %s)! Rolled back changes!',
-              $entityEmailObject->getAgEmailContactType()->email_contact_type,
-              $emailObject->email_contact);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $entityEmailObject;
+    $facilityResourceColl->free(TRUE);
+    unset($facilityResourceColl);
   }
 
   /**
-   *
-   * @param <type> $facility
-   * @param <type> $email
-   * @param <type> $workEmailTypeId
-   * @return bool true if an update or create happened, false otherwise.
+   * Method to check for required columns and to set / create new facility resources.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
-  protected function updateFacilityEmail($facility, $email, $workEmailTypeId, $conn)
+  protected function setScenarioFacilityGroups($throwOnError, Doctrine_Connection $conn)
   {
-    $entityId = $facility->getAgSite()->entity_id;
-    $entityEmail = $this->getEntityContactObject('email', $entityId, $workEmailTypeId, $conn);
+    $facGrpTypeIds = $this->facGrpTypeIds;
+    $facGrpAllocStatusIds = $this->facGrpAllocStatusIds;
 
-    if (empty($entityEmail)) {
-      $facilityEmail = '';
-    } else {
-      $facilityEmail = $entityEmail->getAgEmailContact()->email_contact;
-    }
+    $requiredColumns = array('facility_group_activation_sequence' => NULL,
+                             'facility_group' => NULL,
+                             'facility_group_type' => 'facGrpTypeIds',
+                             'facility_group_allocation_status' => 'facGrpAllocStatusIds'
+                            );
 
-    //  if oldEmail is importedEmail
-    if (strtolower($email) == strtolower($facilityEmail)) {
-      return FALSE;
-    }
+    // Check for valid facility group name, group type, and group allocation status.
+    // Meanwhile also build the $rawFacilityGroup array for later use.
+    foreach ($this->importData AS $rowId => $rowData)
+    {
+      // used at the end to determine whether to continue processing this record
+      $err = FALSE;
 
-    // only useful for nonrequired emails
-    //  if importedEmail null
-    if (empty($email) && !empty($facilityEmail)) {
-      // here we check our current transaction scope and create a transaction
-      // or savepoint based on need
-      $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-      if ($useSavepoint) {
-        $conn->beginTransaction(__FUNCTION__);
-      } else {
-        $conn->beginTransaction();
-      }
-
-      try {
-        $entityEmail->delete($conn);
-        if ($useSavepoint) {
-          $conn->commit(__FUNCTION__);
-        } else {
-          $conn->commit();
+      // loop through each of the required columns and validate it
+      foreach ($requiredColumns as $column => $validator)
+      {
+        if (!isset($rowData['_rawData'][$column]))
+        {
+          $errMsg = 'Required column ' . $column . ' is missing from record id ' . $rowId . '.';
+          $err = TRUE;
         }
-        return TRUE;
-      } catch (Exception $e) {
-        // ALWAYS log rollbacks with as much useful information as possible
-        $this->errMsg = sprintf('Couldn\'t remove old entity email (%s, %s)!
-                                 Rolled back changes!',
-                array_search($workEmailTypeId,
-                    $this->emailContactTypes),
-                $facilityEmail);
-
-        // if we started with a savepoint, let's end with one,
-        // otherwise, rollback globally
-        if ($useSavepoint) {
-          $conn->rollback(__FUNCTION__);
-        } else {
-          $conn->rollback();
+        else
+        {
+          if (empty($validator))
+          {
+            if ($column == 'facility_group')
+            {
+              $rawFacilityGroups[$rowId] = strtolower($rowData['_rawData'][$column]);
+            }
+            else if ($column == 'facility_group_activation_sequence')
+            {
+              if (!ctype_digit($rowData['_rawData'][$column]))
+              {
+                $errMsg = 'Invalid ' . $column . ' "' . $rowData['_rawData'][$column] . '" given for ' .
+                        'record id ' . $rowId . '.';
+                $err = TRUE;
+              }
+            }
+          }
+          else
+          {
+            // Valid all columns that references against the db values.
+            if (!isset(${$validator}[strtolower($rowData['_rawData'][$column])]))
+            {
+              $errMsg = 'Invalid ' . $column . ' "' . $rowData['_rawData'][$column] . '" given for ' .
+                      'record id ' . $rowId . '.';
+              $err = TRUE;
+            }
+          }
         }
 
-        throw $e; // always remember to throw an exception after rollback
+        // oh, poo!
+        if ($err)
+        {
+          // log our error either way
+          $this->eh->logErr($errMsg);
+
+          unset($rawFacilityGroups[$rowId]);
+
+          // Throw error immediately if any of the required columns are not provided.
+          throw new Exception($errMsg);
+        }
       }
-      return TRUE;
     }
 
-    $emailEntity = $this->getEmailObject($email, $conn);
+    // Get the duplicate scenario facility group name now before the foreach loop.
+    $facGrpCount = array_count_values($rawFacilityGroups);
+    $uniqRawFacGrps = array();
 
-    if (empty($emailEntity)) {
-      $emailEntity = $this->createEmail($email, $conn);
-    }
+    foreach ($rawFacilityGroups AS $rowId => $facGrp)
+    {
+      // find the position of the element or return false
+      $pos = array_search($facGrp, $uniqRawFacGrps);
 
-    if (empty($facilityEmail)) {
-      $this->createEntityEmail($entityId, $emailEntity->id, $workEmailTypeId, $conn);
-      return TRUE;
-    }
+      // need to be really strict here because we don't want any [0] positions throwing us
+      if ($pos === FALSE)
+      {
+        // add it to our unique array
+        $uniqRawFacGrps[] = $facGrp;
 
-    // Facility email exists and does not match import email.
-    $this->updateEntityEmail($entityEmail, $emailEntity, $conn);
-    return TRUE;
-  }
-
-  /* PHONE */
-
-  protected function getPhoneObject($phone)
-  {
-    $phoneContact = NULL;
-    $phoneContact = agDoctrineQuery::create()
-            ->from('agPhoneContact')
-            ->where('phone_contact = ?', $phone)
-            ->fetchOne();
-    return $phoneContact;
-  }
-
-  protected function createPhone($phone, $phoneFormatId, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
-
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $phoneContactTbl = $conn->getTable('agPhoneContact');
-      $phoneContact = new agPhoneContact($phoneContactTbl, TRUE);
-      $phoneContact
-          ->set('phone_contact', $phone)
-          ->set('phone_format_id', $phoneFormatId);
-      $phoneContact->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t insert phone %s! Rolled back changes!', $phone);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
+        // the the most recently inserted key
+        $pos = max(array_keys($uniqRawFacGrps));
       }
 
-      throw $e; // always remember to throw an exception after rollback
+      // Point $rawFacGrp to the position in $uniqRawFacGrp.
+      $rawFacilityGroups[$rowId] = $pos;
     }
 
-    return $phoneContact;
-  }
+    $qry = agDoctrineQuery::create($conn)
+      ->from('agScenarioFacilityGroup sfg')
+      ->where('scenario_id = ?', $this->scenarioId)
+      ->andWhereIn('scenario_facility_group', $uniqRawFacGrps);
+    $qryString = $qry->getSqlQuery();
+    $facilityGroupColl = $qry->execute();
 
-  protected function createEntityPhone($entityId, $phoneContactId, $typeId, $conn = NULL)
-  {
-    $priority = $this->getPriorityCounter('phone', $entityId);
+    $this->eh->logDebug('{' . count($facilityGroupColl) . '} scenario facility group entities found in the database.');
 
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
-    }
+    // update our row keys array
+    $this->eh->logDebug('Updating primary keys for found entities.');
 
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
+    // Add facility group id to $this->importData['primaryKeys'].
+    // While we're looping the existing facility, make facility resource updates where necessary.
+    foreach ($facilityGroupColl AS $facGrp)
+    {
+      $facGrpName = strtolower($facGrp['scenario_facility_group']);
+      $posId = array_search($facGrpName, $uniqRawFacGrps);
 
-    try {
-      $entityPhoneContactTbl = $conn->getTable('agEntityPhoneContact');
-      $entityPhone = new agEntityPhoneContact($entityPhoneContactTbl, TRUE);
-      $entityPhone->set('entity_id', $entityId)
-          ->set('phone_contact_id', $phoneContactId)
-          ->set('phone_contact_type_id', $typeId)
-          ->set('priority', $priority);
-      $entityPhone->save($conn);
+      // Scenario facility group can be associated to multiple facility resources.  In this case,
+      // the same scenario facility group will be listed multiple times, each associated to a
+      // different facility resources, in the spreadsheet.  We will then need to assign the
+      // scenario facility group id to each of the import data row's primary key.
+      for ($i = 1; $i <= $facGrpCount[$facGrpName]; $i++)
+      {
+        $rowId = array_search($posId, $rawFacilityGroups);
 
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
+        $rowData = & $this->importData[$rowId];
+        $rowData['primaryKeys']['scenario_facility_group_id'] = $facGrp['id'];
+        $facGrpTypeId = $facGrpTypeIds[strtolower($rowData['_rawData']['facility_group_type'])];
+        $facGrpAllocStatusId = $facGrpAllocStatusIds[strtolower($rowData['_rawData']['facility_group_allocation_status'])];
+        $facGrp['facility_group_type_id'] = $facGrpTypeId;
+        $facGrp['facility_group_allocation_status_id'] = $facGrpAllocStatusId;
+        $facGrp['activation_sequence'] = $rowData['_rawData']['facility_group_activation_sequence'];
+        unset($rawFacilityGroups[$rowId]);
+        unset($rowData);
       }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t create entity phone (%s, %s)! Rolled back changes!',
-              array_search($typeId, $this->phoneContactTypes),
-              Doctrine_Core::getTable('agPhoneContact')->find($phoneContactId)->phone_contact);
+      unset($uniqRawFacGrps[$posId]);
+    }
+    $facilityGroupColl->save($conn);
+    $facilityGroupColl->free(TRUE);
+    unset($facilityGroupColl);
 
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
+    // Create new scenario facility group using rowId as the key to $facilityGroupColl.
+    $facilityGroupColl = new Doctrine_Collection('agScenarioFacilityGroup');
+    $facilityGroupTable = $conn->getTable('agScenarioFacilityGroup');
+    foreach ($uniqRawFacGrps AS $posId => $facGrp)
+    {
+      $facilityGroup = new agScenarioFacilityGroup($facilityGroupTable, TRUE);
+      $facilityGroup['scenario_id'] = $this->scenarioId;
+      for($i=1; $i <= $facGrpCount[$facGrp]; $i++)
+      {
+        $rowId = array_search($posId, $rawFacilityGroups);
+        $rowData = $this->importData[$rowId];
+        $facGrpTypeId = $facGrpTypeIds[strtolower($rowData['_rawData']['facility_group_type'])];
+        $facGrpAllocStatusId = $facGrpAllocStatusIds[strtolower($rowData['_rawData']['facility_group_allocation_status'])];
+        $facilityGroup['scenario_facility_group'] = $rowData['_rawData']['facility_group'];
+        $facilityGroup['facility_group_type_id'] = $facGrpTypeId;
+        $facilityGroup['facility_group_allocation_status_id'] = $facGrpAllocStatusId;
+        $facilityGroup['activation_sequence'] = $rowData['_rawData']['facility_group_activation_sequence'];
       }
-
-      throw $e; // always remember to throw an exception after rollback
+      $facilityGroupColl->add($facilityGroup, $posId);
+      unset($uniqRawFacGrps[$posId]);
     }
-    return $entityPhone;
-  }
+    $facilityGroupColl->save($conn);
 
-  protected function updateEntityPhone($entityPhoneObject, $phoneObject, $conn = NULL)
-  {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
+    // Store new scenario facility group ids to $this->importData['primaryKeys'].
+    foreach($rawFacilityGroups AS $rowId => $posId)
+    {
+      $rowData =& $this->importData[$rowId];
+      $rowData['primaryKeys']['scenario_facility_group_id'] = $facilityGroupColl[$posId]['id'];
+      unset($rawFacilityGroups[$rowId]);
     }
-
-    // here we check our current transaction scope and create a transaction or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $entityPhoneObject->set('phone_contact_id', $phoneObject->id);
-      $entityPhoneObject->save($conn);
-
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t update entity email (%s, %s)! Rolled back changes!',
-              $entityEmailObject->getAgEmailContactType()->email_contact_type,
-              $emailObject->email_contact);
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $entityPhone;
+    $facilityGroupColl->free(TRUE);
+    unset($facilityGroupColl);
   }
 
   /**
-   *
-   * @param <type> $facility
-   * @param <type> $phone
-   * @param <type> $workEmailTypeId
-   * @return bool true if an update or create happened, false otherwise.
+   * Method to check for required columns and to set / create new scenario facility resources.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
    */
-  protected function updateFacilityPhone($facility, $phone, $workPhoneTypeId, $phoneFormatId,
-                                         $conn = NULL)
+  protected function setScenarioFacilityResources($throwOnError, Doctrine_Connection $conn)
   {
-    //TODO
-    $entityId = $facility->getAgSite()->entity_id;
-    $entityPhone = $this->getEntityContactObject('phone', $entityId, $workPhoneTypeId);
+    $facRscAllocStatusIds = $this->facRscAllocStatusIds;
 
-    if (empty($entityPhone)) {
-      $facilityPhone = '';
-    } else {
-      $facilityPhone = $entityPhone->getAgPhoneContact()->phone_contact;
-    }
+    // activation_sequence is a required field but does not reference to any other tables, thus,
+    // pointing to NULL value.
+    $requiredColumns = array('facility_allocation_status' => 'facRscAllocStatusIds',
+                             'facility_activation_sequence' => NULL
+                            );
 
-    //  if oldEmail is importedEmail
-    if (strtolower($phone) == strtolower($facilityPhone)) {
-      return FALSE;
-    }
+    // Check for valid facility resource type abbr and facility resource status provided.
+    // Meanwhile also build the $rawFacilityResources array for later use.
+    foreach ($this->importData AS $rowId => $rowData)
+    {
+      // used at the end to determine whether to continue processing this record
+      $err = FALSE;
 
-    // only useful for nonrequired phones
-    //  if importedEmail null
-    if (empty($phone)) {
-      // here we check our current transaction scope and create a transaction
-      // or savepoint based on need
-      $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-      if ($useSavepoint) {
-        $conn->beginTransaction(__FUNCTION__);
-      } else {
-        $conn->beginTransaction();
-      }
-
-      try {
-        $entityPhone->delete($conn);
-        if ($useSavepoint) {
-          $conn->commit(__FUNCTION__);
-        } else {
-          $conn->commit();
+      // loop through each of the required columns and validate it
+      foreach ($requiredColumns as $column => $validator)
+      {
+        if (!isset($rowData['_rawData'][$column]))
+        {
+          $errMsg = 'Required column ' . $column . ' is missing from record id ' . $rowId . '.';
+          $err = TRUE;
         }
-      } catch (Exception $e) {
-        // ALWAYS log rollbacks with as much useful information as possible
-        $this->errMsg = sprintf('Couldn\'t remove old entity phone (%s, %s)! Rolled back changes!',
-                array_search($workPhoneTypeId, $this->phoneContactTypes),
-                $facilityPhone);
-
-        // if we started with a savepoint, let's end with one,
-        // otherwise, rollback globally
-        if ($useSavepoint) {
-          $conn->rollback(__FUNCTION__);
-        } else {
-          $conn->rollback();
+        else
+        {
+          if (empty($validator))
+          {
+            // Make sure the column's value is a positive integer.
+            $value = $rowData['_rawData'][$column];
+            if (!ctype_digit($value))
+            {
+              if (!isset(${$validator}[strtolower($rowData['_rawData'][$column])]))
+              {
+                $errMsg = 'Invalid ' . $column . ' "' . $rowData['_rawData'][$column] . '" given for ' .
+                        'record id ' . $rowId . '.';
+                $err = TRUE;
+              }
+            }
+          }
+          else
+          {
+            // Validate all table referencing columns against the db values.
+            if (!isset(${$validator}[strtolower($rowData['_rawData'][$column])]))
+            {
+              $errMsg = 'Invalid ' . $column . ' "' . $rowData['_rawData'][$column] . '" given for ' .
+                      'record id ' . $rowId . '.';
+              $err = TRUE;
+            }
+          }
         }
 
-        throw $e; // always remember to throw an exception after rollback
+        // oh, poo!
+        if ($err)
+        {
+          // log our error either way
+          $this->eh->logErr($errMsg);
+
+          unset($rawScenarioFacilityResources[$rowId]);
+
+          // Throw error immediately if any of the required columns are not provided.
+          throw new Exception($errMsg);
+        }
       }
-      return TRUE;
+      $facRscId = $rowData['primaryKeys']['facility_resource_id'];
+      $scenFacGrpId = $rowData['primaryKeys']['scenario_facility_group_id'];
+      $rawScenarioFacilityResources[$rowId] = array('facility_resource_id' => $facRscId,
+                                                    'scenario_facility_group_id' => $scenFacGrpId
+                                                   );
     }
 
-    $phoneEntity = $this->getPhoneObject($phone);
+    // Query for related scenario facility resource in a doctrine collection.
+    $qry = agDoctrineQuery::create($conn)
+                    ->from('agScenarioFacilityResource sfr');
 
-    if (empty($phoneEntity)) {
-      $phoneEntity = $this->createPhone($phone, $phoneFormatId, $conn);
-    }
+    $firstWhereClause = TRUE;
+    foreach ($rawScenarioFacilityResources AS $rowId => $scenFacRscInfo)
+    {
+      $rowData = $this->importData[$rowId];
+      $facRscAllocStatus = strtolower($rowData['_rawData']['facility_allocation_status']);
+      $facilityResourceId = $rawScenarioFacilityResources[$rowId]['facility_resource_id'];
+      $scenarioFacilityGroupId = $rawScenarioFacilityResources[$rowId]['scenario_facility_group_id'];
 
-    if (empty($facilityPhone)) {
-      $this->createEntityPhone($entityId, $phoneEntity->id, $workPhoneTypeId, $conn);
-      return TRUE;
-    }
-
-    // Facility phone exists and does not match import phone
-    $this->updateEntityPhone($entityPhone, $phoneEntity, $conn);
-    return TRUE;
-  }
-
-  /* Address */
-
-  protected function getAssociateAddressElementValues($addressId, $addressElementIds)
-  {
-    $entityAddressElementValues = agDoctrineQuery::create()
-            ->select('ae.address_element, av.value')
-            ->from('agAddressElement ae')
-            ->innerJoin('ae.agAddressValue av')
-            ->innerJoin('av.agAddressMjAgAddressValue aav')
-            ->where('aav.address_id = ?', $addressId)
-            ->andWhereIn('ae.id', array_values($addressElementIds));
-    $querySql = $entityAddressElementValues->getSqlQuery();
-    $entityAddressElementValues = $entityAddressElementValues->execute(array(), 'key_value_pair');
-    return $entityAddressElementValues;
-  }
-
-  private function isEmptyStringArray($vals)
-  {
-    if (empty($vals)) {
-      return FALSE;
-    }
-
-    foreach ($vals as $val) {
-      if (strlen($val) != 0) {
-        return FALSE;
+      if ($firstWhereClause)
+      {
+        $qry->where('(sfr.facility_resource_id = ? AND sfr.scenario_facility_group_id = ?)',
+                    array($facilityResourceId, $scenarioFacilityGroupId));
+        $firstWhereClause = FALSE;
+      }
+      else
+      {
+        $qry->orWhere('(sfr.facility_resource_id = ? AND sfr.scenario_facility_group_id = ?)',
+                      array($facilityResourceId, $scenarioFacilityGroupId));
       }
     }
-    return TRUE;
+    $scenarioFacilityResourceColl = $qry->execute();
+
+    $this->eh->logDebug('{' . count($scenarioFacilityResourceColl) . '} facility entities found in the database.');
+
+    // update our row keys array
+    $this->eh->logDebug('Updating primary keys for found entities.');
+
+    // Add scenario facility resource id to $this->importData['primaryKeys'].
+    // While we're looping the existing scenario facility resource, make scenario facility resource
+    // updates where necessary.
+    foreach ($scenarioFacilityResourceColl AS $scenFacRsc)
+    {
+      $currScenFacRsc = array('facility_resource_id' => $scenFacRsc['facility_resource_id'],
+                              'scenario_facility_group_id' => $scenFacRsc['scenario_facility_group_id']);
+      $rowId = array_search($currScenFacRsc, $rawScenarioFacilityResources);
+
+      $rowData = & $this->importData[$rowId];
+      $rowData['primaryKeys']['scenario_facility_resource_id'] = $scenFacRsc['id'];
+      $facRscAllocStatusId = $facRscAllocStatusIds[strtolower($rowData['_rawData']['facility_allocation_status'])];
+      $scenFacRsc['facility_resource_allocation_status_id'] = $facRscAllocStatusId;
+      $scenFacRsc['activation_sequence'] = $rowData['_rawData']['facility_activation_sequence'];
+      unset($rawScenarioFacilityResources[$rowId]);
+      unset($rowData);
+    }
+    $scenarioFacilityResourceColl->save($conn);
+    $scenarioFacilityResourceColl->free(TRUE);
+    unset($scenarioFacilityResourceColl);
+
+    // Create new scenario facility resource using rowId as the key to $scenarioFacilityResourceColl.
+    $scenarioFacilityResourceColl = new Doctrine_Collection('agScenarioFacilityResource');
+    $scenarioFacilityResourceTable = $conn->getTable('agScenarioFacilityResource');
+    foreach ($rawScenarioFacilityResources AS $rowId => $rawScenFacResc)
+    {
+      $rowData = $this->importData[$rowId];
+      $scenFacResource = new agScenarioFacilityResource($scenarioFacilityResourceTable, TRUE);
+      $scenFacResource['facility_resource_id'] = $rowData['primaryKeys']['facility_resource_id'];
+      $scenFacResource['scenario_facility_group_id'] = $rowData['primaryKeys']['scenario_facility_group_id'];
+      $facRscAllocstatusId = $facRscAllocStatusIds[strtolower($rowData['_rawData']['facility_allocation_status'])];
+      $scenFacResource['facility_resource_allocation_status_id'] = $facRscAllocstatusId;
+      $facResource['activation_sequence'] = $rowData['_rawData']['facility_activation_sequence'];
+      $scenarioFacilityResourceColl->add($scenFacResource, $rowId);
+      unset($rawScenarioFacilityResources[$rowId]);
+    }
+    $scenarioFacilityResourceColl->save($conn);
+
+    // Store new scenario facility resource ids to $this->importData['primaryKeys'].
+    foreach ($this->importData AS $rowId => &$rowData)
+    {
+      if (!isset($rowData['primaryKeys']['scenario_facility_resource_id']))
+      {
+        $rowData['primaryKeys']['scenario_facility_resource_id'] = $scenarioFacilityResourceColl[$rowId]['id'];
+      }
+    }
+    $scenarioFacilityResourceColl->free(TRUE);
+    unset($scenarioFacilityResourceColl);
+
   }
 
-  protected function createAddressValues($fullAddress, $workAddressStandardId, $addressElementIds,
-                                         $conn = NULL)
+  /**
+   * Method to set entity emails during staff import.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function setEntityEmail($throwOnError, Doctrine_Connection $conn)
   {
-    // here you can pick up the default connection if not passed one explicitly
-    if (is_null($conn)) {
-      $conn = Doctrine_Manager::connection();
+    // always start with any data maps we'll need so they're explicit
+    $importEmailTypes = array('work_email' => 'work');
+    $entityEmails = array();
+    $results = array();
+
+    // let's get ahold of our helper object since we're going to use him/her a lot
+    $eeh = & $this->helperObjects['agEntityEmailHelper'];
+
+    // get our email types and map them back to the importEmailTypes
+    $emailTypes = agEmailHelper::getEmailContactTypeIds(array_values($importEmailTypes));
+    foreach ($importEmailTypes as $key => &$val)
+    {
+      $val = $emailTypes[$val];
+    }
+    unset($val);
+    unset($emailTypes);
+
+    // loop through our raw data and build our entity email data
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      if (isset($rowData['primaryKeys']['entity_id']))
+      {
+        // this just makes it easier to use
+        $entityId = $rowData['primaryKeys']['entity_id'];
+
+        // we start with an empty array, devoid of types in case the entity has no types/values
+        $entityEmails[$entityId] = array();
+        foreach ($importEmailTypes as $emailType => $emailTypeId)
+        {
+          if (isset($rowData['_rawData'][$emailType]))
+          {
+            $entityEmails[$entityId][] = array($emailTypeId, $rowData['_rawData'][$emailType]);
+          }
+        }
+      }
     }
 
-    $newAddressValueIds = array();
-    foreach ($fullAddress as $elem => $elemVal) {
-      if (empty($elemVal)) {
+    // pick up some of our components / objects
+    $keepHistory = agGlobal::getParam('staff_import_keep_history');
+    $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
+
+    // execute the helper and finish
+    $results = $eeh->setEntityEmail($entityEmails, $keepHistory, $enforceStrict, $throwOnError,
+                    $conn);
+    unset($entityEmails);
+
+    // @todo do your results reporting here
+  }
+
+  /**
+   * Method to set entity phones during staff import.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function setEntityPhone($throwOnError, Doctrine_Connection $conn)
+  {
+    // always start with any data maps we'll need so they're explicit
+    $importPhoneTypes = array('work_phone' => 'work');
+    $entityPhones = array();
+    $results = array();
+
+    // let's get ahold of our helper object since we're going to use him/her a lot
+    $eph = & $this->helperObjects['agEntityPhoneHelper'];
+
+    // get our email types and map them back to the importEmailTypes
+    $phoneTypes = agPhoneHelper::getPhoneContactTypeIds(array_values($importPhoneTypes));
+    foreach ($importPhoneTypes as $key => &$val)
+    {
+      $val = $phoneTypes[$val];
+    }
+    unset($val);
+    unset($phoneTypes);
+
+    // loop through our raw data and build our entity phone data
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      if (isset($rowData['primaryKeys']['entity_id']))
+      {
+        // this just makes it easier to use
+        $entityId = $rowData['primaryKeys']['entity_id'];
+
+        // we start with an empty array, devoid of types in case the entity has no types/values
+        $entityPhones[$entityId] = array();
+        foreach ($importPhoneTypes as $phoneType => $phoneTypeId)
+        {
+          if (array_key_exists($phoneType, $rowData['_rawData']))
+          {
+            $entityPhones[$entityId][] = array($phoneTypeId, array($rowData['_rawData'][$phoneType]));
+          }
+        }
+      }
+    }
+
+    // pick up some of our components / objects
+    $keepHistory = agGlobal::getParam('staff_import_keep_history');
+    $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
+
+    // execute the helper and finish
+    $results = $eph->setEntityPhone($entityPhones, $keepHistory, $enforceStrict, $throwOnError,
+                    $conn);
+    unset($entityPhones);
+
+    // @todo do your results reporting here
+  }
+
+  /**
+   * Method to set entity address during staff import.
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function setEntityAddress($throwOnError, Doctrine_Connection $conn)
+  {
+    // always start with any data maps we'll need so they're explicit
+    $importAddressTypes = array('work' => 'work');
+    $importAddressElements = array('street_1' => 'line 1', 'street_2' => 'line 2', 'city' => 'city',
+        'state' => 'state', 'postal_code' => 'zip5', 'borough' => 'borough', 'country' => 'country');
+    $entityAddresses = array();
+    $missingGeo = 0;
+    $results = array();
+    $errMsg = NULL;
+
+    // let's get ahold of our helper object since we're going to use him/her a lot
+    $eah = & $this->helperObjects['agEntityAddressHelper'];
+
+    // get our address types and map them back to the importAddressTypes
+    $addressTypes = agAddressHelper::getAddressContactTypeIds(array_values($importAddressTypes));
+    foreach ($importAddressTypes as $key => &$val)
+    {
+      $val = $addressTypes[$val];
+    }
+    unset($val);
+    unset($addressTypes);
+
+    // get our address elements and map them back to the importAddressElements
+    $addressElements = agAddressHelper::getAddressElementIds(array_values($importAddressElements));
+    foreach ($importAddressElements as $key => &$val)
+    {
+      $val = $addressElements[$val];
+    }
+    unset($val);
+    unset($addressElements);
+
+    // get our address standards and geo match scores
+    $addressStandard = agGlobal::getParam('staff_import_address_standard');
+    $addressStandardId = agAddressHelper::getAddressStandardIds(array($addressStandard));
+    $addressStandardId = $addressStandardId[$addressStandard];
+    $geoMatchScore = agGlobal::getParam('default_geo_match_score');
+    $geoMatchScoreId = agGeoHelper::getGeoMatchScoreIds(array($geoMatchScore));
+    $geoMatchScoreId = $geoMatchScoreId[$geoMatchScore];
+
+    // loop through our raw data and build our entity address data
+    foreach ($this->importData as $rowId => $rowData)
+    {
+      // this just makes it easier to use
+      $entityId = $rowData['primaryKeys']['entity_id'];
+      $rawData = $rowData['_rawData'];
+
+      // we start with an empty array, devoid of types in case the entity has no types/values
+      $workAddr = array();
+      foreach ($importAddressElements AS $element => $id)
+      {
+        if (isset($rawData[$element])) {
+          $workAddr[$id] = $rawData[$element];
+        }
+      }
+
+      if (!isset($rawData['latitude']) || !isset($rawData['longitude']))
+      {
+        // log our error or at least grab our counter
+        $missingGeo++;
+        $errMsg = sprintf('Missing work address/geo information from record id  %d', $rowId);
+        if ($throwOnError)
+        {
+          $this->eh->logErr($errMsg);
+          throw new Exception($errMsg);
+        }
+
+        $this->eh->logWarning($errMsg);
         continue;
       }
-      $addressValue = agDoctrineQuery::create($conn)
-              ->from('agAddressValue a')
-              ->innerJoin('a.agAddressElement ae')
-              ->where('a.value = ?', $elemVal)
-              ->andWhere('ae.address_element = ?', $elem)
-              ->fetchOne();
-      if (empty($addressValue)) {
-        // here we check our current transaction scope and create a transaction
-        // or savepoint based on need
-        $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-        if ($useSavepoint) {
-          $conn->beginTransaction(__FUNCTION__);
-        } else {
-          $conn->beginTransaction();
-        }
 
-        try {
-          $addressValueTbl = $conn->getTable('agAddressValue');
-          $newAddressValue = new agAddressValue($addressValueTbl, TRUE);
-          $newAddressValue->set('value', $elemVal)
-              ->set('address_element_id', $addressElementIds[$elem]);
-          $newAddressValue->save($conn);
-          $newAddressValueIds[] = $newAddressValue->id;
-          if ($useSavepoint) {
-            $conn->commit(__FUNCTION__);
-          } else {
-            $conn->commit();
-          }
-        } catch (Exception $e) {
-          // ALWAYS log rollbacks with as much useful information as possible
-          $this->errMsg = sprintf('Couldn\'t create address element value %s!
-                                   Rolled back changes!', $elemVal);
-
-          // if we started with a savepoint, let's end with one,
-          // otherwise, rollback globally
-          if ($useSavepoint) {
-            $conn->rollback(__FUNCTION__);
-          } else {
-            $conn->rollback();
-          }
-
-          throw $e; // always remember to throw an exception after rollback
-        }
-      } else {
-        $newAddressValueIds[] = $addressValue->id;
-      }
-    }
-    return $newAddressValueIds;
-  }
-
-  protected function createAddress($addressStandardId, $conn)
-  {
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
+      // everything is hunky-dory so we can add this to our array to be passed to the helper (which is especially hunky)
+      $workAddrComp = array($workAddr, $addressStandardId);
+      $workAddrComp[] = array(array(array($rawData['latitude'], $rawData['longitude'])),
+        $geoMatchScoreId);
+      $entityAddresses[$entityId][] = array($importAddressTypes['work'], $workAddrComp);
     }
 
-    try {
-      $addressTbl = $conn->getTable('agAddress');
-      $address = new agAddress($addressTbl, TRUE);
-      $address->set('address_standard_id', $addressStandardId);
-      $address->save($conn);
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t create address! Rolled back changes!');
+    // pick up some of our components / objects
+    $keepHistory = FALSE;
+    $enforceStrict = agGlobal::getParam('enforce_strict_contact_formatting');
 
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
+    if (!isset($this->geoSourceId))
+    {
+      $this->geoSourceId = agDoctrineQuery::create()
+                      ->select('gs.id')
+                      ->from('agGeoSource gs')
+                      ->where('gs.geo_source = ?', agGlobal::getParam('facility_import_geo_source'))
+                      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     }
-    return $address;
-  }
+    $geoSourceId = $this->geoSourceId;
 
-  protected function createEntityAddress($entityId, $addressTypeId, $fullAddress,
-                                         $addressStandardId, $addressElementIds, $conn = NULL)
-  {
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
+    $addressGeo = array();
+    // @TODO Handle geo upserts along with address.
+    // execute the helper and finish
+    $results = $eah->setEntityAddress($entityAddresses, $geoSourceId, $keepHistory, $enforceStrict,
+                    $throwOnError, $conn);
+    unset($entityAddresses);
+
+    if ($missingGeo > 0)
+    {
+      $warnMsg = 'Batch contains ' . $missingGeo . ' addresses without associated geo information.';
+      $this->eh->logWarning($warnMsg);
     }
-
-    try {
-      // create new address with importedElements
-      $address = $this->createAddress($addressStandardId, $conn);
-
-      $addressId = $address->id;
-
-      $newAddressValueIds = $this->createAddressValues($fullAddress, $addressStandardId, $addressElementIds, $conn);
-
-      $addrMjAddrValueTbl = $conn->getTable('agAddressMjAgAddressValue');
-      foreach ($newAddressValueIds as $addressValueId) {
-        $mappingAddress = new agAddressMjAgAddressValue($addrMjAddrValueTbl, TRUE);
-        $mappingAddress->set('address_id', $addressId)
-            ->set('address_value_id', $addressValueId);
-        $mappingAddress->save($conn);
-      }
-
-      $priority = $this->getPriorityCounter('address', $entityId);
-
-      $entityAddrContact = $conn->getTable('agEntityAddressContact');
-      $entityAddress = new agEntityAddressContact($entityAddressContact, TRUE);
-      $entityAddress->set('entity_id', $entityId)
-          ->set('address_id', $addressId)
-          ->set('priority', $priority)
-          ->set('address_contact_type_id', $addressTypeId);
-      $entityAddress->save($conn);
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t create entity address! Rolled back changes!');
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-    return $addressId;
-  }
-
-  protected function updateFacilityAddress($facility, $importedAddress, $workAddressTypeId,
-                                           $workAddressStandardId, $addressElementIds, $conn = NULL)
-  {
-    $entityId = $facility->getAgSite()->entity_id;
-    $isImportAddressEmpty = $this->isEmptyStringArray($importedAddress);
-    $facilityAddress = $this->getEntityContactObject('address', $entityId, $workAddressTypeId);
-
-    // Remove existing facility work address if import address is null.
-    if ((!empty($facilityAddress)) && $isImportAddressEmpty) {
-      $this->deleteEntityAddressMapping($facilityAddress->id, $conn);
-      return NULL;
-    }
-
-    // Create new facility address with import address where facility does not have an address and
-    // an address is given in import.
-    $isCreateNew = FALSE;
-    if (empty($facilityAddress) && !$isImportAddressEmpty) {
-      $isCreateNew = TRUE;
-    }
-
-    // Compares existing facility address with imported address.
-    if (!empty($facilityAddress)) {
-      $addressId = $facilityAddress->address_id;
-      $facilityAddressElements = $this->getAssociateAddressElementValues($addressId, $addressElementIds);
-
-      // if the addresses are different in any way
-      if (
-          $facilityAddress->getAgAddress()->address_hash !=
-          agBulkRecordHelper::getRecordComponentsHash($importedAddress)
-      ) {
-        // removes mappings between the different elements
-        foreach ($facilityAddressElements as $eltName => $eltVal) {
-          if (
-              array_key_exists($eltName, $importedAddress) &&
-              (strtolower($eltVal) != strtolower($importedAddress[$eltName]))
-          ) {
-            $this->deleteEntityAddressMapping($facilityAddress->id, $conn);
-            $isCreateNew = TRUE;
-            break;
-          }
-        }
-      } else {
-        $isCreateNew = TRUE;
-      }
-    }
-
-    if ($isCreateNew) {
-      $addressId = $this->createEntityAddress($entityId, $workAddressTypeId, $importedAddress, $workAddressStandardId, $addressElementIds, $conn);
-    }
-
-    return $addressId;
-  }
-
-  protected function deleteEntityAddressMapping($entityAddressId, $conn = NULL)
-  {
-    // here we check our current transaction scope and create a transaction
-    // or savepoint based on need
-    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
-    if ($useSavepoint) {
-      $conn->beginTransaction(__FUNCTION__);
-    } else {
-      $conn->beginTransaction();
-    }
-
-    try {
-      $query = agDoctrineQuery::create($conn)
-              ->delete('agEntityAddressContact')
-              ->where('id = ?', $entityAddressId)
-              ->execute();
-      if ($useSavepoint) {
-        $conn->commit(__FUNCTION__);
-      } else {
-        $conn->commit();
-      }
-    } catch (Exception $e) {
-      // ALWAYS log rollbacks with as much useful information as possible
-      $this->errMsg = sprintf('Couldn\'t remove old address! Rolled back changes!');
-
-      // if we started with a savepoint, let's end with one,
-      // otherwise, rollback globally
-      if ($useSavepoint) {
-        $conn->rollback(__FUNCTION__);
-      } else {
-        $conn->rollback();
-      }
-
-      throw $e; // always remember to throw an exception after rollback
-    }
-  }
-
-  /* Geo */
-
-  protected function updateFacilityGeo($facility, $addressId, $addressTypeId, $addressStandardId,
-                                       $geoInfo, $conn = NULL)
-  {
-    // Create an address container to assign geo info for facility with no address given in import.
-    if (empty($addressId)) {
-      $entityId = $facility->getAgSite()->entity_id;
-      $addressId = $this->createEntityAddress($entityId, $addressTypeId, array(), $addressStandardId, array(), $conn);
-    }
-
-    // Form array to process geo record.
-    $latitude = $geoInfo['latitude'];
-    $longitude = $geoInfo['longitude'];
-    $addrCoord = array($addressId => array(array(array($latitude, $longitude)), $this->geoMatchScoreId));
-
-    $geoHelper = new AgGeoHelper();
-    $count = $geoHelper->setAddressGeo($addrCoord, $this->geoSourceId);
-
-    return ($count == 1) ? TRUE : FALSE;
-  }
-
-  /* ENTITY */
-
-  protected function getEntityContactObject($contactMedium, $entityId, $contactTypeId, $conn)
-  {
-    $entityContactObject = NULL;
-
-    switch (strtolower($contactMedium)) {
-      case 'phone':
-        $table = 'agEntityPhoneContact';
-        $contactType = 'phone_contact_type_id';
-        break;
-      case 'email':
-        $table = 'agEntityEmailContact';
-        $contactType = 'email_contact_type_id';
-        break;
-      case 'address':
-        $table = 'agEntityAddressContact';
-        $contactType = 'address_contact_type_id';
-        break;
-      default:
-        return $entityContactObject;
-    }
-
-    $entityContactObject = agDoctrineQuery::create($conn)
-            ->from($table)
-            ->where('entity_id = ?', $entityId)
-            ->andWhere($contactType . ' = ?', $contactTypeId)
-            ->orderBy('priority')
-            ->fetchOne();
-
-    return $entityContactObject;
-  }
-
-  protected function getPriorityCounter($contactMedium, $entityId)
-  {
-    $priority = NULL;
-
-    switch (strtolower($contactMedium)) {
-      case 'phone':
-        $table = 'agEntityPhoneContact';
-        break;
-      case 'email':
-        $table = 'agEntityEmailContact';
-        break;
-      case 'address':
-        $table = 'agEntityAddressContact';
-        break;
-      default:
-        return $priority;
-    }
-
-    $currentPriority = agDoctrineQuery::create()
-            ->select('max(priority)')
-            ->from($table)
-            ->where('entity_id = ?', $entityId)
-            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-
-    if (empty($currentPriority)) {
-      $priority = 1;
-    } else {
-      $priority = (int) $currentPriority + 1;
-    }
-
-    return $priority;
+    // @todo do your results reporting here
   }
 
 }

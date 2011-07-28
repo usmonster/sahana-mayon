@@ -267,3 +267,10 @@ agGlobalParam:
     agHost: localhost
     datapoint: default_facility_group_allocation_status
     value: active
+    value: 360
+  unprocessed_facility_import_basename:
+    id: 54
+    agHost: localhost
+    datapoint: unprocessed_facility_import_basename
+    value: unprocessed_facility_import
+    
