@@ -28,7 +28,7 @@ class agEntityAddressHelper extends agEntityContactHelper
 
   /**
    * Method to lazily load the $agAddressHelper class property (an instance of agAddressHelper)
-   * @return object The instantiated agAddressHelper object
+   * @return agAddressHelper The instantiated agAddressHelper object
    */
   public function getAgAddressHelper()
   {

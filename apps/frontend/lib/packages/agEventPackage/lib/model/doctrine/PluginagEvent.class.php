@@ -27,6 +27,11 @@ abstract class PluginagEvent extends BaseagEvent
     return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
 
+  /**
+   * Method to get event facility data (useful for exports)
+   * @param integer $eventId An event ID
+   * @return array An array of event facility data
+   */
   public static function getEventFacilities($eventId)
   {
     $results = array();
@@ -142,7 +147,7 @@ abstract class PluginagEvent extends BaseagEvent
         agAddressHelper::ADDR_GET_TYPE, array(TRUE));
 
       foreach ($addr[$entityId][1] as $type => $val) {
-        $subResults[$type] = $val;
+        $subResults[str_replace(' ','_',strtolower($type))] = $val;
       }
 
       $results[$datum['efr_id']] = $subResults;

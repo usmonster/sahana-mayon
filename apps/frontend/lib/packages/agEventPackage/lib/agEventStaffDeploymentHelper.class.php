@@ -27,9 +27,11 @@ class agEventStaffDeploymentHelper extends agPdoHelper
             $skipUnfilled,
             $err = FALSE,
             $startTime,
-            $endTime;
+            $endTime,
+            $profiler;
 
   protected $batchSize,
+            $batchTime,
             $fetchCount,
             $fetchPos,
             $totalWaves,
@@ -83,6 +85,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->batchSize = agGlobal::getParam('default_batch_size');
     $maxShifts = $this->getMaxShiftsPerWave();
     $this->batchSize = ceil(($this->batchSize / $maxShifts));
+    $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
     // reset our statistics
     $this->resetStatistics();
@@ -160,13 +163,59 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   {
     $this->_conn = array();
 
-    $adapter = Doctrine_Manager::connection()->getDbh();
-    $this->_conn[self::CONN_READ] = Doctrine_Manager::connection($adapter, self::CONN_READ);
+    // establish our read connection
+    $this->_conn[self::CONN_READ] = $this->resetConn(self::CONN_READ);
 
-    // establish a write connection with an open transaction
-    $write = Doctrine_Manager::connection($adapter, self::CONN_WRITE);
-    $write->beginTransaction();
-    $this->_conn[self::CONN_WRITE] = $write;
+    // now do our write and start a transaction
+    $conn = $this->resetConn(self::CONN_WRITE);
+    $conn->beginTransaction();
+    $this->_conn[self::CONN_WRITE] = $conn;
+
+    // always re-parent properly
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
+  }
+
+  /**
+   * Resets and/or instantiates and returns the select connection
+   * @param string $connName One of the self::CONN_ constants
+   * @param boolean $new Whether or not to instantiate a new connection if already exists
+   * @return Doctrine_Connection A doctrine connection object
+   */
+  protected function resetConn($connName, $new = FALSE)
+  {
+    if ($conn = $this->getConnection($connName)) {
+      if (!$new) {
+        $this->clearConnection($conn);
+        return $conn;
+      } else {
+       $this->closeConnection($conn);
+      }
+    }
+
+    // need this guy for all the heavy lifting
+    $dm = Doctrine_Manager::getInstance();
+
+    // save for re-setting
+    $currConn = $dm->getCurrentConnection();
+    $currConnName = $dm->getConnectionName($currConn);
+    $adapter = $currConn->getDbh();
+
+    // always re-parent properly
+    $dm->setCurrentConnection('doctrine');
+
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_WRITE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
+    $this->_conn[self::CONN_WRITE] = $conn;
+
+    $dm->setCurrentConnection($currConnName);
+    return $conn;
   }
 
   /**
@@ -229,6 +278,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     reset($this->eventFacilityGroups);
     $this->iterNextGrp = TRUE;
 
+    $this->profiler = new agPerfProfiler();
+    $this->profiler->test();
+
     // also reset batch-level statistics
     $this->resetFacGrpStatistics();
   }
@@ -255,61 +307,19 @@ class agEventStaffDeploymentHelper extends agPdoHelper
    */
   public function processBatch()
   {
-    return $this->processBatchMins();
-  }
-  public function doDeployment(sfEvent $event)
-  {
-        $action = $event->getSubject();
-    $context = $action->getContext();
-    ////$context = sfContext::getInstance();
-    $importer = $action->importer;
-    $moduleName = $action->getModuleName();
+    // set our time limit
+    set_time_limit($this->batchTime);
 
-    //TODO: get import data directory root info from global param
-    $importDataRoot = sfConfig::get('sf_upload_dir');
-    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
-    if (!file_exists($importDir)) {
-      mkdir($importDir);
-    }
-    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+    // set all the minimums
+    $results =  $this->processBatchMins();
 
-    if (!file_exists($statusFile)) {
-      //TODO: check if directory is writeable? -UA
-      touch($statusFile);
-    }
-    if (!is_writable($statusFile)) {
-      $importer->eh->logEmerg('Status file not writeable: '. $statusFile);
-      return;
-    }
+    // this helps keep our memory profile down
+    $this->resetConn(self::CONN_WRITE, FALSE);
 
+    // take our mem / timing temperature
+    $this->profiler->test();
 
-    $action->getUser()->shutdown();
-    session_write_close();
-
-    // blocks import if already in progress
-    $status = sfYaml::load($statusFile);
-    $abortFlagId = 'aborted';
-
-    $continueDeploy == TRUE;
-    while ($continueDeploy == TRUE) {
-//      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
-//        $context->set($abortFlagId, NULL);
-//        break;
-//      }
-      $status = sfYaml::load($statusFile);
-
-        $batch = $staffDeployer->processBatch();
-        $continueDeploy = $batch['continue'];
-      
-      $batchResult = $importer->processBatch();
-      // if the last batch did nothing
-
-      $status = sfYaml::load($statusFile);
-      $status['continueDeploy'] = $continueDeploy;
-      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
-    }    
-
-      
+    return $results;
   }
 
   /**
@@ -530,6 +540,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->eh->logInfo($eventMsg);
 
     // build a collection to store our records and loop through adding records to it
+    $agEventStaffShiftTable = $conn->getTable('agEventStaffShift');
     $coll = new Doctrine_Collection('agEventStaffShift');
     foreach ($shifts as $shift)
     {
@@ -538,7 +549,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         $this->eh->logDebug('Adding event staff id ' . $staff . ' to shift id ' . $shift . '.');
 
         // create a new shift record and add it to our collection
-       $rec = new agEventStaffShift();
+       $rec = new agEventStaffShift($agEventStaffShiftTable, TRUE);
         $rec['event_shift_id'] = $shift;
         $rec['event_staff_id'] = $staff;
         $coll->add($rec);
@@ -567,6 +578,8 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       // rethrow
       throw($e);
     }
+    $coll->free(TRUE);
+    unset($coll);
 
     if ($success)
     {
@@ -605,8 +618,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->andWhereIn('es2.id', $eventStaffIds);
 
     $eventStaffIds = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
-    $q->free();
+    $q->free(TRUE);
 
+    $agEventStaffStatusTable = $conn->getTable('agEventStaffStatus');
     $coll = new Doctrine_Collection('agEventStaffStatus');
 
     foreach ($eventStaffIds as $eventStaffId)
@@ -615,7 +629,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ' staffAllocationStatusId ' . $this->eventStaffDeployedStatusId;
       $this->eh->logDebug($eventMsg);
 
-      $rec = new agEventStaffStatus();
+      $rec = new agEventStaffStatus($agEventStaffStatusTable, TRUE);
       $rec['event_staff_id'] = $eventStaffId;
       $rec['staff_allocation_status_id'] = $this->eventStaffDeployedStatusId;
       $rec['time_stamp'] = date('Y-m-d H:i:s', time());
@@ -639,6 +653,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
       throw($e);
     }
+
+    $coll->free(TRUE);
+    unset($coll);
 
     $this->eh->logInfo('Successfully updated ' . $collSize . ' staff status records.');
   }
@@ -678,9 +695,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     // just pick up the lowest priority staff address
     $minStaffAddr = 'EXISTS (' .
-      'SELECT seac.id ' .
+      'SELECT seac.entity_id ' .
         'FROM agEntityAddressContact AS seac ' .
-        'WHERE seac.id = eac.id ' .
+        'WHERE seac.entity_id = eac.entity_id ' .
         'HAVING MIN(seac.priority) = eac.priority' .
       ')';
     $q->andWhere($minStaffAddr);

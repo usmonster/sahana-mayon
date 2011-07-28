@@ -34,6 +34,7 @@ abstract class agExportHelper extends agPdoHelper {
             $totalFetches = 0,
             $fetchPosition = 0,
             $batchPosition = 0,
+            $batchTime,
             $firstBatch = TRUE;
 
   /**
@@ -71,6 +72,8 @@ abstract class agExportHelper extends agPdoHelper {
     // get our paths
     $this->tempPath = realpath(sys_get_temp_dir());
     $this->exportFileInfo['path'] = sfConfig::get('sf_download_dir');
+
+    $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
   }
 
   /**
@@ -214,6 +217,9 @@ abstract class agExportHelper extends agPdoHelper {
 
   protected function processBatch()
   {
+    // set our batch time
+    set_time_limit($this->batchTime);
+
     // theoretically we only need to do this once :-p
     $this->firstBatch = FALSE;
 

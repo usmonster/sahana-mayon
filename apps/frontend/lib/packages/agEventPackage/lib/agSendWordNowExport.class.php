@@ -114,8 +114,8 @@ abstract class agSendWordNowExport extends agExportHelper {
         ->addSelect('o.organization')
           ->innerJoin('sr.agStaff s')
           ->innerJoin('s.agPerson p')
-          ->innerJoin('p.agEntity e')
-          ->innerJoin('sr.agOrganization o')
+          ->innerJoin('p.agEntity e') // a8
+          ->innerJoin('sr.agOrganization o') // a9
         ->orderBy('o.organization');
 
     return $q;

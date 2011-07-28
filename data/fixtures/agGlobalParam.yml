@@ -261,5 +261,9 @@ agGlobalParam:
     id: 52
     agHost: localhost
     datapoint: bulk_operation_max_batch_time
-    value: 360
-    
+    value: 360    
+  default_facility_group_allocation_status:
+    id: 53
+    agHost: localhost
+    datapoint: default_facility_group_allocation_status
+    value: active

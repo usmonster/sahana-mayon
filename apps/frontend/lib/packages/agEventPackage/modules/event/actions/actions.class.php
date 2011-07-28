@@ -1108,40 +1108,19 @@ class eventActions extends agActions
     public function executeDeploystaff(sfWebRequest $request)
     {
 
-        $this->setEventBasics($request);
-        $this->todeployStaff = 5; // @TODO make static method in agEventStaffDeploymentHelper
-        //before the user clicks the deploy staff button
-        //give them some information on what this will do
+      $this->setEventBasics($request);
 
-        if ($request->isXmlHttpRequest()) {
-            //return sfView::HEADER_ONLY;
-            //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
+      $staffDeployer = agEventStaffDeploymentHelper::getInstance($this->event_id);
+      $continue = TRUE;
+      while ($continue == TRUE) {
+          $batch = $staffDeployer->processBatch();
+          $continue = $batch['continue'];
 
-            /**
-             * @todo
-             * the above should only be called once, then the javascript can poll for the status.
-             * 
-             * the below, though, should currently work (given the getInstance call returns the same
-             * instance
-             */
-            $staffDeployer = agEventStaffDeploymentHelper::getInstance($this->event_id);
-            //$staffDeployer->batchSize = 10;
-            //$staffDeployer->eh->setLogEventLevel(agEventHandler::EVENT_DEBUG);
+          print_r($batch);
+          $this->results = $batch;
+      }
 
-            $continue = TRUE;
-            while ($continue == TRUE) {
-                $batch = $staffDeployer->processBatch();
-                $continue = $batch['continue'];
-
-                $this->results = $continue;
-            }
-
-            //if the entire process is complete, give us some GOOD results
-            $this->results = $staffDeployer->save();
-            //print_r($results);
-            //return "<br/><br/>" . "Success!";
-            return sfView::$this->renderPartial('deploystaff', array('results' => $this->results));
-        }
+      //if the entire process is complete, give us some GOOD results
+      $this->results = $staffDeployer->save();
     }
-
 }

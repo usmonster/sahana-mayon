@@ -20,8 +20,8 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
         <td>
 
             <?php
-            $exportUrl = url_for('event/exportcontacts?event=' . urlencode($sf_data->getRaw('event_name')));
-            echo link_to('Export Unconfirmed Staff List', $exportUrl, array('class' => 'generalButton'));
+            $exportUrl = url_for('event/exportcontacts?event=' . urlencode($sf_data->getRaw('event_name')) . '&type=pre');
+            echo link_to('Export Pre-Deployment Staff List', $exportUrl, array('class' => 'generalButton'));
             //on click of this button, set the div content to 'exporting data, please wait'
             if (isset($exportComplete)) {
                 echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';
@@ -38,11 +38,6 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
                 $importUrl = url_for('event/importreplies?event=' . urlencode($sf_data->getRaw('event_name')));
                 echo link_to('Import Staff Responses', $importUrl,
                         array('class' => 'generalButton', 'title' => 'Import Staff', 'id' => 'import'));
-
-//                $wikiUrl = url_for('@wiki') . '/doku.php?id=tooltip:staff_import&do=export_xhtmlbody';
-//                echo link_to('?', $wikiUrl,
-//                        array('class' => 'tooltipTrigger', 'title' => 'Importing Staff Replies', 'id' => 'import'));
-//                $foo = new agStaff();
                 ?>
 
 
@@ -65,12 +60,6 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
         </td>
     </tr>
     <tr>
-        <td>
-
-            <a href="#" class="generalButton">Preview Confirmed Staff Pool</a>
-        </td>
-        <td> Preview pool of staff who have confirmed they will respond to this event.</td>
-    </tr>
     <tr>
         <td>
 
@@ -81,19 +70,20 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
               </td>
               <td> After a sufficient staff pool have responded, deploy staff to facilities.</td>
           </tr>
-          <tr>
-              <td>
+    <tr>
+        <td>
 
             <?php
-                  echo link_to('Export All Staff Contact List', $exportUrl . '&all', array('class' => 'generalButton'));
-                  //on click of this button, set the div content to 'exporting data, please wait'
-                  if (isset($exportComplete)) {
-                      echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';
-                  }
-            ?>
-        </td>
+            $exportUrl = url_for('event/exportcontacts?event=' . urlencode($sf_data->getRaw('event_name')) . '&type=post');
+            echo link_to('Export Post-Deployment Staff List', $exportUrl, array('class' => 'generalButton'));
+            //on click of this button, set the div content to 'exporting data, please wait'
+            if (isset($exportComplete)) {
+                echo $exportComplete . ' staff records exported, please send this file to your messaging vendor.';
+            }
+            ?></td>
         <td> Export contact list of confirmed staff and their deployment assignments.</td>
-    </tr></table>
+    </tr>
+</table>
 <br> 
 
 <?php   $importUrl = url_for('event/active?event=' . urlencode($sf_data->getRaw('event_name')));

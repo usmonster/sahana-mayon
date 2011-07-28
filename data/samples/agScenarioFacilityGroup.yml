@@ -10,7 +10,7 @@ agScenarioFacilityGroup:
     agScenario: hurricaneA
     scenario_facility_group: ScenA_G01
     agFacilityGroupType: solar
-    agFacilityGroupAllocationStatus: allocatable
+    agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   hurrA_G02:
     agScenario: hurricaneA
