@@ -18,7 +18,8 @@
 class agFacilityImportNormalization extends agImportNormalization
 {
 
-  protected $scenarioId = NULL;
+  protected $scenarioId = NULL,
+            $staffResourceTypes = array();
 
   /**
    * Method to return an instance of this class
@@ -135,7 +136,7 @@ class agFacilityImportNormalization extends agImportNormalization
    */
   protected function setDynamicFieldType()
   {
-
+    $this->dynamicFieldType = array('type' => 'integer', 'length' => 6);
   }
 
   /**
@@ -144,7 +145,12 @@ class agFacilityImportNormalization extends agImportNormalization
    */
   protected function addDynamicColumns(array $importFileHeaders)
   {
-
+    $dynamicColumns = array_diff($importFileHeaders, array_keys($this->importSpec));
+    foreach ($dynamicColumns as $column) {
+      $this->importSpec[$column] = $this->dynamicFieldType;
+      $this->specStrLengths[$column] = self::getSpecificationStrLen($this->dynamicFieldType);
+      $this->eh->logInfo('Adding dynamic column {' . $column . '} to the import specification.');
+    }
   }
 
   /**
@@ -176,22 +182,7 @@ class agFacilityImportNormalization extends agImportNormalization
     $importSpec['country'] = array('type' => "string", 'length' => 128);
     $importSpec['longitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
     $importSpec['latitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
-    $importSpec['ec_opr_min'] = array('type' => "integer", 'length' => 6);
-    $importSpec['ec_opr_max'] = array('type' => "integer", 'length' => 6);
-    $importSpec['hs_opr_min'] = array('type' => "integer", 'length' => 6);
-    $importSpec['hs_opr_max'] = array('type' => "integer", 'length' => 6);
-    $importSpec['spec_min'] = array('type' => "integer", 'length' => 6);
-    $importSpec['spec_max'] = array('type' => "integer", 'length' => 6);
-    $importSpec['uorc_min'] = array('type' => "integer", 'length' => 6);
-    $importSpec['uorc_max'] = array('type' => "integer", 'length' => 6);
-    $importSpec['med_nrs_min'] = array('type' => "integer", 'length' => 6);
-    $importSpec['med_nrs_max'] = array('type' => "integer", 'length' => 6);
-    $importSpec['med_oth_min'] = array('type' => "integer", 'length' => 6);
-    $importSpec['med_oth_max'] = array('type' => "integer", 'length' => 6);
-    $importSpec['staff_min'] = array('type' => "integer", 'length' => 6);
-    $importSpec['staff_max'] = array('type' => "integer", 'length' => 6);
-    $importSpec['opr_min'] = array('type' => "integer", 'length' => 6);
-    $importSpec['opr_max'] = array('type' => "integer", 'length' => 6);
+//    $importSpec['opr_max'] = array('type' => "integer", 'length' => 6);
 
     // set the class property to the newly created
     $this->importSpec = $importSpec;
@@ -269,44 +260,49 @@ class agFacilityImportNormalization extends agImportNormalization
     // array( [order] => array(component => component name, helperClass => Name of the helper class, throwOnError => boolean, method => method name) )
     // setEntity creates entity, person, and staff records.
     $this->importComponents[] = array(
-        'component' => 'facility',
-        'throwOnError' => TRUE,
-        'method' => 'setFacilities',
+      'component' => 'facility',
+      'throwOnError' => TRUE,
+      'method' => 'setFacilities',
     );
     $this->importComponents[] = array(
-        'component' => 'facilityResource',
-        'throwOnError' => TRUE,
-        'method' => 'setFacilityResources'
+      'component' => 'facilityResource',
+      'throwOnError' => TRUE,
+      'method' => 'setFacilityResources'
     );
     $this->importComponents[] = array(
       'component' => 'facilityGroup',
-      'throwOnError' => FALSE,
+      'throwOnError' => TRUE,
       'method' => 'setScenarioFacilityGroups',
     );
     $this->importComponents[] = array(
       'component' => 'scenarioFacilityResource',
-      'throwOnError' => FALSE,
+      'throwOnError' => TRUE,
       'method' => 'setScenarioFacilityResources',
     );
     $this->importComponents[] = array(
-        'component' => 'email',
-        'throwOnError' => FALSE,
-        'method' => 'setEntityEmail',
-        'helperClass' => 'agEntityEmailHelper'
+      'component' => 'email',
+      'throwOnError' => FALSE,
+      'method' => 'setEntityEmail',
+      'helperClass' => 'agEntityEmailHelper'
     );
     $this->importComponents[] = array(
-        'component' => 'phone',
-        'throwOnError' => FALSE,
-        'method' => 'setEntityPhone',
-        'helperClass' => 'agEntityPhoneHelper'
+      'component' => 'phone',
+      'throwOnError' => FALSE,
+      'method' => 'setEntityPhone',
+      'helperClass' => 'agEntityPhoneHelper'
     );
-
 
     $this->importComponents[] = array(
       'component' => 'address',
-      'throwOnError' => FALSE,
+      'throwOnError' => TRUE,
       'method' => 'setEntityAddress',
       'helperClass' => 'agEntityAddressHelper'
+    );
+
+    $this->importComponents[] = array(
+      'component' => 'resourceReqs',
+      'throwOnError' => TRUE,
+      'method' => 'setResourceRequirements',
     );
   }
 
@@ -963,6 +959,146 @@ class agFacilityImportNormalization extends agImportNormalization
     unset($scenarioFacilityResourceColl);
 
   }
+
+  /**
+   * Method to set facility resource requirements
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function setResourceRequirements($throwOnError, Doctrine_Connection $conn)
+  {
+    $err = FALSE;
+    $missingColumn = 0;
+    $negativeNum = 0;
+
+    // try to avoid re-querying where possible
+    if (empty($this->staffResourceTypes)) {
+      $this->staffResourceTypes = agDoctrineQuery::create()
+        ->select('srt.staff_resource_type_abbr')
+            ->addSelect('srt.id')
+          ->from('agStaffResourceType srt')
+      ->execute(array(),agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+      
+        foreach ($this->staffResourceTypes as $abbr => $id) {
+        $minSpec = $abbr . '_min';
+        $maxSpec = $abbr . '_max';
+
+        if (isset($this->importSpec[$minSpec]) && !isset($this->importSpec[$maxSpec])) {
+          $errMsg = 'Missing paired column ' . $maxSpec . ' from import file.';
+          $err = TRUE;
+        } elseif (!isset($this->importSpec[$minSpec]) && isset($this->importSpec[$maxSpec])) {
+          $errMsg = 'Missing paired column ' . $minSpec . ' from import file.';
+          $err = TRUE;
+        }
+
+        if ($err) {
+          $this->eh->logErr($errMsg);
+
+          if ($throwOnError) {
+            throw new Exception($errMsg);
+          }
+        }
+      }
+    }
+
+    $defaultStaffResourceTypes = agDoctrineQuery::create($conn)
+      ->select('dssrt.*')
+        ->from('agDefaultScenarioStaffResouceType dssrt INDEXBY dssrt.staff_resource_type_id')
+        ->where('dssrt.scenario_id = ?', $this->scenarioId)
+        ->execute(array());
+
+    $rscReqs = array();
+    foreach ($this->importData as $rowId => $rowData) {
+      $rawData = $rowData['_rawData'];
+      $scFacRscId = $rowData['primaryKeys']['scenario_facility_resource_id'];
+
+      $tmpRscReqs = array();
+      foreach ($this->staffResourceTypes as $abbr => $id ) {
+        $minSpec = $abbr . '_min';
+        $maxSpec = $abbr . '_max';
+
+        if (isset($rawData[$minSpec]) && isset($rawData[$maxSpec])) {
+          $min = $rawData[$minSpec];
+          $max = $rawData[$maxSpec];
+
+          if (ctype_digit($min) && ctype($max) && $min <= $max) {
+            $tmpRscTypes[$abbr] = array($min, $max);
+          } else {
+            $negativeNum++;
+          }
+
+        } elseif (isset($rawData[$minSpec]) || $rawData[$maxSpec]) {
+          $missingColumn++;
+        }
+        
+      }
+      $rscReqs[$scFacRscId] = $tmpRscReqs;
+    }
+
+    // ie: $rscReqs[$rowId] = array('opr' => array(2,15), 'ecm' => array(3, 39))
+
+    $facilityStaffResources = agDoctrineQuery::create($conn)
+      ->select('fsr.*')
+        ->from('agFacilityStaffResource')
+        ->whereIn('scenario_facility_resource_id', array_keys($scFacRscIds))
+        ->execute(array());
+
+    foreach ($facilityStaffResources as $index => $facilityStaffResource) {
+      $scFacRscId = $facilityStaffResource['scenario_facility_resource_id'];
+
+      foreach($rscReqs[$scFacRscId] as $abbr => $values) {
+        $staffRscTypeId = $this->staffResourceTypes[$abbr];
+        if ($facilityStaffResource['staff_resource_type_id'] == $staffRscTypeId) {
+          if ($values[0] == 0 && $values[1] == 0) {
+            $facilityStaffResources->remove($index);
+          } else {
+            $facilityStaffResource['minimum_staff'] = $values[0];
+            $facilityStaffResource['maximum_staff'] = $values[1];
+          }
+        }
+        unset($rscReqs[$scFacRscId][$abbr]);
+      }
+    }
+    $facilityStaffResources->save($conn);
+    $facilityStaffResources->free(TRUE);
+    unset($facilityStaffResource);
+    unset($facilityStaffResources);
+
+    $facilityStaffResourceTable = $conn->getTable('agFacilityStaffResource');
+    $facilityStaffResources = new Doctrine_Collection('agFacilityStaffResource');
+    foreach ($rscReqs as $scFacRscId => $rscReq) {
+      foreach ($rscReq as $abbr => $values) {
+        if ($values[0] == 0 && $values[1] == 0) {
+          continue;
+        }
+        $facilityStaffResource = new agFacilityStaffResource($facilityStaffResourceTable, TRUE);
+        $facilityStaffResource['scenario_facility_resource_id'] = $scFacRscId;
+        $facilityStaffResource['staff_resource_type_id'] = $this->staffResourceTypes[$abbr];
+        $facilityStaffResource['minimum_staff'] = $values[0];
+        $facilityStaffResource['maximum_staff'] = $values[1];
+        $facilityStaffResources->add($facilityStaffResource);
+      }
+      unset($rscReqs[$scFacRscId]);
+    }
+    $facilityStaffResources->save($conn);
+    $facilityStaffResources->free(TRUE);
+    unset($facilityStaffResource);
+    unset($facilityStaffResources);
+
+    if ($missingColumn > 0) {
+      $warnMsg = $missingColumn . ' cells missing paired min/max data. Please review your staff ' .
+        'resource requirements to ensure data consistency.';
+      $this->eh->logWarn($warnMsg);
+    }
+    if ($negativeNum > 0) {
+      $warnMsg = $negativeNum . ' cells with negative resource requirements or switched min/max ' .
+      'values Please review your staff resource requirements to ensure data consistency.';
+      $this->eh->logWarn($warnMsg);
+    }
+  }
+
+
 
   /**
    * Method to set entity emails during staff import.

@@ -95,6 +95,7 @@ class agStaffImportNormalization extends agImportNormalization
     $dynamicColumns = array_diff($importFileHeaders, array_keys($this->importSpec));
     foreach ($dynamicColumns as $column) {
       $this->importSpec[$column] = $this->dynamicFieldType;
+      $this->specStrLengths[$column] = self::getSpecificationStrLen($this->dynamicFieldType);
       $this->eh->logInfo('Adding dynamic column {' . $column . '} to the import specification.');
     }
   }
@@ -106,7 +107,7 @@ class agStaffImportNormalization extends agImportNormalization
    */
   protected function setImportSpec()
   {
-    $importSpec['entity_id'] = array('type' => 'integer', 'length' => 20);
+    $importSpec['entity_id'] = array('type' => 'integer', 'length' => 6);
     $importSpec['first_name'] = array('type' => "string", 'length' => 64);
     $importSpec['middle_name'] = array('type' => "string", 'length' => 64);
     $importSpec['last_name'] = array('type' => "string", 'length' => 64);

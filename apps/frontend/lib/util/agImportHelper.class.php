@@ -125,6 +125,27 @@ abstract class agImportHelper extends agPdoHelper
   }
 
   /**
+   *
+   * @param array $columnDefinition An array of column definition information
+   *   array('type' => 'integer', 'length' => 6)
+   *
+   * Note that lengths for integers are calculated using Doctrine lengths (eg, 6 = BIGINT)
+   * @return integer The string length for the expected value
+   */
+  protected static function getSpecificationStrLen(array $columnDefinition) {
+    // string length / type comparison auto-magic
+    switch($value['type']) {
+      case 'integer':
+      case 'int':
+        return strlen(256^$columnDefinition['length']);
+        break;
+      default:
+        return $columnDefinition['length'];
+        break;
+    }
+  }
+
+  /**
    * Method to process and refine an import specification.
    */
   protected function processImportSpec()
@@ -150,18 +171,7 @@ abstract class agImportHelper extends agPdoHelper
         $this->eh->logWarning($eventMsg);
       }
 
-      // string length comparison auto-magic
-      if (isset($value['type']) && isset($value['length'])) {
-        switch($value['type']) {
-          case 'integer':
-          case 'int':
-            $this->specStrLengths[$cleanColumn] = 256^$value['length'];
-            break;
-          default:
-            $this->specStrLengths[$cleanColumn] = $value['length'];
-            break;
-        }
-      }
+      $this->specStrLengths[$cleanColumn] = self::getSpecificationStrLen($value);
     }
   }
 

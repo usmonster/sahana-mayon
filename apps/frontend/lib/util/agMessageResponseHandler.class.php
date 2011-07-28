@@ -146,7 +146,7 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function setImportSpec()
   {
-    $importSpec['unique_id'] = array('type' => 'integer', 'length' => 20);
+    $importSpec['unique_id'] = array('type' => 'integer', 'length' => 6);
     $importSpec['last_name'] = array('type' => "string", 'length' => 64);
     $importSpec['first_name'] = array('type' => "string", 'length' => 64);
     $importSpec['label'] = array('type' => "string", 'length' => 32);
