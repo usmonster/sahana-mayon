@@ -700,35 +700,34 @@ class agStaffImportNormalization extends agImportNormalization
       if (isset($rowData['primaryKeys']['entity_id'])) {
         // this just makes it easier to use
         $entityId = $rowData['primaryKeys']['entity_id'];
+        $rawData = $rowData['_rawData'];
 
         // we start with an empty array, devoid of types in case the entity has no types/values
-        $entityAddresses[$entityId] = array();
         list($homeAddr, $workAddr) = array(array(), array());
-        foreach ($rowData['_rawData'] AS $element => $value) {
-          if (preg_match('/^home_address/', $element)) {
-            $formElem = str_replace('home_address_', '', $element);
-            $elemId = $importAddressElements[$formElem];
-            $homeAddr[$importAddressElements[str_replace('home_address_', '', $element)]] = $value;
-          } else if (preg_match('/^work_address/', $element)) {
-            $workAddr[$importAddressElements[str_replace('work_address_', '', $element)]] = $value;
+        foreach ($importAddressElements AS $element => $id) {
+          if (isset($rawData['home_address_' . $element])) {
+            $homeAddr[$id] = $rawData['home_address_' . $element];
+          }
+
+          if (isset($rawData['work_address_' . $element])) {
+            $workAddr[$id] = $rawData['work_address_' . $element];
           }
         }
 
-        if (count($homeAddr) > 0 && isset($rowData['_rawData']['home_latitude']) &&
-            isset($rowData['_rawData']['home_longitude'])) {
+        if (count($homeAddr) > 0 && isset($rawData['home_latitude']) &&
+                isset($rawData['home_longitude'])) {
           $homeAddrComp = array($homeAddr, $addressStandardId);
-          $homeAddrComp[] = array(array(array($rowData['_rawData']['home_latitude'],
-                $rowData['_rawData']['home_longitude'])),
+          $homeAddrComp[] = array(array(array($rawData['home_latitude'],
+                $rawData['home_longitude'])),
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
-        } else {
         }
 
-        if (count($workAddr) > 0 && isset($rowData['_rawData']['work_latitude']) &&
-            isset($rowData['_rawData']['work_longitude'])) {
+        if (count($workAddr) > 0 && isset($rawData['work_latitude']) &&
+            isset($rawData['work_longitude'])) {
           $workAddrComp = array($workAddr, $addressStandardId);
-          $workAddrComp[] = array(array(array($rowData['_rawData']['work_latitude'],
-                $rowData['_rawData']['work_longitude'])),
+          $workAddrComp[] = array(array(array($rawData['work_latitude'],
+              $rawData['work_longitude'])),
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
         } else {
