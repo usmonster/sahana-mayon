@@ -530,13 +530,40 @@ class scenarioActions extends agActions
   {
     $this->setScenarioBasics($request);
     $this->wizardHandler($request, 5);
+    $this->targetModule = 'staff';
+
+    // Get all available staff counts
+    $this->total_staff = agDoctrineQuery::create()
+            ->select('count(*)')
+              ->from('agStaffResource sr')
+                ->innerJoin('sr.agStaffResourceStatus srs')
+              ->where('srs.is_available = ?', 1)
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    // Get staff counts who are assigned to the current scenario.
     $this->scenario_staff_count = agDoctrineQuery::create()
       ->select('count(*)')
         ->from('agScenarioStaffResource ssr')
         ->where('ssr.scenario_id = ?', $this->scenario_id)
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-    $this->targetModule = 'staff';
 
+    // Get staff counts who are assigned to the current scenario by their resource type.
+    $scenario_staff_by_resource_count = agDoctrineQuery::create()
+            ->select('srt.staff_resource_type')
+            ->addSelect('count(*) AS staff_type_count')
+            ->from('agScenarioStaffResource ssr')
+            ->innerJoin('ssr.agStaffResource sr')
+            ->innerJoin('sr.agStaffResourceType srt')
+            ->where('ssr.scenario_id = ?', $this->scenario_id)
+            ->groupBy('srt.id')
+            ->orderBy('srt.staff_resource_type')
+            ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+    array_walk($scenario_staff_by_resource_count,
+      function(&$item){ $item = '<span class="highlightedText">' . $item[1] . '</span> ' . $item[0]; }
+    );
+    $this->scenario_staff_by_resource_count = $scenario_staff_by_resource_count;
+
+    // Retrieve saved search objects
     $this->saved_searches = $existing = agDoctrineQuery::create()
         ->select('ssg.*')
         ->addSelect('s.*')
@@ -545,23 +572,15 @@ class scenarioActions extends agActions
         ->where('ssg.scenario_id = ?', $this->scenario_id)
         ->orderBy('ssg.search_weight DESC, s.search_name ASC')
         ->execute();
-//get all available staff
-    $this->total_staff = agDoctrineQuery::create()
-            ->select('count(*)')
-              ->from('agStaff s')
-              ->innerJoin('s.agStaffResource sr')
-              ->innerJoin('sr.agStaffResourceStatus srs')
-              ->where('srs.is_available = ?', 1)
-              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
 //EDIT
-    if ($request->hasParameter('search_id') && !($request->hasParameter('Delete'))) {
+    if ($request->hasParameter('search_id') && !$request->hasParameter('Delete') && !$request->hasParameter('Preview')) {
       $searchWeight = NULL;
       $this->search_id = $request->getParameter('search_id');
       $searchWeight = agDoctrineQuery::create()
             ->select('search_weight')
-              ->from('agScenarioStaffGenerator')
-              ->where('search_id = ?', $request->getParameter('search_id'))
+                ->from('agScenarioStaffGenerator')
+                ->where('search_id = ?', $request->getParameter('search_id'))
               ->andWhere('scenario_id = ?', $this->scenario_id)
               ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
       $searchInfo = agDoctrineQuery::create()
@@ -617,10 +636,6 @@ class scenarioActions extends agActions
       }
     }
 
-    $saveStatus = $request->getParameter('Save');
-    $saveFlag = $request->hasParameter('Save');
-    $contFlag = $request->hasParameter('Continue');
-
     if ($request->hasParameter('Delete')) {
 //DELETE
       $deleteScenarioStaffGen = agDoctrineQuery::create()
@@ -631,24 +646,24 @@ class scenarioActions extends agActions
       agStaffGeneratorHelper::generateStaffPool($this->scenario_id);
       $this->redirect('scenario/staffpool?id=' . $request->getParameter('id'));
     }
-//PREVIEW    
-    elseif ( ($request->hasParameter('Preview') || $request->hasParameter('search_id'))
-             && !($request->hasParameter('Continue'))
-             && !($request->hasParameter('Save'))) {
-
-      $search_id = null;
-
-    $list = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order);
-    $q = $list[1];
-
-      $this->status = 'active';
-      list($this->displayColumns, $query) = agListHelper::getStaffList(NULL, $this->status, $this->sort, $this->order, 'staffresource');
+//PREVIEW either from new search criteria or from saved searches
+    elseif ( $request->hasParameter('Preview') ||
+             ($request->hasParameter('search_id') &&
+              !($request->hasParameter('Continue')) &&
+              !($request->hasParameter('Save'))) )
+    {
+      $query = agDoctrineQuery::create()
+          ->select('agStaffResourceType.staff_resource_type')
+              ->addSelect('count(*) AS staff_type_count')
+            ->from('agStaffResource sr')
+              ->innerJoin('sr.agStaffResourceStatus srs')
+              ->innerJoin('sr.agStaffResourceType agStaffResourceType')
+              ->innerJoin('sr.agOrganization agOrganization')
+            ->where('srs.is_available = ?', 1)
+            ->groupBy('agStaffResourceType.id')
+            ->orderBy('agStaffResourceType.staff_resource_type');
       $query = agStaffGeneratorHelper::executeStaffPreview($query, $search_condition);
-
-      $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
-      $resultsPerPage = agGlobal::getParam('search_list_results_per_page');
-      $this->pager = new Doctrine_Pager($query, $currentPage, $resultsPerPage);
-      $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+      $this->previewStaffCountResults = $query->execute(array(), Doctrine_Core::HYDRATE_NONE);
     }
 //SAVE
     elseif ($request->hasParameter('Save') || $request->hasParameter('Continue')) { //otherwise, we're SAVING/UPDATING

@@ -26,6 +26,10 @@ deployment of staff based on the scale of the plan and response.</p>
       <tr>
         <th style="float:right;">
           <span class="highlightedText"><?php echo $total_staff ?></span> total staff in system, <span class="highlightedText"><?php echo $scenario_staff_count ?></span> Staff Members in pool
+          <br />
+          <?php
+            echo implode(', ', $sf_data->getRaw('scenario_staff_by_resource_count'));
+          ?>
         <th>
       </tr>
     </thead>
@@ -53,41 +57,30 @@ deployment of staff based on the scale of the plan and response.</p>
 
 <?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
 
-    <div id="searchresults" class="infoHolder">
-
-      <!--sometimes this will fail -->
-  <?php if (isset($pager)) {
- ?>
-
-  <?php
-      $statusTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_list_resource_status&do=export_xhtmlbody';
-      $orgTooltip = url_for('@wiki') . '/doku.php?id=tooltip:organization&do=export_xhtmlbody';
-      $resourceTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody';
-
-      // Adding tooltip info to the displayColumns array to be used in later templates.
-      $displayColumns = $sf_data->getRaw('displayColumns');
-      $displayColumns['organization']['tooltip'] = $orgTooltip;
-      $displayColumns['resource']['tooltip'] = $resourceTooltip;
-      $displayColumns['staff_status']['tooltip'] = $statusTooltip;
-
-      $order = null;
-      $sort = null;
-      $filter = null;
-      //the above three lines are in place to supress warnings until SOF is functional
-      
-      //pager comes in from the action
-      include_partial('global/list', array('sf_request' => $sf_request,
-                                           'displayColumns' => $displayColumns,
-                                           'pager' => $pager,
-                                           'data' => $data,
-                                           'order' => $order,
-                                           'sort' => $sort,
-                                           'status' => $status,
-                                           'targetModule' => 'staff',
-                                           'targetAction' => 'list',
-                                           'caption' => 'Search Results',
-                                           'widgets' => array()
-                                          )
-      );
-    } ?>
-</div>
+<?php if (isset($previewStaffCountResults)): ?>
+  <div id="searchresults" class="infoHolder">
+  <h3>Search Preview:</h3>
+  <?php $previewStaffCountResults = $sf_data->getRaw('previewStaffCountResults'); ?>
+  <?php if (empty($previewStaffCountResults)): ?>
+    <br />
+    <B>No match found.</B>
+  <?php else: ?>
+    <table class="blueTable">
+      <thead>
+        <tr class="head">
+          <th>Staff Resource Type</th>
+          <th>Match Found</th>
+        </tr>
+      </thead>
+      <tbody>
+    <?php foreach($previewStaffCountResults AS $staffResourceCount): ?>
+        <tr>
+          <td><B><?php echo $staffResourceCount[0]; ?></B></td>
+          <td><?php echo $staffResourceCount[1]; ?></td>
+        </tr>
+    <?php endforeach; ?>
+      </tbody>
+    </table>
+  <?php endif; ?>
+  </div>
+<?php endif; ?>
