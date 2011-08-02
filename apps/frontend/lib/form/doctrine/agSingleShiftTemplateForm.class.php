@@ -57,37 +57,8 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
    */
   public function setup()
   {
-      sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
-      $this->wikiUrl = url_for('@wiki');
-      //get default staff resource types for this scenario
-      $dsrt = agScenarioResourceHelper::returnDefaultStaffResourceTypes($this->scenario_id);
-      if (count($dsrt) > 0) {
-        $defaultStaffResourceTypes = $dsrt;
-      } else {
-        $defaultStaffResourceTypes =
-                agDoctrineQuery::create()
-                ->select('srt.id, srt.staff_resource_type')
-                ->from('agStaffResourceType srt')
-                ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      }
-      foreach($defaultStaffResourceTypes as $dsrt){
-        $defaultStaffTypes[$dsrt['srt_id']] = $dsrt['srt_staff_resource_type'];
-      }
-      //get default facility resource types for this scenario
-      $dfrt = agScenarioResourceHelper::returnDefaulFacilityResourceTypes($this->scenario_id);
-      if (count($dfrt) > 0) {
-        $defaultFacilityResourceTypes = $dfrt;
-      } else {
-        $defaultFacilityResourceTypes =
-                agDoctrineQuery::create()
-                ->select('frt.id, frt.facility_resource_type')
-                ->from('agFacilityResourceType frt')
-                ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-      }
-//      $defaultFacilityTypes = array('' => '');
-      foreach($defaultFacilityResourceTypes as $dfrt){
-        $defaultFacilityTypes[$dfrt['frt_id']] = $dfrt['frt_facility_resource_type'];
-      }
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $this->wikiUrl = url_for('@wiki');
     
     $this->setWidgets(
         array(
@@ -97,29 +68,24 @@ class agSingleShiftTemplateForm extends agShiftTemplateForm
           'scenario_id' => new sfWidgetFormInputHidden,
 
           'facility_resource_type_id' =>
-          new sfWidgetFormChoice(array('choices' => $defaultFacilityTypes),
-              array('label' => 'Facility Resource Type','class' => 'filter')
-              )
-//          new sfWidgetFormDoctrineChoice(
-//            array(
-//              'model' => $this->getRelatedModelName('agFacilityResourceType'),
-//              'add_empty' => false,'method' => 'getFacilityResourceType','label' => 'Facility Resource Type'
-//            //'query' => $this::$staticLists['agFacilityResourceType']
-//            )
-//
-//          )
+          new sfWidgetFormDoctrineChoice(
+            array(
+              'model' => $this->getRelatedModelName('agFacilityResourceType'),
+              'add_empty' => false,
+              'method' => 'getFacilityResourceType',
+              'label' => 'Facility Resource Type'
+            )
+          )
           ,
           'staff_resource_type_id' =>
-          new sfWidgetFormChoice(array('choices' => $defaultStaffTypes),
-              array('label' => 'Staff Resource Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_resources&do=export_xhtmlbody" class="tooltipTrigger" title="Search Name">?</a>','class' => 'filter')
-              )
-//          new sfWidgetFormDoctrineChoice(
-//            array(
-//              'model' => $this->getRelatedModelName('agStaffResourceType'),
-//              'add_empty' => false,
-//              'method' => 'getStaffResourceType','label' => 'Staff Resource Type'
-//            )
-//          )
+          new sfWidgetFormDoctrineChoice(
+            array(
+              'model' => $this->getRelatedModelName('agStaffResourceType'),
+              'add_empty' => false,
+              'method' => 'getStaffResourceType',
+              'label' => 'Staff Resource Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:staff_resources&do=export_xhtmlbody" class="tooltipTrigger" title="Search Name">?</a>'
+            )
+          )
           ,
           'task_id' => new sfWidgetFormDoctrineChoice(
             array(
