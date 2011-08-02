@@ -134,10 +134,10 @@ abstract class agImportHelper extends agPdoHelper
    */
   protected static function getSpecificationStrLen(array $columnDefinition) {
     // string length / type comparison auto-magic
-    switch($value['type']) {
+    switch($columnDefinition['type']) {
       case 'integer':
       case 'int':
-        return strlen(256^$columnDefinition['length']);
+        return strlen(pow(256, $columnDefinition['length']));
         break;
       default:
         return $columnDefinition['length'];
