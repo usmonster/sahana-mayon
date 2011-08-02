@@ -24,16 +24,7 @@ class agShiftTemplateContainerForm extends sfForm
       $this->scenario_id = $scenario_id;
     }
 
-    // Only grabbing the unique staff/facility resource types combo.
-    $this->uniqRequiredResourceCombo = array();
-    foreach ($requiredResourceCombo AS $set)
-    {
-      $pos = array_search($set, $this->uniqRequiredResourceCombo);
-      if ($pos === FALSE)
-      {
-        $this->uniqRequiredResourceCombo[] = $set;
-      }
-    }
+    $this->uniqRequiredResourceCombo = $requiredResourceCombo;
     
     parent::__construct(array(), array(), array());
   }
@@ -73,14 +64,20 @@ class agShiftTemplateContainerForm extends sfForm
             ->where('a.scenario_id = ?', $this->scenario_id)
             ->execute(); //->getFirst();
 
+    $defaultShiftTaskLength = agGlobal::getParam('default_shift_task_length');
+    $defaultShiftBreakLength = agGlobal::getParam('default_shift_break_length');
+    $defaultShiftMinutesStartToFacilityActivation = agGlobal::getParam('default_shift_minutes_start_to_facility_activation');
+    $defaultDaysInOperation = agGlobal::getParam('default_days_in_operation');
+    $defaultShiftMaxStaffRepeatShifts = agGlobal::getParam('default_shift_max_staff_repeat_shifts');
 
     if (count($shiftTemplates) > 0)
     {
       foreach ($shiftTemplates as $shiftTemplate)
       {
         // Remove from $requiredResourceCombo if a shift template is already defined for that combo.
-        $existingTemplate = array($shiftTemplate->getStaffResourceTypeId(), 
-                                  $shiftTemplate->getFacilityResourceTypeId());
+        $existingTemplate = array($shiftTemplate->getStaffResourceTypeId(),
+                                  $shiftTemplate->getFacilityResourceTypeId(),
+                                  $shiftTemplate->getShiftStatusId());
         $pos = array_search($existingTemplate, $requiredResourceCombo);
         if ($pos !== FALSE)
         {
@@ -89,8 +86,6 @@ class agShiftTemplateContainerForm extends sfForm
 
         //$shiftTemplateForm = new agEmbeddedShiftTemplateForm($shiftTemplate);
         $shiftTemplateForm = new agSingleShiftTemplateForm($this->scenario_id, $shiftTemplate);
-        $shiftTemplateForm->setDefault('facility_resource_type_id', $shiftTemplate->getFacilityResourceTypeId());// ->facility_resource_type_id);
-        $shiftTemplateForm->setDefault('staff_resource_type_id', $shiftTemplate->getStaffResourceTypeId());
         $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[' . $formCounter . '][%s]');
 
         $this->embedForm($formCounter, $shiftTemplateForm);
@@ -103,16 +98,17 @@ class agShiftTemplateContainerForm extends sfForm
     {
       foreach ($requiredResourceCombo AS $combo)        
       {
-        list($staffResourceTypeId, $facilityResourceTypeId) = $combo;
+        list($staffResourceTypeId, $facilityResourceTypeId, $shiftStatusId) = $combo;
         $shiftTemplateForm = new agSingleShiftTemplateForm($this->scenario_id);
         $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[' . $formCounter . '][%s]');
         $shiftTemplateForm->setDefault('facility_resource_type_id', $facilityResourceTypeId);
         $shiftTemplateForm->setDefault('staff_resource_type_id', $staffResourceTypeId);
-        $shiftTemplateForm->setDefault('task_length_minutes', agGlobal::getParam('default_shift_task_length'));
-        $shiftTemplateForm->setDefault('break_length_minutes', agGlobal::getParam('default_shift_break_length'));
-        $shiftTemplateForm->setDefault('minutes_start_to_facility_activation', agGlobal::getParam('default_shift_minutes_start_to_facility_activation'));
-        $shiftTemplateForm->setDefault('days_in_operation',agGlobal::getParam('default_days_in_operation'));
-        $shiftTemplateForm->setDefault('max_staff_repeat_shifts', agGlobal::getParam('default_shift_max_staff_repeat_shifts'));
+        $shiftTemplateForm->setDefault('shift_status_id', $shiftStatusId);
+        $shiftTemplateForm->setDefault('task_length_minutes', $defaultShiftTaskLength);
+        $shiftTemplateForm->setDefault('break_length_minutes', $defaultShiftBreakLength);
+        $shiftTemplateForm->setDefault('minutes_start_to_facility_activation', $defaultShiftMinutesStartToFacilityActivation);
+        $shiftTemplateForm->setDefault('days_in_operation', $defaultDaysInOperation);
+        $shiftTemplateForm->setDefault('max_staff_repeat_shifts', $defaultShiftMaxStaffRepeatShifts);
 
         $this->embedForm($formCounter, $shiftTemplateForm);
         $this->getWidgetSchema()->setLabel($formCounter++, false);
@@ -124,11 +120,11 @@ class agShiftTemplateContainerForm extends sfForm
     {
       $shiftTemplateForm = new agSingleShiftTemplateForm($this->scenario_id);
       $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[0][%s]');
-      $shiftTemplateForm->setDefault('task_length_minutes', agGlobal::getParam('default_shift_task_length'));
-      $shiftTemplateForm->setDefault('break_length_minutes', agGlobal::getParam('default_shift_break_length'));
-      $shiftTemplateForm->setDefault('minutes_start_to_facility_activation', agGlobal::getParam('default_shift_minutes_start_to_facility_activation'));
-      $shiftTemplateForm->setDefault('days_in_operation',agGlobal::getParam('default_days_in_operation'));
-      $shiftTemplateForm->setDefault('max_staff_repeat_shifts', agGlobal::getParam('default_shift_max_staff_repeat_shifts'));
+      $shiftTemplateForm->setDefault('task_length_minutes', $defaultShiftTaskLength);
+      $shiftTemplateForm->setDefault('break_length_minutes', $defaultShiftBreakLength);
+      $shiftTemplateForm->setDefault('minutes_start_to_facility_activation', $defaultShiftMinutesStartToFacilityActivation);
+      $shiftTemplateForm->setDefault('days_in_operation',$defaultDaysInOperation);
+      $shiftTemplateForm->setDefault('max_staff_repeat_shifts', $defaultShiftMaxStaffRepeatShifts);
 
       $this->embedForm('0', $shiftTemplateForm);
       $this->getWidgetSchema()->setLabel('0', false);

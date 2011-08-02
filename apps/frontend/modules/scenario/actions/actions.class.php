@@ -1208,16 +1208,20 @@ class scenarioActions extends agActions
     if ($request->isMethod(sfRequest::POST) and $request->hasParameter('Predefined'))
     {
       // Query for all predefined staff resource and faciltiy resource combinations.
+      // Note:  Careful with the order of select since agShiftStatus table has no real relation to
+      // either of the tables in the query. The agShiftStatus.id is automatically placed at the end
+      // of the result array.
       $requiredResourceCombo = agDoctrineQuery::create()
-        ->select('fsr.staff_resource_type_id')
-            ->addSelect('fr.facility_resource_type_id')
-          ->from('agFacilityStaffResource AS fsr')
-            ->innerJoin('fsr.agScenarioFacilityResource AS sfr')
-            ->innerJoin('sfr.agFacilityResource AS fr')
-            ->innerJoin('sfr.agScenarioFacilityGroup AS sfg')
-          ->where('sfg.scenario_id = ?', $this->scenario_id)
-          ->orderBy('fsr.staff_resource_type_id, fr.facility_resource_type_id')
-       ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+        ->select('dst.staff_resource_type_id')
+            ->addSelect('dft.facility_resource_type_id')
+            ->addSelect('ss.id')
+          ->from('agDefaultScenarioStaffResourceType dst')
+              ->innerJoin('dst.agScenario s')
+              ->innerJoin('s.agDefaultScenarioFacilityResourceType dft')
+              ->addFrom('agShiftStatus ss')
+          ->where('s.id = ?', $this->scenario_id)
+          ->andWhere('ss.disabled = 0')
+        ->execute(array(), Doctrine_Core::HYDRATE_NONE);
     }
     $this->shifttemplateforms = new agShiftTemplateContainerForm($this->scenario_id,
                                                                  $requiredResourceCombo);
@@ -1231,12 +1235,6 @@ class scenarioActions extends agActions
       {
         if ($request->hasParameter('Continue') || $request->hasParameter('Delete'))
         {
-//          if ($request->hasParameter('Delete'))
-//          {
-//            $this->shifttemplateforms->deleteEmbeddedForms($request->getParameter('deleteShiftTemplateId'));
-////            unset($this->shifttemplateforms[$request->getParameter('deleteShiftTemplateId')]);
-//          }
-
           if  ($request->hasParameter('Delete'))
           {
             $ag_shift_template = $this->shifttemplateforms->saveEmbeddedForms($request->getParameter('deleteShiftTemplateId'));
