@@ -1816,6 +1816,8 @@ table.blueTable tr:hover{background-color: #f7f7f7
 }
 
 
+table.blueTable tr.noborder td{background:#d8d8d8; padding:1px;}
+table.blueTable tr.noborder:hover{background-color: #fff}
 
 table.headerLess{border: 1px solid #dadada; border-collapse: collapse; width:auto; margin-bottom:10px}
 table.headerLess tr td span{font-size:1em; color:#848484; font-weight: bold}
@@ -1969,3 +1971,4 @@ div.agFormatterAddressLevelTwo {
 .inputEmpty{
     background-color: red;
 }
+

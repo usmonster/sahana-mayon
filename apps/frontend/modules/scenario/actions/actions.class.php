@@ -548,7 +548,7 @@ class scenarioActions extends agActions
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     // Get staff counts who are assigned to the current scenario by their resource type.
-    $scenarioStaffByResourceCount = agDoctrineQuery::create()
+    $this->scenarioStaffByResourceCount = agDoctrineQuery::create()
             ->select('srt.staff_resource_type')
             ->addSelect('count(*) AS staff_type_count')
             ->from('agStaffResourceType srt')
@@ -559,9 +559,11 @@ class scenarioActions extends agActions
             ->orderBy('srt.staff_resource_type')
             ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
 
-    $this->summaryCount = array('Total Staff in System' => $totalStaffCount,
+    $this->summaryCount = array('Total Staff Resource in System' => $totalStaffCount,
                                 'Staff Members in Pool' => $scenarioStaffCount);
-    $this->summaryCount = $this->summaryCount + $scenarioStaffByResourceCount;
+    //$this->summaryCount = array('Total Staff in System' => $totalStaffCount,
+    //                            'Staff Members in Pool' => $scenarioStaffCount);
+    //$this->summaryCount = $this->summaryCount + $scenarioStaffByResourceCount;
 
     // Retrieve saved search objects
     $this->saved_searches = $existing = agDoctrineQuery::create()

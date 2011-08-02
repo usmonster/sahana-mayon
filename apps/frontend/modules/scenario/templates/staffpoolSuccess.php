@@ -14,6 +14,36 @@
 deployment of staff based on the scale of the plan and response.</p>
 
 <?php if (count($saved_searches) > 0): ?>
+
+<div class="infoHolder" style="width:750px;">
+  <h3>Saved Search Summary</h3>
+  <br />
+  <table class="blueTable">
+    <thead>
+      <tr class="head">
+        <th>Staff Resource Type</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($scenarioStaffByResourceCount AS $type => $count): ?>
+      <tr>
+        <td><?php echo ucwords(strtolower($type)); ?></td>
+        <td><?php echo $count; ?></td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="noborder">
+        <td colspan="2"></td>
+      </tr>
+      <?php foreach ($summaryCount AS $type => $count): ?>
+      <tr>
+        <td><?php echo ucwords(strtolower($type)); ?></td>
+        <td><?php echo $count; ?></td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
 <div class="infoHolder" style="width:750px;">
   <h3>Saved Searches<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_pool_searches&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Pool Searches">?</a></h3>
       <p class="highlightedText">Searches displayed in deployment order.</p>
@@ -36,26 +66,6 @@ deployment of staff based on the scale of the plan and response.</p>
   </table>
 </div>
 
-<div class="infoHolder" style="width:750px;">
-  <h3>Saved Search Summary</h3>
-  <br />
-  <table class="blueTable">
-    <thead>
-      <tr class="head">
-        <th>Staff Resource Type</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($summaryCount AS $type => $count): ?>
-      <tr>
-        <td><?php echo ucwords(strtolower($type)); ?></td>
-        <td><?php echo $count; ?></td>
-      </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
-</div>
 <?php endif; ?>
 <?php
     if (!isset($search_id)) {
@@ -75,7 +85,7 @@ deployment of staff based on the scale of the plan and response.</p>
   <br />
   <?php $previewStaffCountResults = $sf_data->getRaw('previewStaffCountResults'); ?>
   <?php if (empty($previewStaffCountResults)): ?>
-    <B>No match found.</B>
+    No match found.
   <?php else: ?>
     <table class="blueTable">
       <thead>
@@ -87,7 +97,7 @@ deployment of staff based on the scale of the plan and response.</p>
       <tbody>
     <?php foreach($previewStaffCountResults AS $staffResourceCount): ?>
         <tr>
-          <td><B><?php echo $staffResourceCount[0]; ?></B></td>
+          <td><?php echo ucwords(strtolower($staffResourceCount[0])); ?></td>
           <td><?php echo $staffResourceCount[1]; ?></td>
         </tr>
     <?php endforeach; ?>
