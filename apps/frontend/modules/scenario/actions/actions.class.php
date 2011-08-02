@@ -533,7 +533,7 @@ class scenarioActions extends agActions
     $this->targetModule = 'staff';
 
     // Get all available staff counts
-    $this->total_staff = agDoctrineQuery::create()
+    $totalStaffCount = agDoctrineQuery::create()
             ->select('count(*)')
               ->from('agStaffResource sr')
                 ->innerJoin('sr.agStaffResourceStatus srs')
@@ -541,14 +541,14 @@ class scenarioActions extends agActions
             ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     // Get staff counts who are assigned to the current scenario.
-    $this->scenario_staff_count = agDoctrineQuery::create()
+    $scenarioStaffCount = agDoctrineQuery::create()
       ->select('count(*)')
         ->from('agScenarioStaffResource ssr')
         ->where('ssr.scenario_id = ?', $this->scenario_id)
         ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     // Get staff counts who are assigned to the current scenario by their resource type.
-    $scenario_staff_by_resource_count = agDoctrineQuery::create()
+    $scenarioStaffByResourceCount = agDoctrineQuery::create()
             ->select('srt.staff_resource_type')
             ->addSelect('count(*) AS staff_type_count')
             ->from('agScenarioStaffResource ssr')
@@ -557,11 +557,11 @@ class scenarioActions extends agActions
             ->where('ssr.scenario_id = ?', $this->scenario_id)
             ->groupBy('srt.id')
             ->orderBy('srt.staff_resource_type')
-            ->execute(array(), Doctrine_Core::HYDRATE_NONE);
-    array_walk($scenario_staff_by_resource_count,
-      function(&$item){ $item = '<span class="highlightedText">' . $item[1] . '</span> ' . $item[0]; }
-    );
-    $this->scenario_staff_by_resource_count = $scenario_staff_by_resource_count;
+            ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    $this->summaryCount = array('Total Staff in System' => $totalStaffCount,
+                                'Staff Members in Pool' => $scenarioStaffCount);
+    $this->summaryCount = $this->summaryCount + $scenarioStaffByResourceCount;
 
     // Retrieve saved search objects
     $this->saved_searches = $existing = agDoctrineQuery::create()

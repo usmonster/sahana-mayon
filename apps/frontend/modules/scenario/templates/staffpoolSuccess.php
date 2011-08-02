@@ -13,8 +13,8 @@
 <p>The staff pool is built from a set of searches.  Creating from searches allows you to create custom
 deployment of staff based on the scale of the plan and response.</p>
 
-<?php if (count($saved_searches) > 0) {
-?><div class="infoHolder" style="width:750px;">
+<?php if (count($saved_searches) > 0): ?>
+<div class="infoHolder" style="width:750px;">
   <h3>Saved Searches<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_pool_searches&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Pool Searches">?</a></h3>
       <p class="highlightedText">Searches displayed in deployment order.</p>
   <table class="blueTable">
@@ -22,15 +22,6 @@ deployment of staff based on the scale of the plan and response.</p>
       <tr class="head">
         <th>Search Name</th>
         <th>Search Conditions</th>
-      </tr>
-      <tr>
-        <th style="float:right;">
-          <span class="highlightedText"><?php echo $total_staff ?></span> total staff in system, <span class="highlightedText"><?php echo $scenario_staff_count ?></span> Staff Members in pool
-          <br />
-          <?php
-            echo implode(', ', $sf_data->getRaw('scenario_staff_by_resource_count'));
-          ?>
-        <th>
       </tr>
     </thead>
     <tbody>
@@ -44,7 +35,28 @@ deployment of staff based on the scale of the plan and response.</p>
     </tbody>
   </table>
 </div>
-<?php } ?>
+
+<div class="infoHolder" style="width:750px;">
+  <h3>Saved Search Summary</h3>
+  <br />
+  <table class="blueTable">
+    <thead>
+      <tr class="head">
+        <th>Staff Resource Type</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($summaryCount AS $type => $count): ?>
+      <tr>
+        <td><?php echo ucwords(strtolower($type)); ?></td>
+        <td><?php echo $count; ?></td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+<?php endif; ?>
 <?php
     if (!isset($search_id)) {
       $search_id = NULL;
@@ -60,9 +72,9 @@ deployment of staff based on the scale of the plan and response.</p>
 <?php if (isset($previewStaffCountResults)): ?>
   <div id="searchresults" class="infoHolder">
   <h3>Search Preview:</h3>
+  <br />
   <?php $previewStaffCountResults = $sf_data->getRaw('previewStaffCountResults'); ?>
   <?php if (empty($previewStaffCountResults)): ?>
-    <br />
     <B>No match found.</B>
   <?php else: ?>
     <table class="blueTable">
