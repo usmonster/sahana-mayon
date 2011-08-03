@@ -30,6 +30,8 @@ abstract class agExportHelper extends agPdoHelper {
             $zipFile,
             $tempPath;
 
+  protected $perfProfiler;
+
   protected $XlsMaxExportSize,
             $totalFetches = 0,
             $fetchPosition = 0,
@@ -74,6 +76,8 @@ abstract class agExportHelper extends agPdoHelper {
     $this->exportFileInfo['path'] = sfConfig::get('sf_download_dir');
 
     $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
+
+    $this->perfProfiler = new agPerfProfiler();
   }
 
   /**
@@ -215,6 +219,18 @@ abstract class agExportHelper extends agPdoHelper {
     }
   }
 
+  /**
+   * Method to return the performance results
+   * @return array An array of memory usage results
+   */
+  public function getResults()
+  {
+    return $this->perfProfiler->getResults();
+  }
+
+  /**
+   * Method to process a batch of export records.
+   */
   protected function processBatch()
   {
     // set our batch time
@@ -237,6 +253,9 @@ abstract class agExportHelper extends agPdoHelper {
 
     // iterate our batch
     $this->batchPosition++;
+
+    // check our performance
+    $this->perfProfiler->test();
   }
 
   /**

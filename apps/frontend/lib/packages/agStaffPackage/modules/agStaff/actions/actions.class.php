@@ -405,11 +405,11 @@ class agStaffActions extends agActions
   {
     $this->startTime = microtime(true);
 
-    $staffExporter = new agStaffExporter();
-    $this->exportFile = $staffExporter->export();
-
-    // Get the memory usage
-    $peakMemory = $staffExporter->peakMemory;
+    $staffExporter = agStaffExport::getInstance('staff_export');
+    $this->exportFile = $staffExporter->getExport();
+    $this->exportFile = $this->exportFile['filename'];
+    $results = $staffExporter->getResults();
+    $peakMemory = $results['maxMem'];
 
     // Free up some memory by getting rid of the agFacilityExporter object.
     unset($staffExporter);

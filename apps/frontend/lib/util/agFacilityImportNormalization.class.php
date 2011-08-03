@@ -103,7 +103,6 @@ class agFacilityImportNormalization extends agImportNormalization
             ->from('agFacilityResourceAllocationStatus fras')
             ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
     $this->facRscAllocStatusIds = array_change_key_case($this->facRscAllocStatusIds, CASE_LOWER);
-
   }
 
   public function __setScenario($scenarioId)
@@ -304,6 +303,7 @@ class agFacilityImportNormalization extends agImportNormalization
       'throwOnError' => TRUE,
       'method' => 'setResourceRequirements',
     );
+
   }
 
   /**
@@ -485,6 +485,7 @@ class agFacilityImportNormalization extends agImportNormalization
                              'facility_capacity' => NULL
                             );
 
+    $uniqFacRscTypes = array();
     // Check for valid facility resource type abbr and facility resource status provided.
     // Meanwhile also build the $rawFacilityResources array for later use.
     foreach ($this->importData AS $rowId => $rowData)
@@ -543,6 +544,7 @@ class agFacilityImportNormalization extends agImportNormalization
       $rawFacilityResources[$rowId]['facility_id'] = $rowData['primaryKeys']['facility_id'];
       $facRscTypeId = $facRscTypeAbbrIds[strtolower($rowData['_rawData']['facility_resource_type_abbr'])];
       $rawFacilityResources[$rowId]['facility_resource_type_id'] = $facRscTypeId;
+      $uniqFacRscTypes[$facRscTypeId] = TRUE;
     }
 
     // Query for related facility resource in a doctrine collection.
@@ -622,6 +624,27 @@ class agFacilityImportNormalization extends agImportNormalization
     }
     $facilityResourceColl->free(TRUE);
     unset($facilityResourceColl);
+
+    $defaultScenarioFacilityResourceTypesTable = $conn->getTable('agDefaultScenarioFacilityResourceType');
+    $defaultScenarioFacilityResourceTypes = agDoctrineQuery::create($conn)
+      ->select('dsfrt.*')
+        ->from('agDefaultScenarioFacilityResourceType dsfrt INDEXBY dsfrt.facility_resource_type_id')
+        ->where('dsfrt.scenario_id = ?', $this->scenarioId)
+        ->execute(array());
+
+    foreach ($uniqFacRscTypes as $id => $value) {
+      if (!isset($defaultScenarioFacilityResourceTypes[$id])) {
+        $defaultScenarioFacilityResourceType = new agDefaultScenarioFacilityResourceType($defaultScenarioFacilityResourceTypesTable, TRUE);
+        $defaultScenarioFacilityResourceType['scenario_id'] = $this->scenarioId;
+        $defaultScenarioFacilityResourceType['facility_resource_type_id'] = $id;
+        $defaultScenarioFacilityResourceTypes->add($defaultScenarioFacilityResourceType, $id);
+      }
+    }
+    $defaultScenarioFacilityResourceTypes->save($conn);
+    $defaultScenarioFacilityResourceTypes->free(TRUE);
+    unset($defaultScenarioFacilityResourceType);
+    unset($defaultScenarioFacilityResourceTypes);
+    unset($uniqFacRscTypes);
   }
 
   /**
@@ -969,6 +992,39 @@ class agFacilityImportNormalization extends agImportNormalization
   protected function setResourceRequirements($throwOnError, Doctrine_Connection $conn)
   {
     $err = FALSE;
+
+    if (empty($this->staffResourceTypes)) {
+      $this->staffResourceTypes = agDoctrineQuery::create()
+      ->select('srt.id')
+          ->addSelect('srt.staff_resource_type_abbr')
+        ->from('agStaffResourceType srt')
+      ->execute(array(),agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+      foreach ($this->staffResourceTypes as $id => &$abbr) {
+        $abbr = $this->cleanColumnName($abbr);
+        $minSpec = $abbr . '_min';
+        $maxSpec = $abbr . '_max';
+
+        if (isset($this->importSpec[$minSpec]) && !isset($this->importSpec[$maxSpec])) {
+          $errMsg = 'Missing paired column ' . $maxSpec . ' from import file.';
+          $err = TRUE;
+        } elseif (!isset($this->importSpec[$minSpec]) && isset($this->importSpec[$maxSpec])) {
+          $errMsg = 'Missing paired column ' . $minSpec . ' from import file.';
+          $err = TRUE;
+        }
+
+        if ($err) {
+          $this->eh->logErr($errMsg);
+
+          if ($throwOnError) {
+            throw new Exception($errMsg);
+          }
+        }
+      }
+      unset($abbr);
+      $this->staffResourceTypes = array_flip($this->staffResourceTypes);
+    }
+
+    $err = FALSE;
     $missingColumn = 0;
     $negativeNum = 0;
 
@@ -1002,13 +1058,15 @@ class agFacilityImportNormalization extends agImportNormalization
       }
     }
 
+    $defaultStaffResourceTypesTable = $conn->getTable('agDefaultScenarioStaffResourceType');
     $defaultStaffResourceTypes = agDoctrineQuery::create($conn)
       ->select('dssrt.*')
-        ->from('agDefaultScenarioStaffResouceType dssrt INDEXBY dssrt.staff_resource_type_id')
+        ->from('agDefaultScenarioStaffResourceType dssrt INDEXBY dssrt.staff_resource_type_id')
         ->where('dssrt.scenario_id = ?', $this->scenarioId)
         ->execute(array());
 
     $rscReqs = array();
+    $uniqResourceTypes = array();
     foreach ($this->importData as $rowId => $rowData) {
       $rawData = $rowData['_rawData'];
       $scFacRscId = $rowData['primaryKeys']['scenario_facility_resource_id'];
@@ -1022,16 +1080,16 @@ class agFacilityImportNormalization extends agImportNormalization
           $min = $rawData[$minSpec];
           $max = $rawData[$maxSpec];
 
-          if (ctype_digit($min) && ctype($max) && $min <= $max) {
-            $tmpRscTypes[$abbr] = array($min, $max);
+          if (ctype_digit($min) && ctype_digit($max) && $min <= $max) {
+            $tmpRscReqs[$abbr] = array($min, $max);
+            $uniqResourceTypes[$abbr] = $id;
           } else {
             $negativeNum++;
           }
 
-        } elseif (isset($rawData[$minSpec]) || $rawData[$maxSpec]) {
+        } elseif (isset($rawData[$minSpec]) || isset($rawData[$maxSpec])) {
           $missingColumn++;
         }
-        
       }
       $rscReqs[$scFacRscId] = $tmpRscReqs;
     }
@@ -1040,9 +1098,11 @@ class agFacilityImportNormalization extends agImportNormalization
 
     $facilityStaffResources = agDoctrineQuery::create($conn)
       ->select('fsr.*')
-        ->from('agFacilityStaffResource')
-        ->whereIn('scenario_facility_resource_id', array_keys($scFacRscIds))
+        ->from('agFacilityStaffResource fsr')
+        ->whereIn('fsr.scenario_facility_resource_id', array_keys($rscReqs))
         ->execute(array());
+    $facilityStaffResourceTable = $facilityStaffResources->getTable();
+    $facilityStaffResourceTable->setConnection($conn);
 
     foreach ($facilityStaffResources as $index => $facilityStaffResource) {
       $scFacRscId = $facilityStaffResource['scenario_facility_resource_id'];
@@ -1065,16 +1125,17 @@ class agFacilityImportNormalization extends agImportNormalization
     unset($facilityStaffResource);
     unset($facilityStaffResources);
 
-    $facilityStaffResourceTable = $conn->getTable('agFacilityStaffResource');
     $facilityStaffResources = new Doctrine_Collection('agFacilityStaffResource');
     foreach ($rscReqs as $scFacRscId => $rscReq) {
       foreach ($rscReq as $abbr => $values) {
         if ($values[0] == 0 && $values[1] == 0) {
           continue;
         }
+        $rscTypeId = $this->staffResourceTypes[$abbr];
+
         $facilityStaffResource = new agFacilityStaffResource($facilityStaffResourceTable, TRUE);
         $facilityStaffResource['scenario_facility_resource_id'] = $scFacRscId;
-        $facilityStaffResource['staff_resource_type_id'] = $this->staffResourceTypes[$abbr];
+        $facilityStaffResource['staff_resource_type_id'] = $rscTypeId;
         $facilityStaffResource['minimum_staff'] = $values[0];
         $facilityStaffResource['maximum_staff'] = $values[1];
         $facilityStaffResources->add($facilityStaffResource);
@@ -1086,15 +1147,29 @@ class agFacilityImportNormalization extends agImportNormalization
     unset($facilityStaffResource);
     unset($facilityStaffResources);
 
+    foreach ($uniqResourceTypes as $abbr => $rscTypeId) {
+      if (!isset($defaultStaffResourceTypes[$rscTypeId])) {
+        $defaultStaffResourceType = new agDefaultScenarioStaffResourceType($defaultStaffResourceTypesTable, TRUE);
+        $defaultStaffResourceType['scenario_id'] = $this->scenarioId;
+        $defaultStaffResourceType['staff_resource_type_id'] = $rscTypeId;
+        $defaultStaffResourceTypes->add($defaultStaffResourceType, $rscTypeId);
+      }
+    }
+
+    $defaultStaffResourceTypes->save($conn);
+    $defaultStaffResourceTypes->free(TRUE);
+    unset($defaultStaffResourceType);
+    unset($defaultStaffResourceTypes);
+    
     if ($missingColumn > 0) {
       $warnMsg = $missingColumn . ' cells missing paired min/max data. Please review your staff ' .
         'resource requirements to ensure data consistency.';
-      $this->eh->logWarn($warnMsg);
+      $this->eh->logWarning($warnMsg);
     }
     if ($negativeNum > 0) {
       $warnMsg = $negativeNum . ' cells with negative resource requirements or switched min/max ' .
       'values Please review your staff resource requirements to ensure data consistency.';
-      $this->eh->logWarn($warnMsg);
+      $this->eh->logWarning($warnMsg);
     }
   }
 
