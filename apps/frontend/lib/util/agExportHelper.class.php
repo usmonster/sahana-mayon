@@ -394,6 +394,7 @@ abstract class agExportHelper extends agPdoHelper {
     }
 
     $sheet->save($xlsPath);
+    unset($sheet);
     return TRUE;
   }
 }

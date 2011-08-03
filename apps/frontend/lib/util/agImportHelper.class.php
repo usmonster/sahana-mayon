@@ -137,7 +137,11 @@ abstract class agImportHelper extends agPdoHelper
     switch($columnDefinition['type']) {
       case 'integer':
       case 'int':
-        return strlen(pow(256, $columnDefinition['length']));
+        return strlen(pow(256, $columnDefinition['length'])) + 1;
+        break;
+      case 'decimal':
+      case 'dec':
+        return $columnDefinition['length'] + 2;
         break;
       default:
         return $columnDefinition['length'];
@@ -371,7 +375,7 @@ abstract class agImportHelper extends agPdoHelper
           for ($col = 1; $col <= $numCols; $col++) {
             // try to grab the raw value
             $val = $xlsObj->raw($row, $col, $sheet);
-            if (!($val)) {
+            if (!$val) {
               // failing that, grab its formatted value
               $val = $xlsObj->val($row, $col, $sheet);
             }
@@ -392,6 +396,7 @@ abstract class agImportHelper extends agPdoHelper
             // add the data, either way, to our importRow variable using the column name we picked up
             // off the first sheet
             $importRow[$currentSheetHeaders[$col]] = $val;
+            unset($val);
           }
 
           // check for empty rows early to prevent

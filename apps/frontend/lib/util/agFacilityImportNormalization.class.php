@@ -370,15 +370,18 @@ class agFacilityImportNormalization extends agImportNormalization
   {
     // explicit declarations are good
     $rawFacilityCodes = array();
+    $uniqFacilities = array();
+    $facilityEntities = array();
 
     // loop our import data and pick up any existing facility code
     foreach ($this->importData as $rowId => $rowData)
     {
       $rawData = $rowData['_rawData'];
 
-      if (array_key_exists('facility_code', $rawData))
+      if (isset($rawData['facility_code']))
       {
-        $rawFacilityCodes[$rowId] = strtolower($rawData['facility_code']);
+        $uniqFacilities[strtolower($rawData['facility_code'])][] = $rowId;
+        $rawFacilityCodes[$rowId] = strtolower($rawData['facility_code']); // >>>> REMOVE?
       }
     }
     unset($rowData);
@@ -387,9 +390,9 @@ class agFacilityImportNormalization extends agImportNormalization
     $q = agDoctrineQuery::create($conn)
                     ->select('f.*')
                     ->addSelect('s.*')
-                    ->from('agFacility f')
+                    ->from('agFacility f INDEXBY f.facility_code')
                     ->innerJoin('f.agSite s')
-                    ->whereIn('f.facility_code', $rawFacilityCodes);
+                    ->whereIn('f.facility_code', array_keys($uniqFacilities));
     $facilityColl = $q->execute();
 
     $this->eh->logDebug('{' . count($facilityColl) . '} facility entities found in the database.');
@@ -399,13 +402,15 @@ class agFacilityImportNormalization extends agImportNormalization
 
     // Add entity id and facility id to $this->importData['primaryKeys'].
     // While we're looping the existing facility, make facility update where necessary.
-    foreach ($facilityColl AS $facility)
+    foreach ($facilityColl AS $facilityCode => $facility)
     {
-      $rowId = array_search(strtolower($facility['facility_code']), $rawFacilityCodes);
-      $this->importData[$rowId]['primaryKeys']['entity_id'] = $facility->agSite['entity_id'];
-      $this->importData[$rowId]['primaryKeys']['facility_id'] = $facility['id'];
+      foreach ($uniqFacilities[$facilityCode] as $index => $rowId) {
+        $this->importData[$rowId]['primaryKeys']['entity_id'] = $facility->agSite['entity_id'];
+        $this->importData[$rowId]['primaryKeys']['facility_id'] = $facility['id'];
+      }
+
       $facility['facility_name'] = $this->importData[$rowId]['_rawData']['facility_name'];
-      unset($rawFacilityCodes[$rowId]);
+      unset($uniqFacilities[$facilityCode]);
     }
     $facilityColl->save($conn);
     $facilityColl->free(TRUE);
@@ -418,53 +423,55 @@ class agFacilityImportNormalization extends agImportNormalization
     $siteTable = $conn->getTable('agSite');
     $siteColl = new Doctrine_Collection('agSite');
     $facilityTable = $conn->getTable('agFacility');
+    $facilityColl = new Doctrine_Collection('agFacility');
 
     // Create new entity using rowId as the key to $entityColl.
-    foreach ($rawFacilityCodes AS $rowId => $facilityCode)
+    foreach ($uniqFacilities AS $facilityCode => $rowIds)
     {
       $entity = new agEntity($entityTable, TRUE);
-      $entityColl->add($entity, $rowId);
-      unset($rawFacilityCodes[$rowId]);
+      $entityColl->add($entity, $facilityCode);
     }
     $entityColl->save($conn);
 
     // Create new site using rowId as the key to $siteColl.
-    foreach ($entityColl AS $rowId => $entity)
+    foreach ($entityColl AS $facilityCode => $entity)
     {
       $entityId = $entity['id'];
       $site = new agSite($siteTable, TRUE);
       $site['entity_id'] = $entityId;
-      $siteColl->add($site, $rowId);
+      $siteColl->add($site, $facilityCode);
 
-      $this->importData[$rowId]['primaryKeys']['entity_id'] = $entityId;
+      $facilityEntities[$facilityCode] = $entityId;
     }
     $siteColl->save($conn);
     $entityColl->free(TRUE);
     unset($entityColl);
 
     // Create new facility using rowId as the key to $facilityColl.
-    $facilityColl = new Doctrine_Collection('agFacility');
-    foreach ($siteColl AS $rowId => $site)
+    foreach ($siteColl AS $facilityCode => $site)
     {
-      $rawData = $this->importData[$rowId]['_rawData'];
+      // whoah! what??? how do you not isset()? well, because of how uniq is built we are guaranteed
+      // that each entry has at least one rowId, eg, position [0]
+      $rawData = $this->importData[$uniqFacilities[$facilityCode][0]]['_rawData'];
       $facility = new agFacility($facilityTable, TRUE);
       $facility['site_id'] = $site['id'];
       $facility['facility_name'] = $rawData['facility_name'];
-      $facility['facility_code'] = $rawData['facility_code'];
-      $facilityColl->add($facility, $rowId);
+      $facility['facility_code'] = $facilityCode;
+      $facilityColl->add($facility, $facilityCode);
     }
     $facilityColl->save($conn);
 
-    // Store new facility ids to $this->importData['primaryKeys'].
-    foreach ($this->importData AS $rowId => &$rowData)
-    {
-      if (!isset($rowData['primaryKeys']['facility_id']))
-      {
-        $rowData['primaryKeys']['facility_id'] = $facilityColl[$rowId]['id'];
+    foreach ($uniqFacilities as $facilityCode => $rowIds) {
+      foreach ($rowIds as $rowId) {
+        $this->importData[$rowId]['primaryKeys']['entity_id'] = $facilityEntities[$facilityCode];
+        $this->importData[$rowId]['primaryKeys']['facility_id'] = $facilityColl[$facilityCode]['id'];
       }
     }
     $facilityColl->free(TRUE);
     unset($facilityColl);
+
+    unset($facilityEntities);
+    unset($uniqFacilities);
   }
 
   /**
