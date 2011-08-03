@@ -574,7 +574,10 @@ class agInstall
       $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
       $databaseManager = new sfDatabaseManager($configuration);
 //        $connection = Doctrine_Manager::connection()->connect();
-      sfContext::createInstance($configuration)->dispatch();
+      $sfInstance = sfContext::createInstance($configuration)->dispatch();
+
+//      $task = new sfCacheClearTask(sfContext::getInstance($configuration)->getEventDispatcher(), new sfFormatter());
+//      $task->run(array(), array());
 
       $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup', 'agOrganization'));
       $luceneIndex->indexAll();
