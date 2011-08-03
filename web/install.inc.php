@@ -101,6 +101,14 @@ class agInstall
     unset($GLOBALS['trans']);
   }
 
+  function  __destruct() {
+    if (is_callable('apc_clear_cache')) {
+      apc_clear_cache();
+      apc_clear_cache('user');
+      apc_clear_cache('opcode');
+    }
+  }
+
   function getConfig($name, $default = null)
   {
 //if entry method to this function is admin/config instead of install, set the global
