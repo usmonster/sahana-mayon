@@ -1140,31 +1140,31 @@ class scenarioActions extends agActions
     return $parsedAllocatedFacilityResources;
   }
 
-//  /**
-//   * deleteShiftTemplate AJAX called method
-//   * @param sfWebRequest $request
-//   * @return response success or failure string to ouput in feedback flasher.
-//   */
-//  public function executeDeleteshifttemplate(sfWebRequest $request)
-//  {
-//    $this->forward404unless($request->isXmlHttpRequest());
-//
-//    $shiftTemplateId = $request->getParameter('stId');
-//    $shiftTemplate = Doctrine_Core::getTable('agShiftTemplate')
-//        ->findByDql('id = ?', $shiftTemplateId)
-//        ->getFirst();
-//
-//    $scenShifts = Doctrine_Core::getTable('agScenarioShift')
-//        ->findByDql('originator_id = ?', $shiftTemplateId);
-//
-//    $scenShifts->delete();
-//
-//    $result = $shiftTemplate->delete();
-//
-//    //we assume here that if no error was thrown the shift template and associated shifts
-//    //have been deleted
-//    return $this->renderText('Shift Template Deleted');
-//  }
+  /**
+   * deleteShiftTemplate AJAX called method
+   * @param sfWebRequest $request
+   * @return response success or failure string to ouput in feedback flasher.
+   */
+  public function executeDeleteshifttemplate(sfWebRequest $request)
+  {
+    $this->forward404unless($request->isXmlHttpRequest());
+ //return $this->renderText('Shift Template Deleted');
+    $shiftTemplateId = $request->getParameter('stId');
+    $shiftTemplate = Doctrine_Core::getTable('agShiftTemplate')
+        ->findByDql('id = ?', $shiftTemplateId)
+        ->getFirst();
+
+    $scenShifts = Doctrine_Core::getTable('agScenarioShift')
+        ->findByDql('originator_id = ?', $shiftTemplateId);
+
+    $scenShifts->delete();
+
+    $result = $shiftTemplate->delete();
+
+    //we assume here that if no error was thrown the shift template and associated shifts
+    //have been deleted
+    return $this->renderText('Shift Template Deleted');
+  }
 
   /**
    * addShiftTemplate AJAX called method to add a shift template

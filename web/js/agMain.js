@@ -648,12 +648,13 @@ $(document).ready(function() {
 
     $('.removeShiftTemplate').live('click', function() {
       if($(this).parents('#newshifttemplates').length) {
-        $(this).parents('.shiftTemplateCounter').remove();
+        $(this).parents('.shiftTemplateCounter').fadeOut(1200, function() {
+          $(this).parents('.shiftTemplateCounter').remove();
+        });
         return false;
       } else {
-        $.post($(this).attr('href'), { stId: $(this).attr('id') }, function(data) {
-          var g = data;
-        })
+        var containerId = $(this).parents('.shiftTemplateCounter').attr('id');
+        var g = 7;
       }
 
 
