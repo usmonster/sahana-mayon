@@ -1,8 +1,4 @@
 agFacilityResourceType:
-  admin:
-    facility_resource_type: Administrative Center
-    facility_resource_type_abbr: admin
-    description: Area designated to be used as an administration center.
   ec:
     facility_resource_type: Evacuation Center
     facility_resource_type_abbr: EC
@@ -11,18 +7,6 @@ agFacilityResourceType:
     facility_resource_type: Hurricane Shelter
     facility_resource_type_abbr: HS
     description: Hurricane shelter for clients.
-  pet:
-    facility_resource_type: Pet Center
-    facility_resource_type_abbr: pet
-    description: Area designated to be used as pet center.
-  pod:
-    facility_resource_type: Point of Distribution
-    facility_resource_type_abbr: POD
-    description: Area designated to be used as a distribution center.
-  shelter:
-    facility_resource_type: Shelter
-    facility_resource_type_abbr: shl
-    description: Area designated to house clients.
   smn:
     facility_resource_type: Special Medical Need Shelter
     facility_resource_type_abbr: SMN
@@ -31,7 +15,3 @@ agFacilityResourceType:
     facility_resource_type: Unified Operations Resource
     facility_resource_type_abbr: UORC
     description: Unified Operations Resource Center
-  whs:
-    facility_resource_type: Warehouse
-    facility_resource_type_abbr: whs
-    description: Area designated to be used as storage for food, medical supplies, blankets, cot, and others.
