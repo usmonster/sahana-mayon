@@ -14,6 +14,8 @@
  */
 class adminActions extends agActions
 {
+  protected $_searchedModels = array('agScenario', 'agStaff', 'agFacility',
+    'agScenarioFacilityGroup', 'agOrganization');
 
   /**
    * necessary function which triggers rendering of the indexSuccess template
@@ -34,6 +36,21 @@ class adminActions extends agActions
     $this->redirect('admin/index');
   }
 
+  /**
+   * Magic button to reindex search data
+   * @param sfWebRequest $request
+   * @todo Place these models somewhere special or dynamically generate the list so it's not hard-
+   * coded in here.
+   */
+  public function executeSearchreindex(sfWebRequest $request)
+  {
+    $models = array();
+
+    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+    //agLuceneIndex::indexModels($models);
+    $this->redirect('admin/index');
+  }
+
   public function executeClearcache(sfWebRequest $request)
   {
     if (agGlobal::getParam('enable_clear_cache') == 1) {
@@ -41,10 +58,15 @@ class adminActions extends agActions
       apc_clear_cache('user');
       apc_clear_cache('opcode');
 
-      chdir(sfConfig::get('sf_root_dir'));
-      $task = new sfCacheClearTask($this->context->getEventDispatcher(), new sfFormatter());
-      $task->run();
-      chdir(sfConfig::get('sf_web_dir'));
+      $oldDir = getcwd();
+      try {
+        chdir(sfConfig::get('sf_root_dir'));
+        $task = new sfCacheClearTask($this->context->getEventDispatcher(), new sfFormatter());
+        $task->run();
+      } catch(Exception $e) {
+        $this->sfContext->getLogger()->warning("Failed to clear the symfony cache: \n" . $e->getMessage());
+      }
+      chdir($oldDir);
     }
     $this->redirect('admin/index');
   }

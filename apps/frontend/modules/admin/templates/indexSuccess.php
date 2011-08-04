@@ -26,6 +26,11 @@ Please select one of the following staff administration actions:</p>
     echo link_to('Disable All Staff Resources', $exportUrl, array('method' => 'post', 'confirm' => 'Are you sure you want to set all staff to inactive? Setting all staff to inactive will make them all unavailable for deployment.', 'class' => 'deleteButton', 'title' => 'Inactivate all Staff Resources'));
 //all links on this page should use the link_to helper
   ?>
+<br/><br/>
+<?php echo link_to('Reindex Search Data', url_for('admin/searchreindex'), array('method' => 'post',
+  'confirm' => 'Are you sure you want to reindex all of your search data? This process takes a ' .
+  'long time and may interrupt any currently in-progress searches.', 'class' => 'deleteButton',
+  'title' => 'Reindex Search Data')); ?>
 <?php  if ($enable_cache_clear == 1): ?>
 <br/><br/>
 <?php echo link_to('Clear System Cache', url_for('admin/clearcache'), array('method' => 'post',
