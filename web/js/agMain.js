@@ -654,8 +654,13 @@ $(document).ready(function() {
         return false;
       } else {
         var containerId = $(this).parents('.shiftTemplateCounter').attr('id');
-        var g = 7;
+        $.post($(this).attr('href'), { stId: $(this).attr('id') }, function() {
+          $('#' + containerId).fadeOut(1200, function() {
+            $('#' + containerId).remove();
+          });
+        })
       }
+
 
 
 
