@@ -21,7 +21,7 @@ class adminActions extends agActions
    */
   public function executeIndex(sfWebRequest $request)
   {
-
+    $this->enable_cache_clear = agGlobal::getParam('enable_clear_cache');
   }
 
   /**
@@ -31,6 +31,21 @@ class adminActions extends agActions
   public function executeDisablestaff(sfWebRequest $request)
   {
     $foo = agStaffResource::disableAllStaff();
+    $this->redirect('admin/index');
+  }
+
+  public function executeClearcache(sfWebRequest $request)
+  {
+    if (agGlobal::getParam('enable_clear_cache') == 1) {
+      apc_clear_cache();
+      apc_clear_cache('user');
+      apc_clear_cache('opcode');
+
+      chdir(sfConfig::get('sf_root_dir'));
+      $task = new sfCacheClearTask($this->context->getEventDispatcher(), new sfFormatter());
+      $task->run();
+      chdir(sfConfig::get('sf_web_dir'));
+    }
     $this->redirect('admin/index');
   }
 
@@ -69,23 +84,11 @@ class adminActions extends agActions
     } else {
       $this->paramform = new agGlobalParamForm();
     }
-    $this->ag_global_params = Doctrine_Core::getTable('agGlobalParam')
-            ->createQuery('a')
+    $this->ag_global_params = agDoctrineQuery::create()
+            ->select('gp.*')
+            ->from('agGlobalParam gp')
+            ->orderBy('gp.datapoint ASC')
             ->execute();
-
-    if ($request->hasParameter('delete')) {
-      //$request->checkCSRFProtection();
-
-      $this->forward404Unless(
-          $ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(
-              array($request->getParameter('deleteparam'))
-          ),
-          sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam'))
-      );
-      $ag_global_param->delete();
-
-      $this->redirect('admin/globals');
-    }
 
     if ($request->hasParameter('update') /* && $request->hasParameter('ag_global_param') */) {
       $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));

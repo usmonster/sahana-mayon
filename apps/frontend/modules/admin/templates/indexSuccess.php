@@ -26,6 +26,14 @@ Please select one of the following staff administration actions:</p>
     echo link_to('Disable All Staff Resources', $exportUrl, array('method' => 'post', 'confirm' => 'Are you sure you want to set all staff to inactive? Setting all staff to inactive will make them all unavailable for deployment.', 'class' => 'deleteButton', 'title' => 'Inactivate all Staff Resources'));
 //all links on this page should use the link_to helper
   ?>
+<?php  if ($enable_cache_clear == 1): ?>
+<br/><br/>
+<?php echo link_to('Clear System Cache', url_for('admin/clearcache'), array('method' => 'post',
+  'confirm' => 'Are you sure you want to clear the system cache? This could destructive to any ' .
+  'currently ongoing actions and/or affect other applications on this server. Only execute this ' .
+  'action if you know what you are doing.', 'class' => 'deleteButton',
+  'title' => 'Clear System Cache')); ?>
+<?php endif; ?>
 <br/><br/>
   </fieldset>
 </div>

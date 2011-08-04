@@ -273,4 +273,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: unprocessed_facility_import_basename
     value: unprocessed_facility_import
-    
+  enable_clear_cache:
+    id: 55
+    agHost: localhost
+    datapoint: enable_clear_cache
+    value: 0
