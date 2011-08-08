@@ -1,0 +1,4 @@
+===== Facility Resource =====
+For ease planning and deployment, and because multiple services could be offered in the same building, services available at a facility are called "resources".
+
+A facility can house multiple resources; however only one of each resource type can be made available within each facility.

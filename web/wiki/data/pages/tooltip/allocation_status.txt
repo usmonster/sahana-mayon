@@ -1,0 +1,1 @@
+The current status of the facility group, or it's status upon activation.

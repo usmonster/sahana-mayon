@@ -1,29 +1,39 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Tutorial ======
 
 ===== Scenario Shifts =====
+In the last step, we created a shift template that was used to generate shifts. This page gives emergency managers the opportunity to review the created shifts and, in the event of a problem, return to the templates to tweak and re-generate shifts.
 
 ===== Reference Information =====
 
+==== Important Concepts ====
+  * If you return to the previous page, change templates, and regenerate shifts the old shifts will be lost.
 
-===== Walk-Through =====
+===== Tutorial =====
 
+{{:scenario:scenarioshifts.png?650|}}
 
-===== FAQ =====
+==== Regenerating Shifts ====
+If you determine that the shift templates are not correct and would like to return and regenerate your shifts, click the '6' in the Scenario Creator Wizard menu above the shifts to return to the Shift Template step.
 
+When you are ready, click {{:scenario:screenshot_069.png?200|Finish Wizard}} to review.  Click "Next" below to move to the next Tutorial step.
 
 ====== Continue ======
 
-[[scenario:staff resource pool|{{ :manual:user:next.png|}}]] 
-[[scenario:newstaffresources|{{:manual:user:previous.png?135 }}]]
+[[scenario:newstaffresources|{{:manual:user:previous.jpg?135|Shift Templates }}]]
+[[scenario:review|{{ :manual:user:next.jpg?135|Scenario Review}}]] 
+
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Create A Scenario]]
   - [[scenario:newgroup| Create Facility Groups]]
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - **Generate Scenario Shifts**
+  - **Review Scenario Shifts**
   - [[scenario:review| Review]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:deployevent| Deploying an Event]]

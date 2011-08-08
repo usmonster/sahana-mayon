@@ -1,21 +1,22 @@
 <?php
-/**
-*
-* Extends BaseagEntity and returns entity information
-*
-* PHP Version 5.3
-*
-* LICENSE: This source file is subject to LGPLv2.1 license
-* that is available through the world-wide-web at the following URI:
-* http://www.gnu.org/licenses/lgpl-2.1.html
-*
-* @author Ilya Gulko, CUNY SPS
-*
-* Copyright of the Sahana Software Foundation, sahanafoundation.org
-*/
 
+/**
+ *
+ * Extends BaseagEntity and returns entity information
+ *
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @author Ilya Gulko, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ */
 class agEntity extends BaseagEntity
 {
+
   /**
    * delete()
    *
@@ -49,7 +50,8 @@ class agEntity extends BaseagEntity
      */
     if (count($entityData) > 1) {
       throw new LogicException(
-          'agEntity is linked to more than one record! This should never happen!');
+          'agEntity is linked to more than one record! This should never happen!'
+      );
     }
 
     /**
@@ -79,5 +81,6 @@ class agEntity extends BaseagEntity
      */
     return parent::delete($conn);
   }
+
 }
 

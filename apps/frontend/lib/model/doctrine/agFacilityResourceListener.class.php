@@ -24,10 +24,11 @@ class agFacilityResourceListener extends Doctrine_Record_Listener
   }
 
   /**
-   * This listener implements a chained status-update feature that updates the statuses of
-   * scenarioFacilityResources and eventFacilityResources. It should be noted that this action only
-   * fires when the new status being applied causes a change in the boolean state [is_active] (part
-   * of agFacilityResourceStatus).
+   * This listener implements a chained status-update feature that
+   * updates the statuses of scenarioFacilityResources and
+   * eventFacilityResources. It should be noted that this action only
+   * fires when the new status being applied causes a change in the
+   * boolean state [is_active] (part of agFacilityResourceStatus).
    * @param Doctrine_Event $event
    */
   public function preSave(Doctrine_Event $event)
@@ -38,10 +39,11 @@ class agFacilityResourceListener extends Doctrine_Record_Listener
 
     // $newstatus is the new status id being applied
     // $facilityResourceId is the new facilityResourceId being applied
-
-    //if ($confirmed == TRUE) chain updates to the child facilities in scenario and event
+    //if ($confirmed == TRUE) chain updates to the child facilities in
+    //scenario and event
     if (TRUE == TRUE) {
-      $result = agFacilityHelper::setFacilityResourceStatusOnUpdate($facilityResourceId, $new_status) ;
+      $result = agFacilityHelper::setFacilityResourceStatusOnUpdate(
+              $facilityResourceId, $new_status);
     }
   }
 

@@ -18,24 +18,26 @@
 class agStaffPoolForm extends sfForm
 {
 
-  public $lucene_search_id;
+  public $search_id;
   public $scenario_id;
   public $staff_gen_id;
   public $sg_values;  //staff generator form posted values
-  public $ls_values;  //lucene search form posted values
+  public $s_values;  //search form posted values
+
   /**
    *
    * @param integer $staff_gen_id an incoming staff generator id to construct the form
    * @param array $values is used in the event this form is being constructed after a post
    *        for a preview, to set the defaults of the internal forms
    */
-  public function __construct($staff_gen_id = null, $values = null)
+
+  public function __construct($search_id = null, $values = null)
   {
-    if($values != null){
+    if ($values != null) {
       $this->sg_values = $values['sg_values'];
-      $this->ls_values = $values['ls_values'];
-    }else{
-    $this->staff_gen_id = $staff_gen_id;
+      $this->s_values = $values['s_values'];
+    } else {
+      $this->search_id = $search_id;
     }
     parent::__construct(array(), array(), array());
   }
@@ -45,10 +47,12 @@ class agStaffPoolForm extends sfForm
    * */
   public function embedAgSearchForms()
   {
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $this->wikiUrl = url_for('@wiki');
+    $this->embedSearchForm();
     $this->embedStaffGeneratorForm();
-    $this->embedLuceneForm();
     $this->getWidgetSchema()->setLabel('staff_generator', false);
-    $this->getWidgetSchema()->setLabel('lucene_search', false);
+    $this->getWidgetSchema()->setLabel('search', false);
 
     $staffpoolDeco = new agWidgetFormSchemaFormatterInlineTopLabel($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('row', $staffpoolDeco);
@@ -60,12 +64,12 @@ class agStaffPoolForm extends sfForm
    * */
   public function embedStaffGeneratorForm()
   {
-    if (isset($this->staff_gen_id)) {
+    if (isset($this->search_id)) {
       $staffGenObject = agDoctrineQuery::create()
               ->from('agScenarioStaffGenerator a')
-              ->where('a.id = ?', $this->staff_gen_id)
+              ->where('a.search_id = ?', $this->search_id) //and scenario id?
               ->execute()->getFirst();
-      $this->lucene_search_id = $staffGenObject->lucene_search_id;
+      //if($this->staff_gen_id = $staffGenObject->getId();
     }
     $staffGenForm = new agScenarioStaffGeneratorForm(isset($staffGenObject) ? $staffGenObject : null);
 
@@ -73,57 +77,70 @@ class agStaffPoolForm extends sfForm
     $staffGenForm->getWidgetSchema()->addFormFormatter('row', $staffGenDeco);
     $staffGenForm->getWidgetSchema()->setFormFormatterName('row');
 
-    $staffGenForm->setWidget('lucene_search_id', new sfWidgetFormInputHidden());
+    $staffGenForm->setWidget('search_id', new sfWidgetFormInputHidden());
     $staffGenForm->setWidget('scenario_id', new sfWidgetFormInputHidden());
-    $staffGenForm->setWidget('search_weight', new sfWidgetFormChoice(array('choices' => range(0, 10))));
+    $staffGenForm->setWidget('search_weight', new sfWidgetFormInputText(array(),array('class' => 'inputGray')));//'Choice(array('choices' => range(0, 10))));
 
-    $staffGenForm->setValidator('lucene_search_id', new sfValidatorPass(array('required' => false)));
+    $staffGenForm->setValidator('search_id', new sfValidatorPass(array('required' => false)));
 //    $staffGenForm->setValidator('search_weight', new sfValidatorPass(array('required' => false)));
     $staffGenForm->setValidator('scenario_id', new sfValidatorPass());
 
     unset($staffGenForm['created_at'], $staffGenForm['updated_at']);
-    
-    if(is_array($this->sg_values))
-    {
+
+    if (is_array($this->sg_values)) {
       $staffGenForm->setDefault('search_weight', $this->sg_values['search_weight']);
+    } elseif(!$this->staff_gen_id) {
+      $staffGenForm->setDefault('search_weight', 50);
     }
 
+    /**
+     * Set labels on a few fields
+     */
+
+    $staffGenForm->getWidgetSchema()->setLabel(
+        'search_weight',
+        'Search Weight <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:search_weight&do=export_xhtmlbody" class="tooltipTrigger" title="Search Weight">?</a>');
+
     $this->embedForm('staff_generator', $staffGenForm);
-
-
   }
 
   /**
    * Embeds the Lucene Form
    * */
-  public function embedLuceneForm()
+  public function embedSearchForm()
   {
-    if (isset($this->lucene_search_id)) {
-      $luceneObject = agDoctrineQuery::create()
-              ->from('agLuceneSearch a')
-              ->where('a.id = ?', $this->lucene_search_id)
+    if (isset($this->search_id)) {
+      $searchObject = agDoctrineQuery::create()
+              ->from('agSearch a')
+              ->where('a.id = ?', $this->search_id)
               ->execute()->getFirst();
     }
-    $luceneForm = new agLuceneSearchForm(isset($luceneObject) ? $luceneObject : null);
+    $searchForm = new agSearchForm(isset($searchObject) ? $searchObject : null);
 
     //although this is the third time we've made this object, what it's constructed from each time is different
-    $luceneDeco = new agWidgetFormSchemaFormatterRow($luceneForm->getWidgetSchema());
-    $luceneForm->getWidgetSchema()->addFormFormatter('row', $luceneDeco);
-    $luceneForm->getWidgetSchema()->setFormFormatterName('row');
-    $luceneForm->setWidget('query_condition', new sfWidgetFormInputHidden());
-    $luceneForm->getWidgetSchema()->setLabel('query_name', 'Name of Staff Pool');
-    $luceneForm->getWidgetSchema()->setLabel('lucene_search_type_id', 'Search Type');
+    $searchDeco = new agWidgetFormSchemaFormatterRow($searchForm->getWidgetSchema());
+    $searchForm->getWidgetSchema()->addFormFormatter('row', $searchDeco);
+    $searchForm->getWidgetSchema()->setFormFormatterName('row');
+    $searchForm->setWidget('search_condition', new sfWidgetFormInputHidden());
+    $searchForm->getWidgetSchema()->setLabel('search_name', 'Name');
+    //$searchForm->getWidgetSchema()->setLabel('search_type_id', 'Search Type');
+    $searchForm->setWidget('search_type_id', new sfWidgetFormInputHidden());
+    $searchForm->setWidget('search_hash', new sfWidgetFormInputHidden());
+    $searchForm->getWidget('search_name')->setAttribute('class', 'inputGray');
+    $searchForm->getWidgetSchema()->setLabel(
+    'search_name',
+    'Name <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:search_name&do=export_xhtmlbody" class="tooltipTrigger" title="Search Name">?</a>');
+    $searchForm->setValidator('search_hash', new sfValidatorPass(array('required' => false)));
+    $searchForm->setValidator('search_type_id', new sfValidatorPass(array('required' => false)));
 
+    unset($searchForm['created_at'], $searchForm['updated_at']);
+    unset($searchForm['ag_report_list']);
 
-    unset($luceneForm['created_at'], $luceneForm['updated_at']);
-    unset($luceneForm['ag_report_list']);
-
-    if(is_array($this->ls_values))
-    {
-      $luceneForm->setDefault('query_name', $this->ls_values['query_name']);
-      $luceneForm->setDefault('lucene_search_type_id', $this->ls_values['lucene_search_type_id']);
+    if (is_array($this->s_values)) {
+      $searchForm->setDefault('search_name', $this->s_values['search_name']);
+      //$searchForm->setDefault('search_type_id', $this->s_values['search_type_id']);
     }
-    $this->embedForm('lucene_search', $luceneForm);
+    $this->embedForm('search', $searchForm);
   }
 
   /**
@@ -142,32 +159,42 @@ class agStaffPoolForm extends sfForm
    */
   public function saveEmbeddedForms($con = null, $forms = null)
   {
-    if (isset($this->embeddedForms['lucene_search'])) {
-      $form = $this->embeddedForms['lucene_search'];
-      $values = $this->values['lucene_search'];
-      $this->saveLuceneForm($form, $values);
-      unset($this->embeddedForms['lucene_search']);
+    if (isset($this->embeddedForms['search'])) {
+      $form = $this->embeddedForms['search'];
+      $values = $this->values['search'];
+      $this->saveSearchForm($values);
+      unset($this->embeddedForms['search']);
     }
 
     if (isset($this->embeddedForms['staff_generator'])) {
-      $form = $this->embeddedForms['staff_generator'];
-      $values = $this->values['staff_generator'];
-      $this->saveStaffGenForm($form, $values);
+      // Check whether or not the search is already saved for the scenario.
+	    // Save only if the scenario and search is not saved in scenario staff generator table.
+      $found = Doctrine_core::getTable('agScenarioStaffGenerator')
+                 ->findByDql('scenario_id =? AND search_id = ?', 
+                             array($this->scenario_id, $this->search_id))
+                 ->count();
+      if ($found === 0 || $found === 1) {
+        $form = $this->embeddedForms['staff_generator'];
+        $values = $this->values['staff_generator'];
+        $this->saveStaffGenForm($form, $values);
+      }
       unset($this->embeddedForms['staff_generator']);
     }
   }
 
   /**
-   * save the embedded lucene form
+   * save the embedded search form
    * @param sfForm $form a form to process
    * @param mixed $values a set of values coming from a post
    */
-  public function saveLuceneForm($form, $values)
+  public function saveSearchForm($values)
   {
-    $form->updateObject($values);
-
-    $form->getObject()->save();
-    $this->lucene_search_id = $form->getObject()->getId();
+    $searchCondition = json_decode($values['search_condition'],true);
+    $this->search_id = agSearchHelper::getSearchId(
+        $searchCondition,
+        TRUE,
+        $values['search_name'],
+        agStaffGeneratorHelper::getDefaultSearchTypeId());
   }
 
   /**
@@ -178,8 +205,8 @@ class agStaffPoolForm extends sfForm
   public function saveStaffGenForm($form, $values)
   {
     $form->updateObject($values);
-    if ($form->getObject()->lucene_search_id == null) {
-      $form->getObject()->lucene_search_id = $this->lucene_search_id;
+    if ($form->getObject()->search_id == null) {
+      $form->getObject()->search_id = $this->search_id;
       $form->getObject()->scenario_id = $this->scenario_id;
     }
     $form->getObject()->save();

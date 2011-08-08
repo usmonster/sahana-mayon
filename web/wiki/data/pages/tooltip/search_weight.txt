@@ -1,0 +1,5 @@
+====== Search Weight ======
+
+Deployment of staff can be weighted so certain organizations' staff are deployed before others.  
+
+In these searches the 'heavier' weighted searches are deployed first; meaning staff in a search with the weight of 100 will be deployed before staff in a search with the weight of 50.

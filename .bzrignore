@@ -1,9 +1,10 @@
 apps/*/config/app.yml
 config/config.yml
 config/databases.yml
-data/indexes/**
 data/search/**
 data/sql/schema.sql
+data/uploads/**
+data/downloads/**
 cache/**
 log/**
 web/wiki/conf/users.auth.php
@@ -11,7 +12,8 @@ web/wiki/data/cache/**
 web/wiki/data/index/**
 web/wiki/data/meta/**/*.meta
 web/wiki/data/meta/**/*.changes
-web/dqlme.php
+web/wiki/data/locks/**
+web/wiki/data/tmp/**
 .DS_Store
 nbproject
 plugins/.*
@@ -22,3 +24,4 @@ plugins/.*
 *.vtg
 *.pui
 *.xls
+web/apc.php

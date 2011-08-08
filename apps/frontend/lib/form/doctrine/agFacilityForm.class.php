@@ -12,6 +12,7 @@
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
  * @author Ilya Gulko, CUNY SPS
+ * @author Nils Stolpe, CUNY SPS
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
@@ -30,6 +31,7 @@ class agFacilityForm extends BaseagFacilityForm
      * depends on validator maybe?
      */
     parent::configure();
+    
     unset(
         $this['updated_at'],
         $this['created_at'],
@@ -37,20 +39,25 @@ class agFacilityForm extends BaseagFacilityForm
         $this['ag_facility_resource_type_list']
 //      $this['facility_name'],
 //      $this['facility_code']
-
-
     );
+     /**
+     * Get URL For wiki
+     */
 
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $this->wikiUrl = url_for('@wiki');
 
     $this->setWidget('id', new sfWidgetFormInputHidden());
 
-      $this->setWidget('facility_name', new sfWidgetFormInputText(array(), array('class' => 'inputGray')));
-      //'facility_code' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-    //));
-
+    $this->setWidget(
+        'facility_name', new sfWidgetFormInputText(array(), array('class' => 'inputGray'))
+    );
+    $this->setWidget(
+        'facility_code', new sfWidgetFormInputText(array(), array('class' => 'inputGray'))
+    );
 //    $this->agEntity = $this->getObject()->getAgEntity();
     $this->agEntity = $this->getObject()->getAgSite()->getAgEntity();
-    
+
     $this->embedAgFacilityForms();
 
 
@@ -60,7 +67,6 @@ class agFacilityForm extends BaseagFacilityForm
      * that will be displayed, we have to take care to not get rid
      * of any fields.
      */
-    
     //add csrf protection to the form that has been modified
     $this->addCSRFProtection();
 
@@ -69,15 +75,17 @@ class agFacilityForm extends BaseagFacilityForm
     $useFields = array_merge($useFields, array_diff($formFields, $useFields));
     $this->useFields($useFields);
 
-
     /**
      * Set labels on a few fields
      */
-    $this->widgetSchema->setLabels(array(
-      'resource' => 'Resources',
-      'facility_name' => 'Name',
-      //'facility_code' => 'Facility Code'
-    ));
+
+    $this->widgetSchema->setLabels(
+        array(
+          'resources' => 'Resources <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Resource">?</a>',
+          'facility_name' => 'Name <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_name&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Name">?</a>',
+          'facility_code' => 'Facility Code <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_code&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>'
+        )
+    );
 
     /**
      * Set the formatter of this form to
@@ -86,12 +94,25 @@ class agFacilityForm extends BaseagFacilityForm
     $sectionsDeco = new agWidgetFormSchemaFormatterSection($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('section', $sectionsDeco);
     $this->getWidgetSchema()->setFormFormatterName('section');
-
   }
 
   public function embedPhoneForm($contactContainer)
   {
-    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
+    $defaults = json_decode(
+                            agDoctrineQuery::create()
+                              ->select('value')
+                              ->from('agGlobalParam')
+                              ->where('datapoint = \'default_facility_phone_types\'')
+                              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
+                            true
+                          );
+    $this->ag_phone_contact_types = agDoctrineQuery::create()
+                                      ->select()
+                                      ->from('agPhoneContactType')
+                                      ->whereIn('phone_contact_type', $defaults)
+                                      ->execute();
+
+//    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')->createQuery('a')->execute();
 
     $phoneContainer = new sfForm(array(), array());
     $phoneDeco = new agWidgetFormSchemaFormatterRow($phoneContainer->getWidgetSchema());
@@ -101,7 +122,10 @@ class agFacilityForm extends BaseagFacilityForm
       if ($id = $this->agEntity->id) {
         $phoneObject = Doctrine_query::create()
                 ->from('agPhoneContact pc')
-                ->where('pc.id IN (SELECT jn.phone_contact_id FROM agEntityPhoneContact jn WHERE jn.entity_id = ? AND phone_contact_type_id = ?)', array($id, $phoneContactType->id))
+                ->where(
+                    'pc.id IN (SELECT jn.phone_contact_id FROM agEntityPhoneContact jn WHERE jn.entity_id = ? AND phone_contact_type_id = ?)',
+                    array($id, $phoneContactType->id)
+                )
                 ->execute()->getFirst();
       }
       $phoneContactForm = new agEmbeddedAgPhoneContactForm(isset($phoneObject) ? $phoneObject : null);
@@ -109,12 +133,26 @@ class agFacilityForm extends BaseagFacilityForm
       $phoneContainer->embedForm($phoneContactType->getPhoneContactType(), $phoneContactForm);
     }
 
-    $contactContainer->embedForm('phone', $phoneContainer);
+    $contactContainer->embedForm('Phone', $phoneContainer);
+    $contactContainer->widgetSchema['Phone']->setLabel('Phone <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_phone&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Phone">?</a>');
   }
 
   public function embedEmailForm($contactContainer)
   {
-    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
+    $defaults = json_decode(
+                            agDoctrineQuery::create()
+                              ->select('value')
+                              ->from('agGlobalParam')
+                              ->where('datapoint = \'default_facility_email_types\'')
+                              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
+                            true
+                          );
+    $this->ag_email_contact_types = agDoctrineQuery::create()
+                                      ->select()
+                                      ->from('agEmailContactType')
+                                      ->whereIn('email_contact_type', $defaults)
+                                      ->execute();
+//    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')->createQuery('a')->execute();
 
     $emailContainer = new sfForm();
     $emailDeco = new agWidgetFormSchemaFormatterRow($emailContainer->getWidgetSchema());
@@ -125,14 +163,18 @@ class agFacilityForm extends BaseagFacilityForm
       if ($id = $this->agEntity->id) {
         $emailObject = Doctrine_query::create()
                 ->from('agEmailContact ec')
-                ->where('ec.id IN (SELECT jn.email_contact_id FROM agEntityEmailContact jn WHERE jn.entity_id = ? AND email_contact_type_id = ?)', array($id, $emailContactType->id))
+                ->where(
+                    'ec.id IN (SELECT jn.email_contact_id FROM agEntityEmailContact jn WHERE jn.entity_id = ? AND email_contact_type_id = ?)',
+                    array($id, $emailContactType->id)
+                )
                 ->execute()->getFirst();
       }
       $emailContactForm = new agEmbeddedAgEmailContactForm(isset($emailObject) ? $emailObject : null);
       $emailContactForm->widgetSchema->setLabel('email_contact', false);
       $emailContainer->embedForm($emailContactType->getEmailContactType(), $emailContactForm);
     }
-    $contactContainer->embedForm('email', $emailContainer);
+    $contactContainer->embedForm('Email', $emailContainer);
+    $contactContainer->widgetSchema['Email']->setLabel('Email <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_email&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Email">?</a>');
   }
 
   public function embedResourcesForm($resourceContainer)
@@ -150,15 +192,25 @@ class agFacilityForm extends BaseagFacilityForm
             ->execute()) {
 
       /**
-       *  for every existing facility resource, create an agEmbeddedFacilityResourceForm and embed it into $facilityResourceContainer
-       *   */
+       * for every existing facility resource, create an
+       * agEmbeddedFacilityResourceForm and embed it into $facilityResourceContainer
+       */
+      $i = 1;
       foreach ($this->agFacilityResources as $facilityResource) {
         $facilityResourceForm = new agEmbeddedFacilityResourceForm($facilityResource);
-
-
         $facilityResourceId = $facilityResource->getId();
+        if($i > 1) {
+          $facilityResourceForm->getWidget('facility_resource_type_id')->setLabel(false);
+          $facilityResourceForm->getWidget('facility_resource_status_id')->setLabel(false);
+          $facilityResourceForm->getWidget('capacity')->setLabel(false);
+        } else {
+          $facilityResourceForm->getWidget('facility_resource_type_id')->setLabel('Resource Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>');
+          $facilityResourceForm->getWidget('facility_resource_status_id')->setLabel('Resource Type <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_resource_status&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>');
+          $facilityResourceForm->getWidget('capacity')->setLabel('Capacity <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_capacity&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Code">?</a>');
+        }
         $facilityResourceContainer->embedForm($facilityResourceId, $facilityResourceForm);
         $facilityResourceContainer->widgetSchema->setLabel($facilityResourceId, false);
+        $i++;
       }
     }
 
@@ -169,17 +221,20 @@ class agFacilityForm extends BaseagFacilityForm
      *   */
     for ($iNewForm = 0; $iNewForm < max(3 - count($this->agFacilityResources), 1); $iNewForm++) {
       $facilityResourceForm = new agEmbeddedFacilityResourceForm();
-
+      if($i > 1) {
+        $facilityResourceForm->getWidget('facility_resource_type_id')->setLabel(false);
+        $facilityResourceForm->getWidget('facility_resource_status_id')->setLabel(false);
+        $facilityResourceForm->getWidget('capacity')->setLabel(false);
+      }
       $facilityResourceContainer->embedForm('new' . $iNewForm, $facilityResourceForm);
       $facilityResourceContainer->widgetSchema->setLabel('new' . $iNewForm, false);
+      $i++;
     }
 
     /**
      *  embed the facility resource container form into the facility form
      *   */
-    
     $resourceContainer->embedForm('resource', $facilityResourceContainer);
-
   }
 
   public function embedAddressForm($contactContainer)
@@ -189,11 +244,18 @@ class agFacilityForm extends BaseagFacilityForm
      *
      * This block sets up the embedded agEmbeddedAgAddressContactForms.
      * */
-    $this->address_contact_types = Doctrine::getTable('agAddressContactType')
-            ->createQuery('a')
-            ->select('a.*')
-            ->from('agAddressContactType a')
-            ->where('address_contact_type = ?', 'work')
+    $defaults = json_decode(
+                            agDoctrineQuery::create()
+                              ->select('value')
+                              ->from('agGlobalParam')
+                              ->where('datapoint = \'default_facility_address_types\'')
+                              ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR),
+                            true
+                          );
+    $this->address_contact_types = agDoctrineQuery::create()
+            ->select()
+            ->from('agAddressContactType')
+            ->wherein('address_contact_type', $defaults)
             ->execute();
     $this->address_formats = Doctrine::getTable('agAddressFormat')
             ->createQuery('addressFormat')
@@ -201,9 +263,9 @@ class agFacilityForm extends BaseagFacilityForm
             ->from('agAddressFormat af, af.agAddressElement ae')
             ->execute();
 
-    // This loop makes a 3d array of line sequence values (as the first level key), inline sequence values (as
-    // the second level key), address element values(as the third level string key), and address element ids (as
-    // the third level value).
+    // This loop makes a 3d array of line sequence values (as the first level key),
+    // inline sequence values (as the second level key), address element values
+    // (as the third level string key), and address element ids (as the third level value).
 
     /**
      * @todo this works fine for now, since we only have one address format, but should be
@@ -211,28 +273,25 @@ class agFacilityForm extends BaseagFacilityForm
      * address_standard_id in that table.
      * */
     foreach ($this->address_formats as $af) {
-      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element] = $af->getAgAddressElement()->id;
+      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['id'] = $af->getAgAddressElement()->id;
+      $addressElements[$af->line_sequence][$af->inline_sequence][$af->getAgAddressElement()->address_element]['fieldType'] = $af->getAgFieldType()->getFieldType();
     }
 
     $addressContainer = new sfForm(array(), array()); // Container form.
     #$addressContainer->widgetSchema->setFormFormatterName('list');
-
-    $addressDeco = new agWidgetFormSchemaFormatterRow($addressContainer->getWidgetSchema());
-    $addressContainer->getWidgetSchema()->addFormFormatter('row', $addressDeco);
-    $addressContainer->getWidgetSchema()->setFormFormatterName('row');
-
-    $stateList = agDoctrineQuery::create()
-            ->select('a.value')
-            ->from('agAddressValue a')
-            ->where('a.address_element_id = 4')
-            ->execute();  //select * from ag_address_element .. and get the element_id by the text ('state')
+    $addressContainerFormatter = new agFormatterAddressLevelOne($addressContainer->getWidgetSchema());
+    $addressContainer->getWidgetSchema()->addFormFormatter('addConDeco', $addressContainerFormatter);
+    $addressContainer->getWidgetSchema()->setFormFormatterName('addConDeco');
 
     $this->entityAddress = Doctrine::getTable('agEntity')
             ->createQuery('entityAddresses')
             ->select('e.*, eac.*, act.*, a.*, as.*, aav.*, av.*, p.*, ae.*')
-            ->from('agEntity e, e.agEntityAddressContact eac, eac.agAddressContactType act,
-                eac.agAddress a, a.agAddressStandard as, a.agAddressMjAgAddressValue aav,
-                aav.agAddressValue av, av.agAddressElement ae, e.agPerson p')
+            ->from(
+                'agEntity e, e.agEntityAddressContact eac, eac.agAddressContactType act,
+                eac.agAddress a,
+                a.agAddressStandard as, a.agAddressMjAgAddressValue aav,
+                aav.agAddressValue av, av.agAddressElement ae, e.agPerson p'
+            )
             ->where('e.id = ?', $this->getObject()->getAgSite()->getAgEntity()->getId())
             ->execute()
             ->getFirst();
@@ -250,42 +309,69 @@ class agFacilityForm extends BaseagFacilityForm
     $addressFirstPass = true;
 
     foreach ($this->address_contact_types as $address_contact_type) {
-      $addressSubContainer = new sfForm(array(), array()); // Sublevel container forms beneath address to hold a complete address for each address type.
-//    $addressDeco = new agWidgetFormSchemaFormatterInline($addressSubContainer->getWidgetSchema());
-//    $addressSubContainer->getWidgetSchema()->addFormFormatter('row', $addressDeco);
-//    $addressSubContainer->getWidgetSchema()->setFormFormatterName('row');
+      $addressSubContainer = new sfForm(array(), array());
+// Sublevel container forms beneath address to hold a complete address for each address type.
+      $addressSubContainerFormatter = new agFormatterAddressLevelTwo($addressSubContainer->getWidgetSchema());
+      $addressSubContainer->getWidgetSchema()->addFormFormatter('subFormatter', $addressSubContainerFormatter);
+      $addressSubContainer->getWidgetSchema()->setFormFormatterName('subFormatter');
 
       foreach ($addressElements as $ae) {
         foreach ($ae as $addressElement) {
-          $valueForm = new agEmbeddedAgAddressValueForm(); // Lowest level address form, actually holds the data.
-          $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]); //set the default address_element_id.
-          $valueForm->widgetSchema->setLabel('value', false); //hide the 'value' field label.
-          // Hardcoded for now, this sets the input type for state to a dropdown list, populated only by address values that
-          // have address element 4/state as their address_element value. Refactor to use agAddressFormat's field_type_id in
+          $valueForm = new agEmbeddedAgAddressValueForm();
+          $valueFormFormatter = new agFormatterAddressLevelThree($valueForm->getWidgetSchema());
+          $valueForm->getWidgetSchema()->addFormFormatter('valFormatter', $valueFormFormatter);
+          $valueForm->getWidgetSchema()->setFormFormatterName('valFormatter');
+          //^ Lowest level address form, actually holds the data.
+          $valueForm->setDefault('address_element_id', $addressElement[key($addressElement)]['id']);
+          //^ set the default address_element_id.
+          $valueForm->widgetSchema->setLabel('value', false);
+          // ^hide the 'value' field label.
+          // Hardcoded for now, this sets the input type for state to a
+          // dropdown list, populated only by address values that
+          // have address element 4/state as their address_element value.
+          // Refactor to use agAddressFormat's field_type_id in
           // conjunction with agFieldType.
-          if (key($addressElement) == 'state') {
+          if ($addressElement[key($addressElement)]['fieldType'] == 'sfWidgetFormDoctrineChoice') {
+
             $valueForm->setWidget(
                 'value',
-                new sfWidgetFormDoctrineChoice(array(
-                  'multiple' => false,
-                  'model' => 'agAddressValue',
-                  'add_empty' => true,
-                  'key_method' => 'getValue'
-                ))); //key_method sets the option value of the constructed select list to the value rather than id.
-            $valueForm->widgetSchema->setLabel('value', false);
-            $valueForm->widgetSchema['value']->addOption(
-                'query',
-                $stateList
+                new sfWidgetFormDoctrineChoice(
+                    array(
+                      'multiple' => false,
+                      'model' => 'agAddressValue',
+                      'add_empty' => true,
+                      'key_method' => 'getValue'
+                    ),
+                    array('class' => 'inputGray')
+                )
             );
+            $list = agDoctrineQuery::create()
+               ->select('a.value')
+               ->from('agAddressValue a')
+               ->where('a.address_element_id = ?', $addressElement[key($addressElement)]['id']);
+            
+            $valueForm->widgetSchema->setLabel('value', false);
+            $valueForm->widgetSchema['value']->addOption('query', $list);
           }
 
           if (isset($this->entityAddress) && $this->entityAddress) {
             // Each of the agPerson's existing address records.
             foreach ($this->entityAddress->getAgEntityAddressContact() as $current) {
               if ($current->address_contact_type_id == $address_contact_type->id) {
-                $addressValueElement = $current->getId();
+                // Make a new agAddressHelper() and get geo-coordinates with it.
+                // put those coordinates into the $geoForm and lose the helper.
+                $addressHelper = new agAddressHelper();
+                $addressCoords = $addressHelper->getAddressCoordinates(array($current['address_id']));
+                $geoForm = new agEmbeddedGeoAddressForm();
+                // See if the address has any geo data. If it does, put that data in the form.
+                if($addressCoords = $addressHelper->getAddressCoordinates(array($current['address_id']))) {
+                  $geoForm->setDefault('latitude', $addressCoords[$current['address_id']]['latitude']);
+                  $geoForm->setDefault('longitude', $addressCoords[$current['address_id']]['longitude']);
+                }
+                unset($addressHelper);
 
-                foreach ($current->getAgAddress()->getAgAddressMjAgAddressValue() as $av) {//Get the joins from agAddress to agAddressValue
+                foreach ($current->getAgAddress()->getAgAddressMjAgAddressValue() as $av) {
+                  ////Get the joins from agAddress to agAddressValue
                   if ($av->getAgAddressValue()->getAgAddressElement()->address_element == key($addressElement)) {
                     $valueForm->setDefault('value', $av->getAgAddressValue()->value);
                     $valueForm->id_holder = $av->getAgAddressValue()->id;
@@ -294,19 +380,32 @@ class agFacilityForm extends BaseagFacilityForm
               }
             }
           }
-          $valueForm->addressType = $address_contact_type->address_contact_type; //set an addressType property for the form so the type can be used when saving.
-          $addressSubContainer->embedForm(key($addressElement), $valueForm); //Embed the address elements.
+          $valueForm->addressType = $address_contact_type->address_contact_type;
+          //set an addressType property for the form so the type can be used when saving.
+          $addressSubContainer->embedForm(key($addressElement), $valueForm);
+          //Embed the address elements.
 
           if (!$addressFirstPass) {
             //$addressSubContainer->widgetSchema->setLabel(key($addressElement), false);
           }
         }
       }
-      $addressContainer->embedForm($address_contact_type, $addressSubContainer); //Embed the addresses-by-type
+      // Get rid of a set $geoForm for the next pass.
+      if (!isset($geoForm)) {
+        $geoForm = new agEmbeddedGeoAddressForm();
+      }
+      $addressSubContainer->embedForm('Geo Data', $geoForm);
+      unset($geoForm);
+      $addressSubContainer->getWidgetSchema()->setLabel('Geo Data', false);
+
+      $addressContainer->embedForm($address_contact_type, $addressSubContainer);
+      //Embed the addresses-by-type
 
       $addressFirstPass = false;
     }
-    $contactContainer->embedForm('address', $addressContainer); //Embed all the addresses into agPersonForm.
+    $contactContainer->embedForm('Address', $addressContainer);
+    $contactContainer->widgetSchema['Address']->setLabel('Address <a href="' . $this->wikiUrl .  '/doku.php?id=tooltip:facility_address&do=export_xhtmlbody" class="tooltipTrigger" title="Facility Address">?</a>');
+    //Embed all the addresses into agPersonForm.
   }
 
   public function embedAgFacilityForms()
@@ -316,20 +415,18 @@ class agFacilityForm extends BaseagFacilityForm
 
     $resourceContainer = new sfForm();
     $this->embedResourcesForm($resourceContainer);
-    $resourceContainer->getWidgetSchema()->setLabel('resource',false);
+    $resourceContainer->getWidgetSchema()->setLabel('resource', false);
     $this->embedForm('resources', $resourceContainer);
 //
-    $this->embedAddressForm($contactContainer);
-    $this->embedEmailForm($contactContainer);
-    $this->embedPhoneForm($contactContainer);
-    $this->embedForm('contact', $contactContainer);
+    $this->embedAddressForm($this);
+    $this->embedEmailForm($this);
+    $this->embedPhoneForm($this);
+//    $this->embedForm('contact', $contactContainer);
   }
 
   /*
    * setup() extends the base method to remove unused fields and embed subforms
    */
-
-
 
   /**
    * saveEmbeddedForms() is a recursive function that saves all
@@ -347,6 +444,36 @@ class agFacilityForm extends BaseagFacilityForm
       $forms = $this->embeddedForms;
     }
 
+    /* New Address Saving Section */
+//   if (isset($this->embeddedForms['Address'])) {
+//      $addHelper = new agAddressHelper();
+//      $entAddHelper = new agEntityAddressHelper();
+//      $addressStandardId = $addHelper->getAddressStandardId();
+//      $entId = $this->getObject()->getAgSite()->getEntityId();
+//
+//// Original Code.
+//      foreach ($this->embeddedForms['Address']->embeddedForms as $aKey => $addressForm) {
+//        foreach ($addressForm->embeddedForms as $fKey => $form) {
+//          $this->saveAddressForm($aKey, $fKey, $form);
+//          unset($this->embeddedForms['Address']->embeddedForms[$aKey]->embeddedForms[$fKey]);
+//        }
+//        unset($this->embeddedForms['Address'][$aKey]);
+//      }
+//      // Update the address hashes for this entity.
+//      $ah = new agAddressHelper();
+//      $ah->updateAddressHashes(agDoctrineQuery::create()
+//                              ->select('address_id')
+//                              ->from('agEntityAddressContact')
+//                              ->where('entity_id = ?', $entId)
+//                              ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY));
+//      unset($ah);
+//      unset($this->embeddedForms['Address']);
+//   }
+    if (isset($this->embeddedForms['Address'])) {
+      $this->saveAddressForm($this->embeddedForms['Address']);
+      unset($this->embeddedForms['Address']);
+    }
+    
     if (is_array($forms)) {
       foreach ($forms as $key => $form) {
 
@@ -367,8 +494,8 @@ class agFacilityForm extends BaseagFacilityForm
         if ($form instanceof agEmbeddedFacilityResourceForm) {
           if ($form->isNew()) {
             $newFacilityResource = $form->getObject();
-            if ($newFacilityResource->capacity && $newFacilityResource->facility_resource_type_id
-                && $newFacilityResource->facility_resource_status_id && $newFacilityResource->facility_resource_code) {
+            if (isset ($newFacilityResource->capacity) && $newFacilityResource->facility_resource_type_id
+                && $newFacilityResource->facility_resource_status_id) {
               $newFacilityResource->setFacilityId($this->getObject()->getId());
               $newFacilityResource->save();
               $this->getObject()->getAgFacilityResource()->add($newFacilityResource);
@@ -379,7 +506,7 @@ class agFacilityForm extends BaseagFacilityForm
           } else {
             $objFacilityResource = $form->getObject();
             if ($objFacilityResource->capacity && $objFacilityResource->facility_resource_type_id
-                && $objFacilityResource->facility_resource_status_id && $objFacilityResource->facility_resource_code) {
+                && $objFacilityResource->facility_resource_status_id) {
               $form->getObject()->save();
             } else {
               $form->getObject()->delete();
@@ -401,7 +528,8 @@ class agFacilityForm extends BaseagFacilityForm
 
           $typeId = $typeQuery->fetchOne()->id;
 
-          //This query gets the person's agEntityEmailContact object, based on person_id and email_contact_type_id (as $typeId).
+          //This query gets the person's agEntityEmailContact object,
+          //based on person_id and email_contact_type_id (as $typeId).
           $joinQuery = Doctrine::getTable('agEntityEmailContact')->createQuery('c')
                   ->select('c.id')
                   ->from('agEntityEmailContact c')
@@ -409,13 +537,15 @@ class agFacilityForm extends BaseagFacilityForm
                   ->andWhere('c.entity_id =?', $this->getObject()->getAgSite()->getAgEntity()->id);
           //Check if the agEmbeddedAgEmailContactForm has an email_contact value.
           if ($form->getObject()->email_contact <> null) {
-            // Get an agEntityEmailContact object from $joinQuery. Then create a new agEntityEmailContactForm
+            // Get an agEntityEmailContact object from $joinQuery.
+            // Then create a new agEntityEmailContactForm
             // and put the retrieved object inside it. Set its priority to $typeId
             if ($join = $joinQuery->fetchOne()) {
               $joinForm = new agEntityEmailContactForm($join);
               $joinForm->getObject()->priority = $typeId;
             }
-            // Or create a new agEntityEmailContactForm to be populated later and set its priority to $typeId.
+            // Or create a new agEntityEmailContactForm to be populated
+            //  later and set its priority to $typeId.
             else {
               $joinForm = new agEntityEmailContactForm();
               $joinForm->getObject()->priority = $typeId;
@@ -439,7 +569,8 @@ class agFacilityForm extends BaseagFacilityForm
               if ($queried = $q->fetchOne()) {
                 // Get the id of the email in the db...
                 $email_id = $queried->get('id');
-                // ...then see if the agEntityEmailContact has an email_contact_id corresponding to the
+                // ...then see if the agEntityEmailContact has an
+                // email_contact_id corresponding to the
                 // email queried for. If it is, unset the form, no update is needed...
                 if (isset($joinForm->email_contact_id) && $joinForm->email_contact_id == $email_id) {
                   unset($forms[$key]);
@@ -454,7 +585,8 @@ class agFacilityForm extends BaseagFacilityForm
                   unset($forms[$key]);
                 }
               }
-              // If the entered email isn't in the database already, make a new agEmailContact object,
+              // If the entered email isn't in the database already,
+              // make a new agEmailContact object,
               // populate it with the new email, and save it.
               // Then populate the agEntityEmailContact object's values, associating it with the
               // id of the new email, and save it. Unset the form.
@@ -477,7 +609,8 @@ class agFacilityForm extends BaseagFacilityForm
           // If the name field is blank, unset the field...
           else {
             unset($forms[$key]);
-            // ...if it was populated, delete the existing agPersonMjAgPersonName object since it is
+            // ...if it was populated, delete the existing
+            // agPersonMjAgPersonName object since it is
             // no longer needed.
             if ($join = $joinQuery->fetchOne()) {
               $join->delete();
@@ -584,154 +717,141 @@ class agFacilityForm extends BaseagFacilityForm
             }
           }
         }
-
-
-        /**
-         *  Address Saving Section
-         */
-        if (isset($form->addressType)) {//This value is only set for agEmbeddedAgAddressValueForms. Used due to multi-level complexity of address.
-          //This query finds the address_contact_type ID we need for the next query.
-          $typeQuery = Doctrine::getTable('agAddressContactType')->createQuery('b')
-                  ->select('b.id')
-                  ->from('agAddressContactType b')
-                  ->where('b.address_contact_type = ?', $form->addressType);
-
-          $typeId = $typeQuery->fetchOne()->id;
-
-          //This query gets the person's agEntityAddressContact object, based on person_id and address_contact_type_id (as $typeId).
-          $joinEntityAddressQuery = Doctrine::getTable('agEntityAddressContact')->createQuery('c')
-                  ->select('c.id')
-                  ->from('agEntityAddressContact c')
-                  ->where('c.address_contact_type_id = ?', $typeId)
-                  ->andWhere('c.entity_id = ?', $this->getObject()->getAgSite()->getAgEntity()->id);
-          //Check if the agEmbeddedAgAddressValueForm has a value.
-
-          if ($form->getObject()->value <> null) {
-            // Get an agEntityAddressContact object from $joinEntityAddressQuery. Then create a new agEntityAddressContactForm
-            // and put the retrieved object inside it. Set its priority to $typeId
-            if ($join = $joinEntityAddressQuery->fetchOne()) {
-              $joinEntityAddressForm = new agEntityAddressContactForm($join);
-              $joinEntityAddressForm->getObject()->priority = $typeId;
-            }
-            // Or create a new agAddress, set its address_standard_id, and save it. Then create
-            // agEntityPhoneContactForm to be populated later and set its priority and address_id.
-            else {
-              $newAddress = new agAddress();
-              $newAddress->address_standard_id = 1;
-              $newAddress->save();
-              $joinEntityAddressForm = new agEntityAddressContactForm();
-              $joinEntityAddressForm->getObject()->priority = $typeId;
-              $joinEntityAddressForm->getObject()->address_id = $newAddress->id;
-              $joinEntityAddressForm->getObject()->address_contact_type_id = $typeId;
-              $joinEntityAddressForm->getObject()->entity_id = $this->getObject()->getAgSite()->getAgEntity()->id;
-              $joinEntityAddressForm->getObject()->save();
-            }
-
-            // Check if the agAddressValue has changed since the page was rendered.
-            if ($form->getObject()->value <> $form->getDefault('value')) {
-              // Store the newly entered value as $addressValueLookUp. Then revert the object
-              // to its default values from the page render. This prevents a duplicate entry error.
-              $addressValueLookUp = $form->getObject()->value;
-              $form->updateObject($form->getDefaults());
-
-              // Create a query to see if the submitted address value, as $addressValueLookUp, already exists
-              // in the database.
-              $addressValueQuery = Doctrine::getTable('agAddressValue')->createQuery('a')
-                      ->select('a.id')
-                      ->from('agAddressValue a')
-                      ->where('a.value = ?', $addressValueLookUp)
-                      ->andWhere('a.address_element_id = ?', $form->getObject()->address_element_id);
-
-              // If it does...
-              if ($queried = $addressValueQuery->fetchOne()) {
-                // If it exists, get an agAddressMjAgAddressValue object that joins the id of the agAddress being
-                // worked with and the id of the original agAddressValue being worked with. Used to change an
-                // address_value_id on the agAddressMjAgAddressValue object. id_holder is only set for already joined
-                // address values.
-                if (isset($form->id_holder)) {
-                  $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-                          ->select('a.id')
-                          ->from('agAddressMjAgAddressValue a')
-                          ->where('a.address_value_id = ?', $form->id_holder)
-                          ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
-
-                  $joinAddressValue = $joinAddressValueQuery->fetchOne();
-                  // reassign the agAddressValue of the join to the newly selected value.
-                  $joinAddressValue->address_value_id = $queried->id;
-                  $joinAddressValue->save();
-                  unset($forms[$key]);
-                } else {
-                  $joinAddressValue = new agAddressMjAgAddressValue();
-                  $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
-                  $joinAddressValue->address_value_id = $queried->id;
-                  $joinAddressValue->save();
-                  unset($forms[$key]);
-                }
-              }
-              // If the entered address_value isn't in the database already, make a new agAddressValue object,
-              // populate it with the new address value, and save it.
-              elseif (!$queried = $addressValueQuery->fetchOne()) {
-                $newAddressValue = new agAddressValue();
-                $newAddressValue->value = $addressValueLookUp;
-                $newAddressValue->address_element_id = $form->getObject()->address_element_id;
-                $newAddressValue->save();
-
-                if (isset($form->id_holder)) {
-                  $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-                          ->select('a.id')
-                          ->from('agAddressMjAgAddressValue a')
-                          ->where('a.address_value_id = ?', $form->id_holder)
-                          ->andWhere('a.address_id = ?', $joinEntityAddressForm->getObject()->address_id);
-
-                  $joinAddressValue = $joinAddressValueQuery->fetchOne();
-                  // reassign the agAddressValue of the join to the newly selected value.
-                  $joinAddressValue->address_value_id = $newAddressValue->id;
-                  $joinAddressValue->save();
-                  unset($forms[$key]);
-                } else {
-                  $joinAddressValue = new agAddressMjAgAddressValue();
-                  $joinAddressValue->address_id = $joinEntityAddressForm->getObject()->address_id;
-                  $joinAddressValue->address_value_id = $newAddressValue->id;
-                  $joinAddressValue->save();
-                  unset($forms[$key]);
-                }
-              }
-            }
-            // If the address_value hasn't been changed, unset the form.
-            else {
-              unset($forms[$key]);
-            }
-          }
-          // If the address_value field is blank, unset the form...
-          else {
-            unset($forms[$key]);
-            // ...if it was populated, delete the existing agAddressMjAgAddressValue object since it is
-            // no longer needed.
-            if ($form->getObject()->value <> $form->getDefault('value')) {
-              $joinAddressValueQuery = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')->select('a.id')
-                      ->from('agAddressMjAgAddressValue a')
-                      ->where('a.address_value_id = ?', $form->id_holder)
-                      ->andWhere('a.address_id = ?', $joinEntityAddressQuery->fetchOne()->address_id);
-
-              if ($join = $joinAddressValueQuery->fetchOne()) {
-                $join->delete();
-              }
-            }
-          }
-          if ($entJoin = $joinEntityAddressQuery->fetchOne()) {
-            $q = Doctrine::getTable('agAddressMjAgAddressValue')->createQuery('a')
-                    ->select('a.id')->from('agAddressMjAgAddressValue a')
-                    ->where('a.address_id = ?', $entJoin->address_id);
-            if (!($r = $q->fetchOne())) {
-              $entAdd = $entJoin->getAgAddress();
-              $entJoin->delete();
-              $entAdd->delete();
-            }
-          }
-        }
       }
     }
     return parent::saveEmbeddedForms($con, $forms);
   }
 
+  /*****************************************************************************
+  * Saves address data.
+  *****************************************************************************/
+  public function saveAddressForm($addressContainerForm)
+  {
+    // Set up some an agEntityAddressHelper() and some values we'll need as well
+    $entAddHelper = new agEntityAddressHelper();
+    $entId = $this->getObject()->getAgSite()->getEntityId();
+    $addressStandardId  = $entAddHelper->getAgAddressHelper()->getAddressStandardId();
+    $geoSourceId = $this->getManualEntryGeoSource();
+
+    // set up an interator and then process all of the address forms.
+    $i = 0;
+    foreach ($addressContainerForm->embeddedForms as $type => $addressForm) {
+      // get the agAddressType->id based on the form key. Set the type id in the
+      // address array.
+      $typeId = agDoctrineQuery::create()
+        ->select('id')
+        ->from('agAddressContactType')
+        ->where('address_contact_type = ?', $type)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+      $address[0] = $typeId;
+
+      // Check to see if all address value fields are empty. If they are, no
+      // processing is needed.
+      if($this->checkEmptyAddress($addressForm) === FALSE) {
+        foreach ($addressForm->embeddedForms as $element => $value) {
+          if($element <> 'Geo Data') {
+            // Go through each agAddressValue form and get its value, if it exists.
+            // put those values in the array.
+            if($value->getObject()->value <> NULL) {
+              $address[1][0][$value->getObject()->address_element_id] = $value->getObject()->value;
+              if (empty($addresses[$entId][$i][1][1])) {
+                $address[1][1] = $addressStandardId;
+              }
+            }
+          } else {
+            // Process the agGeoCoordinate forms and add their values to the array.
+            // We only care if both are null, the validator stops one NULL and
+            // one not NULL from getting in.
+            if($value->getObject()->getLatitude() <> NULL || $value->getObject()->getLongitude() <> NULL) {
+              $address[1][2] = array(array(array($value->getObject()->getLatitude(), $value->getObject()->getLongitude())), $geoSourceId);
+            } else {
+              if(!isset($emptyGeo)) $emptyGeo = array();
+              $emptyGeo[$typeId] = $type;
+            }
+          }
+        }
+        // And add the $address array to the $addresses array.
+        $addresses[$entId][$i] = $address;
+      }
+      unset($this->embeddedForms['Address'][$type]);
+      $i++;
+    }
+    // And set all the addresses.
+    if(isset($addresses)) {
+      $entAddHelper->setEntityAddress($addresses, $geoSourceId, FALSE);
+    }
+    // Finally, unset any geo data that has been emptied.
+    if(isset($emptyGeo)) {
+      foreach($emptyGeo as $id => $type) {
+        $addId = agDoctrineQuery::create()
+            ->select('address_id')
+            ->from('agEntityAddressContact')
+            ->where('entity_id = ?', $entId)
+              ->andWhere('address_contact_type_id = ?', $id)
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+        if(!empty($addId)) {
+          $addGeo = agDoctrineQuery::create()
+              ->select('*')
+              ->from('agAddressGeo')
+              ->where('address_id = ?', $addId)
+              ->fetchOne();
+            if($addGeo instanceof agAddressGeo) $addGeo->delete();
+        }
+      }
+    }
+    unset($entAddHelper);
+  }
+  /*
+   * Returns the id for the manual entry geo source
+   */
+  private function getManualEntryGeoSource()
+  {
+    return agDoctrineQuery::create()
+          ->select('id')
+          ->from('agGeoSource')
+          ->where('geo_source = "manual entry"')
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+   /*
+   * Checks an sfForm (one created as $addressContainer on page load by embedAddressForm())
+   * to determine if any single field has submitted data.
+   * If any field does have data, it returns false. If they're all empty, it returns true.
+   *
+   * Checks on the lat and long fields have been disabled, for now at least. Who needs
+   * geo information when there's no address to link it to?
+   *
+   * @param $addressForm  An instance of sfForm(), created and populated in embedAddressForm()
+   * @return Boolean      True if the subforms are all empty, False if any is populated.
+   */
+  private function checkEmptyAddress($addressForm)
+  {
+    $fieldValues = array();
+    foreach($addressForm->embeddedForms as $element => $form) {
+      $object = $form->getObject();
+      if($element <> 'Geo Data') {
+        if(!empty($object['value'])) $fieldValues[] = $object['value'];
+      }
+    }
+    if(empty($fieldValues)) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  public function getJavaScripts()
+  {
+    $js = parent::getJavaScripts();
+    $js[] = 'jquery.ui.custom.js';
+    return $js;
+  }
+  public function getStyleSheets()
+  {
+    $css = parent::getStyleSheets();
+    $css['jquery/jquery.ui.custom.css'] = 'all';
+    $css['jquery/mayon.jquery.ui.css'] = 'all';
+    return $css;
+  }
+  
 }

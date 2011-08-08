@@ -1,0 +1,76 @@
+# Pre-populate address type mj address element
+
+agAddressFormat:
+  us_standard_line1:
+    agAddressStandard: us_standard
+    agAddressElement: line_1
+    line_sequence: 1
+    inline_sequence: 1
+    pre_delimiter: ''
+    post_delimiter: ''
+    agFieldType: sfWidgetFormInput
+    is_required: 1
+  us_standard_line2:
+    agAddressStandard: us_standard
+    agAddressElement: line_2
+    line_sequence: 2
+    inline_sequence: 1
+    pre_delimiter: ''
+    post_delimiter: ''
+    agFieldType: sfWidgetFormInput
+    is_required: 0
+  us_standard_city:
+    agAddressStandard: us_standard
+    agAddressElement: city
+    line_sequence: 3
+    inline_sequence: 1
+    pre_delimiter: ''
+    post_delimiter: ', '
+    agFieldType: sfWidgetFormInput
+    is_required: 1
+  us_standard_state:
+    agAddressStandard: us_standard
+    agAddressElement: state
+    line_sequence: 3
+    inline_sequence: 2
+    pre_delimiter: ''
+    post_delimiter: ' '
+    agFieldType: sfWidgetFormDoctrineChoice 
+    is_required: 1
+  us_standard_zip5:
+    agAddressStandard: us_standard
+    agAddressElement: zip5
+    line_sequence: 3
+    inline_sequence: 3
+    pre_delimiter: ''
+    post_delimiter: ''
+    agFieldType: sfWidgetFormInput
+    is_required: 1
+  us_standard_zip4:
+    agAddressStandard: us_standard
+    agAddressElement: zip4
+    line_sequence: 3
+    inline_sequence: 4
+    pre_delimiter: '-'
+    post_delimiter: ''
+    agFieldType: sfWidgetFormInput
+    is_required: 0
+  us_standard_borough:
+    agAddressStandard: us_standard
+    agAddressElement: borough
+    line_sequence: 4
+    inline_sequence: 1
+    pre_delimiter: ''
+    post_delimiter: ''
+    agFieldType: sfWidgetFormInput
+    is_required: 0
+  us_standard_country:
+    agAddressStandard: us_standard
+    agAddressElement: country
+    line_sequence: 5
+    inline_sequence: 1
+    pre_delimiter: ''
+    post_delimiter: ''
+    agFieldType: sfWidgetFormDoctrineChoice
+    is_required: 0
+

@@ -73,6 +73,7 @@ The following software is required to run Sahana Agasti Mayon:
 * Apache HTTP Server 2.2.14 or later (most current 2.2 preferred)
 * MySQL 5.1.41 or later (most current 5.1 preferred)
 * PHP 5.2.12 or later (most current 5.3 strongly recommended)
+* APC (The Alternative PHP Cache) 3.1.8 or later
 
 Hardware
 --------
@@ -101,17 +102,12 @@ is therefore NOT INTENDED FOR GENERAL USE in its current state.
 This list covers some of the known problems (and workarounds, where applicable)
 with Agasti 2.0 Mayon, which will be resolved in future releases:
 
-- Some pages are currently stubs for development.  Those pages are marked at the top with a warning
-  and the comment tag:
-    // PnaODfcm3Kiz4MV4vzbtr4
-  This random string is grepable for a report of the remaining stubbed pages.  When a developer 
-  fleshes out one of these pages the tag should be removed.
-
 - After submitting the form on the install.php page, it may take up to 5 minutes
   to load and redirect to the login screen.
 
-- The "Client" menu navigation item points to home; this module will be
-  implemented in a future release.
+- The "Foo" menu navigation item is a temporary module that exists at the moment
+  for testing and should not be usedl it will be removed before an official
+  release.
 
 - Pre-loaded fixtures for staff are not searchable; this is because fixture data
   is not currently indexed for searching when populating the schema through the
@@ -123,18 +119,14 @@ with Agasti 2.0 Mayon, which will be resolved in future releases:
 - It is currently not possible to add more than one service to a Facility
   Group's list of available resources.
 
-- Editing user accounts is unstable and may fail with an error page.
+- Form validation has not been turned on in some places, so it may be possible
+  to enter invalid data into the system.
 
-- Omitting a date of birth when creating or editing a staff entry will fail with
-  an error.
-
-- Form validation has not been turned on in most places, so it is possible to
-  enter invalid data into the system.
-
-- The formatting on some pages may seem "off." Page elements may wrap or
-  disappear based on your browser window size or screen resolution. As a
-  temporary workaround, you may need to maximize your browser window or increase
-  your screen resolution.
+- DEVELOPERS: Some pages are currently stubs for development. Those pages are
+  marked at the top with a warning and the comment tag:
+    // PnaODfcm3Kiz4MV4vzbtr4
+  This random string is greppable for a report of the remaining stubbed pages.
+  When a developer fleshes out one of these pages the tag should be removed.
 
 If you think you've found a new issue or bug, please refer to the SUPPORT
 section of this document for information on what to do next.

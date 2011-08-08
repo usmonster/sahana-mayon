@@ -8,7 +8,7 @@
     $('.filter option:selected').each(function(index) {
       out[index] = $(this).parent().attr('id') + ":" + $(this).text();
     })
-    $("#staff_pool_lucene_search_query_condition").val(out.join(' AND '));
+    $("#staff_pool_search_search_condition").val(out.join(' AND '));
   }
 
 </script>
@@ -28,13 +28,13 @@ if (isset($search_id)) {
       <tr>
         <td colspan="2">
 <?php echo $poolform->renderHiddenFields(false) ?>
-          <input type="submit" value="Save" class="saveLinkButton" name="Save" onclick="queryConstruct()"/>
-          <input type="submit" value="Preview" class="linkButton" name="Preview" onclick="queryConstruct()"/>
-          <input type="submit" value="New" name="New" class="linkButton"/>
+          <input type="submit" value="Save" class="continueButton" name="Save" onclick="queryConstruct()"/>
+          <input type="submit" value="Preview" class="generalButton" name="Preview" onclick="queryConstruct()"/>
+          <input type="submit" value="New" name="New" class="continueButton"/>
 <?php if (isset($search_id)) { ?>
-          <input type="submit" value="Delete" name="Delete" class="linkButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
+          <input type="submit" value="Delete" name="Delete" class="deleteButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
 <?php } ?>
-          <a href="<?php echo url_for('scenario/review?id=' . $scenario_id) ?>" class="linkButton" title="Review Scenario">Finish Scenario Wizard</a>
+          <a href="<?php echo url_for('scenario/' . $scenario_id . 'shifttemplates') ?>" class="continueButton" title="Shift Templates">Save and Continue</a>
         </td>
       </tr>
     </tfoot>
@@ -46,8 +46,6 @@ if (isset($search_id)) {
       </tr>
       <tr>
         <td>
-
-          <h3>Construct Search Conditions:</h3>
 <?php
     $labels = $filterForm->getWidgetSchema()->getLabels();
     $fields = $filterForm->getWidgetSchema()->getFields();

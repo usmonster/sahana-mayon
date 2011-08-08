@@ -27,7 +27,7 @@ class agCredForm extends sfGuardPermissionForm
     //$gform = new sfGuardGroupForm();
     //$mj = $this->object->getAgAccountMjSfGuardUser();
     //unset($mjform['ag_person_id']);
-    unset($this['created_at'], $this['updated_at']);//, $this['ag_person_id']);
+    unset($this['created_at'], $this['updated_at']); //, $this['ag_person_id']);
     //$mjform->setDefault('account_id',$theId);
     //$form->getObject()->id = $mj->object->sf_guard_user_id;
     //$mjform->setDefault('sf_guard_user_id',$theId);
@@ -51,27 +51,27 @@ class agCredForm extends sfGuardPermissionForm
 //
 //
 //  }
-  public function saveEmbeddedForms($con = null, $forms = null)
-  {
-    $forms = $this->embeddedForms;
-    foreach ($forms as $form) {
-      //create agAccountMjSfGuardUser object, update it... boom.
-      if ($form->getName() == 'ag_account_mj_sf_guard_user') {
-        $form->getObject()->setAccountId($this->getObject()->getId());
-        $form->saveEmbeddedForms($con);
-        $form->getObject()->save($con);
-      }
-      if ($form->getName() == 'sf_guard_user') {
-        $form->getObject()->setUsername($this->getObject()->getAccountName());
-        //$forms['agAccountMjSfGuardUserForm']->getObject()->setSfGuardUserId($form->getObject()->getId());
-        $form->getObject()->save();
-        $accountMjUser = new agAccountMjSfGuardUser();
-        $accountMjUser->account_id = $this->getObject()->getId();
-        $accountMjUser->sf_guard_user_id = $form->getObject()->getId();
-        $accountMjUser->save();
-      }
-    }
-  }
+//  public function saveEmbeddedForms($con = null, $forms = null)
+//  {
+//    $forms = $this->embeddedForms;
+//    foreach ($forms as $form) {
+//      //create agAccountMjSfGuardUser object, update it... boom.
+//      if ($form->getName() == 'ag_account_mj_sf_guard_user') {
+//        $form->getObject()->setAccountId($this->getObject()->getId());
+//        $form->saveEmbeddedForms($con);
+//        $form->getObject()->save($con);
+//      }
+//      if ($form->getName() == 'sf_guard_user') {
+//        $form->getObject()->setUsername($this->getObject()->getAccountName());
+//        //$forms['agAccountMjSfGuardUserForm']->getObject()->setSfGuardUserId($form->getObject()->getId());
+//        $form->getObject()->save();
+//        $accountMjUser = new agAccountMjSfGuardUser();
+//        $accountMjUser->account_id = $this->getObject()->getId();
+//        $accountMjUser->sf_guard_user_id = $form->getObject()->getId();
+//        $accountMjUser->save();
+//      }
+//    }
+//  }
 
 }
 

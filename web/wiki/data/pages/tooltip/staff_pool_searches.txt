@@ -1,0 +1,5 @@
+===== Staff Pool Saved Searches =====
+
+The staff pool is constructed from a series of weighted saved searches.  This allows Emergency Managers to select only the type of staff they want from specific organizations and include them in a deployment.
+
+Below are the number of staff in the Sahana Agasti application and the number of staff currently contained in the whole of the staff pool.

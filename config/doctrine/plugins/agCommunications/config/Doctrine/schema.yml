@@ -87,6 +87,8 @@ agPhoneContact:
       local: phone_contact_id
       foreign: entity_id
 agEmailContact:
+  options:
+    collate: utf8_bin
   columns:
     id:
       primary: true

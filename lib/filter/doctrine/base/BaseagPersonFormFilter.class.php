@@ -24,13 +24,10 @@ abstract class BaseagPersonFormFilter extends BaseFormFilterDoctrine
       'ag_ethnicity_list'           => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agEthnicity')),
       'ag_sex_list'                 => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agSex')),
       'ag_marital_status_list'      => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agMaritalStatus')),
-      'ag_import_list'              => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agImport')),
       'ag_residential_status_list'  => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agResidentialStatus')),
       'ag_person_name_list'         => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonName')),
       'ag_person_name_type_list'    => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonNameType')),
       'ag_person_custom_field_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agPersonCustomField')),
-      'ag_staff_status_list'        => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agStaffStatus')),
-      'ag_import_type_list'         => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agImportType')),
     ));
 
     $this->setValidators(array(
@@ -45,13 +42,10 @@ abstract class BaseagPersonFormFilter extends BaseFormFilterDoctrine
       'ag_ethnicity_list'           => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agEthnicity', 'required' => false)),
       'ag_sex_list'                 => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agSex', 'required' => false)),
       'ag_marital_status_list'      => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agMaritalStatus', 'required' => false)),
-      'ag_import_list'              => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agImport', 'required' => false)),
       'ag_residential_status_list'  => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agResidentialStatus', 'required' => false)),
       'ag_person_name_list'         => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonName', 'required' => false)),
       'ag_person_name_type_list'    => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonNameType', 'required' => false)),
       'ag_person_custom_field_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agPersonCustomField', 'required' => false)),
-      'ag_staff_status_list'        => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agStaffStatus', 'required' => false)),
-      'ag_import_type_list'         => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agImportType', 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('ag_person_filters[%s]');
@@ -207,24 +201,6 @@ abstract class BaseagPersonFormFilter extends BaseFormFilterDoctrine
     ;
   }
 
-  public function addAgImportListColumnQuery(Doctrine_Query $query, $field, $values)
-  {
-    if (!is_array($values))
-    {
-      $values = array($values);
-    }
-
-    if (!count($values))
-    {
-      return;
-    }
-
-    $query
-      ->leftJoin($query->getRootAlias().'.agPersonLastImport agPersonLastImport')
-      ->andWhereIn('agPersonLastImport.last_import_id', $values)
-    ;
-  }
-
   public function addAgResidentialStatusListColumnQuery(Doctrine_Query $query, $field, $values)
   {
     if (!is_array($values))
@@ -297,42 +273,6 @@ abstract class BaseagPersonFormFilter extends BaseFormFilterDoctrine
     ;
   }
 
-  public function addAgStaffStatusListColumnQuery(Doctrine_Query $query, $field, $values)
-  {
-    if (!is_array($values))
-    {
-      $values = array($values);
-    }
-
-    if (!count($values))
-    {
-      return;
-    }
-
-    $query
-      ->leftJoin($query->getRootAlias().'.agStaff agStaff')
-      ->andWhereIn('agStaff.staff_status_id', $values)
-    ;
-  }
-
-  public function addAgImportTypeListColumnQuery(Doctrine_Query $query, $field, $values)
-  {
-    if (!is_array($values))
-    {
-      $values = array($values);
-    }
-
-    if (!count($values))
-    {
-      return;
-    }
-
-    $query
-      ->leftJoin($query->getRootAlias().'.agImport agImport')
-      ->andWhereIn('agImport.import_type_id', $values)
-    ;
-  }
-
   public function getModelName()
   {
     return 'agPerson';
@@ -353,13 +293,10 @@ abstract class BaseagPersonFormFilter extends BaseFormFilterDoctrine
       'ag_ethnicity_list'           => 'ManyKey',
       'ag_sex_list'                 => 'ManyKey',
       'ag_marital_status_list'      => 'ManyKey',
-      'ag_import_list'              => 'ManyKey',
       'ag_residential_status_list'  => 'ManyKey',
       'ag_person_name_list'         => 'ManyKey',
       'ag_person_name_type_list'    => 'ManyKey',
       'ag_person_custom_field_list' => 'ManyKey',
-      'ag_staff_status_list'        => 'ManyKey',
-      'ag_import_type_list'         => 'ManyKey',
     );
   }
 }

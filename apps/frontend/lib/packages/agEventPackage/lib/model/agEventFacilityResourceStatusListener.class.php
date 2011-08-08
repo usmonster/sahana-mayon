@@ -25,6 +25,10 @@ class agEventFacilityResourceStatusListener extends Doctrine_Record_Listener
 
   public function postSave(Doctrine_Event $event)
   {
+    if ($this->_options['disabled']) {
+      return NULL;
+    }
+    
     $invoker = $event->getInvoker();
     $eventFacilityResourceId = $invoker->event_facility_resource_id;
     $new_status = $invoker->facility_resource_allocation_status_id;

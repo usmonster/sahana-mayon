@@ -1,0 +1,2 @@
+===== Creating Organizations =====
+Organizations are used in Agasti for grouping and prioritizing staff.  The name will be used throughout the application and is required.  The Description is optional and is used later for reference.

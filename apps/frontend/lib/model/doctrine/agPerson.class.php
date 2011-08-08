@@ -1,7 +1,7 @@
 <?php
 
 /**
- * agPerson this class extends the person object for various purposes
+ * Extends the person object for various purposes
  *
  * LICENSE: This source file is subject to LGPLv2.1 license
  * that is available through the world-wide-web at the following URI:
@@ -17,24 +17,29 @@
  */
 class agPerson extends BaseagPerson
 {
-  public    $luceneSearchFields = array('id' => 'keyword');
 
-  protected $helperClasses = array( 'agPersonNameHelper' => 'id',
-                                    'agEntityAddressHelper' => 'entity_id') ;
+  public $luceneSearchFields = array('id' => 'keyword');
+  protected $helperClasses = array('agPersonNameHelper' => 'id',
+                                    'agEntityAddressHelper' => 'entity_id',
+                                    'agEntityPhoneHelper' => 'entity_id',
+                                    'agEntityEmailHelper' => 'entity_id');
+  private $_helperObjects = array(),
+  $_helperMethods;
 
-  private   $_helperObjects = array(),
-            $_helperMethods ;
+  protected $isAutoIndexed;
+
 
   /**
    * This classes' constructor.
    */
-  public function construct()
+  public function __construct($table = null, $isNewEntry = false, $isAutoIndexed = true)
   {
     // call the parent's constructor
-    parent::construct() ;
+    parent::__construct($table, $isNewEntry);
+    $this->isAutoIndexed = $isAutoIndexed;
 
     // pre-load any helper methods we might want to look for in __call()
-    $this->loadHelperMethods() ;
+    $this->loadHelperMethods();
   }
 
   /**
@@ -48,77 +53,90 @@ class agPerson extends BaseagPerson
   public function __call($method, $arguments)
   {
     // check to see if our method exists in our helpers
-    if (array_key_exists($method, $this->_helperMethods))
-    {
-      try
-      {
+    if (array_key_exists($method, $this->_helperMethods)) {
+      try {
         // discover the class that owns the method being called
-        $helperClass = $this->_helperMethods[$method] ;
+        $helperClass = $this->_helperMethods[$method];
 
         // lazily load that helper class
-        $this->loadHelperClass($helperClass) ;
-        
+        $this->loadHelperClass($helperClass);
+
         // get our object out of the objects array and the string value of the id to use
-        $helperObject = $this->_helperObjects[$helperClass] ;
-        $classId = $this->helperClasses[$helperClass] ;
-        $id = $this->$classId ;
+        $helperObject = $this->_helperObjects[$helperClass];
+        $classId = $this->helperClasses[$helperClass];
+        $id = $this->$classId;
 
         // set up our args
-        array_unshift($arguments, $id) ;
+        array_unshift($arguments, array($id));
 
         // execute and return
-        $results = call_user_func_array(array($helperObject,$method), $arguments) ;
-        return $results[$id] ;
-      }
-      catch (Exception $e)
-      {
+        $results = call_user_func_array(array($helperObject, $method), $arguments);
+        // stop an undefined index notice in case results is unpopulated.
+        if (isset($results[$id])) {
+          return $results[$id];
+        } else {
+          return;
+        }
+      } catch (Exception $e) {
         // if there's an error, write to log and return
         $notice = sprintf('Execution of the %s method, found in %s failed. Attempted to use the
-          parent class.', $method, $helperClass) ;
-        sfContext::getInstance()->getLogger()->notice($notice) ;
+          parent class.', $method, $helperClass);
+        sfContext::getInstance()->getLogger()->notice($notice);
       }
     }
     // since no method matched, call the parent's methods
-    return parent::__call($method, $arguments) ;
+    return parent::__call($method, $arguments);
+  }
+
+  public function setUp()
+  {
+    parent::setUp();
+
+    $luceneable0 = new Luceneable();
+    $this->actAs($luceneable0);
   }
 
   /**
-   * A happy little helper function to return all methods explicitly (publicly) defined by a
-   * helper class.
+   * A happy little helper function to return all methods explicitly
+   * (publicly) defined by a helper class.
    */
   private function loadHelperMethods()
   {
     // iterate through all the helper classes defined
-    foreach ($this->helperClasses as $class => $id)
-    {
+    foreach ($this->helperClasses as $class => $id) {
       // get just the explicit children of those classes
-      $methods = agClassHelper::getExplicitClassMethods($class) ;
+      $methods = agClassHelper::getExplicitClassMethods($class);
 
       // build our methods array and assign the owner of each method
-      // @note This is *extremely* naive and if more than one helper provides the same method no
-      // guarantees will be made as to which will load it. Lesson: don't use the same method name!
-      foreach ($methods as $method)
-      {
-        $this->_helperMethods[$method] = $class ;
+      // @note This is *extremely* naive and if more than one helper
+      // provides the same method no guarantees will be made as to
+      // which will load it. Lesson: don't use the same method name!
+      foreach ($methods as $method) {
+        $this->_helperMethods[$method] = $class;
       }
     }
   }
 
   /**
-   * Method to instantiate a helper class object as an array member of the _helperObjects property.
+   * Method to instantiate a helper class object as an array member
+   * of the _helperObjects property.
    *
    * @param string $class The helper class being loaded.
    */
   private function loadHelperClass($class)
   {
-    if (! isset($this->_helperObjects[$class]))
-    {
-      $this->_helperObjects[$class] = new $class() ;
+    if (!isset($this->_helperObjects[$class])) {
+      $this->_helperObjects[$class] = new $class();
     }
   }
 
   public function updateLucene()
   {
+    if (!$this->isAutoIndexed) {
+      return null;
+    }
+
+    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     $doc = new Zend_Search_Lucene_Document();
     //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
     $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));
@@ -128,16 +146,12 @@ class agPerson extends BaseagPerson
     foreach ($names as $key => $name) {
       $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
     }
-
     $sex = $this->getSex();
-      $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
-    
-      $nationalities = $this->getNationality();
-      foreach($nationalities as $nationality)
-      {
-        $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
-      }
-   
+    $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
+    $nationalities = $this->getNationality();
+    foreach ($nationalities as $nationality) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
+    }
     $ethnicity = $this->getEthnicity();
     $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
 
@@ -146,39 +160,39 @@ class agPerson extends BaseagPerson
 
   public function getSex()
   {
-      $sexstore = $this->getAgPersonSex();
-      foreach ($sexstore as $gender)
-      {
-        $sex = $gender->getAgSex()->sex;
-      }
+    $sexstore = $this->getAgPersonSex();
+    foreach ($sexstore as $gender) {
+      $sex = $gender->getAgSex()->sex;
+    }
 
-      return $sex;
+    return $sex;
   }
 
   public function getNationality()
   {
-      foreach($this->getAgPersonMjAgNationality() as $nationality)
-             $nationalities[] = $nationality->getAgNationality()->nationality;
+    $nationalities = array();
+    foreach ($this->getAgPersonMjAgNationality() as $nationality)
+      $nationalities[] = $nationality->getAgNationality()->nationality;
 
-      return $nationalities;
+    return $nationalities;
   }
 
   public function getEthnicity()
   {
-      foreach ($this->getAgPersonEthnicity() as $ethnicity)
-      {
-          $ethnicities = $ethnicity->getAgEthnicity()->ethnicity;
-      }
-      return $ethnicities;
+    $ethnicities = array();
+    foreach ($this->getAgPersonEthnicity() as $ethnicity) {
+      $ethnicities = $ethnicity->getAgEthnicity()->ethnicity;
+    }
+    return $ethnicities;
   }
 
   public function getLanguages()
   {
-      foreach($this->getAgPersonMjAgLanguage() as $languageCompetency)
-      {
-          $languages = $languageCompetency->getAgLanguage()->language;
-      }
-      return $languages;
+    $languages = array();
+    foreach ($this->getAgPersonMjAgLanguage() as $languageCompetency) {
+      $languages = $languageCompetency->getAgLanguage()->language;
+    }
+    return $languages;
   }
 
   /**
@@ -242,4 +256,5 @@ class agPerson extends BaseagPerson
 
     return null;
   }
+
 }

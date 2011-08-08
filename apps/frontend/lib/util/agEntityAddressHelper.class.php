@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Provides person name helper functions and inherits several methods and properties from the
  * EntityContactHelper.
@@ -15,20 +16,26 @@
  */
 class agEntityAddressHelper extends agEntityContactHelper
 {
-  public    $agAddressHelper,
-            $defaultIsPrimary = FALSE,
-            $defaultIsStrType = FALSE;
 
-  protected $_batchSizeModifier = 2 ;
+  public $agAddressHelper,
+  $defaultIsPrimary = FALSE,
+  $defaultIsStrType = FALSE;
+  protected $_batchSizeModifier = 2,
+  $_contactTableMetadata = array('table' => 'agEntityAddressContact',
+    'method' => 'getEntityAddress',
+    'type' => 'address_contact_type_id',
+    'value' => 'address_id');
 
   /**
    * Method to lazily load the $agAddressHelper class property (an instance of agAddressHelper)
-   * @return object The instantiated agAddressHelper object
+   * @return agAddressHelper The instantiated agAddressHelper object
    */
   public function getAgAddressHelper()
   {
-    if (! isset($this->agAddressHelper)) { $this->agAddressHelper = agAddressHelper::init() ; }
-    return $this->agAddressHelper ;
+    if (!isset($this->agAddressHelper)) {
+      $this->agAddressHelper = agAddressHelper::init();
+    }
+    return $this->agAddressHelper;
   }
 
   /**
@@ -39,36 +46,35 @@ class agEntityAddressHelper extends agEntityContactHelper
    * be returned as an ID value or its string equivalent.
    * @return Doctrine_Query An agDoctrineQuery object.
    */
-  private function _getEntityAddressQuery($entityIds = NULL, $strType = NULL)
+  private function _getEntityAddressQuery(array $entityIds = NULL, $strType = NULL)
   {
     // if no (null) ID's are passed, get the addressId's from the class property
-    $entityIds = $this->getRecordIds($entityIds) ;
+    $entityIds = $this->getRecordIds($entityIds);
 
     // if strType is not passed, get the default
-    if (is_null($strType)) { $strType = $this->defaultIsStrType ; }
+    if (is_null($strType)) {
+      $strType = $this->defaultIsStrType;
+    }
 
     // the most basic version of this query
     $q = agDoctrineQuery::create()
-      ->select('eac.entity_id')
-          ->addSelect('eac.address_id')
-          ->addSelect('eac.created_at')
-          ->addSelect('eac.updated_at')
+        ->select('eac.entity_id')
+        ->addSelect('eac.address_id')
+        ->addSelect('eac.created_at')
+        ->addSelect('eac.updated_at')
         ->from('agEntityAddressContact eac')
         ->whereIn('eac.entity_id', $entityIds)
-        ->orderBy('eac.priority') ;
+        ->orderBy('eac.priority');
 
     // here we determine whether to return the address_contact_type_id or its string value
-    if ($strType)
-    {
+    if ($strType) {
       $q->addSelect('act.address_contact_type')
-        ->innerJoin('eac.agAddressContactType act') ;
-    }
-    else
-    {
-      $q->addSelect('eac.address_contact_type_id') ;
+          ->innerJoin('eac.agAddressContactType act');
+    } else {
+      $q->addSelect('eac.address_contact_type_id');
     }
 
-    return $q ;
+    return $q;
   }
 
   /**
@@ -87,98 +93,90 @@ class agEntityAddressHelper extends agEntityContactHelper
    * @return array A two or three dimensional array (depending up on the setting of the $primary
    * parameter), by entityId, by addressContactType.
    */
-  public function getEntityAddressByType ($entityIds = NULL,
-                                          $strType = NULL,
-                                          $primary = NULL,
-                                          $addressHelperMethod = NULL,
-                                          $addressArgs = array())
+  public function getEntityAddressByType(array $entityIds = NULL, $strType = FALSE,
+                                         $primary = FALSE, $addressHelperMethod = NULL,
+                                         array $addressArgs = array())
   {
     // initial results declarations
-    $entityAddresses = array() ;
-    $addressHelperArgs = array(array()) ;
+    $entityAddresses = array();
+    $addressHelperArgs = array(array());
 
     // if primary is not passed, get the default
-    if (is_null($primary)) { $primary = $this->defaultIsPrimary ; }
+    if (is_null($primary)) {
+      $primary = $this->defaultIsPrimary;
+    }
 
     // build our query object
-    $q = $this->_getEntityAddressQuery($entityIds, $strType) ;
+    $q = $this->_getEntityAddressQuery($entityIds, $strType);
 
     // if this is a primary query we add the restrictor
-    if ($primary)
-    {
+    if ($primary) {
       $q->addWhere(' EXISTS (
         SELECT s.id
           FROM agEntityAddressContact s
           WHERE s.entity_id = eac.entity_id
             AND s.address_contact_type_id = eac.address_contact_type_id
-          HAVING MIN(s.priority) = eac.priority )') ;
+          HAVING MIN(s.priority) = eac.priority )');
     }
 
     // build this as custom hydration to 'double tap' the data
-    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
-    foreach ($rows as $row)
-    {
-      $entityAddresses[$row[0]][$row[4]][] = array($row[1], $row[2], $row[3]) ;
+    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
+    foreach ($rows as $row) {
+      $entityAddresses[$row[0]][$row[4]][] = array($row[1], $row[2], $row[3]);
 
       // here we build the mono-dimensional addressId array, excluding dupes as we go; only useful
       // if we're actually going to use the address helper
-      if (! is_null($addressHelperMethod) && ! in_array($row[1], $addressHelperArgs[0]))
-      {
-        $addressHelperArgs[0][] = $row[1] ;
+      if (!is_null($addressHelperMethod) && !in_array($row[1], $addressHelperArgs[0])) {
+        $addressHelperArgs[0][] = $row[1];
       }
     }
 
     // if no address helper method was passed, assume that all we need are the address id's and
     // stop right here!
-    if (is_null($addressHelperMethod))
-    {
-      return $entityAddresses ;
+    if (is_null($addressHelperMethod)) {
+      return $entityAddresses;
     }
 
     // otherwise... we keep going and lazily load our address helper, 'cause we'll need her
-    $addressHelper = $this->getAgAddressHelper() ;
-    
+    $addressHelper = $this->getAgAddressHelper();
+
     // finish appending the rest of our address helper args
-    foreach ($addressArgs as $arg)
-    {
-      $addressHelperArgs[] = $arg ;
+    foreach ($addressArgs as $arg) {
+      $addressHelperArgs[] = $arg;
     }
 
     // use the address helper to format the address results
-    $userFunc = array($addressHelper,$addressHelperMethod) ;
-    $formattedAddresses = call_user_func_array($userFunc,$addressHelperArgs) ;
+    $userFunc = array($addressHelper, $addressHelperMethod);
+    $formattedAddresses = call_user_func_array($userFunc, $addressHelperArgs);
 
     // we can release the address helper args, since we don't need them anymore
-    unset($addressHelperArgs) ;
+    unset($addressHelperArgs);
 
     // now loop through our entities and attach their addresses
-    foreach ($entityAddresses as $entityId => $addressTypes)
-    {
-      foreach ($addressTypes as $addressType => $addresses)
-      {
+    foreach ($entityAddresses as $entityId => $addressTypes) {
+      foreach ($addressTypes as $addressType => $addresses) {
         // if we're only returning the primary, change the third dimension from an array to a value
         // NOTE: because of the restricted query, we can trust there is only one component per type
         // in our output and safely make this assumption
-        if ($primary)
-        {
+        if ($primary && isset($addresses[0])) {
           // flatten the results
-          $addresses = $addresses[0] ;
-          $addresses[0] = $formattedAddresses[$addresses[0]] ;
+          $addresses = $addresses[0];
+          if (isset($formattedAddresses[$addresses[0]])) {
+            $addresses[0] = $formattedAddresses[$addresses[0]];
+          }
 
-          $entityAddresses[$entityId][$addressType][0] = $addresses ;
+          $entityAddresses[$entityId][$addressType][0] = $addresses;
         }
         // if not primary, we have one more loop in our return for another array nesting
-        else
-        {
-          foreach ($addresses as $index => $address)
-          {
-            $entityAddresses[$entityId][$addressType][$index][0] = $formattedAddresses[$address[0]] ;
+        else {
+          foreach ($addresses as $index => $address) {
+            $entityAddresses[$entityId][$addressType][$index][0] = $formattedAddresses[$address[0]];
           }
         }
       }
     }
 
-    return $entityAddresses ;
+    return $entityAddresses;
   }
 
   /**
@@ -204,273 +202,260 @@ class agEntityAddressHelper extends agEntityContactHelper
    *   ... )
    * </code>
    */
-  public function getEntityAddress ($entityIds = NULL,
-                                    $strType = NULL,
-                                    $primary = NULL,
-                                    $addressHelperMethod = NULL,
-                                    $addressArgs = array())
+  public function getEntityAddress(array $entityIds = NULL, $strType = NULL, $primary = NULL,
+                                   $addressHelperMethod = NULL, array $addressArgs = array())
   {
     // initial results declarations
-    $entityAddresses = array() ;
-    $addressHelperArgs = array(array()) ;
+    $entityAddresses = array();
+    $addressHelperArgs = array(array());
 
     // if primary is not passed, get the default
-    if (is_null($primary)) { $primary = $this->defaultIsPrimary ; }
+    if (is_null($primary)) {
+      $primary = $this->defaultIsPrimary;
+    }
 
     // build our query object
-    $q = $this->_getEntityAddressQuery($entityIds, $strType) ;
+    $q = $this->_getEntityAddressQuery($entityIds, $strType);
 
     // if this is a primary query we add the restrictor, note this one is different
     // from the one used in the by-type method
-    if ($primary)
-    {
+    if ($primary) {
       $q->addWhere(' EXISTS (
         SELECT s.id
           FROM agEntityAddressContact s
           WHERE s.entity_id = eac.entity_id
-          HAVING MIN(s.priority) = eac.priority )') ;
+          HAVING MIN(s.priority) = eac.priority )');
     }
     // build this as custom hydration to 'double tap' the data
-    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE) ;
-    foreach ($rows as $row)
-    {
-      $entityAddresses[$row[0]][]= array($row[4],$row[1], $row[2], $row[3]) ;
+    $rows = $q->execute(array(), Doctrine_Core::HYDRATE_NONE);
+    foreach ($rows as $row) {
+      $entityAddresses[$row[0]][] = array($row[4], $row[1], $row[2], $row[3]);
 
       // here we build the mono-dimensional addressId array, excluding dupes as we go; only useful
       // if we're actually going to use the address helper
-      if (! is_null($addressHelperMethod) && ! in_array($row[1], $addressHelperArgs[0]))
-      {
-        $addressHelperArgs[0][] = $row[1] ;
+      if (!is_null($addressHelperMethod) && !in_array($row[1], $addressHelperArgs[0])) {
+        $addressHelperArgs[0][] = $row[1];
       }
     }
 
     // if no address helper method was passed, assume that all we need are the address id's and
     // stop right here!
-    if (is_null($addressHelperMethod))
-    {
-      return $entityAddresses ;
+    if (is_null($addressHelperMethod)) {
+      return $entityAddresses;
     }
 
     // otherwise... we keep going and lazily load our address helper, 'cause we'll need her
-    $addressHelper = $this->getAgAddressHelper() ;
+    $addressHelper = $this->getAgAddressHelper();
 
     // finish appending the rest of our address helper args
-    foreach ($addressArgs as $arg)
-    {
-      $addressHelperArgs[] = $arg ;
+    foreach ($addressArgs as $arg) {
+      $addressHelperArgs[] = $arg;
     }
 
     // use the address helper to format the address results
-    $userFunc = array($addressHelper,$addressHelperMethod) ;
-    $formattedAddresses = call_user_func_array($userFunc,$addressHelperArgs) ;
+    $userFunc = array($addressHelper, $addressHelperMethod);
+    $formattedAddresses = call_user_func_array($userFunc, $addressHelperArgs);
 
     // now loop through our entities and attach their addresses
-    foreach ($entityAddresses as $entityId => $addresses)
-    {
+    foreach ($entityAddresses as $entityId => $addresses) {
       // if we're only returning the primary, change the second dimension from an array to a value
       // NOTE: because of the restricted query, we can trust there is only one component per type
       // in our output and safely make this assumption
-      if ($primary)
-      {
+      if ($primary) {
         // flatten for just one return
-        $addresses = $addresses[0] ;
-        $addresses[1] = $formattedAddresses[$addresses[1]] ;
+        $addresses = $addresses[0];
+        $addresses[1] = $formattedAddresses[$addresses[1]];
 
-        $entityAddresses[$entityId] = $addresses ;
+        $entityAddresses[$entityId] = $addresses;
       }
       // if not primary, we have one more loop in our return for another array nesting
-      else
-      {
-        foreach ($addresses as $index => $address) 
-        {
-          $entityAddresses[$entityId][$index][1] = $formattedAddresses[$address[1]] ;
+      else {
+        foreach ($addresses as $index => $address) {
+          $entityAddresses[$entityId][$index][1] = $formattedAddresses[$address[1]];
         }
       }
     }
-   
-    return $entityAddresses ;
+
+    return $entityAddresses;
   }
 
   /**
-   * Method to set entity address data using address ID 's instead of values.
-   * 
-   * @param array $entityContacts A multidimensional array of address contact information that
-   * mimics the output of getEntityAddress($entityIds, FALSE, FALSE).
-   * @param Doctrine_Connection $conn A doctrine connection object.
-   * @return integer The number of operations performed.
-   * @todo Add the $keepHistory functionality
-   * @todo make results more meaningful (with errs)
-   */
-  public function setEntityAddressById( $entityContacts,
-                                        $keepHistory = TRUE,
-                                        Doctrine_Connection $conn = NULL)
-  {
-    $tableName = 'agEntityAddressContact' ;
-
-    // explicit results declaration
-    $results = array('upserted'=>0, 'removed'=>0, 'failures'=>array()) ;
-    $currContacts = array() ;
-
-
-    // set our connection object if not explicitly passed one
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
-
-    if ($keepHistory)
-    {
-      // if we're going to process existing addresses and keep them, then hold on
-      $currContacts = $this->getEntityAddress(array_keys($entityContacts, FALSE, FALSE)) ;
-    }
-    else
-    {
-      // if we're not going to keep a history, let's build a delete query we'll execute on each
-      // entity
-      $q = agDoctrineQuery::create($conn)
-        ->delete($tableName . ' ec') ;
-    }
-
-    // execute the reprioritization helper and pass it our current addresses as found in the db
-    $entityContacts = $this->reprioritizeContacts($entityContacts, $currContacts ) ;
-
-
-    // loop through our entityContacts
-    foreach ($entityContacts as $entityId => $contacts)
-    {
-      // define our blank collection
-      $coll = new Doctrine_Collection($tableName) ;
-
-      foreach($contacts as $index => $contact)
-      {
-        // create a doctrine record with this info
-        $newRec = new agEntityAddressContact() ;
-        $newRec['entity_id'] = $entityId ;
-        $newRec['priority'] = ($index + 1) ;
-        $newRec['address_id'] = $contact[1] ;
-        $newRec['address_contact_type_id'] = $contact[0] ;
-
-        // add the record to our collection
-        $coll->add($newRec) ;
-      }
-
-      // add our delete query to our where clause ;
-      $q->where('ec.entity_id = ?', $entityId) ;
-
-      // wowee, zowee, now that the hard stuff's done, let's just commit this sucker
-      $conn->beginTransaction() ;
-      try
-      {
-        // if we're not keeping our history, just blow them all out!
-        if (! $keepHistory) { $results['removed'] = $results['removed'] + $q->execute() ; }
-
-        // execute our commit and, while we're at it, add our successes to the bin
-        $coll->replace() ;
-        $conn->commit() ;
-        $results['upserted'] = $results['upserted'] + count($coll) ;
-      }
-      catch(Exception $e)
-      {
-        // if we run into a problem, rollback and add the failed entity to the failures bin
-        $conn->rollback() ;
-        $results['failures'][] = $entityId ;
-      }
-    }
-
-    return $results ;
-  }
-
-  /**
+   * Method to set entity addresses by passing address components, keyed by element id.
    *
-   * @param <type> $entityContacts
-   * @param <type> $keepHistory
-   * @param <type> $enforceComplete
-   * @param Doctrine_Connection $conn
-   * @todo Figure out what our purge policy is going to be (failed inserts)
+   * @param array $entityContacts An array of entity contact information. This is similar to the
+   * output of getEntityAddress if no arguments are passed.
+   * <code>
+   * array(
+   *   $entityId => array(
+   *     array($addressContactTypeId,
+   *            array(array($elementId => $value, ...),
+   *                  $addressStandardId,
+   *                  array(array( array($latitude, $longitude), ...),
+   *                        $matchScoreId)
+   *      )),
+   *     ...
+   *   ), ...
+   * )
+   * </code>
+   * @param <type> $addressGeo
+   * @param boolean $keepHistory An optional boolean value to determine whether old entity contacts
+   * (eg, those stored in the database but not explicitly passed as parameters), will be retained
+   * and reprioritized to the end of the list, or removed altogether.
+   * @param boolean $enforceComplete An optional boolean to control whether or not only complete
+   * addresses will be returned. Defaults to using the class property of the same name.
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'). Defaults to the class
+   * property of the same name.
+   * @param Doctrine_Connection $conn An optional Doctrine connection object.
+   * @return array An associative array of operations performed including the number of upserted
+   * records, removed records, an a positional array of failed inserts.
+   * @todo Hook up the addressGeo bits
    */
-  public function setEntityAddress( $entityContacts,
-                                    $keepHistory = NULL,
-                                    $enforceComplete = NULL,
-                                    Doctrine_Connection $conn = NULL)
+  public function setEntityAddress(array $entityContacts, $geoSourceId = NULL, $keepHistory = NULL,
+                                   $enforceComplete = NULL, $throwOnError = NULL,
+                                   Doctrine_Connection $conn = NULL)
   {
     // some explicit declarations at the top
-    $uniqContacts = array() ;
-    $wontSet = array() ;
+    $uniqContacts = array();
+    $addressGeos = array();
+    $err = NULL;
+    $errMsg = 'This is a generic ERROR for setEntityAddress. You should never receive this ERROR.
+      If you have received this ERROR, there is an error with your ERROR handling code.';
+
+    // determine whether or not we'll explicitly throw exceptions on error
+    if (is_null($throwOnError)) {
+      $throwOnError = $this->throwOnError;
+    }
 
     // loop through our contacts and pull our unique addresses from the fire
-    foreach ($entityContacts as $entityId => $contacts)
-    {
-      foreach ($contacts as $index => $contact)
-      {
+    foreach ($entityContacts as $entityId => &$contacts) {
+      foreach ($contacts as $index => $contact) {
+        $geo = NULL;
+
+        // Trim leading and trailing spaces from contact values.
+        foreach ($contact[1][0] as $elem => $val) {
+          $contact[1][0][$elem] = self::fullTrim($val);
+//          $contact[1][0][$elem] = self::ucTrim($val);
+        }
+
+        if (array_key_exists(2, $contact[1])) {
+          $geo = array_pop($contact[1]);
+        }
+
         // find the position of the element or return false
-        $pos = array_search($contact[1], $uniqContacts, TRUE) ;
+        $pos = array_search($contact[1], $uniqContacts, TRUE);
 
         // need to be really strict here because we don't want any [0] positions throwing us
-        if ($pos === FALSE)
-        {
+        if ($pos === FALSE) {
           // add it to our unique contacts array
-          $uniqContacts[] = $contact[1] ;
+          $uniqContacts[] = $contact[1];
 
           // the the most recently inserted key
-          $pos = max(array_keys($uniqContacts)) ;
+          $pos = max(array_keys($uniqContacts));
+        }
+
+        // Set geo array to have the same index id as address unique array
+        if (!empty($geo)) {
+          $addressGeos[$pos] = $geo;
         }
 
         // either way we'll have to point the entities back to their addresses
-        $entityContacts[$entityId][$index][1] = $pos ;
+        $contacts[$index][1] = $pos;
       }
     }
+    unset($contacts);
 
     // whelp, if we haven't loaded it already, let's get our address helper
-    $addressHelper = $this->getAgAddressHelper() ;
+    $addressHelper = $this->getAgAddressHelper();
 
-    // process addresses, setting or returning, whichever is better with our s/getter
-    $uniqContacts = $addressHelper->setAddresses($uniqContacts, $enforceComplete, $conn) ;
+    // here we check our current transaction scope and create a transaction or savepoint
+    if (is_null($conn)) {
+      $conn = Doctrine_Manager::connection();
+    }
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+    if ($useSavepoint) {
+      $conn->beginTransaction(__FUNCTION__);
+    } else {
+      $conn->beginTransaction();
+    }
 
-    // now loop through the contacts again and give them their real values
-    foreach ($entityContacts as $entityId => $contacts)
-    {
-      foreach ($contacts as $index => $contact)
-      {
-        // check to see if this index found in our 'unsettable' return from setAddresses
-        if (array_key_exists($contact[1], $uniqContacts[1]))
-        {
-          // purge this address
+    try {
+      // process addresses, setting or returning, whichever is better with our s/getter
+      $uniqContacts = $addressHelper->setAddresses($uniqContacts, $addressGeos, $geoSourceId,
+                                                   $enforceComplete, $throwOnError, $conn);
+    } catch (Exception $e) {
+      // log our error
+      $errMsg = sprintf('Could not set addresses %s. Rolling back!', json_encode($uniqContacts));
 
-          unset($entityContacts[$entityId][$index]) ;
-        }
-        else
-        {
-          // otherwise, get our real addressId
-          $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]] ;
+      // hold onto this exception for later
+      $err = $e;
+    }
+
+    if (is_null($err)) {
+      // now loop through the contacts again and give them their real values
+      foreach ($entityContacts as $entityId => $contacts) {
+        foreach ($contacts as $index => $contact) {
+          // check to see if this index found in our 'unsettable' return from setAddresses
+          if (array_key_exists($contact[1], $uniqContacts[1])) {
+            // purge this address
+            unset($entityContacts[$entityId][$index]);
+          } else {
+            // Check whether an addressId is generated.
+            if (isset($uniqContacts[0][$contact[1]]))
+            {
+              // otherwise, get our real addressId
+              $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
+            }
+            else
+            {
+              // purge this address
+              unset($entityContacts[$entityId][$index]);
+            }
+          }
         }
       }
+
+      // we're done with uniqContacts now
+      unset($uniqContacts);
+
+      try {
+        // just submit the entity addresses for setting
+        $results = $this->setEntityContactById($entityContacts, $keepHistory, $throwOnError, $conn);
+        // most excellent! no errors at all, so we commit... finally!
+        if ($useSavepoint) {
+          $conn->commit(__FUNCTION__);
+        } else {
+          $conn->commit();
+        }
+      } catch (Exception $e) {
+        // log our error
+        $errMsg = sprintf('Could not set entity addresses %s. Rolling Back!',
+                          json_encode($entityContacts));
+
+        // hold onto this exception for later
+        $err = $e;
+      }
     }
-    
-    // we're done with uniqContacts now
-    unset($uniqContacts) ;
 
-    // just submit the entity addresses for setting
-    $results = $this->setEntityAddressById($entityContacts, $keepHistory) ;
+    // check to see if we had any errors along the way
+    if (!is_null($err)) {
+      // log our error
+      sfContext::getInstance()->getLogger()->err($errMsg);
 
-    return $results ;
+      // rollback
+      if ($useSavepoint) {
+        $conn->rollback(__FUNCTION__);
+      } else {
+        $conn->rollback();
+      }
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) {
+        throw $err;
+      }
+    }
+
+    return $results;
   }
 
-  public function exceptionTest()
-  {
-    // set our connection object if not explicitly passed one
-   $conn = Doctrine_Manager::connection() ; 
-
-    $q = agDoctrineQuery::create($conn)
-      ->update('agGlobalParam')
-        ->set('value', 20009)
-        ->where('datapoint = ?', 'default_batch_size') ;
-
-    $savepoint = __FUNCTION__  ;
-    print_r($q->getConnection()->getTransactionLevel() . ', ') ;
-
-    $conn->beginTransaction() ;
-    $conn->beginTransaction($savepoint) ;
-    $updates = $q->execute() ;
-    $conn->rollback() ;
-    $conn->commit() ;
-
-    return $updates ;
-  }
 }

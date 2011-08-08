@@ -66,6 +66,9 @@ class navComponents extends sfComponents
     foreach ($menu->getChildren() as $toplink) {
       if(!$toplink->hasChildren()) {
         $toplink->setAttribute('class', 'menu1 noBorder');
+        if($toplink->getName() == 'Help') {
+          $toplink->setLinkOptions(array('target' => 'new'));
+        }
       } else {
         foreach($toplink->getChildren() as $secondlink) {
           if(!$secondlink->hasChildren()) {

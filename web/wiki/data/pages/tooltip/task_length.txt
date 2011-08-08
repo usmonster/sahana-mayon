@@ -1,0 +1,1 @@
+How long will staff be asked to work **per shift**?  Use the slider or text box to set the hours of work.

@@ -315,11 +315,6 @@ agShiftTemplate:
       primary: true
       type: integer(4)
       autoincrement: true
-    shift_template:
-      type: string(64)
-      notnull: true
-    description:
-      type: string(255)
     scenario_id:
       type: integer(2)
       notnull: true
@@ -341,7 +336,7 @@ agShiftTemplate:
     minutes_start_to_facility_activation:
       type: integer(5)
       notnull: true
-    shift_repeats:
+    days_in_operation:
       type: integer(2)
       notnull: true
     max_staff_repeat_shifts:
@@ -439,6 +434,10 @@ agScenarioStaffResource:
     deployment_weight:
       type: integer(1)
       notnull: true
+    delete_flag:
+      type: boolean
+      default: 0
+      notnull: true
   indexes:
     UX_agScenarioStaffResource:
       fields: [scenario_id, staff_resource_id]
@@ -530,7 +529,7 @@ agScenarioStaffGenerator:
     scenario_id:
       type: integer(2)
       notnull: true
-    lucene_search_id:
+    search_id:
       type: integer(2)
       notnull: true
     search_weight:
@@ -538,91 +537,14 @@ agScenarioStaffGenerator:
       notnull: true
   indexes:
     agDeploymentSearch_unq:
-      fields: [scenario_id, lucene_search_id]
+      fields: [scenario_id, search_id]
       type: unique
   relations:
     agScenario:
       local: scenario_id
       foreign: id
-    agLuceneSearch:
-      local: lucene_search_id
+    agSearch:
+      local: search_id
       foreign: id
-tempFacilityImport:
-  options:
-    type: MyISAM
-    collate: utf8_unicode_ci
-    charset: utf8
-  columns:
-    id:
-      primary: true
-      type: integer(5)
-      notnull: true
-      autoincrement: true
-    facility_name:
-      type: string(64)
-    facility_code:
-      type: string(10)
-    facility_resource_type_abbr:
-      type: string(10)
-    facility_resource_status:
-      type: string(40)
-    facility_capacity:
-      type: integer(2)
-    facility_activation_sequece:
-      unsigned: true
-      type: integer(1)
-    facility_allocation_status:
-      type: string(30)
-    facility_group:
-      type: string(64)
-    facility_group_allocation_status:
-      type: string(30)
-    faciltiy_group_activation_sequence:
-      unsigned: true
-      type: integer(1)
-    work_email:
-      type: string(255)
-    work_phone:
-      type: string(16)
-    street_1:
-      type: string(128)
-    street_2:
-      type: string(128)
-    city:
-      type: string(128)
-    state:
-      type: string(128)
-    zip_code:
-      type: string(128)
-    borough:
-      type: string(128)
-    country:
-      type: string(128)
-    longitude:
-      scale: 6
-      type: decimal(12)
-    latitude:
-      scale: 6
-      type: decimal(12)
-    generalist_min:
-      type: integer(2)
-    generalist_max:
-      type: integer(2)
-    specialist_min:
-      type: integer(2)
-    specialist_max:
-      type: integer(2)
-    operator_min:
-      type: integer(2)
-    operator_max:
-      type: integer(2)
-    medical_nurse_min:
-      type: integer(2)
-    medical_nurse_max:
-      type: integer(2)
-    medical_other_min:
-      type: integer(2)
-    medical_other_max:
-      type: integer(2)
 actAs:
   Timestampable: 

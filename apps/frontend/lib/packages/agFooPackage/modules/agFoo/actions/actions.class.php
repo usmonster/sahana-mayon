@@ -17,72 +17,51 @@ class agFooActions extends agActions
             ->createQuery('a')
             ->execute();
 
-    $addressHelper = new agEntityAddressHelper();
-//    $addressHelper= agEntityAddressHelper::init();
-    $addressByType = $addressHelper->getEntityAddressByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agAddressHelper::ADDR_GET_STRING);
-    $addressAll = $addressHelper->getEntityAddress(array(1, 2, 3, 4, 5), TRUE, FALSE, agAddressHelper::ADDR_GET_STRING);
-    unset($addressHelper);
-    echo 'Address By Type: <br />';
-    print_r($addressByType);
-    echo '<br /><br />Address all: <br />';
-    print_r($addressAll);
-    echo '<br /><br />';
+// <-------- CUT HERE -------->
+//    $dh = agEventStaffDeploymentHelper::getInstance(6, agEventHandler::EVENT_DEBUG);
+//    $results = $dh->test();
+//    print_r($results) ;
 
-//    $emailHelper = new agEntityEmailHelper();
-//    $emailByType = $emailHelper->getEntityEmailByType(array(1, 2, 3, 4, 5), TRUE);
-//    $emailAll = $emailHelper->getEntityEmail(array(1, 2, 3, 4, 5), TRUE);
-//    unset($emailHelper);
-//    echo '<br /><br />Email By Type: <br />';
-//    print_r($emailByType);
-//    echo '<br /><br />Email All: <br />';
-//    print_r($emailAll);
-//    echo '<br /><br />';
+    // This is to test exporting an xls file without refreshing current html page.
+    // These attributes will be used in a new window.  The new window will call the executeExport
+    // method to export the xls file.
+    $exportFileName = 'ExportFile.xls';
+    $this->getUser()->setAttribute('exportFileName', $exportFileName);
 
-    $phoneHelper = new agEntityPhoneHelper();
-//    $phoneByType = $phoneHelper->getEntityPhoneByType(array(3, 4, 5), TRUE);
-//    $phoneAll = $phoneHelper->getEntityPhone(array(3, 4, 5), TRUE);
-    $phoneByType = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, FALSE, agPhoneHelper::PHN_GET_FORMATTED);
-    $phoneAll = $phoneHelper->getEntityPhone(array(1, 2, 3, 4, 5), TRUE, FALSE, agPhoneHelper::PHN_GET_FORMATTED);
-    $phoneAreaCode = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_AREA_CODE));
-    $phoneFirstThree = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_FIRST_THREE));
-    $phoneLastFour = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_LAST_FOUR));
-    $phoneExtension = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_EXTENSION));
-    $phoneDefault = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT, array(agPhoneHelper::PHN_DEFAULT));
-    $phoneByComponents = $phoneHelper->getEntityPhoneByType(array(1, 2, 3, 4, 5), TRUE, TRUE, agPhoneHelper::PHN_GET_COMPONENT_SEGMENTS);
-    unset($phoneHelper);
-    echo '<br /><br />Phone By Type: <br />';
-    print_r($phoneByType);
-    echo '<br /><br />Phone All: <br />';
-    print_r($phoneAll);
-    echo '<br /><br />';
-    echo '<br /><br />Phone Area Code: <br />';
-    print_r($phoneAreaCode);
-    echo '<br /><br />Phone First Three: <br />';
-    print_r($phoneFirstThree);
-    echo '<br /><br />Phone Last Four: <br />';
-    print_r($phoneLastFour);
-    echo '<br /><br />Phone Extension: <br />';
-    print_r($phoneExtension);
-    echo '<br /><br />Phone Default: <br />';
-    print_r($phoneDefault);
-    echo '<br /><br />Phone By Component: <br />';
-    print_r($phoneByComponents);
-
-
-//    $phoneAreaCode = $agPhoneHelper::getPhoneComponent(array(1,2, 3, 4, 5), agPhoneHelper::PHN_AREA_CODE);
-//    echo '<br /><br />Phone Area Code: <br />';
-//    print_r($phoneAreaCode);
-//    $phoneFirstThree = $agPhoneHelper::getPhoneComponent(array(1,2, 3, 4, 5), agPhoneHelper::PHN_FIRST_THREE);
-//    echo '<br /><br />Phone First Three: <br />';
-//    print_r($phoneFirstThree);
-//    $phoneLastFour = $phoneHelper->getPhoneComponent(array(1,2, 3, 4, 5), agPhoneHelper::PHN_LAST_FOUR);
-//    echo '<br /><br />Phone Last Four: <br />';
-//    print_r($phoneLastFour);
-//    $phoneExtension = $phoneHelper->getPhoneComponent(array(1,2, 3, 4, 5), agPhoneHelper::PHN_EXTENSION);
-//    echo '<br /><br />Phone Extension: <br />';
-//    print_r($phoneExtension);
-//    unset($phoneHelper);
+    $exportFile = '/home/s/Downloads/Facilities-Hurricane_A-17-06-11-15-21-15.xls';
+    $this->getUser()->setAttribute('exportFile', $exportFile);
+// <-------- CUT HERE -------->
   }
+
+//  /**
+//   * For testing purposes.  This method was to spit out an xls file that was defined in the user's
+//   * attributes.
+//   */
+//  public function executeExport(sfWebRequest $request)
+//  {
+//    $this->errMsg = NULL;
+//
+//    if ($this->getUser()->hasAttribute('exportFile') && $this->getUser()->hasAttribute('exportFileName'))
+//    {
+//      $exportFileName = $this->getUser()->getAttribute('exportFileName');
+//      $exportFile = $this->getUser()->getAttribute('exportFile');
+//
+//      $exportFile = file_get_contents($exportFile);
+//
+//      $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+//      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportFileName . '"');
+//
+//      $this->getResponse()->setContent($exportFile);
+//      $this->getResponse()->send();
+//
+////      $this->getUser()->getAttributeHolder()->remove('exportFile');
+////      $this->getUser()->getAttributeHolder()->remove('exportFileName');
+//    }
+//    else
+//    {
+//      $this->errMsg = 'Error exporting file!';
+//    }
+//  }
 
   public function executeList(sfWebRequest $request)
   {
@@ -127,38 +106,6 @@ class agFooActions extends agActions
 
   public function executeShow(sfWebRequest $request)
   {
-// <-------- CUT HERE -------->
-$array = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14) ;
-$fakeAddr = array(array(array('1'=>'monkeybanana3', '2'=>'raffle1', '3'=>'New York City', '4'=>'NY', '5'=>'10031', '7'=>'United State of America'), 1),
-    array(array('1'=>'peachpitters', '5'=>'10035'), 1)) ;
-$addrContact = array( '1'=>array(array(3,4), array(2,1)),
-    '10'=>array(array(3,10)),
-    '87'=>array(array(1,9))) ;
-//$obj = agAddressHelper::init() ;
-//$obj = agPersonNameHelper::init(4) ;
-$obj = agEntityAddressHelper::init() ;
-//$obj->setAgAddressHelper() ;
-//$obj->agAddressHelper->lineDelimiter = '<br />' ;
-//$addr = $obj->getEntityAddress($array, FALSE, FALSE) ;
-//$results = $obj->defaultNameComponents ;
-//$results = $obj->getPersonIds() ;
-//$results = $obj->getPrimaryNameById() ;
-//$results = $obj->getPrimaryNameByType() ;
-//$results = $obj->getPrimaryNameAsString() ;
-//$results = $obj->getNativeAddressAsString($array) ;
-//$results = $obj->getAddressStandardId() ;
-//$results = agPersonNameHelper::init()->getPrimaryNameAsString(array(4)) ;
-//$results = $obj->getAddressAllowedElements() ;
-//$obj = Doctrine_Core::getTable('agPerson')->find(1) ;
-//$results = $obj->updateAddressHashes($array) ;
-//$addr = $obj->getAddressComponentsById($array) ;
-//$results = $obj->setAddresses($fakeAddr, TRUE) ;
-//$results = $obj->setEntityAddressById($addrContact) ;
-$results = $obj->exceptionTest() ;
-//$results = $obj->setAddresses($fakeAddr) ;
-print_r($results) ;
-// <-------- CUT HERE -------->
-
     $this->ag_foo = Doctrine_Core::getTable('agFoo')->find(array($request->getParameter('id')));
     $this->forward404Unless($this->ag_foo);
   }

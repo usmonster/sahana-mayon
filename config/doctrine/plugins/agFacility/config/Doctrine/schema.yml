@@ -159,6 +159,10 @@ agFacilityResourceAllocationStatus:
       default: 0
       type: boolean
       notnull: true
+    scenario_display:
+      default: 1
+      type: boolean
+      notnull: true
     app_display:
       default: 1
       type: boolean

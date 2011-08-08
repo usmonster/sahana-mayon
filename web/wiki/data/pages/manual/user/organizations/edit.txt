@@ -1,0 +1,25 @@
+====== Organization Management Tutorial ======
+
+===== Editing an Organization =====
+It's helpful to keep organization information updated so any references to that organization are current.  As a user you'll navigate from the list, through viewing the organization information, and then to the edit screen.
+
+===== Tutorial =====
+After click the ID number in the list you'll be viewing the Organization's information.
+
+{{:manual:user:organizations:orgview.png?350|Click Edit}}
+
+Click the Edit button to move to the edit screen.  On the edit screen you can update the Name and Description information, much like when creating an Organization.  After you update the information, click "Save and Continue" to be sure it is stored.  Click "Next" below to continue.
+
+====== Continue ======
+
+[[manual:user:organizations:list|{{:manual:user:previous.jpg?135|List Organizations }}]]
+[[manual:user:organizations:review|{{ :manual:user:next.jpg?135|Review}}]] 
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:organizations:Tutorial|Introduction]]
+  - [[manual:user:organizations:new|Create New Organization]]
+  - [[manual:user:Organizations:list|Listing Organizations]]
+  - **Editing Organizations Records**
+  - [[manual:user:Organizations:review|Organization Management Review]]

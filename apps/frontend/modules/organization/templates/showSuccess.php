@@ -1,49 +1,15 @@
 <h2>Organization Details</h2>
 
-<script type="text/javascript">
-  //On scrolling of DIV tag.
-
-  function OnDivScroll()
-  {
-    var staffList = document.getElementById("staffList");
-
-    if (staffList.options.length > 10)
-    {
-      staffList.size=staffList.options.length;
-    }
-    else
-    {
-      staffList.size=10;
-    }
-  }
-
-  //On focus of Selectbox
-
-  function OnSelectFocus()
-  {
-
-    if (document.getElementById("divAssocStaff").scrollLeft != 0)
-    {
-      document.getElementById("divAssocStaff").scrollLeft = 0;
-    }
-
-    var staffList = document.getElementById('staffList');
-
-    if( staffList.options.length > 10)
-    {
-      staffList.focus();
-      staffList.size=10;
-    }
-  }
-</script>
-
-<noscript><?php echo "Please enable javascript to view list of staffs associating to the organization."; ?></noscript>
 <br
   <table class="singleTable">
   <thead>
-  <h3>Organization</h3>
+  <h3>Organization <a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:organization&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a></h3>
 </thead>
 <tbody>
+  <tr>
+    <th class="headLeft">Id:</th>
+    <td><?php echo $ag_organization->getId() ?></td>
+  </tr>
   <tr>
     <th class="headLeft">Organization:</th>
     <td><?php echo $ag_organization->getOrganization() ?></td>
@@ -59,7 +25,7 @@
 
 <table class="singleTable">
   <thead>
-  <h3>Staff Count</h3>
+  <h3>Staff Count <a href="<?php echo url_for('@wiki'); ?>/doku.php?id=tooltip:organization_staff_count&do=export_xhtmlbody" class="tooltipTrigger" title="Staff Count">?</a></h3>
 </thead>
 <tbody>
   <?php foreach ($staffResourceTypes as $stfResTypeId => $stfResType): ?>
@@ -91,38 +57,7 @@
     </table>
 
     <br>
-    <!--
-    <div class="infoHolder">
-      <h3>Associated Staff Information</h3>
-      <ul class="neatlist">
-        <li>
-    -->
-    <h3>Associated Staff Information</h3>
 
-    <div id="divAssocStaff" onscroll="OnDivScroll();">
-      <SELECT id='staffList' size="10" multiple onfocus="OnSelectFocus();">
-
-        <!--
-               <select id="staffList" name="staffList" size="10" multiple="multiple">
-        -->
-
-<?php $staffResourceList = $sf_data->getRaw('staffResourceList'); ?>
-<?php if (empty($staffResourceList)): ?>
-  <option value="none">none</option>
-<?php else: ?>
-  <?php foreach ($staffResourceList as $staffResourceOrgId => $staffString): ?>
-     <option value="<?php echo $staffResourceOrgId ?>"><?php echo $staffString; ?></option>
-  <?php endforeach ?>
-<?php endif ?>
-
-    </SELECT>
-  </div>
-  <!--
-      </li>
-    </ul>
-  </div>
-  -->
-
-  <a href="<?php echo url_for('organization/edit?id=' . $ag_organization->getId()) ?>" class="linkButton" >Edit</a>
+  <a href="<?php echo url_for('organization/edit?id=' . $ag_organization->getId()) ?>" class="continueButton" >Edit</a>
   &nbsp;
-  <a href="<?php echo url_for('organization/list') ?>" class="linkButton" >List</a>
+  <a href="<?php echo url_for('organization/list') ?>" class="generalButton" >List</a>

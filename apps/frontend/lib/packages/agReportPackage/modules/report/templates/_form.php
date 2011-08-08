@@ -6,7 +6,7 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          &nbsp;<a href="<?php echo url_for('report/index') ?>">Back to list</a>
+          &nbsp;<a href="<?php echo url_for('report/index') ?>" class="generalButton">Back to List</a>
           <input type="submit" value="Save" />
         </td>
       </tr>

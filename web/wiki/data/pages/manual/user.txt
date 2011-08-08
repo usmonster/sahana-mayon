@@ -3,25 +3,17 @@
 
 ----
 
-<html><div style="text-align: center; font-size: 400%; margin: 20px 0;">User's Guide</div></html>
+<html><div style="text-align: center; font-size: 400%; margin: 20px 0;">Application Manager Guide</div></html>
 
 
 ----
     * [[manual:User:Intro|Introduction]]
-    * [[manual:User:Staff|Staff Mgmt]]
-    * [[manual:User:Facilities|Facilities]]
     * [[manual:User:Organizations|Organizations]]
-    * [[manual:user:Geo|Geo Coding]]
+    * [[manual:User:Staff|Staff]]
+    * [[manual:User:Facilities|Facilities]]
     * [[manual:User:Scenario|Scenarios]]
-      * [[manual:user:scenario:walkthrough|Scenario Walk-Through]]
     * [[manual:User:Event|Event Deployment]]
-    * [[manual:User:Client|Clients]]
-    * [[manual:User:Reports|Reports]]
-    * [[manual:User:Modules|Module Mgmt]]
-      * [[manual:User:GIS|GIS Plugin]]
-    * [[manual:User:FAQ|FAQ]]
 <html><div style="text-align: center;"><br><br></html>
-
 
 ----
 <html>

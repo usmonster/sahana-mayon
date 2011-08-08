@@ -1,13 +1,43 @@
 # You can find more information about this file on the symfony website:
 # http://www.symfony-project.org/reference/1_4/en/05-Factories
 
+# Edit the session_name and session_cookie_path parameters if you 
+# are running multiple applications under the same site URL
+# Example: https://some.server.net/mayon-1/
+#
+# Make sure to run a ./symfony cc after making any changes
+# 
+# session_name
+# 
+# The session_name option defines the name of the cookie used by symfony to store the user session. 
+# By default, the name is symfony, which means that all your applications share the same cookie 
+# (and as such the corresponding authentication and authorizations).
+#
+# session_set_cookie_params() parameters
+#
+# The storage factory calls the session_set_cookie_params() function with the value of the following options:
+#
+#    session_cookie_lifetime: Lifetime of the session cookie, defined in seconds.
+#    session_cookie_path: Path on the domain where the cookie will work. Use a single slash (/) for all paths on the domain.
+#    session_cookie_domain: Cookie domain, for example www.php.net. To make cookies visible on all subdomains then the domain must be prefixed with a dot like .php.net.
+#    session_cookie_secure: If true cookie will only be sent over secure connections.
+#    session_cookie_httponly: If set to true then PHP will attempt to send the httponly flag when setting the session cookie.
+#
+#    The description of each option comes from the session_set_cookie_params() function description on the PHP website
+#
+#    Reference http://www.php.net/manual/en/ref.session.php for more details
+
 prod:
   logger:
     class:   sfNoLogger
     param:
       level:   err
       loggers: ~
-
+  storage:
+    param:
+      session_name: agasti-mayon
+      session_cookie_path: /
+      
 test:
   storage:
     class: sfSessionTestStorage
@@ -34,9 +64,11 @@ all:
     param:
       generate_shortest_url:            true
       extra_parameters_as_query_string: true
+    cache:
+      class: sfAPCCache
+      param:
+        automatic_cleaning_factor: 0
+        lifetime: 31556926
 
-  view_cache_manager:
-    class: sfViewCacheManager
-    param:
-      cache_key_use_vary_headers: true
-      cache_key_use_host_name:    true
+  view_cache:
+    class: sfAPCCache

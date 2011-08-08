@@ -1,0 +1,8 @@
+===== Phone Number =====
+**Phone numbers should be entered as 5559991111x1234**
+
+Enter the contact phone numbers for the person.
+
+**Format**: 9 digits without spaces.  Extensions begin with an x.
+
+

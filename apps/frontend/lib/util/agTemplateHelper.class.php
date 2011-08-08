@@ -1,31 +1,44 @@
 <?php
+
 /**
-* agTemplateHelper class
-*
-* PHP Version 5.3
-*
-* LICENSE: This source file is subject to LGPLv2.1 license
-* that is available through the world-wide-web at the following URI:
-* http://www.gnu.org/licenses/lgpl-2.1.html
-*
-* @author     Nils Stolpe, CUNY SPS
-* @author     Pradeep Vijayagiri, CUNY SPS
-*
-* Copyright of the Sahana Software Foundation, sahanafoundation.org
-**/
+ * agTemplateHelper class
+ *
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @author     Nils Stolpe, CUNY SPS
+ * @author     Pradeep Vijayagiri, CUNY SPS
+ * @author     Charles Wisniewski, CUNY SPS
+ *
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ * */
 class agTemplateHelper
 {
-  public static function buildAddressTable($addressArray)
+
+  /**
+   * @param boolean
+   *
+   * @param array of phone information, the format should be:
+   * phone type: phone number <br />
+   * phone type: phone number
+   *
+   * OR phone type: phone number (if primary only flag is true
+   *
+   * @return string html formatted cell of email for display in templates
+   */
+  public static function buildPhoneHtml($phoneArray, $primaryOnly = true)
   {
-    foreach ($addressArray as $type => $address) {
-      $counts[$type] = count($address);
+    foreach ($phoneArray as $type => $phone) {
+      $counts[$type] = count($phone);
     }
 
     // Then determine the maximum rows we'll get.
     $maxRows = max($counts);
     // Get the headers for the table. And start building the HTML for the tables header.
-    $headers = array_keys($addressArray);
-    $tableHead = '<tr>' . PHP_EOL;
+    $headers = array_keys($phoneArray);
     // Set the iterator and build the table rows.
     $i = 0;
     while ($i < $maxRows) {
@@ -36,7 +49,7 @@ class agTemplateHelper
         if ($i == 0) {
           $tableHead .= '<th class="head">' . ucwords($header) . '</th>' . PHP_EOL;
         }
-        $rows[$i] .= '<td>' . (isset($addressArray[$header][$i][0]) ? ($addressArray[$header][$i][0] . '<hr class="ruleGray" /><span class="bold">Last Updated: </span><span class="italic">'  . substr($addressArray[$header][$i][1], 0, 10) . '</span>') : '') . '</td>' . PHP_EOL;
+        $rows[$i] .= '<td>' . (isset($addressArray[$header][$i][0]) ? ($addressArray[$header][$i][0] . '<hr class="ruleGray" /><span class="bold">Last Updated: </span><span class="italic">' . substr($addressArray[$header][$i][1], 0, 10) . '</span>') : '') . '</td>' . PHP_EOL;
       }
       $rows[$i] .= '</tr>' . PHP_EOL;
       $i++;
@@ -50,20 +63,21 @@ class agTemplateHelper
     }
     return $output;
   }
-  //start p-code
+
   public static function include_customTitle()
   {
     $title = sfContext::getInstance()->getResponse()->getTitle();
     $titleinfo = sfConfig::get('app_title');
-    $uri= str_replace("/frontend_dev.php/", "/", $_SERVER['REQUEST_URI']);
-    foreach ($titleinfo as $titlename){
-      if($titlename['url'] == $uri){
-       $title = $titlename['title'];
-         }
+    $uri = str_replace('/frontend_dev.php/', '/', $_SERVER['REQUEST_URI']);
+    foreach ($titleinfo as $titlename) {
+      if ($titlename['url'] == $uri) {
+        $title = $titlename['title'];
+        break;
+      }
     }
-    echo content_tag('title', $title)."\n";
+    echo content_tag('title', $title) . "\n";
   }
-    //end p-code
+
 }
 
 ?>

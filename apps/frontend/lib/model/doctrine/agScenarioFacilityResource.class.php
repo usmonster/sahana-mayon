@@ -17,6 +17,7 @@
  */
 class agScenarioFacilityResource extends BaseagScenarioFacilityResource
 {
+
   /**
    *
    * @return a string representation of the scenario facility resource

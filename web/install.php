@@ -35,32 +35,6 @@ if (!isset($AG_CONFIG['step']))
 if (!isset($AG_CONFIG['agree']))
   $AG_CONFIG['agree'] = false;
 
-$AG_CONFIG['allowed_db'] = array();
-
-/* MYSQL */
-if (ag_is_callable(array('mysql_pconnect', 'mysql_select_db', 'mysql_error', 'mysql_select_db', 'mysql_query', 'mysql_fetch_array', 'mysql_fetch_row', 'mysql_data_seek', 'mysql_insert_id'))) {
-  $AG_CONFIG['allowed_db']['MYSQL'] = 'MySQL';
-}
-
-/* POSTGRESQL */
-if (ag_is_callable(array('pg_pconnect', 'pg_fetch_array', 'pg_fetch_row', 'pg_exec', 'pg_getlastoid'))) {
-  $AG_CONFIG['allowed_db']['POSTGRESQL'] = 'PostgreSQL';
-}
-
-/* ORACLE */
-if (ag_is_callable(array('ocilogon', 'ocierror', 'ociparse', 'ociexecute', 'ocifetchinto'))) {
-  $AG_CONFIG['allowed_db']['ORACLE'] = 'Oracle';
-}
-
-/* SQLITE3 */
-if (ag_is_callable(array('sqlite3_open', 'sqlite3_close', 'sqlite3_query', 'sqlite3_error', 'sqlite3_fetch_array', 'sqlite3_query_close', 'sqlite3_exec'))) {
-  $AG_CONFIG['allowed_db']['SQLITE3'] = 'SQLite3';
-}
-
-if (count($AG_CONFIG['allowed_db']) == 0) {
-  $AG_CONFIG['allowed_db']['no'] = 'No';
-}
-
 global $AG_INSTALL;
 
 $AG_INSTALL = new agInstall($AG_CONFIG);
@@ -78,7 +52,7 @@ unset($_POST);
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Sahana Agasti 2.0 Installer</title>
     <link rel="shortcut icon" href="images/favicon.ico" />
-    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" /> 
+    <link rel="stylesheet" type="text/css" media="screen" href="css/agMain.css" />
   </head>
   <body>
     <div id="header">
@@ -101,18 +75,18 @@ unset($_POST);
                 <input type="hidden" name="_enter_check" value="1" />
                 <input type="hidden" name="_sql_check" value="<?php echo $install_flag; ?>" />
 
-                <input id="back[<?php echo $AG_INSTALL->getStep(); ?>]" name="back[<?php echo $AG_INSTALL->getStep(); ?>]" type="submit" value="<< previous"<?php //echo $AG_INSTALL->; ?> class="linkButton" />
-                <input type="submit" value="cancel" class="linkButton" id="cancel" name="cancel" />
+                <input id="back[<?php echo $AG_INSTALL->getStep(); ?>]" name="back[<?php echo $AG_INSTALL->getStep(); ?>]" type="submit" value="<< Previous" class="generalButton" />
+                <input type="submit" value="Cancel" class="deleteButton" id="cancel" name="cancel" />
 <?php
           if (!isset($AG_INSTALL->steps[$AG_INSTALL->getStep() + 1])) {
             //checking to see if there is anything left in the ag_install stage
-            $dolab = 'finish';
-            $doval = 'finish';
+            $dolab = 'Finish';
+            $doval = 'Finish';
           } else {
-            $dolab = "next[" . $AG_INSTALL->getStep() . "]";
-            $doval = "next >>";
+            $dolab = "Next[" . $AG_INSTALL->getStep() . "]";
+            $doval = "Next >>";
           } ?>
-                <input id="next[<?php echo $dolab; ?>]" name="<?php echo $dolab ?>" type="submit" value="<?php echo $doval ?>" class="linkButton" <?php if ($AG_INSTALL->DISABLE_NEXT)
+                <input id="next[<?php echo $dolab; ?>]" name="<?php echo $dolab ?>" type="submit" value="<?php echo $doval ?>" class="continueButton" <?php if ($AG_INSTALL->DISABLE_NEXT)
                   echo " disabled=true"; ?> />
               </li>
             </ul>
@@ -121,7 +95,7 @@ unset($_POST);
       </div>
     </div>
     <div id="footer">
-      <img src="images/nyc_logo.png" alt="NYC Office of Emergency Management Logo" />
+      <img src="images/logo.png" alt="NYC Office of Emergency Management Logo" />
     </div>
   </body>
 </html>

@@ -1,14 +1,4 @@
 agFacilityGroupType: 
   solar:
-    facility_group_type: solar system
+    facility_group_type: Solar System
     description: A group of facility resources with one facility resource designated as the central main office within the group of facility resources.
-  uorc:
-    facility_group_type: uorc
-    description: A group of Unified Operations Resource Center (UORC) facility resources.
-  shelters:
-    facility_group_type: shelters
-    description: A group of shelters.
-  pod:
-    facility_group_type: point of distribution centers
-    description: A group of distribution centers.
-

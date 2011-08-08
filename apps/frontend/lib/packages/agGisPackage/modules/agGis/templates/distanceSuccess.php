@@ -21,7 +21,7 @@
 
 
 <script type="text/javascript">
-  var start = <?php echo $combinationCount; ?>;
+  var start = <?php echo $todeployCount; ?>;
   var totalLeft = start;
   var totalProcessed = 0;
 

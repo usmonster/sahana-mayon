@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * Normalizing import data.
  *
  * PHP Version 5.3
@@ -15,1249 +14,866 @@
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  *
  */
-class agImportNormalization
+abstract class agImportNormalization extends agImportHelper
 {
-  public $summary = array();
-  private $importStaffList = array();
-  private $staffMapping = array();
+  const CONN_NORMALIZE_READ = 'import_normalize_read';
+  const CONN_NORMALIZE_WRITE = 'import_normalize_write';
 
-  function __construct($scenarioId, $sourceTable, $dataType)
-  {
-    // declare variables
-    $this->dataType = $dataType;
-    $this->scenarioId = $scenarioId;
-    $this->sourceTable = $sourceTable;
-    $this->defineStatusTypes();
-    $this->summary = array();
-    $this->warningMessages = array();
-    $this->nonprocessedRecords = array();
-    $this->totalProcessedRecordCount = 0;
-    $this->totalNewFacilityCount = 0;
-    $this->totalNewFacilityGroupCount = 0;
-    $this->processedFacilityIds = array();
-    $this->conn = null;
-  }
+  protected $helperObjects = array(),
+  $tempToRawQueryName = 'import_temp_to_raw',
+  // array( [order] => array(componentName => component name, helperName => Name of the helper object, throwOnError => boolean, methodName => method name) )
+  $importComponents = array(),
+  //array( [importRowId] => array( _rawData => array(fetched data), primaryKeys => array(keyName => keyValue))
+  $importData = array(),
+  $importCount = 0,
+  $unprocessedXLS = FALSE,
+  $unprocessedBaseName,
+  $XlsMaxExportSize;
 
-  function __destruct()
+  /**
+   * This classes' destructor.
+   */
+  public function __destruct()
   {
-    //drop temp table.
-    $this->conn->export->dropTable($this->sourceTable);
-    $this->conn->close();
+    parent::__destruct();
   }
 
   /**
-   * Method to define status and type variables.
+   * Method to initialize this class
+   * @param string $tempTable The name of the temporary import table to use
+   * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  private function defineStatusTypes()
+  public function __init($tempTable = NULL, $logEventLevel = NULL)
   {
-    $this->facilityContactType = 'work';
-    $this->defaultPhoneFormatTypes = array('USA 10 digit', 'USA 10 digit with an extension');
-    $this->emailContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('email')), CASE_LOWER);
-    $this->phoneContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('phone')), CASE_LOWER);
-    $this->addressContactTypes = array_change_key_case(array_flip(agContactHelper::getContactTypes('address')), CASE_LOWER);
-    $this->phoneFormatTypes = array_flip(agContactHelper::getPhoneFormatTypes($this->defaultPhoneFormatTypes));
-    $this->staffResourceTypes = array_change_key_case(array_flip(agStaffHelper::getStaffResourceTypes(TRUE)), CASE_LOWER);
-    $this->mapStaffColumn();
-    $addressHelper = new agAddressHelper();
-    $this->addressStandards = $addressHelper->getAddressStandardId();
-    $this->addressElements = array_flip($addressHelper->getAddressAllowedElements());
-    $this->geoType = 'point';
-    $this->geoTypeId = agFacilityHelper::getGeoTypes($this->geoType);
-    $this->defaultGeoMatchScore = 'good';
-    $this->geoMatchScores = array_flip(agGisHelper::getGeoMatchScores());
-    $geoMatchScores = $this->geoMatchScores;
-    $this->geoMatchScoreId = $geoMatchScores[$this->defaultGeoMatchScore];
-    $this->geoSourceParamVal = agGlobal::getParam('facility_import_geo_source');
-    $this->geoSources = array_flip(agGisHelper::getGeoSources());
-    $this->geoSourceId = $this->geoSources[$this->geoSourceParamVal];
+    // DO NOT REMOVE
+    parent::__init($tempTable, $logEventLevel);
 
-    if ($this->dataType == 'facility') {
-      $this->facilityResourceTypes = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceAbbrTypes()), CASE_LOWER);
-      $this->facilityResourceStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceStatuses()), CASE_LOWER);
-      $this->facilityResourceAllocationStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityResourceAllocationStatuses()), CASE_LOWER);
-      $this->facilityGroupTypes = array_change_key_case(array_flip(agFacilityHelper::getFacilityGroupTypes()), CASE_LOWER);
-      $this->facilityGroupAllocationStatuses = array_change_key_case(array_flip(agFacilityHelper::getFacilityGroupAllocationStatuses()), CASE_LOWER);
-    }
-
+    $this->setUnprocessedBaseName();
+    $this->XlsMaxExportSize = agGlobal::getParam('xls_max_export_size');
   }
 
+
   /**
-   * Verify data in record for required fields and valid statuses and types
-   *
-   * @param array $record
-   * @return boolean TRUE if data in record satisfies all requirements for processing.  FALSE otherwise.
+   * Method to dynamically build a (mostly) static tempSelectQuery
+   * @return string Returns a string query
    */
-  private function dataValidation(array $record)
+  abstract protected function buildTempSelectQuery();
+
+  /**
+   * Method to set the unprocessed records basename
+   */
+  abstract protected function setUnprocessedBaseName();
+
+  /**
+   * Method to reset ALL iter data.
+   */
+  protected function resetIterData()
   {
-    // Check for required fields
-    if (empty($record['facility_name'])) {
-      return array('pass' => FALSE, 
-                   'status' => 'ERROR', 
-                   'type' => 'Facility Name',
-                   'message' => 'Invalid facility name.');
-    }
+    // execute the parent's reset
+    parent::resetIterData();
 
-    // Check for valid facility_resource_code
-    if (empty($record['facility_resource_code'])) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Resource Code',
-                   'message' => 'Invalid facility resource code.');
-    }
-
-    // Check for valid facility_code
-    if (empty($record['facility_resource_code'])) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Code',
-                   'message' => 'Invalid facility code.');
-    }
-
-    $this->fullAddress = array('line 1' => $record['street_1'],
-          'line 2' => $record['street_2'],
-          'city' => $record['city'],
-          'state' => $record['state'],
-          'zip5' => $record['postal_code'],
-          'borough' => $record['borough'],
-          'country' => $record['country']);
-
-    if (!$this->isEmptyStringArray($this->fullAddress)) {
-      if (empty($record['street_1']) || empty($record['city']) ||
-             empty($record['state']) || empty($record['postal_code'])) {
-        return array('pass' => FALSE,
-                     'status' => 'WARNING',
-                     'type' => 'Mail Address',
-                     'message' => 'Invalid street 1/city/state/postal_code address.');
-      }
-    }
-
-    if (empty($record['longitude']) or empty($record['latitude'])) {
-      return array('pass' => FALSE, 
-                   'status' => 'ERROR',
-                   'type' => 'Geo',
-                   'message' => 'Invalid longitutde/latitude.');
-    }
-
-    // Check for min/max set validation:
-    // (1) Check for valid staff type.
-    // (2) Either both min and max are provided or neither should be provided for each staff type.
-    // (3) max >= min.
-    foreach ($this->importStaffList as $staff) {
-      $staffMin = $staff . '_min';
-      $staffMax = $staff . '_max';
-      if (!array_key_exists($staff, $this->staffMapping)) {
-        return array('pass' => FALSE,
-                     'status' => 'ERROR', 
-                     'type' => 'Staff Resource',
-                     'message' => 'Invalid staff resource type.');
-      }
-
-      // Check if column min/max exists.
-      if (!array_key_exists($staffMin, $record) || !array_key_exists($staffMax, $record)) {
-        return array('pass' => FALSE,
-                     'status' => 'ERROR',
-                     'type' => 'Staff Resource',
-                     'message' => 'Invalid min/max set: missing column.');
-      }
-
-      // Check if a set value is provided.
-      if (( empty($record[$staffMin]) && !empty($record[$staffMax]) )
-              || (!empty($record[$staffMin]) && empty($record[$staffMax]) )) {
-        return array('pass' => FALSE,
-                     'status' => 'ERROR',
-                     'type' => 'Staff Resource',
-                     'message' => 'Invalid min/max set: missing value.');
-      }
-      // Check if min <= max
-      if ($record[$staffMin] > $record[$staffMax]) {
-        return array('pass' => FALSE,
-                     'status' => 'ERROR',
-                     'type' => 'Staff Resource',
-                     'message' => 'Invalid min/max set: min > max.');
-      }
-    }
-
-    // Check for valid email address
-    if (!empty($record['work_email']) && !preg_match('/^.+\@.+\..+$/', $record['work_email'])) {
-      return array('pass' => FALSE,
-                   'status' => 'WARNING',
-                   'type' => 'Email',
-                   'message' => 'Invalid email address.');
-    }
-
-    // Check for valid phone number where it's either 10 digit or
-    // 10 digit follow by an 'x' and the extension.
-    if (!empty($record['work_phone']) && !preg_match('/^\d{10}(x\d+)?$/', $record['work_phone'])) {
-      return array('pass' => FALSE,
-                   'status' => 'WARNING',
-                   'type' => 'Phone',
-                   'message' => 'Invalid phone number.');
-    }
-
-    // Check for valid status and type.
-
-    if (!array_key_exists(strtolower($record['facility_resource_type_abbr']), $this->facilityResourceTypes)) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Resource Type Abbr',
-                   'message' => 'Undefined facility resource type abbreviation.');
-    }
-
-    if (!array_key_exists(strtolower($record['facility_resource_status']), $this->facilityResourceStatuses)) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Resource status',
-                   'message' => 'Undefined facility resource status.');
-    }
-
-    if (!array_key_exists(strtolower($record['facility_allocation_status']), $this->facilityResourceAllocationStatuses)) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Resource Allocation Status',
-                   'message' => 'Undefined facility resource allocation status.');
-    }
-
-    if (!array_key_exists(strtolower($record['facility_group_type']), $this->facilityGroupTypes)) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Group Type',
-                   'message' => 'Undefined facility group type.');
-    }
-
-    if (!array_key_exists(strtolower($record['facility_group_allocation_status']), $this->facilityGroupAllocationStatuses)) {
-      return array('pass' => FALSE,
-                   'status' => 'ERROR',
-                   'type' => 'Facility Group Allocation Status',
-                   'message' => 'Undefined facility group allocation status.');
-    }
-
-    return array('pass' => TRUE,
-                 'status' => 'SUCCESS',
-                 'type' => null,
-                 'message' => null);
-
+    // now reset this data
+    $this->resetRawIterData();
   }
 
   /**
-   * Method to identify all the staff requirement fields, suffixed with either a _min or _max string.
-   *
-   * @param array $columnHeaders  An array of column headers.
+   * Method to reset the iterator data (used in the initial call of an import and at construction)
    */
-  private function getImportStaffList($columnHeaders) {
-
-    $setHeaders = preg_grep('/_(min|max)$/i', $columnHeaders);
-    foreach($setHeaders as $key => $column) {
-      $this->importStaffList[] = rtrim(rtrim(strtolower($column), '_min'), '_max');
-    }
-    $this->importStaffList = array_values(array_unique($this->importStaffList));
-  }
-
-  /**
-   * Method to replace a white space with underscore.
-   *
-   * @param string $name A string for replacement.
-   * @return string $name A reformatted string.
-   */
-  private function stripName ($name = NULL) {
-    if ( is_null($name) || !is_string($name) ) {
-      return $name;
-    }
-
-    $strippedName = strtolower(str_replace(' ', '_', $name));
-    return $strippedName;
-  }
-
-  /**
-   * Method to create a mapping of the staff resource types to their save column header formats.
-   */
-  private function mapStaffColumn()
+  protected function resetRawIterData()
   {
-    foreach($this->staffResourceTypes as $staff => $id)
+    // add additional iter members
+    //TODO: really figure out these bounds. -UA
+    $this->iterData['fetchPosition'] = 0;
+    $this->iterData['fetchCount'] = 0;
+    $this->iterData['batchStart'] = 0;
+    $this->iterData['batchPosition'] = 0;
+    $this->iterData['batchCount'] = 0;
+    $this->iterData['batchSize'] = intval(agGlobal::getParam('default_batch_size'));
+    $this->iterData['processedSuccessful'] = 0;
+    $this->iterData['processedFailed'] = 0;
+    $this->iterData['unprocessed'] = 0;
+  }
+
+  /**
+   * Method to reset the import data array
+   */
+  protected function resetImportData()
+  {
+    $this->eh->logDebug('Removing existing pre-normalization import data.');
+    $this->importData = array();
+  }
+
+  /**
+   * Method to set connection objects. (Includes both parent connections and normalization
+   * connections.
+   */
+  protected function setConnections()
+  {
+    parent::setConnections();
+
+    // we do this little one explicitly.
+    $this->getImportWrite();
+
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
+    $adapter = $dm->getCurrentConnection()->getDbh();
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_READ);
+    $dm->setCurrentConnection(self::CONN_NORMALIZE_READ);
+    $this->_conn[self::CONN_NORMALIZE_READ] = $conn;
+  }
+
+  /**
+   * Method to return the import normalize write connection.
+   * @param boolean $new Whether or not this class returns a new instance of the connection
+   * @return Doctrine_Connection A doctrine connection object
+   */
+  protected function getImportWrite($new = TRUE) {
+    if ($conn = $this->getConnection(self::CONN_NORMALIZE_WRITE)) {
+      if (!$new) {
+        return $conn;
+      } else {
+       $this->closeConnection($conn);
+      }
+    }
+
+    // need this guy for all the heavy lifting
+    $dm = Doctrine_Manager::getInstance();
+
+    // save for re-setting
+    $currConn = $dm->getCurrentConnection();
+    $currConnName = $dm->getConnectionName($currConn);
+    $adapter = $currConn->getDbh();
+
+    // always re-parent properly
+    $dm->setCurrentConnection('doctrine');
+
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_NORMALIZE_WRITE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
+    $this->_conn[self::CONN_NORMALIZE_WRITE] = $conn;
+
+    $dm->setCurrentConnection($currConnName);
+    return $conn;
+  }
+
+  /**
+   * Method to lazily load helper objects used during data normalization
+   * @param string $helperClassName Name of the helper class to load
+   */
+  protected function loadHelperObject($helperClassName)
+  {
+    if (!array_key_exists($helperClassName, $this->helperObjects)) {
+      $this->helperObjects[$helperClassName] = new $helperClassName;
+    }
+  }
+
+  /**
+   * Method to update the temp table and mark this batch as successful or failed print("Import is Done<br>");
+   * @param boolean $success The success value to set
+   */
+  protected function updateTempSuccess($success)
+  {
+    $this->eh->logDebug("Updating temp with batch success data");
+
+    // grab our connection object
+    $conn = $this->getConnection(self::CONN_TEMP_WRITE);
+
+    $dataSize = count($this->importData);
+
+    // create our query statement
+    $q = 'UPDATE ' . $this->tempTable .
+        ' SET ' . $this->successColumn . '=?' .
+        ' WHERE ' . $this->idColumn .
+        ' IN(' . implode(',', array_fill(0, $dataSize, '?')) . ');';
+
+    // create our parameter array
+    $qParam = array_merge(array(intval($success)), array_keys($this->importData));
+
+    // mark this batch accordingly
+    $this->executePdoQuery($conn, $q, $qParam);
+
+    if ($success)
     {
-      $cleanName = $this->stripName($staff);
-      $this->staffMapping[$cleanName] = $staff;
+      $this->iterData['processedSuccessful'] += $dataSize;
     }
-  }
-
-  /**
-   * Method to dynamically generate staff requirements based off of the the pass in record.
-   *
-   * @param array $record An associative array of an entry from the import temp table.
-   */
-  private function dynamicStaffing($record) {
-    $staffingRequirements = array();
-    foreach ($this->importStaffList as $staff)
+    else
     {
-      $staffId = $this->staffResourceTypes[$this->staffMapping[$staff]];
-      $staffMin = $staff . '_min';
-      $staffMax = $staff . '_max';
-      $staffingRequirements[$staffId] = array('min' => $record[$staffMin],
-                                              'max' => $record[$staffMax]);
+      $this->iterData['processedFailed'] += $dataSize;
     }
-    return $staffingRequirements;
+
+    $this->iterData['unprocessed'] -= $dataSize;
+    $this->eh->logInfo("Temp table successfully updated with batch success data");
   }
 
   /**
-   * Method to normalize data from temp table.
+   * Method to remove the successes from our data table so we can return just the unprocessed and
+   * failed.
    */
-  public function normalizeImport()
+  protected function removeTempSuccesses()
   {
-    // Declare static variables.
-    $facilityContactType = $this->facilityContactType;
+    // grab our connection object
+    $conn = $this->getConnection(self::CONN_TEMP_WRITE);
 
-    // Setup db connection.
-    $this->conn = Doctrine_Manager::connection();
+    // create our query statement
+    $q = sprintf('DELETE FROM %s WHERE %s = 1;', $this->tempTable, $this->successColumn);
 
-    // Fetch import data.
-    $query = 'SELECT * FROM ' . $this->sourceTable . ' AS i';
-    $pdo = $this->conn->execute($query);
-    $pdo->setFetchMode(Doctrine_Core::FETCH_ASSOC);
-    $sourceRecords = $pdo->fetchAll();
+    // remove the successes from our data table so we can return just the unprocessed and failed
+    $this->executePdoQuery($conn, $query);
+  }
 
-    // Grab the dynamical columns of staff requirements.
-    if (count($sourceRecords) > 0) {
-      $this->getImportStaffList(array_keys($sourceRecords[0]));
+  public function getImportDataDump()
+  {
+    return $this->importData;
+  }
+
+  /**
+   * Method to return all import events as an array
+   * @return array An array of import events
+   */
+  public function getImportEvents()
+  {
+    return $this->eh->getEvents(agEventHandler::EVENT_SORT_TS);
+  }
+
+  /**
+   * Method to close out an import procedure
+   */
+  public function concludeImport()
+  {
+    // now, close any unnecessary connections to release as much memory as possible
+    Doctrine_Manager::getInstance()->setCurrentConnection('doctrine');
+    $this->closeConnection($this->getConnection(self::CONN_TEMP_WRITE));
+    $this->closeConnection($this->getConnection(self::CONN_NORMALIZE_READ));
+    $this->closeConnection($this->getConnection(self::CONN_NORMALIZE_WRITE));
+    
+    // build our unprocessed XLS file
+    $this->unprocessedXLS = $this->setUnprocessedXLS();
+
+    // now release all remaining connections
+    $this->closeConnection($this->getConnection(self::CONN_TEMP_READ));
+
+    // finally, kick off this hellish piece of work
+    if (agGlobal::getParam('import_auto_index')) {
+      $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+    }
+  }
+
+  /**
+   * Method to return an array pointing to
+   * @return array An array containing the XLS data filename and path
+   */
+  public function getUnprocessedXLS()
+  {
+    return $this->unprocessedXLS;
+  }
+
+  /**
+   * Method to construct an XLS file of unprocessed records returns the path of the XLS file if
+   * successful and FALSE if not
+   * @return boolean Whether or not the process was successful
+   */
+  protected function setUnprocessedXLS()
+  {
+    // return false if there are no records to process
+    $totalUnprocessed = $this->iterData['unprocessed'] + $this->iterData['processedFailed'];
+    if ($totalUnprocessed == 0 && $this->iterData['fetchCount'] > 0)
+    {
+      $eventMsg = 'All records were successfully processed.';
+      $this->eh->logNotice($eventMsg);
+      return FALSE;
     }
 
-    //loop through records.
-    foreach ($sourceRecords as $record) {
+    // log a message and continue
+    $eventMsg = 'All records could not be successfully processed.';
+    $this->eh->logWarning($eventMsg);
+
+    // first search our directory for existing unprocessed files and remove
+    $pathBase = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
+    foreach(glob(($pathBase . '*')) as $filename) {
+      $eventMsg = 'Removing old export file ' . $filename . '.';
+      $this->eh->logDebug($eventMsg);
+      unlink($filename);
+      $eventMsg = 'Successfully removed old export file ' . $filename . '.';
+      $this->eh->logInfo($eventMsg);
+    }
+
+    // rinse and repeat
+    $pathBase = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $this->unprocessedBaseName;
+    foreach(glob(($pathBase . '*')) as $filename) {
+      $eventMsg = 'Removing old export file ' . $filename . '.';
+      $this->eh->logDebug($eventMsg);
+      unlink($filename);
+      $eventMsg = 'Successfully removed old export file ' . $filename . '.';
+      $this->eh->logInfo($eventMsg);
+    }
+
+    // set some smart variables
+    $date = date('Ymd_His');
+    $downloadFile = $this->unprocessedBaseName . '_' . $date . '.zip';
+    $zipPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $downloadFile;
+    $exportFiles = array();
+
+    // Create zip file
+    $zipFile = new ZipArchive();
+
+    if ($zipFile->open($zipPath, ZIPARCHIVE::CREATE) !== TRUE) {
+      $this->eh->err('Could not create the output zip file' .  $zipPath .
+        '. Check your permissions to make sure you have write access.');
+    } else {
+      $this->eh->logDebug('Successfully created' .  $zipPath . '.');
+    }
+    
+    // get our temporary table read connection
+    $conn = $this->getConnection(self::CONN_TEMP_READ);
+    $columnHeaders = array_keys($this->importSpec);
+    $selectCols = 't.' . implode(', t.', $columnHeaders);
+
+    // build our query statement
+    $this->eh->logDebug('Establishing fetch from the database.');
+    $q = 'SELECT ' . $selectCols . ' FROM ' . $this->tempTable . ' AS t WHERE t.' .
+      $this->successColumn . ' != ? OR ' . $this->successColumn . ' IS NULL;';
+    $pdo = $this->executePdoQuery($conn, $q, array(TRUE));
+    $this->eh->logDebug('PDO object successfully created.');
+
+    // set counters
+    $i = 1;
+    $fetchPosition = 0;
+
+    // begin fetching from the database, starting with our first record
+    while ($row = $pdo->fetch()) {
+      // keeps up from potentially ending up in a neverending loop
+      set_time_limit($this->maxBatchTime);
+      
+      // start by incrementing our fetch position
+      $fetchPosition++;
+
+      // reset our exportData array and add our first row to it
+      $exportData = array();
+      $exportData[] = $row;
+
+      // continue fetching until we either run out of records or hit our batch limit
+      while (($fetchPosition % $this->XlsMaxExportSize != 0) && ($row = $pdo->fetch())) {
+        // always increment fetch position immediately
+        $fetchPosition++;
+
+        // add the row to our $rows array
+        $exportData[] = $row;
+      }
+
+      // set our xlsname and pass it and our export data to the buildXls method
+      $xlsName = $this->unprocessedBaseName . '_' . $date . '_' . $i . '.xls';
+      $this->eh->logInfo('Fetched ' . count($row) . ' records from the database into ' .
+        'batch ' . $i . '. Now adding records to ' . $xlsName . '.');
+      $xlsPath = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . $xlsName;
+
+      // check for successful creation of the xlsfile (both soft and hard)
       try {
-        $this->conn->beginTransaction();
-
-        $validEmail = 1;
-        $validPhone = 1;
-        $validAddress = 1;
-        $isNewFacilityRecord = 0;
-        $isNewFacilityGroupRecord = 0;
-
-        $isValidData = $this->dataValidation($record);
-        if (!$isValidData['pass']) {
-          switch ($isValidData['status']) {
-            case 'ERROR':
-              $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-              continue 2;
-            case 'WARNING':
-              switch ($isValidData['type']) {
-                case 'Email':
-                  $validEmail = 0;
-                  $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-                  break;
-                case 'Phone':
-                  $validPhone = 0;
-                  $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-                  break;
-                case 'Mail Address':
-                  $validAddress = 0;
-                  $this->warningMessages[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-                  break;
-              }
-              break;
-            default:
-              $this->nonprocessedRecords[] = array('message' => $isValidData['message'],
-                                                   'record' => $record);
-              continue 2;
-          }
+        if (! $this->buildXls($xlsPath, $exportData)) {
+          break;
         }
-
-        // Declare variables.
-        $facility_name = $record['facility_name'];
-        $facility_resource_code = $record['facility_resource_code'];
-        $facility_code = $record['facility_code'];
-        $facility_resource_type_abbr = strtolower($record['facility_resource_type_abbr']);
-        $facility_resource_status = strtolower($record['facility_resource_status']);
-        $capacity = $record['facility_capacity'];
-        $facility_activation_sequence = $record['facility_activation_sequence'];
-        $facility_allocation_status = strtolower($record['facility_allocation_status']);
-        $facility_group = $record['facility_group'];
-        $facility_group_type = strtolower($record['facility_group_type']);
-        $facility_group_allocation_status = strtolower($record['facility_group_allocation_status']);
-        $facility_group_activation_sequence = $record['facility_group_activation_sequence'];
-        $email = $record['work_email'];
-        $phone = $record['work_phone'];
-        $fullAddress = $this->fullAddress;
-        $geoInfo = array('longitude' => $record['longitude'], 'latitude' => $record['latitude']);
-        $staffing = $this->dynamicStaffing($record);
-
-        $facility_resource_type_id = $this->facilityResourceTypes[$facility_resource_type_abbr];
-        $facility_resource_status_id = $this->facilityResourceStatuses[$facility_resource_status];
-        $facility_group_type_id = $this->facilityGroupTypes[$facility_group_type];
-        $facility_group_allocation_status_id = $this->facilityGroupAllocationStatuses[$facility_group_allocation_status];
-        $facility_resource_allocation_status_id = $this->facilityResourceAllocationStatuses[$facility_allocation_status];
-        $workEmailTypeId = $this->emailContactTypes[$facilityContactType];
-        $workPhoneTypeId = $this->phoneContactTypes[$facilityContactType];
-        $defaultPhoneFormatTypes = $this->defaultPhoneFormatTypes;
-        $workPhoneFormatId = $this->phoneFormatTypes[$defaultPhoneFormatTypes[(preg_match('/^\d{10}$/', $phone) ? 0 : 1)]];
-        $workAddressTypeId = $this->addressContactTypes[$facilityContactType];
-        $workAddressStandardId = $this->addressStandards;
-        $addressElementIds = $this->addressElements;
-
-        // facility
-
-        // tries to find an existing record based on a unique identifier.
-        $facility = agDoctrineQuery::create()
-                ->from('agFacility f')
-                ->where('f.facility_code = ?', $facility_code)
-                ->fetchOne();
-        $facilityResource = NULL;
-        $scenarioFacilityResource = NULL;
-
-        if (empty($facility)) {
-          $facility = $this->createFacility($facility_name, $facility_code);
-          $isNewFacilityRecord = 1;
-        } else {
-          $facility = $this->updateFacility($facility, $facility_name);
-        }
-
-        // Facility Resource
-
-        // tries to find an existing record based on a set of unique identifiers.
-        $facilityResource = agDoctrineQuery::create()
-                ->from('agFacilityResource fr')
-                ->where('fr.facility_id = ?', $facility->id)
-                ->andWhere('fr.facility_resource_type_id = ?', $facility_resource_type_id)
-                ->fetchOne();
-
-        if (empty($facilityResource))
-        {
-          if (empty($facilityResourceByType))
-          {
-            $facilityResource = $this->createFacilityResource($facility, $facility_resource_type_id,
-                                          $facility_resource_status_id, $facility_resource_code,
-                                          $capacity);
-          } else {
-            $this->nonprocessedRecords[] = array('message' => 'Facility resource already exists with a different facility resource code.',
-                                                 'record' => $record);
-
-            $this->conn->rollback();
-
-            continue;
-          }
-        } else {
-          if (empty($facilityResourceByType))
-          {
-            $this->nonprocessedRecords[] = array('message' => 'Facility resource code is already assigned to another facility resource.',
-                                                 'record' => $record);
-
-            $this->conn->rollback();
-
-            continue;
-          } else {
-            if ($facilityResource->id == $facilityResourceByType->id)
-            {
-              $facilityResource = $this->updateFacilityResource($facilityResource, $facility->id,
-                                            $facility_resource_type_id,
-                                            $facility_resource_status_id, $capacity);
-            } else {
-              $this->nonprocessedRecords[] = array('message' => 'Facility resource already exists and facility resource code is assigned to a different facility resource.',
-                                                   'record' => $record);
-
-              $this->conn->rollback();
-
-              continue;
-            }
-          }
-
-          $scenarioFacilityResource = agDoctrineQuery::create()
-                ->from('agScenarioFacilityResource sfr')
-                ->innerJoin('sfr.agScenarioFacilityGroup sfg')
-                ->where('sfg.scenario_id = ?', $this->scenarioId)
-                ->andWhere('facility_resource_id = ?', $facilityResource->id)
-                ->fetchOne();
-        }
-
-        // facility group
-
-        $scenarioFacilityGroup = agDoctrineQuery::create()
-                ->from('agScenarioFacilityGroup')
-                ->where('scenario_id = ?', $this->scenarioId)
-                ->andWhere('scenario_facility_group = ?', $facility_group)
-                ->fetchOne();
-
-        if (empty($scenarioFacilityGroup)) {
-          $scenarioFacilityGroup = $this->createScenarioFacilityGroup($facility_group,
-                                                                      $facility_group_type_id,
-                                                                      $facility_group_allocation_status_id,
-                                                                      $facility_group_activation_sequence);
-          $isNewFacilityGroupRecord = 1;
-        } else {
-          $scenarioFacilityGroup = $this->updateScenarioFacilityGroup($scenarioFacilityGroup,
-                                                                      $facility_group_type_id,
-                                                                      $facility_group_allocation_status_id,
-                                                                      $facility_group_activation_sequence);
-        }
-
-        // facility resource
-        if (empty($scenarioFacilityResource)) {
-          $scenarioFacilityResource = $this->createScenarioFacilityResource($facilityResource,
-                                                                            $scenarioFacilityGroup,
-                                                                            $facility_resource_allocation_status_id,
-                                                                            $facility_activation_sequence);
-        } else {
-          $scenarioFacilityResource = $this->updateScenarioFacilityResource($scenarioFacilityResource,
-                                                                            $scenarioFacilityGroup->id,
-                                                                            $facility_resource_allocation_status_id,
-                                                                            $facility_activation_sequence);
-        }
-
-        // email
-        if ($validEmail) {
-          $this->updateFacilityEmail($facility, $email, $workEmailTypeId);
-        }
-
-        // phone
-        if ($validPhone) {
-          $this->updateFacilityPhone($facility, $phone, $workPhoneTypeId, $workPhoneFormatId);
-        }
-
-        // address
-        if ($validAddress) {
-          $addressId = $this->updateFacilityAddress($facility, $fullAddress, $workAddressTypeId,
-                                                    $workAddressStandardId, $addressElementIds);
-        }
-
-        // geo
-        $this->updateFacilityGeo($facility, $addressId, $workAddressTypeId, $workAddressStandardId,
-                                 $geoInfo, $this->geoTypeId, $this->geoSourceId, $this->geoMatchScoreId);
-
-        //facility staff resource
-        $this->updateFacilityStaffResources($scenarioFacilityResource->getId(), $staffing);
-
-        // Set summary counts
-        if ($isNewFacilityRecord) {
-          $this->totalNewFacilityCount++;
-        }
-        if ($isNewFacilityGroupRecord) {
-          $this->totalNewFacilityGroupCount++;
-        }
-        $this->totalProcessedRecordCount++;
-
-        $facilityId = $facility->id;
-        if (!is_integer(array_search($facilityId, $this->processedFacilityIds))) {
-          array_push($this->processedFacilityIds, $facilityId);
-        }
-
-        $this->conn->commit();
       } catch (Exception $e) {
-        $this->nonprocessedRecords[] = array('message' => 'Unable to normalize data.  Exception error mesage: ' . $e,
-                                             'record' => $record);
-        $this->conn->rollBack();
+        $this->eh->logErr($e->getMessage());
+        break;
       }
-    } // end foreach
 
-    $this->summary = array('totalProcessedRecordCount' => $this->totalProcessedRecordCount,
-                           'TotalFacilityProcessed' => count($this->processedFacilityIds),
-                           'totalNewFacilityCount' => $this->totalNewFacilityCount,
-                           'totalNewFacilityGroupCount' => $this->totalNewFacilityGroupCount,
-                           'nonprocessedRecords' => $this->nonprocessedRecords,
-                           'warningMessages' => $this->warningMessages);
+      // if all went well, add it to the exportFiles array
+      $exportFiles[$i] = array($xlsPath, $xlsName);
+
+      // iterate our batch counter
+      $i++;
+    }
+
+    // we do this to check if any records were processed at all
+    if ($fetchPosition == 0 || count($exportFiles) == 0) {
+
+      // if none were, log a warning
+      $this->eh->logWarning('No unprocessed records could be retrieved. Could not create ' .
+        'unprocessed records export.');
+
+      // close out and remove our zipfile
+      $zipFile->close();
+      unlink($zipPath);
+
+      // then return false
+      return FALSE;
+    }
+
+    // otherwise, add our xls files to the zip
+    foreach ($exportFiles as $xlsFileInfo) {
+      $this->eh->logDebug('Adding ' . $xlsFileInfo[1] . ' to zip file.');
+      $zipFile->addFile($xlsFileInfo[0], $xlsFileInfo[1]);
+    }
+    $this->eh->logInfo('Successfully added ' . count($exportFiles) .
+      ' xls files to zip file.');
+
+    // close the zip
+    $zipFile->close();
+
+    // remove the individual xls files
+    foreach ($exportFiles as $xlsFileInfo) {
+      $this->eh->logDebug('Removing ' . $xlsFileInfo[1] . ' from the temp directory.');
+      unlink($xlsFileInfo[0]);
+    }
+    $this->eh->logInfo('Successfully removed xls files from the temp directory.');
+
+    // finally, move the zip file to its final web-accessible location
+    $this->eh->logDebug('Moving ' . $downloadFile . ' to user-accesible directory.');
+    $downloadPath = sfConfig::get('sf_download_dir') . DIRECTORY_SEPARATOR . $downloadFile;
+    if (! rename($zipPath, $downloadPath)) {
+      $this->eh->logErr('Unable to move ' . $downloadFile . ' to the specified upload ' .
+        'directory. Check your sf_upload_dir configuration to ensure you have write permissions.');
+    }
+
+    $eventMsg = "Successfully created export file of unprocessed records.";
+    $this->eh->logNotice($eventMsg);
+
+
+    return $downloadFile;
 
   }
 
-  /* Facility */
-
-  protected function createFacility($facilityName, $facilityCode)
+  /**
+   * Method to create an xls import file and return TRUE if successful
+   * @param string $xlsPath Path of the export file to create
+   * @param array $exportData An array of export data to write to the xls file
+   * @return boolean Returns TRUE if successful
+   */
+  protected function buildXls($xlsPath, array $exportData)
   {
-    $entity = new agEntity();
-    $entity->save();
-    $site = new agSite();
-    $site->set('entity_id', $entity->id);
-    $site->save();
-    $facility = new agFacility();
-    $facility->set('site_id', $site->id)
-        ->set('facility_name', $facilityName)
-        ->set('facility_code', $facilityCode);
-    $facility->save();
-    return $facility;
-  }
+    // load the Excel writer object
+    $sheet = new agExcel2003ExportHelper($this->unprocessedBaseName);
 
-  protected function updateFacility($facility, $facilityName)
-  {
-    if ($facility->facility_name != $facilityName)
-    {
-      $updateQuery = Doctrine_Query::create()
-             ->update('agFacility f')
-             ->set('f.facility_name', '?', $facilityName)
-             ->where('f.id = ?', $facility->id)
-             ->execute();
-    }
-    return $facility;
-  }
-
-  /* Facility Resource */
-
-  protected function createFacilityResource($facility, $facilityResourceTypeAbbrId,
-                                            $facilityResourceStatusId, $facilityResourceCode,
-                                            $capacity)
-  {
-    $facilityResource = new agFacilityResource();
-    $facilityResource->set('facility_id', $facility->id)
-        ->set('facility_resource_type_id', $facilityResourceTypeAbbrId)
-        ->set('facility_resource_status_id', $facilityResourceStatusId)
-        ->set('facility_resource_code', $facilityResourceCode)
-        ->set('capacity', $capacity);
-    $facilityResource->save();
-    return $facilityResource;
-  }
-
-  protected function updateFacilityResource($facilityResource, $facilityId, $facilityResourceTypeId,
-                                            $facilityResourceStatusId, $capacity)
-  {
-    $doUpdate = FALSE;
-    $updateQuery = agDoctrineQuery::create()
-                    ->update('agFacilityResource fr')
-                    ->where('id = ?', $facilityResource->id);
-
-    if ($facilityResource->facility_id != $facilityId) {
-      $updateQuery->set('facility_id', '?', $facilityId);
-      $doUpdate = TRUE;
+    // Write the column headers
+    foreach (array_keys($exportData[0]) as $columnHeader) {
+      $sheet->label($columnHeader);
+      $sheet->right();
     }
 
-    if ($facilityResource->facility_resource_type_id != $facilityResourceTypeId) {
-      $updateQuery->set('facility_resource_type_id', '?', $facilityResourceTypeId);
-      $doUpdate = TRUE;
-    }
+    foreach ($exportData as $exportRowData) {
+      $sheet->down();
+      $sheet->home();
 
-    if ($facilityResource->facility_resource_status_id != $facilityResourceStatusId) {
-      $updateQuery->set('facility_resource_status_id', '?', $facilityResourceStatusId);
-      $doUpdate = TRUE;
-    }
+      // Write values
+      foreach ($exportRowData as $value) {
+        $sheet->label($value);
+        $sheet->right();
+      }
 
-    if ($facilityResource->capacity != $capacity) {
-      $updateQuery->set('capacity', '?', $capacity);
-      $doUpdate = TRUE;
-    }
-
-    if ($doUpdate) {
-      $updateQuery = $updateQuery->execute();
-    } else {
-      $updateQuery = NULL;
-    }
-
-    return $facilityResource;
-  }
-
-  protected function updateFacilityStaffResources($scenarioFacilityResourceId, $staff_data)
-  {
-    $facilityStaffResource = agDoctrineQuery::create()
-                    ->select('srt.id, fsr.minimum_staff, fsr.maximum_staff, fsr.id')
-                    ->from('agStaffResourceType srt')
-                    ->innerJoin('srt.agFacilityStaffResource fsr')
-                    ->where('fsr.scenario_facility_resource_id = ?', $scenarioFacilityResourceId)
-                    ->execute(array(), 'key_value_array');
-
-    $deleteFacStfResId = array();
-    foreach ($staff_data as $staffTypeId => $count) {
-      if (array_key_exists($staffTypeId, $facilityStaffResource)) {
-        $doUpdate = FALSE;
-        $updateQuery = agDoctrineQuery::create()
-                        ->update('agFacilityStaffResource')
-                        ->where('id = ?', $facilityStaffResource[$staffTypeId][2]);
-
-        if ($count['min'] == 0 && $count['max'] == 0) {
-          $deleteFacStfResId[] = $facilityStaffResource[$staffTypeId][2];
-          continue;
-        }
-
-        if ($facilityStaffResource[$staffTypeId][0] != $count['min']) {
-          $updateQuery->set('minimum_staff', $count['min']);
-          $doUpdate = TRUE;
-        }
-
-        if ($facilityStaffResource[$staffTypeId][1] != $count['max']) {
-          $updateQuery->set('maximum_staff', $count['max']);
-          $doUpdate = TRUE;
-        }
-
-        if ($doUpdate) {
-          $updateQuery->execute();
-        } else {
-          $updateQuery = NULL;
-        }
-      } else {
-        if ($count['min'] != 0 && $count['max'] != 0) {
-          $this->createFacilityStaffResource($scenarioFacilityResourceId, $staffTypeId, $count['min'], $count['max']);
-        }
+      // Capture peak memory
+      $currentMemoryUsage = memory_get_usage();
+      if ($currentMemoryUsage > $this->peakMemory) {
+        $this->peakMemory = memory_get_usage();
       }
     }
 
-    if (!empty($deleteFacStfResId)) {
-      $deleteQuery = agDoctrineQuery::create()
-                      ->delete('agFacilityStaffResource')
-                      ->whereIn('id', $deleteFacStfResId)
-                      ->execute();
-    }
-
-    return $facilityStaffResource;
+    $sheet->save($xlsPath);
+    return TRUE;
   }
 
-  protected function createFacilityStaffResource($scenarioFacilityResourceId, $staffTypeId, $min_staff,
-                                                 $max_staff)
+  /**
+   * Basically everything that can be wiped about this object
+   * @param $resetEvents Boolean to determine whether or not events will also be reset
+   */
+  protected function clearImport($resetEvents = FALSE)
   {
-    $facilityStaffResource = new agFacilityStaffResource();
-    $facilityStaffResource->set('staff_resource_type_id', $staffTypeId)
-        ->set('scenario_facility_resource_id', $scenarioFacilityResourceId)
-        ->set('minimum_staff', $min_staff)
-        ->set('maximum_staff', $max_staff);
-    $facilityStaffResource->save();
-    return $facilityStaffResource;
+    $this->resetImportData();
+    $this->resetIterData();
+    $this->clearConnections();
+    if ($resetEvents) { $this->eh->resetEvents(); }
   }
 
-  /* Scenario Facility Group */
-
-  protected function createScenarioFacilityGroup($facilityGroup, $facilityGroupTypeId,
-                                                 $facilityGroupAllocationStatusId,
-                                                 $facilityGroupActivationSequence)
+  /**
+   * Method to load and process a batch of records.
+   * @return int The number of records left to process or -1 if a fatal error was encountered
+   */
+  public function processBatch()
   {
-    $scenarioFacilityGroup = new agScenarioFacilityGroup();
-    $scenarioFacilityGroup->set('scenario_id', $this->scenarioId)
-        ->set('scenario_facility_group', $facilityGroup)
-        ->set('facility_group_type_id', $facilityGroupTypeId)
-        ->set('facility_group_allocation_status_id', $facilityGroupAllocationStatusId)
-        ->set('activation_sequence', $facilityGroupActivationSequence);
-    $scenarioFacilityGroup->save();
-    return $scenarioFacilityGroup;
+    // keeps us from potentially ending up in a neverending loop
+    set_time_limit($this->maxBatchTime);
+    
+    // preempt this method with a check on our error threshold and stop if we shouldn't continue
+    try {
+
+      // check it once before we start anything and once after
+      $this->eh->checkErrThreshold();
+
+      // load up a batch into the helper
+      $this->fetchNextBatch();
+
+      // normalize and insert our data
+      $normalizeSuccess = $this->normalizeData();
+
+      // update our temp table
+      $this->updateTempSuccess($normalizeSuccess);
+
+      // probably best to check this one more time
+      $this->eh->checkErrThreshold();
+    } catch (Exception $e) {
+      return -1;
+    }
+
+    // since everything's hunky-dory, let's count what's left and return that
+    $remaining = ($this->iterData['fetchCount'] - $this->iterData['fetchPosition']);
+
+    // Get memory usage
+    $memoryUsage = $this->getPeakMemoryUsage();
+    $this->eh->logInfo("Memory: $memoryUsage");
+    
+    return $remaining;
   }
 
-  protected function updateScenarioFacilityGroup($scenarioFacilityGroup, $facilityGroupTypeId, $facilityGroupAllocationStatusId, $facilityGroupActivationSequence)
+  /**
+   * Method to fetch the next batch of raw data records from the PDO object
+   */
+  protected function fetchNextBatch()
   {
-    $doUpdate = FALSE;
-    $updateQuery = agDoctrineQuery::create()
-                    ->update('agScenarioFacilityGroup sfg')
-                    ->where('id = ?', $scenarioFacilityGroup->id);
+    // first, blow out the existing rawData
+    $this->resetImportData();
 
-    if (strtolower($scenarioFacilityGroup->facility_group_type_id) != strtolower($facilityGroupTypeId)) {
-      $updateQuery->set('facility_group_type_id', '?', $facilityGroupTypeId);
-      $doUpdate = TRUE;
+    // these aren't required but make the code more readable
+    $batchSize = $this->iterData['batchSize'];
+    $fetchPosition = & $this->iterData['fetchPosition'];
+
+    // increment our fetch counter
+    $batchPosition = & $this->iterData['batchPosition'];
+    $batchPosition++;
+    $batchStart = $fetchPosition + 1;
+    $this->iterData['batchStart'] = $batchStart;
+    $batchEnd = ($fetchPosition + $batchSize);
+
+    // get our PDO object
+    $pdo = $this->_PDO[$this->tempToRawQueryName];
+
+    // log this event
+    $eventMsg = 'Loading batch starting at ' . $batchStart . ' from the temp table';
+    $this->eh->logDebug($eventMsg);
+
+    // fetch the data up until it ends or we hit our batchsize limit
+    while (($fetchPosition < $batchEnd) && ($row = $pdo->fetch())) {
+      // increment our fetch counter
+      $fetchPosition++;
+
+      // modify the record just a little
+      $rowId = $row->id;
+
+      // add it to import data array and iterate our counter
+      $this->eh->logDebug('Fetching row ' . $rowId . ' from temp table into import data.');
+
+      // use the import spec as our definitive columns list and add the obj properties magically
+      foreach ($this->importSpec as $columnName => $columnSpec) {
+        // checking for empty negates the neebasenamed for an explicit removal step
+        if (!is_null($row->$columnName)) {
+          $this->importData[$rowId]['_rawData'][$columnName] = $row->$columnName;
+        }
+      }
+      $this->importData[$rowId]['primaryKeys'] = array();
     }
 
-    if ($scenarioFacilityGroup->facility_group_allocation_status_id != $facilityGroupAllocationStatusId) {
-      $updateQuery->set('facility_group_allocation_status_id', '?', $facilityGroupAllocationStatusId);
-      $doUpdate = TRUE;
+    $eventMsg = 'Successfully fetched batch ' . $batchPosition . ' (Records ' . $batchStart .
+      ' to ' . $fetchPosition . ')';
+    $this->eh->logInfo($eventMsg);
+  }
+  /**
+   * Method to initiate the import query from temp
+   * @param $query A SQL query string
+   */
+  protected function tempToRaw($query)
+  {
+    $conn = $this->getConnection(self::CONN_TEMP_READ);
+
+    // first get a count of what we need from temp
+    $this->eh->logDebug('Fetching the total number of records and establishing batch size.');
+    $ctQuery = sprintf('SELECT COUNT(*) FROM (%s) AS t;', $query);
+    $ctResults = $this->executePdoQuery($conn, $ctQuery);
+    $this->iterData['fetchCount'] = $ctResults->fetchColumn();
+    $this->iterData['unprocessed'] = $this->iterData['fetchCount'];
+
+    // now caclulate the number of batches we'll need to process it all
+    $this->iterData['batchCount'] = intval(ceil(($this->iterData['fetchCount'] / $this->iterData['batchSize'])));
+    $this->eh->logNotice('Dataset comprised of ' . $this->iterData['fetchCount'] . ' records divided ' .
+        'into ' . $this->iterData['batchCount'] . ' batches of ' . $this->iterData['batchSize'] .
+        ' records per batch.');
+
+    // now we can legitimately execute our real search
+    $this->eh->logDebug('Starting initial fetch from temp.');
+    $this->executePdoQuery($conn, $query, array(), Doctrine_Core::FETCH_OBJ,
+                           $this->tempToRawQueryName);
+    $this->eh->logInfo("Successfully established the PDO fetch iterator.");
+
+    $this->eh->logNotice('Beginning insertion of import data from temporary table.');
+  }
+
+  /**
+   * Method to normalize and insert raw data. Returns TRUE if successful or FALSE if unsucessful.
+   * @return boolean Boolean value indicating whether the import was successful or unsucessful.
+   */
+  protected function normalizeData()
+  {
+    $err = NULL;
+    $eventMsg = 'Normalizing and inserting batch data into database. (Batch ' .
+      $this->iterData['batchPosition'] . '/' . $this->iterData['batchCount'] . ')';
+    $this->eh->logInfo($eventMsg);
+
+    $conn = $this->getImportWrite(TRUE);
+    $conn->beginTransaction();
+
+    foreach ($this->importComponents as $index => $componentData) {
+      // load any helper objects we might need
+      if (array_key_exists('helperClass', $componentData)) {
+        $this->loadHelperObject($componentData['helperClass']);
+      }
+
+      // need this as a var so we can use it in a variable call
+      $method = $componentData['method'];
+      $savepoint = __FUNCTION__ . '_' . $componentData['component'];
+
+      // log an event so we can follow what portion of the insert was begun
+      $eventMsg = $this->eh->logInfo("Calling batch processing method {$method}");
+
+      // start an inner transaction / savepoint per component
+      $conn->beginTransaction($savepoint);
+      try {
+        // Calling method to set data.
+        $this->$method($componentData['throwOnError'], $conn);
+        $conn->commit($savepoint);
+      } catch (Exception $e) {
+        $errMsg = 'Import batch processing for batch ' . $this->iterData['batchPosition'] .
+          ' failed during method: ' . $componentData['method'] . ' with message: ' .
+          $e->getMessage();
+
+        // let's capture this error, regardless of whether we'll throw
+        $this->eh->logErr($errMsg, 0);
+
+        $conn->rollback($savepoint);
+
+        // if it's not an optional component, we do a bit more and stop execution entirely
+        if ($componentData['throwOnError']) {
+          $err = $e;
+          break;
+        }
+      }
     }
 
-    if ($facilityResource->activation_sequence != $facilityGroupActivationSequence) {
-      $updateQuery->set('activation_sequence', '?', $facilityGroupActivationSequence);
-      $doUpdate = TRUE;
+    // attempt our final commit
+    // because doctrine's savepoints are broken, we must also wrap this since earlier failures
+    // may not have been detected
+    if (is_null($err)) {
+      try {
+        $conn->commit();
+      } catch (Exception $e) {
+        // set our err variables
+        $err = $e;
+        $errMsg = sprintf('Failed to execute final commit for batch #%d of %d (batch_size: %d)',
+                          $this->iterData['batchPosition'], $this->iterData['batchCount'],
+                          $this->iterData['batchSize']);
+      }
     }
 
-    if ($doUpdate) {
-      $updateQuery = $updateQuery->execute();
+    if (is_null($err)) {
+      $this->eh->logNotice('Successfully processed batch ' . $this->iterData['batchPosition'] .
+        ' of ' .  $this->iterData['batchCount'] . '. (Records ' . $this->iterData['batchStart'] .
+        ' through ' . $this->iterData['fetchPosition'] . ')');
+
+      // you'll want to do your record keeping here (eg, counts or similar)
+      // be sure to use class properties to store that info so additional loops can
+      // reference it
+
+      $this->importCount += count($this->importData);
+
+      return TRUE;
     } else {
-      $updateQuery = NULL;
+      // our rollback and error logging happen regardless of whether this is an optional component
+      $errMsg = 'Batch ' . $this->iterData['batchPosition'] . ' of ' . 
+        $this->iterData['batchCount'] . ' (Records ' . $this->iterData['batchStart'] . ' through ' .
+        $this->iterData['fetchPosition'] . ') encountered a fatal error and could not continue.';
+
+      $conn->rollback();
+
+      // log our err count but postpone the threshold check until the end of the processBatch
+      $this->eh->logErr($errMsg, count($this->importData), FALSE);
+
+      // return false if not
+      return FALSE;
     }
-
-    return $scenarioFacilityGroup;
-  }
-
-  /* Scenario Facility Resource */
-
-  protected function createScenarioFacilityResource($facilityResource, $scenarioFacilityGroup,
-                                                    $facilityResourceAllocationStatusId,
-                                                    $facilityActivationSequence)
-  {
-    $scenarioFacilityResource = new agScenarioFacilityResource();
-    $scenarioFacilityResource->set('facility_resource_id', $facilityResource->id)
-            ->set('scenario_facility_group_id', $scenarioFacilityGroup->id)
-            ->set('facility_resource_allocation_status_id', $facilityResourceAllocationStatusId)
-            ->set('activation_sequence', $facilityActivationSequence);
-    $scenarioFacilityResource->save();
-    return $scenarioFacilityResource;
-  }
-
-  protected function updateScenarioFacilityResource($scenarioFacilityResource, $scenarioFacilityGroupId, $facilityResourceAllocationStatusId, $facilityActivationSequence)
-  {
-    $doUpdate = FALSE;
-    $updateQuery = agDoctrineQuery::create()
-                    ->update('agScenarioFacilityResource')
-                    ->where('id = ?', $scenarioFacilityResource->id);
-
-    if ($scenarioFacilityResource->scenario_facility_group_id != $scenarioFacilityGroupId) {
-      $updateQuery->set('scenario_facility_group_id', $scenarioFacilityGroupId);
-      $doUpdate = TRUE;
-    }
-
-    if ($scenarioFacilityResource->facility_resource_allocation_status_id != $scenarioFacilityResourceAllocationStatusId) {
-      $updateQuery->set('facility_resource_allocation_status_id', $facilityResourceAllocationStatusId);
-      $doUpdate = TRUE;
-    }
-
-    if ($scenarioFacilityResource->activation_sequence != $facilityActivationSequence) {
-      $updateQuery->set('activation_sequence', $facilityActivationSequence);
-      $doUpdate = TRUE;
-    }
-
-    if ($doUpdate) {
-      $updateQuery = $updateQuery->execute();
-    } else {
-      $updateQuery = NULL;
-    }
-
-    return $scenarioFacilityResource;
-  }
-
-  /* EMAIL */
-
-  protected function getEmailObject($email)
-  {
-    $emailContact = agDoctrineQuery::create()
-            ->from('agEmailContact')
-            ->where('email_contact = ?', $email)
-            ->fetchOne();
-    return $emailContact;
-  }
-
-  protected function createEmail($email)
-  {
-    $emailContact = new agEmailContact();
-    $emailContact->set('email_contact', $email);
-    $emailContact->save();
-    return $emailContact;
-  }
-
-  protected function createEntityEmail($entityId, $emailId, $typeId)
-  {
-    $priority = $this->getPriorityCounter('email', $entityId);
-
-    $entityEmail = new agEntityEmailContact();
-    $entityEmail->set('entity_id', $entityId)
-        ->set('email_contact_id', $emailId)
-        ->set('email_contact_type_id', $typeId)
-        ->set('priority', $priority);
-    $entityEmail->save();
-
-    return $entityEmail;
-  }
-
-  protected function updateEntityEmail($entityEmailObject, $emailObject)
-  {
-    $entityEmailObject->set('email_contact_id', $emailObject->id);
-    $entityEmailObject->save();
-    return $entityEmailObject;
   }
 
   /**
    *
-   * @param <type> $facility
-   * @param <type> $email
-   * @param <type> $workEmailTypeId
-   * @return bool true if an update or create happened, false otherwise.
+   * @param sfEvent $event
+   * @todo document this
    */
-  protected function updateFacilityEmail($facility, $email, $workEmailTypeId)
+  public static function processImportEvent(sfEvent $event)
   {
-    $entityId = $facility->getAgSite()->entity_id;
-    $entityEmail = $this->getEntityContactObject('email', $entityId, $workEmailTypeId);
+    // gets the action, context, and importer object
+    $action = $event->getSubject();
+    $context = $action->getContext();
+    ////$context = sfContext::getInstance();
+    $importer = $action->importer;
+    $moduleName = $action->getModuleName();
 
-    if (empty($entityEmail)) {
-      $facilityEmail = '';
-    } else {
-      $facilityEmail = $entityEmail->getAgEmailContact()->email_contact;
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
+    if (!file_exists($importDir)) {
+      mkdir($importDir);
+    }
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+
+    // generates the identifier for the event status
+//    $statusId = implode('_', array($moduleName, /* $action->actionName, */ 'status'));
+//    if ($context->has($statusId)) {
+//      $status = $context->get($statusId);
+//    }
+    if (!file_exists($statusFile)) {
+      //TODO: check if directory is writeable? -UA
+      touch($statusFile);
+    }
+    if (!is_writable($statusFile)) {
+      $importer->eh->logEmerg('Status file not writeable: ' . $statusFile);
+      return;
     }
 
-    //  if oldEmail is importedEmail
-    if (strtolower($email) == strtolower($facilityEmail)) {
-      return FALSE;
+    // let other things happen
+    $action->getUser()->shutdown();
+    session_write_close();
+
+    // blocks import if already in progress
+    $status = sfYaml::load($statusFile);
+    $abortFlagId = 'aborted';
+    if (isset($status) && 0 != $status['batchesLeft']) {
+      if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
+        $importer->eh->logNotice('Starting new import after user aborted previous attempt.');
+        unset($status[$abortFlagId]);
+      } else {
+        //TODO: distinguish between the two, add cleanup method (action?) for recovery workflow. -UA
+        $importer->eh->logAlert('Import in progress, or attempting new import after failed attempt?');
+        return;
+      }
     }
 
-    // only useful for nonrequired emails
-    //  if importedEmail null
-    if (empty($email) && !empty($facilityEmail)) {
-      $entityEmail->delete();
-      return TRUE;
+    // uploads the import file
+    $uploadedFile = $action->uploadedFile;
+    $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /* $uploadedFile['name'] */;
+    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
+      $importer->eh->logEmerg('Cannot move uploaded file to destination!');
+      // exception is already thrown by logEmerg ^ , but just in case...
+      return;
     }
 
-    $emailEntity = $this->getEmailObject($email);
+    $importer->processXlsImportFile($importPath);
 
-    if (empty($emailEntity)) {
-      $emailEntity = $this->createEmail($email);
+    // initializes the job progress information
+    $totalBatchCount = $importer->iterData['batchCount'];
+    $batchesLeft = $totalBatchCount;
+    $totalRecordCount = $importer->iterData['tempCount'];
+    $recordsLeft = $totalRecordCount;
+
+    $startTime = time();
+    //$context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+    $status['batchesLeft'] = $batchesLeft;
+    $status['totalBatchCount'] = $totalBatchCount;
+    $status['startTime'] = $startTime;
+    file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+
+    // processes batches until complete, aborted, or an unrecoverable error occurs
+    //$abortFlagId = implode('_', array('abort', $statusId));
+    while ($batchesLeft > 0) {
+//      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
+//        $context->set($abortFlagId, NULL);
+//        break;
+//      }
+      $status = sfYaml::load($statusFile);
+      if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
+        $importer->eh->logAlert('User canceled import, stopping import.');
+        unset($status[$abortFlagId]);
+        file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+        break;
+      }
+      $batchResult = $importer->processBatch();
+      // if the last batch did nothing
+      if ($batchResult == $recordsLeft) {
+        $importer->eh->logEmerg('No progress since last batch! Stopping import.');
+        // exception is already thrown by logEmerg ^ , but just in case...
+        break;
+      } else {
+        $recordsLeft = $batchResult;
+      }
+
+      //TODO: use $batchResult ("records left") instead?
+      $batchesLeft = $importer->iterData['batchCount'] - $importer->iterData['batchPosition'] - 1;
+      //$context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
+      $status = sfYaml::load($statusFile);
+      $status['batchesLeft'] = $batchesLeft;
+      $status['totalBatchCount'] = $totalBatchCount;
+      $status['startTime'] = $startTime;
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
     }
 
-    if (empty($facilityEmail)) {
-      $this->createEntityEmail($entityId, $emailEntity->id, $workEmailTypeId);
-      return TRUE;
-    }
+    $context->getEventDispatcher()->notify(new sfEvent($action, 'import.do_reindex'));
 
-    // Facility email exists and does not match import email.
-    $this->updateEntityEmail($entityEmail, $emailEntity);
-    return TRUE;
+    unset($action->importer);
+    //unset($importer);
   }
 
-  /* PHONE */
-
-  protected function getPhoneObject($phone)
+  public static function resetImportStatus($moduleName)
   {
-    $phoneContact = NULL;
-    $phoneContact = agDoctrineQuery::create()
-            ->from('agPhoneContact')
-            ->where('phone_contact = ?', $phone)
-            ->fetchOne();
-    return $phoneContact;
-  }
-
-  protected function createPhone($phone, $phoneFormatId)
-  {
-    $phoneContact = new agPhoneContact();
-    $phoneContact
-        ->set('phone_contact', $phone)
-        ->set('phone_format_id', $phoneFormatId);
-    $phoneContact->save();
-    return $phoneContact;
-  }
-
-  protected function createEntityPhone($entityId, $phoneContactId, $typeId)
-  {
-    $priority = $this->getPriorityCounter('phone', $entityId);
-
-    $entityPhone = new agEntityPhoneContact();
-    $entityPhone->set('entity_id', $entityId)
-        ->set('phone_contact_id', $phoneContactId)
-        ->set('phone_contact_type_id', $typeId)
-        ->set('priority', $priority);
-    $entityPhone->save();
-
-    return $entityPhone;
-  }
-
-  protected function updateEntityPhone($entityPhoneObject, $phoneObject)
-  {
-    $entityPhoneObject->set('phone_contact_id', $phoneObject->id);
-    $entityPhoneObject->save();
-    return $entityPhone;
+    //TODO: get import data directory root info from global param
+    $importDataRoot = sfConfig::get('sf_upload_dir');
+    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
+    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+    if (is_writable($statusFile)) {
+      $status = sfYaml::load($statusFile);
+      $status['batchesLeft'] = 0;
+      $status['totalBatchCount'] = 0;
+      $status['startTime'] = 0;
+      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+    }
   }
 
   /**
-   *
-   * @param <type> $facility
-   * @param <type> $phone
-   * @param <type> $workEmailTypeId
-   * @return bool true if an update or create happened, false otherwise.
+   * Simple method for instantiating what are effectively blank records.
+   * @param string $recordName The name of the Doctrine_Record / model that will be created.
+   * @param array $foreignKeys An array of foreign keys that will be set with the new record.
+   * <code>array( $columnName => $columnValue, ...)</code>
+   * @return integer The newly instantiated record's ID
    */
-  protected function updateFacilityPhone($facility, $phone, $workPhoneTypeId, $phoneFormatId)
+  protected function createNewRec(Doctrine_Table $tableObject, array $foreignKeys)
   {
-    //TODO
-    $entityId = $facility->getAgSite()->entity_id;
-    $entityPhone = $this->getEntityContactObject('phone', $entityId, $workPhoneTypeId);
+    // get our connection object
+    $conn = $this->getConnection(self::CONN_NORMALIZE_WRITE);
+    $recordName = $tableObject->getComponentName();
 
-    if (empty($entityPhone)) {
-      $facilityPhone = '';
-    } else {
-      $facilityPhone = $entityPhone->getAgPhoneContact()->phone_contact;
-    }
+    // instantiate the new record object
+    $newRec = new $recordName($tableObject, TRUE, FALSE);
+    $newRec->synchronizeWithArray($foreignKeys);
 
-    //  if oldEmail is importedEmail
-    if (strtolower($phone) == strtolower($facilityPhone)) {
-      return FALSE;
-    }
+    // save and return our new id
+    $newRec->save($conn);
 
-    // only useful for nonrequired phones
-    //  if importedEmail null
-    if (empty($phone)) {
-      $entityPhone->delete();
-      return TRUE;
-    }
-
-    $phoneEntity = $this->getPhoneObject($phone);
-
-    if (empty($phoneEntity)) {
-      $phoneEntity = $this->createPhone($phone, $phoneFormatId);
-    }
-
-    if (empty($facilityPhone)) {
-      $this->createEntityPhone($entityId, $phoneEntity->id, $workPhoneTypeId);
-      return TRUE;
-    }
-
-    // Facility phone exists and does not match import phone
-    $this->updateEntityPhone($entityPhone, $phoneEntity);
-    return TRUE;
+    return $newRec['id'];
   }
 
-  /* Address */
-
-  protected function getAssociateAddressElementValues($addressId, $addressElementIds)
+  /**
+   * Method to remove null values from _rawData
+   * @deprecated The use of the FETCH_OBJ allows value-by-value examination at the fetch and
+   * avoids inserting empty values altogether
+   */
+  protected function clearNullRawData()
   {
-    $entityAddressElementValues = agDoctrineQuery::create()
-            ->select('ae.address_element, av.value')
-            ->from('agAddressElement ae')
-            ->innerJoin('ae.agAddressValue av')
-            ->innerJoin('av.agAddressMjAgAddressValue aav')
-            ->where('aav.address_id = ?', $addressId)
-            ->andWhereIn('ae.id', array_values($addressElementIds));
-    $querySql = $entityAddressElementValues->getSqlQuery();
-    $entityAddressElementValues = $entityAddressElementValues->execute(array(), 'key_value_pair');
-    return $entityAddressElementValues;
-  }
-
-  private function isEmptyStringArray($vals)
-  {
-    if (empty($vals)) {
-      return FALSE;
-    }
-
-    foreach ($vals as $val) {
-      if (strlen($val) != 0) {
-        return FALSE;
-      }
-    }
-    return TRUE;
-  }
-
-  protected function createAddressValues($fullAddress, $workAddressStandardId, $addressElementIds)
-  {
-    $newAddressValueIds = array();
-    foreach ($fullAddress as $elem => $elemVal) {
-      if (empty($elemVal)) {
-        continue;
-      }
-      $addressValue = agDoctrineQuery::create()
-                      ->from('agAddressValue a')
-                      ->innerJoin('a.agAddressElement ae')
-                      ->where('a.value = ?', $elemVal)
-                      ->andWhere('ae.address_element = ?', $elem)
-                      ->fetchOne();
-      if (empty($addressValue)) {
-        $newAddressValue = new agAddressValue();
-        $newAddressValue->set('value', $elemVal)
-                ->set('address_element_id', $addressElementIds[$elem]);
-        $newAddressValue->save();
-        $newAddressValueIds[] = $newAddressValue->id;
-      } else {
-        $newAddressValueIds[] = $addressValue->id;
-      }
-    }
-    return $newAddressValueIds;
-  }
-
-  protected function createAddress($addressStandardId)
-  {
-    $address = new agAddress();
-    $address->set('address_standard_id', $addressStandardId);
-    $address->save();
-    return $address;
-  }
-
-  protected function createEntityAddress($entityId, $addressTypeId, $fullAddress, $addressStandardId, $addressElementIds)
-  {
-    // create new address with importedElements
-    $address = $this->createAddress($addressStandardId);
-
-    $addressId = $address->id;
-
-    $newAddressValueIds = $this->createAddressValues($fullAddress, $addressStandardId, $addressElementIds);
-
-    foreach ($newAddressValueIds as $addressValueId) {
-      $mappingAddress = new agAddressMjAgAddressValue();
-      $mappingAddress->set('address_id', $addressId)
-          ->set('address_value_id', $addressValueId);
-      $mappingAddress->save();
-    }
-
-    $priority = $this->getPriorityCounter('address', $entityId);
-
-    $entityAddress = new agEntityAddressContact();
-    $entityAddress->set('entity_id', $entityId)
-        ->set('address_id', $addressId)
-        ->set('priority', $priority)
-        ->set('address_contact_type_id', $addressTypeId);
-    $entityAddress->save();
-
-    return $addressId;
-  }
-
-  protected function updateFacilityAddress($facility, $fullAddress, $workAddressTypeId, $workAddressStandardId, $addressElementIds)
-  {
-    $entityId = $facility->getAgSite()->entity_id;
-    $facilityAddress = $this->getEntityContactObject('address', $entityId, $workAddressTypeId);
-    $isImportAddressEmpty = $this->isEmptyStringArray($fullAddress);
-    $addressId = $facilityAddress->address_id;
-
-    // Remove existing facility work address if import address is null.
-    if ((!empty($facilityAddress)) && $isImportAddressEmpty) {
-      $this->deleteEntityAddressMapping($facilityAddress->id);
-      return $addressId = NULL;
-    }
-
-    // Create new facility address with import address where facility does not have an address and
-    // an address is given in import.
-    $isCreateNew = FALSE;
-    if (empty($facilityAddress) && !$isImportAddressEmpty) {
-      $isCreateNew = TRUE;
-    }
-
-    // Compare existing facility address with imported address.
-    if (!empty($facilityAddress)) {
-      $facilityAddressElements = $this->getAssociateAddressElementValues($facilityAddress->address_id, $addressElementIds);
-
-      $diffAddKeys = array_diff(array_keys($facilityAddressElements), array_keys($fullAddress));
-      if (empty($diffAddKeys)) {
-        foreach ($fullAddress as $eltName => $eltVal) {
-          if (strtolower($eltVal) != strtolower($facilityAddressElements[$eltName])) {
-            $this->deleteEntityAddressMapping($facilityAddress->id);
-            $isCreateNew = TRUE;
-            break;
-          }
+    $this->eh->logInfo("Removing null data from batch.");
+    foreach ($this->importData as $rowId => &$rowData) {
+      foreach ($rowData['_rawData'] as $key => $val) {
+        if (empty($val)) {
+          unset($rowData['_rawData'][$key]);
         }
-      } else {
-        $isCreateNew = TRUE;
       }
     }
-
-    if ($isCreateNew) {
-      $addressId = $this->createEntityAddress($entityId, $workAddressTypeId, $fullAddress, $workAddressStandardId, $addressElementIds);
-    }
-
-    return $addressId;
-  }
-
-  protected function deleteEntityAddressMapping($entityAddressId)
-  {
-    $query = agDoctrineQuery::create()
-            ->delete('agEntityAddressContact')
-            ->where('id = ?', $entityAddressId)
-            ->execute();
-  }
-
-  /* Geo */
-
-  protected function createGeo()
-  {
-    $geo = new agGeo();
-    $geo->set('geo_type_id', $this->geoTypeId)
-            ->set('geo_source_id', $this->geoSourceId);
-    $geo->save();
-    return $geo->id;
-  }
-
-  protected function updateFacilityGeo($facility, $addressId, $addressTypeId, $addressStandardId, $geoInfo)
-  {
-
-    // Create an address container to assign geo info for facility with no address given in import.
-    if (empty($addressId)) {
-      $entityId = $facility->getAgSite()->entity_id;
-      $addressId = $this->createEntityAddress($entityId, $addressTypeId, array(), $addressStandardId, array());
-    }
-
-    $agAddressGeo = agDoctrineQuery::create()
-                    ->from('agAddressGeo ag')
-                    ->innerJoin('ag.agGeo g')
-                    ->where('g.geo_source_id = ?', $this->geoSourceId)
-                    ->andWhere('g.geo_type_id = ?', $this->geoTypeId)
-                    ->andWhere('ag.address_id = ?', $addressId)
-                    ->fetchOne();
-
-    if (empty($agAddressGeo)) {
-      $geoId = $this->createGeo();
-      $addressGeo = new agAddressGeo();
-      $addressGeo->set('address_id', $addressId)
-              ->set('geo_id', $geoId)
-              ->set('geo_match_score_id', $this->geoMatchScoreId);
-      $addressGeo->save();
-    } else {
-      $geoId = $agAddressGeo->geo_id;
-    }
-
-    $agAddressCoordinate = agDoctrineQuery::create()
-                    ->select('gc.longitude, gc.latitude')
-                    ->from('agGeoCoordinate gc')
-                    ->innerJoin('gc.agGeoFeature gf')
-                    ->where('gf.geo_id = ?', $geoId)
-                    ->fetchOne();
-
-    if (empty($agAddressCoordinate)) {
-      $geoCoordinate = new agGeoCoordinate();
-      $geoCoordinate->set('longitude', $geoInfo['longitude'])
-              ->set('latitude', $geoInfo['latitude']);
-      $geoCoordinate->save();
-      $geoFeature = new agGeoFeature();
-      $geoFeature->set('geo_id', $geoId)
-              ->set('geo_coordinate_id', $geoCoordinate->id)
-              ->set('geo_coordinate_order', 1);
-      $geoFeature->save();
-    } else {
-      if ($agAddressCoordinate->longitude != $geoInfo['longitude']) {
-        $agAddressCoordinate->set('longitude', $geoInfo['longitude']);
-        $saveUpdate = TRUE;
-      } elseif ($agAddressCoordinate->latitude != $geoInfo['latitude']) {
-        $agAddressCoordinate->set('latitude', $geoInfo['latitude']);
-        $saveUpdate = TRUE;
-      } else {
-        $saveUpdate = FALSE;
-      }
-
-      if ($saveUpdate) {
-        $agAddressCoordinate->save();
-      }
-      return TRUE;
-    }
-  }
-
-  /* ENTITY */
-
-  protected function getEntityContactObject($contactMedium, $entityId, $contactTypeId)
-  {
-    $entityContactObject = NULL;
-
-    switch (strtolower($contactMedium)) {
-      case 'phone':
-        $table = 'agEntityPhoneContact';
-        $contactType = 'phone_contact_type_id';
-        break;
-      case 'email':
-        $table = 'agEntityEmailContact';
-        $contactType = 'email_contact_type_id';
-        break;
-      case 'address':
-        $table = 'agEntityAddressContact';
-        $contactType = 'address_contact_type_id';
-        break;
-      default:
-        return $entityContactObject;
-    }
-
-    $entityContactObject = agDoctrineQuery::create()
-            ->from($table)
-            ->where('entity_id = ?', $entityId)
-            ->andWhere($contactType . ' = ?', $contactTypeId)
-            ->orderBy('priority')
-            ->fetchOne();
-
-    return $entityContactObject;
-  }
-
-  protected function getPriorityCounter($contactMedium, $entityId)
-  {
-    $priority = NULL;
-
-    switch (strtolower($contactMedium)) {
-      case 'phone':
-        $table = 'agEntityPhoneContact';
-        break;
-      case 'email':
-        $table = 'agEntityEmailContact';
-        break;
-      case 'address':
-        $table = 'agEntityAddressContact';
-        break;
-      default:
-        return $priority;
-    }
-
-    $currentPriority = agDoctrineQuery::create()
-            ->select('max(priority)')
-            ->from($table)
-            ->where('entity_id = ?', $entityId)
-            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-
-    if (empty($currentPriority)) {
-      $priority = 1;
-    } else {
-      $priority = (int) $currentPriority + 1;
-    }
-
-    return $priority;
+    unset($rowData);
   }
 
 }

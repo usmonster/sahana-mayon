@@ -1,0 +1,39 @@
+====== Deploying an Event ======
+
+Scenarios are plans in anticipation that an emergency may someday occur.  If those plans should be put into action they will be deployed as **Events** and the relative information in Scenario, such as what staff may respond and the timing of when facilities open, will become specific to that event.
+
+For quick and easy deployment, there are multiple locations in the application where Events can be launched from.  Below are instructions on where in Sahana Agasti you can launch Scenarios as Events.  More information about events is available in the [[manual:user:event|Event Management]] walk-through as well as the [[manual:important|Important Concepts]] section of this manual.
+
+===== Deploying via the Menu =====
+
+From in Sahana Agasti, hover over the "Respond" option in the menu and click "Deploy a Scenario".
+
+{{:scenario:deploymenu.png?500|Respond in the Menu}}
+
+Click "Deploy as Event" on any of the scenarios in the list.
+
+{{:scenario:deployscenariolist.png?500|Select a Scenario to Deploy}}
+
+Click the button below to continue to further instructions about Event Management.
+
+===== Deploying via the Hubs =====
+
+From the Home Page, click the "Respond" Button:
+
+{{:scenario:clickrespond.png?500|Click Respond}}
+
+Select the Scenario from the dropdown to base the Event on and click {{:scenario:clickpredeploy.png?nolink&100|Go To Pre-Deployment}}
+
+{{:scenario:select_scenario.png?500|Select Scenario}}
+
+Click the button below to continue to further instructions about Event Management.
+
+===== Deploying via Scenario Review =====
+
+From the Scenario Review page at the end of the Scenario Creator click "Deploy as Event" to deploy that scenario.
+{{:scenario:deployfromscenariowizard.png?500|Deploy as Event}}
+
+[[manual:user:event|{{ :scenario:event_jump_2.jpg?200|Continue to Event}}]]
+
+Click the button below to continue to further instructions about Event Management.
+

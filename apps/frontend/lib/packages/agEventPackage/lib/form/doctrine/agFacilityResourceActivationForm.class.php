@@ -1,8 +1,8 @@
 <?php
 
 /**
- * agFacilityResourceActivationForm class takes in an array of forms with which to construct
- * a set of embedded forms
+ * agFacilityResourceActivationForm class takes in an array of facility resources with which
+ * to construct a set of embedded forms
  *
  * Provides embedded subform for editing facility resources
  *

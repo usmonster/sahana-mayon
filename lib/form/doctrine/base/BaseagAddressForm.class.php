@@ -34,6 +34,10 @@ abstract class BaseagAddressForm extends BaseFormDoctrine
       'ag_address_contact_type_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agAddressContactType', 'required' => false)),
     ));
 
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorDoctrineUnique(array('model' => 'agAddress', 'column' => array('address_hash')))
+    );
+
     $this->widgetSchema->setNameFormat('ag_address[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);

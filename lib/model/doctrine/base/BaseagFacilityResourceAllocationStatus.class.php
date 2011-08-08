@@ -14,6 +14,7 @@
  * @property boolean $staffed
  * @property boolean $servicing_clients
  * @property boolean $accepting_clients
+ * @property boolean $scenario_display
  * @property boolean $app_display
  * @property Doctrine_Collection $agEventFacilityResourceStatus
  * @property Doctrine_Collection $agScenarioFacilityResource
@@ -27,6 +28,7 @@
  * @method boolean                            getStaffed()                             Returns the current record's "staffed" value
  * @method boolean                            getServicingClients()                    Returns the current record's "servicing_clients" value
  * @method boolean                            getAcceptingClients()                    Returns the current record's "accepting_clients" value
+ * @method boolean                            getScenarioDisplay()                     Returns the current record's "scenario_display" value
  * @method boolean                            getAppDisplay()                          Returns the current record's "app_display" value
  * @method Doctrine_Collection                getAgEventFacilityResourceStatus()       Returns the current record's "agEventFacilityResourceStatus" collection
  * @method Doctrine_Collection                getAgScenarioFacilityResource()          Returns the current record's "agScenarioFacilityResource" collection
@@ -39,6 +41,7 @@
  * @method agFacilityResourceAllocationStatus setStaffed()                             Sets the current record's "staffed" value
  * @method agFacilityResourceAllocationStatus setServicingClients()                    Sets the current record's "servicing_clients" value
  * @method agFacilityResourceAllocationStatus setAcceptingClients()                    Sets the current record's "accepting_clients" value
+ * @method agFacilityResourceAllocationStatus setScenarioDisplay()                     Sets the current record's "scenario_display" value
  * @method agFacilityResourceAllocationStatus setAppDisplay()                          Sets the current record's "app_display" value
  * @method agFacilityResourceAllocationStatus setAgEventFacilityResourceStatus()       Sets the current record's "agEventFacilityResourceStatus" collection
  * @method agFacilityResourceAllocationStatus setAgScenarioFacilityResource()          Sets the current record's "agScenarioFacilityResource" collection
@@ -95,6 +98,11 @@ abstract class BaseagFacilityResourceAllocationStatus extends sfDoctrineRecord
              ));
         $this->hasColumn('accepting_clients', 'boolean', null, array(
              'default' => 0,
+             'type' => 'boolean',
+             'notnull' => true,
+             ));
+        $this->hasColumn('scenario_display', 'boolean', null, array(
+             'default' => 1,
              'type' => 'boolean',
              'notnull' => true,
              ));

@@ -56,3 +56,10 @@ default:
 
     # i18n
     default_culture:        en        # Default user culture
+
+    zend_lib_dir:           %SF_LIB_DIR%
+
+    autoloading_functions:
+
+       - [sfZendFrameworkBridge, autoload]
+

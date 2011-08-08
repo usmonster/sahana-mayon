@@ -20,7 +20,7 @@ abstract class BaseagReportForm extends BaseFormDoctrine
       'report_description'    => new sfWidgetFormInputText(),
       'created_at'            => new sfWidgetFormDateTime(),
       'updated_at'            => new sfWidgetFormDateTime(),
-      'ag_lucene_search_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agLuceneSearch')),
+      'ag_lucene_search_list' => new sfWidgetFormDoctrineChoice(array('multiple' => true, 'model' => 'agSearch')),
     ));
 
     $this->setValidators(array(
@@ -29,7 +29,7 @@ abstract class BaseagReportForm extends BaseFormDoctrine
       'report_description'    => new sfValidatorPass(array('required' => false)),
       'created_at'            => new sfValidatorDateTime(),
       'updated_at'            => new sfValidatorDateTime(),
-      'ag_lucene_search_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agLuceneSearch', 'required' => false)),
+      'ag_lucene_search_list' => new sfValidatorDoctrineChoice(array('multiple' => true, 'model' => 'agSearch', 'required' => false)),
     ));
 
     $this->validatorSchema->setPostValidator(

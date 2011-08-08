@@ -1,35 +1,79 @@
-====== Staff Management Walk-Through ======
-
+====== Staff Management Tutorial ======
 
 ===== Creating New Staff =====
 
-Staff records in Agasti represent potential workforce resources for your emergency response and there are two ways to add new records: manual and [[manual:user:staff:import]].  This page will walk you through creating a new staff resource and, later on in this walk-through, you'll be instructed on importing a staff records file.
+Staff records in Agasti represent the potential workforce for your emergency response and there are two ways to add new records: manual and [[manual:user:staff:import]].  This page will walk you through creating a new staff resource manually and, later on in this Tutorial, you'll be instructed on how to import a staff records file should you wish to maintain staff lists via an imported Microsoft Excel 2003 spreadsheet.
 
 ===== Reference Information =====
 
 ==== Things To Know ====
 
-  * **Staff Resources** are used when creating staff deployment rules in a Scenario.  If you plan to use a portion of your available staff records (instead of all staff), or if you want to deploy some staff with a higher priority than others, to add a staff's resource type and/or the [[manual:user:organizations|organization]] they are associated with.
+  * **Staff Resources** are used when creating staff deployment rules in a Scenario.  Staff Resources can be thought of as staff roles. Each individual staff member may provide multiple staff resources but will only be utilized as the type that has the most immediate need during deployment.  If you plan to use a portion of your available staff records (instead of all staff), or if you want to deploy some staff with a higher priority than others, be sure to add a staff's resource type and the [[manual:user:organizations|organization]] they are associated with to their record.
   * [[manual:user:organizations|Organization]] information can be customized through the Organization module and, ideally, will be entered before staff are created (though staff records can be updated later).
 
-===== Walk-Through =====
+===== Tutorial =====
 
-{{:manual:user:staff:newstaff.png|}}
+From the Staff Management page click "Add Staff" to create a new staff record.  For ease of reference the Tutorial for this page is broken up with instructions following the image for a section of the form.
+
+==== Add Staff Resources ====
+
+{{:manual:user:staff:screenshot_070.png|Add Resources}}
+
+Begin by adding resources to the record.  The form defaults to the first option in each drop-down.  *Be sure to add a resource or they will be saved as the default.*
+  * **Staff Resource Type** - Select the type, similar to the role, that the staff member will have.
+  * **Status** - Select the Status of this resource record
+  * **Organization** - Select the organization associated with this staff type.
+Staff can have multiple resources associated with their record; however only one of each type. To add another resource click "Add Staff Resource".
+
+==== Add Primary Information ====
+
+{{:manual:user:staff:new_primary.png|Add Primary Information}}
+
+Add the staff members primary information:
+  * Names
+    * Given Name - Also known as first name.
+    * Middle Name - Middle name or initial
+    * Family Name - Also known as last name
+  * **Languages**
+    * Language Name - Select the language from the drop down
+    * Read, Write, and Speak - These drop downs are for language proficiency reading, writing, and speaking.  Select the proficiency in each from the drop down.
+  * **Sex** - Select the gender of the staff member
+  * **Date of Birth** - Select the staff member's date of birth
+
+==== Add Contact Information ====
+
+{{:manual:user:staff:new_contact.png|New Staff Contact Information}}
+
+Enter the email and phone information:
+  * Depending on your messaging method email, may be the primary way to contact your staff pool.  Email should be properly formatted to be effective.  Example: name@domain.com
+  * Enter the contact phone numbers for the person. Phone numbers should be entered as 5559991111×1234
+
+==== Save the Record ====
+
+{{:manual:user:staff:new_buttons.png|New Staff Buttons}}
+
+At the bottom of the page there are several action buttons:
+  * **Save** will save and allow you to continue editing this staff record
+  * **Save and Continue** will save and create another new staff record
+  * **Back to List** will cancel the new record and return to the staff list.
 
 ===== FAQ =====
 
-  * **What are Staff Resources?** - A "Staff Resource" is a person and their skills; for example a person with medical training can be labelled as a 'nurse' or 'doctor' in Agasti.  Later on, when a [[manual:user:scenario|scenario]] is created, deployment rules will also be created to dictate how staff will be assigned.  Instead of deploying individual staff the staff resource types will be determined and the available individuals matched to jobs.
-  * **Why not just assign people to facilities?** - It's hard to know when planning an emergency response who is going to be affected and who is going to be available to respond.  To ensure the most needed roles are filled Agasti waits to know who is available; which happens during an active event.
+  * **What are Staff Resources?** - A "Staff Resource" is a person and their skills; for example a person with medical training can be labelled as a 'nurse' or 'doctor' in Agasti.  Later on, when a [[manual:user:scenario|scenario]] is created, deployment rules will also be created to dictate how staff will be assigned.  Instead of deploying individual staff, the staff resource types will be determined and the available individuals matched to jobs.
+  * **Why not just assign people to facilities?** - When planning a response it's hard to know who is going to be affected and who of the staff is going to be available.  To ensure the most needed roles are filled, Sahana Agasti waits to know who is available; which happens during an active event.
 ====== Continue ======
 
-[[manual:user:staff:list|{{ :manual:user:next.png|}}]] 
-[[manual:user:staff:staff_creation_walkthrough|{{:manual:user:previous.png?135 }}]]
+When you have finished creating the staff record click "Save" at the bottom to save the record, then click "Back to List" to move to the staff list.  Then click "Next" below to move to the next step in the Tutorial.
+
+[[manual:user:staff:staff_creation_Tutorial|{{:manual:user:previous.jpg?135|Introduction }}]]
+[[manual:user:staff:list|{{ :manual:user:next.jpg?135|List}}]] 
+
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
 
-  - [[manual:user:staff:staff_creation_walkthrough|Introduction]]
+  - [[manual:user:staff:staff_creation_Tutorial|Introduction]]
   - **Create New Staff**
   - [[manual:user:staff:list|Listing Staff]]
   - [[manual:user:staff:edit|Editing Staff Records]]

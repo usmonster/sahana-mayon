@@ -1,9 +1,4 @@
-<h2>Event Management</h2>
-<p>Event deployment depends largely on when the event will begun/began.  To facilitate pre-deployment
-  settings and the activation of the event's resources, please provide a name for the event and
-  the Zero Hour.</p>
-<p><b>Note:</b> the name should be specific.  For example: a hurricane response to Hurricane Erica could
-  be named "Erica" in Agasti.</p>
+<h2>Event Management</h2> <br/>
 <?php if(isset($scenarioName)){
 
 ?>
@@ -15,10 +10,54 @@ else{
 }
 
 if(!isset($event_name)){
+
   $event_name ="";
 }
+else{
+  $event_name = $sf_data->getRaw('event_name');
+}
 ?>
-<br>
 
-<h3>Event Pre-Deployment</h3>
+<p>Below are checks that the scenario is correct and ready to be deployed.
+  If the checks show "OK" and the staff pool meets your staffing needs, proceed with deployment.
+  If not, return to the scenario and make corrections.  </p>
+
+<?php
+$checkResults = $sf_data->getRaw('checkResults');
+if (isset($checkResults)) {
+    echo '<table class="headerLess">';
+    // echo '<tr class="head"><th class="row1">Warning</th><th>Count</th></tr>';
+    foreach ($checkResults as $label => $checkResult) {
+        echo '<tr>';
+        echo '<td><span>' . $label . '</span></td><td class="highlightedText">';
+        if (is_array($checkResult)) {
+            echo implode(', ', $checkResult);
+            if (empty($checkResult)) {
+                echo '<span style="color:green; font-weight:bold">OK</span>';
+            }
+        } else {
+            echo $checkResult;
+        }
+        echo '</td></tr>';
+    }
+    echo '</table>';
+}
+
+if (isset($errMsg)) {
+    echo '<p>' . $errMsg . '</p>';
+}
+?>
+
+<form action="<?php echo url_for('event/meta?event=' .  urlencode($event_name)) ?>" method="post">
+
+<?php
+//We should have some warnings here in case you're missing something.
+?>
+ 
+</form><br/>
+<h3>Provide a name for the event and the Zero Hour:</h3>
+<p><strong>Note:</strong> the name should be specific.  For example: a hurricane response to Hurricane Erica could
+  be named "Erica".  The Zero Hour is the time the event occurred or is expected to occur.
+<strong>Remember</strong> facility activation time is based on Zero Hour.</p>
 <?php include_partial('metaForm', array('metaForm' => $metaForm, 'scenario_id' => $scenario_id, 'event_name' => $event_name)) ?>
+<br />

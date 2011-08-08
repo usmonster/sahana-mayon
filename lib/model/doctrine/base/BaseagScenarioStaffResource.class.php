@@ -9,6 +9,7 @@
  * @property integer $scenario_id
  * @property integer $staff_resource_id
  * @property integer $deployment_weight
+ * @property boolean $delete_flag
  * @property agStaffResource $agStaffResource
  * @property agScenario $agScenario
  * 
@@ -16,12 +17,14 @@
  * @method integer                 getScenarioId()        Returns the current record's "scenario_id" value
  * @method integer                 getStaffResourceId()   Returns the current record's "staff_resource_id" value
  * @method integer                 getDeploymentWeight()  Returns the current record's "deployment_weight" value
+ * @method boolean                 getDeleteFlag()        Returns the current record's "delete_flag" value
  * @method agStaffResource         getAgStaffResource()   Returns the current record's "agStaffResource" value
  * @method agScenario              getAgScenario()        Returns the current record's "agScenario" value
  * @method agScenarioStaffResource setId()                Sets the current record's "id" value
  * @method agScenarioStaffResource setScenarioId()        Sets the current record's "scenario_id" value
  * @method agScenarioStaffResource setStaffResourceId()   Sets the current record's "staff_resource_id" value
  * @method agScenarioStaffResource setDeploymentWeight()  Sets the current record's "deployment_weight" value
+ * @method agScenarioStaffResource setDeleteFlag()        Sets the current record's "delete_flag" value
  * @method agScenarioStaffResource setAgStaffResource()   Sets the current record's "agStaffResource" value
  * @method agScenarioStaffResource setAgScenario()        Sets the current record's "agScenario" value
  * 
@@ -55,6 +58,11 @@ abstract class BaseagScenarioStaffResource extends sfDoctrineRecord
              'type' => 'integer',
              'notnull' => true,
              'length' => 1,
+             ));
+        $this->hasColumn('delete_flag', 'boolean', null, array(
+             'type' => 'boolean',
+             'default' => 0,
+             'notnull' => true,
              ));
 
 

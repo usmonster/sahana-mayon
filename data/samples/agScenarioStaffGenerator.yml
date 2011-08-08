@@ -1,0 +1,9 @@
+agScenarioStaffGenerator:
+  1:
+    scenario_id: 1
+    search_id: 1
+    search_weight: 1
+  2:
+    scenario_id: 2
+    search_id: 2
+    search_weight: 1

@@ -13,10 +13,63 @@ staff_search:
 staff_filter:
   url:   /staff/filter
   param: { module: agStaff, action: filter }
+staff_checkaddress:
+  url: /staff/checkaddress
+  param: { module: agStaff, action: checkaddress }
 staff_import:
   url:   /staff/import
+  #class: sfRequestRoute
   param: { module: agStaff, action: import }
+  #TODO: check on this
+  requirements:
+    sf_method: [post]
+
+staff_download:
+  url:  /staff/download
+  param: { module: agStaff, action: download }
+
+#staff_import_show:
+#  url:   /staff/import
+#  #class: sfRequestRoute
+#  param: { module: agStaff, action: ??? }
+#  #TODO: check on this
+#  requirements:
+#    sf_method: [get]
+staff_import_cancel:
+  url:   /staff/import
+  #class: sfRequestRoute
+  param: { module: agStaff, action: cancelimport }
+  #TODO: check on this
+  requirements:
+    sf_method: [delete]
+staff_import_clear:
+  url:   /staff/import
+  #class: sfRequestRoute
+  param: { module: agStaff, action: clearimport }
+  #TODO: check on this
+  requirements:
+    sf_method: [delete]
+staff_export_unprocessed:
+  url:   /staff/import/exportunprocessed
+  param: { module: agStaff, action: exportunprocessed }
+staff_addstaffresource:
+  url:   /staff/addstaffresource
+  param: { module: agStaff, action: addstaffresource }
+staff_deletestaffresource:
+  url:   /staff/deletestaffresource
+  param: { module: agStaff, action: deletestaffresource }
+staff_type:
+  url: /staff/stafftypes
+  param: { module: agStaff, action: stafftypes }
+staff_poll:
+  url:  /staff/poll
+  param: { module: agStaff, action: poll }
+
+staff_status:
+  url: /staff/status.:sf_format
+  param: { module: agStaff, action: status }
 
 staff:
   url: /staff/:action/*
   param: { module: agStaff }
+

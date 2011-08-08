@@ -13,17 +13,17 @@ abstract class BaseagReportGeneratorFormFilter extends BaseFormFilterDoctrine
   public function setup()
   {
     $this->setWidgets(array(
-      'report_id'        => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agReport'), 'add_empty' => true)),
-      'lucene_search_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agLuceneSearch'), 'add_empty' => true)),
-      'created_at'       => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
-      'updated_at'       => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
+      'report_id'  => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agReport'), 'add_empty' => true)),
+      'search_id'  => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agSearch'), 'add_empty' => true)),
+      'created_at' => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
+      'updated_at' => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
     ));
 
     $this->setValidators(array(
-      'report_id'        => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agReport'), 'column' => 'id')),
-      'lucene_search_id' => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agLuceneSearch'), 'column' => 'id')),
-      'created_at'       => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
-      'updated_at'       => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
+      'report_id'  => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agReport'), 'column' => 'id')),
+      'search_id'  => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agSearch'), 'column' => 'id')),
+      'created_at' => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
+      'updated_at' => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 00:00:00')), 'to_date' => new sfValidatorDateTime(array('required' => false, 'datetime_output' => 'Y-m-d 23:59:59')))),
     ));
 
     $this->widgetSchema->setNameFormat('ag_report_generator_filters[%s]');
@@ -43,11 +43,11 @@ abstract class BaseagReportGeneratorFormFilter extends BaseFormFilterDoctrine
   public function getFields()
   {
     return array(
-      'id'               => 'Number',
-      'report_id'        => 'ForeignKey',
-      'lucene_search_id' => 'ForeignKey',
-      'created_at'       => 'Date',
-      'updated_at'       => 'Date',
+      'id'         => 'Number',
+      'report_id'  => 'ForeignKey',
+      'search_id'  => 'ForeignKey',
+      'created_at' => 'Date',
+      'updated_at' => 'Date',
     );
   }
 }

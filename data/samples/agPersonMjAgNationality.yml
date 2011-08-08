@@ -1,0 +1,38 @@
+# Samples of person's nationality
+# Requirement: Pre-load person object samples and nationality data dictionary.
+
+agPersonMjAgNationality:
+  1:
+    agPerson: 1
+    agNationality: abkhazia
+  2:
+    agPerson: 2
+    agNationality: afghanistan
+  3:
+    agPerson: 3
+    agNationality: albania
+  4:
+    agPerson: 4
+    agNationality: algeria
+  5:
+    agPerson: 5
+    agNationality: american_samoa
+  6:
+    agPerson: 6
+    agNationality: andorra
+  7:
+    agPerson: 7
+    agNationality: angola
+  8:
+    agPerson: 8
+    agNationality: anguilla
+  9:
+    agPerson: 9
+    agNationality: antigua_and_barbuda1
+  10:
+    agPerson: 10
+    agNationality: argentina
+  11:
+    agPerson: 10
+    agNationality: armenia
+

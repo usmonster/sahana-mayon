@@ -10,11 +10,11 @@
       <tr>
         <td colspan="2">
           <?php echo $form->renderHiddenFields(false) ?>
-          &nbsp;<a href="<?php echo url_for('admin/list') ?>" class="linkButton">Back to list</a>
+          &nbsp;<a href="<?php echo url_for('admin/list') ?>" class="generalButton">Back to List</a>
           <?php if (!$form->getObject()->isNew()): ?>
-            &nbsp;<?php echo link_to('Delete', 'admin/creddelete?id='.$form->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?>
+            &nbsp;<?php echo link_to('Delete', 'admin/creddelete?id='.$form->getObject()->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'deleteButton')) ?>
           <?php endif; ?>
-          <input type="submit" value="Save" class="saveLinkButton" />
+          <input type="submit" value="Save" class="continueButton" />
         </td>
       </tr>
     </tfoot>

@@ -1,0 +1,9 @@
+===== Email =====
+
+Depending on your messaging method email, may be the primary way to contact your staff pool.
+
+==== Format ====
+
+Sahana Agasti will only accept properly formatted emails.
+
+**Example:** name@domain.com

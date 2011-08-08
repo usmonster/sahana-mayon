@@ -18,724 +18,928 @@
 class eventActions extends agActions
 {
 
-  public static $event_id;
-  public static $event_name;
-  public static $event;
-  protected $searchedModels = array('agEventStaff');
+    public static $event_id;
+    public static $event_name;
+    public static $event;
+    protected $searchedModels = array('agEventStaff');
 
-  /**
-   * Displays the index page for the event module.
-   *
-   * Users will see a list of existing events and be given the option to create
-   * a new event from a list of existing scenarios.
-   *
-   * @param sfWebRequest $request
-   * */
-  public function executeIndex(sfWebRequest $request)
-  {
-    $this->scenarioForm = new sfForm();
-    $this->scenarioForm->setWidgets(array(
-      'ag_scenario_list' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agScenario'))
-    ));
+    //TODO: put this in the global actions file?
+    public function executeCancelimport(sfWebRequest $request)
+    {
+        $abortFlagId = 'aborted'; //implode('_', array('abort', $this->moduleName, 'import'));
+        //$this->getContext()->set($abortFlagId, TRUE);
+        //TODO: get import data directory root info from global param
+        $importDataRoot = sfConfig::get('sf_upload_dir');
+        $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $this->moduleName;
+        $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+        if (is_writable($statusFile)) {
+            $status = sfYaml::load($statusFile);
+            $status[$abortFlagId] = TRUE;
+            file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
+        }
+
+        return sfView::NONE;
+    }
+
+    public function executeClearimport(sfWebRequest $request)
+    {
+        agImportNormalization::resetImportStatus($this->moduleName);
+        return sfView::NONE;
+    }
+
+    /**
+     * Import Replies is used in event messaging to receive input from a messaging vendor
+     * in the form of a spreadsheet with responses of Yes or No to messages
+     * @param sfWebRequest $request
+     * @return results
+     */
+    public function executeImportreplies(sfWebRequest $request)
+    {
+        $this->startTime = microtime(true);
+
+        $uploadedFile = $_FILES['import'];
+
+        //print("<pre>" . print_r($_FILES, true) . "</pre>");
+
+        $this->importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
 
 
-    $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
-    $this->ag_events = agDoctrineQuery::create()
-            ->select('a.*')
-            ->from('agEvent a')
-            ->execute();
-  }
+        if (!move_uploaded_file($uploadedFile['tmp_name'], $this->importPath)) {
+            return sfView::ERROR;
+        }
+        //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
-  public function executeFacilityresource(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
-    $this->xmlHttpRequest = $request->isXmlHttpRequest();
-    $this->facility_resource = agDoctrineQuery::create()
-            ->select()
-            ->from('agFacilityResource')
-            ->where('id = ?', $request->getParameter('facilityResourceId'))
-            ->execute()->getFirst();
-    $groupIds = agDoctrineQuery::create()
+        $this->importer = agMessageResponseHandler::getInstance(NULL, agEventHandler::EVENT_NOTICE);
+
+        $this->importer->processXlsImportFile($this->importPath);
+
+        $left = 1;
+        while ($left > 0) {
+            $left = $this->importer->processBatch();
+            // print_r($left);
+        }
+        $iterData = $this->importer->getIterData();
+        $this->totalRecords = $iterData['fetchCount'];
+        $this->successful = $iterData['processedSuccessful'];
+        $this->failed = $iterData['processedFailed'];
+        $this->unprocessed = $iterData['unprocessed'];
+
+        // Report elapsed time
+        $this->endTime = microtime(true);
+        $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+        $this->importTime = date("H:i:s", $time);
+
+        // Get the memory usage
+        $peakMemory = $this->importer->getPeakMemoryUsage();
+
+        // Format memory
+        $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+        if ($peakMemory <= 999) {
+            $peakMemory = 1;
+        }
+        for ($i = 0; $peakMemory > 999; $i++) {
+            $peakMemory /= 1024;
+        }
+        $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
+
+        // close out import components and create an xls if needed
+        $this->importer->concludeImport();
+        $downloadFile = $this->importer->getUnprocessedXLS();
+        $this->unprocessedXLS = $downloadFile;
+    }
+
+    public function executeDownload(sfWebRequest $request)
+    {
+        // being sure no other content wil be output
+        $this->setLayout(false);
+        //sfConfig::set('sf_web_debug', false);
+
+        $fileName = preg_replace("/\.zip/", "", $request->getParameter('filename'));
+
+        $filePath = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR
+            . 'data/downloads' . DIRECTORY_SEPARATOR
+            . $fileName . '.zip';
+
+
+        // check if the file exists
+        $this->forward404Unless(file_exists($filePath));
+
+        // Make sure the browser doesn't try to deliver a chached version
+        $this->getResponse()->setHttpHeader("Pragma", "public");
+        $this->getResponse()->setHttpHeader("Expires", "0");
+        $this->getResponse()->setHttpHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+
+        // Provide application and file info headers
+        $this->getResponse()->setHttpHeader("Content-Type", "application/zip");
+        $this->getResponse()->setHttpHeader("Content-Disposition", "attachment; filename='" . $fileName . ".zip'");
+        $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
+        $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($filePath));
+
+        $this->getResponse()->sendHttpHeaders();
+        $this->getResponse()->setContent(readfile($filePath));
+        $this->getResponse()->send();
+
+
+        return sfView::NONE;
+    }
+
+    /**
+     * Displays the index page for the event module.
+     *
+     * Users will see a list of existing events and be given the option to create
+     * a new event from a list of existing scenarios.
+     *
+     * @param sfWebRequest $request
+     * */
+    public function executeIndex(sfWebRequest $request)
+    {
+        $this->scenarioForm = new sfForm();
+        $this->scenarioForm->setWidgets(
+            array(
+              'ag_scenario_list' => new sfWidgetFormDoctrineChoice(
+                  array('multiple' => false, 'model' => 'agScenario')
+              )
+            )
+        );
+
+
+        $this->scenarioForm->getWidgetSchema()->setLabel('ag_scenario_list', false);
+
+        // Query all existing events and their info for display.
+        $query = agDoctrineQuery::create()
+            ->select('e.event_name')
+            ->addSelect('esc.id')
+            ->addSelect('s.scenario')
+            ->addSelect('es.id')
+            ->addSelect('est.event_status_type')
+            ->from('agEvent e')
+            ->innerJoin('e.agEventStatus es')
+            ->innerJoin('es.agEventStatusType est')
+            ->innerJoin('e.agEventScenario esc')
+            ->innerJoin('esc.agScenario s')
+            ->where(
+                'EXISTS (
+                  SELECT s.id
+                    FROM agEventStatus es2
+                    WHERE es2.event_id = es.event_id
+                      AND es2.time_stamp <= CURRENT_TIMESTAMP
+                    HAVING MAX(es2.time_stamp) = es.time_stamp)'
+        );
+        $this->allEvents = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+    }
+
+    public function executeFacilityresource(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        $this->xmlHttpRequest = $request->isXmlHttpRequest();
+        // This is the event_facility_resource.
+        $this->event_facility_resource = agDoctrineQuery::create()
+                ->select()
+                ->from('agEventFacilityResource')
+                ->where('id = ?', $request->getParameter('eventFacilityResourceId'))
+                ->execute()->getFirst();
+        $groupIds = agDoctrineQuery::create()
             ->select('id')
             ->from('agEventFacilityGroup')
             ->where('event_id = ?', $this->event_id)
             ->execute(array(), 'single_value_array');
-    $this->event_facility_resource = agDoctrineQuery::create()
-            ->select('')
-            ->from('agEventFacilityResource')
-            ->where('facility_resource_id = ?', $this->facility_resource['id'])
-              ->andWhereIn('event_facility_group_id', $groupIds)
-            ->execute()->getFirst();
-    $this->facilityResourceActivationTimeForm = new agSingleEventFacilityResourceActivationTimeForm();//new agFacilityResourceAcvitationForm($this->event_facility_resource);
-    $this->facilityResourceActivationTimeForm->setDefault('event_facility_resource_id', $this->event_facility_resource['id']);
-    $b = $this->facilityResourceActivationTimeForm;
-    $c = $this->event_facility_resource;
-    $d = 3;
-  }
-
-  /**
-   * event/facilitygroups provides the means to manage activation time for facility
-   * resources that are in active groups which do not have activation times set 
-   * @param sfWebRequest $request
-   */
-  public function executeFacilitygroups(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
-
-    $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
-    $this->facility_group = NULL;
-    $facility_groups = array();
-    foreach ($this->active_facility_groups as $event_fgroup) {
-      $facility_groups[$event_fgroup['efg_id']] = $event_fgroup['efg_event_facility_group'];
+        // This is the actual facility resource that will have access to names and other information.
+        $this->facility_resource = agDoctrineQuery::create()
+                ->select('')
+                ->from('agFacilityResource')
+                ->where('id = ?', $this->event_facility_resource['facility_resource_id'])
+                ->execute()->getFirst();
+        $this->facilityResourceActivationTimeForm = new agSingleEventFacilityResourceActivationTimeForm(); //new agFacilityResourceAcvitationForm($this->event_facility_resource);
+        $this->facilityResourceActivationTimeForm->setDefault(
+            'event_facility_resource_id', $this->event_facility_resource['id']
+        );
     }
 
-    $this->facilitygroupsForm = new sfForm();
-    $this->facilitygroupsForm->setWidgets(array(
-      'facility_group_list' => new sfWidgetFormChoice(array('multiple' => false, 'choices' => $facility_groups))// ,'onClick' => 'submit()'))
-    ));
-
-    $this->xmlHttpRequest = $request->isXmlHttpRequest();
-    //the facility group choices above (if selected) will pare down the returned facility resources below FOR a facility group
-    if ($request->isMethod(sfRequest::POST)) {
-      if ($request->getParameter('facility_group_filter')) {
-        $this->facility_group = $request->getParameter('facility_group_list');
-        $this->facilitygroupsForm->setDefault('facility_group_list', $this->facility_group);
-      } else {
-        $fac_activation = $request->getPostParameters();
-        $timeconverter = new agValidatorDateTime();
-        $timeconverted = $timeconverter->convertDateArrayToUnix($fac_activation['facility_resource_activation']['activation_time']);
-
-
-        foreach ($fac_activation['facility_resource_activation'] as $fac_activate) {
-          if (is_array($fac_activate) && isset($fac_activate['operate_on'])) {
-            $eFacResActivation = new agEventFacilityResourceActivationTime();
-
-            $eFacResActivation->setActivationTime($timeconverted);
-            $eFacResActivation->setEventFacilityResourceId($fac_activate['event_facility_resource_id']);
-            $eFacResActivation->save();
-
-            //agEventFacilityHelper::setFacilityActivationTime($eventFacilityResourceIds, $activationTime, $shiftChangeRestriction, $releaseStaff, $conn);
-          }
-        }
-      }
-    }
-
-    $this->event_facility_resources = agEventFacilityHelper::returnFacilityResourceActivation($this->event_id, $this->facility_group);
-
-    $this->fgroupForm = new agFacilityResourceAcvitationForm($this->event_facility_resources);
-  }
-
-  /**
-   * the event/deploy action provides a user with pre-deployment check information and the ability
-   * to deploy an event if a scenario was given.
-   * @param sfWebRequest $request
-   */
-  public function executeDeploy(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
-    $this->scenario_id = agDoctrineQuery::create()
+    /**
+     * the event/deploy action provides a user with pre-deployment check information and the ability
+     * to deploy an event if a scenario was given.
+     * @param sfWebRequest $request
+     */
+    public function executeDeploy(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        $this->scenario_id = agDoctrineQuery::create()
             ->select('scenario_id')
             ->from('agEventScenario')
             ->where('event_id = ?', $this->event_id)
             ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
-    if ($this->scenario_id) {
-      $this->scenarioName = Doctrine::getTable('agScenario')
-              ->findByDql('id = ?', $this->scenario_id)
-              ->getFirst()->scenario;
-
-      $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
-   //p-code
-    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event['event_name'] . ' Deploy');
-  //end p-code
-      if ($request->isMethod(sfRequest::POST)) {
-        agEventMigrationHelper::migrateScenarioToEvent($this->scenario_id, $this->event_id);
-        $this->redirect('event/active?event=' . urlencode($this->event_name));
-      }
-    } else {
-      $this->forward404('you cannot deploy an event without a scenario.');
-    }
-
-
-  }
-
-  /**
-   * setEventBasics sets up basic information used across most event actions
-   * @param sfWebRequest $request
-   */
-  private function setEventBasics(sfWebRequest $request)
-  {
-    if ($request->getParameter('id')) {
-      $this->event_id = $request->getParameter('id');
-      if ($this->event_id != "") {
-        $this->event_name = Doctrine_Core::getTable('agEvent')
-                ->findByDql('id = ?', $this->event_id)
-                ->getFirst()->getEventName();
-      }
-      //TODO step through to check and see if the second if is needed
-    }
-    if ($request->getParameter('event')) {
-      $this->event = agDoctrineQuery::create()
-              ->select()
-              ->from('agEvent')
-              ->where('event_name = ?', urldecode($request->getParameter('event')))
-              ->execute()->getFirst();
-
-      $this->event_id = $this->event->id;
-      $this->event_name = $this->event->event_name;
-      //TODO step through to check and see if the second if is needed
-    }
-  }
-
-  /**
-   * the meta action (event/meta) gives the user CRU functionality of event meta information
-   * @param sfWebRequest $request
-   */
-  public function executeMeta(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
-    if ($this->event_id != "") { //if someone is coming here from an edit context
-      $eventMeta = Doctrine::getTable('agEvent')
-              ->findByDql('id = ?', $this->event_id)
-              ->getFirst();
-    } else {
-      $eventMeta = null;
-    }
-
-    if ($request->isMethod(sfRequest::POST) && !$request->getParameter('ag_scenario_list')) {
-      //if someone has posted, but is not creating an event from a scenario.
-      $this->metaForm = new PluginagEventDefForm($eventMeta);
-      $this->metaForm->bind($request->getParameter($this->metaForm->getName()), $request->getFiles($this->metaForm->getName()));
-      if ($this->metaForm->isValid()) {
-
-        $ag_event = $this->metaForm->save();
-
-        $eventStatusObject = agDoctrineQuery::create()
-                ->from('agEventStatus a')
-                ->where('a.id =?', $ag_event->getId())
-                ->execute()->getFirst();
-
-        $ag_event_status = isset($eventStatusObject) ? $eventStatusObject : new agEventStatus();
-        $ag_event_status->setEventStatusTypeId(3);
-        $ag_event_status->setEventId($ag_event->getId());
-        $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
-        $ag_event_status->save();
-
-        //have to do this for delete also, i.e. delete the event_scenario object
-        if ($request->getParameter('scenario_id') && $request->getParameter('scenario_id') != "") {
-          //the way this is constructed we will always have a scenario_id
-          $ag_event_scenario = new agEventScenario();
-          $ag_event_scenario->setScenarioId($request->getParameter('scenario_id'));
-          $ag_event_scenario->setEventId($ag_event->getId());
-          $ag_event_scenario->save();
-          $this->redirect('event/deploy?event=' . urlencode($ag_event->getEventName()));
+        if ($this->scenario_id) {
+            if ($request->isMethod(sfRequest::POST)) {
+                $mh = new agEventMigrationHelper();
+                $this->migrationCount = $mh->migrateScenarioToEvent($this->scenario_id, $this->event_id);
+                $this->redirect('event/active?event=' . urlencode($this->event_name));
+            } else {
+                $this->redirect('event/active?event=' . urlencode($this->event_name));
+            }
+        } else {
+            $this->forward404('you cannot deploy an event without a scenario.');
         }
-        $this->blackOutFacilities = agEventFacilityHelper::returnActivationBlacklistFacilities($ag_event->getId(), $ag_event->getZeroHour());
-        $this->redirect('event/active?event=' . urlencode($ag_event->getEventName()));
-      }
-    } else {
-      //get scenario information passed from previous form
-      //we should save the scenario that this event is based on
-      if ($request->getParameter('ag_scenario_list')) {
-        $this->scenario_id = $request->getParameter('ag_scenario_list');
-        $this->scenarioName = Doctrine::getTable('agScenario')
-                ->findByDql('id = ?', $this->scenario_id)
-                ->getFirst()->scenario;
-      }
-      $this->metaForm = new PluginagEventDefForm($eventMeta);
     }
 
-    //as a rule of thumb, actions should post to themself and then redirect
-   //p-code
-  if(isset($eventMeta->event_name)){
-    $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Event Management');
-  } else{
-    $this->getResponse()->setTitle('Sahana Agasti New Event Management');
-  }
-  //end p-code
-  }
+    /**
+     * setEventBasics sets up basic information used across most event actions
+     * @param sfWebRequest $request
+     */
+    private function setEventBasics(sfWebRequest $request)
+    {
+//    if ($request->getParameter('id')) {
+//      $this->event_id = $request->getParameter('id');
+//      if ($this->event_id != "") {
+//        $this->event_name = Doctrine_Core::getTable('agEvent')
+//                ->findByDql('id = ?', $this->event_id)
+//                ->getFirst()->getEventName();
+//      }
+//      //TODO step through to check and see if the second if is needed
+//    }
 
-  /**
-   * event/list shows a listing of events, this provides the list data to the listSuccess template
-   * @param sfWebRequest $request
-   */
-  public function executeList(sfWebRequest $request)
-  {
-    $this->ag_events = agDoctrineQuery::create()
+        if ($request->getParameter('event')) {
+            $this->event = agDoctrineQuery::create()
+                    ->select()
+                    ->from('agEvent')
+                    ->where('event_name = ?', urldecode($request->getParameter('event')))
+                    ->execute()->getFirst();
+
+            $this->event_id = $this->event->id;
+            $this->event_name = $this->event->event_name;
+            $this->organization_name = agGlobal::getParam('organization_name');
+            $this->vesuvius_address = agGlobal::getParam('vesuvius_address');
+        }
+    }
+
+    /**
+     * the meta action (event/meta) gives the user CRU functionality of event meta information
+     * @param sfWebRequest $request
+     */
+    public function executeMeta(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        $this->isPreDeploy = 1;
+        $this->eventStatusType = NULL;
+        $this->eventStatusTypeId = NULL;
+        $this->checkResults = NULL;
+        $conn = Doctrine_Manager::connection();
+
+        if (empty($this->event_id)) {
+            $eventMeta = NULL;
+
+            if ($request->hasParameter('ag_scenario_list')) {
+                $this->scenario_id = $request->getParameter('ag_scenario_list');
+            } elseif ($request->hasParameter('scenario_id')) {
+                $this->scenario_id = $request->getParameter('scenario_id');
+            } else {
+                $this->scenario_id = NULL;
+            }
+        } else {
+
+            $eventMeta = agDoctrineQuery::create($conn)
+                ->from('agEvent e')
+                ->where('e.id = ?', $this->event_id)
+                ->execute();
+            $eventMeta = $eventMeta[0];
+
+            $this->scenario_id = agDoctrineQuery::create()
+                ->select('scenario_id')
+                ->from('agEventScenario')
+                ->where('event_id = ?', $this->event_id)
+                ->execute(array(), Doctrine_CORE::HYDRATE_SINGLE_SCALAR);
+
+            $eventStatus = agDoctrineQuery::create()
+                ->select('es.id')
+                ->addSelect('est.id')
+                ->addSelect('est.event_status_type')
+                ->addSelect('est.active')
+                ->from('agEvent AS e')
+                ->innerJoin('e.agEventStatus AS es')
+                ->innerJoin('es.agEventStatusType AS est')
+                ->where('e.id = ?', $this->event_id)
+                ->andWhere('EXISTS (SELECT es1.id
+                                FROM agEventStatus AS es1
+                                WHERE es1.event_id = es.event_id
+                                HAVING MAX(es1.time_stamp) = es.time_stamp)')
+                ->execute(array(), Doctrine_Core::HYDRATE_NONE);
+
+            $eventStatusId = (empty($eventStatus)) ? null : $eventStatus[0][0];
+            $eventStatusTypeId = (empty($eventStatus)) ? null : $eventStatus[0][1];
+            $eventStatusType = (empty($eventStatus)) ? null : $eventStatus[0][2];
+        }
+
+        $this->metaForm = new PluginagEventDefForm($eventMeta);
+
+        // Query for pre-migration statistics if the event is associated to a scenario.
+        if (!empty($this->scenario_id)) {
+            $this->scenarioName = Doctrine::getTable('agScenario')
+                    ->findByDql('id = ?', $this->scenario_id)
+                    ->getFirst()->scenario;
+
+            $this->checkResults = agEventMigrationHelper::preMigrationCheck($this->scenario_id);
+        }
+
+        // Saving event meta.
+        if ($request->isMethod(sfRequest::POST)) {
+            try {
+                // here we check our current transaction scope and create a transaction or savepoint
+                $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
+                if ($useSavepoint) {
+                    $conn->beginTransaction(__FUNCTION__);
+                } else {
+                    $conn->beginTransaction();
+                }
+
+                if ($request->hasParameter('Deploy') || $request->hasParameter('Save')) {
+
+                    $deployStatus = agGlobal::getParam('event_deploy_status');
+                    $deployStatusId = Doctrine_Core::getTable('agEventStatusType')
+                            ->findBy('event_status_type', $deployStatus)->getFirst()->id;
+
+                    $this->metaForm->bind(
+                        $request->getParameter($this->metaForm->getName()), $request->getFiles($this->metaForm->getName())
+                    );
+
+                    $ag_event = $this->metaForm->save($conn);
+
+                    if ($this->metaForm->isValid()) {
+
+                        // Save event meta updates as deploy event status.
+                        if ($request->hasParameter('Deploy')) {
+                            $event_status_type_id = $deployStatusId;
+                        } else { // Save event meta updates as default event status.
+                            $event_status_type_id = (empty($eventStatusTypeId)) ?
+                                agEventHelper::returnDefaultEventStatus() :
+                                $eventStatusTypeId;
+                        }
+
+                        $agEventStatusTable = $conn->getTable('agEventStatus');
+                        if (empty($eventStatusId)) {
+                            $agEventStatus = new agEventStatus($agEventStatusTable, TRUE);
+                        } else {
+                            $agEventStatus = $agEventStatusTable->find($eventStatusId);
+                        }
+                        $agEventStatus->setEventId($ag_event->getId());
+                        $agEventStatus->setTimeStamp(new Doctrine_Expression('CURRENT_TIMESTAMP'));
+                        $agEventStatus->setEventStatusTypeId($event_status_type_id);
+                        $agEventStatus->save($conn);
+
+                        $eventScenarioId = agDoctrineQuery::create()
+                            ->select('es.id')
+                            ->from('agEventScenario AS es')
+                            ->where('es.event_id = ?', $this->event_id)
+                            ->andWhere('es.scenario_id = ?', $request->getParameter('scenario_id'))
+                            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+                        // Save event-scenario entry
+                        if (!empty($this->scenario_id)) {
+                            $eventScenTable = $conn->getTable('agEventScenario');
+                            if (empty($eventScenarioId)) {
+                                $ag_event_scenario = new agEventScenario($eventScenTable, TRUE);
+                            } else {
+                                $ag_event_scenario = $eventScenTable->find($eventScenarioId);
+                            }
+
+                            $ag_event_scenario->setScenarioId($this->scenario_id);
+                            $ag_event_scenario->setEventId($ag_event->getId());
+                            $ag_event_scenario->save($conn);
+                        }
+                    }
+                }
+                if ($useSavepoint) {
+                    $conn->commit(__FUNCTION__);
+                } else {
+                    $conn->commit();
+                }
+            } catch (Exception $e) {
+                // rollback
+                if ($useSavepoint) {
+                    $conn->rollback(__FUNCTION__);
+                } else {
+                    $conn->rollback();
+                }
+
+                $this->errMsg = 'Cannot save event.  Error Msg: ' . $e->getMessage();
+                return sfView::SUCCESS;
+            }
+        }
+
+        if ($request->isMethod(sfRequest::POST)) {
+            if ($request->hasParameter('Deploy')) {
+                $eventName = $this->metaForm->getObject()->getEventName();
+                $this->getRequest()->setParameter('event', $eventName);
+                $this->forward($request->getParameter('module'), 'deploy');
+            } elseif ($request->hasParameter('Save')) {
+                $this->redirect('event/active?event=' . urlencode($ag_event->getEventName()));
+            }
+        }
+
+        //p-code
+        if (isset($eventMeta->event_name)) {
+
+            // Redirect back to the active page if the existing event is not in pre-deploy state.
+            if (strtoupper(agGlobal::getParam('event_pre_deploy_status')) <> strtoupper($eventStatusType)) {
+                $this->redirect('event/active?event=' . urlencode($eventMeta->event_name));
+            }
+
+            $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Event Management');
+        } else {
+            $this->getResponse()->setTitle('Sahana Agasti: New Event');
+        }
+
+        //end p-code
+    }
+
+    /**
+     * event/list shows a listing of events, this provides the list data to the listSuccess template
+     * @param sfWebRequest $request
+     */
+    public function executeList(sfWebRequest $request)
+    {
+        $this->ag_events = agDoctrineQuery::create()
             ->select('a.*')
             ->from('agEvent a')
             ->execute();
-  }
+    }
 
-  /**
-   * provides event staff pool management functions.
-   * @param sfWebRequest $request request coming from web
-   */
-  public function executeStaffpool(sfWebRequest $request)
+    public function preExecute()
+    {
+        // The code inserted here is executed at the beginning of each action call
+        //$this->getUser()->signin($sfGuardUserObject);
+        //$this->getUser()->signin();
+
+    }
+
+    public function executeExportfacilities(sfWebRequest $request)
+    {
+
+        //TODO put switch in here to check for type of request
+        $this->setEventBasics($request);
+
+        /*
+          $event_facility_query = agEventFacilityResource::getEventFacilityResourceQuery($this->event_id);
+
+          $this->event_facility_resources =
+          $event_facility_query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+         */
+
+
+        $facilityData = new agEventFacilityExporter($this->event_id);
+        $jsonData = $facilityData->getJsonExport();
+
+
+        // Make sure the browser doesn't try to deliver a chached version
+        $this->getResponse()->setHttpHeader("Pragma", "public");
+        $this->getResponse()->setHttpHeader("Expires", "0");
+        $this->getResponse()->setHttpHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+
+        // Provide application and file info headers
+        $this->getResponse()->setHttpHeader("Content-Type", "application/json");
+
+
+
+        $this->renderText($jsonData);
+
+        return sfView::NONE;
+    }
+
+  public function executeExportcontacts(sfWebRequest $request)
   {
     $this->setEventBasics($request);
+    $this->info = array();
 
-    $this->saved_searches = $existing = Doctrine_Core::getTable('AgScenarioStaffGenerator')
-            ->findAll();
+    if ($request->hasParameter('type')) {
+      $type = $request->getParameter('type');
 
-    //get the possible filters from our request eg. &fr=1&type=generalist&org=volunteer
-    $filters = array();
-    foreach ($request->getParameterHolder() as $parameter => $filter) { //('filter')
-      if ($parameter == 'fr') {
-        $filters['essh.event_facility_resource_id'] = $filter;
+      switch ($type) {
+        case 'pre':
+          $exporter = agSendWordNowPreDeploy::getInstance($this->event_id, 'staff_contacts_predeploy');
+          break;
+        case 'post':
+          $exporter = agSendWordNowPostDeploy::getInstance($this->event_id, 'staff_contacts_postdeploy');
+          break;
       }
-      if ($parameter == 'st') {
-        $filters['sr.staff_resource_type_id'] = $filter;
-      }
-      if ($parameter == 'so') {
-        $filters['sro.organization_id'] = $filter;
-      }
-    }
-    //set up inputs for filter form
-    $inputs = array(
-      'st' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => true)), // 'class' => 'filter')),
-      'so' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => true)), //, 'class' => 'filter'))
-      'fr' => new sfWidgetFormDoctrineChoice(array('model' => 'agEventFacilityResource', 'label' => 'Facility Resource', 'add_empty' => true))
-    );
-    /** @todo set defaults from the request */
-    $this->filterForm = new sfForm(null, array(), false);
-    //$this->filterForm->getWidgetSchema()->setNameFormat('filter[%s]');
-    foreach ($inputs as $key => $input) {
-      $input->setAttribute('class', 'filter');
-      $this->filterForm->setWidget($key, $input);
+
+      $this->fileInfo = $exporter->getExport();
+
+      $this->getResponse()->setHttpHeader('Content-Type', 'application/zip');
+      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' .
+        $this->fileInfo['filename'] . '"');
+
+      $exportFile = file_get_contents($this->fileInfo['path'] . DIRECTORY_SEPARATOR .
+        $this->fileInfo['filename']);
+
+      $this->getResponse()->setContent($exportFile);
+      $this->getResponse()->send();
     }
 
-    //begin construction of query used for listing
-    $query = agDoctrineQuery::create()
-            ->select('es.id, essh.id, esh.event_facility_resource_id, efr.facility_resource_id, fr.facility_id, f.facility_name, sr.id, srt.staff_resource_type, sro.id, o.organization, s.id, s.staff_status_id, ss.staff_status, p.id, ess.staff_allocation_status_id')//, sas.staff_allocation_status') //maybe we should only get the id since it's needed for dropdown
-            ->from('agEventStaff es,
-              es.agEventStaffShift essh,
-              essh.agEventShift esh,
-              esh.agEventFacilityResource efr,
-              efr.agFacilityResource fr,
-              fr.agFacility f,
-              es.agStaffResource sr,
-              sr.agStaffResourceType srt,
-              sr.agStaffResourceOrganization sro,
-              sro.agOrganization o,
-              sr.agStaff s,
-              s.agStaffStatus ss,
-              s.agPerson p,
-              es.agEventStaffStatus ess')
-            //ess.agStaffAllocationStatus sas')
-            ->where('es.event_id = ?', $this->event_id);
-
-    if (sizeof($filters) > 0) {
-      foreach ($filters as $field => $filter) {
-        $query->andWhere($field . ' = ?', $filter);
-      }
-    }
-
-    if ($request->isMethod(sfRequest::POST)) {
-      if ($request->getParameter('event_status')) {
-        foreach ($request->getParameter('event_status') as $event_status) {
-          //this is inefficient here as we are executing the same query in a loop to get associated objects
-//check to see if this staff member already has a status set.
-          $eventStaffStatusObject = agDoctrineQuery::create()
-                  ->from('agEventStaffStatus a')
-                  ->where('a.event_staff_id =?', $event_status['event_staff_id'])
-                  ->fetchOne();
-//NEW
-          if (!$eventStaffStatusObject) {
-            $eventStaffStatusObject = new agEventStaffStatus();
-            $eventStaffStatusObject->time_stamp = date('Y-m-d H:i:s', time());
-            $eventStaffStatusObject->event_staff_id = $event_status['event_staff_id'];
-            $eventStaffStatusObject->staff_allocation_status_id = $event_status['status'];
-            $eventStaffStatusObject->save();
-          } else {
-//UPDATE  ONLY IF staff_allocation_status has changed
-            //technically this should always be an update, by the time a staff member is in an event
-            if ($eventStaffStatusObject->staff_allocation_status_id != $event_status['status']) {
-              $eventStaffStatusObject->time_stamp = date('Y-m-d H:i:s', time());
-              //$eventStaffStatusObject->event_staff_id = $event_status['event_staff_id'];
-              $eventStaffStatusObject->staff_allocation_status_id = $event_status['status'];
-              $eventStaffStatusObject->save();
-            }
-          }
-          //we should throw a check here to see if the most recent status is the same as incoming
-        }
-      }
-    }
-    $eventStaff = array();
-    $ag_event_staff = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-    foreach ($ag_event_staff as $key => $value) {
-      $person_array[] = $value['p_id'];
-      //$remapped_array[$ag_event_staff['es_id']] = $
-    }
-    $names = new agPersonNameHelper($person_array); //we need to get persons from the event staff ids that are returned here
-    $person_names = $names->getPrimaryNameByType();
-
-    //$names->
-    //this is the desired format of the return array:
-    $this->widget = new sfForm();
-    $this->widget->getWidgetSchema()->setNameFormat('event_status[][%s]');
-    $this->widget->setWidget('status', new sfWidgetFormDoctrineChoice(array('model' => 'agStaffAllocationStatus', 'method' => 'getStaffAllocationStatus')));
-
-    //the agStaffAllocationStatus ID coming from each of the selections will be saved to ag_Event_staff_status.
-    $this->widget->getWidgetSchema()->setLabel('status', false);
-    /** @todo set defaults for each status drop down from the web request */
-    $this->form_action = 'event/staffpool?event=' . $this->event_name;
-    foreach ($ag_event_staff as $staff => $value) {
-      $result_array[] = array(
-        'fn' => $person_names[$value['p_id']]['given'],
-        'ln' => $person_names[$value['p_id']]['family'],
-        'organization_name' => $value['o_organization'],
-        'status' => $value['ss_staff_status'],
-        'type' => $value['srt_staff_resource_type'],
-        'facility' => $value['f_facility_name'],
-        'es_id' => $value['es_id'],
-        'ess_staff_allocation_status_id' => $value['ess_staff_allocation_status_id']
-      );
-    }
-
-    $this->ag_event_staff = $result_array;
-    //$thingy = $query->getSqlQuery();
-//    foreach ($this->ag_event_staff as $eventFacilityGroup) {
-//      $tempArray = $this->queryForTable($eventFacilityGroup->id);
-//      foreach ($tempArray as $ta) {
-//        array_push($eventStaff, $ta);
-//      }
-//    }
-    //$this->facilityGroupArray = $facilityGroupArray;
-    $this->pager = new agArrayPager(null, 10);
-
-
-    $this->pager->setResultArray($this->ag_event_staff);
-    $this->pager->setPage($this->getRequestParameter('page', 1));
-    $this->pager->init();
-    //set up the widget for use in the ' list form '
-
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
-   //end p-code
+    $this->redirect('event/messaging?event=' . urlencode($this->event_name));
   }
-
-  /**
-   * provide event shift CRUD
-   * @param sfWebRequest $request
-   */
-  public function executeShifts(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
+    /**
+     * provide event shift CRUD
+     * @param sfWebRequest $request
+     */
+    public function executeShifts(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
 //CREATE  / UPDATE
-    if ($request->isMethod(sfRequest::POST)) {
-      if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
-        $this->eventshiftform = new agEventShiftForm();
-      } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
-        $ag_event_shift = Doctrine_Core::getTable('agEventShift')
-                ->findByDql('id = ?', $request->getParameter('shiftid'))
-                ->getFirst();
-        $this->eventshiftform = new agEventShiftForm($ag_event_shift);
-      } elseif ($request->getParameter('delete')) {
+        if ($request->isMethod(sfRequest::POST)) {
+            if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
+                $this->eventshiftform = new agEventShiftForm();
+            } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
+                $ag_event_shift = Doctrine_Core::getTable('agEventShift')
+                    ->findByDql('id = ?', $request->getParameter('shiftid'))
+                    ->getFirst();
+                $this->eventshiftform = new agEventShiftForm($ag_event_shift);
+            } elseif ($request->getParameter('delete')) {
 //DELETE
-      }
-      $this->eventshiftform->bind($request->getParameter($this->eventshiftform->getName()), $request->getFiles($this->eventshiftform->getName()));
-      $formvalues = $request->getParameter($this->eventshiftform->getName());
-      if ($this->eventshiftform->isValid()) { //form is not passing validation because the bind is failing?
-        $ag_event_shift = $this->eventshiftform->save();
-        $this->generateUrl('event_shifts', array('module' => 'event',
-          'action' => 'shifts', 'event' => $this->event_name, 'shiftid' => $ag_event_shift->getId()));
-      }
-      $this->redirect('event/shifts?event=' . urlencode($this->event_name)); //need to pass in event id
-    } else {
+            }
+            $this->eventshiftform->bind($request->getParameter($this->eventshiftform->getName()), $request->getFiles($this->eventshiftform->getName()));
+            $formvalues = $request->getParameter($this->eventshiftform->getName());
+            if ($this->eventshiftform->isValid()) { //form is not passing validation because the bind is failing?
+                $ag_event_shift = $this->eventshiftform->save();
+                $this->generateUrl('event_shifts', array('module' => 'event',
+                  'action' => 'shifts', 'event' => $this->event_name, 'shiftid' => $ag_event_shift->getId()));
+            }
+            $this->redirect('event/shifts?event=' . urlencode($this->event_name)); //need to pass in event id
+        } else {
 //READ
-      if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
-        $this->eventshiftform = new agEventShiftForm();
-        $this->setTemplate('editshift');
-      } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
+            if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
+                $this->eventshiftform = new agEventShiftForm();
+                $this->setTemplate('editshift');
+            } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
 
-        $ag_event_shift = Doctrine_Core::getTable('agEventShift')
-                ->findByDql('id = ?', $request->getParameter('shiftid'))
-                ->getFirst();
+                $ag_event_shift = Doctrine_Core::getTable('agEventShift')
+                    ->findByDql('id = ?', $request->getParameter('shiftid'))
+                    ->getFirst();
 
-        $this->eventshiftform = new agEventShiftForm($ag_event_shift);
-        $this->setTemplate('editshift');
-      } else {
+                $this->eventshiftform = new agEventShiftForm($ag_event_shift);
+                $this->setTemplate('editshift');
+            } else {
 //LIST
+                $query = agDoctrineQuery::create()
+                    ->select('es.*, efr.*, efg.id, efg.event_facility_group, e.*, af.*, fr.*, frt.*, srt.*, ess.*, est.*')
+                    ->from('agEventShift as es')
+                    ->leftJoin('es.agEventStaffShift ess')
+                    ->leftJoin('ess.agEventStaff est')
+                    ->leftJoin('es.agStaffResourceType srt')
+                    ->leftJoin('es.agEventFacilityResource AS efr')
+                    ->leftJoin('efr.agEventFacilityGroup AS efg')
+                    ->leftJoin('efr.agFacilityResource fr, fr.agFacility af, fr.agFacilityResourceType frt')
+                    ->leftJoin('efg.agEvent AS e')
+                    ->where('e.id = ?', $this->event_id);
+
+                /**
+                 * Create pager
+                 */
+                $this->pager = new sfDoctrinePager('agEventShift', 20);
+
+                /**
+                 * Set pager's query to our final query including sort
+                 * parameters
+                 */
+                $this->pager->setQuery($query);
+
+                /**
+                 * Set the pager's page number, defaulting to page 1
+                 */
+                $this->pager->setPage($request->getParameter('page', 1));
+                $this->pager->init();
+            }
+        }
+
+        //p-code
+        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
+        //end p-code
+    }
+
+    /**
+     * provides basic information about an active event, the template gives links to event management
+     * @param sfWebRequest $request
+     */
+    public function executeActive(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        $availableStaffStatus = agEventStaffHelper::returnAvailableEventStaffStatus();
+
+        $zero_hour_ts = agEvent::getEventZeroHour($this->event_id);
+        $this->zero_hour = date("Y-m-d H:i e", $zero_hour_ts);
+
+        $eventAvailableStaff = agDoctrineQuery::create()
+            ->select('es.id, COUNT(es.id), ess.id, sr.id')
+            ->from('agEventStaff es')
+            ->addFrom('es.agEventStaffStatus ess')
+            ->where('ess.staff_allocation_status_id = ?', $availableStaffStatus)
+            ->andWhere('es.event_id = ?', $this->event_id)
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        $this->eventAvailableStaff = $eventAvailableStaff['es_COUNT'];
+
+        $this->eventStaffPool = agDoctrineQuery::create()
+            ->select('COUNT(es.id)')
+            ->from('agEventStaff es')
+            ->where('es.event_id = ?', $this->event_id)
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        if (empty($this->eventStaffPool)) {
+            $this->eventStaffPool = 0;
+        }
+
+        $this->event_description = agDoctrineQuery::create()
+            ->select('ed.description, e.id')
+            ->from('agEvent e')
+            ->addFrom('e.agEventDescription ed')
+            ->where('e.id = ?', $this->event_id)
+            ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+        if (empty($this->event_description[1])) {
+            $this->event_description = '---';
+        } else {
+            $this->event_description = $this->event_description[1];
+        }
+
+        $this->event_facility_groups = agDoctrineQuery::create()
+            ->select('COUNT(efg.id)')
+            ->from('agEventFacilityGroup efg')
+            ->where('efg.event_id = ?', $this->event_id)
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        $this->event_facility_resources = agDoctrineQuery::create()
+            ->select('COUNT(efr.id)')
+            ->from('agEventFacilityResource efr')
+            ->leftJoin('efr.agEventFacilityGroup efg')
+            ->where('efg.event_id = ?', $this->event_id)
+            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+        //p-code
+        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
+
+
+        $current_status = agEventFacilityHelper::returnCurrentEventStatus($this->event_id);
+        if ($current_status != "") {
+            $cur_status = Doctrine::getTable('agEventStatusType')
+                    ->findByDql('id = ?', $current_status)
+                    ->getFirst()->event_status_type;
+        }
+        $this->upper_case_cur_Status = strtoupper($cur_status);
+
+        //end p-code
+    }
+
+    /**
+     * provides basic staff management in an event
+     * @param sfWebRequest $request
+     */
+    public function executeStaff(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+
+        //p-code
+        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+        //end p-code
+    }
+
+    /**
+     * provides a list of facility groups in an event, or all events
+     * also lists the facility resources in those facility groups and provides the ability to modify
+     * each resource's status
+     * @param sfWebRequest $request
+     */
+    public function executeListgroups(sfWebRequest $request)
+    {
+        if ($request->getParameter('event') != null && Doctrine::getTable('agEvent')->findByDql('where event_name = ?', $request->getParameter('event'))->getFirst() == false) {
+            $this->redirect('event/listgroups');
+        }
+        if ($request->getParameter('event') == null) {
+            $this->missingEvent = true;
+        }
+        $this->setEventBasics($request);
+
         $query = agDoctrineQuery::create()
-                ->select('es.*, efr.*, efg.id, efg.event_facility_group, e.*, af.*, fr.*, frt.*, srt.*, ess.*, est.*')
-                ->from('agEventShift as es')
-                ->leftJoin('es.agEventStaffShift ess')
-                ->leftJoin('ess.agEventStaff est')
-                ->leftJoin('es.agStaffResourceType srt')
-                ->leftJoin('es.agEventFacilityResource AS efr')
-                ->leftJoin('efr.agEventFacilityGroup AS efg')
-                ->leftJoin('efr.agFacilityResource fr, fr.agFacility af, fr.agFacilityResourceType frt')
-                ->leftJoin('efg.agEvent AS e')
-                ->where('e.id = ?', $this->event_id);
+            ->select('efg.id')
+            ->addSelect('efg.event_facility_group')
+            ->addSelect('fgt.facility_group_type')
+            ->addSelect('fgas.id')
+            ->addSelect('fgas.facility_group_allocation_status')
+            ->addSelect('ev.event_name')
+            ->addSelect('count(efr.event_facility_group_id)')
+            ->from('agEventFacilityGroup efg')
+            ->innerJoin('efg.agEventFacilityGroupStatus efgs')
+            ->innerJoin('efg.agFacilityGroupType fgt')
+            ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
+            ->innerJoin('efg.agEvent ev')
+            ->innerJoin('efg.agEventFacilityResource efr')
+            ->where('EXISTS (
+              SELECT s.id
+                FROM agEventFacilityGroupStatus s
+                WHERE s.event_facility_group_id = efgs.event_facility_group_id
+                  AND s.time_stamp <= CURRENT_TIMESTAMP
+                HAVING MAX(s.time_stamp) = efgs.time_stamp)')
+            ->groupBy('efg.event_facility_group');
+        // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
+        if ($this->event != "") {
+            $query->andWhere('efg.event_id = ?', $this->event_id);
+        }
 
-        /**
-         * Create pager
-         */
-        $this->pager = new sfDoctrinePager('agEventShift', 20);
+        $facilityResourceArray = array();
+        $this->facilityGroupArray = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
-        /**
-         * Set pager's query to our final query including sort
-         * parameters
-         */
-        $this->pager->setQuery($query);
+        foreach ($this->facilityGroupArray as $eventFacilityGroup) {
+            $facilityResourceArray[$eventFacilityGroup['efg_id']] = $this->groupResourceQuery($eventFacilityGroup['efg_id']);
+        }
+        $this->facilityResourceArray = $facilityResourceArray;
+        $this->pager = new agArrayPager(null, 10);
 
-        /**
-         * Set the pager's page number, defaulting to page 1
-         */
-        $this->pager->setPage($request->getParameter('page', 1));
+        if ($request->getParameter('sort') && $request->getParameter('order')) {
+            $sortColumns = array(
+              'group' => 'efg_event_facility_group',
+              'type' => 'fgt_facility_group_type',
+              'status' => 'fgas_facility_group_allocation_status',
+              'count' => 'efr_count',
+              'event' => 'ev_event_name');
+            $sort = $sortColumns[$request->getParameter('sort')];
+            agArraySort::$sort = $sort;
+            usort($this->facilityGroupArray, array('agArraySort', 'arraySort'));
+            if ($request->getParameter('order') == 'DESC') {
+                $this->facilityGroupArray = array_reverse($this->facilityGroupArray);
+            }
+        }
+        $this->pager->setResultArray($this->facilityGroupArray);
+        $this->pager->setPage($this->getRequestParameter('page', 1));
         $this->pager->init();
-      }
+
+        //p-code
+        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Facility Groups');
+        //end p-code
     }
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
-   //end p-code
-  }
-
-  /**
-   * provides the ability to add staff members into a shift
-   * @param sfWebRequest $request
-   */
-  public function executeStaffshift(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
-    $this->xmlHttpRequest = $request->isXmlHttpRequest();
-    $this->shift_id = $request->getParameter('shiftid');
-
-    $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => TRUE)), // 'class' => 'filter')),
-      'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => TRUE)),
-      'query_condition' => new sfWidgetFormInputHidden()
-        ////, 'class' => 'filter'))
-    ); //will have to set the class for the form elements elsewhere
-    //set up inputs for form
-    $filterForm = new sfForm();
-
-    foreach ($inputs as $key => $input) {
-      $input->setAttribute('class', 'filter');
-      $filterForm->setWidget($key, $input);
-    }
-    $this->filterForm = $filterForm;
-
-    if ($request->getParameter('Search')) {
-
-      $this->staffSearchForm = new sfForm();
-      $this->staffSearchForm->setWidget('add', new agWidgetFormSelectCheckbox(array('choices' => array(null)), array()));
-      $this->staffSearchForm->getWidgetSchema()->setLabel('add', false);
-      $lucene_query = $request->getParameter('query_condition');
-      //$lucene_query = $filter_form['query_condition'];
-      $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
-
-      /**
-       * @todo abstract the common operations here that are used in staff pool mangement to a helper class
-       */
-      $this->searchedModels = array('agEventStaff');  //we want the search model to be agEventStaff
-      //note, this does not provide ability to add event
-      parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
-    } elseif ($request->getParameter('Add')) {
-      $staffPotentials = $request->getPostParameter('resultform'); //('staff_list'); //ideally get only the widgets whose corresponding checkbox
-      foreach ($staffPotentials as $key => $staffAdd) {
-        //see if staff member exists in this shift already
-        $existing = Doctrine::getTable('agEventStaffShift')
-                ->findByDql('event_staff_id = ?', $this->shift_id)
-                ->getFirst();
-        if (!$existing) {
-          $existing = new agEventStaffShift();
-          $existing->setEventStaffId($key);
-          $existing->setEventShiftId($this->shift_id);
+    public function executeEventfacilityresource(sfWebRequest $request)
+    {
+        // Load Table
+        //
+    // This first conditional check is for displaying the facility resource table for a specific facility group.
+        // It is rendered inside of the expandable facility group table from listgroupsSuccess.
+        // This should be the only use of a GET request.
+        if ($request->isMethod(sfRequest::GET)) {
+            $this->facilityResourceArray = $this->groupResourceQuery($request->getParameter('eventFacResId'));
+            return $this->renderPartial('eventFacResTable', array('facilityResourceArray' => $this->facilityResourceArray));
         }
-        $existing->save();
-      }
-    } elseif ($request->getParameter('Remove')) {
-      //remove this staff member!
-    }
+        // POST handles all the rest. Loading the forms to replace the TD html, saving the forms, etc.
+        elseif ($request->isMethod(sfRequest::POST)) {
+            $params = $request->getPostParameters();
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff Shift');
-   //end p-code
-  }
+            // Render the Forms
+            if (isset($params['type']) && $params['type'] == 'resourceStatus') {
+                // This case is for loading the event-facility-resource-status form to replace the link that sumbitted
+                // the request.
+                $facilityResourceStatus = new agEventFacilityResourceStatus();
+                $facilityResourceStatus['event_facility_resource_id'] = ltrim($params['id'], 'res_stat_id_');
+                $facilityResourceStatus['facility_resource_allocation_status_id'] =
+                    agDoctrineQuery::create()
+                    ->select('id')
+                    ->from('agFacilityResourceAllocationStatus')
+                    ->where('facility_resource_allocation_status = ?', $params['current'])
+                    ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-  /**
-   * @todo todo
-   * @param sfWebRequest $request
-   */
-  public function executeDashboard(sfWebRequest $request)
-  {
-    
-  }
+                $resourceStatusForm = new agTinyEventFacilityResourceStatusForm($facilityResourceStatus);
+                $resourceStatusForm->getWidget('facility_resource_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
 
-  /**
-   * provides basic information about an active event, the template gives links to event management
-   * @param sfWebRequest $request
-   */
-  public function executeActive(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
+                return $this->renderPartial('global/includeForm', array(
+                  'form' => $resourceStatusForm,
+                  'set' => $params['type'],
+                  'id' => $params['id'],
+                  'url' => 'event/eventfacilityresource?eventFacilityResourceId=' . ltrim($params['id'], 'res_stat_id_')
+                    )
+                );
+            } elseIf (isset($params['type']) && $params['type'] == 'resourceActivationTime') {
+                // This case is for loading the even-facility-resource-activation-time form in place of the submittal link.
+                if ($params['current'] != '----') {
+                    $eventFacilityResourceActivationTime = agDoctrineQuery::create()
+                        ->select()
+                        ->from('agEventFacilityResourceActivationTime')
+                        ->where('event_facility_resource_id = ?', ltrim($params['id'], 'res_act_id_'))
+                        ->fetchOne(array(), Doctrine_Core::HYDRATE_RECORD);
+                    $eventFacilityResourceActivationTime['activation_time'] = date('m/d/Y H:i', $eventFacilityResourceActivationTime['activation_time']);
+                } else {
+                    $eventFacilityResourceActivationTime = new agEventFacilityResourceActivationTime();
+                    $eventFacilityResourceActivationTime['event_facility_resource_id'] = ltrim($params['id'], 'res_act_id_');
+                }
+                $eventFacilityResourceActivationTimeForm = new agTinyEventFacilityResourceActivationTimeForm($eventFacilityResourceActivationTime);
+                $eventFacilityResourceActivationTimeForm->getWidget('activation_time')->setAttribute('class', 'inputGray submitTextToForm set110');
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Management');
-   //end p-code
-    
-  }
+                return $this->renderPartial('global/includeForm', array('form' => $eventFacilityResourceActivationTimeForm,
+                  'set' => $params['type'],
+                  'id' => $params['id'],
+                  'url' => 'event/eventfacilityresource?eventFacilityResourceId=' . ltrim($params['id'], 'res_act_id_')
+                    )
+                );
+            }
+            // Save Forms/Objects
+            if ($request->getParameter('ag_event_facility_resource_status')) {
+                // This first condition handles ag_event_facility_resource_status objects. No update here, only creation of new objects.
+                $eventFacilityActivationStatus = new agEventFacilityResourceStatus();
+                $eventFacilityActivationStatus['facility_resource_allocation_status_id'] = $params['ag_event_facility_resource_status']['facility_resource_allocation_status_id'];
+                $eventFacilityActivationStatus['event_facility_resource_id'] = $params['ag_event_facility_resource_status']['event_facility_resource_id'];
+                $eventFacilityActivationStatus['time_stamp'] = date('Y-m-d H:i:s', time());
+                $eventFacilityActivationStatus->save();
 
-  /**
-   * provides basic staff management in an event
-   * @param sfWebRequest $request
-   */
-  public function executeStaff(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
+                $refresh = agDoctrineQuery::create()
+                    ->select('facility_resource_allocation_status')
+                    ->from('agFacilityResourceAllocationStatus')
+                    ->where('id = ?', $params['ag_event_facility_resource_status']['facility_resource_allocation_status_id'])
+                    ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+                return $this->renderText(json_encode(array('status' => 'success', 'refresh' => $refresh)));
+            } elseIf ($request->getParameter('ag_event_facility_resource_activation_time')) {
+                // This condition handes ag_event_facility_resource_activation_time objects. This is almost always
+                // an update, unless the resource has no activation time already.
+                $params['ag_event_facility_resource_activation_time']['activation_time'] = strtotime($params['ag_event_facility_resource_activation_time']['activation_time']);
+                // Catch if an invalid date/time has been entered into the activation form and return response
+                // text to be rendered inside the input if it is invalid.
+                if ($params['ag_event_facility_resource_activation_time']['activation_time'] == false) {
+//          return $this->renderText('Invalid Date-Time');
+                    return $this->renderText(json_encode(array('status' => 'failure', 'refresh' => 'Invalid Date-Time')));
+                }
+                // See if there's already and activation time set for this fac-res.
+                $eventFacilityResourceActivationTime = agDoctrineQuery::create()
+                    ->select()
+                    ->from('agEventFacilityResourceActivationTime')
+                    ->where('event_facility_resource_id = ?', $params['ag_event_facility_resource_activation_time']['event_facility_resource_id'])
+                    ->fetchOne(array(), Doctrine_Core::HYDRATE_RECORD);
+                // If there isn't, create a new object, assign values.
+                if ($eventFacilityResourceActivationTime == false) {
+                    $eventFacilityResourceActivationTime = new agEventFacilityResourceActivationTime();
+                    $eventFacilityResourceActivationTime['event_facility_resource_id'] = $params['ag_event_facility_resource_activation_time']['event_facility_resource_id'];
+                }
+                // In any case, set the time to whatever the new time is.
+                $eventFacilityResourceActivationTime['activation_time'] = $params['ag_event_facility_resource_activation_time']['activation_time'];
 
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
-   //end p-code
-  }
-
-  /**
-   * provides a list of facility groups in an event, or all events
-   * also lists the facility resources in those facility groups and provides the ability to modify
-   * each resource's status
-   * @param sfWebRequest $request
-   */
-  public function executeListgroups(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
-    $query = agDoctrineQuery::create()
-            ->select('a.*, afr.*, afgt.*, fr.*')
-            ->from('agEventFacilityGroup a, a.agEventFacilityResource afr, a.agFacilityGroupType afgt, a.agFacilityResource fr');
-
-    // If the request has an event parameter, get only the agEventFacilityGroups for that event. Otherwise, all in the system will be returned.
-    if ($this->event != "") {
-      $query->where('a.event_id = ?', $this->event_id);
-    }
-    $facilityGroupArray = array();
-    $this->ag_event_facility_groups = $query->execute();
-    foreach ($this->ag_event_facility_groups as $eventFacilityGroup) {
-      $tempArray = $this->queryForTable($eventFacilityGroup->id);
-      foreach ($tempArray as $ta) {
-        array_push($facilityGroupArray, $ta);
-      }
-    }
-    $this->facilityGroupArray = $facilityGroupArray;
-    $this->pager = new agArrayPager(null, 10);
-
-    if ($request->getParameter('sort') && $request->getParameter('order')) {
-      $sortColumns = array('group' => 'efg_event_facility_group',
-        'name' => 'f_facility_name',
-        'code' => 'fr_facility_resource_code',
-        'status' => 'ras_facility_resource_allocation_status',
-        'time' => 'efrat_activation_time',
-        'type' => 'fgt_facility_group_type',
-        'event' => 'e_event_name');
-      $sort = $sortColumns[$request->getParameter('sort')];
-      agArraySort::$sort = $sort;
-      usort($facilityGroupArray, array('agArraySort', 'arraySort'));
-      if ($request->getParameter('order') == 'DESC') {
-        $facilityGroupArray = array_reverse($facilityGroupArray);
-      }
-    }
-    $this->pager->setResultArray($facilityGroupArray);
-    $this->pager->setPage($this->getRequestParameter('page', 1));
-    $this->pager->init();
-
-   //p-code
-  $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Facility Groups');
-   //end p-code
-  }
-
-  /**
-   * Calls the groupdetailSuccess template.
-   *
-   * The template is used to display information about all event facilities in
-   * an event facility group. The status of any of those facilities or of the group
-   * can also be changed. This action will normally post to a modal dialog, but can
-   * also post to the main browser window.
-   *
-   * @param sfWebRequest $request
-   * */
-  public function executeGroupdetail(sfWebRequest $request)
-  {
-    $this->event = agDoctrineQuery::create()
-            ->select()
-            ->from('agEvent')
-            ->where('event_name = ?', urldecode($request->getParameter('event')))
-            ->fetchOne();
-    $this->eventFacilityGroup = agDoctrineQuery::create()
-            ->select()
-            ->from('agEventFacilityGroup')
-            ->where('event_facility_group = ?', urldecode($request->getParameter('group')))
-            ->andWhere('event_id = ?', $this->event->id)
-            ->fetchOne();
-    $this->xmlHttpRequest = $request->isXmlHttpRequest();
-    if ($request->isMethod(sfRequest::POST)) {
-      // Check which type of data is coming through. Are you changing resource status
-      // or group status? Then build an object with the incoming values and some
-      // $request parameters.
-      if ($request->getParameter('resource_allocation_status')) {
-        // Find the most recent activation status for the facility resource.
-        // $staffed and $unstaffed will also be set for use in the if below.
-        $activationStatus = agEventFacilityHelper::getCurrentEventFacilityResourceStatus($this->event->id, array($request->getParameter('event_facility_resource_id')));
-        $staffed = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', 1);
-        $unstaffed = agEventFacilityHelper::getFacilityResourceAllocationStatus('staffed', 0);
-
-        $resourceAllocation = new agEventFacilityResourceStatus();
-        $resourceAllocation->event_facility_resource_id = $request->getParameter('event_facility_resource_id');
-        $resourceAllocation->facility_resource_allocation_status_id = $request->getParameter('resource_allocation_status');
-        $resourceAllocation->time_stamp = date('Y-m-d H:i:s', time());
-        if (in_array($activationStatus[$request->getParameter('event_facility_resource_id')], $unstaffed)) {
-          $resourceAllocation->save();
-//          return $this->renderText('event/' . urlencode($this->event->event_name) . '/facilityresource/' . urlencode($request->getParameter('facility_resource_code')));
-          return $this->renderText('facilityresource/' . urlencode($request->getParameter('facility_resource_id')));
+                $eventFacilityResourceActivationTime->save();
+                return $this->renderText(json_encode(array('status' => 'success', 'refresh' => date('m/d/Y H:i', $params['ag_event_facility_resource_activation_time']['activation_time']))));
+            }
         }
-
-        $resourceAllocation->save();
-        $a = 'yay';
-      } elseif ($request->getParameter('group_allocation_status')) {
-        $groupAllocation = new agEventFacilityGroupStatus();
-        $groupAllocation->event_facility_group_id = $this->eventFacilityGroup->id;
-        $groupAllocation->facility_group_allocation_status_id = $request->getParameter('group_allocation_status');
-        $groupAllocation->time_stamp = date('Y-m-d H:i:s', time()); //time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
-        $groupAllocation->save();
-      }
     }
-    $this->results = $this->queryForTable($this->eventFacilityGroup->id);
 
-    $statusIds = agEventFacilityHelper::returnCurrentEventFacilityGroupStatus($this->event->id);
+    public function executeEventfacilitygroup(sfWebRequest $request)
+    {
+        // Get the incoming params.
+        $params = $request->getPostParameters();
 
-    $query = agDoctrineQuery::create()
-            ->select('s.event_facility_group_id')
-            ->addSelect('s.facility_group_allocation_status_id')
-            ->from('agEventFacilityGroupStatus s')
-            ->whereIn('s.id', array_keys($statusIds));
-    // Returns fgroup_id as key, status_id as val
-    $statusQuery = $query->execute(array(), 'key_value_pair');
+        if (isset($params['type']) && $params['type'] == 'groupStatus') {
+            // Build an agEventFacilityGroupStatus object from incoming params, then stick it in a form.
+            $groupAllocationStatus = new agEventFacilityGroupStatus();
+            $groupAllocationStatus->event_facility_group_id = ltrim($params['id'], 'group_id_');
+            $groupAllocationStatus->facility_group_allocation_status_id =
+                agDoctrineQuery::create()
+                ->select('id')
+                ->from('agFacilityGroupAllocationStatus')
+                ->where('facility_group_allocation_status = ?', $params['current'])
+                ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+            $groupAllocationStatus->time_stamp = date('Y-m-d H:i:s', time());
+            $groupAllocationStatusForm = new agTinyEventFacilityGroupStatusForm($groupAllocationStatus);
+            $groupAllocationStatusForm->getWidget('facility_group_allocation_status_id')->setAttribute('class', 'inputGray submitTextToForm set100');
+            return $this->renderPartial('global/includeForm', array('form' => $groupAllocationStatusForm,
+              'set' => $params['type'],
+              'id' => $params['id'],
+              'url' => 'event/eventfacilitygroup'
+                )
+            );
+        }
+        // This checks for an incoming form. We'll always be saving here, not updating.
+        if ($request->getParameter('ag_event_facility_group_status')) {
+            $groupAllocationStatus = new agEventFacilityGroupStatus();
+            $groupAllocationStatus['event_facility_group_id'] = $params['ag_event_facility_group_status']['event_facility_group_id'];
+            $groupAllocationStatus['event_facility_group_id'] = $params['ag_event_facility_group_status']['event_facility_group_id'];
+            $groupAllocationStatus['facility_group_allocation_status_id'] = $params['ag_event_facility_group_status']['facility_group_allocation_status_id'];
+            $groupAllocationStatus['time_stamp'] = date('Y-m-d H:i:s', time());
 
-    $this->statusId = $statusQuery[$this->eventFacilityGroup->id];
-    $this->form = new sfForm();
-    $this->form->setWidgets(array(
-      'group_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityGroupAllocationStatus', 'method' => 'getFacilityGroupAllocationStatus')),
-      'resource_allocation_status' => new sfWidgetFormDoctrineChoice(array('model' => 'agFacilityResourceAllocationStatus', 'method' => 'getFacilityResourceAllocationStatus')),
-    ));
-  }
+            $groupAllocationStatus->save();
 
-  /**
-   * Gets facility information to display in the groupdetailSuccess template.
-   *
-   * @param int      $eventFacilityGroupId     The id of an agEventFacilityGroup.
-   *                                           Passed in from executeGroupDetail.
-   *                                           If this isn't present, all facilities
-   *                                           for an event will be displayed.
-   * @return array() $results                  A multidimensional array of facility
-   *                                           information. Each top level element
-   *                                           corresponds to a returned facility.
-   *
-   * */
-  private function queryForTable($eventFacilityGroupId = null)
-  {
-    $query = agDoctrineQuery::create()
+            $refresh = agDoctrineQuery::create()
+                ->select('facility_group_allocation_status')
+                ->from('agFacilityGroupAllocationStatus')
+                ->where('id = ?', $params['ag_event_facility_group_status']['facility_group_allocation_status_id'])
+                ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+            return $this->renderText(json_encode(array('status' => 'success', 'refresh' => $refresh)));
+        }
+    }
+
+    /**
+     * Gets facility resource information for facility resources within the facility group with the id
+     * passed to the function.
+     *
+     * @param int      $eventFacilityGroupId     The id of an agEventFacilityGroup.
+     *                                           Passed in from executeGroupDetail.
+     *                                           If this isn't present, all facilities
+     *                                           for an event will be displayed.
+     * @return array() $results                  A multidimensional array of facility
+     *                                           information. Each top level element
+     *                                           corresponds to a returned facility.
+     *
+     * */
+    private function groupResourceQuery($eventFacilityGroupId = null)
+    {
+        $query = agDoctrineQuery::create()
             ->select('efr.id')
             ->addSelect('f.facility_name')
-            ->addSelect('fr.facility_resource_code')
+            ->addSelect('f.facility_code')
             ->addSelect('frt.facility_resource_type')
+            ->addSelect('frt.facility_resource_type_abbr')
             ->addSelect('ras.facility_resource_allocation_status')
             ->addSelect('f.id')
             ->addSelect('fr.id')
@@ -744,6 +948,7 @@ class eventActions extends agActions
             ->addSelect('ers.id')
             ->addSelect('es.id')
             ->addSelect('efg.event_facility_group')
+            ->addSelect('efg.id')
             ->addSelect('fgt.facility_group_type')
             ->addSelect('e.event_name')
             ->addSelect('efrat.id')
@@ -766,61 +971,156 @@ class eventActions extends agActions
               AND efrs.time_stamp <= CURRENT_TIMESTAMP
             HAVING MAX(efrs.time_stamp) = ers.time_stamp)');
 
-    if (isset($eventFacilityGroupId)) {
-      $query->andWhere('efg.id = ?', $eventFacilityGroupId);
+        if (isset($eventFacilityGroupId)) {
+            $query->andWhere('efg.id = ?', $eventFacilityGroupId);
+        }
+        $results = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+        return $results;
     }
-    $results = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-    return $results;
-  }
 
-  /**
-   * provides the ability to give a description of an event, and close the event
-   * @todo other resolution operations
-   * @param sfWebRequest $request
-   */
-  public function executeResolution(sfWebRequest $request)
-  {
-    $this->setEventBasics($request);
-    if ($request->isMethod(sfRequest::POST)) {
-      //never going to be updating, will always be 'setting' the status, with the current timestamp
-      $ag_event_status = new agEventStatus();
+    /**
+     * provides the ability to give a description of an event, and close the event
+     * @todo other resolution operations
+     * @param sfWebRequest $request
+     */
+    public function executeResolution(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        if ($request->isMethod(sfRequest::POST)) {
+            //never going to be updating, will always be 'setting' the status, with the current timestamp
+            $ag_event_status = new agEventStatus();
 
-      $ag_event_status->setEventStatusTypeId($request->getParameter('event_status'));
-      $ag_event_status->setEventId($this->event_id);
-      $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
-      $ag_event_status->save();
-    }
-    $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
-    $this->resForm = new sfForm();
-    $this->resForm->setWidgets(array(
-      'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType')),
+            $ag_event_status->setEventStatusTypeId($request->getParameter('event_status'));
+            $ag_event_status->setEventId($this->event_id);
+            $ag_event_status->time_stamp = new Doctrine_Expression('CURRENT_TIMESTAMP');
+            $ag_event_status->save();
+            $this->redirect('event');
+        }
+        $this->active_facility_groups = agEventFacilityHelper::returnEventFacilityGroups($this->event_id, TRUE);
+        $this->resForm = new sfForm();
+        $this->resForm->setWidgets(array(
+          'event_status' => new sfWidgetFormDoctrineChoice(array('multiple' => false, 'model' => 'agEventStatusType', 'method' => 'getEventStatusType')),
 //      'event_id'     => new sfWidgetFormInputHidden()
-    ));
-    $currentStatus = agEventFacilityHelper::returnCurrentEventStatus($this->event_id);
-    $this->resForm->setDefault('event_status', $currentStatus);
-  }
+        ));
+        $currentStatus = agEventFacilityHelper::returnCurrentEventStatus($this->event_id);
+        $this->resForm->setDefault('event_status', $currentStatus);
+    }
 
-  /**
-   * @todo todo
-   * @param sfWebRequest $request
-   */
-  public function executePost(sfWebRequest $request)
-  {
-    
-  }
+    /**
+     * @todo todo
+     * @param sfWebRequest $request
+     */
+    public function executePost(sfWebRequest $request)
+    {
+        
+    }
 
-  /**
-   * deletes an event
-   * @param sfWebRequest $request
-   */
-  public function executeDelete(sfWebRequest $request)
-  {
-    $request->checkCSRFProtection();
+    /**
+     * deletes an event
+     * @param sfWebRequest $request
+     */
+    public function executeDelete(sfWebRequest $request)
+    {
+        $request->checkCSRFProtection();
 
-    $this->forward404Unless($ag_event = Doctrine_Core::getTable('agEvent')->find(array($request->getParameter('id'))), sprintf('Object ag_event does not exist (%s).', $request->getParameter('id')));
-    $ag_event->delete();
+        $this->forward404Unless($ag_event = Doctrine_Core::getTable('agEvent')->find(array($request->getParameter('id'))), sprintf('Object ag_event does not exist (%s).', $request->getParameter('id')));
+        $ag_event->delete();
 
-    $this->redirect('event/index');
-  }
+        $this->redirect('event/index');
+    }
 
+    /**
+     * provides the ability to add staff members into a shift
+     * @param sfWebRequest $request
+     */
+    public function executeStaffshift(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        $this->xmlHttpRequest = $request->isXmlHttpRequest();
+        $this->shift_id = $request->getParameter('shiftid');
+
+        $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => TRUE)), // 'class' => 'filter')),
+          'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => TRUE)),
+          'query_condition' => new sfWidgetFormInputHidden()
+            ////, 'class' => 'filter'))
+        ); //will have to set the class for the form elements elsewhere
+        //set up inputs for form
+        $filterForm = new sfForm();
+
+        foreach ($inputs as $key => $input) {
+            $input->setAttribute('class', 'filter');
+            $filterForm->setWidget($key, $input);
+        }
+        $this->filterForm = $filterForm;
+
+        if ($request->getParameter('Search')) {
+
+            $this->staffSearchForm = new sfForm();
+            $this->staffSearchForm->setWidget('add', new agWidgetFormSelectCheckbox(array('choices' => array(null)), array()));
+            $this->staffSearchForm->getWidgetSchema()->setLabel('add', false);
+            $lucene_query = $request->getParameter('query_condition');
+            //$lucene_query = $filter_form['query_condition'];
+            $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
+
+            /**
+             * @todo abstract the common operations here that are used in staff pool mangement to a helper class
+             */
+            $this->searchedModels = array('agEventStaff');  //we want the search model to be agEventStaff
+            //note, this does not provide ability to add event
+            parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
+            return $this->renderPartial('search/resultform', array(
+              'hits' => $this->hits,
+              'searchquery' => $this->searchquery,
+              'results' => $this->results,
+              'widget' => $this->widget,
+              'shift_id' => $this->shift_id,
+              'event_id' => $this->event_id
+            ));
+        } elseif ($request->getParameter('Add')) {
+            $staffPotentials = $request->getPostParameter('resultform'); //('staff_list'); //ideally get only the widgets whose corresponding checkbox
+            foreach ($staffPotentials as $key => $staffAdd) {
+                //see if staff member exists in this shift already
+                $existing = Doctrine::getTable('agEventStaffShift')
+                    ->findByDql('event_staff_id = ?', $this->shift_id)
+                    ->getFirst();
+                if (!$existing) {
+                    $existing = new agEventStaffShift();
+                    $existing->setEventStaffId($key);
+                    $existing->setEventShiftId($this->shift_id);
+                }
+                $existing->save();
+            }
+        } elseif ($request->getParameter('Remove')) {
+            //remove this staff member!
+        }
+
+        //p-code
+        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff Shift');
+        //end p-code
+    }
+
+    public function executeMessaging(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        //$this->eventName = urlencode($request->getParameter('event'));
+    }
+
+    public function executeDeploystaff(sfWebRequest $request)
+    {
+
+      $this->setEventBasics($request);
+
+      $staffDeployer = agEventStaffDeploymentHelper::getInstance($this->event_id);
+      $continue = TRUE;
+      while ($continue == TRUE) {
+          $batch = $staffDeployer->processBatch();
+          $continue = $batch['continue'];
+
+          print_r($batch);
+          $this->results = $batch;
+      }
+
+      //if the entire process is complete, give us some GOOD results
+      $this->results = $staffDeployer->save();
+    }
 }

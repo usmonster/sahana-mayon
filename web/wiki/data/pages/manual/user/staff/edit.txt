@@ -1,27 +1,69 @@
-====== Staff Management Walk-Through ======
-
+====== Staff Management Tutorial ======
 
 ===== Editing Staff Records =====
+Though staff resources can be updated through import, minor updates can be done on individual staff records through the application.  Here you can update the languages known, contact information, and resources available.
 
 ===== Reference Information =====
 
+==== Things To Know ====
+  * By now you know that a Staff Resource is the combination of a staff information in Sahana Agasti and the Resource that they could be deployed as.  To ensure an accurate staff pool (used in scenario) the information on available staff should be maintained as closely as possible.
+===== Tutorial =====
+For ease of reference, the different sections and possible updates are outlined in the breakdowns below:
 
-===== Walk-Through =====
+==== Staff Resource Updates ====
+{{:manual:user:staff:edit_staff_resource.png?700}}
 
+=== Deleting Resources ===
+To delete a resource record from an existing staff record click the orange icon {{:manual:user:staff:delete_icon.png|}} on the right of the associated record. 
+
+=== Adding Resources ===
+To add a resource type to an existing staff record click the {{:manual:user:staff:add_staff_resource.png|}} link just below the existing resources.
+
+==== Information Updates ====
+
+To edit the name, language, email, phone, or address in a staff record, update the requested information.
+=== Primary Information ===
+
+{{:manual:user:staff:edit_primary.png|Edit Primary Information}}
+Editing primary information:
+  * Names
+    * Given Name - Also known as first name.
+    * Middle Name - Middle name or initial
+    * Family Name - Also known as last name
+  * **Languages**
+    * Language Name - Select the language from the drop down
+    * Read, Write, and Speak - These drop downs are for language proficiency reading, writing, and speaking.  Select the proficiency in each from the drop down.
+  * **Sex** - Select the gender of the staff member
+  * **Date of Birth** - Select the staff member's date of birth
+
+=== Contact Information ===
+
+{{:manual:user:staff:edit_contact.png|Edit Contact Information}}
+Enter the email and phone information:
+  * Depending on your messaging method email, may be the primary way to contact your staff pool.  Email should be properly formatted to be effective.  Example: name@domain.com
+  * Enter the contact phone numbers for the person. Phone numbers should be entered as 5559991111×1234
+
+==== Action Buttons ====
+
+  * Click {{:manual:user:staff:save_and_another_button.png|Save and Create Another}} to create another record.
+  * Click {{:manual:user:staff:save_button.png|Save}} to save and stay on this page.
+  * Click {{:manual:user:staff:edit_delete.png|Delete}} to delete the record.
+  * Click {{:manual:user:staff:edit_back.png|Back to List}} to cancel the edits and return to the staff list.
 
 ===== FAQ =====
 
-
+  * **If a staff record has multiple resource types will that staff member be deployed more than once?** - No.  Sahana Agasti is designed to deploy a staff person only once; allowing you to record all the potential roles of an individual without worrying about them being counted more than onces.
 ====== Continue ======
 
-[[manual:user:staff:import|{{ :manual:user:next.png|}}]] 
-[[manual:user:staff:list|{{:manual:user:previous.png?135 }}]]
+[[manual:user:staff:list|{{:manual:user:previous.jpg?135|List Staff }}]]
+[[manual:user:staff:import|{{ :manual:user:next.jpg?135|Importing Staff}}]] 
+
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
 
-  - [[manual:user:staff:staff_creation_walkthrough|Introduction]]
+  - [[manual:user:staff:staff_creation_Tutorial|Introduction]]
   - [[manual:user:staff:new|Create New Staff]]
   - [[manual:user:staff:list|Listing Staff]]
   - **Editing Staff Records**

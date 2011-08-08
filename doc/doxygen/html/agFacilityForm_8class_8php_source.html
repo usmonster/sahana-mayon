@@ -357,7 +357,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00368"></a>00368           <span class="keywordflow">if</span> ($form-&gt;isNew()) {
 <a name="l00369"></a>00369             $newFacilityResource = $form-&gt;getObject();
 <a name="l00370"></a>00370             <span class="keywordflow">if</span> ($newFacilityResource-&gt;capacity &amp;&amp; $newFacilityResource-&gt;facility_resource_type_id
-<a name="l00371"></a>00371                 &amp;&amp; $newFacilityResource-&gt;facility_resource_status_id &amp;&amp; $newFacilityResource-&gt;facility_resource_code) {
+<a name="l00371"></a>00371                 &amp;&amp; $newFacilityResource-&gt;facility_resource_status_id) {
 <a name="l00372"></a>00372               $newFacilityResource-&gt;setFacilityId($this-&gt;getObject()-&gt;getId());
 <a name="l00373"></a>00373               $newFacilityResource-&gt;save();
 <a name="l00374"></a>00374               $this-&gt;getObject()-&gt;getAgFacilityResource()-&gt;add($newFacilityResource);
@@ -368,7 +368,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00379"></a>00379           } <span class="keywordflow">else</span> {
 <a name="l00380"></a>00380             $objFacilityResource = $form-&gt;getObject();
 <a name="l00381"></a>00381             <span class="keywordflow">if</span> ($objFacilityResource-&gt;capacity &amp;&amp; $objFacilityResource-&gt;facility_resource_type_id
-<a name="l00382"></a>00382                 &amp;&amp; $objFacilityResource-&gt;facility_resource_status_id &amp;&amp; $objFacilityResource-&gt;facility_resource_code) {
+<a name="l00382"></a>00382                 &amp;&amp; $objFacilityResource-&gt;facility_resource_status_id) {
 <a name="l00383"></a>00383               $form-&gt;getObject()-&gt;save();
 <a name="l00384"></a>00384             } <span class="keywordflow">else</span> {
 <a name="l00385"></a>00385               $form-&gt;getObject()-&gt;delete();

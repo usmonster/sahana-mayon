@@ -90,7 +90,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00048"></a>00048     <span class="keywordflow">if</span> (isset($this-&gt;facility_resources)) {
 <a name="l00049"></a>00049       <span class="keywordflow">foreach</span> ($this-&gt;facility_resources as $facility_resource) {
 <a name="l00050"></a>00050 
-<a name="l00051"></a>00051         $fgroupForm = <span class="keyword">new</span> agEventFacilityResourceActivationTimeForm();
+<a name="l00051"></a>00051         $fgroupForm = <span class="keyword">new</span> <a class="code" href="classagMultipleEventFacilityResourceActivationTimeForm.html" title="Form stub for multiple event functionatlity and time.">agMultipleEventFacilityResourceActivationTimeForm</a>();
 <a name="l00052"></a>00052         $fgroupForm-&gt;getWidget(<span class="stringliteral">&#39;operate_on&#39;</span>)-&gt;setAttribute(<span class="stringliteral">&#39;class&#39;</span>, <span class="stringliteral">&#39;checkToggle&#39;</span>);
 <a name="l00053"></a>00053         $facility_type = $facility_resource-&gt;getAgFacilityResource()-&gt;getAgFacilityResourceType()-&gt;facility_resource_type;
 <a name="l00054"></a>00054 

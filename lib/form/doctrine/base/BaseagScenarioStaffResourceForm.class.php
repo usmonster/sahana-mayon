@@ -19,6 +19,7 @@ abstract class BaseagScenarioStaffResourceForm extends BaseFormDoctrine
       'scenario_id'       => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => false)),
       'staff_resource_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResource'), 'add_empty' => false)),
       'deployment_weight' => new sfWidgetFormInputText(),
+      'delete_flag'       => new sfWidgetFormInputCheckbox(),
       'created_at'        => new sfWidgetFormDateTime(),
       'updated_at'        => new sfWidgetFormDateTime(),
     ));
@@ -28,6 +29,7 @@ abstract class BaseagScenarioStaffResourceForm extends BaseFormDoctrine
       'scenario_id'       => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'))),
       'staff_resource_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResource'))),
       'deployment_weight' => new sfValidatorInteger(),
+      'delete_flag'       => new sfValidatorBoolean(array('required' => false)),
       'created_at'        => new sfValidatorDateTime(),
       'updated_at'        => new sfValidatorDateTime(),
     ));

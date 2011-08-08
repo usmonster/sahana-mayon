@@ -1,1 +1,12 @@
 1292954840	127.0.0.1	C	manual:user:event	sa	created	
+1303739290	127.0.0.1	E	manual:user:event		external edit	
+1306159700	127.0.0.1	E	manual:user:event	admin		
+1307649508	::1	E	manual:user:event	admin		
+1307658048	::1	E	manual:user:event	admin	[Deploying an Event] 	
+1307658181	::1	E	manual:user:event	admin	[Messaging Staff] 	
+1307659400	::1	E	manual:user:event	admin	[Manual Messaging] 	
+1307660282	::1	E	manual:user:event	admin	[Manual Messaging] 	
+1307661852	::1	E	manual:user:event	admin		
+1307661909	::1	E	manual:user:event	admin		
+1307661953	::1	E	manual:user:event	admin		
+1307662923	::1	E	manual:user:event	admin		

@@ -1,36 +1,58 @@
-<h2>Scenario Facility Groups</h2><br>
 <?php
-  if(!isset($group_id)) $group_id = 'none';
-  $existingFgroups = false;
-if (count($scenarioFacilityGroups) > 0) {
-  $existingFgroups = true;
-  include_partial('facilityGroupTable', array('scenarioFacilityGroups' => $scenarioFacilityGroups, 'scenarioName' => $scenarioName, 'group_id' => $group_id));
-} else {
-  echo '<h3>There are no facility groups associated with the <span class="highlightedText">' . $scenarioName . '</span> scenario</h3><br />';
-}
+  use_helper('agTemplate');
+?>
+<h2>Create Facility Groups: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2>
 
-if(isset($group_id)){
-  if(is_numeric($group_id)){
-    $groupAction = 'Edit';
-  }
-  else{
-    $groupAction = 'Create a New';
-  }
-}
+<?php
+  include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 
-<h3><?php echo $groupAction ?> Facility Group for the <span class="highlightedText"><?php echo $scenarioName;
-?> </span> Scenario</h3>
-<p>Facility Groups are actually groupings of facility resources.  To create a facility group name
-the group, assign the group type, allocation status, and the order in which is should be activated 
-(activation sequence).</p>
-<p><b>Note:</b> Facility resources should be created in the facility module.  If there are no records
-  below use the "Plan" menu above to reach the Facility menu and add your facilities to Agasti.</p>
+<?php
+  if(!isset($groupId)) $groupId = 'none';
+  $existingFgroups = false;
+
+  if(isset($groupId)){
+    if(is_numeric($groupId)){
+      $groupAction = 'Edit';
+    }
+    else{
+      $groupAction = 'Create a New';
+    }
+  }
+?>
+<h4><?php echo $groupAction ?> Facility Group for the <span class="highlightedText"><?php echo $scenarioName;
+?> </span> Scenario</h4>
+<p>Facility Groups are groupings of facility resources.  To create a facility group: name
+the group, assign the group type, select the allocation status, and the order in which is
+should be activated (the activation sequence).  Click the tooltip icons for additional information.</p>
+<p><strong>Note:</strong> Facility resources should be created in the facility module.  If there are no records
+  below use the "Prepare" menu above to reach the Facility menu and add your facilities to Sahana Agasti.
+  Facilities not grouped will not be available for activation when the Scenario is deployed as an event.</p>
 <div>
-  <?php include_partial('groupform', array('groupform' => $groupform, 'ag_facility_resources' => $ag_facility_resources, 'ag_allocated_facility_resources' => $ag_allocated_facility_resources, 'scenario_id' => $scenario_id, 'existingFgroups' => $existingFgroups)) ?>
+<?php if ($groupSelector != null): ?>
+<br />
+<!--<p>Use the list below to select existing facility groups for editing.</p>-->
+<form class="formSmall" id="groupSelector" action="<?php echo url_for('scenario/fgroup?id=' . $scenario_id); ?>" method="post">
+  <?php
+    $groupSelector->getWidget('Change Facility Group:')->setLabel('Change Facility Group: <a href="' . url_for('@wiki') .  '/doku.php?id=tooltip:change_facility_group&do=export_xhtmlbody" class="tooltipTrigger" title="Change Facility Group">?</a>');
+    echo $groupSelector;
+  ?>
+  <input type="button" class="generalButton" value="Change" name="Change Group" onclick="reloadGroup(this)" />
+</form>
+<br />
+<?php endif; ?>
+  <?php
+    include_partial('groupform', array('facilityStatusForm' => $facilityStatusForm ,
+                                       'groupform' => $groupform,
+                                       'availableFacilityResources' => $availableFacilityResources,
+                                       'allocatedFacilityResources' => $allocatedFacilityResources,
+                                       'scenario_id' => $scenario_id,
+                                       'selectStatuses' => $selectStatuses,
+                                       'facilityResourceTypes' => $facilityResourceTypes));
+  ?>
 </div>
-<p>Click "Save" to continue editing this group.  Click "Save and Continue" to save this group and
-move to the next step.  Click "Save and Create Another" to save this grouping and create another
-grouping.</p>
-<b>Note:</b> facilities not grouped will not be available for activation when the Scenario is
-deployed as an event.
+
+<?php
+  $contents = $sf_data->getRaw('facilityResourceTypes');
+  echo buildCheckBoxTable($contents, 'id', 'facility_resource_type', 'checkBoxTable checkBoxContainer searchParams', 'revealable', 2, 'facility_resource_type_', 'facility_resource_type_abbr', true, true);
+?>

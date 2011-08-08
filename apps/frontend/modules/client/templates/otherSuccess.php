@@ -23,7 +23,7 @@ foreach ($tabula->getRelations() as $relation) {
   $relationsLevel1[] = $relation->getClass();
 }
 echo $bar;
-echo "<hr>";
+echo '<hr class="ruleGray" />';
 $desired_fields =
     Array(
       'agPersonNameType', 'agPersonSex', 'agPersonMjAgNationality', 'agPersonEthnicity',
@@ -64,7 +64,7 @@ $desired_fields = array_diff($desired_fields, $relationsLevel1);
             <td>
               <a href="<?php echo url_for('staff/show?id=' . $staffMember->getId()); ?>"
                  title="View Staff Member <?php echo $staffMember->getId(); ?>"
-                 class="linkButton"><?php echo $i++; ?></a>
+                 class="continueButton"><?php echo $i++; ?></a>
             </td>
       <?php
           foreach ($ag_person_name_types as $agPersonNameType) {
@@ -127,7 +127,7 @@ $desired_fields = array_diff($desired_fields, $relationsLevel1);
             </table>
             <br />
             <div class="floatLeft">
-              <a href="<?php echo url_for('staff/new') ?>" class="linkButton"
+              <a href="<?php echo url_for('staff/new') ?>" class="continueButton"
                  title="Create New Staff Member">Create New</a>
             </div>
             <div class="floatRight">

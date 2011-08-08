@@ -21,7 +21,8 @@ class agAddressContactType extends BaseagAddressContactType
 /**
 * Returns as string value as default instead of an ID.
 *
-* @return the string value of the address_contact_type field from the ag_address_contact_type table. __toString is used to get that value instead of the ID.
+* @return the string value of the address_contact_type field
+ * from the ag_address_contact_type table. __toString is used to get that value instead of the ID.
 * Used to fill lists autopopulated from tables by Symfony.
 */
   public function __toString()

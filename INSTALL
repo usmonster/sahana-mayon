@@ -1,9 +1,9 @@
-SAHANA AGASTI 2.0 MAYON
+SAHANA AGASTI 2.0 MAYON 
 Emergency Management Software
 
 INSTALLATION INSTRUCTIONS
 
-Updated: 2011-02-24
+Updated: 2011-05-31
 
 *** IMPORTANT NOTE: ***
 
@@ -27,6 +27,7 @@ The following software is required to run Sahana Agasti Mayon:
 * Apache HTTP Server 2.2.14 or later (most current 2.2 preferred)
 * MySQL 5.1.41 or later (most current 5.1 preferred)
 * PHP 5.2.12 or later (most current 5.3 strongly recommended)
+* APC (The Alternative PHP Cache) 3.1.8 or later
 
 Hardware
 --------
@@ -51,11 +52,11 @@ Apache
 1. To set permissions to allow the web server appropriate access to the required
    directories, execute the following commands from the project root:
 
-  $ sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/indexes/ \
-      data/search/ data/sql/ web/wiki/conf/ web/wiki/data/
-  $ chmod -cR g+wr config/ apps/*/config/ data/indexes/ data/search/ data/sql/ \
-      web/wiki/conf/ web/wiki/data/
-  $ ./symfony project:permissions
+  sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/ \
+      web/wiki/conf/ web/wiki/data/ web/wiki/lib/plugins/dw2pdf/mpdf/tmp/
+  chmod -cR g+wr config/ apps/*/config/ data/ web/wiki/conf/ web/wiki/data/ \
+      web/wiki/lib/plugins/dw2pdf/mpdf/tmp/
+  ./symfony project:permissions
 
   * NOTE: Replace WEB_GROUP with the group associated with the Apache user, e.g.
     www-data or apache.
@@ -72,23 +73,23 @@ Apache
 3. If your version of Apache supports it, write a custom configuration file for
    the application; for example:
 
-   $ echo 'Alias /agasti/sf AG_ROOT/lib/vendor/symfony/data/web/sf
+   Alias /agasti/sf AG_ROOT/lib/vendor/symfony/data/web/sf
     <Directory "/var/www/agasti">
       AllowOverride All
       Allow from All
-    </Directory>' > agasti
+    </Directory>
 
   To activate the site configuration, as well as mod_rewrite if it isn't
   already, you can then run the following commands:
 
-  $ sudo mv agasti /etc/apache2/sites-available/
-  $ sudo a2ensite agasti
-  $ sudo a2enmod rewrite
-  $ sudo /etc/init.d/apache2 restart
+  sudo mv agasti /etc/apache2/sites-available/
+  sudo a2ensite agasti
+  sudo a2enmod rewrite
+  sudo /etc/init.d/apache2 restart
 
   * NOTES:
 
-    - Again, replace AG_ROOT with the full filesystem path to the Agasti
+    - Again, replace AG_ROOT with the full file system path to the Agasti
       root directory.
 
     - Commands may vary slightly, depending upon your version of Apache.
@@ -100,17 +101,16 @@ MySQL
 
 1. On the database server, create a schema for the project; for example:
 
-  $ mysqladmin -uroot -p create AGASTI_DB
+   mysqladmin -uroot -p create AGASTI_DB
 
   * NOTE: Replace AGASTI_DB with the name you chose for the schema, e.g. agasti.
 
 2. Create a dedicated database user for the application (using root is highly
    discouraged):
 
-  $ mysql -uroot -p mysql << EOF
-    GRANT ALL PRIVILEGES ON AGASTI_DB.* TO 'AGASTI_DB_USERNAME'@'DB_HOSTNAME'
-     IDENTIFIED BY 'AGASTI_DB_PASS';
-    EOF
+    GRANT ALL PRIVILEGES ON agasti_db.* TO '<agasti_db_username>'@'<db_hostname>'
+     IDENTIFIED BY '<agasti_db_pass>';
+
 
   * NOTES:
 
@@ -152,10 +152,12 @@ MySQL
 PHP
 ---
 
-Set PHP's memory limit to 256 MB or greater by editing or adding the following
-line in /etc/php5/apache2/php.ini:
+Set PHP's memory and upload limits to the recommended minima by editing or
+adding the following lines in /etc/php5/apache2/php.ini:
 
-  memory_limit = 256M
+  memory_limit = 500M
+  post_max_size = 64M
+  upload_max_filesize = 64M
 
 If there are any other major differences between your current php.ini and the
 default recommended production settings, it is highly recommended that you reset
@@ -166,10 +168,52 @@ them via this command:
 
   * NOTES:
 
-    - The memory_limit would still need to be modified after this copy.
+    - The other recommended settings would still need to be set after this copy.
 
-    - Be sure to test that this change doesn't negatively affect other PHP
+    - Be sure to test that these changes don't negatively affect other PHP
       applications you might be running.
+
+Finally, be sure to also specify your timezone in php.ini; for example:
+
+  date.timezone = "America/New_York"
+
+Replace "America/New_York" with your own from the List of Supported Timezones,
+linked at http://php.net/date.timezone .
+
+APC
+---
+
+If you haven't installed APC, this is currently the recommended command to get
+the most recent stable build:
+
+  $ sudo apt-get install libpcre3 libpcre3-dev
+  $ sudo pecl install apc
+
+The following lists our recommended settings for APC configuration, located in
+/etc/php5/conf.d/apc.ini:
+
+  ; Enable APC extension module
+  extension=apc.so
+
+  ; Options for the APC module
+  apc.enabled = 1
+  apc.shm_segments = 1
+  apc.optimization = 0
+  apc.shm_size = 256M
+  apc.ttl = 7200
+  apc.user_ttl = 7200
+  apc.num_files_hint = 1500
+  apc.mmap_file_mask = /tmp/apc.XXXXXX
+  apc.enable_cli = 1
+  apc.cache_by_default = 1
+  apc.include_once_override = 1
+  apc.slam_defense = 1
+
+It is recommended to change these only if you encounter an error and are
+comfortable with the settings do; see http://php.net/apc.setup for more
+information. When you are finished, restart Apache:
+
+  $ sudo /etc/init.d/apache2 restart
 
 
 APPLICATION INSTALLATION
@@ -210,9 +254,6 @@ Finally, generate the wiki indexes by running the following command:
     - Replace WEB_USER with the user associated with the Apache, e.g.
       www-data or apache.
 
-    - You can safely ignore any PHP warning of the form:
-      PHP Warning:  parse_url(http:///web/wiki/bin/): Unable to parse URL in ...
-
 
 ERRORS AND TROUBLESHOOTING
 ==========================
@@ -238,6 +279,16 @@ ERRORS AND TROUBLESHOOTING
   $ ./symfony cc
 
   and try again.
+
+- If the database has been deleted and you are unable to log in, even with the superadmin credentials enable super admin by editing the /apps/frontend/config/app.yml file by adding the following lines after the first line (which should read 'all:')
+
+  sf_guard_plugin:
+    check_password_callable:
+      - agSudoAuth
+      - authenticate
+  sf_guard_plugin_signin_form: agSudoSigninForm
+
+It is important that pre-line spacing is maintained in the copy and paste of the lines.
 
 - I have another error, or my issue still isn't resolved:
 

@@ -1,0 +1,48 @@
+====== Important Concepts ======
+Before continuing with Sahana Agasti it will be helpful to understand the terminology and concepts used.  
+
+===== All Hazards Planning =====
+Because Sahana Agasti is flexible to accommodate most planning styles it is able to be used to plan a wide variety of responses.  Sahana Agasti was designed as a set of 'buckets' that represent resource needs and potential resources to be allocated to them.  Because of this flexible design Sahana Agasti can be used to respond to a wide variety of emergency situations.  The system has been designed from the ground up to treat hazards agnostically and without preference towards specific response styles.
+
+===== Resources =====
+Resources in Sahana Agasti are the people, places, and materials that are available to an emergency manager.  Currently, Sahana Agasti contains management tools for **Staff Resources** and **Facility Resources**.
+
+A key component of resources management through Sahana Agasti is the idea of **Shared Resources**.  A resource can be flagged for use in multiple scenarios using a single record, but only actively deployed once.
+
+==== Staff Resources ====
+"Staff" are people who you, as an emergency manager, know might be available in a response.  You have access to contact information, organizational affiliation, and possibly skills information for these individuals.  **Staff Resources** can be thought of as staff roles.  Each individual may provide multiple resources through a combination of the organizations they work or volunteer for and the skills they provide to that organization.  
+
+__For Example__: Kristin works for a city agency and is required, as part of her job, to be available as shelter staff.  She is also a Certified First Responder and registered with the Red Cross.  Kristin is one staff person; however she is two staff resources: Shelter Staff (city worker) and Medical Other (ARC).
+
+==== Facility Resources ====
+"Facilities" are physical locations and defined in Sahana Agasti as specific buildings that are known to be available for emergency responses.  **Facility Resources** are the services available in that location and, much like staff, facilities can have multiple resources available at one location.  
+
+__For Example__: A local high school has a large gym and a cafeteria. During an emergency the gym is used for a shelter and a cafeteria for medical overflow. In Agasti the school, Lincoln High, would be listed as two Facility Resources: "Lincoln High: Shelter" and "Lincoln High: Medical Overflow".
+
+===== Scenarios =====
+Sahana Agasti defines two phases to operation that mirror the prepare and respond phases of Emergency Management: Scenarios and Events.  Scenarios are plans for theoretical emergencies and are intended to complement existing emergency management strategies.  
+
+__For Example__: Shangrala lies near the Hypothetical Fault Line and has a municipal sheltering plan that deploys unaffected school teachers to local schools to house those who've been affected following an earthquake.  They also call on volunteer nurses to help with non-emergency medical assistance at the schools.  The city Emergency Manager uses Sahana Agasti to create a scenario called "Earthquake Sheltering" where teachers and nurses are pooled and school resources stored as available and stand-by.  
+
+==== Time Management in Scenarios ====
+Emergency managers are acutely aware of the unpredictable timing of emergencies and it is common practice to develop emergency plans in relative time. As emergency plans themselves, scenarios follow this paradigm. All times stored in Sahana Agasti's scenario system are relative to key response events such as the zero-hour of hurricane landing or the opening of a facility. This allows Sahana Agasti's scenarios to immediately adapt to the timing of an emergency; whether it occurs at 8am, 8pm, or 3:41 in the morning.
+
+===== Events =====
+If Scenarios are plans, **Events** are the actualization of those plans.  Scenarios are broad ideas of what could happen and who may be available, and events are specifically timed and actualized by who is available to respond.
+
+__For Example__: On August 7, 2011 the Hypothetical Fault Line experiences a major shift and many homes in Shangrala are damaged.  The city Emergency Manager activates the Earthquake Sheltering plan with an event titled "August 7 Earthquake" and begins managing his sheltering response.
+
+==== Time Management in Events ====
+While time is relative in Scenarios, during events time becomes specific.  Events and scenarios refer to **Zero Hour**, the time while the event is expected to happen or, depending on the emergency, did happen.  _For Example_: a hurricane sheltering plan may have facilities open the day before zero hour in the anticipation of flooding, while in an earthquake plan the shelters open after zero hour because it's unpredictable.  
+
+During the deployment of an event the Zero Hour is set and all the relative time relationships created in the Scenario become specific times in relationship to the zero hour.  This concept will be explored in more detail in the Scenario Creator Wizard tutorial and the Event Management Tutorial.
+
+===== Scenarios vs Events =====
+We've established that scenarios are plans; as scenarios are deployed as events, the scenario data is used to generate an event response plan. Once the event has been created, however, it operates independently from its scenario. This allows Emergency Managers to create general plans that can then be customized upon the emergence of a specific event. Since Mayon supports multiple events, the same scenario plans can be used and reused without fear of plan contamination by specific event response efforts.
+
+===== Continue =====
+The sections of this guide are divided into two parts: a Quick Guide and a Tutorial.  The Quick Guide, the first page of each section, is designed to be printed and kept for quick reference.  However, users going through Sahana Agasti for the first time will want to use the Walk-Throughs for more detail about how Sahana Agasti works and how to perform it's primary functions.
+
+[[manual:user:organizations|{{ :manual:user:org_jump_2.jpg?200|Continue to Organization Management}}]]
+
+Now that you have enough information about Scenarios and Events you can begin preparing Sahana Agasti with the information you'll need to create your own Scenarios.  First you'll add Organization information, which is used to sort Staff.  Next you'll add your staff information, either manually or via import of a Microsoft Excel 2003 spreadsheet.  Then, depending on if you'll be importing your facilities manually or via import, you'll learn about adding facility information and using that information to build your first Scenarios.  For now, you can move on to [[manual:user:organizations|Organization Management]].

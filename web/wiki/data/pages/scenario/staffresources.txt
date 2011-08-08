@@ -1,43 +1,49 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Tutorial ======
 
 ===== Staff Resource Requirements =====
+For Sahana Agasti to assign staff personnel to a facility the system must know how many of each type of staff is required for that facility to open.  Staffing requirements are stored as a [min] / [max] pair representing the minimum and maximum number of staff that should be deployed to each individual facility resource. This data must be entered for each of the default staff types chosen in Step 2 of the Scenario Creation Wizard; emphasizing the importance of only selecting the staff resource types you intend to use in this scenario.
 
-**What it does:**
-
-For Agasti to assign staff personnel to a facility the system must know how many of each type of staff is required for that facility to open.  In this step the minimum and maximum required staff will be entered for the facilities you included in your groups.
 ===== Reference Information =====
 
-**Good things to know about Staff Resource Requirements.**:
+==== How Staff Resource Requirements affect Deployment ====
+Using the automated deployment engine, staff resources are distributed according to the highest priority facility group, then highest priority facility within that group. Once a facility has reached its minimum threshold, the next facility is queued to receive resource assignments until its minimum threshold is met and so on. Once all active facilities in all active facility groups have had their minimum requirements satisfied, staff are distributed in a round-robin fashion that shares resources equally until facilities reach their maximum capacities.
 
-  * Every facility must have at least one staff type with staff assigned (otherwise, there will be facilities open without staff in them).
-  * Not every facility needs to have every staff type assigned. (Shelters without medical facilities don't need doctors).
+==== Important Concepts ====
+  * Every facility must have at least one staff type with staff assigned (otherwise, there will be facilities without staff assigned to them).
+  * Not every facility needs to have every staff type assigned.  _For Example_: Shelters without medical facilities may not need doctors and warehouses may not need Shelter Staff.
   * If you assign a minimum you must assign a maximum.
   * The facilities are broken up by group, so if there are multiple groups they will be listed with the facilities together in the order you put them in when creating your facility groups.
 
-===== Walk-Through =====
+===== Tutorial =====
 
-{{:scenario:screenshot_024.png?900}}
+{{:scenario:staffresrequirements.png?700|Enter Staff Numbers}}
 
   - For each facility record listed enter **at least some staff** required for **at least one staff type** for __**every facility**__.  
   - When you've finished entering the staff requirements click "Save and Continue".
 
-After you've clicked "Save and Continue" hit the "Next" button below.
+After you've clicked "Save and Continue", click "Next" below to move to the next step in the Tutorial.
 ===== FAQ =====
 
+  - **Why are Staff Resource Requirements defined individually?** - Even though two facilities may provide the same resource (eg, Hospital), the facility sizes may be widely different. Because size is variable, each facility resource may have different resource requirements. For this reason, facility resource requirements are defined individually to be certain that resource requirements are suited to the individual facility.
   - **Does a facility need to have every staff type assigned?** - No, you do not need to have every staff type assigned to every facility.  If a facility does not need some staff then those fields can be blank.
 ====== Continue ======
 
-[[scenario:newstaffresources|{{ :manual:user:next.png|}}]] 
-[[scenario:newgroup|{{:manual:user:previous.png?135 }}]]
+[[scenario:newgroup|{{:manual:user:previous.jpg?135|Create Facility Groups }}]]
+[[scenario:staff_resource_pool|{{ :manual:user:next.jpg?135|Create Staff Pool Searches}}]] 
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Start]]
+  - [[manual:user:scenario:Tutorial|Start]]
   - [[scenario:pre|Pre Scenario Creation]]
-  - [[scenario:new|Create A Scenario]]
+  - [[scenario:new|Name and Describe]]
+  - [[scenario:resources|Select Resources]]
   - [[scenario:newgroup| Create Facility Groups]]
   - **Set Staff Resource Requirements**
+  - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:staff_resource_pool| Generate Scenario Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
+  - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
+  - [[scenario:deployevent| Deploying an Event]]

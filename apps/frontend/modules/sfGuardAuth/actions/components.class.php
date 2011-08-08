@@ -10,7 +10,8 @@
 
 class sfGuardAuthComponents extends sfComponents
 {
-    public function executeLogin()
+  
+  public function executeLogin()
     {
         $this->loggedIn = $this->getUser()->isAuthenticated();
         if (!$this->loggedIn)

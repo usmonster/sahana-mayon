@@ -20,3 +20,13 @@
 </table>
 
   <a href="<?php echo url_for('foo/new') ?>">New</a>
+
+
+<!-- Below are for testing purposes only.  Delete after testing -->
+
+<br />
+
+<br />
+
+<!-- Comment out link for export testing. -->
+<!--<a class="buttonText" href="<?php #echo url_for('foo/export') ?>" target="_blank">Export Error File</a>-->

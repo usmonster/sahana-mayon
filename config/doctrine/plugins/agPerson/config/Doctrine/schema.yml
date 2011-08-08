@@ -8,9 +8,6 @@ agPerson:
     entity_id:
       type: integer(5)
       notnull: true
-  actAs:
-    Luceneable:
-    Timestampable:
   indexes:
     agPerson_unq:
       fields: [entity_id]
@@ -66,11 +63,6 @@ agPerson:
       refClass: agPersonMaritalStatus
       local: person_id
       foreign: marital_status_id
-    agImport:
-      class: agImport
-      refClass: agPersonLastImport
-      local: person_id
-      foreign: last_import_id
     agResidentialStatus:
       class: agResidentialStatus
       refClass: agPersonResidentialStatus
@@ -484,6 +476,8 @@ agPersonNameType:
       local: person_name_type_id
       foreign: person_name_id
 agPersonName:
+  options:
+    collate: utf8_bin
   columns:
     id:
       primary: true
@@ -614,6 +608,10 @@ agPersonLanguageCompetency:
     language_competency_id:
       type: integer(2)
       notnull: true
+  indexes:
+    agPersonLanguageCompetency_unq:
+      fields: [person_language_id, language_format_id]
+      type: unique
   relations:
     agLanguageFormat:
       local: language_format_id

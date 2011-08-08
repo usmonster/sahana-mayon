@@ -7,4 +7,8 @@ agGeoMatchScore:
     id: 2
     geo_match_score: zip-only
     geo_match_score_value: 50
+  unknown:
+    id: 3
+    geo_match_score: unknown
+    geo_match_score_value: 0
 

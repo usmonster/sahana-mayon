@@ -69,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="contents">
 <!-- doxytag: class="agEntityAddressHelper" --><!-- doxytag: inherits="agEntityContactHelper" -->
-<p>Provides person name helper functions and inherits several methods and properties from the bulk record helper.  
+<p>Provides person name helper functions and inherits several methods and properties from the EntityContactHelper.  
 <a href="#_details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for agEntityAddressHelper:</div>
@@ -92,10 +92,11 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return entity addresses for a group of entity ids, sorted from highest priority to lowest priority, and grouped by the address contact type.  <a href="#ac35a04557adfc1b358d4fa7ad139a11f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEntityAddressHelper.html#abb0e9ef08ef986133ad43bf2d01b41a5">getEntityAddress</a> ($entityIds=NULL, $strType=NULL, $primary=NULL, $addressHelperMethod=NULL, $addressArgs=array())</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to return entity addresses for a group of entity ids, sorted from highest priority to lowest priority.  <a href="#abb0e9ef08ef986133ad43bf2d01b41a5"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEntityAddressHelper.html#a77441fdd4a44364ee849f2a6f9027ed6">setEntityAddressById</a> ($entityContacts, Doctrine_Connection $conn=NULL)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to set entity address data using address ID 's instead of values.  <a href="#a77441fdd4a44364ee849f2a6f9027ed6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aff3ee40c1d7b1598130ee59ceae2d024"></a><!-- doxytag: member="agEntityAddressHelper::setEntityAddress" ref="aff3ee40c1d7b1598130ee59ceae2d024" args="()" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>setEntityAddress</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEntityAddressHelper.html#a6a4338cbf159f060d856718b91a54152">setEntityAddressById</a> ($entityContacts, $keepHistory=TRUE, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to set entity address data using address ID 's instead of values.  <a href="#a6a4338cbf159f060d856718b91a54152"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classagEntityAddressHelper.html#ab2aae6f72564ca1392aa4e46e29bf6a0">setEntityAddress</a> ($entityContacts, $keepHistory=NULL, $enforceComplete=NULL, Doctrine_Connection $conn=NULL)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89c6f3741d83ef5c1b6b7f09b1c6a703"></a><!-- doxytag: member="agEntityAddressHelper::exceptionTest" ref="a89c6f3741d83ef5c1b6b7f09b1c6a703" args="()" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>exceptionTest</b> ()</td></tr>
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af90597e47d0ff1b06111f970b82f126f"></a><!-- doxytag: member="agEntityAddressHelper::$agAddressHelper" ref="af90597e47d0ff1b06111f970b82f126f" args="" -->
@@ -110,9 +111,9 @@ Protected Attributes</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>$_batchSizeModifier</b> = 2</td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>Provides person name helper functions and inherits several methods and properties from the bulk record helper. </p>
-<p>PHP Version 5</p>
-<p>LICENSE: This source file is subject to LGPLv3.0 license that is available through the world-wide-web at the following URI: <a href="http://www.gnu.org/copyleft/lesser.html">http://www.gnu.org/copyleft/lesser.html</a></p>
+<div class="textblock"><p>Provides person name helper functions and inherits several methods and properties from the EntityContactHelper. </p>
+<p>PHP Version 5.3</p>
+<p>LICENSE: This source file is subject to LGPLv2.1 license that is available through the world-wide-web at the following URI: <a href="http://www.gnu.org/licenses/lgpl-2.1.html">http://www.gnu.org/licenses/lgpl-2.1.html</a></p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Chad Heuschober, CUNY SPS</dd></dl>
 <p>Copyright of the Sahana Software Foundation, sahanafoundation.org </p>
 
@@ -259,7 +260,58 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a77441fdd4a44364ee849f2a6f9027ed6"></a><!-- doxytag: member="agEntityAddressHelper::setEntityAddressById" ref="a77441fdd4a44364ee849f2a6f9027ed6" args="($entityContacts, Doctrine_Connection $conn=NULL)" -->
+<a class="anchor" id="ab2aae6f72564ca1392aa4e46e29bf6a0"></a><!-- doxytag: member="agEntityAddressHelper::setEntityAddress" ref="ab2aae6f72564ca1392aa4e46e29bf6a0" args="($entityContacts, $keepHistory=NULL, $enforceComplete=NULL, Doctrine_Connection $conn=NULL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">agEntityAddressHelper::setEntityAddress </td>
+          <td>(</td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>entityContacts</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>keepHistory</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>enforceComplete</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Doctrine_Connection $&#160;</td>
+          <td class="paramname"><em>conn</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramtype"></td><td class="paramname">&lt;type&gt;</td><td>$entityContacts </td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">&lt;type&gt;</td><td>$keepHistory </td></tr>
+    <tr><td class="paramtype"></td><td class="paramname">&lt;type&gt;</td><td>$enforceComplete </td></tr>
+    <tr><td class="paramtype">Doctrine_Connection</td><td class="paramname">$conn</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000075">Todo:</a></b></dt><dd>Figure out what our purge policy is going to be (failed inserts) </dd></dl>
+
+<p>Definition at line <a class="el" href="agEntityAddressHelper_8class_8php_source.html#l00388">388</a> of file <a class="el" href="agEntityAddressHelper_8class_8php_source.html">agEntityAddressHelper.class.php</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6a4338cbf159f060d856718b91a54152"></a><!-- doxytag: member="agEntityAddressHelper::setEntityAddressById" ref="a6a4338cbf159f060d856718b91a54152" args="($entityContacts, $keepHistory=TRUE, Doctrine_Connection $conn=NULL)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -268,6 +320,12 @@ Protected Attributes</h2></td></tr>
           <td>(</td>
           <td class="paramtype">$&#160;</td>
           <td class="paramname"><em>entityContacts</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">$&#160;</td>
+          <td class="paramname"><em>keepHistory</em> = <code>TRUE</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -293,8 +351,11 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>integer The number of operations performed. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000074">Todo:</a></b></dt><dd><p class="startdd">Add the $keepHistory functionality </p>
+<p class="enddd">make results more meaningful (with errs) </p>
+</dd></dl>
 
-<p>Definition at line <a class="el" href="agEntityAddressHelper_8class_8php_source.html#l00306">306</a> of file <a class="el" href="agEntityAddressHelper_8class_8php_source.html">agEntityAddressHelper.class.php</a>.</p>
+<p>Definition at line <a class="el" href="agEntityAddressHelper_8class_8php_source.html#l00304">304</a> of file <a class="el" href="agEntityAddressHelper_8class_8php_source.html">agEntityAddressHelper.class.php</a>.</p>
 
 </div>
 </div>

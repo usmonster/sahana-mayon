@@ -13,8 +13,6 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
   public function setup()
   {
     $this->setWidgets(array(
-      'shift_template'                       => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'description'                          => new sfWidgetFormFilterInput(),
       'scenario_id'                          => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agScenario'), 'add_empty' => true)),
       'facility_resource_type_id'            => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agFacilityResourceType'), 'add_empty' => true)),
       'staff_resource_type_id'               => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => true)),
@@ -22,7 +20,7 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
       'task_length_minutes'                  => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'break_length_minutes'                 => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'minutes_start_to_facility_activation' => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'shift_repeats'                        => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'days_in_operation'                    => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'max_staff_repeat_shifts'              => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'shift_status_id'                      => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agShiftStatus'), 'add_empty' => true)),
       'deployment_algorithm_id'              => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'add_empty' => true)),
@@ -31,8 +29,6 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
     ));
 
     $this->setValidators(array(
-      'shift_template'                       => new sfValidatorPass(array('required' => false)),
-      'description'                          => new sfValidatorPass(array('required' => false)),
       'scenario_id'                          => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agScenario'), 'column' => 'id')),
       'facility_resource_type_id'            => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agFacilityResourceType'), 'column' => 'id')),
       'staff_resource_type_id'               => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agStaffResourceType'), 'column' => 'id')),
@@ -40,7 +36,7 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
       'task_length_minutes'                  => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'break_length_minutes'                 => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'minutes_start_to_facility_activation' => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
-      'shift_repeats'                        => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
+      'days_in_operation'                    => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'max_staff_repeat_shifts'              => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'shift_status_id'                      => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agShiftStatus'), 'column' => 'id')),
       'deployment_algorithm_id'              => new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agDeploymentAlgorithm'), 'column' => 'id')),
@@ -66,8 +62,6 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
   {
     return array(
       'id'                                   => 'Number',
-      'shift_template'                       => 'Text',
-      'description'                          => 'Text',
       'scenario_id'                          => 'ForeignKey',
       'facility_resource_type_id'            => 'ForeignKey',
       'staff_resource_type_id'               => 'ForeignKey',
@@ -75,7 +69,7 @@ abstract class BaseagShiftTemplateFormFilter extends BaseFormFilterDoctrine
       'task_length_minutes'                  => 'Number',
       'break_length_minutes'                 => 'Number',
       'minutes_start_to_facility_activation' => 'Number',
-      'shift_repeats'                        => 'Number',
+      'days_in_operation'                    => 'Number',
       'max_staff_repeat_shifts'              => 'Number',
       'shift_status_id'                      => 'ForeignKey',
       'deployment_algorithm_id'              => 'ForeignKey',

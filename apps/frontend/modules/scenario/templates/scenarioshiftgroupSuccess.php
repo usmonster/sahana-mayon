@@ -43,10 +43,10 @@ Click on Id to view all scenario shifts defined for that scenario.
 <?php $recordRowNumber = $pager->getFirstIndice(); ?>
 <?php foreach ($pager->getResults() as $scenarioShiftGroup): ?>
           <tr>
-            <td><a class=linkButton href="<?php echo url_for('scenario/showscenarioshiftgroup?scenId=' . $scenarioShiftGroup->getId()) ?>" title="View Scenario Shifts in Scenario <?php echo $scenarioShiftGroup->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
+            <td><a class=continueButton href="<?php echo url_for('scenario/showscenarioshiftgroup?scenId=' . $scenarioShiftGroup->getId()) ?>" title="View Scenario Shifts in Scenario <?php echo $scenarioShiftGroup->getId() ?>"><?php echo $recordRowNumber++; ?></a></td>
             <td><?php echo $scenarioShiftGroup->getScenario(); ?></td>
             <td><?php echo $scenarioShiftGroup->getCount(); ?></td>
-            <td><?php echo link_to('delete', 'scenario/deletescenarioshiftgroup?scenId=' . $scenarioShiftGroup->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'linkButton')) ?></td>
+            <td><?php echo link_to('delete', 'scenario/deletescenarioshiftgroup?scenId=' . $scenarioShiftGroup->getId(), array('method' => 'delete', 'confirm' => 'Are you sure?', 'class' => 'continueButton')) ?></td>
           </tr>
 <?php endforeach; ?>
         </tbody>

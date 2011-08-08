@@ -15,13 +15,15 @@
  */
 class agScenarioForm extends BaseagScenarioForm
 {
+
   /**
    * Initializes the array of datapoints for the scenario form.
    * */
   public function configure()
   {
     /**
-     * Unset widgets that are auto-filled, unnecessary, or whose relations are not properly defined without using embedded forms.
+     * Unset widgets that are auto-filled, unnecessary, or whose
+     * relations are not properly defined without using embedded forms.
      * */
     unset($this['created_at'],
         $this['updated_at'],
@@ -32,44 +34,60 @@ class agScenarioForm extends BaseagScenarioForm
      * keep only the few that are needed
      * */
   }
+
   public function setup()
   {
-    $this->setWidgets(array(
-      'id'            => new sfWidgetFormInputHidden(),
-      'scenario'      => new sfWidgetFormInputText(array(), array('class' => 'inputGray setWidgetsScenario')),
-      'description'   => new sfWidgetFormTextarea(array(), array('class' => 'inputGray setWidgetsDesc')),
-    ));
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $wikiUrl = url_for('@wiki');
+    $this->setWidgets(
+        array(
+          'id' => new sfWidgetFormInputHidden(),
+          'scenario' => new sfWidgetFormInputText(
+              array(),
+              array('class' => 'inputGray setWidgetsScenario')
+          ),
+          'description' => new sfWidgetFormTextarea(
+              array(),
+              array('class' => 'inputGray setWidgetsDesc')
+          ),
+        )
+    );
 
-    $this->setValidators(array(
-      'id'            => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'scenario'      => new sfValidatorString(array('max_length' => 64)),
-      'description'   => new sfValidatorString(array('max_length' => 255, 'required' => false)),
-    ));
-    
+    $this->setValidators(
+        array(
+          'id' => new sfValidatorChoice(
+              array(
+                'choices' => array($this->getObject()->get('id')),
+                'empty_value' => $this->getObject()->get('id'),
+                'required' => false)
+          ),
+          'scenario' => new sfValidatorString(array('trim' => true, 'max_length' => 64)),
+          'description' => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)),
+        )
+    );
+
     $this->validatorSchema->setPostValidator(
-      new sfValidatorDoctrineUnique(array('model' => 'agScenario', 'column' => array('scenario')))
+        new sfValidatorDoctrineUnique(
+            array('model' => 'agScenario', 'column' => array('scenario'))
+        )
     );
     $this->widgetSchema->setNameFormat('ag_scenario[%s]');
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
     unset($this['created_at'],
         $this['updated_at'],
         $this['ag_event_list']);
-    $this->widgetSchema->setLabels(array(
-    'scenario' => 'Name',
-    'description' => 'Description',
-    //'facility_group' => 'Facility Groups'
-    ));
+    $this->widgetSchema->setLabels(
+        array(
+          'scenario' => 'Name <a href="<?php' . $wikiUrl . '/doku.php?id=tooltip:scenario_name&do=export_xhtmlbody" class="tooltipTrigger" title="Scenario Name">?</a>',
+          'description' => 'Description <a href="<?php' . $wikiUrl . '/doku.php?id=tooltip:scenario_description&do=export_xhtmlbody" class="tooltipTrigger" title="Scenario Description">?</a>',
+        //'facility_group' => 'Facility Groups'
+        )
+    );
 
-    
+
     $sectionsDeco = new agWidgetFormSchemaFormatterSection($this->getWidgetSchema());
     $this->getWidgetSchema()->addFormFormatter('section', $sectionsDeco);
     $this->getWidgetSchema()->setFormFormatterName('section');
   }
-/**
- *
- * @param <type> $con doctrine connection
- * @param <type> $forms array of forms passed in the event of a recursed SeF
- * @return <type> 
- */
-  
+
 }

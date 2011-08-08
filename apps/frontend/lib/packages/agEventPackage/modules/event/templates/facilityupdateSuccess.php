@@ -12,8 +12,8 @@
 
 <p>When a facility is activated the shifts associated with it are generated based on when the facility
   opens.  Below, please set the date and time for facility activation:</p>
-<b>Button to Generate Shifts for this facility.</b><br>
-<b>Button to Export Contact Notification for Staff.</b><br>
+<strong>Button to Generate Shifts for this facility.</strong><br>
+<strong>Button to Export Contact Notification for Staff.</strong><br>
 
-<b>A button to cancel.  Another button save and return to Facility Group.</b>
+<strong>A button to cancel.  Another button save and return to Facility Group.</strong>
 

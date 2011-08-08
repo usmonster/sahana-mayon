@@ -1,0 +1,21 @@
+agEventScenario:
+  zombie_apocalypse_plague:
+    id: 1
+    agEvent: zombie_apocalypse_event_1
+    agScenario: plague
+  asteroid_apocalypse_earthquake:
+    id: 2
+    agEvent: asteroid_apocalypse_event_2
+    agScenario: earthquake
+  tsunami_warning_hurricaneC:
+    id: 3
+    agEvent: tsunami_warning_event_3
+    agScenario: hurricaneC
+  megaquake_earthquake:
+    id: 4
+    agEvent: megaquake_event_4
+    agScenario: hurricaneC
+  supervolcano_earthquake:
+    id: 5
+    agEvent: supervolcano_event_5
+    agScenario: earthquake

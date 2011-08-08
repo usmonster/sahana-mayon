@@ -1,8 +1,8 @@
 <?php use_stylesheets_for_form($fgroupForm) ?>
 <?php use_javascripts_for_form($fgroupForm) ?>
 
-<form action="<?php echo url_for('event/fgroup?event=' . urlencode($event_name)) ?> " method="post">
-  <?php echo $facilitygroupsForm['facility_group_list']->renderRow(array('onchange' => 'submit();'), 'Facility Group') ?>
+<form action="<?php echo url_for('event/facilitygroups?event=' . urlencode($sf_data->getRaw('event_name'))) ?> " method="post" id="ajax">
+  <?php echo $facilitygroupsForm['facility_group_list']->renderRow(array('class' => 'blorg'), 'Facility Group') ?>
   <input type="hidden" value="facility_group_filter" name="facility_group_filter">
   <br />
   <span class="borderBottom">
@@ -11,13 +11,13 @@
   </span>
 </form>
 <br />
-<form action="<?php echo url_for('event/fgroup?event=' . urlencode($event_name)) ?> " method="post">
+<form action="<?php echo url_for('event/facilitygroups?event=' . urlencode($sf_data->getRaw('event_name'))) ?> " method="post">
 
   <table>
     <tfoot>
       <tr>
         <td colspan="2">
-          <input type="submit" value="Apply Activation Time" class="linkButton"/>
+          <input type="submit" value="Apply Activation Time" class="continueButton"/>
         </td>
       </tr>
     </tfoot>

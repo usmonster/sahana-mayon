@@ -1,0 +1,3 @@
+===== Naming Organizations =====
+
+Organization names will be used throughout Sahana Agasti to reference the organization.  They **must** be unique.

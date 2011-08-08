@@ -13,4 +13,4 @@
 <p>This page will display any reports generated and saved during the active event.  There should also
 be some standard reports, like how many shelterees were serviced.</p>
 
-<b>Buttons to Return To Event Dashboard.</b>
+<strong>Buttons to Return To Event Dashboard.</strong>

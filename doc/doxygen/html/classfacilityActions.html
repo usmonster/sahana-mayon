@@ -85,6 +85,8 @@ Inheritance diagram for facilityActions:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6942715773f8e0f1fb58406909ce9b1"></a><!-- doxytag: member="facilityActions::executeSearch" ref="af6942715773f8e0f1fb58406909ce9b1" args="(sfWebRequest $request)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>executeSearch</b> (sfWebRequest $request)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#a486d7ce8177d447ca49904b5ae07d218">executeIndex</a> (sfWebRequest $request)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classfacilityActions.html#a486d7ce8177d447ca49904b5ae07d218" title="executeIndex()">executeIndex()</a>  <a href="#a486d7ce8177d447ca49904b5ae07d218"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfacilityActions.html#acfd17f509bd0f5ab594d9c8b5ed65dde">executeList</a> (sfWebRequest $request)</td></tr>
@@ -120,8 +122,8 @@ Protected Attributes</h2></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Facility Actions extends sfActions. </p>
-<p>PHP Version 5</p>
-<p>LICENSE: This source file is subject to LGPLv3.0 license that is available through the world-wide-web at the following URI: <a href="http://www.gnu.org/copyleft/lesser.html">http://www.gnu.org/copyleft/lesser.html</a></p>
+<p>PHP Version 5.3</p>
+<p>LICENSE: This source file is subject to LGPLv2.1 license that is available through the world-wide-web at the following URI: <a href="http://www.gnu.org/licenses/lgpl-2.1.html">http://www.gnu.org/licenses/lgpl-2.1.html</a></p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Charles Wisniewski, CUNY SPS </dd>
 <dd>
 Nils Stolpe, CUNY SPS </dd>
@@ -155,7 +157,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00136">136</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00151">151</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -184,12 +186,12 @@ Ilya Gulko, CUNY SPS</dd></dl>
 </dl>
 
 <p><p>Locate the associated <a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> record through the associated <a class="el" href="classagSite.html" title="Extends BaseagSite.">agSite</a> record. Call the <a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> object's delete() method, which results in the deletion of all of the records associated with this <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> record, including contact information.</p>
-<p><a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> will call its <a class="el" href="classagSite.html" title="Extends BaseagSite.">agSite</a> object's delete() method which will, in turn, call our <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> object's delete() method. The <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> object will also delete the associated <a class="el" href="classagFacilityResource.html" title="agFacilityResource">agFacilityResource</a> records.</p>
+<p><a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> will call its <a class="el" href="classagSite.html" title="Extends BaseagSite.">agSite</a> object's delete() method which will, in turn, call our <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> object's delete() method. The <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> object will also delete the associated <a class="el" href="classagFacilityResource.html" title="agFacilityResource extends the base FacilityResource class">agFacilityResource</a> records.</p>
 <p>If there was no related <a class="el" href="classagEntity.html" title="Extends BaseagEntity and returns entity information.">agEntity</a> record found, something is wrong.</p>
 <p>Redirect to facility/list when done if it hasn't happened already</p>
 </p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00283">283</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00309">309</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -217,7 +219,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00261">261</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00287">287</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -245,7 +247,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00165">165</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00180">180</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -266,7 +268,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <p>Instantiates agFacilityExporter() and calls its functions to export all facilities in the system. </p>
 <p>After the exporter returns, the instance is unset to free up memory, then the browser directs to the exported xls. </p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00361">361</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00387">387</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -286,11 +288,11 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <div class="memdoc">
 
 <p>Imports facility records from a properly formatted XLS file. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000094">Todo:</a></b></dt><dd><p class="startdd">: define a standard import format and document it for the end user. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000099">Todo:</a></b></dt><dd><p class="startdd">: define a standard import format and document it for the end user. </p>
 <p class="enddd">: make this more robust and create meaningful error messages for failed import fields and records. </p>
 </dd></dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00211">211</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00230">230</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -318,7 +320,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00031">31</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00040">40</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -346,14 +348,14 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p><p>Query the database for <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> records joined with <a class="el" href="classagFacilityResource.html" title="agFacilityResource">agFacilityResource</a> records</p>
+<p><p>Query the database for <a class="el" href="classagFacility.html" title="extends the base Facility class for added functionality">agFacility</a> records joined with <a class="el" href="classagFacilityResource.html" title="agFacilityResource extends the base FacilityResource class">agFacilityResource</a> records</p>
 <p>Create pager</p>
 <p>Check if the client wants the results sorted, and set pager query attributes accordingly</p>
 <p>Set pager's query to our final query including sort parameters</p>
 <p>Set the pager's page number, defaulting to page 1</p>
 </p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00051">51</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00060">60</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -381,7 +383,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00124">124</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00139">139</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -409,7 +411,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00097">97</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00106">106</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -438,7 +440,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00194">194</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00213">213</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -469,7 +471,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
 <p>$lookUps = array( 'Facility Resource Status' =&gt; array( 'selectTable' =&gt; 'agFacilityResourceStatus', 'selectColumn' =&gt; 'facility_resource_status', 'whereColumn' =&gt; null, 'whereValue' =&gt; null ), 'Facility Resource Status' =&gt; array( 'selectTable' =&gt; 'agFacilityResourceStatus', 'selectColumn' =&gt; 'facility_resource_status', 'whereColumn' =&gt; null, 'whereValue' =&gt; null ) );</p>
 <p>Additional values of the $lookUps array can also be included. The keys of the inner array musy be set to selectTable, selectColumn, whereColumn, and whereValue. </p>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00409">409</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00435">435</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>
@@ -508,7 +510,7 @@ Ilya Gulko, CUNY SPS</dd></dl>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00342">342</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
+<p>Definition at line <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html#l00368">368</a> of file <a class="el" href="modules_2facility_2actions_2actions_8class_8php_source.html">actions.class.php</a>.</p>
 
 </div>
 </div>

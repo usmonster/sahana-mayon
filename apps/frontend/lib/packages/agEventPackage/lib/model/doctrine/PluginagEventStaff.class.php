@@ -14,32 +14,41 @@
 abstract class PluginagEventStaff extends BaseagEventStaff
 {
 
-  public function updateLucene()
+  /**
+   * Method to return a doctrine query that only selects active event staff
+   * @param integer $eventId The event ID being queried
+   * @return agDoctrineQuery An agDoctrineQuery object
+   */
+  public static function getActiveEventStaffQuery($eventId)
   {
+    // start with our basic query object
+    $q = agDoctrineQuery::create()
+        ->from('agEventStaff evs')
+          ->innerJoin('evs.agEventStaffStatus ess')
+          ->innerJoin('ess.agStaffAllocationStatus sas')
+          ->innerJoin('evs.agStaffResource sr')
+          ->innerJoin('sr.agStaffResourceStatus srs')
+        ->where('evs.event_id = ?', $eventId)
+          ->andWhere('srs.is_available = ?', TRUE);
 
-    //Charles Wisniewski @ 00:11 03/08/2011: perhaps this should be abstracted to a 'staff helper'
-    //or parts of it, to be called when updating lucene index for eventstaff AND regular staff
-    $doc = new Zend_Search_Lucene_Document();
-    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
-    //$doc->addField(Zend_Search_Lucene_Field::UnStored('staff_status', $this->getAgStaffStatus()->staff_status, 'utf-8'));
-    $query = agDoctrineQuery::create()
-            ->select('e.id, sr.id, s.id')
-             ->from('agEventStaff e')
-            ->innerJoin('e.agStaffResource sr')
-            ->innerJoin('sr.agStaff s')
-            ->where('e.id = ?', $this->id);
+    // ensure that we only get the most recent staff status
+    $recentStaffStatus = 'EXISTS (' .
+      'SELECT sess.id ' .
+        'FROM agEventStaffStatus AS sess ' .
+        'WHERE sess.time_stamp <= CURRENT_TIMESTAMP ' .
+          'AND sess.event_staff_id = ess.event_staff_id ' .
+        'HAVING MAX(sess.time_stamp) = ess.time_stamp' .
+      ')';
+    $q->andWhere($recentStaffStatus);
 
-    $staffResources = $query->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-
-    //the event staff member will ALWAYS be a staff resource first
-
-    foreach ($staffResources as $stf) {
-      $doc->addField(Zend_Search_Lucene_Field::unStored('staff', $stf['s_id'], 'utf-8'));
-    }
-
-    return $doc;
-
+    return $q;
   }
 
+  public function setUp()
+  {
+    parent::setUp();
 
+    $luceneable0 = new Luceneable(array());
+    $this->actAs($luceneable0);
+  }
 }

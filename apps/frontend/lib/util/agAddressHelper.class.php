@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Provides bulk-address manipulation methods
  *
  * PHP Version 5.3
@@ -28,7 +27,8 @@ class agAddressHelper extends agBulkRecordHelper
   public    $lineDelimiter = "<br />",
             $enforceComplete = FALSE,
             $enforceLineNumber = FALSE,
-            $checkValuesForCompleteness = FALSE ;
+            $checkValuesForCompleteness = FALSE,
+            $agGeoHelper ;
 
   protected $_globalDefaultAddressStandard = 'default_address_standard',
             $_globalDefaultAddressGeoType = 'default_address_geo_type',
@@ -80,13 +80,23 @@ class agAddressHelper extends agBulkRecordHelper
    *
    * @param array $addressIds A single dimension array of address id values.
    */
-  public function __construct($addressIds = NULL)
+  public function __construct(array $addressIds = NULL)
   {
     // if passed an array of address id's, set them as a class property
     parent::__construct($addressIds);
 
     // set our default address standard and pick up the formatting components
     $this->_setDefaultReturnStandard() ;
+  }
+
+  /**
+   * Method to lazily load the $agAddressHelper class property (an instance of agAddressHelper)
+   * @return object The instantiated agAddressHelper object
+   */
+  public function getAgGeoHelper()
+  {
+    if (! isset($this->agGeoHelper)) { $this->agGeoHelper = new agGeoHelper() ; }
+    return $this->agGeoHelper ;
   }
 
   /**
@@ -109,14 +119,7 @@ class agAddressHelper extends agBulkRecordHelper
    */
   protected function _setDefaultAddressGeoType()
   {
-    $geoType = agGlobal::getParam($this->_globalDefaultAddressGeoType) ;
-    $geoTypeId = agDoctrineQuery::create()
-      ->select('gt.id')
-        ->from('agGeoType gt')
-        ->where('gt.geo_type = ?', $geoType)
-        ->execute(array(),DOCTRINE_CORE::HYDRATE_SINGLE_SCALAR) ;
-
-    $this->_addressGeoTypeId = $geoTypeId ;
+    $this->_addressGeoTypeId = agGeoType::getAddressGeoTypeId() ;
   }
 
   /**
@@ -192,7 +195,7 @@ class agAddressHelper extends agBulkRecordHelper
    * @param array $arguments The arguments to be passed to the address return method.
    * @return array The results of the $returnMethod.
    */
-  protected function _getNativeAddress($returnMethod, $arguments)
+  protected function _getNativeAddress($returnMethod, array $arguments)
   {
     // always nice to have results, don'cha think?
     $results = array() ;
@@ -202,7 +205,7 @@ class agAddressHelper extends agBulkRecordHelper
 
     // pick up our all of our address ids
     $addressIds = array_shift($arguments) ;
-    $addressIds = $this->getRecordIds($addressIds) ;
+    $addressIds = $this->getRecordIds($addressIds);
 
     // seems a little insane but we do this so our foreach can always replace [0]
     array_unshift($arguments, array()) ;
@@ -246,7 +249,7 @@ class agAddressHelper extends agBulkRecordHelper
    * @param array $addressIds A single-dimension array of address  id's.
    * @return agDoctrineQuery An extended doctrine query object.
    */
-  protected function _getAddressComponents($addressIds)
+  protected function _getAddressComponents(array $addressIds)
   {
     // if no (null) ID's are passed, get the addressId's from the class property
     $addressIds = $this->getRecordIds($addressIds) ;
@@ -272,7 +275,7 @@ class agAddressHelper extends agBulkRecordHelper
    * @return array A two dimensional array keyed by address_id, then by address_element_id, and
    * containing the address value.
    */
-  public function getAddressComponentsById($addressIds = NULL)
+  public function getAddressComponentsById(array $addressIds = NULL)
   {
     // return our base query object
     $q = $this->_getAddressComponents($addressIds) ;
@@ -288,7 +291,7 @@ class agAddressHelper extends agBulkRecordHelper
    * @return array A two-dimensional associative array, keyed by address id, that has key/value
    * pairs representing latitude and longitude.
    */
-  public function getAddressCoordinates($addressIds = NULL)
+  public function getAddressCoordinates(array $addressIds = NULL)
   {
     // always a good idea to set this at the top
     $results = array() ;
@@ -338,7 +341,7 @@ class agAddressHelper extends agBulkRecordHelper
    * @return array A two-dimensional associative array, keyed by address_id and the string
    * representation of the address component.
    */
-  public function getAddressComponentsByName($addressIds = NULL, $getGeoCoordinates = TRUE)
+  public function getAddressComponentsByName(array $addressIds = NULL, $getGeoCoordinates = TRUE)
   {
     $results = array() ;
 
@@ -388,7 +391,7 @@ class agAddressHelper extends agBulkRecordHelper
    * Defaults to the class parameter $checkValuesForCompleteness.
    * @return boolean Is it a complete address? True or False. 
    */
-  public function isCompleteAddress($addressComponentArray, $checkValues = NULL)
+  public function isCompleteAddress(array $addressComponentArray, $checkValues = NULL)
   {
     // get our class-default checkValues value
     if (is_null($checkValues)) { $checkValues = $this->checkValuesForCompleteness ; }
@@ -426,7 +429,7 @@ class agAddressHelper extends agBulkRecordHelper
    * classes' $addressIds property is used.
    * @return array A mono-dimesional array of address_ids.
    */
-  public function getIncompleteAddresses($addressIds = NULL)
+  public function getIncompleteAddresses(array $addressIds = NULL)
   {
     $results = array() ;
     $addresses = $this->getAddressComponentsById($addressIds) ;
@@ -454,7 +457,7 @@ class agAddressHelper extends agBulkRecordHelper
    *
    * @todo This could *perhaps* be turned into some sort of super-efficient walk method
    */
-  public function getAddressComponentsByLine($addressIds = NULL, $enforceComplete = NULL)
+  public function getAddressComponentsByLine(array $addressIds = NULL, $enforceComplete = NULL)
   {
     // always a good idea to explicitly declare this
     $results = array() ;
@@ -517,7 +520,7 @@ class agAddressHelper extends agBulkRecordHelper
    * @return array A mono-dimensional associative array keyed by address_id with the combined
    * address string as a value.
    */
-  public function getAddressAsString( $addressIds = NULL,
+  public function getAddressAsString(array $addressIds = NULL,
                                       $enforceComplete = NULL,
                                       $enforceLineNumber = NULL)
   {
@@ -607,7 +610,7 @@ class agAddressHelper extends agBulkRecordHelper
    * @deprecated This should not normally be necessary as address hashes should be generated
    * at address creation.
    */
-  public function updateAddressHashes($addressIds = NULL, $conn = NULL)
+  public function updateAddressHashes(array $addressIds = NULL, $conn = NULL)
   {
     // what is our transaction called?
     $savepoint = 'updateAddrHash' ;
@@ -633,7 +636,7 @@ class agAddressHelper extends agBulkRecordHelper
     foreach ($addressComponents as $addressId => $components)
     {
       // calculate the component hash
-      $addrHash = $this->hashAddress($components) ;
+      $addrHash = agBulkRecordHelper::getRecordComponentsHash($components) ;
 
       // update the address hash value of this addressId by array access
       $addressCollection[$addressId]['address_hash'] = $addrHash ;
@@ -643,7 +646,7 @@ class agAddressHelper extends agBulkRecordHelper
     $conn->beginTransaction() ;
     try
     {
-     $addressCollection->save() ;
+     $addressCollection->save($conn) ;
      $conn->commit() ;
     }
     catch(Exception $e)
@@ -659,34 +662,86 @@ class agAddressHelper extends agBulkRecordHelper
   }
 
   /**
-   * Method to take an address component array and return a json encoded, md5sum'ed address hash.
-   * @param array $addressComponentArray An associative array of address components keyed by
-   * elementId with the string value.
-   * @return string(128) A 128-bit md5sum string.
-   */
-  protected function hashAddress($addressComponentArray)
-  {
-    // first off, we don't trust the sorting of the address components so we do our own
-    ksort($addressComponentArray) ;
-
-    // we json encode the return to
-    return md5(json_encode($addressComponentArray)) ;
-  }
-
-  /**
    * A quick helper method to take in an array address hashes and return an array of address ids.
    * @param array $addressHashes A monodimensional array of md5sum, json_encoded address hashes.
    * @return array An associative array, keyed by address hash, with a value of address_id.
    */
-  public function getAddressIdsByHash($addressHashes)
+  public function getAddressIdsByHash(array $addressHashes)
   {
     $q = agDoctrineQuery::create()
-      ->select('a.address_hash')
-          ->addSelect('a.id')
+      ->select('a.id')
         ->from('agAddress a')
-        ->whereIn('a.address_hash',$addressHashes) ;
+      ->useResultCache(TRUE, 1800);
+    
+    $results = array();
+    $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+    foreach ($addressHashes as $index => $hash)
+    {
+      $q->where('a.address_hash = ?',$hash);
 
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR) ;
+      $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+      // clear the cache if we had no result
+      if (empty($result))
+      {
+        $cacheDriver->delete($q->getResultCacheHash());
+      }
+      else
+      {
+        $results[$hash] = $result;
+      }
+      unset($addressHashes[$index]);
+    }
+
+    return $results;
+  }
+
+  /**
+   * Method to return address contact type ids from address contact type values.
+   * @param array $addressTypes An array of address_contact_types
+   * @return array An associative array of address contact type ids keyed by address contact type.
+   */
+  static public function getAddressContactTypeIds(array $addressTypes)
+  {
+    return agDoctrineQuery::create()
+      ->select('act.address_contact_type')
+          ->addSelect('act.id')
+        ->from('agAddressContactType act')
+        ->whereIn('act.address_contact_type', $addressTypes)
+      ->useResultCache(TRUE, 3600)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
+   * Method to return address element ids from address element values.
+   * @param array $addressElements An array of address_elements
+   * @return array An associative array of address element ids keyed by address element.
+   */
+  static public function getAddressElementIds(array $addressElements)
+  {
+    return agDoctrineQuery::create()
+      ->select('ae.address_element')
+          ->addSelect('ae.id')
+        ->from('agAddressElement ae')
+        ->whereIn('ae.address_element', $addressElements)
+      ->useResultCache(TRUE, 3600)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+  
+  /**
+   * Method to return address standard ids from address standard values.
+   * @param array $addressStandards An array of address_standards
+   * @return array An associative array of address standard ids keyed by address standard.
+   */
+  static public function getAddressStandardIds(array $addressStandards)
+  {
+    return agDoctrineQuery::create()
+      ->select('as.address_standard')
+          ->addSelect('as.id')
+        ->from('agAddressStandard as')
+        ->whereIn('as.address_standard', $addressStandards)
+      ->useResultCache(TRUE, 3600)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
   /**
@@ -703,7 +758,18 @@ class agAddressHelper extends agBulkRecordHelper
    * array(
    *    [$index] => array(
    *      [0] => array( [$elementId] => $valueString, ...),
-   *      [1] => $addressStanardId
+   *      [1] => $addressStandardId
+   *    ),
+   *    ...
+   * )
+   * </code>
+   * @param array $addressGeo An array of address geo elements.
+   * NOTE: Must use the same $index ID's as the $addresses array.
+   * <code>
+   * array(
+   *    [$index] => array(
+   *      [0] => array( [0]=> array($latitude, $longitude), [1] => ...),
+   *      [1] => $matchScoreId
    *    ),
    *    ...
    * )
@@ -711,6 +777,8 @@ class agAddressHelper extends agBulkRecordHelper
    * @param boolean $enforceComplete Determines whether or not only complete addresses will be
    * processed and set. Warning! It still won't process addresses that were previously allowed to
    * be incomplete meaning users should attempt to be consistent in the use of this parameter.
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return array A two dimensional array. The first array element ([0]), returns an array of
    * address indexes and the newly inserted addressIds. The second array element [1], returns all
@@ -721,20 +789,51 @@ class agAddressHelper extends agBulkRecordHelper
    *  [1] => array( $addressIndex, ... )
    * )
    * </code>
+   * @todo Pass the addressGeo array through
    */
-  public function setAddresses( $addresses,
+  public function setAddresses( array $addresses,
+                                array $addressIndexGeo = array(),
+                                $geoSourceId = NULL,
                                 $enforceComplete = NULL,
+                                $throwOnError = NULL,
                                 Doctrine_Connection $conn = NULL)
   {
-    // determine whether or not we're enforcing completeness in addresses
+    $uniqAddr = array();
+    $addressIdGeo = array();
+    $err = NULL;
+    $uniqResults = array(array(), array());
+    $results = array(array(), array());
+
+    // get some defaults if not explicitly passed
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
     if (is_null($enforceComplete)) { $enforceComplete = $this->enforceComplete ; }
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
+
+    // fail out if not provided a geoSourceId but expected to process geo
+    if (! empty($addressIndexGeo) && is_null($geoSourceId))
+    {
+      $errMsg = "Geo coordinates provided, missing geoSourceId.";
+      throw new Exception($errMsg);
+    }
+
+    // clean up our data (ucwords etc)
+    foreach ($addresses as &$address)
+    {
+      foreach($address[0] as &$component)
+      {
+        $component = self::fullTrim($component);
+//        $component = self::ucTrim($component);
+      }
+      unset($component);
+    }
+    unset($address);
+
+    // set up the incompletes (non-processed) array
+    $incompleteAddresses = array() ;
 
     // if we're going to do this, let's set up our required elements and kick out incompletes
     if ($enforceComplete)
     {
-      // set up the incompletes (non-processed) array
-      $incompleteAddresses = array() ;
-
       // we'll want this flipped array to process all address standards one at a time
       $addressesByStandard = array() ;
       foreach ($addresses as $index => $components)
@@ -761,6 +860,19 @@ class agAddressHelper extends agBulkRecordHelper
 
             // also remove it from the group to be processed
             unset($addresses[$index]) ;
+
+            // if we're being strict with error throws, let's throw on a problem
+            if ($throwOnError)
+            {
+              $errMsg = sprintf('Address \'%s\' with components %s failed the test for completeness
+                for address standard id \'%s\'.', $index, json_encode($components), $standardId) ;
+
+              // log our error
+              sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+              // throw the exception we promised in our boolean
+              throw new Exception($errMsg) ;
+            }
           }
 
           // release the array!
@@ -775,21 +887,128 @@ class agAddressHelper extends agBulkRecordHelper
       if ($origStandard != $this->_returnStandardId) { $this->setReturnStandard($origStandard) ; }
     }
 
-    // either way, we eventually pass the 'cleared' addresses to our setter
-    $results = $this->_setAddresses($addresses, $conn) ;
+    foreach ($addresses as $index => &$components)
+    {
+      // Trim address values.
+      foreach ($components[0] as $elem => $val)
+      {
+        $components[0][$elem] = trim($val);
+      }
 
+      // see if the addresses components already exist in our uniq array
+      $pos = array_search($components, $uniqAddr);
+      if ($pos === FALSE)
+      {
+        // if not, add them and get the newly added index
+        $uniqAddr[] = $components;
+        $pos = max(array_keys($uniqAddr));
+      }
+
+      // replace the components array with the new index
+      $components = $pos;
+    }
+    unset($components);
+
+    // here we check our current transaction scope and create a transaction or savepoint
+    $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+    if ($useSavepoint)
+    {
+      $conn->beginTransaction(__FUNCTION__) ;
+    }
+    else
+    {
+      $conn->beginTransaction() ;
+    }
+
+    try
+    {
+      // either way, we eventually pass the 'cleared' addresses to our setter
+      $uniqResults = $this->_setAddresses($uniqAddr, $throwOnError, $conn) ;
+    }
+    catch(Exception $e)
+    {
+     // log our error
+      $errMsg = sprintf('Failed to execute _setAddresses!  %s', $e->getMessage());
+
+      // capture our exception for a later throw and break out of this loop
+      $err = $e ;
+    }
+
+    // release some resources
+    unset($uniqAddr);
+
+    // now de-unique the addresses and re-attach the original index
+    foreach ($addresses as $index => $value)
+    {
+      if (array_key_exists($value, $uniqResults[0]))
+      {
+        $results[0][$index] = $uniqResults[0][$value];
+        unset($addresses[$index]);
+      }
+      elseif (in_array($value, $uniqResults))
+      {
+        $results[1][] = $index;
+        unset($addresses[$index]);
+      }
+    }
+    unset($addresses);
+    unset($uniqResults);
+
+    if (is_null($err))
+    {
+      // Resetting an address geo array with address id as index.
+      foreach ($results[0] as $index => $addrId)
+      {
+        if (array_key_exists($index, $addressIndexGeo))
+        {
+          $addressIdGeo[$addrId] = $addressIndexGeo[$index];
+          unset($addressIndexGeo[$index]);
+        }
+      }
+
+      //Lazy load agGeoHelper.
+      $geoHelper = $this->getAgGeoHelper();
+      try
+      {
+        $geoHelper->setAddressGeo($addressIdGeo, $geoSourceId, NULL, $throwOnError, $conn);
+        // most excellent! no errors at all, so we commit... finally!
+        if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+      }
+      catch(Exception $e)
+      {
+       // log our error
+        $errMsg = sprintf('Failed to execute setAddressGeo!  %s', $e->getMessage());
+
+        // capture our exception for a later throw and break out of this loop
+        $err = $e ;
+      }
+    }
+
+    if (!is_null($err))
+    {
+      // log our error
+      sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+      // rollback
+      if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+      // capture failed address index in results.
+      $results[1] = $results[1] + array_keys($results[0]) ;
+      $results[0] = array();
+
+      // ALWAYS throw an error, it's like stepping on a crack if you don't
+      if ($throwOnError) { throw $err ; }
+    }
+    
     // append our incompletes to the other failed addresses
     $results[1] = $results[1] + $incompleteAddresses ;
 
     return $results ;
   }
-
+  
   /**
    * Method to take in address components and return address ids, inserting new addresses OR
    * address components as necessary.
-   *
-   * NOTE: This method does not fail fast. Addresses for which address id's could not be returned,
-   * either by failed search or failed insert, are returned by index as part of the results set.
    *
    * @param array $addresses This multi-dimensional array of address data is keyed by an arbitrary
    * index. The values of each index are: an array of address components, keyed by element id, and the
@@ -803,6 +1022,8 @@ class agAddressHelper extends agBulkRecordHelper
    *    ...
    * )
    * </code>
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return array A two dimensional array. The first array element ([0]), returns an array of
    * address indexes and the newly inserted addressIds. The second array element [1], returns all
@@ -814,7 +1035,9 @@ class agAddressHelper extends agBulkRecordHelper
    * )
    * </code>
    */
-  protected function _setAddresses( $addresses, Doctrine_Connection $conn = NULL)
+  protected function _setAddresses(array $addresses,
+                                    $throwOnError = NULL,
+                                    Doctrine_Connection $conn = NULL)
   {
     // declare our results array
     $results = array() ;
@@ -824,11 +1047,11 @@ class agAddressHelper extends agBulkRecordHelper
 
     // declare the addrHashes array explicitly too
     $addrHashes = array() ;
-    
+
     // loop through the addresses, hash the components, and build the hash-keyed search array
     foreach($addresses as $index => $addressComponents)
     {
-      $hash = $this->hashAddress($addressComponents[0]) ;
+      $hash = agBulkRecordHelper::getRecordComponentsHash($addressComponents[0]) ;
       $addrHashes[$index] = $hash ;
     }
 
@@ -859,8 +1082,11 @@ class agAddressHelper extends agBulkRecordHelper
     // just 'cause this is going to be a very memory-hungry method, we'll unset the hashes too
     unset($dbHashes) ;
 
+    // pick up the default connection if one is not passed
+    if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+
     // now that we have all of the 'existing' addresses, let's build the new ones
-    $newAddresses = $this->setNewAddresses($addresses) ;
+    $newAddresses = $this->setNewAddresses($addresses, $throwOnError, $conn) ;
     $successes = array_shift($newAddresses) ;
 
     // we don't need this anymore!
@@ -902,6 +1128,8 @@ class agAddressHelper extends agBulkRecordHelper
    *    ...
    * )
    * </code>
+   * @param boolean $throwOnError A boolean to determine whether or not errors will trigger an
+   * exception or be silently ignored (rendering an address 'optional'.
    * @param Doctrine_Connection $conn A doctrine connection object.
    * @return array A two dimensional array. The first array element ([0]), returns an array of
    * address indexes and the newly inserted addressIds. The second array element [1], returns all
@@ -912,82 +1140,87 @@ class agAddressHelper extends agBulkRecordHelper
    *  [1] => array( $addressIndex, ... )
    * )
    * </code>
+   * @todo add new geo's or attach old ones (as appropriate)
+   * @todo optimize for APC to do the results caching
    */
-  protected function setNewAddresses($addresses, Doctrine_Connection $conn = NULL)
+  protected function setNewAddresses(array $addresses,
+                                      $throwOnError = NULL,
+                                      Doctrine_Connection $conn = NULL)
   {
-    // we'll use this like a cache and check against it with each successive execution
-    $valuesCache = array() ;
-
     // declare our results array
     $results = array() ;
 
-    // pick up the default connection if one is not passed
+    // pick up the default connection and error throw prerogative if one is not passed
     if (is_null($conn)) { $conn = Doctrine_Manager::connection() ; }
+    if (is_null($throwOnError)) { $throwOnError = $this->throwOnError ; }
 
     // loop through our addresses and the components
     foreach ($addresses as $index => $components)
     {
       // we do this so we only have to call rollback / unset once, plus it's nice to have a bool to
       // check on our own
-      $err = FALSE ;
+      $err = NULL ;
+      $errMsg = 'This is a generic error message for setNewAddresses. You should never receive this
+        error. If you are recieving this error, there is an ERROR in your error-handling code.' ;
 
       // if for whatever reason we're not passed a standard, pick up the default
       if (! isset($components[1])) { $components[1] = $this->_returnStandardId ; }
 
-
-      // similarly, we want to wrap this whole sucker in a transaction
-      $conn->beginTransaction() ;
+      // here we check our current transaction scope and create a transaction or savepoint
+      $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE ;
+      if ($useSavepoint)
+      {
+        $conn->beginTransaction(__FUNCTION__) ;
+      }
+      else
+      {
+        $conn->beginTransaction() ;
+      }
 
       // build a results cache so we commit entire addresses at once, not just individual elements
       $resultsCache = array() ;
 
       foreach($components[0] as $elementId => $value)
       {
-        // if we've already picked up this address value, GREAT! just load it from our
-        // cache and keep going!
-        if (isset($valuesCache[$elementId][$value]))
-        {
-          $resultsCache[$elementId] = $valuesCache[$elementId][$value] ;
-        }
-        else
-        {
-          // since we didn't find it in cache, we'll try to grab it from the db
-          $valueId = $this->getAddressValueId($elementId, $value) ;
+        // since we didn't find it in cache, we'll try to grab it from the db
+        $valueId = $this->getAddressValueId($elementId, $value) ;
 
-          // unfortunately, if we didn't get value we've got to add it!
-          if (empty($valueId))
+        // unfortunately, if we didn't get value we've got to add it!
+        if (empty($valueId))
+        {
+          $addressValueTbl = $conn->getTable('agAddressValue');
+          $addrValue = new agAddressValue($addressValueTbl, TRUE);
+          $addrValue['address_element_id'] = $elementId ;
+          $addrValue['value'] = $value ;
+          try
           {
+            // save the address
+            $addrValue->save($conn) ;
+            $valueId = $addrValue->getId() ;
+          }
+          catch(Exception $e)
+          {
+           // log our error
+            $errMsg = sprintf('Couldn\'t insert address value %s of element %s!
+              Rolled back changes!', $value, $elementId) ;
 
-            $addrValue = new agAddressValue();
-            $addrValue['address_element_id'] = $elementId ;
-            $addrValue['value'] = $value ;
-            try
-            {
-              // save the address
-              $addrValue->save($conn) ;
-              $valueId = $addrValue->getId() ;
-              
-              // and since that went right, add it to our results arrays
-              $valuesCache[$elementId][$value] = $valueId ;
-              $resultsCache[$elementId] = $valueId ;
-            }
-            catch(Exception $e)
-            {
-              // if we run into a problem, set this once rollback will roll it all back at the end
-              $err = TRUE ;
-              break ;
-
-            }
+            // capture our exception for a later throw and break out of this loop
+            $err = $e ;
+            break ;
           }
         }
+
+      // and since that all went right, add it to our results arrays
+      $resultsCache[$elementId] = $valueId ;
       }
 
       // now we attempt to insert the new address_id with all of our value bits, again only useful
       // if we've not already had an error
-      if (! $err)
+      if (is_null($err))
       {
         // attempt to insert the actual address
-        $newAddr = new agAddress() ;
+        $addressTbl = $conn->getTable('agAddress');
+        $newAddr = new agAddress($addressTbl, TRUE) ;
         $newAddr['address_standard_id'] = $components[1] ;
         $newAddr['address_hash'] = $components[2] ;
 
@@ -999,8 +1232,12 @@ class agAddressHelper extends agBulkRecordHelper
         }
         catch(Exception $e)
         {
-          // if we run into a problem, set this once rollback will roll it all back at the end
-          $err = TRUE ;
+          // log our error
+          $errMsg = sprintf('Couldn\'t insert address with standard %s and hash %s!
+            Rolled back changes!', $components[1], $components[2]) ;
+
+          // hold onto this exception for later
+          $err = $e ;
         }
       }
 
@@ -1008,9 +1245,10 @@ class agAddressHelper extends agBulkRecordHelper
       foreach ($resultsCache as $rElem => $rValueId)
       {
         // if we at any point pick up an error, don't bother
-        if ($err) { break ; }
+        if (! is_null($err)) { break ; }
 
-        $newAmav = new agAddressMjAgAddressValue() ;
+        $amavTbl = $conn->getTable('agAddressMjAgAddressValue');
+        $newAmav = new agAddressMjAgAddressValue($amavTbl, TRUE) ;
         $newAmav['address_id'] = $addrId ;
         $newAmav['address_value_id'] = $rValueId ;
 
@@ -1021,26 +1259,49 @@ class agAddressHelper extends agBulkRecordHelper
         }
         catch(Exception $e)
         {
-          // if we run into a problem, set this once rollback will roll it all back at the end
-          $err = TRUE ;
+          // log our error
+          $errMsg = sprintf('Couldn\'t insert address (%s) + value (%s) mapping join!
+            Rolled back changes!', $addrId, $rValueId) ;
+
+          // hold onto this exception for later
+          $err = $e ;
+        }
+      }
+
+      if (is_null($err))
+      {
+        try
+        {
+          // most excellent! no errors at all, so we commit... finally!
+          if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
+        }
+        catch(Exception $e)
+        {
+          $errMsg = 'Failed to commit new address identified by hash ' . $components[2] .
+            ' to database.';
+          $err = $e;
         }
       }
 
       // if there's been an error, at any point, we rollback any transactions for this address
-      if ($err)
+      if (is_null($err))
       {
-        $conn->rollback() ;
-      }
-      else
-      {
-        // most excellent! no erors at all, so we commit... finally!
-        $conn->commit() ;
-
         // commit our results to our final results array
         $results[$index] = $addrId ;
 
         // release the value on our input array
         unset($addresses[$index]) ;
+      }
+      else
+      {
+        // log our error
+        sfContext::getInstance()->getLogger()->err($errMsg) ;
+
+        // rollback
+        if ($useSavepoint) { $conn->rollback(__FUNCTION__) ; } else { $conn->rollback() ; }
+
+        // ALWAYS throw an error, it's like stepping on a crack if you don't
+        if ($throwOnError) { throw $err ; }
       }
     }
 
@@ -1068,7 +1329,20 @@ class agAddressHelper extends agBulkRecordHelper
 
     if (! is_null($conn)) { $q->setConnection($conn) ; }
 
-    return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    // set up our initial cache
+    $q->useResultCache(TRUE, 1800);
+    
+    // execute
+    $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    // clear the cache if we had no result
+    if (empty($result))
+    {
+      $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+      $cacheDriver->delete($q->getResultCacheHash());
+    }
+
+    return $result;
   }
 
   /**

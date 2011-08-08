@@ -1,8 +1,8 @@
 <?php
 
 /**
- * An extension of an organization base form to process the edit and show forms of organization
- * and its related records.
+ * An extension of an organization base form to process the edit and
+ * show forms of organization and its related records.
  *
  * PHP Version 5.3
  *
@@ -18,8 +18,8 @@ class agOrganizationForm extends BaseagOrganizationForm
 {
 
   /** @method setup()
-   * Unset widgets that are auto-filled, unnecessary, or whose relations are not properly defined 
-   * without using embedded forms.
+   * Unset widgets that are auto-filled, unnecessary, or whose relations
+   * are not properly defined without using embedded forms.
    */
   public function setup()
   {
@@ -31,7 +31,8 @@ class agOrganizationForm extends BaseagOrganizationForm
   }
 
   /** @method configure()
-   *  In the method it is creating and setting both widgets and validtion for the form.
+   * In the method it is creating and setting both widgets and
+   * validtion for the form.
    */
   public function configure()
   {
@@ -46,27 +47,54 @@ class agOrganizationForm extends BaseagOrganizationForm
         $this['ag_branch_list']
     );
 
-    $this->setWidgets(array(
-      'id' => new sfWidgetFormInputHidden(),
-      'entity_id' => new sfWidgetFormInputHidden(),
-      'organization' => new sfWidgetFormInputText(),
-      'description' => new sfWidgetFormInputText(),
-    ));
+    $this->setWidgets(
+        array(
+          'id' => new sfWidgetFormInputHidden(),
+          'entity_id' => new sfWidgetFormInputHidden(),
+          'organization' => new sfWidgetFormInputText(
+            array(),
+            array('class' => 'inputGray setWidgetsScenario')
+          ),
+          'description' => new sfWidgetFormTextArea(
+            array(),
+            array('class' => 'inputGray setWidgetsDesc')
+          ),
+        )
+    );
 
-    $this->setValidators(array(
-      'id' => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')),
-        'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'organization' => new sfValidatorString(array('required' => true, 'max_length' => 128)),
-      'description' => new sfValidatorString(array('required' => false, 'min_length' => 1,
-        'max_length' => 255)),
-    ));
+    $this->setValidators(
+        array(
+          'id' => new sfValidatorChoice(
+              array(
+                'choices' => array($this->getObject()->get('id')),
+                'empty_value' => $this->getObject()->get('id'),
+                'required' => false)
+          ),
+          'organization' => new sfValidatorString(array('trim' => true, 
+                                                        'required' => true,
+                                                        'max_length' => 128)
+          ),
+          'description' => new sfValidatorString(array('trim' => true, 'required' => false, 
+                                                       'max_length' => 255, 'required' => false)
+          ),
+        )
+    );
+    sfProjectConfiguration::getActive()->loadHelpers(array ('Helper','Url', 'Asset', 'Tag'));
+    $wikiUrl = url_for('@wiki');
 
     $this->validatorSchema->setOption('allow_extra_fields', true);
-    $this->widgetSchema->setNameFormat('ag_staff_resource_organization[%s]');
+    $this->widgetSchema->setNameFormat('ag_organization[%s]');
+    $this->widgetSchema->setLabels(
+             array(
+               'organization' => 'Organization <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_name&do=export_xhtmlbody" class="tooltipTrigger" title="Organization">?</a>',
+               'description'  => 'Description <a href="' . $wikiUrl .  '/doku.php?id=tooltip:organization_description&do=export_xhtmlbody" class="tooltipTrigger" title="Organization Description">?</a>',
+             )
+           );
 
-    $custDeco = new agWidgetFormSchemaFormatterInline($this->getWidgetSchema());
-    $this->getWidgetSchema()->addFormFormatter('custDeco', $custDeco);
-    $this->getWidgetSchema()->setFormFormatterName('custDeco');
+
+    $sectionsDeco = new agWidgetFormSchemaFormatterSection($this->getWidgetSchema());
+    $this->getWidgetSchema()->addFormFormatter('section', $sectionsDeco);
+    $this->getWidgetSchema()->setFormFormatterName('section');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);
   }

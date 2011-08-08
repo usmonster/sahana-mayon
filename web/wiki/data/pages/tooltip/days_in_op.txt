@@ -1,0 +1,3 @@
+===== Days in Operation =====
+
+Enter the number of days the facility is expected to remain open.

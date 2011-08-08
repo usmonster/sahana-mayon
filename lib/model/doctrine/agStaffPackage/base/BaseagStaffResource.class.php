@@ -8,28 +8,37 @@
  * @property integer $id
  * @property integer $staff_id
  * @property integer $staff_resource_type_id
+ * @property integer $staff_resource_status_id
+ * @property integer $organization_id
  * @property agStaff $agStaff
  * @property agStaffResourceType $agStaffResourceType
- * @property Doctrine_Collection $agStaffResourceOrganization
+ * @property agStaffResourceStatus $agStaffResourceStatus
+ * @property agOrganization $agOrganization
  * @property Doctrine_Collection $agEventStaff
  * @property Doctrine_Collection $agScenarioStaffResource
  * 
- * @method integer             getId()                          Returns the current record's "id" value
- * @method integer             getStaffId()                     Returns the current record's "staff_id" value
- * @method integer             getStaffResourceTypeId()         Returns the current record's "staff_resource_type_id" value
- * @method agStaff             getAgStaff()                     Returns the current record's "agStaff" value
- * @method agStaffResourceType getAgStaffResourceType()         Returns the current record's "agStaffResourceType" value
- * @method Doctrine_Collection getAgStaffResourceOrganization() Returns the current record's "agStaffResourceOrganization" collection
- * @method Doctrine_Collection getAgEventStaff()                Returns the current record's "agEventStaff" collection
- * @method Doctrine_Collection getAgScenarioStaffResource()     Returns the current record's "agScenarioStaffResource" collection
- * @method agStaffResource     setId()                          Sets the current record's "id" value
- * @method agStaffResource     setStaffId()                     Sets the current record's "staff_id" value
- * @method agStaffResource     setStaffResourceTypeId()         Sets the current record's "staff_resource_type_id" value
- * @method agStaffResource     setAgStaff()                     Sets the current record's "agStaff" value
- * @method agStaffResource     setAgStaffResourceType()         Sets the current record's "agStaffResourceType" value
- * @method agStaffResource     setAgStaffResourceOrganization() Sets the current record's "agStaffResourceOrganization" collection
- * @method agStaffResource     setAgEventStaff()                Sets the current record's "agEventStaff" collection
- * @method agStaffResource     setAgScenarioStaffResource()     Sets the current record's "agScenarioStaffResource" collection
+ * @method integer               getId()                       Returns the current record's "id" value
+ * @method integer               getStaffId()                  Returns the current record's "staff_id" value
+ * @method integer               getStaffResourceTypeId()      Returns the current record's "staff_resource_type_id" value
+ * @method integer               getStaffResourceStatusId()    Returns the current record's "staff_resource_status_id" value
+ * @method integer               getOrganizationId()           Returns the current record's "organization_id" value
+ * @method agStaff               getAgStaff()                  Returns the current record's "agStaff" value
+ * @method agStaffResourceType   getAgStaffResourceType()      Returns the current record's "agStaffResourceType" value
+ * @method agStaffResourceStatus getAgStaffResourceStatus()    Returns the current record's "agStaffResourceStatus" value
+ * @method agOrganization        getAgOrganization()           Returns the current record's "agOrganization" value
+ * @method Doctrine_Collection   getAgEventStaff()             Returns the current record's "agEventStaff" collection
+ * @method Doctrine_Collection   getAgScenarioStaffResource()  Returns the current record's "agScenarioStaffResource" collection
+ * @method agStaffResource       setId()                       Sets the current record's "id" value
+ * @method agStaffResource       setStaffId()                  Sets the current record's "staff_id" value
+ * @method agStaffResource       setStaffResourceTypeId()      Sets the current record's "staff_resource_type_id" value
+ * @method agStaffResource       setStaffResourceStatusId()    Sets the current record's "staff_resource_status_id" value
+ * @method agStaffResource       setOrganizationId()           Sets the current record's "organization_id" value
+ * @method agStaffResource       setAgStaff()                  Sets the current record's "agStaff" value
+ * @method agStaffResource       setAgStaffResourceType()      Sets the current record's "agStaffResourceType" value
+ * @method agStaffResource       setAgStaffResourceStatus()    Sets the current record's "agStaffResourceStatus" value
+ * @method agStaffResource       setAgOrganization()           Sets the current record's "agOrganization" value
+ * @method agStaffResource       setAgEventStaff()             Sets the current record's "agEventStaff" collection
+ * @method agStaffResource       setAgScenarioStaffResource()  Sets the current record's "agScenarioStaffResource" collection
  * 
  * @package    AGASTI_CORE
  * @subpackage model
@@ -57,6 +66,16 @@ abstract class BaseagStaffResource extends sfDoctrineRecord
              'notnull' => true,
              'length' => 2,
              ));
+        $this->hasColumn('staff_resource_status_id', 'integer', 2, array(
+             'type' => 'integer',
+             'notnull' => true,
+             'length' => 2,
+             ));
+        $this->hasColumn('organization_id', 'integer', 2, array(
+             'type' => 'integer',
+             'notnull' => true,
+             'length' => 2,
+             ));
 
 
         $this->index('agStaffResource_unq', array(
@@ -66,6 +85,18 @@ abstract class BaseagStaffResource extends sfDoctrineRecord
               1 => 'staff_resource_type_id',
              ),
              'type' => 'unique',
+             ));
+        $this->index('IX_agStaffResource_staffResourceStatusId', array(
+             'fields' => 
+             array(
+              0 => 'staff_resource_status_id',
+             ),
+             ));
+        $this->index('IX_agStaffResource_organizationId', array(
+             'fields' => 
+             array(
+              0 => 'organization_id',
+             ),
              ));
     }
 
@@ -80,9 +111,13 @@ abstract class BaseagStaffResource extends sfDoctrineRecord
              'local' => 'staff_resource_type_id',
              'foreign' => 'id'));
 
-        $this->hasMany('agStaffResourceOrganization', array(
-             'local' => 'id',
-             'foreign' => 'staff_resource_id'));
+        $this->hasOne('agStaffResourceStatus', array(
+             'local' => 'staff_resource_status_id',
+             'foreign' => 'id'));
+
+        $this->hasOne('agOrganization', array(
+             'local' => 'organization_id',
+             'foreign' => 'id'));
 
         $this->hasMany('agEventStaff', array(
              'local' => 'id',

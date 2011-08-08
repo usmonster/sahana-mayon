@@ -1,0 +1,10 @@
+===== Scenario Name =====
+Ideally, Scenarios are named for the type of emergency response they are used for.  Examples include:
+  * "Earthquake Response" for earthquakes
+  * "Flooding Shelter Plan" to house flood victims
+  * "Tornado Aid Distribution" for dispersing relief donations in a tornado response
+
+Scenario names are used throughout Sahana Agasti as a label.
+
+===== Scenario Description =====
+The scenario description text is a reference for you and other members of your staff.  The scenario description is used in the scenario module.

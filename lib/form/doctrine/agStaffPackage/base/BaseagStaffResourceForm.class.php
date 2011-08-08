@@ -15,19 +15,23 @@ abstract class BaseagStaffResourceForm extends BaseFormDoctrine
   public function setup()
   {
     $this->setWidgets(array(
-      'id'                     => new sfWidgetFormInputHidden(),
-      'staff_id'               => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaff'), 'add_empty' => false)),
-      'staff_resource_type_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => false)),
-      'created_at'             => new sfWidgetFormDateTime(),
-      'updated_at'             => new sfWidgetFormDateTime(),
+      'id'                       => new sfWidgetFormInputHidden(),
+      'staff_id'                 => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaff'), 'add_empty' => false)),
+      'staff_resource_type_id'   => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'), 'add_empty' => false)),
+      'staff_resource_status_id' => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceStatus'), 'add_empty' => false)),
+      'organization_id'          => new sfWidgetFormDoctrineChoice(array('model' => $this->getRelatedModelName('agOrganization'), 'add_empty' => false)),
+      'created_at'               => new sfWidgetFormDateTime(),
+      'updated_at'               => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
-      'id'                     => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
-      'staff_id'               => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaff'))),
-      'staff_resource_type_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'))),
-      'created_at'             => new sfValidatorDateTime(),
-      'updated_at'             => new sfValidatorDateTime(),
+      'id'                       => new sfValidatorChoice(array('choices' => array($this->getObject()->get('id')), 'empty_value' => $this->getObject()->get('id'), 'required' => false)),
+      'staff_id'                 => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaff'))),
+      'staff_resource_type_id'   => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceType'))),
+      'staff_resource_status_id' => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agStaffResourceStatus'))),
+      'organization_id'          => new sfValidatorDoctrineChoice(array('model' => $this->getRelatedModelName('agOrganization'))),
+      'created_at'               => new sfValidatorDateTime(),
+      'updated_at'               => new sfValidatorDateTime(),
     ));
 
     $this->validatorSchema->setPostValidator(

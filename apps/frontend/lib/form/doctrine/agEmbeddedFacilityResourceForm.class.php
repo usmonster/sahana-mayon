@@ -65,7 +65,7 @@ class agEmbeddedFacilityResourceForm extends agFacilityResourceForm
       $lists = array('agFacilityResourceType', 'agFacilityResourceStatus');
 
       foreach ($lists as $list) {
-        $this::$staticLists[$list] = Doctrine::getTable($list)->createQuery($list)->execute();
+        $this::$staticLists[$list] = Doctrine::getTable($list)->createQuery($list);
       }
     }
 
@@ -75,12 +75,14 @@ class agEmbeddedFacilityResourceForm extends agFacilityResourceForm
      */
     $this->setWidget(
         'facility_resource_status_id',
-        new sfWidgetFormDoctrineChoice(array(
-          'model' => $this->getRelatedModelName('agFacilityResourceStatus'),
-          'add_empty' => true,
-          'method' => 'getFacilityResourceStatus',
-          'query' => $this::$staticLists['agFacilityResourceStatus']
-        ))
+        new sfWidgetFormDoctrineChoice(
+            array(
+              'model' => $this->getRelatedModelName('agFacilityResourceStatus'),
+              'add_empty' => true,
+              'method' => 'getFacilityResourceStatus',
+              'query' => $this::$staticLists['agFacilityResourceStatus']
+            )
+        )
     );
 
     /**
@@ -89,11 +91,12 @@ class agEmbeddedFacilityResourceForm extends agFacilityResourceForm
      */
     $this->setWidget(
         'facility_resource_type_id',
-        new sfWidgetFormDoctrineChoice(array(
-          'model' => $this->getRelatedModelName('agFacilityResourceType'),
-          'add_empty' => true,
-          'method' => 'getFacilityResourceType',
-          'query' => $this::$staticLists['agFacilityResourceType']
+        new sfWidgetFormDoctrineChoice(
+            array(
+              'model' => $this->getRelatedModelName('agFacilityResourceType'),
+              'add_empty' => true,
+              'method' => 'getFacilityResourceType',
+              'query' => $this::$staticLists['agFacilityResourceType']
             )
         )
     );
@@ -102,20 +105,30 @@ class agEmbeddedFacilityResourceForm extends agFacilityResourceForm
      * Add the Capacity field and Facility Code and add the inputGray style to it
      */
     $this->setWidget('capacity', new sfWidgetFormInputText(array(), array('class' => 'inputGray')));
-    $this->setWidget('facility_resource_code', new sfWidgetFormInputText(array(), array('class' => 'inputGray')));
     /**
      * Set the validators for all visible fields to not required.
      * This will allow us to delete facility resource records by
      * leaving the fields blank.
      */
     $this->setValidator('capacity', new sfValidatorInteger(array('required' => false)));
-    $this->setValidator('facility_resource_code', new sfValidatorPass(array('required' => false)));
     $this->setValidator(
         'facility_resource_status_id',
-        new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agFacilityResourceStatus'))));
+        new sfValidatorDoctrineChoice(
+            array(
+              'required' => false,
+              'model' => $this->getRelatedModelName('agFacilityResourceStatus')
+            )
+        )
+    );
     $this->setValidator(
         'facility_resource_type_id',
-        new sfValidatorDoctrineChoice(array('required' => false, 'model' => $this->getRelatedModelName('agFacilityResourceType'))));
+        new sfValidatorDoctrineChoice(
+            array(
+              'required' => false,
+              'model' => $this->getRelatedModelName('agFacilityResourceType')
+            )
+        )
+    );
 
     /**
      * Set the formatter to agWidgetFormSchemaFormatterRow so that

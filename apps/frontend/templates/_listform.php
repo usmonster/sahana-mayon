@@ -1,4 +1,7 @@
 <?php
+
+
+//the below has been moved to an abstracted function in agActions actions.class.php and should be replaced
 $sortColumn = $sf_request->getGetParameter('sort');
     $sortOrder = $sf_request->getGetParameter('order');
     ($sf_request->getGetParameter('filter')) ? $filterAppend = '&filter=' . $sf_request->getGetParameter('filter') : $filterAppend = '';
@@ -37,22 +40,17 @@ $sortColumn = $sf_request->getGetParameter('sort');
 <?php
 
     foreach ($pager->getResults() as $result) {
-        echo get_partial('global/formresult', array(
+
+          echo get_partial('global/formresult', array(
         'obj' => $result,
         'widget' => $widget,
-         'displayColumns' => $displayColumns)
-
-            //ideally the set of columns passed here should be something like:
-            //query_field_name (with table alias... the query has to be on point)
-            //then we can foreach of that array....
-            //e.g. $columns is:
-            /**
-             * $columns = array('query_field_alias' => array(
-             */
-      );
+         'displayColumns' => $displayColumns));
     }
   ?>
     </tbody>
 </table>
+
+  <br />
+  
   <input type="submit" name="Save" value="Save" id="save">
 </form>

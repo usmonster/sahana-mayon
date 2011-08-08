@@ -1,6 +1,0 @@
-gis_index:
-  url: /gis
-  param: { module: agGis, action: index }
-gis:
-  url: /gis/:action
-  param: { module: agGis}

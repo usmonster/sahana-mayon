@@ -1,0 +1,27 @@
+agEventStatus:
+  zombie_apocalypse_event_1_closed_status:
+    id: 1
+    agEvent: zombie_apocalypse_event_1
+    time_stamp: '2011-02-07 12:45:00'
+    agEventStatusType: closed
+  asteroid_apocalypse_event_2_open_status:
+    id: 2
+    agEvent: asteroid_apocalypse_event_2
+    time_stamp: '2011-02-07 12:30:00'
+    agEventStatusType: open
+  tsunami_warning_event_3_open_status:
+    id: 3
+    agEvent: tsunami_warning_event_3
+    time_stamp: '2011-02-07 12:45:00'
+    agEventStatusType: open
+  megaquake_event_4_pre_deployment_status:
+    id: 4
+    agEvent: megaquake_event_4
+    time_stamp: '2011-02-07 12:15:00'
+    agEventStatusType: pre_deployment
+  supervolcano_event_5_closed_status:
+    id: 5
+    agEvent: supervolcano_event_5
+    time_stamp: '2011-02-07 18:30:00'
+    agEventStatusType: closed
+

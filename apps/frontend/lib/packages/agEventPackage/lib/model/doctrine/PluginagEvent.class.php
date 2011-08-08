@@ -12,4 +12,147 @@
  */
 abstract class PluginagEvent extends BaseagEvent
 {
+  /**
+   * Method to get the event zero hour
+   * @param integer $eventId The event ID being queried
+   * @return integer A unix timestamp representing the event zero hour
+   */
+  public static function getEventZeroHour($eventId)
+  {
+    $q = agDoctrineQuery::create()
+      ->select('e.zero_hour')
+        ->from('agEvent e')
+        ->where('e.id = ?', $eventId);
+
+    return $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+  /**
+   * Method to get event facility data (useful for exports)
+   * @param integer $eventId An event ID
+   * @return array An array of event facility data
+   */
+  public static function getEventFacilities($eventId)
+  {
+    $results = array();
+
+    $rstatExists = 'EXISTS (SELECT subEfrs.id ' .
+      'FROM agEventFacilityResourceStatus subEfrs ' .
+      'WHERE subEfrs.time_stamp <= CURRENT_TIMESTAMP ' .
+        'AND subEfrs.event_facility_resource_id = efrs.event_facility_resource_id ' .
+      'HAVING MAX(subEfrs.time_stamp) = efrs.time_stamp)';
+
+    $gstatExists = 'EXISTS (SELECT subEfgs.id ' .
+      'FROM agEventFacilityGroupStatus subEfgs ' .
+      'WHERE subEfgs.time_stamp <= CURRENT_TIMESTAMP ' .
+        'AND subEfgs.event_facility_group_id = efgs.event_facility_group_id ' .
+      'HAVING MAX(subEfgs.time_stamp) = efgs.time_stamp)';
+
+    $eExists = '((EXISTS (' .
+        'SELECT subE.id ' .
+        'FROM agEntityEmailContact AS subE ' .
+        'WHERE subE.entity_id = eec.entity_id ' .
+        'HAVING MIN(subE.priority) = eec.priority' .
+        ')) ' .
+        'OR (eec.id IS NULL)' .
+        ')';
+
+    $pExists = '(' .
+        '(EXISTS (' .
+        'SELECT subP.id ' .
+        'FROM agEntityPhoneContact AS subP ' .
+        'WHERE subP.entity_id = epc.entity_id ' .
+        'HAVING MIN(subP.priority) = epc.priority' .
+        ')) ' .
+        'OR (epc.id IS NULL)' .
+        ')';
+
+    $q = agDoctrineQuery::create()
+      ->select('e.id')
+          ->addSelect('eec.id')
+          ->addSelect('ec.id')
+          ->addSelect('ec.email_contact')
+          ->addSelect('epc.id')
+          ->addSelect('pc.phone_contact')
+          ->addSelect('s.id')
+          ->addSelect('f.id')
+          ->addSelect('f.facility_name')
+          ->addSelect('f.facility_code')
+          ->addSelect('fr.id')
+          ->addSelect('fr.capacity')
+          ->addSelect('frt.id')
+          ->addSelect('frt.facility_resource_type_abbr')
+          ->addSelect('frs.id')
+          ->addSelect('frs.facility_resource_status')
+          ->addSelect('efr.id')
+          ->addSelect('efr.activation_sequence')
+          ->addSelect('efrs.id')
+          ->addSelect('fras.id')
+          ->addSelect('fras.facility_resource_allocation_status')
+          ->addSelect('fgt.facility_group_type')
+          ->addSelect('efg.id')
+          ->addSelect('efg.activation_sequence')
+          ->addSelect('efg.event_facility_group')
+          ->addSelect('efgs.id')
+          ->addSelect('fgas.id')
+          ->addSelect('fgas.facility_group_allocation_status')
+        ->from('agEntity e')
+          ->innerJoin('e.agSite s')
+          ->leftJoin('e.agEntityEmailContact eec')
+          ->leftJoin('eec.agEmailContact ec')
+          ->leftJoin('e.agEntityPhoneContact epc')
+          ->leftJoin('epc.agPhoneContact pc')
+          ->innerJoin('s.agFacility f')
+          ->innerJoin('f.agFacilityResource fr')
+          ->innerJoin('fr.agFacilityResourceStatus frs')
+          ->innerJoin('fr.agFacilityResourceType frt')
+          ->innerJoin('fr.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityGroup efg')
+          ->innerJoin('efg.agFacilityGroupType fgt')
+          ->innerJoin('efg.agEventFacilityGroupStatus efgs')
+          ->innerJoin('efr.agEventFacilityResourceStatus efrs')
+          ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
+          ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
+          ->where('efg.event_id = ?', $eventId)
+            ->andWhere($gstatExists)
+            ->andWhere($rstatExists)
+            ->andWhere($pExists)
+            ->andWhere($eExists);
+
+    $sql = $q->getSqlQuery(array(36, TRUE));
+
+    // execute our query and get the entity id
+    $data = $q->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    $eah = new agEntityAddressHelper();
+
+    foreach ($data as $datum) {
+      $subResults = array();
+      $subResults['facility_name'] = $datum['f_facility_name'];
+      $subResults['facility_code'] = $datum['f_facility_code'];
+      $subResults['facility_resource_type_abbr'] = $datum['frt_facility_resource_type_abbr'];
+      $subResults['facility_resource_status'] = $datum['frs_facility_resource_status'];
+      $subResults['capacity'] = $datum['fr_capacity'];
+      $subResults['facility_resource_activation_sequence'] = $datum['efr_activation_sequence'];
+      $subResults['facility_resource_allocation_status'] = $datum['fras_facility_resource_allocation_status'];
+      $subResults['facility_group'] = $datum['efg_event_facility_group'];
+      $subResults['facility_group_type'] = $datum['fgt_facility_group_type'];
+      $subResults['facility_group_allocation_status'] = $datum['fgas_facility_group_allocation_status'];
+      $subResults['facility_group_activation_sequence'] = $datum['efg_activation_sequence'];
+      $subResults['email'] = $datum['ec_email_contact'];
+      $subResults['phone'] = $datum['pc_phone_contact'];
+
+      $entityId = $datum['e_id'];
+      $addr = $eah->getEntityAddress(array($entityId), FALSE, TRUE,
+        agAddressHelper::ADDR_GET_TYPE, array(TRUE));
+
+      foreach ($addr[$entityId][1] as $type => $val) {
+        $subResults[str_replace(' ','_',strtolower($type))] = $val;
+      }
+
+      $results[$datum['efr_id']] = $subResults;
+    }
+
+    return $results;
+  }
 }

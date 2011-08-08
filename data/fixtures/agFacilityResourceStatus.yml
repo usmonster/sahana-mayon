@@ -1,8 +1,8 @@
 agFacilityResourceStatus:
   available:
-    facility_resource_status: available
+    facility_resource_status: Available
     is_available: 1
   unavailable:
-    facility_resource_status: unavailable
+    facility_resource_status: Unavailable
     is_available: 0
 

@@ -1,0 +1,36 @@
+====== Organization Management Tutorial ======
+===== Introduction =====
+The Organization Management functionality in Sahana Agasti is designed to store Organization information for use in categorizing, sorting, and searching staff resources.  While the interface is designed to be intuitive to users, this Tutorial will help guide a user through the steps of entering organization information, listing and editing that information.
+
+To help organize the information each page of the Tutorial will contain the following sections:
+
+  * **What It Does** - A brief overview of the step's purpose when building the scenario.
+  * **Reference Information** - Details that may not be intuitive for some users or will be good reference information when building later scenarios.
+  * **Tutorial** - A step by step detail of fields on the page and what to do next.
+  * **FAQ** - Frequently Asked Questions about that step and its repercussions later on.
+
+===== Getting Started =====
+To start, you'll want to add your first Organization; later, you'll associate staff resources with it.  Keep this Tutorial open while you progress through organization management, and remember that you can always come back and edit an organization's information if it changes.
+
+To get started, use the menu to navigate to the Organization Management page.  Hover over "Prepare" in the menu and then click "Organization".  
+
+You can also click the "Prepare" button on the Home page and then click the "Manage Organizations" button.
+
+{{:manual:user:organizations:screenshot_062.png?500|Clicking in the menu to Organization}}
+
+Next, click 'Create Organization' to add an organization record.
+
+{{:manual:user:organizations:clickaddneworg.png?500|Create New}}
+
+[[manual:user:organizations:new|{{ :manual:user:next.jpg?135|Adding Organizations}}]] 
+
+After you've clicked the "Add Organization" link, click next in this tutorial.
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - **Introduction**
+  - [[manual:user:Organizations:new|Create New Organization]]
+  - [[manual:user:Organizations:list|Listing Organizations]]
+  - [[manual:user:Organizations:edit|Editing Organizations Records]]
+  - [[manual:user:Organizations:review|Organization Management Review]]

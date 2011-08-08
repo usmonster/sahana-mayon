@@ -59,6 +59,16 @@ abstract class BaseagPersonLanguageCompetency extends sfDoctrineRecord
              'notnull' => true,
              'length' => 2,
              ));
+
+
+        $this->index('agPersonLanguageCompetency_unq', array(
+             'fields' => 
+             array(
+              0 => 'person_language_id',
+              1 => 'language_format_id',
+             ),
+             'type' => 'unique',
+             ));
     }
 
     public function setUp()

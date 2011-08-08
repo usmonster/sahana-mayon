@@ -1,0 +1,1 @@
+Break length refers to the time between shifts that staff will have off.  Use the sliders or text box to select how much time between active shifts staff will have a break.

@@ -1,0 +1,3 @@
+===== Facility Export =====
+
+Exporting facilities will produce a spreadsheet to save on your computer.  To begin the export, click "Export Facilities".  Depending on your browser, you may be asked to select where to save the file.

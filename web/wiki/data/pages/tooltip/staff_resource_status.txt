@@ -1,0 +1,7 @@
+===== Resource Status =====
+
+Some staff may be available in one capacity and not another.  The staff resource status applies directly to a specific resource the staff is available as.
+  * **Active** - The resource is available
+  * **Inactive** - The resource is not available
+  * **Retired** - The staff member is retired from this resource and not available
+  * **Other** - The staff member is not available for other reasons
