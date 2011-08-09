@@ -6,6 +6,13 @@
   (isset($sort)) ? $sort = $sort : $sort = '';
   (isset($order)) ? $order = $order : $order = '';
 
+  if ($numOfResults >= $searchLimit)
+  {
+    echo 'You have reached your search result limit of <span class="highlightedText">' .
+         $searchLimit . '</span> on <span class="highlightedText">' . $searchquery .
+         '</span>.  Please limit your search criteria.<br /><br />';
+  }
+
   if($sf_request->getParameter('module') == 'agStaff' || $sf_request->getParameter('module') == 'home' )
   {
     //set tooltips

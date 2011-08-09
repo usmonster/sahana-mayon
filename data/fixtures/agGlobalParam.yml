@@ -278,3 +278,8 @@ agGlobalParam:
     agHost: localhost
     datapoint: enable_clear_cache
     value: 0
+  search_result_limit:
+    id: 56
+    agHost: localhost
+    datapoint: search_result_limit
+    value: 250
