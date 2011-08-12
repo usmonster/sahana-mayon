@@ -283,3 +283,13 @@ agGlobalParam:
     agHost: localhost
     datapoint: search_result_limit
     value: 250
+  default_facility_group_activation_sequence:
+    id: 57
+    agHost: localhost
+    datapoint: default_facility_group_activation_sequence
+    value: 50
+  default_facility_resource_activation_sequence:
+    id: 58
+    agHost: localhost
+    datapoint: default_facility_resource_activation_sequence
+    value: 50

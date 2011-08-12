@@ -19,6 +19,8 @@ class agFacilityImportNormalization extends agImportNormalization
 {
 
   protected $scenarioId = NULL,
+            $defaultFacilityGroupActivationSequence,
+            $defaultFacilityResourceActivationSequence,
             $staffResourceTypes = array();
 
   /**
@@ -103,6 +105,9 @@ class agFacilityImportNormalization extends agImportNormalization
             ->from('agFacilityResourceAllocationStatus fras')
             ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
     $this->facRscAllocStatusIds = array_change_key_case($this->facRscAllocStatusIds, CASE_LOWER);
+
+    $this->defaultFacilityGroupActivationSequence = agGlobal::getParam('default_facility_group_activation_sequence');
+    $this->defaultFacilityResourceActivationSequence = agGlobal::getParam('default_facility_resource_activation_sequence');
   }
 
   public function __setScenario($scenarioId)
@@ -542,16 +547,26 @@ class agFacilityImportNormalization extends agImportNormalization
           // log our error either way
           $this->eh->logErr($errMsg);
 
-          unset($rawFacilityResources[$rowId]);
-
           // Throw error immediately if any of the required columns are not provided.
           throw new Exception($errMsg);
         }
       }
-      $rawFacilityResources[$rowId]['facility_id'] = $rowData['primaryKeys']['facility_id'];
+      $facilityId = $rowData['primaryKeys']['facility_id'];
       $facRscTypeId = $facRscTypeAbbrIds[strtolower($rowData['_rawData']['facility_resource_type_abbr'])];
-      $rawFacilityResources[$rowId]['facility_resource_type_id'] = $facRscTypeId;
+//      $rawFacilityResources[$rowId]['facility_id'] = $rowData['primaryKeys']['facility_id'];
+//      $rawFacilityResources[$rowId]['facility_resource_type_id'] = $facRscTypeId;
       $uniqFacRscTypes[$facRscTypeId] = TRUE;
+
+      if (!isset($rawFacilityResources[$facilityId][$facRscTypeId])) {
+        $rawFacilityResources[$facilityId][$facRscTypeId] = $rowId;
+      } else {
+        $warnMsg = 'Import row ' . $rowId . ' (' . $rowData['_rawData']['facility_code'] . ' ' .
+        $rowData['_rawData']['facility_resource_type_abbr'] . ') is a duplicate of row ' .
+          $rawFacilityResources[$facilityId][$facRscTypeId] . ' and will be skipped.';
+
+        unset($this->importData[$rowId]);
+        $this->eh->logWarning($warnMsg);
+      }
     }
 
     // Query for related facility resource in a doctrine collection.
@@ -559,28 +574,22 @@ class agFacilityImportNormalization extends agImportNormalization
                   ->from('agFacilityResource fr');
 
     $firstWhereClause = TRUE;
-    foreach ($rawFacilityResources AS $rowId => $facRscInfo)
-    {
-      $facId = $facRscInfo['facility_id'];
-      $facRscTypeId = $facRscInfo['facility_resource_type_id'];
-
-      if ($firstWhereClause)
-      {
-        $q->where('(fr.facility_id = ? AND fr.facility_resource_type_id = ?)',
-                  array($facId, $facRscTypeId));
-        $firstWhereClause = FALSE;
-      }
-      else
-      {
-        $q->orWhere('(fr.facility_id = ? AND fr.facility_resource_type_id = ?)',
-                    array($facId, $facRscTypeId));
+    foreach ($rawFacilityResources AS $facilityId => $facRscTypes) {
+      foreach ($facRscTypes as $facRscTypeId => $rowId) {
+        if ($firstWhereClause)
+        {
+          $q->where('(fr.facility_id = ? AND fr.facility_resource_type_id = ?)',
+                    array($facilityId, $facRscTypeId));
+          $firstWhereClause = FALSE;
+        }
+        else
+        {
+          $q->orWhere('(fr.facility_id = ? AND fr.facility_resource_type_id = ?)',
+                      array($facilityId, $facRscTypeId));
+        }
       }
     }
-    $sql = $q->getSqlQuery();
-    $param = $q->getParams();
     $facilityResourceColl = $q->execute();
-//    $facilityResourceTable = $facilityResourceColl->getTable();
-//    $facilityResourceTable->setConnection($conn);
 
     $this->eh->logDebug('{' . count($facilityResourceColl) . '} facility entities found in the database.');
 
@@ -591,16 +600,14 @@ class agFacilityImportNormalization extends agImportNormalization
     // While we're looping the existing facility, make facility resource updates where necessary.
     foreach ($facilityResourceColl AS $facRsc)
     {
-      $currFacRsc = array('facility_id' => $facRsc['facility_id'],
-                          'facility_resource_type_id' => $facRsc['facility_resource_type_id']);
-      $rowId = array_search($currFacRsc, $rawFacilityResources);
+      $rowId = $rawFacilityResources[$facRsc['facility_id']][$facRsc['facility_resource_type_id']];
 
       $rowData = & $this->importData[$rowId];
       $rowData['primaryKeys']['facility_resource_id'] = $facRsc['id'];
       $facRscStatusId = $facRscStatusIds[strtolower($rowData['_rawData']['facility_resource_status'])];
       $facRsc['facility_resource_status_id'] = $facRscStatusId;
       $facRsc['capacity'] = $rowData['_rawData']['facility_capacity'];
-      unset($rawFacilityResources[$rowId]);
+      unset($rawFacilityResources[$facRsc['facility_id']][$facRsc['facility_resource_type_id']]);
       unset($rowData);
     }
     $facilityResourceColl->save($conn);
@@ -610,17 +617,18 @@ class agFacilityImportNormalization extends agImportNormalization
     // Create new facility resource using rowId as the key to $facilityResourceColl.
     $facilityResourceColl = new Doctrine_Collection('agFacilityResource');
     $facilityResourceTable = $conn->getTable('agFacilityResource');
-    foreach ($rawFacilityResources AS $rowId => $rawFacResc)
-    {
-      $rowData = $this->importData[$rowId];
-      $facResource = new agFacilityResource($facilityResourceTable, TRUE);
-      $facResource['facility_id'] = $rowData['primaryKeys']['facility_id'];
-      $facResource['facility_resource_type_id'] = $rawFacResc['facility_resource_type_id'];
-      $facRscStatusId = $facRscStatusIds[strtolower($rowData['_rawData']['facility_resource_status'])];
-      $facResource['facility_resource_status_id'] = $facRscStatusId;
-      $facResource['capacity'] = $rowData['_rawData']['facility_capacity'];
-      $facilityResourceColl->add($facResource, $rowId);
-      unset($rawFacilityResources[$rowId]);
+    foreach ($rawFacilityResources AS $facilityId => $facRscTypes) {
+      foreach ($facRscTypes as $facRscTypeId => $rowId) {
+        $rawData = $this->importData[$rowId]['_rawData'];
+        $facResource = new agFacilityResource($facilityResourceTable, TRUE);
+        $facResource['facility_id'] = $facilityId;
+        $facResource['facility_resource_type_id'] = $facRscTypeId;
+        $facRscStatusId = $facRscStatusIds[strtolower($rawData['facility_resource_status'])];
+        $facResource['facility_resource_status_id'] = $facRscStatusId;
+        $facResource['capacity'] = $rawData['facility_capacity'];
+        $facilityResourceColl->add($facResource, $rowId);
+        unset($rawFacilityResources[$facilityId][$facRscTypeId]);
+      }
     }
     $facilityResourceColl->save($conn);
 
@@ -665,8 +673,7 @@ class agFacilityImportNormalization extends agImportNormalization
     $facGrpTypeIds = $this->facGrpTypeIds;
     $facGrpAllocStatusIds = $this->facGrpAllocStatusIds;
 
-    $requiredColumns = array('facility_group_activation_sequence' => NULL,
-                             'facility_group' => NULL,
+    $requiredColumns = array('facility_group' => NULL,
                              'facility_group_type' => 'facGrpTypeIds',
                              'facility_group_allocation_status' => 'facGrpAllocStatusIds'
                             );
@@ -786,7 +793,9 @@ class agFacilityImportNormalization extends agImportNormalization
         $facGrpAllocStatusId = $facGrpAllocStatusIds[strtolower($rowData['_rawData']['facility_group_allocation_status'])];
         $facGrp['facility_group_type_id'] = $facGrpTypeId;
         $facGrp['facility_group_allocation_status_id'] = $facGrpAllocStatusId;
-        $facGrp['activation_sequence'] = $rowData['_rawData']['facility_group_activation_sequence'];
+        if (isset($rowData['_rawData']['facility_group_activation_sequence'])) {
+          $facGrp['activation_sequence'] = $rowData['_rawData']['facility_group_activation_sequence'];
+        }
         unset($rawFacilityGroups[$rowId]);
         unset($rowData);
       }
@@ -799,6 +808,7 @@ class agFacilityImportNormalization extends agImportNormalization
     // Create new scenario facility group using rowId as the key to $facilityGroupColl.
     $facilityGroupColl = new Doctrine_Collection('agScenarioFacilityGroup');
     $facilityGroupTable = $conn->getTable('agScenarioFacilityGroup');
+    $missingSequence = 0;
     foreach ($uniqRawFacGrps AS $posId => $facGrp)
     {
       $facilityGroup = new agScenarioFacilityGroup($facilityGroupTable, TRUE);
@@ -812,10 +822,20 @@ class agFacilityImportNormalization extends agImportNormalization
         $facilityGroup['scenario_facility_group'] = $rowData['_rawData']['facility_group'];
         $facilityGroup['facility_group_type_id'] = $facGrpTypeId;
         $facilityGroup['facility_group_allocation_status_id'] = $facGrpAllocStatusId;
-        $facilityGroup['activation_sequence'] = $rowData['_rawData']['facility_group_activation_sequence'];
+        if (isset($rowData['_rawData']['facility_group_activation_sequence'])) {
+          $facilityGroup['activation_sequence'] = $rowData['_rawData']['facility_group_activation_sequence'];
+        } else {
+          $facilityGroup['activation_sequence'] = $this->defaultFacilityGroupActivationSequence;
+          $missingSequence++;
+        }
       }
       $facilityGroupColl->add($facilityGroup, $posId);
       unset($uniqRawFacGrps[$posId]);
+    }
+    if ($missingSequence > 0) {
+      $this->eh->logWarning($missingSequence . ' facility groups missing a decalred activation ' .
+        'sequence. Used default sequence `' . $this->defaultFacilityGroupActivationSequence .
+        '` instead.');
     }
     $facilityGroupColl->save($conn);
 
@@ -842,8 +862,7 @@ class agFacilityImportNormalization extends agImportNormalization
 
     // activation_sequence is a required field but does not reference to any other tables, thus,
     // pointing to NULL value.
-    $requiredColumns = array('facility_allocation_status' => 'facRscAllocStatusIds',
-                             'facility_activation_sequence' => NULL
+    $requiredColumns = array('facility_allocation_status' => 'facRscAllocStatusIds'
                             );
 
     // Check for valid facility resource type abbr and facility resource status provided.
@@ -952,7 +971,9 @@ class agFacilityImportNormalization extends agImportNormalization
       $rowData['primaryKeys']['scenario_facility_resource_id'] = $scenFacRsc['id'];
       $facRscAllocStatusId = $facRscAllocStatusIds[strtolower($rowData['_rawData']['facility_allocation_status'])];
       $scenFacRsc['facility_resource_allocation_status_id'] = $facRscAllocStatusId;
-      $scenFacRsc['activation_sequence'] = $rowData['_rawData']['facility_activation_sequence'];
+      if (isset($rowData['_rawData']['facility_activation_sequence'])) {
+        $scenFacRsc['activation_sequence'] = $rowData['_rawData']['facility_activation_sequence'];
+      }
       unset($rawScenarioFacilityResources[$rowId]);
       unset($rowData);
     }
@@ -963,6 +984,7 @@ class agFacilityImportNormalization extends agImportNormalization
     // Create new scenario facility resource using rowId as the key to $scenarioFacilityResourceColl.
     $scenarioFacilityResourceColl = new Doctrine_Collection('agScenarioFacilityResource');
     $scenarioFacilityResourceTable = $conn->getTable('agScenarioFacilityResource');
+    $missingSequence = 0;
     foreach ($rawScenarioFacilityResources AS $rowId => $rawScenFacResc)
     {
       $rowData = $this->importData[$rowId];
@@ -971,10 +993,21 @@ class agFacilityImportNormalization extends agImportNormalization
       $scenFacResource['scenario_facility_group_id'] = $rowData['primaryKeys']['scenario_facility_group_id'];
       $facRscAllocstatusId = $facRscAllocStatusIds[strtolower($rowData['_rawData']['facility_allocation_status'])];
       $scenFacResource['facility_resource_allocation_status_id'] = $facRscAllocstatusId;
-      $facResource['activation_sequence'] = $rowData['_rawData']['facility_activation_sequence'];
+      if (isset($rowData['_rawData']['facility_activation_sequence'])) {
+        $facResource['activation_sequence'] = $rowData['_rawData']['facility_activation_sequence'];
+      } else {
+        $facResource['activation_sequence'] = $this->defaultFacilityResourceActivationSequence;
+        $missingSequence++;
+      }
       $scenarioFacilityResourceColl->add($scenFacResource, $rowId);
       unset($rawScenarioFacilityResources[$rowId]);
     }
+    if ($missingSequence > 0) {
+      $this->eh->logWarning($missingSequence . ' facility resources missing a decalred activation ' .
+        'sequence. Used default sequence `' . $this->defaultFacilityResourceActivationSequence .
+        '` instead.');
+    }
+    
     $scenarioFacilityResourceColl->save($conn);
 
     // Store new scenario facility resource ids to $this->importData['primaryKeys'].
