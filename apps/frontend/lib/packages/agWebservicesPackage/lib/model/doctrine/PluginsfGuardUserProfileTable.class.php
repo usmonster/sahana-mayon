@@ -17,7 +17,7 @@ class PluginsfGuardUserProfileTable extends agDoctrineTable
     {
         return Doctrine_Core::getTable('PluginsfGuardUserProfile');
     }
-
+    
     public function getByToken(array $parameters)
     {
         $user = Doctrine_Core::getTable('sfGuardUserProfile')->findOneByToken($parameters['token']);
@@ -25,6 +25,6 @@ class PluginsfGuardUserProfileTable extends agDoctrineTable
             throw new sfError404Exception(sprintf('Client with token "%s" does not exist or is not activated.', $parameters['token']));
         }
         return $user;
-    }
+    }    
 
 }

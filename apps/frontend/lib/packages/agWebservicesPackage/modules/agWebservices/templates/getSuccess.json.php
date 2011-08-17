@@ -1,11 +1,77 @@
-[
-<?php $nb = count($results); $i = 0 ; foreach ($results as $url => $entity): ++$i ?>
-{
-  "type": "<?php echo $type ?>", 
-  <?php $nb1 = count($entity); $j = 0; foreach ($entity as $key => $value): ++$j ?>
-"<?php echo $key ?>": <?php echo (is_object($value))?json_encode($value->getRawValue()):json_encode($value); echo ($nb1 == $j ? '' : ',') ?> 
-  <?php endforeach ?>
-}<?php echo $nb == $i ? '' : ',' ?>
+<?php
+$json = "[";
+$nb = count($results);
+$i = 0;
+foreach ($results as $url => $entity) {
+    ++$i;    
+    $json .= '{';
+    $json .= '"type":"'.$type.'",';
+    $nb1 = count($entity);
+    $j = 0;
+    foreach ($entity as $key => $value) {
+        ++$j;
+        $json .= '"'.$key.'":' . (is_object($value) ? json_encode($value->getRawValue()) : json_encode($value));
+        $json .= ($nb1 == $j ? '' : ',');
+    }
+    $json .= '}';
+    $json .= ($nb == $i ? '' : ',');
+}
+$json .= "]";
 
-<?php endforeach ?>
+
+/**
+ * Indents a flat JSON string to make it more human-readable
+ * @author http://recursive-design.com/blog/2008/03/11/format-json-with-php/
+ * @param string $json The original JSON string to process
+ * @return string Indented version of the original JSON string
+ */
+function indent($json) {
+
+    $result = '';
+    $pos = 0;
+    $strLen = strlen($json);
+    $indentStr = ' ';
+    $newLine = "\n";
+    $prevChar = '';
+    $outOfQuotes = true;
+
+    for($i = 0; $i <= $strLen; $i++) {
+
+        // Grab the next character in the string
+        $char = substr($json, $i, 1);
+
+        // Are we inside a quoted string?
+        if($char == '"' && $prevChar != '\\') {
+            $outOfQuotes = !$outOfQuotes;
+        }
+        // If this character is the end of an element,
+        // output a new line and indent the next line
+        else if(($char == '}' || $char == ']') && $outOfQuotes) {
+            $result .= $newLine;
+            $pos --;
+            for ($j=0; $j<$pos; $j++) {
+                $result .= $indentStr;
+            }
+        }
+        // Add the character to the result string
+        $result .= $char;
+
+        // If the last character was the beginning of an element,
+        // output a new line and indent the next line
+        if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
+            $result .= $newLine;
+            if ($char == '{' || $char == '[') {
+                $pos ++;
+            }
+            for ($j = 0; $j < $pos; $j++) {
+                $result .= $indentStr;
+            }
+        }
+        $prevChar = $char;
+    }
+
+    return $result;
+}
+
+echo indent($json);
 ]

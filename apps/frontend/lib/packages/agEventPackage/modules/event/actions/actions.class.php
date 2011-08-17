@@ -625,14 +625,15 @@ class eventActions extends agActions
         $zero_hour_ts = agEvent::getEventZeroHour($this->event_id);
         $this->zero_hour = date("Y-m-d H:i e", $zero_hour_ts);
 
-        $eventAvailableStaff = agDoctrineQuery::create()
-            ->select('es.id, COUNT(es.id), ess.id, sr.id')
-            ->from('agEventStaff es')
-            ->addFrom('es.agEventStaffStatus ess')
-            ->where('ess.staff_allocation_status_id = ?', $availableStaffStatus)
-            ->andWhere('es.event_id = ?', $this->event_id)
-            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-        $this->eventAvailableStaff = $eventAvailableStaff['es_COUNT'];
+        $this->eventAvailableStaff = agEventStaff::getActiveEventStaffQuery($this->event_id)
+           ->select('COUNT(evs.id)')
+          ->andWhere('ess.staff_allocation_status_id = ?', $availableStaffStatus)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+        $this->eventCommittedStaff = agEventStaff::getActiveEventStaffQuery($this->event_id)
+          ->select('COUNT(evs.id)')
+          ->andWhere('sas.committed = ?', TRUE)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
         $this->eventStaffPool = agDoctrineQuery::create()
             ->select('COUNT(es.id)')
@@ -1116,7 +1117,6 @@ class eventActions extends agActions
           $batch = $staffDeployer->processBatch();
           $continue = $batch['continue'];
 
-          print_r($batch);
           $this->results = $batch;
       }
 

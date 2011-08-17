@@ -25,4 +25,148 @@ abstract class PluginagEventFacilityResource extends BaseagEventFacilityResource
     
     return $basefrQuery;
   }
+
+  /**
+   * Returns event staff associated with specified Event Facility Resource within
+   * the specified time bound
+   * @param integer $eventFacilityResourceId An event facility resource id
+   * @param string $startTime A standard php time string ('Y-m-d H:i:s.u') indicating the start of
+   * the time bound
+   * @param string $endTime A standard php time string ('Y-m-d H:i:s.u') indicating the end of the
+   * tme bound
+   * @return agDoctrineQuery An agDoctrineQuery object
+   */
+  public static function getEventStaffByFacility($eventFacilityResourceId, $startTime, $endTime)
+  {
+    $q = agDoctrineQuery::create()
+        ->select('es.id')
+        ->addSelect('efr.id')
+        ->addSelect('efrat.id')
+        ->addSelect('t.id')
+        ->addSelect('ss.id')
+        ->addSelect('srt.staff_resource_type_abbr')
+        ->addSelect('es.minimum_staff')
+        ->addSelect('es.maximum_staff')
+        ->addSelect('es.task_length_minutes')
+        ->addSelect('es.break_length_minutes')
+        ->addSelect('((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) AS shift_start')
+        ->addSelect('((60 * (es.minutes_start_to_facility_activation + es.task_length_minutes)) + efrat.activation_time) AS break_start')
+        ->addSelect('((60 * (es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes)) + efrat.activation_time) AS shift_end')
+        ->addSelect('es.staff_wave')
+        ->addSelect('t.task')
+        ->addSelect('ss.shift_status')
+        ->addSelect('ess.id')
+        ->addSelect('est.id')
+        ->addSelect('sr.id')
+        ->addSelect('s.id')
+        ->addSelect('p.id')
+        ->addSelect('e.id')
+        ->addSelect('o.organization')
+        ->addSelect('eec.id')
+        ->addSelect('ect.email_contact_type')
+        ->addSelect('ec.email_contact')
+        ->addSelect('epc.id')
+        ->addSelect('pct.phone_contact_type')
+        ->addSelect('pc.phone_contact')
+        ->from('agEventShift es')
+        ->innerJoin('es.agEventFacilityResource efr')
+        ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
+        ->innerJoin('es.agEventStaffShift ess')
+        ->innerJoin('es.agShiftStatus ss')
+        ->innerJoin('es.agTask t')
+        ->innerJoin('es.agEventStaff est')
+        ->innerJoin('est.agStaffResource sr')
+        ->innerJoin('sr.agStaff AS s')
+        ->innerJoin('s.agPerson AS p')
+        ->innerJoin('p.agEntity AS e')
+        ->innerJoin('es.agStaffResourceType srt')
+        ->innerJoin('sr.agOrganization o')
+        ->leftJoin('e.agEntityEmailContact AS eec')
+        ->leftJoin('eec.agEmailContactType AS ect')
+        ->leftJoin('eec.agEmailContact AS ec')
+        ->leftJoin('e.agEntityPhoneContact AS epc')
+        ->leftJoin('epc.agPhoneContactType AS pct')
+        ->leftJoin('epc.agPhoneContact AS pc')
+        ->where('es.event_facility_resource_id = ?', $eventFacilityResourceId);
+
+    $timeBoundWhere = '(shift_start >= ? AND shift_shart <= ?) OR (shift_end >= ? AND shift_end <= ?)';
+    $q->andWhere($timeBoundWhere, array($startTime, $endTime, $startTime, $endTime));
+
+    // add our contact info
+    $emailWhere = '(' .
+        '(EXISTS (' .
+        'SELECT subE.id ' .
+        'FROM agEntityEmailContact AS subE ' .
+        'WHERE subE.entity_id = eec.entity_id ' .
+        'HAVING MIN(subE.priority) = eec.priority' .
+        ')) ' .
+        'OR (eec.id IS NULL)' .
+        ')';
+    $q->andWhere($emailWhere);
+
+    $phoneWhere = '(' .
+        '(EXISTS (' .
+        'SELECT subP.id ' .
+        'FROM agEntityPhoneContact AS subP ' .
+        'WHERE subP.entity_id = epc.entity_id ' .
+        'HAVING MIN(subP.priority) = epc.priority' .
+        ')) ' .
+        'OR (epc.id IS NULL)' .
+        ')';
+    $q->andWhere($phoneWhere);
+
+    // do this to get the ID types ordered property
+    $nameHelper = new agPersonNameHelper();
+    $nameComponents = $nameHelper->defaultNameComponents;
+    unset($nameHelper);
+
+    // do this to get the string types, again ordered properly
+    $nameTypes = json_decode(agGlobal::getParam('default_name_components'));
+
+    // loop through each of the name types
+    foreach ($nameComponents as $ncIdx => $nc) {
+      // grab our type id
+      $ncId = $nc[0];
+
+      // build the clause strings
+      $selectId = 'pmpn' . $ncId . '.id';
+      $column = 'pn' . $ncId . '.person_name';
+      $select = $column . ' AS name' . $ncId;
+      $pmpnJoin = 'p.agPersonMjAgPersonName AS pmpn' . $ncId . ' WITH pmpn' . $ncId .
+          '.person_name_type_id = ?';
+      $pnJoin = 'pmpn' . $ncId . '.agPersonName AS pn' . $ncId;
+
+      $where = '(' .
+          '(EXISTS (' .
+          'SELECT sub' . $ncId . '.id ' .
+          'FROM agPersonMjAgPersonName AS sub' . $ncId . ' ' .
+          'WHERE sub' . $ncId . '.person_name_type_id = ? ' .
+          'AND sub' . $ncId . '.person_id = pmpn' . $ncId . '.person_id ' .
+          'HAVING MIN(sub' . $ncId . '.priority) = pmpn' . $ncId . '.priority' .
+          ')) ' .
+          'OR (pmpn' . $ncId . '.id IS NULL)' .
+          ')';
+
+      // add the clauses to the query
+      $q->addSelect($selectId)
+          ->addSelect($select)
+          ->leftJoin($pmpnJoin, $ncId)
+          ->leftJoin($pnJoin)
+          ->andWhere($where, $ncId);
+    }
+  }
+
+  /**
+   * Returns event staff associated with the currently instantiated Event Facility Resource within
+   * the specified time bound
+   * @param string $startTime A standard php time string ('Y-m-d H:i:s.u') indicating the start of
+   * the time bound
+   * @param string $endTime A standard php time string ('Y-m-d H:i:s.u') indicating the end of the
+   * tme bound
+   * @return agDoctrineQuery An agDoctrineQuery object
+   */
+  public function getEventStaff($startTime, $endTime)
+  {
+    return self::getEventStaffByFacility($this->id, $startTime, $endTime);
+  }
 }

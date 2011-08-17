@@ -110,8 +110,9 @@ class agSendWordNowPostDeploy extends agSendWordNowExport
 
       // concat value strings
       $this->exportData[$rowId]['CUSTOM LABEL'] = $gData['event_facility_group'] . '; ' .
-        $gData['facility_name'] . ' ('.  $gData['facility_resource_type'] . '); ' .
-        $gData['facility_resource_type'] . ' ' . $gData['facility_code'];
+        $gData['facility_resource_type'] . '; ' . $gData['facility_code'] . '; ' .
+        $gData['facility_name'] ;
+        
       $this->exportData[$rowId]['CUSTOM VALUE'] = $gData['facility_name'] . ', ' .
         $gData['facility_address'] . ' at ' . $time;
     }

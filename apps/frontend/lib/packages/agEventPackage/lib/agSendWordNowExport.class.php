@@ -55,15 +55,15 @@ abstract class agSendWordNowExport extends agExportHelper {
     $exportSpec['TIME ZONE'] = array();
     $exportSpec['CUSTOM LABEL'] = array();
     $exportSpec['CUSTOM VALUE'] = array();
-    $exportSpec['PHONE LABEL 1'] = array('type' => 'string', 'length' => 20, 'mapsTo' => 'contact type');
-    $exportSpec['PHONE COUNTRY CODE 1'] = array('type' => 'string', 'length' => 5, 'mapsTo' => 'country code');
-    $exportSpec['PHONE 1'] = array('type' => 'string', 'length' => 14, 'mapsTo' => 'phone');
-    $exportSpec['PHONE EXTENSION 1'] = array('type' => 'string', 'length' => 8, 'mapsTo' => 'extension');
+    $exportSpec['PHONE LABEL 1'] = array('type' => 'string', 'length' => 20, 'mapsTo' => array('contact type'));
+    $exportSpec['PHONE COUNTRY CODE 1'] = array('type' => 'string', 'length' => 5, 'mapsTo' => array('country code'));
+    $exportSpec['PHONE 1'] = array('type' => 'string', 'length' => 14, 'mapsTo' => array('area code', 'phone'));
+    $exportSpec['PHONE EXTENSION 1'] = array('type' => 'string', 'length' => 8, 'mapsTo' => array('extension'));
     $exportSpec['CASCADE 1'] = array();
-    $exportSpec['PHONE LABEL 2'] = array('type' => 'string', 'length' => 20, 'mapsTo' => 'contact type');
-    $exportSpec['PHONE COUNTRY CODE 2'] = array('type' => 'string', 'length' => 5, 'mapsTo' => 'country code');
-    $exportSpec['PHONE 2'] = array('type' => 'string', 'length' => 14, 'mapsTo' => 'phone');
-    $exportSpec['PHONE EXTENSION 2'] = array('type' => 'string', 'length' => 14, 'mapsTo' => 'extension');
+    $exportSpec['PHONE LABEL 2'] = array('type' => 'string', 'length' => 20, 'mapsTo' => array('contact type'));
+    $exportSpec['PHONE COUNTRY CODE 2'] = array('type' => 'string', 'length' => 5, 'mapsTo' => array('country code'));
+    $exportSpec['PHONE 2'] = array('type' => 'string', 'length' => 14, 'mapsTo' => array('area code', 'phone'));
+    $exportSpec['PHONE EXTENSION 2'] = array('type' => 'string', 'length' => 14, 'mapsTo' => array('extension'));
     $exportSpec['CASCADE 2'] = array();
     $exportSpec['EMAIL LABEL 1'] = array('type' => 'string', 'length' => 20, 'mapsTo' => 'contact type');
     $exportSpec['EMAIL 1'] = array('type' => 'string', 'length' => 60, 'mapsTo' => 'email');
@@ -213,11 +213,17 @@ abstract class agSendWordNowExport extends agExportHelper {
             $phone['contact type'] = $phones[$sKey][0];
 
             foreach ($phoneFields as $phoneField) {
-            $phoneField = $phoneField . ' ' . $suffix;
-            $spec = $this->exportSpec[$phoneField];
-            $component = $spec['mapsTo'];
-              if (array_key_exists($component, $phone)) {
-                $this->exportData[$rowId][$phoneField] = substr($phone[$component], 0, $spec['length']);
+              $phoneField = $phoneField . ' ' . $suffix;
+              $spec = $this->exportSpec[$phoneField];
+              $componentVal = '';
+              foreach ($spec['mapsTo'] as $component) {
+                  if (array_key_exists($component, $phone)) {
+                    $componentVal = $componentVal . $phone[$component];
+                }
+              }
+
+              if (!empty($componentVal)) {
+                $this->exportData[$rowId][$phoneField] = substr($componentVal, 0, $spec['length']);
               }
             }
           }

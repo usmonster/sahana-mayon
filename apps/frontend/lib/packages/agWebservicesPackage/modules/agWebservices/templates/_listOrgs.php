@@ -6,6 +6,7 @@
 			<tr>
 				<th>Id</th>
 				<th>Organization</th>
+				<th>Description</th>
 				<th>Entity Id</th>
 				<th>Branch</th>
 				<th>Email Contact</th>
@@ -21,6 +22,7 @@
 					href="<?php echo url_for('organization/show?id='. $organization['id'])?>"><?php echo $organization['id'] ?>
 				</a></td>
 				<td><?php echo $organization['organization'] ?></td>
+				<td><?php echo $organization['description'] ?></td>
 				<td><?php echo $organization['entity_id'] ?></td>
 				<td><?php echo $organization['branch'] ?></td>
 				<td><?php echo $organization['email'] ?></td>

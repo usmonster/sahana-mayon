@@ -16,41 +16,86 @@
  * */
 class agWebservicesHelper
 {
-
     public static function getStaff()
     {
-        // Incomplete yet
+         
         $staff_dql = agDoctrineQuery::create()
-            ->select('st.*, p.*, srt.*, pn.*, pdb.*')
-            ->from('agStaff st')
-            ->innerJoin('st.agPerson p')
-            ->innerJoin('p.agPersonName pn')
-            ->innerJoin('p.agPersonDateOfBirth pdb')
-            ->leftJoin('st.agStaffResourceType srt');
-        $v = $staff_dql->execute()->toArray();
+        ->select('st.*, p.*, sr.id, srs.*, srt.*, org.*')
+        ->from('agStaff st')
+        ->innerJoin('st.agPerson p')
+        ->leftJoin('st.agStaffResource sr')
+        ->leftJoin('sr.agStaffResourceStatus srs')
+        ->leftJoin('sr.agOrganization org')
+        ->leftJoin('sr.agStaffResourceType srt');
+
         return self::asStaffArray($staff_dql->execute());
     }
+
+    /**
+     * Prototype for persons - should be edited to 'public' when is done
+     * @param $personId
+     */
+    private static function getPerson($personId) 
+    {
+
+        $person_dql = agDoctrineQuery::create()
+        ->select('st.*, p.*, e.*, pmpn.id, pn.*, epc.id, pc.*, eec.id, ec.*')
+        ->addSelect('pml.id, pmp.id, prof.id, peth.id, pnat.id, prel.id, pmar.id, psex.id, presid.id')
+        ->addSelect('st.*, p.*, l.*, nat.*, rel.*, mar.*, sex.*, resid.*, nat.*, eth.*, pdb.*')
+        ->from('agPerson p')
+        ->innerJoin('p.agPersonMjAgPersonName pmpn')
+        ->innerJoin('pmpn.agPersonName pn')
+
+        ->innerJoin('p.agEntity e')
+        ->innerJoin('e.agEntityPhoneContact epc')
+        ->innerJoin('epc.agPhoneContact pc')
+        ->innerJoin('e.agEntityEmailContact eec')
+        ->innerJoin('eec.agEmailContact ec')
+
+        ->innerJoin('p.agPersonMjAgLanguage pml')
+        ->innerJoin('pml.agLanguage l')
+        ->innerJoin('p.agPersonMjAgProfession pmp')
+        ->innerJoin('pmp.agProfession prof')
+        ->innerJoin('p.agPersonEthnicity peth')
+        ->innerJoin('peth.agEthnicity eth')
+        ->innerJoin('p.agPersonMjAgNationality pnat')
+        ->innerJoin('pnat.agNationality nat')
+        ->innerJoin('p.agPersonMjAgReligion prel')
+        ->innerJoin('prel.agReligion rel')
+        ->innerJoin('p.agPersonMaritalStatus pmar')
+        ->innerJoin('pmar.agMaritalStatus mar')
+        ->innerJoin('p.agPersonSex psex')
+        ->innerJoin('psex.agSex sex')
+        ->innerJoin('p.agPersonResidentialStatus presid')
+        ->innerJoin('presid.agResidentialStatus resid')
+        ->innerJoin('p.agPersonDateOfBirth pdb')
+
+        ->where('p.id = ?', $personId);
+
+        return self::asPersonArray($person_dql->execute());
+    }
+
 
     public static function getEvents()
     {
 
-        $whereStr = 'EXISTS (SELECT subEs.id 
+        $whereStr = 'EXISTS (SELECT subEs.id
             FROM agEventStatus subEs
             WHERE subEs.time_stamp <= CURRENT_TIMESTAMP 
             AND subEs.event_id = a.id
             HAVING MAX(subEs.time_stamp) = st.time_stamp)';
 
         $ag_events = agDoctrineQuery::create()
-            ->select('a.*')
-            ->addSelect('s.scenario')
-            ->addSelect('est.event_status_type, est.description')
-            ->from('agEvent a')
-            ->innerJoin('a.agEventScenario es')
-            ->innerJoin('es.agScenario s')
-            ->innerJoin('a.agEventStatus st')
-            ->innerJoin('st.agEventStatusType est')
-            ->andWhere($whereStr)
-            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+        ->select('a.*')
+        ->addSelect('s.scenario')
+        ->addSelect('est.event_status_type, est.description')
+        ->from('agEvent a')
+        ->innerJoin('a.agEventScenario es')
+        ->innerJoin('es.agScenario s')
+        ->innerJoin('a.agEventStatus st')
+        ->innerJoin('st.agEventStatusType est')
+        ->andWhere($whereStr)
+        ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
 
         return $ag_events;
@@ -68,15 +113,17 @@ class agWebservicesHelper
 
     public static function getOrganizations()
     {
-        // Incomplete yet
         $organization_dql = agDoctrineQuery::create()
-            ->select('ent.*, org.*, bra.*, email.*, phone.*')
-            ->from('agOrganization org')
-            ->innerJoin('org.agEntity ent')
-            ->leftJoin('org.agBranch bra')
-            ->leftJoin('ent.agPhoneContact phone')
-            ->leftJoin('ent.agEmailContact email')
-            ->leftJoin('ent.agEntityAddressContact eaddr');
+        ->select('ent.*, org.*, bran.*, enemail.*, email.*, enphone.*, phone.*, enaddr.*, addr.*')
+        ->from('agOrganization org')
+        ->leftJoin('org.agBranch bran')
+        ->leftJoin('org.agEntity ent')
+        ->leftJoin('ent.agEntityEmailContact enemail')
+        ->leftJoin('enemail.agEmailContact email')
+        ->leftJoin('ent.agEntityPhoneContact enphone')
+        ->leftJoin('enphone.agPhoneContact phone')
+        ->leftJoin('ent.agEntityAddressContact enaddr');
+
         return self::asOrganizationArray($organization_dql->execute());
     }
 
@@ -84,38 +131,29 @@ class agWebservicesHelper
     {
         $results = $result->toArray();
         $response = array();
-        foreach ($results as $k => $array) {
-            $staffResourceTypes = array();
-            $staffResourceTypesAbbr = array();
-            $descriptions = array();
-            $names = array();
-
-            // foreach: adds the values in the same order for the type of staff resource,
-            // its abbreviation and description. Here those three share the same keys
-            foreach ($array['agStaffResourceType'] as $key => $staffResourceType) {
-                $staffResourceTypes[$key] = $staffResourceType['staff_resource_type'];
-                $staffResourceTypesAbbr[$key] = $staffResourceType['staff_resource_type_abbr'];
-                $descriptions[$key] = $staffResourceType['description'];
+        foreach ($results as $result) {
+            // Resources
+            $srType = array();
+            $srStatus = array();
+            $srOrganization = array();
+            foreach ($result['agStaffResource'] as $key => $resource) {
+                // Type
+                $srType['resource_type_'.$key]       = $resource['agStaffResourceType'];
+                // Status
+                $srStatus['resource_status_'.$key]   = $resource['agStaffResourceStatus'];
+                // Organizations
+                $srOrganization['organization_'.$key] = $resource['agOrganization'];
             }
 
-            // foreach: some as above, but only for names, in order to get all staff's names
-            // in a single array of names
-            foreach ($array['agPerson']['agPersonName'] as $key => $name) {
-                $names[$key] = $name['person_name'];
-            }
-
-            // at least, we create an associative array to facilitate the creation
-            // of the documents in json and xml
-            $response[$k] = array(
-              'id' => $array['id'],
-              'person_id' => $array['person_id'],
-              'created_at' => $array['created_at'],
-              'updated_at' => $array['updated_at'],
-              'person_names' => $names,
-              'staff_resource_type' => $staffResourceTypes,
-              'staff_resource_type_abbr' => $staffResourceTypesAbbr,
-              'staff_resource_type_description' => $descriptions,
-              'date_of_birth' => $array['agPerson']['agPersonDateOfBirth']['date_of_birth'],
+            // at last, we create an associative array to facilitate the creation of json and xml documents
+            $response[$result['id']] = array(
+             'id' => $result['id'],
+             'person' => $result['agPerson'],
+             'id' => $result['id'],
+             'created_at' => $result['created_at'],
+             'updated_at' => $result['updated_at'],
+             'resources' => array('resource_type' => $srType, 'resource_status' => $srStatus),
+             'organizations' => $srOrganization
             );
         }
         return $response;
@@ -136,11 +174,11 @@ class agWebservicesHelper
               'created_at' => $array['created_at'],
               'updated_at' => $array['updated_at'],
               // avoid empty values or get subvalues of the result array
-              'branch' => (!isset($array['agBranch'])) ? $array['agBranch']['branch'] : null,
-              // avoid empty values or get subvalues of the result array
-              'phone' => (!isset($array['agEntity']['agPhoneContact'])) ? $array['agEntity']['agPhoneContact'] : null,
-              // avoid empty values or get subvalues of the result array
-              'email' => (!isset($array['agEntity']['agEmailContact'])) ? $array['agEntity']['agEmailContact'] : null
+              'branch' => (!empty($array['agBranch'])) ? $array['agBranch']['branch'] : null,
+              'phone' => (!empty($array['agEntity']['agEntityPhoneContact']['agPhoneContact'])) ? $array['agEntity']['agEntityPhoneContact']['agPhoneContact']['phone_contact'] : null,
+              'email' => (!empty($array['agEntity']['agEntityEmailContact']['agEmailContact'])) ? $array['agEntity']['agEntityEmailContact']['agEmailContact']['email_contact'] : null,
+            	'address' => (!empty($array['agEntity']['agEntityAddressContact']['agEmailContact'])) ? $array['agEntity']['agEntityEmailContact']['agEmailContact']['email_contact'] : null
+            //
             );
         }
         return $response;
@@ -176,4 +214,8 @@ class agWebservicesHelper
         $i = 0;
     }
 
+    public static function getEventStaff()
+    {
+
+    }
 }

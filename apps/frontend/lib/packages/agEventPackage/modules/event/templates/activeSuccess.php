@@ -47,7 +47,7 @@ if (isset($blackOutFacilities)) {
         </td>
         <td>
             Total Staff: <span class="highlightedText"><?php echo $eventStaffPool ?></span><br />
-            Confirmed Staff: <span class="highlightedText"><?php echo $eventAvailableStaff ?></span>
+            Confirmed Staff: <span class="highlightedText"><?php echo $eventCommittedStaff ?></span> Committed / <span class="highlightedText"><?php echo $eventAvailableStaff ?></span> Available
         </td>
     </tr>
     <tr>
@@ -66,14 +66,6 @@ if (isset($blackOutFacilities)) {
         <td>
             <div>Click the Client Information link to jump to the Vesuvius client information
               tracking system.</div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a class="buttonText" href="#">Reporting</a>
-        </td>
-        <td>
-            <div style="font-style:oblique">No information currently available .</div>
         </td>
     </tr>
 </table>

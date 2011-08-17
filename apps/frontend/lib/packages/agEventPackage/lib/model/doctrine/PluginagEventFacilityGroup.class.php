@@ -16,16 +16,16 @@ abstract class PluginagEventFacilityGroup extends BaseagEventFacilityGroup
     $results = array();
 
     // build our query components including an exists clause
-    $seqExists = 'EXISTS (SELECT s.id ' .
-      'FROM agEventFacilityResource s' .
-      'WHERE s.event_facility_group_id = efr.event_facility_group_id ' .
-      'HAVING MIN(s.activation_sequence) = efr.activation_sequence)';
+    $seqExists = 'EXISTS (SELECT tefr.id ' .
+      'FROM agEventFacilityResource tefr ' .
+      'WHERE tefr.event_facility_group_id = efr.event_facility_group_id ' .
+      'HAVING MIN(tefr.activation_sequence) = efr.activation_sequence)';
     
-    $rstatExists = 'EXISTS (SELECT s.id ' .
-      'FROM agEventFacilityResourceStatus s ' .
-      'WHERE s.time_stamp <= CURRENT_TIMESTAMP ' .
-        'AND s.event_facility_resource_id = efrs.event_facility_resource_id ' .
-      'HAVING MAX(s.time_stamp) = efrs.time_stamp)';
+    $rstatExists = 'EXISTS (SELECT tefrs.id ' .
+      'FROM agEventFacilityResourceStatus AS tefrs ' .
+      'WHERE tefrs.time_stamp <= CURRENT_TIMESTAMP ' .
+        'AND tefrs.event_facility_resource_id = efrs.event_facility_resource_id ' .
+      'HAVING MAX(tefrs.time_stamp) = efrs.time_stamp)';
 
     $q = agDoctrineQuery::create()
       ->select('e.id')
@@ -58,7 +58,7 @@ abstract class PluginagEventFacilityGroup extends BaseagEventFacilityGroup
     $data = $q->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
     if (!empty($data)) {
-      $entityId = $data[0]['e__id'];
+      $entityId = $data[0]['e_id'];
 
       $eah = new agEntityAddressHelper();
       $ah = $eah->getAgAddressHelper();
@@ -68,11 +68,11 @@ abstract class PluginagEventFacilityGroup extends BaseagEventFacilityGroup
       $addr = $addr[$entityId][1];
 
       $results = array();
-      $results['event_facility_group'] = $data[0]['efg__event_facility_group'];
-      $results['event_facility_resource_id'] = $data[0]['efr__id'];
-      $results['facility_name'] = $data[0]['f__facility_name'];
-      $results['facility_resource_type'] = $data[0]['frt__facility_resource_type_abbr'];
-      $results['facility_code'] = $data[0]['f__facility_code'];
+      $results['event_facility_group'] = $data[0]['efg_event_facility_group'];
+      $results['event_facility_resource_id'] = $data[0]['efr_id'];
+      $results['facility_name'] = $data[0]['f_facility_name'];
+      $results['facility_resource_type'] = $data[0]['frt_facility_resource_type_abbr'];
+      $results['facility_code'] = $data[0]['f_facility_code'];
       $results['facility_address'] = $addr;
     }
 

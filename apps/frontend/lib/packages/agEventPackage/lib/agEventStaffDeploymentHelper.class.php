@@ -52,10 +52,10 @@ class agEventStaffDeploymentHelper extends agPdoHelper
    * @param integer $eventId An event ID
    * @return agEventStaffDeploymentHelper An instance of agEventStaffDeploymentHelper
    */
-  public static function getInstance($eventId, $eventDebugLevel = NULL)
+  public static function getInstance($eventId, $skipUnfilled = TRUE, $eventDebugLevel = NULL)
   {
     $esdh = new self();
-    $esdh->__init($eventId, $eventDebugLevel);
+    $esdh->__init($eventId, $skipUnfilled, $eventDebugLevel);
     return $esdh;
   }
 
