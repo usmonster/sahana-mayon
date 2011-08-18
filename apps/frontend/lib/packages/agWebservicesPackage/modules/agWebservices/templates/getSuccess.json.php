@@ -74,4 +74,5 @@ function indent($json) {
 }
 
 echo indent($json);
-]
+
+?>

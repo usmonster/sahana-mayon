@@ -1,35 +1,6 @@
-<?
-$xml = '<?xml version="1.0" encoding="utf-8" ?>';
-$xml .= '<results>';
-foreach ($results as $k => $entity) {
-    $xml .= '<entity type="'.$type.'">';
-    foreach ($entity as $key => $value) {
-        $xml .= '<'.$key.'>'.dump($value).'</'.$key.'>';
-    }
-    $xml .= '</entity>';
-}
-$xml .= '</results>';
-
-function dump($value) 
-{
-    if (is_null($value)) {
-        return ;
-    }
-
-    $response = '';
-    if (is_array($value)) {
-        foreach ($value as $k => $v) {
-            $response .= "<{$k}>".dump($v)."</{$k}>";
-        }
-    } else {
-        if (is_object($value)) {
-            $response .= dump($value->getRawValue());
-        } else {
-            $response = $value;
-        }
-    }
-    return $response;
-}
+<?php
+$rootNode = '<results type="'.$type.'"></results>';
+$xml = agWebservicesHelper::xml_encode($sf_data->getRaw('results'), $rootNode);
 
 /**
  * Receives a flat XML string and make it well-formatted
@@ -78,5 +49,4 @@ function formatXmlString($xml)
 }
 
 echo formatXmlString($xml);
-
-</results>
+?>

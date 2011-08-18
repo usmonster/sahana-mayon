@@ -44,7 +44,7 @@ class agWebservicesActions extends agActions
     $this->getRoute()->getObjects();
     $this->type = $request->getParameter('datapoint');
     $method = 'get'.ucfirst($this->type);
-    $this->results = agWebservicesHelper::$method();
+    $this->results = agWebservicesHelper::$method($request->getGetParameters());
   }
   
   

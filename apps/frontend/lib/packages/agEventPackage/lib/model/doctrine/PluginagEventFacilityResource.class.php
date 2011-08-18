@@ -38,6 +38,16 @@ abstract class PluginagEventFacilityResource extends BaseagEventFacilityResource
    */
   public static function getEventStaffByFacility($eventFacilityResourceId, $startTime, $endTime)
   {
+    // short fetch to get our nametypes
+    $nameTypes = array('given' => NULL, 'family' => NULL);
+    foreach ($nameTypes as $nameType => &$nameID) {
+      $nameID = agDoctrineQuery::create()->select('pnt.id')
+        ->from('agPersonNameType pnt')
+        ->where('pnt.person_name_type = ?', $nameType)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
+    unset($nameID);
+
     $q = agDoctrineQuery::create()
         ->select('es.id')
         ->addSelect('efr.id')
@@ -53,7 +63,6 @@ abstract class PluginagEventFacilityResource extends BaseagEventFacilityResource
         ->addSelect('((60 * (es.minutes_start_to_facility_activation + es.task_length_minutes)) + efrat.activation_time) AS break_start')
         ->addSelect('((60 * (es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes)) + efrat.activation_time) AS shift_end')
         ->addSelect('es.staff_wave')
-        ->addSelect('t.task')
         ->addSelect('ss.shift_status')
         ->addSelect('ess.id')
         ->addSelect('est.id')
@@ -71,10 +80,9 @@ abstract class PluginagEventFacilityResource extends BaseagEventFacilityResource
         ->from('agEventShift es')
         ->innerJoin('es.agEventFacilityResource efr')
         ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
-        ->innerJoin('es.agEventStaffShift ess')
         ->innerJoin('es.agShiftStatus ss')
-        ->innerJoin('es.agTask t')
-        ->innerJoin('es.agEventStaff est')
+        ->innerJoin('es.agEventStaffShift ess')
+        ->innerJoin('ess.agEventStaff est')
         ->innerJoin('est.agStaffResource sr')
         ->innerJoin('sr.agStaff AS s')
         ->innerJoin('s.agPerson AS p')
@@ -89,7 +97,12 @@ abstract class PluginagEventFacilityResource extends BaseagEventFacilityResource
         ->leftJoin('epc.agPhoneContact AS pc')
         ->where('es.event_facility_resource_id = ?', $eventFacilityResourceId);
 
-    $timeBoundWhere = '(shift_start >= ? AND shift_shart <= ?) OR (shift_end >= ? AND shift_end <= ?)';
+    $timeBoundWhere = '((( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) ' .
+      '>= ? AND (( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) <= ?) ' .
+      'OR ((( 60 * ( es.minutes_start_to_facility_activation + es.task_length_minutes + ' .
+      'es.break_length_minutes )) + efrat.activation_time ) >= ? AND (( 60 * ( ' .
+      'es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes )) ' .
+      '+ efrat.activation_time ) <= ? )';
     $q->andWhere($timeBoundWhere, array($startTime, $endTime, $startTime, $endTime));
 
     // add our contact info
@@ -115,45 +128,37 @@ abstract class PluginagEventFacilityResource extends BaseagEventFacilityResource
         ')';
     $q->andWhere($phoneWhere);
 
-    // do this to get the ID types ordered property
-    $nameHelper = new agPersonNameHelper();
-    $nameComponents = $nameHelper->defaultNameComponents;
-    unset($nameHelper);
-
-    // do this to get the string types, again ordered properly
-    $nameTypes = json_decode(agGlobal::getParam('default_name_components'));
-
     // loop through each of the name types
-    foreach ($nameComponents as $ncIdx => $nc) {
-      // grab our type id
-      $ncId = $nc[0];
+    foreach ($nameTypes as $nameType => $nameTypeID) {
 
       // build the clause strings
-      $selectId = 'pmpn' . $ncId . '.id';
-      $column = 'pn' . $ncId . '.person_name';
-      $select = $column . ' AS name' . $ncId;
-      $pmpnJoin = 'p.agPersonMjAgPersonName AS pmpn' . $ncId . ' WITH pmpn' . $ncId .
+      $selectId = 'pmpn_' . $nameType . '.id';
+      $column = 'pn_' . $nameType . '.person_name';
+      $select = $column . ' AS ' . $nameType . '_name';
+      $pmpnJoin = 'p.agPersonMjAgPersonName AS pmpn_' . $nameType . ' WITH pmpn_' . $nameType .
           '.person_name_type_id = ?';
-      $pnJoin = 'pmpn' . $ncId . '.agPersonName AS pn' . $ncId;
+      $pnJoin = 'pmpn_' . $nameType . '.agPersonName AS pn_' . $nameType;
 
       $where = '(' .
           '(EXISTS (' .
-          'SELECT sub' . $ncId . '.id ' .
-          'FROM agPersonMjAgPersonName AS sub' . $ncId . ' ' .
-          'WHERE sub' . $ncId . '.person_name_type_id = ? ' .
-          'AND sub' . $ncId . '.person_id = pmpn' . $ncId . '.person_id ' .
-          'HAVING MIN(sub' . $ncId . '.priority) = pmpn' . $ncId . '.priority' .
+          'SELECT sub_' . $nameType . '.id ' .
+          'FROM agPersonMjAgPersonName AS sub_' . $nameType . ' ' .
+          'WHERE sub_' . $nameType . '.person_name_type_id = ? ' .
+          'AND sub_' . $nameType . '.person_id = pmpn_' . $nameType . '.person_id ' .
+          'HAVING MIN(sub_' . $nameType . '.priority) = pmpn_' . $nameType . '.priority' .
           ')) ' .
-          'OR (pmpn' . $ncId . '.id IS NULL)' .
+          'OR (pmpn_' . $nameType . '.id IS NULL)' .
           ')';
 
       // add the clauses to the query
       $q->addSelect($selectId)
           ->addSelect($select)
-          ->leftJoin($pmpnJoin, $ncId)
+          ->leftJoin($pmpnJoin, $nameTypeID)
           ->leftJoin($pnJoin)
-          ->andWhere($where, $ncId);
+          ->andWhere($where, $nameTypeID);
     }
+
+    return $q;
   }
 
   /**

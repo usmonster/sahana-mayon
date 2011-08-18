@@ -16,7 +16,7 @@
  * */
 class agWebservicesHelper
 {
-    public static function getStaff()
+    public static function getStaff(array $getParameters)
     {
          
         $staff_dql = agDoctrineQuery::create()
@@ -76,7 +76,7 @@ class agWebservicesHelper
     }
 
 
-    public static function getEvents()
+    public static function getEvents(array $getParameters)
     {
 
         $whereStr = 'EXISTS (SELECT subEs.id
@@ -111,7 +111,7 @@ class agWebservicesHelper
         return self::asFacilityArray($facilityData);
     }
 
-    public static function getOrganizations()
+    public static function getOrganizations(array $getParameters)
     {
         $organization_dql = agDoctrineQuery::create()
         ->select('ent.*, org.*, bran.*, enemail.*, email.*, enphone.*, phone.*, enaddr.*, addr.*')
@@ -214,8 +214,80 @@ class agWebservicesHelper
         $i = 0;
     }
 
-    public static function getEventStaff()
+    public static function getFacilityEventStaff($getParameters)
     {
+      $eventFacilityResourceId = $getParameters['evfac'];
+      $startTime = $getParameters['start'];
+      $endTime = $getParameters['end'];
 
+      $q = agEventFacilityResource::getEventStaffByFacility($eventFacilityResourceId, $startTime,
+        $endTime);
+
+      $orderBy = 'shift_start, shift_end, ss.shift_status, srt.staff_resource_type_abbr, ' .
+        'o.organization, pn_family.person_name, pn_given.person_name';
+      $q->orderBy($orderBy);
+      
+      return self::asFacilityEventStaffArray($q->execute(array(), Doctrine_Core::HYDRATE_NONE));
     }
+
+  private static function asFacilityEventStaffArray(array $results)
+  {
+    $rGrouped = array();
+    foreach($results as $key => $r) {
+      $rGrouped[$r[0]]['shift_status'] = $r[9];
+      $rGrouped[$r[0]]['staffing_requirements']['min'] = $r[1];
+      $rGrouped[$r[0]]['staffing_requirements']['max'] = $r[2];
+      $rGrouped[$r[0]]['staffing_requirements']['resource_type'] = $r[16];
+      $rGrouped[$r[0]]['relative_times']['task_length'] = $r[3];
+      $rGrouped[$r[0]]['relative_times']['break_length'] = $r[4];
+      $rGrouped[$r[0]]['relative_times']['unit'] = 'minutes';
+      $rGrouped[$r[0]]['absolute_times']['shift_start']['formatted'] = date('Y-m-d H:i:s', $r[28]);
+      $rGrouped[$r[0]]['absolute_times']['shift_start']['raw'] = $r[28];
+      $rGrouped[$r[0]]['absolute_times']['break_start']['formatted'] = date('Y-m-d H:i:s', $r[29]);
+      $rGrouped[$r[0]]['absolute_times']['break_start']['raw'] = $r[29];
+      $rGrouped[$r[0]]['absolute_times']['shift_end']['formatted'] = date('Y-m-d H:i:s', $r[30]);
+      $rGrouped[$r[0]]['absolute_times']['shift_end']['raw'] = $r[30];
+      $rGrouped[$r[0]]['absolute_times']['timezone']['string'] = date('e');
+      $rGrouped[$r[0]]['absolute_times']['timezone']['utc_offset'] = date('Z');
+      $rGrouped[$r[0]]['absolute_times']['timezone']['utc_offset_unit'] = 'seconds';
+      $rGrouped[$r[0]]['staff'][$r[11]]['entity_id'] = $r[15];
+      $rGrouped[$r[0]]['staff'][$r[11]]['organization'] = $r[17];
+      $rGrouped[$r[0]]['staff'][$r[11]]['name']['given'] = $r[31];
+      $rGrouped[$r[0]]['staff'][$r[11]]['name']['family'] = $r[32];
+      $rGrouped[$r[0]]['staff'][$r[11]]['contacts']['email']['type'] = $r[19];
+      $rGrouped[$r[0]]['staff'][$r[11]]['contacts']['email']['value'] = $r[20];
+      $rGrouped[$r[0]]['staff'][$r[11]]['contacts']['phone']['type'] = $r[22];
+      $rGrouped[$r[0]]['staff'][$r[11]]['contacts']['phone']['value'] = $r[23];
+      unset($results[$key]);
+    }
+
+    return $rGrouped;
+  }
+
+  public static function xml_encode($array, $rootNode, $xml = false)
+  {
+    if($xml === false){
+      $xml = new SimpleXMLElement($rootNode);
+    }
+    foreach($array as $key => $value){
+      if(is_array($value)){
+        if(is_numeric($key)){
+          $rec = $xml->addChild('element');
+          $rec->addAttribute('id', $key);
+          self::xml_encode($value, $rootNode, $rec);
+        }else{
+          self::xml_encode($value, $rootNode, $xml->addChild($key));
+        }
+      }else{
+        if (is_numeric($key)){
+          $rec = $xml->addAttribute('id', $key);
+          $rec->addChild('element', $value);
+        }else{
+          $xml->addChild($key, $value);
+        }
+      }
+    }
+
+    return $xml->asXML();
+  }
 }
