@@ -5,7 +5,7 @@ webservices_get:
   options: { model: sfGuardUserProfile, type: list, method: getByToken }
   requirements:
     sf_format: (?:xml|json)
-    datapoint: (?:staff|organizations|events|facilityEventStaff)
+    datapoint: (?:staff|organizations|events|facilityEventStaff|facilityShifts)
 webservices_getevent:
   url:  /webservices/getevent/:token/:event/:datapoint.:sf_format
   class: sfDoctrineRoute

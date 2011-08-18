@@ -214,50 +214,76 @@ class agWebservicesHelper
         $i = 0;
     }
 
-    public static function getFacilityEventStaff($getParameters)
-    {
-      $eventFacilityResourceId = $getParameters['evfac'];
-      $startTime = $getParameters['start'];
-      $endTime = $getParameters['end'];
+  public static function getFacilityEventStaff($getParameters)
+  {
+    $eventFacilityResourceId = $getParameters['evfac'];
+    $startTime = $getParameters['start'];
+    $endTime = $getParameters['end'];
 
-      $q = agEventFacilityResource::getEventStaffByFacility($eventFacilityResourceId, $startTime,
-        $endTime);
+    $q = agEventFacilityResource::getFacilityEventStaff($eventFacilityResourceId, $startTime,
+      $endTime);
 
-      $orderBy = 'shift_start, shift_end, ss.shift_status, srt.staff_resource_type_abbr, ' .
-        'o.organization, pn_family.person_name, pn_given.person_name';
-      $q->orderBy($orderBy);
-      
-      return self::asFacilityEventStaffArray($q->execute(array(), Doctrine_Core::HYDRATE_NONE));
+    $orderBy = 'shift_start, shift_end, ss.shift_status, srt.staff_resource_type_abbr, es.id, ' .
+      'o.organization, pn_family.person_name, pn_given.person_name';
+    $q->orderBy($orderBy);
+
+    return self::asFacilityEventShiftArray($q->execute(array(), Doctrine_Core::HYDRATE_SCALAR));
+  }
+
+  public static function getFacilityShifts($getParameters)
+  {
+    $eventFacilityResourceId = $getParameters['evfac'];
+
+    if (!isset($getParameters['start']) || !isset($getParameters['end'])) {
+      $getParameters['start'] = NULL;
+      $getParameters['end'] = NULL;
     }
 
-  private static function asFacilityEventStaffArray(array $results)
+    $q = agEventFacilityResource::getFacilityShifts($eventFacilityResourceId,
+      $getParameters['start'], $getParameters['end']);
+
+    return self::asFacilityEventShiftArray($q->execute(array(), Doctrine_Core::HYDRATE_SCALAR), FALSE);
+  }
+
+  private static function asFacilityEventShiftArray(array $results, $includeStaff = TRUE)
   {
     $rGrouped = array();
+    $lastShiftId = NULL;
     foreach($results as $key => $r) {
-      $rGrouped[$r[0]]['shift_status'] = $r[9];
-      $rGrouped[$r[0]]['staffing_requirements']['min'] = $r[1];
-      $rGrouped[$r[0]]['staffing_requirements']['max'] = $r[2];
-      $rGrouped[$r[0]]['staffing_requirements']['resource_type'] = $r[16];
-      $rGrouped[$r[0]]['relative_times']['task_length'] = $r[3];
-      $rGrouped[$r[0]]['relative_times']['break_length'] = $r[4];
-      $rGrouped[$r[0]]['relative_times']['unit'] = 'minutes';
-      $rGrouped[$r[0]]['absolute_times']['shift_start']['formatted'] = date('Y-m-d H:i:s', $r[28]);
-      $rGrouped[$r[0]]['absolute_times']['shift_start']['raw'] = $r[28];
-      $rGrouped[$r[0]]['absolute_times']['break_start']['formatted'] = date('Y-m-d H:i:s', $r[29]);
-      $rGrouped[$r[0]]['absolute_times']['break_start']['raw'] = $r[29];
-      $rGrouped[$r[0]]['absolute_times']['shift_end']['formatted'] = date('Y-m-d H:i:s', $r[30]);
-      $rGrouped[$r[0]]['absolute_times']['shift_end']['raw'] = $r[30];
-      $rGrouped[$r[0]]['absolute_times']['timezone']['string'] = date('e');
-      $rGrouped[$r[0]]['absolute_times']['timezone']['utc_offset'] = date('Z');
-      $rGrouped[$r[0]]['absolute_times']['timezone']['utc_offset_unit'] = 'seconds';
-      $rGrouped[$r[0]]['staff'][$r[11]]['entity_id'] = $r[15];
-      $rGrouped[$r[0]]['staff'][$r[11]]['organization'] = $r[17];
-      $rGrouped[$r[0]]['staff'][$r[11]]['name']['given'] = $r[31];
-      $rGrouped[$r[0]]['staff'][$r[11]]['name']['family'] = $r[32];
-      $rGrouped[$r[0]]['staff'][$r[11]]['contacts']['email']['type'] = $r[19];
-      $rGrouped[$r[0]]['staff'][$r[11]]['contacts']['email']['value'] = $r[20];
-      $rGrouped[$r[0]]['staff'][$r[11]]['contacts']['phone']['type'] = $r[22];
-      $rGrouped[$r[0]]['staff'][$r[11]]['contacts']['phone']['value'] = $r[23];
+      $rGrouped[$r['es_id']]['shift_status'] = $r['ss_shift_status'];
+      $rGrouped[$r['es_id']]['staffing_requirements']['min'] = $r['es_minimum_staff'];
+      $rGrouped[$r['es_id']]['staffing_requirements']['max'] = $r['es_maximum_staff'];
+      $rGrouped[$r['es_id']]['staffing_requirements']['resource_type'] = $r['srt_staff_resource_type_abbr'];
+      $rGrouped[$r['es_id']]['relative_times']['task_length'] = $r['es_task_length_minutes'];
+      $rGrouped[$r['es_id']]['relative_times']['break_length'] = $r['es_break_length_minutes'];
+      $rGrouped[$r['es_id']]['relative_times']['unit'] = 'minutes';
+      $rGrouped[$r['es_id']]['absolute_times']['shift_start']['formatted'] = date('Y-m-d H:i:s', $r['es_shift_start']);
+      $rGrouped[$r['es_id']]['absolute_times']['shift_start']['raw'] = $r['es_shift_start'];
+      $rGrouped[$r['es_id']]['absolute_times']['break_start']['formatted'] = date('Y-m-d H:i:s', $r['es_break_start']);
+      $rGrouped[$r['es_id']]['absolute_times']['break_start']['raw'] = $r['es_break_start'];
+      $rGrouped[$r['es_id']]['absolute_times']['shift_end']['formatted'] = date('Y-m-d H:i:s', $r['es_shift_end']);
+      $rGrouped[$r['es_id']]['absolute_times']['shift_end']['raw'] = $r['es_shift_end'];
+      $rGrouped[$r['es_id']]['absolute_times']['timezone']['string'] = date('e');
+      $rGrouped[$r['es_id']]['absolute_times']['timezone']['utc_offset'] = date('Z');
+      $rGrouped[$r['es_id']]['absolute_times']['timezone']['utc_offset_unit'] = 'seconds';
+
+      if($lastShiftId != $r['es_id']) {
+        $rGrouped[$r['es_id']]['staffing_requirements']['count'] = 0;
+        $lastShiftId = $r['es_id'];
+        $rGrouped[$r['es_id']]['staff'] = array();
+      }
+
+      if (isset($r[12]) && $includeStaff) {
+        $rGrouped[$r['es_id']]['staffing_requirements']['count']++;
+        $rGrouped[$r['es_id']]['staff'][$r['est_id']]['entity_id'] = $r['e_id'];
+        $rGrouped[$r['es_id']]['staff'][$r['est_id']]['organization'] = $r['o_organization'];
+        $rGrouped[$r['es_id']]['staff'][$r['est_id']]['name']['given'] = $r['pn_given_given_name'];
+        $rGrouped[$r['es_id']]['staff'][$r['est_id']]['name']['family'] = $r['pn_family_family_name'];
+        $rGrouped[$r['es_id']]['staff'][$r['est_id']]['contacts']['email']['type'] = $r['ect_email_contact_type'];
+        $rGrouped[$r['es_id']]['staff'][$r['est_id']]['contacts']['email']['value'] = $r['ec_email_contact'];
+        $rGrouped[$r['es_id']]['staff'][$r['est_id']]['contacts']['phone']['type'] = $r['pct_phone_contact_type'];
+        $rGrouped[$r['es_id']]['staff'][$r['est_id']]['contacts']['phone']['value'] = $r['pc_phone_contact'];
+      }
       unset($results[$key]);
     }
 
