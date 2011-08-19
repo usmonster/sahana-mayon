@@ -690,6 +690,21 @@ class eventActions extends agActions
     public function executeStaff(sfWebRequest $request)
     {
         $this->setEventBasics($request);
+        $this->results = array();
+
+        $this->subForm = new agReportTimeForm();
+        unset($this->subForm['_csrf_token']);
+
+        if ($request->isMethod(sfRequest::POST))
+        {
+          $this->subForm->bind($request->getParameter('reportTime'));
+          if ($this->subForm->isValid())
+          {
+            $formArray = $request->getParameter('reportTime');
+            $reportTime = strtotime($formArray['report_time']);
+            $this->results = agEvent::getShiftsSummary($this->event_id, $reportTime);
+          }
+        }
 
         //p-code
         $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
@@ -1126,14 +1141,4 @@ class eventActions extends agActions
       //@todo redirect to the staffing summary
     }
 
-    public function executeStaffingsummary(sfWebRequest $request)
-    {
-      $this->setEventBasics($request);
-      
-      $timestamp = strtotime('2011-08-26 16:37:00');
-
-      $this->strtime = date('F d, Y g:m:s A T', $timestamp);
-      $this->results = agEvent::getShiftsSummary($this->event_id, $timestamp);
-
-    }
 }

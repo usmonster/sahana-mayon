@@ -240,7 +240,7 @@ abstract class PluginagEvent extends BaseagEvent
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['facility_code'] = $r['f_facility_code'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['facility_name'] = $r['f_facility_name'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['facility_status'] = $r['fras_facility_resource_allocation_status'];
-      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['staff_type'] = $r['srt_staff_type'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['staff_type'] = $r['srt_staff_resource_type_abbr'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['minimum_staff'] = $r['es_minimum_staff'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['maximum_staff'] = $r['es_maximum_staff'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['staff_count'] = $r['ess_staff_count'];
@@ -253,7 +253,7 @@ abstract class PluginagEvent extends BaseagEvent
     }
 
     foreach ($results as $efgID => $efg) {
-      $facilities = 0;
+      $facilityCt = 0;
       foreach ($efg['facilities'] as $facilityID => $facility) {
         $facilityCt++;
         $results[$efgID]['facilities'][$facilityID]['shift_count'] = count($facility['shifts']);
