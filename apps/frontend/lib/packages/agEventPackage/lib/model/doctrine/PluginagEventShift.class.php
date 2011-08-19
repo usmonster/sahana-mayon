@@ -12,5 +12,39 @@
  */
 abstract class PluginagEventShift extends BaseagEventShift
 {
+  public static function getEventStaffShifts($startTime = NULL, $endTime = NULL)
+  {
+      $q = agDoctrineQuery::create()
+        ->select('es.id')
+        ->addSelect('efr.id')
+        ->addSelect('efrat.id')
+        ->addSelect('ss.id')
+        ->addSelect('srt.staff_resource_type_abbr')
+        ->addSelect('es.minimum_staff')
+        ->addSelect('es.maximum_staff')
+        ->addSelect('es.task_length_minutes')
+        ->addSelect('es.break_length_minutes')
+        ->addSelect('((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) AS shift_start')
+        ->addSelect('((60 * (es.minutes_start_to_facility_activation + es.task_length_minutes)) + efrat.activation_time) AS break_start')
+        ->addSelect('((60 * (es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes)) + efrat.activation_time) AS shift_end')
+        ->addSelect('es.staff_wave')
+        ->addSelect('ss.shift_status')
+        ->from('agEventShift es')
+        ->innerJoin('es.agEventFacilityResource efr')
+        ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
+        ->innerJoin('es.agShiftStatus ss')
+        ->innerJoin('es.agStaffResourceType srt');
 
+    if (!is_null($startTime) && !is_null($endTime)) {
+      $timeBoundWhere = '((( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) ' .
+        '>= ? AND (( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) <= ?) ' .
+        'OR ((( 60 * ( es.minutes_start_to_facility_activation + es.task_length_minutes + ' .
+        'es.break_length_minutes )) + efrat.activation_time ) >= ? AND (( 60 * ( ' .
+        'es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes )) ' .
+        '+ efrat.activation_time ) <= ? )';
+      $q->andWhere($timeBoundWhere, array($startTime, $endTime, $startTime, $endTime));
+    }
+
+    return $q;
+  }
 }

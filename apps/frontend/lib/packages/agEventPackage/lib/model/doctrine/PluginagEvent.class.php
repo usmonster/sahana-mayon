@@ -155,4 +155,112 @@ abstract class PluginagEvent extends BaseagEvent
 
     return $results;
   }
+
+  /**
+   * Method to return a summary of shifts and their staffing levels for a specific event
+   * @param integer $eventId An eventId
+   * @param integer $timestamp A php timestamp
+   * @return array A multidimensional array of shift summary data
+   */
+  public static function getShiftsSummary($eventId, $timestamp)
+  {
+    $results = array();
+
+    $rStatusExists = 'EXISTS (SELECT tefrs.id ' .
+      'FROM agEventFacilityResourceStatus AS tefrs ' .
+      'WHERE tefrs.time_stamp <= ? ' .
+        'AND tefrs.event_facility_resource_id = efrs.event_facility_resource_id ' .
+      'HAVING MAX(tefrs.time_stamp) = efrs.time_stamp)';
+
+    $gStatusExists = 'EXISTS (SELECT tefgs.id ' .
+      'FROM agEventFacilityGroupStatus AS tefgs ' .
+      'WHERE tefgs.time_stamp <= ? ' .
+        'AND tefgs.event_facility_group_id = efgs.event_facility_group_id ' .
+      'HAVING MAX(tefgs.time_stamp) = efgs.time_stamp)';
+
+    $q = agEventShift::getEventStaffShifts($timestamp, $timestamp);
+    $origCols = $q->getDqlPart('select');
+
+    // we only really do it this way because we're going to have an annoyingly long group-by later
+    $cols[] = 'efrs.id';
+    $cols[] = 'fras.id';
+    $cols[] = 'fr.id';
+    $cols[] = 'frt.id';
+    $cols[] = 'f.id';
+    $cols[] = 'efg.id';
+    $cols[] = 'efgs.id';
+    $cols[] = 'fgas.id';
+    $cols[] = 'frt.facility_resource_type_abbr';
+    $cols[] = 'f.facility_name';
+    $cols[] = 'f.facility_code';
+    $cols[] = 'efg.event_facility_group';
+    $cols[] = 'fras.facility_resource_allocation_status';
+    $cols[] = 'fgas.facility_group_allocation_status';
+
+    foreach ($cols as $column) {
+      $q->addSelect($column);
+    }
+    $q->addSelect('COUNT(ess.id) as staff_count')
+      ->innerJoin('efr.agEventFacilityResourceStatus efrs')
+      ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
+      ->innerJoin('efr.agFacilityResource fr')
+      ->innerJoin('fr.agFacilityResourceType frt')
+      ->innerJoin('fr.agFacility f')
+      ->innerJoin('efr.agEventFacilityGroup efg')
+      ->innerJoin('efg.agEventFacilityGroupStatus efgs')
+      ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
+      ->leftJoin('es.agEventStaffShift ess')
+      ->andWhere('efg.event_id = ?', $eventId)
+      ->andWhere($rStatusExists, date('Y-m-d H:i:s', $timestamp))
+      ->andWhere($gStatusExists, date('Y-m-d H:i:s', $timestamp));
+
+    // if only everything could be as easy as an orderby
+    $orderBy = 'efg.event_facility_group, frt.facility_resource_type_abbr, f.facility_code, ' .
+      'shift_start, shift_end, srt.staff_resource_type';
+    $q->orderBy($orderBy);
+
+    // this grabs pesky aliased columns
+    foreach ($origCols as $column) {
+      $aliasPos = strpos($column, ' AS ');
+      if ($aliasPos !== FALSE) {
+        $cols[] = substr($column, ($aliasPos + 4));
+      } else {
+        $cols[] = $column;
+      }
+    }
+    unset($origCols);
+
+    $q->groupBy(implode(', ', $cols));
+
+
+    foreach($q->execute(array(), Doctrine_Core::HYDRATE_SCALAR) as $r) {
+      $results[$r['efg_id']]['group_name'] = $r['efg_event_facility_group'];
+      $results[$r['efg_id']]['group_status'] = $r['fgas_facility_group_allocation_status'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['facility_type'] = $r['frt_facility_resource_type_abbr'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['facility_code'] = $r['f_facility_code'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['facility_name'] = $r['f_facility_name'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['facility_status'] = $r['fras_facility_resource_allocation_status'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['staff_type'] = $r['srt_staff_type'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['minimum_staff'] = $r['es_minimum_staff'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['maximum_staff'] = $r['es_maximum_staff'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['staff_count'] = $r['ess_staff_count'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['shift_status'] = $r['ss_shift_status'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['staff_wave'] = $r['es_staff_wave'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['shift_start'] = date('Y-m-d H:i:s', $r['es_shift_start']);
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['break_start'] = date('Y-m-d H:i:s', $r['es_break_start']);
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['shift_end'] = date('Y-m-d H:i:s', $r['es_shift_end']);
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['timezone'] = date('T');
+    }
+
+    foreach ($results as $efgID => $efg) {
+      $facilities = 0;
+      foreach ($efg['facilities'] as $facilityID => $facility) {
+        $facilityCt++;
+        $results[$efgID]['facilities'][$facilityID]['shift_count'] = count($facility['shifts']);
+      }
+      $results[$efgID]['facility_count'] = $facilityCt;
+    }
+
+    return $results;
+  }
 }

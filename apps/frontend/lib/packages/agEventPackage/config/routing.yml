@@ -95,9 +95,9 @@ event_exportcontacts:
   url:    /event/:event/exportcontacts
   param:  { module: event, action: exportcontacts }
 
-event_exportcontacts:
-  url:    /event/:event/exportcontacts
-  param:  { module: event, action: exportcontacts }
+event_staffingsummary:
+  url:    /event/:event/staffingsummary
+  param:  { module: event, action: staffingsummary }
 
 api_event_exportfacilities:
   url:    /event/:event/exportfacilities.:sf_format

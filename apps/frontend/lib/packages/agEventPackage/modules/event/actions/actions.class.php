@@ -1122,5 +1122,18 @@ class eventActions extends agActions
 
       //if the entire process is complete, give us some GOOD results
       $this->results = $staffDeployer->save();
+
+      //@todo redirect to the staffing summary
+    }
+
+    public function executeStaffingsummary(sfWebRequest $request)
+    {
+      $this->setEventBasics($request);
+      
+      $timestamp = strtotime('2011-08-26 16:37:00');
+
+      $this->strtime = date('F d, Y g:m:s A T', $timestamp);
+      $this->results = agEvent::getShiftsSummary($this->event_id, $timestamp);
+
     }
 }
