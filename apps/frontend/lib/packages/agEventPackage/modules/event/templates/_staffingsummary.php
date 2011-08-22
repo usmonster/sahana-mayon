@@ -36,7 +36,7 @@
             <?php endif; ?>
                 </span>
               </td><td><?php echo $shiftinfo['minimum_staff']; ?>/<?php echo $shiftinfo['maximum_staff']; ?></td><td><?php echo $shiftinfo['shift_status']; ?></td><td>
-          <?php $shiftinfo['staff_wave']; ?></td><td><?php echo $shiftinfo['shift_start']; ?></td><td><?php echo $shiftinfo['break_start']; ?></td><td><?php echo $shiftinfo['shift_end']; ?></td><td><?php echo $shiftinfo['timezone']; ?></td>
+          <?php echo $shiftinfo['staff_wave']; ?></td><td><?php echo $shiftinfo['shift_start']; ?></td><td><?php echo $shiftinfo['break_start']; ?></td><td><?php echo $shiftinfo['shift_end']; ?></td><td><?php echo $shiftinfo['timezone']; ?></td>
               </tr>
       <?php endforeach; ?>
                 </table>
