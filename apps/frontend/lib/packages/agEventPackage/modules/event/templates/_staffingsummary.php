@@ -1,84 +1,50 @@
 <?php
-
-$results = $sf_data->getRaw('results');
-if (!empty($results))
-{
- // print_r($results);
-
-
-  
-  foreach( $results as $efg_id => $groupinfo)
-  {  echo "<div style=\"background-color:#ccc; display:inline-block;\">";
-     echo "<div style=\"display:inline-block;padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold \"> Facility Group: ".$groupinfo['group_name'] . "</div><div style=\"display:inline-block;float:right; padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold \">Status: ".  $groupinfo['group_status']. "</div>";
-     echo '<br>';
-
-     foreach($groupinfo['facilities'] as  $efr_id => $facilityinfo)
-     {  echo "<div style=\"background-color:#d8d8d8; display:inline-block; margin:3px 10px;padding:5px;width:auto; border:1px solid #fff; \">";
-    // echo $groupinfo['group_name'] . "    ".  $groupinfo['group_status'];
-    // echo '<br>';
-        echo "<div style=\"display:inline-block; text-align:left;padding:5px 20px 5px 5px;\">Facility: ". $facilityinfo['facility_type'] . "-".  $facilityinfo['facility_code'] . "</div><div style=\"display:inline-block;padding:5px 20px 5px 10px; \">Facility Name: ".  $facilityinfo['facility_name'] . "</div><div style=\"display:inline-block;padding:5px; float:right \">Facility Status: ".  $facilityinfo['facility_status']. "</div>";
-        echo '<br>';
-
-        echo "<table class=\"blueTable\" cellpadding=\"5\" style=\"width:auto\">";
-        echo "<tr class=\"head\"><th>Staff Type</th><th>Staff Count</th><th>Min / Max</th><th>Shift Status</th><th>Staff Wave</th><th>Shift Start</th><th>Break Start</th><th>Shift End</th><th>Time Zone</th></tr>";
-        foreach($facilityinfo['shifts'] as $es_id => $shiftinfo)
-        {
-
-          if($shiftinfo['shift_disabled'] || $shiftinfo['shift_standby'])
-          {
-             echo "<tr style=\"background-color:#EEE; padding:5px; \">";
-          }
-          else
-          {
-             echo "<tr style=\"background-color:#fff; padding:5px;  \">";
-          }
-
-
-          echo  "<td>".$shiftinfo['staff_type']. "</td><td><span ";
-
-          if ($shiftinfo['shift_disabled']) {
-            echo "style=\"color: #999\">";
-          } else {
-            if($shiftinfo['staff_count'] == $shiftinfo['maximum_staff'])
-            {
-              echo "style=\"font-weight:bold; color:green\">";
-            }
-            else if(($shiftinfo['staff_count'] >= $shiftinfo['minimum_staff']) && $shiftinfo['staff_count'] < $shiftinfo['maximum_staff'])
-            {
-              echo "style=\"font-weight:bold; color:green\">";
-            }
-            else if($shiftinfo['staff_count'] < $shiftinfo['minimum_staff'])
-            {
-              echo "style=\"font-weight:bold; color:red\">";
-            }
-          }
-
-         echo $shiftinfo['staff_count'];
-          
-           echo "</span></td><td>".$shiftinfo['minimum_staff']. "/".$shiftinfo['maximum_staff']. "</td><td>".$shiftinfo['shift_status']. "</td><td>";
-          echo $shiftinfo['staff_wave']. "</td><td>".$shiftinfo['shift_start']. "</td><td>".$shiftinfo['break_start']. "</td><td>".$shiftinfo['shift_end']. "</td><td>".$shiftinfo['timezone']."</td>";
-          echo '</tr>';
-
-        }
-        echo "</table>";
-
-
-
-
-
-
-        echo '</div><br><br> ';
-
-
-     }
-
-    echo '</div><br><br><br>';
-
-  }
-  
-
-  
-}
+  $results = $sf_data->getRaw('results');
+  if (!empty($results)): // print_r($results);
+?>
+<?php foreach ($results as $efg_id => $groupinfo): ?>
+      <div style="background-color:#ccc; display:inline-block;">
+        <div style="display:inline-block;padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold "> Facility Group: <?php echo $groupinfo['group_name']; ?></div>
+        <div style="display:inline-block;float:right; padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold ">Status: <?php echo $groupinfo['group_status']; ?></div>
+        <br>
+  <?php foreach ($groupinfo['facilities'] as $efr_id => $facilityinfo): ?>
+        <div style="background-color:#d8d8d8; display:inline-block; margin:3px 10px;padding:5px;width:auto; border:1px solid #fff; ">
+          <div style="display:inline-block; text-align:left;padding:5px 20px 5px 5px;">Facility: <?php echo $facilityinfo['facility_type'] ?>-<?php echo $facilityinfo['facility_code'] ?></div><div style="display:inline-block;padding:5px 20px 5px 10px; ">Facility Name: <?php echo $facilityinfo['facility_name'] ?></div><div style="display:inline-block;padding:5px; float:right ">Facility Status: <?php echo $facilityinfo['facility_status']; ?></div>
+          <br>
+          <table class="blueTable" cellpadding="5" style="width:auto">
+            <tr class="head"><th>Staff Type</th><th>Staff Count</th><th>Min / Max</th><th>Shift Status</th><th>Staff Wave</th><th>Shift Start</th><th>Break Start</th><th>Shift End</th><th>Time Zone</th></tr>
+      <?php foreach ($facilityinfo['shifts'] as $es_id => $shiftinfo): ?>
+      <?php if ($shiftinfo['shift_disabled'] || $shiftinfo['shift_standby']): ?>
+            <tr style="background-color:#EEE; padding:5px; ">
+        <?php else: ?>
+            <tr style="background-color:#fff; padding:5px;  ">
+        <?php endif; ?>
+              <td><?php echo $shiftinfo['staff_type']; ?></td>
+              <td>
+          <?php if ($shiftinfo['shift_disabled']): ?>
+                <span style="color: #999">
+            <?php else: ?>
+            <?php
+                  if ($shiftinfo['staff_count'] == $shiftinfo['maximum_staff']) {
+                    echo "<span style=\"font-weight:bold; color:green\">";
+                  } elseif (($shiftinfo['staff_count'] >= $shiftinfo['minimum_staff']) && $shiftinfo['staff_count'] < $shiftinfo['maximum_staff']) {
+                    echo "<span style=\"font-weight:bold; color:green\">";
+                  } elseif ($shiftinfo['staff_count'] < $shiftinfo['minimum_staff']) {
+                    echo "<span style=\"font-weight:bold; color:red\">";
+                  }
+                  echo $shiftinfo['staff_count']; ?>
+            <?php endif; ?>
+                </span>
+              </td><td><?php echo $shiftinfo['minimum_staff']; ?>/<?php echo $shiftinfo['maximum_staff']; ?></td><td><?php echo $shiftinfo['shift_status']; ?></td><td>
+          <?php $shiftinfo['staff_wave']; ?></td><td><?php echo $shiftinfo['shift_start']; ?></td><td><?php echo $shiftinfo['break_start']; ?></td><td><?php echo $shiftinfo['shift_end']; ?></td><td><?php echo $shiftinfo['timezone']; ?></td>
+              </tr>
+      <?php endforeach; ?>
+                </table>
+              </div><br><br>
+  <?php endforeach; ?>
+                </div><br><br><br>
+<?php endforeach; ?>
+<?php
+                  endif;
 //print_r($sf_data->getRaw('results'));
-
 ?>
