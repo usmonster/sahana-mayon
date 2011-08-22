@@ -2,6 +2,11 @@
   $results = $sf_data->getRaw('results');
   if (!empty($results)): // print_r($results);
 ?>
+
+The following are shift staffing results for shifts that are in-progress at <?php
+echo date('Y-m-d H:m:s T', $reportTime) ?>.
+<br /><br />
+
 <?php foreach ($results as $efg_id => $groupinfo): ?>
       <div style="background-color:#ccc; display:inline-block; border:1px solid #ccc">
         <div style="display:inline-block;padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold "> Facility Group: <?php echo $groupinfo['group_name']; ?></div>
@@ -44,6 +49,10 @@
   <?php endforeach; ?>
                 </div><br><br><br>
 <?php endforeach; ?>
+<?php elseif (is_null($reportTime)): ?>
+<?php else: ?>
+There is no shift staffing data available for this event at <?php
+echo date('Y-m-d H:m:s T', $reportTime) ?>.
 <?php
                   endif;
 //print_r($sf_data->getRaw('results'));

@@ -267,4 +267,30 @@ abstract class PluginagEvent extends BaseagEvent
 
     return $results;
   }
+
+  /**
+   * Simple method to return the staff shift count
+   * @param integer $eventId An event ID
+   * @return integer An int value of the number of staff who are deployed in this event
+   */
+  public static function getEventShiftStaffCount($eventId)
+  {
+    return agDoctrineQuery::create()
+      ->select('COUNT(ess.id) as count_staff_shift')
+        ->from('agEventStaffShift ess')
+        ->innerJoin('ess.agEventShift es')
+        ->innerJoin('es.agEventFacilityResource efr')
+        ->innerJoin('efr.agEventFacilityGroup efg')
+        ->where('efg.event_id = ?', $eventId)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+  /**
+   * Simple method to return the staff shift count
+   * @return integer An int value of the number of staff who are deployed in this event
+   */
+  public function getShiftStaffCount()
+  {
+    return self::getEventShiftStaffCount($this->id);
+  }
 }

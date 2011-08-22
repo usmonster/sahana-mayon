@@ -26,7 +26,6 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
         <th>Event Name</th>
         <th>Base Scenario</th>
         <th>Status</th>
-        <th>Reports</th>
       </tr>
     </thead>
     <tbody>
@@ -35,7 +34,6 @@ echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target
         <td><a href="<?php echo url_for('event/active?event=' . urlencode($event['e_event_name'])) ?>" class="buttonText"><?php echo $event['e_event_name'] ?></a></td>
         <td><?php echo $event['s_scenario'] ?></td>
         <td><?php echo $event['est_event_status_type']; ?></td>
-        <td><a href="<?php echo url_for('report/list') ?>" class="continueButton">reports</a></td>
       </tr>
     <?php endforeach; ?>
     </tbody>

@@ -14,7 +14,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 
 <br />
 
-Please input a valid data/time to view your staff summary.
+Please input a valid data/time to view your staffing summary for the specified point in time. Any valid date/time string may be used (eg, '2015-01-01 13:00' or 'January 1, 2015 1:00 pm').
 
 <br /><br />
 
@@ -22,11 +22,11 @@ Please input a valid data/time to view your staff summary.
 <?php 
   echo $subForm;
 ?>
-  <input class="continueButton" type="submit" value="Report Time" name="Retrieve Report"/>
+  <input class="continueButton" type="submit" value="Get Report" name="Retrieve Report"/>
 </form>
 <br />
 
-<?php include_partial('staffingsummary', array('results' => $results)); ?>
+<?php include_partial('staffingsummary', array('results' => $results, 'reportTime' => $reportTime)); ?>
 
 <br />
 

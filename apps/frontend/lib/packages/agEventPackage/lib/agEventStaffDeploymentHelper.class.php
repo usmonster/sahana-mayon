@@ -143,6 +143,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $results['start'] = $this->startTime;
     $results['end'] = $this->endTime;
     $results['duration'] = $duration;
+    $results['profiler'] = $this->profiler->getResults();
 
     return $results;
   }

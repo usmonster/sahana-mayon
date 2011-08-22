@@ -266,6 +266,7 @@ class eventActions extends agActions
 
             $this->event_id = $this->event->id;
             $this->event_name = $this->event->event_name;
+            $this->event_zero_hour = $this->event->zero_hour;
             $this->organization_name = agGlobal::getParam('organization_name');
             $this->vesuvius_address = agGlobal::getParam('vesuvius_address');
         }
@@ -680,6 +681,8 @@ class eventActions extends agActions
         }
         $this->upper_case_cur_Status = strtoupper($cur_status);
 
+        $this->eventShiftStaffCount = agEvent::getEventShiftStaffCount($this->event_id);
+
         //end p-code
     }
 
@@ -694,6 +697,7 @@ class eventActions extends agActions
 
         $this->subForm = new agReportTimeForm();
         unset($this->subForm['_csrf_token']);
+        $this->reportTime = NULL;
 
         if ($request->isMethod(sfRequest::POST))
         {
@@ -701,8 +705,8 @@ class eventActions extends agActions
           if ($this->subForm->isValid())
           {
             $formArray = $request->getParameter('reportTime');
-            $reportTime = strtotime($formArray['report_time']);
-            $this->results = agEvent::getShiftsSummary($this->event_id, $reportTime);
+            $this->reportTime = strtotime($formArray['report_time']);
+            $this->results = agEvent::getShiftsSummary($this->event_id, $this->reportTime);
           }
         }
 
@@ -1123,7 +1127,7 @@ class eventActions extends agActions
 
     public function executeDeploystaff(sfWebRequest $request)
     {
-
+      $this->staffingSummary = array();
       $this->setEventBasics($request);
 
       $staffDeployer = agEventStaffDeploymentHelper::getInstance($this->event_id);
@@ -1132,13 +1136,21 @@ class eventActions extends agActions
           $batch = $staffDeployer->processBatch();
           $continue = $batch['continue'];
 
-          $this->results = $batch;
+          $this->batchResults = $batch;
       }
 
       //if the entire process is complete, give us some GOOD results
-      $this->results = $staffDeployer->save();
+      $this->batchResults = $staffDeployer->save();
+      unset($staffDeployer);
 
-      //@todo redirect to the staffing summary
+        $this->strStart = date('Y:m:d H:i:s T', $batchResults['start']);
+        $this->strEnd =  date('Y:m:d H:i:s T', $batchResults['end']);
+        $this->strDuration = date('H:i:s', mktime(0, 0, round(($this->batchResults['duration']), 0), 0, 0, 2000));
+
+      if (!$this->batchResults['err']) {
+        $this->staffingSummary = agEvent::getShiftsSummary($this->event_id, $this->event_zero_hour);
+        $this->strZeroHour = date('Y-m-d H:i:s T', $this->event_zero_hour);
+      }
     }
 
 }
