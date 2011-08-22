@@ -201,6 +201,8 @@ abstract class PluginagEvent extends BaseagEvent
       $q->addSelect($column);
     }
     $q->addSelect('COUNT(ess.id) as staff_count')
+      ->addSelect('ss.standby')
+      ->addSelect('ss.disabled')
       ->innerJoin('efr.agEventFacilityResourceStatus efrs')
       ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
       ->innerJoin('efr.agFacilityResource fr')
@@ -245,6 +247,8 @@ abstract class PluginagEvent extends BaseagEvent
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['maximum_staff'] = $r['es_maximum_staff'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['staff_count'] = $r['ess_staff_count'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['shift_status'] = $r['ss_shift_status'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['shift_status'] = $r['ss_standby'];
+      $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['shift_status'] = $r['ss_disabled'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['staff_wave'] = $r['es_staff_wave'];
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['shift_start'] = date('Y-m-d H:i:s', $r['es_shift_start']);
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['break_start'] = date('Y-m-d H:i:s', $r['es_break_start']);
