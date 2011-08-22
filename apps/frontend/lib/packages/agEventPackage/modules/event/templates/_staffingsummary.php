@@ -20,17 +20,13 @@ if (!empty($results))
         echo '<br>';
 
         echo "<table class=\"blueTable\" cellpadding=\"5\" style=\"width:auto\">";
-        echo "<tr class=\"head\"><th>Staff Type</th><th>Staff Count</th><th>Min / Max Staff</th><th>Shift Status</th><th>Staff Wave</th><th>Shift Start</th><th>Break Start</th><th>Shift End</th><th>Time Zone</th></tr>";
+        echo "<tr class=\"head\"><th>Staff Type</th><th>Staff Count</th><th>Min / Max</th><th>Shift Status</th><th>Staff Wave</th><th>Shift Start</th><th>Break Start</th><th>Shift End</th><th>Time Zone</th></tr>";
         foreach($facilityinfo['shifts'] as $es_id => $shiftinfo)
         {
 
-
-          if($shiftinfo['shift_disabled'])
+          if($shiftinfo['shift_disabled'] || $shiftinfo['shift_standby'])
           {
-             echo "<tr style=\"background-color:#DAA520; padding:5px;  \">";
-          }
-          else if($shiftinfo['shift_standby']){
-             echo "<tr style=\"background-color:#FFE4B5; padding:5px;  \">";
+             echo "<tr style=\"background-color:#EEE; padding:5px; \">";
           }
           else
           {
@@ -40,17 +36,21 @@ if (!empty($results))
 
           echo  "<td>".$shiftinfo['staff_type']. "</td><td><span ";
 
-          if($shiftinfo['staff_count'] == $shiftinfo['maximum_staff'])
-          {
-            echo "style=\"font-weight:bold; color:dark green\">";
-          }
-          else if(($shiftinfo['staff_count'] >= $shiftinfo['minimum_staff']) && $shiftinfo['staff_count'] < $shiftinfo['maximum_staff'])
-          {
-            echo "style=\"font-weight:bold; color:light green\">";
-          }
-          else if($shiftinfo['staff_count'] < $shiftinfo['minimum_staff'])
-          {
-            echo "style=\"font-weight:bold; color:red\">";
+          if ($shiftinfo['shift_disabled']) {
+            echo "style=\"color: #999\">";
+          } else {
+            if($shiftinfo['staff_count'] == $shiftinfo['maximum_staff'])
+            {
+              echo "style=\"font-weight:bold; color:green\">";
+            }
+            else if(($shiftinfo['staff_count'] >= $shiftinfo['minimum_staff']) && $shiftinfo['staff_count'] < $shiftinfo['maximum_staff'])
+            {
+              echo "style=\"font-weight:bold; color:green\">";
+            }
+            else if($shiftinfo['staff_count'] < $shiftinfo['minimum_staff'])
+            {
+              echo "style=\"font-weight:bold; color:red\">";
+            }
           }
 
          echo $shiftinfo['staff_count'];
