@@ -1143,10 +1143,21 @@ class eventActions extends agActions
       $this->batchResults = $staffDeployer->save();
       unset($staffDeployer);
 
-        $this->strStart = date('Y:m:d H:i:s T', $batchResults['start']);
-        $this->strEnd =  date('Y:m:d H:i:s T', $batchResults['end']);
-        $this->strDuration = date('H:i:s', mktime(0, 0, round(($this->batchResults['duration']), 0), 0, 0, 2000));
+      $this->strStart = date('Y:m:d H:i:s T', $batchResults['start']);
+      $this->strEnd =  date('Y:m:d H:i:s T', $batchResults['end']);
+      $this->strDuration = date('H:i:s', mktime(0, 0, round(($this->batchResults['duration']), 0), 0, 0, 2000));
 
+      // Format memory
+      $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+      $peakMemory = $batchResults['profiler']['maxMem'];
+      if ($peakMemory <= 999) {
+        $peakMemory = 1;
+      }
+      for ($i = 0; $peakMemory > 999; $i++) {
+        $peakMemory /= 1024;
+      }
+      $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
+      
       if (!$this->batchResults['err']) {
         $this->staffingSummary = agEvent::getShiftsSummary($this->event_id, $this->event_zero_hour);
         $this->strZeroHour = date('Y-m-d H:i:s T', $this->event_zero_hour);

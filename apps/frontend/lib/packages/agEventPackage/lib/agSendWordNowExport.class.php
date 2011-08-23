@@ -25,9 +25,17 @@ abstract class agSendWordNowExport extends agExportHelper {
    */
   protected function _init($eventId, $exportBaseName)
   {
+    // grab some global defaults and/or set new vars
+    $eventName = agDoctrineQuery::create()
+      ->select('e.event_name')
+        ->from('agEvent e')
+        ->where('e.id = ?', $eventId)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    $exportBaseName = $exportBaseName . '_' . str_replace(' ', '_', strtolower($eventName));
+
     parent::__init($exportBaseName);
 
-    // grab some global defaults and/or set new vars
     $this->eventId = $eventId;
     $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
   }
@@ -93,6 +101,14 @@ abstract class agSendWordNowExport extends agExportHelper {
 
     // Set the exportComponents and components
     $this->exportComponents = $exportComponents;
+  }
+
+  /**
+   * Method to set the (optional) lookup sheet data.
+   */
+  protected function setLookupSheet()
+  {
+
   }
 
   /**

@@ -30,6 +30,8 @@ abstract class agExportHelper extends agPdoHelper {
             $zipFile,
             $tempPath;
 
+  protected $lookupSheet = array();
+
   protected $perfProfiler;
 
   protected $XlsMaxExportSize,
@@ -56,6 +58,11 @@ abstract class agExportHelper extends agPdoHelper {
   abstract protected function setExportComponents();
 
   /**
+   * Method to set the (optional) lookup sheet data (implement as empty if a lookup sheet is not desired)
+   */
+  abstract protected function setLookupSheet();
+
+  /**
    * A method to act like this classes' own constructor
    * @param integer $eventId An event ID
    * @param string The export basename (as it would appear in an export)
@@ -68,7 +75,7 @@ abstract class agExportHelper extends agPdoHelper {
     // set our export basename
     $this->exportBaseName = $exportBaseName;
 
-    // get our export data
+    // get our export date
     $this->exportDate = date('Ymd_His');
 
     // get our paths
@@ -78,6 +85,8 @@ abstract class agExportHelper extends agPdoHelper {
     $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
     $this->perfProfiler = new agPerfProfiler();
+
+    $this->setLookupSheet();
   }
 
   /**
@@ -129,6 +138,9 @@ abstract class agExportHelper extends agPdoHelper {
     while ($this->firstBatch || $this->fetchPosition != $this->totalFetches) {
       $this->processBatch();
     }
+
+    // grab our validation sheet (if it's applicable)
+    $this->createValidationSheet();
 
     // perform a little general cleanup
     $this->clearConnections();
@@ -369,17 +381,20 @@ abstract class agExportHelper extends agPdoHelper {
    * Method to create an xls import file and return TRUE if successful
    * @param string $xlsPath Path of the export file to create
    * @param array $exportData An array of export data to write to the xls file
+   * @param boolean $headers Whether or not to write column headers
    * @return boolean Returns TRUE if successful
    */
-  protected function buildXls($xlsPath, array $exportData)
+  protected function buildXls($xlsPath, array $exportData, $headers = TRUE)
   {
     // load the Excel writer object
     $sheet = new agExcel2003ExportHelper($this->exportBaseName);
 
     // Write the column headers
-    foreach ($this->exportSpec as $columnHeader => $specData) {
-      $sheet->label($columnHeader);
-      $sheet->right();
+    if ($headers) {
+      foreach ($this->exportSpec as $columnHeader => $specData) {
+        $sheet->label($columnHeader);
+        $sheet->right();
+      }
     }
 
     foreach ($exportData as $exportRowData) {
@@ -395,6 +410,28 @@ abstract class agExportHelper extends agPdoHelper {
 
     $sheet->save($xlsPath);
     unset($sheet);
+    return TRUE;
+  }
+
+  /**
+   * Method to create the optional validation sheet
+   */
+  protected function createValidationSheet()
+  {
+    if (empty($this->lookupSheet)) {
+      return TRUE;
+    }
+    
+    $xlsName = $this->exportBaseName . '_' . $this->exportDate . '_' . 'validation.xls';
+    $fullPath = $this->tempPath . DIRECTORY_SEPARATOR . $xlsName;
+
+    // check for successful creation of the xlsfile (both soft and hard)
+    if (! $this->buildXls($fullPath, $this->lookupSheet, FALSE)) {
+      throw new sfException('Export failed during method ' . __FUNCTION__ . '.');
+    }
+
+    $this->zipContents[] = array('path' => $this->tempPath, 'filename' => $xlsName);
+
     return TRUE;
   }
 }

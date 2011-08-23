@@ -132,7 +132,15 @@ class agFacilityImportNormalization extends agImportNormalization
    */
   protected function setUnprocessedBaseName()
   {
-    $this->unprocessedBaseName = agGlobal::getParam('unprocessed_facility_import_basename');
+    $scenarioName = agDoctrineQuery::create()
+      ->select('s.scenario')
+        ->from('agScenario s')
+        ->where('s.id = ?', $this->scenarioId)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    $scenarioName = str_replace(' ', '_', strtolower($scenarioName));
+    $this->unprocessedBaseName = agGlobal::getParam('unprocessed_facility_import_basename') . '_' .
+       $scenarioName;
   }
 
   /**

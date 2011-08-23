@@ -70,7 +70,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
       <span>Peak Memory Usage: </span>
     </td>
     <td>
-      <?php echo $batchResults['profiler']['maxMem']; ?>
+      <?php echo $peakMemory; ?>
     </td>
   </tr>
 </table>
@@ -82,10 +82,6 @@ Staff deployment encountered an error and could not could not complete successfu
 <?php echo $batchResults['msg']; ?>
 
 <?php else: ?>
-Staff deployment successfully completed with the message: <?php echo $batchResults['msg']; ?>
-<br />
-<br />
-
 <?php include_partial('staffingsummary', array('results' => $staffingSummary, 'reportTime' => $event_zero_hour)); ?>
 <?php endif; ?>
 

@@ -115,6 +115,127 @@ class agStaffExport extends agExportHelper {
   }
 
   /**
+   * Method to set the (optional) lookup sheet data (implement as empty if a lookup sheet is not desired)
+   */
+  protected function setLookupSheet()
+  {
+    // first get the raw data
+    $states = array();
+    $states[] = 'AL';
+    $states[] = 'AK';
+    $states[] = 'AZ';
+    $states[] = 'CA';
+    $states[] = 'CO';
+    $states[] = 'CT';
+    $states[] = 'DE';
+    $states[] = 'FL';
+    $states[] = 'GA';
+    $states[] = 'HI';
+    $states[] = 'ID';
+    $states[] = 'IL';
+    $states[] = 'IN';
+    $states[] = 'IA';
+    $states[] = 'KS';
+    $states[] = 'KY';
+    $states[] = 'LA';
+    $states[] = 'ME';
+    $states[] = 'MD';
+    $states[] = 'MA';
+    $states[] = 'MI';
+    $states[] = 'MN';
+    $states[] = 'MS';
+    $states[] = 'MO';
+    $states[] = 'MT';
+    $states[] = 'NE';
+    $states[] = 'NV';
+    $states[] = 'NH';
+    $states[] = 'NJ';
+    $states[] = 'NM';
+    $states[] = 'NY';
+    $states[] = 'NC';
+    $states[] = 'ND';
+    $states[] = 'OH';
+    $states[] = 'OK';
+    $states[] = 'OR';
+    $states[] = 'PA';
+    $states[] = 'RI';
+    $states[] = 'SC';
+    $states[] = 'SD';
+    $states[] = 'TN';
+    $states[] = 'TX';
+    $states[] = 'UT';
+    $states[] = 'VT';
+    $states[] = 'VA';
+    $states[] = 'WA';
+    $states[] = 'WV';
+    $states[] = 'WI';
+    $states[] = 'WY';
+    
+    $resourcetypes = agDoctrineQuery::create()
+      ->select('srt.staff_resource_type')
+        ->from('agStaffResourceType srt')
+      ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+
+    $resourcestatuses = agDoctrineQuery::create()
+      ->select('srs.staff_resource_status')
+        ->from('agStaffResourceStatus srs')
+      ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+
+    $languages = agDoctrineQuery::create()
+      ->select('l.language')
+        ->from('agLanguage l')
+      ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+
+    $competencies = agDoctrineQuery::create()
+      ->select('lc.language_competency')
+        ->from('agLanguageCompetency lc')
+      ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+
+    $organizations = agDoctrineQuery::create()
+      ->select('o.organization')
+        ->from('agOrganization o')
+      ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+
+    $fields = array(2 => 'states', 4 => 'resourcetypes', 5 => 'resourcestatuses', 6 => 'languages',
+      7 => 'competencies', 8 => 'organizations');
+
+    // just find our max row count
+    $maxCt = 0;
+    foreach ($fields as $field) {
+      $ctVar = $field . 'Ct';
+      $$ctVar = count(${$field});
+      $maxCt = ($maxCt < ${$ctVar}) ? ${$ctVar} : $maxCt;
+    }
+
+    // now add our two blank columns
+    for($i = 0; $i <= $maxCt; $i++) {
+      $this->lookupSheet[($i+2)][1] = '';
+      $this->lookupSheet[($i+2)][3] = '';
+    }
+
+    // iterate each field type then iterate columns adding values or blanks
+    foreach ($fields as $col => $field) {
+      $this->lookupSheet[2][$col] = $field;
+
+      for($i = 0; $i < $maxCt; $i++) {
+
+        if (isset(${$field}[$i])) {
+          $this->lookupSheet[($i+3)][$col] = ${$field}[$i];
+        } else {
+          $this->lookupSheet[($i+3)][$col] = '';
+        }
+      }
+    }
+
+    // do some necessary sorting
+    ksort($this->lookupSheet);
+    foreach ($this->lookupSheet as &$arr) {
+      ksort($arr);
+    }
+    unset($arr);
+  }
+
+  /**
    * Method to set an export spec
    */
   protected function setExportSpec()

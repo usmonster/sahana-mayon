@@ -214,7 +214,6 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function setImportComponents()
   {
-    
     $this->importComponents[] = array( 'component' => 'message_response', 'throwOnError' => TRUE, 'method' => 'setEventStaffStatus');
   }
 
