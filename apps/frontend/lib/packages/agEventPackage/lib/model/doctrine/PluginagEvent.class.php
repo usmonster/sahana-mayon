@@ -128,6 +128,7 @@ abstract class PluginagEvent extends BaseagEvent
 
     foreach ($data as $datum) {
       $subResults = array();
+      $subResults['eventFacilityResourceID'] = $datum['efr_id'];
       $subResults['facility_name'] = $datum['f_facility_name'];
       $subResults['facility_code'] = $datum['f_facility_code'];
       $subResults['facility_resource_type_abbr'] = $datum['frt_facility_resource_type_abbr'];
