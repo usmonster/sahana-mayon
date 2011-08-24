@@ -614,25 +614,35 @@ abstract class PluginagEvent extends BaseagEvent
     $availableStaff = self::getAvailableEventStaffTypeCount($eventId, $timestamp);
     $committedStaff = self::getCommittedEventStaffTypeCount($eventId, $timestamp);
 
+    $results['total'] = array('min_required' => 0, 'max_required' => 0, 'unknown' => 0,
+      'available' => 0, 'committed' => 0);
+
     foreach ($shiftResources as $srtId => $sums) {
+
       $results[$srtId]['resource_type'] = $staffResourceTypes[$srtId];
       $results[$srtId]['min_required'] = $sums[0];
       $results[$srtId]['max_required'] = $sums[1];
 
+      $results['total']['min_required'] += $sums[0];
+      $results['total']['max_required'] += $sums[1];
+
       if (isset($unknownStaff[$srtId])) {
         $results[$srtId]['unknown'] = $unknownStaff[$srtId];
+        $results['total']['unknown'] += $unknownStaff[$srtId];
       } else {
         $results[$srtId]['unknown'] = 0;
       }
 
       if (isset($availableStaff[$srtId])) {
         $results[$srtId]['available'] = $availableStaff[$srtId];
+        $results['total']['available'] += $availableStaff[$srtId];
       } else {
         $results[$srtId]['available'] = 0;
       }
 
       if (isset($committedStaff[$srtId])) {
         $results[$srtId]['committed'] = $committedStaff[$srtId];
+        $results['total']['committed'] += $committedStaff[$srtId];
       } else {
         $results[$srtId]['committed'] = 0;
       }
