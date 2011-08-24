@@ -623,7 +623,7 @@ class eventActions extends agActions
     public function executeStaffingestimates(sfWebRequest $request)
     {
         $this->setEventBasics($request);
-        $this->results = array();
+        $this->uniqStaffCounts = array();
 
         $this->subForm = new agReportTimeForm();
         unset($this->subForm['_csrf_token']);
@@ -636,7 +636,11 @@ class eventActions extends agActions
           {
             $formArray = $request->getParameter('reportTime');
             $this->reportTime = strtotime($formArray['report_time']);
-            $this->results = agEvent::getShiftsSummary($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['unknown'] = agEvent::getUnknownUniqueEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['available'] = agEvent::getAvailableUniqueEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['committed'] = agEvent::getCommittedUniqueEventStaffCount($this->event_id, $this->reportTime);
+
+            $this->staffTypeEstimates = agEvent::getEventShiftEstimates($this->event_id, $this->reportTime);
           }
         }
 
