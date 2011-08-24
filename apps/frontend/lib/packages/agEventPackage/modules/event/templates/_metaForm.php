@@ -20,7 +20,6 @@ if ($event_name != "") {
         <tfoot>
             <tr>
                 <td colspan="2" style="padding-top:10px">
-                      <input type="submit" value="Save" name="Save" class="continueButton"/>
                       <input type="submit" value="Save and Deploy" name ="Deploy" class="continueButton"<?php echo $confirmScript ?>>
                       <?php
                         if (!empty($event_name))

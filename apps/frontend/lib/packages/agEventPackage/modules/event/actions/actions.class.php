@@ -451,18 +451,6 @@ class eventActions extends agActions
         //end p-code
     }
 
-    /**
-     * event/list shows a listing of events, this provides the list data to the listSuccess template
-     * @param sfWebRequest $request
-     */
-    public function executeList(sfWebRequest $request)
-    {
-        $this->ag_events = agDoctrineQuery::create()
-            ->select('a.*')
-            ->from('agEvent a')
-            ->execute();
-    }
-
     public function preExecute()
     {
         // The code inserted here is executed at the beginning of each action call
@@ -536,83 +524,6 @@ class eventActions extends agActions
 
     $this->redirect('event/messaging?event=' . urlencode($this->event_name));
   }
-    /**
-     * provide event shift CRUD
-     * @param sfWebRequest $request
-     */
-    public function executeShifts(sfWebRequest $request)
-    {
-        $this->setEventBasics($request);
-//CREATE  / UPDATE
-        if ($request->isMethod(sfRequest::POST)) {
-            if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
-                $this->eventshiftform = new agEventShiftForm();
-            } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
-                $ag_event_shift = Doctrine_Core::getTable('agEventShift')
-                    ->findByDql('id = ?', $request->getParameter('shiftid'))
-                    ->getFirst();
-                $this->eventshiftform = new agEventShiftForm($ag_event_shift);
-            } elseif ($request->getParameter('delete')) {
-//DELETE
-            }
-            $this->eventshiftform->bind($request->getParameter($this->eventshiftform->getName()), $request->getFiles($this->eventshiftform->getName()));
-            $formvalues = $request->getParameter($this->eventshiftform->getName());
-            if ($this->eventshiftform->isValid()) { //form is not passing validation because the bind is failing?
-                $ag_event_shift = $this->eventshiftform->save();
-                $this->generateUrl('event_shifts', array('module' => 'event',
-                  'action' => 'shifts', 'event' => $this->event_name, 'shiftid' => $ag_event_shift->getId()));
-            }
-            $this->redirect('event/shifts?event=' . urlencode($this->event_name)); //need to pass in event id
-        } else {
-//READ
-            if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
-                $this->eventshiftform = new agEventShiftForm();
-                $this->setTemplate('editshift');
-            } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
-
-                $ag_event_shift = Doctrine_Core::getTable('agEventShift')
-                    ->findByDql('id = ?', $request->getParameter('shiftid'))
-                    ->getFirst();
-
-                $this->eventshiftform = new agEventShiftForm($ag_event_shift);
-                $this->setTemplate('editshift');
-            } else {
-//LIST
-                $query = agDoctrineQuery::create()
-                    ->select('es.*, efr.*, efg.id, efg.event_facility_group, e.*, af.*, fr.*, frt.*, srt.*, ess.*, est.*')
-                    ->from('agEventShift as es')
-                    ->leftJoin('es.agEventStaffShift ess')
-                    ->leftJoin('ess.agEventStaff est')
-                    ->leftJoin('es.agStaffResourceType srt')
-                    ->leftJoin('es.agEventFacilityResource AS efr')
-                    ->leftJoin('efr.agEventFacilityGroup AS efg')
-                    ->leftJoin('efr.agFacilityResource fr, fr.agFacility af, fr.agFacilityResourceType frt')
-                    ->leftJoin('efg.agEvent AS e')
-                    ->where('e.id = ?', $this->event_id);
-
-                /**
-                 * Create pager
-                 */
-                $this->pager = new sfDoctrinePager('agEventShift', 20);
-
-                /**
-                 * Set pager's query to our final query including sort
-                 * parameters
-                 */
-                $this->pager->setQuery($query);
-
-                /**
-                 * Set the pager's page number, defaulting to page 1
-                 */
-                $this->pager->setPage($request->getParameter('page', 1));
-                $this->pager->init();
-            }
-        }
-
-        //p-code
-        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
-        //end p-code
-    }
 
     /**
      * provides basic information about an active event, the template gives links to event management
@@ -691,6 +602,35 @@ class eventActions extends agActions
      * @param sfWebRequest $request
      */
     public function executeStaff(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        $this->results = array();
+
+        $this->subForm = new agReportTimeForm();
+        unset($this->subForm['_csrf_token']);
+        $this->reportTime = NULL;
+
+        if ($request->isMethod(sfRequest::POST))
+        {
+          $this->subForm->bind($request->getParameter('reportTime'));
+          if ($this->subForm->isValid())
+          {
+            $formArray = $request->getParameter('reportTime');
+            $this->reportTime = strtotime($formArray['report_time']);
+            $this->results = agEvent::getShiftsSummary($this->event_id, $this->reportTime);
+          }
+        }
+
+        //p-code
+        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+        //end p-code
+    }
+
+    /**
+     * provides basic staff management in an event
+     * @param sfWebRequest $request
+     */
+    public function executeStaffingestimates(sfWebRequest $request)
     {
         $this->setEventBasics($request);
         $this->results = array();
@@ -1143,8 +1083,8 @@ class eventActions extends agActions
       $this->batchResults = $staffDeployer->save();
       unset($staffDeployer);
 
-      $this->strStart = date('Y:m:d H:i:s T', $batchResults['start']);
-      $this->strEnd =  date('Y:m:d H:i:s T', $batchResults['end']);
+      $this->strStart = date('Y:m:d H:i:s T', $this->batchResults['start']);
+      $this->strEnd =  date('Y:m:d H:i:s T', $this->batchResults['end']);
       $this->strDuration = date('H:i:s', mktime(0, 0, round(($this->batchResults['duration']), 0), 0, 0, 2000));
 
       // Format memory
