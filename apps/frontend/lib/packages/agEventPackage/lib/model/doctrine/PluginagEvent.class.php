@@ -425,4 +425,229 @@ abstract class PluginagEvent extends BaseagEvent
   {
     return self::getAvailableUniqueEventStaffCount($this->id, $timestamp);
   }
+
+  /**
+   * Method to return an event status type query
+   * @param integer $eventId An eventId
+   * @param integer $timestamp A unix timestamp
+   * @return agDoctrineQuery An agDoctrineQuery object
+   */
+  protected static function getEventStaffTypeCount($eventId, $timestamp)
+  {
+    $statusExists = 'EXISTS ( ' .
+      'SELECT subEss.id ' .
+        'FROM agEventStaffStatus subEss ' .
+        'WHERE subEss.time_stamp <= ? ' .
+          'AND subEss.event_staff_id = ess.event_staff_id ' .
+        'HAVING (MAX(subEss.time_stamp) = ess.time_stamp) ' .
+      ')';
+
+    $q = agDoctrineQuery::create()
+      ->select('sr.staff_resource_type_id')
+          ->addSelect('COUNT(sr.id) as staff_count')
+        ->from('agStaffResource sr')
+          ->innerJoin('sr.agStaffResourceStatus srs')
+          ->innerJoin('sr.agEventStaff es')
+          ->innerJoin('es.agEventStaffStatus ess')
+          ->innerJoin('ess.agStaffAllocationStatus sas')
+        ->where('es.event_id = ?', $eventId)
+            ->addWhere('srs.is_available = ?', TRUE)
+            ->addWhere($statusExists, date('Y-m-d H:i:s', $timestamp))
+        ->groupBy('sr.staff_resource_type_id');
+
+    return $q;
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $eventId An eventId
+   * @param integer $timestamp A unix timestamp
+   * @return array A single-dimension associative array
+   */
+  public static function getUnknownEventStaffTypeCount($eventId, $timestamp)
+  {
+    return self::getEventStaffTypeCount($eventId, $timestamp)
+      ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, TRUE))
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $eventId An eventId
+   * @param integer $timestamp A unix timestamp
+   * @return array A single-dimension associative array
+   */
+  public static function getAvailableEventStaffTypeCount($eventId, $timestamp)
+  {
+    return self::getEventStaffTypeCount($eventId, $timestamp)
+      ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, FALSE))
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $eventId An eventId
+   * @param integer $timestamp A unix timestamp
+   * @return array A single-dimension associative array
+   */
+  public static function getCommittedEventStaffTypeCount($eventId, $timestamp)
+  {
+    return self::getEventStaffTypeCount($eventId, $timestamp)
+      ->andWhere('(sas.committed = ?)', TRUE)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $timestamp A unix timestamp
+   * @return array A single-dimension associative array
+   */
+  public function getUnknownStaffTypeCount($timestamp)
+  {
+    return self::getUnknownEventStaffTypeCount($this->id, $timestamp);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $timestamp A unix timestamp
+   * @return array A single-dimension associative array
+   */
+  public function getAvailableStaffTypeCount($timestamp)
+  {
+    return self::getAvailableEventStaffTypeCount($this->id, $timestamp);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $timestamp A unix timestamp
+   * @return array A single-dimension associative array
+   */
+  public function getCommittedStaffTypeCount($timestamp)
+  {
+    return self::getCommittedEventStaffTypeCount($this->id, $timestamp);
+  }
+
+  /**
+   * Returns a sum of required min / max staff for a specified point in time
+   * @param integer $eventId An eventId
+   * @param integer $timestamp A PHP / UNIX timestamp
+   * @return array A multidimensional array keyed by staff resource type
+   */
+  public static function getEventShiftStaffTypeSum($eventId, $timestamp)
+  {
+    $strTimestamp = date('Y-m-d H:i:s', $timestamp);
+
+    $frStatusExists = 'EXISTS ( ' .
+      'SELECT subEfrs.id ' .
+        'FROM agEventFacilityResourceStatus subEfrs ' .
+        'WHERE subEfrs.time_stamp <= ? ' .
+          'AND subEfrs.event_facility_resource_id = efrs.event_facility_resource_id ' .
+        'HAVING (MAX(subEfrs.time_stamp) = efrs.time_stamp) ' .
+      ')';
+
+    $fgStatusExists = 'EXISTS ( ' .
+      'SELECT subEfgs.id ' .
+        'FROM agEventFacilityGroupStatus subEfgs ' .
+        'WHERE subEfgs.time_stamp <= ? ' .
+          'AND subEfgs.event_facility_group_id = efgs.event_facility_group_id ' .
+        'HAVING (MAX(subEfgs.time_stamp) = efgs.time_stamp) ' .
+      ')';
+
+    $timeBoundWhere = '((( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) ' .
+      '<= ?) AND ((( 60 * ( es.minutes_start_to_facility_activation + es.task_length_minutes + ' .
+      'es.break_length_minutes )) + efrat.activation_time ) >= ? )';
+
+    $q = agDoctrineQuery::create()
+      ->select('es.staff_resource_type_id')
+        ->addSelect('SUM(es.minimum_staff) as minSum')
+        ->addSelect('SUM(es.minimum_staff) as maxSum')
+      ->from('agEventShift es')
+        ->innerJoin('es.agEventFacilityResource efr')
+        ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
+        ->innerJoin('efr.agEventFacilityResourceStatus efrs')
+        ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
+        ->innerJoin('efr.agFacilityResource fr')
+        ->innerJoin('fr.agFacilityResourceStatus frs')
+        ->innerJoin('efr.agEventFacilityGroup efg')
+        ->innerJoin('efg.agEventFacilityGroupStatus efgs')
+        ->innerJoin('efgs.agFacilityGroupAllocationStatus fgas')
+      ->where('frs.is_available = ?', TRUE)
+        ->andWhere('fras.staffed = ?', TRUE)
+        ->andWhere('fgas.active = ?', TRUE)
+        ->andwhere($frStatusExists, $strTimestamp)
+        ->andwhere($fgStatusExists, $strTimestamp)
+        ->andWhere($timeBoundWhere, array($timestamp, $timestamp))
+      ->groupBy('es.staff_resource_type_id');
+
+    return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_ARRAY);
+  }
+
+  /**
+   * Returns a sum of required min / max staff for a specified point in time
+   * @param integer $timestamp A PHP / UNIX timestamp
+   * @return array A multidimensional array keyed by staff resource type
+   */
+  public function getShiftStaffTypeSum($timestamp)
+  {
+    return self::getEventShiftStaffTypeSum($this->id, $timestamp);
+  }
+
+  /**
+   * Returns a multidimensional array of staffing estimates
+   * @param integer $eventId An eventId
+   * @param integer $timestamp A PHP / UNIX timestamp
+   * @return array A multidimensional array keyed by staff resource type
+   */
+  public static function getEventShiftEstimates($eventId, $timestamp)
+  {
+    $results = array();
+
+    $staffResourceTypes = agDoctrineQuery::create()
+      ->select('srt.id')
+        ->addSelect('srt.staff_resource_type')
+      ->from('agStaffResourceType srt')
+      ->useResultCache(TRUE, 3600)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    $shiftResources = self::getEventShiftStaffTypeSum($eventId, $timestamp);
+    $unknownStaff = self::getUnknownEventStaffTypeCount($eventId, $timestamp);
+    $availableStaff = self::getAvailableEventStaffTypeCount($eventId, $timestamp);
+    $committedStaff = self::getCommittedEventStaffTypeCount($eventId, $timestamp);
+
+    foreach ($shiftResources as $srtId => $sums) {
+      $results[$srtId]['resource_type'] = $staffResourceTypes[$srtId];
+      $results[$srtId]['min_required'] = $sums[0];
+      $results[$srtId]['max_required'] = $sums[1];
+
+      if (isset($unknownStaff[$srtId])) {
+        $results[$srtId]['unknown'] = $unknownStaff[$srtId];
+      } else {
+        $results[$srtId]['unknown'] = 0;
+      }
+
+      if (isset($availableStaff[$srtId])) {
+        $results[$srtId]['available'] = $availableStaff[$srtId];
+      } else {
+        $results[$srtId]['available'] = 0;
+      }
+
+      if (isset($committedStaff[$srtId])) {
+        $results[$srtId]['committed'] = $committedStaff[$srtId];
+      } else {
+        $results[$srtId]['committed'] = 0;
+      }
+    }
+
+    return $results;
+  }
+
+  /**
+   * Returns a multidimensional array of staffing estimates
+   * @param integer $timestamp A PHP / UNIX timestamp
+   * @return array A multidimensional array keyed by staff resource type
+   */
+  public function getShiftEstimates($timestamp)
+  {
+    return self::getEventShiftEstimates($this->id, $timestamp);
+  }
 }

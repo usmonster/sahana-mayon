@@ -608,6 +608,7 @@ class eventActions extends agActions
             $formArray = $request->getParameter('reportTime');
             $this->reportTime = strtotime($formArray['report_time']);
             $this->results = agEvent::getShiftsSummary($this->event_id, $this->reportTime);
+            $this->test = agEvent::getShiftEstimates($this->event_id, $this->reportTime);
           }
         }
 

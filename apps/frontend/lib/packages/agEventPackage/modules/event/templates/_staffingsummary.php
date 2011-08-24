@@ -4,7 +4,7 @@
 ?>
 
 The following are shift staffing results for shifts that are in-progress at <?php
-echo date('Y-m-d H:m:s T', $reportTime) ?>.
+echo date('Y-m-d H:i:s T', $reportTime) ?>.
 <br /><br />
 
 <?php foreach ($results as $efg_id => $groupinfo): ?>
