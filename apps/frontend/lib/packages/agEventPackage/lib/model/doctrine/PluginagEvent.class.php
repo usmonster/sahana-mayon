@@ -325,4 +325,104 @@ abstract class PluginagEvent extends BaseagEvent
   {
     return self::getEventShiftStaffCount($this->id);
   }
+
+  /**
+   * Simple method to return a unique staff count
+   * @param integer $evnetId An event ID
+   * @param timestamp $timestamp
+   * @return agDoctrineQuery A doctrine query.
+   */
+  protected static function getUniqueStaffCount($eventId, $timestamp)
+  {
+    $subQuery = 'EXISTS ( ' .
+      'SELECT ess2.id '.
+        'FROM agEventStaffStatus ess2 '.
+          'WHERE ess2.event_staff_id = ess.event_staff_id ' .
+            'AND ess2.time_stamp <= ? '.
+          'HAVING (MAX(ess2.time_stamp) = ess.time_stamp) ' .
+        ')';
+
+    $query = agDoctrineQuery::create()
+      ->select('count(s.id) staffCount')
+        ->from('agStaff s')
+          ->innerJoin('s.agStaffResource sr')
+          ->innerJoin('sr.agStaffResourceStatus srs')
+          ->innerJoin('sr.agEventStaff es')
+          ->innerJoin('es.agEventStaffStatus ess')
+          ->innerJoin('ess.agStaffAllocationStatus sas')
+        ->where('es.event_id = ?', $eventId)
+        ->andWhere('srs.is_available = ?', TRUE)
+        ->andWhere($subQuery, date('Y-m-d H:i:s', $timestamp));
+
+    return $query;
+  }
+
+  /**
+   * Simple method to return a unique staff count who meet the qualified criterion
+   * @param integer $evnetId An event ID
+   * @param timestamp $timestamp
+   * @return integer An integer of the staff count
+   */
+  public static function getUnknownUniqueEventStaffCount($eventId, $timestamp)
+  {
+    return self::getUniqueStaffCount($eventId, $timestamp)
+      ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, TRUE))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+  /**
+   * Simple method to return a unique staff count who meet the qualified criterion
+   * @param integer $evnetId An event ID
+   * @param timestamp $timestamp
+   * @return integer An integer of the staff count
+   */
+  public static function getAvailableUniqueEventStaffCount($eventId, $timestamp)
+  {
+    return self::getUniqueStaffCount($eventId, $timestamp)
+      ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, FALSE))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+  /**
+   * Simple method to return a unique staff count who meet the qualified criterion
+   * @param integer $evnetId An event ID
+   * @param timestamp $timestamp
+   * @return integer An integer of the staff count
+   */
+  public static function getCommittedUniqueEventStaffCount($eventId, $timestamp)
+  {
+    return self::getUniqueStaffCount($eventId, $timestamp)
+      ->andWhere('sas.committed = ?', TRUE, FALSE)
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $timestamp A unix timestamp
+   * @return integer An integer of the staff count
+   */
+  public function getUnknownUniqueStaffCount($timestamp)
+  {
+    return self::getUnknownUniqueEventStaffCount($this->id, $timestamp);
+  }
+  
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $timestamp A unix timestamp
+   * @return integer An integer of the staff count
+   */
+  public function getAvailableUniqueStaffCount($timestamp)
+  {
+    return self::getAvailableUniqueEventStaffCount($this->id, $timestamp);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $timestamp A unix timestamp
+   * @return integer An integer of the staff count
+   */
+  public function getCommittedUniqueStaffCount($timestamp)
+  {
+    return self::getAvailableUniqueEventStaffCount($this->id, $timestamp);
+  }
 }
