@@ -567,7 +567,7 @@ abstract class agImportNormalization extends agImportHelper
       // use the import spec as our definitive columns list and add the obj properties magically
       foreach ($this->importSpec as $columnName => $columnSpec) {
         // checking for empty negates the neebasenamed for an explicit removal step
-        if (!is_null($row->$columnName)) {
+        if (isset($row->$columnName)) {
           $this->importData[$rowId]['_rawData'][$columnName] = $row->$columnName;
         }
       }

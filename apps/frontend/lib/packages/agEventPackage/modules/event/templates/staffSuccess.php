@@ -13,11 +13,11 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 <h4>View Shift Staffing Summary for the  <span class="highlightedText"><?php echo $event_name; ?></span> event.</h4>
 
 <br />
-<?php echo "Current Event Status: <span class=\"highlightedText\">".$upper_case_cur_Status."</span><br />Zero Hour: <span class=\"highlightedText\">". $zero_hour. "</span>"?>
+<?php echo "Current Event Status: <span class=\"highlightedText\">". $current_event_status . "</span><br />Zero Hour: <span class=\"highlightedText\">". $event_zero_hour_str . "</span>"?>
 <br/>
 <br/>
 
-Please input a valid data/time to view your staffing summary for the specified point in time. Any valid date/time string may be used (eg, '2015-01-01 13:00' or 'January 1, 2015 1:00 pm').
+Please input a valid data/time to view your post-deployment staffing summary for the specified point in time. Any valid date/time string may be used (eg, '2015-01-01 13:00' or 'January 1, 2015 1:00 pm').
 
 <br /><br />
 

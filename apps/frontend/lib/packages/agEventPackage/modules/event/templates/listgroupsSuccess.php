@@ -17,7 +17,7 @@
 ?>
 <h2>Facility Group Management: <?php if (isset($event)) : ?><span class="highlightedText"><?php echo $event->event_name; ?></span><?php endif; ?></h2>
 <br />
-<h3>Facility Resources<?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
+<h3>Facility Resources <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
 <div id="tableContainer">
   <table class="singleTable" style="width: 700px;">
     <thead>

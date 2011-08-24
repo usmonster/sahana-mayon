@@ -4,7 +4,7 @@
 ?>
 
 <br />
-<?php echo "Current Event Status: <span class=\"highlightedText\">".$upper_case_cur_Status."</span><br />Zero Hour: <span class=\"highlightedText\">". $zero_hour. "</span>"?>
+<?php echo "Current Event Status: <span class=\"highlightedText\">". $current_event_status . "</span><br />Zero Hour: <span class=\"highlightedText\">". $event_zero_hour_str . "</span>"?>
 <br/>
 <?php
 $urlEncodedEventName = urlencode($sf_data->getRaw('event_name'));
@@ -28,7 +28,7 @@ if (isset($blackOutFacilities)) {
         <th>Description</th>
     </tr>
 
-    <?php if ($upper_case_cur_Status == "PRE-DEPLOYMENT"): ?>
+    <?php if ($current_event_status == "PRE-DEPLOYMENT"): ?>
     <tr>
         <td>
         <a class="buttonText" href="<?php echo url_for('event/meta?event=' . $urlEncodedEventName); ?>">Event Name and Zero Hour</a>

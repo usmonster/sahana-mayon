@@ -35,20 +35,18 @@ abstract class PluginagEvent extends BaseagEvent
    */
   public static function getCurrentEventStatus($eventId)
   {
-      $query = agDoctrineQuery::create()
-            ->select('es.event_status_type_id')
-            ->from('agEventStatus es')
-            ->where('es.event_id = ?', $eventId)
-            ->andWhere(
-                'EXISTS (
-            SELECT s.id
-              FROM agEventStatus s
-              WHERE s.event_id = es.event_id
-                AND s.time_stamp <= CURRENT_TIMESTAMP
-              HAVING MAX(s.time_stamp) = es.time_stamp)'
-    );
-
-    $results = $query->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    return agDoctrineQuery::create()
+      ->select('es.event_status_type_id')
+      ->from('agEventStatus es')
+      ->where('es.event_id = ?', $eventId)
+      ->andWhere(
+              'EXISTS (
+          SELECT s.id
+            FROM agEventStatus s
+            WHERE s.event_id = es.event_id
+              AND s.time_stamp <= CURRENT_TIMESTAMP
+            HAVING MAX(s.time_stamp) = es.time_stamp)')
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
 
   /**

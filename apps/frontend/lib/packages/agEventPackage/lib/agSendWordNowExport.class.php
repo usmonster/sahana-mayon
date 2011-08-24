@@ -143,7 +143,7 @@ abstract class agSendWordNowExport extends agExportHelper {
   protected function setUniqueId()
   {
     foreach ($this->exportRawData as $rowId => $rawData) {
-      $this->exportData[$rowId]['UNIQUE ID'] = $rawData->a__id;
+      $this->exportData[$rowId]['UNIQUE ID'] = $rawData->a4__id;
       $this->exportData[$rowId]['GROUP ID'] = $rawData->a9__id;
       $this->exportData[$rowId]['GROUP DESCRIPTION'] = substr($rawData->a9__organization, 0,
         $this->exportSpec['GROUP DESCRIPTION']['length']);

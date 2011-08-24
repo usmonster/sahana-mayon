@@ -55,6 +55,8 @@ class eventActions extends agActions
      */
     public function executeImportreplies(sfWebRequest $request)
     {
+      $this->setEventBasics($request);
+
         $this->startTime = microtime(true);
 
         $uploadedFile = $_FILES['import'];
@@ -69,7 +71,7 @@ class eventActions extends agActions
         }
         //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
-        $this->importer = agMessageResponseHandler::getInstance(NULL, agEventHandler::EVENT_NOTICE);
+        $this->importer = agMessageResponseHandler::getInstance($this->event_id, NULL, agEventHandler::EVENT_NOTICE);
 
         $this->importer->processXlsImportFile($this->importPath);
 
@@ -247,29 +249,21 @@ class eventActions extends agActions
      */
     private function setEventBasics(sfWebRequest $request)
     {
-//    if ($request->getParameter('id')) {
-//      $this->event_id = $request->getParameter('id');
-//      if ($this->event_id != "") {
-//        $this->event_name = Doctrine_Core::getTable('agEvent')
-//                ->findByDql('id = ?', $this->event_id)
-//                ->getFirst()->getEventName();
-//      }
-//      //TODO step through to check and see if the second if is needed
-//    }
+      if ($request->getParameter('event')) {
+          $this->event = agDoctrineQuery::create()
+                  ->select()
+                  ->from('agEvent')
+                  ->where('event_name = ?', urldecode($request->getParameter('event')))
+                  ->execute()->getFirst();
 
-        if ($request->getParameter('event')) {
-            $this->event = agDoctrineQuery::create()
-                    ->select()
-                    ->from('agEvent')
-                    ->where('event_name = ?', urldecode($request->getParameter('event')))
-                    ->execute()->getFirst();
-
-            $this->event_id = $this->event->id;
-            $this->event_name = $this->event->event_name;
-            $this->event_zero_hour = $this->event->zero_hour;
-            $this->organization_name = agGlobal::getParam('organization_name');
-            $this->vesuvius_address = agGlobal::getParam('vesuvius_address');
-        }
+          $this->event_id = $this->event['id'];
+          $this->event_name = $this->event['event_name'];
+          $this->event_zero_hour = $this->event['zero_hour'];
+          $this->organization_name = agGlobal::getParam('organization_name');
+          $this->vesuvius_address = agGlobal::getParam('vesuvius_address');
+          $this->event_zero_hour_str = date('Y-m-d H:i:s T', $this->event_zero_hour);
+          $this->current_event_status = strtoupper(agEventStatus::getStatusType($this->event->getCurrentStatus()));
+      }
     }
 
     /**
@@ -534,9 +528,6 @@ class eventActions extends agActions
         $this->setEventBasics($request);
         $availableStaffStatus = agEventStaffHelper::returnAvailableEventStaffStatus();
 
-        $zero_hour_ts = agEvent::getEventZeroHour($this->event_id);
-        $this->zero_hour = date("Y-m-d H:i e", $zero_hour_ts);
-
         $this->eventAvailableStaff = agEventStaff::getActiveEventStaffQuery($this->event_id)
            ->select('COUNT(evs.id)')
           ->andWhere('ess.staff_allocation_status_id = ?', $availableStaffStatus)
@@ -590,7 +581,6 @@ class eventActions extends agActions
                     ->findByDql('id = ?', $current_status)
                     ->getFirst()->event_status_type;
         }
-        $this->upper_case_cur_Status = strtoupper($cur_status);
 
         $this->eventShiftStaffCount = agEvent::getEventShiftStaffCount($this->event_id);
 
