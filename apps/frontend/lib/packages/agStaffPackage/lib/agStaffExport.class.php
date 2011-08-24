@@ -184,6 +184,7 @@ class agStaffExport extends agExportHelper {
     $languages = agDoctrineQuery::create()
       ->select('l.language')
         ->from('agLanguage l')
+        ->where('l.app_display = ?', TRUE)
       ->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
 
     $competencies = agDoctrineQuery::create()

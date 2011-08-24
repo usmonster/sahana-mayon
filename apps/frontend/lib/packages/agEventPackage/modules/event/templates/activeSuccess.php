@@ -85,6 +85,11 @@ if (isset($blackOutFacilities)) {
           </tr>
     <tr>
     <tr>
+        <td> <?php echo link_to('Check Staffing Estimates', url_for('event/staffingestimates?event=' .
+           urlencode($event_name)), array('class' => 'buttonText')) ?> </td>
+        <td>Check your staff response patterns and view an estimate of your staff requirements.</td>
+    </tr>
+    <tr>
         <td> <?php echo link_to('View Staffing Summary', url_for('event/staff?event=' .
            urlencode($event_name)), array('class' => 'buttonText')) ?> </td>
         <td>View a summary report of staff deployments.</td>
