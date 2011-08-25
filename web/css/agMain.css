@@ -1826,6 +1826,36 @@ table.headerLess tr:hover{background-color: #f7f7f7}
 /*table.staffPool tr.head:hover{ background-color: #e5f7ff
 }*/
 
+
+table.sumry-tbl-info{
+  width:60%; display:inline-block
+}
+table.sumry-tbl-info tr.info{
+  background-color:#fff; padding:5px; text-align: center
+}
+table.sumry-tbl-info tr.info td{
+  width:20%; border-bottom:1px solid #dadada;
+}
+table.sumry-tbl-info tr th{
+  color: #666; border-bottom:2px solid #ccc;
+}
+table.sumry-tbl-info tr td {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .inlineLists {
   vertical-align: top;
   display: inline-block;
