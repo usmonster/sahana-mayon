@@ -3,7 +3,7 @@
   if (!empty($uniqStaffCounts)):
 ?>
 
-The following are staffing estimates at <?php echo date('Y-m-d H:m:s T', $reportTime); ?>.
+The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $reportTime); ?>.
 <br /><br />
 
 <div class="infoHolder" style="width:750px;">
