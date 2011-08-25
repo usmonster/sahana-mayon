@@ -150,12 +150,12 @@ class agMessageResponseHandler extends agImportNormalization
   protected function setImportSpec()
   {
     $importSpec['contact_id'] = array('type' => 'integer', 'length' => 6);
-    $importSpec['last_name'] = array('type' => "string", 'length' => 64);
-    $importSpec['first_name'] = array('type' => "string", 'length' => 64);
-    $importSpec['label'] = array('type' => "string", 'length' => 32);
-    $importSpec['address'] = array('type' => "string", 'length' => 255);
+    $importSpec['name'] = array('type' => "string", 'length' => 64);
+    $importSpec['type'] = array('type' => "string", 'length' => 32);
+    $importSpec['contact_point'] = array('type' => "string", 'length' => 255);
     $importSpec['status'] = array('type' => "string", 'length' => 128);
-    $importSpec['time_stamp'] = array('type' => "string", 'length' => 24);
+    $importSpec['sent'] = array('type' => "string", 'length' => 24);
+    $importSpec['delivered'] = array('type' => "string", 'length' => 24); // ex: time_stamp
     $importSpec['response'] = array('type' => "string", 'length' => 16);
     
     // set the class property to the newly created 
@@ -204,7 +204,7 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function buildTempSelectQuery()
   {
-    $query = 'SELECT t.id, t.unique_id, t.response, t.time_stamp ' .
+    $query = 'SELECT t.id, t.contact_id, t.response, t.delivered ' .
          'FROM ' . $this->tempTable . ' AS t ' .
          'WHERE t.response IS NOT NULL AND t.response != ""' .
          'ORDER BY t.unique_id ASC, t.time_stamp ASC';
@@ -266,7 +266,7 @@ class agMessageResponseHandler extends agImportNormalization
           '. Skipping response processing.';
         $this->eh->logWarning($eventMsg);
       } else {
-        $responses[$rd['unique_id']] = array($response, strtotime($rd['time_stamp']));
+        $responses[$rd['contact_id']] = array($response, strtotime($rd['delivered']));
       }
     }
 
