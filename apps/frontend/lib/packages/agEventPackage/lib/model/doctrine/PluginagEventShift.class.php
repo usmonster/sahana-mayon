@@ -35,14 +35,24 @@ abstract class PluginagEventShift extends BaseagEventShift
         ->innerJoin('es.agShiftStatus ss')
         ->innerJoin('es.agStaffResourceType srt');
 
-    if (!is_null($startTime) && !is_null($endTime)) {
-      $timeBoundWhere = '((( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) ' .
-        '>= ? AND (( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) <= ?) ' .
-        'OR ((( 60 * ( es.minutes_start_to_facility_activation + es.task_length_minutes + ' .
-        'es.break_length_minutes )) + efrat.activation_time ) >= ? AND (( 60 * ( ' .
-        'es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes )) ' .
-        '+ efrat.activation_time ) <= ? )';
-      $q->andWhere($timeBoundWhere, array($startTime, $endTime, $startTime, $endTime));
+    if (!is_null($startTime)) {
+      if (!is_null($endTime)) {
+        $timeBoundWhere = '((( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) ' .
+          '>= ? AND (( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) <= ?) ' .
+          'OR ((( 60 * ( es.minutes_start_to_facility_activation + es.task_length_minutes + ' .
+          'es.break_length_minutes )) + efrat.activation_time ) >= ? AND (( 60 * ( ' .
+          'es.minutes_start_to_facility_activation + es.task_length_minutes + es.break_length_minutes )) ' .
+          '+ efrat.activation_time ) <= ? ) OR (((60 * es.minutes_start_to_facility_activation ) + ' .
+          'efrat.activation_time ) <= ? AND (( 60 * ( es.minutes_start_to_facility_activation + ' .
+          'es.task_length_minutes + es.break_length_minutes )) + efrat.activation_time ) >= ? )';
+        $q->andWhere($timeBoundWhere, array($startTime, $endTime, $startTime, $endTime, $startTime,
+          $endTime));
+      } else {
+        $timeBoundWhere = '((( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) ' .
+          '<= ?) AND ((( 60 * ( es.minutes_start_to_facility_activation + es.task_length_minutes + ' .
+          'es.break_length_minutes )) + efrat.activation_time ) >= ? )';
+        $q->andWhere($timeBoundWhere, array($startTime, $startTime));
+      }  
     }
 
     return $q;

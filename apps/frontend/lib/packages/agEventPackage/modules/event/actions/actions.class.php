@@ -624,6 +624,7 @@ class eventActions extends agActions
     {
         $this->setEventBasics($request);
         $this->uniqStaffCounts = array();
+        $this->staffTypeEstimates = array();
 
         $this->subForm = new agReportTimeForm();
         unset($this->subForm['_csrf_token']);

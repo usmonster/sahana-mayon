@@ -210,7 +210,7 @@ abstract class PluginagEvent extends BaseagEvent
         'AND tefgs.event_facility_group_id = efgs.event_facility_group_id ' .
       'HAVING MAX(tefgs.time_stamp) = efgs.time_stamp)';
 
-    $q = agEventShift::getEventStaffShifts($timestamp, $timestamp);
+    $q = agEventShift::getEventStaffShifts($timestamp);
     $origCols = $q->getDqlPart('select');
 
     // we only really do it this way because we're going to have an annoyingly long group-by later
@@ -286,15 +286,35 @@ abstract class PluginagEvent extends BaseagEvent
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['break_start'] = date('Y-m-d H:i:s', $r['es_break_start']);
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['shift_end'] = date('Y-m-d H:i:s', $r['es_shift_end']);
       $results[$r['efg_id']]['facilities'][$r['efr_id']]['shifts'][$r['es_id']]['timezone'] = date('T');
+
+      if (isset($results[$r['efg_id']]['staff_totals']['resource_types'][$r['srt_staff_resource_type_abbr']])) {
+        $results[$r['efg_id']]['staff_totals']['resource_types'][$r['srt_staff_resource_type_abbr']]['staff_count'] += $r['ess_staff_count'];
+        $results[$r['efg_id']]['staff_totals']['resource_types'][$r['srt_staff_resource_type_abbr']]['minimum_staff'] += $r['es_minimum_staff'];
+        $results[$r['efg_id']]['staff_totals']['resource_types'][$r['srt_staff_resource_type_abbr']]['maximum_staff'] += $r['es_maximum_staff'];
+      } else {
+        $results[$r['efg_id']]['staff_totals']['resource_types'][$r['srt_staff_resource_type_abbr']]['staff_count'] = $r['ess_staff_count'];
+        $results[$r['efg_id']]['staff_totals']['resource_types'][$r['srt_staff_resource_type_abbr']]['minimum_staff'] = $r['es_minimum_staff'];
+        $results[$r['efg_id']]['staff_totals']['resource_types'][$r['srt_staff_resource_type_abbr']]['maximum_staff'] = $r['es_maximum_staff'];
+      }
     }
 
     foreach ($results as $efgID => $efg) {
       $facilityCt = 0;
+      $results[$efgID]['staff_totals']['staff_count'] = 0;
+      $results[$efgID]['staff_totals']['minimum_staff'] = 0;
+      $results[$efgID]['staff_totals']['maximum_staff'] = 0;
+
       foreach ($efg['facilities'] as $facilityID => $facility) {
         $facilityCt++;
         $results[$efgID]['facilities'][$facilityID]['shift_count'] = count($facility['shifts']);
       }
       $results[$efgID]['facility_count'] = $facilityCt;
+
+      foreach ($efg['staff_totals']['resource_types'] as $totals) {
+        $results[$efgID]['staff_totals']['staff_count'] += $totals['staff_count'];
+        $results[$efgID]['staff_totals']['minimum_staff'] += $totals['minimum_staff'];
+        $results[$efgID]['staff_totals']['maximum_staff'] += $totals['maximum_staff'];
+      }
     }
 
     return $results;
