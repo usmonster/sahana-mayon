@@ -83,7 +83,7 @@ class agMessageResponseHandler extends agImportNormalization
     $this->defaultStaffAllocStatus = agGlobal::getParam('default_staff_messaging_allocation_status');
 
 
-    $this->requiredColumns = array('unique_id', 'time_stamp');
+    $this->requiredColumns = array('contact_id', 'delivered');
   }
 
   /**
