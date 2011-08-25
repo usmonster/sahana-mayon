@@ -66,7 +66,7 @@ if (!empty($results)): // print_r($results);
         <?php endforeach; ?>
                       </table>
                       <table  cellpadding="10" style="width:auto;  display:inline-block;border:1px solid #d8d8d8; margin: 10px; ">
-                        <tr style="background-color:#fff; padding:5px; color:#999;  font-weight: bold"><td style="background-color:#999;color:#fff;padding:10px ;">Totals</td> <td>Staff Count:</td><td style="border-right:2px solid #ccc; border-style: dotted"><?php echo $groupinfo['staff_totals']['staff_count'] ?></td><td>Min/Max:</td><td><?php echo $groupinfo['staff_totals']['minimum_staff'] . "/" . $groupinfo['staff_totals']['maximum_staff']; ?></td></tr>
+                        <tr style="background-color:#fff; padding:5px; color:#999;  font-weight: bold"><td style="background-color:#999;color:#fff;padding:10px ;">Totals</td> <td>Staff Count:</td><td style="border-right: 1px solid #ccc;"><?php echo $groupinfo['staff_totals']['staff_count'] ?></td><td>Min/Max:</td><td><?php echo $groupinfo['staff_totals']['minimum_staff'] . "/" . $groupinfo['staff_totals']['maximum_staff']; ?></td></tr>
 
                       </table>
                     </div>
