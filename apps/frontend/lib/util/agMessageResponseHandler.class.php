@@ -207,7 +207,7 @@ class agMessageResponseHandler extends agImportNormalization
     $query = 'SELECT t.id, t.contact_id, t.response, t.delivered ' .
          'FROM ' . $this->tempTable . ' AS t ' .
          'WHERE t.response IS NOT NULL AND t.response != ""' .
-         'ORDER BY t.unique_id ASC, t.time_stamp ASC';
+         'ORDER BY t.contact_id ASC, t.delivered ASC';
 
     return $query;
   }
