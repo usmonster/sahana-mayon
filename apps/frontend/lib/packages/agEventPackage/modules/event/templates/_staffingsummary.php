@@ -1,3 +1,8 @@
+<?php use_javascript('jquery-1-test.js');
+      use_javascript('jquery-test.js');
+      use_javascript('menu-test.js');
+    use_stylesheet('style-test.css'); ?>
+
 <?php
   $results = $sf_data->getRaw('results');
   if (!empty($results)): // print_r($results);
@@ -6,14 +11,18 @@
 The following are shift staffing results for shifts that are in-progress at <?php
 echo date('Y-m-d H:i:s T', $reportTime) ?>.
 <br /><br />
-
+          <a name="top"></a>
+  
+  <div><a href="#" class="expandall">Expand All</a> | <a href="#" class="collapseall">Collapse All</a></div><br>
+  <ul id="menu1" class="menu_summary noaccordion" style="list-style-type: none">
 <?php foreach ($results as $efg_id => $groupinfo): ?>
-      <div style="background-color:#ccc; display:inline-block; border:1px solid #ccc">
-        <div style="display:inline-block;padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold "> Facility Group: <?php echo $groupinfo['group_name']; ?></div>
-        <div style="display:inline-block;float:right; padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold ">Status: <?php echo $groupinfo['group_status']; ?></div>
-        <br>
+      
+        <li style="background-color:#ccc;  border:1px solid #ccc;; margin-bottom:13px; max-width:950px;"><a class="<?php echo "m".$efg_id; ?>"><div style="display:inline-block;padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold "> Facility Group: <?php echo $groupinfo['group_name']; ?></div>
+        <div style="display:inline-block;float:right; padding:10px 10px 5px; font-size:17px; color:#fff; font-weight:bold ">Status: <?php echo $groupinfo['group_status']; ?></div></a>
+        <ul style="display:none; list-style-type: none">
+        
   <?php foreach ($groupinfo['facilities'] as $efr_id => $facilityinfo): ?>
-        <div style="background-color:#d8d8d8; display:inline-block; margin:3px 10px;padding:5px;width:auto; border:1px solid #999; ">
+        <li><div style="background-color:#d8d8d8; display:inline-block; margin:3px 10px;padding:5px;width:auto; border:1px solid #999; ">
           <div style="display:inline-block; text-align:left;padding:5px 20px 5px 5px;">Facility: <?php echo $facilityinfo['facility_type'] ?>-<?php echo $facilityinfo['facility_code'] ?></div><div style="display:inline-block;padding:5px 20px 5px 10px; ">Facility Name: <?php echo $facilityinfo['facility_name'] ?></div><div style="display:inline-block;padding:5px; float:right ">Facility Status: <?php echo $facilityinfo['facility_status']; ?></div>
           <br>
           <table class="blueTable" cellpadding="5" style="width:auto; border: 1px solid #dadada">
@@ -45,10 +54,12 @@ echo date('Y-m-d H:i:s T', $reportTime) ?>.
               </tr>
       <?php endforeach; ?>
                 </table>
-              </div><br> 
-  <?php endforeach; ?>
-                </div><br><br><br>
+              </div></li>
+  <?php endforeach; ?></ul>
+        </li>
 <?php endforeach; ?>
+          </ul>
+
 <?php elseif (is_null($reportTime)): ?>
 <?php else: ?>
 There is no shift staffing data available for this event at <?php
@@ -57,3 +68,5 @@ echo date('Y-m-d H:m:s T', $reportTime) ?>.
                   endif;
 //print_r($sf_data->getRaw('results'));
 ?>
+
+  <br><div><a href="#" class="expandall">Expand All</a> | <a href="#" class="collapseall">Collapse All</a></div><br><br><br>
