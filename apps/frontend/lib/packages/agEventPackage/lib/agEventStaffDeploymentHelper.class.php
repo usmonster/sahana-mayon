@@ -259,7 +259,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $this->eh->logInfo($eventMsg);
 
       // now execute the real query and continue
-      $pdo = $this->getFacGrpShiftWaves();
+      $this->getFacGrpShiftWaves();
 
       // finally, reset our little iter flag
       $this->iterNextGrp = FALSE;
@@ -859,7 +859,6 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addGroupBy('es.originator_id')
           ->addGroupBy('gc.latitude')
           ->addGroupBy('gc.longitude')
-          ->addGroupBy('efr.id')
           ->addGroupBy('fr.id')
           ->addGroupBy('f.id')
           ->addGroupBy('s.id')
