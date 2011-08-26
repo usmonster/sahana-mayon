@@ -690,6 +690,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('gf.agGeoCoordinate gc')
         ->andWhere('sr.staff_resource_type_id = ?', $staffResourceTypeId)
           ->andWhere('sas.allocatable = ?', TRUE)
+          ->andWhere('sas.standby = ?', FALSE)
           ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
         ->orderBy('evs.deployment_weight DESC')
         ->limit($staffCount);
