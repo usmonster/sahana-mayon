@@ -722,6 +722,14 @@ class agStaffImportNormalization extends agImportNormalization
                 $rawData['home_longitude'])),
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
+        } else {
+          // log our error or at least grab our counter
+          $missingGeo++;
+          if ($throwOnError) {
+            $errMsg = sprintf('Missing home address/geo information from record id  %d', $rowId);
+            $this->eh->logErr($errMsg);
+            throw new Exception($errMsg);
+          }
         }
 
         if (count($workAddr) > 0 && isset($rawData['work_latitude']) &&
