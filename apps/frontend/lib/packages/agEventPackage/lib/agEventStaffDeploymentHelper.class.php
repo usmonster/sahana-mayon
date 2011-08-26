@@ -505,14 +505,16 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       ->select('es.id')
         ->from('agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
+          ->innerJoin('es.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
         ->where('es.event_facility_resource_id = ?', $eventFacilityResourceId)
           ->andWhere('es.staff_wave = ?', $staffWave)
           ->andWhere('es.originator_id = ?', $shiftOrigin)
           ->andWhere('ss.disabled = ?', FALSE);
 
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
+    $allocatableShifts = '(60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= ?';
+    $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
     return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
   }
@@ -752,7 +754,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
-          ->innerJoin('efr.agEventFacilityResourceActivationTime')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
           ->innerJoin('efr.agEventFacilityResourceStatus efrs')
           ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
           ->innerJoin('efr.agFacilityResource fr')
@@ -772,9 +774,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->limit(1);
 
     // restrict ourselves only to allocatable shifts
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
+    $allocatableShifts = '(60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= ?';
+    $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
     // ensure that we only get the most recent facility resource status
     $recentFacRscStatus = 'EXISTS (' .
@@ -876,9 +878,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addOrderBy('efr.id ASC');
  
     // restrict ourselves only to allocatable shifts
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
+    $allocatableShifts = '(60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= ?';
+    $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
 
     // ensure that we only get the most recent facility resource status
