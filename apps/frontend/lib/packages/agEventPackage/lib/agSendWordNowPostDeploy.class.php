@@ -106,7 +106,7 @@ class agSendWordNowPostDeploy extends agSendWordNowExport
       // format the data
       $gData = $this->getStaffDistributionCenter($rawData->a14__id);
       $timestamp = $rawData->a11__minutes_start_to_facility_activation + $rawData->a13__activation_time;
-      $time = date('Y-m-d h:j', $timestamp);
+      $time = date('Y-m-d h:i', $timestamp);
 
       // concat value strings
       $this->exportData[$rowId]['CUSTOM LABEL'] = $gData['event_facility_group'] . '; ' .
