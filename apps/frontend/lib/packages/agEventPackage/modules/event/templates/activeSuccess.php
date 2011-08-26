@@ -64,8 +64,8 @@ if (isset($blackOutFacilities)) {
 
          <?php
               $deployUrl = url_for('event/deploystaff?event=' . urlencode($event_name));
-              $deployText = 'You are about to deploy staff for this event. You may only do so once per-' .
-                'event. This process takes a long time. Please do not close your browser.';
+              $deployText = 'You are about to deploy staff for this event. This process takes a ' .
+                'long time. Please do not close your browser.';
               $deployDesc = 'After a sufficient staff pool have responded, deploy staff to facilities.';
 
             echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'buttonText',

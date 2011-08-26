@@ -692,7 +692,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->andWhere('sas.allocatable = ?', TRUE)
           ->andWhere('sas.standby = ?', FALSE)
           ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
-        ->orderBy('evs.deployment_weight DESC')
+//        ->orderBy('evs.deployment_weight DESC')
         ->limit($staffCount);
 
     // just pick up the lowest priority staff address
