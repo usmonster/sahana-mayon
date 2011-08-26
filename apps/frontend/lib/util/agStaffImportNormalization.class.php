@@ -422,7 +422,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // grab our entityId from the entity collection or skip if unfound
       if (! isset($entityColl[$rowId])) {
-        if (! isset($rowData['primaryKeys']['person_id'])) {
+        if (isset($rowData['primaryKeys']['person_id'])) {
           // no new parent, child record exists
           continue;
         }
@@ -456,7 +456,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // grab our entityId from the entity collection or skip if unfound
       if (! isset($personColl[$rowId])) {
-        if (! isset($rowData['primaryKeys']['staff_id'])) {
+        if (isset($rowData['primaryKeys']['staff_id'])) {
           // no new parent, child record exists
           continue;
         }
