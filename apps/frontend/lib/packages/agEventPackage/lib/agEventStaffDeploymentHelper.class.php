@@ -708,7 +708,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
       '+ cos( radians(gc.latitude) ) * cos( radians(' . $facLat . ') ) ' .
       '* cos( radians(' . $facLon . ') - radians(gc.longitude) ) ) * 6378)' ;
-    $q->orderBy($geoDistance . ' ASC');
+    //$q->orderBy($geoDistance . ' ASC');
 
     return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
   }
