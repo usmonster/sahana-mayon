@@ -1,0 +1,24 @@
+CREATE INDEX idx_geo_coordinate_latitude ON ag_geo_coordinate (latitude);
+CREATE INDEX idx_geo_coordinate_longitude ON ag_geo_coordinate (longitude);
+CREATE UNIQUE INDEX uc_geo_coordinate_latitude_longitude ON ag_geo_coordinate (latitude,longitude);
+
+CREATE INDEX idx_staff_allocation_status_allocatable ON ag_staff_allocation_status(allocatable);
+CREATE INDEX idx_staff_allocation_status_committed ON ag_staff_allocation_status(committed);
+CREATE INDEX idx_staff_allocation_status_standby ON ag_staff_allocation_status(standby);
+CREATE INDEX idx_staff_allocation_status_active ON ag_staff_allocation_status(active);
+
+CREATE INDEX idx_staff_resource_status_is_available ON ag_staff_resource_status(is_available);
+CREATE INDEX idx_facility_resource_status_is_available ON ag_facility_resource_status(is_available);
+
+CREATE INDEX idx_facility_resource_allocation_status_available ON ag_facility_resource_allocation_status (available);
+CREATE INDEX idx_facility_resource_allocation_status_committed ON ag_facility_resource_allocation_status (committed);
+CREATE INDEX idx_facility_resource_allocation_status_standby ON ag_facility_resource_allocation_status (standby);
+CREATE INDEX idx_facility_resource_allocation_status_staffed ON ag_facility_resource_allocation_status (staffed);
+CREATE INDEX idx_facility_resource_allocation_status_servicing_clients ON ag_facility_resource_allocation_status (servicing_clients);
+CREATE INDEX idx_facility_resource_allocation_status_accepting_clients ON ag_facility_resource_allocation_status (accepting_clients);
+
+CREATE INDEX idx_facility_group_allocation_status_allocatable ON ag_facility_group_allocation_status (allocatable);
+CREATE INDEX idx_facility_group_allocation_status_standby ON ag_facility_group_allocation_status (standby);
+CREATE INDEX idx_facility_group_allocation_status_active ON ag_facility_group_allocation_status (active);
+
+

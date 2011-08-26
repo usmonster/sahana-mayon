@@ -63,19 +63,10 @@ if (isset($blackOutFacilities)) {
         <td>
 
          <?php
-           if ($eventShiftStaffCount > 0) {
-              $deployUrl = url_for('event/active?event=' . urlencode($event_name));
-              $deployText = 'Staff have already been deployed for this event. Additional deployments are ' .
-                'not currently supported. You will now be re-directed to the Event Management page.';
-              $deployDesc = 'Staff have already been deployed to this event. For more information ' .
-                'view the ' . link_to('staffing summary', url_for('event/staff?event=' .
-                 urlencode($event_name))) . ' page.';
-            } else {
               $deployUrl = url_for('event/deploystaff?event=' . urlencode($event_name));
               $deployText = 'You are about to deploy staff for this event. You may only do so once per-' .
                 'event. This process takes a long time. Please do not close your browser.';
               $deployDesc = 'After a sufficient staff pool have responded, deploy staff to facilities.';
-            }
 
             echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'buttonText',
               'confirm' => $deployText));
