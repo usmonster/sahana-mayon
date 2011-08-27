@@ -512,7 +512,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->andWhere('es.originator_id = ?', $shiftOrigin)
           ->andWhere('ss.disabled = ?', FALSE);
 
-    $allocatableShifts = '(60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
       ' >= ?';
     $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
@@ -774,7 +774,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->limit(1);
 
     // restrict ourselves only to allocatable shifts
-    $allocatableShifts = '(60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
       ' >= ?';
     $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
@@ -878,7 +878,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addOrderBy('efr.id ASC');
  
     // restrict ourselves only to allocatable shifts
-    $allocatableShifts = '(60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
       ' >= ?';
     $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
