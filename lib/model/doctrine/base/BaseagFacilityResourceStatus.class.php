@@ -53,6 +53,12 @@ abstract class BaseagFacilityResourceStatus extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
+        $this->index('idx_facility_resource_status_is_available', array(
+             'fields' => 
+             array(
+              0 => 'is_available',
+             ),
+             ));
     }
 
     public function setUp()

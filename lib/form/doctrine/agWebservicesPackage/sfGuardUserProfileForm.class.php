@@ -12,6 +12,5 @@ class sfGuardUserProfileForm extends PluginsfGuardUserProfileForm
 {
   public function configure()
   {
-    unset($this['updated_at'], $this['created_at']);
   }
 }

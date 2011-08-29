@@ -47,6 +47,28 @@ abstract class BaseagGeoCoordinate extends sfDoctrineRecord
              'notnull' => true,
              'length' => 12,
              ));
+
+
+        $this->index('idx_geo_coordinate_latitude', array(
+             'fields' => 
+             array(
+              0 => 'latitude',
+             ),
+             ));
+        $this->index('idx_geo_coordinate_longitude', array(
+             'fields' => 
+             array(
+              0 => 'longitude',
+             ),
+             ));
+        $this->index('uc_geo_coordinate_lat_long', array(
+             'fields' => 
+             array(
+              0 => 'latitude',
+              1 => 'longitude',
+             ),
+             'type' => 'unique',
+             ));
     }
 
     public function setUp()

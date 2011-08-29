@@ -77,7 +77,7 @@ agGeoCoordinate:
       fields: [latitude]
     idx_geo_coordinate_longitude:
       fields: [longitude]
-    uc_geo_coordinate_latitude_longitude:
+    uc_geo_coordinate_lat_long:
       fields: [latitude, longitude]
       type: unique
 agGeoFeature:
