@@ -72,6 +72,14 @@ agGeoCoordinate:
       scale: 8
       type: decimal(12)
       notnull: true
+  indexes:
+    idx_geo_coordinate_latitude:
+      fields: [latitude]
+    idx_geo_coordinate_longitude:
+      fields: [longitude]
+    uc_geo_coordinate_latitude_longitude:
+      fields: [latitude, longitude]
+      type: unique
 agGeoFeature:
   columns:
     id:

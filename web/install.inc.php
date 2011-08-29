@@ -580,8 +580,8 @@ class agInstall
       $task = new sfCacheClearTask(sfContext::createInstance($configuration)->getEventDispatcher(), new sfFormatter());
       $task->run(array(), array());
 
-      $luceneIndex = new agLuceneIndex(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup', 'agOrganization'));
-      $luceneIndex->indexAll();
+      $luceneIndex = new agLuceneIndex();
+      $luceneIndex->indexModels(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup', 'agOrganization'));
       $installed = 'Success!';
     } catch (Exception $e) {
       $installed[] = 'Could not index Data! : ' . "\n" . $e->getMessage();
