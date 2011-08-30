@@ -447,6 +447,74 @@ abstract class PluginagEvent extends BaseagEvent
   }
 
   /**
+   * Simple method to return a unique staff count who meet the qualified criterion
+   * @param integer $evnetId An event ID
+   * @param timestamp $timestamp
+   * @return integer An integer of the staff count
+   */
+  protected static function getMissingGeoUniqueStaffBaseCount($eventId, $timestamp)
+  {
+    $subStaffStatusQuery = 'EXISTS ( ' .
+      'SELECT ess2.id '.
+        'FROM agEventStaffStatus ess2 '.
+          'WHERE ess2.event_staff_id = ess.event_staff_id ' .
+            'AND ess2.time_stamp <= ? '.
+          'HAVING (MAX(ess2.time_stamp) = ess.time_stamp) ' .
+        ')';
+
+    $subNonGeoQuery = 'NOT EXISTS ( ' .
+        'SELECT eac.id ' .
+          'FROM agEntityAddressContact eac ' .
+            'INNER JOIN eac.agAddress a ' .
+            'INNER JOIN a.agAddressGeo ag ' .
+            'INNER JOIN ag.agGeo g ' .
+            'INNER JOIN g.agGeoFeature gf ' .
+            'INNER JOIN gf.agGeoCoordinate gc ' .
+          'WHERE eac.entity_id = e.id ' .
+        ')';
+
+    $q = agDoctrineQuery::create()
+      ->select('count(s.id) AS ct_staffs')
+        ->from('agStaff s')
+          ->innerJoin('s.agStaffResource sr')
+          ->innerJoin('sr.agStaffResourceStatus srs')
+          ->innerJoin('sr.agEventStaff es')
+          ->innerJoin('es.agEventStaffStatus ess')
+          ->innerJoin('ess.agStaffAllocationStatus sas')
+          ->innerJoin('s.agPerson p')
+          ->innerJoin('p.agEntity e')
+        ->where('es.event_id = ?', $eventId)
+        ->andWhere('srs.is_available = ?', TRUE)
+        ->andWhere($subStaffStatusQuery, date('Y-m-d H:i:s', $timestamp))
+        ->andWhere($subNonGeoQuery);
+
+    return $q;
+  }
+
+  /**
+   * Simple method to return a unique staff count who meet the qualified criterion
+   * @param integer $evnetId An event ID
+   * @param timestamp $timestamp
+   * @return integer An integer of the staff count
+   */
+  public static function getMissingGeoUniqueStaffCount($eventId, $timestamp)
+  {
+    return self::getMissingGeoUniqueStaffBaseCount($eventId, $timestamp)
+      ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, FALSE))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $timestamp A unix timestamp
+   * @return integer An integer of the staff count
+   */
+  public function getMissingGeoStaffCount($timestamp)
+  {
+    return self::getMissingGeoUniqueStaffCount($this->event_id, $timestamp);
+  }
+
+  /**
    * Method to return an event status type query
    * @param integer $eventId An eventId
    * @param integer $timestamp A unix timestamp

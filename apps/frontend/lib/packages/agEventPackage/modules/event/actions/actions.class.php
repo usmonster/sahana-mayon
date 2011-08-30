@@ -640,6 +640,7 @@ class eventActions extends agActions
             $this->uniqStaffCounts['unknown'] = agEvent::getUnknownUniqueEventStaffCount($this->event_id, $this->reportTime);
             $this->uniqStaffCounts['available'] = agEvent::getAvailableUniqueEventStaffCount($this->event_id, $this->reportTime);
             $this->uniqStaffCounts['committed'] = agEvent::getCommittedUniqueEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['non_geo'] = agEvent::getMissingGeoUniqueStaffCount($this->event_id, $this->reportTime);
 
             $this->staffTypeEstimates = agEvent::getEventShiftEstimates($this->event_id, $this->reportTime);
           }

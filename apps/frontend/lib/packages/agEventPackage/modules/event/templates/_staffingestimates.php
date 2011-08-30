@@ -15,6 +15,7 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
         <th>Unknown</th>
         <th>Available</th>
         <th>Committed</th>
+        <th>Non-Geo</th>
       </tr>
     </thead>
     <tbody>
@@ -22,6 +23,7 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
         <td><?php echo $uniqStaffCounts['unknown']; ?></td>
         <td><?php echo $uniqStaffCounts['available']; ?></td>
         <td><?php echo $uniqStaffCounts['committed']; ?></td>
+        <td><?php echo $uniqStaffCounts['non_geo']; ?></td>
       </tr>
     </tbody>
   </table>
@@ -30,6 +32,8 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
 <div class="infoHolder" style="width:750px;">
   <h3>Staff Type Estimates</h3>
   <br />
+  The following estimates exclude staff without GEO data.
+  <br /><br />
   <table class="blueTable">
     <thead>
       <tr class="head">
