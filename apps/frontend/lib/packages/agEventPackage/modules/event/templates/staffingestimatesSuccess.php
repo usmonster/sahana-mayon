@@ -29,7 +29,7 @@ Please input a valid data/time to view your post-deployment staffing estimates f
 </form>
 <br />
 
-<?php include_partial('staffingestimates', array('uniqStaffCounts' => $uniqStaffCounts, 'staffTypeEstimates' => $staffTypeEstimates, 'reportTime' => $reportTime)); ?>
+<?php include_partial('staffingestimates', array('uniqStaffCounts' => $uniqStaffCounts, 'staffTypeEstimates' => $staffTypeEstimates, 'reportTime' => $reportTime, 'statusDistributionChart' => $statusDistributionChart)); ?>
 
 <br />
 

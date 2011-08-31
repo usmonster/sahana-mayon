@@ -396,6 +396,19 @@ abstract class PluginagEvent extends BaseagEvent
    * @param timestamp $timestamp
    * @return integer An integer of the staff count
    */
+  public static function getUnavailableUniqueEventStaffCount($eventId, $timestamp)
+  {
+    return self::getUniqueStaffCount($eventId, $timestamp)
+      ->andWhere('(sas.allocatable = ? AND sas.committed = ?)', array(FALSE, FALSE))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
+  /**
+   * Simple method to return a unique staff count who meet the qualified criterion
+   * @param integer $evnetId An event ID
+   * @param timestamp $timestamp
+   * @return integer An integer of the staff count
+   */
   public static function getAvailableUniqueEventStaffCount($eventId, $timestamp)
   {
     return self::getUniqueStaffCount($eventId, $timestamp)

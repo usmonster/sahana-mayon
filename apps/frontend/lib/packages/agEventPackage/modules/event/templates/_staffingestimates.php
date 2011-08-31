@@ -15,7 +15,7 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
         <th>Unknown</th>
         <th>Available</th>
         <th>Committed</th>
-        <th>Non-Geo</th>
+        <th>Without Geo</th>
       </tr>
     </thead>
     <tbody>
@@ -27,12 +27,19 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
       </tr>
     </tbody>
   </table>
+
+  <br />
+  <h4>Staff Distribution by Status</h4>
+  <div>
+    <?php echo xspchart_image_tag($statusDistributionChart); ?>
+  </div>
+
 </div>
 
 <div class="infoHolder" style="width:750px;">
   <h3>Staff Type Estimates</h3>
   <br />
-  The following estimates exclude staff without GEO data.
+  Staff without geo-data are non-deployable. The following estimates exclude staff without this information.
   <br /><br />
   <table class="blueTable">
     <thead>

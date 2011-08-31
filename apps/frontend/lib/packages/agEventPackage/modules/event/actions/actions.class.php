@@ -623,6 +623,8 @@ class eventActions extends agActions
     public function executeStaffingestimates(sfWebRequest $request)
     {
         $this->setEventBasics($request);
+        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+        $eventNameSafe = str_replace(' ', '_', strtolower($this->event_name));
         $this->uniqStaffCounts = array();
         $this->staffTypeEstimates = array();
 
@@ -637,18 +639,40 @@ class eventActions extends agActions
           {
             $formArray = $request->getParameter('reportTime');
             $this->reportTime = strtotime($formArray['report_time']);
+            $this->uniqStaffCounts['unavailable'] = agEvent::getUnavailableUniqueEventStaffCount($this->event_id, $this->reportTime);
             $this->uniqStaffCounts['unknown'] = agEvent::getUnknownUniqueEventStaffCount($this->event_id, $this->reportTime);
             $this->uniqStaffCounts['available'] = agEvent::getAvailableUniqueEventStaffCount($this->event_id, $this->reportTime);
             $this->uniqStaffCounts['committed'] = agEvent::getCommittedUniqueEventStaffCount($this->event_id, $this->reportTime);
-            $this->uniqStaffCounts['non_geo'] = agEvent::getMissingGeoUniqueStaffCount($this->event_id, $this->reportTime);
 
+            // build a chart
+            $chartLabels = array();
+            $chartValues = array();
+            foreach ($this->uniqStaffCounts as $label => $value) {
+              $chartLabels[] = $label;
+              $chartValues[] = $value;
+            }
+
+            $chartData = new xsPData();
+            $chartData->AddPoint($chartValues, 'Values');
+            $chartData->AddPoint($chartLabels, 'Status');
+            $chartData->AddAllSeries();
+            $chartData->SetAbsciseLabelSerie('Status');
+            $getData = $chartData->getData();
+            $getDataDesc = $chartData->GetDataDescription();
+
+            $chart = new xsPChart(380,200);
+            $chart->xsSetFontProperties('DejaVuSans.ttf', 8);
+            $chart->drawPieGraph($getData, $getDataDesc, 150,90,110, PIE_PERCENTAGE,TRUE,50,20,5);
+            $chart->drawPieLegend(283,10,$getData,$getDataDesc,250,250,250);
+
+            $this->statusDistributionChart =  $eventNameSafe . '_uniq_staff_status_distribution.png';
+            $chart->xsRender($this->statusDistributionChart);
+
+            $this->uniqStaffCounts['non_geo'] = agEvent::getMissingGeoUniqueStaffCount($this->event_id, $this->reportTime);
             $this->staffTypeEstimates = agEvent::getEventShiftEstimates($this->event_id, $this->reportTime);
+
           }
         }
-
-        //p-code
-        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
-        //end p-code
     }
 
     /**

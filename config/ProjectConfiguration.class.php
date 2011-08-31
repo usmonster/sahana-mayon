@@ -130,6 +130,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->dispatcher->connect('import.start', array('agImportNormalization', 'processImportEvent'));
     $this->dispatcher->connect('import.do_reindex', array('agLuceneIndex', 'indexAll'));
     $this->dispatcher->connect('global_param.param_updated', array('agGlobal', 'loadParams'));
+    $this->enablePlugins('xsPChartPlugin');
   }
 
   /**

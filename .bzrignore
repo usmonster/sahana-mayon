@@ -25,3 +25,4 @@ plugins/.*
 *.pui
 *.xls
 web/apc.php
+web/images/tmp/xspchart/*
