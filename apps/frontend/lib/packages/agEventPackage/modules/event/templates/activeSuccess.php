@@ -69,7 +69,7 @@ if (isset($blackOutFacilities)) {
               $deployDesc = 'After a sufficient staff pool have responded, deploy staff to facilities.';
 
             echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'buttonText',
-              'confirm' => $deployText));
+              'confirm' => $deployText, 'target' => '_blank'));
           ?>
               </td>
               <td> <?php echo $deployDesc; ?> </td>
