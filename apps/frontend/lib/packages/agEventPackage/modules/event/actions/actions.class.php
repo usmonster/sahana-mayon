@@ -17,6 +17,7 @@
  */
 class eventActions extends agActions
 {
+    CONST   CHART_STAFF_STATUS_PIE = 'staffStatusPie';
 
     public static $event_id;
     public static $event_name;
@@ -629,7 +630,8 @@ class eventActions extends agActions
         $this->staffTypeEstimates = array();
         $this->staffTypeStatusDistributionCharts = array();
         $this->statusDistributionChart = NULL;
-
+        $this->pCache = new xsPCache(sfConfig::get('sf_xspchart_sys_cache_dir'));
+        $this->pCharts = new stdClass();
 
         $this->subForm = new agReportTimeForm();
         unset($this->subForm['_csrf_token']);
@@ -661,19 +663,19 @@ class eventActions extends agActions
             unset($this->staffTypeEstimates['total']);
 
             // build our first chart
-            $chartData = array();
-            $chartData[] = array('Name'=>'Current',
+            $staffRequiredBarData = array();
+            $staffRequiredBarData[] = array('Name'=>'Current',
                 'staff' => $this->uniqStaffCounts['committed'],
                 'min' => $this->staffTypeEstimateTotals['min_required'],
                 'max' => $this->staffTypeEstimateTotals['max_required'],
             );
-            $chartData[] = array('Name'=>"Best Projection",
+            $staffRequiredBarData[] = array('Name'=>"Best Projection",
                 'staff' => ($this->uniqStaffCounts['available'] + $this->uniqStaffCounts['committed']),
                 'min' => $this->staffTypeEstimateTotals['min_required'],
                 'max' => $this->staffTypeEstimateTotals['max_required'],
             );
 
-            $chartDesc = array(
+            $staffRequiredBarDesc = array(
               'Position' => 'Name',
               'Values' => array('max', 'min', 'staff', ),
               'Description' => array(
@@ -684,55 +686,25 @@ class eventActions extends agActions
               'Axis' => array(),
               );
         
-            $chart = new xsPChart(320, 210);
-            $chart->setGraphArea(60, 30, 220, 180);
-            $chart->xsSetFontProperties('DejaVuSans.ttf', 9);
-            $chart->setColorPalette(0, 33, 188, 255);
-            $chart->setColorPalette(1, 255, 145, 22);
-            $chart->setColorPalette(2, 11, 119, 166);
-            $chart->drawScale($chartData, $chartDesc, SCALE_NORMAL, 150,150,150, TRUE, 0, 0, TRUE);
-            $chart->drawGrid(4, TRUE, 230, 230, 230, 50);
-            $chart->drawTreshold(0, 143, 55, 72, TRUE, TRUE);
-            $chart->drawOverlayBarGraph($chartData, $chartDesc, 100);
-            $chart->drawLegend(210, 20, $chartDesc, 255, 255, 255);
-            $chart->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
-            $chart->drawTitle(10, 10, 'Staff Resource Projections', 134, 134, 134);
-
-            $this->staffRequiredChart = $eventNameSafe .
-              '_staff_required.png';
-
-            $chart->xsRender($this->staffRequiredChart);
-            // build a chart
-            $chartLabels = array();
-            $chartValues = array();
-            $unavailableLabel = ($this->uniqStaffCounts['non_geo'] > 0) ? 'Unavailable*' : 'Unavailable';
-
-            $chartLabels[] = array('Unknown', $unavailableLabel, 'Available', 'Committed', );
-            $chartValues[] = array ($this->uniqStaffCounts['unknown'],
-              $this->uniqStaffCounts['unavailable'],
-              $this->uniqStaffCounts['available'],
-              $this->uniqStaffCounts['committed'],
-            );
-
-            $chartData = new xsPData();
-            $chartData->AddPoint($chartValues, 'Values');
-            $chartData->AddPoint($chartLabels, 'Status');
-            $chartData->AddAllSeries();
-            $getData = $chartData->getData();
-
-            $chart = new xsPChart(390,210);
-            $chart->setColorPalette(0, 255, 145, 22);
-            $chart->setColorPalette(1, 255, 67, 22);
-            $chart->setColorPalette(2, 33, 188, 255);
-            $chart->setColorPalette(3, 11, 119, 166);
-            $chart->xsSetFontProperties('DejaVuSans.ttf', 8);
-            $chart->drawPieGraph($getData, $statusChartDesc, 150,100,110, PIE_PERCENTAGE,TRUE,60,20,5);
-            $chart->drawPieLegend(283,20,$getData,$statusChartDesc,250,250,250);
-            $chart->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
-            $chart->drawTitle(10, 10, 'Staff Resource Distribution By Status', 134, 134, 134);
-
-            $this->statusDistributionChart =  $eventNameSafe . '_uniq_staff_status_distribution.png';
-            $chart->xsRender($this->statusDistributionChart);
+            $staffRequiredBar = new xsPChart(320, 210);
+            $chartId = 'staffRequiredBar';
+//            $this->pCache->GetFromCache($chartId, $staffRequiredBarData);
+            $this->pCharts->$chartId = $staffRequiredBar;
+            $staffRequiredBar->setGraphArea(60, 30, 220, 180);
+            $staffRequiredBar->xsSetFontProperties('DejaVuSans.ttf', 9);
+            $staffRequiredBar->setColorPalette(0, 33, 188, 255);
+            $staffRequiredBar->setColorPalette(1, 255, 145, 22);
+            $staffRequiredBar->setColorPalette(2, 11, 119, 166);
+            $staffRequiredBar->drawScale($staffRequiredBarData, $staffRequiredBarDesc, SCALE_NORMAL,
+                150,150,150, TRUE, 0, 0, TRUE);
+            $staffRequiredBar->drawGrid(4, TRUE, 230, 230, 230, 50);
+            $staffRequiredBar->drawTreshold(0, 143, 55, 72, TRUE, TRUE);
+            $staffRequiredBar->drawOverlayBarGraph($staffRequiredBarData, $staffRequiredBarDesc, 100);
+            $staffRequiredBar->drawLegend(210, 20, $staffRequiredBarDesc, 255, 255, 255);
+            $staffRequiredBar->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
+            $staffRequiredBar->drawTitle(10, 10, 'Staff Resource Projections', 134, 134, 134);
+            $this->pCache->WriteToCache($chartId, $staffRequiredBarData, $staffRequiredBar);
+            unset($staffRequiredBar);
 
             // loop through staff types and build a new chart for each
             foreach ($this->staffTypeEstimates as $staffTypeId => $se) {
@@ -793,6 +765,45 @@ class eventActions extends agActions
             $chart->xsRender($this->staffTypeRequiredChart);
           }
         }
+    }
+
+    public function executeChart(sfWebRequest $request)
+    {
+      $chartId =
+
+      // build a chart
+      $staffStatusPieLabels = array();
+      $staffStatusPieValues = array();
+      $unavailableLabel = ($this->uniqStaffCounts['non_geo'] > 0) ? 'Unavailable*' : 'Unavailable';
+
+      $staffStatusPieLabels[] = array('Unknown', $unavailableLabel, 'Available', 'Committed', );
+      $staffStatusPieValues[] = array ($this->uniqStaffCounts['unknown'],
+        $this->uniqStaffCounts['unavailable'],
+        $this->uniqStaffCounts['available'],
+        $this->uniqStaffCounts['committed'],
+      );
+
+      $staffStatusPieData = new xsPData();
+      $staffStatusPieData->AddPoint($staffStatusPieValues, 'Values');
+      $staffStatusPieData->AddPoint($staffStatusPieLabels, 'Status');
+      $staffStatusPieData->AddAllSeries();
+      $staffStatusPieData = $staffStatusPieData->getData();
+
+      $staffStatusPie = new xsPChart(390,210);
+      $chartId = 'staffStatusPie';
+      $this->pCache->GetFromCache($chartId, $staffStatusPieData);
+      $this->pCharts->$chartId = $staffStatusPie;
+      $staffStatusPie->setColorPalette(0, 255, 145, 22);
+      $staffStatusPie->setColorPalette(1, 255, 67, 22);
+      $staffStatusPie->setColorPalette(2, 33, 188, 255);
+      $staffStatusPie->setColorPalette(3, 11, 119, 166);
+      $staffStatusPie->xsSetFontProperties('DejaVuSans.ttf', 8);
+      $staffStatusPie->drawPieGraph($staffStatusPieData, $statusChartDesc, 150,100,110, PIE_PERCENTAGE,TRUE,60,20,5);
+      $staffStatusPie->drawPieLegend(283,20,$staffStatusPieData,$statusChartDesc,250,250,250);
+      $staffStatusPie->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
+      $staffStatusPie->drawTitle(10, 10, 'Staff Resource Distribution By Status', 134, 134, 134);
+      $this->pCache->WriteToCache($chartId, $staffStatusPieData, $staffStatusPie);
+      
     }
 
     /**

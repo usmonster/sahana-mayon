@@ -30,8 +30,8 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
 
   <br />
   <div>
-    <?php echo xspchart_image_tag($statusDistributionChart); ?>
-    <?php echo xspchart_image_tag($staffRequiredChart); ?>
+    <img alt="staffStatusPie"  src="<?php $pCharts->staffStatusPie->Stroke(); ?>">
+    <!-- <?php //$pCharts->staffRequiredBar->Stroke(); ?> -->
   </div>
   <br />
 <?php if ($uniqStaffCounts['non_geo'] > 0): ?>

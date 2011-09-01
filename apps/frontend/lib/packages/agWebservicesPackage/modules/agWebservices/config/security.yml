@@ -1,6 +1,6 @@
+all:
+  is_secure: true
 get:
   is_secure: false
 getevent:
   is_secure: false
-list:
-  is_secure: true

@@ -85,11 +85,7 @@ class ProjectConfiguration extends sfProjectConfiguration
 
   public function setup()
   {
-    // redefines the upload and download directories to be in a secure (i.e. web-inaccessible) location
-    sfConfig::set('sf_upload_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'uploads');
-    sfConfig::set('sf_download_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'downloads');
-
-    //$this->appendEnabledModules();
+     //$this->appendEnabledModules();
     // plugins are considered 'core' elements, akin to apps/frontend/modules, they should not be
     // disabled
     $this->enablePlugins(
@@ -99,11 +95,18 @@ class ProjectConfiguration extends sfProjectConfiguration
           'sfDoxygenPlugin',
           'sfPhpExcelPlugin',
           'ajDoctrineLuceneablePlugin',
-          'ioMenuPlugin'
+          'ioMenuPlugin',
+          'xsPChartPlugin'
         )
     );
 
-    //packages are specific to the application, though not core and should function standalone
+    // redefines the upload and download directories to be in a secure (i.e. web-inaccessible) location
+    sfConfig::set('sf_upload_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'uploads');
+    sfConfig::set('sf_download_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'downloads');
+    sfConfig::set('sf_xspchart_data_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'xspchart' . DIRECTORY_SEPARATOR . 'data');
+    sfConfig::set('sf_xspchart_cache_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'xspchart' . DIRECTORY_SEPARATOR . 'cache');
+
+   //packages are specific to the application, though not core and should function standalone
     $this->enablePackages(
         array('agFooPackage',
           'agStaffPackage',

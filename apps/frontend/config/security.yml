@@ -1,9 +1,5 @@
 # You can find more information about this file on the symfony website:
 # http://www.symfony-project.org/reference/1_4/en/08-Security
 
-default:
-  is_secure: true
-search:
-  is_secure: true
-status:
+all:
   is_secure: true

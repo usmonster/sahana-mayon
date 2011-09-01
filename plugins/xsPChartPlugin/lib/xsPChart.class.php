@@ -95,7 +95,7 @@ class xsPData extends pData
  * @package symfony
  * @subpackage xsPData
  */
-class xsPCache extends pData
+class xsPCache extends pCache
 {
 
 } // pChart

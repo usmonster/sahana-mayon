@@ -1,6 +1,0 @@
-default:
-  is_secure: false
-prepare:
-  is_secure: true
-respond:
-  is_secure: true
