@@ -16,7 +16,18 @@
  */
 abstract class agSendWordNowExport extends agExportHelper {
 
-  protected $eventId;
+  protected $eventId,
+            $agEntityAddressHelper,
+            $agEntityPhoneHelper;
+
+  protected $phoneContactTypes = array(),
+            $addressContactTypes = array(),
+            $emailContactTypes = array(),
+            $personNameTypes = array(),
+            $queryHeaders = array(),
+            $emailHeaders = array(),
+            $phoneHeaders = array(),
+            $nameHeaders = array();
 
   /**
    * A method to act like this classes' own constructor
@@ -38,6 +49,45 @@ abstract class agSendWordNowExport extends agExportHelper {
 
     $this->eventId = $eventId;
     $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
+
+
+    $this->agEntityAddressHelper = new agEntityAddressHelper();
+    $this->agEntityPhoneHelper = new agEntityPhoneHelper();
+
+    $this->nameHeaders['given'] = 'FIRST NAME';
+    $this->nameHeaders['family'] = 'LAST NAME';
+    $this->nameHeaders['middle'] = 'MIDDLE NAME';
+
+    $this->nameSort = array('family', 'given', 'middle');
+
+    $this->emailHeaders['work'] = 'EMAIL 1';
+    $this->emailHeaders['personal'] = 'EMAIL 2';
+
+    $this->addressContactTypes = agDoctrineQuery::create()
+      ->select('act.address_contact_type')
+          ->addSelect('act.id')
+        ->from('agAddressContactType act')
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    $this->phoneContactTypes = agDoctrineQuery::create()
+      ->select('pct.phone_contact_type')
+          ->addSelect('pct.id')
+        ->from('agPhoneContactType pct')
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    $this->emailContactTypes = agDoctrineQuery::create()
+      ->select('ect.email_contact_type')
+          ->addSelect('ect.id')
+        ->from('agEmailContactType ect')
+        ->whereIn('ect.email_contact_type', array_keys($this->emailHeaders))
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    $this->personNameTypes = agDoctrineQuery::create()
+      ->select('pnt.person_name_type')
+          ->addSelect('pnt.id')
+        ->from('agPersonNameType pnt')
+        ->whereIn('pnt.person_name_type', array_keys($this->nameHeaders))
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
   /**
@@ -47,12 +97,12 @@ abstract class agSendWordNowExport extends agExportHelper {
   {
     // define a few variables
     $exportSpec = array();
-    $exportSpec['UNIQUE ID'] = array('type' => 'integer');
+    $exportSpec['UNIQUE ID'] = array('type' => 'integer', 'length' => 20);
     $exportSpec['LAST NAME'] = array('type' => 'string', 'length' => 30, 'mapsTo' => 'given');
     $exportSpec['FIRST NAME'] = array('type' => 'string', 'length' => 30, 'mapsTo' => 'family');
     $exportSpec['MIDDLE INITIAL'] = array('type' => 'string', 'length' => 1, 'mapsTo' => 'middle');
     $exportSpec['PIN Code'] = array('type' => 'integer');
-    $exportSpec['GROUP ID'] = array('type' => 'integer');
+    $exportSpec['GROUP ID'] = array('type' => 'integer', 'length' => 5);
     $exportSpec['GROUP DESCRIPTION'] = array('type' => 'string', 'length' => 128);
     $exportSpec['ADDRESS 1'] = array('type' => 'string', 'length' => 60, 'mapsTo' => 'line 1');
     $exportSpec['ADDRESS 2'] = array('type' => 'string', 'length' => 60, 'mapsTo' => 'line 2');
@@ -93,11 +143,9 @@ abstract class agSendWordNowExport extends agExportHelper {
   {
     // define a few variables
     $exportComponents = array();
-    $exportComponents[] = array('method' => 'setUniqueId');
-    $exportComponents[] = array('method' => 'setName');
+    $exportComponents[] = array('method' => 'setBasics');
     $exportComponents[] = array('method' => 'setAddress');
     $exportComponents[] = array('method' => 'setPhones');
-    $exportComponents[] = array('method' => 'setEmails');
 
     // Set the exportComponents and components
     $this->exportComponents = $exportComponents;
@@ -134,43 +182,107 @@ abstract class agSendWordNowExport extends agExportHelper {
           ->innerJoin('sr.agOrganization o') // a9
         ->orderBy('o.organization');
 
+    $this->queryHeaders['a4__id'] = 'UNIQUE ID';
+    $this->queryHeaders['a9__id'] = 'GROUP ID';
+    $this->queryHeaders['a9__organization'] = 'GROUP DESCRIPTION';
+
+    // we'll use this from this point on
+    $tableCounter = 9;
+
+    $rawNameSortHeader = array();
+    // loop through each of the name types
+    foreach ($this->personNameTypes as $nc => $ncId) {
+
+
+      // build the clause strings
+      $selectId = 'pmpn' . $ncId . '.id';
+      $column = 'pn' . $ncId . '.person_name';
+      $pmpnJoin = 'p.agPersonMjAgPersonName AS pmpn' . $ncId . ' WITH pmpn' . $ncId .
+          '.person_name_type_id = ' . $ncId;
+      $pnJoin = 'pmpn' . $ncId . '.agPersonName AS pn' . $ncId;
+
+      $where = '(' .
+          '(EXISTS (' .
+          'SELECT sub' . $ncId . '.id ' .
+          'FROM agPersonMjAgPersonName AS sub' . $ncId . ' ' .
+          'WHERE sub' . $ncId . '.person_name_type_id = ? ' .
+          'AND sub' . $ncId . '.person_id = pmpn' . $ncId . '.person_id ' .
+          'HAVING MIN(sub' . $ncId . '.priority) = pmpn' . $ncId . '.priority' .
+          ')) ' .
+          'OR (pmpn' . $ncId . '.id IS NULL)' .
+          ')';
+
+      // add the clauses to the query
+      $q->addSelect($selectId)
+          ->addSelect($column)
+          ->leftJoin($pmpnJoin)
+          ->leftJoin($pnJoin)
+          ->andWhere($where, $ncId);
+
+      $tableCounter += 2;
+      $header = 'a' . $tableCounter . '__person_name';
+      $this->queryHeaders[$header] = $this->nameHeaders[$nc];
+      $rawNameSortHeader[$nc] = $column;
+    }
+
+    // get our name headers
+    foreach ($this->nameSort as $index => $nc) {
+      $sortColumns[$index] = $rawNameSortHeader[$nc];
+    }
+
+    // make our orderBy clause
+    $orderBy = implode(", ", $sortColumns);
+    $orderBy = 'o.organization, ' . $orderBy;
+    $q->addOrderBy($orderBy);
+
+
+    // loop through each of the email types
+    foreach ($this->emailContactTypes as $val => $id) {
+      // build the clause strings
+      $selectId1 = 'eec' . $id . '.id';
+      $selectId2 = 'ec' . $id . '.id';
+      $column = 'ec' . $id . '.email_contact';
+      $entityJoin = 'e.agEntityEmailContact AS eec' . $id . ' WITH eec' . $id .
+          '.email_contact_type_id = ' . $id;
+      $valueJoin = 'eec' . $id . '.agEmailContact AS ec' . $id;
+
+      $where = '(' .
+          '(EXISTS (' .
+          'SELECT subE' . $id . '.id ' .
+          'FROM agEntityEmailContact AS subE' . $id . ' ' .
+          'WHERE subE' . $id . '.email_contact_type_id = ? ' .
+          'AND subE' . $id . '.entity_id = eec' . $id . '.entity_id ' .
+          'HAVING MIN(subE' . $id . '.priority) = eec' . $id . '.priority' .
+          ')) ' .
+          'OR (eec' . $id . '.id IS NULL)' .
+          ')';
+
+      // add the clauses to the query
+      $q->addSelect($selectId1)
+        ->addSelect($selectId2)
+          ->addSelect($column)
+          ->leftJoin($entityJoin)
+          ->leftJoin($valueJoin)
+          ->andWhere($where, $id);
+
+      $tableCounter += 2;
+      $header = 'a' . $tableCounter . '__email_contact';
+      $this->queryHeaders[$header] = $this->emailHeaders[$val];
+    }
+
     return $q;
   }
 
   /**
-   * Method to set the unique id field
+   * Method to set the basic query-returned data
    */
-  protected function setUniqueId()
+  protected function setBasics()
   {
     foreach ($this->exportRawData as $rowId => $rawData) {
-      $this->exportData[$rowId]['UNIQUE ID'] = $rawData->a4__id;
-      $this->exportData[$rowId]['GROUP ID'] = $rawData->a9__id;
-      $this->exportData[$rowId]['GROUP DESCRIPTION'] = substr($rawData->a9__organization, 0,
-        $this->exportSpec['GROUP DESCRIPTION']['length']);
-    }
-  }
-
-  /**
-   * Method to set person names
-   */
-  protected function setName()
-  {
-    $pnh = $this->getHelperObject('agPersonNameHelper');
-
-    $nameFields = array('LAST NAME', 'FIRST NAME', 'MIDDLE INITIAL');
-
-    foreach ($this->exportRawData as $rowId => $rowData) {
-      $names = $pnh->getPrimaryNameByType(array($rowData->a7__id));
-      if (! isset($names[$rowData->a7__id])) {
-        continue;
-      }
-      $names = $names[$rowData->a7__id];
-
-      foreach ($nameFields as $nameField) {
-        $spec = $this->exportSpec[$nameField];
-        $type = $spec['mapsTo'];
-        if (array_key_exists($type, $names)) {
-          $this->exportData[$rowId][$nameField] = substr($names[$type], 0, $spec['length']);
+      foreach($this->queryHeaders as $header => $exportColumn) {
+        if (!is_null($rawData->$header)) {
+          $this->exportData[$rowId][$exportColumn] = substr($rawData->$header, 0,
+            $this->exportSpec[$exportColumn]['length']);
         }
       }
     }
@@ -181,7 +293,7 @@ abstract class agSendWordNowExport extends agExportHelper {
    */
   protected function setAddress()
   {
-    $eah = $this->getHelperObject('agEntityAddressHelper');
+    $eah = $this->agEntityAddressHelper;
 
     $addressFields = array('ADDRESS 1', 'ADDRESS 2', 'CITY', 'STATE/PROVINCE', 'ZIP/POSTAL CODE',
       'COUNTRY');
@@ -209,7 +321,7 @@ abstract class agSendWordNowExport extends agExportHelper {
    */
   protected function setPhones()
   {
-    $eph = $this->getHelperObject('agEntityPhoneHelper');
+    $eph = $this->agEntityPhoneHelper;
 
     $phoneFields = array('PHONE LABEL', 'PHONE COUNTRY CODE', 'PHONE', 'PHONE EXTENSION');
     $suffixes = array(1, 2);
@@ -240,44 +352,6 @@ abstract class agSendWordNowExport extends agExportHelper {
 
               if (!empty($componentVal)) {
                 $this->exportData[$rowId][$phoneField] = substr($componentVal, 0, $spec['length']);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * Method to set phone done
-   */
-  protected function setEmails()
-  {
-    $eeh = $this->getHelperObject('agEntityEmailHelper');
-
-    $emailFields = array('EMAIL LABEL', 'EMAIL');
-    $suffixes = array(1, 2);
-
-    foreach ($this->exportRawData as $rowId => $rowData) {
-
-      $emails = $eeh->getEntityEmail(array($rowData->a8__id), TRUE, FALSE, agEmailHelper::EML_GET_VALUE);
-       // skip this row if no email exists
-      if (isset($emails[$rowData->a8__id])) {
-       $emails = $emails[$rowData->a8__id];
-
-        foreach ($suffixes as $suffix) {
-          $sKey = $suffix - 1;
-          if (array_key_exists($sKey, $emails)) {
-            $email = array();
-            $email['email'] = $emails[$sKey][1];
-            $email['contact type'] = $emails[$sKey][0];
-
-            foreach ($emailFields as $emailField) {
-            $emailField = $emailField . ' ' . $suffix;
-            $spec = $this->exportSpec[$emailField];
-            $component = $spec['mapsTo'];
-              if (array_key_exists($component, $email)) {
-                $this->exportData[$rowId][$emailField] = substr($email[$component], 0, $spec['length']);
               }
             }
           }
