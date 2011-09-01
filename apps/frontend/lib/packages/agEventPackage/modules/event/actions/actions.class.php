@@ -627,6 +627,9 @@ class eventActions extends agActions
         $eventNameSafe = str_replace(' ', '_', strtolower($this->event_name));
         $this->uniqStaffCounts = array();
         $this->staffTypeEstimates = array();
+        $this->staffTypeStatusDistributionCharts = array();
+        $this->statusDistributionChart = NULL;
+
 
         $this->subForm = new agReportTimeForm();
         unset($this->subForm['_csrf_token']);
@@ -637,40 +640,157 @@ class eventActions extends agActions
           $this->subForm->bind($request->getParameter('reportTime'));
           if ($this->subForm->isValid())
           {
+            $statusChartDesc = array(
+                'Format' => array('X' => 'number', 'Y' => 'number'),
+                'Unit' => array('X' => NULL, 'Y' => NULL),
+                'Values' => array(0 => 'Values', 1 => 'Status'),
+                'Position' => 'Status'
+            );
+
             $formArray = $request->getParameter('reportTime');
             $this->reportTime = strtotime($formArray['report_time']);
-            $this->uniqStaffCounts['unavailable'] = agEvent::getUnavailableUniqueEventStaffCount($this->event_id, $this->reportTime);
-            $this->uniqStaffCounts['unknown'] = agEvent::getUnknownUniqueEventStaffCount($this->event_id, $this->reportTime);
-            $this->uniqStaffCounts['available'] = agEvent::getAvailableUniqueEventStaffCount($this->event_id, $this->reportTime);
-            $this->uniqStaffCounts['committed'] = agEvent::getCommittedUniqueEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['unavailable'] = agEvent::getUnavailableEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['unknown'] = agEvent::getUnknownEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['available'] = agEvent::getAvailableEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['committed'] = agEvent::getCommittedEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['non_geo'] = agEvent::getMissingGeoEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['non_geo_pctg'] = number_format((($this->uniqStaffCounts['non_geo'] / $this->uniqStaffCounts['unavailable']) * 100), 0);
 
+            $this->staffTypeEstimates = agEvent::getEventShiftEstimates($this->event_id, $this->reportTime);
+            $this->staffTypeEstimateTotals = $this->staffTypeEstimates['total'];
+            unset($this->staffTypeEstimates['total']);
+
+            // build our first chart
+            $chartData = array();
+            $chartData[] = array('Name'=>'Current',
+                'staff' => $this->uniqStaffCounts['committed'],
+                'min' => $this->staffTypeEstimateTotals['min_required'],
+                'max' => $this->staffTypeEstimateTotals['max_required'],
+            );
+            $chartData[] = array('Name'=>"Best Projection",
+                'staff' => ($this->uniqStaffCounts['available'] + $this->uniqStaffCounts['committed']),
+                'min' => $this->staffTypeEstimateTotals['min_required'],
+                'max' => $this->staffTypeEstimateTotals['max_required'],
+            );
+
+            $chartDesc = array(
+              'Position' => 'Name',
+              'Values' => array('max', 'min', 'staff', ),
+              'Description' => array(
+                'max' => 'Max Required', 'min' => 'Min Required', 'staff' => 'Staff',
+                ),
+              'Format' => array('X' => 'number', 'Y' => 'number'),
+              'Unit' => array('X' => NULL, 'Y' => NULL),
+              'Axis' => array(),
+              );
+        
+            $chart = new xsPChart(320, 210);
+            $chart->setGraphArea(60, 30, 220, 180);
+            $chart->xsSetFontProperties('DejaVuSans.ttf', 9);
+            $chart->setColorPalette(0, 33, 188, 255);
+            $chart->setColorPalette(1, 255, 145, 22);
+            $chart->setColorPalette(2, 11, 119, 166);
+            $chart->drawScale($chartData, $chartDesc, SCALE_NORMAL, 150,150,150, TRUE, 0, 0, TRUE);
+            $chart->drawGrid(4, TRUE, 230, 230, 230, 50);
+            $chart->drawTreshold(0, 143, 55, 72, TRUE, TRUE);
+            $chart->drawOverlayBarGraph($chartData, $chartDesc, 100);
+            $chart->drawLegend(210, 20, $chartDesc, 255, 255, 255);
+            $chart->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
+            $chart->drawTitle(10, 10, 'Staff Resource Projections', 134, 134, 134);
+
+            $this->staffRequiredChart = $eventNameSafe .
+              '_staff_required.png';
+
+            $chart->xsRender($this->staffRequiredChart);
             // build a chart
             $chartLabels = array();
             $chartValues = array();
-            foreach ($this->uniqStaffCounts as $label => $value) {
-              $chartLabels[] = $label;
-              $chartValues[] = $value;
-            }
+            $unavailableLabel = ($this->uniqStaffCounts['non_geo'] > 0) ? 'Unavailable*' : 'Unavailable';
+
+            $chartLabels[] = array('Unknown', $unavailableLabel, 'Available', 'Committed', );
+            $chartValues[] = array ($this->uniqStaffCounts['unknown'],
+              $this->uniqStaffCounts['unavailable'],
+              $this->uniqStaffCounts['available'],
+              $this->uniqStaffCounts['committed'],
+            );
 
             $chartData = new xsPData();
             $chartData->AddPoint($chartValues, 'Values');
             $chartData->AddPoint($chartLabels, 'Status');
             $chartData->AddAllSeries();
-            $chartData->SetAbsciseLabelSerie('Status');
             $getData = $chartData->getData();
-            $getDataDesc = $chartData->GetDataDescription();
 
-            $chart = new xsPChart(380,200);
+            $chart = new xsPChart(390,210);
+            $chart->setColorPalette(0, 255, 145, 22);
+            $chart->setColorPalette(1, 255, 67, 22);
+            $chart->setColorPalette(2, 33, 188, 255);
+            $chart->setColorPalette(3, 11, 119, 166);
             $chart->xsSetFontProperties('DejaVuSans.ttf', 8);
-            $chart->drawPieGraph($getData, $getDataDesc, 150,90,110, PIE_PERCENTAGE,TRUE,50,20,5);
-            $chart->drawPieLegend(283,10,$getData,$getDataDesc,250,250,250);
+            $chart->drawPieGraph($getData, $statusChartDesc, 150,100,110, PIE_PERCENTAGE,TRUE,60,20,5);
+            $chart->drawPieLegend(283,20,$getData,$statusChartDesc,250,250,250);
+            $chart->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
+            $chart->drawTitle(10, 10, 'Staff Resource Distribution By Status', 134, 134, 134);
 
             $this->statusDistributionChart =  $eventNameSafe . '_uniq_staff_status_distribution.png';
             $chart->xsRender($this->statusDistributionChart);
 
-            $this->uniqStaffCounts['non_geo'] = agEvent::getMissingGeoUniqueStaffCount($this->event_id, $this->reportTime);
-            $this->staffTypeEstimates = agEvent::getEventShiftEstimates($this->event_id, $this->reportTime);
+            // loop through staff types and build a new chart for each
+            foreach ($this->staffTypeEstimates as $staffTypeId => $se) {
+              $unfilled = $se['min_required'] - ($se['available'] + $se['committed']);
 
+              // re-initialize our data
+              $smallStatusPieData = array();
+              $smallStatusPieData[] = array('Name' => 'Status', 'Values' => $se['available'], 'Status' => 'Available' );
+              $smallStatusPieData[] = array('Name' => 'Status', 'Values' => $se['committed'], 'Status' => 'Committed' );
+              $smallStatusPieData[] = array('Name' => 'Status', 'Values' => $unfilled, 'Status' => "Unfilled\nRequirement" );
+
+              // draw / render
+              $smallStatusPie = new xsPChart(310, 250);
+              $smallStatusPie->setColorPalette(0, 33, 188, 255);
+              $smallStatusPie->setColorPalette(1, 11, 119, 166);
+              $smallStatusPie->setColorPalette(2, 255, 145, 22);
+              $smallStatusPie->xsSetFontProperties('DejaVuSans.ttf', 8);
+              $smallStatusPie->drawFlatPieGraph($smallStatusPieData, $statusChartDesc, 130,110,87, PIE_PERCENTAGE, 7);
+              $smallStatusPie->drawPieLegend(220,172,$smallStatusPieData,$statusChartDesc,255,255,255);
+              $smallStatusPie->drawTitle(10, 10, $se['resource_type'], 0, 0, 0);
+
+              $chartName = $eventNameSafe . '_staff_type_' . $staffTypeId . '_status_distribution.png';
+              $this->staffTypeStatusDistributionCharts[$staffTypeId] =  $chartName;
+              $smallStatusPie->xsRender($chartName);
+
+              $requiredData[] = array('Name'=>$se['resource_type'], 
+                'committed' => $se['committed'],'min' => $se['min_required'],'max' => $se['max_required'],
+                );
+            }
+
+            $requiredDesc = array(
+              'Position' => 'Name',
+              'Values' => array('max', 'min', 'committed', ),
+              'Description' => array(
+                'max' => 'Max Required', 'min' => 'Min Required', 'committed' => 'Commmitted',
+                ),
+              'Format' => array('X' => 'number', 'Y' => 'number'),
+              'Unit' => array('X' => NULL, 'Y' => NULL),
+              'Axis' => array('Y' => 'Staff'),
+              );
+
+
+            $chart = new xsPChart(720, 320);
+            $chart->setGraphArea(50, 30, 680, 200);
+            $chart->xsSetFontProperties('DejaVuSans.ttf', 9);
+            $chart->setColorPalette(0, 22,255,117);
+            $chart->setColorPalette(1, 255, 145, 22);
+            $chart->setColorPalette(2, 11, 119, 166);
+            $chart->drawScale($requiredData, $requiredDesc, SCALE_NORMAL, 150,150,150, TRUE, 60, 0, TRUE);
+            $chart->drawGrid(4, TRUE, 230, 230, 230, 50);
+            $chart->drawTreshold(0, 143, 55, 72, TRUE, TRUE);
+            $chart->drawOverlayBarGraph($requiredData, $requiredDesc, 100);
+            $chart->drawLegend(570, 250, $requiredDesc, 255, 255, 255);
+
+            $this->staffTypeRequiredChart = $eventNameSafe .
+              '_staff_type_required.png';
+
+            $chart->xsRender($this->staffTypeRequiredChart);
           }
         }
     }

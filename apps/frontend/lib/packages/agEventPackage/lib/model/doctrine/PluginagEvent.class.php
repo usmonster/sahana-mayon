@@ -12,6 +12,7 @@
  */
 abstract class PluginagEvent extends BaseagEvent
 {
+
   /**
    * Method to get the event zero hour
    * @param integer $eventId The event ID being queried
@@ -347,12 +348,12 @@ abstract class PluginagEvent extends BaseagEvent
   }
 
   /**
-   * Simple method to return a unique staff count
+   * Simple method to return a  staff count
    * @param integer $evnetId An event ID
    * @param timestamp $timestamp
    * @return agDoctrineQuery A doctrine query.
    */
-  protected static function getUniqueStaffCount($eventId, $timestamp)
+  protected static function getStaffCount($eventId, $timestamp)
   {
     $subQuery = 'EXISTS ( ' .
       'SELECT ess2.id '.
@@ -370,61 +371,68 @@ abstract class PluginagEvent extends BaseagEvent
           ->innerJoin('sr.agEventStaff es')
           ->innerJoin('es.agEventStaffStatus ess')
           ->innerJoin('ess.agStaffAllocationStatus sas')
+          ->innerJoin('s.agPerson p')
+          ->innerJoin('p.agEntity e')
         ->where('es.event_id = ?', $eventId)
-        ->andWhere('srs.is_available = ?', TRUE)
         ->andWhere($subQuery, date('Y-m-d H:i:s', $timestamp));
 
     return $query;
   }
 
   /**
-   * Simple method to return a unique staff count who meet the qualified criterion
+   * Simple method to return a  staff count who meet the qualified criterion
    * @param integer $evnetId An event ID
    * @param timestamp $timestamp
    * @return integer An integer of the staff count
    */
-  public static function getUnknownUniqueEventStaffCount($eventId, $timestamp)
+  public static function getUnknownEventStaffCount($eventId, $timestamp)
   {
-    return self::getUniqueStaffCount($eventId, $timestamp)
+    return self::getStaffCount($eventId, $timestamp)
+      ->andWhere('srs.is_available = ?', TRUE)
       ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, TRUE))
+      ->andWhere(agEntity::QUERY_HAS_GEO)
       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
 
   /**
-   * Simple method to return a unique staff count who meet the qualified criterion
+   * Simple method to return a  staff count who meet the qualified criterion
    * @param integer $evnetId An event ID
    * @param timestamp $timestamp
    * @return integer An integer of the staff count
    */
-  public static function getUnavailableUniqueEventStaffCount($eventId, $timestamp)
+  public static function getUnavailableEventStaffCount($eventId, $timestamp)
   {
-    return self::getUniqueStaffCount($eventId, $timestamp)
-      ->andWhere('(sas.allocatable = ? AND sas.committed = ?)', array(FALSE, FALSE))
+    return self::getStaffCount($eventId, $timestamp)
+      ->andWhere('(sas.allocatable = ? AND sas.committed = ?) OR (srs.is_available = ?) OR ' .
+        '(NOT ' . agEntity::QUERY_HAS_GEO . ')', array(FALSE, FALSE, FALSE))
       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
 
   /**
-   * Simple method to return a unique staff count who meet the qualified criterion
+   * Simple method to return a  staff count who meet the qualified criterion
    * @param integer $evnetId An event ID
    * @param timestamp $timestamp
    * @return integer An integer of the staff count
    */
-  public static function getAvailableUniqueEventStaffCount($eventId, $timestamp)
+  public static function getAvailableEventStaffCount($eventId, $timestamp)
   {
-    return self::getUniqueStaffCount($eventId, $timestamp)
+    return self::getStaffCount($eventId, $timestamp)
+      ->andWhere('srs.is_available = ?', TRUE)
       ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, FALSE))
+      ->andWhere(agEntity::QUERY_HAS_GEO)
       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
 
   /**
-   * Simple method to return a unique staff count who meet the qualified criterion
+   * Simple method to return a  staff count who meet the qualified criterion
    * @param integer $evnetId An event ID
    * @param timestamp $timestamp
    * @return integer An integer of the staff count
    */
-  public static function getCommittedUniqueEventStaffCount($eventId, $timestamp)
+  public static function getCommittedEventStaffCount($eventId, $timestamp)
   {
-    return self::getUniqueStaffCount($eventId, $timestamp)
+    return self::getStaffCount($eventId, $timestamp)
+      ->andWhere('srs.is_available = ?', TRUE)
       ->andWhere('sas.committed = ?', TRUE, FALSE)
       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
@@ -434,9 +442,9 @@ abstract class PluginagEvent extends BaseagEvent
    * @param integer $timestamp A unix timestamp
    * @return integer An integer of the staff count
    */
-  public function getUnknownUniqueStaffCount($timestamp)
+  public function getUnknownStaffCount($timestamp)
   {
-    return self::getUnknownUniqueEventStaffCount($this->id, $timestamp);
+    return self::getUnknownEventStaffCount($this->id, $timestamp);
   }
   
   /**
@@ -444,9 +452,9 @@ abstract class PluginagEvent extends BaseagEvent
    * @param integer $timestamp A unix timestamp
    * @return integer An integer of the staff count
    */
-  public function getAvailableUniqueStaffCount($timestamp)
+  public function getAvailableStaffCount($timestamp)
   {
-    return self::getAvailableUniqueEventStaffCount($this->id, $timestamp);
+    return self::getAvailableEventStaffCount($this->id, $timestamp);
   }
 
   /**
@@ -454,66 +462,23 @@ abstract class PluginagEvent extends BaseagEvent
    * @param integer $timestamp A unix timestamp
    * @return integer An integer of the staff count
    */
-  public function getCommittedUniqueStaffCount($timestamp)
+  public function getCommittedStaffCount($timestamp)
   {
-    return self::getAvailableUniqueEventStaffCount($this->id, $timestamp);
+    return self::getAvailableEventStaffCount($this->id, $timestamp);
   }
 
   /**
-   * Simple method to return a unique staff count who meet the qualified criterion
+   * Simple method to return a  staff count who meet the qualified criterion
    * @param integer $evnetId An event ID
    * @param timestamp $timestamp
    * @return integer An integer of the staff count
    */
-  protected static function getMissingGeoUniqueStaffBaseCount($eventId, $timestamp)
+  public static function getMissingGeoEventStaffCount($eventId, $timestamp)
   {
-    $subStaffStatusQuery = 'EXISTS ( ' .
-      'SELECT ess2.id '.
-        'FROM agEventStaffStatus ess2 '.
-          'WHERE ess2.event_staff_id = ess.event_staff_id ' .
-            'AND ess2.time_stamp <= ? '.
-          'HAVING (MAX(ess2.time_stamp) = ess.time_stamp) ' .
-        ')';
-
-    $subNonGeoQuery = 'NOT EXISTS ( ' .
-        'SELECT eac.id ' .
-          'FROM agEntityAddressContact eac ' .
-            'INNER JOIN eac.agAddress a ' .
-            'INNER JOIN a.agAddressGeo ag ' .
-            'INNER JOIN ag.agGeo g ' .
-            'INNER JOIN g.agGeoFeature gf ' .
-            'INNER JOIN gf.agGeoCoordinate gc ' .
-          'WHERE eac.entity_id = e.id ' .
-        ')';
-
-    $q = agDoctrineQuery::create()
-      ->select('count(s.id) AS ct_staffs')
-        ->from('agStaff s')
-          ->innerJoin('s.agStaffResource sr')
-          ->innerJoin('sr.agStaffResourceStatus srs')
-          ->innerJoin('sr.agEventStaff es')
-          ->innerJoin('es.agEventStaffStatus ess')
-          ->innerJoin('ess.agStaffAllocationStatus sas')
-          ->innerJoin('s.agPerson p')
-          ->innerJoin('p.agEntity e')
-        ->where('es.event_id = ?', $eventId)
-        ->andWhere('srs.is_available = ?', TRUE)
-        ->andWhere($subStaffStatusQuery, date('Y-m-d H:i:s', $timestamp))
-        ->andWhere($subNonGeoQuery);
-
-    return $q;
-  }
-
-  /**
-   * Simple method to return a unique staff count who meet the qualified criterion
-   * @param integer $evnetId An event ID
-   * @param timestamp $timestamp
-   * @return integer An integer of the staff count
-   */
-  public static function getMissingGeoUniqueStaffCount($eventId, $timestamp)
-  {
-    return self::getMissingGeoUniqueStaffBaseCount($eventId, $timestamp)
-      ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, FALSE))
+    return self::getStaffCount($eventId, $timestamp)
+      ->andWhere('srs.is_available = ?', TRUE)
+      ->andWhere('(sas.allocatable = ? OR sas.committed = ?)', array(TRUE, TRUE))
+      ->andWhere('NOT ' . agEntity::QUERY_HAS_GEO)
       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
 
@@ -524,7 +489,7 @@ abstract class PluginagEvent extends BaseagEvent
    */
   public function getMissingGeoStaffCount($timestamp)
   {
-    return self::getMissingGeoUniqueStaffCount($this->event_id, $timestamp);
+    return self::getMissingGeoStaffCount($this->event_id, $timestamp);
   }
 
   /**
@@ -548,13 +513,18 @@ abstract class PluginagEvent extends BaseagEvent
           ->addSelect('COUNT(sr.id) as staff_count')
         ->from('agStaffResource sr')
           ->innerJoin('sr.agStaffResourceStatus srs')
+          ->innerJoin('sr.agStaffResourceType srt')
           ->innerJoin('sr.agEventStaff es')
           ->innerJoin('es.agEventStaffStatus ess')
           ->innerJoin('ess.agStaffAllocationStatus sas')
+          ->innerJoin('sr.agStaff s')
+          ->innerJoin('s.agPerson p')
+          ->innerJoin('p.agEntity e')
         ->where('es.event_id = ?', $eventId)
-            ->addWhere('srs.is_available = ?', TRUE)
             ->addWhere($statusExists, date('Y-m-d H:i:s', $timestamp))
-        ->groupBy('sr.staff_resource_type_id');
+            ->andWhere(agEntity::QUERY_HAS_GEO)
+        ->groupBy('sr.staff_resource_type_id')
+        ->orderBy('srt.staff_resource_type ASC');
 
     return $q;
   }
@@ -568,7 +538,21 @@ abstract class PluginagEvent extends BaseagEvent
   public static function getUnknownEventStaffTypeCount($eventId, $timestamp)
   {
     return self::getEventStaffTypeCount($eventId, $timestamp)
+      ->addWhere('srs.is_available = ?', TRUE)
       ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, TRUE))
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+  }
+
+  /**
+   * Method to return a count of event staff who meet the qualified criterion
+   * @param integer $eventId An eventId
+   * @param integer $timestamp A unix timestamp
+   * @return array A single-dimension associative array
+   */
+  public static function getUnavailableEventStaffTypeCount($eventId, $timestamp)
+  {
+    return self::getEventStaffTypeCount($eventId, $timestamp)
+      ->andWhere('(srs.is_available = ?) OR (sas.allocatable = ? AND sas.standby = ?)', array(FALSE, FALSE, FALSE))
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
@@ -581,6 +565,7 @@ abstract class PluginagEvent extends BaseagEvent
   public static function getAvailableEventStaffTypeCount($eventId, $timestamp)
   {
     return self::getEventStaffTypeCount($eventId, $timestamp)
+      ->addWhere('srs.is_available = ?', TRUE)
       ->andWhere('(sas.allocatable = ? AND sas.standby = ?)', array(TRUE, FALSE))
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
@@ -594,6 +579,7 @@ abstract class PluginagEvent extends BaseagEvent
   public static function getCommittedEventStaffTypeCount($eventId, $timestamp)
   {
     return self::getEventStaffTypeCount($eventId, $timestamp)
+      ->addWhere('srs.is_available = ?', TRUE)
       ->andWhere('(sas.committed = ?)', TRUE)
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
@@ -663,6 +649,7 @@ abstract class PluginagEvent extends BaseagEvent
         ->addSelect('SUM(es.minimum_staff) as minSum')
         ->addSelect('SUM(es.minimum_staff) as maxSum')
       ->from('agEventShift es')
+        ->innerJoin('es.agStaffResourceType srt')
         ->innerJoin('es.agEventFacilityResource efr')
         ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
         ->innerJoin('efr.agEventFacilityResourceStatus efrs')
@@ -678,7 +665,8 @@ abstract class PluginagEvent extends BaseagEvent
         ->andwhere($frStatusExists, $strTimestamp)
         ->andwhere($fgStatusExists, $strTimestamp)
         ->andWhere($timeBoundWhere, array($timestamp, $timestamp))
-      ->groupBy('es.staff_resource_type_id');
+      ->groupBy('es.staff_resource_type_id')
+      ->orderBy('srt.staff_resource_type ASC');
 
     return $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_ARRAY);
   }
@@ -714,6 +702,7 @@ abstract class PluginagEvent extends BaseagEvent
     $unknownStaff = self::getUnknownEventStaffTypeCount($eventId, $timestamp);
     $availableStaff = self::getAvailableEventStaffTypeCount($eventId, $timestamp);
     $committedStaff = self::getCommittedEventStaffTypeCount($eventId, $timestamp);
+    $unavailableStaff = self::getUnavailableEventStaffTypeCount($eventId, $timestamp);
 
     $results['total'] = array('min_required' => 0, 'max_required' => 0, 'unknown' => 0,
       'available' => 0, 'committed' => 0);
@@ -732,6 +721,13 @@ abstract class PluginagEvent extends BaseagEvent
         $results['total']['unknown'] += $unknownStaff[$srtId];
       } else {
         $results[$srtId]['unknown'] = 0;
+      }
+
+      if (isset($unavailableStaff[$srtId])) {
+        $results[$srtId]['unavailable'] = $unavailableStaff[$srtId];
+        $results['total']['unavailable'] += $unavailableStaff[$srtId];
+      } else {
+        $results[$srtId]['unavailable'] = 0;
       }
 
       if (isset($availableStaff[$srtId])) {
