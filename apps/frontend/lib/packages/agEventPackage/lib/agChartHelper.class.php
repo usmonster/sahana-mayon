@@ -19,6 +19,13 @@ class agChartHelper
   CONST CHART_STAFFTYPE_REQUIRED_BAR = 'stafftypeRequiredBar';
   CONST CHART_STAFFTYPE_STATUS_PIE = 'stafftypeStatusPie';
 
+  CONST CHART_CACHE_DIR = 'sf_xspchart_cache_dir';
+  CONST CHART_DATA_DIR = 'sf_xspchart_data_dir';
+
+  CONST INVALID_UNIQUE_IDENT = '[^-\w]';
+
+  protected static $xsPCache;
+
   protected static $dataDescs = array(
       self::CHART_STAFF_STATUS_PIE => array(
           'Format' => array('X' => 'number', 'Y' => 'number'),
@@ -54,48 +61,117 @@ class agChartHelper
         ),
     );
 
+  protected static function getXsPCache()
+  {
+    if (!isset(self::$xsPCache)) {
+      self::$xsPCache = new xsPCache(sfConfig::get(self::CHART_CACHE_DIR) . DIRECTORY_SEPARATOR);
+    }
+
+    return self::$xsPCache;
+  }
+
   /**
    * Simple method to return the chart data description
    * @param string $chartId One of the CHART_ constants
    * @return array A chart data description
    */
-  public static function getDataDesc($chartId)
+  protected static function getDataDesc($chartId)
   {
     return self::$dataDescs[$chartId];
   }
 
-  public static function getChartDataFile($chartId)
+  /**
+   * Returns the data file responsible for creating chart data
+   * @param mixed $uniqueIdent A string (unique) identifier for a chart
+   * @param string $chartId One of the CHART_ constants
+   * @return string A url to the chart data file
+   */
+  protected static function getChartDataFile($uniqueIdent, $chartId)
   {
-    return sfConfig::get('sf_xspchart_data_dir') . DIRECTORY_SEPARATOR . $chartId . '.yml';
+    if (preg_match(self::INVALID_UNIQUE_IDENT, $uniqueIdent)) {
+      return FALSE;
+    }
+
+    return sfConfig::get(self::CHART_DATA_DIR) . DIRECTORY_SEPARATOR .
+      $uniqueIdent . '_' . $chartId . '.yml';
   }
 
-  public static function getChartData($chartId)
+  /**
+   * Returns the raw chart data from its parent file
+   * @param string $chartDataFile The uri of a chart data file
+   * @return array An array of chart data
+   */
+  protected static function getChartDataFromFile($chartDataFile)
   {
-    return sfYaml::load(self::getChartDataFile($chartId));
+    return sfYaml::load($chartDataFile);
+  }
+
+  /**
+   * Returns properly reduced chart data as an array
+   * @param mixed $uniqueIdent A string (unique) identifier for a chart
+   * @param string $chartId One of the CHART_ constants
+   * @param mixed $subChartId A unique sub-chart identifier
+   * @return array An array of chart data
+   */
+  protected static function getChartData($uniqueIdent, $chartId, $subChartId = NULL)
+  {
+    $data = self::getChartDataFromFile(self::getChartDataFile($uniqueIdent, $chartId));
+
+    if (!is_null($subChartId) && isset($data[$subChartId])) {
+      return $data[$subChartId];
+    }
+
+    return $data;
   }
   
-  public static function setChartData($chartId, $dataArray)
+  /**
+   * A method to set chart data. It automatically checks whether or not the data file
+   * exists and, if-so, whether the current data file matches the passed data array (avoiding
+   * unnecessary writes). If no data file exists it attempts to create one.
+   * @param mixed $uniqueIdent A string (unique) identifier for a chart
+   * @param string $chartId One of the CHART_ constants
+   * @param array $dataArray An array of chart data
+   * @return boolean Returns false if the chart is not known to the class
+   */
+  public static function setChartData($uniqueIdent, $chartId, array $dataArray)
   {
-    $dataFile = self::getChartDataFile($chartId);
-    if (!file_exists($dataFile)) {
+    if (!isset(self::$dataDescs[$chartId])) {
+      return FALSE;
+    }
+
+    $dataFile = self::getChartDataFile($uniqueIdent, $chartId);
+    if (file_exists($dataFile)) {
+      if ($dataArray == self::getChartDataFromFile($dataFile)) {
+        return TRUE;
+      }
+    } else {
       touch($dataFile);
     }
 
     file_put_contents($dataFile, sfYaml::dump($dataArray, 1));
+    return TRUE;
   }
 
-  public static function getChart($chartId, $subChartId = NULL)
+  public static function getChart($uniqueIdent, $chartId, $subChartId = NULL)
   {
-    if (isset(self::$dataDescs[$chartId])) {
-      $data = self::getChartData($chartId);
-      $desc = self::$dataDescs[$chartId];
-    } else {
+    if (preg_match(self::INVALID_UNIQUE_IDENT, $uniqueIdent) || 
+        !isset(self::$dataDescs[$chartId])) {
       return FALSE;
     }
-    
-    if (!is_null($subChartId) && isset($data[$subChartId])) {
-      $data = $data[$subChartId];
+
+    $data = self::getChartData($uniqueIdent, $chartId, $subChartId);
+
+    $cacheId = $uniqueIdent . '-' . $chartId;
+    if (!is_null($subChartId)) {
+      $cacheId .= '-' . $subChartId;
     }
+
+    $cache = self::getXsPCache();
+    if ($cache->IsInCache($cacheId, $data)) {
+      return $cache->GetFromCache($cacheId, $data);
+    }
+
+    $desc = self::$dataDescs[$chartId];
 
     switch ($chartId) {
       case self::CHART_STAFF_STATUS_PIE:
@@ -112,6 +188,114 @@ class agChartHelper
         break;
     }
 
+    $cache->WriteToCache($cacheId, $data, $chart);
+    return $cache->GetFromCache($cacheId, $data);
+  }
 
+  /**
+   * Method to construct a chart object
+   * @param array $data An array of chart data
+   * @param array $desc An array of chart description data
+   * @return xsPChart An xsPChart object
+   */
+  protected static function getStaffStatusPie(array $data, array $desc)
+  {
+    $chart = new xsPChart(390,210);
+    $chart->setColorPalette(0, 255, 145, 22);
+    $chart->setColorPalette(1, 255, 67, 22);
+    $chart->setColorPalette(2, 33, 188, 255);
+    $chart->setColorPalette(3, 11, 119, 166);
+    $chart->xsSetFontProperties('DejaVuSans.ttf', 8);
+    $chart->drawPieGraph($data, $desc, 150,100,110, PIE_PERCENTAGE,TRUE,60,20,5);
+    $chart->drawPieLegend(283,20,$data,$desc,250,250,250);
+    $chart->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
+    $chart->drawTitle(10, 10, 'Staff Resource Distribution By Status', 134, 134, 134);
+
+    return $chart;
+  }
+
+  /**
+   * Method to construct a chart object
+   * @param array $data An array of chart data
+   * @param array $desc An array of chart description data
+   * @return xsPChart An xsPChart object
+   */
+  protected static function getStaffRequiredBar(array $data, array $desc)
+  {
+    $chart = new xsPChart(320, 210);
+    $chart->setGraphArea(60, 30, 220, 180);
+    $chart->xsSetFontProperties('DejaVuSans.ttf', 9);
+    $chart->setColorPalette(0, 33, 188, 255);
+    $chart->setColorPalette(1, 255, 145, 22);
+    $chart->setColorPalette(2, 11, 119, 166);
+    $chart->drawScale($data, $desc, SCALE_NORMAL, 150,150,150, TRUE, 0, 0, TRUE);
+    $chart->drawGrid(4, TRUE, 230, 230, 230, 50);
+    $chart->drawTreshold(0, 143, 55, 72, TRUE, TRUE);
+    $chart->drawOverlayBarGraph($data, $desc, 100);
+    $chart->drawLegend(210, 20, $desc, 255, 255, 255);
+    $chart->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
+    $chart->drawTitle(10, 10, 'Staff Resource Projections', 134, 134, 134);
+
+    return $chart;
+  }
+
+  /**
+   * Method to construct a chart object
+   * @param array $data An array of chart data
+   * @param array $desc An array of chart description data
+   * @return xsPChart An xsPChart object
+   */
+  protected static function getStafftypeRequiredBar(array $data, array $desc)
+  {
+    $chart = new xsPChart(720, 320);
+    $chart->setGraphArea(50, 30, 680, 200);
+    $chart->xsSetFontProperties('DejaVuSans.ttf', 9);
+    $chart->setColorPalette(0, 22,255,117);
+    $chart->setColorPalette(1, 255, 145, 22);
+    $chart->setColorPalette(2, 11, 119, 166);
+    $chart->drawScale($data, $desc, SCALE_NORMAL, 150,150,150, TRUE, 60, 0, TRUE);
+    $chart->drawGrid(4, TRUE, 230, 230, 230, 50);
+    $chart->drawTreshold(0, 143, 55, 72, TRUE, TRUE);
+    $chart->drawOverlayBarGraph($data, $desc, 100);
+    $chart->drawLegend(570, 250, $desc, 255, 255, 255);
+
+    return $chart;
+  }
+
+  /**
+   * Method to construct a chart object
+   * @param array $data An array of chart data
+   * @param array $desc An array of chart description data
+   * @return xsPChart An xsPChart object
+   */
+  protected static function getStafftypeStatusPie(array $data, array $desc)
+  {
+    $chart = new xsPChart(310, 230);
+    $chart->setColorPalette(0, 33, 188, 255);
+    $chart->setColorPalette(1, 11, 119, 166);
+    $chart->setColorPalette(2, 255, 145, 22);
+    $chart->xsSetFontProperties('DejaVuSans.ttf', 8);
+    $chart->drawFlatPieGraph($data, $desc, 130,112,87, PIE_PERCENTAGE, 7);
+    $chart->drawPieLegend(220,172,$data, $desc,255,255,255);
+
+    return $chart;
+  }
+
+  /**
+   * Method to get a chart URL
+   * @param string $baseUrl The base URL to which this should be appended
+   * @param mixed $uniqueIdent A unique chart identifier
+   * @param mixed $chartId A chartId
+   * @param mixed $subChartId A subchartId
+   * @return string A unique chart url
+   */
+  public static function getChartUrl($baseUrl, $uniqueIdent, $chartId, $subChartId = NULL)
+  {
+    $firstOperand = (strpos($baseUrl, '?') === FALSE) ? '&' : '?';
+    $subChart = (is_null($subChartId)) ? '' : '&subChartId=' . $subChartId;
+    $configuration = sfContext::getInstance()->getConfiguration();
+    $configuration->loadHelpers(array('Url', 'Tag'));
+    return url_for($baseUrl) . $firstOperand . 'uniqueIdent=' . $uniqueIdent . '&chartId=' .
+      $chartId . $subChart;
   }
 }

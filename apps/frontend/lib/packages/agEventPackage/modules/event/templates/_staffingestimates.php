@@ -30,8 +30,8 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
 
   <br />
   <div>
-    <img alt="staffStatusPie"  src="<?php $pCharts->staffStatusPie->Stroke(); ?>">
-    <!-- <?php //$pCharts->staffRequiredBar->Stroke(); ?> -->
+    <img alt="Staff Status Pie Chart"  src="<?php echo $pCharts['staffStatusPie']; ?>">
+    <img alt="Staff Required Bar Chart"  src="<?php echo $pCharts['staffRequiredBar']; ?>">
   </div>
   <br />
 <?php if ($uniqStaffCounts['non_geo'] > 0): ?>
@@ -83,26 +83,36 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
   <h4>Staff Resource Requirements</h4>
   <br />
   <div align ="center">
-  <?php echo xspchart_image_tag($staffTypeRequiredChart); ?>
+    <img alt="Staff Type Required Bar Chart"  src="<?php echo $pCharts['staffTypeRequiredBar']; ?>">
   </div>
   <h4>Staff Resource Minimum Requirements By Type</h4>
   <br />
-  <div>
-  <?php
-    $i = 0;
-    foreach ($staffTypeEstimates AS $typeId => $se) {
-    echo '<a title="' . $se['resource_type'] . '" name="st' . $typeId . '">';
-    echo xspchart_image_tag($staffTypeStatusDistributionCharts[$typeId]);
-    echo '</a>';
-      $i++;
-      if ($i % 2 == 0) {
-        echo '<br />';
-      }
-    }
-  ?>
-  </div>
-</div>
 
-<?php
-  endif;
-?>
+  <!-- @todo PAY PARTICULAR ATTENTION TO CLEANING UP THE INLINE CSS -->
+  <div style="padding-left: 1em; padding-right: 4em;">
+  <?php $i = 0; foreach ($staffTypeEstimates AS $typeId => $se): ?>
+    <?php if ($i % 2 == 0): ?>
+      <div>
+      <?php $divStyle = 'float: left; padding-bottom: 1em;' ?>
+    <?php else: ?>
+      <?php $divStyle = 'float: right; padding-bottom: 1em;' ?>
+    <?php endif; ?>
+    <?php $i++; ?>
+    <div style="<?php echo $divStyle; ?>">
+      <a title="<?php echo $se['resource_type']; ?>" name="st<?php echo $typeId; ?>"><h5><?php echo $se['resource_type']; ?></h5></a>
+      <img src="<?php echo $pCharts['staffTypeStatusPie'][$typeId] ?>" alt="<?php echo $se['resource_type']; ?> Status Pie Chart">
+    </div>
+    <?php if ($i % 2 == 0): ?>
+      </div>
+    <?php endif; ?>
+  <?php endforeach; ?>
+  <?php if ($i % 2 != 0): ?>
+    </div>
+  <?php endif; ?>
+  </div>
+  <div style="clear: both;"></div>
+</div>
+<!-- END TODO -->
+
+
+<?php endif; ?>

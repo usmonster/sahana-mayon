@@ -26,9 +26,7 @@ class xsPChartPluginConfiguration extends sfPluginConfiguration
     sfConfig::set('sf_xspchart_lib_dir', sfConfig::get('sf_xspchart_root_dir') . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'pChart' );
 
     // Dir for temporary files/pchar - system path
-    sfConfig::set('sf_xspchart_sys_web_tmp_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR .  sfConfig::get('sf_xspchart_web_tmp_dir'));
+    sfConfig::set('sf_xspchart_sys_web_tmp_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'xspchart' . DIRECTORY_SEPARATOR . 'data');
 
-    // Dir for temporary files/pchar - system path
-    sfConfig::set('sf_xspchart_sys_cache_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR .  sfConfig::get('sf_xspchart_web_tmp_dir'));
   }
 }

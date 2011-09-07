@@ -33,9 +33,6 @@ Please input a valid data/time to view your post-deployment staffing estimates f
   'staffTypeEstimates' => $staffTypeEstimates,
   'staffTypeEstimateTotals' => $staffTypeEstimateTotals,
    'reportTime' => $reportTime,
-   'staffTypeStatusDistributionCharts' => $staffTypeStatusDistributionCharts,
-   'staffTypeRequiredChart' => $staffTypeRequiredChart,
-   'pCache' => $pCache,
    'pCharts' => $pCharts,
   )); ?>
 

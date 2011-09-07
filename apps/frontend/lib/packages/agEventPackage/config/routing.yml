@@ -6,6 +6,10 @@ event_deploy:
   options: { model: agEvent, type: object }
   param:   { module: event, action: deploy }
 
+event_chart:
+  url:     /event/:event/chart
+  param:   { module: event, action: chart }
+
 event_meta:
   url:     /event/:event/meta
   options: { model: agEvent, type: object }

@@ -705,7 +705,7 @@ abstract class PluginagEvent extends BaseagEvent
     $unavailableStaff = self::getUnavailableEventStaffTypeCount($eventId, $timestamp);
 
     $results['total'] = array('min_required' => 0, 'max_required' => 0, 'unknown' => 0,
-      'available' => 0, 'committed' => 0);
+      'available' => 0, 'committed' => 0, 'unavailable' => 0);
 
     foreach ($shiftResources as $srtId => $sums) {
 
