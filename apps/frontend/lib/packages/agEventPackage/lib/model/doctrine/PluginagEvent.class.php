@@ -464,7 +464,7 @@ abstract class PluginagEvent extends BaseagEvent
    */
   public function getCommittedStaffCount($timestamp)
   {
-    return self::getAvailableEventStaffCount($this->id, $timestamp);
+    return self::getCommittedEventStaffCount($this->id, $timestamp);
   }
 
   /**
@@ -489,7 +489,7 @@ abstract class PluginagEvent extends BaseagEvent
    */
   public function getMissingGeoStaffCount($timestamp)
   {
-    return self::getMissingGeoStaffCount($this->event_id, $timestamp);
+    return self::getMissingGeoEventStaffCount($this->event_id, $timestamp);
   }
 
   /**
