@@ -650,6 +650,8 @@ class eventActions extends agActions
             $this->uniqStaffCounts['non_geo'] = agEvent::getMissingGeoEventStaffCount($this->event_id, $this->reportTime);
             if ($this->uniqStaffCounts['unavailable'] > 0) {
               $this->uniqStaffCounts['non_geo_pctg'] = number_format((($this->uniqStaffCounts['non_geo'] / $this->uniqStaffCounts['unavailable']) * 100), 0);
+            } else {
+              $this->uniqStaffCounts['non_geo_pctg'] = 0;
             }
 
             $this->staffTypeEstimates = agEvent::getEventShiftEstimates($this->event_id, $this->reportTime);

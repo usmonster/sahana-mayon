@@ -477,7 +477,6 @@ abstract class PluginagEvent extends BaseagEvent
   {
     return self::getStaffCount($eventId, $timestamp)
       ->andWhere('srs.is_available = ?', TRUE)
-      ->andWhere('(sas.allocatable = ? OR sas.committed = ?)', array(TRUE, TRUE))
       ->andWhere('NOT ' . agEntity::QUERY_HAS_GEO)
       ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
   }
@@ -552,7 +551,7 @@ abstract class PluginagEvent extends BaseagEvent
   public static function getUnavailableEventStaffTypeCount($eventId, $timestamp)
   {
     return self::getEventStaffTypeCount($eventId, $timestamp)
-      ->andWhere('(srs.is_available = ?) OR (sas.allocatable = ? AND sas.standby = ?)', array(FALSE, FALSE, FALSE))
+      ->andWhere('(srs.is_available = ?) OR (sas.allocatable = ? AND sas.committed = ?)', array(FALSE, FALSE, FALSE))
       ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
   }
 
