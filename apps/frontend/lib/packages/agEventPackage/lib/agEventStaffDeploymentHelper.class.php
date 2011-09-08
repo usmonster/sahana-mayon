@@ -110,12 +110,13 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     if($this->err)
     {
-      $lastEvent = 'Deployment operation failed to complete successfully. The last known event ' .
+      $eventMsg = 'Deployment operation failed to complete successfully. The last known event ' .
         'message was: ' . "\n" . $lastEvent;
+      $this->eh->logNotice($eventMsg);
 
-      $waves = 0;
-      $shifts = 0;
-      $staff = 0;
+      $this->totalWaves = 0;
+      $this->totalShifts = 0;
+      $this->totalStaff = 0;
     }
     else
     {
@@ -123,23 +124,31 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $conn = $this->getConnection(self::CONN_WRITE);
 
       $conn->commit();
-
-      // grab our statistics
-      $waves = $this->totalWaves;
-      $shifts = $this->totalShifts;
-      $staff = $this->totalStaff;
     }
 
+    $results = $this->getResults();
+    return $results;
+  }
+
+  /**
+   * Method to return an array of deployment results.
+   * @return array An associative array of the processed results.
+   */
+  public function getResults()
+  {
     // pick up our temporal statistics
     $this->endTime = time();
     $duration = $this->endTime - $this->startTime;
 
+    $lastEvent = $this->eh->getLastEvent(agEventHandler::EVENT_NOTICE);
+    $lastEvent = $lastEvent['msg'];
+
     $results = array();
     $results['err'] = $this->err;
     $results['msg'] = $lastEvent;
-    $results['waves'] = $waves;
-    $results['shifts'] = $shifts;
-    $results['staff'] = $staff;
+    $results['waves'] = $this->totalWaves;
+    $results['shifts'] = $this->totalShifts;
+    $results['staff'] = $this->totalStaff;
     $results['start'] = $this->startTime;
     $results['end'] = $this->endTime;
     $results['duration'] = $duration;

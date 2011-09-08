@@ -81,8 +81,8 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 Staff deployment encountered an error and could not could not complete successfully. The last known error message was: <br />
 <?php echo $batchResults['msg']; ?>
 
-<?php #else: ?>
-<?php #include_partial('staffingsummary', array('results' => $staffingSummary, 'reportTime' => $event_zero_hour)); ?>
+<?php else: ?>
+<?php include_partial('staffingsummary', array('results' => $staffingSummary, 'reportTime' => $event_zero_hour)); ?>
 <?php endif; ?>
 
 <!-- <noscript>
