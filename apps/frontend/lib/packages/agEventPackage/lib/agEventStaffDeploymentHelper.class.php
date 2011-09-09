@@ -90,7 +90,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->batchSize = ceil(($this->batchSize / $maxShifts));
     $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
-    $this->deployableStaffQuery = self::getDeployableEventStaffQuery();
+    $this->deployableStaffQuery = $this->getDeployableEventStaffQuery();
 
     // reset our statistics
     $this->resetStatistics();
@@ -705,7 +705,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
   }
 
-  protected static function getDeployableEventStaffQuery()
+  protected function getDeployableEventStaffQuery()
   {
     // start with our basic query object
     $q = agEventStaff::getActiveEventStaffQuery($this->eventId);
