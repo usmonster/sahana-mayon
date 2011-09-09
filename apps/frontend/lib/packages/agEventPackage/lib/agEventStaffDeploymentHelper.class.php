@@ -27,6 +27,8 @@ class agEventStaffDeploymentHelper extends agPdoHelper
             $skipUnfilled,
             $enableGeo,
             $deployableStaffQuery,
+            $disableEventStaffQuery,
+            $waveShiftsQuery,
             $err = FALSE,
             $startTime,
             $endTime,
@@ -91,7 +93,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
     $this->deployableStaffQuery = $this->getDeployableEventStaffQuery();
-
+    $this->disableEventStaffQuery = $this->getDisableEventStaffQuery();
+    $this->waveShiftsQuery = $this->getWaveShiftsQuery();
+    
     // reset our statistics
     $this->resetStatistics();
 
@@ -515,22 +519,26 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                     $staffWave,
                                     $shiftOrigin)
   {
-    $q = agDoctrineQuery::create()
+    return $this->waveShiftsQuery->execute(array($eventFacilityResourceId, $staffWave,
+      $shiftOrigin), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+  }
+
+  protected function getWaveShiftsQuery()
+  {
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= ?';
+
+    return agDoctrineQuery::create()
       ->select('es.id')
         ->from('agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
           ->innerJoin('es.agEventFacilityResource efr')
           ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
-        ->where('es.event_facility_resource_id = ?', $eventFacilityResourceId)
+        ->where('ss.disabled = ?', FALSE)
+          ->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)))
+          ->andWhere('es.event_facility_resource_id = ?', $eventFacilityResourceId)
           ->andWhere('es.staff_wave = ?', $staffWave)
-          ->andWhere('es.originator_id = ?', $shiftOrigin)
-          ->andWhere('ss.disabled = ?', FALSE);
-
-    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
-      ' >= ?';
-    $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
-
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+          ->andWhere('es.originator_id = ?', $shiftOrigin);
   }
 
   /**
@@ -624,17 +632,8 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   {
     $conn = $this->getConnection(self::CONN_WRITE);
 
-    $q = agDoctrineQuery::create()
-      ->select('es1.id')
-        ->from('agEventStaff AS es1')
-          ->innerJoin('es1.agStaffResource AS sr1')
-          ->innerJoin('sr1.agStaff AS s1')
-          ->innerJoin('s1.agStaffResource AS sr2')
-          ->innerJoin('sr2.agEventStaff AS es2')
-        ->where('es1.event_id = es2.event_id')
-          ->andWhereIn('es2.id', $eventStaffIds);
-
-    $eventStaffIds = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    $eventStaffIds = $this->disableEventStaffQuery->execute(array($eventStaffIds),
+      agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
     $q->free(TRUE);
 
     $agEventStaffStatusTable = $conn->getTable('agEventStaffStatus');
@@ -675,6 +674,19 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     unset($coll);
 
     $this->eh->logInfo('Successfully updated ' . $collSize . ' staff status records.');
+  }
+
+  protected function getDisableEventStaffQuery()
+  {
+    return agDoctrineQuery::create()
+      ->select('es1.id')
+        ->from('agEventStaff AS es1')
+          ->innerJoin('es1.agStaffResource AS sr1')
+          ->innerJoin('sr1.agStaff AS s1')
+          ->innerJoin('s1.agStaffResource AS sr2')
+          ->innerJoin('sr2.agEventStaff AS es2')
+        ->where('es1.event_id = es2.event_id')
+          ->andWhereIn('es2.id');
   }
 
   /**
