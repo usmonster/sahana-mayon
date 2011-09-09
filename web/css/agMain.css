@@ -771,7 +771,7 @@ th .tableRow {
   text-align: center;
 }
 
-table.staffTable td.left {
+table.staffTable td.left, .leftText {
   text-align:left;
 }
 
@@ -2002,3 +2002,26 @@ div.agFormatterAddressLevelTwo {
     background-color: red;
 }
 
+.fullWidthRightText{
+width:100% !important; text-align:right;
+}
+
+.graphDisplay{
+display:inline-block;zoom:1; *display:inline;
+}
+
+.padding20Px{  
+padding:20px; 
+}
+
+.padding10PxLeft{
+padding-left:10px;
+}
+
+.width750Px{
+width:750px;
+}
+
+.pad1Em{
+text-align:left; padding-left:1em !important;
+}

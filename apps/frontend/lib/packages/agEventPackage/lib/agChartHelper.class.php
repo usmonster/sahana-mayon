@@ -23,6 +23,7 @@ class agChartHelper
   CONST CHART_DATA_DIR = 'sf_xspchart_data_dir';
 
   CONST INVALID_UNIQUE_IDENT = '[^-\w]';
+  CONST YAML_INLINE = 1;
 
   protected static $xsPCache;
 
@@ -61,6 +62,10 @@ class agChartHelper
         ),
     );
 
+  /**
+   * Method to return (or instantiate) the xsPCache object
+   * @return xsPCache An xsPCache object
+   */
   protected static function getXsPCache()
   {
     if (!isset(self::$xsPCache)) {
@@ -148,10 +153,17 @@ class agChartHelper
       touch($dataFile);
     }
 
-    file_put_contents($dataFile, sfYaml::dump($dataArray, 1));
+    file_put_contents($dataFile, sfYaml::dump($dataArray, self::YAML_INLINE));
     return TRUE;
   }
 
+  /**
+   * Method to return streamed PNG chart data
+   * @param mixed $uniqueIdent A string (unique) identifier for a chart
+   * @param string $chartId One of the CHART_ constants
+   * @param mixed $subChartId A unique sub-chart identifier
+   * @return binary A PNG file (not a url, the actual PNG content)
+   */
   public static function getChart($uniqueIdent, $chartId, $subChartId = NULL)
   {
     if (preg_match(self::INVALID_UNIQUE_IDENT, $uniqueIdent) || 
@@ -167,9 +179,10 @@ class agChartHelper
     }
 
     $cache = self::getXsPCache();
-    if ($cache->IsInCache($cacheId, $data)) {
-      return $cache->GetFromCache($cacheId, $data);
-    }
+    $cache->GetFromCache($cacheId, $data);
+//    if ($cache->IsInCache($cacheId, $data)) {
+//
+//    }
 
     $desc = self::$dataDescs[$chartId];
 
@@ -189,7 +202,7 @@ class agChartHelper
     }
 
     $cache->WriteToCache($cacheId, $data, $chart);
-    return $cache->GetFromCache($cacheId, $data);
+    $cache->GetFromCache($cacheId, $data);
   }
 
   /**
@@ -200,16 +213,15 @@ class agChartHelper
    */
   protected static function getStaffStatusPie(array $data, array $desc)
   {
-    $chart = new xsPChart(390,210);
+    $chart = new xsPChart(390,195);
     $chart->setColorPalette(0, 255, 145, 22);
     $chart->setColorPalette(1, 255, 67, 22);
     $chart->setColorPalette(2, 33, 188, 255);
     $chart->setColorPalette(3, 11, 119, 166);
     $chart->xsSetFontProperties('DejaVuSans.ttf', 8);
-    $chart->drawPieGraph($data, $desc, 150,100,110, PIE_PERCENTAGE,TRUE,60,20,5);
+    $chart->drawPieGraph($data, $desc, 150,90,110, PIE_PERCENTAGE,TRUE,60,20,5);
     $chart->drawPieLegend(283,20,$data,$desc,250,250,250);
     $chart->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
-    $chart->drawTitle(10, 10, 'Staff Resource Distribution By Status', 134, 134, 134);
 
     return $chart;
   }
@@ -222,8 +234,8 @@ class agChartHelper
    */
   protected static function getStaffRequiredBar(array $data, array $desc)
   {
-    $chart = new xsPChart(320, 210);
-    $chart->setGraphArea(60, 30, 220, 180);
+    $chart = new xsPChart(320, 195);
+    $chart->setGraphArea(60, 10, 220, 175);
     $chart->xsSetFontProperties('DejaVuSans.ttf', 9);
     $chart->setColorPalette(0, 33, 188, 255);
     $chart->setColorPalette(1, 255, 145, 22);
@@ -234,7 +246,6 @@ class agChartHelper
     $chart->drawOverlayBarGraph($data, $desc, 100);
     $chart->drawLegend(210, 20, $desc, 255, 255, 255);
     $chart->xsSetFontProperties('DejaVuSans-Bold.ttf', 10);
-    $chart->drawTitle(10, 10, 'Staff Resource Projections', 134, 134, 134);
 
     return $chart;
   }
@@ -275,7 +286,7 @@ class agChartHelper
     $chart->setColorPalette(1, 11, 119, 166);
     $chart->setColorPalette(2, 255, 145, 22);
     $chart->xsSetFontProperties('DejaVuSans.ttf', 8);
-    $chart->drawFlatPieGraph($data, $desc, 130,112,87, PIE_PERCENTAGE, 7);
+    $chart->drawFlatPieGraph($data, $desc, 120,112,87, PIE_PERCENTAGE, 7);
     $chart->drawPieLegend(220,172,$data, $desc,255,255,255);
 
     return $chart;

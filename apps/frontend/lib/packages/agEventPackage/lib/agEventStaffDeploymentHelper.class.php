@@ -25,6 +25,8 @@ class agEventStaffDeploymentHelper extends agPdoHelper
             $addrGeoTypeId,
             $shiftOffset,
             $skipUnfilled,
+            $enableGeo,
+            $deployableStaffQuery,
             $err = FALSE,
             $startTime,
             $endTime,
@@ -80,12 +82,15 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->addrGeoTypeId = agGeoType::getAddressGeoTypeId();
     $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
     $this->shiftOffset = agGlobal::getParam('shift_change_restriction');
+    $this->enableGeo = agGlobal::getParam('enable_geo_base_staff_deployment');
 
     // get our global batch size, then modify it to guesstimate on our worst-case wave
     $this->batchSize = agGlobal::getParam('default_batch_size');
     $maxShifts = $this->getMaxShiftsPerWave();
     $this->batchSize = ceil(($this->batchSize / $maxShifts));
     $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
+
+    $this->deployableStaffQuery = self::getDeployableEventStaffQuery();
 
     // reset our statistics
     $this->resetStatistics();
@@ -686,11 +691,27 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                              $facLat,
                                              $facLon)
   {
+    // add our geo-distance calculation
+    if ($this->enableGeo) {
+      $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
+        '+ cos( radians(gc.latitude) ) * cos( radians(' . $facLat . ') ) ' .
+        '* cos( radians(' . $facLon . ') - radians(gc.longitude) ) ) * 6378)' ;
+      $this->deployableStaffQuery->orderBy($geoDistance . ' ASC');
+    }
+
+    $this->deployableStaffQuery->limit($staffCount);
+
+    return $this->deployableStaffQuery->execute(array($staffResourceTypeId),
+      agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+  }
+
+  protected static function getDeployableEventStaffQuery()
+  {
     // start with our basic query object
     $q = agEventStaff::getActiveEventStaffQuery($this->eventId);
 
-    $q->select('evs.id')
-        ->innerJoin('sr.agStaff s')
+    if ($this->enableGeo) {
+      $q->innerJoin('sr.agStaff s')
           ->innerJoin('s.agPerson p')
           ->innerJoin('p.agEntity e')
           ->innerJoin('e.agEntityAddressContact eac')
@@ -699,29 +720,24 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('ag.agGeo g')
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
-        ->andWhere('sr.staff_resource_type_id = ?', $staffResourceTypeId)
           ->andWhere('sas.allocatable = ?', TRUE)
           ->andWhere('sas.standby = ?', FALSE)
-          ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
-//        ->orderBy('evs.deployment_weight DESC')
-        ->limit($staffCount);
+          ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId) ;
 
-    // just pick up the lowest priority staff address
-    $minStaffAddr = 'EXISTS (' .
-      'SELECT seac.entity_id ' .
-        'FROM agEntityAddressContact AS seac ' .
-        'WHERE seac.entity_id = eac.entity_id ' .
-        'HAVING MIN(seac.priority) = eac.priority' .
-      ')';
-    $q->andWhere($minStaffAddr);
+      // just pick up the lowest priority staff address
+      $minStaffAddr = 'EXISTS (' .
+        'SELECT seac.entity_id ' .
+          'FROM agEntityAddressContact AS seac ' .
+          'WHERE seac.entity_id = eac.entity_id ' .
+          'HAVING MIN(seac.priority) = eac.priority' .
+        ')';
+      $q->andWhere($minStaffAddr);
+    }
 
-    // add our geo-distance calculation
-    $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
-      '+ cos( radians(gc.latitude) ) * cos( radians(' . $facLat . ') ) ' .
-      '* cos( radians(' . $facLon . ') - radians(gc.longitude) ) ) * 6378)' ;
-    //$q->orderBy($geoDistance . ' ASC');
+    $q->select('evs.id')
+        ->andWhere('sr.staff_resource_type_id = ?');
 
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    return $q;
   }
 
   /**
@@ -928,30 +944,5 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $pdoStmt = $this->executePdoQuery($conn, $sql, $params['where'], NULL, self::QUERY_SHIFTS);
     
     return $pdoStmt;
-  }
-
-  /**
-   * A simple method used to test execution of this class
-   * @return <type>
-   * @deprecated A test-method only
-   */
-  public function test()
-  {
-    $this->batchSize = 10;
-    $this->eh->setLogEventLevel(agEventHandler::EVENT_DEBUG);
-
-    $continue = TRUE;
-    while ($continue == TRUE)
-    {
-      $batch = $this->processBatch();
-      $continue = $batch['continue'];
-
-      print_r($batch);
-      echo "<br/><br/>";
-    }
-
-    $results = $this->save();
-    print_r($results);
-    return "<br/><br/>" . "Success!";
   }
 }
