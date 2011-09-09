@@ -297,4 +297,4 @@ agGlobalParam:
     id: 59
     agHost: localhost
     datapoint: enable_geo_base_staff_deployment
-    value 0
+    value: 0
