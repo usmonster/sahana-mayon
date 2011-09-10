@@ -519,14 +519,15 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                     $staffWave,
                                     $shiftOrigin)
   {
-    return $this->waveShiftsQuery->execute(array($eventFacilityResourceId, $staffWave,
-      $shiftOrigin), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    return $this->waveShiftsQuery->execute(array(':efrId' => $eventFacilityResourceId,
+      ':wave' => $staffWave, ':originator' => $shiftOrigin),
+      agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
   }
 
   protected function getWaveShiftsQuery()
   {
     $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
-      ' >= ?';
+      ' >= :offset';
 
     return agDoctrineQuery::create()
       ->select('es.id')
@@ -534,11 +535,11 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('es.agShiftStatus ss')
           ->innerJoin('es.agEventFacilityResource efr')
           ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
-        ->where('ss.disabled = ?', FALSE)
-          ->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)))
-          ->andWhere('es.event_facility_resource_id = ?')
-          ->andWhere('es.staff_wave = ?')
-          ->andWhere('es.originator_id = ?');
+        ->where('ss.disabled = :disabled', array(':disabled' => FALSE))
+          ->andWhere($allocatableShifts, array(':offset' => (time() + (60 * $this->shiftOffset))))
+          ->andWhere('es.event_facility_resource_id = :efrId')
+          ->andWhere('es.staff_wave = :wave')
+          ->andWhere('es.originator_id = :originator');
   }
 
   /**
@@ -713,14 +714,31 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     $this->deployableStaffQuery->limit($staffCount);
 
-    return $this->deployableStaffQuery->execute(array($staffResourceTypeId),
+    return $this->deployableStaffQuery->execute(array(':staffResourceType' => $staffResourceTypeId),
       agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
   }
 
   protected function getDeployableStaffQuery()
   {
     // start with our basic query object
-    $q = agEventStaff::getActiveEventStaffQuery($this->eventId);
+    $q = agDoctrineQuery::create()
+        ->from('agEventStaff evs')
+          ->innerJoin('evs.agEventStaffStatus ess')
+          ->innerJoin('ess.agStaffAllocationStatus sas')
+          ->innerJoin('evs.agStaffResource sr')
+          ->innerJoin('sr.agStaffResourceStatus srs')
+        ->where('evs.event_id = :event', array(':event' => $this->eventId))
+          ->andWhere('srs.is_available = :srsAvailable', array(':srsAvailable' => TRUE));
+
+    // ensure that we only get the most recent staff status
+    $recentStaffStatus = 'EXISTS (' .
+      'SELECT sess.id ' .
+        'FROM agEventStaffStatus AS sess ' .
+        'WHERE sess.time_stamp <= CURRENT_TIMESTAMP ' .
+          'AND sess.event_staff_id = ess.event_staff_id ' .
+        'HAVING MAX(sess.time_stamp) = ess.time_stamp' .
+      ')';
+    $q->andWhere($recentStaffStatus);;
 
     if ($this->enableGeo) {
       $q->innerJoin('sr.agStaff s')
@@ -732,9 +750,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('ag.agGeo g')
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
-          ->andWhere('sas.allocatable = TRUE')
-          ->andWhere('sas.standby = FALSE')
-          ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId) ;
+          ->andWhere('sas.allocatable = :allocatable', array(':allocatable' => TRUE))
+          ->andWhere('sas.standby = :standby', array(':standby' => FALSE))
+          ->andWhere('g.geo_type_id = :geoType', array(':geoType' => $this->addrGeoTypeId)) ;
 
       // just pick up the lowest priority staff address
       $minStaffAddr = 'EXISTS (' .
@@ -747,7 +765,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     }
 
     $q->select('evs.id')
-        ->andWhere('sr.staff_resource_type_id = ?');
+        ->andWhere('sr.staff_resource_type_id = :staffResourceType');
 
     return $q;
   }
