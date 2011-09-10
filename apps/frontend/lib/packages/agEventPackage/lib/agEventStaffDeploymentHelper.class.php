@@ -632,13 +632,12 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   protected function disableEventStaff(array $eventStaffIds)
   {
     $conn = $this->getConnection(self::CONN_WRITE);
+
     $this->disableEventStaffQuery->where('es1.event_id = es2.event_id')
       ->andWhereIn('es2.id', $eventStaffIds);
-
     $eventStaffIds = $this->disableEventStaffQuery->execute(array(),
       agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
-    $q->free(TRUE);
-
+    
     $agEventStaffStatusTable = $conn->getTable('agEventStaffStatus');
     $coll = new Doctrine_Collection('agEventStaffStatus');
 
