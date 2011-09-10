@@ -632,8 +632,10 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   protected function disableEventStaff(array $eventStaffIds)
   {
     $conn = $this->getConnection(self::CONN_WRITE);
+    $this->disableEventStaffQuery->where('es1.event_id = es2.event_id')
+      ->andWhereIn('es2.id', $eventStaffIds);
 
-    $eventStaffIds = $this->disableEventStaffQuery->execute(array($eventStaffIds),
+    $eventStaffIds = $this->disableEventStaffQuery->execute(array(),
       agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
     $q->free(TRUE);
 
@@ -685,9 +687,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('es1.agStaffResource AS sr1')
           ->innerJoin('sr1.agStaff AS s1')
           ->innerJoin('s1.agStaffResource AS sr2')
-          ->innerJoin('sr2.agEventStaff AS es2')
-        ->where('es1.event_id = es2.event_id')
-          ->andWhereIn('es2.id');
+          ->innerJoin('sr2.agEventStaff AS es2');
   }
 
   /**
