@@ -304,7 +304,8 @@ class agStaffImportNormalization extends agImportNormalization
     return agDoctrineQuery::create()
       ->select('ieh.entity_id')
       ->from('agImportEntityHash ieh')
-      ->where('ieh.row_hash = ?', $importHash);
+      ->where('ieh.row_hash = ?', $importHash)
+      ->;
   }
 
   /**
