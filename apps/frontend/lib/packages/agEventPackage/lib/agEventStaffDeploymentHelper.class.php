@@ -536,9 +536,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
         ->where('ss.disabled = ?', FALSE)
           ->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)))
-          ->andWhere('es.event_facility_resource_id = ?', $eventFacilityResourceId)
-          ->andWhere('es.staff_wave = ?', $staffWave)
-          ->andWhere('es.originator_id = ?', $shiftOrigin);
+          ->andWhere('es.event_facility_resource_id = ?')
+          ->andWhere('es.staff_wave = ?')
+          ->andWhere('es.originator_id = ?');
   }
 
   /**
@@ -734,7 +734,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('gf.agGeoCoordinate gc')
           ->andWhere('sas.allocatable = TRUE')
           ->andWhere('sas.standby = FALSE')
-          ->andWhere('g.geo_type_id = ' . $this->addrGeoTypeId) ;
+          ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId) ;
 
       // just pick up the lowest priority staff address
       $minStaffAddr = 'EXISTS (' .
