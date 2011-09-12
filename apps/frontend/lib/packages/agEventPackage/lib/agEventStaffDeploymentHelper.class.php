@@ -703,6 +703,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                              $facLat,
                                              $facLon)
   {
+    $results = array();
     // add our geo-distance calculation
     if ($this->enableGeo) {
       $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
@@ -713,15 +714,24 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     $this->deployableStaffQuery->limit($staffCount);
 
-    return $this->deployableStaffQuery->execute(array(':staffResourceType' => $staffResourceTypeId),
-      agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    // we don't hydrate o hopefully avoid the DISTINCT that doctrine throws in by default
+    $results = $this->deployableStaffQuery->execute(array(':staffResourceType' => $staffResourceTypeId),
+      agDoctrineQuery::HYDRATE_NONE);
+
+    foreach ($results as &$row) {
+      $row = $row[0];
+    }
+    unset($row);
+
+    return $results;
   }
 
   protected function getDeployableStaffQuery()
   {
     // start with our basic query object
     $q = agDoctrineQuery::create()
-        ->from('agEventStaff evs')
+      ->select('evs.id')
+      ->from('agEventStaff evs')
           ->innerJoin('evs.agEventStaffStatus ess')
           ->innerJoin('ess.agStaffAllocationStatus sas')
           ->innerJoin('evs.agStaffResource sr')
@@ -737,7 +747,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           'AND sess.event_staff_id = ess.event_staff_id ' .
         'HAVING MAX(sess.time_stamp) = ess.time_stamp' .
       ')';
-    $q->andWhere($recentStaffStatus);;
+    $q->andWhere($recentStaffStatus);
 
     if ($this->enableGeo) {
       $q->innerJoin('sr.agStaff s')
@@ -763,8 +773,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $q->andWhere($minStaffAddr);
     }
 
-    $q->select('evs.id')
-        ->andWhere('sr.staff_resource_type_id = :staffResourceType');
+    $q->andWhere('sr.staff_resource_type_id = :staffResourceType');
 
     return $q;
   }

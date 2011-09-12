@@ -77,7 +77,7 @@ if (!empty($results)): // print_r($results);
 
 <?php elseif (is_null($reportTime)): ?>
 <?php else: ?>
-                            There is no shift staffing data available for this event at <?php echo date('Y-m-d H:m:s T', $reportTime) ?>.
+                            There is no shift staffing data available for this event at <?php echo date('Y-m-d H:i:s T', $reportTime) ?>.
 <?php
                             endif;
 //print_r($sf_data->getRaw('results'));
