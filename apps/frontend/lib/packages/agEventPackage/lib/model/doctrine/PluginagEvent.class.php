@@ -641,7 +641,7 @@ abstract class PluginagEvent extends BaseagEvent
 
     $timeBoundWhere = '((( 60 * es.minutes_start_to_facility_activation ) + efrat.activation_time ) ' .
       '<= ?) AND ((( 60 * ( es.minutes_start_to_facility_activation + es.task_length_minutes + ' .
-      'es.break_length_minutes )) + efrat.activation_time ) >= ? )';
+      'es.break_length_minutes )) + efrat.activation_time ) > ? )';
 
     $q = agDoctrineQuery::create()
       ->select('es.staff_resource_type_id')
