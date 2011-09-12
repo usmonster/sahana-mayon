@@ -92,6 +92,10 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->batchSize = ceil(($this->batchSize / $maxShifts));
     $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
+    // @todo These unsets shouldn't be necessary. Somehow this is being called twice which needs to be resolved
+    unset($this->deployableStaffQuery);
+    unset($this->disableEventStaffQuery);
+    unset($this->waveShiftsQuery);
     $this->deployableStaffQuery = $this->getDeployableStaffQuery();
     $this->disableEventStaffQuery = $this->getDisableEventStaffQuery();
     $this->waveShiftsQuery = $this->getWaveShiftsQuery();
