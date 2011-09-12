@@ -716,7 +716,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     // we don't hydrate o hopefully avoid the DISTINCT that doctrine throws in by default
     $results = $this->deployableStaffQuery->execute(array(':staffResourceType' => $staffResourceTypeId),
-      agDoctrineQuery::HYDRATE_NONE);
+      Doctrine_Core::HYDRATE_NONE);
 
     foreach ($results as &$row) {
       $row = $row[0];
