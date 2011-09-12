@@ -73,11 +73,11 @@ class agSendWordNowPostDeploy extends agSendWordNowExport
       ->addSelect('evfrat.id')
       ->addSelect('evfrat.activation_time')
       ->addSelect('evfg.id')
-      ->innerJoin('evs.agEventStaffShift evss') // a10
-      ->innerJoin('evss.agEventShift evsh') // a11
-      ->innerJoin('evsh.agEventFacilityResource evfr') // a12
-      ->innerJoin('evfr.agEventFacilityResourceActivationTime evfrat') // a13
-      ->innerJoin('evfr.agEventFacilityGroup evfg') // a14
+      ->innerJoin('evs.agEventStaffShift evss') // 20
+      ->innerJoin('evss.agEventShift evsh') // a21
+      ->innerJoin('evsh.agEventFacilityResource evfr') // a22
+      ->innerJoin('evfr.agEventFacilityResourceActivationTime evfrat') // a23
+      ->innerJoin('evfr.agEventFacilityGroup evfg') // a24
       ->andWhere('sas.committed = ?', TRUE);
 
     // filter for the first shift for each staffperson
@@ -104,9 +104,9 @@ class agSendWordNowPostDeploy extends agSendWordNowExport
   {
     foreach ($this->exportRawData as $rowId => $rawData) {
       // format the data
-      $gData = $this->getStaffDistributionCenter($rawData->a14__id);
-      $timestamp = $rawData->a11__minutes_start_to_facility_activation + $rawData->a13__activation_time;
-      $time = date('Y-m-d h:i', $timestamp);
+      $gData = $this->getStaffDistributionCenter($rawData->a24__id);
+      $timestamp = (60* $rawData->a21__minutes_start_to_facility_activation) + $rawData->a23__activation_time;
+      $time = date('Y-m-d H:i', $timestamp);
 
       // concat value strings
       $this->exportData[$rowId]['CUSTOM LABEL'] = $gData['event_facility_group'] . '; ' .
