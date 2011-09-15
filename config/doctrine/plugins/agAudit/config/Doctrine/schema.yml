@@ -4,6 +4,7 @@ agImportEntityHash:
       primary: true
       type: integer(5)
       notnull: true
+      autoincrement: true
     entity_id:
       type: integer(5)
       notnull: true

@@ -219,9 +219,9 @@ class agStaffImportNormalization extends agImportNormalization
     // array( [order] => array(component => component name, helperClass => Name of the helper class, throwOnError => boolean, method => method name) )
     // setEntity creates entity, person, and staff records.
     $this->importComponents[] = array(
-      'component' => 'entityHashes',
+      'component' => 'createEntityHashes',
       'throwOnError' => TRUE,
-      'method' => 'setEntityHashes'
+      'method' => 'createEntityHashes'
     );
     $this->importComponents[] = array(
       'component' => 'entity',
@@ -268,12 +268,24 @@ class agStaffImportNormalization extends agImportNormalization
       'method' => 'setPersonLanguage',
       'helperClass' => 'agPersonLanguageHelper'
     );
+    $this->importComponents[] = array(
+      'component' => 'setImportEntityHash',
+      'throwOnError' => FALSE,
+      'method' => 'setImportEntityHash'
+    );
   }
 
-  protected function getEntityHashes($throwOnError, Doctrine_Connection $conn)
+  /**
+   * Method to create entity hashes for import rows
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function createEntityHashes($throwOnError, Doctrine_Connection $conn)
   {
     // loop through the import data
-    $hashses = array();
+    $hashes = array();
+    $matched = 0;
     foreach ($this->importData as $rowId => &$rowData) {
 
       // first calculate the hash without the entity ID
@@ -283,29 +295,55 @@ class agStaffImportNormalization extends agImportNormalization
       $hash = md5(json_encode($hashData));
 
       // we do this for in-batch duplicate detection
-      $hashes[$hash] = TRUE;
       if (!isset($hashes[$hash])) {
+        $hashes[$hash] = TRUE;
         $rowData['primaryKeys']['import_hash'] = $hash;
+
+        // build a specific hash data array that excludes entity ID
+        if (!isset($rowData['_rawData']['entity_id'])) {
+          $entityId = $this->getEntityFromImportHash($hash);
+          if (!empty($entityId)) {
+            $rowData['_rawData']['entity_id'] = $entityId;
+            $matched++;
+          }
+        }
       } else {
         $eventMsg = 'Duplicate import row found on row ' . $rowId . '. Ignoring duplicate.';
         $this->eh->logAlert($eventMsg, 1, FALSE);
-        unset($this->importData['$rowId']);
-      }
-
-      // build a specific hash data array that excludes entity ID
-      if (!isset($rowData['_rawData']['entity_id'])) {
-
+        unset($this->importData[$rowId]);
       }
     }
     unset($rowData);
+
+    if ($matched > 0) {
+      $eventMsg = 'Found ' . $matched . ' rows without Entity ID\'s that matched a previous import. ' .
+      'Rows were assigned the matched Entity ID.';
+      $this->eh->logAlert($eventMsg);
+    }
   }
 
+  /**
+   * Method to retrieve an entity import row hash
+   * @param string $importHash An import row hash
+   * @return integer An import hash ID
+   */
   protected function getEntityFromImportHash($importHash) {
-    return agDoctrineQuery::create()
+
+    $q = agDoctrineQuery::create()
       ->select('ieh.entity_id')
       ->from('agImportEntityHash ieh')
       ->where('ieh.row_hash = ?', $importHash)
-      ->;
+      ->useResultCache(TRUE, 1800);
+
+    $result = $q->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
+    if (empty($result))
+    {
+      $cacheDriver = Doctrine_Manager::getInstance()->getAttribute(Doctrine_Core::ATTR_RESULT_CACHE);
+      $cacheDriver->delete($q->getResultCacheHash());
+    }
+
+    return $result;
   }
 
   /**
@@ -346,8 +384,18 @@ class agStaffImportNormalization extends agImportNormalization
     foreach ($this->importData as $rowId => $rowData) {
       $rawData = $rowData['_rawData'];
 
-      if (array_key_exists('entity_id', $rawData)) {
-        $rawEntityIds[] = $rawData['entity_id'];
+      if (isset($rawData['entity_id'])) {
+        $entityId = $rawData['entity_id'];
+        // we apply a small check for dupes
+        if (!isset($rawEntityIds[$entityId])) {
+          $rawEntityIds[$entityId] = TRUE;
+        } else {
+          $eventMsg = 'A previous row was identified with Entity ID #' . $entityId . '. Skipping ' .
+            'subsequent row.';
+          $this->eh->logAlert($eventMsg, 0);
+
+          unset($this->importData[$rowId]);
+        }
       }
     }
 
@@ -359,7 +407,7 @@ class agStaffImportNormalization extends agImportNormalization
         ->from('agEntity e')
         ->innerJoin('e.agPerson p')
         ->leftJoin('p.agStaff s')
-        ->whereIn('e.id', $rawEntityIds);
+        ->whereIn('e.id', array_keys($rawEntityIds));
     $entities = $q->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_ARRAY);
     $q->free();
 
@@ -1120,6 +1168,50 @@ class agStaffImportNormalization extends agImportNormalization
     unset($personLanguages);
 
     // @todo do your results reporting here
+  }
+
+  /**
+   * Method to set import entity hash for future retrieval
+   * @param boolean $throwOnError Parameter sometimes used by import normalization methods to
+   * control whether or not errors will be thrown.
+   * @param Doctrine_Connection $conn A doctrine connection for data manipulation.
+   */
+  protected function setImportEntityHash($throwOnError, Doctrine_Connection $conn)
+  {
+    $entityHashes = array();
+    $table = $conn->getTable('agImportEntityHash');
+
+    // simplify our array to be a k/v pair
+    foreach ($this->importData as $importData) {
+      $entityHashes[$importData['primaryKeys']['entity_id']] = $importData['primaryKeys']['import_hash'];
+    }
+
+    // find all existing records
+    $coll = agDoctrineQuery::create($conn)
+      ->select('*')
+        ->from('agImportEntityHash ieh INDEXBY ieh.entity_id')
+        ->whereIn('ieh.entity_id', array_keys($entityHashes))
+        ->execute();
+
+    // update existing row hashes
+    foreach ($coll as $entityId => $rec) {
+      $rec['row_hash'] = $entityHashes[$entityId];
+      unset($entityHashes[$entityId]);
+    }
+
+    // make new records as appropriate
+    foreach ($entityHashes as $entityId => $importHash) {
+      $rec = new agImportEntityHash($table, TRUE);
+      $rec['entity_id'] = $entityId;
+      $rec['row_hash'] = $importHash;
+
+      // this shouldn't error if entity uniqueness is preserved above
+      $coll->add($rec, $entityId);
+    }
+
+    // save and release
+    $coll->save($conn);
+    $coll->free();
   }
 
 }
