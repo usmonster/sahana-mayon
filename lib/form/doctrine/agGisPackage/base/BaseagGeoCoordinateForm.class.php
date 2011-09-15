@@ -30,6 +30,10 @@ abstract class BaseagGeoCoordinateForm extends BaseFormDoctrine
       'updated_at' => new sfValidatorDateTime(),
     ));
 
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorDoctrineUnique(array('model' => 'agGeoCoordinate', 'column' => array('latitude', 'longitude')))
+    );
+
     $this->widgetSchema->setNameFormat('ag_geo_coordinate[%s]');
 
     $this->errorSchema = new sfValidatorErrorSchema($this->validatorSchema);

@@ -25,6 +25,10 @@ class agEventStaffDeploymentHelper extends agPdoHelper
             $addrGeoTypeId,
             $shiftOffset,
             $skipUnfilled,
+            $enableGeo,
+            $deployableStaffQuery,
+            $disableEventStaffQuery,
+            $waveShiftsQuery,
             $err = FALSE,
             $startTime,
             $endTime,
@@ -52,10 +56,10 @@ class agEventStaffDeploymentHelper extends agPdoHelper
    * @param integer $eventId An event ID
    * @return agEventStaffDeploymentHelper An instance of agEventStaffDeploymentHelper
    */
-  public static function getInstance($eventId, $eventDebugLevel = NULL)
+  public static function getInstance($eventId, $skipUnfilled = TRUE, $eventDebugLevel = NULL)
   {
     $esdh = new self();
-    $esdh->__init($eventId, $eventDebugLevel);
+    $esdh->__init($eventId, $skipUnfilled, $eventDebugLevel);
     return $esdh;
   }
 
@@ -80,6 +84,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->addrGeoTypeId = agGeoType::getAddressGeoTypeId();
     $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
     $this->shiftOffset = agGlobal::getParam('shift_change_restriction');
+    $this->enableGeo = agGlobal::getParam('enable_geo_base_staff_deployment');
 
     // get our global batch size, then modify it to guesstimate on our worst-case wave
     $this->batchSize = agGlobal::getParam('default_batch_size');
@@ -87,6 +92,14 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->batchSize = ceil(($this->batchSize / $maxShifts));
     $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
+    // @todo These unsets shouldn't be necessary. Somehow this is being called twice which needs to be resolved
+    unset($this->deployableStaffQuery);
+    unset($this->disableEventStaffQuery);
+    unset($this->waveShiftsQuery);
+    $this->deployableStaffQuery = $this->getDeployableStaffQuery();
+    $this->disableEventStaffQuery = $this->getDisableEventStaffQuery();
+    $this->waveShiftsQuery = $this->getWaveShiftsQuery();
+    
     // reset our statistics
     $this->resetStatistics();
 
@@ -110,12 +123,13 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     if($this->err)
     {
-      $lastEvent = 'Deployment operation failed to complete successfully. The last known event ' .
+      $eventMsg = 'Deployment operation failed to complete successfully. The last known event ' .
         'message was: ' . "\n" . $lastEvent;
+      $this->eh->logNotice($eventMsg);
 
-      $waves = 0;
-      $shifts = 0;
-      $staff = 0;
+      $this->totalWaves = 0;
+      $this->totalShifts = 0;
+      $this->totalStaff = 0;
     }
     else
     {
@@ -123,26 +137,35 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $conn = $this->getConnection(self::CONN_WRITE);
 
       $conn->commit();
-
-      // grab our statistics
-      $waves = $this->totalWaves;
-      $shifts = $this->totalShifts;
-      $staff = $this->totalStaff;
     }
 
+    $results = $this->getResults();
+    return $results;
+  }
+
+  /**
+   * Method to return an array of deployment results.
+   * @return array An associative array of the processed results.
+   */
+  public function getResults()
+  {
     // pick up our temporal statistics
     $this->endTime = time();
     $duration = $this->endTime - $this->startTime;
 
+    $lastEvent = $this->eh->getLastEvent(agEventHandler::EVENT_NOTICE);
+    $lastEvent = $lastEvent['msg'];
+
     $results = array();
     $results['err'] = $this->err;
     $results['msg'] = $lastEvent;
-    $results['waves'] = $waves;
-    $results['shifts'] = $shifts;
-    $results['staff'] = $staff;
+    $results['waves'] = $this->totalWaves;
+    $results['shifts'] = $this->totalShifts;
+    $results['staff'] = $this->totalStaff;
     $results['start'] = $this->startTime;
     $results['end'] = $this->endTime;
     $results['duration'] = $duration;
+    $results['profiler'] = $this->profiler->getResults();
 
     return $results;
   }
@@ -258,7 +281,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $this->eh->logInfo($eventMsg);
 
       // now execute the real query and continue
-      $pdo = $this->getFacGrpShiftWaves();
+      $this->getFacGrpShiftWaves();
 
       // finally, reset our little iter flag
       $this->iterNextGrp = FALSE;
@@ -500,20 +523,27 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                     $staffWave,
                                     $shiftOrigin)
   {
-    $q = agDoctrineQuery::create()
+    return $this->waveShiftsQuery->execute(array(':efrId' => $eventFacilityResourceId,
+      ':wave' => $staffWave, ':originator' => $shiftOrigin),
+      agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+  }
+
+  protected function getWaveShiftsQuery()
+  {
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= :offset';
+
+    return agDoctrineQuery::create()
       ->select('es.id')
         ->from('agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
-        ->where('es.event_facility_resource_id = ?', $eventFacilityResourceId)
-          ->andWhere('es.staff_wave = ?', $staffWave)
-          ->andWhere('es.originator_id = ?', $shiftOrigin)
-          ->andWhere('ss.disabled = ?', FALSE);
-
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
-
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+          ->innerJoin('es.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
+        ->where('ss.disabled = :disabled', array(':disabled' => FALSE))
+          ->andWhere($allocatableShifts, array(':offset' => (time() + (60 * $this->shiftOffset))))
+          ->andWhere('es.event_facility_resource_id = :efrId')
+          ->andWhere('es.staff_wave = :wave')
+          ->andWhere('es.originator_id = :originator');
   }
 
   /**
@@ -607,19 +637,11 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   {
     $conn = $this->getConnection(self::CONN_WRITE);
 
-    $q = agDoctrineQuery::create()
-      ->select('es1.id')
-        ->from('agEventStaff AS es1')
-          ->innerJoin('es1.agStaffResource AS sr1')
-          ->innerJoin('sr1.agStaff AS s1')
-          ->innerJoin('s1.agStaffResource AS sr2')
-          ->innerJoin('sr2.agEventStaff AS es2')
-        ->where('es1.event_id = es2.event_id')
-          ->andWhereIn('es2.id', $eventStaffIds);
-
-    $eventStaffIds = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
-    $q->free(TRUE);
-
+    $this->disableEventStaffQuery->where('es1.event_id = es2.event_id')
+      ->andWhereIn('es2.id', $eventStaffIds);
+    $eventStaffIds = $this->disableEventStaffQuery->execute(array(),
+      agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    
     $agEventStaffStatusTable = $conn->getTable('agEventStaffStatus');
     $coll = new Doctrine_Collection('agEventStaffStatus');
 
@@ -660,6 +682,17 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->eh->logInfo('Successfully updated ' . $collSize . ' staff status records.');
   }
 
+  protected function getDisableEventStaffQuery()
+  {
+    return agDoctrineQuery::create()
+      ->select('es1.id')
+        ->from('agEventStaff AS es1')
+          ->innerJoin('es1.agStaffResource AS sr1')
+          ->innerJoin('sr1.agStaff AS s1')
+          ->innerJoin('s1.agStaffResource AS sr2')
+          ->innerJoin('sr2.agEventStaff AS es2');
+  }
+
   /**
    * Method to return an array of deployable event staff id's sorted by deployment weight and
    * distance to the querying facility.
@@ -674,11 +707,54 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                              $facLat,
                                              $facLon)
   {
-    // start with our basic query object
-    $q = agEventStaff::getActiveEventStaffQuery($this->eventId);
+    $results = array();
+    // add our geo-distance calculation
+    if ($this->enableGeo) {
+      $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
+        '+ cos( radians(gc.latitude) ) * cos( radians(' . $facLat . ') ) ' .
+        '* cos( radians(' . $facLon . ') - radians(gc.longitude) ) ) * 6378)' ;
+      $this->deployableStaffQuery->orderBy($geoDistance . ' ASC');
+    }
 
-    $q->select('evs.id')
-        ->innerJoin('sr.agStaff s')
+    $this->deployableStaffQuery->limit($staffCount);
+
+    // we don't hydrate o hopefully avoid the DISTINCT that doctrine throws in by default
+    $results = $this->deployableStaffQuery->execute(array(':staffResourceType' => $staffResourceTypeId),
+      Doctrine_Core::HYDRATE_NONE);
+
+    foreach ($results as &$row) {
+      $row = $row[0];
+    }
+    unset($row);
+
+    return $results;
+  }
+
+  protected function getDeployableStaffQuery()
+  {
+    // start with our basic query object
+    $q = agDoctrineQuery::create()
+      ->select('evs.id')
+      ->from('agEventStaff evs')
+          ->innerJoin('evs.agEventStaffStatus ess')
+          ->innerJoin('ess.agStaffAllocationStatus sas')
+          ->innerJoin('evs.agStaffResource sr')
+          ->innerJoin('sr.agStaffResourceStatus srs')
+        ->where('evs.event_id = :event', array(':event' => $this->eventId))
+          ->andWhere('srs.is_available = :srsAvailable', array(':srsAvailable' => TRUE));
+
+    // ensure that we only get the most recent staff status
+    $recentStaffStatus = 'EXISTS (' .
+      'SELECT sess.id ' .
+        'FROM agEventStaffStatus AS sess ' .
+        'WHERE sess.time_stamp <= CURRENT_TIMESTAMP ' .
+          'AND sess.event_staff_id = ess.event_staff_id ' .
+        'HAVING MAX(sess.time_stamp) = ess.time_stamp' .
+      ')';
+    $q->andWhere($recentStaffStatus);
+
+    if ($this->enableGeo) {
+      $q->innerJoin('sr.agStaff s')
           ->innerJoin('s.agPerson p')
           ->innerJoin('p.agEntity e')
           ->innerJoin('e.agEntityAddressContact eac')
@@ -687,28 +763,23 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('ag.agGeo g')
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
-        ->andWhere('sr.staff_resource_type_id = ?', $staffResourceTypeId)
-          ->andWhere('sas.allocatable = ?', TRUE)
-          ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
-        ->orderBy('evs.deployment_weight DESC')
-        ->limit($staffCount);
+          ->andWhere('sas.allocatable = :allocatable', array(':allocatable' => TRUE))
+          ->andWhere('sas.standby = :standby', array(':standby' => FALSE))
+          ->andWhere('g.geo_type_id = :geoType', array(':geoType' => $this->addrGeoTypeId)) ;
 
-    // just pick up the lowest priority staff address
-    $minStaffAddr = 'EXISTS (' .
-      'SELECT seac.entity_id ' .
-        'FROM agEntityAddressContact AS seac ' .
-        'WHERE seac.entity_id = eac.entity_id ' .
-        'HAVING MIN(seac.priority) = eac.priority' .
-      ')';
-    $q->andWhere($minStaffAddr);
+      // just pick up the lowest priority staff address
+      $minStaffAddr = 'EXISTS (' .
+        'SELECT seac.entity_id ' .
+          'FROM agEntityAddressContact AS seac ' .
+          'WHERE seac.entity_id = eac.entity_id ' .
+          'HAVING MIN(seac.priority) = eac.priority' .
+        ')';
+      $q->andWhere($minStaffAddr);
+    }
 
-    // add our geo-distance calculation
-    $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
-      '+ cos( radians(gc.latitude) ) * cos( radians(' . $facLat . ') ) ' .
-      '* cos( radians(' . $facLon . ') - radians(gc.longitude) ) ) * 6378)' ;
-    $q->orderBy($geoDistance . ' ASC');
+    $q->andWhere('sr.staff_resource_type_id = :staffResourceType');
 
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    return $q;
   }
 
   /**
@@ -750,7 +821,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
-          ->innerJoin('efr.agEventFacilityResourceActivationTime')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
           ->innerJoin('efr.agEventFacilityResourceStatus efrs')
           ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
           ->innerJoin('efr.agFacilityResource fr')
@@ -770,9 +841,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->limit(1);
 
     // restrict ourselves only to allocatable shifts
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= ?';
+    $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
     // ensure that we only get the most recent facility resource status
     $recentFacRscStatus = 'EXISTS (' .
@@ -833,7 +904,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
-          ->innerJoin('efr.agEventFacilityResourceActivationTime')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
           ->innerJoin('efr.agEventFacilityResourceStatus efrs')
           ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
           ->innerJoin('efr.agFacilityResource fr')
@@ -847,18 +918,19 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('ag.agGeo g')
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
+          ->leftJoin('es.agEventStaffShift ess')
         ->where('fras.staffed = ?', TRUE)
           ->andWhere('frs.is_available = ?', TRUE)
           ->andWhere('ss.disabled = ?', FALSE)
           ->andWhere('efr.event_facility_group_id = ?', $this->currFacGrpId)
           ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
+          ->andWhere('ess.id IS NULL')
         ->groupBy('efr.id')
           ->addGroupBy('es.staff_wave')
           ->addGroupBy('es.staff_resource_type_id')
           ->addGroupBy('es.originator_id')
           ->addGroupBy('gc.latitude')
           ->addGroupBy('gc.longitude')
-          ->addGroupBy('efr.id')
           ->addGroupBy('fr.id')
           ->addGroupBy('f.id')
           ->addGroupBy('s.id')
@@ -873,9 +945,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addOrderBy('efr.id ASC');
  
     // restrict ourselves only to allocatable shifts
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= ?';
+    $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
 
     // ensure that we only get the most recent facility resource status
@@ -914,30 +986,5 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $pdoStmt = $this->executePdoQuery($conn, $sql, $params['where'], NULL, self::QUERY_SHIFTS);
     
     return $pdoStmt;
-  }
-
-  /**
-   * A simple method used to test execution of this class
-   * @return <type>
-   * @deprecated A test-method only
-   */
-  public function test()
-  {
-    $this->batchSize = 10;
-    $this->eh->setLogEventLevel(agEventHandler::EVENT_DEBUG);
-
-    $continue = TRUE;
-    while ($continue == TRUE)
-    {
-      $batch = $this->processBatch();
-      $continue = $batch['continue'];
-
-      print_r($batch);
-      echo "<br/><br/>";
-    }
-
-    $results = $this->save();
-    print_r($results);
-    return "<br/><br/>" . "Success!";
   }
 }

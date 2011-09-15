@@ -25,3 +25,5 @@ plugins/.*
 *.pui
 *.xls
 web/apc.php
+data/xspchart/cache/**
+data/xspchart/data/**

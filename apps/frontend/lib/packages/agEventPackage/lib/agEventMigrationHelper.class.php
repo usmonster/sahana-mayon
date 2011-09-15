@@ -159,8 +159,6 @@ class agEventMigrationHelper
         ->useResultCache(TRUE, 1800)
         ->execute(array(),Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-
-
     $staffedAllocationStatus = agDoctrineQuery::create()
       ->select('afras.id')
         ->from('agFacilityResourceAllocationStatus afras')
@@ -426,7 +424,7 @@ class agEventMigrationHelper
 
       // we hold onto the group allocation status for activation time setting
       if (isset($activeGroupAllocationStatus[$evFacGrp['facility_group_allocation_status_id']])) {
-        $activeGrpScFacRsc[] = $scFacRscId;
+        $activeGrpScFacRsc[$scFacRscId] = TRUE;
       }
     }
     
@@ -456,7 +454,7 @@ class agEventMigrationHelper
       $evFacRscId = $evFacRscStatus['event_facility_resource_id'];
 
       // build this map for pass-through to the next series of methods
-      $scFacRscMap -> $scFacRscId = $evFacRscId;
+      $scFacRscMap->$scFacRscId = $evFacRscId;
 
       // check for conditions that indicate a new activation time record
       if(isset($staffedResourceAllocationStatus[$evFacRscStatus['facility_resource_allocation_status_id']]) &&

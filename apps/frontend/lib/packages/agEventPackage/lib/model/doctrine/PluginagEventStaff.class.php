@@ -29,7 +29,7 @@ abstract class PluginagEventStaff extends BaseagEventStaff
           ->innerJoin('evs.agStaffResource sr')
           ->innerJoin('sr.agStaffResourceStatus srs')
         ->where('evs.event_id = ?', $eventId)
-          ->andWhere('srs.is_available = ?', TRUE);
+          ->andWhere('srs.is_available = TRUE');
 
     // ensure that we only get the most recent staff status
     $recentStaffStatus = 'EXISTS (' .

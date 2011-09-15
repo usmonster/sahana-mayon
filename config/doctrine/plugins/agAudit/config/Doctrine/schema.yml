@@ -10,12 +10,9 @@ agImportEntityHash:
     row_hash:
       type: string(128)
       notnull: true
-    file_name:
-      type: string(255)
-      notnull: true
   indexes:
     agImportEntityHash_unq:
-      fields: [entity_id, file_name]
+      fields: [entity_id]
       type: unique
   relations:
     agEntity:

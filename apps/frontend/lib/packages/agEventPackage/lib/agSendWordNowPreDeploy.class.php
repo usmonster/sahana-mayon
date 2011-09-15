@@ -40,7 +40,8 @@ class agSendWordNowPreDeploy extends agSendWordNowExport
     $q = $this->getEventStaffContactQuery();
 
     // add our pre-deploy components
-    $q->andWhere('sas.allocatable = ?', TRUE);
+    $q->andWhere('sas.allocatable = ?', TRUE)
+      ->andWhere('sas.standby = ?', TRUE);
     return $q;
   }
 }

@@ -171,6 +171,18 @@ agFacilityResourceAllocationStatus:
     agFacilityResourceAllocationStatus:
       fields: [facility_resource_allocation_status]
       type: unique
+    idx_facility_resource_allocation_status_available:
+      fields: [available]
+    idx_facility_resource_allocation_status_committed:
+      fields: [committed]
+    idx_facility_resource_allocation_status_standby:
+      fields: [standby]
+    idx_facility_resource_allocation_status_staffed:
+      fields: [staffed]
+    idx_facility_resource_allocation_status_servicing_clients:
+      fields: [servicing_clients]
+    idx_facility_resource_allocation_status_accepting_clients:
+      fields: [accepting_clients]
 agFacilityGroupAllocationStatus:
   columns:
     id:
@@ -203,6 +215,12 @@ agFacilityGroupAllocationStatus:
     UX_agFacilityGroupAllocationStatus:
       fields: [facility_group_allocation_status]
       type: unique
+    idx_facility_group_allocation_status_allocatable:
+      fields: [allocatable]
+    idx_facility_group_allocation_status_standby:
+      fields: [standby]
+    idx_facility_group_allocation_status_active:
+      fields: [active]
 agFacilityResourceStatus:
   columns:
     id:
@@ -219,5 +237,7 @@ agFacilityResourceStatus:
     UX_agFacilityResourceStatus:
       fields: [facility_resource_status]
       type: unique
+    idx_facility_resource_status_is_available:
+      fields: [is_available]
 actAs:
   Timestampable: 

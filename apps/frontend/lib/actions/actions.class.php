@@ -74,6 +74,9 @@ class agActions extends sfActions
     $this->targetModule = 'staff';
     $this->searchquery = $searchquery;
     $this->getResponse()->setTitle('Search results for: ' . $this->searchquery);
+    $resultsPerPage = agGlobal::getParam('search_list_results_per_page');
+    $this->searchLimit = agGlobal::getParam('search_result_limit');
+    $this->numOfResults = 0;
 
     Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
     $query = LuceneSearch::find($this->searchquery);
@@ -81,16 +84,11 @@ class agActions extends sfActions
       $query->fuzzy();
     }
     $query->in($models);
-    $this->results = $query->getRecords();
-    $this->hits = $query->getHits();
-    $this->widget = $widget;
 
-    $searchResult = $query->getRecords(); //agStaff should be $models
+    $searchResult = $query->getRecords($this->searchLimit); //agStaff should be $models
     // TODO
     //a) we can return the results hydrated as scalar
     // (only get the PK's[person,entity,staff,facility,etc])
-
-    $resultsPerPage = agGlobal::getParam('search_list_results_per_page');
 
     if ($models[0] == 'agStaff')
     {
@@ -100,6 +98,7 @@ class agActions extends sfActions
       {
         $staffCollection = $searchResult['agStaff'];
         $staff_ids = $staffCollection->getKeys();
+        $this->numOfResults = count($staff_ids);
       }
       list($this->displayColumns, $pagerQuery) = agListHelper::getStaffList($staff_ids);
     } elseif ($models[0] == 'agFacility') {
@@ -109,6 +108,7 @@ class agActions extends sfActions
       {
         $facilityCollection = $searchResult['agFacility'];
         $facility_ids = $facilityCollection->getKeys();
+        $this->numOfResults = count($facility_ids);
       }
       list($this->displayColumns, $pagerQuery) = agListHelper::getFacilityList($facility_ids);
     } elseif($models[0] == 'agOrganization') {
@@ -118,6 +118,7 @@ class agActions extends sfActions
       {
         $organizationCollection = $searchResult['agOrganization'];
         $organization_ids = $organizationCollection->getKeys();
+        $this->numOfResults = count($organization_ids);
       }
       list($this->displayColumns, $pagerQuery) = agListHelper::getOrganizationList($organization_ids);
     } else {

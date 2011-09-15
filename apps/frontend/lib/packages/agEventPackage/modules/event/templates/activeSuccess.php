@@ -4,7 +4,7 @@
 ?>
 
 <br />
-<?php echo "Current Event Status: <span class=\"highlightedText\">".$upper_case_cur_Status."</span><br />Zero Hour: <span class=\"highlightedText\">". $zero_hour. "</span>"?>
+<?php echo "Current Event Status: <span class=\"highlightedText\">". $current_event_status . "</span><br />Zero Hour: <span class=\"highlightedText\">". $event_zero_hour_str . "</span>"?>
 <br/>
 <?php
 $urlEncodedEventName = urlencode($sf_data->getRaw('event_name'));
@@ -28,7 +28,7 @@ if (isset($blackOutFacilities)) {
         <th>Description</th>
     </tr>
 
-    <?php if ($upper_case_cur_Status == "PRE-DEPLOYMENT"): ?>
+    <?php if ($current_event_status == "PRE-DEPLOYMENT"): ?>
     <tr>
         <td>
         <a class="buttonText" href="<?php echo url_for('event/meta?event=' . $urlEncodedEventName); ?>">Event Name and Zero Hour</a>
@@ -47,7 +47,7 @@ if (isset($blackOutFacilities)) {
         </td>
         <td>
             Total Staff: <span class="highlightedText"><?php echo $eventStaffPool ?></span><br />
-            Confirmed Staff: <span class="highlightedText"><?php echo $eventAvailableStaff ?></span>
+            Confirmed Staff: <span class="highlightedText"><?php echo $eventCommittedStaff ?></span> Committed / <span class="highlightedText"><?php echo $eventAvailableStaff ?></span> Available
         </td>
     </tr>
     <tr>
@@ -61,19 +61,37 @@ if (isset($blackOutFacilities)) {
     </tr>
     <tr>
         <td>
+
+         <?php
+              $deployUrl = url_for('event/deploystaff?event=' . urlencode($event_name));
+              $deployText = 'You are about to deploy staff for this event. This process takes a ' .
+                'long time. Please do not close your browser.';
+              $deployDesc = 'After a sufficient staff pool have responded, deploy staff to facilities.';
+
+            echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'buttonText',
+              'confirm' => $deployText, 'target' => '_blank'));
+          ?>
+              </td>
+              <td> <?php echo $deployDesc; ?> </td>
+          </tr>
+    <tr>
+    <tr>
+        <td> <?php echo link_to('Check Staffing Estimates', url_for('event/staffingestimates?event=' .
+           urlencode($event_name)), array('class' => 'buttonText')) ?> </td>
+        <td>Check your staff response patterns and view an estimate of your staff requirements.</td>
+    </tr>
+    <tr>
+        <td> <?php echo link_to('View Staffing Summary', url_for('event/staff?event=' .
+           urlencode($event_name)), array('class' => 'buttonText')) ?> </td>
+        <td>View a summary report of staff deployments.</td>
+    </tr>
+    <tr>
+        <td>
             <a class="buttonText" href="<?php echo $vesuvius_address; ?>" target="_blank">Client Information</a>
         </td>
         <td>
             <div>Click the Client Information link to jump to the Vesuvius client information
               tracking system.</div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a class="buttonText" href="#">Reporting</a>
-        </td>
-        <td>
-            <div style="font-style:oblique">No information currently available .</div>
         </td>
     </tr>
 </table>

@@ -47,18 +47,12 @@ abstract class BaseagImportEntityHash extends sfDoctrineRecord
              'notnull' => true,
              'length' => 128,
              ));
-        $this->hasColumn('file_name', 'string', 255, array(
-             'type' => 'string',
-             'notnull' => true,
-             'length' => 255,
-             ));
 
 
         $this->index('agImportEntityHash_unq', array(
              'fields' => 
              array(
               0 => 'entity_id',
-              1 => 'file_name',
              ),
              'type' => 'unique',
              ));

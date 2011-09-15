@@ -12,5 +12,19 @@
  */
 abstract class PluginagEventStatus extends BaseagEventStatus
 {
+  /**
+   * Method to statically return an event status based on statusTypeId
+   * @param integer $eventStatusTypeId An event status type Id
+   * @return strin An string representation of event status
+   */
+  public static function getStatusType($eventStatusTypeId)
+  {
+    return agDoctrineQuery::create()
+      ->select('est.event_status_type')
+        ->from('agEventStatusType est')
+        ->where('est.id = ?', $eventStatusTypeId)
+        ->useResultCache(TRUE, 3600)
+        ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
+  }
 }

@@ -88,6 +88,24 @@ abstract class BaseagFacilityGroupAllocationStatus extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
+        $this->index('idx_facility_group_allocation_status_allocatable', array(
+             'fields' => 
+             array(
+              0 => 'allocatable',
+             ),
+             ));
+        $this->index('idx_facility_group_allocation_status_standby', array(
+             'fields' => 
+             array(
+              0 => 'standby',
+             ),
+             ));
+        $this->index('idx_facility_group_allocation_status_active', array(
+             'fields' => 
+             array(
+              0 => 'active',
+             ),
+             ));
     }
 
     public function setUp()

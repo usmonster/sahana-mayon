@@ -25,17 +25,18 @@ class agMessageResponseHandler extends agImportNormalization
   protected $agEventAvailableStaffStatus,
             $agEventUnAvailableStaffStatus,
             $staffMsgStatuses = array(),
-            $defaultStaffAllocationStatus;
+            $defaultStaffAllocationStatus,
+            $eventId;
   /**
    * Method to return an instance of this class
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    * @return agStaffImportNormalization An instance of this class
    */
-  public static function getInstance($tempTable, $logEventLevel = NULL)
+  public static function getInstance($eventId, $tempTable = NULL, $logEventLevel = NULL)
   {
     $self = new self();
-    $self->__init($tempTable, $logEventLevel);
+    $self->_init($eventId, $tempTable, $logEventLevel);
     return $self;
   }
 
@@ -44,7 +45,7 @@ class agMessageResponseHandler extends agImportNormalization
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
    */
-  public function __init($tempTable = NULL, $logEventLevel = NULL)
+  public function _init($eventId, $tempTable = NULL, $logEventLevel = NULL)
   {
     if (is_null($tempTable)) {
       $tempTable = 'temp_message_import';
@@ -76,11 +77,13 @@ class agMessageResponseHandler extends agImportNormalization
     }
     unset($status);
 
+    $this->eventId = $eventId;
+
     // unused?
     $this->defaultStaffAllocStatus = agGlobal::getParam('default_staff_messaging_allocation_status');
 
 
-    $this->requiredColumns = array('unique_id', 'time_stamp');
+    $this->requiredColumns = array('contact_id', 'delivered');
   }
 
   /**
@@ -146,13 +149,13 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function setImportSpec()
   {
-    $importSpec['unique_id'] = array('type' => 'integer', 'length' => 6);
-    $importSpec['last_name'] = array('type' => "string", 'length' => 64);
-    $importSpec['first_name'] = array('type' => "string", 'length' => 64);
-    $importSpec['label'] = array('type' => "string", 'length' => 32);
-    $importSpec['address'] = array('type' => "string", 'length' => 255);
+    $importSpec['contact_id'] = array('type' => 'integer', 'length' => 6);
+    $importSpec['name'] = array('type' => "string", 'length' => 64);
+    $importSpec['type'] = array('type' => "string", 'length' => 32);
+    $importSpec['contact_point'] = array('type' => "string", 'length' => 255);
     $importSpec['status'] = array('type' => "string", 'length' => 128);
-    $importSpec['time_stamp'] = array('type' => "string", 'length' => 24);
+    $importSpec['sent'] = array('type' => "string", 'length' => 24);
+    $importSpec['delivered'] = array('type' => "string", 'length' => 24); // ex: time_stamp
     $importSpec['response'] = array('type' => "string", 'length' => 16);
     
     // set the class property to the newly created 
@@ -201,10 +204,10 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function buildTempSelectQuery()
   {
-    $query = 'SELECT t.id, t.unique_id, t.response, t.time_stamp ' .
+    $query = 'SELECT t.id, t.contact_id, t.response, t.delivered ' .
          'FROM ' . $this->tempTable . ' AS t ' .
          'WHERE t.response IS NOT NULL AND t.response != ""' .
-         'ORDER BY t.unique_id ASC, t.time_stamp ASC';
+         'ORDER BY t.contact_id ASC, t.delivered ASC';
 
     return $query;
   }
@@ -214,8 +217,8 @@ class agMessageResponseHandler extends agImportNormalization
    */
   protected function setImportComponents()
   {
-    
-    $this->importComponents[] = array( 'component' => 'message_response', 'throwOnError' => TRUE, 'method' => 'setEventStaffStatus');
+    $this->importComponents[] = array( 'component' => 'message_response', 'throwOnError' => TRUE,
+      'method' => 'setEventStaffStatus');
   }
 
   /**
@@ -263,7 +266,7 @@ class agMessageResponseHandler extends agImportNormalization
           '. Skipping response processing.';
         $this->eh->logWarning($eventMsg);
       } else {
-        $responses[$rd['unique_id']] = array($response, strtotime($rd['time_stamp']));
+        $responses[$rd['contact_id']] = array($response, strtotime($rd['delivered']));
       }
     }
 
@@ -271,11 +274,27 @@ class agMessageResponseHandler extends agImportNormalization
       return FALSE;
     }
 
+    $eventStaff = agDoctrineQuery::create()
+      ->select('es.id')
+          ->addSelect('es.staff_resource_id')
+        ->from('agEventStaff es')
+        ->whereIn('es.staff_resource_id', array_keys($responses))
+          ->andWhere('es.event_id = ?', $this->eventId)
+        ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
+    $esrDiff = count($responses) - count($eventStaff);
+
+    if ($esrDiff > 0) {
+      $eventMsg = 'Batch containted responses from ' . $esrDiff . ' staff who are not currently ' .
+        'associated with this event. Responses were ignored.';
+      $this->eh->logWarning($eventMsg);
+    }
+
     // this step is necessary to avoid index constraints
     $coll = agDoctrineQuery::create($conn)
       ->select('ess.*')
         ->from('agEventStaffStatus ess')
-        ->whereIn('ess.event_staff_id', array_keys($responses))
+        ->whereIn('ess.event_staff_id', array_keys($eventStaff))
           ->andWhere('EXISTS (SELECT s.id ' .
               'FROM agEventStaffStatus AS s ' .
               'WHERE s.event_staff_id = ess.event_staff_id ' .
@@ -287,8 +306,9 @@ class agMessageResponseHandler extends agImportNormalization
     // loop through all of our event staff and insert for those who already have a status
     foreach ($coll as $collId => $rec)
     {
+      $staffResourceId = $eventStaff[$rec['event_staff_id']];
       // grab that particular response record
-      $rVals = $responses[$rec['event_staff_id']];
+      $rVals = $responses[$staffResourceId];
       $dbTimeStamp = strtotime($rec['time_stamp']);
 
       // @todo Check the timestamp output... this might need to be strtotime'd
@@ -321,23 +341,10 @@ class agMessageResponseHandler extends agImportNormalization
       }
 
       // either way, we can be safely done this response
-      unset($responses[$rec['event_staff_id']]);
+      unset($responses[$staffResourceId]);
+      unset($eventStaff[$rec['event_staff_id']]);
     }
    
-    // If we still have members in $responses, they were not event staff as of this execution
-    // NOTE: Theoretically, an event staff person could have an event staff record but no
-    // event staff status record (the source for the collection), however, operationally, this
-    // case should not occur since all newly generated staff pool members are given a default
-    // status.
-
-    // Either way, we should warn the user that these records will not be updated
-    if (!empty($responses))
-    {
-      $eventMsg = 'Event staff with IDs {' . implode(',', array_keys($responses)) . '} are no ' .
-        'longer valid members of this event. Skipping response processing.';
-      $this->eh->logWarning($eventMsg);
-    }
-
     // here's the big to-do; let's save!
     $coll->save($conn);
     $coll->free();

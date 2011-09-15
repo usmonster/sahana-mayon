@@ -219,6 +219,11 @@ class agStaffImportNormalization extends agImportNormalization
     // array( [order] => array(component => component name, helperClass => Name of the helper class, throwOnError => boolean, method => method name) )
     // setEntity creates entity, person, and staff records.
     $this->importComponents[] = array(
+      'component' => 'entityHashes',
+      'throwOnError' => TRUE,
+      'method' => 'setEntityHashes'
+    );
+    $this->importComponents[] = array(
       'component' => 'entity',
       'throwOnError' => TRUE,
       'method' => 'setEntities'
@@ -263,6 +268,44 @@ class agStaffImportNormalization extends agImportNormalization
       'method' => 'setPersonLanguage',
       'helperClass' => 'agPersonLanguageHelper'
     );
+  }
+
+  protected function getEntityHashes($throwOnError, Doctrine_Connection $conn)
+  {
+    // loop through the import data
+    $hashses = array();
+    foreach ($this->importData as $rowId => &$rowData) {
+
+      // first calculate the hash without the entity ID
+      $hashData = $rowData['_rawData'];
+      unset($hashData['entity_id']);
+      ksort($hashData);
+      $hash = md5(json_encode($hashData));
+
+      // we do this for in-batch duplicate detection
+      $hashes[$hash] = TRUE;
+      if (!isset($hashes[$hash])) {
+        $rowData['primaryKeys']['import_hash'] = $hash;
+      } else {
+        $eventMsg = 'Duplicate import row found on row ' . $rowId . '. Ignoring duplicate.';
+        $this->eh->logAlert($eventMsg, 1, FALSE);
+        unset($this->importData['$rowId']);
+      }
+
+      // build a specific hash data array that excludes entity ID
+      if (!isset($rowData['_rawData']['entity_id'])) {
+
+      }
+    }
+    unset($rowData);
+  }
+
+  protected function getEntityFromImportHash($importHash) {
+    return agDoctrineQuery::create()
+      ->select('ieh.entity_id')
+      ->from('agImportEntityHash ieh')
+      ->where('ieh.row_hash = ?', $importHash)
+      ->;
   }
 
   /**
@@ -422,7 +465,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // grab our entityId from the entity collection or skip if unfound
       if (! isset($entityColl[$rowId])) {
-        if (! isset($rowData['primaryKeys']['person_id'])) {
+        if (isset($rowData['primaryKeys']['person_id'])) {
           // no new parent, child record exists
           continue;
         }
@@ -456,7 +499,7 @@ class agStaffImportNormalization extends agImportNormalization
 
       // grab our entityId from the entity collection or skip if unfound
       if (! isset($personColl[$rowId])) {
-        if (! isset($rowData['primaryKeys']['staff_id'])) {
+        if (isset($rowData['primaryKeys']['staff_id'])) {
           // no new parent, child record exists
           continue;
         }
@@ -722,6 +765,14 @@ class agStaffImportNormalization extends agImportNormalization
                 $rawData['home_longitude'])),
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
+        } else {
+          // log our error or at least grab our counter
+          $missingGeo++;
+          if ($throwOnError) {
+            $errMsg = sprintf('Missing home address/geo information from record id  %d', $rowId);
+            $this->eh->logErr($errMsg);
+            throw new Exception($errMsg);
+          }
         }
 
         if (count($workAddr) > 0 && isset($rawData['work_latitude']) &&

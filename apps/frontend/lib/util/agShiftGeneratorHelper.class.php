@@ -131,7 +131,7 @@ class agShiftGeneratorHelper
           }
           else
           {
-            $reset_minutes_start_to_facility_activation = $reset_minutes_start_to_facility_activation + $row['st_task_length_minutes'];
+            $reset_minutes_start_to_facility_activation += $row['st_task_length_minutes'];
           }
 
           $scenarioShift = new agScenarioShift($scenarioShiftTable, TRUE);

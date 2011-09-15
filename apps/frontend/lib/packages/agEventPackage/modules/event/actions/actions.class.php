@@ -17,6 +17,7 @@
  */
 class eventActions extends agActions
 {
+    CONST   CHART_STAFF_STATUS_PIE = 'staffStatusPie';
 
     public static $event_id;
     public static $event_name;
@@ -55,6 +56,8 @@ class eventActions extends agActions
      */
     public function executeImportreplies(sfWebRequest $request)
     {
+      $this->setEventBasics($request);
+
         $this->startTime = microtime(true);
 
         $uploadedFile = $_FILES['import'];
@@ -69,7 +72,7 @@ class eventActions extends agActions
         }
         //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
-        $this->importer = agMessageResponseHandler::getInstance(NULL, agEventHandler::EVENT_NOTICE);
+        $this->importer = agMessageResponseHandler::getInstance($this->event_id, NULL, agEventHandler::EVENT_NOTICE);
 
         $this->importer->processXlsImportFile($this->importPath);
 
@@ -247,28 +250,21 @@ class eventActions extends agActions
      */
     private function setEventBasics(sfWebRequest $request)
     {
-//    if ($request->getParameter('id')) {
-//      $this->event_id = $request->getParameter('id');
-//      if ($this->event_id != "") {
-//        $this->event_name = Doctrine_Core::getTable('agEvent')
-//                ->findByDql('id = ?', $this->event_id)
-//                ->getFirst()->getEventName();
-//      }
-//      //TODO step through to check and see if the second if is needed
-//    }
+      if ($request->getParameter('event')) {
+          $this->event = agDoctrineQuery::create()
+                  ->select()
+                  ->from('agEvent')
+                  ->where('event_name = ?', urldecode($request->getParameter('event')))
+                  ->execute()->getFirst();
 
-        if ($request->getParameter('event')) {
-            $this->event = agDoctrineQuery::create()
-                    ->select()
-                    ->from('agEvent')
-                    ->where('event_name = ?', urldecode($request->getParameter('event')))
-                    ->execute()->getFirst();
-
-            $this->event_id = $this->event->id;
-            $this->event_name = $this->event->event_name;
-            $this->organization_name = agGlobal::getParam('organization_name');
-            $this->vesuvius_address = agGlobal::getParam('vesuvius_address');
-        }
+          $this->event_id = $this->event['id'];
+          $this->event_name = $this->event['event_name'];
+          $this->event_zero_hour = $this->event['zero_hour'];
+          $this->organization_name = agGlobal::getParam('organization_name');
+          $this->vesuvius_address = agGlobal::getParam('vesuvius_address');
+          $this->event_zero_hour_str = date('Y-m-d H:i:s T', $this->event_zero_hour);
+          $this->current_event_status = strtoupper(agEventStatus::getStatusType($this->event->getCurrentStatus()));
+      }
     }
 
     /**
@@ -450,18 +446,6 @@ class eventActions extends agActions
         //end p-code
     }
 
-    /**
-     * event/list shows a listing of events, this provides the list data to the listSuccess template
-     * @param sfWebRequest $request
-     */
-    public function executeList(sfWebRequest $request)
-    {
-        $this->ag_events = agDoctrineQuery::create()
-            ->select('a.*')
-            ->from('agEvent a')
-            ->execute();
-    }
-
     public function preExecute()
     {
         // The code inserted here is executed at the beginning of each action call
@@ -535,83 +519,6 @@ class eventActions extends agActions
 
     $this->redirect('event/messaging?event=' . urlencode($this->event_name));
   }
-    /**
-     * provide event shift CRUD
-     * @param sfWebRequest $request
-     */
-    public function executeShifts(sfWebRequest $request)
-    {
-        $this->setEventBasics($request);
-//CREATE  / UPDATE
-        if ($request->isMethod(sfRequest::POST)) {
-            if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
-                $this->eventshiftform = new agEventShiftForm();
-            } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
-                $ag_event_shift = Doctrine_Core::getTable('agEventShift')
-                    ->findByDql('id = ?', $request->getParameter('shiftid'))
-                    ->getFirst();
-                $this->eventshiftform = new agEventShiftForm($ag_event_shift);
-            } elseif ($request->getParameter('delete')) {
-//DELETE
-            }
-            $this->eventshiftform->bind($request->getParameter($this->eventshiftform->getName()), $request->getFiles($this->eventshiftform->getName()));
-            $formvalues = $request->getParameter($this->eventshiftform->getName());
-            if ($this->eventshiftform->isValid()) { //form is not passing validation because the bind is failing?
-                $ag_event_shift = $this->eventshiftform->save();
-                $this->generateUrl('event_shifts', array('module' => 'event',
-                  'action' => 'shifts', 'event' => $this->event_name, 'shiftid' => $ag_event_shift->getId()));
-            }
-            $this->redirect('event/shifts?event=' . urlencode($this->event_name)); //need to pass in event id
-        } else {
-//READ
-            if ($request->getParameter('shiftid') && $request->getParameter('shiftid') == 'new') {
-                $this->eventshiftform = new agEventShiftForm();
-                $this->setTemplate('editshift');
-            } elseif ($request->getParameter('shiftid') && is_numeric($request->getParameter('shiftid'))) {
-
-                $ag_event_shift = Doctrine_Core::getTable('agEventShift')
-                    ->findByDql('id = ?', $request->getParameter('shiftid'))
-                    ->getFirst();
-
-                $this->eventshiftform = new agEventShiftForm($ag_event_shift);
-                $this->setTemplate('editshift');
-            } else {
-//LIST
-                $query = agDoctrineQuery::create()
-                    ->select('es.*, efr.*, efg.id, efg.event_facility_group, e.*, af.*, fr.*, frt.*, srt.*, ess.*, est.*')
-                    ->from('agEventShift as es')
-                    ->leftJoin('es.agEventStaffShift ess')
-                    ->leftJoin('ess.agEventStaff est')
-                    ->leftJoin('es.agStaffResourceType srt')
-                    ->leftJoin('es.agEventFacilityResource AS efr')
-                    ->leftJoin('efr.agEventFacilityGroup AS efg')
-                    ->leftJoin('efr.agFacilityResource fr, fr.agFacility af, fr.agFacilityResourceType frt')
-                    ->leftJoin('efg.agEvent AS e')
-                    ->where('e.id = ?', $this->event_id);
-
-                /**
-                 * Create pager
-                 */
-                $this->pager = new sfDoctrinePager('agEventShift', 20);
-
-                /**
-                 * Set pager's query to our final query including sort
-                 * parameters
-                 */
-                $this->pager->setQuery($query);
-
-                /**
-                 * Set the pager's page number, defaulting to page 1
-                 */
-                $this->pager->setPage($request->getParameter('page', 1));
-                $this->pager->init();
-            }
-        }
-
-        //p-code
-        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Shifts');
-        //end p-code
-    }
 
     /**
      * provides basic information about an active event, the template gives links to event management
@@ -622,17 +529,15 @@ class eventActions extends agActions
         $this->setEventBasics($request);
         $availableStaffStatus = agEventStaffHelper::returnAvailableEventStaffStatus();
 
-        $zero_hour_ts = agEvent::getEventZeroHour($this->event_id);
-        $this->zero_hour = date("Y-m-d H:i e", $zero_hour_ts);
+        $this->eventAvailableStaff = agEventStaff::getActiveEventStaffQuery($this->event_id)
+           ->select('COUNT(evs.id)')
+          ->andWhere('ess.staff_allocation_status_id = ?', $availableStaffStatus)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
-        $eventAvailableStaff = agDoctrineQuery::create()
-            ->select('es.id, COUNT(es.id), ess.id, sr.id')
-            ->from('agEventStaff es')
-            ->addFrom('es.agEventStaffStatus ess')
-            ->where('ess.staff_allocation_status_id = ?', $availableStaffStatus)
-            ->andWhere('es.event_id = ?', $this->event_id)
-            ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-        $this->eventAvailableStaff = $eventAvailableStaff['es_COUNT'];
+        $this->eventCommittedStaff = agEventStaff::getActiveEventStaffQuery($this->event_id)
+          ->select('COUNT(evs.id)')
+          ->andWhere('sas.committed = ?', TRUE)
+          ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
         $this->eventStaffPool = agDoctrineQuery::create()
             ->select('COUNT(es.id)')
@@ -677,7 +582,8 @@ class eventActions extends agActions
                     ->findByDql('id = ?', $current_status)
                     ->getFirst()->event_status_type;
         }
-        $this->upper_case_cur_Status = strtoupper($cur_status);
+
+        $this->eventShiftStaffCount = agEvent::getEventShiftStaffCount($this->event_id);
 
         //end p-code
     }
@@ -689,10 +595,165 @@ class eventActions extends agActions
     public function executeStaff(sfWebRequest $request)
     {
         $this->setEventBasics($request);
+        $this->results = array();
+
+        $this->subForm = new agReportTimeForm();
+        unset($this->subForm['_csrf_token']);
+        $this->reportTime = NULL;
+
+        if ($request->isMethod(sfRequest::POST))
+        {
+          $this->subForm->bind($request->getParameter('reportTime'));
+          if ($this->subForm->isValid())
+          {
+            $formArray = $request->getParameter('reportTime');
+            $this->reportTime = strtotime($formArray['report_time']);
+            $this->results = agEvent::getShiftsSummary($this->event_id, $this->reportTime);
+          }
+        }
 
         //p-code
         $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
         //end p-code
+    }
+
+    /**
+     * provides basic staff management in an event
+     * @param sfWebRequest $request
+     */
+    public function executeStaffingestimates(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff');
+        $eventNameSafe = str_replace(' ', '_', strtolower($this->event_name));
+        $this->uniqStaffCounts = array();
+        $this->staffTypeEstimates = array();
+        $this->staffTypeEstimateTotals = NULL;
+        $this->pCharts = array();
+        $this->chartUniqueIdent = 'event_' . $eventNameSafe;
+
+        $this->subForm = new agReportTimeForm();
+        unset($this->subForm['_csrf_token']);
+        $this->reportTime = NULL;
+
+        if ($request->isMethod(sfRequest::POST))
+        {
+          $this->subForm->bind($request->getParameter('reportTime'));
+          if ($this->subForm->isValid())
+          {
+            $formArray = $request->getParameter('reportTime');
+            $this->reportTime = strtotime($formArray['report_time']);
+            $this->uniqStaffCounts['unavailable'] = agEvent::getUnavailableEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['unknown'] = agEvent::getUnknownEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['available'] = agEvent::getAvailableEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['committed'] = agEvent::getCommittedEventStaffCount($this->event_id, $this->reportTime);
+            $this->uniqStaffCounts['non_geo'] = agEvent::getMissingGeoEventStaffCount($this->event_id, $this->reportTime);
+            if ($this->uniqStaffCounts['unavailable'] > 0) {
+              $this->uniqStaffCounts['non_geo_pctg'] = number_format((($this->uniqStaffCounts['non_geo'] / $this->uniqStaffCounts['unavailable']) * 100), 0);
+            } else {
+              $this->uniqStaffCounts['non_geo_pctg'] = 0;
+            }
+
+            $this->staffTypeEstimates = agEvent::getEventShiftEstimates($this->event_id, $this->reportTime);
+            $this->staffTypeEstimateTotals = $this->staffTypeEstimates['total'];
+            unset($this->staffTypeEstimates['total']);
+
+            // build our first chart
+            $staffStatusPieLabels = array();
+            $staffStatusPieValues = array();
+            $unavailableLabel = ($this->uniqStaffCounts['non_geo'] > 0) ? 'Unavailable*' : 'Unavailable';
+
+            $staffStatusPieLabels[] = array('Unknown', $unavailableLabel, 'Available', 'Committed', );
+            $staffStatusPieValues[] = array ($this->uniqStaffCounts['unknown'],
+              $this->uniqStaffCounts['unavailable'],
+              $this->uniqStaffCounts['available'],
+              $this->uniqStaffCounts['committed'],
+            );
+
+            $staffStatusPieData = new xsPData();
+            $staffStatusPieData->AddPoint($staffStatusPieValues, 'Values');
+            $staffStatusPieData->AddPoint($staffStatusPieLabels, 'Status');
+            $staffStatusPieData->AddAllSeries();
+            agChartHelper::setChartData($this->chartUniqueIdent,
+              agChartHelper::CHART_STAFF_STATUS_PIE, $staffStatusPieData->getData());
+            $this->pCharts['staffStatusPie'] = agChartHelper::getChartUrl('event/chart?event=' .
+              $this->event_name, $this->chartUniqueIdent, agChartHelper::CHART_STAFF_STATUS_PIE);
+
+
+            $staffRequiredBarData = array();
+            $staffRequiredBarData[] = array('Name'=>'Current',
+                'staff' => $this->uniqStaffCounts['committed'],
+                'min' => $this->staffTypeEstimateTotals['min_required'],
+                'max' => $this->staffTypeEstimateTotals['max_required'],
+            );
+            $staffRequiredBarData[] = array('Name'=>"Best Projection",
+                'staff' => ($this->uniqStaffCounts['available'] + $this->uniqStaffCounts['committed']),
+                'min' => $this->staffTypeEstimateTotals['min_required'],
+                'max' => $this->staffTypeEstimateTotals['max_required'],
+            );
+            agChartHelper::setChartData($this->chartUniqueIdent,
+              agChartHelper::CHART_STAFF_REQUIRED_BAR, $staffRequiredBarData);
+            $this->pCharts['staffRequiredBar'] = agChartHelper::getChartUrl('event/chart?event=' .
+              $this->event_name, $this->chartUniqueIdent, agChartHelper::CHART_STAFF_REQUIRED_BAR);
+
+            // loop through staff types and build a new chart for each
+            $staffTypeStatusPieData = array();
+            $staffTypeRequiredBarData = array();
+            $this->pCharts['staffTypeStatusBar'] = array();
+            foreach ($this->staffTypeEstimates as $staffTypeId => $se) {
+              $unfilled = $se['min_required'] - ($se['available'] + $se['committed']);
+
+              // re-initialize our data
+              $staffTypeStatusPieData[$staffTypeId] = array();
+              $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
+                  'Values' => $se['available'], 'Status' => 'Available' );
+              $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
+                  'Values' => $se['committed'], 'Status' => 'Committed' );
+              $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
+                  'Values' => $unfilled, 'Status' => "Unfilled\nRequirement" );
+
+              $this->pCharts['staffTypeStatusPie'][$staffTypeId] = agChartHelper::getChartUrl(
+                'event/chart?event=' . $this->event_name, $this->chartUniqueIdent,
+                agChartHelper::CHART_STAFFTYPE_STATUS_PIE, $staffTypeId);
+
+
+              $staffTypeRequiredBarData[] = array('Name'=>$se['resource_type'],
+                  'committed' => $se['committed'],
+                  'min' => $se['min_required'],
+                  'max' => $se['max_required'],
+                );
+            }
+
+            agChartHelper::setChartData($this->chartUniqueIdent,
+              agChartHelper::CHART_STAFFTYPE_STATUS_PIE, $staffTypeStatusPieData);
+
+            agChartHelper::setChartData($this->chartUniqueIdent,
+              agChartHelper::CHART_STAFFTYPE_REQUIRED_BAR, $staffTypeRequiredBarData);
+            $this->pCharts['staffTypeRequiredBar'] = agChartHelper::getChartUrl('event/chart?event=' .
+              $this->event_name, $this->chartUniqueIdent, agChartHelper::CHART_STAFFTYPE_REQUIRED_BAR);
+          }
+        }
+    }
+
+    public function executeChart(sfWebRequest $request)
+    {
+      if ($request->getParameter('event') == null) {
+        $this->missingEvent = true;
+      }
+
+      $params = array('uniqueIdent' => TRUE, 'chartId' => TRUE, 'subChartId' => FALSE);
+
+      foreach ($params as $param => $required) {
+        $this->$param = NULL;
+
+        if ($request->hasParameter($param)) {
+          $this->$param = $request->getParameter($param);
+        } elseif ($required) {
+          $this->forward404('You must specify a ' . $param . ' parameter in your url.');
+        }
+      }
+
+      return agChartHelper::getChart($this->uniqueIdent, $this->chartId, $this->subChartId);
     }
 
     /**
@@ -1107,7 +1168,7 @@ class eventActions extends agActions
 
     public function executeDeploystaff(sfWebRequest $request)
     {
-
+      $this->staffingSummary = array();
       $this->setEventBasics($request);
 
       $staffDeployer = agEventStaffDeploymentHelper::getInstance($this->event_id);
@@ -1116,11 +1177,32 @@ class eventActions extends agActions
           $batch = $staffDeployer->processBatch();
           $continue = $batch['continue'];
 
-          print_r($batch);
-          $this->results = $batch;
+          $this->batchResults = $batch;
       }
 
       //if the entire process is complete, give us some GOOD results
-      $this->results = $staffDeployer->save();
+      $this->batchResults = $staffDeployer->save();
+      unset($staffDeployer);
+
+      $this->strStart = date('Y:m:d H:i:s T', $this->batchResults['start']);
+      $this->strEnd =  date('Y:m:d H:i:s T', $this->batchResults['end']);
+      $this->strDuration = date('H:i:s', mktime(0, 0, round(($this->batchResults['duration']), 0), 0, 0, 2000));
+
+      // Format memory
+      $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+      $peakMemory = $batchResults['profiler']['maxMem'];
+      if ($peakMemory <= 999) {
+        $peakMemory = 1;
+      }
+      for ($i = 0; $peakMemory > 999; $i++) {
+        $peakMemory /= 1024;
+      }
+      $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
+      
+      if (!$this->batchResults['err']) {
+        $this->staffingSummary = agEvent::getShiftsSummary($this->event_id, $this->event_zero_hour);
+        $this->strZeroHour = date('Y-m-d H:i:s T', $this->event_zero_hour);
+      }
     }
+
 }

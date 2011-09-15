@@ -61,4 +61,9 @@ class agGlobal
 
     self::$_params = $query->execute(array(), 'key_value_pair');
   }
+  
+  public static function clearParams()
+  {
+    self::$_params = array();
+  }
 }

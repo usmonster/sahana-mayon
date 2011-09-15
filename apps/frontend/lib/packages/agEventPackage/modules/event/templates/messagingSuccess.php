@@ -60,17 +60,6 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
         </td>
     </tr>
     <tr>
-    <tr>
-        <td>
-
-            <?php
-                  $deployUrl = url_for('event/deploystaff?event=' . urlencode($sf_data->getRaw('event_name')));
-                  echo link_to('Deploy Staff to Facilities', $deployUrl, array('class' => 'generalButton'));
-            ?>
-              </td>
-              <td> After a sufficient staff pool have responded, deploy staff to facilities.</td>
-          </tr>
-    <tr>
         <td>
 
             <?php

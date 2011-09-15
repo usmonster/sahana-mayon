@@ -186,3 +186,4 @@ default:
 default_index:
   url:   /:module
   param: { action: index }
+

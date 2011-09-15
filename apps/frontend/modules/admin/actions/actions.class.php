@@ -117,6 +117,7 @@ class adminActions extends agActions
       //$this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
       //are we editing or creating a new param
       $this->processParam($request, $this->paramform);
+      agGlobal::clearParams();
     }
   }
 
