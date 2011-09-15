@@ -15,9 +15,9 @@
   ($sf_request->getParameter('sort')) ? $sortAppend = '&sort=' . $sf_request->getParameter('sort') : $sortAppend = '';
   ($sf_request->getParameter('order')) ? $orderAppend = '&order=' . $sf_request->getParameter('order') : $orderAppend = '';
 ?>
-<h2><?php if (isset($event)) : ?><span class="highlightedText"><?php echo $event->event_name; ?></span><?php endif; ?> Facility Group Management</h2>
+<h2>Facility Group Management: <?php if (isset($event)) : ?><span class="highlightedText"><?php echo $event->event_name; ?></span><?php endif; ?></h2>
 <br />
-<h3>Facility Resources<?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
+<h3>Facility Resources <?php echo $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . ((isset($event)) ? ' for the <span class="highlightedText">' . $event->event_name . '</span> Event' : ' for all Events'); ?></h3>
 <div id="tableContainer">
   <table class="singleTable" style="width: 700px;">
     <thead>
@@ -102,7 +102,8 @@
     </div>
 <?php if(isset($event_id)): ?>
   <br />
-  <a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="continueButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>
+  <a href="<?php echo url_for('event/active?event=' . urlencode($event->event_name)) ?>" class="continueButton"><?php echo $event->event_name ?> Event Management</a><br />
+<!--<a href="<?php echo url_for('event/facilitygroups?event=' . urlencode($event_name)); ?>" class="continueButton" title="Facilities and Resources">Manage Standby Facility Groups</a><br/>-->
 <?php endif; ?>
           <div class="floatRight">
   <?php

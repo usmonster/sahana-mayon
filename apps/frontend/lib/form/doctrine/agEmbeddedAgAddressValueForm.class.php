@@ -21,7 +21,7 @@ class agEmbeddedAgAddressValueForm extends agAddressValueForm
     $this->setWidgets(
         array('id' => new sfWidgetFormInputHidden(),
           'value' => new sfWidgetFormInputText(array(), array('class' => 'inputGray')),
-          'address_element_id' => new sfWidgetFormInputHidden())
+          'address_element_id' => new sfWidgetFormInputHidden(array(), array('class' => 'address-element-id')))
     );
 
     $this->setValidators(

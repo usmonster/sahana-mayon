@@ -1,2 +1,71 @@
-====== Event Management ======
-<<This is a placeholder for event management>>
+====== Event Management Quick Guide ======
+Scenarios are plans; and events are the deployments of those plans in response to real-world emergencies.
+Below are quick reference instructions for events.  More details are available in the [[manual:user:event:introduction|Event Management Tutorial]].
+
+===== Reference Information =====
+
+
+====== Deploying an Event ======
+Below are basic instructions for deploying an event.  The last step of the Scenario Creator Tutorial, [[scenario:deployevent|Deploying an Event]] covers detailed navigation to event deployment.  More details on event management are available in the [[manual:user:event:introduction|Event Management Tutorial]].
+
+=== Using the Menu ===
+From the "Home" page:
+  * Hover over "Respond" in the menu
+  * Select "Deploy a Scenario" in the drop down
+  * On the row for the Scenario you would like to deploy click "Deploy as Event".
+  * Use the checks to verify that the scenario was completed and their is a large enough staff pool to contact for response (typically you should have more staff than you need in this step).
+  * Enter a name for the event.
+  * Set the Zero Hour for the event. **Zero Hour** is the time when the event _did_ occur or _will occur_.  Zero Hour defaults to the current time. **Important:** in Scenario you set what time before or after zero hour facilities should open.  You may want to verify those times on the Scenario Shift Template page to be sure you have them set at a correct ratio to Zero Hour.
+  * To Save and wait in case you have more preparation, click "Save".  To deploy now click "Save and Deploy".  **Remember**: Once you save the event any updates to the Scenario it is based on will no longer affect it.
+  * After deployment you will be redirected to the Event Management page for this event where you can access other functions in this event.
+
+Use the instructions below or in the [[manual:user:event:introduction|Event Management Tutorial]] for information about managing an event.
+
+=== Using the Hub Buttons ===
+From the "Home" page:
+  * Click the "Respond" button
+  * Select the Scenario to base this event on from the dropdown box.
+  * Click "Go to Pre Deployment"
+  * Use the checks to verify that the scenario was completed and their is a large enough staff pool to contact for response (typically you should have more staff than you need in this step).
+  * Enter a name for the event.
+  * Set the Zero Hour for the event. **Zero Hour** is the time when the event _did_ occur or _will occur_.  Zero Hour defaults to the current time. **Important:** in Scenario you set what time before or after zero hour facilities should open.  You may want to verify those times on the Scenario Shift Template page to be sure you have them set at a correct ratio to Zero Hour.
+  * To Save and wait in case you have more preparation, click "Save".  To deploy now click "Save and Deploy".  **Remember**: Once you save the event any updates to the Scenario it is based on will no longer affect it.
+  * After deployment you will be redirected to the Event Management page for this event where you can access other functions in this event.
+
+Use the instructions below or in the [[manual:user:event:introduction|Event Management Tutorial]] for information about managing an event.
+
+===== Messaging and Deploying Staff =====
+While the staff messaging component of Sahana Agasti was designed for use with Send Word NOW the same interface can be used for manual staff messaging and deployment.  Below are instructions both for messaging with Send Word NOW and manual staff contact.
+==== Via Send Word Now ====
+From the Event Management page:
+  - Click the "Event Staff Messaging" link to be taken to the Event Staff Messaging page.
+  - Click the {{:manual:user:event:messaging_unconfirmed.png?150|Export Unconfirmed Staff}} button.
+  - Depending on your browser you may be asked where to save the file, or it may download automatically.  Open the exported file and use the exported information to contact your staff.
+  - Use Send Word NOW to contact Staff, record responses, and receive the import file.  **The import file must be in Excel 2003 .xls format**.  
+  - Click {{:manual:user:event:messaging_import.png?150|Import Staff Responses}} to open the option to import the staff response spreadsheet.  Click "Browse" and select the file.  Click "Submit" to submit the file for import.
+  - After the response file is imported all available staff will be available for preview by clicking the {{:manual:user:event:messaging_preview.png?200|Preview Confirmed Staff}} button to verify there are enough staff to respond.
+  - **If you do not have sufficient staff** return to step 1.  Only staff that were not imported with responses will be included in the updated contact list.
+  - **When you have enough staff to respond** click {{:manual:user:event:messaging_deploy.png?150|Deploy Staff}} to deploy staff to facilities.
+  - Click {{:manual:user:event:messaging_export_staff.png?150|Export Staff Pool}} to export a list of the staff assignments.  Use Send Word NOW to contact responding staff with their work assignments.
+
+==== Manual Messaging and Deployment ====
+From the Event Management page:
+  - Click the "Event Staff Messaging" link to be taken to the Event Staff Messaging page.
+  - Click the {{:manual:user:event:messaging_unconfirmed.png?150|Export Unconfirmed Staff}} button.
+  - Depending on your browser you may be asked where to save the file, or it may download automatically.  Open the exported file and use the exported information to contact your staff.
+  - Record your staff responses in an Excel 2003 Spreadsheet matching the [[manual:user:event:send_word_now_import|Send Word Now Import File Format]].  **Be sure to retain the Unique ID from the export or the file will not import properly.**
+  - Save the file on your computer.
+  - Click {{:manual:user:event:messaging_import.png?150|Import Staff Responses}} to open the option to import the staff response spreadsheet.  Click "Browse" and select the file.  Click "Submit" to submit the file for import.
+  - After the response file is imported all available staff will be available for preview by clicking the {{:manual:user:event:messaging_preview.png?200|Preview Confirmed Staff}} button to verify there are enough staff to respond.
+  - **If you do not have sufficient staff** return to step 1.  Only staff that were not imported with responses will be included in the updated contact list.
+  - **When you have enough staff to respond** click {{:manual:user:event:messaging_deploy.png?150|Deploy Staff}} to deploy staff to facilities.
+  - Click {{:manual:user:event:messaging_export_staff.png?150|Export Staff Pool}} to export a list of the staff assignments.  Use this list to follow-up with your staff and give them their assignments.
+
+===== Managing Event Staff =====
+
+===== Managing Event Facilities =====
+
+===== Resolving Events =====
+
+===== Working with Vesuvius (Client Registration) =====
+

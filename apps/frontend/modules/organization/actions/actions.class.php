@@ -13,9 +13,23 @@
  *
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-class organizationActions extends sfActions
+class organizationActions extends agActions
 {
   protected $agOrganizationHelper ;
+  protected $_searchedModels = array('agOrganization');
+
+  public function executeSearch(sfWebRequest $request)
+  {
+    $this->targetAction = 'search';
+    $string = $request->getParameter('query');
+    $pattern = "/\W/";
+    $replace = " ";
+    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
+//    $this->params = '?query=' . $request->getParameter('query');
+    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+    parent::doSearch($request->getParameter('query'), $currentPage);
+    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
+  }
 
   /**
    * Method to lazily load the agOrganizationHelper helper class.
@@ -227,7 +241,14 @@ class organizationActions extends sfActions
     {
       $ag_organization = $form->save();
 
-      $this->redirect('organization/edit?id='.$ag_organization->getId());
+      if ($request->hasParameter("Another"))
+      {
+        $this->redirect('organization/new');
+      }
+      else
+      {
+        $this->redirect('organization/edit?id='.$ag_organization->getId());
+      }
     }
   }
 }

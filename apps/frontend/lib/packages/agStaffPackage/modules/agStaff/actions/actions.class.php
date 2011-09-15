@@ -46,25 +46,12 @@ class agStaffActions extends agActions
     }
   }
 
-//  /**
-//   *
-//   * @param sfWebRequest $request
-//   * generates and passes a new scenario form to the view
-//   */
-//  public function executeGrouptype(sfWebRequest $request)
-//  {
-//    $this->ag_facility_group_types = Doctrine_Core::getTable('agFacilityGroupType')
-//        ->createQuery('a')
-//        ->execute();
-//    $this->grouptypeform = new agFacilityGroupTypeForm();
-//  }
-
   public function executeList(sfWebRequest $request)
   {
-    $this->status = 'active';
-    $this->sort = null;
-    $this->order = null;
-    $this->limit = null;
+    $this->targetAction = 'list';
+    $this->status = 'all';
+    $this->sort = NULL;
+    $this->order = NULL;
 
     //the next few lines could be abstracted to agActions as they are request params that may be
     //used for any list
@@ -74,8 +61,6 @@ class agStaffActions extends agActions
       $this->sort = $request->getGetParameter('sort');
     if ($request->getGetParameter('order'))
       $this->order = $request->getGetParameter('order');
-    if ($request->getGetParameter('limit'))
-      $this->limit = $request->getGetParameter('limit');
 
     /** @todo take into consideration app_display */
     $staffStatusOptions = agDoctrineQuery::create()
@@ -110,28 +95,13 @@ class agStaffActions extends agActions
     $this->statusWidget->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
     $this->statusWidget->getWidgetSchema()->setFormFormatterName('inline');
 
-//    if(apc_exists('staffArray')){
-//      $staffArray = apc_fetch('staffArray');
-//    }
-//    else{
-    $staffArray = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order,
-                                             $this->limit);
-//      apc_store('staffArray', $staffArray);
-//    }  this will not work currently on update, there needs to be a hook/callback
+    list($this->displayColumns, $query) = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order);
 
-    $this->pager = new agArrayPager(null, 10);
-    $this->pager->setResultArray($staffArray);
+    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+    $resultsPerPage = agGlobal::getParam('staff_list_results_per_page');
+    $this->pager = new Doctrine_Pager($query, $currentPage, $resultsPerPage);
+    $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
-    $this->pager->setPage($this->getRequestParameter('page', 1));
-    $this->pager->init();
-
-
-    $this->ag_phone_contact_types = Doctrine::getTable('agPhoneContactType')
-        ->createQuery('c')
-        ->execute();
-    $this->ag_email_contact_types = Doctrine::getTable('agEmailContactType')
-        ->createQuery('d')
-        ->execute();
     //p-code
     //$this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' ');
     //end p-code
@@ -158,81 +128,6 @@ class agStaffActions extends agActions
    */
   public function executeShow(sfWebRequest $request)
   {
-//    $query = Doctrine::getTable('agStaff')
-//            ->createQuery('a')
-//            ->select(
-//                'p.*,
-//                  st.*,
-//                  ps.*,
-//                  s.*,
-//                  pn.*,
-//                  n.*,
-//                  e.*,
-//                  lang.*,
-//                  religion.*,
-//                  namejoin.*,
-//                  name.*,
-//                  nametype.*'
-//            )
-//            ->from(
-//                'agStaff st,
-//                  st.agPerson p,
-//                  p.agPersonSex ps,
-//                  ps.agSex s,
-//                  p.agPersonMjAgNationality pn,
-//                  pn.agNationality n,
-//                  p.agEthnicity e,
-//                  p.agLanguage lang,
-//                  p.agReligion religion,
-//                  p.agPersonMjAgPersonName namejoin,
-//                  namejoin.agPersonName name,
-//                  name.agPersonNameType nametype'
-//    );
-    //$this->pager = new sfDoctrinePager('agStaff', 1);
-    //if we have exceucted a search
-//    if ($request['query']) {
-//      $lqResults = Doctrine_core::getTable('agStaff')->getForLuceneQuery($request['query']);
-//
-//      $i = 0;
-//      $lqIds = array();
-//
-//      foreach ($lqResults as $lqResult) {
-//        $lqIds[$i] = $lqResult->getId();
-//        $i++;
-//      }
-//
-//      if (count($lqIds) > 0) {
-//        $q = Doctrine::getTable('agStaff')
-//                ->createQuery('a')
-//                ->select('s.*')
-//                ->from('agStaff s')
-//                ->where('s.id IN (' . implode(',', $lqIds) . ')');
-//        $this->pager->setQuery($q);
-//        $this->pager->setPage($request->getParameter('page', 1));
-//        $this->pager->init();
-//
-//        $this->query = $request['query'];
-//      }
-//    } else {
-//      if ($request->getParameter('sort')) {
-//        if (substr($request->getParameter('sort'), 0, 11) == 'person_name') {
-//          $nameId = substr($request->getParameter('sort'), 12);
-//          $sortOrder = $request->getParameter('order', 'DESC');
-//          $this->pager->setQuery($query->orderBy('namejoin.person_name_type_id = ' . $nameId . ' ' . $sortOrder . ', person_name ' . $sortOrder));
-//        } else {
-//          $this->pager->setQuery($query->orderBy($request->getParameter('sort', 'person_name') . ' ' . $request->getParameter('order',
-//                      'DESC')));
-//        }
-//        //$this->sortAppend = $sortOrder;
-//      } else {
-//        //$this->pager->setQuery(Doctrine::getTable('agPerson')->createQuery('a'));
-//        $this->pager->setQuery($query);
-//      }
-//      $this->pager->setPage($request->getParameter('page', 1));
-//      $this->pager->init();
-//    }
-
-
     $this->forward404Unless(
         $this->agStaff = Doctrine::getTable('AgStaff')->find($request->getParameter('id')),
                                                                                     sprintf('Object ag_staff does not exist (%s).',
@@ -506,23 +401,34 @@ class agStaffActions extends agActions
    * @todo: allow export of group selections or search results, implement export for other modules and models.
    * @todo: add some more formatting to the file that is output to make reading easier.
    * */
-  public function executeExport()
+  public function executeExport(sfWebRequest $request)
   {
-    $staffExporter = new agStaffExporter();
-    $exportResponse = $staffExporter->export();
+    $this->startTime = microtime(true);
+
+    $staffExporter = agStaffExport::getInstance('staff_export');
+    $this->exportFile = $staffExporter->getExport();
+    $this->exportFile = $this->exportFile['filename'];
+    $results = $staffExporter->getResults();
+    $peakMemory = $results['maxMem'];
+
     // Free up some memory by getting rid of the agFacilityExporter object.
     unset($staffExporter);
-    $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
-    $this->getResponse()->setHttpHeader('Content-Disposition',
-                                        'attachment;filename="' . $exportResponse['fileName'] . '"');
+    
+      // Report elapsed time
+    $this->endTime = microtime(true);
+    $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+    $this->importTime = date("H:i:s", $time);
 
-    $exportFile = file_get_contents($exportResponse['filePath']);
+    // Format memory
+    $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+    if ($peakMemory <= 999) {
+      $peakMemory = 1;
+    }
+    for ($i = 0; $peakMemory > 999; $i++) {
+      $peakMemory /= 1024;
+    }
+    $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
 
-    $this->getResponse()->setContent($exportFile);
-    $this->getResponse()->send();
-    unlink($exportResponse['filePath']);
-
-    $this->redirect('staff/index');
   }
 
   //TODO: put this in the global actions file?
@@ -551,42 +457,94 @@ class agStaffActions extends agActions
 
   public function executeImport(sfWebRequest $request)
   {
-    //    $this->timer = time();
+    $this->startTime = microtime(true);
 
     $uploadedFile = $_FILES['import'];
 
-    print("<pre>" . print_r($_FILES, true) . "</pre>");
+    //print("<pre>" . print_r($_FILES, true) . "</pre>");
 
     $this->importPath = sfConfig::get('sf_upload_dir') . DIRECTORY_SEPARATOR . $uploadedFile['name'];
 
-    print("<pre>Move {$uploadedFile['tmp_name']} to " . $this->importPath . "</pre>");
+
     if (!move_uploaded_file($uploadedFile['tmp_name'], $this->importPath)) {
-      print("<pre>Failed to move {$uploadedFile['tmp_name']} to ".$this->importPath."</pre>");
-      //return sfView::ERROR;
+      return sfView::ERROR;
     }
+    //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
 
+    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_NOTICE);
 
-    // fires event so listener will process the file (see ProjectConfiguration.class.php)
-    //$this->dispatcher->notify(new sfEvent($this, 'import.staff_file_ready'));
-    // TODO: eventually use this ^^^ to replace this vvv.
-
-    $this->importer = agStaffImportNormalization::getInstance(NULL, agEventHandler::EVENT_DEBUG);
-    
     $this->importer->processXlsImportFile($this->importPath);
 
     $left = 1;
     while ($left > 0) {
       $left = $this->importer->processBatch();
-      print_r($left);
+      // print_r($left);
     }
-    $this->importer->concludeImport();
+    $iterData = $this->importer->getIterData();
+    $this->totalRecords = $iterData['fetchCount'];
+    $this->successful = $iterData['processedSuccessful'];
+    $this->failed = $iterData['processedFailed'] + $iterData['tempErrCt'];
+    $this->unprocessed = $iterData['unprocessed'];
 
-    // removes the file from the server
-    //unlink($this->importPath);
-    
-    //$this->dispatcher->notify(new sfEvent($this, 'import.start'));
-    //unset($this->importer);
-    //$this->timer = (time() - $this->timer);
+    // Report elapsed time
+    $this->endTime = microtime(true);
+    $time = mktime(0, 0, round(($this->endTime - $this->startTime), 0), 0, 0, 2000);
+    $this->importTime = date("H:i:s", $time);
+
+    // Get the memory usage
+    $peakMemory = $this->importer->getPeakMemoryUsage();
+
+    // Format memory
+    $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
+    if ($peakMemory <= 999) {
+      $peakMemory = 1;
+    }
+    for ($i = 0; $peakMemory > 999; $i++) {
+      $peakMemory /= 1024;
+    }
+    $this->peakMemory = ceil($peakMemory) . " " . $bytes[$i];
+
+    // close out import components and create an xls if needed
+    $this->importer->concludeImport();
+    $downloadFile = $this->importer->getUnprocessedXLS();
+    $this->unprocessedXLS = $downloadFile;
   }
 
+  public function executeDownload(sfWebRequest $request)
+  {
+    // being sure no other content wil be output
+    $this->setLayout(false);
+    //sfConfig::set('sf_web_debug', false);
+
+    $fileName = preg_replace("/\.zip/", "", $request->getParameter('filename'));
+
+    $filePath = sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR
+        . 'data/downloads' . DIRECTORY_SEPARATOR
+        . $fileName . '.zip';
+
+
+    // check if the file exists
+    $this->forward404Unless(file_exists($filePath));
+
+    // Make sure the browser doesn't try to deliver a chached version
+    $this->getResponse()->setHttpHeader("Pragma", "public");
+    $this->getResponse()->setHttpHeader("Expires", "0");
+    $this->getResponse()->setHttpHeader("Cache-Control",
+                                        "must-revalidate, post-check=0, pre-check=0");
+
+    // Provide application and file info headers
+    $this->getResponse()->setHttpHeader("Content-Type", "application/zip");
+    $this->getResponse()->setHttpHeader("Content-Disposition",
+                                        'attachment; filename=' . $fileName . '.zip');
+    $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
+    $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($filePath));
+
+    $this->getResponse()->sendHttpHeaders();
+    $this->getResponse()->setContent(readfile($filePath));
+    $this->getResponse()->send();
+
+
+    return sfView::NONE;
+
+  }
 }

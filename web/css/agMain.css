@@ -244,7 +244,7 @@ float:right;
 
 
 /**** Links ****/
-.continueButton, .deleteButton, .generalButton {
+.continueButton, .deleteButton, .generalButton, .submitLinkButton {
   display: inline-block;
   padding: 5px 10px;
   border: solid 1px;
@@ -286,7 +286,7 @@ float:right;
   border-color: #ff8f00;
 }
 
-input.continueButton, input.deleteButton {
+input.continueButton, input.deleteButton, imput.submitLinkButton {
   font-family: helvetica, arial, verdana, sans-serif;
   padding: 0.32em 0.6em;
   margin: 0.12em;
@@ -327,14 +327,14 @@ input.continueButton, input.deleteButton {
   position: relative;
 }
 
-.continueButton:hover, .buttonSmall:hover, .smallLinkButton:hover {
+.continueButton:hover, .buttonSmall:hover, .smallLinkButton:hover, .submitLinkButton:hover {
   color: #009931;
   border-color: #009931;
   background: #cdffdd;
   cursor: pointer;
 }
 
-.continueButton:active, .buttonSmall:active{
+.continueButton:active, .buttonSmall:active, .submitLinkButton:active{
   background: #98ffb9;
   color: #009931;
   border-color: #009931;
@@ -680,7 +680,7 @@ input[type="button"]:-moz-focus-inner, form input[type="submit"]:-moz-focus-inne
   padding: .25em;
 }
 
-#fileUpload {
+#fileUpload, #inputfileupload2 {
   text-align: right; 
   opacity: 0; 
   -moz-opacity:0; 
@@ -689,6 +689,28 @@ input[type="button"]:-moz-focus-inner, form input[type="submit"]:-moz-focus-inne
   position: relative; 
   width: 190px;
 }
+.fileUploadHover {
+    /*fromjquery*/
+  color: #009931;
+  border-color: #009931;
+  background: #cdffdd;
+  cursor: pointer;
+
+
+   display: inline-block;
+  padding: 5px 10px;
+  border: solid 1px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  outline: none; 
+}
+
+
 
 #login ul {
   list-style-type: none;
@@ -720,7 +742,7 @@ th .tableRow {
   border: none;
 }
 
-.staffTable, .singleTable {
+.staffTable, .singleTable, .adminGlobal {
   border-collapse: collapse;
 }
 .staffTable {
@@ -731,7 +753,7 @@ th .tableRow {
   border: solid #bcbcbc 1px;
 }
 
-.staffTable tr, .singleTable tr {
+.staffTable tr, .singleTable tr, .adminGlobal tr {
   border-bottom: solid #bcbcbc 1px;
 }
 
@@ -739,13 +761,17 @@ th .tableRow {
   background: #e5f7ff;
 }
 
-.staffTable td, .staffTable th {
+.adminGlobal tr:hover{
+    background:#f7f7f7;
+}
+
+.staffTable td, .staffTable th, .adminGlobal td, .adminGlobal th {
   padding: .25em;
   margin: 0;
   text-align: center;
 }
 
-table.staffTable td.left {
+table.staffTable td.left, .leftText {
   text-align:left;
 }
 
@@ -757,10 +783,14 @@ table.staffTable td.right {
   text-align: center
 }
 
-.staffTable .head, .singleTable .head, .singleTable .headLeft, .singleTable .headMid {
+.staffTable .head, .singleTable .head, .singleTable .headLeft, .singleTable .headMid, .adminGlobal .head {
   background: #dadada;
   text-align: center;
   color: #848484;
+}
+
+.adminGlobal tr.head:hover{
+    background-color: #dadada;
 }
 
 .singleTable .headLeft {
@@ -778,10 +808,10 @@ table.staffTable td.right {
   padding: .25em 1em;
   color: #dadada;
 }*/
-.staffTable .buttonText {
+.staffTable .buttonText, .adminGlobal .buttonText {
   font-size:1em;
 }
-.staffTable .headsort .buttonText {
+.staffTable .headsort .buttonText, .adminGlobal .headsort .buttonText {
   color: #000000;
 }
 
@@ -802,7 +832,7 @@ table.staffTable td.right {
   font-weight: bold;
 }*/
 
-.staffTable caption, .singleTable caption {
+.staffTable caption, .singleTable caption, .adminGlobal caption {
   font-size: 1.5em;
   font-weight: bold;
   color: #848484;
@@ -1324,7 +1354,7 @@ P {
 
 }
 
-.staffTable td, .staffTable th {
+.staffTable td, .staffTable th, .adminGlobal th {
   padding: .25em;
 
   text-align: center;
@@ -1786,8 +1816,45 @@ table.blueTable tr:hover{background-color: #f7f7f7
 }
 
 
+table.blueTable tr.noborder td{background:#d8d8d8; padding:1px;}
+table.blueTable tr.noborder:hover{background-color: #fff}
+
+table.headerLess{border: 1px solid #dadada; border-collapse: collapse; width:auto; margin-bottom:10px}
+table.headerLess tr td span{font-size:1em; color:#848484; font-weight: bold}
+table.headerLess tr td{ border:1px solid #dadada; padding:5px;}
+table.headerLess tr:hover{background-color: #f7f7f7}
 /*table.staffPool tr.head:hover{ background-color: #e5f7ff
 }*/
+
+
+table.sumry-tbl-info{
+  width:60%; display:inline-block
+}
+table.sumry-tbl-info tr.info{
+  background-color:#fff; padding:5px; text-align: center
+}
+table.sumry-tbl-info tr.info td{
+  width:20%; border-bottom:1px solid #dadada;
+}
+table.sumry-tbl-info tr th{
+  color: #666; border-bottom:2px solid #ccc;
+}
+table.sumry-tbl-info tr td {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .inlineLists {
   vertical-align: top;
@@ -1889,12 +1956,16 @@ li.agFormatterAddressLevelTwo {
 
 h4.agFormatterAddressLevelTwo {
   display: inline-block;
-  width: 60px;
+  width: 70px;
   text-align: left;
 }
 
 div.agFormatterAddressLevelTwo {
   display: inline-block
+}
+
+.geoLine {
+  margin: 1em 0;
 }
 
 .nameHolder {
@@ -1907,4 +1978,50 @@ div.agFormatterAddressLevelTwo {
   padding: .5em;
   text-align: center;
   vertical-align: top;
+}
+
+.textLeft{
+  text-align: left !important;
+}
+
+.adminGlobal2 select{
+    margin-left: 0px
+}
+
+.redColorText{
+    color: red;
+}
+.orangeColorText{
+    color:orange;
+}
+.greenColorText{
+    color:green;
+}
+
+.inputEmpty{
+    background-color: red;
+}
+
+.fullWidthRightText{
+width:100% !important; text-align:right;
+}
+
+.graphDisplay{
+display:inline-block;zoom:1; *display:inline;
+}
+
+.padding20Px{  
+padding:20px; 
+}
+
+.padding10PxLeft{
+padding-left:10px;
+}
+
+.width750Px{
+width:750px;
+}
+
+.pad1Em{
+text-align:left; padding-left:1em !important;
 }

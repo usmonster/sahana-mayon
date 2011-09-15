@@ -175,7 +175,7 @@ class agListForm
 
 
     $listbody = '<table class="staffTable">';
-    $listbody .= '<caption>List Facilities ' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '</caption>';
+    $listbody .= '<caption>Facility Resource List</caption>'; //' . $pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count() . '
     $listbody .= '<thead>
     <tr class="head">';
     foreach ($columns as $column => $columnCaption) {
@@ -187,13 +187,42 @@ class agListForm
       }
       $listbody .= '</th>';
     }
+    
+    
+     //footer paging code continuation
+    $listfoot = '<td colspan="4"">';
+//
+//First Page link (or inactive if we're at the first page).
+    $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
+//Previous Page link (or inactive if we're at the first page).
+    $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
+//Next Page link (or inactive if we're at the last page).
+    $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getNextPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
+//Last Page link (or inactive if we're at the last page).
+    $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
+    $listfoot .= '</td>';   
+    
+    
+    
+    
     $listbody .= ' </tr>
     </thead>
-    <tbody>';
+    <tfoot class="tFootInfo">
+      <tr>
+        <td colspan="4">' .$pager->getFirstIndice() . "-" . $pager->getLastIndice() . " of " . $pager->count(). '</td>
+      </tr>
+    ';
+
+    $listbody .= $listfoot;
+
+
+
+
 
     foreach ($pager->getResults() as $result) {
 
-      $listbody .='<tr>
+      $listbody .='<tbody>
+        <tr>
           <td><a class=continueButton href="' . url_for('facility/show?id=' . $result->getId()) . '">' . $result->getId() . '</a></td>';
       //$listbody .='<td>' . $result->getFacilityCode() . '</td>';
       $listbody .='<td>' . $result->getFacilityName() . '</td>';
@@ -235,20 +264,9 @@ class agListForm
     $listbody .= '<a href="' . url_for('facility/new') . '" class="continueButton" title="Create New Facility">Create New</a>
         </div>';
 
-    $listfoot = '<div class="floatRight">';
-//
-//First Page link (or inactive if we're at the first page).
-    $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getFirstPage() . $sortAppend . $orderAppend . '" class="buttonText" title="First Page">&lt;&lt;</a>' : '<a class="buttonTextOff">&lt;&lt;</a>');
-//Previous Page link (or inactive if we're at the first page).
-    $listfoot .= ( !$pager->isFirstPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getPreviousPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Previous Page">&lt;</a>' : '<a class="buttonTextOff">&lt;</a>');
-//Next Page link (or inactive if we're at the last page).
-    $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getNextPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Next Page">&gt;</a>' : '<a class="buttonTextOff">&gt;</a>');
-//Last Page link (or inactive if we're at the last page).
-    $listfoot .= ( !$pager->isLastPage() ? '<a href="' . $thisUrl . '?page=' . $pager->getLastPage() . $sortAppend . $orderAppend . '" class="buttonText" title="Last Page">&gt;&gt;</a>' : '<a class="buttonTextOff">&gt;&gt;</a>');
-    $listfoot .= '</div>';
 
     // Commented out $listheader here. It's declaration is commented above. Ask Charles.
-    $nice_list = $listbody . $listfoot;
+    $nice_list = $listbody;
 
     return $nice_list;
   }

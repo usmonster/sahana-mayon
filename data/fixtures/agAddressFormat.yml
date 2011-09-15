@@ -71,6 +71,6 @@ agAddressFormat:
     inline_sequence: 1
     pre_delimiter: ''
     post_delimiter: ''
-    agFieldType: sfWidgetFormInput
+    agFieldType: sfWidgetFormDoctrineChoice
     is_required: 0
 

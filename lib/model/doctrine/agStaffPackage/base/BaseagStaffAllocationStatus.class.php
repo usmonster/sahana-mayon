@@ -90,6 +90,30 @@ abstract class BaseagStaffAllocationStatus extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
+        $this->index('idx_staff_allocation_status_allocatable', array(
+             'fields' => 
+             array(
+              0 => 'allocatable',
+             ),
+             ));
+        $this->index('idx_staff_allocation_status_committed', array(
+             'fields' => 
+             array(
+              0 => 'committed',
+             ),
+             ));
+        $this->index('idx_staff_allocation_status_standby', array(
+             'fields' => 
+             array(
+              0 => 'standby',
+             ),
+             ));
+        $this->index('idx_staff_allocation_status_active', array(
+             'fields' => 
+             array(
+              0 => 'active',
+             ),
+             ));
     }
 
     public function setUp()

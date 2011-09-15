@@ -14,6 +14,8 @@
  */
 class adminActions extends agActions
 {
+  protected $_searchedModels = array('agScenario', 'agStaff', 'agFacility',
+    'agScenarioFacilityGroup', 'agOrganization');
 
   /**
    * necessary function which triggers rendering of the indexSuccess template
@@ -21,7 +23,7 @@ class adminActions extends agActions
    */
   public function executeIndex(sfWebRequest $request)
   {
-
+    $this->enable_cache_clear = agGlobal::getParam('enable_clear_cache');
   }
 
   /**
@@ -31,6 +33,41 @@ class adminActions extends agActions
   public function executeDisablestaff(sfWebRequest $request)
   {
     $foo = agStaffResource::disableAllStaff();
+    $this->redirect('admin/index');
+  }
+
+  /**
+   * Magic button to reindex search data
+   * @param sfWebRequest $request
+   * @todo Place these models somewhere special or dynamically generate the list so it's not hard-
+   * coded in here.
+   */
+  public function executeSearchreindex(sfWebRequest $request)
+  {
+    $models = array();
+
+    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
+    //agLuceneIndex::indexModels($models);
+    $this->redirect('admin/index');
+  }
+
+  public function executeClearcache(sfWebRequest $request)
+  {
+    if (agGlobal::getParam('enable_clear_cache') == 1) {
+      apc_clear_cache();
+      apc_clear_cache('user');
+      apc_clear_cache('opcode');
+
+      $oldDir = getcwd();
+      try {
+        chdir(sfConfig::get('sf_root_dir'));
+        $task = new sfCacheClearTask($this->context->getEventDispatcher(), new sfFormatter());
+        $task->run();
+      } catch(Exception $e) {
+        $this->sfContext->getLogger()->warning("Failed to clear the symfony cache: \n" . $e->getMessage());
+      }
+      chdir($oldDir);
+    }
     $this->redirect('admin/index');
   }
 
@@ -69,29 +106,18 @@ class adminActions extends agActions
     } else {
       $this->paramform = new agGlobalParamForm();
     }
-    $this->ag_global_params = Doctrine_Core::getTable('agGlobalParam')
-            ->createQuery('a')
+    $this->ag_global_params = agDoctrineQuery::create()
+            ->select('gp.*')
+            ->from('agGlobalParam gp')
+            ->orderBy('gp.datapoint ASC')
             ->execute();
-
-    if ($request->hasParameter('delete')) {
-      //$request->checkCSRFProtection();
-
-      $this->forward404Unless(
-          $ag_global_param = Doctrine_Core::getTable('agGlobalParam')->find(
-              array($request->getParameter('deleteparam'))
-          ),
-          sprintf('There is no such parameter (%s).', $request->getParameter('deleteparam'))
-      );
-      $ag_global_param->delete();
-
-      $this->redirect('admin/globals');
-    }
 
     if ($request->hasParameter('update') /* && $request->hasParameter('ag_global_param') */) {
       $this->forward404Unless($request->isMethod(sfRequest::POST) || $request->isMethod(sfRequest::PUT));
       //$this->forward404Unless($ag_global_param = Doctrine::getTable('agGlobalParam')->findAll()->getFirst(), sprintf('Object ag_account does not exist (%s).', $request->getParameter('id')));
       //are we editing or creating a new param
       $this->processParam($request, $this->paramform);
+      agGlobal::clearParams();
     }
   }
 
@@ -337,14 +363,18 @@ class adminActions extends agActions
   protected function processParam(sfWebRequest $request, sfForm $paramform)
   {
     $values = $request->getParameter('ag_global_param');
-    if (isset($values['id'])) {
+    if (empty($values['id'])) {
+
+      if (!is_null($values['id']))
+      { $values['id'] = NULL; }
+
+      $param = new agGlobalParam();
+    } else {
       $param = agDoctrineQuery::create()
               ->select()
               ->from('agGlobalParam')
               ->where('id = ?', $values['id'])
               ->fetchOne();
-    } else {
-      $param = new agGlobalParam();
     }
     $param->synchronizeWithArray($values);
 

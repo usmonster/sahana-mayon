@@ -1,0 +1,27 @@
+====== Event Management Tutorial ======
+
+===== Managing Event Facilities =====
+
+===== Reference Information =====
+
+==== Things To Know ====
+
+===== Tutorial =====
+
+===== FAQ =====
+
+===== Continue =====
+
+[[manual:user:event:managing_event_staff|{{:manual:user:previous.jpg?135|Managing Event Staff }}]]
+[[manual:user:event:resolving_events|{{ :manual:user:next.jpg?135|Resolving Events}}]] 
+
+===== Jump to Another Step =====
+
+{{ :logo_c3.jpg?200}}
+  - [[manual:user:event:introduction|Introduction]]
+  - [[manual:user:event:deploying_an_event|Deploying an Event]]
+  - [[manual:user:event:messaging_staff|Messaging and Deploying Staff]]
+  - [[manual:user:event:managing_event_staff|Managing Event Staff]]
+  - **Managing Event Facilities**
+  - [[manual:user:event:resolving_events|Resolving Events]]
+  - [[manual:user:event:clients|Vesuvius Client Tracking System]]

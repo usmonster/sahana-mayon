@@ -1,4 +1,4 @@
-====== Organization Management Walk-Through ======
+====== Organization Management Tutorial ======
 
 
 ===== Creating a New Organization =====
@@ -11,7 +11,7 @@ Organizations in Sahana Agasti are primarily used to group staff.  In a deployme
   * It's a good idea to name your first Organization 'Volunteer' so one is available for extraneous staff.
   * An organization's **Name** is used throughout the application to reference that group.  The **Description** is used for reference when in the Organization module.
 
-===== Walk-Through =====
+===== Tutorial =====
 
 In the form for a New Organization, add the name of the organization and a brief description.  **Reminder:** It's a good idea to create an organization called "Volunteer" for any unaffiliated staff that may want to help.
   * **Name**: the name of the organization or department
@@ -22,13 +22,13 @@ In the form for a New Organization, add the name of the organization and a brief
 After entering the information, click "Save and Continue".  The information will save and the page will refresh.  After the information saves, click "Back to List" to be taken to the Organization list.
 ====== Continue ======
 
-[[manual:user:organizations:walkthrough|{{:manual:user:previous.jpg?135|Introduction }}]]
+[[manual:user:organizations:Tutorial|{{:manual:user:previous.jpg?135|Introduction }}]]
 [[manual:user:organizations:list|{{ :manual:user:next.jpg?135|List Organizations}}]] 
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:organizations:walkthrough|Introduction]]
+  - [[manual:user:organizations:tutorial|Introduction]]
   - **Create New Organization**
   - [[manual:user:Organizations:list|Listing Organizations]]
   - [[manual:user:Organizations:edit|Editing Organizations Records]]

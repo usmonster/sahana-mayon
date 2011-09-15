@@ -25,11 +25,17 @@ class agEventStaffDeploymentHelper extends agPdoHelper
             $addrGeoTypeId,
             $shiftOffset,
             $skipUnfilled,
+            $enableGeo,
+            $deployableStaffQuery,
+            $disableEventStaffQuery,
+            $waveShiftsQuery,
             $err = FALSE,
             $startTime,
-            $endTime;
+            $endTime,
+            $profiler;
 
   protected $batchSize,
+            $batchTime,
             $fetchCount,
             $fetchPos,
             $totalWaves,
@@ -48,12 +54,12 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   /**
    * Method to return an instance of agEventStaffDeploymentHelper
    * @param integer $eventId An event ID
-   * @return self An instance of agEventStaffDeploymentHelper
+   * @return agEventStaffDeploymentHelper An instance of agEventStaffDeploymentHelper
    */
-  public static function getInstance($eventId, $eventDebugLevel = NULL)
+  public static function getInstance($eventId, $skipUnfilled = TRUE, $eventDebugLevel = NULL)
   {
     $esdh = new self();
-    $esdh->__init($eventId, $eventDebugLevel);
+    $esdh->__init($eventId, $skipUnfilled, $eventDebugLevel);
     return $esdh;
   }
 
@@ -78,12 +84,22 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->addrGeoTypeId = agGeoType::getAddressGeoTypeId();
     $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
     $this->shiftOffset = agGlobal::getParam('shift_change_restriction');
+    $this->enableGeo = agGlobal::getParam('enable_geo_base_staff_deployment');
 
     // get our global batch size, then modify it to guesstimate on our worst-case wave
     $this->batchSize = agGlobal::getParam('default_batch_size');
     $maxShifts = $this->getMaxShiftsPerWave();
     $this->batchSize = ceil(($this->batchSize / $maxShifts));
+    $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
+    // @todo These unsets shouldn't be necessary. Somehow this is being called twice which needs to be resolved
+    unset($this->deployableStaffQuery);
+    unset($this->disableEventStaffQuery);
+    unset($this->waveShiftsQuery);
+    $this->deployableStaffQuery = $this->getDeployableStaffQuery();
+    $this->disableEventStaffQuery = $this->getDisableEventStaffQuery();
+    $this->waveShiftsQuery = $this->getWaveShiftsQuery();
+    
     // reset our statistics
     $this->resetStatistics();
 
@@ -107,12 +123,13 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     if($this->err)
     {
-      $lastEvent = 'Deployment operation failed to complete successfully. The last known event ' .
+      $eventMsg = 'Deployment operation failed to complete successfully. The last known event ' .
         'message was: ' . "\n" . $lastEvent;
+      $this->eh->logNotice($eventMsg);
 
-      $waves = 0;
-      $shifts = 0;
-      $staff = 0;
+      $this->totalWaves = 0;
+      $this->totalShifts = 0;
+      $this->totalStaff = 0;
     }
     else
     {
@@ -120,26 +137,35 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $conn = $this->getConnection(self::CONN_WRITE);
 
       $conn->commit();
-
-      // grab our statistics
-      $waves = $this->totalWaves;
-      $shifts = $this->totalShifts;
-      $staff = $this->totalStaff;
     }
 
+    $results = $this->getResults();
+    return $results;
+  }
+
+  /**
+   * Method to return an array of deployment results.
+   * @return array An associative array of the processed results.
+   */
+  public function getResults()
+  {
     // pick up our temporal statistics
     $this->endTime = time();
     $duration = $this->endTime - $this->startTime;
 
+    $lastEvent = $this->eh->getLastEvent(agEventHandler::EVENT_NOTICE);
+    $lastEvent = $lastEvent['msg'];
+
     $results = array();
     $results['err'] = $this->err;
     $results['msg'] = $lastEvent;
-    $results['waves'] = $waves;
-    $results['shifts'] = $shifts;
-    $results['staff'] = $staff;
+    $results['waves'] = $this->totalWaves;
+    $results['shifts'] = $this->totalShifts;
+    $results['staff'] = $this->totalStaff;
     $results['start'] = $this->startTime;
     $results['end'] = $this->endTime;
     $results['duration'] = $duration;
+    $results['profiler'] = $this->profiler->getResults();
 
     return $results;
   }
@@ -160,13 +186,59 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   {
     $this->_conn = array();
 
-    $adapter = Doctrine_Manager::connection()->getDbh();
-    $this->_conn[self::CONN_READ] = Doctrine_Manager::connection($adapter, self::CONN_READ);
+    // establish our read connection
+    $this->_conn[self::CONN_READ] = $this->resetConn(self::CONN_READ);
 
-    // establish a write connection with an open transaction
-    $write = Doctrine_Manager::connection($adapter, self::CONN_WRITE);
-    $write->beginTransaction();
-    $this->_conn[self::CONN_WRITE] = $write;
+    // now do our write and start a transaction
+    $conn = $this->resetConn(self::CONN_WRITE);
+    $conn->beginTransaction();
+    $this->_conn[self::CONN_WRITE] = $conn;
+
+    // always re-parent properly
+    $dm = Doctrine_Manager::getInstance();
+    $dm->setCurrentConnection('doctrine');
+  }
+
+  /**
+   * Resets and/or instantiates and returns the select connection
+   * @param string $connName One of the self::CONN_ constants
+   * @param boolean $new Whether or not to instantiate a new connection if already exists
+   * @return Doctrine_Connection A doctrine connection object
+   */
+  protected function resetConn($connName, $new = FALSE)
+  {
+    if ($conn = $this->getConnection($connName)) {
+      if (!$new) {
+        $this->clearConnection($conn);
+        return $conn;
+      } else {
+       $this->closeConnection($conn);
+      }
+    }
+
+    // need this guy for all the heavy lifting
+    $dm = Doctrine_Manager::getInstance();
+
+    // save for re-setting
+    $currConn = $dm->getCurrentConnection();
+    $currConnName = $dm->getConnectionName($currConn);
+    $adapter = $currConn->getDbh();
+
+    // always re-parent properly
+    $dm->setCurrentConnection('doctrine');
+
+    $conn = Doctrine_Manager::connection($adapter, self::CONN_WRITE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, TRUE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
+    $this->_conn[self::CONN_WRITE] = $conn;
+
+    $dm->setCurrentConnection($currConnName);
+    return $conn;
   }
 
   /**
@@ -209,7 +281,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $this->eh->logInfo($eventMsg);
 
       // now execute the real query and continue
-      $pdo = $this->getFacGrpShiftWaves();
+      $this->getFacGrpShiftWaves();
 
       // finally, reset our little iter flag
       $this->iterNextGrp = FALSE;
@@ -228,6 +300,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->totalStaff = 0;
     reset($this->eventFacilityGroups);
     $this->iterNextGrp = TRUE;
+
+    $this->profiler = new agPerfProfiler();
+    $this->profiler->test();
 
     // also reset batch-level statistics
     $this->resetFacGrpStatistics();
@@ -255,61 +330,19 @@ class agEventStaffDeploymentHelper extends agPdoHelper
    */
   public function processBatch()
   {
-    return $this->processBatchMins();
-  }
-  public function doDeployment(sfEvent $event)
-  {
-        $action = $event->getSubject();
-    $context = $action->getContext();
-    ////$context = sfContext::getInstance();
-    $importer = $action->importer;
-    $moduleName = $action->getModuleName();
+    // set our time limit
+    set_time_limit($this->batchTime);
 
-    //TODO: get import data directory root info from global param
-    $importDataRoot = sfConfig::get('sf_upload_dir');
-    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
-    if (!file_exists($importDir)) {
-      mkdir($importDir);
-    }
-    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
+    // set all the minimums
+    $results =  $this->processBatchMins();
 
-    if (!file_exists($statusFile)) {
-      //TODO: check if directory is writeable? -UA
-      touch($statusFile);
-    }
-    if (!is_writable($statusFile)) {
-      $importer->eh->logEmerg('Status file not writeable: '. $statusFile);
-      return;
-    }
+    // this helps keep our memory profile down
+    $this->resetConn(self::CONN_WRITE, FALSE);
 
+    // take our mem / timing temperature
+    $this->profiler->test();
 
-    $action->getUser()->shutdown();
-    session_write_close();
-
-    // blocks import if already in progress
-    $status = sfYaml::load($statusFile);
-    $abortFlagId = 'aborted';
-
-    $continueDeploy == TRUE;
-    while ($continueDeploy == TRUE) {
-//      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
-//        $context->set($abortFlagId, NULL);
-//        break;
-//      }
-      $status = sfYaml::load($statusFile);
-
-        $batch = $staffDeployer->processBatch();
-        $continueDeploy = $batch['continue'];
-      
-      $batchResult = $importer->processBatch();
-      // if the last batch did nothing
-
-      $status = sfYaml::load($statusFile);
-      $status['continueDeploy'] = $continueDeploy;
-      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
-    }    
-
-      
+    return $results;
   }
 
   /**
@@ -490,20 +523,27 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                     $staffWave,
                                     $shiftOrigin)
   {
-    $q = agDoctrineQuery::create()
+    return $this->waveShiftsQuery->execute(array(':efrId' => $eventFacilityResourceId,
+      ':wave' => $staffWave, ':originator' => $shiftOrigin),
+      agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+  }
+
+  protected function getWaveShiftsQuery()
+  {
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= :offset';
+
+    return agDoctrineQuery::create()
       ->select('es.id')
         ->from('agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
-        ->where('es.event_facility_resource_id = ?', $eventFacilityResourceId)
-          ->andWhere('es.staff_wave = ?', $staffWave)
-          ->andWhere('es.originator_id = ?', $shiftOrigin)
-          ->andWhere('ss.disabled = ?', FALSE);
-
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
-
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+          ->innerJoin('es.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
+        ->where('ss.disabled = :disabled', array(':disabled' => FALSE))
+          ->andWhere($allocatableShifts, array(':offset' => (time() + (60 * $this->shiftOffset))))
+          ->andWhere('es.event_facility_resource_id = :efrId')
+          ->andWhere('es.staff_wave = :wave')
+          ->andWhere('es.originator_id = :originator');
   }
 
   /**
@@ -530,6 +570,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->eh->logInfo($eventMsg);
 
     // build a collection to store our records and loop through adding records to it
+    $agEventStaffShiftTable = $conn->getTable('agEventStaffShift');
     $coll = new Doctrine_Collection('agEventStaffShift');
     foreach ($shifts as $shift)
     {
@@ -538,7 +579,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         $this->eh->logDebug('Adding event staff id ' . $staff . ' to shift id ' . $shift . '.');
 
         // create a new shift record and add it to our collection
-       $rec = new agEventStaffShift();
+       $rec = new agEventStaffShift($agEventStaffShiftTable, TRUE);
         $rec['event_shift_id'] = $shift;
         $rec['event_staff_id'] = $staff;
         $coll->add($rec);
@@ -567,6 +608,8 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       // rethrow
       throw($e);
     }
+    $coll->free(TRUE);
+    unset($coll);
 
     if ($success)
     {
@@ -594,19 +637,12 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   {
     $conn = $this->getConnection(self::CONN_WRITE);
 
-    $q = agDoctrineQuery::create()
-      ->select('es1.id')
-        ->from('agEventStaff AS es1')
-          ->innerJoin('es1.agStaffResource AS sr1')
-          ->innerJoin('sr1.agStaff AS s1')
-          ->innerJoin('s1.agStaffResource AS sr2')
-          ->innerJoin('sr2.agEventStaff AS es2')
-        ->where('es1.event_id = es2.event_id')
-          ->andWhereIn('es2.id', $eventStaffIds);
-
-    $eventStaffIds = $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
-    $q->free();
-
+    $this->disableEventStaffQuery->where('es1.event_id = es2.event_id')
+      ->andWhereIn('es2.id', $eventStaffIds);
+    $eventStaffIds = $this->disableEventStaffQuery->execute(array(),
+      agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    
+    $agEventStaffStatusTable = $conn->getTable('agEventStaffStatus');
     $coll = new Doctrine_Collection('agEventStaffStatus');
 
     foreach ($eventStaffIds as $eventStaffId)
@@ -615,7 +651,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ' staffAllocationStatusId ' . $this->eventStaffDeployedStatusId;
       $this->eh->logDebug($eventMsg);
 
-      $rec = new agEventStaffStatus();
+      $rec = new agEventStaffStatus($agEventStaffStatusTable, TRUE);
       $rec['event_staff_id'] = $eventStaffId;
       $rec['staff_allocation_status_id'] = $this->eventStaffDeployedStatusId;
       $rec['time_stamp'] = date('Y-m-d H:i:s', time());
@@ -640,7 +676,21 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       throw($e);
     }
 
+    $coll->free(TRUE);
+    unset($coll);
+
     $this->eh->logInfo('Successfully updated ' . $collSize . ' staff status records.');
+  }
+
+  protected function getDisableEventStaffQuery()
+  {
+    return agDoctrineQuery::create()
+      ->select('es1.id')
+        ->from('agEventStaff AS es1')
+          ->innerJoin('es1.agStaffResource AS sr1')
+          ->innerJoin('sr1.agStaff AS s1')
+          ->innerJoin('s1.agStaffResource AS sr2')
+          ->innerJoin('sr2.agEventStaff AS es2');
   }
 
   /**
@@ -657,30 +707,41 @@ class agEventStaffDeploymentHelper extends agPdoHelper
                                              $facLat,
                                              $facLon)
   {
+    $results = array();
+    // add our geo-distance calculation
+    if ($this->enableGeo) {
+      $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
+        '+ cos( radians(gc.latitude) ) * cos( radians(' . $facLat . ') ) ' .
+        '* cos( radians(' . $facLon . ') - radians(gc.longitude) ) ) * 6378)' ;
+      $this->deployableStaffQuery->orderBy($geoDistance . ' ASC');
+    }
+
+    $this->deployableStaffQuery->limit($staffCount);
+
+    // we don't hydrate o hopefully avoid the DISTINCT that doctrine throws in by default
+    $results = $this->deployableStaffQuery->execute(array(':staffResourceType' => $staffResourceTypeId),
+      Doctrine_Core::HYDRATE_NONE);
+
+    foreach ($results as &$row) {
+      $row = $row[0];
+    }
+    unset($row);
+
+    return $results;
+  }
+
+  protected function getDeployableStaffQuery()
+  {
     // start with our basic query object
     $q = agDoctrineQuery::create()
       ->select('evs.id')
-        ->from('agEventStaff evs')
+      ->from('agEventStaff evs')
           ->innerJoin('evs.agEventStaffStatus ess')
           ->innerJoin('ess.agStaffAllocationStatus sas')
           ->innerJoin('evs.agStaffResource sr')
           ->innerJoin('sr.agStaffResourceStatus srs')
-          ->innerJoin('sr.agStaff s')
-          ->innerJoin('s.agPerson p')
-          ->innerJoin('p.agEntity e')
-          ->innerJoin('e.agEntityAddressContact eac')
-          ->innerJoin('eac.agAddress a')
-          ->innerJoin('a.agAddressGeo ag')
-          ->innerJoin('ag.agGeo g')
-          ->innerJoin('g.agGeoFeature gf')
-          ->innerJoin('gf.agGeoCoordinate gc')
-        ->where('evs.event_id = ?', $this->eventId)
-          ->andWhere('sr.staff_resource_type_id = ?', $staffResourceTypeId)
-          ->andWhere('sas.allocatable = ?', TRUE)
-          ->andWhere('srs.is_available = ?', TRUE)
-          ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
-        ->orderBy('evs.deployment_weight DESC')
-        ->limit($staffCount);
+        ->where('evs.event_id = :event', array(':event' => $this->eventId))
+          ->andWhere('srs.is_available = :srsAvailable', array(':srsAvailable' => TRUE));
 
     // ensure that we only get the most recent staff status
     $recentStaffStatus = 'EXISTS (' .
@@ -692,22 +753,33 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       ')';
     $q->andWhere($recentStaffStatus);
 
-    // just pick up the lowest priority staff address
-    $minStaffAddr = 'EXISTS (' .
-      'SELECT seac.id ' .
-        'FROM agEntityAddressContact AS seac ' .
-        'WHERE seac.id = eac.id ' .
-        'HAVING MIN(seac.priority) = eac.priority' .
-      ')';
-    $q->andWhere($minStaffAddr);
+    if ($this->enableGeo) {
+      $q->innerJoin('sr.agStaff s')
+          ->innerJoin('s.agPerson p')
+          ->innerJoin('p.agEntity e')
+          ->innerJoin('e.agEntityAddressContact eac')
+          ->innerJoin('eac.agAddress a')
+          ->innerJoin('a.agAddressGeo ag')
+          ->innerJoin('ag.agGeo g')
+          ->innerJoin('g.agGeoFeature gf')
+          ->innerJoin('gf.agGeoCoordinate gc')
+          ->andWhere('sas.allocatable = :allocatable', array(':allocatable' => TRUE))
+          ->andWhere('sas.standby = :standby', array(':standby' => FALSE))
+          ->andWhere('g.geo_type_id = :geoType', array(':geoType' => $this->addrGeoTypeId)) ;
 
-    // add our geo-distance calculation
-    $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
-      '+ cos( radians(gc.latitude) ) * cos( radians(' . $facLat . ') ) ' .
-      '* cos( radians(' . $facLon . ') - radians(gc.longitude) ) ) * 6378)' ;
-    $q->orderBy($geoDistance . ' ASC');
+      // just pick up the lowest priority staff address
+      $minStaffAddr = 'EXISTS (' .
+        'SELECT seac.entity_id ' .
+          'FROM agEntityAddressContact AS seac ' .
+          'WHERE seac.entity_id = eac.entity_id ' .
+          'HAVING MIN(seac.priority) = eac.priority' .
+        ')';
+      $q->andWhere($minStaffAddr);
+    }
 
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    $q->andWhere('sr.staff_resource_type_id = :staffResourceType');
+
+    return $q;
   }
 
   /**
@@ -749,7 +821,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
-          ->innerJoin('efr.agEventFacilityResourceActivationTime')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
           ->innerJoin('efr.agEventFacilityResourceStatus efrs')
           ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
           ->innerJoin('efr.agFacilityResource fr')
@@ -769,9 +841,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->limit(1);
 
     // restrict ourselves only to allocatable shifts
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= ?';
+    $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
     // ensure that we only get the most recent facility resource status
     $recentFacRscStatus = 'EXISTS (' .
@@ -832,7 +904,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
-          ->innerJoin('efr.agEventFacilityResourceActivationTime')
+          ->innerJoin('efr.agEventFacilityResourceActivationTime efrat')
           ->innerJoin('efr.agEventFacilityResourceStatus efrs')
           ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
           ->innerJoin('efr.agFacilityResource fr')
@@ -846,18 +918,19 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('ag.agGeo g')
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
+          ->leftJoin('es.agEventStaffShift ess')
         ->where('fras.staffed = ?', TRUE)
           ->andWhere('frs.is_available = ?', TRUE)
           ->andWhere('ss.disabled = ?', FALSE)
           ->andWhere('efr.event_facility_group_id = ?', $this->currFacGrpId)
           ->andWhere('g.geo_type_id = ?', $this->addrGeoTypeId)
+          ->andWhere('ess.id IS NULL')
         ->groupBy('efr.id')
           ->addGroupBy('es.staff_wave')
           ->addGroupBy('es.staff_resource_type_id')
           ->addGroupBy('es.originator_id')
           ->addGroupBy('gc.latitude')
           ->addGroupBy('gc.longitude')
-          ->addGroupBy('efr.id')
           ->addGroupBy('fr.id')
           ->addGroupBy('f.id')
           ->addGroupBy('s.id')
@@ -872,9 +945,9 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addOrderBy('efr.id ASC');
  
     // restrict ourselves only to allocatable shifts
-    $allocatableShifts = '(60 * (es.minutes_start_to_facility_activation - ' . $this->shiftOffset .
-      ')) <= CURRENT_TIMESTAMP';
-    $q->andWhere($allocatableShifts);
+    $allocatableShifts = '((60 * es.minutes_start_to_facility_activation) + efrat.activation_time) ' .
+      ' >= ?';
+    $q->andWhere($allocatableShifts, (time() + (60 * $this->shiftOffset)));
 
 
     // ensure that we only get the most recent facility resource status
@@ -913,30 +986,5 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $pdoStmt = $this->executePdoQuery($conn, $sql, $params['where'], NULL, self::QUERY_SHIFTS);
     
     return $pdoStmt;
-  }
-
-  /**
-   * A simple method used to test execution of this class
-   * @return <type>
-   * @deprecated A test-method only
-   */
-  public function test()
-  {
-    $this->batchSize = 10;
-    $this->eh->setLogEventLevel(agEventHandler::EVENT_DEBUG);
-
-    $continue = TRUE;
-    while ($continue == TRUE)
-    {
-      $batch = $this->processBatch();
-      $continue = $batch['continue'];
-
-      print_r($batch);
-      echo "<br/><br/>";
-    }
-
-    $results = $this->save();
-    print_r($results);
-    return "<br/><br/>" . "Success!";
   }
 }

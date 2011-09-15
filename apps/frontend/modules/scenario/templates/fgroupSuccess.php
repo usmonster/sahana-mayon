@@ -24,11 +24,10 @@
 ?> </span> Scenario</h4>
 <p>Facility Groups are groupings of facility resources.  To create a facility group: name
 the group, assign the group type, select the allocation status, and the order in which is
-should be activated (the activation sequence).</p>
+should be activated (the activation sequence).  Click the tooltip icons for additional information.</p>
 <p><strong>Note:</strong> Facility resources should be created in the facility module.  If there are no records
-  below use the "Prepare" menu above to reach the Facility menu and add your facilities to Sahana Agasti.</p>
-<strong>Note:</strong> Facilities not grouped will not be available for activation when the Scenario is
-deployed as an event.
+  below use the "Prepare" menu above to reach the Facility menu and add your facilities to Sahana Agasti.
+  Facilities not grouped will not be available for activation when the Scenario is deployed as an event.</p>
 <div>
 <?php if ($groupSelector != null): ?>
 <br />

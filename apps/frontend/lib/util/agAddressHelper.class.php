@@ -646,7 +646,7 @@ class agAddressHelper extends agBulkRecordHelper
     $conn->beginTransaction() ;
     try
     {
-     $addressCollection->save() ;
+     $addressCollection->save($conn) ;
      $conn->commit() ;
     }
     catch(Exception $e)
@@ -815,6 +815,18 @@ class agAddressHelper extends agBulkRecordHelper
       $errMsg = "Geo coordinates provided, missing geoSourceId.";
       throw new Exception($errMsg);
     }
+
+    // clean up our data (ucwords etc)
+    foreach ($addresses as &$address)
+    {
+      foreach($address[0] as &$component)
+      {
+        $component = self::fullTrim($component);
+//        $component = self::ucTrim($component);
+      }
+      unset($component);
+    }
+    unset($address);
 
     // set up the incompletes (non-processed) array
     $incompleteAddresses = array() ;
@@ -1176,8 +1188,8 @@ class agAddressHelper extends agBulkRecordHelper
         // unfortunately, if we didn't get value we've got to add it!
         if (empty($valueId))
         {
-
-          $addrValue = new agAddressValue();
+          $addressValueTbl = $conn->getTable('agAddressValue');
+          $addrValue = new agAddressValue($addressValueTbl, TRUE);
           $addrValue['address_element_id'] = $elementId ;
           $addrValue['value'] = $value ;
           try
@@ -1185,9 +1197,6 @@ class agAddressHelper extends agBulkRecordHelper
             // save the address
             $addrValue->save($conn) ;
             $valueId = $addrValue->getId() ;
-
-            // and since that went right, add it to our results arrays
-            $resultsCache[$elementId] = $valueId ;
           }
           catch(Exception $e)
           {
@@ -1200,6 +1209,9 @@ class agAddressHelper extends agBulkRecordHelper
             break ;
           }
         }
+
+      // and since that all went right, add it to our results arrays
+      $resultsCache[$elementId] = $valueId ;
       }
 
       // now we attempt to insert the new address_id with all of our value bits, again only useful
@@ -1207,7 +1219,8 @@ class agAddressHelper extends agBulkRecordHelper
       if (is_null($err))
       {
         // attempt to insert the actual address
-        $newAddr = new agAddress() ;
+        $addressTbl = $conn->getTable('agAddress');
+        $newAddr = new agAddress($addressTbl, TRUE) ;
         $newAddr['address_standard_id'] = $components[1] ;
         $newAddr['address_hash'] = $components[2] ;
 
@@ -1234,7 +1247,8 @@ class agAddressHelper extends agBulkRecordHelper
         // if we at any point pick up an error, don't bother
         if (! is_null($err)) { break ; }
 
-        $newAmav = new agAddressMjAgAddressValue() ;
+        $amavTbl = $conn->getTable('agAddressMjAgAddressValue');
+        $newAmav = new agAddressMjAgAddressValue($amavTbl, TRUE) ;
         $newAmav['address_id'] = $addrId ;
         $newAmav['address_value_id'] = $rValueId ;
 

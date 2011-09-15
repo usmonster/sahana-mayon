@@ -12,5 +12,70 @@
  */
 abstract class PluginagEventFacilityGroup extends BaseagEventFacilityGroup
 {
+  public static function getStaffDistributionCenter($eventFacilityGroupID) {
+    $results = array();
 
+    // build our query components including an exists clause
+    $seqExists = 'EXISTS (SELECT tefr.id ' .
+      'FROM agEventFacilityResource tefr ' .
+      'WHERE tefr.event_facility_group_id = efr.event_facility_group_id ' .
+      'HAVING MIN(tefr.activation_sequence) = efr.activation_sequence)';
+    
+    $rstatExists = 'EXISTS (SELECT tefrs.id ' .
+      'FROM agEventFacilityResourceStatus AS tefrs ' .
+      'WHERE tefrs.time_stamp <= CURRENT_TIMESTAMP ' .
+        'AND tefrs.event_facility_resource_id = efrs.event_facility_resource_id ' .
+      'HAVING MAX(tefrs.time_stamp) = efrs.time_stamp)';
+
+    $q = agDoctrineQuery::create()
+      ->select('e.id')
+          ->addSelect('s.id')
+          ->addSelect('f.id')
+          ->addSelect('f.facility_name')
+          ->addSelect('f.facility_code')
+          ->addSelect('fr.id')
+          ->addSelect('frt.id')
+          ->addSelect('frt.facility_resource_type_abbr')
+          ->addSelect('efr.id')
+          ->addSelect('efg.id')
+          ->addSelect('efg.event_facility_group')
+        ->from('agEntity e')
+          ->innerJoin('e.agSite s')
+          ->innerJoin('s.agFacility f')
+          ->innerJoin('f.agFacilityResource fr')
+          ->innerJoin('fr.agFacilityResourceType frt')
+          ->innerJoin('fr.agEventFacilityResource efr')
+          ->innerJoin('efr.agEventFacilityGroup efg')
+          ->innerJoin('efr.agEventFacilityResourceStatus efrs')
+          ->innerJoin('efrs.agFacilityResourceAllocationStatus fras')
+          ->where('efg.id = ?', $eventFacilityGroupID)
+            ->andWhere($seqExists)
+            ->andWhere($rstatExists)
+            ->andWhere('fras.committed = ?', TRUE)
+      ->limit(1);
+
+    // execute our query and get the entity id
+    $data = $q->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+    if (!empty($data)) {
+      $entityId = $data[0]['e_id'];
+
+      $eah = new agEntityAddressHelper();
+      $ah = $eah->getAgAddressHelper();
+      $ah->lineDelimiter = ', ';
+      $addr = $eah->getEntityAddress(array($entityId), FALSE, TRUE,
+        agAddressHelper::ADDR_GET_STRING, array(FALSE, FALSE));
+      $addr = $addr[$entityId][1];
+
+      $results = array();
+      $results['event_facility_group'] = $data[0]['efg_event_facility_group'];
+      $results['event_facility_resource_id'] = $data[0]['efr_id'];
+      $results['facility_name'] = $data[0]['f_facility_name'];
+      $results['facility_resource_type'] = $data[0]['frt_facility_resource_type_abbr'];
+      $results['facility_code'] = $data[0]['f_facility_code'];
+      $results['facility_address'] = $addr;
+    }
+
+    return $results;
+  }
 }

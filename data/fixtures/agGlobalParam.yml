@@ -55,7 +55,7 @@ agGlobalParam:
     id: 11
     agHost: localhost
     datapoint: default_batch_size
-    value: 20000
+    value: 100
   lucene_delimiter:
     id: 12
     agHost: localhost
@@ -70,7 +70,7 @@ agGlobalParam:
     id: 14
     agHost: localhost
     datapoint: default_country
-    value: United States
+    value: United States of America
   default_organization:
     id: 15
     agHost: localhost
@@ -95,7 +95,7 @@ agGlobalParam:
     id: 19
     agHost: localhost
     datapoint: import_error_threshold
-    value: 20
+    value: 100
   default_shift_task_length:
     id: 20
     agHost: localhost
@@ -115,7 +115,7 @@ agGlobalParam:
     id: 23
     agHost: localhost
     datapoint: default_days_in_operation
-    value: 0
+    value: 5
   default_shift_max_staff_repeat_shifts:
     id: 24
     agHost: localhost
@@ -186,3 +186,115 @@ agGlobalParam:
     agHost: localhost
     datapoint: staff_disabled_status
     value: inactive
+  event_deploy_status:
+    id: 38
+    agHost: localhost
+    datapoint: event_deploy_status
+    value: open
+  vesuvius_address:
+    id: 39
+    agHost: localhost
+    datapoint: vesuvius_address
+    value: http://
+  organization_name:
+    id: 40
+    agHost: localhost
+    datapoint: organization_name
+    value: New York City OEM
+  staff_messaging_allocation_status:
+    id: 41
+    agHost: localhost
+    datapoint: staff_messaging_allocation_status
+    value: '<?php echo json_encode(array(1 => "Available", 2 => "Unavailable")); ?>'
+  default_staff_messaging_allocation_status:
+    id: 42
+    agHost: localhost
+    datapoint: default_staff_messaging_allocation_status
+    value: Unknown
+  unprocessed_staff_import_basename:
+    id: 43
+    agHost: localhost
+    datapoint: unprocessed_staff_import_basename
+    value: unprocessed_staff_import
+  xls_max_export_size:
+    id: 44
+    agHost: localhost
+    datapoint: xls_max_export_size
+    value: 20000
+  event_pre_deploy_status:
+    id: 45
+    agHost: localhost
+    datapoint: event_pre_deploy_status
+    value: Pre-Deployment
+  staff_list_results_per_page:
+    id: 46
+    agHost: localhost
+    datapoint: staff_list_results_per_page
+    value: 20
+  search_list_results_per_page:
+    id: 47
+    agHost: localhost
+    datapoint: search_list_results_per_page
+    value: 20
+  staff_resource_requirements_per_page:
+    id: 48
+    agHost: localhost
+    datapoint: staff_resource_requirements_per_page
+    value: 3
+  import_auto_index:
+    id: 49
+    agHost: localhost
+    datapoint: import_auto_index
+    value: 0
+    description: This feature is not currently working. Do not enable.
+  front_end_geo_source:
+    id: 50
+    agHost: localhost
+    datapoint: front_end_geo_source
+    value: manual entry 
+  clear_cache_on_import:
+    id: 51
+    agHost: localhost
+    datapoint: clear_cache_on_import
+    value: 1
+  bulk_operation_max_batch_time:
+    id: 52
+    agHost: localhost
+    datapoint: bulk_operation_max_batch_time
+    value: 360    
+  default_facility_group_allocation_status:
+    id: 53
+    agHost: localhost
+    datapoint: default_facility_group_allocation_status
+    value: active
+    value: 360
+  unprocessed_facility_import_basename:
+    id: 54
+    agHost: localhost
+    datapoint: unprocessed_facility_import_basename
+    value: unprocessed_facility_import
+  enable_clear_cache:
+    id: 55
+    agHost: localhost
+    datapoint: enable_clear_cache
+    value: 0
+  search_result_limit:
+    id: 56
+    agHost: localhost
+    datapoint: search_result_limit
+    value: 250
+  default_facility_group_activation_sequence:
+    id: 57
+    agHost: localhost
+    datapoint: default_facility_group_activation_sequence
+    value: 50
+  default_facility_resource_activation_sequence:
+    id: 58
+    agHost: localhost
+    datapoint: default_facility_resource_activation_sequence
+    value: 50
+  enable_geo_base_staff_deployment:
+    id: 59
+    agHost: localhost
+    datapoint: enable_geo_base_staff_deployment
+    value: 0

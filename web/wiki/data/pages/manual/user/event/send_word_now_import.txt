@@ -1,0 +1,18 @@
+====== Event Management Appendix ======
+===== Send Word NOW Import File Format =====
+Sahana Agasti was designed to integrate with Send Word NOW for messaging; however, the same messaging interface can be used for manually contacting staff for smaller deployments.  For instructions on how to export the staff contact list reference  [[manual:user:event&#manual_messaging|Manual Messaging]] in Event Management.
+
+Below are detailed instructions for creating the import file for Staff Responses during an event.  These instructions assume that you have exported the Unconfirmed Staff List for your event and will be manually contacting staff.
+
+===== Column Headers =====
+The following must be the first row of the import spreadsheet.  Required fields are in **bold**:
+  * **Unique ID** - **must** be the same unique ID for the staff person as the export
+  * **Last Name** - The last name of the staff member who was contacted	
+  * **First Name** - The first name of the staff member who was contacted
+  * Label - Optional field - Label of which type of phone or email was contacted: Home, Work, Personal
+  * Address - Optional field - Enter the phone number, address, or email used to contact
+  * **Status** - Enter "Delivered" if the person was contacted or, if the person was not spoken to, a brief message about the status of the contact.
+  * Time Stamp - Optional Field
+  * **Response** - Enter 1 or 2.  1 means they will be responding, 2 means they will not be responding.
+
+

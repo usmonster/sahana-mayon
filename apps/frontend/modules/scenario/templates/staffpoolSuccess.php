@@ -6,15 +6,45 @@
   ?>
 <h2>Staff Resource Pool: <span class="highlightedText"><?php echo $scenarioName ?> </span></h2>
 <?php
-include_partial('wizard', array('wizardDiv' => $wizardDiv));
+  include_partial('wizard', array('wizardDiv' => $wizardDiv));
 ?>
 <h4>Create searches to build the staff pool for the <span class="highlightedText"><?php echo $scenarioName;
 ?> </span> scenario.</h4>
 <p>The staff pool is built from a set of searches.  Creating from searches allows you to create custom
 deployment of staff based on the scale of the plan and response.</p>
 
-<?php if (count($saved_searches) > 0) {
-?><div class="infoHolder" style="width:750px;">
+<?php if (count($saved_searches) > 0): ?>
+
+<div class="infoHolder" style="width:750px;">
+  <h3>Saved Search Summary</h3>
+  <br />
+  <table class="blueTable">
+    <thead>
+      <tr class="head">
+        <th>Staff Resource Type</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($scenarioStaffByResourceCount AS $type => $count): ?>
+      <tr>
+        <td><?php echo ucwords(strtolower($type)); ?></td>
+        <td><?php echo $count; ?></td>
+      </tr>
+      <?php endforeach; ?>
+      <tr class="noborder">
+        <td colspan="2"></td>
+      </tr>
+      <?php foreach ($summaryCount AS $type => $count): ?>
+      <tr>
+        <td><?php echo ucwords(strtolower($type)); ?></td>
+        <td><?php echo $count; ?></td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+<div class="infoHolder" style="width:750px;">
   <h3>Saved Searches<a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_pool_searches&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Pool Searches">?</a></h3>
       <p class="highlightedText">Searches displayed in deployment order.</p>
   <table class="blueTable">
@@ -22,11 +52,6 @@ deployment of staff based on the scale of the plan and response.</p>
       <tr class="head">
         <th>Search Name</th>
         <th>Search Conditions</th>
-      </tr>
-      <tr>
-        <th style="float:right;">
-          <span class="highlightedText"><?php echo $total_staff ?></span> total staff in system, <span class="highlightedText"><?php echo $scenario_staff_count ?></span> Staff Members in pool
-        <th>
       </tr>
     </thead>
     <tbody>
@@ -40,7 +65,8 @@ deployment of staff based on the scale of the plan and response.</p>
     </tbody>
   </table>
 </div>
-<?php } ?>
+
+<?php endif; ?>
 <?php
     if (!isset($search_id)) {
       $search_id = NULL;
@@ -53,59 +79,30 @@ deployment of staff based on the scale of the plan and response.</p>
 
 <?php include_partial('poolform', array('poolform' => $poolform, 'filterForm' => $filterForm, 'scenario_id' => $scenario_id, 'search_id' => $search_id)) ?>
 
-    <div id="searchresults" class="infoHolder">
-
-      <!--sometimes this will fail -->
-  <?php if (isset($pager)) {
- ?>
-
-  <?php
-      //include_partial('search/search', array('hits' => $hits, 'searchquery' => $searchquery, 'results' => $results, 'target_module' => $target_module))
-      $displayColumns = array(
-        'id' => array('title' => '', 'sortable' => false),
-        'fn' => array('title' => 'First Name', 'sortable' => false),
-        'ln' => array('title' => 'Last Name', 'sortable' => false),
-        'agency' => array('title' => 'Agency', 'sortable' => true),
-        'classification' => array('title' => 'Classification', 'sortable' => true),
-        'phones' => array('title' => 'Phone Contact(s)', 'sortable' => true),
-        'emails' => array('title' => 'Email Contact(s)', 'sortable' => true),
-        'staff_status' => array('title' => 'Status', 'sortable' => false),
-      );
-
-$statusTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_list_resource_status&do=export_xhtmlbody';
-$orgTooltip = url_for('@wiki') . '/doku.php?id=tooltip:organization&do=export_xhtmlbody';
-$resourceTooltip = url_for('@wiki') . '/doku.php?id=tooltip:staff_resource&do=export_xhtmlbody';
-
-$displayColumns = array(
-  'id' => array('title' => '', 'sortable' => false),
-  'fn' => array('title' => 'First Name', 'sortable' => true),
-  'ln' => array('title' => 'Last Name', 'sortable' => true),
-  'organization' => array('title' => 'Organization', 'sortable' => true, 'tooltip' => $orgTooltip),
-  'resource' => array('title' => 'Resource', 'sortable' => true, 'tooltip' => $resourceTooltip),
-  'phones' => array('title' => 'Phone', 'sortable' => false),
-  'emails' => array('title' => 'Email', 'sortable' => false),
-  'staff_status' => array('title' => 'Status', 'sortable' => false, 'tooltip' => $statusTooltip),
-);      
-      
-      
-      
-//pager comes in from the action
-
-      $order = null;
-      $sort = null;
-      $filter = null;
-      //the above three lines are in place to supress warnings until SOF is functional
-      include_partial('global/list', array('sf_request' => $sf_request,
-        'displayColumns' => $displayColumns,
-        'pager' => $pager,
-        'order' => $order,
-        'sort' => $sort,
-        'limit' => $limit,
-        'status' => $status,
-        'target_module' => 'staff',
-        'caption' => 'Search Results',
-        'widgets' => array()
-          )
-      );
-    } ?>
-</div>
+<?php if (isset($previewStaffCountResults)): ?>
+  <div id="searchresults" class="infoHolder">
+  <h3>Search Preview:</h3>
+  <br />
+  <?php $previewStaffCountResults = $sf_data->getRaw('previewStaffCountResults'); ?>
+  <?php if (empty($previewStaffCountResults)): ?>
+    No match found.
+  <?php else: ?>
+    <table class="blueTable">
+      <thead>
+        <tr class="head">
+          <th>Staff Resource Type</th>
+          <th>Match Found</th>
+        </tr>
+      </thead>
+      <tbody>
+    <?php foreach($previewStaffCountResults AS $staffResourceCount): ?>
+        <tr>
+          <td><?php echo ucwords(strtolower($staffResourceCount[0])); ?></td>
+          <td><?php echo $staffResourceCount[1]; ?></td>
+        </tr>
+    <?php endforeach; ?>
+      </tbody>
+    </table>
+  <?php endif; ?>
+  </div>
+<?php endif; ?>

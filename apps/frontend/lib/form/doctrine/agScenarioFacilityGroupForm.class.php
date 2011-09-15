@@ -74,6 +74,8 @@ class agScenarioFacilityGroupForm extends BaseagScenarioFacilityGroupForm
         )
     );
 
+    $defaultGroupAllocationStatus = agScenarioFacilityGroup::getDefaultAllocationStatus();
+    $this->setDefaults(array('facility_group_allocation_status_id' => $defaultGroupAllocationStatus));
 
     $this->setValidators(
         array(

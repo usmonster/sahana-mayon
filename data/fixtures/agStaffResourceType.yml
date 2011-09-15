@@ -3,8 +3,12 @@ agStaffResourceType:
     staff_resource_type: EC Operator
     staff_resource_type_abbr: EC Opr
     description: EC Operator
-  staff:
+  gen:
     staff_resource_type: Generalist
+    staff_resource_type_abbr: gen
+    description: General staff
+  staff:
+    staff_resource_type: Staff
     staff_resource_type_abbr: staff
     description: General staff
   hs_manager:

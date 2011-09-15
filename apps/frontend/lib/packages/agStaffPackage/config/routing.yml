@@ -13,6 +13,9 @@ staff_search:
 staff_filter:
   url:   /staff/filter
   param: { module: agStaff, action: filter }
+staff_checkaddress:
+  url: /staff/checkaddress
+  param: { module: agStaff, action: checkaddress }
 staff_import:
   url:   /staff/import
   #class: sfRequestRoute
@@ -20,6 +23,10 @@ staff_import:
   #TODO: check on this
   requirements:
     sf_method: [post]
+
+staff_download:
+  url:  /staff/download
+  param: { module: agStaff, action: download }
 
 #staff_import_show:
 #  url:   /staff/import
@@ -42,6 +49,9 @@ staff_import_clear:
   #TODO: check on this
   requirements:
     sf_method: [delete]
+staff_export_unprocessed:
+  url:   /staff/import/exportunprocessed
+  param: { module: agStaff, action: exportunprocessed }
 staff_addstaffresource:
   url:   /staff/addstaffresource
   param: { module: agStaff, action: addstaffresource }
@@ -62,3 +72,4 @@ staff_status:
 staff:
   url: /staff/:action/*
   param: { module: agStaff }
+

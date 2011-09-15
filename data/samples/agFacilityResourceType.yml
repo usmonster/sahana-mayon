@@ -1,0 +1,21 @@
+agFacilityResourceType:
+  admin:
+    facility_resource_type: Administrative Center
+    facility_resource_type_abbr: admin
+    description: Area designated to be used as an administration center.
+  pet:
+    facility_resource_type: Pet Center
+    facility_resource_type_abbr: pet
+    description: Area designated to be used as pet center.
+  pod:
+    facility_resource_type: Point of Distribution
+    facility_resource_type_abbr: POD
+    description: Area designated to be used as a distribution center.
+  shelter:
+    facility_resource_type: Shelter
+    facility_resource_type_abbr: shl
+    description: Area designated to house clients.
+  whs:
+    facility_resource_type: Warehouse
+    facility_resource_type_abbr: whs
+    description: Area designated to be used as storage for food, medical supplies, blankets, cot, and others.

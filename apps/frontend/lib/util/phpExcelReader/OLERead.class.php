@@ -72,10 +72,12 @@ class OLERead extends phpExcelReader
       return false;
     }
     
+
     if (substr($this->data, 0, 8) != IDENTIFIER_OLE) {
       $this->error = 1;
       return false;
     }
+
     $this->numBigBlockDepotBlocks = parent::GetInt4d($this->data, NUM_BIG_BLOCK_DEPOT_BLOCKS_POS);
     $this->sbdStartBlock = parent::GetInt4d($this->data, SMALL_BLOCK_DEPOT_BLOCK_POS);
     $this->rootStartBlock = parent::GetInt4d($this->data, ROOT_START_BLOCK_POS);

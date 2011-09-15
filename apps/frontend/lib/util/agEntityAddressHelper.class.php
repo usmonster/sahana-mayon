@@ -17,18 +17,18 @@
 class agEntityAddressHelper extends agEntityContactHelper
 {
 
-  public    $agAddressHelper,
-            $defaultIsPrimary = FALSE,
-            $defaultIsStrType = FALSE;
+  public $agAddressHelper,
+  $defaultIsPrimary = FALSE,
+  $defaultIsStrType = FALSE;
   protected $_batchSizeModifier = 2,
-            $_contactTableMetadata = array('table' => 'agEntityAddressContact',
-                                            'method' => 'getEntityAddress',
-                                            'type' => 'address_contact_type_id',
-                                            'value' => 'address_id');
+  $_contactTableMetadata = array('table' => 'agEntityAddressContact',
+    'method' => 'getEntityAddress',
+    'type' => 'address_contact_type_id',
+    'value' => 'address_id');
 
   /**
    * Method to lazily load the $agAddressHelper class property (an instance of agAddressHelper)
-   * @return object The instantiated agAddressHelper object
+   * @return agAddressHelper The instantiated agAddressHelper object
    */
   public function getAgAddressHelper()
   {
@@ -58,13 +58,13 @@ class agEntityAddressHelper extends agEntityContactHelper
 
     // the most basic version of this query
     $q = agDoctrineQuery::create()
-            ->select('eac.entity_id')
-            ->addSelect('eac.address_id')
-            ->addSelect('eac.created_at')
-            ->addSelect('eac.updated_at')
-            ->from('agEntityAddressContact eac')
-            ->whereIn('eac.entity_id', $entityIds)
-            ->orderBy('eac.priority');
+        ->select('eac.entity_id')
+        ->addSelect('eac.address_id')
+        ->addSelect('eac.created_at')
+        ->addSelect('eac.updated_at')
+        ->from('agEntityAddressContact eac')
+        ->whereIn('eac.entity_id', $entityIds)
+        ->orderBy('eac.priority');
 
     // here we determine whether to return the address_contact_type_id or its string value
     if ($strType) {
@@ -93,10 +93,9 @@ class agEntityAddressHelper extends agEntityContactHelper
    * @return array A two or three dimensional array (depending up on the setting of the $primary
    * parameter), by entityId, by addressContactType.
    */
-  public function getEntityAddressByType(array $entityIds = NULL,
-                                          $strType = FALSE, $primary = FALSE,
-                                          $addressHelperMethod = NULL,
-                                          array $addressArgs = array())
+  public function getEntityAddressByType(array $entityIds = NULL, $strType = FALSE,
+                                         $primary = FALSE, $addressHelperMethod = NULL,
+                                         array $addressArgs = array())
   {
     // initial results declarations
     $entityAddresses = array();
@@ -159,10 +158,12 @@ class agEntityAddressHelper extends agEntityContactHelper
         // if we're only returning the primary, change the third dimension from an array to a value
         // NOTE: because of the restricted query, we can trust there is only one component per type
         // in our output and safely make this assumption
-        if ($primary) {
+        if ($primary && isset($addresses[0])) {
           // flatten the results
           $addresses = $addresses[0];
-          $addresses[0] = $formattedAddresses[$addresses[0]];
+          if (isset($formattedAddresses[$addresses[0]])) {
+            $addresses[0] = $formattedAddresses[$addresses[0]];
+          }
 
           $entityAddresses[$entityId][$addressType][0] = $addresses;
         }
@@ -201,11 +202,8 @@ class agEntityAddressHelper extends agEntityContactHelper
    *   ... )
    * </code>
    */
-  public function getEntityAddress(array $entityIds = NULL,
-                                    $strType = NULL,
-                                    $primary = NULL,
-                                    $addressHelperMethod = NULL,
-                                    array $addressArgs = array())
+  public function getEntityAddress(array $entityIds = NULL, $strType = NULL, $primary = NULL,
+                                   $addressHelperMethod = NULL, array $addressArgs = array())
   {
     // initial results declarations
     $entityAddresses = array();
@@ -313,17 +311,14 @@ class agEntityAddressHelper extends agEntityContactHelper
    * records, removed records, an a positional array of failed inserts.
    * @todo Hook up the addressGeo bits
    */
-  public function setEntityAddress( array $entityContacts,
-                                    $geoSourceId = NULL,
-                                    $keepHistory = NULL,
-                                    $enforceComplete = NULL,
-                                    $throwOnError = NULL,
-                                    Doctrine_Connection $conn = NULL)
+  public function setEntityAddress(array $entityContacts, $geoSourceId = NULL, $keepHistory = NULL,
+                                   $enforceComplete = NULL, $throwOnError = NULL,
+                                   Doctrine_Connection $conn = NULL)
   {
     // some explicit declarations at the top
-    $uniqContacts = array() ;
+    $uniqContacts = array();
     $addressGeos = array();
-    $err = NULL ;
+    $err = NULL;
     $errMsg = 'This is a generic ERROR for setEntityAddress. You should never receive this ERROR.
       If you have received this ERROR, there is an error with your ERROR handling code.';
 
@@ -333,20 +328,17 @@ class agEntityAddressHelper extends agEntityContactHelper
     }
 
     // loop through our contacts and pull our unique addresses from the fire
-    foreach ($entityContacts as $entityId => &$contacts)
-    {
-      foreach ($contacts as $index => $contact)
-      {
+    foreach ($entityContacts as $entityId => &$contacts) {
+      foreach ($contacts as $index => $contact) {
         $geo = NULL;
 
         // Trim leading and trailing spaces from contact values.
-        foreach ($contact[1][0] as $elem => $val)
-        {
-          $contact[1][0][$elem] = trim($val);
+        foreach ($contact[1][0] as $elem => $val) {
+          $contact[1][0][$elem] = self::fullTrim($val);
+//          $contact[1][0][$elem] = self::ucTrim($val);
         }
 
-        if (array_key_exists(2, $contact[1]))
-        {
+        if (array_key_exists(2, $contact[1])) {
           $geo = array_pop($contact[1]);
         }
 
@@ -363,8 +355,7 @@ class agEntityAddressHelper extends agEntityContactHelper
         }
 
         // Set geo array to have the same index id as address unique array
-        if (!empty($geo))
-        {
+        if (!empty($geo)) {
           $addressGeos[$pos] = $geo;
         }
 
@@ -391,10 +382,8 @@ class agEntityAddressHelper extends agEntityContactHelper
     try {
       // process addresses, setting or returning, whichever is better with our s/getter
       $uniqContacts = $addressHelper->setAddresses($uniqContacts, $addressGeos, $geoSourceId,
-        $enforceComplete, $throwOnError, $conn) ;
-    }
-    catch(Exception $e)
-    {
+                                                   $enforceComplete, $throwOnError, $conn);
+    } catch (Exception $e) {
       // log our error
       $errMsg = sprintf('Could not set addresses %s. Rolling back!', json_encode($uniqContacts));
 
@@ -411,8 +400,17 @@ class agEntityAddressHelper extends agEntityContactHelper
             // purge this address
             unset($entityContacts[$entityId][$index]);
           } else {
-            // otherwise, get our real addressId
-            $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
+            // Check whether an addressId is generated.
+            if (isset($uniqContacts[0][$contact[1]]))
+            {
+              // otherwise, get our real addressId
+              $entityContacts[$entityId][$index][1] = $uniqContacts[0][$contact[1]];
+            }
+            else
+            {
+              // purge this address
+              unset($entityContacts[$entityId][$index]);
+            }
           }
         }
       }
@@ -424,13 +422,15 @@ class agEntityAddressHelper extends agEntityContactHelper
         // just submit the entity addresses for setting
         $results = $this->setEntityContactById($entityContacts, $keepHistory, $throwOnError, $conn);
         // most excellent! no errors at all, so we commit... finally!
-        if ($useSavepoint) { $conn->commit(__FUNCTION__) ; } else { $conn->commit() ; }
-      }
-      catch(Exception $e)
-      {
+        if ($useSavepoint) {
+          $conn->commit(__FUNCTION__);
+        } else {
+          $conn->commit();
+        }
+      } catch (Exception $e) {
         // log our error
         $errMsg = sprintf('Could not set entity addresses %s. Rolling Back!',
-                json_encode($entityContacts));
+                          json_encode($entityContacts));
 
         // hold onto this exception for later
         $err = $e;
@@ -455,7 +455,7 @@ class agEntityAddressHelper extends agEntityContactHelper
       }
     }
 
-    return $results ;
+    return $results;
   }
 
 }

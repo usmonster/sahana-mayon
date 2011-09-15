@@ -109,7 +109,8 @@ class agLanguageHelper extends agBulkRecordHelper
 
     foreach ($newLanguages as $language)
     {
-      $newRec = new agLanguage();
+      $languageTbl = $conn->getTable('agLangauge');
+      $newRec = new agLanguage($languageTbl, TRUE);
       $newRec['language'] = $language;
 
       try
@@ -182,7 +183,8 @@ class agLanguageHelper extends agBulkRecordHelper
 
     foreach ($newFormats as $format)
     {
-      $newRec = new agLanguageFormat();
+      $langFormatTbl = $conn->getTable('agLanguageFormat');
+      $newRec = new agLanguageFormat($langFormatTbl, TRUE);
       $newRec['language_format'] = $format;
 
       try
@@ -256,7 +258,8 @@ class agLanguageHelper extends agBulkRecordHelper
 
     foreach ($newCompetencies as $competency)
     {
-      $newRec = new agLanguageCompetency();
+      $langComp = $conn->getTable('agLanguageCompetency');
+      $newRec = new agLanguageCompetency($langComp, TRUE);
       $newRec['language_competency'] = $competency;
 
       try

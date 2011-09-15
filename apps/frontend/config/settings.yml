@@ -5,10 +5,12 @@ prod:
   .settings:
     no_script_name:         true
     logging_enabled:        false
+    cache:                  true
 
 dev:
   .settings:
     error_reporting:        <?php echo (E_ALL | E_STRICT)."\n" ?>
+    logging_enabled:        true
     web_debug:              true
     cache:                  false
     no_script_name:         false
@@ -17,6 +19,7 @@ dev:
 test:
   .settings:
     error_reporting:        <?php echo ((E_ALL | E_STRICT) ^ E_NOTICE)."\n" ?>
+    logging_enabled:        true
     cache:                  false
     web_debug:              false
     no_script_name:         false
@@ -34,7 +37,7 @@ all:
     # Enable the database manager
     use_database:           true
 
-    enabled_modules:        [default, sfGuardAuth, sfGuardUser, sfGuardPermission, sfGuardGroup, agStaff, agGis, agFoo, scenario, event, report, agClient, agPet, search ]
+    enabled_modules:        [default, sfGuardAuth, sfGuardUser, sfGuardPermission, sfGuardGroup, agStaff, agGis, agFoo, scenario, event, report, agClient, agPet, search, agWebservices ]
     i18n:                   true
 
   .actions:

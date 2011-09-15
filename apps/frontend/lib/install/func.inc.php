@@ -244,9 +244,6 @@ function writeAppYml($authMethod = NULL)
         'homepage' => array('label' => 'Home', 'route' => '@homepage'),
         'prepare' => array('label' => 'Prepare', 'route' => '@prepare'),
         'respond' => array('label' => 'Respond', 'route' => '@respond'),
-        'recover' => array('label' => 'Recover', 'route' => '@homepage'),
-        'mitigate' => array('label' => 'Mitigate', 'route' => '@homepage'),
-        'modules' => array('label' => 'Modules', 'route' => '@homepage'),
         'admin' => array('label' => 'Administration', 'route' => '@admin'),
         'help' => array('label' => 'Help', 'route' => '@wiki'));
 
@@ -271,12 +268,6 @@ function writeAppYml($authMethod = NULL)
           ('label' => 'Add New Facility', 'route' => 'facility/new', 'parent' => 'facility'),
         'facility_list' => array
           ('label' => 'List Facilities', 'route' => 'facility/list', 'parent' => 'facility'),
-        'facility_import' => array
-          ('label' => 'Import Facilities', 'route' => '@facility', 'parent' => 'facility'),
-        'facility_export' => array
-          ('label' => 'Export Facilities', 'route' => '@facility', 'parent' => 'facility'),
-        'facility_types' => array
-          ('label' => 'List Facility Types', 'route' => '@facility', 'parent' => 'facility'),
         'org_new' => array
           ('label' => 'Add New Organization', 'route' => 'organization/new', 'parent' => 'org'),
         'org_list' => array
@@ -284,9 +275,7 @@ function writeAppYml($authMethod = NULL)
         'scenario_create' => array
           ('label' => 'Create New Scenario', 'route' => 'scenario/meta', 'parent' => 'scenario'),
         'scenario_list' => array
-          ('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'),
-        'scenario_facilitygrouptypes' => array
-          ('label' => 'List Facility Group Types', 'route' => 'scenario/grouptype', 'parent' => 'scenario'));
+          ('label' => 'List Scenarios', 'route' => 'scenario/list', 'parent' => 'scenario'));
 
   $appConfig['all']['.array']['title'] =
       array(

@@ -213,24 +213,22 @@ class agEventFacilityHelper
 
       // set up a new collection for inserts
       $insertCollection = new Doctrine_Collection('agEventFacilityResourceActivationTime');
-
+      $eventFacRescActiveTimeTable = $conn->getTable('agEventFacilityResourceActivationTime');
       foreach ($insertIds as $id) {
         // build our values array
         $data = array('event_facility_resource_id' => $id, 'activation_time' => $activationTime);
 
         // new efrat object
-        $efrat = new agEventFacilityResourceActivationTime();
+        $efrat = new agEventFacilityResourceActivationTime($eventFacRescActiveTimeTable, TRUE);
         $efrat->fromArray($data);
 
         // add it to the collection.
         $insertCollection->add($efrat);
-
-        // since we've got it in memory, we can free it, right?
-        // $efrat->free() ;
       }
 
       // save the collection
       $insertCollection->save($conn);
+      $insertCollection->free(TRUE);
 
       // commit
       $conn->commit();
@@ -438,21 +436,7 @@ class agEventFacilityHelper
    */
   public static function returnCurrentEventStatus($eventId)
   {
-    $query = agDoctrineQuery::create()
-            ->select('es.event_status_type_id')
-            ->from('agEventStatus es')
-            ->where('es.event_id = ?', $eventId)
-            ->andWhere(
-                'EXISTS (
-            SELECT s.id
-              FROM agEventStatus s
-              WHERE s.event_id = es.event_id
-                AND s.time_stamp <= CURRENT_TIMESTAMP
-              HAVING MAX(s.time_stamp) = es.time_stamp)'
-    );
-
-    $results = $query->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-    return $results;
+    return agEvent::getCurrentEventStatus($eventId);
   }
 
   /**
@@ -612,7 +596,7 @@ class agEventFacilityHelper
             ->andWhere($andWhereClause, $actionTimeOffset);
     $releasedShifts = $query->execute(array(), 'key_value_array');
 
-    $results = agEventShiftHelper::setEventShiftStatus($releasedShifts, $disabledStatusId, TRUE);
+    $results = agEventShiftHelper::setEventShiftStatus($releasedShifts, $disabledStatusId, TRUE, $conn);
     return $results;
   }
 
@@ -654,6 +638,7 @@ class agEventFacilityHelper
     try {
       // set up a new collection for inserts
       $collection = new Doctrine_Collection('agEventFacilityResourceStatus');
+      $eventFacRescStatusTable = $conn->getTable('agEventFacilityResourceStatus');
 
       foreach ($eventFacilityResourceIds as $id) {
         // build our values array
@@ -663,7 +648,7 @@ class agEventFacilityHelper
         $data['facility_resource_allocation_status_id'] = $allocationStatusId;
 
         // new efrat object
-        $efrs = new agEventFacilityResourceStatus();
+        $efrs = new agEventFacilityResourceStatus($eventFacRescStatusTable, TRUE);
         $efrs->fromArray($data);
 
         // add it to the collection.
@@ -673,7 +658,8 @@ class agEventFacilityHelper
       }
 
       // save the collection
-      $collection->save();
+      $collection->save($conn);
+      $collection->free(TRUE);
 
       // commit
       $conn->commit();

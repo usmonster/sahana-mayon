@@ -61,7 +61,10 @@ class agScenarioForm extends BaseagScenarioForm
                 'empty_value' => $this->getObject()->get('id'),
                 'required' => false)
           ),
-          'scenario' => new sfValidatorString(array('trim' => true, 'max_length' => 64)),
+          'scenario' => new sfValidatorRegex(
+            array('required' => TRUE, 'pattern' => '/^[a-zA-Z0-9 _-]{4,64}$/', 'trim' => TRUE),
+            array('invalid' => 'You must enter a valid name between 4 and 64 characters in length. ' .
+              'Allowed Characters include: A-z, 0-9, space, underscore, and dash.')),
           'description' => new sfValidatorString(array('trim' => true, 'max_length' => 255, 'required' => false)),
         )
     );

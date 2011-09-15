@@ -23,7 +23,6 @@ if (isset($search_id)) {
               <input type="submit" value="Delete" name="Delete" class="deleteButton"/> <!--this should be used if you are 'editing' a search condition but then want to create a new one, without 'refreshing' the page -->
             <?php } ?>
             <input type="submit" value="Save and Continue" class="continueButton" name="Continue" onclick="queryConstruct()"/>
-            <a href="<?php echo url_for('scenario/shifttemplates?id=' . $scenario_id) ?>" class="continueButton" title="Skip and Continue">Skip and Continue</a>
           </td>
         </tr>
       </tfoot>

@@ -30,6 +30,7 @@ blank.  <strong>A facility resource must have at least one staff resource entere
     include_partial('staffresourceform', array(
       'facilityStaffResourceContainer' => $facilityStaffResourceContainer,
       'scenario' => $scenario,
+      'pager' => $pager,
     ));
 
 ?>

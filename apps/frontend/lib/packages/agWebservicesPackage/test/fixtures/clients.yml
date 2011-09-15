@@ -1,0 +1,7 @@
+agWebservicesClients:
+  symfony:
+    url: @webservices_get
+    email: fabiocbalbuquerque@gmail.com
+    is_active: true
+    token: webservicetoken
+    agWebservicesEntities: [organizations, staff]

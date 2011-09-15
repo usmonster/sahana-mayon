@@ -33,7 +33,7 @@
 
 <p>A total of <span class="highlightedText">
           <?php echo $shifts ?></span> shifts have been generated covering
-          <span class="highlightedText"><?php echo $operationTime ?></span> of operation.  Click the id below to customize individual shifts.</p>
+          <span class="highlightedText"><?php echo $operationTime ?></span> of operation. </p>
 
 <table class="staffTable">
   <thead>
@@ -75,7 +75,7 @@
 
 <br>
 <div>
-  <a href="<?php echo url_for('scenario/shifts?id=' .$scenario_id) .'/new'?>" class="continueButton" title="Create New Scenario Shift">Create New Scenario Shift</a>
+<!--  <a href="<?php echo url_for('scenario/shifts?id=' .$scenario_id) .'/new'?>" class="continueButton" title="Create New Scenario Shift">Create New Scenario Shift</a>-->
   <a href="<?php echo url_for('scenario/review?id=' .$scenario_id ) ?>" class="continueButton" title="Finish Wizard">Finish Wizard and Review Scenario</a>
 
 </div>

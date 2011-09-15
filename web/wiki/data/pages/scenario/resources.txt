@@ -1,31 +1,115 @@
-====== Scenario Creator Walk-through ======
+====== Scenario Creator Tutorial ======
 
-===== Select Staff Resources =====
-To expedite the creation of Scenarios, select only the resources you'll need available for this scenario.
+===== Selecting Resources and Importing Facilities =====
+This step is designed to help limit the scope of the scenario, as well as expedite Scenario Creation through an optional Facility Import.
+
+**Important Suggestion**: If this is your first time creating Scenarios you may wish to create a test scenario to learn about the process before creating a Scenario with Facility Import.
 
 ===== Reference Information =====
-As you learned when you entered staff and facilities into Sahana Agasti, they are recorded as "Resources".  Staff Resources are a combination of staff records and their associated skill. Facility Resources are a combination of the physical location of a facility and the services offered at that location.
 
-===== Walk-Through =====
+==== Scenario Resources ====
+As you learned when you entered staff and facilities into Sahana Agasti, they are recorded as "Resources".  Staff Resources are a combination of staff records and their associated skill. Facility Resources are a combination of the physical location of a facility and the services offered at that location. For a review of the details of Facility and Staff Resources, return to the [[manual:important#resources|Resources Section]] of the Important Concepts page.
+
+==== Importing Facilities ====
+Facilities are imported into Sahana Agasti as part of Scenario Creation to ensure both that the detailed information required for activating facilities is included and to ease the creation of large scale planning.  Included in the import are not only the details on location and name of the facility, but it's resources and the information relating to them, and the groups the facilities will be included in.
+
+If you have not created a scenario before you are strongly encouraged to create a "test" scenario to learn about the system before using Facility Import to create your scenario.
+
+=== Things to Know ===
+  * The Facility Import template includes all the information on a facility resource, it's capacity, its activation sequence in a given scenario, and contact information. {{:manual:user:facilities:facility_import_and_export_template.xls|Facility Import Template}}
+  * **Imported facilities are directly related to specific scenarios.** When importing a facility you're required to select the scenario that import sheet relates to.
+  * Facilities can be imported as part of scenario creation, or the scenarios can be created and facilities imported later.
+  * Each row in import is for a Facility Resource.  If a facility has more than one resource each resource will be a new line in the import spreadsheet.
+
+=== Facility Import Column Headers ===
+It it **very important** that facility records be entered properly into the import template.  Below are the column headers for the facility import spreadsheet.  Required fields are **in bold**.
+  * Facility Name - Name of the facility.  Displayed as a title for the user.
+  * Facility Code - Unique code for the physical location of the facility.  **Must be unique.**  Used by Sahana Agasti to reference unique facilities.
+  * Facility Resource Type Abbr - Abbreviation for the facility resource being entered in this row.  Current Facility Resources are:
+    * Evacuation Center: EC
+    * Hurricane Shelter: HS
+    * Special Medical Needs Shelter: SMN
+    * Point of Distribution: POD
+    * Unified Operations Resource Center: UORC
+  * Facility Resource Status - Current status of that facility resource.  Available or Unavailable.
+  * Facility Capacity - Capacity of sheltering or medical services open to the public.  For non-public resources, such as distribution or control centers, enter 0.
+  * Facility Activation Sequence - Numerical activation sequence of that facility within its group.  Number 1 to 10.
+  * Facility Allocation Status - Status of the facility resource upon activation of the scenario.  Setup, Standby, or Unavailable.
+  * Facility Group - Name of the facility group this facility resource is associated with in the scenario.
+  * Facility Group Type - Type of facility group this facility is in.  Solar System, UORC, Shelters, Point of Distribution Centers.
+  * Facility Group Allocation Status - Status of the facility group upon activation of this scenario.  Available, Stand-by, Unavailable
+  * Facility Group Activation Sequence - Sequence the facility groups should be activated in.
+  * Work Email - Email of the facility
+  * Work Phone - Phone of the facility
+  * Street 1 - Line one of the facility address
+  * Street 2 - Line two of the facility address
+  * City - City of the facility address
+  * State - State of the facility address
+  * Postal Code - Postal Code of the facility
+  * Borough - Borough the facility is in
+  * Country - Country the facility is in
+  * Longitude - Longitude of the facility's geo coordinates
+  * Latitude - Latitude of the facility's geo coordinates
+  * Staff Minimum and Maximums - Facility staff requirements are included in the import as 2 columns per staff type; one minimum and one maximum.  The columns are titled with the "staff type short name"_min and "staff type short name"_max.  The current Coastal Storm Plan column headers are:
+    * ec_opr_min - Evacuation Center Operator minimum
+    * ec_opr_max - Evacuation Center Operator maximum
+    * hs_opr_min - Hurricane Shelter Operator minimum
+    * hs_opr_max - Hurricane Shelter Operator maximum
+    * spec_min - Specialist minimum
+    * spec_max - Specialist maximum
+    * uorc_min - UORC Staff minimum
+    * uorc_max - UORC Staff maximum
+    * med_nrs_min - Medical Nurse minimum
+    * med_nrs_max - Medical Nurse maximum
+    * med_oth_min - Medical Other minimum
+    * med_oth_max - Medical Other maximum
+    * staff_min - Staff minimum
+    * staff_max - Staff maximum
+    * opr_min - Operator minimum
+    * opr_max - Operator maximum
+
+=== Facility Import Dos and Donts ===
+A facility import quick guide with dos and donts is available for download: {{:manual:user:facilities:facility_import_quick_guide.pdf|Facility Import Quick Guide}}
+
+===== Tutorial =====
+For easy reference this Tutorial has been broken into two parts: the selection of Resource Types and Facility Import.
+
+==== Selecting Scenario Resources ====
+If you are not importing facilities for this scenario begin by selecting the resources required.
 {{:scenario:resourcetypes.png?700|Select Resources Types for this Scenario}}
   - Check the staff resources you would like available for this scenario.
   - Check the facility resources you would like available for this scenario
+  - If you are not importing facilities click "Save and Continue" to move on in Sahana Agasti.
+  - If you are importing facilities click "Save", then move on to the facility import instructions below.
 
-When you have selected the resources required for this scenario, click "Save and Continue" in Sahana Agasti, then click the "Next" button below to move to the next step.
+=== Importing Facilities ===
+
+  - Download the {{:manual:user:facilities:facility_import_and_export_template.xls|Facility Import Template}}, remove the example information, and enter information for your scenarios' facilities.
+  - Click "Import Facilities"
+  - Click {{:manual:user:facilities:browse_button.png|Browse}} and select the file to upload from your computer
+  - Click {{:manual:user:facilities:submit_button.png|Submit}}
+  - After the import has completed uploading you will be redirected to a confirmation page.  Confirm that the facilities imported successfully and then, at the bottom of the page, click {{:scenario:returnafterimport.png?|Return to Scenario Resources}}.
+  - If you have not already, select the Resource Types required in this scenario.
+
+After you have selected your Scenario Resource Types and, should you choose to, imported facilities click "Save and Continue" in Sahana Agasti to move to the next step in the Scenario Creation Wizard.  Then click "Next" in this tutorial to move to the next step.
+
+If you are importing facilities some of the remaining steps in scenario will be used to verify the uploaded information is correct.
 
 ===== FAQ =====
-  - **Why do I need to add resources?**  Staff and facilities are grouped by their resources to make them easy to sort, group, and search.  You'll want to add the resource types you need to be sure you have people and services available in the event of a response.
-  - **Why don't I just use all the resources?** Selecting specific resources that you require will expedite the scenario creation process by limiting the number of options show to only what you need.  If you need all resources available, select all resources.
-  - **Can I add more resources later?** Yes!  Though be sure to go through each of the remaining steps in the Scenario Creator to add those resources to groups and shifts.
+  * **Why do I need to add resources?**  Staff and facilities are grouped by their resources to make them easy to sort, group, and search.  You'll want to add the resource types you need to be sure you have people and services available in the event of a response.
+  * **Why don't I just use all the resources?** Selecting specific resources that you require will expedite the scenario creation process by limiting the number of options shown to only what you need.  If you need all resources available, select all resources.
+  * **Can I add more resources later?** Yes.  Though be sure to go through each of the remaining steps in the Scenario Creator to add those resources to groups and shifts.
 
 ====== Continue ======
-[[scenario:newgroup|{{ :manual:user:next.png?135|Create Facility Groups}}]] 
-[[scenario:new|{{:manual:user:previous.png?135|Name and Describe }}]]
+
+[[scenario:new|{{:manual:user:previous.jpg?135|Name and Describe }}]]
+[[scenario:newgroup|{{ :manual:user:next.jpg?135|Create Facility Groups}}]] 
+
 
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:scenario:walkthrough|Introduction]]
+  - [[manual:user:scenario:Tutorial|Introduction]]
   - [[scenario:pre|Pre Scenario Creation]]
   - [[scenario:new|Name and Describe]]
   - **Select Resources**
@@ -33,8 +117,8 @@ When you have selected the resources required for this scenario, click "Save and
   - [[scenario:staffresources| Set Staff Resource Requirements]]
   - [[scenario:staff_resource_pool| Create Staff Pool Searches]]
   - [[scenario:newstaffresources| Create Shift Templates]]
-  - [[scenario:shift| Generate and Verify Shifts]]
+  - [[scenario:scenarioshiftlist|Review Scenario Shifts]]
   - [[scenario:review| Review]]
-  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:facilityexport| Facility Export]]
+  - [[scenario:facilityimport| Facility Import]]
   - [[scenario:deployevent| Deploying an Event]]

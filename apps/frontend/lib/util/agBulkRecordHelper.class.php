@@ -17,6 +17,9 @@
 abstract class agBulkRecordHelper
 {
 
+  const       REGEX_MULTISPACE_PATTERN = '/  +/';
+  const       REGEX_MULTISPACE_REPLACE = ' ';
+
   public      $strictBatchSize = FALSE,
               $throwOnError = TRUE,
               $purgeOrphans = FALSE,
@@ -155,4 +158,23 @@ abstract class agBulkRecordHelper
     return md5(json_encode($recordComponentsArray));
   }
 
+  /**
+   * Method to take a value and return it trimmed of undesirable characters and strToLowered
+   * @return string
+   */
+  public static function ucTrim($value)
+  {
+    return strtolower(self::fullTrim($value));
+  }
+
+  /**
+   * Method to take a value and return it trimmed of undesirable characters and strToLowered
+   * @return string
+   */
+  public static function fullTrim($value)
+  {
+    return trim(
+      preg_replace(self::REGEX_MULTISPACE_PATTERN, self::REGEX_MULTISPACE_REPLACE, $value)
+    );
+  }
 }

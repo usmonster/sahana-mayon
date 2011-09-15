@@ -130,7 +130,8 @@ class agEmailHelper extends agBulkRecordHelper
         $conn->beginTransaction();
       }
 
-      $newEmail = new agEmailContact();
+      $emailContactTbl = $conn->getTable('agEmailContact');
+      $newEmail = new agEmailContact($emailContactTbl, TRUE);
       $newEmail['email_contact'] = $email;
 
       try

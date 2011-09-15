@@ -88,6 +88,14 @@ class agPerson extends BaseagPerson
     return parent::__call($method, $arguments);
   }
 
+  public function setUp()
+  {
+    parent::setUp();
+
+    $luceneable0 = new Luceneable();
+    $this->actAs($luceneable0);
+  }
+
   /**
    * A happy little helper function to return all methods explicitly
    * (publicly) defined by a helper class.
@@ -134,18 +142,18 @@ class agPerson extends BaseagPerson
     $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));
 
     // uses the agPersonNameHelper method that includes all names / aliases of type in a string
-//    $names = $this->getNameByTypeAsString();
-//    foreach ($names as $key => $name) {
-//      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
-//    }
-//    $sex = $this->getSex();
-//    $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
-//    $nationalities = $this->getNationality();
-//    foreach ($nationalities as $nationality) {
-//      $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
-//    }
-//    $ethnicity = $this->getEthnicity();
-//    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
+    $names = $this->getNameByTypeAsString();
+    foreach ($names as $key => $name) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
+    }
+    $sex = $this->getSex();
+    $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
+    $nationalities = $this->getNationality();
+    foreach ($nationalities as $nationality) {
+      $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
+    }
+    $ethnicity = $this->getEthnicity();
+    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
 
     return $doc;
   }
@@ -162,6 +170,7 @@ class agPerson extends BaseagPerson
 
   public function getNationality()
   {
+    $nationalities = array();
     foreach ($this->getAgPersonMjAgNationality() as $nationality)
       $nationalities[] = $nationality->getAgNationality()->nationality;
 
@@ -170,6 +179,7 @@ class agPerson extends BaseagPerson
 
   public function getEthnicity()
   {
+    $ethnicities = array();
     foreach ($this->getAgPersonEthnicity() as $ethnicity) {
       $ethnicities = $ethnicity->getAgEthnicity()->ethnicity;
     }
@@ -178,6 +188,7 @@ class agPerson extends BaseagPerson
 
   public function getLanguages()
   {
+    $languages = array();
     foreach ($this->getAgPersonMjAgLanguage() as $languageCompetency) {
       $languages = $languageCompetency->getAgLanguage()->language;
     }

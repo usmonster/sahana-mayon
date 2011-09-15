@@ -1,102 +1,27 @@
 agEventStatus:
-  zombie_apocalypse_event_1_open_status:
+  zombie_apocalypse_event_1_closed_status:
     id: 1
     agEvent: zombie_apocalypse_event_1
     time_stamp: '2011-02-07 12:45:00'
-    agEventStatusType: open
-  zombie_apocalypse_event_1_closed_status:
-    id: 2
-    agEvent: zombie_apocalypse_event_1
-    time_stamp: '2011-02-07 12:30:00'
     agEventStatusType: closed
-  zombie_apocalypse_event_1_pre_deployment_status:
-    id: 3
-    agEvent: zombie_apocalypse_event_1
-    time_stamp: '2011-02-07 12:15:00'
-    agEventStatusType: pre_deployment
-  zombie_apocalypse_event_1_zombie_apocalypse_worrying_status:
-    id: 4
-    agEvent: zombie_apocalypse_event_1
-    time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: open
   asteroid_apocalypse_event_2_open_status:
-    id: 5
-    agEvent: asteroid_apocalypse_event_2
-    time_stamp: '2011-02-07 12:45:00'
-    agEventStatusType: open
-  asteroid_apocalypse_event_2_closed_status:
-    id: 6
+    id: 2
     agEvent: asteroid_apocalypse_event_2
     time_stamp: '2011-02-07 12:30:00'
-    agEventStatusType: closed
-  asteroid_apocalypse_event_2_pre_deployment_status:
-    id: 7
-    agEvent: asteroid_apocalypse_event_2
-    time_stamp: '2011-02-07 12:15:00'
-    agEventStatusType: pre_deployment
-  asteroid_apocalypse_event_2_zombie_apocalypse_worrying_status:
-    id: 8
-    agEvent: asteroid_apocalypse_event_2
-    time_stamp: '2011-02-07 12:00:00'
     agEventStatusType: open
   tsunami_warning_event_3_open_status:
-    id: 9
+    id: 3
     agEvent: tsunami_warning_event_3
     time_stamp: '2011-02-07 12:45:00'
     agEventStatusType: open
-  tsunami_warning_event_3_closed_status:
-    id: 10
-    agEvent: tsunami_warning_event_3
-    time_stamp: '2011-02-07 12:30:00'
-    agEventStatusType: closed
-  tsunami_warning_event_3_pre_deployment_status:
-    id: 11
-    agEvent: tsunami_warning_event_3
-    time_stamp: '2011-02-07 12:15:00'
-    agEventStatusType: pre_deployment
-  tsunami_warning_event_3_zombie_apocalypse_worrying_status:
-    id: 12
-    agEvent: tsunami_warning_event_3
-    time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: open
-  megaquake_event_4_open_status:
-    id: 13
-    agEvent: megaquake_event_4
-    time_stamp: '2011-02-07 12:45:00'
-    agEventStatusType: open
-  megaquake_event_4_closed_status:
-    id: 14
-    agEvent: megaquake_event_4
-    time_stamp: '2011-02-07 12:30:00'
-    agEventStatusType: closed
   megaquake_event_4_pre_deployment_status:
-    id: 15
+    id: 4
     agEvent: megaquake_event_4
     time_stamp: '2011-02-07 12:15:00'
     agEventStatusType: pre_deployment
-  megaquake_event_4_zombie_apocalypse_worrying_status:
-    id: 16
-    agEvent: megaquake_event_4
-    time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: open
-  supervolcano_event_5_open_status:
-    id: 17
-    agEvent: supervolcano_event_5
-    time_stamp: '2011-02-07 12:45:00'
-    agEventStatusType: open
   supervolcano_event_5_closed_status:
-    id: 18
+    id: 5
     agEvent: supervolcano_event_5
-    time_stamp: '2011-02-07 12:30:00'
+    time_stamp: '2011-02-07 18:30:00'
     agEventStatusType: closed
-  supervolcano_event_5_pre_deployment_status:
-    id: 19
-    agEvent: supervolcano_event_5
-    time_stamp: '2011-02-07 12:15:00'
-    agEventStatusType: pre_deployment
-  supervolcano_event_5_zombie_apocalypse_worrying_status:
-    id: 20
-    agEvent: supervolcano_event_5
-    time_stamp: '2011-02-07 12:00:00'
-    agEventStatusType: open
 

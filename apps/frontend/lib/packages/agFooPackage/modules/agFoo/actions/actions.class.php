@@ -18,11 +18,50 @@ class agFooActions extends agActions
             ->execute();
 
 // <-------- CUT HERE -------->
-    $dh = agEventStaffDeploymentHelper::getInstance(6, agEventHandler::EVENT_DEBUG);
-    $results = $dh->test();
-    print_r($results) ;
+//    $dh = agEventStaffDeploymentHelper::getInstance(6, agEventHandler::EVENT_DEBUG);
+//    $results = $dh->test();
+//    print_r($results) ;
+
+    // This is to test exporting an xls file without refreshing current html page.
+    // These attributes will be used in a new window.  The new window will call the executeExport
+    // method to export the xls file.
+    $exportFileName = 'ExportFile.xls';
+    $this->getUser()->setAttribute('exportFileName', $exportFileName);
+
+    $exportFile = '/home/s/Downloads/Facilities-Hurricane_A-17-06-11-15-21-15.xls';
+    $this->getUser()->setAttribute('exportFile', $exportFile);
 // <-------- CUT HERE -------->
   }
+
+//  /**
+//   * For testing purposes.  This method was to spit out an xls file that was defined in the user's
+//   * attributes.
+//   */
+//  public function executeExport(sfWebRequest $request)
+//  {
+//    $this->errMsg = NULL;
+//
+//    if ($this->getUser()->hasAttribute('exportFile') && $this->getUser()->hasAttribute('exportFileName'))
+//    {
+//      $exportFileName = $this->getUser()->getAttribute('exportFileName');
+//      $exportFile = $this->getUser()->getAttribute('exportFile');
+//
+//      $exportFile = file_get_contents($exportFile);
+//
+//      $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
+//      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportFileName . '"');
+//
+//      $this->getResponse()->setContent($exportFile);
+//      $this->getResponse()->send();
+//
+////      $this->getUser()->getAttributeHolder()->remove('exportFile');
+////      $this->getUser()->getAttributeHolder()->remove('exportFileName');
+//    }
+//    else
+//    {
+//      $this->errMsg = 'Error exporting file!';
+//    }
+//  }
 
   public function executeList(sfWebRequest $request)
   {

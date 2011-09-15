@@ -22,6 +22,14 @@ abstract class PluginagStaff extends BaseagStaff
     $this->isAutoIndexed = $isAutoIndexed;
   }
 
+  public function setUp()
+  {
+    parent::setUp();
+    
+    $luceneable0 = new Luceneable(array());
+    $this->actAs($luceneable0);
+  }
+
   public function updateLucene()
   {
     if (!$this->isAutoIndexed) {

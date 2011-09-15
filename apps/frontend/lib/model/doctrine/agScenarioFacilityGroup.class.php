@@ -22,6 +22,20 @@ class agScenarioFacilityGroup extends BaseagScenarioFacilityGroup
     return $this->getScenarioFacilityGroup();
   }
 
+  /**
+   * Method to return the default group allocation status id
+   * @return integer Default group allocation status id
+   */
+  public static function getDefaultAllocationStatus()
+  {
+    return agDoctrineQuery::create()
+      ->select('fgas.id')
+        ->from('agFacilityGroupAllocationStatus fgas')
+        ->where('fgas.facility_group_allocation_status = ?',
+          agGlobal::getParam('default_facility_group_allocation_status'))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+  }
+
   public function updateLucene()
   {
     $doc = new Zend_Search_Lucene_Document();

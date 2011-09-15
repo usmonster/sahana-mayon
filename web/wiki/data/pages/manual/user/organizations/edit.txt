@@ -1,9 +1,9 @@
-====== Organization Management Walk-Through ======
+====== Organization Management Tutorial ======
 
 ===== Editing an Organization =====
 It's helpful to keep organization information updated so any references to that organization are current.  As a user you'll navigate from the list, through viewing the organization information, and then to the edit screen.
 
-===== Walk-Through =====
+===== Tutorial =====
 After click the ID number in the list you'll be viewing the Organization's information.
 
 {{:manual:user:organizations:orgview.png?350|Click Edit}}
@@ -18,7 +18,7 @@ Click the Edit button to move to the edit screen.  On the edit screen you can up
 ===== Jump to Another Step =====
 
 {{ :logo_c3.jpg?200}}
-  - [[manual:user:organizations:walkthrough|Introduction]]
+  - [[manual:user:organizations:Tutorial|Introduction]]
   - [[manual:user:organizations:new|Create New Organization]]
   - [[manual:user:Organizations:list|Listing Organizations]]
   - **Editing Organizations Records**

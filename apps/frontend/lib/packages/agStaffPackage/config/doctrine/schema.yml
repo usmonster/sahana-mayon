@@ -31,6 +31,14 @@ agStaffAllocationStatus:
     UX_agEventStaffStatus:
       fields: [staff_allocation_status]
       type: unique
+    idx_staff_allocation_status_allocatable:
+      fields: [allocatable]
+    idx_staff_allocation_status_committed:
+      fields: [committed]
+    idx_staff_allocation_status_standby:
+      fields: [standby]
+    idx_staff_allocation_status_active:
+      fields: [active]
 agStaff:
   columns:
     id:
@@ -41,7 +49,7 @@ agStaff:
     person_id:
       type: integer(5)
       notnull: true
-  actAs: [Luceneable, Timestampable]
+  actAs: [Timestampable]
   indexes:
     agStaff_unq:
       fields: [person_id]
@@ -158,5 +166,7 @@ agStaffResourceStatus:
     agStaffResourceStatus_unq:
       fields: [staff_resource_status]
       type: unique
+    idx_staff_resource_status_is_available:
+      fields: [is_available]
 actAs:
   Timestampable: 

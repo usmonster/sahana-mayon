@@ -5,7 +5,7 @@
     <tfoot>
       <tr>
         <td colspan="2">
-          <input type="submit" value="Go to Pre-Deployment" class="continueButton" />
+          <input type="submit" value="Go to Pre-Deployment" class="continueButton" name="create"/>
         </td>
       </tr>
     </tfoot>

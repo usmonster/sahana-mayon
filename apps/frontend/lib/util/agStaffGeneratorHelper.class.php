@@ -15,6 +15,8 @@
  */
 class agStaffGeneratorHelper extends agSearchHelper
 {
+  const             CONN_GENERATE_STAFF = 'conn_generate_staff';
+
   protected static  $defaultSearchType = 'doctrine_query_simple',
                     $defaultSearchTypeId ;
 
@@ -124,61 +126,37 @@ class agStaffGeneratorHelper extends agSearchHelper
                                             $keepExisting = FALSE,
                                             Doctrine_Connection $conn = NULL)
   {
-    // not exactly our final results set, but a pretty important interim one
-    $staffResources = array();
+    // some initial variable declarations
+    $err = FALSE;
+    $updated = 0;
+    $inserted = 0;
+    $deleted = 0;
+    $batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
+    $batchSize = agGlobal::getParam('default_batch_size');
 
     // get all of the searches we're expected to execute
     $searches = self::getScenarioSearches($scenarioId);
 
-    // loop through our searches and execute, storing the results in $staffResources
-    foreach($searches as $searchId => $searchWeight)
-    {
-      foreach (self::executeStaffSearch($searchId) as $staffResourceId)
-      {
-        $staffResources[$staffResourceId] = $searchWeight ;
-      }
+    // first we need to pick up a connection if not passed one
+    if (is_null($conn)) {
+        // need this guy for all the heavy lifting
+        $dm = Doctrine_Manager::getInstance();
+
+        // save for re-setting
+        $currConn = $dm->getCurrentConnection();
+        $currConnName = $dm->getConnectionName($currConn);
+        $adapter = $currConn->getDbh();
+        unset($currConn);
+
+        // always re-parent properly
+        $conn = Doctrine_Manager::connection($adapter, self::CONN_GENERATE_STAFF);
+        $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
+        $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+        $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
+        $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
     }
 
-    // now it's time to process the differences between the existing data collection and the new
-    $coll = self::getScenarioStaffResource($scenarioId);
-    foreach($coll as $index => &$record)
-    {
-      // not necessary, but it sure makes it easier to read
-      $staffResourceId = $record['staff_resource_id'];
-
-      if (array_key_exists($staffResourceId, $staffResources))
-      {
-        // if the scenario staff resource exists, update its search weight (which may have changed)
-        $record['deployment_weight'] = $staffResources[$staffResourceId];
-        unset($staffResources[$staffResourceId]);
-      }
-      elseif (! $keepExisting)
-      {
-        // if it doesn't exist, we remove the entry from the collection (effectively deleting it)
-        $coll->remove($index);
-      }
-    }
-
-    // we've now done updates and deletes, let's handle our inserts
-    foreach ($staffResources as $staffResourceId => $searchWeight)
-    {
-      // create a new record
-      $newRec = new agScenarioStaffResource();
-      $newRec['scenario_id'] = $scenarioId;
-      $newRec['staff_resource_id'] = $staffResourceId;
-      $newRec['deployment_weight'] = $searchWeight;
-
-      // add it to our collection and remove it from the $staffResources array
-      $coll->add($newRec);
-      unset($staffResources[$staffResourceId]);
-    }
-
-    // our staff resource collection has been updated, all that's left is to save
-    // take note: the doctrine method for processing diffs incurs minimal I/O, however it may cause
-    // confusion, if you're examining query output since very few may be run at all
-
-    // first we need to pick up a connection if not passed one and start a transaction
-    if (is_null($conn)) { $conn = Doctrine_Manager::connection(); }
+    // set up our transaction jazz
     $useSavepoint = ($conn->getTransactionLevel() > 0) ? TRUE : FALSE;
     if ($useSavepoint)
     {
@@ -189,47 +167,161 @@ class agStaffGeneratorHelper extends agSearchHelper
       $conn->beginTransaction();
     }
 
-    try
-    {
-      // save and commit
-      $coll->save($conn);
-      if ($useSavepoint) { $conn->commit(__FUNCTION__); } else { $conn->commit(); }
+    if (!$keepExisting) {
+      $udq = Doctrine_Query::create($conn)
+        ->update('agScenarioStaffResource ssr')
+          ->set('ssr.delete_flag', '?', TRUE)
+          ->where('ssr.scenario_id = ?', $scenarioId);
+      try {
+        $udq->execute();
+      } catch(Exception $e) {
+        $err = TRUE;
+      }
     }
-    catch(Exception $e)
-    {
-      // if that didn't work, log our error
+
+
+    if (!$err) {
+      // loop through our searches and execute, storing the results in $staffResources
+      foreach($searches as $searchId => $searchWeight) {
+        // give us a little breathing room for each search
+        set_time_limit($batchTime);
+
+        $uq = Doctrine_Query::create($conn)
+          ->update('agScenarioStaffResource ssr');
+
+        // prepare our subquery
+        $uqSub = $uq->createSubquery();
+        $uqSub = self::parseQuery(self::getStaffSearch($uqSub), $searchId);
+        $uqSubParams = $uqSub->getParams();
+
+        // add our subquery to our main query and execute our update
+        $uq->where('ssr.staff_resource_id IN (' . $uqSub->getDql() . ')', $uqSubParams['where']);
+        $uq->andWhere('ssr.scenario_id = ?', $scenarioId);
+
+        $uq->set('ssr.deployment_weight', '?', $searchWeight);
+        $uq->set('ssr.delete_flag', '?', FALSE);
+
+
+        // now execute the updates all in one block
+        try {
+          $sql = $uq->getSqlQuery();
+          $updated = $uq->execute();
+        } catch(Exception $e) {
+          $err = TRUE;
+          break;
+        }
+
+        // create our query to add new members
+        $iq = agDoctrineQuery::create();
+        $iq = self::parseQuery(self::getStaffSearch($iq), $searchId);
+        $iq->leftJoin('agStaffResource.agScenarioStaffResource AS ssr WITH ssr.scenario_id = ?',
+          $scenarioId);
+        $iq->andWhere('ssr.id IS NULL');
+        $irs = $iq->execute(array(), Doctrine_Core::HYDRATE_ON_DEMAND);
+
+        $ssrTable = $conn->getTable('agScenarioStaffResource');
+        $coll = new Doctrine_Collection('agScenarioStaffResource');
+
+        foreach ($irs as $index => $ir) {
+          $ssrRec = new agScenarioStaffResource($ssrTable, TRUE);
+          $ssrRec['scenario_id'] = $scenarioId;
+          $ssrRec['staff_resource_id'] = $ir['id'];
+          $ssrRec['deployment_weight'] = $searchWeight;
+          $ssrRec['delete_flag'] = FALSE;
+          $coll->add($ssrRec);
+
+          // try to save at batch intervals
+          if ($index % $batchSize == 0) {
+            try {
+              $coll->save($conn);
+              $inserted += count($coll);
+            } catch(Exception $e) {
+              $err=TRUE;
+              break;
+            }
+
+            // regain a little memory
+            $coll->free();
+            $coll = new Doctrine_Collection('agScenarioStaffResource');
+          }
+
+          // if we've encountered an error, let's break out of this loop
+          if ($err) {
+            break;
+          }
+        }
+
+        // if we have holdover records that didn't make it into the last batch
+        if ($coll->isModified()) {
+          try {
+            $coll->save($conn);
+            $inserted += count($coll);
+           } catch(Exception $e) {
+            $err=TRUE;
+            break;
+          }
+
+          $coll->free();
+          unset($coll);
+        }
+      }
+    }
+
+    if (!$err) {
+      $dq = Doctrine_Query::create($conn)
+        ->delete('agScenarioStaffResource ssr')
+          ->where('ssr.delete_flag = ?', TRUE)
+          ->andWhere('ssr.scenario_id = ?', $scenarioId);
+      try {
+        $deleted = $dq->execute();
+      } catch(Exception $e) {
+        $err = TRUE;
+      }
+    }
+
+    // if we don't have any errors, continue happily along and commit
+    if (!$err) {
+      try
+      {
+        if ($useSavepoint) {
+          $conn->commit(__FUNCTION__);
+        } else {
+          $conn->commit();
+        }
+      }
+      catch(Exception $e)
+      {
+        $err = TRUE;
+      }
+    }
+
+    // if there have been errors, rollback and re-throw
+    if ($err) {
+       // if that didn't work, log our error
       $errMsg = sprintf('%s failed to generate a staff pool for scenarioId: %s',
         __FUNCTION__, $scenarioId);
       sfContext::getInstance()->getLogger()->err($errMsg);
 
       // rollback and re-throw
       if ($useSavepoint) { $conn->rollback(__FUNCTION__); } else { $conn->rollback(); }
+    }
+
+    if (isset($currConnName)) {
+      $dm->setCurrentConnection($currConnName);
+      $dm->closeConnection($conn);
+    }
+
+    if ($err) {
       throw $e;
     }
 
     // if all went well, we'll return the number of records in our new staff pool
-    return count($coll);
-  }
-
-  /**
-   * Method to execute a staff search and return its results set.
-   * @param <type> $searchId An agSearch id value.
-   * @return array A single-dimension array of staff resource ids.
-   */
-  public static function executeStaffSearch($searchId)
-  {
-    // build our basic staff search query
-    $q = self::returnBaseStaffSearch();
-
-    // parse the query and add search conditions
-    $q = self::parseQuery($q, $searchId);
-
-    // execute and return
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    return $updated + $inserted;
   }
 
   /**
    * Method to execute a preview search by simply passing the conditions array.
+   * @param agDoctrineQuery $query An ag doctrine query object
    * @param array $conditions An array of search conditions for staff preview.
    * <code>array(
    *   array(
@@ -240,32 +332,31 @@ class agStaffGeneratorHelper extends agSearchHelper
    * )</code>
    * @return array A monodimensional array of staffIds.
    */
-  public static function executeStaffPreview($conditions)
+  public static function executeStaffPreview(agDoctrineQuery $query, $conditions)
   {
     // pick up our default search type method
     $method = self::$constructorMethods[self::$defaultSearchType];
 
     // build a base query object and add our conditions
-    $q = self::returnBaseStaffSearch();
-    $q = self::$method($q, $conditions);
+    $query = self::$method($query, $conditions);
 
-    return $q->execute(array(), agDoctrineQuery::HYDRATE_SINGLE_VALUE_ARRAY);
+    return $query;
   }
 
   /**
    * Method to return base staff search query object.
+   * @param agDoctrineQuery an agDoctrineQuery object
    * @return agDoctrineQuery An agDoctrineQuery object
    */
-  public static function returnBaseStaffSearch()
+  public static function getStaffSearch(agDoctrineQuery $q)
   {
     // build our basic staff search query
-    $q = agDoctrineQuery::create()
-        ->select('agStaffResource.staff_id')
-        ->from('agStaffResource agStaffResource')
-          ->innerJoin('agStaffResource.agOrganization agOrganization')
-          ->innerJoin('agStaffResource.agStaffResourceType agStaffResourceType')
-          ->innerJoin('agStaffResource.agStaffResourceStatus agStaffResourceStatus')
-        ->where('agStaffResourceStatus.is_available = ?', TRUE);
+    $q->select('agStaffResource.id')
+      ->from('agStaffResource agStaffResource')
+        ->innerJoin('agStaffResource.agOrganization agOrganization')
+        ->innerJoin('agStaffResource.agStaffResourceType agStaffResourceType')
+        ->innerJoin('agStaffResource.agStaffResourceStatus agStaffResourceStatus')
+      ->where('agStaffResourceStatus.is_available = ?', TRUE);
 
     return $q;
   }

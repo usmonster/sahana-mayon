@@ -363,7 +363,7 @@ agEventStaff:
     deployment_weight:
       type: integer(1)
       notnull: true
-  actAs: [Luceneable, Timestampable]
+  actAs: [Timestampable]
   indexes:
     UX_agEventStaff:
       fields: [event_id, staff_resource_id]

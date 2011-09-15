@@ -19,8 +19,22 @@
 class agFormatterAddressLevelTwo extends sfWidgetFormSchemaFormatter
 {
   protected
-    $rowFormat       = "<li class=\"agFormatterAddressLevelTwo\"><h4 class=\"agFormatterAddressLevelTwo\">%error%%label%:</h4>\n  <div class=\"agFormatterAddressLevelTwo\">%field%%help%\n%hidden_fields%</div></li>\n",
+    $rowFormat       = "<li class=\"agFormatterAddressLevelTwo\"><h4 class=\"agFormatterAddressLevelTwo\">%error%%label%</h4>\n  <div class=\"agFormatterAddressLevelTwo\">%field%%help%%hidden_fields%</div></li>\n",
     $errorRowFormat  = "<li>\n%errors%</li>\n",
     $helpFormat      = '<br />%help%',
     $decoratorFormat = "<ul class=\"agFormatterAddressLevelTwo\">\n  %content%</ul>";
+
+  public function formatRow($label, $field, $errors = array(), $help = '', $hiddenFields = null)
+  {
+    if($label === false) {
+      $this->rowFormat = str_replace('<h4 class="agFormatterAddressLevelTwo">%error%%label%</h4>', '', $this->rowFormat);
+    }
+    return strtr($this->getRowFormat(), array(
+      '%label%'         => $label,
+      '%field%'         => $field,
+      '%error%'         => $this->formatErrorsForRow($errors),
+      '%help%'          => $this->formatHelp($help),
+      '%hidden_fields%' => null === $hiddenFields ? '%hidden_fields%' : $hiddenFields,
+    ));
+  }
 }

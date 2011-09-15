@@ -120,6 +120,42 @@ abstract class BaseagFacilityResourceAllocationStatus extends sfDoctrineRecord
              ),
              'type' => 'unique',
              ));
+        $this->index('idx_facility_resource_allocation_status_available', array(
+             'fields' => 
+             array(
+              0 => 'available',
+             ),
+             ));
+        $this->index('idx_facility_resource_allocation_status_committed', array(
+             'fields' => 
+             array(
+              0 => 'committed',
+             ),
+             ));
+        $this->index('idx_facility_resource_allocation_status_standby', array(
+             'fields' => 
+             array(
+              0 => 'standby',
+             ),
+             ));
+        $this->index('idx_facility_resource_allocation_status_staffed', array(
+             'fields' => 
+             array(
+              0 => 'staffed',
+             ),
+             ));
+        $this->index('idx_facility_resource_allocation_status_servicing_clients', array(
+             'fields' => 
+             array(
+              0 => 'servicing_clients',
+             ),
+             ));
+        $this->index('idx_facility_resource_allocation_status_accepting_clients', array(
+             'fields' => 
+             array(
+              0 => 'accepting_clients',
+             ),
+             ));
     }
 
     public function setUp()

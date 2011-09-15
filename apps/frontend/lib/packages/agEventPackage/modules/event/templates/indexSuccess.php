@@ -15,51 +15,29 @@
 echo '<a href="' . public_path('wiki/doku.php?id=manual:user:event') . '" target="new" class="buttonText" title="Help">Help</a><br/>';
 ?>
 
-<?php if ($ag_events) {
-?>
+<?php if ($allEvents): ?>
 <hr class="ruleGray"/>
+<br>
   <h3>Existing Events</h3>
 
-  <table>
+  <table class="blueTable" style="width:auto">
     <thead>
-      <tr>
+      <tr class="head">
         <th>Event Name</th>
-        <th>Scenario Base</th>
-        <th>Created at</th>
-        <th>Updated at</th>
+        <th>Base Scenario</th>
         <th>Status</th>
-        <th>&nbsp;</th>
       </tr>
     </thead>
     <tbody>
-    <?php foreach ($ag_events as $ag_event): ?>
+    <?php foreach ($allEvents as $event): ?>
       <tr>
-        <?php
-        $current_status = agEventFacilityHelper::returnCurrentEventStatus($ag_event->getId()); //[0]
-        if ($current_status != "")
-        {
-          $cur_status = Doctrine::getTable('agEventStatusType')
-            ->findByDql('id = ?', $current_status)
-            ->getFirst()->event_status_type;
-        }
-        else{
-          $cur_status = 'for some reason, this event does not have a status';
-        }
-
-        ?>
-
-        <td><a href="<?php echo url_for('event/active?event=' . urlencode($ag_event->getEventName())) ?>" class="continueButton"><?php echo $ag_event->getEventName() ?></a></td>
-        <td><?php #echo $ag_event->getAgEventScenario()->getFirst()->getAgScenario() ?></td>
-        <td><?php echo $ag_event->getCreatedAt() ?></td>
-        <td><?php echo $ag_event->getUpdatedAt() ?></td>
-        <td><?php echo $cur_status; ?></td>
-        <td><a href="<?php echo url_for('report/list') ?>" class="continueButton">reports</a></td>
+        <td><a href="<?php echo url_for('event/active?event=' . urlencode($event['e_event_name'])) ?>" class="buttonText"><?php echo $event['e_event_name'] ?></a></td>
+        <td><?php echo $event['s_scenario'] ?></td>
+        <td><?php echo $event['est_event_status_type']; ?></td>
       </tr>
     <?php endforeach; ?>
     </tbody>
   </table>
 
 
-<?php
-    } //end if for ag event listing
-?>
+<?php endif ?>

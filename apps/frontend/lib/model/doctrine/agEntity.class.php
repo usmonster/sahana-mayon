@@ -17,6 +17,8 @@
 class agEntity extends BaseagEntity
 {
 
+  CONST QUERY_HAS_GEO = 'EXISTS (SELECT subGc.id FROM agEntityAddressContact subEac INNER JOIN subEac.agAddress subA INNER JOIN subA.agAddressGeo subAg INNER JOIN subAg.agGeo subGeo INNER JOIN subGeo.agGeoFeature subGf INNER JOIN subGf.agGeoCoordinate subGc WHERE subEac.entity_id = e.id)';
+
   /**
    * delete()
    *

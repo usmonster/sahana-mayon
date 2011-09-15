@@ -36,21 +36,31 @@ class agEventHandler
   const       EVENT_INFO_LEVEL = 64;      // Informational
   const       EVENT_DEBUG_LEVEL = 128;    // Debug-level messages
 
+  const       EVENT_SORT_TYPE = 1;
+  const       EVENT_SORT_TS = 2;
+
   private     $events,
               $lastEvent,
               $lastEventByType,
               $errCount,
               $logLevelValue,
               $logEventLevel,
-              $errThreshold = 1000;
+              $errThreshold = 1000,
+              $sfContext;
 
   /**
    * This class's constructor.
    * @param string $tempTable The name of the temporary import table to use
    * @param string $logEventLevel An optional parameter dictating the event level logging to be used
+   * @param sfContext $sfContext An instance of the sfContext to use
    */
-  public function __construct($logEventLevel = NULL, $minEventLevel = self::EVENT_EMERG)
+  public function __construct($logEventLevel = NULL,
+                              $minEventLevel = self::EVENT_EMERG,
+                              sfContext $sfContext = NULL)
   {
+    if (empty($sfContext)) { $sfContext = sfContext::getInstance(); }
+    $this->sfContext = $sfContext;
+
     // reset any events (or initialize the handlers)
     $this->resetEvents();
 
@@ -58,8 +68,8 @@ class agEventHandler
     if (is_null($logEventLevel)) { $logEventLevel = self::EVENT_ERR; }
 
     // test to see if the log level was set too low
-    $logLevelValue = constant('self::EVENT_' . $logEventLevel . '_LEVEL');
-    $minLevelValue = constant('self::EVENT_' . $minEventLevel . '_LEVEL');
+    $logLevelValue = self::getEventLevel($logEventLevel);
+    $minLevelValue = self::getEventLevel($minEventLevel);
     if ($logLevelValue < $minLevelValue)
     {
       $this->setLogEventLevel($minEventLevel);
@@ -122,7 +132,7 @@ class agEventHandler
       throw new Exception($e);
     }
 
-    $this->logLevelValue = constant('self::EVENT_' . $logEventLevel . '_LEVEL');
+    $this->logLevelValue = self::getEventLevel($logEventLevel);
     $this->logEventLevel = $logEventLevel;
   }
 
@@ -143,10 +153,10 @@ class agEventHandler
     }
 
     // if our log level has been set high enough to capture these events, do so
-    if ($this->logLevelValue >= constant('self::EVENT_' . $eventType . '_LEVEL'))
+    if ($this->logLevelValue >= self::getEventLevel($eventType))
     {
       $logger = strtolower($eventType);
-      sfContext::getInstance()->getLogger()->$logger($eventMsg);
+      $this->sfContext->getLogger()->$logger($eventMsg);
       $timestamp = microtime(TRUE);
       $event = array('ts' => $timestamp, 'msg' => $eventMsg);
       $this->events[$eventType][] = $event;
@@ -196,35 +206,45 @@ class agEventHandler
    * @param string $eventMsg An error message
    * @param integer $errCount The number of failures encountered
    */
-  public function logErr($eventMsg, $errCount = 1)
+  public function logErr($eventMsg, $errCount = 1, $checkThreshold = TRUE)
   {
     $this->logEvent(self::EVENT_ERR, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    $this->checkErrThreshold();
+    if ($checkThreshold) {
+      $this->checkErrThreshold();
+    }
   }
 
   /**
    * Method to explicitly log a critical message and up our error counter.
    * @param string $eventMsg A critical message
    * @param integer $errCount The number of failures encountered
+   * @param boolean $checkThreshold Whether or not this method performs an automatic err threshold
+   * check. Defaults to TRUE.
    */
-  public function logCrit($eventMsg, $errCount = 1)
+  public function logCrit($eventMsg, $errCount = 1, $checkThreshold = TRUE)
   {
     $this->logEvent(self::EVENT_CRIT, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    $this->checkErrThreshold();
+    if ($checkThreshold) {
+      $this->checkErrThreshold();
+    }
   }
 
   /**
    * Method to explicitly log an alert message and up our error counter.
    * @param string $eventMsg An alert message
    * @param integer $errCount The number of failures encountered
+   * @param boolean $checkThreshold Whether or not this method performs an automatic err threshold
+   * check. Defaults to TRUE.
    */
-  public function logAlert($eventMsg, $errCount = 1)
+  public function logAlert($eventMsg, $errCount = 1, $checkThreshold = TRUE)
   {
     $this->logEvent(self::EVENT_ALERT, $eventMsg);
     $this->errCount = $this->errCount + $errCount;
-    $this->checkErrThreshold();
+    if ($checkThreshold) {
+      $this->checkErrThreshold();
+    }
   }
 
   /**
@@ -279,7 +299,7 @@ class agEventHandler
     // continue only if our error count is below our error threshold
     if (0 < $this->errThreshold && $this->errThreshold < $this->getErrCount())
     {
-      $errMsg = 'Import error threshold ({' . $this->errThreshold . '}) has been exceeded.';
+      $errMsg = 'Import error threshold {' . $this->errThreshold . '} has been exceeded.';
       $this->logEmerg($errMsg);
     }
   }
@@ -299,7 +319,7 @@ class agEventHandler
         $event = sprintf("\t%s (%s): %s\n", $level, $event['ts'], $event['msg']);
         $eventLog = $eventLog . $event;
       }
-      sfContext::getInstance()->getLogger()->$logType($eventLog);
+      $this->sfContext->getLogger()->$logType($eventLog);
     }
   }
 
@@ -322,9 +342,50 @@ class agEventHandler
    * )
    * </code>
    */
-  public function getEvents()
+  public function getEvents($sortType = self::EVENT_SORT_TYPE)
   {
-    return $this->events;
+    if ($sortType == self::EVENT_SORT_TYPE)
+    {
+      return $this->events;
+    }
+
+    $sorted = array();
+    foreach ($this->events as $type => $events)
+    {
+      foreach($events as $event)
+      {
+        $tsKeyed = array_merge(array('type' => $type, 'lvl' => self::getEventLevel($type)), $event);
+        $sorted[] = $tsKeyed;
+      }
+    }
+    usort($sorted, array('self', 'tsCompare'));
+    return $sorted;
+  }
+
+  /**
+   * Timestamp comparison method
+   * @param array $a
+   * @param array $b
+   * @return integer
+   */
+  public static function tsCompare(array $a, array $b)
+  {
+    if ($a['ts'] == $b['ts'])
+    {
+      return 0;
+    }
+    return ($a['ts'] > $b['ts']) ? -1 : +1;
+  }
+
+
+  /**
+   * Small helper function to return an event type's event level
+   * @param string $eventType One of the EVENT_* types
+   * @return integer The integer value of the event type
+   */
+  public static function getEventLevel($eventType)
+  {
+    return constant('self::EVENT_' . $eventType . '_LEVEL');
   }
 
   /**

@@ -5,9 +5,11 @@
         <td colspan="2">
           <?php echo $form->renderHiddenFields(false) ?>
           &nbsp;<a href="<?php echo url_for('scenario/list') ?>" class="generalButton">Back to List</a>
-          <?php if (!$form->getObject()->isNew()): ?>
-            &nbsp;<?php echo link_to ('Delete', 'scenario/delete?id='.$form->getObject()->getId(), array('class' => 'deleteButton', 'method' => 'delete', 'confirm' => 'Are you sure?')) ?>
-          <?php endif; ?>
+          <!--
+          <?php #if (!$form->getObject()->isNew()): ?>
+            &nbsp;<?php #echo link_to ('Delete', 'scenario/delete?id='.$form->getObject()->getId(), array('class' => 'deleteButton', 'method' => 'delete', 'confirm' => 'Are you sure?')) ?>
+          <?php #endif; ?>
+          --> 
           <input type="submit" value="Save and Continue" name="Continue" class="continueButton"/>
         </td>
       </tr>

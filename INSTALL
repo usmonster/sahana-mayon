@@ -52,12 +52,11 @@ Apache
 1. To set permissions to allow the web server appropriate access to the required
    directories, execute the following commands from the project root:
 
-  $ sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/search/ \
-      data/sql/ data/uploads/ web/wiki/conf/ web/wiki/data/ \
-      web/wiki/lib/plugins/dw2pdf/mpdf/tmp/
-  $ chmod -cR g+wr config/ apps/*/config/ data/search/ data/sql/ data/uploads/ \
+  sudo chgrp -R WEB_GROUP cache/ log/ config/ apps/*/config/ data/ \
       web/wiki/conf/ web/wiki/data/ web/wiki/lib/plugins/dw2pdf/mpdf/tmp/
-  $ ./symfony project:permissions
+  chmod -cR g+wr config/ apps/*/config/ data/ web/wiki/conf/ web/wiki/data/ \
+      web/wiki/lib/plugins/dw2pdf/mpdf/tmp/ 
+  ./symfony project:permissions
 
   * NOTE: Replace WEB_GROUP with the group associated with the Apache user, e.g.
     www-data or apache.
@@ -74,23 +73,23 @@ Apache
 3. If your version of Apache supports it, write a custom configuration file for
    the application; for example:
 
-   $ echo 'Alias /agasti/sf AG_ROOT/lib/vendor/symfony/data/web/sf
+   Alias /agasti/sf AG_ROOT/lib/vendor/symfony/data/web/sf
     <Directory "/var/www/agasti">
       AllowOverride All
       Allow from All
-    </Directory>' > agasti
+    </Directory>
 
   To activate the site configuration, as well as mod_rewrite if it isn't
   already, you can then run the following commands:
 
-  $ sudo mv agasti /etc/apache2/sites-available/
-  $ sudo a2ensite agasti
-  $ sudo a2enmod rewrite
-  $ sudo /etc/init.d/apache2 restart
+  sudo mv agasti /etc/apache2/sites-available/
+  sudo a2ensite agasti
+  sudo a2enmod rewrite
+  sudo /etc/init.d/apache2 restart
 
   * NOTES:
 
-    - Again, replace AG_ROOT with the full filesystem path to the Agasti
+    - Again, replace AG_ROOT with the full file system path to the Agasti
       root directory.
 
     - Commands may vary slightly, depending upon your version of Apache.
@@ -102,17 +101,16 @@ MySQL
 
 1. On the database server, create a schema for the project; for example:
 
-  $ mysqladmin -uroot -p create AGASTI_DB
+   mysqladmin -uroot -p create AGASTI_DB
 
   * NOTE: Replace AGASTI_DB with the name you chose for the schema, e.g. agasti.
 
 2. Create a dedicated database user for the application (using root is highly
    discouraged):
 
-  $ mysql -uroot -p mysql << EOF
-    GRANT ALL PRIVILEGES ON AGASTI_DB.* TO 'AGASTI_DB_USERNAME'@'DB_HOSTNAME'
-     IDENTIFIED BY 'AGASTI_DB_PASS';
-    EOF
+    GRANT ALL PRIVILEGES ON agasti_db.* TO '<agasti_db_username>'@'<db_hostname>'
+     IDENTIFIED BY '<agasti_db_pass>';
+
 
   * NOTES:
 
@@ -157,9 +155,9 @@ PHP
 Set PHP's memory and upload limits to the recommended minima by editing or
 adding the following lines in /etc/php5/apache2/php.ini:
 
-  memory_limit = 256M
-  post_max_size = 32M
-  upload_max_filesize = 32M
+  memory_limit = 500M
+  post_max_size = 64M
+  upload_max_filesize = 64M
 
 If there are any other major differences between your current php.ini and the
 default recommended production settings, it is highly recommended that you reset
@@ -281,6 +279,16 @@ ERRORS AND TROUBLESHOOTING
   $ ./symfony cc
 
   and try again.
+
+- If the database has been deleted and you are unable to log in, even with the superadmin credentials enable super admin by editing the /apps/frontend/config/app.yml file by adding the following lines after the first line (which should read 'all:')
+
+  sf_guard_plugin:
+    check_password_callable:
+      - agSudoAuth
+      - authenticate
+  sf_guard_plugin_signin_form: agSudoSigninForm
+
+It is important that pre-line spacing is maintained in the copy and paste of the lines.
 
 - I have another error, or my issue still isn't resolved:
 

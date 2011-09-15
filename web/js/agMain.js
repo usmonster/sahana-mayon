@@ -16,6 +16,7 @@ $(document).ready(function initialize(){
   initDeployStaff();
   initFileImportReplacer();
   initStatusPolling();
+  fileUploadBrowseHover();
 });
 
 /** Start Initializer Section *********************************************************************/
@@ -187,12 +188,24 @@ function initTriggerModal() {
 function fileImportReplacer() {
   $('#fileImportReplacer').click(function () {
     if($('#importForm').length < 1) {
-      var $importForm = '<form id="importForm" enctype="multipart/form-data" method="post" action="' + $('#fileImportReplacer').attr('href') + '">\n\
-                           <input type="file" name="import" />\n\
-                           <input type="submit" value="Import Facilities"/>\n\
-                         </form>';
+      var $importForm = '<form id="importForm" style="position: relative; display: inline-block" action="' + $('#fileImportReplacer').attr('href') + '" method="post" enctype="multipart/form-data" target="_blank"><div style="position: absolute; top: 0px; left: 0px; width: 250px"><input  style="display: inline-block; color: #848484" class="inputGray" id="show" /><a class="continueButton fileUploadBrowse" style="padding: 5px;margin-left: 5px;">Browse</a></div><input type="file" name="import" id="inputfileupload2" style="height:25px" onchange="javascript:document.getElementById(\'show\').value = this.value;"/><input type="submit" name="submit" value="Submit" class="submitLinkButton" style="position:absolute; top:0px; left: 199px" onclick="return confirm(\'To begin importing click &quot;OK&quot; and a new tab will open.  Do not close the new tab until import is complete.\');" /></form>';
+
       $('#replaceMe').hide();
       $('#replaceMe').parent().append($importForm);
+
+      
+
+           $('input#inputfileupload2').mouseover(function()
+    {
+        $('a.fileUploadBrowse').addClass("fileUploadHover").removeClass("continueButton");
+    });
+     $('input#inputfileupload2').mouseout(function()
+    {
+        $('a.fileUploadBrowse').removeClass("fileUploadHover").addClass("continueButton");
+    });
+
+
+
     } else {
       $('#importForm').remove();
       $('#replaceMe').show();
@@ -203,10 +216,10 @@ function fileImportReplacer() {
 /***************************************************************************************************
 * reveal() reveals whatever content is within #revealable.                                         *
 ***************************************************************************************************/
-function reveal(revealer) {
-  $('#reveal').click(function() {
-    var pos = $(revealer).offset();
-    var height = $(revealer).height();
+function reveal() {
+  $('#revealer').click(function() {
+    var pos = $(this).offset();
+    var height = $(this).height();
 
     $("#revealable").css( {
       "left": pos.left + "px",
@@ -214,7 +227,7 @@ function reveal(revealer) {
     } );
 
     $("#revealable").fadeToggle();
-    $(revealer).html(pointerCheck($(revealer).html()));
+    $(this).html(pointerCheck($(this).html()));
     return false;
   });
 }
@@ -494,6 +507,7 @@ $(document).ready(function() {
       $(this).nextAll('div:eq(1)').slideToggle("slow");
       $(this).text($(this).text() =='[-]'? '[+]' :'[-]');
     });
+
     $(".facgroup :input:text").each(function(){
       if( $(this).val() == "")
       {
@@ -512,6 +526,53 @@ $(document).ready(function() {
     // Watermark stuff for scenario/staffresources
     $(":input[id$='minimum_staff']").Watermark("Min");
     $(":input[id$='maximum_staff']").Watermark("Max");
+
+
+        //start p-code
+
+        $(":input[id$='maximum_staff']").focusout(function(){
+            if( $(this).val() != "")
+            {
+                $(this).parent().parent().parent().children(':first-child').children(':first-child').children(':first-child').addClass('inputEmpty');
+                $(this).parent().parent().parent().children(':first-child').children(':first-child').children(':first-child').focusout(function(){
+                {
+                    if( $(this).val() != "")
+                    {
+                        $(this).removeClass('inputEmpty');
+                        $(this).parent().parent().parent().children(':nth-child(3)').children(':nth-child(1)').children(':first-child').removeClass('inputEmpty');
+                    }
+                }
+                });
+
+
+        }
+        });
+
+        
+
+    $(":input[id$='minimum_staff']").focusout(function(){
+        if( $(this).val() != "")
+        {
+            $(this).removeClass('inputEmpty');
+
+            $(this).parent().parent().parent().children(':nth-child(3)').children(':nth-child(1)').children(':first-child').addClass('inputEmpty');
+           
+            $(this).parent().parent().parent().children(':nth-child(3)').children(':nth-child(1)').children(':first-child').focusout(function(){
+            {
+                if( $(this).val() != "")
+                {
+                    $(this).removeClass('inputEmpty');
+                    $(this).parent().parent().parent().children(':first-child').children(':first-child').children(':first-child').removeClass('inputEmpty');
+                }
+              
+            }
+            });
+    }
+    });
+
+//end p-code
+
+
 
     //adding forward slash after minimum_staff  input box
     $(":input[id$='minimum_staff']").parent().parent().after("<span style='margin-left:2px; font-size:15px'>/</span>");
@@ -560,7 +621,8 @@ $(document).ready(function() {
       var passId = '#' + $(this).attr('id');
       var $poster = $(this);
       var templates = $('.shiftTemplateCounter').length;
-      $(passId).parent().prepend(addShiftTemplate(templates, $(this).attr('href')));
+      $('#newshifttemplates').append(addShiftTemplate(templates, $(this).attr('href')));
+//      $(passId).parent().append(addShiftTemplate(templates, $(this).attr('href')));
       var STContainers = $(".shiftTemplateCounter");
       
       var newSTContainer = STContainers[STContainers.length -1];
@@ -585,21 +647,39 @@ $(document).ready(function() {
 
 
     $('.removeShiftTemplate').live('click', function() {
-      //if there is no id for this record(db_not_exists)
-      var passId = '#' + $(this).attr('id');
-      //send get/post to call delete
-      $('#container' + $(this).attr('id').replace('removeShiftTemplate', '')).remove();
-                 
-      $('#newshifttemplates').prepend('<h2 class="overlay">'
-        + removeShiftTemplate(
-          $(this).attr('id'), $(this).attr('href'))
-
-        + '</h2>');
-      $('.overlay').fadeIn(1200, function() {
-        $('.overlay').fadeOut(1200, function() {
-          $('.overlay').remove();
+      if($(this).parents('#newshifttemplates').length) {
+        $(this).parents('.shiftTemplateCounter').fadeOut(1200, function() {
+          $(this).parents('.shiftTemplateCounter').remove();
         });
-      });
+        return false;
+      } else {
+        var containerId = $(this).parents('.shiftTemplateCounter').attr('id');
+        $.post($(this).attr('href'), { stId: $(this).attr('id') }, function() {
+          $('#' + containerId).fadeOut(1200, function() {
+            $('#' + containerId).remove();
+          });
+        })
+      }
+
+
+
+
+
+//      //if there is no id for this record(db_not_exists)
+//      var passId = '#' + $(this).attr('id');
+//      //send get/post to call delete
+//      $('#container' + $(this).attr('id').replace('removeShiftTemplate', '')).remove();
+//
+//      $('#newshifttemplates').prepend('<h2 class="overlay">'
+//        + removeShiftTemplate(
+//          $(this).attr('id'), $(this).attr('href'))
+//
+//        + '</h2>');
+//      $('.overlay').fadeIn(1200, function() {
+//        $('.overlay').fadeOut(1200, function() {
+//          $('.overlay').remove();
+//        });
+//      });
       return false;
     });
 
@@ -1091,7 +1171,7 @@ function returnContent(data) {
    * @todo refactor so we can pass pattern to this. JSON stuff, probably.
    **/
 function processReturn(data) {
-  pattern = /facilityresource\/[\w\d+%-]*/
+  pattern = /facilityresource\/[\w\d+%-]*/;
   if(data == $(this).attr('id')) {
     appendContent($(this), data);
   //    returnContent(data);
@@ -1129,4 +1209,25 @@ function updateStatus(url) {
     setTimeout("updateStatus(url)", 5000);
     return false;
   });
+}
+
+function fileUploadBrowseHover() {
+    $('#fileUpload').mouseover(function()
+    {
+        $('a.fileUploadBrowse').addClass("fileUploadHover").removeClass("continueButton");
+    });
+     $('#fileUpload').mouseout(function()
+    {
+        $('a.fileUploadBrowse').removeClass("fileUploadHover").addClass("continueButton");
+    });
+}
+
+/***************************************************************************************************
+*                                                                *
+***************************************************************************************************/
+function shiftTemplateIdVal(stId) {
+  var eleId = $('#deleteShiftTemplateId');
+  if($('#deleteShiftTemplateId').length) {
+   eleId.val(stId);
+  }
 }

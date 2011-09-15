@@ -60,6 +60,14 @@ class reportActions extends sfActions
     $this->redirect('report/index');
   }
 
+  public function executeList(sfWebRequest $request)
+  {   
+     $this->ag_reports = agDoctrineQuery::create()
+        ->select('*')
+        ->from('agReportGenerator s')
+        ->execute(array());
+  }
+
   protected function processForm(sfWebRequest $request, sfForm $form)
   {
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
