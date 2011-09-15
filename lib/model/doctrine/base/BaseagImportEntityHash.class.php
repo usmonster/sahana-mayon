@@ -35,6 +35,7 @@ abstract class BaseagImportEntityHash extends sfDoctrineRecord
         $this->hasColumn('id', 'integer', 5, array(
              'primary' => true,
              'type' => 'integer',
+             'autoincrement' => true,
              'length' => 5,
              ));
         $this->hasColumn('entity_id', 'integer', 5, array(
