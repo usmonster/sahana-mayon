@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Provides a quick way to enable Agasti accounts as web services
  *
@@ -94,7 +95,8 @@ function rand_sha1($length)
     return substr($random, 0, $length);
 }
 
-function print_help_message(){
+function print_help_message()
+{
     $msg = "Usage: webservice-token-setup.php [options] -u <username> 
        webservice-token-setup.php [options] -u <username> -t <token>
 
