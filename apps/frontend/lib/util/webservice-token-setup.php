@@ -80,7 +80,7 @@ if (isset($user['id'])) {
     echo ("User $webSrvUser updated.\n");
     echo ("Token = $webSrvToken\n");
 } else {
-    echo ("Error: User does not exist.");
+    echo ("Error: User does not exist.\n");
 }
 
 //print_r($newRec);
