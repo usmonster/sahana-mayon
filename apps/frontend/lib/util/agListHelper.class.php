@@ -6,7 +6,8 @@
 class agListHelper
 {
   public static function getStaffList($staff_ids = null, $staffStatus = 'active',
-                                       $sort = null, $order = null, $staffIdType = 'staff')
+                                        $sort = null, $order = null, $staffIdType = 'staff',
+                                        $where = NULL)
   {
     list($headers, $query) = agStaffResource::getStaffResourceQuery();
 
