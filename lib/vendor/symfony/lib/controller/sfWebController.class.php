@@ -160,6 +160,7 @@ abstract class sfWebController extends sfController
       }
     }
 
+
     return array($route, $params);
   }
 

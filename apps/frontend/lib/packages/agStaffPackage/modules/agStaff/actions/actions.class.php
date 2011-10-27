@@ -17,7 +17,7 @@
  */
 class agStaffActions extends agActions {
 
-  protected $_searchedModels = array('agStaff');
+  public $_search= 'staff';
 
   /**
    * executeIndex is currently used to execute the index action
@@ -56,8 +56,15 @@ class agStaffActions extends agActions {
       if ($request->getPostParameter($postParam)) {
         // if found, we trigger our redirect and add it to our listParams
         $redirect = TRUE;
-        $this->listParams = array_merge($this->listParams,
-          array($postParam => trim($request->getPostParameter($postParam))));
+        $param = trim($request->getPostParameter($postParam));
+
+        // for query we handle a lower conversion too
+        if ($postParam == 'query') {
+          $param = str_replace('*', '%', strtolower($param));
+        }
+
+        // merge the results together
+        $this->listParams = array_merge($this->listParams, array($postParam => $param));
       }
     }
 

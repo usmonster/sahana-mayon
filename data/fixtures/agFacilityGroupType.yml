@@ -5,9 +5,9 @@ agFacilityGroupType:
   uorc:
     facility_group_type: UORC
     description: UORC
-  solar:
+  shelter:
     facility_group_type: Shelters
-    description: General shelters.
-  solar:
+    description: General shelters
+  pod:
     facility_group_type: point of distribution centers
-    description: Point of distribution centers.
+    description: point of distribution centers

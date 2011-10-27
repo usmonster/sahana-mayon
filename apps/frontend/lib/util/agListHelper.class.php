@@ -47,7 +47,7 @@ class agListHelper
 
       // create an equal number of parameters and clauses
       $likeParams = array_fill(0, count($likeSearches), '%' . $where . '%');
-      $likeClause = '(' . implode(' LIKE ?) OR (', $likeSearches) . ' LIKE ?)';
+      $likeClause = '(lcase(' . implode(') LIKE ?) OR (lcase(', $likeSearches) . ') LIKE ?)';
 
       $query->where('(' . $likeClause . ')', $likeParams);
     }

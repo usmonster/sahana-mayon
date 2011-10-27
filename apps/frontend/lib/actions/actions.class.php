@@ -16,27 +16,23 @@
 class agActions extends sfActions
 {
 
-  protected $_searchedModels;
+  protected $_search;
 
   public function __construct($context, $moduleName, $actionName)
   {
     parent::__construct($context, $moduleName, $actionName);
-    if (empty($this->_searchedModels)) {
-      $this->_searchedModels = array('agStaff', 'agFacility', 'agOrganization');
+    if (!isset($this->_search)) {
+      $this->_search = 'staff';
     }
   }
 
   public function executeSearch(sfWebRequest $request)
   {
-    $queryParams = $request->getGetParameters();
-    if($request->hasParameter('query')) {
-      $queryParams['query'] = base64_encode(trim($request->getParameter('query')));
-    }
-
     // build our url
-    $url = $request->getParameter('module') . '/list';
-    if (!empty($queryParams)) {
-      $url .= '?' . http_build_query($queryParams);
+    $url = $this->_search . '/list';
+    if ($request->getPostParameter('query')) {
+      $url .= '?' . http_build_query(array_merge($request->getGetParameters(),
+        array('query' => strtolower(trim($request->getPostParameter('query'))),)));
     }
     $this->redirect($url);
   }
