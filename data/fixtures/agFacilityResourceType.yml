@@ -15,3 +15,7 @@ agFacilityResourceType:
     facility_resource_type: Unified Operations Resource
     facility_resource_type_abbr: UORC
     description: Unified Operations Resource Center
+  pod:
+    facility_resource_type: Point of Distribution Center
+    facility_resource_type_abbr: POD
+    description: Point of Distribution Center
