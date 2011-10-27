@@ -43,39 +43,53 @@ class agStaffActions extends agActions {
     }
   }
 
-  public function executeList(sfWebRequest $request) {
-    $this->targetAction = 'list';
-    $this->status = 'all';
-    $this->sort = NULL;
-    $this->order = NULL;
-    $this->searchQuery = NULL;
-    
+  public function executeList(sfWebRequest $request)
+  {
+    // we use the get parameters to manage most of this action's methods
     $this->listParams = $request->getGetParameters();
 
-    //the next few lines could be abstracted to agActions as they are request params that may be
-    //used for any list
-    if ($request->getGetParameter('status'))
-      $this->status = $request->getGetParameter('status');
-    if ($request->getGetParameter('sort'))
-      $this->sort = $request->getGetParameter('sort');
-    if ($request->getGetParameter('order'))
-      $this->order = $request->getGetParameter('order');
-    if ($request->getGetParameter('q'))
-      $this->searchQuery = $request->getGetParameter('query');
+    // in the event that we've recieved a form post, we'll trigger a redirect but normally not
+    $redirect = FALSE;
 
-    /** @todo take into consideration app_display */
+    // here are the post params we're looking for
+    foreach(array('status', 'query') as $postParam) {
+      if ($request->getPostParameter($postParam)) {
+        // if found, we trigger our redirect and add it to our listParams
+        $redirect = TRUE;
+        $this->listParams = array_merge($this->listParams,
+          array($postParam => trim($request->getPostParameter($postParam))));
+      }
+    }
+
+    // if a post was found we redirect and add everything via http_build_query
+    if ($redirect) {
+      $this->redirect(($this->moduleName . '/' . $this->actionName . '?' .
+        http_build_query($this->listParams)));
+    }
+
+    // if a post was not found, we happily continue on with variable declarations
+    $this->targetAction = 'list';
+    $status = 'all';
+
+    // these are the 'normal' get params we're looking for
+    foreach (array('sort', 'order', 'query') as $getParam) {
+      $$getParam = ($request->getParameter($getParam)) ? $request->getParameter($getParam) : NULL;
+    }
+
+    // status takes a bit more care because we validate it against the db
     $staffStatusOptions = agDoctrineQuery::create()
                     ->select('s.staff_resource_status, s.staff_resource_status')
                     ->from('agStaffResourceStatus s')
+                    ->where('s.app_display=?',TRUE)
                     ->execute(array(), 'key_value_pair');
-    //the above query returns an array of keys matching their values.
-    //ideally the above should exist in a global param,
-    //so the database is not queried all the time
     $staffStatusOptions['all'] = 'all';
-    if ($request->getParameter('status') && in_array($request->getParameter('status'),
-                    $staffStatusOptions)) {
-      $this->status = $request->getParameter('status');
+    if (isset($this->listParams['status']) &&
+        isset($staffStatusOptions[$this->listParams['status']]))
+    {
+      $status = $this->listParams['status'];
     }
+
+    // create the widget that uses the above status values
     $this->statusWidget = new sfForm();
     $this->statusWidget->setWidgets(
             array(
@@ -90,13 +104,14 @@ class agStaffActions extends agActions {
             // 'add_empty' => true))// ,'onClick' => 'submit()'))
             )
     );
-    $this->statusWidget->setDefault('status', $this->status);
+    $this->statusWidget->setDefault('status', $status);
 
     $inlineDeco = new agWidgetFormSchemaFormatterInlineLeftLabel($this->statusWidget->getWidgetSchema());
     $this->statusWidget->getWidgetSchema()->addFormFormatter('inline', $inlineDeco);
     $this->statusWidget->getWidgetSchema()->setFormFormatterName('inline');
 
-    list($this->displayColumns, $query) = agListHelper::getStaffList(null, $this->status, $this->sort, $this->order);
+    // $sort, $order, and $query are magically created above ($$getParam)
+    list($this->displayColumns, $query) = agListHelper::getStaffList(null, $status, $sort, $order, 'staff', $query);
 
     $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
     $resultsPerPage = agGlobal::getParam('staff_list_results_per_page');

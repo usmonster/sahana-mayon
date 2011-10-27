@@ -26,14 +26,8 @@ if (!(isset($caption)))
       foreach ($widgets as $widget) {
     ?>
         <div class="floatRight" style="font-size: 12px;">
-          <form name="statusForm" action="<?php echo $thisUrl ?>" method="get">
+          <form name="statusForm" action="<?php echo $thisUrl . '?' . http_build_query($listParams) ?>" method="post">
         <?php echo $widget ?>
-        <?php if (isset($listParams['sort'])): ?>
-          <input type="hidden" name="sort" value="<?php echo $listParams['sort'] ?>">
-        <?php endif ?>
-        <?php if (isset($listParams['order'])): ?>
-            <input type="hidden" name="order" value="<?php echo $listParams['order'] ?>">
-        <?php endif ?>
 
           </form></div>
     <?php
@@ -53,7 +47,8 @@ if (!(isset($caption)))
             foreach ($sortOrders as $sortOrder => $character) {
               
               // match if this is the one currently selected to find highlighted css class
-              if ((strtolower($listParams['sort']) == strtolower($column)) &&
+              if ((isset($listParams['sort']) && isset($listParams['order'])) &&
+                  (strtolower($listParams['sort']) == strtolower($column)) &&
                   (strtolower($listParams['order']) == strtolower($sortOrder))) {
                 $class = 'buttonSortSelected';
               } else {

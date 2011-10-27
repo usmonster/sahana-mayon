@@ -17,7 +17,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 <br/>
 <br/>
 
-Please input a valid data/time to view your post-deployment staffing estimates for the specified point in time. Any valid date/time string may be used (eg, '2015-01-01 13:00' or 'January 1, 2015 1:00 pm').
+Please input a valid date/time to view your post-deployment staffing estimates for the specified point in time. Any valid date/time string may be used (eg, '2015-01-01 13:00' or 'January 1, 2015 1:00 pm').
 
 <br /><br />
 

@@ -28,17 +28,34 @@ class agActions extends sfActions
 
   public function executeSearch(sfWebRequest $request)
   {
-    $this->targetAction = 'search';
-    $string = $request->getParameter('query');
-    $pattern = "/\W/";
-    $replace = " ";
-    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
-//    $this->params = '?query=' . $request->getParameter('query');
-    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
-    self::doSearch($request->getParameter('query'), $currentPage);
-    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
-    //$this->setTemplate('global/search');
+    $queryParams = $request->getGetParameters();
+    if($request->hasParameter('query')) {
+      $queryParams['query'] = base64_encode(trim($request->getParameter('query')));
+    }
+
+    // build our url
+    $url = $request->getParameter('module') . '/list';
+    if (!empty($queryParams)) {
+      $url .= '?' . http_build_query($queryParams);
+    }
+    $this->redirect($url);
   }
+
+
+
+//  public function executeSearch(sfWebRequest $request)
+//  {
+//    $this->targetAction = 'search';
+//    $string = $request->getParameter('query');
+//    $pattern = "/\W/";
+//    $replace = " ";
+//    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
+////    $this->params = '?query=' . $request->getParameter('query');
+//    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+//    self::doSearch($request->getParameter('query'), $currentPage);
+//    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
+//    //$this->setTemplate('global/search');
+//  }
 
   public function executeStatus(sfWebRequest $request)
   {

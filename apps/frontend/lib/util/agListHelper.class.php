@@ -40,6 +40,18 @@ class agListHelper
     }
     $query->orderBy($sortField . ' ' . $order);
 
+    if ($where !== NULL) {
+      // the searchable fields
+      $likeSearches = array('pn1.person_name', 'pn3.person_name', 'agOrganization.organization',
+        'pc.phone_contact', 'ec.email_contact', 'agStaffResourceType.staff_resource_type');
+
+      // create an equal number of parameters and clauses
+      $likeParams = array_fill(0, count($likeSearches), '%' . $where . '%');
+      $likeClause = '(' . implode(' LIKE ?) OR (', $likeSearches) . ' LIKE ?)';
+
+      $query->where('(' . $likeClause . ')', $likeParams);
+    }
+
     $genericDisplayColumns = array(
       'id' => array('title' => '', 'sortable' => false, 'index' => 's_id'),
       'fn' => array('title' => 'First Name', 'sortable' => true, 'index' => 'pn1_name1'),
