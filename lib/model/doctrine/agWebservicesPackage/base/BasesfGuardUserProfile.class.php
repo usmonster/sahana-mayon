@@ -50,8 +50,6 @@ abstract class BasesfGuardUserProfile extends sfDoctrineRecord
              'type' => 'boolean',
              'default' => 0,
              ));
-        $this->hasColumn('created_at', '', null);
-        $this->hasColumn('updated_at', '', null);
     }
 
     public function setUp()

@@ -8,10 +8,11 @@
  * @author     CUNY SPS
  * @version    SVN: $Id: actions.class.php 23810 2009-11-12 11:07:44Z Kris.Wallsmith $
  */
-class profileActions extends sfActions
+class profileActions extends agActions
 {
   public function executeIndex(sfWebRequest $request)
   {
+    $r = $request;
     $this->sf_guard_user_profiles = Doctrine_Core::getTable('sfGuardUserProfile')
       ->createQuery('a')
       ->execute();
@@ -27,6 +28,8 @@ class profileActions extends sfActions
     $this->forward404Unless($request->isMethod(sfRequest::POST));
 
     $this->form = new sfGuardUserProfileForm();
+    unset($this->form['created_at']);
+    unset($this->form['updated_at']);
 
     $this->processForm($request, $this->form);
 
