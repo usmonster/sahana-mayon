@@ -8,6 +8,8 @@ Please select one of the following staff administration actions:</p>
 <br/> 
 <a href="<?php echo url_for('admin/new') ?>" class="continueButton" title="Create New Account">Create Account</a><br/><br/>
 <a href="<?php echo url_for('admin/list') ?>" class="continueButton" title="List Existing Accounts">List Accounts</a><br/><br/>
+<a href="<?php echo url_for('profile/index') ?>" class="continueButton" title="Webservice Accounts">Webservice Accounts</a><br/><br/>
+
 <!--<a href="<?php echo url_for('admin/cred') ?>" class="continueButton" title="Credential Management">Credential Management</a><br/><br/>-->
 
   </fieldset>
