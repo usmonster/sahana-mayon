@@ -100,6 +100,20 @@ class agWebservicesHelper
 
         return $ag_events;
     }
+    
+    public static function getEventStaffTypes($eventId) {
+        
+        $staffTypes = agDoctrineQuery::create()
+            ->select('DISTINCT s.event_id, rt.staff_resource_type')
+            ->from('agEventStaff s')
+            ->innerJoin('s.agStaffResource sr')
+            ->innerJoin('sr.agStaffResourceType rt')
+            ->where('s.event_id = ' . $eventId)
+            ->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+        
+        return $staffTypes;
+    }
+    
 
     public static function getEventFacilities($eventId)
     {
