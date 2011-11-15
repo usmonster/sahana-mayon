@@ -754,7 +754,7 @@ class agStaffImportNormalization extends agImportNormalization
     // always start with any data maps we'll need so they're explicit
     $importAddressTypes = array('work_address' => 'work', 'home_address' => 'home');
     $importAddressElements = array('line_1' => 'line 1', 'line_2' => 'line 2', 'city' => 'city',
-      'state' => 'state', 'zip' => 'zip5', 'country' => 'country');
+      'state' => 'state', 'zip5' => 'zip', 'country' => 'country');
     $entityAddresses = array();
     $missingGeo = 0;
     $results = array();
