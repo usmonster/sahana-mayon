@@ -122,16 +122,16 @@ class agStaffImportNormalization extends agImportNormalization
     $importSpec['home_address_state'] = array('type' => "string", 'length' => 255);
     $importSpec['home_address_zip'] = array('type' => "string", 'length' => 5);
     $importSpec['home_address_country'] = array('type' => "string", 'length' => 128);
-    $importSpec['home_latitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
-    $importSpec['home_longitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['home_address_latitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['home_address_longitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
     $importSpec['work_address_line_1'] = array('type' => "string", 'length' => 255);
     $importSpec['work_address_line_2'] = array('type' => "string", 'length' => 255);
     $importSpec['work_address_city'] = array('type' => "string", 'length' => 255);
     $importSpec['work_address_state'] = array('type' => "string", 'length' => 255);
     $importSpec['work_address_zip'] = array('type' => "string", 'length' => 5);
     $importSpec['work_address_country'] = array('type' => "string", 'length' => 128);
-    $importSpec['work_latitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
-    $importSpec['work_longitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['work_address_latitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
+    $importSpec['work_address_longitude'] = array('type' => "decimal", 'length' => 12, 'scale' => 8);
     $importSpec['organization'] = array('type' => "string", 'length' => 128);
     $importSpec['resource_type'] = array('type' => "string", 'length' => 64);
     $importSpec['resource_status'] = array('type' => "string", 'length' => 30);
@@ -806,11 +806,11 @@ class agStaffImportNormalization extends agImportNormalization
           }
         }
 
-        if (count($homeAddr) > 0 && isset($rawData['home_latitude']) &&
-                isset($rawData['home_longitude'])) {
+        if (count($homeAddr) > 0 && isset($rawData['home_address_latitude']) &&
+                isset($rawData['home_address_longitude'])) {
           $homeAddrComp = array($homeAddr, $addressStandardId);
-          $homeAddrComp[] = array(array(array($rawData['home_latitude'],
-                $rawData['home_longitude'])),
+          $homeAddrComp[] = array(array(array($rawData['home_address_latitude'],
+                $rawData['home_address_longitude'])),
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
         } else {
@@ -823,11 +823,11 @@ class agStaffImportNormalization extends agImportNormalization
           }
         }
 
-        if (count($workAddr) > 0 && isset($rawData['work_latitude']) &&
-            isset($rawData['work_longitude'])) {
+        if (count($workAddr) > 0 && isset($rawData['work_address_latitude']) &&
+            isset($rawData['work_address_longitude'])) {
           $workAddrComp = array($workAddr, $addressStandardId);
-          $workAddrComp[] = array(array(array($rawData['work_latitude'],
-              $rawData['work_longitude'])),
+          $workAddrComp[] = array(array(array($rawData['work_address_latitude'],
+              $rawData['work_address_longitude'])),
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
         } else {
