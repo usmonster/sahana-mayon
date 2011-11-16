@@ -258,16 +258,16 @@ class agStaffExport extends agExportHelper {
     $exportSpec['Home Address State'] = array('type' => 'string', 'length' => 255);
     $exportSpec['Home Address Zip'] = array('type' => 'string', 'length' => 255);
     $exportSpec['Home Address Country'] = array('type' => 'string', 'length' => 128);
-    $exportSpec['Home Address Latitude'] = array('type' => 'string', 'length' => 13);
-    $exportSpec['Home Address Longitude'] = array('type' => 'string', 'length' => 13);
+    $exportSpec['Home Latitude'] = array('type' => 'string', 'length' => 13);
+    $exportSpec['Home Longitude'] = array('type' => 'string', 'length' => 13);
     $exportSpec['Work Address Line 1'] = array('type' => 'string', 'length' => 255);
     $exportSpec['Work Address Line 2'] = array('type' => 'string', 'length' => 255);
     $exportSpec['Work Address City'] = array('type' => 'string', 'length' => 255);
     $exportSpec['Work Address State'] = array('type' => 'string', 'length' => 255);
     $exportSpec['Work Address Zip'] = array('type' => 'string', 'length' => 255);
     $exportSpec['Work Address Country'] = array('type' => 'string', 'length' => 128);
-    $exportSpec['Work Address Latitude'] = array('type' => 'string', 'length' => 13);
-    $exportSpec['Work Address Longitude'] = array('type' => 'string', 'length' => 13);
+    $exportSpec['Work Latitude'] = array('type' => 'string', 'length' => 13);
+    $exportSpec['Work Longitude'] = array('type' => 'string', 'length' => 13);
     $exportSpec['Organization'] = array('type' => "string", 'length' => 128);
     $exportSpec['Resource Type'] = array('type' => "string", 'length' => 64);
     $exportSpec['Resource Status'] = array('type' => "string", 'length' => 30);
@@ -566,7 +566,7 @@ class agStaffExport extends agExportHelper {
 
           foreach ($address[0][0] as $element => $value) {
             if(isset($this->addressHeaders[$element])) {
-              $header = $contactType. ' ' . $this->addressHeaders[$element];
+              $header = $contactType . ' ' . $this->addressHeaders[$element];
               $this->exportData[$rowId][$header] = $value;
             }
           }
