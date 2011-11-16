@@ -790,6 +790,9 @@ class agStaffImportNormalization extends agImportNormalization
     // loop through our raw data and build our entity address data
     foreach ($this->importData as $rowId => $rowData) {
       if (isset($rowData['primaryKeys']['entity_id'])) {
+        $hasHomeElem = FALSE;
+        $hasWorkElem = FALSE;
+
         // this just makes it easier to use
         $entityId = $rowData['primaryKeys']['entity_id'];
         $rawData = $rowData['_rawData'];
@@ -799,10 +802,12 @@ class agStaffImportNormalization extends agImportNormalization
         foreach ($importAddressElements AS $element => $id) {
           if (isset($rawData['home_address_' . $element])) {
             $homeAddr[$id] = $rawData['home_address_' . $element];
+            $hasHomeElem = TRUE;
           }
 
           if (isset($rawData['work_address_' . $element])) {
             $workAddr[$id] = $rawData['work_address_' . $element];
+            $hasWorkElem = TRUE;
           }
         }
 
@@ -813,7 +818,7 @@ class agStaffImportNormalization extends agImportNormalization
                 $rawData['home_longitude'])),
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
-        } else {
+        } elseif ($hasHomeElem) {
           // log our error or at least grab our counter
           $missingGeo++;
           if ($throwOnError) {
@@ -830,7 +835,7 @@ class agStaffImportNormalization extends agImportNormalization
               $rawData['work_longitude'])),
             $geoMatchScoreId);
           $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
-        } else {
+        } elseif ($hasWorkElem) {
           // log our error or at least grab our counter
           $missingGeo++;
           if ($throwOnError) {
