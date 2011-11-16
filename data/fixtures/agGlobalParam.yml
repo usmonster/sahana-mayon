@@ -90,7 +90,7 @@ agGlobalParam:
     id: 18
     agHost: localhost
     datapoint: enforce_strict_contact_formatting
-    value: 1
+    value: 0
   import_error_threshold:
     id: 19
     agHost: localhost
