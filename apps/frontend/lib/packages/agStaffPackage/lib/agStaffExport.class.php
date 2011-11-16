@@ -75,8 +75,8 @@ class agStaffExport extends agExportHelper {
     $this->addressHeaders['state'] = 'Address State';
     $this->addressHeaders['zip5'] = 'Address Zip';
     $this->addressHeaders['country'] = 'Address Country';
-    $this->addressHeaders['latitude'] = 'Address Latitude';
-    $this->addressHeaders['longitude'] = 'Address Longitude';
+    $this->addressHeaders['latitude'] = 'Latitude';
+    $this->addressHeaders['longitude'] = 'Longitude';
 
     $this->addressContactTypes = agDoctrineQuery::create()
       ->select('act.address_contact_type')
