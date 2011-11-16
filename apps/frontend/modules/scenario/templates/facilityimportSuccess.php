@@ -1,4 +1,4 @@
-<h2>Staff Import Status</h2>
+<h2>Facility Import Status</h2>
 
 <?php // include_partial('facility/infobar', array('timer' => $timer)); ?>
 

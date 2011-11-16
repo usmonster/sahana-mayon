@@ -790,9 +790,6 @@ class agStaffImportNormalization extends agImportNormalization
     // loop through our raw data and build our entity address data
     foreach ($this->importData as $rowId => $rowData) {
       if (isset($rowData['primaryKeys']['entity_id'])) {
-        $hasHomeElem = FALSE;
-        $hasWorkElem = FALSE;
-
         // this just makes it easier to use
         $entityId = $rowData['primaryKeys']['entity_id'];
         $rawData = $rowData['_rawData'];
@@ -802,7 +799,6 @@ class agStaffImportNormalization extends agImportNormalization
         foreach ($importAddressElements AS $element => $id) {
           if (isset($rawData['home_address_' . $element])) {
             $homeAddr[$id] = $rawData['home_address_' . $element];
-            $hasHomeElem = TRUE;
           }
 
           if (isset($rawData['work_address_' . $element])) {
@@ -811,37 +807,39 @@ class agStaffImportNormalization extends agImportNormalization
           }
         }
 
-        if (count($homeAddr) > 0 && isset($rawData['home_latitude']) &&
-                isset($rawData['home_longitude'])) {
-          $homeAddrComp = array($homeAddr, $addressStandardId);
-          $homeAddrComp[] = array(array(array($rawData['home_latitude'],
-                $rawData['home_longitude'])),
-            $geoMatchScoreId);
-          $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
-        } elseif ($hasHomeElem) {
-          // log our error or at least grab our counter
-          $missingGeo++;
-          if ($throwOnError) {
-            $errMsg = sprintf('Missing home address/geo information from record id  %d', $rowId);
-            $this->eh->logErr($errMsg);
-            throw new Exception($errMsg);
+        if (count($homeAddr) > 0) {
+          if (isset($rawData['home_latitude']) && isset($rawData['home_longitude'])) {
+            $homeAddrComp = array($homeAddr, $addressStandardId);
+            $homeAddrComp[] = array(array(array($rawData['home_latitude'],
+                  $rawData['home_longitude'])),
+              $geoMatchScoreId);
+            $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
+          } else {
+            // log our error or at least grab our counter
+            $missingGeo++;
+            if ($throwOnError) {
+              $errMsg = sprintf('Missing home address/geo information from record id  %d', $rowId);
+              $this->eh->logErr($errMsg);
+              throw new Exception($errMsg);
+            }
           }
         }
 
-        if (count($workAddr) > 0 && isset($rawData['work_latitude']) &&
-            isset($rawData['work_longitude'])) {
-          $workAddrComp = array($workAddr, $addressStandardId);
-          $workAddrComp[] = array(array(array($rawData['work_latitude'],
-              $rawData['work_longitude'])),
-            $geoMatchScoreId);
-          $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
-        } elseif ($hasWorkElem) {
-          // log our error or at least grab our counter
-          $missingGeo++;
-          if ($throwOnError) {
-            $errMsg = sprintf('Missing work address/geo information from record id  %d', $rowId);
-            $this->eh->logErr($errMsg);
-            throw new Exception($errMsg);
+        if (count($workAddr) > 0) {
+          if (isset($rawData['work_latitude']) && isset($rawData['work_longitude'])) {
+            $workAddrComp = array($workAddr, $addressStandardId);
+            $workAddrComp[] = array(array(array($rawData['work_latitude'],
+                $rawData['work_longitude'])),
+              $geoMatchScoreId);
+            $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
+          } else {
+            // log our error or at least grab our counter
+            $missingGeo++;
+            if ($throwOnError) {
+              $errMsg = sprintf('Missing work address/geo information from record id  %d', $rowId);
+              $this->eh->logErr($errMsg);
+              throw new Exception($errMsg);
+            }
           }
         }
       }
