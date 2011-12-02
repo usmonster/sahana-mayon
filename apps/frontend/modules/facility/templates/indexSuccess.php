@@ -4,7 +4,7 @@
 use_stylesheet('jquery/jquery.ui.custom.css');
 use_stylesheet('jquery/mayon.jquery.ui.css');?>
 <h2>Facility Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:facility_management&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Facility Management">?</a></h2>
-<p>The Facility Management feature in Sahana Agasti is used to manage your available facility resources while planning before an emergency response.</p>
+<p>The Facility Management feature in the <?php echo sfConfig::get('sf_application_name'); ?> is used to manage your available facility resources while planning before an emergency response.</p>
 
   <h3>Please select one of the following actions:</h3>
   <?php

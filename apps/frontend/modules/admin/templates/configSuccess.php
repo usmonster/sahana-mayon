@@ -19,7 +19,7 @@ require_once (sfConfig::get('sf_app_module_dir') . '/admin/lib/config.inc.php');
 ?>
 <div class="adminConfig">
   <h2>System Configuration</h2>
-  <p>This page will allow you to configure your Agasti installation.</p>
+  <p>This page will allow you to configure your installation.</p>
   <p>Use the form to the top left to enter your system information.
   The information to the right provides you with a system configuration check
   </p>

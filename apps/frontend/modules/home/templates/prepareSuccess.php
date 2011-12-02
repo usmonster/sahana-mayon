@@ -1,5 +1,5 @@
 <h2>Prepare</h2>
-<p>In Sahana Agasti, preparing means creating Scenarios.  Scenarios are plans within the application
+<p>In the <?php echo sfConfig::get('sf_application_name'); ?>, preparing means creating Scenarios.  Scenarios are plans within the application
 that complement your organizations existing emergency plans.</p>
 <p><strong>Important:</strong> Resources, like staff or facilities, should be loaded into the application
   before creating a scenario.  Facilities can be entered manually before scenario creation or 

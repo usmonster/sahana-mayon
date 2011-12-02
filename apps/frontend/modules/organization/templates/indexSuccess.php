@@ -7,7 +7,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 ?>
 <h2>Organization Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:organization_management&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Organization Management">?</a></h2>
 
-<p>The Organization Management function in Sahana Agasti is used to record information on government and
+<p>The Organization Management function in <?php echo sfConfig::get('sf_application_name'); ?> is used to record information on government and
   non-government organizations who may be involved with an emergency response.
   This data is recorded on staff records and used for staff deployment when planning
   for and responding to an emergency.</p>

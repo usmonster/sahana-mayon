@@ -1,5 +1,5 @@
 <h3>System Administration</h3>
-<p class="greyText">Hello, welcome to the system administration management module of Sahana Agasti 2.0, Mayon
+<p class="greyText">Hello, welcome to the system administration management module of the <?php echo sfConfig::get('sf_application_name'); ?>.
 <br />
 Please select one of the following staff administration actions:</p>
 <div class="configure adminConfig">
@@ -45,5 +45,5 @@ Please select one of the following staff administration actions:</p>
   </fieldset>
 </div>
   <br />
-    <p class="greyText">This page will allow you to configure your Agasti installation.</p>
+    <p class="greyText">This page will allow you to configure your installation.</p>
         <p class="greyText">Select one of the administration options</p>

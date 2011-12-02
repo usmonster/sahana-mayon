@@ -105,6 +105,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     sfConfig::set('sf_download_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'downloads');
     sfConfig::set('sf_xspchart_data_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'xspchart' . DIRECTORY_SEPARATOR . 'data');
     sfConfig::set('sf_xspchart_cache_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'xspchart' . DIRECTORY_SEPARATOR . 'cache');
+    sfConfig::set('sf_application_name', 'Sahana Resource Management Program');
 
    //packages are specific to the application, though not core and should function standalone
     $this->enablePackages(

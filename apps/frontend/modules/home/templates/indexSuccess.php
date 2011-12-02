@@ -1,26 +1,17 @@
 
-<h2>
-  <?php echo $organization_name; ?> Sahana Agasti </h2>
+<h2><?php echo sfConfig::get('sf_application_name'); ?></h2>
 
-<?php
-  if ($sf_user->isAuthenticated()) {
-    echo "<h3> Welcome to Sahana Agasti Emergency Preparedness and Response Software</h3>";
-  }
-?>
+  <p>
+    The <?php echo sfConfig::get('sf_application_name'); ?> is an application with tools to manage staff
+    and facility resources, response plans, and deploy emergency event response via an easy to use
+    web interface.
+  </p>
 
-  <p>Sahana Agasti is the <?php echo $organization_name; ?>  emergency planning and
-    response application with tools to manage staff and facility resources, response plans, and deploy
-    emergency event response via an easy to use web interface. </p>
+<?php if (!$sf_user->isAuthenticated()): ?>
+    <h3>"To begin, please login in the upper right.</h3><br/>;
+<?php endif; ?>
 
-<?php
-  if (!$sf_user->isAuthenticated()) {
-    echo "<h2> To begin, please login in the upper right.</h2><br/>";
-  }
-?>
-
-<?php
-  if ($sf_user->isAuthenticated()) {
-?>
+<?php if ($sf_user->isAuthenticated()): ?>
     <h3>To begin, select an option from the menus above or the icons below.</h3>
 
 
@@ -34,13 +25,12 @@
         <td><?php echo link_to('Administration', 'admin/index', array('class' => 'generalButton width140', 'title' => 'Administration')); ?></td>
       </tr>
     </table>
-<?php
-  }
-?>
-  <h3>If you are working at a shelter with <?php echo $organization_name; ?> and entering client data:</h3>
+<?php endif; ?>
+    
+  <h3>If you are working at a shelter with and entering client data:</h3>
   <table cellspacing='20'>
     <tr>
-      <td><a href="<?php echo $vesuvius_address; ?>" class="generalButton width140" title="Jump to Vesuvius Client Tracking" target="_blank"> Jump to Vesuvius Client Tracking</a>
+      <td><a href="<?php echo $vesuvius_address; ?>" class="generalButton width140" title="Jump to the Sahana Registry Program" target="_blank"> Jump to the Sahana Registry Program</a>
 
 </td>
   </tr>
