@@ -2,7 +2,7 @@
 <?php use_javascripts_for_form($scenarioForm) ?>
 
 <h2>Respond</h2>
-<p>From this page you can quickly navigate to Sahana Agasti's emergency response features.
+<p>From this page you can quickly navigate to the <?php echo sfConfig::get('sf_application_name'); ?>'s emergency response features.
 <br/>Active events may be accessed directly from this page. For access to all events, click the List
   All Events button below.</p>
 <h3>Please select a scenario to base your event on: </h3>

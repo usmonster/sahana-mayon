@@ -8,7 +8,7 @@
   </p>
 
 <?php if (!$sf_user->isAuthenticated()): ?>
-    <h3>"To begin, please login in the upper right.</h3><br/>;
+    <h3>To begin, please login in the upper right.</h3><br/>;
 <?php endif; ?>
 
 <?php if ($sf_user->isAuthenticated()): ?>
