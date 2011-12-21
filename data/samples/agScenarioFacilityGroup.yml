@@ -108,19 +108,19 @@ agScenarioFacilityGroup:
   equake_G01:
     agScenario: earthquake
     scenario_facility_group: Shelters01
-    agFacilityGroupType: shelters
+    agFacilityGroupType: shelter
     agFacilityGroupAllocationStatus: active
     activation_sequence: 1
   equake_G02:
     agScenario: earthquake
     scenario_facility_group: Shelters02
-    agFacilityGroupType: shelters
+    agFacilityGroupType: shelter
     agFacilityGroupAllocationStatus: standby
     activation_sequence: 2
   equake_G03:
     agScenario: earthquake
     scenario_facility_group: Medical01
-    agFacilityGroupType: shelters
+    agFacilityGroupType: shelter
     agFacilityGroupAllocationStatus: active
     activation_sequence: 1
 # plaque

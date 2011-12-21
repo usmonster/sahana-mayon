@@ -7,10 +7,6 @@ agFacilityResourceType:
     facility_resource_type: Pet Center
     facility_resource_type_abbr: pet
     description: Area designated to be used as pet center.
-  pod:
-    facility_resource_type: Point of Distribution
-    facility_resource_type_abbr: POD
-    description: Area designated to be used as a distribution center.
   shelter:
     facility_resource_type: Shelter
     facility_resource_type_abbr: shl
