@@ -9,8 +9,6 @@
  * @property string $token
  * @property boolean $is_webservice_client
  * @property boolean $is_active
- * @property  $created_at
- * @property  $updated_at
  * @property sfGuardUser $User
  * 
  * @method integer            getUserId()               Returns the current record's "user_id" value
