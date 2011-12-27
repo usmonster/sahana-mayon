@@ -17,7 +17,7 @@
  */
 class agStaffActions extends agActions {
 
-  public $_search= 'staff';
+  protected $_search= 'staff';
 
   /**
    * executeIndex is currently used to execute the index action
@@ -108,7 +108,6 @@ class agStaffActions extends agActions {
                         ),
                         array('onchange' => 'submit();')
                 ),
-            // 'add_empty' => true))// ,'onClick' => 'submit()'))
             )
     );
     $this->statusWidget->setDefault('status', $status);
@@ -124,10 +123,6 @@ class agStaffActions extends agActions {
     $resultsPerPage = agGlobal::getParam('staff_list_results_per_page');
     $this->pager = new Doctrine_Pager($query, $currentPage, $resultsPerPage);
     $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
-
-    //p-code
-    //$this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' ');
-    //end p-code
   }
 
   /**

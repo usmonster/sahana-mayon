@@ -16,7 +16,7 @@
 class scenarioActions extends agActions
 {
 
-  protected $_searchedModels = array('agScenarioFacilityGroup', 'agScenario', 'agStaff');
+  protected $_search = 'scenario';
   public static $scenario_id;
   public static $scenarioName;
   public static $wizardOp;
@@ -53,10 +53,35 @@ class scenarioActions extends agActions
    */
   public function executeList(sfWebRequest $request)
   {
-    $this->ag_scenarios = agDoctrineQuery::create()
+    // we use the get parameters to manage most of this action's methods
+    $this->listParams = $request->getGetParameters();
+
+    // in the event that we've recieved a form post, we'll trigger a redirect but normally not
+    $redirect = FALSE;
+
+    // here are the post params we're looking for
+    if ($request->getPostParameter('query')) {
+
+      // if found, we trigger our redirect and add it to our listParams
+      $param = str_replace('*', '%', strtolower(trim($request->getPostParameter('query'))));
+
+      // merge the results together
+      $this->listParams = array_merge($this->listParams, array($postParam => $param));
+
+      // if a post was found we redirect and add everything via http_build_query
+      $this->redirect(($this->moduleName . '/' . $this->actionName . '?' .
+        http_build_query($this->listParams)));
+    }
+
+    $q = agDoctrineQuery::create()
         ->select('a.*, b.*')
-        ->from('agScenario a, a.agScenarioFacilityGroup b')
-        ->execute();
+        ->from('agScenario a, a.agScenarioFacilityGroup b');
+
+    if (isset($this->listParams['query'])) {
+      $q->where('a.scenario LIKE ?', array( '%' . $this->listParams['query'] . '%'));
+    }
+
+    $this->ag_scenarios = $q->execute();
   }
 
   /**
