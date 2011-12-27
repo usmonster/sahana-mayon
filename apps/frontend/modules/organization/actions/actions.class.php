@@ -16,20 +16,21 @@
 class organizationActions extends agActions
 {
   protected $agOrganizationHelper ;
-  protected $_searchedModels = array('agOrganization');
+  protected $_search = 'organization';
 
-  public function executeSearch(sfWebRequest $request)
-  {
-    $this->targetAction = 'search';
-    $string = $request->getParameter('query');
-    $pattern = "/\W/";
-    $replace = " ";
-    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
-//    $this->params = '?query=' . $request->getParameter('query');
-    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
-    parent::doSearch($request->getParameter('query'), $currentPage);
-    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
-  }
+
+//  public function executeSearch(sfWebRequest $request)
+//  {
+//    $this->targetAction = 'search';
+//    $string = $request->getParameter('query');
+//    $pattern = "/\W/";
+//    $replace = " ";
+//    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
+////    $this->params = '?query=' . $request->getParameter('query');
+//    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+//    parent::doSearch($request->getParameter('query'), $currentPage);
+//    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
+//  }
 
   /**
    * Method to lazily load the agOrganizationHelper helper class.
@@ -65,38 +66,67 @@ class organizationActions extends agActions
    */
   public function executeList(sfWebRequest $request)
   {
-    // Query organizations and their staff counts.
+    // we use the get parameters to manage most of this action's methods
+    $this->listParams = $request->getGetParameters();
+
+    // here are the post params we're looking for
+    if ($request->getPostParameter('query')) {
+
+      // if found, we trigger our redirect and add it to our listParams
+      $param = str_replace('*', '%', strtolower(trim($request->getPostParameter('query'))));
+
+      // merge the results together
+      $this->listParams = array_merge($this->listParams, array($postParam => $param));
+
+      // if a post was found we redirect and add everything via http_build_query
+      $this->redirect(($this->moduleName . '/' . $this->actionName . '?' .
+        http_build_query($this->listParams)));
+    }
+
+    // query organizations and their staff counts.
     $query = agDoctrineQuery::create()
     ->select('o.*, count(distinct sr.staff_id) AS staffCount')
     ->from('agOrganization as o')
     ->leftJoin('o.agStaffResource sr')
     ->groupBy('o.organization');
 
-     /**
-     * Create pager
-     */
-    $this->pager = new sfDoctrinePager('agOrganization', 10);
-
-    /**
-     * Check if the client wants the results sorted, and set pager
-     * query attributes accordingly
-     */
-    $this->sortColumn = $request->getParameter('sort') ? $request->getParameter('sort') : 'Organization';
-    $this->sortOrder = $request->getParameter('order') ? $request->getParameter('order') : 'ASC';
-
-    if ($request->getParameter('sort')) {
-      $query = $query->orderBy($request->getParameter('sort', 'Organization') . ' ' . $request->getParameter('order', 'ASC'));
+    // attach the wildcard query criterion
+    if (isset($this->listParams['query'])) {
+      $query->where('o.organization LIKE ?', array('%' . $this->listParams['query'] . '%'));
     }
 
-    /**
-     * Set pager's query to our final query including sort
-     * parameters
-     */
-    $this->pager->setQuery($query);
+    // establish our sort parameter mapping
+    $sorts = array('organization' => 'o.organization',
+        'description' => 'o.description',
+        'staffCount' => 'count(distinct sr.staff_id)',
+        );
 
-    /**
-     * Set the pager's page number, defaulting to page 1
-     */
+    // map the variable to the sort param
+    if (isset($this->listParams['sort']) && isset($sorts[$this->listParams['sort']]) &&
+        isset($this->listParams['order'])) {
+      $this->sortColumn = $this->listParams['sort'];
+      $this->sortOrder = $this->listParams['order'];
+    } else {
+      $this->sortColumn = 'organization';
+      $this->sortOrder = 'ASC';
+    }
+
+    // attach it to the query
+    $query->orderBy($sorts[$this->sortColumn] . ' ' . $this->sortOrder);
+
+
+    //Defines the columns of the organization display list page.
+    $this->columnHeaders = array(
+      'id' => array('title' => 'Id', 'sortable' => false),
+      'organization' => array('title' => 'Organization','tooltip' => 'organization_name', 'sortable' => true),
+      'description' => array('title' => 'Description', 'tooltip' => 'organization_description', 'sortable' => true),
+      'staffCount' => array('title' => 'Staff Resources', 'tooltip' => 'organization_staff_count', 'sortable' => TRUE),
+    );
+
+    // set up our query and datasource
+    $resultsPerPage = agGlobal::getParam('staff_list_results_per_page');
+    $this->pager = new sfDoctrinePager('agOrganization', $resultsPerPage);
+    $this->pager->setQuery($query);
     $this->pager->setPage($request->getParameter('page', 1));
     $this->pager->init();
 

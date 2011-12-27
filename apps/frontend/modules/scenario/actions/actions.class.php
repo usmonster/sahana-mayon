@@ -56,9 +56,6 @@ class scenarioActions extends agActions
     // we use the get parameters to manage most of this action's methods
     $this->listParams = $request->getGetParameters();
 
-    // in the event that we've recieved a form post, we'll trigger a redirect but normally not
-    $redirect = FALSE;
-
     // here are the post params we're looking for
     if ($request->getPostParameter('query')) {
 
