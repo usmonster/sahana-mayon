@@ -18,21 +18,21 @@
 class facilityActions extends agActions
 {
 
-  protected $_searchedModels = array('agFacility');
+  protected $_search = 'facility';
 
-  public function executeSearch(sfWebRequest $request)
-  {
-    $this->targetAction = 'search';
-    $string = $request->getParameter('query');
-    $pattern = "/\W/";
-    $replace = " ";
-    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
-//    $this->params = '?query=' . $request->getParameter('query');
-    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
-    parent::doSearch($request->getParameter('query'), $currentPage);
-    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
-    //$this->setTemplate('global/search');
-  }
+//  public function executeSearch(sfWebRequest $request)
+//  {
+//    $this->targetAction = 'search';
+//    $string = $request->getParameter('query');
+//    $pattern = "/\W/";
+//    $replace = " ";
+//    $this->params = '?query=' . urlencode(trim(preg_replace($pattern, $replace, $string), '+'));
+////    $this->params = '?query=' . $request->getParameter('query');
+//    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+//    parent::doSearch($request->getParameter('query'), $currentPage);
+//    $this->setTemplate(sfConfig::get('sf_app_dir') . DIRECTORY_SEPARATOR . 'modules/search/templates/search');
+//    //$this->setTemplate('global/search');
+//  }
 
   /**
    * executeIndex()
@@ -62,44 +62,80 @@ class facilityActions extends agActions
   **/
   public function executeList(sfWebRequest $request)
   {
-    /**
-     * Query the database for agFacility records joined with
-     * agFacilityResource records
-     * */
-    $query = agDoctrineQuery::create()
-            ->select('f.*, fr.*')
-            ->from('agFacility f, f.agFacilityResource fr');
+    // we use the get parameters to manage most of this action's methods
+    $this->listParams = $request->getGetParameters();
 
-    /**
-     * Create pager
-     * */
-    $this->target_module = 'facility';
-    $request->getParameter('limit') ? $limit = $request->getParameter('limit') : $limit = 10;
-    //instead of 10 for the limit, we should pull from a global parameter
-    $this->pager = new sfDoctrinePager('agFacility', $limit);
+    // here are the post params we're looking for
+    if ($request->getPostParameter('query')) {
+      // if found, we trigger our redirect and add it to our listParams
+      $param = str_replace('*', '%', strtolower(trim($request->getPostParameter('query'))));
 
-    /**
-     * Check if the client wants the results sorted, and set pager
-     * query attributes accordingly
-     * */
-    $this->sortColumn = $request->getParameter('sort') ? $request->getParameter('sort') : 'facility_name';
-    $this->sortOrder = $request->getParameter('order') ? $request->getParameter('order') : 'ASC';
-
-    if ($request->getParameter('sort')) {
-      $query = $query->orderBy($request->getParameter('sort', 'facility_name') . ' ' . $request->getParameter('order', 'ASC'));
+      // merge the results together
+      $this->listParams = array_merge($this->listParams, array($postParam => $param));
+      
+      // if a post was found we redirect and add everything via http_build_query
+      $this->redirect(($this->moduleName . '/' . $this->actionName . '?' .
+        http_build_query($this->listParams)));
     }
 
-    /**
-     * Set pager's query to our final query including sort
-     * parameters
-     * */
-    $this->pager->setQuery($query);
+    // if a post was not found, we happily continue on with variable declarations
+    $this->targetAction = 'list';
+    $this->targetModule = $this->_search;
 
-    /**
-     * Set the pager's page number, defaulting to page 1
-     * */
-    $this->pager->setPage($request->getParameter('page', 1));
-    $this->pager->init();
+    // these are the 'normal' get params we're looking for
+    foreach (array('sort', 'order', 'query') as $getParam) {
+      $$getParam = ($request->getParameter($getParam)) ? $request->getParameter($getParam) : NULL;
+    }
+
+    // $sort, $order, and $query are magically created above ($$getParam)
+    list($this->displayColumns, $doctrineQuery) = agListHelper::getFacilityList($sort, $order, $query);
+
+    $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
+    $resultsPerPage = agGlobal::getParam('staff_list_results_per_page');
+    $this->pager = new Doctrine_Pager($doctrineQuery, $currentPage, $resultsPerPage);
+    $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
+
+
+
+// ------------------------
+//    /**
+//     * Query the database for agFacility records joined with
+//     * agFacilityResource records
+//     * */
+//    $query = agDoctrineQuery::create()
+//            ->select('f.*, fr.*')
+//            ->from('agFacility f, f.agFacilityResource fr');
+//
+//    /**
+//     * Create pager
+//     * */
+//    $this->target_module = 'facility';
+//    $request->getParameter('limit') ? $limit = $request->getParameter('limit') : $limit = 10;
+//    //instead of 10 for the limit, we should pull from a global parameter
+//    $this->pager = new sfDoctrinePager('agFacility', $limit);
+//
+//    /**
+//     * Check if the client wants the results sorted, and set pager
+//     * query attributes accordingly
+//     * */
+//    $this->sortColumn = $request->getParameter('sort') ? $request->getParameter('sort') : 'facility_name';
+//    $this->sortOrder = $request->getParameter('order') ? $request->getParameter('order') : 'ASC';
+//
+//    if ($request->getParameter('sort')) {
+//      $query = $query->orderBy($request->getParameter('sort', 'facility_name') . ' ' . $request->getParameter('order', 'ASC'));
+//    }
+//
+//    /**
+//     * Set pager's query to our final query including sort
+//     * parameters
+//     * */
+//    $this->pager->setQuery($query);
+//
+//    /**
+//     * Set the pager's page number, defaulting to page 1
+//     * */
+//    $this->pager->setPage($request->getParameter('page', 1));
+//    $this->pager->init();
   }
 
   /**
