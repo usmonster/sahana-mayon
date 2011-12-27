@@ -26,9 +26,10 @@ include_partial('global/list',
                       'widgets' => array($statusWidget)
                     ));
 
-if ($targetAction == 'list')
+  if ($targetAction == 'list')
   {
-    echo '<a href="' . url_for('staff/new') . '" class="generalButton">Create New</a>';
+    echo link_to('Create New', 'staff/new', array('class' => 'generalButton'));
   }
+
 ?>
 
