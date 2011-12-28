@@ -91,7 +91,7 @@ class facilityActions extends agActions
     list($this->displayColumns, $doctrineQuery) = agListHelper::getFacilityList($sort, $order, $query);
 
     $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
-    $resultsPerPage = agGlobal::getParam('staff_list_results_per_page');
+    $resultsPerPage = agGlobal::getParam('default_list_page_size');
     $this->pager = new Doctrine_Pager($doctrineQuery, $currentPage, $resultsPerPage);
     $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
 
@@ -318,7 +318,6 @@ class facilityActions extends agActions
       $this->summary = $this->importer->summary;
     }
 
-    $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
     $this->timer = (time() - $this->timer);
 
   }
@@ -419,8 +418,6 @@ class facilityActions extends agActions
     $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
     if ($form->isValid()) {
       $ag_facility = $form->save();
-      LuceneRecord::updateLuceneRecord($ag_facility);
-
       $this->redirect('facility/edit?id=' . $ag_facility->getId());
     }
   }

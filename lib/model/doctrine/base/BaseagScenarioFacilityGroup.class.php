@@ -133,11 +133,8 @@ abstract class BaseagScenarioFacilityGroup extends sfDoctrineRecord
              'local' => 'id',
              'foreign' => 'scenario_facility_group_id'));
 
-        $luceneable0 = new Luceneable(array(
-             ));
         $timestampable0 = new Doctrine_Template_Timestampable(array(
              ));
-        $this->actAs($luceneable0);
         $this->actAs($timestampable0);
     }
 }

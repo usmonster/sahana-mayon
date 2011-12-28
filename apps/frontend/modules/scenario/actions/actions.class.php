@@ -761,7 +761,6 @@ class scenarioActions extends agActions
                                                $request->getFiles($this->form->getName()));
       if ($this->form->isValid()) {
         $ag_scenario = $this->form->save();
-        $ag_scenario->updateLucene();
         if ($request->hasParameter('Continue')) {
           $this->ag_facility_resources = agDoctrineQuery::create()
               ->select('a.facility_id, af.*, afrt.*')
@@ -1026,8 +1025,6 @@ class scenarioActions extends agActions
               agScenarioFacilityHelper::deleteScenarioFacilityResource($deletable);
             }
           }
-
-          LuceneRecord::updateLuceneRecord($agScenarioFacilityGroup);
 
           if ($request->hasParameter('Continue')) {
             $return = json_encode(array(
@@ -1677,7 +1674,6 @@ class scenarioActions extends agActions
     if ($form->isValid()) {
 
       $ag_scenario = $form->save();
-      $ag_scenario->updateLucene();
       if ($request->hasParameter('Continue')) {
         $this->ag_facility_resources = agDoctrineQuery::create()
             ->select('a.facility_id, af.*, afrt.*')

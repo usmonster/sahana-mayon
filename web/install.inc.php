@@ -543,33 +543,7 @@ class agInstall
     } catch (Exception $e) {
       $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
     }
-//
-//    $packages = agPluginManager::getPackagesByStatus(1); //get all enabled packages
-//    foreach($packages as $package)
-//    {
-//      try {
-////        if($package == 'agStaffPackage'){
-////          Doctrine_Core::loadModels(sfConfig::get('sf_lib_dir') . '/model/doctrine', Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
-////        }
-////        else{
-//          Doctrine_Core::loadModels(sfConfig::get('sf_app_dir') . '/lib/packages/' . $package . '/lib/model/doctrine', Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
-////        }
-//        Doctrine_Core::loadData(sfConfig::get('sf_app_dir') . '/lib/packages/' . $package  . '/data/fixtures', true);
-//        $installed[] = 'Successfully loaded packaged data fixtures';
-//      } catch (Exception $e) {
-//        $installed[] = 'Could not insert SQL! : ' . "\n" . $e->getMessage();
-//      }
-//    }
-//    this entry is achieved by proxy of the agHost.yml fixture/example
-//
-//    try {
-//      $ag_host = new agHost();
-//      $ag_host->setHostname($this->getConfig('DB_SERVER'));
-//      $ag_host->save();
-//      //$installed[] = 'Successfully generated host record based on database server host';
-//    } catch (Exception $e) {
-//      $installed[] = 'Could not insert ag_host record ' . $e->getMessage();
-//    }
+
     try {
       $configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
       $databaseManager = new sfDatabaseManager($configuration);
@@ -580,11 +554,9 @@ class agInstall
       $task = new sfCacheClearTask(sfContext::createInstance($configuration)->getEventDispatcher(), new sfFormatter());
       $task->run(array(), array());
 
-      $luceneIndex = new agLuceneIndex();
-      $luceneIndex->indexModels(array('agStaff', 'agFacility', 'agScenario', 'agScenarioFacilityGroup', 'agOrganization'));
       $installed = 'Success!';
     } catch (Exception $e) {
-      $installed[] = 'Could not index Data! : ' . "\n" . $e->getMessage();
+      $installed[] = 'Could not Clear Cache Data! : ' . "\n" . $e->getMessage();
     }
     if (is_array($installed)) {
       return implode('<br>', $installed);

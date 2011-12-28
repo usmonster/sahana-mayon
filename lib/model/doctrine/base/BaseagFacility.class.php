@@ -115,13 +115,6 @@ abstract class BaseagFacility extends sfDoctrineRecord
              'foreign' => 'facility_id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();
-        $luceneable0 = new Luceneable(array(
-             'fields' => 
-             array(
-              'facility_name' => 'unstored',
-             ),
-             ));
         $this->actAs($timestampable0);
-        $this->actAs($luceneable0);
     }
 }

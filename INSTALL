@@ -255,6 +255,14 @@ Finally, generate the wiki indexes by running the following command:
       www-data or apache.
 
 
+CLEANUP
+========================
+It is not recommended to leave the installer in your web directory. You must
+remove it after installation. To remove the installer execute
+
+sudo -u [WEB_USER] rm web/install.php
+
+
 ERRORS AND TROUBLESHOOTING
 ==========================
 

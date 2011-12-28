@@ -120,7 +120,7 @@ class agStaffActions extends agActions {
     list($this->displayColumns, $query) = agListHelper::getStaffList(null, $status, $sort, $order, 'staff', $query);
 
     $currentPage = ($request->hasParameter('page')) ? $request->getParameter('page') : 1;
-    $resultsPerPage = agGlobal::getParam('staff_list_results_per_page');
+    $resultsPerPage = agGlobal::getParam('default_list_page_size');
     $this->pager = new Doctrine_Pager($query, $currentPage, $resultsPerPage);
     $this->data = $this->pager->execute(array(), Doctrine_Core::HYDRATE_SCALAR);
   }
@@ -384,7 +384,6 @@ class agStaffActions extends agActions {
                       ->from('agStaff s')
                       ->where('s.person_id=?', $ag_staff->id)
                       ->fetchOne();
-      LuceneRecord::updateLuceneRecord($staffObj);
 
       //$staff_id = $ag_staff->getAgStaff()->getFirst()->getId();
 //not an object? first it's a collection, now not an object if i just get one

@@ -56,16 +56,6 @@ class agFacilityStaffResourceContainerForm extends sfForm
       // More container forms to hold the staff requirement forms for each facility.
       foreach ($facilityGroup as $facilityResourceKey => $facilityResources) {
         $facilityResourceLabel = $this->facilityLabels[$groupKey][$facilityResourceKey];
-//                    $subSubKeyLabel = $resourceKey
-//            ->getAgFacilityResource()
-//                ->getAgFacility()->facility_name . 
-//                ': ' . ucwords($scenarioFacilityResource
-//                    ->getAgFacilityResource()
-//                    ->getAgFacilityResourceType()->facility_resource_type) . 
-//                    ' (' . $scenarioFacilityResource
-//                    ->getAgFacilityResource()
-//                        ->getAgFacility()->facility_code . ')';
-        //TODO ^ add nice labels to facility resource containers.
         
         $resourceForm = new sfForm();
 
@@ -79,11 +69,6 @@ class agFacilityStaffResourceContainerForm extends sfForm
         foreach ($facilityResources as $staffKey => $staffResourceForm) {
           // And here are the real forms, the ones that will hold fields
           // and data rather than just other forms.
-
-     //     $staffResourceFormDeco = new agWidgetFormSchemaFormatterInlineTopLabel($staffResourceForm->getWidgetSchema());
-     //     $staffResourceForm->getWidgetSchema()->addFormFormatter('staffResourceFormDeco', $staffResourceFormDeco);
-     //     $staffResourceForm->getWidgetSchema()->setFormFormatterName('staffResourceFormDeco');
-          //$staffResourceForm->update
           //if we already have existing data, set the defaults here
           if (isset($scenarioFacilityGroups)) {
             if (isset($scenarioFacilityGroups[$groupKey][$resouceKey][$staffKey])) {
@@ -102,25 +87,4 @@ class agFacilityStaffResourceContainerForm extends sfForm
     }
   }
 
-  /**
-   * this is the only saving that takes place since the sfForm has nothing but embedded forms
-   * @param $con to maintain amorphism this interface is copied
-   * @param $forms to maintain amorphism this interface is copied
-   */
-//  public function saveEmbeddedForms($con = null, $forms = null)
-//  {
-//    if (isset($this->embeddedForms['lucene_search'])) {
-//      $form = $this->embeddedForms['lucene_search'];
-//      $values = $this->values['lucene_search'];
-//      $this->saveLuceneForm($form, $values);
-//      unset($this->embeddedForms['lucene_search']);
-//    }
-//
-//    if (isset($this->embeddedForms['staff_generator'])) {
-//      $form = $this->embeddedForms['staff_generator'];
-//      $values = $this->values['staff_generator'];
-//      $this->saveStaffGenForm($form, $values);
-//      unset($this->embeddedForms['staff_generator']);
-//    }
-//  }
 }

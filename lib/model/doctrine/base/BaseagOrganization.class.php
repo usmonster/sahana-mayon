@@ -107,13 +107,6 @@ abstract class BaseagOrganization extends sfDoctrineRecord
              'foreign' => 'certifying_organization_id'));
 
         $timestampable0 = new Doctrine_Template_Timestampable();
-        $luceneable0 = new Luceneable(array(
-             'fields' => 
-             array(
-              'organization' => 'unstored',
-             ),
-             ));
         $this->actAs($timestampable0);
-        $this->actAs($luceneable0);
     }
 }
