@@ -49,7 +49,7 @@ class agListHelper
       $likeParams = array_fill(0, count($likeSearches), '%' . $where . '%');
       $likeClause = '(lcase(' . implode(') LIKE ?) OR (lcase(', $likeSearches) . ') LIKE ?)';
 
-      $query->where('(' . $likeClause . ')', $likeParams);
+      $query->andWhere('(' . $likeClause . ')', $likeParams);
     }
 
     $genericDisplayColumns = array(
@@ -123,7 +123,7 @@ class agListHelper
       $likeParams = array_fill(0, count($likeSearches), '%' . $where . '%');
       $likeClause = '(lcase(' . implode(') LIKE ?) OR (lcase(', $likeSearches) . ') LIKE ?)';
 
-      $query->where('(' . $likeClause . ')', $likeParams);
+      $query->andWhere('(' . $likeClause . ')', $likeParams);
     }
 
     // set our column headers
