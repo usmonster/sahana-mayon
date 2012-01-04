@@ -1097,6 +1097,11 @@ class eventActions extends agActions
         $this->redirect('event/index');
     }
 
+    public function executeMessaging(sfWebRequest $request)
+    {
+        $this->setEventBasics($request);
+    }
+    
     public function executeDeploystaff(sfWebRequest $request)
     {
       $this->staffingSummary = array();
