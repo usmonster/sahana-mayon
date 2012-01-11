@@ -708,16 +708,30 @@ class eventActions extends agActions
             $staffTypeRequiredBarData = array();
             $this->pCharts['staffTypeStatusBar'] = array();
             foreach ($this->staffTypeEstimates as $staffTypeId => $se) {
-              $unfilled = $se['min_required'] - ($se['available'] + $se['committed']);
+
+              // do a little data mangling to prevent over 100%
+              $pieUnfilled = $se['min_required'] - $se['committed'];
+              if ($pieUnfilled <= 0) {
+                $pieUnfilled = 0;
+                $pieAvailable = 0;
+              } else {
+                if ($pieUnfilled <= $se['available']) {
+                  $pieAvailable = $pieUnfilled;
+                  $pieUnfilled = 0;
+                } else {
+                  $pieUnfilled = $pieUnfilled - $se['available'];
+                  $pieAvailable = $se['available'];
+                }
+              }
 
               // re-initialize our data
               $staffTypeStatusPieData[$staffTypeId] = array();
               $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
-                  'Values' => $se['available'], 'Status' => 'Available' );
+                  'Values' => $pieAvailable, 'Status' => 'Available' );
               $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
                   'Values' => $se['committed'], 'Status' => 'Committed' );
               $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
-                  'Values' => $unfilled, 'Status' => "Unfilled\nRequirement" );
+                  'Values' => $pieUnfilled, 'Status' => "Unfilled\nRequirement" );
 
               $this->pCharts['staffTypeStatusPie'][$staffTypeId] = agChartHelper::getChartUrl(
                 'event/chart?event=' . $this->event_name, $this->chartUniqueIdent,
@@ -1126,7 +1140,7 @@ class eventActions extends agActions
 
       // Format memory
       $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
-      $peakMemory = $batchResults['profiler']['maxMem'];
+      $peakMemory = $this->batchResults['profiler']['maxMem'];
       if ($peakMemory <= 999) {
         $peakMemory = 1;
       }

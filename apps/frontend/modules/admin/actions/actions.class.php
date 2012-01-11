@@ -106,51 +106,6 @@ class adminActions extends agActions
     }
   }
 
-  /** Config gives the administrator a place to see and configure system settings
-   *
-   * @param sfWebRequest $request is what the user is asking of the server
-   */
-  public function executeConfig(sfWebRequest $request)
-  {
-
-    require_once (sfConfig::get('sf_app_lib_dir') . '/install/func.inc.php');
-    //OR sfProjectConfiguration::getActive()->loadHelpers(array('Install)); ^
-
-    if ($request->getParameter('saveconfig')) {
-      $file = sfConfig::get('sf_config_dir') . '/config.yml';
-      $config_array = sfYaml::load($file);
-      $config_array['admin']['admin_name'] = $_POST['admin_name'];
-      $config_array['admin']['admin_email'] = $_POST['admin_email'];
-      $config_array['admin']['auth_method']['value'] = $_POST['auth_method'];
-
-      // update config.yml
-      try {
-        file_put_contents($file, sfYaml::dump($config_array, 4));
-      } catch (Exception $e) {
-        echo "hey, something went wrong:" . $e->getMessage();
-      }
-      //try to create the default app.yml file, function called from func.inc.php
-      if ($_POST['auth_method'] == 'bypass') {
-        $authMethod = NULL;
-      } else {
-        $authMethod = '';
-      }
-
-      $appYmlWriteResult = writeAppYml($authMethod);
-      //write app.yml file
-
-      $caches = array('all', 'dev', 'prod');
-
-      // clear the cache after changing the app.yml file
-      foreach ($caches as $cachedir) {
-        $cacheDir = sfConfig::get('sf_cache_dir') . '/frontend/' . $cachedir . '/';
-        $cache = new sfFileCache(array('cache_dir' => $cacheDir));
-        $cache->clean();
-      }
-      $this->result = $appYmlWriteResult;
-    }
-  }
-
   /**
    *
    * Display is the stub for managing display options in select lists, it is NOT STABLE

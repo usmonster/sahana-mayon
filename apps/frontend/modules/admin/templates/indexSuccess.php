@@ -10,15 +10,12 @@ Please select one of the following staff administration actions:</p>
 <a href="<?php echo url_for('admin/list') ?>" class="continueButton" title="List Existing Accounts">List Accounts</a><br/><br/>
 <a href="<?php echo url_for('profile/index') ?>" class="continueButton" title="Webservice Accounts">Webservice Accounts</a><br/><br/>
 
-<!--<a href="<?php echo url_for('admin/cred') ?>" class="continueButton" title="Credential Management">Credential Management</a><br/><br/>-->
 
   </fieldset>
   <fieldset>
     <legend><?php echo image_tag('config.png', array('alt' => 'config gear icon')) ?>Configuration:</legend>
     <br/>
-    <a href="<?php echo url_for('admin/config') ?>" class="continueButton" title="System Settings">System Settings</a><br/><br/>
     <a href="<?php echo url_for('admin/globals') ?>" class="continueButton" title="System Settings">Global Parameters</a><br/><br/>
-<!-- <a href="<?php echo url_for('admin/pacman') ?>" class="continueButton" title="Module Manager">Package Manager</a><br/><br/>-->
   </fieldset>
   <fieldset>
     <legend><?php echo image_tag('config.png', array('alt' => 'config gear icon')) ?>Custom Management:</legend>
