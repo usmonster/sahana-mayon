@@ -43,9 +43,10 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
   <br />
 <?php if ($uniqStaffCounts['non_geo'] > 0): ?>
 *Of the <?php echo $uniqStaffCounts['unavailable']; ?> staff resources reported as unavailable, <?php echo $uniqStaffCounts['non_geo']; ?> (<?php echo $uniqStaffCounts['non_geo_pctg']; ?>%) are missing geo-data.
-</div>
 <?php endif; ?>
+</div>
 
+<?php if(!empty($staffTypeEstimates)): ?>
 <div class="infoHolder width750Px">
   <h3>Staff Type Estimates</h3>
   <br />
@@ -95,31 +96,25 @@ The following are staffing estimates at <?php echo date('Y-m-d H:i:s T', $report
   <h4>Staff Resource Minimum Requirements By Type</h4>
   <br />
 
-  <!-- @todo PAY PARTICULAR ATTENTION TO CLEANING UP THE INLINE CSS (It's Cleaned up now !)-->
   <div class="pad1Em">
   <?php $i = 0; foreach ($staffTypeEstimates AS $typeId => $se): ?>
     <?php if ($i % 2 == 0): ?>
       <div>
-      <?php $divClass = 'graphDisplay padding20Px' ?>
-    <?php else: ?>
-      <?php $divClass = 'graphDisplay padding20Px' ?>
     <?php endif; ?>
     <?php $i++; ?>
-    <div class="<?php echo $divClass; ?>">
+    <div class="graphDisplay padding20Px">
       <a title="<?php echo $se['resource_type']; ?>" name="st<?php echo $typeId; ?>"><h5><?php echo $se['resource_type']; ?></h5></a>
       <img src="<?php echo $pCharts['staffTypeStatusPie'][$typeId] ?>" alt="<?php echo $se['resource_type']; ?> Status Pie Chart">
     </div>
-    <?php if ($i % 2 == 0): ?>
+    <?php if ($i % 2 != 0): ?>
       </div>
     <?php endif; ?>
   <?php endforeach; ?>
-  <?php if ($i % 2 != 0): ?>
+  <?php if ($i % 2 == 0): ?>
     </div>
   <?php endif; ?>
   </div>
-  <div class="clearBoth"></div>
-</div>
-<!-- END TODO -->
+<?php endif; ?>
 
-
+<div class="clearBoth"></div>
 <?php endif; ?>
