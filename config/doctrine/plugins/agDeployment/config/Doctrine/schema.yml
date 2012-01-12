@@ -10,6 +10,9 @@ agDeploymentAlgorithm:
       notnull: true
     description:
       type: string(255)
+    use_geo:
+      type: boolean
+      notnull: true
     app_display:
       default: 1
       type: boolean

@@ -44,7 +44,8 @@ class agEventStaffDeploymentHelper extends agPdoHelper
             $facGrpPos,
             $facGrpCt,
             $currFacGrpId,
-            $iterNextGrp;
+            $iterNextGrp,
+            $deploymentAlgorithms;
 
   /**
    * @var agEventHandler An instance of agEventHandler
@@ -84,7 +85,6 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->addrGeoTypeId = agGeoType::getAddressGeoTypeId();
     $this->eventStaffDeployedStatusId = agStaffAllocationStatus::getEventStaffDeployedStatusId();
     $this->shiftOffset = agGlobal::getParam('shift_change_restriction');
-    $this->enableGeo = agGlobal::getParam('enable_geo_base_staff_deployment');
 
     // get our global batch size, then modify it to guesstimate on our worst-case wave
     $this->batchSize = agGlobal::getParam('default_batch_size');
@@ -420,6 +420,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $shiftCount = $row['a2__2'];
       $facLat = $row['a17__latitude'];
       $facLon = $row['a17__longitude'];
+      $this->enableGeo = $row['a18__use_geo'];
 
       $eventMsg = 'Processing ' . $shiftCount . ' shifts for event facility resource ' .
         $evFacRscId . ' wave ' . $staffWave . ' origin id ' . $shiftOrigin . '.';
@@ -916,6 +917,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addSelect('COUNT(es.id) AS shift_count')
           ->addSelect('gc.latitude')
           ->addSelect('gc.longitude')
+          ->addSelect('da.use_geo')
           ->addSelect('fr.id')
           ->addSelect('f.id')
           ->addSelect('s.id')
@@ -925,6 +927,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addSelect('ag.id')
           ->addSelect('g.id')
           ->addSelect('gf.id')
+          ->addSelect('da.id')
         ->from('agEventFacilityResource efr')
           ->innerJoin('efr.agEventShift es')
           ->innerJoin('es.agShiftStatus ss')
@@ -942,6 +945,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->innerJoin('ag.agGeo g')
           ->innerJoin('g.agGeoFeature gf')
           ->innerJoin('gf.agGeoCoordinate gc')
+          ->innerJoin('es.agDeploymentAlgorithm da')
           ->leftJoin('es.agEventStaffShift ess')
         ->where('fras.staffed = ?', TRUE)
           ->andWhere('frs.is_available = ?', TRUE)
@@ -955,6 +959,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addGroupBy('es.originator_id')
           ->addGroupBy('gc.latitude')
           ->addGroupBy('gc.longitude')
+          ->addGroupBy('da.use_geo')
           ->addGroupBy('fr.id')
           ->addGroupBy('f.id')
           ->addGroupBy('s.id')
@@ -964,6 +969,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
           ->addGroupBy('ag.id')
           ->addGroupBy('g.id')
           ->addGroupBy('gf.id')
+          ->addGroupBy('da.id')
         ->orderBy('es.staff_wave ASC')
           ->addOrderBy('efr.activation_sequence ASC')
           ->addOrderBy('efr.id ASC');

@@ -8,6 +8,7 @@
  * @property integer $id
  * @property string $deployment_algorithm
  * @property string $description
+ * @property boolean $use_geo
  * @property boolean $app_display
  * @property Doctrine_Collection $agEventShift
  * @property Doctrine_Collection $agScenarioShift
@@ -16,6 +17,7 @@
  * @method integer               getId()                   Returns the current record's "id" value
  * @method string                getDeploymentAlgorithm()  Returns the current record's "deployment_algorithm" value
  * @method string                getDescription()          Returns the current record's "description" value
+ * @method boolean               getUseGeo()               Returns the current record's "use_geo" value
  * @method boolean               getAppDisplay()           Returns the current record's "app_display" value
  * @method Doctrine_Collection   getAgEventShift()         Returns the current record's "agEventShift" collection
  * @method Doctrine_Collection   getAgScenarioShift()      Returns the current record's "agScenarioShift" collection
@@ -23,6 +25,7 @@
  * @method agDeploymentAlgorithm setId()                   Sets the current record's "id" value
  * @method agDeploymentAlgorithm setDeploymentAlgorithm()  Sets the current record's "deployment_algorithm" value
  * @method agDeploymentAlgorithm setDescription()          Sets the current record's "description" value
+ * @method agDeploymentAlgorithm setUseGeo()               Sets the current record's "use_geo" value
  * @method agDeploymentAlgorithm setAppDisplay()           Sets the current record's "app_display" value
  * @method agDeploymentAlgorithm setAgEventShift()         Sets the current record's "agEventShift" collection
  * @method agDeploymentAlgorithm setAgScenarioShift()      Sets the current record's "agScenarioShift" collection
@@ -52,6 +55,10 @@ abstract class BaseagDeploymentAlgorithm extends sfDoctrineRecord
         $this->hasColumn('description', 'string', 255, array(
              'type' => 'string',
              'length' => 255,
+             ));
+        $this->hasColumn('use_geo', 'boolean', null, array(
+             'type' => 'boolean',
+             'notnull' => true,
              ));
         $this->hasColumn('app_display', 'boolean', null, array(
              'default' => 1,
