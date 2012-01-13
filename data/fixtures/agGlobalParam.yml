@@ -325,9 +325,9 @@ agGlobalParam:
     datapoint: default_facility_resource_activation_sequence
     value: 50
     description: default activation sequence number assigned to newly created facility group members
-  enable_geo_base_staff_deployment:
+  default_deployment_algorithm:
     id: 59
     agHost: localhost
-    datapoint: enable_geo_base_staff_deployment
-    value: 0
-    description: boolean that determines whether or not geo-data will be used by the deployment engine (if no, deployment uses organization weighting only)
+    datapoint: default_deployment_algorithm
+    value: All Staff (With Geo)
+    description: string that determines the default deployment algorithm supplied to newly generated shift templates

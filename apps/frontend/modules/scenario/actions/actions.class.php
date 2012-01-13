@@ -1205,6 +1205,12 @@ class scenarioActions extends agActions
   {
     $this->forward404unless($request->isXmlHttpRequest());
     $number = intval($request->getParameter('num'));
+    $defaultDeploymentAlgorithmId = agDoctrineQuery::create()
+      ->select('da.id')
+      ->from('agDeploymentAlgorithm da')
+      ->where('da.deployment_algorithm = ?', agGlobal::getParam('default_deployment_algorithm'))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
     $shiftTemplate = new agShiftTemplate();
     $shiftTemplateForm = new agSingleShiftTemplateForm($request->getParameter('id'), $shiftTemplate);
     $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[' . $number . '][%s]');
@@ -1218,6 +1224,7 @@ class scenarioActions extends agActions
                                    agGlobal::getParam('default_days_in_operation'));
     $shiftTemplateForm->setDefault('max_staff_repeat_shifts',
                                    agGlobal::getParam('default_shift_max_staff_repeat_shifts'));
+    $shiftTemplateForm->setDefault('deployment_algorithm_id', $defaultDeploymentAlgorithmId);
     //$shiftTemplateForm->getWidgetSchema()->setIdFormat($number . '%s');
     unset($shiftTemplateForm['_csrf_token']);
     return $this->renderPartial('shifttemplateform',
