@@ -15,7 +15,6 @@
         <div id="header">
             <div class="floatLeft">
                 <h1>Sahana Resource Management Program</h1><br/>
-                <h2>Installation Wizard</h2>
             </div>
         </div>
         <div id="wrapper">

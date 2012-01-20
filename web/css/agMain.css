@@ -39,7 +39,7 @@ html, body {
 }
 
 #columnRight {
-    float: right;
+    float: left;
     margin: 0px;
     width: 70%
 
@@ -491,6 +491,7 @@ form.importForm {
 /**** Install/Configure ****/
 table.requirements{
     width: 100%;
+    *width:97%;
     border-collapse: collapse;
 }
 
@@ -678,6 +679,7 @@ div.success {
     padding: 10px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
+    margin-top: 10px;
 
 }
 
