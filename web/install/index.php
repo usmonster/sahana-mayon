@@ -13,7 +13,6 @@
  * @author Charles Wisniewski, CUNY SPS
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-
 // Load Symfony framework libs
 require_once (dirname(__FILE__) . '/../../lib/vendor/symfony/lib/yaml/sfYaml.php');
 require_once (dirname(__FILE__) . '/../../config/ProjectConfiguration.class.php');
@@ -64,6 +63,13 @@ $app->get('/intro', function () use ($app) {
         $app->redirect($app->request()->getRootUri());
     });
 
+
+$app->get('/progress', function () use ($app) {
+
+        $response['progress'] = apc_fetch('sahana_install_progress') ? apc_fetch('sahana_install_progress') : 0;
+        $response['step'] = apc_fetch('sahana_install_step') ? apc_fetch('sahana_install_step') : "";
+        echo json_encode($response);
+    });
 
 $app->get('/cancel', function () use ($app) {
 

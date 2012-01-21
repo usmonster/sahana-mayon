@@ -300,7 +300,9 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
     $databaseManager = new sfDatabaseManager(dbParams($dbParams));
     $buildSql = new Doctrine_Task_GenerateSql();
     $dropDb = new Doctrine_Task_DropDb();
-
+    
+    // Set install progress APC key
+    apc_store('sahana_install_progress', 0);
     $dropDb->setArguments(array('force' => true));
     $buildSql->setArguments(array(
       'models_path' => sfConfig::get('sf_lib_dir') . '/model/doctrine',
@@ -309,6 +311,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
 
     // Drop existing database
     $createDb = new Doctrine_Task_CreateDb();
+    apc_store('sahana_install_progress', 10);
+    apc_store('sahana_install_step', "Dropping existing database.");
     try {
         if ($dropDb->validate()) {
             $dropDb->execute();
@@ -320,6 +324,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
     }
 
     // Create a new database
+    apc_store('sahana_install_progress', 20);
+    apc_store('sahana_install_step', "Dropping new database.");
     try {
         if ($createDb->validate()) {
             $createDb->execute();
@@ -332,6 +338,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
     }
 
     // Build schema
+    apc_store('sahana_install_progress', 30);
+    apc_store('sahana_install_step', "Building installation schema.");
     try {
         if ($buildSql->validate()) {
             $buildSql->execute();
@@ -342,6 +350,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
     }
 
     // Load all the models
+    apc_store('sahana_install_progress', 40);
+    apc_store('sahana_install_step', "Loading all models.");
     try {
         $allmodels = Doctrine_Core::loadModels(
                 sfConfig::get('sf_lib_dir') . '/model/doctrine', Doctrine_Core::MODEL_LOADING_CONSERVATIVE);
@@ -351,6 +361,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
     }
 
     // Generate create table SQL from models
+    apc_store('sahana_install_progress', 50);
+    apc_store('sahana_install_step', "Generating create SQL statements.");
     try {
         Doctrine_Core::createTablesFromArray(Doctrine_Core::getLoadedModels());
         $installed[] = array('Create database tables from models', 2);
@@ -360,6 +372,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
     }
 
     // Load fixture data
+    apc_store('sahana_install_progress', 70);
+    apc_store('sahana_install_step', "Loading default fixture data.");
     try {
         // Get the core fixtures
         $dataDirectories = array(sfConfig::get('sf_data_dir') . '/fixtures');
@@ -367,6 +381,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
 
         // Load sample data fixtures if enabled
         if ($loadSamples) {
+            apc_store('sahana_install_progress', 80);
+            apc_store('sahana_install_step', "Adding sample data.");
             $dataDirectories[] = sfConfig::get('sf_data_dir') . '/samples';
             $installed[] = array('Sample data added', 2);
         }
@@ -376,6 +392,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
         $installed[] = array('Could not insert SQL! : ' . "\n" . $e->getMessage(), 0);
     }
 
+    apc_store('sahana_install_progress', 90);
+    apc_store('sahana_install_step', "Creating administrator account.");
     try {
         // Create super user as first application user
         $user = new sfGuardUser();
@@ -392,6 +410,10 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
 
     // Release the database connection manager
     unset($databaseManager);
+    
+    
+    // Release the apc key
+    apc_delete('sahana_install_progress');
 
     if (is_array($installed)) {
         return $installed;
