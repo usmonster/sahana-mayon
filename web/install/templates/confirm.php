@@ -44,8 +44,8 @@
 </div>
 <div class="info">
     <h3>Confirm Installation Settings</h3>
-    <p>Please take a moment to confirm the settings below before clicking the 
-        <b>Next</b> button.</p>
+    <p>You are now ready to install the database. Please take a moment to confirm the settings below before clicking the 
+        <b><i>Next</i></b> button.</p>
     <table class="requirements">
         <thead>
             <tr>
@@ -89,10 +89,10 @@
         </tbody>
     </table>
 
-    <p><span class="warningColor">WARNING!</span></p>
-    <p>The database <i><?php echo $dbName ?>@<?php echo $dbHost ?></i> will be 
-        overwritten by this installation. Any existing data will be lost. Please 
-        make a backup before clicking the <b>Next</b> button if you wish to keep
+    <p><img src="<?php echo $rootUri ?>/../images/warn.png" /> <span class="orange" style="font-size: 1.5em; f">WARNING!</span></p>
+    <p>The database <b><i><?php echo $dbName ?>@<?php echo $dbHost ?></i></b> will be 
+        overwritten by this installation process. Any existing data will be lost. Please 
+        make a backup before clicking the <b><i>Next</i></b> button if you wish to keep
         this information.</p>
 </div>
 <?php require 'footer.php'; ?>

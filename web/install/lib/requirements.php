@@ -18,6 +18,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+
+function check_php_apc()
+{
+    $required = '3.1.3';
+    $recommended = '3.1.5';
+    $current = phpversion('apc');
+
+    if ($current >= $recommended) {
+        $req = 2;
+    } else if ($current >= $required) {
+        $req = 1;
+    } else {
+        $req = 0;
+    }
+
+    $result = array(
+      'name' => S_APC_VERSION,
+      'current' => $current,
+      'required' => $required,
+      'recommended' => $recommended,
+      'result' => $req,
+      'error' => S_MINIMAL_VERSION_OF_APC_IS . SPACE . $required
+    );
+
+    return $result;
+}
+
 function check_php_version()
 {
     $required = '5.2.12';
@@ -183,7 +211,7 @@ function check_php_timezone()
     $current = ini_get('date.timezone');
     $current = !empty($current);
 
-    $req = $current ? 1 : 0;
+    $req = $current ? 2 : 0;
 
     $result = array(
       'name' => S_PHP_TIMEZONE,

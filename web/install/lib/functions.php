@@ -117,6 +117,7 @@ function check_php_requirements()
     $result[] = check_php_session();
     $result[] = check_php_gd();
     $result[] = check_php_gd_png();
+    $result[] = check_php_apc();
 
     return $result;
 }

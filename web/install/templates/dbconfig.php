@@ -91,13 +91,15 @@
                 <label>Sample Data:</label>
                 <input id="sample" type="checkbox" name="sample_data" <?php echo ($sampleData) ? "checked" : "" ?> />
             </li>
-            <li>
-                <p>The database connection settings will be automatically tested before allowing 
-                    you to continue to the next step.</p>
-            </li>
+            <?php if ($failCount > 0) : ?>
+                <li>
+                    <p>The database connection settings must be saved and tested before allowing 
+                        you to continue to the next step. Click the <b><i>Save Settings</i></b> button.</p>
+                </li>
+            <?php endif; ?>
             <li>
                 <label>&nbsp;</label>
-                <input class="generalButton" type="submit" value="Test Connection" name="Submit"/>
+                <input class="generalButton" type="submit" value="Save Settings" name="Submit"/>
             </li>
         </ul>
 

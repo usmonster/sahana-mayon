@@ -40,6 +40,10 @@
                 <?php endforeach; ?>
             </ul>
         </div>
+    <?php else : ?>
+    <div class="success">
+        <p>Super user account saved. Click <b><i>Next</i></b> to continue.</p>
+    </div>
     <?php endif; ?>
     <b>Settings</b>
     <form class="configure" style="font-weight: normal; background-color: #FFF; color: #333"  method="post" action="<?php echo $rootUri . $resourceUri ?>">

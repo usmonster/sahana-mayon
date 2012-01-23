@@ -121,7 +121,7 @@ $app->get('/license/', function () use ($app) {
         if (isset($_SESSION['install']['licenseAgreement']) && $_SESSION['install']['licenseAgreement'] == 'agree') {
             $data['nextStep'] = getStepRoute($step + 1);
         }
-        $data['failCount'] = 0;
+        $data['failCount'] = 1;
 
         // Display the page
         $app->render("license.php", $data);
