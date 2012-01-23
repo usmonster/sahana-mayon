@@ -7,7 +7,7 @@
                 <a id="prevButton" href="<?php echo $rootUri . $prevStep ?>" class="generalButton">Previous</a>
                 <a id="cancelButton" href="<?php echo $rootUri; ?>/cancel" class="deleteButton">Cancel</a>
             <?php endif; ?>
-            <? if (isset($nextStep) && $failCount == 0) : ?>
+            <?php if (isset($nextStep) && $failCount == 0) : ?>
                 <a id="nextButton" href="<?php echo $rootUri . $nextStep ?>" class="continueButton">Next</a>
             <?php endif; ?>
         <?php endif; ?>

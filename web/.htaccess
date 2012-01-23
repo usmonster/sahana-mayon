@@ -13,7 +13,7 @@ php_value xdebug.profiler_output_dir /home/tmp
 
   # uncomment the following line, if you are having trouble
   # getting no_script_name to work
-  RewriteBase /mayon
+  #RewriteBase /mayon
   
   # Allow access to the wiki
   RewriteRule ^wiki/ - [L]
