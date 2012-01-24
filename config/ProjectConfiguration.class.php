@@ -87,6 +87,7 @@ class ProjectConfiguration extends sfProjectConfiguration
         array(
           'sfDoctrinePlugin',
           'sfDoctrineGuardPlugin',
+          'sfPhpExcelPlugin',
           'sfDoxygenPlugin',
           'ioMenuPlugin',
           'xsPChartPlugin'
