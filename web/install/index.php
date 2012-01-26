@@ -13,11 +13,7 @@
  * @author Charles Wisniewski, CUNY SPS
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-// Load Symfony framework libs
-require_once (dirname(__FILE__) . '/../../lib/vendor/symfony/lib/yaml/sfYaml.php');
-require_once (dirname(__FILE__) . '/../../config/ProjectConfiguration.class.php');
-require_once (dirname(__FILE__) . '/../../apps/frontend/lib/install/func.inc.php');
-$configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'all', false);
+
 
 // Load installer's Slim framwork and libs
 require_once 'Slim/Slim.php';
@@ -103,7 +99,7 @@ $app->get('/license/', function () use ($app) {
         }
 
         // Read the license file
-        $licenseFile = sfConfig::get('sf_root_dir') . '/LICENSE';
+        $licenseFile = '../../LICENSE';
 
         if (file_exists($licenseFile)) {
             $data['license'] = file_get_contents($licenseFile);
@@ -143,7 +139,7 @@ $app->post('/license/', function () use ($app) {
 
 
         // Read the license file
-        $licenseFile = sfConfig::get('sf_root_dir') . '/LICENSE';
+        $licenseFile = '../../LICENSE';
 
         if (file_exists($licenseFile)) {
             $data['license'] = file_get_contents($licenseFile);
@@ -200,9 +196,11 @@ $app->get('/syscheck/', function () use ($app) {
         $data['prevStep'] = getStepRoute($step - 1);
         $data['nextStep'] = getStepRoute($step + 1);
 
+        // Load Symphony core 
+        require_once('lib/symphony.php');
+        
         // Check the requirements
         $data['phpReqs'] = check_php_requirements();
-        $data['dirPermissions'] = check_directory_permissions();
 
         // Test for blocking failures
         $failCount = 0;
@@ -213,6 +211,11 @@ $app->get('/syscheck/', function () use ($app) {
             }
         }
         $data['failCount'] = $failCount;
+        
+        // Set the requirements OK flag
+        if($failCount == 0) {
+            $_SESSION['install']['reqOK'] = true;
+        }
 
         // Display the page
         $app->render('syscheck.php', $data);
@@ -240,6 +243,9 @@ $app->get('/filecheck/', function () use ($app) {
         $data['stepList'] = getStepList($step, $app->request()->getRootUri());
         $data['prevStep'] = getStepRoute($step - 1);
         $data['nextStep'] = getStepRoute($step + 1);
+        
+        // Load Symphony core 
+        require_once('lib/symphony.php');
 
         // Check the requirements
         $data['filePerms'] = check_directory_permissions();
@@ -282,6 +288,9 @@ $app->get('/dbconfig/', function () use ($app) {
         $data['stepList'] = getStepList($step, $app->request()->getRootUri());
         $data['prevStep'] = getStepRoute($step - 1);
         $data['nextStep'] = getStepRoute($step + 1);
+        
+        // Load Symphony core 
+        require_once('lib/symphony.php');
 
         // Load current config
         $dbConfig = getCurrentDBConfig();
@@ -359,6 +368,9 @@ $app->post('/dbconfig/', function () use ($app) {
         $data['stepList'] = getStepList($step, $app->request()->getRootUri());
         $data['prevStep'] = getStepRoute($step - 1);
         $data['nextStep'] = getStepRoute($step + 1);
+        
+        // Load Symphony core 
+        require_once('lib/symphony.php');
 
         // Validate host
         if (empty($_POST['db_host'])) {
@@ -507,6 +519,9 @@ $app->get('/superuser/', function () use ($app) {
         $data['stepList'] = getStepList($step, $app->request()->getRootUri());
         $data['prevStep'] = getStepRoute($step - 1);
         $data['nextStep'] = getStepRoute($step + 1);
+        
+        // Load Symphony core 
+        require_once('lib/symphony.php');
 
         // Check the requirements
         $sfConfig = getCurrentSfConfig();
@@ -572,7 +587,9 @@ $app->post('/superuser/', function () use ($app) {
             $failCount++;
             $errors[] = showStatus(0) . " : " . "You must supply a password for the super user.";
         }
-
+        
+        // Load Symphony core 
+        require_once('lib/symphony.php');
 
         // Get the current SF config if it exits
         $sfConfig = getCurrentSfConfig();
@@ -652,6 +669,9 @@ $app->get('/confirm/', function () use ($app) {
         $data['stepList'] = getStepList($step, $app->request()->getRootUri());
         $data['prevStep'] = getStepRoute($step - 1);
         $data['nextStep'] = getStepRoute($step + 1);
+        
+        // Load Symphony core 
+        require_once('lib/symphony.php');
 
         // Get current config
         $sfConfig = getCurrentSfConfig();
@@ -709,6 +729,9 @@ $app->get('/summary/', function () use ($app) {
         // Get steps
         $data['stepList'] = getStepList($step, $app->request()->getRootUri());
         $data['prevStep'] = getStepRoute($step - 1);
+        
+        // Load Symphony core 
+        require_once('lib/symphony.php');
 
         // Get current config
         $sfConfig = getCurrentSfConfig();

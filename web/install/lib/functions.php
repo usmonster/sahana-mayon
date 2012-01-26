@@ -211,31 +211,6 @@ function CheckConnection(array $dbConfig)
     return $result;
 }
 
-/** these two extended classes are for configuring doctrine */
-class agDoctrineConfigureDatabaseTask extends sfDoctrineConfigureDatabaseTask
-{
-
-    function execute($arguments = array(), $options = array())
-    {
-        parent::execute($arguments, $options);
-    }
-
-}
-
-class agDoctrineBuildSqlTask extends sfDoctrineBuildSqlTask
-{
-
-    function execute($arguments = array(), $options = array())
-    {
-        try {
-            parent::execute($arguments, $options);
-        } catch (Exception $e) {
-            throw new Doctrine_Exception($e->getMessage());
-        }
-    }
-
-}
-
 function saveDbConfig($dbConfig)
 {
     $success = true;
@@ -301,7 +276,7 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
     $databaseManager = new sfDatabaseManager(dbParams($dbParams));
     $buildSql = new Doctrine_Task_GenerateSql();
     $dropDb = new Doctrine_Task_DropDb();
-    
+
     // Set install progress APC key
     apc_store('sahana_install_progress', 0);
     $dropDb->setArguments(array('force' => true));
@@ -411,8 +386,8 @@ function doInstall(array $dbParams, $adminName, $adminPass, $adminEmail, $loadSa
 
     // Release the database connection manager
     unset($databaseManager);
-    
-    
+
+
     // Release the apc key
     apc_delete('sahana_install_progress');
 

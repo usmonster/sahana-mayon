@@ -67,7 +67,7 @@ $trans = array(
   'S_B' => "B",
   'SPACE' => " ",
   'S_APC_VERSION' => "Alternative PHP Cache (APC)",
-  'S_MINIMAL_VERSION_OF_APC_IS' => "3.1.3"
+  'S_MINIMAL_VERSION_OF_APC_IS' => "APC is required and must be at least version "
 );
 foreach ($trans as $const => $label) {
     if (!defined($const))
