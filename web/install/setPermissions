@@ -30,7 +30,7 @@ $ignore = array(
 $rootPath = realpath(dirname(__FILE__) . '/../..');
 
 // Set default permissions
-chmod_r($rootPath, 0770, 0640, $ignore);
+chmod_r($rootPath, 0750, 0640, $ignore);
 
 // Set the directory permissions
 foreach ($dirPermissions as $location) {
