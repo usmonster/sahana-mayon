@@ -14,9 +14,8 @@
         <thead>
             <tr>
                 <th style="border-bottom: 1px solid #DADADA">Directory Name</th>
-                <th style="border-bottom: 1px solid #DADADA">Server Value</th>
-                <th style="border-bottom: 1px solid #DADADA">Minimum Required</th>
-                <th style="border-bottom: 1px solid #DADADA">Recommended Permission</th>
+                <th style="border-bottom: 1px solid #DADADA">Current</th>
+                <th style="border-bottom: 1px solid #DADADA">Required</th>
                 <th style="border-bottom: 1px solid #DADADA"></th>
             </tr>
         </thead>
@@ -27,7 +26,6 @@
                     <td><?php echo $perm['name'] ?></td>
                     <td style="text-align:center"><?php echo $perm['current'] ?></td>
                     <td style="text-align:center"><?php echo $perm['required'] ?></td>
-                    <td style="text-align:center"><?php echo $perm['recommended'] ?></td>  
                     <td><?php echo showStatus($perm['result']) ?></td>
                 </tr>
                 <?php $i++ ?>

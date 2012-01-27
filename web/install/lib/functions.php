@@ -13,7 +13,6 @@
  * @author Charles Wisniewski, CUNY SPS
  * Copyright of the Sahana Software Foundation, sahanafoundation.org
  */
-
 function getStepName($id = 0)
 {
 
@@ -124,16 +123,13 @@ function check_php_requirements()
 
 function check_directory_permissions()
 {
+    global $dirPermissions;
     $result = array();
 
-    $result[] = check_file_permissions(sfConfig::get('sf_config_dir'), '0775');
-    $result[] = check_file_permissions(sfConfig::get('sf_app_config_dir'), '0775');
-    $result[] = check_file_permissions(sfConfig::get('sf_data_dir'), '0775');
-    $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/search/', '0775');
-    $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/sql/', '0775');
-    $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/uploads/', '0775');
-    $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/downloads/', '0775');
-    $result[] = check_file_permissions(sfConfig::get('sf_data_dir') . '/xspchart/', '0775');
+    foreach ($dirPermissions as $item) {
+        $result[] = check_file_permissions(sfConfig::get('sf_root_dir') . DIRECTORY_SEPARATOR . $item['path'], $item['dir']);
+    }
+
 
     return $result;
 }

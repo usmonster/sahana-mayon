@@ -24,6 +24,19 @@ $steps[] = array('title' => 'Super User Settings', 'route' => '/superuser');
 $steps[] = array('title' => 'Pre-Install Confirmation', 'route' => '/confirm');
 $steps[] = array('title' => 'Installation Summary', 'route' => '/summary');
 
+
+// Directory permissions
+$dirPermissions = array(
+  array('path' => 'cache/', 'dir' => '0770', 'file' => '0664'),
+  array('path' => 'log/', 'dir' => '0770', 'file' => '0664'),
+  array('path' => 'config/','dir' => '0770', 'file' => '0644'),
+  array('path' => 'apps/frontend/config/','dir' => '0770', 'file' => '0644'),
+  array('path' => 'data/', 'dir' => '0770', 'file' => '0644'),
+  array('path' => 'web/wiki/conf/', 'dir' => '0770', 'file' => '0664'),
+  array('path' => 'web/wiki/data/', 'dir' => '0770', 'file' => '0664'),
+  array('path' => 'web/wiki/lib/plugins/dw2pdf/mpdf/tmp/', 'dir' => '0770', 'file' => '0664')
+);
+
 global $trans;
 $trans = array(
   // Translation text for requirements.php
@@ -74,4 +87,7 @@ foreach ($trans as $const => $label) {
         define($const, $label);
 }
 unset($GLOBALS['trans']);
+
+
+
 ?>
