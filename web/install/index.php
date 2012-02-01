@@ -737,6 +737,7 @@ $app->get('/summary/', function () use ($app) {
         $sfConfig = getCurrentSfConfig();
         $data['superUser'] = $sfConfig['sudo']['super_user'];
         $data['superPassword'] = $sfConfig['sudo']['super_pass'];
+        $data['adminEmail'] = $sfConfig['admin']['admin_email'];
 
         // Load current database config
         $dbConfig = getCurrentDBConfig();
@@ -745,7 +746,7 @@ $app->get('/summary/', function () use ($app) {
         $sampleData = $_SESSION['install']['sampleData'];
 
         // Execute the database installation
-        $data['results'] = doInstall($dbConfig, $data['superUser'], $data['superPassword'], $sampleData);
+        $data['results'] = doInstall($dbConfig, $data['superUser'], $data['superPassword'], $data['adminEmail'], $sampleData);
 
         // Check install results for fails
         $failCount = 0;
