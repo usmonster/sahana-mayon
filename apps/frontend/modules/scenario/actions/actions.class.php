@@ -166,7 +166,7 @@ class scenarioActions extends agActions
         ->findByDql('id = ?', $this->scenario_id)
         ->getFirst();
     $this->ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
-        ->find(array($request->getParameter('id')));
+        ->findByDql('scenario_id = ?', $this->scenario_id);
     $this->ag_staff_resources = agDoctrineQuery::create()
         ->select('agSFR.*')
         ->from('agScenarioFacilityResource agSFR')
