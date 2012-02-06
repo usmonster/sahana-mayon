@@ -1,212 +1,100 @@
-SAHANA AGASTI 2.0 MAYON 
-Emergency Management Software
+symfony sandbox
+===============
 
-Updated: 2010-11-18
+Thank you for downloading the symfony sandbox. This pre-configured symfony
+project will allow you to experiment with the symfony framework immediately, 
+without any installation or configuration.
 
-Sahana Agasti is a free, open-source emergency preparedness and management
-software application written in PHP by members of the Sahana Software
-Foundation's developer community.
+Quick start
+-----------
 
-The mission of the Sahana Agasti project is to facilitate resource management
-and communication throughout all phases of emergency management by providing a
-turnkey open-source application that is reliable, scalable, extensible, and
-usable both by volunteers and by professionals, and which supports the primary
-goal of the Sahana Software Foundation: alleviating human suffering and saving
-lives.
+The sandbox project will work "out of the box", provided that you extract the 
+.tgz archive under the root web directory configured for your server (usually 
+`web/`).
 
-For more information on the Sahana Agasti project, visit
-http://agasti.sahanafoundation.org/ or see the included DEVELOPERS file for
-information on becoming a contributing developer.
+After unpacking the archive, test the sandbox by requesting the following URL:
 
-For information on the Sahana Software Foundation, visit
-http://www.sahanafoundation.org/.
+    http://localhost/sf_sandbox/web/
+    
+You should see a congratulations page.
 
-INCLUDED DOCUMENTS
-------------------
+Command line
+------------
 
-Information for this software can be found in the following included documents:
+If you are in the `sf_sandbox/` directory, you can use the command line to do 
+usual site management operations. For instance, to clear the cache, type:
 
-CHANGELOG  - Detailed release notes and version history
-DEVELOPERS - Information for software developers
-INSTALL    - Installation instructions
-LICENSE    - Licensing information
-README     - This document
+    $ ./symfony.sh clear-cache                      (*nix)
+    symfony clear-cache                             (Windows)
+    
+To discover all the available actions of the symfony command line, type:
 
+    $ ./symfony.sh -T                               (*nix)
+    symfony -T                                      (Windows)
 
-WHAT'S NEW
-==========
+Environments
+------------
 
-This is the initial release of the 2.0 series, named Mayon. It is largely a
-development release and is NOT INTENDED FOR GENERAL USE.
+The sandbox already contains one application called `frontend`, accessible 
+through two environments:
 
-The following major features are included in this first release:
+- the default environment is the `prod` one, in which the application is fast 
+  but outputs few error messages
+- the `dev` environment is slower but gives access to a lot of information
+  about the current request
 
-- Simple installation process
-- Minimal front-end UI design
-- Rough tool for basic user account creation & administration
-- Initial modules for limited Staff, Facility, and Scenario input & management
-- Search, filter, and sorting capabilities for Staff data
-- Staff export tool
-- Extensive, flexible schema to support design & development of future features
-- Built using symfony, an extensible web PHP framework, to ease development
+To access the `frontend` application in the `dev` environment, type:
 
-For a more complete and detailed list of changes and fixes, including version
-history, please see the included CHANGELOG file.
+    http://localhost/sf_sandbox/web/frontend_dev.php/
+               (don't forget the final /)
 
+Modules
+-------
 
-SYSTEM REQUIREMENTS
-===================
+To create a new module `mymodule`, just type in the command line:
 
-*** IMPORTANT NOTE: ***
+    $ ./symfony.sh init-module frontend mymodule    (*nix)
+    symfony init-module frontend mymodule           (Windows)
 
-This software has been tested with the following technology stack, though other
-platforms, web servers, and database engines may be supported with some
-additional work. All documentation for this version of the software, however,
-will assume the following setup:
+To access it, call:
 
-Software
---------
+    http://localhost/sf_sandbox/web/mymodule
 
-The following software is required to run Sahana Agasti Mayon:
+If, at this point, you meet an error, this means that your web server doesn't
+support mod_rewrite. Delete the `.htaccess` file from the `web/` directory and
+call instead: 
 
-* Ubuntu 9.10 LTS or later (most current 10.04 LTS strongly recommended)
-* Apache HTTP Server 2.2.14 or later (most current 2.2 preferred)
-* MySQL 5.1.41 or later (most current 5.1 preferred)
-* PHP 5.2.12 or later (most current 5.3 strongly recommended)
-* APC (The Alternative PHP Cache) 3.1.8 or later
+    http://localhost/sf_sandbox/web/index.php/mymodule
 
-Hardware
---------
+What's in the sandbox?
+----------------------
 
-The following hardware resources are recommended to run Sahana Agasti Mayon:
+The sandbox is an empty symfony project where all the required libraries 
+(symfony, pake, creole, propel and phing) are already included (in the 
+`sf_sandbox/lib/` directory). It is configured to work without any 
+configuration if unpacked under the web root, but you can install it anywhere 
+in your disk. In this case,
 
-* Intel Pentium or AMD Athlon CPU
-* minimum of 50 MB available disk space
-* minimum 512 MB RAM
+- delete the 22nd line of the `sf_sandbox/apps/frontend/config/settings.yml`
+  (`relative_url_root: /sf_sandbox/web/`)
+- create a virtual host in your web server configuration to address the 
+  `sf_sandbox/web` directory
 
+The sandbox is intended for you to practice with symfony in a local computer, 
+not really to develop complex applications that may end up on the web. 
+However, the version of symfony shipped with the sandbox is fully functional 
+and equivalent to the one you can install via PEAR.
 
-INSTALLATION
-============
+Beware that the sandbox is not upgradeable.
 
-For installation instructions, please see the included INSTALL file.
+Happy symfony! 
+--------------
 
+Feel free to experiment and try the various techniques described in the 
+www.symfony-project.com website. All the tutorials can also work in a sandbox. 
+But in the long run, if you decide to go on with symfony, we advise you to 
+switch to a PEAR installation, which will guarantee you with the possibility 
+to use the latest patches and enhancements.
 
-KNOWN ISSUES AND WORKAROUNDS
-============================
-
-IMPORTANT GENERAL NOTE: this is the initial release for the Mayon (2.0) series
-of Sahana Agasti. The development team is aware that there are various kinks,
-quirks, and that existing functionality and usability is limited. The software
-is therefore NOT INTENDED FOR GENERAL USE in its current state.
-
-This list covers some of the known problems (and workarounds, where applicable)
-with Agasti 2.0 Mayon, which will be resolved in future releases:
-
-- After submitting the form on the install.php page, it may take up to 5 minutes
-  to load and redirect to the login screen.
-
-- The "Foo" menu navigation item is a temporary module that exists at the moment
-  for testing and should not be usedl it will be removed before an official
-  release.
-
-- Pre-loaded fixtures for staff are not searchable; this is because fixture data
-  is not currently indexed for searching when populating the schema through the
-  install process. Any new data entered into the system, however, will be
-  searchable.
-
-- Sorting a list of Staff by name is currently buggy and may not sort correctly.
-
-- It is currently not possible to add more than one service to a Facility
-  Group's list of available resources.
-
-- Form validation has not been turned on in some places, so it may be possible
-  to enter invalid data into the system.
-
-- DEVELOPERS: Some pages are currently stubs for development. Those pages are
-  marked at the top with a warning and the comment tag:
-    // PnaODfcm3Kiz4MV4vzbtr4
-  This random string is greppable for a report of the remaining stubbed pages.
-  When a developer fleshes out one of these pages the tag should be removed.
-
-If you think you've found a new issue or bug, please refer to the SUPPORT
-section of this document for information on what to do next.
-
-
-SUPPORT
-=======
-
-FAQ
----
-
-1. What is Sahana?
-
-The Sahana Software Foundation is a non-profit organization whose goal is to aid
-relief efforts in emergency situations through the creation and implementation
-of technology. Please visit http://www.sahanafoundation.org/ for more
-information.
-
-2. What is Sahana Agasti?
-
-Sahana Agasti is a set of software tools, developed in PHP, for managing
-resources in the event of a large-scale emergency. Please visit
-http://wiki.sahanafoundation.org/doku.php/agasti:start
-
-3. What does Sahana Agasti do?
-
-The current development release is the foundation for the Mayon series and is
-not intended for general use. Although current functionality is limited, Sahana
-Agasti Mayon is being actively developed, and this release includes an
-installer, basic entry and management tools for emergency staff, facilities,
-scenarios, and user accounts, and an extensible schema on top of the symfony web
-application framework.
-
-4. What is the difference between Sahana Agasti and Sahana Eden?
-
-Agasti and Eden are both currently active projects approved and supported by the
-Sahana Software Foundation; however, they are separate initiatives with
-different functionality and goals. Visit http://wiki.sahanafoundation.org/ for
-more information.
-
-5. What if I have more questions?
-
-Please use the information below, under Additional Support, to contact the
-active volunteer community of the Sahana Software Foundation.
-
-Additional Support
-------------------
-
-For the most up-to-date information regarding Sahana Agasti, please visit
-http://wiki.sahanafoundation.org/doku.php/agasti:start
-
-Direct support for use or development of Agasti can be found via our active
-volunteer community:
-
-1. Email
-
-   For user support, please subscribe to the Sahana User list here:
-   https://lists.sourceforge.net/lists/listinfo/sahana-user 
-
-   You can also join the Agasti mailing list by going to
-   https://lists.sourceforge.net/lists/listinfo/sahana-agasti
-
-2. IRC
-
-   Sahana Agasti developers are available on FreeNode IRC channels
-   #sahana and #sahana-agasti.
-
-3. Launchpad
-
-   Please visit our Answers page on Launchpad, here:
-   https://answers.launchpad.net/sahana
-
-
-LICENSING
-=========
-
-For licensing information, please see the included LICENSE file.
-
-
-Thank you for using Sahana Agasti!
-                                     The Sahana Software Foundation
-                                     http://www.sahanafoundation.org/
-
+The symfony team
+http://www.symfony-project.com/
