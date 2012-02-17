@@ -5,296 +5,329 @@ agGlobalParam:
     id: 1
     agHost: localhost
     datapoint: shift_change_restriction
-    value: 2160
+    value: 720
+    description: a buffer window (in minutes) from the start of a shift where no changes to the shift may be made
   shift_disabled_status:
     id: 2
     agHost: localhost
     datapoint: shift_disabled_status
     value: inactive
+    description: default status set for disabled shifts
   facility_resource_disabled_status:
     id: 3
     agHost: localhost
     datapoint: facility_resource_disabled_status
     value: unavailable
+    description: default status used for disabled facilities
   facility_resource_enabled_status:
     id: 4
     agHost: localhost
     datapoint: facility_resource_enabled_status
     value: unknown
+    description: default status used for re-enabled facilities
   facility_resource_status_affects_scenarios:
     id: 5
     agHost: localhost
     datapoint: facility_resource_status_affects_scenarios
     value: 1
+    description: THIS FEATURE IS NOT CURRENTLY ENABLED
   facility_resource_status_affects_events:
     id: 6
     agHost: localhost
     datapoint: facility_resource_status_affects_events
     value: 1
+    description: THIS FEATURE IS NOT CURRENTLY ENABLED
   facility_import_geo_source:
     id: 7
     agHost: localhost
     datapoint: facility_import_geo_source 
     value: import
+    description: name of the geo source to which imported facility geo codes are attributed
   default_address_standard:
     id: 8
     agHost: localhost
     datapoint: default_address_standard 
     value: us standard
+    description: the address standard used by manual data entry
   default_address_geo_type:
     id: 9
     agHost: localhost
     datapoint: default_address_geo_type
     value: point
+    description: the type of shape to use for addresses
   default_name_components:
     id: 10
     agHost: localhost
     datapoint: default_name_components
     value: '<?php echo json_encode(array(array('given',FALSE), array('middle',TRUE), array('family',FALSE))); ?>'
+    description: a JSON array of name components to use for general name display purposes
   default_batch_size:
     id: 11
     agHost: localhost
     datapoint: default_batch_size
     value: 100
+    description: the number of records to process in a single batch operation
   lucene_delimiter:
     id: 12
     agHost: localhost
     datapoint: lucene_delimiter
     value: ' '
+    description: delimiter used to separate search queries
   default_phone_format_type:
     id: 13
     agHost: localhost
     datapoint: default_phone_format_type
     value: unknown 
+    description: default phone format type (used for phone validation)
   default_country:
     id: 14
     agHost: localhost
     datapoint: default_country
     value: United States of America
+    description: default country
   default_organization:
     id: 15
     agHost: localhost
     datapoint: default_organization
     value: volunteer
+    description: default organization
   default_geo_match_score:
     id: 16
     agHost: localhost
     datapoint: default_geo_match_score
     value: unknown
+    description: geo score value used when none is suppplied
   staff_import_keep_history:
     id: 17
     agHost: localhost
     datapoint: staff_import_keep_history
     value: 0
+    description: boolean value whether or not import operations will add to or replace existing contact data
   enforce_strict_contact_formatting:
     id: 18
     agHost: localhost
     datapoint: enforce_strict_contact_formatting
-    value: 1
+    value: 0
+    description: boolean value whether or not contact information must meet strict formatting standards
   import_error_threshold:
     id: 19
     agHost: localhost
     datapoint: import_error_threshold
     value: 100
+    description: number of errors an import operation may ignore before cancelling import
   default_shift_task_length:
     id: 20
     agHost: localhost
     datapoint: default_shift_task_length
     value: 720
+    description: default number of minutes for shift tasks
   default_shift_break_length:
     id: 21
     agHost: localhost
     datapoint: default_shift_break_length
     value: 720
+    description: default number of minutes for shift breaks
   default_shift_minutes_start_to_facility_activation:
     id: 22
     agHost: localhost
     datapoint: default_shift_minutes_start_to_facility_activation
     value: -4320
+    description: default number of minutes for the first shift to start prior to the activation of the facility
   default_days_in_operation:
     id: 23
     agHost: localhost
     datapoint: default_days_in_operation
     value: 5
+    description: default number of days of operations for shifts
   default_shift_max_staff_repeat_shifts:
     id: 24
     agHost: localhost
     datapoint: default_shift_max_staff_repeat_shifts
     value: 0
+    description: default number of consecutive shifts an individual may work before being released
   staff_import_address_standard:
     id: 25
     agHost: localhost
     datapoint: staff_import_address_standard
     value: us standard
+    description: address format enforced by import
   create_edge_table_values:
     id: 26
     agHost: localhost
     datapoint: create_edge_table_values
     value: 0
+    description: boolean that determines whether or not edge table values will be created on-the-fly
   staff_import_geo_source:
     id: 27
     agHost: localhost
     datapoint: staff_import_geo_source
     value: import
+    description: geo source applied to new geo coordinates introduced through import
   default_event_status_type:
     id: 28
     agHost: localhost
     datapoint: default_event_status_type
     value: Pre-Deployment
+    description: default event status
   default_event_staff_status:
     id: 29
     agHost: localhost
     datapoint: default_event_staff_status
     value: unknown
+    description: default allocation status of staff at instantiation of an event
   event_staff_available_status:
     id: 30
     agHost: localhost
     datapoint: event_staff_available_status
     value: available
+    description: status applied to staff after acknowledging availability
   default_phone_country_code_usa:
     id: 31
     agHost: localhost
     datapoint: default_phone_country_code_usa
     value: 1
+    description: usa country code
   default_facility_address_types:
     id: 32
     agHost: localhost
     datapoint: default_facility_address_types
     value: '<?php echo json_encode(array("work")); ?>'
+    description: JSON array of address types used by facilities
   default_facility_email_types:
     id: 33
     agHost: localhost
     datapoint: default_facility_email_types
     value: '<?php echo json_encode(array("work", "other")); ?>'
+    description: JSON array of email types used by facilities
   default_facility_phone_types:
     id: 34
     agHost: localhost
     datapoint: default_facility_phone_types
     value: '<?php echo json_encode(array("work", "other")); ?>'
+    description: JSON array of phone types used by facilities
   default_list_page_size:
     id: 35
     agHost: localhost
     datapoint: default_list_page_size
     value: 20
+    description: number of results per page to display in tabular lists
   event_staff_unavailable_status:
     id: 36
     agHost: localhost
     datapoint: event_staff_unavailable_status
     value: unavailable
+    description: status given to staff who respond as being unable to participate in an event
   staff_disabled_status:
     id: 37
     agHost: localhost
     datapoint: staff_disabled_status
     value: inactive
+    description: status given to staff who are disabled
   event_deploy_status:
     id: 38
     agHost: localhost
     datapoint: event_deploy_status
     value: open
+    description: status used to indicate a deployable event
   vesuvius_address:
     id: 39
     agHost: localhost
     datapoint: vesuvius_address
     value: http://
+    description: location of the vesuvius client tracking application
   organization_name:
     id: 40
     agHost: localhost
     datapoint: organization_name
     value: New York City OEM
+    description: name of the organization overseeing this installation
   staff_messaging_allocation_status:
     id: 41
     agHost: localhost
     datapoint: staff_messaging_allocation_status
     value: '<?php echo json_encode(array(1 => "Available", 2 => "Unavailable")); ?>'
+    description: JSON array of message response statuses
   default_staff_messaging_allocation_status:
     id: 42
     agHost: localhost
     datapoint: default_staff_messaging_allocation_status
     value: Unknown
+    description: default message response allocation status
   unprocessed_staff_import_basename:
     id: 43
     agHost: localhost
     datapoint: unprocessed_staff_import_basename
     value: unprocessed_staff_import
+    description: basename of export files from failed / unprocessed staff import operations
   xls_max_export_size:
     id: 44
     agHost: localhost
     datapoint: xls_max_export_size
     value: 20000
+    description: maximum number of rows per export file
   event_pre_deploy_status:
     id: 45
     agHost: localhost
     datapoint: event_pre_deploy_status
     value: Pre-Deployment
-  staff_list_results_per_page:
-    id: 46
-    agHost: localhost
-    datapoint: staff_list_results_per_page
-    value: 20
-  search_list_results_per_page:
-    id: 47
-    agHost: localhost
-    datapoint: search_list_results_per_page
-    value: 20
+    description: pre-deployment status for an event
   staff_resource_requirements_per_page:
     id: 48
     agHost: localhost
     datapoint: staff_resource_requirements_per_page
     value: 3
-  import_auto_index:
-    id: 49
-    agHost: localhost
-    datapoint: import_auto_index
-    value: 0
-    description: This feature is not currently working. Do not enable.
+    description: default number of staff resource requirements to show per person add/edit page
   front_end_geo_source:
     id: 50
     agHost: localhost
     datapoint: front_end_geo_source
     value: manual entry 
+    description: geo-source tag used for manually entered geo information
   clear_cache_on_import:
     id: 51
     agHost: localhost
     datapoint: clear_cache_on_import
     value: 1
+    description: whether or not to clear the symfony cache on an import operation
   bulk_operation_max_batch_time:
     id: 52
     agHost: localhost
     datapoint: bulk_operation_max_batch_time
     value: 360    
+    description: the maximum number of seconds a single batch operation may be allowed to run
   default_facility_group_allocation_status:
     id: 53
     agHost: localhost
     datapoint: default_facility_group_allocation_status
     value: active
-    value: 360
+    description: default facility group allocation status for newly created fac groups
   unprocessed_facility_import_basename:
     id: 54
     agHost: localhost
     datapoint: unprocessed_facility_import_basename
     value: unprocessed_facility_import
+    description: basename of export files from failed / unprocessed facility import operations
   enable_clear_cache:
     id: 55
     agHost: localhost
     datapoint: enable_clear_cache
     value: 0
-  search_result_limit:
-    id: 56
-    agHost: localhost
-    datapoint: search_result_limit
-    value: 250
+    description: enables the clear cache button on the admin page (BE CAREFUL!)
   default_facility_group_activation_sequence:
     id: 57
     agHost: localhost
     datapoint: default_facility_group_activation_sequence
     value: 50
+    description: default activation sequence number assigned to newly created facility groups
   default_facility_resource_activation_sequence:
     id: 58
     agHost: localhost
     datapoint: default_facility_resource_activation_sequence
     value: 50
-  enable_geo_base_staff_deployment:
+    description: default activation sequence number assigned to newly created facility group members
+  default_deployment_algorithm:
     id: 59
     agHost: localhost
-    datapoint: enable_geo_base_staff_deployment
-    value: 0
+    datapoint: default_deployment_algorithm
+    value: All Staff (With Geo)
+    description: string that determines the default deployment algorithm supplied to newly generated shift templates

@@ -29,11 +29,6 @@ class ProjectConfiguration extends sfProjectConfiguration
       return;
     }
 
-    set_include_path(sfConfig::get('sf_plugins_dir') . '/ajDoctrineLuceneablePlugin/data/vendor' .
-        PATH_SEPARATOR . get_include_path());
-    require_once sfConfig::get('sf_plugins_dir') .
-        '/ajDoctrineLuceneablePlugin/data/vendor/Zend/Loader/Autoloader.php';
-    Zend_Loader_Autoloader::getInstance();
     self::$zendLoaded = true;
   }
 
@@ -92,9 +87,8 @@ class ProjectConfiguration extends sfProjectConfiguration
         array(
           'sfDoctrinePlugin',
           'sfDoctrineGuardPlugin',
-          'sfDoxygenPlugin',
           'sfPhpExcelPlugin',
-          'ajDoctrineLuceneablePlugin',
+          'sfDoxygenPlugin',
           'ioMenuPlugin',
           'xsPChartPlugin'
         )
@@ -105,19 +99,18 @@ class ProjectConfiguration extends sfProjectConfiguration
     sfConfig::set('sf_download_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'downloads');
     sfConfig::set('sf_xspchart_data_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'xspchart' . DIRECTORY_SEPARATOR . 'data');
     sfConfig::set('sf_xspchart_cache_dir', sfConfig::get('sf_data_dir') . DIRECTORY_SEPARATOR . 'xspchart' . DIRECTORY_SEPARATOR . 'cache');
+    sfConfig::set('sf_application_name', 'Sahana Resource Management Program');
 
    //packages are specific to the application, though not core and should function standalone
     $this->enablePackages(
-        array('agFooPackage',
+        array(
           'agStaffPackage',
           'agClientPackage',
+          'agEventPackage',
           'agGisPackage',
-          'agEventPackage',
-          'agReportPackage',
           'agPetPackage',
-          'agEventPackage',
           'agWebservicesPackage',
-          'agMessagePackage')
+        )
     );
 
     // enables indexing by getting symfony to see lucene.yml for each module in the array
@@ -131,9 +124,9 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->dispatcher->connect('import.file_ready', array('agImportXLS', 'processFile'));
     $this->dispatcher->connect('deploy.do_deployment', array('agEventStaffDeploymentHelper', 'doDeployment'));
     $this->dispatcher->connect('import.start', array('agImportNormalization', 'processImportEvent'));
-    $this->dispatcher->connect('import.do_reindex', array('agLuceneIndex', 'indexAll'));
     $this->dispatcher->connect('global_param.param_updated', array('agGlobal', 'loadParams'));
     $this->enablePlugins('xsPChartPlugin');
+    $this->enablePlugins('sfDoxygenPlugin');
   }
 
   /**

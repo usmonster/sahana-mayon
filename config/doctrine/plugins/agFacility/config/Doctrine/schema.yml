@@ -68,9 +68,6 @@ agFacility:
       notnull: true
   actAs:
     Timestampable:
-    Luceneable: 
-      fields:
-        facility_name: unstored
   indexes:
     agFacility_siteId_unq:
       fields: [site_id]

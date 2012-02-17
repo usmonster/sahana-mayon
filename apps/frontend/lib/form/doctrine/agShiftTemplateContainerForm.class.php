@@ -31,8 +31,25 @@ class agShiftTemplateContainerForm extends sfForm
 
   public function addShiftTemplateForm($num)
   {
+    $defaultShiftTaskLength = agGlobal::getParam('default_shift_task_length');
+    $defaultShiftBreakLength = agGlobal::getParam('default_shift_break_length');
+    $defaultShiftMinutesStartToFacilityActivation = agGlobal::getParam('default_shift_minutes_start_to_facility_activation');
+    $defaultDaysInOperation = agGlobal::getParam('default_days_in_operation');
+    $defaultShiftMaxStaffRepeatShifts = agGlobal::getParam('default_shift_max_staff_repeat_shifts');
+    $defaultDeploymentAlgorithmId = agDoctrineQuery::create()
+      ->select('da.id')
+      ->from('agDeploymentAlgorithm da')
+      ->where('da.deployment_algorithm = ?', agGlobal::getParam('default_deployment_algorithm'))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
     $embed_form = new agSingleShiftTemplateForm($this->scenario_id);
     //$embed_form->getWidgetSchema()->setNameFormat('[' . $num . '][%s]');
+    $embed_form->setDefault('task_length_minutes', $defaultShiftTaskLength);
+    $embed_form->setDefault('break_length_minutes', $defaultShiftBreakLength);
+    $embed_form->setDefault('minutes_start_to_facility_activation', $defaultShiftMinutesStartToFacilityActivation);
+    $embed_form->setDefault('days_in_operation', $defaultDaysInOperation);
+    $embed_form->setDefault('max_staff_repeat_shifts', $defaultShiftMaxStaffRepeatShifts);
+    $embed_form->setDefault('deployment_algorithm_id', $defaultDeploymentAlgorithmId);
     $this->embedForm($num, $embed_form);
     //Re-embedding the container
     
@@ -69,6 +86,11 @@ class agShiftTemplateContainerForm extends sfForm
     $defaultShiftMinutesStartToFacilityActivation = agGlobal::getParam('default_shift_minutes_start_to_facility_activation');
     $defaultDaysInOperation = agGlobal::getParam('default_days_in_operation');
     $defaultShiftMaxStaffRepeatShifts = agGlobal::getParam('default_shift_max_staff_repeat_shifts');
+    $defaultDeploymentAlgorithmId = agDoctrineQuery::create()
+      ->select('da.id')
+      ->from('agDeploymentAlgorithm da')
+      ->where('da.deployment_algorithm = ?', agGlobal::getParam('default_deployment_algorithm'))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
     if (count($shiftTemplates) > 0)
     {
@@ -109,6 +131,7 @@ class agShiftTemplateContainerForm extends sfForm
         $shiftTemplateForm->setDefault('minutes_start_to_facility_activation', $defaultShiftMinutesStartToFacilityActivation);
         $shiftTemplateForm->setDefault('days_in_operation', $defaultDaysInOperation);
         $shiftTemplateForm->setDefault('max_staff_repeat_shifts', $defaultShiftMaxStaffRepeatShifts);
+        $shiftTemplateForm->setDefault('deployment_algorithm_id', $defaultDeploymentAlgorithmId);
 
         $this->embedForm($formCounter, $shiftTemplateForm);
         $this->getWidgetSchema()->setLabel($formCounter++, false);
@@ -125,6 +148,7 @@ class agShiftTemplateContainerForm extends sfForm
       $shiftTemplateForm->setDefault('minutes_start_to_facility_activation', $defaultShiftMinutesStartToFacilityActivation);
       $shiftTemplateForm->setDefault('days_in_operation',$defaultDaysInOperation);
       $shiftTemplateForm->setDefault('max_staff_repeat_shifts', $defaultShiftMaxStaffRepeatShifts);
+      $shiftTemplateForm->setDefault('deployment_algorithm_id', $defaultDeploymentAlgorithmId);
 
       $this->embedForm('0', $shiftTemplateForm);
       $this->getWidgetSchema()->setLabel('0', false);

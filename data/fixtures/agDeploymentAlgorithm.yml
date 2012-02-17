@@ -2,3 +2,8 @@ agDeploymentAlgorithm:
   all_staff:
     deployment_algorithm: All Available Staff
     description: Deployment method for all available staff.
+    use_geo: 0
+  all_staff_geo:
+    deployment_algorithm: All Staff (With Geo)
+    description: Deployment method for all available staff that utilizes geo-matching algorithms.
+    use_geo: 1

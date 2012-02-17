@@ -9,7 +9,7 @@ staff_create:
   param: { module: agStaff, action: new }
 staff_search:
   url:   /staff/search
-  param: { module: agStaff, action: search }
+  param: { module: agStaff, action: list }
 staff_filter:
   url:   /staff/filter
   param: { module: agStaff, action: filter }

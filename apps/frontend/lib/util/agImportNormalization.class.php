@@ -256,11 +256,6 @@ abstract class agImportNormalization extends agImportHelper
 
     // now release all remaining connections
     $this->closeConnection($this->getConnection(self::CONN_TEMP_READ));
-
-    // finally, kick off this hellish piece of work
-    if (agGlobal::getParam('import_auto_index')) {
-      $this->dispatcher->notify(new sfEvent($this, 'import.do_reindex'));
-    }
   }
 
   /**
@@ -702,123 +697,6 @@ abstract class agImportNormalization extends agImportHelper
     }
   }
 
-  /**
-   *
-   * @param sfEvent $event
-   * @todo document this
-   */
-  public static function processImportEvent(sfEvent $event)
-  {
-    // gets the action, context, and importer object
-    $action = $event->getSubject();
-    $context = $action->getContext();
-    ////$context = sfContext::getInstance();
-    $importer = $action->importer;
-    $moduleName = $action->getModuleName();
-
-    //TODO: get import data directory root info from global param
-    $importDataRoot = sfConfig::get('sf_upload_dir');
-    $importDir = $importDataRoot . DIRECTORY_SEPARATOR . $moduleName;
-    if (!file_exists($importDir)) {
-      mkdir($importDir);
-    }
-    $statusFile = $importDir . DIRECTORY_SEPARATOR . 'status.yml';
-
-    // generates the identifier for the event status
-//    $statusId = implode('_', array($moduleName, /* $action->actionName, */ 'status'));
-//    if ($context->has($statusId)) {
-//      $status = $context->get($statusId);
-//    }
-    if (!file_exists($statusFile)) {
-      //TODO: check if directory is writeable? -UA
-      touch($statusFile);
-    }
-    if (!is_writable($statusFile)) {
-      $importer->eh->logEmerg('Status file not writeable: ' . $statusFile);
-      return;
-    }
-
-    // let other things happen
-    $action->getUser()->shutdown();
-    session_write_close();
-
-    // blocks import if already in progress
-    $status = sfYaml::load($statusFile);
-    $abortFlagId = 'aborted';
-    if (isset($status) && 0 != $status['batchesLeft']) {
-      if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
-        $importer->eh->logNotice('Starting new import after user aborted previous attempt.');
-        unset($status[$abortFlagId]);
-      } else {
-        //TODO: distinguish between the two, add cleanup method (action?) for recovery workflow. -UA
-        $importer->eh->logAlert('Import in progress, or attempting new import after failed attempt?');
-        return;
-      }
-    }
-
-    // uploads the import file
-    $uploadedFile = $action->uploadedFile;
-    $importPath = $importDir . DIRECTORY_SEPARATOR . 'import.xls' /* $uploadedFile['name'] */;
-    if (!move_uploaded_file($uploadedFile['tmp_name'], $importPath)) {
-      $importer->eh->logEmerg('Cannot move uploaded file to destination!');
-      // exception is already thrown by logEmerg ^ , but just in case...
-      return;
-    }
-
-    $importer->processXlsImportFile($importPath);
-
-    // initializes the job progress information
-    $totalBatchCount = $importer->iterData['batchCount'];
-    $batchesLeft = $totalBatchCount;
-    $totalRecordCount = $importer->iterData['tempCount'];
-    $recordsLeft = $totalRecordCount;
-
-    $startTime = time();
-    //$context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
-    $status['batchesLeft'] = $batchesLeft;
-    $status['totalBatchCount'] = $totalBatchCount;
-    $status['startTime'] = $startTime;
-    file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
-
-    // processes batches until complete, aborted, or an unrecoverable error occurs
-    //$abortFlagId = implode('_', array('abort', $statusId));
-    while ($batchesLeft > 0) {
-//      if ($context->has($abortFlagId) && $context->get($abortFlagId)) {
-//        $context->set($abortFlagId, NULL);
-//        break;
-//      }
-      $status = sfYaml::load($statusFile);
-      if (isset($status[$abortFlagId]) && $status[$abortFlagId]) {
-        $importer->eh->logAlert('User canceled import, stopping import.');
-        unset($status[$abortFlagId]);
-        file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
-        break;
-      }
-      $batchResult = $importer->processBatch();
-      // if the last batch did nothing
-      if ($batchResult == $recordsLeft) {
-        $importer->eh->logEmerg('No progress since last batch! Stopping import.');
-        // exception is already thrown by logEmerg ^ , but just in case...
-        break;
-      } else {
-        $recordsLeft = $batchResult;
-      }
-
-      //TODO: use $batchResult ("records left") instead?
-      $batchesLeft = $importer->iterData['batchCount'] - $importer->iterData['batchPosition'] - 1;
-      //$context->set($statusId, array($batchesLeft, $totalBatchCount, $startTime));
-      $status = sfYaml::load($statusFile);
-      $status['batchesLeft'] = $batchesLeft;
-      $status['totalBatchCount'] = $totalBatchCount;
-      $status['startTime'] = $startTime;
-      file_put_contents($statusFile, sfYaml::dump($status), LOCK_EX);
-    }
-
-    $context->getEventDispatcher()->notify(new sfEvent($action, 'import.do_reindex'));
-
-    unset($action->importer);
-    //unset($importer);
-  }
 
   public static function resetImportStatus($moduleName)
   {

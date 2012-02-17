@@ -13,11 +13,11 @@ webservices_getevent:
   options: { model: sfGuardUserProfile, type: list, method: getByToken }
   requirements:
     sf_format: (?:xml|json)
-    datapoint: (?:eventFacilities)
+    datapoint: (?:eventFacilities|eventStaffTypes)
 webservices_list:
   url:  /webservices/list/:datapoint
   param: { module: agWebservices, action: list }
-  requirements: { datapoint: (?:staff|organizations|eventFacilities) }
+  requirements: { datapoint: (?:staff|organizations|eventFacilities|eventStaffTypes) }
 webservices_index:
   url:  /webservices/index
   param: { module: agWebservices, action: index }

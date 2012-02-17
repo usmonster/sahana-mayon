@@ -197,11 +197,7 @@ class agFacilityExporter
       // Use the staff resource types returned from the query above to get the actual
       // staff type minimums and maximums.
       foreach ($this->staffResourceTypes as $stfResType) {
-        if (strtolower($stfResType) == 'staff') {
-          $exp_index = 'generalist';
-        } else {
-          $exp_index = strtolower(str_replace(' ', '_', $stfResType));
-        }
+        $exp_index = strtolower(str_replace(' ', '_', $stfResType));
 
         if (array_key_exists($fac['sfr_id'], $this->facilityStaffResource)) {
           if (array_key_exists($stfResType, $this->facilityStaffResource[$fac['sfr_id']])) {

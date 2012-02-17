@@ -26,6 +26,7 @@ class agPerson extends BaseagPerson
   private $_helperObjects = array(),
   $_helperMethods;
 
+  // @deprecated
   protected $isAutoIndexed;
 
 
@@ -88,14 +89,6 @@ class agPerson extends BaseagPerson
     return parent::__call($method, $arguments);
   }
 
-  public function setUp()
-  {
-    parent::setUp();
-
-    $luceneable0 = new Luceneable();
-    $this->actAs($luceneable0);
-  }
-
   /**
    * A happy little helper function to return all methods explicitly
    * (publicly) defined by a helper class.
@@ -128,34 +121,6 @@ class agPerson extends BaseagPerson
     if (!isset($this->_helperObjects[$class])) {
       $this->_helperObjects[$class] = new $class();
     }
-  }
-
-  public function updateLucene()
-  {
-    if (!$this->isAutoIndexed) {
-      return null;
-    }
-
-    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
-    $doc = new Zend_Search_Lucene_Document();
-    //$doc = Zend_Search_Lucene_Document_Html::loadHTML($this->getBody());
-    $doc->addField(Zend_Search_Lucene_Field::Keyword('id', $this->getId(), 'utf-8'));
-
-    // uses the agPersonNameHelper method that includes all names / aliases of type in a string
-    $names = $this->getNameByTypeAsString();
-    foreach ($names as $key => $name) {
-      $doc->addField(Zend_Search_Lucene_Field::Unstored($key . ' name', $name, 'utf-8'));
-    }
-    $sex = $this->getSex();
-    $doc->addField(Zend_Search_Lucene_Field::Unstored('sex', $sex, 'utf-8'));
-    $nationalities = $this->getNationality();
-    foreach ($nationalities as $nationality) {
-      $doc->addField(Zend_Search_Lucene_Field::Unstored('nationality', $nationality, 'utf-8'));
-    }
-    $ethnicity = $this->getEthnicity();
-    $doc->addField(Zend_Search_Lucene_Field::Unstored('ethnicity', $ethnicity, 'utf-8'));
-
-    return $doc;
   }
 
   public function getSex()

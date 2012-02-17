@@ -15,9 +15,6 @@ agOrganization:
       notnull: true
   actAs:
     Timestampable:
-    Luceneable: 
-      fields:
-        organization: unstored
   indexes:
     agOrganization_unq:
       fields: [organization]

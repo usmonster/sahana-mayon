@@ -19,18 +19,17 @@ include_partial('global/list',
                       'displayColumns' => $displayColumns,
                       'pager' => $pager,
                       'data' => $data,
-                      'order' => $order,
-                      'sort' => $sort,
-                      'status' => $status,
+                      'listParams' => $listParams,
                       'targetModule' => 'staff',
                       'targetAction' => $targetAction,
                       'caption' => 'Staff Resource List',
                       'widgets' => array($statusWidget)
                     ));
 
-if ($targetAction == 'list')
+  if ($targetAction == 'list')
   {
-    echo '<a href="' . url_for('staff/new') . '" class="generalButton">Create New</a>';
+    echo link_to('Create New', 'staff/new', array('class' => 'generalButton'));
   }
+
 ?>
 

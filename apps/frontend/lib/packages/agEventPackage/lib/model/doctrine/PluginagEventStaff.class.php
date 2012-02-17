@@ -47,8 +47,5 @@ abstract class PluginagEventStaff extends BaseagEventStaff
   public function setUp()
   {
     parent::setUp();
-
-    $luceneable0 = new Luceneable(array());
-    $this->actAs($luceneable0);
   }
 }

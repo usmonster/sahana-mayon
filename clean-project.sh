@@ -113,7 +113,3 @@ else
   sudo -u $WEB_USER $PROJECT_ROOT/symfony doctrine:data-load data/fixtures
 fi
 
-
-#indexes the data loaded so it is searchable to the user
-sudo -u $WEB_USER $PROJECT_ROOT/symfony lucene:reindex --application="frontend" --connection="doctrine" agScenario agStaff agFacility agScenarioFacilityGroup agOrganization
-

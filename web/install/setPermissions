@@ -1,0 +1,131 @@
+#!/usr/bin/env php
+<?php
+/**
+ * extends agActions for the administration module
+ *
+ * PHP Version 5.3
+ *
+ * LICENSE: This source file is subject to LGPLv2.1 license
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * @author Clayton Kramer, CUNY SPS
+ * Copyright of the Sahana Software Foundation, sahanafoundation.org
+ */
+require_once 'lib/config.php';
+
+$ignore = array(
+  '.bzr',
+  '.bzrignore',
+  '.svn',
+  '.nbproject',
+  '.htaccess',
+  'symfony',
+  'clean-project.sh',
+  'load-data.sh',
+  'setPermissions'
+);
+
+// Determine the application's root directory
+$rootPath = realpath(dirname(__FILE__) . '/../..');
+
+echo "\n";
+echo "Setting recursive directory group ownership for:\n";
+echo "-----------------------------------------\n";
+echo $rootPath . "\n\n";
+
+// Get the apache user
+$webUser = get_apache_user();
+echo "Setting group ownship to: $webUser\n\n";
+chgrp_r($rootPath,$webUser);
+
+
+// Set default permissions
+echo "Setting recursive directory permissions for main application.\n";
+echo "-------------------------------------------------------------\n";
+echo $rootPath . "\n\n";
+chmod_r($rootPath, 0750, 0640, $ignore);
+
+// Set the directory permissions
+echo "Setting recursive directory permissions.\n";
+echo "----------------------------------------\n";
+foreach ($dirPermissions as $location) {
+    echo  $location['path'] . " : " . $location['dir'] . " " . $location['file'] . "\n";
+    chmod_r($rootPath . DIRECTORY_SEPARATOR . $location['path'], octdec($location['dir']), octdec($location['file']), $ignore);
+}
+
+
+/**
+ * This function recursively performs a chmod on a path. It requires a directory mode
+ * and a file mode. You can also pass it an array of ignore values.
+ * 
+ * @param type $path
+ * @param type $dirmode
+ * @param type $filemode
+ * @param type $ignore 
+ */
+function chmod_r($path, $dirmode, $filemode, $ignore = array())
+{
+    if (is_dir($path)) {
+        if (!chmod($path, $dirmode)) {
+            print "Failed applying filemode '" . octdec($dirmode) . "' on directory '$path'\n";
+        }
+
+        // Open the directory object handler
+        $dh = opendir($path);
+
+        while (($file = readdir($dh)) !== false) {
+
+            // Skip self, parent and ignored directories
+            if ($file != '.' && $file != '..' && !in_array(basename($file), $ignore)) {
+                $fullpath = $path . '/' . $file;
+
+                // Self recursion 
+                chmod_r($fullpath, $dirmode, $filemode);
+            }
+        }
+
+        // Close directory object
+        closedir($dh);
+    } else {
+
+        // Skip links and ignored files
+        if (!is_link($path) && !in_array(basename($path), $ignore)) {
+
+            if (!chmod($path, $filemode)) {
+
+                print "Failed applying filemode '" . octdec($dirmode) . "' on file '$path'\n";
+            }
+        }
+    }
+}
+
+function get_apache_user()
+{
+
+    $webUser = "";
+
+    $command = "ps axho user,comm|grep -E \"httpd|apache\"|uniq|grep -v \"root\"|awk 'END {print $1}'";
+    $webUser = shell_exec($command);
+
+    return trim($webUser);
+}
+
+function chgrp_r($mypath, $gid)
+{
+    $d = opendir($mypath);
+    while (($file = readdir($d)) !== false) {
+        if ($file != "." && $file != "..") {
+
+            $typepath = $mypath . "/" . $file;
+
+            //print $typepath. " : " . filetype ($typepath). "<BR>" ; 
+            if (filetype($typepath) == 'dir') {
+                chgrp_r($typepath, $gid);
+            }
+
+            chgrp($typepath, $gid);
+        }
+    }
+}
+?>

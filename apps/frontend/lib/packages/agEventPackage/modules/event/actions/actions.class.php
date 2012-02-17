@@ -480,8 +480,6 @@ class eventActions extends agActions
         // Provide application and file info headers
         $this->getResponse()->setHttpHeader("Content-Type", "application/json");
 
-
-
         $this->renderText($jsonData);
 
         return sfView::NONE;
@@ -505,19 +503,28 @@ class eventActions extends agActions
       }
 
       $this->fileInfo = $exporter->getExport();
+      $exportFile = $this->fileInfo['path'] . DIRECTORY_SEPARATOR . $this->fileInfo['filename'];
 
+      // check if the file exists
+      $this->forward404Unless(file_exists($exportFile));
+
+      // Make sure the browser doesn't try to deliver a chached version
+      $this->getResponse()->setHttpHeader("Pragma", "public");
+      $this->getResponse()->setHttpHeader("Expires", "0");
+      $this->getResponse()->setHttpHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+
+      // Provide application and file info headers
       $this->getResponse()->setHttpHeader('Content-Type', 'application/zip');
-      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' .
-        $this->fileInfo['filename'] . '"');
+      $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $this->fileInfo['filename'] . '"');
+      $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
+      $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($exportFile));
 
-      $exportFile = file_get_contents($this->fileInfo['path'] . DIRECTORY_SEPARATOR .
-        $this->fileInfo['filename']);
-
-      $this->getResponse()->setContent($exportFile);
+      $this->getResponse()->sendHttpHeaders();
+      $this->getResponse()->setContent(file_get_contents($exportFile));
       $this->getResponse()->send();
-    }
 
-    $this->redirect('event/messaging?event=' . urlencode($this->event_name));
+    }
+    return sfView::NONE;
   }
 
     /**
@@ -701,16 +708,30 @@ class eventActions extends agActions
             $staffTypeRequiredBarData = array();
             $this->pCharts['staffTypeStatusBar'] = array();
             foreach ($this->staffTypeEstimates as $staffTypeId => $se) {
-              $unfilled = $se['min_required'] - ($se['available'] + $se['committed']);
+
+              // do a little data mangling to prevent over 100%
+              $pieUnfilled = $se['min_required'] - $se['committed'];
+              if ($pieUnfilled <= 0) {
+                $pieUnfilled = 0;
+                $pieAvailable = 0;
+              } else {
+                if ($pieUnfilled <= $se['available']) {
+                  $pieAvailable = $pieUnfilled;
+                  $pieUnfilled = 0;
+                } else {
+                  $pieUnfilled = $pieUnfilled - $se['available'];
+                  $pieAvailable = $se['available'];
+                }
+              }
 
               // re-initialize our data
               $staffTypeStatusPieData[$staffTypeId] = array();
               $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
-                  'Values' => $se['available'], 'Status' => 'Available' );
+                  'Values' => $pieAvailable, 'Status' => 'Available' );
               $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
                   'Values' => $se['committed'], 'Status' => 'Committed' );
               $staffTypeStatusPieData[$staffTypeId][] = array('Name' => 'Status',
-                  'Values' => $unfilled, 'Status' => "Unfilled\nRequirement" );
+                  'Values' => $pieUnfilled, 'Status' => "Unfilled\nRequirement" );
 
               $this->pCharts['staffTypeStatusPie'][$staffTypeId] = agChartHelper::getChartUrl(
                 'event/chart?event=' . $this->event_name, $this->chartUniqueIdent,
@@ -1090,82 +1111,11 @@ class eventActions extends agActions
         $this->redirect('event/index');
     }
 
-    /**
-     * provides the ability to add staff members into a shift
-     * @param sfWebRequest $request
-     */
-    public function executeStaffshift(sfWebRequest $request)
-    {
-        $this->setEventBasics($request);
-        $this->xmlHttpRequest = $request->isXmlHttpRequest();
-        $this->shift_id = $request->getParameter('shiftid');
-
-        $inputs = array('staff_type' => new sfWidgetFormDoctrineChoice(array('model' => 'agStaffResourceType', 'label' => 'Staff Type', 'add_empty' => TRUE)), // 'class' => 'filter')),
-          'staff_org' => new sfWidgetFormDoctrineChoice(array('model' => 'agOrganization', 'method' => 'getOrganization', 'label' => 'Staff Organization', 'add_empty' => TRUE)),
-          'query_condition' => new sfWidgetFormInputHidden()
-            ////, 'class' => 'filter'))
-        ); //will have to set the class for the form elements elsewhere
-        //set up inputs for form
-        $filterForm = new sfForm();
-
-        foreach ($inputs as $key => $input) {
-            $input->setAttribute('class', 'filter');
-            $filterForm->setWidget($key, $input);
-        }
-        $this->filterForm = $filterForm;
-
-        if ($request->getParameter('Search')) {
-
-            $this->staffSearchForm = new sfForm();
-            $this->staffSearchForm->setWidget('add', new agWidgetFormSelectCheckbox(array('choices' => array(null)), array()));
-            $this->staffSearchForm->getWidgetSchema()->setLabel('add', false);
-            $lucene_query = $request->getParameter('query_condition');
-            //$lucene_query = $filter_form['query_condition'];
-            $incomingFields = $this->filterForm->getWidgetSchema()->getFields();
-
-            /**
-             * @todo abstract the common operations here that are used in staff pool mangement to a helper class
-             */
-            $this->searchedModels = array('agEventStaff');  //we want the search model to be agEventStaff
-            //note, this does not provide ability to add event
-            parent::doSearch($lucene_query, FALSE, $this->staffSearchForm);
-            return $this->renderPartial('search/resultform', array(
-              'hits' => $this->hits,
-              'searchquery' => $this->searchquery,
-              'results' => $this->results,
-              'widget' => $this->widget,
-              'shift_id' => $this->shift_id,
-              'event_id' => $this->event_id
-            ));
-        } elseif ($request->getParameter('Add')) {
-            $staffPotentials = $request->getPostParameter('resultform'); //('staff_list'); //ideally get only the widgets whose corresponding checkbox
-            foreach ($staffPotentials as $key => $staffAdd) {
-                //see if staff member exists in this shift already
-                $existing = Doctrine::getTable('agEventStaffShift')
-                    ->findByDql('event_staff_id = ?', $this->shift_id)
-                    ->getFirst();
-                if (!$existing) {
-                    $existing = new agEventStaffShift();
-                    $existing->setEventStaffId($key);
-                    $existing->setEventShiftId($this->shift_id);
-                }
-                $existing->save();
-            }
-        } elseif ($request->getParameter('Remove')) {
-            //remove this staff member!
-        }
-
-        //p-code
-        $this->getResponse()->setTitle('Sahana Agasti ' . $this->event_name . ' Staff Shift');
-        //end p-code
-    }
-
     public function executeMessaging(sfWebRequest $request)
     {
         $this->setEventBasics($request);
-        //$this->eventName = urlencode($request->getParameter('event'));
     }
-
+    
     public function executeDeploystaff(sfWebRequest $request)
     {
       $this->staffingSummary = array();
@@ -1190,7 +1140,7 @@ class eventActions extends agActions
 
       // Format memory
       $bytes = array('KB', 'KB', 'MB', 'GB', 'TB');
-      $peakMemory = $batchResults['profiler']['maxMem'];
+      $peakMemory = $this->batchResults['profiler']['maxMem'];
       if ($peakMemory <= 999) {
         $peakMemory = 1;
       }

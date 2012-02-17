@@ -9,8 +9,6 @@
  * @property string $token
  * @property boolean $is_webservice_client
  * @property boolean $is_active
- * @property  $created_at
- * @property  $updated_at
  * @property sfGuardUser $User
  * 
  * @method integer            getUserId()               Returns the current record's "user_id" value
@@ -50,8 +48,6 @@ abstract class BasesfGuardUserProfile extends sfDoctrineRecord
              'type' => 'boolean',
              'default' => 0,
              ));
-        $this->hasColumn('created_at', '', null);
-        $this->hasColumn('updated_at', '', null);
     }
 
     public function setUp()

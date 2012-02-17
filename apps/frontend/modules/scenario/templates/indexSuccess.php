@@ -6,7 +6,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 ?>
 
 <h2>Scenario Management</h2>
-<p>In Sahana Agasti scenarios are plans. Using scenarios Emergency Managers are able
+<p>In the <?php echo sfConfig::get('sf_application_name'); ?> scenarios are plans. Using scenarios Emergency Managers are able
   to plan the deployment of staff and facility resources during emergency response.
   These scenarios complement existing response plans.  Once created, scenarios can be
   customized and modified as the emergency response plan evolves.</p>

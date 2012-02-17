@@ -240,7 +240,7 @@ class agChartHelper
     $chart->setColorPalette(0, 33, 188, 255);
     $chart->setColorPalette(1, 255, 145, 22);
     $chart->setColorPalette(2, 11, 119, 166);
-    $chart->drawScale($data, $desc, SCALE_NORMAL, 150,150,150, TRUE, 0, 0, TRUE);
+    $chart->drawScale($data, $desc, SCALE_START0, 150,150,150, TRUE, 0, 0, TRUE);
     $chart->drawGrid(4, TRUE, 230, 230, 230, 50);
     $chart->drawTreshold(0, 143, 55, 72, TRUE, TRUE);
     $chart->drawOverlayBarGraph($data, $desc, 100);
@@ -264,7 +264,7 @@ class agChartHelper
     $chart->setColorPalette(0, 22,255,117);
     $chart->setColorPalette(1, 255, 145, 22);
     $chart->setColorPalette(2, 11, 119, 166);
-    $chart->drawScale($data, $desc, SCALE_NORMAL, 150,150,150, TRUE, 60, 0, TRUE);
+    $chart->drawScale($data, $desc, SCALE_START0, 150,150,150, TRUE, 60, 0, TRUE);
     $chart->drawGrid(4, TRUE, 230, 230, 230, 50);
     $chart->drawTreshold(0, 143, 55, 72, TRUE, TRUE);
     $chart->drawOverlayBarGraph($data, $desc, 100);
@@ -286,8 +286,8 @@ class agChartHelper
     $chart->setColorPalette(1, 11, 119, 166);
     $chart->setColorPalette(2, 255, 145, 22);
     $chart->xsSetFontProperties('DejaVuSans.ttf', 8);
-    $chart->drawFlatPieGraph($data, $desc, 120,112,87, PIE_PERCENTAGE, 7);
-    $chart->drawPieLegend(220,172,$data, $desc,255,255,255);
+    $chart->drawFlatPieGraph($data, $desc, 130,112,85, PIE_PERCENTAGE, 7);
+    $chart->drawPieLegend(222,172,$data, $desc,255,255,255);
 
     return $chart;
   }

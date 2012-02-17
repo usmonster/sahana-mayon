@@ -11,10 +11,6 @@ agScenario:
       type: string(255)
   actAs:
     Timestampable:
-    Luceneable:
-      fields:
-        scenario: unstored
-        description: unstored
   indexes:
     agScenario_unq:
       fields: [scenario]
@@ -202,7 +198,7 @@ agScenarioFacilityGroup:
       unsigned: true
       type: integer(1)
       notnull: true
-  actAs: [Luceneable, Timestampable]
+  actAs: [Timestampable]
   indexes:
     UX_agScenarioFacilityGroup:
       fields: [scenario_id, scenario_facility_group]

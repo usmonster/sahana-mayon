@@ -17,29 +17,6 @@ class agOrganization extends BaseagOrganization
   protected $isAutoIndexed;
 
   /**
-   * Builds an index for organization.
-   *
-   * The Lucene Organization Index allows for an organization to be searched by:
-   * id and organization name.
-   *
-   * @return Zend_Search_Lucene_Document $doc
-   *
-   */
-  public function updateLucene()
-  {
-    if (!$this->isAutoIndexed) {
-      return null;
-    }
-    Zend_Search_Lucene_Analysis_Analyzer::setDefault(
-        new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
-    $doc = new Zend_Search_Lucene_Document();
-    $doc->addField(Zend_Search_Lucene_Field::Keyword('Id', $this->id, 'utf-8'));
-    $doc->addField(Zend_Search_Lucene_Field::unStored('organization', $this->organization, 'utf-8'));
-
-    return $doc;
-  }
-
-  /**
    * organizationInArray() is a static method to return an array of
    * organization where the organization id is set as the array's keys.
    *

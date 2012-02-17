@@ -11,11 +11,11 @@
  * @property integer $geo_source_id
  * @property agGeoType $agGeoType
  * @property agGeoSource $agGeoSource
+ * @property Doctrine_Collection $agAffectedArea
+ * @property Doctrine_Collection $agEventServiceAreaComposite
  * @property Doctrine_Collection $agGeoFeature
  * @property Doctrine_Collection $agAddressGeo
  * @property Doctrine_Collection $agGeoRelationship
- * @property Doctrine_Collection $agAffectedArea
- * @property Doctrine_Collection $agEventServiceAreaComposite
  * @property Doctrine_Collection $agAffectedAreaTemplate
  * @property Doctrine_Collection $agScenarioServiceAreaComposite
  * 
@@ -25,11 +25,11 @@
  * @method integer             getGeoSourceId()                    Returns the current record's "geo_source_id" value
  * @method agGeoType           getAgGeoType()                      Returns the current record's "agGeoType" value
  * @method agGeoSource         getAgGeoSource()                    Returns the current record's "agGeoSource" value
+ * @method Doctrine_Collection getAgAffectedArea()                 Returns the current record's "agAffectedArea" collection
+ * @method Doctrine_Collection getAgEventServiceAreaComposite()    Returns the current record's "agEventServiceAreaComposite" collection
  * @method Doctrine_Collection getAgGeoFeature()                   Returns the current record's "agGeoFeature" collection
  * @method Doctrine_Collection getAgAddressGeo()                   Returns the current record's "agAddressGeo" collection
  * @method Doctrine_Collection getAgGeoRelationship()              Returns the current record's "agGeoRelationship" collection
- * @method Doctrine_Collection getAgAffectedArea()                 Returns the current record's "agAffectedArea" collection
- * @method Doctrine_Collection getAgEventServiceAreaComposite()    Returns the current record's "agEventServiceAreaComposite" collection
  * @method Doctrine_Collection getAgAffectedAreaTemplate()         Returns the current record's "agAffectedAreaTemplate" collection
  * @method Doctrine_Collection getAgScenarioServiceAreaComposite() Returns the current record's "agScenarioServiceAreaComposite" collection
  * @method agGeo               setId()                             Sets the current record's "id" value
@@ -38,11 +38,11 @@
  * @method agGeo               setGeoSourceId()                    Sets the current record's "geo_source_id" value
  * @method agGeo               setAgGeoType()                      Sets the current record's "agGeoType" value
  * @method agGeo               setAgGeoSource()                    Sets the current record's "agGeoSource" value
+ * @method agGeo               setAgAffectedArea()                 Sets the current record's "agAffectedArea" collection
+ * @method agGeo               setAgEventServiceAreaComposite()    Sets the current record's "agEventServiceAreaComposite" collection
  * @method agGeo               setAgGeoFeature()                   Sets the current record's "agGeoFeature" collection
  * @method agGeo               setAgAddressGeo()                   Sets the current record's "agAddressGeo" collection
  * @method agGeo               setAgGeoRelationship()              Sets the current record's "agGeoRelationship" collection
- * @method agGeo               setAgAffectedArea()                 Sets the current record's "agAffectedArea" collection
- * @method agGeo               setAgEventServiceAreaComposite()    Sets the current record's "agEventServiceAreaComposite" collection
  * @method agGeo               setAgAffectedAreaTemplate()         Sets the current record's "agAffectedAreaTemplate" collection
  * @method agGeo               setAgScenarioServiceAreaComposite() Sets the current record's "agScenarioServiceAreaComposite" collection
  * 
@@ -99,6 +99,14 @@ abstract class BaseagGeo extends sfDoctrineRecord
              'local' => 'geo_source_id',
              'foreign' => 'id'));
 
+        $this->hasMany('agAffectedArea', array(
+             'local' => 'id',
+             'foreign' => 'geo_id'));
+
+        $this->hasMany('agEventServiceAreaComposite', array(
+             'local' => 'id',
+             'foreign' => 'geo_id'));
+
         $this->hasMany('agGeoFeature', array(
              'local' => 'id',
              'foreign' => 'geo_id'));
@@ -110,14 +118,6 @@ abstract class BaseagGeo extends sfDoctrineRecord
         $this->hasMany('agGeoRelationship', array(
              'local' => 'id',
              'foreign' => 'geo_id1'));
-
-        $this->hasMany('agAffectedArea', array(
-             'local' => 'id',
-             'foreign' => 'geo_id'));
-
-        $this->hasMany('agEventServiceAreaComposite', array(
-             'local' => 'id',
-             'foreign' => 'geo_id'));
 
         $this->hasMany('agAffectedAreaTemplate', array(
              'local' => 'id',

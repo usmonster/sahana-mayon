@@ -8,18 +8,15 @@
  * @property integer $id
  * @property integer $entity_id
  * @property string $row_hash
- * @property string $file_name
  * @property agEntity $agEntity
  * 
  * @method integer            getId()        Returns the current record's "id" value
  * @method integer            getEntityId()  Returns the current record's "entity_id" value
  * @method string             getRowHash()   Returns the current record's "row_hash" value
- * @method string             getFileName()  Returns the current record's "file_name" value
  * @method agEntity           getAgEntity()  Returns the current record's "agEntity" value
  * @method agImportEntityHash setId()        Sets the current record's "id" value
  * @method agImportEntityHash setEntityId()  Sets the current record's "entity_id" value
  * @method agImportEntityHash setRowHash()   Sets the current record's "row_hash" value
- * @method agImportEntityHash setFileName()  Sets the current record's "file_name" value
  * @method agImportEntityHash setAgEntity()  Sets the current record's "agEntity" value
  * 
  * @package    AGASTI_CORE

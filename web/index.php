@@ -2,7 +2,7 @@
 
 //if db not installed, redirect to install.php
 if (file_exists(dirname(__FILE__) . '/../config/databases.yml') == FALSE) {
-  header("Location: install.php");
+  header("Location: " . $_SERVER['REQUEST_URI'] . "install/");
   exit;
 }
 

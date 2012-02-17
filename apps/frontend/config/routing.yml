@@ -181,7 +181,7 @@ eventpoll:
 
 # Keep these two at the bottom to aid in the addition of new routes.
 default:
-  url:   /:module/:action/*
+  url:   /:module/:action/
 
 default_index:
   url:   /:module

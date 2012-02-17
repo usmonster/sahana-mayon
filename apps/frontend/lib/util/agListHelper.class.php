@@ -6,7 +6,8 @@
 class agListHelper
 {
   public static function getStaffList($staff_ids = null, $staffStatus = 'active',
-                                       $sort = null, $order = null, $staffIdType = 'staff')
+                                        $sort = null, $order = null, $staffIdType = 'staff',
+                                        $where = NULL)
   {
     list($headers, $query) = agStaffResource::getStaffResourceQuery();
 
@@ -38,6 +39,18 @@ class agListHelper
       $order = 'ASC';
     }
     $query->orderBy($sortField . ' ' . $order);
+
+    if ($where !== NULL) {
+      // the searchable fields
+      $likeSearches = array('pn1.person_name', 'pn3.person_name', 'agOrganization.organization',
+        'pc.phone_contact', 'ec.email_contact', 'agStaffResourceType.staff_resource_type');
+
+      // create an equal number of parameters and clauses
+      $likeParams = array_fill(0, count($likeSearches), '%' . $where . '%');
+      $likeClause = '(lcase(' . implode(') LIKE ?) OR (lcase(', $likeSearches) . ') LIKE ?)';
+
+      $query->andWhere('(' . $likeClause . ')', $likeParams);
+    }
 
     $genericDisplayColumns = array(
       'id' => array('title' => '', 'sortable' => false, 'index' => 's_id'),
@@ -72,50 +85,58 @@ class agListHelper
     return preg_replace($formatters[0]['pft_match_pattern'], $formatters[0]['pft_replacement_pattern'], $phoneContact);
   }
 
-  public static function getFacilityList($facility_ids = null, $sort = null, $order = null)
+
+  public static function getFacilityList($sort = NULL, $order = NULL, $where = NULL)
   {
-
-    $facility_array = array();
-    $resultArray = array();
-    $facility_emails = array();
-    $facility_phones = array();
-
-    // Define staff resource query.
+    // Define the basic facility resource query.
     $query = agDoctrineQuery::create()
-              ->select('f.id')
-                  ->addSelect('f.facility_name')
-                  ->addSelect('f.facility_code')
-                  ->addSelect('fr.id')
-                  ->addSelect('frt.id')
-                  ->addSelect('frt.facility_resource_type')
-                ->from('agFacility f')
-                  ->innerJoin('f.agFacilityResource fr')
-                  ->innerJoin('fr.agFacilityResourceType frt')
-                ->where('1 = ?', 1); //there must be a better way to do this :)
+      ->select('f.id')
+          ->addSelect('f.facility_name')
+          ->addSelect('f.facility_code')
+          ->addSelect('fr.id')
+          ->addSelect('frt.id')
+          ->addSelect('frt.facility_resource_type')
+        ->from('agFacility f')
+          ->innerJoin('f.agFacilityResource fr')
+          ->innerJoin('fr.agFacilityResourceType frt');
 
-    if ($facility_ids !== null) {
-      $query->andWhereIn('f.id', $facility_ids);
-    }
+    // add in sort / order logic
     if ($sort == 'facility_name') {
       $sortField = 'f.facility_name';
-    }
-    elseif($sort == 'facility_codes') {
+    } else if ($sort == 'facility_code') {
       $sortField = 'f.facility_code';
-    }
-    else {
+    } else if ($sort == 'resource_type') {
+      $sortField = 'frt.facility_resource_type';
+    } else {
       $sortField = 'f.id';
       $order = 'ASC';
     }
+
+    // attach the order by
     $query->orderBy($sortField . ' ' . $order);
 
-    $displayColumns = array(
-        'id' => array('title' => 'Id', 'sortable' => false, 'index' => 'f_id'),
-        'facility_name' => array('title' => 'Facility Name', 'sortable' => true, 'index' => 'f_facility_name'),
-        'services' => array('title' => 'Services', 'sortable' => false, 'index' => 'frt_facility_resource_type'),
-        'facility_code' => array('title' => 'Facility Code', 'sortable' => true, 'index' => 'f_facility_code')
+    if ($where !== NULL) {
+      // the searchable fields
+      $likeSearches = array('f.facility_name', 'f.facility_code', 'frt.facility_resource_type',);
+
+      // create an equal number of parameters and clauses
+      $likeParams = array_fill(0, count($likeSearches), '%' . $where . '%');
+      $likeClause = '(lcase(' . implode(') LIKE ?) OR (lcase(', $likeSearches) . ') LIKE ?)';
+
+      $query->andWhere('(' . $likeClause . ')', $likeParams);
+    }
+
+    // set our column headers
+    $columnHeaders = array(
+      'id' => array('title' => '', 'sortable' => false, 'index' => 'f_id'),
+      'facility_name' => array('title' => 'Facility Name', 'sortable' => true, 'index' => 'f_facility_name'),
+      'resource_type' => array('title' => 'Resource Type', 'sortable' => true, 'index' => 'frt_facility_resource_type'),
+      'facility_code' => array('title' => 'Facility Code', 'sortable' => true, 'index' => 'f_facility_code'),
     );
 
-    return array($displayColumns, $query);
+
+    // return the query
+    return array($columnHeaders, $query);
   }
 
   public static function getOrganizationList($organization_ids = null, $sort = null, $order = null)

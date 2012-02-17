@@ -803,40 +803,43 @@ class agStaffImportNormalization extends agImportNormalization
 
           if (isset($rawData['work_address_' . $element])) {
             $workAddr[$id] = $rawData['work_address_' . $element];
+            $hasWorkElem = TRUE;
           }
         }
 
-        if (count($homeAddr) > 0 && isset($rawData['home_latitude']) &&
-                isset($rawData['home_longitude'])) {
-          $homeAddrComp = array($homeAddr, $addressStandardId);
-          $homeAddrComp[] = array(array(array($rawData['home_latitude'],
-                $rawData['home_longitude'])),
-            $geoMatchScoreId);
-          $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
-        } else {
-          // log our error or at least grab our counter
-          $missingGeo++;
-          if ($throwOnError) {
-            $errMsg = sprintf('Missing home address/geo information from record id  %d', $rowId);
-            $this->eh->logErr($errMsg);
-            throw new Exception($errMsg);
+        if (count($homeAddr) > 0) {
+          if (isset($rawData['home_latitude']) && isset($rawData['home_longitude'])) {
+            $homeAddrComp = array($homeAddr, $addressStandardId);
+            $homeAddrComp[] = array(array(array($rawData['home_latitude'],
+                  $rawData['home_longitude'])),
+              $geoMatchScoreId);
+            $entityAddresses[$entityId][] = array($importAddressTypes['home_address'], $homeAddrComp);
+          } else {
+            // log our error or at least grab our counter
+            $missingGeo++;
+            if ($throwOnError) {
+              $errMsg = sprintf('Missing home address/geo information from record id  %d', $rowId);
+              $this->eh->logErr($errMsg);
+              throw new Exception($errMsg);
+            }
           }
         }
 
-        if (count($workAddr) > 0 && isset($rawData['work_latitude']) &&
-            isset($rawData['work_longitude'])) {
-          $workAddrComp = array($workAddr, $addressStandardId);
-          $workAddrComp[] = array(array(array($rawData['work_latitude'],
-              $rawData['work_longitude'])),
-            $geoMatchScoreId);
-          $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
-        } else {
-          // log our error or at least grab our counter
-          $missingGeo++;
-          if ($throwOnError) {
-            $errMsg = sprintf('Missing work address/geo information from record id  %d', $rowId);
-            $this->eh->logErr($errMsg);
-            throw new Exception($errMsg);
+        if (count($workAddr) > 0) {
+          if (isset($rawData['work_latitude']) && isset($rawData['work_longitude'])) {
+            $workAddrComp = array($workAddr, $addressStandardId);
+            $workAddrComp[] = array(array(array($rawData['work_latitude'],
+                $rawData['work_longitude'])),
+              $geoMatchScoreId);
+            $entityAddresses[$entityId][] = array($importAddressTypes['work_address'], $workAddrComp);
+          } else {
+            // log our error or at least grab our counter
+            $missingGeo++;
+            if ($throwOnError) {
+              $errMsg = sprintf('Missing work address/geo information from record id  %d', $rowId);
+              $this->eh->logErr($errMsg);
+              throw new Exception($errMsg);
+            }
           }
         }
       }

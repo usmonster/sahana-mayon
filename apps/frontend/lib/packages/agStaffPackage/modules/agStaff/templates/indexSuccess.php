@@ -8,7 +8,7 @@ use_stylesheet('jquery/mayon.jquery.ui.css');
 
 <h2>Staff Management <a href="<?php echo url_for('@wiki') . '/doku.php?id=tooltip:staff_management&do=export_xhtmlbody' ?>" class="tooltipTrigger" title="Staff Management">?</a></h2>
 
-<p>The Staff Management feature in Sahana Agasti is used to manage your available staff resources while planning before an emergency response.</p>
+<p>The Staff Management feature in the <?php echo sfConfig::get('sf_application_name'); ?> is used to manage your available staff resources while planning before an emergency response.</p>
 <h3>Please select one of the following actions:</h3>
 
 <a href="<?php echo url_for('staff/new'); ?>" class="generalButton" title="Create New Staff">Add Staff</a><br/><br/>

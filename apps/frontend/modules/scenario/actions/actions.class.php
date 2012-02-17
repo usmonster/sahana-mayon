@@ -16,7 +16,7 @@
 class scenarioActions extends agActions
 {
 
-  protected $_searchedModels = array('agScenarioFacilityGroup', 'agScenario', 'agStaff');
+  protected $_search = 'scenario';
   public static $scenario_id;
   public static $scenarioName;
   public static $wizardOp;
@@ -53,10 +53,32 @@ class scenarioActions extends agActions
    */
   public function executeList(sfWebRequest $request)
   {
-    $this->ag_scenarios = agDoctrineQuery::create()
+    // we use the get parameters to manage most of this action's methods
+    $this->listParams = $request->getGetParameters();
+
+    // here are the post params we're looking for
+    if ($request->getPostParameter('query')) {
+
+      // if found, we trigger our redirect and add it to our listParams
+      $param = str_replace('*', '%', strtolower(trim($request->getPostParameter('query'))));
+
+      // merge the results together
+      $this->listParams = array_merge($this->listParams, array($postParam => $param));
+
+      // if a post was found we redirect and add everything via http_build_query
+      $this->redirect(($this->moduleName . '/' . $this->actionName . '?' .
+        http_build_query($this->listParams)));
+    }
+
+    $q = agDoctrineQuery::create()
         ->select('a.*, b.*')
-        ->from('agScenario a, a.agScenarioFacilityGroup b')
-        ->execute();
+        ->from('agScenario a, a.agScenarioFacilityGroup b');
+
+    if (isset($this->listParams['query'])) {
+      $q->where('a.scenario LIKE ?', array( '%' . $this->listParams['query'] . '%'));
+    }
+
+    $this->ag_scenarios = $q->execute();
   }
 
   /**
@@ -144,7 +166,7 @@ class scenarioActions extends agActions
         ->findByDql('id = ?', $this->scenario_id)
         ->getFirst();
     $this->ag_scenario_facility_group = Doctrine_Core::getTable('agScenarioFacilityGroup')
-        ->find(array($request->getParameter('id')));
+        ->findByDql('scenario_id = ?', $this->scenario_id);
     $this->ag_staff_resources = agDoctrineQuery::create()
         ->select('agSFR.*')
         ->from('agScenarioFacilityResource agSFR')
@@ -308,16 +330,27 @@ class scenarioActions extends agActions
     $exportResponse = $facilityExporter->export();
     // Free up some memory by getting rid of the agFacilityExporter object.
     unset($facilityExporter);
+
+
+    // check if the file exists
+    $this->forward404Unless(file_exists($exportResponse['filePath']));
+
+    // Make sure the browser doesn't try to deliver a chached version
+    $this->getResponse()->setHttpHeader("Pragma", "public");
+    $this->getResponse()->setHttpHeader("Expires", "0");
+    $this->getResponse()->setHttpHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+
+    // Provide application and file info headers
     $this->getResponse()->setHttpHeader('Content-Type', 'application/vnd.ms-excel');
     $this->getResponse()->setHttpHeader('Content-Disposition', 'attachment;filename="' . $exportResponse['fileName'] . '"');
+    $this->getResponse()->setHttpHeader("Content-Transfer-Encoding", "binary");
+    $this->getResponse()->setHttpHeader("Content-Length", "" . filesize($exportResponse['filePath']));
 
-    $exportFile = file_get_contents($exportResponse['filePath']);
-
-    $this->getResponse()->setContent($exportFile);
+    $this->getResponse()->sendHttpHeaders();
+    $this->getResponse()->setContent(file_get_contents($exportResponse['filePath']));
     $this->getResponse()->send();
-    unlink($exportResponse['filePath']);
 
-    $this->redirect('facility/index');
+    return sfView::NONE;
   }
 
   /*   * ***********************************************************************************************
@@ -728,7 +761,6 @@ class scenarioActions extends agActions
                                                $request->getFiles($this->form->getName()));
       if ($this->form->isValid()) {
         $ag_scenario = $this->form->save();
-        $ag_scenario->updateLucene();
         if ($request->hasParameter('Continue')) {
           $this->ag_facility_resources = agDoctrineQuery::create()
               ->select('a.facility_id, af.*, afrt.*')
@@ -994,8 +1026,6 @@ class scenarioActions extends agActions
             }
           }
 
-          LuceneRecord::updateLuceneRecord($agScenarioFacilityGroup);
-
           if ($request->hasParameter('Continue')) {
             $return = json_encode(array(
               'response' => url_for('scenario/staffresources?id=' . $this->scenario_id),
@@ -1175,6 +1205,12 @@ class scenarioActions extends agActions
   {
     $this->forward404unless($request->isXmlHttpRequest());
     $number = intval($request->getParameter('num'));
+    $defaultDeploymentAlgorithmId = agDoctrineQuery::create()
+      ->select('da.id')
+      ->from('agDeploymentAlgorithm da')
+      ->where('da.deployment_algorithm = ?', agGlobal::getParam('default_deployment_algorithm'))
+      ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+
     $shiftTemplate = new agShiftTemplate();
     $shiftTemplateForm = new agSingleShiftTemplateForm($request->getParameter('id'), $shiftTemplate);
     $shiftTemplateForm->getWidgetSchema()->setNameFormat('shift_template[' . $number . '][%s]');
@@ -1188,6 +1224,7 @@ class scenarioActions extends agActions
                                    agGlobal::getParam('default_days_in_operation'));
     $shiftTemplateForm->setDefault('max_staff_repeat_shifts',
                                    agGlobal::getParam('default_shift_max_staff_repeat_shifts'));
+    $shiftTemplateForm->setDefault('deployment_algorithm_id', $defaultDeploymentAlgorithmId);
     //$shiftTemplateForm->getWidgetSchema()->setIdFormat($number . '%s');
     unset($shiftTemplateForm['_csrf_token']);
     return $this->renderPartial('shifttemplateform',
@@ -1644,7 +1681,6 @@ class scenarioActions extends agActions
     if ($form->isValid()) {
 
       $ag_scenario = $form->save();
-      $ag_scenario->updateLucene();
       if ($request->hasParameter('Continue')) {
         $this->ag_facility_resources = agDoctrineQuery::create()
             ->select('a.facility_id, af.*, afrt.*')
