@@ -325,8 +325,8 @@ $app->get('/dbconfig/', function () use ($app) {
 
         $data['dbHost'] = isset($dbHost) ? $dbHost : "localhost";
         $data['dbPort'] = isset($dbPort) ? $dbPort : "";
-        $data['dbName'] = isset($dbName) ? $dbName : "sahana_rmp";
-        $data['dbUser'] = isset($dbUser) ? $dbUser : "sahana_user";
+        $data['dbName'] = isset($dbName) ? $dbName : "sems_rmp";
+        $data['dbUser'] = isset($dbUser) ? $dbUser : "sems_db_user";
 
         // Give the form the obfuscated version of the input
         $data['dbPassword'] = empty($dbPassword) ? "" : obfuscateString($dbPassword);
