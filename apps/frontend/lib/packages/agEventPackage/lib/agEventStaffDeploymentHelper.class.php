@@ -93,7 +93,6 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     $this->batchTime = agGlobal::getParam('bulk_operation_max_batch_time');
 
     // @todo These unsets shouldn't be necessary. Somehow this is being called twice which needs to be resolved
-    unset($this->deployableStaffQuery);
     unset($this->disableEventStaffQuery);
     unset($this->waveShiftsQuery);
     $this->deployableStaffQuery = $this->getDeployableStaffQuery();
@@ -191,15 +190,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
 
     // now do our write and start a transaction
     $conn = $this->resetConn(self::CONN_WRITE);
-    $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, FALSE);
-    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
-    $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, TRUE);
-    $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
-    $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
-    $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
-    $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
     $conn->beginTransaction();
-    $this->_conn[self::CONN_WRITE] = $conn;
 
     // always re-parent properly
     $dm = Doctrine_Manager::getInstance();
@@ -218,7 +209,6 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       if (!$new) {
         $this->clearConnection($conn);
         $conn->clear();
-        $conn->evictTables();
         return $conn;
       } else {
        $this->closeConnection($conn);
@@ -236,7 +226,7 @@ class agEventStaffDeploymentHelper extends agPdoHelper
     // always re-parent properly
     $dm->setCurrentConnection('doctrine');
 
-    $conn = Doctrine_Manager::connection($adapter, self::CONN_WRITE);
+    $conn = Doctrine_Manager::connection($adapter, $connName);
     $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, TRUE);
@@ -723,6 +713,8 @@ class agEventStaffDeploymentHelper extends agPdoHelper
   {
     $results = array();
     $params = array();
+    $query = $this->getDeployableStaffQuery();
+
 
     // by-default only these params are needed unless geo is active
     $params[':staffResourceType'] = $staffResourceTypeId;
@@ -740,13 +732,13 @@ class agEventStaffDeploymentHelper extends agPdoHelper
       $geoDistance = '(acos( sin( radians(gc.latitude) ) * sin( radians(' . $facLat . ') ) ' .
         '+ cos( radians(gc.latitude) ) * cos( radians(' . $facLat . ') ) ' .
         '* cos( radians(' . $facLon . ') - radians(gc.longitude) ) ) * 6378)' ;
-      $this->deployableStaffQuery->orderBy($geoDistance . ' ASC');
+      $query->orderBy($geoDistance . ' ASC');
     }
 
-    $this->deployableStaffQuery->limit($staffCount);
+    $query->limit($staffCount);
 
     // we don't hydrate o hopefully avoid the DISTINCT that doctrine throws in by default
-    $results = $this->deployableStaffQuery->execute($params, Doctrine_Core::HYDRATE_NONE);
+    $results = $query->execute($params, Doctrine_Core::HYDRATE_NONE);
 
     foreach ($results as &$row) {
       $row = $row[0];
