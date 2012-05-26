@@ -1,0 +1,40 @@
+all:
+  .array:
+    menu_top:
+      homepage: { label: Home, route: '@homepage' }
+      prepare: { label: Prepare, route: '@prepare' }
+      respond: { label: Respond, route: '@respond' }
+      admin: { label: Administration, route: '@admin' }
+      help: { label: Help, route: '@wiki' }
+    menu_children:
+      facility: { label: Facilities, route: '@facility', parent: prepare }
+      org: { label: Organizations, route: '@org', parent: prepare }
+      scenario: { label: Scenarios, route: '@scenario', parent: prepare }
+      deploy: { label: 'Deploy a Scenario', route: scenario/list, parent: respond }
+      event_active: { label: 'List Active Events', route: '@respond', parent: respond }
+      event: { label: 'List All Events', route: event, parent: respond }
+    menu_grandchildren:
+      facility_new: { label: 'Add New Facility', route: facility/new, parent: facility }
+      facility_list: { label: 'List Facilities', route: facility/list, parent: facility }
+      org_new: { label: 'Add New Organization', route: organization/new, parent: org }
+      org_list: { label: 'List Organizations', route: organization/list, parent: org }
+      scenario_create: { label: 'Create New Scenario', route: scenario/meta, parent: scenario }
+      scenario_list: { label: 'List Scenarios', route: scenario/list, parent: scenario }
+    title:
+      homepage: { url: /, title: 'Sahana Agasti Home' }
+      staff_page: { url: /staff/index, title: 'Sahana Agasti Staff' }
+      staff_list: { url: /staff/list, title: 'Sahana Agasti Staff List' }
+      staff_new: { url: /staff/new, title: 'Sahana Agasti Staff New' }
+      staff_import: { url: /staff/import, title: 'Sahana Agasti Staff Import' }
+      facility_page: { url: /facility/index, title: 'Sahana Agasti Facilities' }
+      facility_list: { url: /facility/list, title: 'Sahana Agasti Facility List' }
+      facility_new: { url: /facility/new, title: 'Sahana Agasti Facility New' }
+      facility_import: { url: /facility/import, title: 'Sahana Agasti Facility Import' }
+      organization_page: { url: /organization/index, title: 'Sahana Agasti Organization' }
+      organization_list: { url: /organization/list, title: 'Sahana Agasti Organization List' }
+      organization_new: { url: /organization/new, title: 'Sahana Agasti Organization New' }
+      scenario_page: { url: /scenario/index, title: 'Sahana Agasti Scenario' }
+      scenario_list: { url: /scenario/list, title: 'Sahana Agasti Scenario List' }
+      scenario_pre: { url: /scenario/pre, title: 'Sahana Agasti Scenario Pre-Creator' }
+      scenario_new: { url: /scenario/meta, title: 'Sahana Agasti Scenario Creator' }
+      events_page: { url: /event/index, title: 'Sahana Agasti Events' }
