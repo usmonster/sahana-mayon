@@ -180,8 +180,15 @@ abstract class agPdoHelper
    */
   protected function closeConnections()
   {
+    $defaultConn = 'doctrine';
     $dm = Doctrine_Manager::getInstance();
-    $dm->setCurrentConnection('doctrine');
+
+    if (!$dm->contains($defaultConn))
+    {
+      $adapter = Doctrine_Manager::connection()->getDbh();
+      Doctrine_Manager::connection($adapter, $defaultConn);
+    }
+    $dm->setCurrentConnection($defaultConn);
 
     foreach($this->_conn as $idx => $conn)
     {
