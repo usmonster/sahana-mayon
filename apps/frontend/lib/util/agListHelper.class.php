@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -9,6 +9,14 @@ class agListHelper
                                         $sort = null, $order = null, $staffIdType = 'staff',
                                         $where = NULL)
   {
+    $nameTypes = array('given', 'family');
+    $nameTypes = agDoctrineQuery::create()
+      ->select('pnt.person_name_type')
+        ->addSelect('pnt.id')
+      ->from('agPersonNameType pnt')
+      ->whereIn('pnt.person_name_type', $nameTypes)
+      ->execute(array(), agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
+
     list($headers, $query) = agStaffResource::getStaffResourceQuery();
 
     if ($staff_ids !== null) {
@@ -33,7 +41,7 @@ class agListHelper
     }
     elseif($sort == 'ln') {
       $sortField = $headers['family'][0];//'srt.staff_resource_type';
-    }    
+    }
     else {
       $sortField = 's.id';
       $order = 'ASC';
@@ -42,8 +50,11 @@ class agListHelper
 
     if ($where !== NULL) {
       // the searchable fields
-      $likeSearches = array('pn1.person_name', 'pn3.person_name', 'agOrganization.organization',
+      $likeSearches = array('agOrganization.organization',
         'pc.phone_contact', 'ec.email_contact', 'agStaffResourceType.staff_resource_type');
+      foreach($nameTypes as $nameTypeId) {
+        $likeSearches[] = 'pn' . $nameTypeId . '.person_name';
+      }
 
       // create an equal number of parameters and clauses
       $likeParams = array_fill(0, count($likeSearches), '%' . $where . '%');
@@ -52,19 +63,19 @@ class agListHelper
       $query->andWhere('(' . $likeClause . ')', $likeParams);
     }
 
-    $genericDisplayColumns = array(
-      'id' => array('title' => '', 'sortable' => false, 'index' => 's_id'),
-      'fn' => array('title' => 'First Name', 'sortable' => true, 'index' => 'pn1_name1'),
-      'ln' => array('title' => 'Last Name', 'sortable' => true, 'index' => 'pn3_name3'),
-      'organization' => array('title' => 'Organization', 'sortable' => true,
-        'index' => 'agOrganization_organization'),
-      'resource' => array('title' => 'Resource', 'sortable' => true, 
-        'index' => 'agStaffResourceType_staff_resource_type'),
-      'phones' => array('title' => 'Phone', 'sortable' => false, 'index' => 'pc_phone_contact'),
-      'emails' => array('title' => 'Email', 'sortable' => false, 'index' => 'ec_email_contact'),
-      'staff_status' => array('title' => 'Status', 'sortable' => false,
-        'index' => 'agStaffResourceStatus_staff_resource_status'),
-    );
+    $genericDisplayColumns = array('id' => array('title' => '', 'sortable' => false, 'index' => 's_id'));
+
+    $genericDisplayColumns['fn'] = array('title' => 'First Name', 'sortable' => true, 'index' => 'pn' . $nameTypes['given'] . '_name' . $nameTypes['given']);
+    $genericDisplayColumns['ln'] = array('title' => 'Last Name', 'sortable' => true, 'index' => 'pn' . $nameTypes['family'] . '_name' . $nameTypes['family']);
+
+    $genericDisplayColumns['organization'] = array('title' => 'Organization', 'sortable' => true,
+      'index' => 'agOrganization_organization');
+    $genericDisplayColumns['resource'] = array('title' => 'Resource', 'sortable' => true,
+      'index' => 'agStaffResourceType_staff_resource_type');
+    $genericDisplayColumns['phones'] = array('title' => 'Phone', 'sortable' => false, 'index' => 'pc_phone_contact');
+    $genericDisplayColumns['emails'] = array('title' => 'Email', 'sortable' => false, 'index' => 'ec_email_contact');
+    $genericDisplayColumns['staff_status'] = array('title' => 'Status', 'sortable' => false,
+      'index' => 'agStaffResourceStatus_staff_resource_status');
 
     return array($genericDisplayColumns, $query);
   }
