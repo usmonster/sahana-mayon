@@ -97,7 +97,7 @@ abstract class agImportHelper extends agPdoHelper
     $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
     $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
-    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+//    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
@@ -225,7 +225,7 @@ abstract class agImportHelper extends agPdoHelper
 
   /**
    * Returns the peak memory
-   * 
+   *
    * @return type int
    */
   public function getPeakMemoryUsage()
@@ -568,7 +568,7 @@ abstract class agImportHelper extends agPdoHelper
   /**
    * This method provides simple validation of import file column headers. It is intended to be
    * extended by its child classes which may provide more advanced validation.
-   * 
+   *
    * @param array $importFileHeaders An array of import file headers.
    * @param string $sheetName The name of the sheet being validated.
    * @return boolean A boolean indicating un/successful validation of column headers.

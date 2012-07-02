@@ -28,16 +28,6 @@ class agFacilityResource extends BaseagFacilityResource
   }
 
   /**
-   * overloads the setTableDefinition for the baseFacilityResource class, adding a listener
-   */
-  public function setTableDefinition()
-  {
-    parent::setTableDefinition();
-
-    $this->addListener(new agFacilityResourceListener());
-  }
-
-  /**
    * delete()
    *
    * Before deleting this agFacilityResource record, first delete
@@ -55,13 +45,13 @@ class agFacilityResource extends BaseagFacilityResource
 
   /**
    * @method facilityResourceInfo()
-   * A static method to return a double array of facility resource info in the format of 
+   * A static method to return a double array of facility resource info in the format of
    * array( facility resource id =>  array(facility id, facility name, facility code, facility resource type id, facility resource type, facility resource status id, facility resource status))
-   * 
-   * @param array $facilityResourceIds - Optional.  If param is passed in, the 
-   * will only query for the specified facility resource.  If none is passed in, 
+   *
+   * @param array $facilityResourceIds - Optional.  If param is passed in, the
+   * will only query for the specified facility resource.  If none is passed in,
    * it will query for all facility resource.
-   * 
+   *
    */
   static public function facilityResourceInfo($facilityResourceIds = null)
   {
