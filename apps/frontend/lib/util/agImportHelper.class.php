@@ -97,7 +97,7 @@ abstract class agImportHelper extends agPdoHelper
     $conn->setAttribute(Doctrine_Core::ATTR_AUTO_FREE_QUERY_OBJECTS, TRUE);
     $conn->setAttribute(Doctrine_Core::ATTR_USE_DQL_CALLBACKS, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_AUTOLOAD_TABLE_CLASSES, FALSE);
-//    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
+    $conn->setAttribute(Doctrine_Core::ATTR_AUTOCOMMIT, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_LOAD_REFERENCES, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_VALIDATE, FALSE);
     $conn->setAttribute(Doctrine_Core::ATTR_CASCADE_SAVES, FALSE);
