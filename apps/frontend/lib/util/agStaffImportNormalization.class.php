@@ -144,7 +144,7 @@ class agStaffImportNormalization extends agImportNormalization
     $importSpec['l2_read'] = array('type' => "string", 'length' => 64);
     $importSpec['l2_write'] = array('type' => "string", 'length' => 64);
 
-    // set the class property to the newly created 
+    // set the class property to the newly created
     $this->importSpec = $importSpec;
   }
 
@@ -309,7 +309,7 @@ class agStaffImportNormalization extends agImportNormalization
         }
       } else {
         $eventMsg = 'Duplicate import row found on row ' . $rowId . '. Ignoring duplicate.';
-        $this->eh->logAlert($eventMsg, 1, FALSE);
+        $this->eh->logWarning($eventMsg);
         unset($this->importData[$rowId]);
       }
     }
@@ -318,7 +318,7 @@ class agStaffImportNormalization extends agImportNormalization
     if ($matched > 0) {
       $eventMsg = 'Found ' . $matched . ' rows without Entity ID\'s that matched a previous import. ' .
       'Rows were assigned the matched Entity ID.';
-      $this->eh->logAlert($eventMsg);
+      $this->eh->logWarning($eventMsg);
     }
   }
 

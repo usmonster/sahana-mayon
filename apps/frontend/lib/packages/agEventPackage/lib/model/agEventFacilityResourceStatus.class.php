@@ -16,11 +16,4 @@
 
 class agEventFacilityResourceStatus extends PluginagEventFacilityResourceStatus
 {
-  public function setTableDefinition()
-  {
-    parent::setTableDefinition() ;
-
-    $this->addListener(new agEventFacilityResourceStatusListener());
-  }
-
 }

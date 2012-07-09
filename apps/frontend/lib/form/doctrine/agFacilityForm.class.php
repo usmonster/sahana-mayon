@@ -31,7 +31,7 @@ class agFacilityForm extends BaseagFacilityForm
      * depends on validator maybe?
      */
     parent::configure();
-    
+
     unset(
         $this['updated_at'],
         $this['created_at'],
@@ -349,7 +349,7 @@ class agFacilityForm extends BaseagFacilityForm
                ->select('a.value')
                ->from('agAddressValue a')
                ->where('a.address_element_id = ?', $addressElement[key($addressElement)]['id']);
-            
+
             $valueForm->widgetSchema->setLabel('value', false);
             $valueForm->widgetSchema['value']->addOption('query', $list);
           }
@@ -473,7 +473,7 @@ class agFacilityForm extends BaseagFacilityForm
       $this->saveAddressForm($this->embeddedForms['Address']);
       unset($this->embeddedForms['Address']);
     }
-    
+
     if (is_array($forms)) {
       foreach ($forms as $key => $form) {
 
@@ -853,5 +853,5 @@ class agFacilityForm extends BaseagFacilityForm
     $css['jquery/mayon.jquery.ui.css'] = 'all';
     return $css;
   }
-  
+
 }

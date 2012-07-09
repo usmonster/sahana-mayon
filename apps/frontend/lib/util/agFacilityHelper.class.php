@@ -469,7 +469,7 @@ class agFacilityHelper
 
   /**
    * Returns the id of the facility resource status either in an associative array or an integer.
-   * @param string $facilityResourceStatus Optional.  Pass in a specific facility resource status 
+   * @param string $facilityResourceStatus Optional.  Pass in a specific facility resource status
    * to retrieve only the id of that instant.  If none pass in, retrieve the ids for
    * all facility resource status.
    * @return array|integer Returns either an associative array,
@@ -593,96 +593,6 @@ class agFacilityHelper
       ->from($tableName)
       ->execute(array(), 'key_value_pair');
     return $returnValue;
-  }
-
-  /**
-   * Method to set facility resource status specifically used as part of the
-   * agFacilityResourceStatus listener.
-   *
-   * @param array $facilityResourceIds An array of facility resource ID's to affect.
-   * @param integer(2) $facilityResourceStatusId The facility resource alloation status being applied.
-   * @param boolean $affectScenarios An optional parameter dictating whether or not this action will
-   * affect scenario facility resources. If left NULL it searches for the global parameter
-   * facility_resource_status_affects_scenarios and applies the value stored there.
-   * @param boolean $affectEvents An optional parameter dictating whether or not this action will
-   * affect event facility resources. If left NULL it searches for the global parameter
-   * facility_resource_status_affects_events and applies the value stored there.
-   * @param Doctrine_Connection $conn An optional Doctrine connection object.
-   * @return array An array containing the number of operations performed. 
-   */
-  public static function setFacilityResourceStatusOnUpdate($facilityResourceIds, $facilityResourceStatusId, $affectScenarios = NULL, $affectEvents = NULL, Doctrine_Connection $conn = NULL)
-  {
-    $useInverse = TRUE;
-    $operations = array();
-
-    // get just the ones that are changing (don't want to have spurious expensive operations!)
-    $actionableResources = self::returnActionableResources($facilityResourceIds, $facilityResourceStatusId);
-
-    // pick up our available status
-    $available = self::getFacilityResourceAvailableStatus($facilityResourceStatusId, $useInverse);
-
-    // as a listener this gets fired a lot so we don't even do the rest without check if we have to
-    if (!empty($actionableResources)) {
-      // set our default variables to determine if scenarios or events are affected
-      if (is_null($affectScenarios)) {
-        $affectScenarios = agGlobal::getParam(self::$affectScenariosGlobal);
-      }
-      if (is_null($affectEvents)) {
-        $affectEvents = agGlobal::getParam(self::$affectEventsGlobal);
-      }
-
-      // only take action if at least one of these is affected
-      if ($affectScenarios || $affectEvents) {
-        // pick up the allocation status we're about to apply from the defaults in the global param table
-        if ($available) {
-          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::getParam(self::$resourceEnabledGlobal));
-        } else {
-          $allocationStatusId = self::returnFacilityResourceAllocationStatusId(agGlobal::getParam(self::$resourceDisabledGlobal));
-        }
-
-        // set our default connection if one is not passed and wrap it all in a transaction
-        if (is_null($conn)) {
-          $conn = Doctrine_Manager::connection();
-        }
-        $conn->beginTransaction();
-        try {
-          if ($affectScenarios) {
-            // collect all scenarios to be affected
-            $scenarioIds = agDoctrineQuery::create()
-                            ->select('s.id')
-                            ->from('agScenario s')
-                            ->execute(array(), 'single_value_array');
-
-            // apply changes to all scenarios
-            $scenarioOperations = agScenarioFacilityHelper::setScenarioFacilityResourceAllocationStatus($scenarioIds, $actionableResources, $allocationStatusId);
-            $operations['scenarioOperations'] = $scenarioOperations;
-          }
-
-          if ($affectEvents) {
-            $eventIds = array();
-
-            // get our event id's that have active status
-            $currentEventStatuses = array_values(agEventHelper::returnCurrentEventStatus());
-            foreach ($currentEventStatuses as $eventStatus) {
-              if ($eventStatus[3] == TRUE) {
-                $eventIds[] = $eventStatus[0];
-              }
-            }
-
-            // apply changes to all active events
-            $eventOperations = agEventFacilityHelper::setEventFacilityResourceStatus($eventIds, $actionableResources, $allocationStatusId);
-            $operations['eventOperations'] = $eventOperations;
-          }
-
-          // commit
-          $conn->commit();
-        } catch (Exception $e) {
-          $conn->rollback(); // rollback if we must :(
-        }
-      }
-    }
-    // collect results and return
-    return $operations;
   }
 
 }

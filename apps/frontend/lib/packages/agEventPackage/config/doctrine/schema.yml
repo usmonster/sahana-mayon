@@ -394,10 +394,10 @@ agEventShift:
       type: integer(2)
       notnull: true
     minimum_staff:
-      type: integer(1)
+      type: integer(2)
       notnull: true
     maximum_staff:
-      type: integer(1)
+      type: integer(2)
       notnull: true
     minutes_start_to_facility_activation:
       type: integer(5)

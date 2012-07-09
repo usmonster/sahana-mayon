@@ -24,7 +24,7 @@ class scenarioActions extends agActions
   /**
    * sets up basic scenario information from a web request, used in most actions here
    * @param <type> $request a web request
-   * 
+   *
    */
   protected function setScenarioBasics($request)
   {
@@ -202,7 +202,7 @@ class scenarioActions extends agActions
               $facilityStaffResourceForm->bind($facilityStaffResource, null);
               /**
                * @todo clean up for possible dirty data
-               * 
+               *
                */
               if ($facilityStaffResourceForm->isValid() && isset($facilityStaffResource['minimum_staff']) && isset($facilityStaffResource['maximum_staff'])) {
                 $savedResources[] = $facilityStaffResourceForm->save();
@@ -309,7 +309,7 @@ class scenarioActions extends agActions
     }
 
     $this->formsArray = $formsArray;
-    
+
     $this->facilityStaffResourceContainer = new agFacilityStaffResourceContainerForm($formsArray,
             $facilityLabels);
 
@@ -550,7 +550,7 @@ class scenarioActions extends agActions
 
   public function executePre(sfWebRequest $request)
   {
-    
+
   }
 
   /**
@@ -784,7 +784,7 @@ class scenarioActions extends agActions
   {
     $this->setScenarioBasics($request);
     $this->wizardHandler($request, 2);
-    
+
     $this->getUser()->setAttribute('returnPage', 'scenarioResourceTypes');
 
     $this->resourceForm = new agDefaultResourceTypeForm($this->scenario_id);

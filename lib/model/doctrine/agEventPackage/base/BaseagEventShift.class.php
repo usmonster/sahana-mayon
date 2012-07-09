@@ -93,15 +93,15 @@ abstract class BaseagEventShift extends sfDoctrineRecord
              'notnull' => true,
              'length' => 2,
              ));
-        $this->hasColumn('minimum_staff', 'integer', 1, array(
+        $this->hasColumn('minimum_staff', 'integer', 2, array(
              'type' => 'integer',
              'notnull' => true,
-             'length' => 1,
+             'length' => 2,
              ));
-        $this->hasColumn('maximum_staff', 'integer', 1, array(
+        $this->hasColumn('maximum_staff', 'integer', 2, array(
              'type' => 'integer',
              'notnull' => true,
-             'length' => 1,
+             'length' => 2,
              ));
         $this->hasColumn('minutes_start_to_facility_activation', 'integer', 5, array(
              'type' => 'integer',

@@ -64,7 +64,7 @@ class agFacilityImportNormalization extends agImportNormalization
   }
 
   /**
-   * Method to pre-gather all lookup values into class properties for later facility import 
+   * Method to pre-gather all lookup values into class properties for later facility import
    * processing.  Note: All returned values are converted to all lower case characters to gaurantee
    * a case-insensitive match.  For all data matching against these class property values much also
    * be pre- lower case.
@@ -623,8 +623,8 @@ class agFacilityImportNormalization extends agImportNormalization
     unset($facilityResourceColl);
 
     // Create new facility resource using rowId as the key to $facilityResourceColl.
-    $facilityResourceColl = new Doctrine_Collection('agFacilityResource');
     $facilityResourceTable = $conn->getTable('agFacilityResource');
+    $facilityResourceColl = new Doctrine_Collection($facilityResourceTable);
     foreach ($rawFacilityResources AS $facilityId => $facRscTypes) {
       foreach ($facRscTypes as $facRscTypeId => $rowId) {
         $rawData = $this->importData[$rowId]['_rawData'];
@@ -1015,7 +1015,7 @@ class agFacilityImportNormalization extends agImportNormalization
         'sequence. Used default sequence `' . $this->defaultFacilityResourceActivationSequence .
         '` instead.');
     }
-    
+
     $scenarioFacilityResourceColl->save($conn);
 
     // Store new scenario facility resource ids to $this->importData['primaryKeys'].
@@ -1083,7 +1083,7 @@ class agFacilityImportNormalization extends agImportNormalization
             ->addSelect('srt.id')
           ->from('agStaffResourceType srt')
       ->execute(array(),agDoctrineQuery::HYDRATE_KEY_VALUE_PAIR);
-      
+
         foreach ($this->staffResourceTypes as $srt => $id) {
         $minSpec = $srt . '_min';
         $maxSpec = $srt . '_max';
@@ -1208,7 +1208,7 @@ class agFacilityImportNormalization extends agImportNormalization
     $defaultStaffResourceTypes->free(TRUE);
     unset($defaultStaffResourceType);
     unset($defaultStaffResourceTypes);
-    
+
     if ($missingColumn > 0) {
       $warnMsg = $missingColumn . ' cells missing paired min/max data. Please review your staff ' .
         'resource requirements to ensure data consistency.';
